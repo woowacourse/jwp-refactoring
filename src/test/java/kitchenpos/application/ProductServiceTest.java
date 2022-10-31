@@ -1,37 +1,33 @@
 package kitchenpos.application;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import javax.sql.DataSource;
-import kitchenpos.BeanAssembler;
-import kitchenpos.domain.Product;
-import org.junit.jupiter.api.BeforeEach;
+import kitchenpos.application.dto.request.ProductCreateRequest;
+import kitchenpos.application.dto.response.ProductResponse;
+import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 
-@JdbcTest
+@ServiceTest
 class ProductServiceTest {
-
-    @Autowired
-    private DataSource dataSource;
 
     private ProductService productService;
 
-    @BeforeEach
-    void setUp() {
-        productService = BeanAssembler.createProductService(dataSource);
+    @Autowired
+    public ProductServiceTest(ProductService productService) {
+        this.productService = productService;
     }
 
     @Test
     void createProduct() {
         // given
-        Product product = new Product("상품", BigDecimal.valueOf(1000));
+        ProductCreateRequest request = new ProductCreateRequest("상품", BigDecimal.valueOf(1000));
 
         // when
-        Product savedProduct = productService.create(product);
+        ProductResponse savedProduct = productService.create(request);
 
         // then
         assertThat(savedProduct).isNotNull();
@@ -40,41 +36,42 @@ class ProductServiceTest {
     @Test
     void createProductWithNullPrice() {
         // given
-        Product product = new Product("상품", null);
+        ProductCreateRequest request = new ProductCreateRequest("상품", null);
 
         // when & then
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void createProductWithZeroPrice() {
         // given
-        Product product = new Product("상품", BigDecimal.valueOf(0));
+        ProductCreateRequest request = new ProductCreateRequest("상품", BigDecimal.valueOf(0));
 
         // when
-        Product savedProduct = productService.create(product);
+        ProductResponse response = productService.create(request);
 
         // then
-        assertThat(savedProduct).isNotNull();
+        assertThat(response).isNotNull();
     }
 
     @Test
     void createProductWithNegativePrice() {
         // given
-        Product product = new Product("상품", BigDecimal.valueOf(-1));
+        ProductCreateRequest request = new ProductCreateRequest("상품", BigDecimal.valueOf(-1));
 
         // when & then
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void findProducts() {
         // given & when
-        List<Product> products = productService.list();
+        List<ProductResponse> responses = productService.list();
 
         // then
-        assertThat(products).hasSize(6);
+        int defaultSize = 6;
+        assertThat(responses).hasSize(defaultSize);
     }
 }

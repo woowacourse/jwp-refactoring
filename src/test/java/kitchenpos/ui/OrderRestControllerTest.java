@@ -1,5 +1,6 @@
 package kitchenpos.ui;
 
+import static kitchenpos.OrderFixtures.createOrderResponse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -9,72 +10,66 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.OrderFixtures;
 import kitchenpos.application.OrderService;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.application.dto.response.OrderResponse;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
-@WebMvcTest(OrderRestController.class)
 class OrderRestControllerTest extends ControllerTest {
 
-    @MockBean
+    @Autowired
     private OrderService orderService;
 
     @Test
     void create() throws Exception {
         // given
-        long id = 1L;
-        Order order = new Order(1L, OrderStatus.COOKING.name(), LocalDateTime.now(), List.of());
-        order.setId(id);
-
-        given(orderService.create(any())).willReturn(order);
+        OrderResponse response = createOrderResponse();
+        given(orderService.create(any())).willReturn(response);
 
         // when
         ResultActions actions = mockMvc.perform(post("/api/orders")
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .content(objectMapper.writeValueAsString(order))
+                .content(objectMapper.writeValueAsString(OrderFixtures.createOrderRequest()))
         );
 
         // then
         actions.andExpect(status().isCreated())
-                .andExpect(header().string("Location", "/api/orders/" + id));
+                .andExpect(header().string("Location", "/api/orders/" + response.getId()));
     }
 
     @Test
     void list() throws Exception {
         // given
-        Order order = new Order(1L, OrderStatus.COOKING.name(), LocalDateTime.now(), List.of());
-        given(orderService.list()).willReturn(List.of(order));
+        OrderResponse response = createOrderResponse();
+        given(orderService.list()).willReturn(List.of(response));
 
         // when
         ResultActions actions = mockMvc.perform(get("/api/orders"));
 
         // then
         actions.andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(List.of(order))));
+                .andExpect(content().json(objectMapper.writeValueAsString(List.of(response))));
     }
 
     @Test
     void changeOrderStatus() throws Exception {
         // given
-        Order order = new Order(1L, OrderStatus.COOKING.name(), LocalDateTime.now(), List.of());
-        given(orderService.changeOrderStatus(any(), any())).willReturn(order);
+        OrderResponse response = createOrderResponse();
+        given(orderService.changeOrderStatus(any(), any())).willReturn(response);
 
         // when
         ResultActions actions = mockMvc.perform(put("/api/orders/{orderId}/order-status", 1L)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .content(objectMapper.writeValueAsString(order))
+                .content(objectMapper.writeValueAsString(OrderFixtures.createOrderChangeRequest()))
         );
 
         // then
         actions.andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(order)));
+                .andExpect(content().json(objectMapper.writeValueAsString(response)));
     }
 }

@@ -3,38 +3,38 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import javax.sql.DataSource;
-import kitchenpos.BeanAssembler;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.application.dto.request.MenuGroupRequest;
+import kitchenpos.application.dto.response.MenuGroupResponse;
+import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 
-@JdbcTest
+@ServiceTest
 class MenuGroupServiceTest {
 
     private MenuGroupService menuGroupService;
 
     @Autowired
-    public MenuGroupServiceTest(DataSource dataSource) {
-        this.menuGroupService = BeanAssembler.createMenuGroupService(dataSource);
+    public MenuGroupServiceTest(MenuGroupService menuGroupService) {
+        this.menuGroupService = menuGroupService;
     }
 
     @Test
     void create() {
         // given
-        MenuGroup menuGroup = new MenuGroup("메뉴그룹");
+        MenuGroupRequest request = new MenuGroupRequest("메뉴그룹");
         // when
-        MenuGroup createdMenuGroup = menuGroupService.create(menuGroup);
+        MenuGroupResponse response = menuGroupService.create(request);
         // then
-        assertThat(createdMenuGroup.getId()).isNotNull();
+        assertThat(response.getId()).isNotNull();
     }
 
     @Test
     void list() {
         // given & when
-        List<MenuGroup> menuGroups = menuGroupService.list();
+        List<MenuGroupResponse> responses = menuGroupService.list();
         // then
-        assertThat(menuGroups).hasSize(4);
+        int defaultSize = 4;
+        assertThat(responses).hasSize(defaultSize);
     }
 }

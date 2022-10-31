@@ -1,55 +1,48 @@
 package kitchenpos.ui;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.TableGroupFixtures;
 import kitchenpos.application.TableGroupService;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.TableGroup;
-import org.junit.jupiter.api.DisplayName;
+import kitchenpos.application.dto.request.TableGroupCreateRequest;
+import kitchenpos.application.dto.request.TableGroupIdRequest;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
-@WebMvcTest(TableGroupRestController.class)
 class TableGroupRestControllerTest extends ControllerTest {
 
-    @MockBean
     private TableGroupService tableGroupService;
+
+    @Autowired
+    public TableGroupRestControllerTest(TableGroupService tableGroupService) {
+        this.tableGroupService = tableGroupService;
+    }
 
     @Test
     void create() throws Exception {
         // given
-        long id = 1L;
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of());
-        tableGroup.setId(id);
-
-        given(tableGroupService.create(any())).willReturn(tableGroup);
+        given(tableGroupService.create(any())).willReturn(TableGroupFixtures.createTableGroupResponse());
 
         // when
+        List<TableGroupIdRequest> orderTableIds = List.of(new TableGroupIdRequest(1L), new TableGroupIdRequest(2L));
         ResultActions actions = mockMvc.perform(post("/api/table-groups")
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .content(objectMapper.writeValueAsString(tableGroup))
+                .content(objectMapper.writeValueAsString(new TableGroupCreateRequest(orderTableIds)))
         );
 
         // then
         actions.andExpect(status().isCreated())
-                .andExpect(header().string("Location", "/api/table-groups/" + id));
+                .andExpect(header().exists("Location"));
     }
 
     @Test

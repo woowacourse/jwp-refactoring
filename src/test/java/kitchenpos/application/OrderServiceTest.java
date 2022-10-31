@@ -1,63 +1,81 @@
 package kitchenpos.application;
 
+import static kitchenpos.OrderFixtures.createOrder;
+import static kitchenpos.OrderFixtures.createOrderChangeRequest;
+import static kitchenpos.OrderFixtures.createOrderLineItemRequest;
+import static kitchenpos.OrderFixtures.createOrderRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import javax.sql.DataSource;
-import kitchenpos.BeanAssembler;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.OrderTableFixtures;
+import kitchenpos.TableGroupFixtures;
+import kitchenpos.application.dto.request.OrderRequest;
+import kitchenpos.application.dto.request.OrderStatusChangeRequest;
+import kitchenpos.application.dto.response.OrderResponse;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.support.ServiceTest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 
-@JdbcTest
+@ServiceTest
 class OrderServiceTest {
 
     private OrderService orderService;
-    private TableGroupDao tableGroupDao;
-    private OrderTableDao orderTableDao;
-    private OrderDao orderDao;
+    private TableGroupRepository tableGroupRepository;
+    private OrderTableRepository orderTableRepository;
+    private OrderRepository orderRepository;
 
     @Autowired
-    public OrderServiceTest(DataSource dataSource) {
-        this.orderService = BeanAssembler.createOrderService(dataSource);
-        this.tableGroupDao = BeanAssembler.createTableGroupDao(dataSource);
-        this.orderTableDao = BeanAssembler.createOrderTableDao(dataSource);
-        this.orderDao = BeanAssembler.createOrderDao(dataSource);
+    public OrderServiceTest(
+            OrderService orderService,
+            TableGroupRepository tableGroupRepository,
+            OrderTableRepository orderTableRepository,
+            OrderRepository orderRepository
+    ) {
+        this.orderService = orderService;
+        this.tableGroupRepository = tableGroupRepository;
+        this.orderTableRepository = orderTableRepository;
+        this.orderRepository = orderRepository;
+    }
+
+    private TableGroup tableGroup;
+    private OrderTable emptyOrderTable;
+    private OrderTable filledOrderTable;
+
+    @BeforeEach
+    void setUp() {
+        this.tableGroup = tableGroupRepository.save(TableGroupFixtures.createTableGroup());
+        this.emptyOrderTable = orderTableRepository.save(OrderTableFixtures.createOrderTable(tableGroup, 0, true));
+        this.filledOrderTable = orderTableRepository.save(OrderTableFixtures.createOrderTable(tableGroup, 2, false));
     }
 
     @Test
     void create() {
         // given
-        TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
-        OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 3, false));
-        Order order = new Order(orderTable.getId(), null, LocalDateTime.now(), List.of(new OrderLineItem(null, 1L, 2)));
+        OrderRequest request = createOrderRequest(filledOrderTable.getId());
 
         // when
-        Order createdOrder = orderService.create(order);
+        OrderResponse response = orderService.create(request);
 
         // then
-        assertThat(createdOrder.getId()).isNotNull();
+        assertThat(response.getId()).isNotNull();
     }
 
     @Test
     void createWithEmptyOrderLineItems() {
         // given
-        TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
-        OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 3, false));
-        Order order = new Order(orderTable.getId(), null, LocalDateTime.now(), List.of());
+        OrderRequest request = createOrderRequest(filledOrderTable.getId(), List.of());
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -65,13 +83,13 @@ class OrderServiceTest {
     void createWithInvalidMenu() {
         // given
         long invalidMenuId = 999L;
-        TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
-        OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 3, false));
-        Order order = new Order(orderTable.getId(), null, LocalDateTime.now(),
-                List.of(new OrderLineItem(null, invalidMenuId, 2)));
+        OrderRequest request = createOrderRequest(
+                filledOrderTable.getId(),
+                List.of(createOrderLineItemRequest(invalidMenuId))
+        );
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -79,82 +97,69 @@ class OrderServiceTest {
     void createWithInvalidOrderTable() {
         // given
         long invalidOrderTableId = 999L;
-        Order order = new Order(invalidOrderTableId, null, LocalDateTime.now(),
-                List.of(new OrderLineItem(null, 1L, 2)));
+        OrderRequest request = createOrderRequest(invalidOrderTableId);
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void createWithEmptyOrderTable() {
         // given
-        TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
-        OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 0, true));
-        Order order = new Order(orderTable.getId(), null, LocalDateTime.now(), List.of(new OrderLineItem(null, 1L, 2)));
+        OrderRequest request = createOrderRequest(emptyOrderTable.getId());
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void list() {
         // given & when
-        List<Order> orders = orderService.list();
+        List<OrderResponse> responses = orderService.list();
         // then
-        assertThat(orders).hasSize(0);
+        assertThat(responses).isEmpty();
     }
 
     @Test
     void changeOrderStatus() {
         // given
-        TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
-        OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 3, false));
-        Order createdOrder = orderService.create(
-                new Order(orderTable.getId(), null, LocalDateTime.now(), List.of(new OrderLineItem(null, 1L, 2)))
-        );
+        Order savedOrder = orderRepository.save(createOrder());
 
         // when
-        Order changedOrder = orderService.changeOrderStatus(createdOrder.getId(),
-                new Order(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), null)
+        OrderStatusChangeRequest changeRequest = createOrderChangeRequest();
+        OrderResponse response = orderService.changeOrderStatus(
+                savedOrder.getId(),
+                changeRequest
         );
 
         // then
-        assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
+        assertThat(response.getOrderStatus()).isEqualTo(changeRequest.getOrderStatus());
     }
 
     @Test
     void changeOrderStatusWithInvalidOrder() {
         // given
-        TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
-        OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 3, false));
         long invalidOrderId = 999L;
 
         // when
-        assertThatThrownBy(() -> orderService.changeOrderStatus(invalidOrderId,
-                new Order(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), null)
+        assertThatThrownBy(() -> orderService.changeOrderStatus(
+                invalidOrderId,
+                createOrderChangeRequest()
         )).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void changeOrderStatusWithAlreadyCompletedStatus() {
         // given
-        String orderStatus = OrderStatus.COMPLETION.name();
-
-        TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
-        OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 3, false));
-        Order createdOrder = orderDao.save(new Order(
-                orderTable.getId(),
-                orderStatus,
-                LocalDateTime.now(),
-                List.of(new OrderLineItem(null, 1L, 2))
-        ));
+        OrderStatus orderStatus = OrderStatus.COMPLETION;
+        Order savedOrder = orderRepository.save(createOrder(orderStatus));
 
         // when
-        assertThatThrownBy(() -> orderService.changeOrderStatus(createdOrder.getId(),
-                new Order(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), null)
-        )).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.changeOrderStatus(
+                savedOrder.getId(),
+                createOrderChangeRequest()
+        )).isInstanceOf(IllegalStateException.class);
     }
 }
