@@ -38,30 +38,17 @@ public class MenuService {
 
     @Transactional
     public Menu create(final MenuDto menuDto) {
-        validateMenuPrice(menuDto.getPrice());
         validateMenuGroup(menuDto);
         final List<MenuProduct> menuProducts = menuDto.getMenuProducts();
-        validateMenuPrice(menuDto.getPrice(), calculateProductPrice(menuProducts));
         final Menu savedMenu = menuDao.save(menuDto.toEntity());
+        savedMenu.compareToTotalMenuPrice(calculateProductPrice(menuProducts));
         fillMenuIdToMenuProduct(menuProducts, savedMenu);
         return savedMenu;
-    }
-
-    private void validateMenuPrice(final BigDecimal menuPrice) {
-        if (Objects.isNull(menuPrice) || menuPrice.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("[ERROR] 부적절한 메뉴 가격입니다.");
-        }
     }
 
     private void validateMenuGroup(final MenuDto menuDto) {
         if (!menuGroupDao.existsById(menuDto.getMenuGroupId())) {
             throw new IllegalArgumentException("[ERROR] 메뉴 그룹이 존재하지 않습니다.");
-        }
-    }
-
-    private void validateMenuPrice(final BigDecimal menuPrice, final BigDecimal sum) {
-        if (menuPrice.compareTo(sum) > 0) {
-            throw new IllegalArgumentException("[ERROR] 메뉴 가격은 메뉴 상들 가격의 합보다 클 수 없습니다.");
         }
     }
 

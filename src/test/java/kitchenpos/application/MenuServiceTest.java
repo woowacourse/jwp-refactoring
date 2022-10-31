@@ -40,41 +40,12 @@ public class MenuServiceTest extends ServiceTest {
     }
 
     @Test
-    @DisplayName("create -> 메뉴의 가격이 0원 미만이면 예외가 발생한다.")
-    void create_invalidPrice_throwException() {
-        // given
-        final MenuGroup menuGroup = 메뉴그룹등록(메뉴그룹1);
-        final Product product = 상품등록(피자);
-
-        final Menu menu = createMenu("양념치킨메뉴", -1, menuGroup, product);
-
-        // when & then
-        assertThatThrownBy(() -> menuService.create(new MenuDto(menu)))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
     @DisplayName("create -> 메뉴 그룹이 존재하지 않으면 예외가 발생한다.")
     void create_noGroup_throwException() {
         // given
         final MenuGroup notRegisteredMenuGroup = 메뉴그룹1;
         final Product product = 상품등록(피자);
         final Menu menu = createMenu("양념치킨메뉴", 1_000, notRegisteredMenuGroup, product);
-
-        // when & then
-        assertThatThrownBy(() -> menuService.create(new MenuDto(menu)))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    @DisplayName("create -> 메뉴의 가격이 메뉴 상품들 가격의 합보다 클 경우 예외가 발생한다.")
-    void create_overProductsPrice_throwException() {
-        // given
-        final MenuGroup menuGroup = 메뉴그룹등록(메뉴그룹1);
-        final Product product1 = 상품등록(후라이드치킨);
-        final Product product2 = 상품등록(양념치킨);
-
-        final Menu menu = createMenu("치킨피자메뉴", 30_000, menuGroup, product1, product2);
 
         // when & then
         assertThatThrownBy(() -> menuService.create(new MenuDto(menu)))
