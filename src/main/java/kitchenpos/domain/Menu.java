@@ -38,7 +38,7 @@ Menu {
     }
 
     private void validOverMenuProductsSum(final BigDecimal price, final List<MenuProduct> menuProducts) {
-        final BigDecimal sum = menuProducts.stream().map(MenuProduct::getAmount)
+        final BigDecimal sum = menuProducts.stream().map(MenuProduct::calculateAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         if (price.compareTo(sum) > 0) {

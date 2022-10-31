@@ -9,6 +9,6 @@ class MenuProductTest {
     @Test
     void amount() {
         final MenuProduct product = new MenuProduct(1L, 10L, BigDecimal.valueOf(1000L));
-        assertThat(product.getAmount()).isEqualTo(BigDecimal.valueOf(10000L));
+        assertThat(product.calculateAmount()).isEqualTo(BigDecimal.valueOf(10000L));
     }
 }

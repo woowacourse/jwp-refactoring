@@ -53,7 +53,7 @@ public class MenuProduct {
         return quantity;
     }
 
-    public BigDecimal getAmount() {
+    public BigDecimal calculateAmount() {
         return price.multiply(BigDecimal.valueOf(quantity));
     }
 }
