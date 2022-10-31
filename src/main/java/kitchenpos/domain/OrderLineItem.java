@@ -14,44 +14,79 @@ public class OrderLineItem {
     @Column(name = "seq")
     private Long seq;
 
-    @Column(name = "order_id", nullable = false)
+    @Column(name = "order_id")
     private Long orderId;
 
-    @Column(nullable = false)
+    @Column
     private Long menuId;
 
-    @Column(nullable = false)
+    @Column
     private long quantity;
+
+    public OrderLineItem() {
+    }
+
+    public OrderLineItem(final Long orderId, final Long menuId, final long quantity) {
+        this.orderId = orderId;
+        this.menuId = menuId;
+        this.quantity = quantity;
+    }
+
+    private OrderLineItem(Builder builder) {
+        this.seq = builder.seq;
+        this.orderId = builder.orderId;
+        this.menuId = builder.menuId;
+        this.quantity = builder.quantity;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     public Long getSeq() {
         return seq;
-    }
-
-    public void setSeq(final Long seq) {
-        this.seq = seq;
     }
 
     public Long getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(final Long orderId) {
-        this.orderId = orderId;
-    }
-
     public Long getMenuId() {
         return menuId;
-    }
-
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
     }
 
     public long getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
+    public static class Builder {
+        private Long seq;
+        private Long orderId;
+        private Long menuId;
+        private long quantity;
+
+        public Builder seq(final Long seq) {
+            this.seq = seq;
+            return this;
+        }
+
+        public Builder orderId(final Long orderId) {
+            this.orderId = orderId;
+            return this;
+        }
+
+        public Builder menuId(final Long menuId) {
+            this.menuId = menuId;
+            return this;
+        }
+
+        public Builder quantity(final long quantity) {
+            this.quantity = quantity;
+            return this;
+        }
+
+        public OrderLineItem build() {
+            return new OrderLineItem(this);
+        }
     }
 }

@@ -25,27 +25,59 @@ public class TableGroup {
     @JoinColumn(name = "table_group_id")
     private List<OrderTable> orderTables;
 
-    public Long getId() {
-        return id;
+    public TableGroup() {
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+        this.createdDate = createdDate;
+        this.orderTables = orderTables;
+    }
+
+    private TableGroup(final Builder builder) {
+        this.id = builder.id;
+        this.createdDate = builder.createdDate;
+        this.orderTables = builder.orderTables;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
     public List<OrderTable> getOrderTables() {
         return orderTables;
     }
 
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
+
+    public static class Builder {
+        private Long id;
+        private LocalDateTime createdDate;
+        private List<OrderTable> orderTables;
+
+        public Builder id(final Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder createdDate(final LocalDateTime createdDate) {
+            this.createdDate = createdDate;
+            return this;
+        }
+
+        public Builder orderTables(final List<OrderTable> orderTables) {
+            this.orderTables = orderTables;
+            return this;
+        }
+
+        public TableGroup build() {
+            return new TableGroup(this);
+        }
     }
 }

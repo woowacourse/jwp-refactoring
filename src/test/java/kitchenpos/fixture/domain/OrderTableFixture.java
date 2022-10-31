@@ -9,9 +9,9 @@ public class OrderTableFixture {
     }
 
     public static OrderTable createOrderTable(Long id) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(id);
-        return orderTable;
+        return OrderTable.builder()
+                .id(id)
+                .build();
     }
 
     public static OrderTable createOrderTable(boolean empty) {
@@ -23,17 +23,17 @@ public class OrderTableFixture {
     }
 
     public static OrderTable createOrderTable(int numberOfGuests, boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        return orderTable;
+        return OrderTable.builder()
+                .numberOfGuests(numberOfGuests)
+                .empty(empty)
+                .build();
     }
 
     public static OrderTable createOrderTable(Long tableGroupId, int numberOfGuests, boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        return orderTable;
+        return OrderTable.builder()
+                .tableGroupId(tableGroupId)
+                .numberOfGuests(numberOfGuests)
+                .empty(empty)
+                .build();
     }
 }

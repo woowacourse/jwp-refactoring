@@ -21,6 +21,9 @@ import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
+import kitchenpos.ui.dto.request.TableCreateRequest;
+import kitchenpos.ui.dto.response.TableCreateResponse;
+import kitchenpos.ui.dto.response.TableFindAllResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -52,15 +55,15 @@ class TableServiceTest {
     @Test
     void create_success() {
         // given
-        OrderTable orderTable = createOrderTable(4, true);
+        TableCreateRequest request = new TableCreateRequest(4, true);
 
         // when
-        OrderTable savedOrderTable = tableService.create(orderTable);
+        TableCreateResponse response = tableService.create(request);
 
         // then
-        OrderTable dbOrderTable = orderTableRepository.findById(savedOrderTable.getId())
+        OrderTable dbOrderTable = orderTableRepository.findById(response.getId())
                 .orElseThrow(NoSuchElementException::new);
-        assertThat(dbOrderTable.getId()).isEqualTo(savedOrderTable.getId());
+        assertThat(dbOrderTable.getId()).isEqualTo(response.getId());
     }
 
     @DisplayName("주문 테이블을 조회한다.")
@@ -70,11 +73,11 @@ class TableServiceTest {
         OrderTable savedOrderTable = orderTableRepository.save(createOrderTable(4, true));
 
         // when
-        List<OrderTable> tables = tableService.list();
+        List<TableFindAllResponse> responses = tableService.list();
 
         // then
-        List<Long> tableIds = tables.stream()
-                .map(OrderTable::getId)
+        List<Long> tableIds = responses.stream()
+                .map(TableFindAllResponse::getId)
                 .collect(Collectors.toList());
         assertThat(tableIds).contains(savedOrderTable.getId());
     }
@@ -100,9 +103,9 @@ class TableServiceTest {
         // given
         OrderTable orderTable1 = orderTableRepository.save(createOrderTable(4, true));
         OrderTable orderTable2 = orderTableRepository.save(createOrderTable(4, true));
-        TableGroup tableGroup = tableGroupRepository.save(createTableGroup(LocalDateTime.now(), Arrays.asList(orderTable1, orderTable2)));
-        orderTable1.setTableGroupId(tableGroup.getId());
-        orderTable1.setEmpty(false);
+        TableGroup tableGroup = tableGroupRepository.save(
+                createTableGroup(LocalDateTime.now(), Arrays.asList(orderTable1, orderTable2)));
+        orderTable1.group(tableGroup.getId());
         orderTableRepository.save(orderTable1);
 
         // when, then

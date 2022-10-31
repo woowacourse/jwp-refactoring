@@ -19,7 +19,7 @@ public class ProductService {
 
     @Transactional
     public ProductCreateResponse create(final ProductCreateRequest request) {
-        Product product = productRepository.save(toProduct(request));
+        final Product product = productRepository.save(toProduct(request));
         return ProductCreateResponse.from(product);
     }
 

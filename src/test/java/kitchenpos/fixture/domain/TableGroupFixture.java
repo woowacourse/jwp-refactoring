@@ -8,21 +8,21 @@ import kitchenpos.domain.TableGroup;
 public class TableGroupFixture {
 
     public static TableGroup createTableGroup(Long id) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setId(id);
-        return tableGroup;
+        return TableGroup.builder()
+                .id(id)
+                .build();
     }
 
     public static TableGroup createTableGroup(List<OrderTable> orderTables) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(orderTables);
-        return tableGroup;
+        return TableGroup.builder()
+                .orderTables(orderTables)
+                .build();
     }
 
     public static TableGroup createTableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(createdDate);
-        tableGroup.setOrderTables(orderTables);
-        return tableGroup;
+        return TableGroup.builder()
+                .createdDate(createdDate)
+                .orderTables(orderTables)
+                .build();
     }
 }

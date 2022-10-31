@@ -13,7 +13,7 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "table_group_id", nullable = false)
+    @Column(name = "table_group_id")
     private Long tableGroupId;
 
     @Column(nullable = false)
@@ -22,35 +22,82 @@ public class OrderTable {
     @Column(nullable = false)
     private boolean empty;
 
-    public Long getId() {
-        return id;
+    public OrderTable() {
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    public OrderTable(Builder builder) {
+        this.id = builder.id;
+        this.tableGroupId = builder.tableGroupId;
+        this.numberOfGuests = builder.numberOfGuests;
+        this.empty = builder.empty;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public void changeEmpty(final boolean empty) {
+        this.empty = empty;
+    }
+
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public Long getTableGroupId() {
         return tableGroupId;
     }
 
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-    }
-
     public int getNumberOfGuests() {
         return numberOfGuests;
-    }
-
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
     }
 
     public boolean isEmpty() {
         return empty;
     }
 
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
+    public void group(final Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
+        this.empty = false;
+    }
+
+    public void ungroup() {
+        this.tableGroupId = null;
+        this.empty = false;
+    }
+
+    public static class Builder {
+        private Long id;
+        private Long tableGroupId;
+        private int numberOfGuests;
+        private boolean empty;
+
+        public Builder id(final Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder tableGroupId(final Long tableGroupId) {
+            this.tableGroupId = tableGroupId;
+            return this;
+        }
+
+        public Builder numberOfGuests(final int numberOfGuests) {
+            this.numberOfGuests = numberOfGuests;
+            return this;
+        }
+
+        public Builder empty(final boolean empty) {
+            this.empty = empty;
+            return this;
+        }
+
+        public OrderTable build() {
+            return new OrderTable(this);
+        }
     }
 }

@@ -8,39 +8,39 @@ import kitchenpos.domain.OrderLineItem;
 public class OrderFixture {
 
     public static Order createOrder(Long id) {
-        Order order = new Order();
-        order.setId(id);
-        return order;
+        return Order.builder()
+                .id(id)
+                .build();
     }
 
     public static Order createOrder(String orderStatus) {
-        Order order = new Order();
-        order.setOrderStatus(orderStatus);
-        return order;
+        return Order.builder()
+                .orderStatus(orderStatus)
+                .build();
     }
 
     public static Order createOrder(Long orderTableId, List<OrderLineItem> orderLineItems) {
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderLineItems(orderLineItems);
-        return order;
+        return Order.builder()
+                .orderTableId(orderTableId)
+                .orderLineItems(orderLineItems)
+                .build();
     }
 
     public static Order createOrder(Long orderTableId, String orderStatus, List<OrderLineItem> orderLineItems) {
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus(orderStatus);
-        order.setOrderLineItems(orderLineItems);
-        return order;
+        return Order.builder()
+                .orderTableId(orderTableId)
+                .orderStatus(orderStatus)
+                .orderLineItems(orderLineItems)
+                .build();
     }
 
     public static Order createOrder(Long orderTableId, String orderStatus, LocalDateTime orderedTime,
-                              List<OrderLineItem> orderLineItems) {
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus(orderStatus);
-        order.setOrderedTime(orderedTime);
-        order.setOrderLineItems(orderLineItems);
-        return order;
+                                    List<OrderLineItem> orderLineItems) {
+        return Order.builder()
+                .orderTableId(orderTableId)
+                .orderStatus(orderStatus)
+                .orderedTime(orderedTime)
+                .orderLineItems(orderLineItems)
+                .build();
     }
 }

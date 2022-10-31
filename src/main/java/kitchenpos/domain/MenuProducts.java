@@ -11,7 +11,7 @@ import kitchenpos.exception.NotFoundException;
 @Embeddable
 public class MenuProducts {
 
-    private static final String NOT_FOUND_MENU_GROUP_ERROR_MESSAGE = "존재하지 않는 메뉴그룹 ID 입니다.";
+    private static final String NOT_FOUND_MENU_GROUP_ERROR_MESSAGE = "존재하지 않는 메뉴그룹입니다.";
 
     @ElementCollection
     @CollectionTable(name = "menu_product", joinColumns = @JoinColumn(name = "menu_id"))

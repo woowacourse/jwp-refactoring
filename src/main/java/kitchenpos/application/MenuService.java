@@ -22,8 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class MenuService {
 
-    private static final String NOT_FOUND_PRODUCT_ERROR_MESSAGE = "존재하지 않는 상품 ID 입니다.";
-    private static final String NOT_FOUND_MENU_GROUP_ERROR_MESSAGE = "존재하지 않는 메뉴그룹 ID 입니다.";
+    private static final String NOT_FOUND_PRODUCT_ERROR_MESSAGE = "존재하지 않는 상품입니다.";
+    private static final String NOT_FOUND_MENU_GROUP_ERROR_MESSAGE = "존재하지 않는 메뉴그룹입니다.";
 
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;

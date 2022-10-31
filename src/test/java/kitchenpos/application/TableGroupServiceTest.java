@@ -15,6 +15,8 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
+import kitchenpos.ui.dto.request.TableCreateDto;
+import kitchenpos.ui.dto.request.TableGroupCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,12 +40,14 @@ class TableGroupServiceTest {
     @Test
     void create_success() {
         // given
-        OrderTable orderTable1 = orderTableRepository.save(createOrderTable(4, true));
-        OrderTable orderTable2 = orderTableRepository.save(createOrderTable(4, true));
-        TableGroup tableGroup = createTableGroup(Arrays.asList(orderTable1, orderTable2));
+        TableGroup tableGroup = createTableGroup(LocalDateTime.now(), new ArrayList<>());
+        OrderTable orderTable1 = orderTableRepository.save(createOrderTable(tableGroup.getId(), 4, true));
+        OrderTable orderTable2 = orderTableRepository.save(createOrderTable(tableGroup.getId(), 4, true));
+        TableGroupCreateRequest request = new TableGroupCreateRequest(
+                Arrays.asList(new TableCreateDto(orderTable1.getId()), new TableCreateDto(orderTable2.getId())));
 
         // when
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        TableGroup savedTableGroup = tableGroupService.create(request);
 
         // then
         TableGroup dbTableGroup = tableGroupRepository.findById(savedTableGroup.getId())
@@ -55,10 +59,10 @@ class TableGroupServiceTest {
     @Test
     void create_fail_if_emptyOrderTable() {
         // given
-        TableGroup tableGroup = createTableGroup(new ArrayList<>());
+        TableGroupCreateRequest request = new TableGroupCreateRequest(new ArrayList<>());
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -66,11 +70,13 @@ class TableGroupServiceTest {
     @Test
     void create_fail_if_orderTable_is_one() {
         // given
-        OrderTable orderTable = orderTableRepository.save(createOrderTable(4, true));
-        TableGroup tableGroup = createTableGroup(Collections.singletonList(orderTable));
+        TableGroup tableGroup = createTableGroup(LocalDateTime.now(), new ArrayList<>());
+        OrderTable orderTable = orderTableRepository.save(createOrderTable(tableGroup.getId(), 4, true));
+        TableGroupCreateRequest request = new TableGroupCreateRequest(
+                Collections.singletonList(new TableCreateDto(orderTable.getId())));
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -78,11 +84,11 @@ class TableGroupServiceTest {
     @Test
     void create_fail_if_orderTable_not_exist() {
         // given
-        OrderTable orderTable = createOrderTable(4, true);
-        TableGroup tableGroup = createTableGroup(Collections.singletonList(orderTable));
+        TableGroupCreateRequest request = new TableGroupCreateRequest(
+                Arrays.asList(new TableCreateDto(999999L), new TableCreateDto(999999L)));
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -90,11 +96,14 @@ class TableGroupServiceTest {
     @Test
     void create_fail_if_orderTable_not_empty() {
         // given
-        OrderTable orderTable = orderTableRepository.save(createOrderTable(4, false));
-        TableGroup tableGroup = createTableGroup(Collections.singletonList(orderTable));
+        TableGroup tableGroup = createTableGroup(LocalDateTime.now(), new ArrayList<>());
+        OrderTable orderTable1 = orderTableRepository.save(createOrderTable(tableGroup.getId(), 4, false));
+        OrderTable orderTable2 = orderTableRepository.save(createOrderTable(tableGroup.getId(), 4, true));
+        TableGroupCreateRequest request = new TableGroupCreateRequest(
+                Arrays.asList(new TableCreateDto(orderTable1.getId()), new TableCreateDto(orderTable2.getId())));
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -102,16 +111,19 @@ class TableGroupServiceTest {
     @Test
     void create_fail_if_orderTable_has_orderTableGroup() {
         // given
-        OrderTable orderTable1 = orderTableRepository.save(createOrderTable(4, true));
-        OrderTable orderTable2 = orderTableRepository.save(createOrderTable(4, true));
-        TableGroup tableGroup = createTableGroup(Arrays.asList(orderTable1, orderTable2));
-        tableGroupService.create(tableGroup);
+        TableGroup tableGroup = createTableGroup(LocalDateTime.now(), new ArrayList<>());
+        OrderTable orderTable1 = orderTableRepository.save(createOrderTable(tableGroup.getId(), 4, true));
+        OrderTable orderTable2 = orderTableRepository.save(createOrderTable(tableGroup.getId(), 4, true));
+        TableGroupCreateRequest createRequest = new TableGroupCreateRequest(
+                Arrays.asList(new TableCreateDto(orderTable1.getId()), new TableCreateDto(orderTable2.getId())));
+        tableGroupService.create(createRequest);
 
         OrderTable orderTable3 = orderTableRepository.save(createOrderTable(4, true));
-        TableGroup newTableGroup = createTableGroup(Arrays.asList(orderTable1, orderTable3));
+        TableGroupCreateRequest request = new TableGroupCreateRequest(
+                Arrays.asList(new TableCreateDto(orderTable1.getId()), new TableCreateDto(orderTable3.getId())));
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(newTableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -119,8 +131,9 @@ class TableGroupServiceTest {
     @Test
     void ungroup_success() {
         // given
-        OrderTable orderTable1 = orderTableRepository.save(createOrderTable(4, true));
-        OrderTable orderTable2 = orderTableRepository.save(createOrderTable(4, true));
+        TableGroup tableGroup = tableGroupRepository.save(createTableGroup(LocalDateTime.now(), new ArrayList<>()));
+        OrderTable orderTable1 = orderTableRepository.save(createOrderTable(tableGroup.getId(), 4, true));
+        OrderTable orderTable2 = orderTableRepository.save(createOrderTable(tableGroup.getId(), 4, true));
         TableGroup savedTableGroup = tableGroupRepository.save(createTableGroup(
                 LocalDateTime.now(), Arrays.asList(orderTable1, orderTable2)));
 
