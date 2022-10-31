@@ -24,11 +24,9 @@ public class MenuProducts {
     }
 
     public BigDecimal calculateTotalAmount() {
-        BigDecimal sum = BigDecimal.ZERO;
-        for (MenuProduct menuProduct : menuProducts) {
-            sum = sum.add(menuProduct.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
-        return sum;
+        return menuProducts.stream()
+            .map(MenuProduct::calculateAmount)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     public List<MenuProduct> getMenuProducts() {

@@ -41,6 +41,10 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
+    public BigDecimal calculateAmount() {
+        return price.multiply(BigDecimal.valueOf(quantity));
+    }
+
     public Long getSeq() {
         return seq;
     }
