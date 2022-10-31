@@ -31,13 +31,6 @@ public class MenuGroupService {
     }
 
     private MenuGroup generateMenuGroup(MenuGroupCreateRequest menuGroupCreateRequest) {
-        validateName(menuGroupCreateRequest);
         return new MenuGroup(menuGroupCreateRequest.getName());
-    }
-
-    private void validateName(MenuGroupCreateRequest menuGroupCreateRequest) {
-        if (menuGroupCreateRequest.getName() == null) {
-            throw new IllegalArgumentException();
-        }
     }
 }

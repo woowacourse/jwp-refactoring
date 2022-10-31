@@ -1,12 +1,14 @@
 package kitchenpos.domain;
 
-public class OrderTable {
-    private Long id;
-    private Long tableGroupId;
-    private int numberOfGuests;
-    private boolean empty;
+import javax.persistence.criteria.CriteriaBuilder;
 
-    public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
+public class OrderTable {
+    private final Long id;
+    private final Long tableGroupId;
+    private final Integer numberOfGuests;
+    private final boolean empty;
+
+    public OrderTable(Long id, Long tableGroupId, Integer numberOfGuests, boolean empty) {
         validateNumberOfGuests(numberOfGuests);
         this.id = id;
         this.tableGroupId = tableGroupId;
@@ -14,13 +16,13 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    private void validateNumberOfGuests(int numberOfGuests) {
-        if (numberOfGuests < 0) {
+    private void validateNumberOfGuests(Integer numberOfGuests) {
+        if (numberOfGuests == null || numberOfGuests < 0) {
             throw new IllegalArgumentException();
         }
     }
 
-    public OrderTable(int numberOfGuests, boolean empty) {
+    public OrderTable(Integer numberOfGuests, boolean empty) {
         this(null, null, numberOfGuests, empty);
     }
 

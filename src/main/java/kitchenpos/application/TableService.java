@@ -31,15 +31,7 @@ public class TableService {
     }
 
     private OrderTable generateOrderTable(OrderTableCreateRequest orderTableCreateRequest) {
-        validateNumberOfGuests(orderTableCreateRequest);
         return new OrderTable(orderTableCreateRequest.getNumberOfGuests(), orderTableCreateRequest.getEmpty());
-    }
-
-    private void validateNumberOfGuests(OrderTableCreateRequest orderTableCreateRequest) {
-        Integer numberOfGuests = orderTableCreateRequest.getNumberOfGuests();
-        if (numberOfGuests == null || numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
     }
 
     public List<OrderTableResponse> list() {
@@ -84,25 +76,22 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
                                            OrderTableUpdateGuestsRequest orderTableUpdateGuestsRequest) {
-        OrderTable savedOrderTable = searchOrderTable(orderTableId, orderTableUpdateGuestsRequest.getNumberOfGuests());
+        OrderTable savedOrderTable = searchOrderTableWhenChange(orderTableId);
 
         savedOrderTable = savedOrderTable.changeNumberOfGuests(orderTableUpdateGuestsRequest.getNumberOfGuests());
         return new OrderTableResponse(savedOrderTable.getId(), savedOrderTable.getTableGroupId(),
                 savedOrderTable.getNumberOfGuests(), savedOrderTable.isEmpty());
     }
 
-    private OrderTable searchOrderTable(Long orderTableId, Integer numberOfGuests) {
+    private OrderTable searchOrderTableWhenChange(Long orderTableId) {
         OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        validateNotEmpty(savedOrderTable, numberOfGuests);
+        validateNotEmpty(savedOrderTable);
         return savedOrderTable;
     }
 
-    private void validateNotEmpty(OrderTable savedOrderTable, Integer numberOfGuests) {
-        if (numberOfGuests == null || numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
+    private void validateNotEmpty(OrderTable savedOrderTable) {
         if (savedOrderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
