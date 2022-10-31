@@ -10,7 +10,7 @@ import kitchenpos.exception.LowerThanZeroPriceException;
 @Embeddable
 public class Price {
 
-    private static final BigDecimal PRICE_MIN_VALUE = new BigDecimal(0);
+    private static final BigDecimal PRICE_MIN_VALUE = BigDecimal.ZERO;
 
     @Column(name = "price")
     private BigDecimal value;
