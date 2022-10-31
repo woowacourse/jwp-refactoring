@@ -8,8 +8,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.math.BigDecimal;
 import kitchenpos.application.ProductService;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.response.ProductCreateResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -28,7 +30,8 @@ public class ProductRestControllerTest extends ControllerTest {
     public void create() throws Exception {
         // given
         Product product = createProduct("강정치킨", 17_000L);
-        given(productService.create(any())).willReturn(createProduct(1L));
+        given(productService.create(any())).willReturn(
+                createProductCreateResponse(1L, "후라이드", BigDecimal.valueOf(10_000L)));
 
         // when
         ResultActions perform = mockMvc.perform(post("/api/products")
@@ -39,6 +42,11 @@ public class ProductRestControllerTest extends ControllerTest {
 
         // then
         perform.andExpect(status().isCreated());
+    }
+
+    private ProductCreateResponse createProductCreateResponse(final Long id, final String name,
+                                                              final BigDecimal price) {
+        return new ProductCreateResponse(id, name, price);
     }
 
     @DisplayName("상품을 조회한다.")

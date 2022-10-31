@@ -6,9 +6,12 @@ import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
+import kitchenpos.exception.NotFoundException;
 
 @Embeddable
 public class MenuProducts {
+
+    private static final String NOT_FOUND_MENU_GROUP_ERROR_MESSAGE = "존재하지 않는 메뉴그룹 ID 입니다.";
 
     @ElementCollection
     @CollectionTable(name = "menu_product", joinColumns = @JoinColumn(name = "menu_id"))
@@ -25,15 +28,23 @@ public class MenuProducts {
         return menuProducts;
     }
 
-    public BigDecimal calculateTotalAmount() {
+    public BigDecimal calculateTotalAmount(final List<Product> products) {
         BigDecimal totalAmount = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = menuProduct.getProduct();
-            final BigDecimal price = product.getPrice();
-            long quantity = menuProduct.getQuantity();
-            BigDecimal amount = price.multiply(BigDecimal.valueOf(quantity));
+            final Long productId = menuProduct.getProductId();
+            final BigDecimal price = getPrice(products, productId);
+            final long quantity = menuProduct.getQuantity();
+            final BigDecimal amount = price.multiply(BigDecimal.valueOf(quantity));
             totalAmount = totalAmount.add(amount);
         }
         return totalAmount;
+    }
+
+    private BigDecimal getPrice(final List<Product> products, final Long productId) {
+        return products.stream()
+                .filter(product -> product.getId().equals(productId))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_MENU_GROUP_ERROR_MESSAGE))
+                .getPrice();
     }
 }

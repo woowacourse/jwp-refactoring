@@ -13,6 +13,7 @@ import java.util.Collections;
 import kitchenpos.application.MenuService;
 import kitchenpos.ui.dto.request.MenuProductCreateRequest;
 import kitchenpos.ui.dto.request.MenuCreateRequest;
+import kitchenpos.ui.dto.response.MenuCreateResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -32,7 +33,7 @@ public class MenuRestControllerTest extends ControllerTest {
         // given
         MenuCreateRequest request = new MenuCreateRequest("후라이드+후라이드", BigDecimal.valueOf(20_000L), 1L,
                 Collections.singletonList(new MenuProductCreateRequest(1L, 2)));
-        given(menuService.create(any())).willReturn(createMenu());
+        given(menuService.create(any())).willReturn(generateMenuCreateResponse());
 
         // when
         ResultActions perform = mockMvc.perform(post("/api/menus")
@@ -43,6 +44,10 @@ public class MenuRestControllerTest extends ControllerTest {
 
         // then
         perform.andExpect(status().isCreated());
+    }
+
+    private MenuCreateResponse generateMenuCreateResponse() {
+        return MenuCreateResponse.from(createMenu());
     }
 
     @DisplayName("메뉴를 조회한다.")

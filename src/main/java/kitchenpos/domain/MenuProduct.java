@@ -2,15 +2,12 @@ package kitchenpos.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 @Embeddable
 public class MenuProduct {
 
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
+    @Column(nullable = false)
+    private Long productId;
 
     @Column(nullable = false)
     private long quantity;
@@ -18,13 +15,13 @@ public class MenuProduct {
     public MenuProduct() {
     }
 
-    public MenuProduct(final Product product, final long quantity) {
-        this.product = product;
+    public MenuProduct(final Long productId, final long quantity) {
+        this.productId = productId;
         this.quantity = quantity;
     }
 
-    public Product getProduct() {
-        return product;
+    public Long getProductId() {
+        return productId;
     }
 
     public long getQuantity() {

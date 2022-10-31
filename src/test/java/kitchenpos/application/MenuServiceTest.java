@@ -1,7 +1,10 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.domain.MenuFixture.createMenu;
 import static kitchenpos.fixture.domain.MenuGroupFixture.createMenuGroup;
 import static kitchenpos.fixture.domain.ProductFixture.createProduct;
+import static kitchenpos.fixture.dto.MenuDtoFixture.createMenuCreateRequest;
+import static kitchenpos.fixture.dto.MenuProductDtoFixture.createMenuProductCreateRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -15,13 +18,16 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Product;
 import kitchenpos.exception.NotFoundException;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
-import kitchenpos.ui.dto.request.MenuProductCreateRequest;
 import kitchenpos.ui.dto.request.MenuCreateRequest;
+import kitchenpos.ui.dto.response.MenuCreateResponse;
+import kitchenpos.ui.dto.response.MenuFindAllResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -51,14 +57,14 @@ class MenuServiceTest {
     void create_success() {
         // given
         MenuGroup newMenuGroup = menuGroupRepository.save(createMenuGroup("추천메뉴"));
-        MenuCreateRequest request = createMenuRequest("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
-                Collections.singletonList(createMenuProductRequest(1L, 2)));
+        MenuCreateRequest request = createMenuCreateRequest("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
+                Collections.singletonList(createMenuProductCreateRequest(1L, 2)));
 
         // when
-        Menu savedMenu = menuService.create(request);
+        MenuCreateResponse response = menuService.create(request);
 
         // then
-        Menu dbMenu = menuRepository.findById(savedMenu.getId())
+        Menu dbMenu = menuRepository.findById(response.getId())
                 .orElseThrow(NoSuchElementException::new);
         assertAll(
                 () -> assertThat(dbMenu.getName()).isEqualTo(request.getName()),
@@ -72,8 +78,8 @@ class MenuServiceTest {
     void create_fail_if_price_is_negative() {
         // given
         MenuGroup newMenuGroup = menuGroupRepository.save(createMenuGroup("추천메뉴"));
-        MenuCreateRequest request = createMenuRequest("후라이드+후라이드", -1L, newMenuGroup.getId(),
-                Collections.singletonList(createMenuProductRequest(1L, 2)));
+        MenuCreateRequest request = createMenuCreateRequest("후라이드+후라이드", -1L, newMenuGroup.getId(),
+                Collections.singletonList(createMenuProductCreateRequest(1L, 2)));
 
         // when, then
         assertThatThrownBy(() -> menuService.create(request))
@@ -84,8 +90,8 @@ class MenuServiceTest {
     @Test
     void create_fail_if_menuGroupId_is_null() {
         // given
-        MenuCreateRequest request = createMenuRequest("후라이드+후라이드", 19_000L, 9999999L,
-                Collections.singletonList(createMenuProductRequest(1L, 2)));
+        MenuCreateRequest request = createMenuCreateRequest("후라이드+후라이드", 19_000L, 9999999L,
+                Collections.singletonList(createMenuProductCreateRequest(1L, 2)));
 
         // when, then
         assertThatThrownBy(() -> menuService.create(request))
@@ -98,8 +104,9 @@ class MenuServiceTest {
         // given
         Product 후라이드 = productRepository.save(createProduct("후라이드", 10_000L));
         MenuGroup newMenuGroup = menuGroupRepository.save(createMenuGroup("추천메뉴"));
-        MenuCreateRequest request = createMenuRequest("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
-                Arrays.asList(createMenuProductRequest(후라이드.getId(), 1), createMenuProductRequest(후라이드.getId(), 1)));
+        MenuCreateRequest request = createMenuCreateRequest("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
+                Arrays.asList(createMenuProductCreateRequest(후라이드.getId(), 1),
+                        createMenuProductCreateRequest(후라이드.getId(), 1)));
 
         // when, then
         assertDoesNotThrow(() -> menuService.create(request));
@@ -112,8 +119,9 @@ class MenuServiceTest {
         // given
         Product 후라이드 = productRepository.save(createProduct("후라이드", 10_000L));
         MenuGroup newMenuGroup = menuGroupRepository.save(createMenuGroup("추천메뉴"));
-        MenuCreateRequest request = createMenuRequest("후라이드+후라이드", price, newMenuGroup.getId(),
-                Arrays.asList(createMenuProductRequest(후라이드.getId(), 1), createMenuProductRequest(후라이드.getId(), 1)));
+        MenuCreateRequest request = createMenuCreateRequest("후라이드+후라이드", price, newMenuGroup.getId(),
+                Arrays.asList(createMenuProductCreateRequest(후라이드.getId(), 1),
+                        createMenuProductCreateRequest(후라이드.getId(), 1)));
 
         // when, then
         assertThatThrownBy(() -> menuService.create(request))
@@ -125,8 +133,8 @@ class MenuServiceTest {
     void create_fail_if_productId_is_null() {
         // given
         MenuGroup newMenuGroup = menuGroupRepository.save(createMenuGroup("추천메뉴"));
-        MenuCreateRequest request = createMenuRequest("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
-                Collections.singletonList(createMenuProductRequest(9999999L, 2)));
+        MenuCreateRequest request = createMenuCreateRequest("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
+                Collections.singletonList(createMenuProductCreateRequest(9999999L, 2)));
 
         // when, then
         assertThatThrownBy(() -> menuService.create(request))
@@ -137,27 +145,23 @@ class MenuServiceTest {
     @Test
     void list_success() {
         // given
-        MenuGroup newMenuGroup = menuGroupRepository.save(createMenuGroup("추천메뉴"));
-        MenuCreateRequest request = createMenuRequest("후라이드+후라이드", 19_000L, newMenuGroup.getId(),
-                Collections.singletonList(createMenuProductRequest(1L, 2)));
-        Menu savedMenu = menuService.create(request);
+        Product 후라이드 = productRepository.save(createProduct("후라이드", 10_000L));
+        Menu menu = Menu.builder()
+                .id(1L)
+                .name("후라이드+후라이드")
+                .price(BigDecimal.valueOf(19_000L))
+                .menuGroupId(1L)
+                .menuProducts(new MenuProducts(Collections.singletonList(new MenuProduct(후라이드.getId(), 2))))
+                .build();
+        Menu savedMenu = menuRepository.save(createMenu());
 
         // when
-        List<Menu> menus = menuService.list();
+        List<MenuFindAllResponse> responses = menuService.list();
 
         // then
-        List<String> menuNames = menus.stream()
-                .map(Menu::getName)
+        List<String> menuNames = responses.stream()
+                .map(MenuFindAllResponse::getName)
                 .collect(Collectors.toList());
         assertThat(menuNames).contains(savedMenu.getName());
-    }
-
-    private MenuCreateRequest createMenuRequest(final String name, final Long price, final Long menuGroupId,
-                                                final List<MenuProductCreateRequest> menuProductsRequest) {
-        return new MenuCreateRequest(name, BigDecimal.valueOf(price), menuGroupId, menuProductsRequest);
-    }
-
-    private MenuProductCreateRequest createMenuProductRequest(final Long productId, final long quantity) {
-        return new MenuProductCreateRequest(productId, quantity);
     }
 }

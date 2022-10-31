@@ -6,13 +6,12 @@ import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuProducts;
-import kitchenpos.domain.Product;
 
 public class MenuFixture {
 
     public static Menu createMenu() {
         final List<MenuProduct> menuProducts = Collections.singletonList(
-                new MenuProduct(new Product("후라이드", BigDecimal.valueOf(10_000L)), 2));
+                new MenuProduct(1L, 2));
         return Menu.builder()
                 .id(1L)
                 .name("후라이드+후라이드")

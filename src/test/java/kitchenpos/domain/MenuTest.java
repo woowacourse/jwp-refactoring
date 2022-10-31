@@ -14,7 +14,7 @@ class MenuTest {
     @Test
     void create_fail_if_price_is_null() {
         List<MenuProduct> menuProducts = Collections.singletonList(
-                new MenuProduct(new Product("후라이드", BigDecimal.valueOf(10_000L)), 2));
+                new MenuProduct(1L, 2));
 
         assertThatThrownBy(() -> Menu.builder()
                 .name("후라이드+후라이드")
@@ -29,7 +29,7 @@ class MenuTest {
     @Test
     void create_fail_if_price_is_negative() {
         List<MenuProduct> menuProducts = Collections.singletonList(
-                new MenuProduct(new Product("후라이드", BigDecimal.valueOf(10_000L)), 2));
+                new MenuProduct(1L, 2));
 
         assertThatThrownBy(() -> Menu.builder()
                 .name("후라이드+후라이드")
