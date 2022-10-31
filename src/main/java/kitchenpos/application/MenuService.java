@@ -7,7 +7,7 @@ import kitchenpos.application.exception.CustomIllegalArgumentException;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.Menu;
-import kitchenpos.ui.dto.MenuRequest;
+import kitchenpos.ui.dto.request.MenuRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

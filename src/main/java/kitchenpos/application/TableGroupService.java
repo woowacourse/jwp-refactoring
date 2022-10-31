@@ -14,8 +14,8 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.ui.dto.OrderTableIdRequest;
-import kitchenpos.ui.dto.TableGroupRequest;
+import kitchenpos.ui.dto.request.OrderTableIdRequest;
+import kitchenpos.ui.dto.request.TableGroupRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

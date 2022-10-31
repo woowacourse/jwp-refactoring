@@ -12,8 +12,8 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.ui.dto.OrderLineItemRequest;
-import kitchenpos.ui.dto.OrderRequest;
+import kitchenpos.ui.dto.request.OrderLineItemRequest;
+import kitchenpos.ui.dto.request.OrderRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 

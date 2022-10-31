@@ -4,7 +4,7 @@ import java.net.URI;
 import java.util.List;
 import kitchenpos.application.ProductService;
 import kitchenpos.domain.Product;
-import kitchenpos.ui.dto.ProductRequest;
+import kitchenpos.ui.dto.request.ProductRequest;
 import kitchenpos.ui.dto.ProductResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

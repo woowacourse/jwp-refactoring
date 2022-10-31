@@ -3,7 +3,7 @@ package kitchenpos.application;
 import java.util.List;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
-import kitchenpos.ui.dto.ProductRequest;
+import kitchenpos.ui.dto.request.ProductRequest;
 import kitchenpos.ui.dto.ProductResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -4,7 +4,7 @@ import java.net.URI;
 import java.util.List;
 import kitchenpos.application.MenuService;
 import kitchenpos.domain.Menu;
-import kitchenpos.ui.dto.MenuRequest;
+import kitchenpos.ui.dto.request.MenuRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

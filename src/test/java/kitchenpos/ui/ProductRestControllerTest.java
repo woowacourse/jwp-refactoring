@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.Product;
-import kitchenpos.ui.dto.ProductRequest;
+import kitchenpos.ui.dto.request.ProductRequest;
 import kitchenpos.ui.dto.ProductResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;

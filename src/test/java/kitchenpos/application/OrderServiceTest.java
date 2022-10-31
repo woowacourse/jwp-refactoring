@@ -1,14 +1,12 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.exception.ExceptionType.INVALID_CHANGE_ORDER_STATUS_EXCEPTION;
 import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_MENU_EXCEPTION;
 import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_TABLE_EXCEPTION;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.ui.dto.OrderRequest;
+import kitchenpos.ui.dto.request.OrderRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
