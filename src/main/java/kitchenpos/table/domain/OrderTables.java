@@ -21,8 +21,8 @@ public class OrderTables {
         }
     }
 
-    public <T> void validateSameSizeWithRequest(List<T> request) {
-        if (orderTables.size() != request.size()) {
+    public <T> void validateSameSize(List<T> orderTablesIds) {
+        if (orderTables.size() != orderTablesIds.size()) {
             throw new InvalidGroupOrderTablesSizeException();
         }
     }

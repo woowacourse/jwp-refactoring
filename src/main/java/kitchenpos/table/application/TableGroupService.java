@@ -31,7 +31,9 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(TableGroupSaveRequest request) {
-        OrderTables orderTables = findOrderTables(request.toEntities());
+        List<Long> orderTableIds = request.toEntities();
+        OrderTables orderTables = findOrderTables(orderTableIds);
+        orderTables.validateSameSize(orderTableIds);
 
         TableGroup tableGroup = tableGroupDao.save(TableGroup.from());
         orderTables.joinWithTableGroup(tableGroup);
@@ -69,9 +71,7 @@ public class TableGroupService {
     }
 
     private OrderTables findOrderTables(List<Long> orderTableIds) {
-        OrderTables orderTables = new OrderTables(orderTableDao.findAllByIdIn(orderTableIds));
-        orderTables.validateSameSizeWithRequest(orderTableIds);
-        return orderTables;
+        return new OrderTables(orderTableDao.findAllByIdIn(orderTableIds));
     }
 
     private OrderTables findOrderTables(Long tableGroupId) {
