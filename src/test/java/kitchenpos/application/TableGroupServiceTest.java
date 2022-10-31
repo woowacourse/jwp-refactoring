@@ -131,7 +131,7 @@ class TableGroupServiceTest extends ServiceTest {
                     new TableGroup(null, LocalDateTime.now(), new OrderTables(
                             List.of(new OrderTable(1L, null, 2, true), new OrderTable(2L, null, 2, true)))));
             private final OrderTable orderTable1 = orderTableRepository.save(
-                    new OrderTable(null, savedTableGroup.getId(), 2, true));
+                    new OrderTable(null, savedTableGroup, 2, true));
             private final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(null, null, 2, true));
             private final TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(
                     List.of(new OrderTableRequest(orderTable1.getId()), new OrderTableRequest(orderTable2.getId())));
@@ -162,8 +162,8 @@ class TableGroupServiceTest extends ServiceTest {
                 tableGroupService.ungroup(tableGroupResponse.getId());
 
                 assertAll(() -> {
-                    assertThat(orderTable1.getTableGroupId()).isNull();
-                    assertThat(orderTable2.getTableGroupId()).isNull();
+                    assertThat(orderTable1.getTableGroup()).isNull();
+                    assertThat(orderTable2.getTableGroup()).isNull();
                 });
             }
         }

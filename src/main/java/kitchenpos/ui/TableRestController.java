@@ -27,35 +27,33 @@ public class TableRestController {
     }
 
     @PostMapping
-    public ResponseEntity<OrderTableResponse> create(
-            @RequestBody final OrderTableCreateRequest orderTableCreateRequest) {
-        OrderTableResponse orderTableResponse = tableService.create(orderTableCreateRequest);
-        URI uri = URI.create("/api/tables/" + orderTableResponse.getId());
+    public ResponseEntity<OrderTableResponse> create(@RequestBody final OrderTableCreateRequest request) {
+        OrderTableResponse response = tableService.create(request);
+        URI uri = URI.create("/api/tables/" + response.getId());
         return ResponseEntity.created(uri)
-                .body(orderTableResponse);
+                .body(response);
     }
 
     @GetMapping
     public ResponseEntity<List<OrderTableResponse>> list() {
-        List<OrderTableResponse> orderTableResponses = tableService.list();
+        List<OrderTableResponse> responses = tableService.list();
         return ResponseEntity.ok()
-                .body(orderTableResponses);
+                .body(responses);
     }
 
     @PutMapping("/{orderTableId}/empty")
     public ResponseEntity<OrderTableResponse> changeEmpty(@PathVariable final Long orderTableId,
-                                                          @RequestBody final EmptyOrderTableRequest emptyOrderTableRequest) {
-        OrderTableResponse orderTableResponse = tableService.changeEmpty(orderTableId, emptyOrderTableRequest);
+                                                          @RequestBody final EmptyOrderTableRequest request) {
+        OrderTableResponse response = tableService.changeEmpty(orderTableId, request);
         return ResponseEntity.ok()
-                .body(orderTableResponse);
+                .body(response);
     }
 
     @PutMapping("/{orderTableId}/number-of-guests")
     public ResponseEntity<OrderTableResponse> changeNumberOfGuests(@PathVariable final Long orderTableId,
-                                                                   @RequestBody final ChangeGuestNumberRequest changeGuestNumberRequest) {
-        OrderTableResponse orderTableResponse = tableService.changeNumberOfGuests(orderTableId,
-                changeGuestNumberRequest);
+                                                                   @RequestBody final ChangeGuestNumberRequest request) {
+        OrderTableResponse response = tableService.changeNumberOfGuests(orderTableId, request);
         return ResponseEntity.ok()
-                .body(orderTableResponse);
+                .body(response);
     }
 }

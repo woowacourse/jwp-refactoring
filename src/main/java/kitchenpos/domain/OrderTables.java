@@ -23,6 +23,11 @@ public class OrderTables {
         this.orderTables = orderTables;
     }
 
+    public OrderTables arrangeGroup(final TableGroup tableGroup) {
+        orderTables.forEach(orderLineItem -> orderLineItem.arrangeGroup(tableGroup));
+        return this;
+    }
+
     public void ungroup() {
         for (OrderTable orderTable : orderTables) {
             orderTable.ungroup();

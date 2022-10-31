@@ -31,7 +31,7 @@ public class TableGroup {
     public TableGroup(final Long id, final LocalDateTime createdDate, final OrderTables orderTables) {
         this.id = id;
         this.createdDate = createdDate;
-        this.orderTables = orderTables;
+        this.orderTables = orderTables.arrangeGroup(this);
     }
 
     public static Builder builder() {

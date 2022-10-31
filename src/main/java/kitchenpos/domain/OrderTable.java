@@ -1,11 +1,14 @@
 package kitchenpos.domain;
 
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -16,8 +19,8 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "table_group_id")
-    private Long tableGroupId;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    private TableGroup tableGroup;
 
     @Column(name = "number_of_guests", nullable = false)
     private int numberOfGuests;
@@ -28,9 +31,9 @@ public class OrderTable {
     protected OrderTable() {
     }
 
-    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+    public OrderTable(final Long id, final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
         this.id = id;
-        this.tableGroupId = tableGroupId;
+        this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -40,7 +43,7 @@ public class OrderTable {
     }
 
     public void ungroup() {
-        this.tableGroupId = null;
+        this.tableGroup = null;
         this.empty = false;
     }
 
@@ -61,16 +64,20 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
+    public void arrangeGroup(final TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+    }
+
     private boolean inTableGroup() {
-        return Objects.nonNull(tableGroupId);
+        return Objects.nonNull(tableGroup);
     }
 
     public Long getId() {
         return id;
     }
 
-    public Long getTableGroupId() {
-        return tableGroupId;
+    public TableGroup getTableGroup() {
+        return tableGroup;
     }
 
     public int getNumberOfGuests() {
@@ -84,7 +91,7 @@ public class OrderTable {
     public static class Builder {
 
         private Long id;
-        private Long tableGroupId;
+        private TableGroup tableGroup;
         private int numberOfGuests;
         private boolean empty;
 
@@ -93,8 +100,8 @@ public class OrderTable {
             return this;
         }
 
-        public Builder tableGroupId(final Long tableGroupId) {
-            this.tableGroupId = tableGroupId;
+        public Builder tableGroup(final TableGroup tableGroup) {
+            this.tableGroup = tableGroup;
             return this;
         }
 
@@ -109,7 +116,7 @@ public class OrderTable {
         }
 
         public OrderTable build() {
-            return new OrderTable(id, tableGroupId, numberOfGuests, empty);
+            return new OrderTable(id, tableGroup, numberOfGuests, empty);
         }
     }
 }

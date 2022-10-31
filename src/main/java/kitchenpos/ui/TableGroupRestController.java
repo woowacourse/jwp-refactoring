@@ -23,12 +23,11 @@ public class TableGroupRestController {
     }
 
     @PostMapping
-    public ResponseEntity<TableGroupResponse> create(
-            @RequestBody final TableGroupCreateRequest tableGroupCreateRequest) {
-        TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupCreateRequest);
-        URI uri = URI.create("/api/table-groups/" + tableGroupResponse.getId());
+    public ResponseEntity<TableGroupResponse> create(@RequestBody final TableGroupCreateRequest request) {
+        TableGroupResponse response = tableGroupService.create(request);
+        URI uri = URI.create("/api/table-groups/" + response.getId());
         return ResponseEntity.created(uri)
-                .body(tableGroupResponse);
+                .body(response);
     }
 
     @DeleteMapping("/{tableGroupId}")

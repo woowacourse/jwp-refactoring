@@ -34,10 +34,10 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse create(final OrderCreateRequest orderCreateRequest) {
-        OrderTable orderTable = orderTableRepository.findById(orderCreateRequest.getOrderTableId())
+    public OrderResponse create(final OrderCreateRequest request) {
+        OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
-        List<OrderLineItem> orderLineItems = getOrderLineItems(orderCreateRequest);
+        List<OrderLineItem> orderLineItems = getOrderLineItems(request);
 
         Order order = Order.builder()
                 .orderTable(orderTable)
@@ -58,27 +58,26 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse changeOrderStatus(final Long orderId,
-                                           final ChangeOrderStatusRequest changeOrderStatusRequest) {
+    public OrderResponse changeOrderStatus(final Long orderId, final ChangeOrderStatusRequest request) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
-        order.changeOrderStatus(OrderStatus.valueOf(changeOrderStatusRequest.getOrderStatus()));
+        order.changeOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
         return OrderResponse.from(order);
     }
 
-    private List<OrderLineItem> getOrderLineItems(final OrderCreateRequest orderCreateRequest) {
-        return orderCreateRequest.getOrderLineItems()
+    private List<OrderLineItem> getOrderLineItems(final OrderCreateRequest request) {
+        return request.getOrderLineItems()
                 .stream()
                 .map(this::getOrderLineItem)
                 .collect(Collectors.toList());
     }
 
-    private OrderLineItem getOrderLineItem(final OrderLineItemRequest orderLineItemRequest) {
-        Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
+    private OrderLineItem getOrderLineItem(final OrderLineItemRequest request) {
+        Menu menu = menuRepository.findById(request.getMenuId())
                 .orElseThrow(() -> new IllegalArgumentException("메뉴가 존재하지 않습니다."));
         return OrderLineItem.builder()
                 .menu(menu)
-                .quantity(orderLineItemRequest.getQuantity())
+                .quantity(request.getQuantity())
                 .build();
     }
 }

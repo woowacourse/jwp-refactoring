@@ -26,24 +26,24 @@ public class OrderRestController {
     }
 
     @PostMapping
-    public ResponseEntity<OrderResponse> create(@RequestBody final OrderCreateRequest orderCreateRequest) {
-        OrderResponse orderResponse = orderService.create(orderCreateRequest);
-        URI uri = URI.create("/api/orders/" + orderResponse.getId());
+    public ResponseEntity<OrderResponse> create(@RequestBody final OrderCreateRequest request) {
+        OrderResponse response = orderService.create(request);
+        URI uri = URI.create("/api/orders/" + response.getId());
         return ResponseEntity.created(uri)
-                .body(orderResponse);
+                .body(response);
     }
 
     @GetMapping
     public ResponseEntity<List<OrderResponse>> list() {
-        List<OrderResponse> orderResponses = orderService.list();
+        List<OrderResponse> responses = orderService.list();
         return ResponseEntity.ok()
-                .body(orderResponses);
+                .body(responses);
     }
 
     @PutMapping("/{orderId}/order-status")
     public ResponseEntity<OrderResponse> changeOrderStatus(@PathVariable final Long orderId,
-                                                           @RequestBody final ChangeOrderStatusRequest changeOrderStatusRequest) {
-        OrderResponse orderResponse = orderService.changeOrderStatus(orderId, changeOrderStatusRequest);
-        return ResponseEntity.ok(orderResponse);
+                                                           @RequestBody final ChangeOrderStatusRequest request) {
+        OrderResponse response = orderService.changeOrderStatus(orderId, request);
+        return ResponseEntity.ok(response);
     }
 }

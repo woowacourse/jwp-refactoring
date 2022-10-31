@@ -27,10 +27,10 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTableResponse create(final OrderTableCreateRequest orderTableCreateRequest) {
+    public OrderTableResponse create(final OrderTableCreateRequest request) {
         OrderTable orderTable = OrderTable.builder()
-                .numberOfGuests(orderTableCreateRequest.getNumberOfGuests())
-                .empty(orderTableCreateRequest.isEmpty())
+                .numberOfGuests(request.getNumberOfGuests())
+                .empty(request.isEmpty())
                 .build();
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
         return OrderTableResponse.from(savedOrderTable);
@@ -45,18 +45,18 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId,
-                                          final EmptyOrderTableRequest emptyOrderTableRequest) {
+                                          final EmptyOrderTableRequest request) {
         OrderTable orderTable = getOrderTable(orderTableId);
         checkOrderTableStatus(orderTableId);
-        orderTable.changeEmpty(emptyOrderTableRequest.isEmpty());
+        orderTable.changeEmpty(request.isEmpty());
         return OrderTableResponse.from(orderTable);
     }
 
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
-                                                   final ChangeGuestNumberRequest changeGuestNumberRequest) {
+                                                   final ChangeGuestNumberRequest request) {
         OrderTable orderTable = getOrderTable(orderTableId);
-        orderTable.changeNumberOfGuest(changeGuestNumberRequest.getNumberOfGuests());
+        orderTable.changeNumberOfGuest(request.getNumberOfGuests());
         return OrderTableResponse.from(orderTable);
     }
 
