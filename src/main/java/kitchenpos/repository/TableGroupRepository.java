@@ -26,7 +26,7 @@ public class TableGroupRepository {
 
     public TableGroup add(final TableGroup tableGroup) {
         final var savedTableGroup = tableGroupDao.save(tableGroup);
-        final var orderTables = fetchAllOrderTables(tableGroup.getOrderTables(), savedTableGroup.getId());
+        final var orderTables = updateAllOrderTables(tableGroup.getOrderTables(), savedTableGroup.getId());
 
         return new TableGroup(
                 savedTableGroup.getId(),
@@ -35,7 +35,7 @@ public class TableGroupRepository {
         );
     }
 
-    private List<OrderTable> fetchAllOrderTables(final List<OrderTable> orderTables, final Long tableGroupId) {
+    private List<OrderTable> updateAllOrderTables(final List<OrderTable> orderTables, final Long tableGroupId) {
         return orderTables.stream()
                 .map(orderTable -> {
                     final var entity = new OrderTable(
