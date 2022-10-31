@@ -35,12 +35,12 @@ public class OrderService {
 
     @Transactional
     public Order create(final Order orderRequest) {
-        final List<OrderLineItem> orderLineItems = orderRequest.getOrderLineItems();
+        final List<OrderLineItem> orderLineItemsRequest = orderRequest.getOrderLineItems();
         validateOrderTableEmpty(orderRequest.getOrderTableId());
-        validateExistMenus(orderLineItems);
+        validateExistMenus(orderLineItemsRequest);
 
-        final Order savedOrder = orderDao.save(Order.of(orderRequest.getOrderTableId(), orderLineItems));
-        savedOrder.changeOrderLineItems(getSavedOrderLineItems(orderLineItems, savedOrder));
+        final Order savedOrder = orderDao.save(Order.of(orderRequest.getOrderTableId(), orderLineItemsRequest));
+        savedOrder.changeOrderLineItems(getSavedOrderLineItems(orderLineItemsRequest, savedOrder));
         return savedOrder;
     }
 
