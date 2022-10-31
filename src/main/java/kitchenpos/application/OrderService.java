@@ -9,7 +9,6 @@ import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderLineItems;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.ordertable.OrderTable;
@@ -41,9 +40,7 @@ public class OrderService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 OrderTable 입니다."));
         validateOrderTableEmpty(orderTable);
 
-        final Order order = new Order(orderTable.getId(), OrderStatus.COOKING);
-        final OrderLineItems orderLineItems = createOrderLineItems(request, order);
-        order.updateOrderLineItems(orderLineItems);
+        final Order order = new Order(orderTable.getId(), OrderStatus.COOKING, createOrderLineItems(request));
         return orderRepository.save(order);
     }
 
@@ -66,16 +63,16 @@ public class OrderService {
         return savedOrder;
     }
 
-    private OrderLineItem toOrderLineItem(final OrderLineItemRequest request, Order order) {
+    private OrderLineItem toOrderLineItem(final OrderLineItemRequest request) {
         final Menu menu = menuRepository.findById(request.getMenuId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 메뉴가 존재하지 않습니다."));
-        return new OrderLineItem(order, menu.getId(), request.getQuantity());
+        return new OrderLineItem(menu.getId(), request.getQuantity());
     }
 
-    private OrderLineItems createOrderLineItems(final OrderCreateRequest request, final Order order) {
-        return new OrderLineItems(request.getOrderLineItems()
+    private List<OrderLineItem> createOrderLineItems(final OrderCreateRequest request) {
+        return request.getOrderLineItems()
                 .stream()
-                .map(it -> toOrderLineItem(it, order))
-                .collect(Collectors.toList()));
+                .map(it -> toOrderLineItem(it))
+                .collect(Collectors.toList());
     }
 }

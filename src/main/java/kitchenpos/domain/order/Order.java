@@ -1,6 +1,7 @@
 package kitchenpos.domain.order;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -14,7 +15,6 @@ import javax.persistence.Table;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.util.CollectionUtils;
 
 @Entity
 @Getter
@@ -44,23 +44,16 @@ public class Order {
     }
 
     public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime,
-                 final OrderLineItems orderLineItems) {
+                 final List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
+        this.orderLineItems = new OrderLineItems(orderLineItems, this);
     }
 
-    public Order(final Long orderTableId, final OrderStatus orderStatus) {
-        this(null, orderTableId, orderStatus, LocalDateTime.now(), null);
-    }
-
-    public void updateOrderLineItems(final OrderLineItems orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems.getValue())) {
-            throw new IllegalArgumentException("주문 상품이 존재하지 않습니다.");
-        }
-        this.orderLineItems = orderLineItems;
+    public Order(final Long orderTableId, final OrderStatus orderStatus, final List<OrderLineItem> orderLineItems) {
+        this(null, orderTableId, orderStatus, LocalDateTime.now(), orderLineItems);
     }
 
     public void changeStatus(final OrderStatus orderStatus) {

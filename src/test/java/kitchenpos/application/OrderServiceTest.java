@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.application.request.MenuCreateRequest;
@@ -21,6 +22,7 @@ import kitchenpos.application.request.OrderUpdateRequest;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductPrice;
@@ -157,9 +159,17 @@ public class OrderServiceTest {
 
             @Test
             void Order의_목록을_반환한다() {
-                final OrderTable orderTable = tableService.changeEmpty(1L, new OrderTableUpdateRequest(5, false));
+                final OrderTable orderTable = tableService.create(삼인테이블_생성요청);
+                tableService.changeEmpty(orderTable.getId(), new OrderTableUpdateRequest(5, false));
+                final MenuGroup menuGroup = menuGroupService.create(Fixture.한마리메뉴_생성요청);
+                final Menu menu1 = menuService.create(
+                        new MenuCreateRequest("후라이드치킨", BigDecimal.valueOf(0), menuGroup.getId(),
+                                new ArrayList<>()));
+                final Menu menu2 = menuService.create(
+                        new MenuCreateRequest("양념치킨", BigDecimal.valueOf(0), menuGroup.getId(), new ArrayList<>()));
                 final OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(),
-                        List.of(new OrderLineItemRequest(1L, 1L), new OrderLineItemRequest(2L, 1L)));
+                        List.of(new OrderLineItemRequest(menu1.getId(), 1L),
+                                new OrderLineItemRequest(menu2.getId(), 1L)));
 
                 orderService.create(request);
 
@@ -190,7 +200,8 @@ public class OrderServiceTest {
 
             @Test
             void 예외가_발생한다() {
-                final Order actual = orderRepository.save(new Order(1L, COMPLETION));
+                final Order actual = orderRepository.save(
+                        new Order(1L, COMPLETION, List.of(new OrderLineItem(1L, 1L))));
 
                 assertThatThrownBy(() -> orderService.changeOrderStatus(actual.getId(),
                         new OrderUpdateRequest(COOKING.name()))).isInstanceOf(IllegalStateException.class)
@@ -206,12 +217,13 @@ public class OrderServiceTest {
             @Test
             void Order의_상태를_변경한다() {
                 final OrderTable orderTable = tableService.create(삼인테이블_생성요청);
-                tableService.changeEmpty(1L, new OrderTableUpdateRequest(5, false));
+                tableService.changeEmpty(orderTable.getId(), new OrderTableUpdateRequest(5, false));
                 final MenuGroup menuGroup = menuGroupService.create(Fixture.한마리메뉴_생성요청);
                 final Menu menu1 = menuService.create(
-                        new MenuCreateRequest("후라이드치킨", BigDecimal.valueOf(16000), menuGroup.getId(), null));
+                        new MenuCreateRequest("후라이드치킨", BigDecimal.valueOf(0), menuGroup.getId(),
+                                new ArrayList<>()));
                 final Menu menu2 = menuService.create(
-                        new MenuCreateRequest("양념치킨", BigDecimal.valueOf(16000), menuGroup.getId(), null));
+                        new MenuCreateRequest("양념치킨", BigDecimal.valueOf(0), menuGroup.getId(), new ArrayList<>()));
                 final Order order = orderService.create(new OrderCreateRequest(orderTable.getId(),
                         List.of(new OrderLineItemRequest(menu1.getId(), 1L),
                                 new OrderLineItemRequest(menu2.getId(), 1L))));

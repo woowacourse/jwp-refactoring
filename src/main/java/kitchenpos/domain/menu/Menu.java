@@ -39,17 +39,18 @@ public class Menu {
         this.name = name;
         this.menuPrice = menuPrice;
         this.menuGroupId = menuGroupId;
-        this.menuProducts = new MenuProducts(menuProducts);
+        this.menuProducts = new MenuProducts(menuProducts, this);
+        if (menuPrice.isExpensive(this.menuProducts.calculateEntirePrice())) {
+            throw new IllegalArgumentException("Menu 가격은 Product 가격의 합을 초과할 수 없습니다.");
+        }
+    }
+
+    public Menu(final String name, final MenuPrice menuPrice, final Long menuGroupId,
+                final List<MenuProduct> menuProducts) {
+        this(null, name, menuPrice, menuGroupId, menuProducts);
     }
 
     public Menu(final String name, final MenuPrice menuPrice, final Long menuGroupId) {
         this(null, name, menuPrice, menuGroupId, new ArrayList<>());
-    }
-
-    public void updateProducts(final MenuProducts menuProducts) {
-        if (menuPrice.isExpensive(menuProducts.calculateEntirePrice())) {
-            throw new IllegalArgumentException("Menu 가격은 Product 가격의 합을 초과할 수 없습니다.");
-        }
-        this.menuProducts = menuProducts;
     }
 }

@@ -12,14 +12,21 @@ import lombok.Getter;
 @Getter
 public class MenuProducts {
 
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
     private List<MenuProduct> value = new ArrayList<>();
 
     protected MenuProducts() {
     }
 
-    public MenuProducts(final List<MenuProduct> menuProducts) {
-        value.addAll(menuProducts);
+    public MenuProducts(final List<MenuProduct> menuProducts, final Menu menu) {
+        if (menuProducts == null) {
+            this.value = new ArrayList<>();
+            return;
+        }
+        this.value = menuProducts;
+        for (MenuProduct menuProduct : menuProducts) {
+            menuProduct.changeMenu(menu);
+        }
     }
 
     public BigDecimal calculateEntirePrice() {

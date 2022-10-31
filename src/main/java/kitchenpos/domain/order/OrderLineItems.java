@@ -1,6 +1,5 @@
 package kitchenpos.domain.order;
 
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
@@ -17,13 +16,15 @@ public class OrderLineItems {
     protected OrderLineItems() {
     }
 
-    public OrderLineItems(final List<OrderLineItem> value) {
-        if (value == null) {
-            this.value = new ArrayList<>();
-            return;
+    public OrderLineItems(final List<OrderLineItem> value, final Order order) {
+        if (value == null || value.isEmpty()) {
+            throw new IllegalArgumentException("주문 상품이 존재하지 않습니다.");
         }
         validateDuplicatedMenuExists(value);
         this.value = value;
+        for (OrderLineItem orderLineItem : value) {
+            orderLineItem.changeOrder(order);
+        }
     }
 
     private void validateDuplicatedMenuExists(final List<OrderLineItem> value) {

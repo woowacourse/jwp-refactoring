@@ -12,6 +12,7 @@ import kitchenpos.application.request.OrderTableCreateRequest;
 import kitchenpos.application.request.OrderTableGroupCreateRequest;
 import kitchenpos.application.request.TableGroupCreateRequest;
 import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.tablegroup.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
@@ -144,8 +145,8 @@ class TableGroupServiceTest {
             void setUp() {
                 orderTable1 = tableService.create(new OrderTableCreateRequest(5, true));
                 orderTable2 = tableService.create(new OrderTableCreateRequest(5, true));
-                orderRepository.save(new Order(orderTable1.getId(), COOKING));
-                orderRepository.save(new Order(orderTable2.getId(), COOKING));
+                orderRepository.save(new Order(orderTable1.getId(), COOKING, List.of(new OrderLineItem(1L, 1L))));
+                orderRepository.save(new Order(orderTable2.getId(), COOKING, List.of(new OrderLineItem(1L, 1L))));
             }
 
             @Test
@@ -171,8 +172,8 @@ class TableGroupServiceTest {
             void setUp() {
                 orderTable1 = tableService.create(new OrderTableCreateRequest(5, true));
                 orderTable2 = tableService.create(new OrderTableCreateRequest(5, true));
-                orderRepository.save(new Order(orderTable1.getId(), COMPLETION));
-                orderRepository.save(new Order(orderTable2.getId(), COMPLETION));
+                orderRepository.save(new Order(orderTable1.getId(), COMPLETION, List.of(new OrderLineItem(1L, 1L))));
+                orderRepository.save(new Order(orderTable2.getId(), COMPLETION, List.of(new OrderLineItem(1L, 1L))));
             }
 
             @Test

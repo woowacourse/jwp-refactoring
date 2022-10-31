@@ -8,6 +8,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.application.request.MenuCreateRequest;
 import kitchenpos.application.request.MenuProductRequest;
@@ -31,7 +32,7 @@ public class MenuServiceTest {
             @BeforeEach
             void setUp() {
                 final MenuGroup menuGroup = menuGroupService.create(한마리메뉴_생성요청);
-                request = new MenuCreateRequest("메뉴", null, menuGroup.getId(), null);
+                request = new MenuCreateRequest("메뉴", null, menuGroup.getId(), new ArrayList<>());
             }
 
             @Test
@@ -53,7 +54,7 @@ public class MenuServiceTest {
             void setUp() {
                 final MenuGroup menuGroup = menuGroupService.create(한마리메뉴_생성요청);
                 request = new MenuCreateRequest("메뉴", new BigDecimal(INVALID_PRICE), menuGroup.getId(),
-                        null);
+                        new ArrayList<>());
             }
 
             @Test
