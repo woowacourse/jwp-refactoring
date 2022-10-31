@@ -60,7 +60,10 @@ public class JdbcTemplateTableGroupDao {
     }
 
     private TableGroup toEntity(final ResultSet resultSet) throws SQLException {
-        return new TableGroup(resultSet.getLong(KEY_COLUMN_NAME),
-                resultSet.getObject("created_date", LocalDateTime.class));
+        final TableGroup tableGroup = new TableGroup();
+        tableGroup.setId(resultSet.getLong(KEY_COLUMN_NAME));
+        tableGroup.setCreatedDate(resultSet.getObject("created_date", LocalDateTime.class));
+
+        return tableGroup;
     }
 }

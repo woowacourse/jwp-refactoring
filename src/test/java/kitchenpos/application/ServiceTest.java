@@ -69,6 +69,10 @@ public class ServiceTest {
         return new OrderTable(id, 1L, 1, false);
     }
 
+    protected OrderTable 테이블_그룹_없는_테이블_생성(Long id) {
+        return new OrderTable(id, null, 1, false);
+    }
+
     protected OrderTableIdRequest 테이블_요청_생성(Long id) {
         return new OrderTableIdRequest(1L);
     }

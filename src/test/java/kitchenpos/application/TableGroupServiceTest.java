@@ -2,8 +2,10 @@ package kitchenpos.application;
 
 import static kitchenpos.application.exception.ExceptionType.INVALID_TABLE_UNGROUP_EXCEPTION;
 import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_TABLE_EXCEPTION;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.when;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import kitchenpos.ui.dto.request.TableGroupRequest;
 import org.assertj.core.api.Assertions;
@@ -27,9 +29,16 @@ class TableGroupServiceTest extends ServiceTest {
     @Autowired
     private TableGroupService tableGroupService;
 
+    /**
+     * public TableGroupResponse create(final TableGroupRequest request) { final List<OrderTable> savedOrderTables =
+     * getRequestOrderTables(request.getOrderTables()); validateSize(request.getOrderTables(), savedOrderTables); final
+     * TableGroup tableGroup = convertSavaTableGroup(savedOrderTables); final TableGroup saveTableGroup =
+     * tableGroupDao.save(tableGroup); return TableGroupResponse.from(saveTableGroup); }
+     */
+
     @Test
     void 존재하지_않는_테이블로_그룹을_생성하면_예외를_반환한다() {
-        final TableGroupRequest request = new TableGroupRequest(1L, LocalDateTime.now(), Arrays.asList(테이블_요청_생성(1L), 테이블_요청_생성(2L)));
+        final TableGroupRequest request = new TableGroupRequest(Arrays.asList(테이블_요청_생성(1L), 테이블_요청_생성(2L)));
 
         Assertions.assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(IllegalArgumentException.class)

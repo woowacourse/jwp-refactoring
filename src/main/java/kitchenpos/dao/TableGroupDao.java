@@ -6,7 +6,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.springframework.stereotype.Repository;
 
-public interface  TableGroupDao {
+public interface TableGroupDao {
     TableGroup save(TableGroup entity);
 
     Optional<TableGroup> findById(Long id);
@@ -28,23 +28,21 @@ class TableGroupRepository implements TableGroupDao {
 
     @Override
     public TableGroup save(final TableGroup entity) {
-        final Long tableGroupId = entity.getId();
-        final List<OrderTable> savedOrderTables = entity.getOrderTables();
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroupId(tableGroupId);
+        final TableGroup saveTableGroup = tableGroupDao.save(entity);
+        for (final OrderTable savedOrderTable : entity.getOrderTables()) {
+            savedOrderTable.setTableGroupId(saveTableGroup.getId());
             orderTableDao.save(savedOrderTable);
         }
-        entity.setOrderTables(savedOrderTables);
-        return tableGroupDao.save(entity);
+        return saveTableGroup;
     }
 
     @Override
     public Optional<TableGroup> findById(final Long id) {
-        return Optional.empty();
+        return tableGroupDao.findById(id);
     }
 
     @Override
     public List<TableGroup> findAll() {
-        return null;
+        return tableGroupDao.findAll();
     }
 }

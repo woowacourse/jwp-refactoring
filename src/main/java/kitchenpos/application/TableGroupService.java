@@ -5,6 +5,7 @@ import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_TABLE_EXC
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,6 +15,7 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.dto.TableGroupResponse;
 import kitchenpos.ui.dto.request.OrderTableIdRequest;
 import kitchenpos.ui.dto.request.TableGroupRequest;
 import org.springframework.stereotype.Service;
@@ -33,15 +35,10 @@ public class TableGroupService {
         this.tableGroupDao = tableGroupDao;
     }
 
-    public TableGroup create(final TableGroupRequest request) {
-        final List<OrderTable> savedOrderTables = getRequestOrderTables(request.getOrderTables());
-        validateSize(request.getOrderTables(), savedOrderTables);
-        final TableGroup tableGroup = convertSavaTableGroup(request, savedOrderTables);
-        return tableGroupDao.save(tableGroup);
-    }
-
-    private TableGroup convertSavaTableGroup(final TableGroupRequest request, final List<OrderTable> savedOrderTables) {
-        return new TableGroup(request.getId(), request.getCreatedDate(), savedOrderTables);
+    public TableGroupResponse create(final TableGroupRequest request) {
+        final List<OrderTable> savedOrderTables = getSavedOrderTables(request.getOrderTables());
+        final TableGroup saveTableGroup = tableGroupDao.save(TableGroup.of(LocalDateTime.now(), savedOrderTables));
+        return TableGroupResponse.from(saveTableGroup);
     }
 
     private void validateSize(final List<OrderTableIdRequest> targetOrderTables,
@@ -51,11 +48,13 @@ public class TableGroupService {
         }
     }
 
-    private List<OrderTable> getRequestOrderTables(final List<OrderTableIdRequest> orderTables) {
+    private List<OrderTable> getSavedOrderTables(final List<OrderTableIdRequest> orderTables) {
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTableIdRequest::getId)
                 .collect(Collectors.toList());
-        return orderTableDao.findAllByIdIn(orderTableIds);
+        final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
+        validateSize(orderTables, savedOrderTables);
+        return savedOrderTables;
     }
 
     public void ungroup(final Long tableGroupId) {
