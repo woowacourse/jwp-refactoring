@@ -5,6 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.MenuGroupCreateRequest;
+import kitchenpos.dto.MenuGroupCreateResponse;
+import kitchenpos.dto.MenuGroupFindResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +17,8 @@ class MenuGroupServiceTest extends ServiceTest {
     void create() {
         final MenuGroup menuGroup = saveAndGetMenuGroup(1L);
 
-        final MenuGroup actual = menuGroupService.create(menuGroup);
+        final MenuGroupCreateResponse actual =
+                menuGroupService.create(new MenuGroupCreateRequest(menuGroup.getName()));
 
         assertThat(actual.getName()).isEqualTo("애기메뉴목록");
     }
@@ -24,7 +28,7 @@ class MenuGroupServiceTest extends ServiceTest {
     void list() {
         saveAndGetMenuGroup(1L);
 
-        final List<MenuGroup> actual = menuGroupService.list();
+        final List<MenuGroupFindResponse> actual = menuGroupService.list();
 
         assertAll(
                 () -> assertThat(actual).hasSize(1),

@@ -9,6 +9,10 @@ public class MenuGroup {
         this.name = name;
     }
 
+    public MenuGroup(final String name) {
+        this(null, name);
+    }
+
     public Long getId() {
         return id;
     }
