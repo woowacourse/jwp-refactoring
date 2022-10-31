@@ -7,6 +7,7 @@ import java.util.Objects;
 import org.springframework.util.CollectionUtils;
 
 public class TableGroup {
+    private static final int MINIMUM_ORDER_TABLE_SIZE = 2;
     private Long id;
     private LocalDateTime createdDate;
     private List<OrderTable> orderTables;
@@ -36,19 +37,43 @@ public class TableGroup {
     }
 
     private static void validate(final List<OrderTable> orderTables) {
+        validateOrderTables(orderTables);
+    }
+
+    private static void validateOrderTables(final List<OrderTable> orderTables) {
+        validateEmptyOrderTables(orderTables);
+        validateOrderTableSize(orderTables);
+        for (final OrderTable orderTable : orderTables) {
+            validateOrderTable(orderTable);
+        }
+    }
+
+    private static void validateEmptyOrderTables(final List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables)) {
             throw new IllegalArgumentException("주문 테이블 없이 테이블 그룹을 생성할 수 없습니다.");
         }
-        if (orderTables.size() < 2) {
+    }
+
+    private static void validateOrderTableSize(final List<OrderTable> orderTables) {
+        if (orderTables.size() < MINIMUM_ORDER_TABLE_SIZE) {
             throw new IllegalArgumentException("주문 테이블이 2개 이상이어야 합니다.");
         }
-        for (final OrderTable orderTable : orderTables) {
-            if (!orderTable.isEmpty()) {
-                throw new IllegalArgumentException("주문 테이블이 비어있지 않으면 테이블 그룹을 생성할 수 없습니다.");
-            }
-            if (Objects.nonNull(orderTable.getTableGroupId())) {
-                throw new IllegalArgumentException("이미 테이블 그룹을 가진 주문 테이블은 테이블 그룹을 생성할 수 없습니다.");
-            }
+    }
+
+    private static void validateOrderTable(final OrderTable orderTable) {
+        validateEmptyOrderTable(orderTable);
+        validateExistTableGroup(orderTable);
+    }
+
+    private static void validateEmptyOrderTable(final OrderTable orderTable) {
+        if (!orderTable.isEmpty()) {
+            throw new IllegalArgumentException("주문 테이블이 비어있지 않으면 테이블 그룹을 생성할 수 없습니다.");
+        }
+    }
+
+    private static void validateExistTableGroup(final OrderTable orderTable) {
+        if (Objects.nonNull(orderTable.getTableGroupId())) {
+            throw new IllegalArgumentException("이미 테이블 그룹을 가진 주문 테이블은 테이블 그룹을 생성할 수 없습니다.");
         }
     }
 
