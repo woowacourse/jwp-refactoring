@@ -8,10 +8,10 @@ import static kitchenpos.support.fixture.domain.ProductFixture.APPLE_1000;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.product.domain.Product;
 import kitchenpos.support.fixture.domain.ProductFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,7 +34,7 @@ class JdbcTemplateMenuProductDaoTest extends JdbcTemplateTest {
 
             MenuProduct savedMenuProduct = jdbcTemplateMenuProductDao.save(menuProduct);
 
-            Long actual = savedMenuProduct.getSeq();
+            Long actual = savedMenuProduct.getId();
             assertThat(actual).isNotNull();
         }
     }
@@ -56,7 +56,7 @@ class JdbcTemplateMenuProductDaoTest extends JdbcTemplateTest {
         @Test
         @DisplayName("아이디로 메뉴 상품을 단일 조회한다.")
         void success() {
-            Long seq = menuProduct.getSeq();
+            Long seq = menuProduct.getId();
 
             MenuProduct foundMenuProduct = jdbcTemplateMenuProductDao.findById(seq)
                 .orElseThrow();

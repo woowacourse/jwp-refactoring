@@ -1,26 +1,30 @@
 package kitchenpos.application;
 
+import static kitchenpos.order.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import kitchenpos.NestedApplicationTest;
-import kitchenpos.dao.JdbcTemplateMenuDao;
-import kitchenpos.dao.JdbcTemplateMenuGroupDao;
-import kitchenpos.dao.JdbcTemplateOrderDao;
-import kitchenpos.dao.JdbcTemplateOrderTableDao;
-import kitchenpos.dao.JdbcTemplateTableGroupDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.dao.JdbcTemplateMenuDao;
+import kitchenpos.menu.domain.dao.JdbcTemplateMenuGroupDao;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.application.dto.OrderResponse;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.dao.JdbcTemplateOrderDao;
 import kitchenpos.support.fixture.domain.MenuFixture;
 import kitchenpos.support.fixture.domain.MenuGroupFixture;
 import kitchenpos.support.fixture.domain.OrderFixture;
 import kitchenpos.support.fixture.domain.OrderLineItemFixture;
 import kitchenpos.support.fixture.domain.OrderTableFixture;
 import kitchenpos.support.fixture.domain.TableGroupFixture;
+import kitchenpos.support.fixture.dto.OrderDtoFixture;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.domain.dao.JdbcTemplateOrderTableDao;
+import kitchenpos.table.domain.dao.JdbcTemplateTableGroupDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -56,17 +60,17 @@ class OrderServiceTest {
         @DisplayName("주문을 저장한다.")
         void success() {
             TableGroup tableGroup = jdbcTemplateTableGroupDao.save(TableGroupFixture.getTableGroup());
-            OrderTable orderTable = jdbcTemplateOrderTableDao.save(OrderTableFixture.GUEST_ONE_EMPTY_FALSE.getOrderTable(tableGroup.getId()));
-            Order order = OrderFixture.COMPLETION.getOrder(orderTable.getId());
+            OrderTable orderTable = jdbcTemplateOrderTableDao.save(
+                OrderTableFixture.GUEST_ONE_EMPTY_FALSE.getOrderTable(tableGroup.getId()));
             MenuGroup menuGroup = jdbcTemplateMenuGroupDao.save(MenuGroupFixture.KOREAN.getMenuGroup());
             Menu menu = jdbcTemplateMenuDao.save(MenuFixture.CHICKEN_1000.getMenu(menuGroup.getId()));
-            order.setOrderLineItems(List.of(OrderLineItemFixture.ONE.getOrderLineItem(menu.getId())));
-
-            Order actual = orderService.create(order);
+            Order order = OrderFixture.COMPLETION.getOrder(orderTable.getId());
+            List<OrderLineItem> orderLineItems = List.of(OrderLineItemFixture.ONE.getOrderLineItem(menu.getId(), order.getId()));
+            OrderResponse actual = orderService.create(OrderDtoFixture.주문_생성_요청(order, orderLineItems));
 
             assertThat(actual).usingRecursiveComparison()
-                .ignoringFields("id", "orderLineItems")
-                .isEqualTo(order);
+                .ignoringFields("id", "orderedTime", "orderLineItems.id", "orderLineItems.orderId")
+                .isEqualTo(OrderDtoFixture.주문_생성_응답(order, orderLineItems));
         }
     }
 
@@ -77,20 +81,22 @@ class OrderServiceTest {
         @BeforeEach
         void setUp() {
             TableGroup tableGroup1 = jdbcTemplateTableGroupDao.save(TableGroupFixture.getTableGroup());
-            OrderTable orderTable1 = jdbcTemplateOrderTableDao.save(OrderTableFixture.GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup1.getId()));
+            OrderTable orderTable1 = jdbcTemplateOrderTableDao.save(
+                OrderTableFixture.GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup1.getId()));
             jdbcTemplateOrderDao.save(OrderFixture.COMPLETION.getOrder(orderTable1.getId()));
 
             TableGroup tableGroup2 = jdbcTemplateTableGroupDao.save(TableGroupFixture.getTableGroup());
-            OrderTable orderTable2 = jdbcTemplateOrderTableDao.save(OrderTableFixture.GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup2.getId()));
+            OrderTable orderTable2 = jdbcTemplateOrderTableDao.save(
+                OrderTableFixture.GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup2.getId()));
             jdbcTemplateOrderDao.save(OrderFixture.COMPLETION.getOrder(orderTable2.getId()));
         }
 
         @Test
         @DisplayName("주문 전체 목록을 조회한다.")
         void success() {
-            List<Order> orders = orderService.list();
+            List<OrderResponse> responses = orderService.list();
 
-            assertThat(orders).hasSize(2);
+            assertThat(responses).hasSize(2);
         }
     }
 
@@ -103,20 +109,17 @@ class OrderServiceTest {
         @BeforeEach
         void setUp() {
             TableGroup tableGroup = jdbcTemplateTableGroupDao.save(TableGroupFixture.getTableGroup());
-            OrderTable orderTable = jdbcTemplateOrderTableDao.save(OrderTableFixture.GUEST_ONE_EMPTY_FALSE.getOrderTable(tableGroup.getId()));
-            Order order1 = OrderFixture.COMPLETION.getOrder(orderTable.getId());
-            MenuGroup menuGroup = jdbcTemplateMenuGroupDao.save(MenuGroupFixture.KOREAN.getMenuGroup());
-            Menu menu = jdbcTemplateMenuDao.save(MenuFixture.CHICKEN_1000.getMenu(menuGroup.getId()));
-            order1.setOrderLineItems(List.of(OrderLineItemFixture.ONE.getOrderLineItem(menu.getId())));
-            order = orderService.create(order1);
+            OrderTable orderTable = jdbcTemplateOrderTableDao.save(
+                OrderTableFixture.GUEST_ONE_EMPTY_TRUE.getOrderTable(tableGroup.getId()));
+            order = jdbcTemplateOrderDao.save(OrderFixture.COMPLETION.getOrder(orderTable.getId()));
         }
 
         @Test
         @DisplayName("주문상태를 변경한다.")
         void success() {
-            Order actual = orderService.changeOrderStatus(order.getId(), OrderFixture.MEAL.getOrder());
+            OrderResponse response = orderService.changeOrderStatus(order.getId(), MEAL.name());
 
-            assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
+            assertThat(response.getOrderStatus()).isEqualTo(MEAL.name());
         }
     }
 }

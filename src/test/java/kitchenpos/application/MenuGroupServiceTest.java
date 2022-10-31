@@ -5,8 +5,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import kitchenpos.NestedApplicationTest;
-import kitchenpos.dao.JdbcTemplateMenuGroupDao;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.menu.application.MenuGroupService;
+import kitchenpos.menu.application.dto.MenuGroupResponse;
+import kitchenpos.menu.domain.dao.JdbcTemplateMenuGroupDao;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.support.fixture.dto.MenuGroupDtoFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,11 +34,11 @@ class MenuGroupServiceTest {
         void success() {
             MenuGroup menuGroup = KOREAN.getMenuGroup();
 
-            MenuGroup actual = menuGroupService.create(menuGroup);
+            MenuGroupResponse menuGroupResponse = menuGroupService.create(menuGroup.getName());
 
-            assertThat(actual).usingRecursiveComparison()
+            assertThat(menuGroupResponse).usingRecursiveComparison()
                 .ignoringFields("id")
-                .isEqualTo(menuGroup);
+                .isEqualTo(MenuGroupDtoFixture.메뉴_그룹_생성_응답(menuGroup));
         }
     }
 
@@ -52,9 +55,9 @@ class MenuGroupServiceTest {
         @Test
         @DisplayName("메뉴 그룹 전체 목록을 조회한다.")
         void success() {
-            List<MenuGroup> menuGroups = menuGroupService.list();
+            List<MenuGroupResponse> responses = menuGroupService.list();
 
-            assertThat(menuGroups).hasSize(2);
+            assertThat(responses).hasSize(2);
         }
     }
 }

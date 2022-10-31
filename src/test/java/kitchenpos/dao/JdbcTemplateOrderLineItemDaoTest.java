@@ -9,12 +9,12 @@ import static kitchenpos.support.fixture.domain.OrderTableFixture.GUEST_ONE_EMPT
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
 import kitchenpos.support.fixture.domain.TableGroupFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -39,7 +39,7 @@ class JdbcTemplateOrderLineItemDaoTest extends JdbcTemplateTest {
 
             OrderLineItem savedOrderLineItem = jdbcTemplateOrderLineItemDao.save(orderLineItem);
 
-            Long actual = savedOrderLineItem.getSeq();
+            Long actual = savedOrderLineItem.getId();
             assertThat(actual).isNotNull();
         }
     }
@@ -63,7 +63,7 @@ class JdbcTemplateOrderLineItemDaoTest extends JdbcTemplateTest {
         @Test
         @DisplayName("아이디로 주문 라인 아이템을 단일 조회한다.")
         void success() {
-            Long seq = orderLineItem.getSeq();
+            Long seq = orderLineItem.getId();
 
             OrderLineItem actual = jdbcTemplateOrderLineItemDao.findById(seq)
                 .orElseThrow();

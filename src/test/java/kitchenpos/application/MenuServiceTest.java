@@ -9,13 +9,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import kitchenpos.NestedApplicationTest;
-import kitchenpos.dao.JdbcTemplateMenuDao;
-import kitchenpos.dao.JdbcTemplateMenuGroupDao;
-import kitchenpos.dao.JdbcTemplateProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Product;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.application.dto.MenuResponse;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.dao.JdbcTemplateMenuDao;
+import kitchenpos.menu.domain.dao.JdbcTemplateMenuGroupDao;
+import kitchenpos.product.domain.dao.JdbcTemplateProductDao;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.product.domain.Product;
 import kitchenpos.support.fixture.domain.MenuGroupFixture;
+import kitchenpos.support.fixture.dto.MenuDtoFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,16 +53,16 @@ class MenuServiceTest {
             Product product1 = jdbcTemplateProductDao.save(APPLE_1000.getProduct());
             Product product2 = jdbcTemplateProductDao.save(APPLE_1000.getProduct());
             Product product3 = jdbcTemplateProductDao.save(APPLE_1000.getProduct());
-            menu.setMenuProducts(
-                List.of(
+            List<MenuProduct> menuProducts = List.of(
                 ONE.getMenuProduct(product1.getId()),
                 ONE.getMenuProduct(product2.getId()),
-                ONE.getMenuProduct(product3.getId())));
+                ONE.getMenuProduct(product3.getId()));
 
-            Menu actual = menuService.create(menu);
+            MenuResponse response = menuService.create(MenuDtoFixture.메뉴_생성_요청(menu, menuProducts));
 
-            assertThat(actual).extracting(Menu::getName, it -> it.getPrice().longValue(), Menu::getMenuGroupId)
-                    .contains(menu.getName(), menu.getPrice().longValue(), menu.getMenuGroupId());
+            assertThat(response).usingRecursiveComparison()
+                .ignoringFields("id")
+                .isEqualTo(MenuDtoFixture.메뉴_생성_응답(menu));
         }
     }
 
@@ -80,9 +84,9 @@ class MenuServiceTest {
         @Test
         @DisplayName("메뉴 전체 목록을 조회한다.")
         void success() {
-            List<Menu> menus = menuService.list();
+            List<MenuResponse> responses = menuService.list();
 
-            assertThat(menus).hasSize(2);
+            assertThat(responses).hasSize(2);
         }
     }
 }

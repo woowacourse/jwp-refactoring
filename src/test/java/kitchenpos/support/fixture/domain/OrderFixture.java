@@ -1,7 +1,6 @@
 package kitchenpos.support.fixture.domain;
 
-import java.time.LocalDateTime;
-import kitchenpos.domain.Order;
+import kitchenpos.order.domain.Order;
 
 public enum OrderFixture {
 
@@ -10,27 +9,12 @@ public enum OrderFixture {
     COMPLETION,
     ;
 
-    public Order getOrder() {
-        Order order = new Order();
-        order.setOrderStatus(this.name());
-        order.setOrderedTime(LocalDateTime.now());
-        return order;
-    }
-
     public Order getOrder(Long orderTableId) {
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus(this.name());
-        order.setOrderedTime(LocalDateTime.now());
-        return order;
+        return Order.from(orderTableId);
     }
 
     public Order getOrder(Long id, Long orderTableId) {
-        Order order = new Order();
-        order.setId(id);
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus(this.name());
-        order.setOrderedTime(LocalDateTime.now());
-        return order;
+        Order order = Order.from(orderTableId);
+        return new Order(id, orderTableId, order.getOrderStatus(), order.getOrderedTime());
     }
 }

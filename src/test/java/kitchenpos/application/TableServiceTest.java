@@ -1,13 +1,16 @@
 package kitchenpos.application;
 
+import static kitchenpos.support.fixture.domain.OrderTableFixture.GUEST_ONE_EMPTY_FALSE;
 import static kitchenpos.support.fixture.domain.OrderTableFixture.GUEST_ONE_EMPTY_TRUE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import kitchenpos.NestedApplicationTest;
-import kitchenpos.dao.JdbcTemplateOrderTableDao;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.support.fixture.domain.OrderTableFixture;
+import kitchenpos.support.fixture.dto.OrderTableDtoFixture;
+import kitchenpos.table.application.TableService;
+import kitchenpos.table.application.dto.OrderTableResponse;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.dao.JdbcTemplateOrderTableDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,10 +35,10 @@ class TableServiceTest {
         @DisplayName("주문 테이블을 생성한다.")
         void success() {
             OrderTable orderTable = GUEST_ONE_EMPTY_TRUE.getOrderTable();
-            OrderTable actual = tableService.create(orderTable);
+            OrderTableResponse response = tableService.create(OrderTableDtoFixture.상품_생성_요청(orderTable));
 
-            assertThat(actual).usingRecursiveComparison()
-                .ignoringFields("id")
+            assertThat(response).usingRecursiveComparison()
+                .ignoringFields("id", "tableGroupId")
                 .isEqualTo(orderTable);
         }
     }
@@ -53,9 +56,9 @@ class TableServiceTest {
         @Test
         @DisplayName("주문 테이블 전체 목록을 조회한다.")
         void success() {
-            List<OrderTable> orderTables = tableService.list();
+            List<OrderTableResponse> responses = tableService.list();
 
-            assertThat(orderTables).hasSize(2);
+            assertThat(responses).hasSize(2);
         }
     }
 
@@ -67,16 +70,15 @@ class TableServiceTest {
 
         @BeforeEach
         void setUp() {
-            orderTable = tableService.create(GUEST_ONE_EMPTY_TRUE.getOrderTable());
+            orderTable = jdbcTemplateOrderTableDao.save(GUEST_ONE_EMPTY_TRUE.getOrderTable());
         }
 
         @Test
         @DisplayName("공석 여부를 변경한다.")
         void success() {
-            orderTable.setEmpty(false);
-            OrderTable actual = tableService.changeEmpty(orderTable.getId(), orderTable);
+            OrderTableResponse response = tableService.changeEmpty(orderTable.getId(), false);
 
-            assertThat(actual.isEmpty()).isFalse();
+            assertThat(response.isEmpty()).isFalse();
         }
     }
 
@@ -88,16 +90,15 @@ class TableServiceTest {
 
         @BeforeEach
         void setUp() {
-            orderTable = tableService.create(OrderTableFixture.GUEST_ONE_EMPTY_FALSE.getOrderTable());
+            orderTable = jdbcTemplateOrderTableDao.save(GUEST_ONE_EMPTY_FALSE.getOrderTable());
         }
 
         @Test
         @DisplayName("손님 수를 변경한다.")
         void success() {
-            OrderTable actual = tableService.changeNumberOfGuests(orderTable.getId(),
-                OrderTableFixture.GUEST_TWO_EMPTY_FALSE.getOrderTable());
+            OrderTableResponse response = tableService.changeNumberOfGuests(orderTable.getId(), 2);
 
-            assertThat(actual.getNumberOfGuests()).isEqualTo(2);
+            assertThat(response.getNumberOfGuests()).isEqualTo(2);
         }
     }
 }

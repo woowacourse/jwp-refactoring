@@ -1,7 +1,15 @@
 package kitchenpos.dao;
 
 import javax.sql.DataSource;
+import kitchenpos.menu.domain.dao.JdbcTemplateMenuDao;
+import kitchenpos.menu.domain.dao.JdbcTemplateMenuGroupDao;
+import kitchenpos.menu.domain.dao.JdbcTemplateMenuProductDao;
+import kitchenpos.order.domain.dao.JdbcTemplateOrderDao;
+import kitchenpos.order.domain.dao.JdbcTemplateOrderLineItemDao;
+import kitchenpos.product.domain.dao.JdbcTemplateProductDao;
 import kitchenpos.support.tool.DataBaseCleaner;
+import kitchenpos.table.domain.dao.JdbcTemplateOrderTableDao;
+import kitchenpos.table.domain.dao.JdbcTemplateTableGroupDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
