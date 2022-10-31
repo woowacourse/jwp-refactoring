@@ -5,13 +5,15 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import org.springframework.util.CollectionUtils;
 
 @Embeddable
 public class OrderTables {
 
-    @OneToMany(mappedBy = "tableGroupId", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "table_group_id")
     private List<OrderTable> orderTables = new ArrayList<>();
 
     protected OrderTables() {
@@ -21,33 +23,24 @@ public class OrderTables {
         this.orderTables = orderTables;
     }
 
-    public void changeGroups(final Long tableGroupId) {
-        for (OrderTable orderTable : orderTables) {
-            orderTable.validateEmpty();
-            orderTable.addTableGroupId(tableGroupId);
-            orderTable.changeEmpty(false);
-        }
-        validateOrderTables(orderTables);
+    public boolean isEmpty() {
+        return CollectionUtils.isEmpty(orderTables);
+    }
+
+    public boolean isSmallerThen(final int value) {
+        return orderTables.size() < value;
+    }
+
+    public boolean isUsing() {
+        return orderTables
+            .stream()
+            .anyMatch(OrderTable::isUsing);
     }
 
     public void changeUngroups() {
         for (final OrderTable orderTable : orderTables) {
             orderTable.addTableGroupId(null);
             orderTable.changeEmpty(true);
-        }
-    }
-
-    private void validateOrderTables(final List<OrderTable> orderTables) {
-        validateSize(orderTables);
-        for (OrderTable orderTable : orderTables) {
-            orderTable.validateNotEmpty();
-            orderTable.validateNotTableGroupId();
-        }
-    }
-
-    private void validateSize(final List<OrderTable> orderTables) {
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
         }
     }
 

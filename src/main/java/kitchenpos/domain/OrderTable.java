@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.util.Objects;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,6 +13,7 @@ public class OrderTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "table_group_id", insertable = false, updatable = false)
     private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
@@ -52,26 +54,18 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
+    public boolean isUsing() {
+        return !empty || Objects.nonNull(tableGroupId);
+    }
+
     public void validateNotEmpty() {
         if (this.empty) {
             throw new IllegalArgumentException();
         }
     }
 
-    public void validateEmpty() {
-        if (!this.empty) {
-            throw new IllegalArgumentException();
-        }
-    }
-
     private void validateNumberOfGuests(final int numberOfGuests) {
         if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    public void validateNotTableGroupId() {
-        if (tableGroupId == null) {
             throw new IllegalArgumentException();
         }
     }

@@ -37,23 +37,32 @@ public class TableGroupService {
     }
 
     public TableGroupResponse create(final TableGroupCreateRequest request) {
-        final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(request.getOrderTables());
+        final List<OrderTable> orderTables = findOrderTablesIdIn(request.getOrderTables());
 
-        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
-        tableGroup.changeOrderTablesOfGroups(orderTables);
+        final TableGroup tableGroup = tableGroupRepository.save(
+            new TableGroup(LocalDateTime.now(), new OrderTables(orderTables)));
 
         return TableGroupResponse.createResponse(tableGroup);
+    }
+
+    private List<OrderTable> findOrderTablesIdIn(final List<Long> orderTablesIds) {
+        final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTablesIds);
+        if (orderTables.size() != orderTablesIds.size()) {
+            throw new IllegalArgumentException("존재하지 않는 주문 테이블 입니다.");
+        }
+
+        return orderTables;
     }
 
     public void ungroup(final Long tableGroupId) {
         final OrderTables orderTables = new OrderTables(orderTableRepository.findAllByTableGroupId(tableGroupId));
 
         final List<Long> orderTableIds = orderTables.getOrderTables().stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
+            .map(OrderTable::getId)
+            .collect(Collectors.toList());
 
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+            orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
 

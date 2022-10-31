@@ -9,17 +9,17 @@ public class TableGroupResponse {
 
     private Long id;
     private LocalDateTime createDate;
-    private List<OrderTableResponse> orderTableResponses;
+    private List<OrderTableResponse> orderTables;
 
     protected TableGroupResponse() {
     }
 
     public TableGroupResponse(final Long id,
                               final LocalDateTime createDate,
-                              final List<OrderTableResponse> orderTableResponses) {
+                              final List<OrderTableResponse> orderTables) {
         this.id = id;
         this.createDate = createDate;
-        this.orderTableResponses = orderTableResponses;
+        this.orderTables = orderTables;
     }
 
     public static TableGroupResponse createResponse(final TableGroup tableGroup) {
@@ -40,7 +40,7 @@ public class TableGroupResponse {
         return createDate;
     }
 
-    public List<OrderTableResponse> getOrderTableResponses() {
-        return orderTableResponses;
+    public List<OrderTableResponse> getOrderTables() {
+        return orderTables;
     }
 }
