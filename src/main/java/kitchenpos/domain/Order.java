@@ -10,14 +10,15 @@ public class Order {
 
     private final Long id;
     private final Long orderTableId;
-    private String orderStatus;
+    private OrderStatus orderStatus;
     private final LocalDateTime orderedTime;
     private final List<OrderLineItem> orderLineItems;
 
-    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
+    public Order(final Long id, final Long orderTableId, final String orderStatus,
+                 final LocalDateTime orderedTime) {
         this.id = id;
         this.orderTableId = orderTableId;
-        this.orderStatus = orderStatus;
+        this.orderStatus = OrderStatus.valueOf(orderStatus);
         this.orderedTime = orderedTime;
         this.orderLineItems = new ArrayList<>();
     }
@@ -30,12 +31,12 @@ public class Order {
         this(null, orderTableId, null, null, orderLineItems);
     }
 
-    public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+    public Order(final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
-    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+    public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
         validateOrderLineItems(orderLineItems);
         this.id = id;
@@ -55,19 +56,19 @@ public class Order {
         if (isStatusCompletion()) {
             throw new IllegalArgumentException();
         }
-        this.orderStatus = orderStatus.name();
+        this.orderStatus = orderStatus;
     }
 
     private boolean isStatusCompletion() {
-        return Objects.equals(OrderStatus.COMPLETION.name(), orderStatus);
+        return Objects.equals(OrderStatus.COMPLETION, orderStatus);
     }
 
     public boolean isStatusCooking() {
-        return Objects.equals(OrderStatus.COOKING.name(), orderStatus);
+        return Objects.equals(OrderStatus.COOKING, orderStatus);
     }
 
     public boolean isStatusMeal() {
-        return Objects.equals(OrderStatus.MEAL.name(), orderStatus);
+        return Objects.equals(OrderStatus.MEAL, orderStatus);
     }
 
     public Long getId() {
@@ -79,7 +80,7 @@ public class Order {
     }
 
     public String getOrderStatus() {
-        return orderStatus;
+        return orderStatus.name();
     }
 
     public LocalDateTime getOrderedTime() {

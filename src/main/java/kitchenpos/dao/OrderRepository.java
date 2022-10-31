@@ -1,7 +1,6 @@
 package kitchenpos.dao;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -19,29 +18,41 @@ public class OrderRepository {
     }
 
     public Order save(final Order entity) {
-        final Order savedOrder = orderDao.save(entity);
+        final OrderDto savedOrder = orderDao.save(entity);
+        final Order order = savedOrder.toEntity();
 
         final List<OrderLineItem> savedOrderLineItems = entity.getOrderLineItems().stream()
-                .map(orderLineItem -> new OrderLineItem(savedOrder.getId(), orderLineItem))
+                .map(orderLineItem -> new OrderLineItem(order.getId(), orderLineItem))
                 .map(orderLineItemDao::save)
                 .collect(Collectors.toList());
 
-        return new Order(savedOrder, savedOrderLineItems);
+        order.addOrderLineItems(savedOrderLineItems);
+
+        return order;
     }
 
     public Order update(final Order entity) {
-        final Order savedOrder = orderDao.save(entity);
-        final List<OrderLineItem> orderLineItems = orderLineItemDao.findAllByOrderId(savedOrder.getId());
+        final OrderDto savedOrder = orderDao.save(entity);
+        final Order order = savedOrder.toEntity();
 
-        return new Order(savedOrder, orderLineItems);
+        final List<OrderLineItem> orderLineItems = orderLineItemDao.findAllByOrderId(order.getId());
+
+        order.addOrderLineItems(orderLineItems);
+
+        return order;
     }
 
-    public Optional<Order> findById(final Long id) {
-        return orderDao.findById(id);
+    public Order findById(final Long id) {
+        return orderDao.findById(id)
+                .orElseThrow(IllegalArgumentException::new)
+                .toEntity();
     }
 
     public List<Order> findAll() {
-        final List<Order> orders = orderDao.findAll();
+        final List<OrderDto> savedOrders = orderDao.findAll();
+        final List<Order> orders = savedOrders.stream()
+                .map(OrderDto::toEntity)
+                .collect(Collectors.toList());
 
         for (final Order order : orders) {
             order.addOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));

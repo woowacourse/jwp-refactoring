@@ -99,23 +99,23 @@ class OrderServiceTest extends ServiceTest {
         final OrderCreateRequest orderCreateRequest = getOrderCreateRequest(orderTable.getId(), menu.getId());
         final Order savedOrder = 주문_등록(orderCreateRequest);
 
-        final OrderStatusChangeRequest statusChangeRequest = new OrderStatusChangeRequest(OrderStatus.MEAL.name());
+        final OrderStatusChangeRequest statusChangeRequest = new OrderStatusChangeRequest(OrderStatus.MEAL);
         final Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), statusChangeRequest);
 
         assertAll(
                 () -> assertThat(changedOrder.getId()).isEqualTo(savedOrder.getId()),
                 () -> assertThat(changedOrder.getOrderTableId()).isEqualTo(savedOrder.getOrderTableId()),
                 () -> assertThat(changedOrder.getOrderLineItems()).hasSize(1),
-                () -> assertThat(changedOrder.getOrderStatus()).isEqualTo(statusChangeRequest.getOrderStatus())
+                () -> assertThat(changedOrder.getOrderStatus()).isEqualTo(statusChangeRequest.getOrderStatus().name())
         );
     }
 
     @DisplayName("주문 상태를 변경한다. - 존재하지 않는 주문이면 예외를 반환한다.")
     @Test
     void changeOrderStatus_exception_noSuchOrder() {
-        final OrderStatusChangeRequest statusChangeRequest = new OrderStatusChangeRequest(OrderStatus.MEAL.name());
+        final OrderStatusChangeRequest statusChangeRequest = new OrderStatusChangeRequest(OrderStatus.MEAL);
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(null, statusChangeRequest))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(100L, statusChangeRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -128,10 +128,10 @@ class OrderServiceTest extends ServiceTest {
         final Order savedOrder = 주문_등록(request);
 
         final OrderStatusChangeRequest statusChangeRequest1 = new OrderStatusChangeRequest(
-                OrderStatus.COMPLETION.name());
+                OrderStatus.COMPLETION);
         orderService.changeOrderStatus(savedOrder.getId(), statusChangeRequest1);
 
-        final OrderStatusChangeRequest statusChangeRequest2 = new OrderStatusChangeRequest(OrderStatus.MEAL.name());
+        final OrderStatusChangeRequest statusChangeRequest2 = new OrderStatusChangeRequest(OrderStatus.MEAL);
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), statusChangeRequest2))
                 .isInstanceOf(IllegalArgumentException.class);

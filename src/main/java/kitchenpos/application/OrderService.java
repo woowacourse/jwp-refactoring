@@ -44,7 +44,7 @@ public class OrderService {
         return orderRepository.save(
                 new Order(
                         orderTableId,
-                        OrderStatus.COOKING.name(),
+                        OrderStatus.COOKING,
                         LocalDateTime.now(),
                         mapToOrderLineItems(orderLineItems))
         );
@@ -81,10 +81,9 @@ public class OrderService {
 
     @Transactional
     public Order changeOrderStatus(final Long orderId, final OrderStatusChangeRequest request) {
-        final Order savedOrder = orderRepository.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+        final Order savedOrder = orderRepository.findById(orderId);
 
-        savedOrder.changeOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
+        savedOrder.changeOrderStatus(request.getOrderStatus());
 
         return orderRepository.update(savedOrder);
     }

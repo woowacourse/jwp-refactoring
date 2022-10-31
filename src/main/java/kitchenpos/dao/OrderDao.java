@@ -6,13 +6,13 @@ import kitchenpos.domain.Order;
 
 public interface OrderDao {
 
-    Order save(Order entity);
+    OrderDto save(Order entity);
 
-    Optional<Order> findById(Long id);
+    Optional<OrderDto> findById(Long id);
 
-    List<Order> findAll();
+    List<OrderDto> findAll();
 
-    Optional<Order> findByOrderTableId(Long id);
+    Optional<OrderDto> findByOrderTableId(Long id);
 
-    List<Order> findAllByOrderTableIdIn(List<Long> tableGroupIds);
+    List<OrderDto> findAllByOrderTableIdIn(List<Long> tableGroupIds);
 }

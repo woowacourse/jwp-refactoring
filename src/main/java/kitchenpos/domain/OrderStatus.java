@@ -2,5 +2,9 @@ package kitchenpos.domain;
 
 public enum OrderStatus {
 
-    COOKING, MEAL, COMPLETION
+    COOKING, MEAL, COMPLETION;
+
+    public boolean isStatus(final String status) {
+        return this.name().equals(status);
+    }
 }

@@ -59,7 +59,7 @@ class TableServiceTest extends ServiceTest {
         final Menu menu = 메뉴_등록(getMenuCreateRequest(menuGroup.getId(), createMenuProductDtos()));
         final Order savedOrder = 주문_등록(getOrderCreateRequest(savedTable.getId(), menu.getId()));
         final OrderStatusChangeRequest statusChangeRequest = new OrderStatusChangeRequest(
-                OrderStatus.COMPLETION.name());
+                OrderStatus.COMPLETION);
         orderService.changeOrderStatus(savedOrder.getId(), statusChangeRequest);
 
         final TableChangeEmptyRequest request = getTableChangeEmptyRequest(true);

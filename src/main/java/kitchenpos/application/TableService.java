@@ -2,8 +2,9 @@ package kitchenpos.application;
 
 import java.util.List;
 import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderDto;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.request.table.TableChangeEmptyRequest;
 import kitchenpos.ui.request.table.TableChangeNumberOfGuestsRequest;
@@ -44,10 +45,11 @@ public class TableService {
     }
 
     private void validateOrderStatus(final Long orderTableId) {
-        final Order savedOrder = orderDao.findByOrderTableId(orderTableId)
+        final OrderDto savedOrder = orderDao.findByOrderTableId(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (savedOrder.isStatusCooking() || savedOrder.isStatusMeal()) {
+        if (OrderStatus.COOKING.isStatus(savedOrder.getOrderStatus()) ||
+                OrderStatus.MEAL.isStatus(savedOrder.getOrderStatus())) {
             throw new IllegalArgumentException();
         }
     }

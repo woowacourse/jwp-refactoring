@@ -30,7 +30,7 @@ class OrderTest {
     void changeOrderStatus() {
         final Order order = new Order(
                 1L,
-                OrderStatus.COOKING.name(),
+                OrderStatus.COOKING,
                 LocalDateTime.now(),
                 getOrderLineItems(1L, 1)
         );
@@ -45,7 +45,7 @@ class OrderTest {
     void changeOrderStatus_exception_orderStatusIsCompletion() {
         final Order order = new Order(
                 1L,
-                OrderStatus.COMPLETION.name(),
+                OrderStatus.COMPLETION,
                 LocalDateTime.now(),
                 getOrderLineItems(1L, 1)
         );
@@ -59,7 +59,7 @@ class OrderTest {
     void isStatusCooking() {
         final Order order = new Order(
                 1L,
-                OrderStatus.COOKING.name(),
+                OrderStatus.COOKING,
                 LocalDateTime.now(),
                 getOrderLineItems(1L, 1)
         );
@@ -74,7 +74,7 @@ class OrderTest {
     void isStatusMeal() {
         final Order order = new Order(
                 1L,
-                OrderStatus.MEAL.name(),
+                OrderStatus.MEAL,
                 LocalDateTime.now(),
                 getOrderLineItems(1L, 1)
         );

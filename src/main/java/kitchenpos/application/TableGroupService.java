@@ -4,9 +4,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderDto;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupRepository;
-import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.request.tablegroup.OrderTableDto;
@@ -53,7 +54,7 @@ public class TableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        validateOrderStatus(orderDao.findAllByOrderTableIdIn(orderTableIds));
+        validateOrderStatus(orderTableIds);
 
         for (final OrderTable orderTable : orderTables) {
             orderTable.ungroup();
@@ -61,9 +62,14 @@ public class TableGroupService {
         }
     }
 
-    private void validateOrderStatus(final List<Order> orders) {
-        for (final Order order : orders) {
-            if (order.isStatusCooking() || order.isStatusMeal()) {
+    private void validateOrderStatus(final List<Long> orderTableIds) {
+        final List<OrderStatus> orderStatuses = orderDao.findAllByOrderTableIdIn(orderTableIds).stream()
+                .map(OrderDto::getOrderStatus)
+                .map(OrderStatus::valueOf)
+                .collect(Collectors.toList());
+
+        for (final OrderStatus status : orderStatuses) {
+            if (OrderStatus.COOKING.equals(status) || OrderStatus.MEAL.equals(status)) {
                 throw new IllegalArgumentException();
             }
         }
