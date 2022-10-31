@@ -1,9 +1,12 @@
 package kitchenpos.application;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import kitchenpos.application.request.OrderLineItemRequest;
 import kitchenpos.application.request.OrderRequest;
 import kitchenpos.application.response.OrderResponse;
@@ -66,13 +69,6 @@ public class OrderService {
         return OrderResponse.from(savedOrder);
     }
 
-    private List<OrderLineItem> getOrderLineItems(final OrderRequest request) {
-        final List<OrderLineItemRequest> orderLineItems = request.getOrderLineItems();
-        return orderLineItems.stream()
-                .map(it -> new OrderLineItem(findMenu(it.getMenuId()), it.getQuantity()))
-                .collect(toList());
-    }
-
     private void validateSavedMenuSize(final OrderRequest request) {
         final List<Long> menuIds = request.getOrderLineItems()
                 .stream()
@@ -93,8 +89,23 @@ public class OrderService {
         }
     }
 
-    private Menu findMenu(Long id) {
-        return menuRepository.findById(id)
-                .orElseThrow(IllegalArgumentException::new);
+    private List<OrderLineItem> getOrderLineItems(final OrderRequest request) {
+        final List<OrderLineItemRequest> orderLineItemRequests = request.getOrderLineItems();
+        final Map<Long, Long> menuAndQuantity = orderLineItemRequests.stream()
+                .collect(toMap(OrderLineItemRequest::getMenuId, OrderLineItemRequest::getQuantity));
+
+        final List<Menu> menus = menuRepository.findAllById(menuAndQuantity.keySet());
+
+        return getOrderLineItems(menuAndQuantity, menus);
+    }
+
+    private static List<OrderLineItem> getOrderLineItems(final Map<Long, Long> menuAndQuantity, final List<Menu> menus) {
+        final List<OrderLineItem> orderLineItems = new ArrayList<>();
+        for (Menu menu : menus) {
+            final OrderLineItem orderLineItem = new OrderLineItem(menu, menuAndQuantity.get(menu.getId()));
+            orderLineItems.add(orderLineItem);
+        }
+
+        return orderLineItems;
     }
 }
