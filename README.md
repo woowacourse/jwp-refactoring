@@ -45,12 +45,13 @@
 
 ### 서비스 리팩터링
 
-첫번째 할 일
 - [x] `ServiceTest`, `DaoTest` 에서 사용하는 픽스처를 통합한다.
 - [x] `id`가 존재하지않는 픽스처는 `request`, 존재하는 픽스처는 도메인 이름으로 수정한다.
-- [x] `test` 에서만 사용하는 `setter` 를 제거한다.
+- [x] `test` 에서만 사용하는 `setter` 및 `생성자` 를 제거한다.
 - [x] `ProductService` 에서 도메인으로 책임을 내릴부분은 내린다.
-- [ ] `TableService` 에서 도메인으로 책임을 내릴부분은 내린다.
+- [x] `TableService` 에서 도메인으로 책임을 내릴부분은 내린다.
+- [x] `XXXService` 책임을 다 내린다.
+
 
 
 
