@@ -9,6 +9,7 @@ import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.dto.response.MenuResponse;
@@ -39,7 +40,7 @@ public class MenuService {
         final List<MenuProduct> menuProducts = menuRequest.toMenuProducts();
 
         validateMenuGroup(menu);
-        menu.validatePrice(calculateSumOfMenuPrice(menuProducts));
+        validateMenuPrice(menu.getPrice(), calculateSumOfMenuPrice(menuProducts));
 
         final Menu savedMenu = menuDao.save(menu);
         final List<MenuProduct> savedMenuProducts = saveMenuProducts(menuProducts, savedMenu);
@@ -52,6 +53,12 @@ public class MenuService {
                 .map(menuProduct -> menuProductDao.save(
                         new MenuProduct(savedMenu.getId(), menuProduct.getProductId(), menuProduct.getQuantity())))
                 .collect(Collectors.toList());
+    }
+
+    public void validateMenuPrice(Price menuPrice, BigDecimal sum) {
+        if (menuPrice.getValue().compareTo(sum) > 0) {
+            throw new IllegalArgumentException("메뉴의 가격은 상품 수량 * 상품 가격의 합보다 클 수 없습니다.");
+        }
     }
 
     private BigDecimal calculateSumOfMenuPrice(final List<MenuProduct> menuProducts) {
