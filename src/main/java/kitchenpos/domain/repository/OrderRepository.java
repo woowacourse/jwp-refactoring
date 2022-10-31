@@ -34,11 +34,10 @@ public class OrderRepository {
 
     private List<OrderLineItem> saveOrderLineItems(Order order, Long orderId) {
         return order.getOrderLineItems().stream()
-                .map(orderLineItem -> orderLineItemDao.save(new OrderLineItem(
-                        orderId,
-                        orderLineItem.getMenuId(),
-                        orderLineItem.getQuantity()
-                ))).collect(Collectors.toList());
+                .map(orderLineItem -> new OrderLineItem(
+                        orderId, orderLineItem.getMenuId(), orderLineItem.getQuantity()))
+                .map(orderLineItemDao::save)
+                .collect(Collectors.toList());
     }
 
     public List<Order> findAll() {

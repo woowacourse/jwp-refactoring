@@ -31,8 +31,9 @@ public class TableGroupRepository {
     private List<OrderTable> updateOrderTables(TableGroup tableGroup, Long tableGroupId) {
         return tableGroup.getOrderTables()
                 .stream()
-                .map(orderTable -> orderTableDao.save(
-                        new OrderTable(orderTable.getId(), tableGroupId, orderTable.getNumberOfGuests(), false)))
+                .map(orderTable -> new OrderTable(
+                        orderTable.getId(), tableGroupId, orderTable.getNumberOfGuests(), false))
+                .map(orderTableDao::save)
                 .collect(Collectors.toList());
     }
 

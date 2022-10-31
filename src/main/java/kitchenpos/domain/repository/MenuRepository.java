@@ -29,8 +29,8 @@ public class MenuRepository {
     private List<MenuProduct> saveMenuProducts(Menu menu, Long menuId) {
         return menu.getMenuProducts()
                 .stream()
-                .map(menuProduct -> menuProductDao.save(
-                        new MenuProduct(menuId, menuProduct.getProductId(), menuProduct.getQuantity())))
+                .map(menuProduct -> new MenuProduct(menuId, menuProduct.getProductId(), menuProduct.getQuantity()))
+                .map(menuProductDao::save)
                 .collect(Collectors.toList());
     }
 
