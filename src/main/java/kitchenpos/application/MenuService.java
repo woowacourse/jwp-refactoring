@@ -12,7 +12,6 @@ import kitchenpos.domain.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -38,32 +37,38 @@ public class MenuService {
         }
 
         final List<Product> products = mapToProducts(menuRequest);
-
         final Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuRequest.getMenuGroupId(),
                 menuRequest.getMenuProducts(), products);
-
         final Menu savedMenu = menuRepository.save(menu);
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
 
-        for (final MenuProduct menuProduct : menuRequest.getMenuProducts()) {
-            final MenuProduct target = new MenuProduct(menuRepository.findById(savedMenu.getId())
-                    .orElseThrow(IllegalArgumentException::new), menuProduct.getProductId(), menuProduct.getQuantity());
+        final List<MenuProduct> savedMenuProducts = menuRequest.getMenuProducts()
+                .stream()
+                .map(menuProduct -> menuProductRepository.save(new MenuProduct(
+                        findMenu(savedMenu), menuProduct.getProductId(), menuProduct.getQuantity())))
+                .collect(Collectors.toList());
 
-            final MenuProduct tempMenuProduct = menuProductRepository.save(target);
-            savedMenuProducts.add(tempMenuProduct);
-        }
+        return new Menu(savedMenu.getId(), savedMenu.getName(), savedMenu.getPrice(), savedMenu.getMenuGroupId(),
+                savedMenuProducts, products);
+    }
 
-        return new Menu(savedMenu.getId(), savedMenu.getName(),
-                savedMenu.getPrice(), savedMenu.getMenuGroupId(), savedMenuProducts, products);
+    private Menu findMenu(Menu menu) {
+        return menuRepository.findById(menu.getId())
+                .orElseThrow(IllegalArgumentException::new);
     }
 
     private List<Product> mapToProducts(MenuRequest menuRequest) {
         return menuRequest.getMenuProducts()
                 .stream()
-                .map(mp -> productRepository.findById(mp.getProductId()).orElseThrow(IllegalArgumentException::new))
+                .map(this::findProductByMenuProduct)
                 .collect(Collectors.toList());
     }
 
+    private Product findProductByMenuProduct(MenuProduct menuProduct) {
+        return productRepository.findById(menuProduct.getProductId())
+                .orElseThrow(IllegalArgumentException::new);
+    }
+
+    @Transactional(readOnly = true)
     public List<Menu> list() {
         final List<Menu> menus = menuRepository.findAll();
 
