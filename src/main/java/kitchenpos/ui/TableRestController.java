@@ -10,17 +10,20 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/api/tables")
 public class TableRestController {
+
     private final TableService tableService;
 
     public TableRestController(final TableService tableService) {
         this.tableService = tableService;
     }
 
-    @PostMapping("/api/tables")
+    @PostMapping
     public ResponseEntity<TableDto> create(@RequestBody TableDto tableDto) {
         TableDto created = tableService.create(tableDto);
         URI uri = URI.create("/api/tables/" + created.getId());
@@ -29,14 +32,14 @@ public class TableRestController {
                 ;
     }
 
-    @GetMapping("/api/tables")
+    @GetMapping
     public ResponseEntity<List<TableDto>> list() {
         return ResponseEntity.ok()
                 .body(tableService.list())
                 ;
     }
 
-    @PutMapping("/api/tables/{orderTableId}/empty")
+    @PutMapping("/{orderTableId}/empty")
     public ResponseEntity<TableDto> changeEmpty(@PathVariable Long orderTableId, @RequestBody TableDto tableDto) {
         return ResponseEntity.ok()
                 .body(tableService.changeEmpty(orderTableId, tableDto))
