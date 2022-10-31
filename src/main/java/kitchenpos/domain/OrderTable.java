@@ -32,10 +32,6 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public void addTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-    }
-
     // Todo: Refactor!
     public void changeSingleEmpty(final boolean empty) {
         if (Objects.nonNull(this.getTableGroupId())) {
@@ -44,9 +40,6 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public void changeEmpty(final boolean empty) {
-        this.empty = empty;
-    }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
         validateNotEmpty();
@@ -56,6 +49,11 @@ public class OrderTable {
 
     public boolean isUsing() {
         return !empty || Objects.nonNull(tableGroupId);
+    }
+
+    public void unBindGroup() {
+        this.tableGroupId = null;
+        this.empty = false;
     }
 
     public void validateNotEmpty() {

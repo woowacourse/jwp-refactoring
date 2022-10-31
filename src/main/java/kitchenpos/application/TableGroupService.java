@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.TableGroupCreateRequest;
 import kitchenpos.application.dto.TableGroupResponse;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTables;
@@ -16,21 +15,18 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Transactional
 @Service
 public class TableGroupService {
 
-    private final OrderDao orderDao;
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(final OrderDao orderDao, final OrderRepository orderRepository,
+    public TableGroupService(final OrderRepository orderRepository,
                              final OrderTableRepository orderTableRepository,
                              final TableGroupRepository tableGroupRepository) {
-        this.orderDao = orderDao;
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
@@ -56,16 +52,15 @@ public class TableGroupService {
 
     public void ungroup(final Long tableGroupId) {
         final OrderTables orderTables = new OrderTables(orderTableRepository.findAllByTableGroupId(tableGroupId));
+        validateTableOrderStatus(orderTables);;
 
-        final List<Long> orderTableIds = orderTables.getOrderTables().stream()
-            .map(OrderTable::getId)
-            .collect(Collectors.toList());
+        orderTables.unBindGroups();
+    }
 
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
-            orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+    private void validateTableOrderStatus(final OrderTables orderTables) {
+        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
+            orderTables.getOrderTableIds(), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+            throw new IllegalArgumentException("테이블 그룹을 분리할 수 없습니다.");
         }
-
-        orderTables.changeUngroups();
     }
 }

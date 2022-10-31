@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
@@ -37,11 +38,13 @@ public class OrderTables {
             .anyMatch(OrderTable::isUsing);
     }
 
-    public void changeUngroups() {
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.addTableGroupId(null);
-            orderTable.changeEmpty(true);
-        }
+    public void unBindGroups() {
+        orderTables.forEach(OrderTable::unBindGroup);
+    }
+    public List<Long> getOrderTableIds() {
+        return orderTables.stream()
+            .map(OrderTable::getId)
+            .collect(Collectors.toList());
     }
 
     public List<OrderTable> getOrderTables() {
