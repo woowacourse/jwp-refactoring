@@ -23,11 +23,7 @@ public class MenuService {
     private final MenuProductDao menuProductDao;
     private final ProductDao productDao;
 
-    public MenuService(
-            final MenuDao menuDao,
-            final MenuProductDao menuProductDao,
-            final ProductDao productDao
-    ) {
+    public MenuService(MenuDao menuDao, MenuProductDao menuProductDao, ProductDao productDao) {
         this.menuDao = menuDao;
         this.menuProductDao = menuProductDao;
         this.productDao = productDao;
