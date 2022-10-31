@@ -32,11 +32,6 @@ public class Menu {
         }
     }
 
-    public void changePrice(final BigDecimal price) {
-        validatePrice(price);
-        this.price = price;
-    }
-
     public void addMenuIdToMenuProducts() {
         menuProducts.addMenuId(id);
     }

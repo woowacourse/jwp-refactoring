@@ -28,20 +28,12 @@ public class Order {
         this.orderLineItems.addOrderLineItem(orderLineItems);
     }
 
-    public void changeAllOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = new OrderLineItems(orderLineItems);
-    }
-
     public boolean isCompletionOrder() {
         return orderStatus.equals(OrderStatus.COMPLETION.name());
     }
 
     public void changeOrderStatus(final String orderStatus) {
         this.orderStatus = orderStatus;
-    }
-
-    public List<Long> getOrderMenuIds() {
-        return orderLineItems.getOrderLineItemMenuIds();
     }
 
     public void addOrderIdsToOrderLineItems(final Long orderId) {

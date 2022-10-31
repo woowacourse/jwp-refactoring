@@ -1,6 +1,5 @@
 package kitchenpos.domain;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.util.CollectionUtils;
@@ -17,7 +16,7 @@ public class OrderTables {
         this.orderTables = orderTables;
     }
 
-    public boolean hasValidOrderTables(final List<OrderTable> registeredTables) {
+    public boolean hasValidOrderTableSize(final List<OrderTable> registeredTables) {
         return getOrderTableIds().size() == registeredTables.size();
     }
 
@@ -41,10 +40,6 @@ public class OrderTables {
 
     public boolean isEmpty() {
         return CollectionUtils.isEmpty(orderTables);
-    }
-
-    public void addOrderTable(final OrderTable... orderTables) {
-        this.orderTables.addAll(Arrays.asList(orderTables));
     }
 
     public List<OrderTable> getOrderTables() {

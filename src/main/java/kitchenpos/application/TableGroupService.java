@@ -46,7 +46,7 @@ public class TableGroupService {
         if (!savedOrderTables.isGroupAble()) {
             throw new IllegalArgumentException();
         }
-        if (!tables.hasValidOrderTables(savedOrderTables.getOrderTables())) {
+        if (!tables.hasValidOrderTableSize(savedOrderTables.getOrderTables())) {
             throw new IllegalArgumentException();
         }
     }
