@@ -15,22 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class MenuProductsTest {
 
-    @DisplayName("중복되는 상품 id로 메뉴 상품 목록을 생성 시 중복을 없앤다")
-    @Test
-    void create_duplicateProduct() {
-        List<MenuProduct> menuProductList = List.of(
-                new MenuProduct(1L,1L), new MenuProduct(2L, 3L),
-                new MenuProduct(2L, 1L));
-
-        MenuProducts menuProducts = new MenuProducts(menuProductList);
-
-        assertAll(
-                () -> assertThat(menuProducts.getMenuProducts().size()).isEqualTo(2),
-                () -> assertThat(menuProducts.getMenuProducts().get(1).getProductId()).isEqualTo(2L),
-                () -> assertThat(menuProducts.getMenuProducts().get(1).getQuantity()).isEqualTo(4L)
-        );
-    }
-
     @DisplayName("메뉴 가격이 메뉴 상품 목록 전체 가격보다 큰 경우")
     @ParameterizedTest
     @CsvSource(value = {"7000:false", "7001:true"}, delimiter = ':')

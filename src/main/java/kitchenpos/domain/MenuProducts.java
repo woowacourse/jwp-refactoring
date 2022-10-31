@@ -8,18 +8,7 @@ public class MenuProducts {
     private final List<MenuProduct> menuProducts;
 
     public MenuProducts(List<MenuProduct> menuProducts) {
-        this.menuProducts = compressQuantity(menuProducts);
-    }
-
-    private List<MenuProduct> compressQuantity(List<MenuProduct> menuProducts) {
-        Map<Long, Long> groupedQuantityByProduct = new HashMap<>();
-        for (MenuProduct menuProduct : menuProducts) {
-            Long quantity = groupedQuantityByProduct.computeIfAbsent(menuProduct.getProductId(), (id) -> 0L);
-            groupedQuantityByProduct.put(menuProduct.getProductId(), quantity + menuProduct.getQuantity());
-        }
-        return menuProducts.stream()
-                .map(each -> new MenuProduct(each.getSeq(), each.getMenuId(), each.getProductId(), groupedQuantityByProduct.get(each.getProductId())))
-                .collect(Collectors.toUnmodifiableList());
+        this.menuProducts = menuProducts;
     }
 
     public boolean isOverThanTotalPrice(Map<Long, Long> groupedPriceByProduct, long menuPrice) {

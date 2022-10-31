@@ -18,9 +18,9 @@ public class FakeTableGroupDao implements TableGroupDao {
     @Override
     public TableGroup save(TableGroup entity) {
         if (entity.getId() == null) {
-            entity.setId(++id);
-            repository.put(entity.getId(), entity);
-            return entity;
+            TableGroup addEntity = new TableGroup(++id, entity.getCreatedDate(), entity.getOrderTables());
+            repository.put(addEntity.getId(), addEntity);
+            return addEntity;
         }
         return repository.computeIfAbsent(entity.getId(), (id) -> entity);
     }

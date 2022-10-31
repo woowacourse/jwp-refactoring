@@ -11,6 +11,7 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuCreateRequest;
 import kitchenpos.dto.MenuProductsRequest;
+import kitchenpos.dto.MenuResponse;
 import kitchenpos.util.FakeMenuDao;
 import kitchenpos.util.FakeMenuGroupDao;
 import kitchenpos.util.FakeMenuProductDao;
@@ -45,7 +46,7 @@ public class MenuServiceTest {
                 "2인육회", 24000L, 3L,
                 List.of(new MenuProductsRequest(5L, 2L)));
 
-        Menu menu = menuService.create(menuCreateRequest);
+        MenuResponse menu = menuService.create(menuCreateRequest);
 
         assertAll(
                 () -> assertThat(menu.getMenuGroupId()).isEqualTo(3L),
@@ -114,7 +115,7 @@ public class MenuServiceTest {
     void list() {
         preprocessWhenList(2);
 
-        List<Menu> menus = menuService.list();
+        List<MenuResponse> menus = menuService.list();
 
         assertThat(menus.size()).isEqualTo(2);
     }

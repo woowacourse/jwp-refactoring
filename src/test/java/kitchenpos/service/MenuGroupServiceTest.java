@@ -4,6 +4,7 @@ import kitchenpos.application.MenuGroupService;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.MenuGroupCreateRequest;
+import kitchenpos.dto.MenuGroupResponse;
 import kitchenpos.util.FakeMenuGroupDao;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ public class MenuGroupServiceTest {
     void create() {
         MenuGroupCreateRequest menuGroupCreateRequest = new MenuGroupCreateRequest("우테코 단체");
 
-        MenuGroup menuGroup = menuGroupService.create(menuGroupCreateRequest);
+        MenuGroupResponse menuGroup = menuGroupService.create(menuGroupCreateRequest);
 
         assertThat(menuGroup.getName()).isEqualTo("우테코 단체");
     }
@@ -40,7 +41,7 @@ public class MenuGroupServiceTest {
     void list() {
         preprocessWhenList(2);
 
-        List<MenuGroup> menuGroups = menuGroupService.list();
+        List<MenuGroupResponse> menuGroups = menuGroupService.list();
 
         assertThat(menuGroups.size()).isEqualTo(2);
     }

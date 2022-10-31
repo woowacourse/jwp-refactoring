@@ -10,6 +10,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.OrderTableRequest;
 import kitchenpos.dto.TableGroupCreateRequest;
+import kitchenpos.dto.TableGroupResponse;
 import kitchenpos.util.FakeOrderDao;
 import kitchenpos.util.FakeOrderTableDao;
 import kitchenpos.util.FakeTableGroupDao;
@@ -42,7 +43,7 @@ public class TableGroupServiceTest {
                 List.of(new OrderTableRequest(1L), new OrderTableRequest(8L))
         );
 
-        TableGroup tableGroup = tableGroupService.create(tableGroupCreateRequest);
+        TableGroupResponse tableGroup = tableGroupService.create(tableGroupCreateRequest);
 
         assertAll(
                 () -> assertThat(tableGroup.getOrderTables().size()).isEqualTo(2),

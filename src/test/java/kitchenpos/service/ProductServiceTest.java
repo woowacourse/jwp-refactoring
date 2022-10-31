@@ -4,6 +4,7 @@ import kitchenpos.application.ProductService;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductCreateRequest;
+import kitchenpos.dto.ProductResponse;
 import kitchenpos.util.FakeProductDao;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ public class ProductServiceTest {
     void create() {
         ProductCreateRequest productCreateRequest = new ProductCreateRequest("샐러드", 3000L);
 
-        Product product = productService.create(productCreateRequest);
+        ProductResponse product = productService.create(productCreateRequest);
 
         assertAll(
                 () -> assertThat(product.getName()).isEqualTo("샐러드"),
@@ -51,7 +52,7 @@ public class ProductServiceTest {
     void list() {
         preprocessWhenList(2);
 
-        List<Product> products = productService.list();
+        List<ProductResponse> products = productService.list();
 
         assertThat(products.size()).isEqualTo(2);
     }
