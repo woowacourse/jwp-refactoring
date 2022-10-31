@@ -87,7 +87,7 @@ class OrderServiceTest {
                 Product product = productRepository.save(new Product("강정치킨", BigDecimal.valueOf(18000)));
                 Menu menu = menuRepository.save(new Menu("강정치킨", BigDecimal.valueOf(37000), menuGroup.getId()));
                 menu.addMenuProduct(new MenuProduct(menu.getId(), product.getId(), 2));
-                OrderTable orderTable = orderTableRepository.save(new OrderTable(2, true));
+                OrderTable orderTable = orderTableRepository.save(new OrderTable(2, false));
 
                 assertThatThrownBy(
                         () -> orderService.create(new OrderCommand(orderTable.getId(), Collections.emptyList())))

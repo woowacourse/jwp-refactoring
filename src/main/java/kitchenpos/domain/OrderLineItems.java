@@ -18,6 +18,9 @@ public class OrderLineItems {
     }
 
     public OrderLineItems(List<OrderLineItem> values) {
+        if (values.isEmpty()) {
+            throw new IllegalArgumentException("주문 항목이 비어있습니다.");
+        }
         this.values = values;
     }
 
