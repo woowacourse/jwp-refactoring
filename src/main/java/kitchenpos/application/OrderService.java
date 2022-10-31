@@ -14,12 +14,10 @@ import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.dto.OrderRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 @Transactional
@@ -76,12 +74,8 @@ public class OrderService {
     }
 
     public Order changeOrderStatus(final Long orderId, final Order order) {
-        final Order savedOrder = orderDao.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
-        savedOrder.changeOrderStatus(orderStatus.name());
-        savedOrder.setOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
-        orderDao.save(savedOrder);
-        return savedOrder;
+        final Order savedOrder = orderDao.findById(orderId);
+        savedOrder.changeOrderStatus(order.getOrderStatus());
+        return orderDao.save(savedOrder);
     }
 }

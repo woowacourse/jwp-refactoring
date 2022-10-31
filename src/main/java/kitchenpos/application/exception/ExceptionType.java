@@ -5,6 +5,7 @@ public enum ExceptionType {
     NOT_FOUND_MENU_EXCEPTION("없는 메뉴가 포함된 주문입니다."),
     NOT_FOUND_MENU_GROUP_EXCEPTION("없는 메뉴 그룹입니다.."),
     NOT_FOUND_TABLE_EXCEPTION("없는 테이블에 대한 요청입니다."),
+    NOT_FOUND_ORDER_EXCEPTION("없는 주문에 대한 요청입니다."),
     NOT_FOUND_ORDER_LINE_ITEM_EXCEPTION("없는 주문서에 대한 요청입니다."),
     INVALID_PRICE_EXCEPTION("잘못된 가격입니다."),
     INVALID_MENU_PRODUCT_EXCEPTION("메뉴 가격은 메뉴의 합 이하여야합니다. "),

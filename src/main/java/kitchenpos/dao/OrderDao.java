@@ -1,8 +1,10 @@
 package kitchenpos.dao;
 
+import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_ORDER_EXCEPTION;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import kitchenpos.application.exception.CustomIllegalArgumentException;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import org.springframework.stereotype.Repository;
@@ -10,7 +12,7 @@ import org.springframework.stereotype.Repository;
 public interface OrderDao {
     Order save(Order entity);
 
-    Optional<Order> findById(Long id);
+    Order findById(Long id);
 
     List<Order> findAll();
 
@@ -43,9 +45,11 @@ class OrderRepository implements OrderDao {
     }
 
     @Override
-    public Optional<Order> findById(final Long id) {
-        //:todo 확인해볼 것
-        return orderDao.findById(id);
+    public Order findById(final Long id) {
+        final Order order = orderDao.findById(id)
+                .orElseThrow(() -> new CustomIllegalArgumentException(NOT_FOUND_ORDER_EXCEPTION));
+        order.setOrderLineItems(orderLineItemDao.findAllByOrderId(id));
+        return order;
     }
 
     @Override
