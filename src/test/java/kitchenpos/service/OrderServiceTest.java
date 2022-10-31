@@ -8,6 +8,7 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.*;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderLineItemRequest;
+import kitchenpos.dto.OrderResponse;
 import kitchenpos.dto.OrderStatusUpdateRequest;
 import kitchenpos.util.FakeMenuDao;
 import kitchenpos.util.FakeOrderDao;
@@ -43,10 +44,10 @@ public class OrderServiceTest {
                 List.of(new OrderLineItemRequest(2L, 3L),
                         new OrderLineItemRequest(1L, 2L)));
 
-        Order order = orderService.create(orderCreateRequest);
+        OrderResponse order = orderService.create(orderCreateRequest);
 
         assertAll(
-                () -> assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING),
+                () -> assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
                 () -> assertThat(order.getOrderTableId()).isEqualTo(4L),
                 () -> assertThat(order.getOrderLineItems().size()).isEqualTo(2)
         );
@@ -93,7 +94,7 @@ public class OrderServiceTest {
     @Test
     void list() {
         preprocessWhenList(2);
-        List<Order> orders = orderService.list();
+        List<OrderResponse> orders = orderService.list();
 
         assertThat(orders.size()).isEqualTo(2);
     }
@@ -101,16 +102,16 @@ public class OrderServiceTest {
     @Test
     void changeOrderStatus() {
         preprocessWhenChange(
-                new Order(1L, 2L, OrderStatus.COOKING, LocalDateTime.now(), null),
+                new Order(1L, 2L, OrderStatus.MEAL, LocalDateTime.now(), null),
                 List.of(
                         new OrderLineItem(1L, 1L, 1L),
                         new OrderLineItem(1L, 2L, 1L)));
-        OrderStatusUpdateRequest orderStatusUpdateRequest = new OrderStatusUpdateRequest("MEAL");
+        OrderStatusUpdateRequest orderStatusUpdateRequest = new OrderStatusUpdateRequest("COMPLETION");
 
-        Order order = orderService.changeOrderStatus(1L, orderStatusUpdateRequest);
+        OrderResponse order = orderService.changeOrderStatus(1L, orderStatusUpdateRequest);
 
         assertAll(
-                () -> assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.MEAL),
+                () -> assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name()),
                 () -> assertThat(order.getOrderTableId()).isEqualTo(2L),
                 () -> assertThat(order.getOrderLineItems().size()).isEqualTo(2)
         );

@@ -6,6 +6,7 @@ import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.*;
 import kitchenpos.dto.*;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -37,7 +38,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(OrderCreateRequest orderCreateRequest) {
+    public OrderResponse create(OrderCreateRequest orderCreateRequest) {
         OrderLineItems orderLineItems = generateOrderLineItems(orderCreateRequest);
         OrderTable orderTable = generateOrderTable(orderCreateRequest);
 
@@ -45,8 +46,15 @@ public class OrderService {
 
         final Long orderId = savedOrder.getId();
         List<OrderLineItem> lastOrderLineItems = orderLineItems.changeOrderId(orderId).getOrderLineItems();
-        lastOrderLineItems.forEach(orderLineItemDao::save);
-        return savedOrder.changeOrderLineItems(lastOrderLineItems);
+        lastOrderLineItems = lastOrderLineItems.stream()
+                .map(orderLineItemDao::save)
+                .collect(Collectors.toUnmodifiableList());
+        savedOrder = savedOrder.changeOrderLineItems(lastOrderLineItems);
+        List<OrderLineItemResponse> orderLineItemResponses = savedOrder.getOrderLineItems().stream()
+                .map(each -> new OrderLineItemResponse(each.getSeq(), each.getOrderId(), each.getMenuId(), each.getQuantity()))
+                .collect(Collectors.toUnmodifiableList());
+        return new OrderResponse(savedOrder.getId(), savedOrder.getOrderTableId(), savedOrder.getOrderStatus().name(),
+                savedOrder.getOrderedTime(), orderLineItemResponses, savedOrder.isCompletion());
     }
 
     private OrderLineItems generateOrderLineItems(OrderCreateRequest orderCreateRequest) {
@@ -88,20 +96,38 @@ public class OrderService {
         return new Order(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now());
     }
 
-    public List<Order> list() {
-        return orderDao.findAll().stream()
-                .map(each -> each.changeOrderLineItems(orderLineItemDao.findAllByOrderId(each.getId())))
-                .collect(Collectors.toUnmodifiableList());
+    public List<OrderResponse> list() {
+        List<Order> orders = orderDao.findAll();
+        List<Order> fullOrders = new ArrayList<>();
+        for (Order order : orders) {
+            List<OrderLineItem> orderLineItems = orderLineItemDao.findAllByOrderId(order.getId());
+            fullOrders.add(order.changeOrderLineItems(orderLineItems));
+        }
+
+        List<OrderResponse> orderResponses = new ArrayList<>();
+        for (Order order : fullOrders) {
+            List<OrderLineItemResponse> orderLineItemResponses = order.getOrderLineItems().stream()
+                    .map(each -> new OrderLineItemResponse(each.getSeq(), each.getOrderId(), each.getMenuId(), each.getQuantity()))
+                    .collect(Collectors.toUnmodifiableList());
+            orderResponses.add(new OrderResponse(order.getId(), order.getOrderTableId(), order.getOrderStatus().name(),
+                    order.getOrderedTime(), orderLineItemResponses, order.isCompletion()));
+        }
+        return orderResponses;
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, OrderStatusUpdateRequest orderStatusUpdateRequest) {
+    public OrderResponse changeOrderStatus(final Long orderId, OrderStatusUpdateRequest orderStatusUpdateRequest) {
         Order searchedOrder = searchOrder(orderId);
         final OrderStatus orderStatus = OrderStatus.valueOf(orderStatusUpdateRequest.getOrderStatus());
 
         searchedOrder = orderDao.save(searchedOrder.changeOrderStatus(orderStatus));
 
-        return searchedOrder.changeOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
+        searchedOrder = searchedOrder.changeOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
+        List<OrderLineItemResponse> orderLineItemResponses = searchedOrder.getOrderLineItems().stream()
+                .map(each -> new OrderLineItemResponse(each.getSeq(), each.getOrderId(), each.getMenuId(), each.getQuantity()))
+                .collect(Collectors.toUnmodifiableList());
+        return new OrderResponse(searchedOrder.getId(), searchedOrder.getOrderTableId(), searchedOrder.getOrderStatus().name(),
+                searchedOrder.getOrderedTime(), orderLineItemResponses, searchedOrder.isCompletion());
     }
 
     private Order searchOrder(Long orderId) {
