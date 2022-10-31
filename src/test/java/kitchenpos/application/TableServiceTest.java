@@ -124,7 +124,7 @@ class TableServiceTest extends ServiceTest {
 
         assertThatThrownBy(() -> 테이블_손님수_변경(테이블_1.getId(), 음수_손님수))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("테이블 고객 수는 0 이상이어야 한다.");
+                .hasMessage("테이블은 차있어야 한다.");
     }
 
     private OrderTableResponse 테이블_손님수_변경(Long tableId, int numberOfGuests) {

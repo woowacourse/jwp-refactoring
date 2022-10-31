@@ -31,10 +31,10 @@ class TableGroupServiceTest extends ServiceTest {
         Long 테이블그룹Id = tableGroupService.create(테이블그룹요청_id(빈테이블_1_id, 빈테이블_2_id)).getId();
 
         List<OrderTable> 테이블_목록 = orderTableDao.findAllByTableGroupId(테이블그룹Id);
-        boolean 손님_착석 = false;
+        boolean empty = false;
         검증_필드비교_동일_목록(테이블_목록, List.of(
-                new OrderTable(빈테이블_1_id, 테이블그룹Id, 0, 손님_착석),
-                new OrderTable(빈테이블_2_id, 테이블그룹Id, 0, 손님_착석)
+                new OrderTable(빈테이블_1_id, 테이블그룹Id, 0, empty),
+                new OrderTable(빈테이블_2_id, 테이블그룹Id, 0, empty)
         ));
     }
 

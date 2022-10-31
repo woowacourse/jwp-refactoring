@@ -35,12 +35,13 @@ public class TableGroupService {
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
         final Tables orderTables = new Tables(getOrderTables(tableGroupRequest));
 
-        final TableGroup savedTableGroup = tableGroupDao.save(
+        final TableGroup tableGroup = tableGroupDao.save(
                 new TableGroup(null, LocalDateTime.now(), orderTables.getOrderTables()));
-        updateToFull(savedTableGroup);
-        addTableGroupId(savedTableGroup);
+        tableGroup.updateTablesFull();
+        tableGroup.addTableGroupId();
 
-        return toTableGroupResponse(savedTableGroup);
+        updateAllTables(tableGroup);
+        return toTableGroupResponse(tableGroup);
     }
 
     private List<OrderTable> getOrderTables(TableGroupRequest tableGroupRequest) {
@@ -55,23 +56,12 @@ public class TableGroupService {
                 .collect(Collectors.toList());
     }
 
-    private void updateToFull(TableGroup savedTableGroup) {
+    private void updateAllTables(TableGroup tableGroup) {
         List<OrderTable> orderTables = new ArrayList<>();
-        for (final OrderTable savedOrderTable : savedTableGroup.getOrderTables()) {
-            savedOrderTable.updateEmpty(false);
-            orderTables.add(orderTableDao.save(savedOrderTable));
+        for (final OrderTable table : tableGroup.getOrderTables()) {
+            orderTables.add(orderTableDao.save(table));
         }
-        savedTableGroup.updateOrderTables(orderTables);
-    }
-
-    private void addTableGroupId(TableGroup savedTableGroup) {
-        final Long tableGroupId = savedTableGroup.getId();
-        List<OrderTable> orderTables = new ArrayList<>();
-        for (final OrderTable savedOrderTable : savedTableGroup.getOrderTables()) {
-            savedOrderTable.updateTableGroupId(tableGroupId);
-            orderTables.add(orderTableDao.save(savedOrderTable));
-        }
-        savedTableGroup.updateOrderTables(orderTables);
+        tableGroup.updateOrderTables(orderTables);
     }
 
     private TableGroupResponse toTableGroupResponse(TableGroup savedTableGroup) {
@@ -93,20 +83,21 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
-
         validateComplete(getOrderTableIds(orderTables));
-
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.updateTableGroupId(null);
-            orderTable.updateEmpty(false);
-            orderTableDao.save(orderTable);
-        }
+        deleteTableGroupId(orderTables);
     }
 
     private void validateComplete(List<Long> orderTableIds) {
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException("단체 지정 속 모든 테이블들의 주문이 있다면 COMPLETION 상태여야 한다.");
+        }
+    }
+
+    private void deleteTableGroupId(List<OrderTable> orderTables) {
+        for (final OrderTable orderTable : orderTables) {
+            orderTable.updateTableGroupId(null);
+            orderTableDao.save(orderTable);
         }
     }
 }
