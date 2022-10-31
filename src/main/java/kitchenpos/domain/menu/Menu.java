@@ -35,13 +35,14 @@ public class Menu {
     }
 
     public static Menu of(String name, BigDecimal price, Long menuGroupId, ProductQuantities productQuantities) {
-        validateMenuPrice(price, productQuantities);
-        return new Menu(null, name, new Price(price), menuGroupId);
+        Price menuPrice = new Price(price);
+        validateMenuPrice(menuPrice, productQuantities);
+        return new Menu(null, name, menuPrice, menuGroupId);
     }
 
-    private static void validateMenuPrice(BigDecimal price, ProductQuantities productQuantities) {
-        BigDecimal individualPriceSum = productQuantities.calculateTotalPrice();
-        if (price == null || price.compareTo(individualPriceSum) > 0) {
+    private static void validateMenuPrice(Price menuPrice, ProductQuantities productQuantities) {
+        Price totalPrice = productQuantities.calculateTotalPrice();
+        if (menuPrice == null || menuPrice.isBiggerThan(totalPrice)) {
             throw new IllegalArgumentException("메뉴의 가격은 구성품을 개별적으로 구매했을 때에 비해 비싸면 안됩니다.");
         }
     }

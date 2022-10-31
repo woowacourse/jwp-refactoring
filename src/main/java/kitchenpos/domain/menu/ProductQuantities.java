@@ -12,10 +12,10 @@ public class ProductQuantities {
         this.values = values;
     }
 
-    public BigDecimal calculateTotalPrice() {
-        return this.values.stream()
+    public Price calculateTotalPrice() {
+        return new Price(this.values.stream()
                 .map(ProductQuantity::calculateTotalPrice)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .reduce(BigDecimal.ZERO, BigDecimal::add));
     }
 
     public List<MenuProduct> toMenuProducts(Long menuId) {

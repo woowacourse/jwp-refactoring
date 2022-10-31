@@ -21,6 +21,10 @@ public class Price {
         this.value = value;
     }
 
+    public boolean isBiggerThan(Price target) {
+        return value.compareTo(target.value) > 0;
+    }
+
     public Price multiply(int operand) {
         return new Price(value.multiply(BigDecimal.valueOf(operand)));
     }
