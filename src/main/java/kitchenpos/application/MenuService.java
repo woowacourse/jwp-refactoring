@@ -8,6 +8,7 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,12 +37,12 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final Menu menu) {
-        validateMenuPrice(menu.getPrice());
-        validateMenuGroup(menu);
-        final List<MenuProduct> menuProducts = menu.getMenuProducts();
-        validateMenuPrice(menu.getPrice(), calculateProductPrice(menuProducts));
-        final Menu savedMenu = menuDao.save(menu);
+    public Menu create(final MenuDto menuDto) {
+        validateMenuPrice(menuDto.getPrice());
+        validateMenuGroup(menuDto);
+        final List<MenuProduct> menuProducts = menuDto.getMenuProducts();
+        validateMenuPrice(menuDto.getPrice(), calculateProductPrice(menuProducts));
+        final Menu savedMenu = menuDao.save(menuDto.toEntity());
         fillMenuIdToMenuProduct(menuProducts, savedMenu);
         return savedMenu;
     }
@@ -52,8 +53,8 @@ public class MenuService {
         }
     }
 
-    private void validateMenuGroup(final Menu menu) {
-        if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
+    private void validateMenuGroup(final MenuDto menuDto) {
+        if (!menuGroupDao.existsById(menuDto.getMenuGroupId())) {
             throw new IllegalArgumentException("[ERROR] 메뉴 그룹이 존재하지 않습니다.");
         }
     }

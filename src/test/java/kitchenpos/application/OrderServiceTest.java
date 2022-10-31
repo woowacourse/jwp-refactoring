@@ -20,6 +20,8 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderDto;
+import kitchenpos.dto.OrderTableDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +37,7 @@ public class OrderServiceTest extends ServiceTest {
         final Order order = createOrder(table, menu);
 
         // when
-        final Order createdOrder = orderService.create(order);
+        final Order createdOrder = orderService.create(new OrderDto(order));
 
         // then
         assertAll(
@@ -55,7 +57,7 @@ public class OrderServiceTest extends ServiceTest {
         final Order order = createOrder(table, notRegisteredMenu);
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(new OrderDto(order)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -66,12 +68,12 @@ public class OrderServiceTest extends ServiceTest {
         final OrderTable table = 주문테이블등록(createOrderTable(3, false));
         final Menu menu = 메뉴등록(createMenu("양념치킨메뉴", 10_000, 메뉴그룹등록(메뉴그룹1), 상품등록(피자)));
 
-        tableService.changeEmpty(table.getId(), forUpdateEmpty(true));
+        tableService.changeEmpty(table.getId(), new OrderTableDto(forUpdateEmpty(true)));
 
         final Order order = createOrder(table, menu);
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(new OrderDto(order)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -106,7 +108,7 @@ public class OrderServiceTest extends ServiceTest {
         final Order order = 주문등록(createOrder(table, menu));
 
         // when
-        final Order actual = orderService.changeOrderStatus(order.getId(), forUpdateStatus("MEAL"));
+        final Order actual = orderService.changeOrderStatus(order.getId(), new OrderDto(forUpdateStatus("MEAL")));
 
         // then
         assertThat(actual.getOrderStatus()).isEqualTo(MEAL.name());
@@ -122,8 +124,9 @@ public class OrderServiceTest extends ServiceTest {
         final Order notRegisteredOrder = createOrder(table, menu);
 
         // when & then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(notRegisteredOrder.getId(), forUpdateStatus("MEAL")))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(
+                () -> orderService.changeOrderStatus(notRegisteredOrder.getId(), new OrderDto(forUpdateStatus("MEAL")))
+        ).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -134,11 +137,12 @@ public class OrderServiceTest extends ServiceTest {
         final Menu menu = 메뉴등록(createMenu("양념치킨메뉴", 10_000, 메뉴그룹등록(메뉴그룹1), 상품등록(피자)));
 
         final Order order = 주문등록(createOrder(table, menu));
-        orderService.changeOrderStatus(order.getId(), forUpdateStatus(OrderStatus.COMPLETION.name()));
+        orderService.changeOrderStatus(order.getId(), new OrderDto(forUpdateStatus(OrderStatus.COMPLETION.name())));
 
         // when & then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), forUpdateStatus("COOKING")))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(
+                () -> orderService.changeOrderStatus(order.getId(), new OrderDto(forUpdateStatus("COOKING")))
+        ).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -153,7 +157,7 @@ public class OrderServiceTest extends ServiceTest {
         final Order forUpdate = DomainFixture.forUpdateStatus("TEST");
 
         // when & then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), forUpdate))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), new OrderDto(forUpdate)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

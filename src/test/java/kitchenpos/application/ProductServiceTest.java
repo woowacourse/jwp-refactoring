@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +23,7 @@ public class ProductServiceTest extends ServiceTest {
         final Product product = createProduct("김피탕", 10_000);
 
         // when
-        final Product actual = productService.create(product);
+        final Product actual = productService.create(new ProductDto(product));
 
         // then
         final Long actualId = actual.getId();
@@ -39,7 +40,7 @@ public class ProductServiceTest extends ServiceTest {
         final Product product = createProduct("김피탕", -1);
 
         // when & then
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(new ProductDto(product)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

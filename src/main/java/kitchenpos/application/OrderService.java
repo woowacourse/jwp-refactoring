@@ -13,6 +13,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -38,11 +39,11 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final Order order) {
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
+    public Order create(final OrderDto orderDto) {
+        final List<OrderLineItem> orderLineItems = orderDto.getOrderLineItems();
         validateOrderLineItems(orderLineItems);
         validateMenu(orderLineItems);
-        final OrderTable orderTable = searchOrderTable(order);
+        final OrderTable orderTable = searchOrderTable(orderDto.toEntity());
         validateOrderTable(orderTable);
         Order orderForSave =
                 Order.ofNullId(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), List.of());
@@ -100,10 +101,10 @@ public class OrderService {
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final Order order) {
+    public Order changeOrderStatus(final Long orderId, final OrderDto orderDto) {
         final Order savedOrder = searchOrder(orderId);
         validateOrderStatus(savedOrder);
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
+        final OrderStatus orderStatus = OrderStatus.valueOf(orderDto.getOrderStatus());
         savedOrder.updateOrderStatus(orderStatus.name());
         orderDao.save(savedOrder);
         savedOrder.addAllOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));

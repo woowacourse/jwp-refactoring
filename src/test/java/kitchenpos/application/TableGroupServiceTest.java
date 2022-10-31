@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.TableGroupDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +22,7 @@ public class TableGroupServiceTest extends ServiceTest {
         final OrderTable table2 = 주문테이블등록(createOrderTable(5, true));
 
         // when
-        final TableGroup tableGroup = tableGroupService.create(createTableGroup(table1, table2));
+        final TableGroup tableGroup = tableGroupService.create(new TableGroupDto(createTableGroup(table1, table2)));
         final OrderTable actual = orderTableDao.findById(table1.getId())
                 .orElseThrow();
 
@@ -41,7 +42,7 @@ public class TableGroupServiceTest extends ServiceTest {
         final OrderTable table2 = 주문테이블등록(createOrderTable(5, false));
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(createTableGroup(table1, table2)))
+        assertThatThrownBy(() -> tableGroupService.create(new TableGroupDto(createTableGroup(table1, table2))))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -52,7 +53,7 @@ public class TableGroupServiceTest extends ServiceTest {
         final OrderTable table = 주문테이블등록(createOrderTable(3, true));
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(createTableGroup(table)))
+        assertThatThrownBy(() -> tableGroupService.create(new TableGroupDto(createTableGroup(table))))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -62,12 +63,12 @@ public class TableGroupServiceTest extends ServiceTest {
         // given
         final OrderTable groupedTable1 = 주문테이블등록(createOrderTable(3, true));
         final OrderTable groupedTable2 = 주문테이블등록(createOrderTable(3, true));
-        tableGroupService.create(createTableGroup(groupedTable1, groupedTable2));
+        tableGroupService.create(new TableGroupDto(createTableGroup(groupedTable1, groupedTable2)));
 
         final OrderTable table = 주문테이블등록(createOrderTable(5, true));
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(createTableGroup(groupedTable1, table)))
+        assertThatThrownBy(() -> tableGroupService.create(new TableGroupDto(createTableGroup(groupedTable1, table))))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

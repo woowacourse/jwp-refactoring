@@ -17,6 +17,9 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderDto;
+import kitchenpos.dto.OrderTableDto;
+import kitchenpos.dto.TableGroupDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -31,7 +34,7 @@ public class TableServiceTest extends ServiceTest {
         final OrderTable table = createOrderTable(3, false);
 
         // when
-        final OrderTable createdTable = tableService.create(table);
+        final OrderTable createdTable = tableService.create(new OrderTableDto(table));
         final Long createdTableId = createdTable.getId();
 
         // then
@@ -48,7 +51,8 @@ public class TableServiceTest extends ServiceTest {
         final OrderTable table = 주문테이블등록(createOrderTable(5, false));
 
         // when
-        final OrderTable updatedTable = tableService.changeEmpty(table.getId(), forUpdateEmpty(true));
+        final OrderTable updatedTable =
+                tableService.changeEmpty(table.getId(), new OrderTableDto(forUpdateEmpty(true)));
 
         // then
         assertThat(updatedTable.isEmpty()).isTrue();
@@ -61,7 +65,8 @@ public class TableServiceTest extends ServiceTest {
         final OrderTable table = 주문테이블등록(createOrderTable(5, true));
 
         // when
-        final OrderTable updatedTable = tableService.changeEmpty(table.getId(), forUpdateEmpty(false));
+        final OrderTable updatedTable =
+                tableService.changeEmpty(table.getId(), new OrderTableDto(forUpdateEmpty(false)));
 
         // then
         assertThat(updatedTable.isEmpty()).isFalse();
@@ -71,7 +76,7 @@ public class TableServiceTest extends ServiceTest {
     @DisplayName("changeEmpty -> 주문 테이블이 존재하지 않으면 예외가 발생한다.")
     void changeEmpty_noOrderTable_throwException() {
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(999L, forUpdateEmpty(true)))
+        assertThatThrownBy(() -> tableService.changeEmpty(999L, new OrderTableDto(forUpdateEmpty(true))))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -81,10 +86,10 @@ public class TableServiceTest extends ServiceTest {
         // given
         final OrderTable table = 주문테이블등록(createOrderTable(3, true));
         final OrderTable table2 = 주문테이블등록(createOrderTable(3, true));
-        tableGroupService.create(createTableGroup(table, table2));
+        tableGroupService.create(new TableGroupDto(createTableGroup(table, table2)));
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(table.getId(), forUpdateEmpty(false)))
+        assertThatThrownBy(() -> tableService.changeEmpty(table.getId(), new OrderTableDto(forUpdateEmpty(false))))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -97,11 +102,10 @@ public class TableServiceTest extends ServiceTest {
         final Menu menu = 메뉴등록(createMenu("양념치킨메뉴", 10_000, 메뉴그룹등록(메뉴그룹1), 상품등록(피자)));
 
         final Order order = 주문등록(createOrder(table, menu));
-        orderService.changeOrderStatus(order.getId(), forUpdateStatus(orderStatus.name()));
-//        주문상태변경(order, orderStatus);
+        orderService.changeOrderStatus(order.getId(), new OrderDto(forUpdateStatus(orderStatus.name())));
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(table.getId(), forUpdateEmpty(true)))
+        assertThatThrownBy(() -> tableService.changeEmpty(table.getId(), new OrderTableDto(forUpdateEmpty(true))))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -112,7 +116,8 @@ public class TableServiceTest extends ServiceTest {
         final OrderTable table = 주문테이블등록(createOrderTable(5, false));
 
         // when
-        final OrderTable actual = tableService.changeNumberOfGuests(table.getId(), forUpdateGuestNumber(3));
+        final OrderTable actual =
+                tableService.changeNumberOfGuests(table.getId(), new OrderTableDto(forUpdateGuestNumber(3)));
 
         // then
         assertThat(actual.getNumberOfGuests()).isEqualTo(3);
@@ -125,8 +130,9 @@ public class TableServiceTest extends ServiceTest {
         final OrderTable table = 주문테이블등록(createOrderTable(4, false));
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(table.getId(), forUpdateGuestNumber(-1)))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(
+                () -> tableService.changeNumberOfGuests(table.getId(), new OrderTableDto(forUpdateGuestNumber(-1)))
+        ).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -136,8 +142,8 @@ public class TableServiceTest extends ServiceTest {
         final OrderTable table = 주문테이블등록(createOrderTable(4, true));
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(table.getId(), forUpdateGuestNumber(2)))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(
+                () -> tableService.changeNumberOfGuests(table.getId(), new OrderTableDto(forUpdateGuestNumber(2)))
+        ).isInstanceOf(IllegalArgumentException.class);
     }
-
 }

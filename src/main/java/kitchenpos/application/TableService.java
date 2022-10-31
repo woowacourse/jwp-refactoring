@@ -7,6 +7,7 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderTableDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,9 +23,9 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
+    public OrderTable create(final OrderTableDto orderTableDto) {
         OrderTable orderTableForSave =
-                OrderTable.ofNullId(null, orderTable.getNumberOfGuests(), orderTable.isEmpty());
+                OrderTable.ofNullId(null, orderTableDto.getNumberOfGuests(), orderTableDto.isEmpty());
         return orderTableDao.save(orderTableForSave);
     }
 
@@ -33,11 +34,11 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
+    public OrderTable changeEmpty(final Long orderTableId, final OrderTableDto orderTableDto) {
         final OrderTable savedOrderTable = searchOrderTable(orderTableId);
         validateOrderTableAlreadyInGroup(savedOrderTable);
         validateOrderStatus(orderTableId);
-        savedOrderTable.updateEmpty(orderTable.isEmpty());
+        savedOrderTable.updateEmpty(orderTableDto.isEmpty());
         return orderTableDao.save(savedOrderTable);
     }
 
@@ -61,8 +62,8 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
+    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTableDto orderTableDto) {
+        final int numberOfGuests = orderTableDto.getNumberOfGuests();
         validateNumberOfGuests(numberOfGuests);
         final OrderTable savedOrderTable = searchOrderTable(orderTableId);
         validateEmptyOrderTable(savedOrderTable);

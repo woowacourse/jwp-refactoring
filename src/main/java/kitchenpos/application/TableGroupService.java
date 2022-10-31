@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -11,6 +10,7 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.TableGroupDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -30,14 +30,14 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
+    public TableGroup create(final TableGroupDto tableGroupDto) {
+        final List<OrderTable> orderTables = tableGroupDto.getOrderTables();
         validateOrderTablesSize(orderTables);
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(getOrderTableIds(orderTables));
         validateOrderTablesSize(orderTables, savedOrderTables);
         validateOrderTableAlreadyInGroup(savedOrderTables);
-        tableGroup.updateCreatedDate(LocalDateTime.now());
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        tableGroupDto.updateCreatedDateToNow();
+        final TableGroup savedTableGroup = tableGroupDao.save(tableGroupDto.toEntity());
         updateTableGroupOfOrderTables(savedOrderTables, savedTableGroup);
         return savedTableGroup;
     }

@@ -14,6 +14,7 @@ import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +29,7 @@ public class MenuServiceTest extends ServiceTest {
         final Menu menu = createMenu("후라이드치킨메뉴", 1_000, menuGroup, product);
 
         // when
-        final Menu createdMenu = menuService.create(menu);
+        final Menu createdMenu = menuService.create(new MenuDto(menu));
 
         // then
         final Long createdMenuId = createdMenu.getId();
@@ -48,7 +49,7 @@ public class MenuServiceTest extends ServiceTest {
         final Menu menu = createMenu("양념치킨메뉴", -1, menuGroup, product);
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(new MenuDto(menu)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -61,7 +62,7 @@ public class MenuServiceTest extends ServiceTest {
         final Menu menu = createMenu("양념치킨메뉴", 1_000, notRegisteredMenuGroup, product);
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(new MenuDto(menu)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -76,7 +77,7 @@ public class MenuServiceTest extends ServiceTest {
         final Menu menu = createMenu("치킨피자메뉴", 30_000, menuGroup, product1, product2);
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(new MenuDto(menu)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

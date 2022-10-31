@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.MenuGroupDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +21,7 @@ public class MenuGroupServiceTest extends ServiceTest {
         final MenuGroup menuGroup = createMenuGroup("새로운메뉴그룹");
 
         // when
-        final MenuGroup createdMenuGroup = menuGroupService.create(menuGroup);
+        final MenuGroup createdMenuGroup = menuGroupService.create(new MenuGroupDto(menuGroup));
 
         // then
         final Long createdMenuGroupId = createdMenuGroup.getId();
