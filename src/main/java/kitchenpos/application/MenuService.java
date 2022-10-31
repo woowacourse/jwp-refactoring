@@ -91,8 +91,9 @@ public class MenuService {
         List<Long> existProductIds = productDao.findAll().stream()
                 .map(Product::getId)
                 .collect(Collectors.toUnmodifiableList());
-        if (menuCreateRequest.getMenuProducts().stream()
-                .anyMatch(each -> !existProductIds.contains(each.getProductId()))) {
+        boolean isNotExistProductId = menuCreateRequest.getMenuProducts().stream()
+                .anyMatch(each -> !existProductIds.contains(each.getProductId()));
+        if (isNotExistProductId) {
             throw new IllegalArgumentException();
         }
     }

@@ -73,8 +73,9 @@ public class OrderService {
         List<Long> existMenuIds = menuDao.findAll().stream()
                 .map(Menu::getId)
                 .collect(Collectors.toUnmodifiableList());
-        if (orderCreateRequest.getOrderLineItems().stream()
-                .anyMatch(each -> !existMenuIds.contains(each.getMenuId()))) {
+        boolean isNotExistMenuId = orderCreateRequest.getOrderLineItems().stream()
+                .anyMatch(each -> !existMenuIds.contains(each.getMenuId()));
+        if (isNotExistMenuId) {
             throw new IllegalArgumentException();
         }
     }
