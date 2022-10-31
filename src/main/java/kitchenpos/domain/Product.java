@@ -6,7 +6,7 @@ public class Product implements Entity {
 
     private Long id;
     private String name;
-    private Price price;
+    private BigDecimal price;
 
     public Product() {
     }
@@ -16,7 +16,10 @@ public class Product implements Entity {
                    final BigDecimal price) {
         this.id = id;
         this.name = name;
-        this.price = new Price(price);
+        this.price = price;
+        if (isNew()) {
+            validateOnCreate();
+        }
     }
 
     @Override
@@ -26,6 +29,9 @@ public class Product implements Entity {
 
     @Override
     public void validateOnCreate() {
+        if (price == null || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
@@ -41,6 +47,6 @@ public class Product implements Entity {
     }
 
     public BigDecimal getPrice() {
-        return price.getPrice();
+        return price;
     }
 }

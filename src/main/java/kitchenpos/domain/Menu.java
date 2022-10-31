@@ -8,7 +8,7 @@ public class Menu implements Entity {
 
     private Long id;
     private String name;
-    private Price price;
+    private BigDecimal price;
     private Long menuGroupId;
     private List<MenuProduct> menuProducts;
 
@@ -32,7 +32,7 @@ public class Menu implements Entity {
                 final Long menuGroupId,
                 final List<MenuProduct> menuProducts) {
         this.id = id;
-        this.price = new Price(price);
+        this.price = price;
         this.name = name;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
@@ -54,7 +54,7 @@ public class Menu implements Entity {
     }
 
     public BigDecimal getPrice() {
-        return price.getPrice();
+        return price;
     }
 
     public Long getMenuGroupId() {
@@ -76,14 +76,14 @@ public class Menu implements Entity {
 
     @Override
     public void validateOnCreate() {
-        validatePrice(menuProducts);
+        validatePrice();
     }
 
-    private void validatePrice(final List<MenuProduct> menuProducts) {
+    private void validatePrice() {
         final var total = menuProducts.stream()
                 .map(MenuProduct::amount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        if (price.getPrice().compareTo(total) > 0) {
+        if (price.compareTo(total) > 0) {
             throw new IllegalArgumentException();
         }
     }
