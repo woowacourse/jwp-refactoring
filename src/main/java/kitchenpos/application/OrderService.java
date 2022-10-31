@@ -42,7 +42,7 @@ public class OrderService {
         }
 
         OrderTable orderTable = findOrderTable(orderRequest);
-        validOrderTable(orderTable);
+        orderTable.checkIsEmpty();
 
         List<OrderLineItem> orderLineItems = createOrderLineItems(orderRequest);
 
@@ -53,12 +53,6 @@ public class OrderService {
     private OrderTable findOrderTable(OrderRequest orderRequest) {
         return orderTableRepository.findById(orderRequest.getOrderTableId())
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블입니다"));
-    }
-
-    private void validOrderTable(OrderTable orderTable) {
-        if(orderTable.isEmpty()){
-            throw new IllegalArgumentException("비어있는 테이블에는 주문을 추가할 수 없습니다.");
-        }
     }
 
     private List<OrderLineItem> createOrderLineItems(OrderRequest orderRequest) {

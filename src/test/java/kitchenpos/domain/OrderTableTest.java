@@ -13,6 +13,7 @@ class OrderTableTest {
     void changeEmptyError(){
         //given
         OrderTable orderTable = new OrderTable(1, false);
+        orderTable.updateTableGroup(new TableGroup());
 
         //when, then
         assertThatThrownBy(()-> orderTable.changeEmpty(true))
@@ -27,7 +28,7 @@ class OrderTableTest {
         OrderTable orderTable = new OrderTable(1, false);
 
         //when, then
-        assertThatThrownBy(()-> orderTable.updateNumberOfGuests(2))
+        assertThatThrownBy(()-> orderTable.updateNumberOfGuests(-1))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("손님의 수는 0 미만일 수 없습니다.");
     }

@@ -64,8 +64,8 @@ public class MenuService {
     }
 
     private void checkPrice(List<MenuProduct> menuProducts, int price) {
-        int menuProductSum = menuProducts.stream()
-            .mapToInt(menuProduct -> (int)(menuProduct.getProduct().getPrice().intValue() * menuProduct.getQuantity()))
+        long menuProductSum = menuProducts.stream()
+            .mapToLong(MenuProduct::getMenuPrice)
             .sum();
 
         if(price < menuProductSum){

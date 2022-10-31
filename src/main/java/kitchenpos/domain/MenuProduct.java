@@ -53,6 +53,10 @@ public class MenuProduct {
         return menu;
     }
 
+    public long getMenuPrice() {
+        return product.getPrice().longValue() * quantity;
+    }
+
     private void validQuantity(long quantity) {
         if (quantity <= 0) {
             throw new IllegalArgumentException("0 이하의 양을 등록할 수 없습니다.");
