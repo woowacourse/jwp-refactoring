@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
@@ -10,6 +9,7 @@ import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.ChangeOrderStatusRequest;
@@ -18,7 +18,6 @@ import kitchenpos.dto.OrderRequest;
 import kitchenpos.dto.OrderResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
@@ -41,40 +40,17 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderRequest orderRequest) {
-        final List<OrderLineItem> orderLineItems = toOrderLineItems(orderRequest);
-        validateItem(orderLineItems);
-
+        final OrderLineItems orderLineItems = new OrderLineItems(toOrderLineItems(orderRequest));
         final OrderTable orderTable = orderTableDao.findById(orderRequest.getOrderTableId());
-        validateTableNotEmpty(orderTable);
+        orderTable.validateTableIsFull();
 
         Order entity = new Order(null,
                 orderTable.getId(),
                 OrderStatus.COOKING.name(),
                 LocalDateTime.now(),
-                orderLineItems);
+                orderLineItems.getItems());
 
         return toOrderResponse(orderDao.save(entity));
-    }
-
-    private void validateItem(List<OrderLineItem> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException("하나 이상의 메뉴를 주문해야 한다.");
-        }
-
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
-                .collect(Collectors.toList());
-
-        long countByIdIn = menuDao.countByIdIn(menuIds);
-        if (orderLineItems.size() != countByIdIn) {
-            throw new IllegalArgumentException("주문한 메뉴들은 모두 DB에 등록되어야 한다.");
-        }
-    }
-
-    private void validateTableNotEmpty(OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("주문 테이블은 손님이 존재해야 한다.");
-        }
     }
 
     private OrderResponse toOrderResponse(Order savedOrder) {
@@ -105,17 +81,8 @@ public class OrderService {
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final ChangeOrderStatusRequest statusRequest) {
         final Order order = orderDao.findById(orderId);
-        validateNoCompletion(order);
-
         order.updateOrderStatus(statusRequest.getOrderStatus().name());
         Order save = orderDao.save(order);
-
         return toOrderResponse(save);
-    }
-
-    private void validateNoCompletion(Order order) {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), order.getOrderStatus())) {
-            throw new IllegalArgumentException("주문 상태가 COMPLETION일 시 주문 상태를 변경할 수 없다.");
-        }
     }
 }

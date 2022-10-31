@@ -14,10 +14,13 @@ public class OrderRepository implements OrderDao {
 
     private final JdbcTemplateOrderDao orderDao;
     private final OrderLineItemRepository itemRepository;
+    private final MenuRepository menuRepository;
 
-    public OrderRepository(JdbcTemplateOrderDao orderDao, OrderLineItemRepository itemRepository) {
+    public OrderRepository(JdbcTemplateOrderDao orderDao, OrderLineItemRepository itemRepository,
+                           MenuRepository menuRepository) {
         this.orderDao = orderDao;
         this.itemRepository = itemRepository;
+        this.menuRepository = menuRepository;
     }
 
     @Override
@@ -40,6 +43,7 @@ public class OrderRepository implements OrderDao {
     }
 
     private void saveItem(List<OrderLineItem> items, OrderLineItem item) {
+        menuRepository.findById(item.getMenuId());
         if (item.getSeq() == null) {
             items.add(itemRepository.save(item));
             return;

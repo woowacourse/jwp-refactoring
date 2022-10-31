@@ -36,7 +36,6 @@ public class MenuService {
         final MenuProducts menuProducts = new MenuProducts(
                 new Price(menuRequest.getPrice()),
                 toMenuProducts(menuRequest.getMenuProducts()));
-
         final Menu savedMenu = menuDao.save(toMenu(menuRequest));
 
         menuProducts.updateMenuId(savedMenu.getId());

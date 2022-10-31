@@ -24,7 +24,14 @@ public class Order {
     }
 
     public void updateOrderStatus(final String orderStatus) {
+        validateNoCompletion();
         this.orderStatus = orderStatus;
+    }
+
+    private void validateNoCompletion() {
+        if (orderStatus.equals(OrderStatus.COMPLETION.name())) {
+            throw new IllegalArgumentException("주문 상태가 COMPLETION일 시 주문 상태를 변경할 수 없다.");
+        }
     }
 
     public Long getId() {
