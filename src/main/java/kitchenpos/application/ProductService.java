@@ -21,7 +21,7 @@ public class ProductService {
     }
 
     public ProductResponse create(final ProductCreateRequest request) {
-        Product product = productRepository.save(new Product(request.getName(), BigDecimal.valueOf(request.getPrice())));
+        final Product product = productRepository.save(new Product(request.getName(), BigDecimal.valueOf(request.getPrice())));
 
         return ProductResponse.createResponse(product);
     }

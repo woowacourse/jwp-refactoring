@@ -18,7 +18,7 @@ class MenuGroupServiceTest {
             final MenuGroupRequest menuGroup = new MenuGroupRequest("세트 1번");
 
             // when
-            MenuGroupResponse extract = menuGroupService.create(menuGroup);
+            final MenuGroupResponse extract = menuGroupService.create(menuGroup);
 
             // then
             assertThat(extract).isNotNull();
