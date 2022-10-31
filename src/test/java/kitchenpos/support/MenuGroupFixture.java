@@ -1,8 +1,6 @@
 package kitchenpos.support;
 
-import java.util.List;
-import java.util.Map;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menu.MenuGroup;
 
 public abstract class MenuGroupFixture {
 

@@ -1,66 +1,63 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import java.util.List;
+import kitchenpos.domain.order.OrderTable;
 import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.repository.order.OrderRepository;
+import kitchenpos.repository.order.OrderTableRepository;
+import kitchenpos.specification.TableSpecification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-
 @Service
 public class TableService {
-    private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
 
-    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
-        this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
+    private final TableSpecification tableSpecification;
+    private final OrderRepository orderRepository;
+    private final OrderTableRepository orderTableRepository;
+
+    public TableService(TableSpecification tableSpecification,
+                        OrderRepository orderRepository,
+                        OrderTableRepository orderTableRepository) {
+        this.tableSpecification = tableSpecification;
+        this.orderRepository = orderRepository;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
-    public OrderTable create(final OrderTableRequest orderTableRequest) {
+    public OrderTable create(OrderTableRequest request) {
 
-        final OrderTable orderTable = orderTableRequest.toDomain();
+        OrderTable orderTable = request.toDomain();
 
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
+        orderTable.clearKeys();
 
-        return orderTableDao.save(orderTable);
+        return orderTableRepository.save(orderTable);
     }
 
     public List<OrderTable> list() {
-        return orderTableDao.findAll();
+
+        return orderTableRepository.findAll();
     }
 
     @Transactional
     public OrderTable changeEmpty(Long orderTableId, OrderTableRequest orderTableRequest) {
 
-        final OrderTable orderTable = orderTableRequest.toDomain();
+        final OrderTable orderTable =
+                orderTableRepository.findWithOrdersAndTableGroupById(orderTableId)
+                        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블 ID입니다."));
 
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블 ID입니다."));
+        orderTable.validateChangeEmptyStatus();
 
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException("주문 테이블이 단체 지정되었을 경우 상태를 변경할 수 없습니다.");
-        }
+        boolean empty = orderTableRequest.isEmpty();
 
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException("주문 테이블이 계산 완료되었을 경우에만 상태를 변경할 수 있습니다.");
-        }
+        orderTable.setEmpty(empty);
 
-        savedOrderTable.setEmpty(orderTable.isEmpty());
-
-        return orderTableDao.save(savedOrderTable);
+        return orderTable;
     }
 
+
     @Transactional
-    public OrderTable changeNumberOfGuests(Long orderTableId,
+    public OrderTable changeNumberOfGuests_asis(Long orderTableId,
                                            OrderTableRequest orderTableRequest) {
 
         final OrderTable orderTable = orderTableRequest.toDomain();
@@ -71,15 +68,27 @@ public class TableService {
             throw new IllegalArgumentException("손님의 수는 음수가 될 수 없습니다.");
         }
 
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("변경 요청한 주문테이블이 존재하지 않습니다."));
-
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException("주문 테이블이 비어있는 경우 손님 수를 변경할 수 없습니다.");
-        }
 
         savedOrderTable.setNumberOfGuests(numberOfGuests);
 
-        return orderTableDao.save(savedOrderTable);
+        return orderTableRepository.save(savedOrderTable);
+    }
+
+    @Transactional
+    public OrderTable changeNumberOfGuests(Long orderTableId,
+                                           OrderTableRequest request) {
+
+        tableSpecification.validateChangeNumberOfGuests(request);
+
+        final OrderTable orderTable = orderTableRepository.findById(orderTableId)
+                .orElseThrow(() -> new IllegalArgumentException("변경 요청한 주문테이블이 존재하지 않습니다."));
+
+        orderTable.validateChangeNumberOfGuests();
+
+        orderTable.setNumberOfGuests(request.getNumberOfGuests());
+
+        return orderTable;
     }
 }

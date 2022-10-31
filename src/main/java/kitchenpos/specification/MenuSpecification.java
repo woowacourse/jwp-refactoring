@@ -1,8 +1,8 @@
 package kitchenpos.specification;
 
-import kitchenpos.dao.jpa.MenuGroupRepository;
-import kitchenpos.dao.jpa.ProductRepository;
-import kitchenpos.domain.Menu;
+import kitchenpos.repository.menu.MenuGroupRepository;
+import kitchenpos.repository.menu.ProductRepository;
+import kitchenpos.domain.menu.Menu;
 import org.springframework.stereotype.Component;
 
 @Component

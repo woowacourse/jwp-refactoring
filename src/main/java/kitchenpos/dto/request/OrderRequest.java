@@ -2,49 +2,24 @@ package kitchenpos.dto.request;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 
 public class OrderRequest {
-    private Long id;
     private Long orderTableId;
     private String orderStatus;
     private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+    private List<OrderLineItemRequest> orderLineItems;
 
     protected OrderRequest() {
     }
 
-    public OrderRequest(final Long orderTableId,
-                        final String orderStatus,
-                        final LocalDateTime orderedTime,
-                        final List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
-    }
-
-    public OrderRequest(final Long id,
-                        final Long orderTableId,
-                        final String orderStatus,
-                        final LocalDateTime orderedTime,
-                        final List<OrderLineItem> orderLineItems) {
-        this.id = id;
+    public OrderRequest(Long orderTableId,
+                        String orderStatus,
+                        LocalDateTime orderedTime,
+                        List<OrderLineItemRequest> orderLineItems) {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
-    }
-
-    public Order toDomain() {
-
-        return new Order(id, orderTableId, orderStatus, orderedTime, orderLineItems);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public Long getOrderTableId() {
@@ -71,19 +46,18 @@ public class OrderRequest {
         this.orderedTime = orderedTime;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
+    public List<OrderLineItemRequest> getOrderLineItems() {
         return orderLineItems;
     }
 
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
+    public void setOrderLineItems(List<OrderLineItemRequest> orderLineItems) {
         this.orderLineItems = orderLineItems;
     }
 
     @Override
     public String toString() {
-        return "Order{" +
-                "id=" + id +
-                ", orderTableId=" + orderTableId +
+        return "OrderRequest{" +
+                "orderTableId=" + orderTableId +
                 ", orderStatus='" + orderStatus + '\'' +
                 ", orderedTime=" + orderedTime +
                 ", orderLineItems=" + orderLineItems +

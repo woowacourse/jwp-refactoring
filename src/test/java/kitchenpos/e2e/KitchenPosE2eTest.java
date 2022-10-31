@@ -1,7 +1,7 @@
 package kitchenpos.e2e;
 
 import static java.time.LocalDateTime.now;
-import static kitchenpos.domain.OrderStatus.MEAL;
+import static kitchenpos.domain.order.OrderStatus.MEAL;
 import static kitchenpos.support.MenuFixture.menuRequest;
 import static kitchenpos.support.MenuGroupFixture.단짜_두_마리_메뉴;
 import static kitchenpos.support.ProductFixture.후라이드_치킨_요청_DTO;
@@ -11,14 +11,15 @@ import io.restassured.response.Response;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.menu.Product;
+import kitchenpos.dto.request.OrderLineItemRequest;
+import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.MenuResponse;
@@ -51,7 +52,7 @@ public abstract class KitchenPosE2eTest extends E2eTest {
 
         final LocalDateTime 주문일시 = now().minusMinutes(1);
 
-        final Order 주문 = new Order(주문테이블_ID, orderStatus.name(), 주문일시, List.of(new OrderLineItem(메뉴_ID, 1)));
+        final OrderRequest 주문 = new OrderRequest(주문테이블_ID, orderStatus.name(), 주문일시, List.of(new OrderLineItemRequest(메뉴_ID, 1)));
 
         return POST_요청(ORDER_URL, 주문).as(Order.class);
     }
@@ -60,7 +61,7 @@ public abstract class KitchenPosE2eTest extends E2eTest {
 
         final Long 메뉴_ID = 메뉴_생성_및_ID_반환();
 
-        final Order 주문 = new Order(주문테이블_ID, MEAL.name(), 주문일시, List.of(new OrderLineItem(메뉴_ID, 1)));
+        final OrderRequest 주문 = new OrderRequest(주문테이블_ID, MEAL.name(), 주문일시, List.of(new OrderLineItemRequest(메뉴_ID, 1)));
 
         return POST_요청(ORDER_URL, 주문);
     }
@@ -73,7 +74,7 @@ public abstract class KitchenPosE2eTest extends E2eTest {
 
         final LocalDateTime 주문일시 = now().minusMinutes(1);
 
-        final Order 주문 = new Order(주문테이블_ID, MEAL.name(), 주문일시, List.of(new OrderLineItem(메뉴_ID, 1)));
+        final OrderRequest 주문 = new OrderRequest(주문테이블_ID, MEAL.name(), 주문일시, List.of(new OrderLineItemRequest(메뉴_ID, 1)));
 
         return POST_요청(ORDER_URL, 주문).as(Order.class);
     }

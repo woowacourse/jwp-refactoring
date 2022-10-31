@@ -1,12 +1,11 @@
 package kitchenpos.application;
 
-import static kitchenpos.support.MenuGroupFixture.menuGroup;
 import static kitchenpos.support.MenuGroupFixture.간장_양념_세_마리_메뉴;
 import static kitchenpos.support.MenuGroupFixture.단짜_두_마리_메뉴;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.dto.request.MenuGroupRequest;
 import kitchenpos.support.IntegrationServiceTest;
 import org.junit.jupiter.api.BeforeEach;

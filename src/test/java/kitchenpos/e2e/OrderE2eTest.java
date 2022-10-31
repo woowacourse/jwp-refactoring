@@ -9,10 +9,11 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.dto.response.OrderResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
@@ -27,7 +28,7 @@ public class OrderE2eTest extends KitchenPosE2eTest {
 
         // when
         ExtractableResponse<Response> 응답 = 주문_생성(주문테이블_ID, 주문일시);
-        Order 처리된_주문 = 응답.as(Order.class);
+        OrderResponse 처리된_주문 = 응답.as(OrderResponse.class);
         OrderLineItem 처리된_주문항목 = 처리된_주문.getOrderLineItems().get(0);
 
         // then
@@ -36,7 +37,7 @@ public class OrderE2eTest extends KitchenPosE2eTest {
                 NOT_NULL_검증(처리된_주문.getId()),
                 NOT_NULL_검증(처리된_주문항목.getSeq()),
                 단일_검증(처리된_주문.getOrderTableId(), 주문테이블_ID),
-                단일_검증(처리된_주문항목.getOrderId(), 처리된_주문.getId()),
+                단일_검증(처리된_주문항목.getOrder().getId(), 처리된_주문.getId()),
                 단일_검증(처리된_주문.getOrderStatus(), OrderStatus.COOKING.name()),
                 () -> assertThat(처리된_주문.getOrderedTime().isAfter(주문일시)).isTrue()
         );

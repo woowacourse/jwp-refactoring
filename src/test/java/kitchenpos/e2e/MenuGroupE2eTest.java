@@ -8,8 +8,8 @@ import static kitchenpos.support.AssertionsSupport.assertAll;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 

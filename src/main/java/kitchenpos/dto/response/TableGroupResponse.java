@@ -3,8 +3,7 @@ package kitchenpos.dto.response;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.order.TableGroup;
 
 public class TableGroupResponse {
 
@@ -38,8 +37,12 @@ public class TableGroupResponse {
 
     private static List<OrderTableResponse> extractOrderTableResponses(TableGroup tableGroup) {
         return tableGroup.getOrderTables().stream()
-                .map(orderTable -> new OrderTableResponse(orderTable.getId(), orderTable.getTableGroupId(),
-                        orderTable.getNumberOfGuests(), orderTable.isEmpty()))
+                .map(orderTable -> new OrderTableResponse(
+                        orderTable.getId(),
+                        orderTable.getTableGroup().getId(),
+                        orderTable.getNumberOfGuests(),
+                        orderTable.isEmpty())
+                )
                 .collect(Collectors.toList());
     }
 

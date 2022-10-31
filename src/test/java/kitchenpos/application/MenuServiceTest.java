@@ -10,10 +10,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.Product;
 import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.support.IntegrationServiceTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,6 +34,7 @@ class MenuServiceTest extends IntegrationServiceTest {
 
             @Test
             void 예외가_발생한다() {
+
                 assertThatThrownBy(() -> menuService.create(menuRequest))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("가격은 양의 정수이어야 합니다.");

@@ -3,8 +3,8 @@ package kitchenpos.dto.request;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.order.TableGroup;
 
 public class TableGroupRequest {
 
@@ -42,17 +42,29 @@ public class TableGroupRequest {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public LocalDateTime getCreatedDate() {
         return createdDate;
+    }
+
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
     }
 
     public List<OrderTableRequest> getOrderTables() {
         return orderTables;
     }
 
+    public void setOrderTables(List<OrderTableRequest> orderTables) {
+        this.orderTables = orderTables;
+    }
+
     @Override
     public String toString() {
-        return "TableGroup{" +
+        return "TableGroupRequest{" +
                 "id=" + id +
                 ", createdDate=" + createdDate +
                 ", orderTables=" + orderTables +

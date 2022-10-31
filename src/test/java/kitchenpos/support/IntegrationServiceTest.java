@@ -1,23 +1,26 @@
 package kitchenpos.support;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.application.MenuService;
 import kitchenpos.application.OrderService;
 import kitchenpos.application.ProductService;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.application.TableService;
-import kitchenpos.dao.jpa.MenuGroupRepository;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.dao.jpa.MenuProductRepository;
-import kitchenpos.dao.jpa.ProductRepository;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.order.TableGroup;
+import kitchenpos.repository.menu.MenuGroupRepository;
+import kitchenpos.repository.order.OrderRepository;
+import kitchenpos.repository.order.OrderLineItemRepository;
+import kitchenpos.repository.order.OrderTableRepository;
+import kitchenpos.repository.order.TableGroupRepository;
+import kitchenpos.repository.menu.MenuProductRepository;
+import kitchenpos.repository.menu.ProductRepository;
+import kitchenpos.domain.order.OrderTable;
 import kitchenpos.dto.request.OrderTableRequest;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 각 서비스 테스트의 최상단에 붙입니다.
@@ -28,7 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
 s */
 @SuppressWarnings("NonAsciiCharacters")
 @SpringBootTest
-@Transactional // Transaction Rollback in Test
 abstract public class IntegrationServiceTest {
 
     // Service's
@@ -59,15 +61,15 @@ abstract public class IntegrationServiceTest {
     protected ProductRepository productRepository;
 
     @Autowired
-    protected OrderLineItemDao orderLineItemDao;
+    protected OrderLineItemRepository orderLineItemRepository;
     @Autowired
-    protected OrderDao orderDao;
+    protected OrderRepository orderRepository;
 
     @Autowired
-    protected OrderTableDao orderTableDao;
+    protected OrderTableRepository orderTableRepository;
 
     @Autowired
-    protected TableGroupDao tableGroupDao;
+    protected TableGroupRepository tableGroupRepository;
 
     @Autowired
     protected MenuProductRepository menuProductRepository;
@@ -80,13 +82,39 @@ abstract public class IntegrationServiceTest {
     @Autowired
     protected DbTableCleaner dbTableCleaner;
 
-    protected OrderTableRequest createOrderTableResponseFrom(OrderTable orderTable) {
+    @PersistenceContext
+    protected EntityManager entityManager;
+
+    @BeforeEach
+    void setUp() {
+        dbTableCleaner.clearAll();
+    }
+
+    protected OrderTableRequest convertTableRequestFrom(OrderTable orderTable) {
+
+        Long tableGroupId = extractTableGroupId(orderTable);
 
         return new OrderTableRequest(
                 orderTable.getId(),
-                orderTable.getTableGroupId(),
+                tableGroupId,
                 orderTable.getNumberOfGuests(),
                 orderTable.isEmpty()
         );
+    }
+
+    private Long extractTableGroupId(OrderTable orderTable) {
+
+        Long tableGroupId = null;
+        TableGroup tableGroup = orderTable.getTableGroup();
+
+        if (tableGroup != null) {
+            tableGroupId = tableGroup.getId();
+        }
+
+        return tableGroupId;
+    }
+
+    protected OrderTable 주문테이블_저장() {
+        return orderTableRepository.save(new OrderTable(4, true, null));
     }
 }
