@@ -15,7 +15,9 @@ public class OrderTable {
     private Long id;
     @Column(name = "table_group_id", insertable = false, updatable = false)
     private Long tableGroupId;
+    @Column(name = "number_of_guests", nullable = false)
     private int numberOfGuests;
+    @Column(name = "empty", nullable = false)
     private boolean empty;
 
     protected OrderTable() {

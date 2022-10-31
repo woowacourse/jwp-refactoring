@@ -29,13 +29,6 @@ public class MenuProduct {
         this(null, null, productId, price, quantity);
     }
 
-    public MenuProduct(final Long seq, final Long menuId, final Long productId, final long quantity) {
-        this.seq = seq;
-        this.menuId = menuId;
-        this.productId = productId;
-        this.quantity = quantity;
-    }
-
     public MenuProduct(final Long seq,
                        final Long menuId,
                        final Long productId,
@@ -46,10 +39,6 @@ public class MenuProduct {
         this.productId = productId;
         this.price = price;
         this.quantity = quantity;
-    }
-
-    public void addMenu(final Long menuId) {
-        this.menuId = menuId;
     }
 
     public Long getSeq() {

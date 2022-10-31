@@ -19,8 +19,8 @@ public class OrderLineItems {
     }
 
     public OrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
         validateSize(orderLineItems);
+        this.orderLineItems = orderLineItems;
     }
 
     private void validateSize(final List<OrderLineItem> orderLineItems) {

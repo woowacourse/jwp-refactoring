@@ -19,6 +19,7 @@ public class Order {
     private Long id;
     @Column(name = "order_table_id")
     private Long orderTableId;
+    @Column(name = "order_status")
     private String orderStatus;
     @Column(name = "ordered_time")
     private LocalDateTime orderedTime;

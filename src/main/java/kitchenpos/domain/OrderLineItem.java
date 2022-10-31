@@ -14,7 +14,9 @@ public class OrderLineItem {
     private Long seq;
     @Column(name = "order_id", insertable = false, updatable = false)
     private Long orderId;
+    @Column(name = "menu_id",  nullable = false)
     private Long menuId;
+    @Column(name = "quantity")
     private long quantity;
 
     protected OrderLineItem() {
