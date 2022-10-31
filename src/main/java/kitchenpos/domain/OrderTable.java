@@ -73,6 +73,11 @@ public class OrderTable implements Entity {
         return isAllOrderCompleted();
     }
 
+    public void ungroup() {
+        this.tableGroupId = null;
+        this.empty = false;
+    }
+
     public boolean canBeGrouped() {
         return empty && tableGroupId == null;
     }

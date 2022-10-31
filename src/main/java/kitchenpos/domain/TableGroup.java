@@ -3,7 +3,6 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class TableGroup implements Entity {
     
@@ -32,7 +31,7 @@ public class TableGroup implements Entity {
 
     public void ungroup() {
         validateCanBeUngrouped();
-        this.orderTables = ungroupAllTables();;
+        orderTables.forEach(OrderTable::ungroup);
     }
 
     private void validateCanBeUngrouped() {
@@ -43,18 +42,6 @@ public class TableGroup implements Entity {
         if (!isAllTablesCanBeUngrouped) {
             throw new IllegalArgumentException();
         }
-    }
-
-    private List<OrderTable> ungroupAllTables() {
-        return orderTables
-                .stream()
-                .map(orderTable -> new OrderTable(
-                        orderTable.getId(),
-                        null,
-                        orderTable.getNumberOfGuests(),
-                        false,
-                        orderTable.getOrders())
-                ).collect(Collectors.toList());
     }
 
     @Override
