@@ -1,17 +1,21 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixtures.domain.OrderFixture.createOrder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.dto.request.TableGroupRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
+import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.dto.response.TableGroupResponse;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
@@ -162,9 +166,20 @@ class TableGroupServiceTest extends ServiceTest {
             OrderTable orderTable1 = orderTableRepository.save(new OrderTable(10, true));
             OrderTable orderTable2 = orderTableRepository.save(new OrderTable(10, true));
 
-            orderRepository.save(createOrder(orderTable1.getId(), orderStatus, LocalDateTime.now(), List.of()));
-            orderRepository.save(
-                    createOrder(orderTable1.getId(), OrderStatus.COMPLETION, LocalDateTime.now(), List.of()));
+            ProductResponse savedProduct = saveProduct("상품", 10_000);
+            MenuProduct menuProduct = new MenuProduct(savedProduct.getId(), 1L);
+            MenuGroupResponse savedMenuGroup = saveMenuGroup("메뉴 그룹");
+            MenuResponse savedMenu = saveMenu("메뉴", 10_000, savedMenuGroup.toEntity(), List.of(menuProduct));
+            OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getId(), 1L);
+
+            Order order1 = new Order(orderTable1.getId(), List.of(orderLineItem));
+            order1.changeOrderStatus(orderStatus);
+
+            Order order2 = new Order(orderTable1.getId(), List.of(orderLineItem));
+            order2.changeOrderStatus(OrderStatus.COMPLETION);
+
+            orderRepository.save(order1);
+            orderRepository.save(order2);
 
             TableGroupResponse request = tableGroupService.create(
                     new TableGroupRequest(List.of(orderTable1.getId(), orderTable2.getId())));
