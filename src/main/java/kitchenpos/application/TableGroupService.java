@@ -35,6 +35,9 @@ public class TableGroupService {
     public TableGroupResponse create(final TableGroupCreateRequest request) {
         request.verify();
         final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(request.getOrderTableIds());
+        if (request.getOrderTableIds().size() != orderTables.size()) {
+            throw new IllegalArgumentException();
+        }
 
         final TableGroup tableGroup = tableGroupRepository.save(TableGroup.from(LocalDateTime.now()))
                 .addOrderTables(orderTables);

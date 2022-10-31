@@ -65,8 +65,34 @@ class TableGroupServiceTest extends ServiceTest {
         @DisplayName("모든 주문 테이블이 존재해야 한다.")
         void create_notExistOrderTable_success() {
             // given
-            final OrderTable orderTable = saveOrderTable(1, true);
-            final TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(orderTable.getId(), 999L));
+            final OrderTable orderTable1 = saveOrderTable(1, true);
+            final OrderTable orderTable2 = saveOrderTable(2, true);
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    List.of(
+                            orderTable1.getId(),
+                            orderTable2.getId(),
+                            999L
+                    )
+            );
+
+            // when & then
+            assertThatThrownBy(() -> tableGroupService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        @DisplayName("중복된 주문 테이블은 존재하지 않아야한다.")
+        void create_duplicateOrderTable_success() {
+            // given
+            final OrderTable orderTable1 = saveOrderTable(1, true);
+            final OrderTable orderTable2 = saveOrderTable(2, true);
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    List.of(
+                            orderTable1.getId(),
+                            orderTable2.getId(),
+                            orderTable1.getId()
+                    )
+            );
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(request))
@@ -136,7 +162,8 @@ class TableGroupServiceTest extends ServiceTest {
 
             final Product product = saveProduct("감자튀김");
             final MenuGroup menuGroup = saveMenuGroup("감자");
-            final Menu menu = saveMenu("감자세트", BigDecimal.ONE, menuGroup, new MenuProduct(product.getId(), 1L, product.getPrice()));
+            final Menu menu = saveMenu("감자세트", BigDecimal.ONE, menuGroup,
+                    new MenuProduct(product.getId(), 1L, product.getPrice()));
             saveOrder(orderTable1, "COOKING", new OrderLineItem(menu.getId(), 1L));
             saveOrder(orderTable2, "COMPLETION", new OrderLineItem(menu.getId(), 2L));
 

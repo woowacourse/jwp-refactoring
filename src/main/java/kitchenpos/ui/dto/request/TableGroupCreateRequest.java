@@ -21,6 +21,12 @@ public class TableGroupCreateRequest {
         if (CollectionUtils.isEmpty(orderTables)) {
             throw new IllegalArgumentException();
         }
+        final long distinctOrderTableIdCount = orderTables.stream()
+                .distinct()
+                .count();
+        if (orderTables.size() != distinctOrderTableIdCount) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public List<Long> getOrderTableIds() {
