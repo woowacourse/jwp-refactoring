@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.dto.response.MenuResponse;
@@ -36,6 +37,9 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuRequest request) {
+        MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
+                .orElseThrow(IllegalArgumentException::new);
+
         List<MenuProduct> menuProducts = request.getMenuProducts()
                 .stream()
                 .map(menuProductRequest -> new MenuProduct(
@@ -49,15 +53,11 @@ public class MenuService {
         Menu menu = new Menu(
                 request.getName(),
                 request.getPrice(),
-                request.getMenuGroupId(),
+                menuGroup,
                 menuProducts
         );
 
         final BigDecimal price = menu.getPrice();
-        if (!menuGroupRepository.existsById(menu.getMenuGroupId())) {
-            throw new IllegalArgumentException();
-        }
-
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
             sum = sum.add(menuProduct.getProduct().getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
