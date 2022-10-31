@@ -51,7 +51,7 @@ class TableRestControllerTest {
                 () -> assertThat(response.getBody().isEmpty()).isTrue()
         );
     }
-    
+
     @DisplayName("테이블 인원 수정")
     @Test
     void changeNumberOfGuests() {

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TableGroup implements Entity {
-    
+
     private Long id;
     private LocalDateTime createdDate;
     private List<OrderTable> orderTables;

@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Menu implements Entity{
+public class Menu implements Entity {
 
     private Long id;
     private String name;

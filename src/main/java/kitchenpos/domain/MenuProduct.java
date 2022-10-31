@@ -42,11 +42,7 @@ public class MenuProduct implements Entity {
     public Long getMenuId() {
         return menuId;
     }
-
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
-    }
-
+    
     public Product getProduct() {
         return product;
     }
