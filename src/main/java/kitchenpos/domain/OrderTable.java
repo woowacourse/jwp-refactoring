@@ -7,6 +7,9 @@ public class OrderTable {
     private boolean empty;
     private OrderStatus orderStatus;
 
+    private OrderTable() {
+    }
+
     public OrderTable(final Long id,
                       final Long tableGroupId,
                       final int numberOfGuests,

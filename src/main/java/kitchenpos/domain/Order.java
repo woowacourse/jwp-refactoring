@@ -11,11 +11,14 @@ public class Order {
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
 
+    private Order() {
+    }
+
     private Order(final Long id,
-                 final Long orderTableId,
-                 final OrderStatus orderStatus,
-                 final LocalDateTime orderedTime,
-                 final List<OrderLineItem> orderLineItems) {
+                  final Long orderTableId,
+                  final OrderStatus orderStatus,
+                  final LocalDateTime orderedTime,
+                  final List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
