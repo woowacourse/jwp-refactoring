@@ -79,9 +79,10 @@ public class MenuService {
         Map<Long, Long> groupByMenuProductsId = menuCreateRequest.getMenuProducts().stream()
                 .collect(Collectors.toMap(MenuProductsRequest::getProductId, MenuProductsRequest::getQuantity));
 
-        List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        groupByMenuProductsId.keySet()
-                .forEach(each -> savedMenuProducts.add(new MenuProduct(each, groupByMenuProductsId.get(each))));
+        List<MenuProduct> savedMenuProducts = groupByMenuProductsId.keySet()
+                .stream()
+                .map(each -> new MenuProduct(each, groupByMenuProductsId.get(each)))
+                .collect(Collectors.toUnmodifiableList());
 
         return new MenuProducts(savedMenuProducts);
     }
