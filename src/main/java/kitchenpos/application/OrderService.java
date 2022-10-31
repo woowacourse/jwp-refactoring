@@ -73,10 +73,15 @@ public class OrderService {
     private List<OrderLineItem> saveOrderLineItems(final List<OrderLineItemRequest> orderLineItemRequests,
                                                    final Order savedOrder) {
         return orderLineItemRequests.stream()
-                .map(orderLineItemRequest -> orderLineItemDao.save(new OrderLineItem(savedOrder.getId(),
+                .map(orderLineItemRequest -> new OrderLineItem(savedOrder.getId(),
                         orderLineItemRequest.getMenuId(),
-                        orderLineItemRequest.getQuantity())))
+                        orderLineItemRequest.getQuantity()))
+                .map(this::saveAndGetOrderLineItem)
                 .collect(Collectors.toList());
+    }
+
+    private OrderLineItem saveAndGetOrderLineItem(final OrderLineItem orderLineItem) {
+        return orderLineItemDao.save(orderLineItem);
     }
 
     public List<OrderResponse> list() {
@@ -93,8 +98,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final String orderStatusName) {
-        final Order savedOrder = orderDao.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+        final Order savedOrder = orderDao.findById(orderId).orElseThrow(IllegalArgumentException::new);
 
         savedOrder.changeOrderStatus(orderStatusName);
         orderDao.save(savedOrder);

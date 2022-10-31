@@ -48,7 +48,7 @@
 - [x] MenuService - getSumOfMenuPrice()
     - 네이밍 : get메서드는 값을 가져온다는 의미
     - 메서드에서 상품 조회와 가격의 합을 구하는 일 2개 수행 중, 분리 필요
-- [ ] OderService - orderLineItemDao.save() 메서드 분리
+- [x] OrderService - orderLineItemDao.save() 메서드 분리
     - 가독성을 위해서
 - [ ] Repository 클래스를 만들어 참조하는 객체의 조립 책임을 분리
 - [ ] Dao에 getId()를 통해 분기처리하는 로직 개선
