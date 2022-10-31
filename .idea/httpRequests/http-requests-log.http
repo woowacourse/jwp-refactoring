@@ -1,0 +1,627 @@
+POST http://localhost:8080/api/table-groups
+Content-Type: application/json
+
+{
+  "orderTables": [
+    {
+      "id": 1
+    },
+    {
+      "id": 2
+    }
+  ]
+}
+
+<> 2022-10-31T135310-2.500.json
+
+###
+
+POST http://localhost:8080/api/products
+Content-Type: application/json
+
+{
+  "name": "강정치킨",
+  "price": 17000
+}
+
+<> 2022-10-31T135310.201.json
+
+###
+
+POST http://localhost:8080/api/orders
+Content-Type: application/json
+
+{
+  "orderTableId": 1,
+  "orderLineItems": [
+    {
+      "menuId": 1,
+      "quantity": 1
+    }
+  ]
+}
+
+<> 2022-10-31T135310-1.500.json
+
+###
+
+POST http://localhost:8080/api/menus
+Content-Type: application/json
+
+{
+  "name": "후라이드+후라이드",
+  "price": 19000,
+  "menuGroupId": 1,
+  "menuProducts": [
+    {
+      "productId": 1,
+      "quantity": 2
+    }
+  ]
+}
+
+<> 2022-10-31T135310.500.json
+
+###
+
+POST http://localhost:8080/api/menu-groups
+Content-Type: application/json
+
+{
+  "name": "추천메뉴"
+}
+
+<> 2022-10-31T135309.201.json
+
+###
+
+POST http://localhost:8080/api/table-groups
+Content-Type: application/json
+
+{
+  "orderTables": [
+    {
+      "id": 1
+    },
+    {
+      "id": 2
+    }
+  ]
+}
+
+<> 2022-10-31T135303.500.json
+
+###
+
+POST http://localhost:8080/api/products
+Content-Type: application/json
+
+{
+  "name": "강정치킨",
+  "price": 17000
+}
+
+<> 2022-10-31T135302-1.201.json
+
+###
+
+POST http://localhost:8080/api/orders
+Content-Type: application/json
+
+{
+  "orderTableId": 1,
+  "orderLineItems": [
+    {
+      "menuId": 1,
+      "quantity": 1
+    }
+  ]
+}
+
+<> 2022-10-31T135302-1.500.json
+
+###
+
+POST http://localhost:8080/api/menus
+Content-Type: application/json
+
+{
+  "name": "후라이드+후라이드",
+  "price": 19000,
+  "menuGroupId": 1,
+  "menuProducts": [
+    {
+      "productId": 1,
+      "quantity": 2
+    }
+  ]
+}
+
+<> 2022-10-31T135302.500.json
+
+###
+
+POST http://localhost:8080/api/menu-groups
+Content-Type: application/json
+
+{
+  "name": "추천메뉴"
+}
+
+<> 2022-10-31T135302.201.json
+
+###
+
+POST http://localhost:8080/api/menus
+Content-Type: application/json
+
+{
+  "name": "후라이드+후라이드",
+  "price": 19000,
+  "menuGroupId": 1,
+  "menuProducts": [
+    {
+      "productId": 1,
+      "quantity": 2
+    }
+  ]
+}
+
+<> 2022-10-31T135257.500.json
+
+###
+
+POST http://localhost:8080/api/menu-groups
+Content-Type: application/json
+
+{
+  "name": "추천메뉴"
+}
+
+<> 2022-10-31T135252.201.json
+
+###
+
+POST http://localhost:8080/api/orders
+Content-Type: application/json
+
+{
+  "orderTableId": 1,
+  "orderLineItems": [
+    {
+      "menuId": 1,
+      "quantity": 1
+    }
+  ]
+}
+
+<> 2022-10-31T135245.500.json
+
+###
+
+POST http://localhost:8080/api/products
+Content-Type: application/json
+
+{
+  "name": "강정치킨",
+  "price": 17000
+}
+
+<> 2022-10-31T135234.201.json
+
+###
+
+POST http://localhost:8080/api/menus
+Content-Type: application/json
+
+{
+  "name": "후라이드+후라이드",
+  "price": 19000,
+  "menuGroupId": 1,
+  "menuProducts": [
+    {
+      "productId": 1,
+      "quantity": 2
+    }
+  ]
+}
+
+<> 2022-10-31T135231.500.json
+
+###
+
+POST http://localhost:8080/api/menus
+Content-Type: application/json
+
+{
+  "name": "후라이드+후라이드",
+  "price": 19000,
+  "menuGroupId": 1,
+  "menuProducts": [
+    {
+      "productId": 1,
+      "quantity": 2
+    }
+  ]
+}
+
+<> 2022-10-31T135223.500.json
+
+###
+
+POST http://localhost:8080/api/menus
+Content-Type: application/json
+
+{
+  "name": "후라이드+후라이드",
+  "price": 19000,
+  "menuGroupId": 1,
+  "menuProducts": [
+    {
+      "productId": 1,
+      "quantity": 2
+    }
+  ]
+}
+
+<> 2022-10-31T135220.500.json
+
+###
+
+POST http://localhost:8080/api/table-groups
+Content-Type: application/json
+
+{
+  "orderTables": [
+    {
+      "id": 1
+    },
+    {
+      "id": 2
+    }
+  ]
+}
+
+<> 2022-10-31T132257.500.json
+
+###
+
+POST http://localhost:8080/api/products
+Content-Type: application/json
+
+{
+  "name": "강정치킨",
+  "price": 17000
+}
+
+<> 2022-10-31T132240.201.json
+
+###
+
+POST http://localhost:8080/api/orders
+Content-Type: application/json
+
+{
+  "orderTableId": 1,
+  "orderLineItems": [
+    {
+      "menuId": 1,
+      "quantity": 1
+    }
+  ]
+}
+
+<> 2022-10-31T132230.500.json
+
+###
+
+POST http://localhost:8080/api/orders
+Content-Type: application/json
+
+{
+  "orderTableId": 1,
+  "orderLineItems": [
+    {
+      "menuId": 1,
+      "quantity": 1
+    }
+  ]
+}
+
+<> 2022-10-31T132210.500.json
+
+###
+
+GET http://localhost:8080/api/menu-groups
+
+###
+
+POST http://localhost:8080/api/menu-groups
+Content-Type: application/json
+
+{
+  "name": "추천메뉴"
+}
+
+###
+
+GET http://localhost:8080/api/menus
+
+<> 2022-10-31T125113.200.json
+
+###
+
+POST http://localhost:8080/api/menus
+Content-Type: application/json
+
+{
+  "name": "후라이드+후라이드",
+  "price": 19000,
+  "menuGroupId": 1,
+  "menuProducts": [
+    {
+      "productId": 1,
+      "quantity": 2
+    }
+  ]
+}
+
+<> 2022-10-31T125113.500.json
+
+###
+
+GET http://localhost:8080/api/menu-groups
+
+<> 2022-10-31T125111.200.json
+
+###
+
+POST http://localhost:8080/api/menu-groups
+Content-Type: application/json
+
+{
+  "name": "추천메뉴"
+}
+
+<> 2022-10-31T125111.201.json
+
+###
+
+DELETE http://localhost:8080/api/table-groups/1
+
+<> 2022-10-31T125105-1.500.json
+
+###
+
+POST http://localhost:8080/api/table-groups
+Content-Type: application/json
+
+{
+  "orderTables": [
+    {
+      "id": 1
+    },
+    {
+      "id": 2
+    }
+  ]
+}
+
+<> 2022-10-31T125105.500.json
+
+###
+
+PUT http://localhost:8080/api/tables/2/empty
+Content-Type: application/json
+
+{
+  "empty": true
+}
+
+<> 2022-10-31T124848-4.200.json
+
+###
+
+PUT http://localhost:8080/api/tables/1/empty
+Content-Type: application/json
+
+{
+  "empty": true
+}
+
+<> 2022-10-31T124848-3.200.json
+
+###
+
+PUT http://localhost:8080/api/tables/1/number-of-guests
+Content-Type: application/json
+
+{
+  "numberOfGuests": 4
+}
+
+<> 2022-10-31T124848-2.200.json
+
+###
+
+PUT http://localhost:8080/api/tables/1/empty
+Content-Type: application/json
+
+{
+  "empty": false
+}
+
+<> 2022-10-31T124848-1.200.json
+
+###
+
+GET http://localhost:8080/api/tables
+
+<> 2022-10-31T124848.200.json
+
+###
+
+POST http://localhost:8080/api/tables
+Content-Type: application/json
+
+{
+  "numberOfGuests": 0,
+  "empty": true
+}
+
+<> 2022-10-31T124848.500.json
+
+###
+
+PUT http://localhost:8080/api/tables/2/empty
+Content-Type: application/json
+
+{
+  "empty": true
+}
+
+<> 2022-10-31T124844-3.200.json
+
+###
+
+PUT http://localhost:8080/api/tables/1/empty
+Content-Type: application/json
+
+{
+  "empty": true
+}
+
+<> 2022-10-31T124844-2.200.json
+
+###
+
+PUT http://localhost:8080/api/tables/1/number-of-guests
+Content-Type: application/json
+
+{
+  "numberOfGuests": 4
+}
+
+<> 2022-10-31T124844-1.200.json
+
+###
+
+PUT http://localhost:8080/api/tables/1/empty
+Content-Type: application/json
+
+{
+  "empty": false
+}
+
+<> 2022-10-31T124844.200.json
+
+###
+
+GET http://localhost:8080/api/tables
+
+<> 2022-10-31T124843.200.json
+
+###
+
+POST http://localhost:8080/api/tables
+Content-Type: application/json
+
+{
+  "numberOfGuests": 0,
+  "empty": true
+}
+
+<> 2022-10-31T124843.500.json
+
+###
+
+DELETE http://localhost:8080/api/table-groups/1
+
+<> 2022-10-31T124839-1.500.json
+
+###
+
+POST http://localhost:8080/api/table-groups
+Content-Type: application/json
+
+{
+  "orderTables": [
+    {
+      "id": 1
+    },
+    {
+      "id": 2
+    }
+  ]
+}
+
+<> 2022-10-31T124839.500.json
+
+###
+
+DELETE http://{{host}}/api/table-groups/1
+
+###
+
+POST http://{{host}}/api/table-groups
+Content-Type: application/json
+
+{
+  "orderTables": [
+    {
+      "id": 1
+    },
+    {
+      "id": 2
+    }
+  ]
+}
+
+###
+
+GET http://localhost:8080/api/products
+
+<> 2022-10-31T124830.200.json
+
+###
+
+POST http://localhost:8080/api/products
+Content-Type: application/json
+
+{
+  "name": "강정치킨",
+  "price": 17000
+}
+
+<> 2022-10-31T124830.201.json
+
+###
+
+PUT http://localhost:8080/api/orders/1/order-status
+Content-Type: application/json
+
+{
+  "orderStatus": "COMPLETION"
+}
+
+<> 2022-10-31T124823-2.500.json
+
+###
+
+PUT http://localhost:8080/api/orders/1/order-status
+Content-Type: application/json
+
+{
+  "orderStatus": "MEAL"
+}
+
+<> 2022-10-31T124823-1.500.json
+
+###
+
+GET http://localhost:8080/api/orders
+
+<> 2022-10-31T124823.200.json
+
+###
+
