@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -10,6 +11,9 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuCreateRequest;
+import kitchenpos.dto.MenuCreateResponse;
+import kitchenpos.dto.MenuFindResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,18 +37,28 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(
-            final String name, final BigDecimal price, final Long menuGroupId, final List<MenuProduct> menuProducts
-    ) {
-        if (!menuGroupDao.existsById(menuGroupId)) {
+    public MenuCreateResponse create(final MenuCreateRequest menuCreateRequest) {
+        if (!menuGroupDao.existsById(menuCreateRequest.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
-        validateMenuPrice(price, menuProducts);
+        validateMenuPrice(menuCreateRequest.getPrice(), menuCreateRequest.getMenuProducts());
 
-        final Menu savedMenu = menuDao.save(new Menu(name, price, menuGroupId));
-        updateMenuProductsByMenuId(menuProducts, savedMenu);
+        final Menu savedMenu = menuDao.save(
+                new Menu(
+                        menuCreateRequest.getName(),
+                        menuCreateRequest.getPrice(),
+                        menuCreateRequest.getMenuGroupId()
+                )
+        );
+        updateMenuProductsByMenuId(menuCreateRequest.getMenuProducts(), savedMenu);
 
-        return savedMenu;
+        return new MenuCreateResponse(
+                savedMenu.getId(),
+                savedMenu.getName(),
+                savedMenu.getPrice(),
+                savedMenu.getMenuGroupId(),
+                savedMenu.getAllMenuProduct()
+        );
     }
 
     private void validateMenuPrice(final BigDecimal price, final List<MenuProduct> menuProducts) {
@@ -67,7 +81,10 @@ public class MenuService {
         savedMenu.changeAllMenuProducts(new MenuProducts(menuProducts));
     }
 
-    public List<Menu> list() {
-        return menuDao.findAll();
+    public List<MenuFindResponse> list() {
+        final List<Menu> menus = menuDao.findAll();
+        return menus.stream()
+                .map(MenuFindResponse::from)
+                .collect(Collectors.toList());
     }
 }

@@ -12,6 +12,9 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuCreateRequest;
+import kitchenpos.dto.MenuCreateResponse;
+import kitchenpos.dto.MenuFindResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -23,8 +26,7 @@ class MenuServiceTest extends ServiceTest {
         final Menu menu = saveAndGetMenu(1L);
         menu.addMenuProduct(saveAndGetMenuProduct(1L, 1L, 1L));
 
-        final Menu actual =
-                menuService.create(menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menu.getAllMenuProduct());
+        final MenuCreateResponse actual = menuService.create(MenuCreateRequest.from(menu));
 
         assertThat(actual.getName()).isEqualTo("피자세트메뉴");
     }
@@ -37,7 +39,13 @@ class MenuServiceTest extends ServiceTest {
         menu.addMenuProduct(saveAndGetMenuProduct(1L, 1L, 1L));
 
         assertThatThrownBy(() -> menuService.create(
-                menu.getName(), BigDecimal.valueOf(-1L), menu.getMenuGroupId(), menu.getAllMenuProduct())
+                        new MenuCreateRequest(
+                                menu.getName(),
+                                BigDecimal.valueOf(-1L),
+                                menu.getMenuGroupId(),
+                                menu.getAllMenuProduct()
+                        )
+                )
         )
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -47,9 +55,7 @@ class MenuServiceTest extends ServiceTest {
     void create_priceExpensiveException() {
         final Menu actual = createMenuRequest(BigDecimal.valueOf(999999999L), 1L);
 
-        assertThatThrownBy(() -> menuService.create(
-                actual.getName(), actual.getPrice(), actual.getMenuGroupId(), actual.getAllMenuProduct())
-        )
+        assertThatThrownBy(() -> menuService.create(MenuCreateRequest.from(actual)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -58,9 +64,7 @@ class MenuServiceTest extends ServiceTest {
     void create_notExistProductException() {
         final Menu actual = createMenuRequestNotExistProduct(BigDecimal.valueOf(15_000L), 1L);
 
-        assertThatThrownBy(() -> menuService.create(
-                actual.getName(), actual.getPrice(), actual.getMenuGroupId(), actual.getAllMenuProduct())
-        )
+        assertThatThrownBy(() -> menuService.create(MenuCreateRequest.from(actual)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -69,7 +73,7 @@ class MenuServiceTest extends ServiceTest {
     void list() {
         saveAndGetMenu(1L);
 
-        final List<Menu> actual = menuService.list();
+        final List<MenuFindResponse> actual = menuService.list();
 
         assertAll(
                 () -> assertThat(actual).hasSize(1),
