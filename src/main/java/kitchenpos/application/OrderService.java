@@ -41,7 +41,7 @@ public class OrderService {
         validateSavedMenuSize(request);
         validateOrderTableNotEmpty(request);
 
-        final Order order = Order.of(request.getOrderTableId(), COOKING, LocalDateTime.now(),
+        final Order order = Order.of(request.getOrderTableId(), LocalDateTime.now(),
                 getOrderLineItems(request));
         final Order savedOrder = orderRepository.save(order);
 

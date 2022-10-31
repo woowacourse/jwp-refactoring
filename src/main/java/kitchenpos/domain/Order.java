@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.GenerationType.IDENTITY;
+import static kitchenpos.domain.OrderStatus.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -53,17 +54,17 @@ public class Order {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
-    public static Order of(final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime,
+    public static Order of(final Long orderTableId, final LocalDateTime orderedTime,
                            final List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException("한 가지 이상의 주문 항목을 포함해야합니다.");
         }
 
-        return new Order(orderTableId, orderStatus, orderedTime, orderLineItems);
+        return new Order(orderTableId, COOKING, orderedTime, orderLineItems);
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {
-        if (Objects.equals(this.orderStatus, OrderStatus.COMPLETION)) {
+        if (Objects.equals(this.orderStatus, COMPLETION)) {
             throw new IllegalArgumentException("이미 계산 완료 상태이므로 주문 상태 변경이 불가합니다.");
         }
 
