@@ -32,8 +32,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(OrderCreateRequest request) {
-        List<Long> menuIds = extractMenuIds(request);
-        Order order = request.toEntity(OrderStatus.COOKING.name(), menuRepository.countByIdIn(menuIds));
+        Order order = request.toEntity(OrderStatus.COOKING.name(), menuRepository.countByIdIn(request.toMenuIds()));
 
         validateTableExistence(orderTableRepository.findById(order.getOrderTableId()));
 
@@ -42,13 +41,7 @@ public class OrderService {
         return OrderResponse.from(savedOrder);
     }
 
-    private List<Long> extractMenuIds(OrderCreateRequest request) { // FIXME : DTO에서
-        return request.getOrderLineItems().stream()
-                .map(OrderLineItemCreateRequest::getMenuId)
-                .collect(Collectors.toList());
-    }
-
-    private void validateTableExistence(OrderTable orderTable) { // 메소드명 수정, Order에서 검증하게 하기
+    private void validateTableExistence(OrderTable orderTable) {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }

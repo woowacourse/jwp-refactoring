@@ -28,6 +28,12 @@ public class OrderCreateRequest {
         return orderLineItems;
     }
 
+    public List<Long> toMenuIds() {
+        return orderLineItems.stream()
+                .map(OrderLineItemCreateRequest::getMenuId)
+                .collect(Collectors.toList());
+    }
+
     public Order toEntity(String orderStatus, Long actualMenusSize) {
         return Order.create(orderTableId, orderStatus, toOrderLineItemEntity(), actualMenusSize);
     }

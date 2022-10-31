@@ -21,10 +21,9 @@ public class MenuService {
     private final MenuGroupRepository menuGroupRepository;
     private final ProductRepository productRepository;
 
-    public MenuService(
-            MenuRepository menuRepository,
-            MenuGroupRepository menuGroupRepository,
-            ProductRepository productRepository) {
+    public MenuService(MenuRepository menuRepository,
+                       MenuGroupRepository menuGroupRepository,
+                       ProductRepository productRepository) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
         this.productRepository = productRepository;
@@ -38,6 +37,12 @@ public class MenuService {
         return MenuResponse.from(menuRepository.save(request.toEntity()));
     }
 
+    private void validateMenuGroupExistence(MenuCreateRequest request) {
+        if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     private void validateMenuPrice(BigDecimal menuPrice, List<MenuProductCreateRequest> menuProductsRequest) {
         BigDecimal sum = BigDecimal.ZERO;
         for (MenuProductCreateRequest menuProductRequest : menuProductsRequest) {
@@ -49,12 +54,6 @@ public class MenuService {
 
     private void validateMenuPriceLessThanTotalProductPrice(BigDecimal menuPrice, BigDecimal productsSum) {
         if (menuPrice.compareTo(productsSum) > 0) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateMenuGroupExistence(MenuCreateRequest request) {
-        if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
     }
