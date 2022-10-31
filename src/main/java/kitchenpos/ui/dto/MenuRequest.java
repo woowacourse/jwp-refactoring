@@ -13,7 +13,7 @@ public class MenuRequest {
     private Long menuGroupId;
     private List<MenuProductDto> menuProducts;
 
-    public MenuRequest() {
+    private MenuRequest() {
     }
 
     public MenuRequest(final String name, final Long price, final Long menuGroupId,
@@ -40,6 +40,10 @@ public class MenuRequest {
 
     public Long getMenuGroupId() {
         return menuGroupId;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public List<MenuProductDto> getMenuProducts() {
