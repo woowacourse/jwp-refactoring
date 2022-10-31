@@ -26,7 +26,7 @@ public class Product {
 
     public Product(Long id, String name, BigDecimal price) {
         if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("상품명이 누락되었습니다.");
         }
         this.id = id;
         this.name = name;

@@ -44,7 +44,7 @@ public class Order {
 
     public static Order of(OrderTable orderTable) {
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("비어있는 테이블에서는 주문을 생성할 수 없습니다.");
         }
         return new Order(null, orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now());
     }

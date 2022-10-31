@@ -16,7 +16,7 @@ public class Price {
 
     public Price(BigDecimal value) {
         if (value == null || value.doubleValue() < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("가격은 0 이상의 값이어야 합니다.");
         }
         this.value = value;
     }

@@ -66,7 +66,7 @@ public class TableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, OrderStatus.getOngoingStatuses())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("식사 중인 테이블은 그룹화를 제거할 수 없습니다.");
         }
     }
 }

@@ -43,7 +43,7 @@ public class TableService {
         Long orderTableId = emptyTableDto.getOrderTableId();
         final OrderTable savedOrderTable = getOrderTable(orderTableId);
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, OrderStatus.getOngoingStatuses())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("식사 중인 테이블은 비울 수 없습니다.");
         }
         savedOrderTable.changeEmpty(emptyTableDto.getEmpty());
         return TableDto.of(orderTableRepository.save(savedOrderTable));

@@ -53,7 +53,7 @@ public class OrderService {
                 .map(CreateOrderLineItemDto::getMenuId)
                 .collect(Collectors.toList());
         if (CollectionUtils.isEmpty(menuIds) || menuIds.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문할 수 없는 메뉴 정보가 포함되어있습니다.");
         }
     }
 

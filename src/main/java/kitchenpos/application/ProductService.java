@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.math.BigDecimal;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.CreateProductDto;
 import kitchenpos.application.dto.response.ProductDto;
