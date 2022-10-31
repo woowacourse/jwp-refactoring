@@ -12,6 +12,5 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
     @EntityGraph(attributePaths = "menuProducts")
     List<Menu> findAll();
 
-    @Query("select count(m.id) from Menu m where m.id in (:menuIds)")
     int countByIdIn(@Param("menuIds") List<Long> menuIds);
 }
