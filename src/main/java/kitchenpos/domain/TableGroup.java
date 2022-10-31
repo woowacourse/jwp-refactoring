@@ -6,6 +6,8 @@ import org.springframework.util.CollectionUtils;
 
 public class TableGroup {
 
+    private static final int MINIMUM_ORDER_TABLE_SIZE = 2;
+
     private Long id;
     private LocalDateTime createdDate;
     private List<OrderTable> orderTables;
@@ -13,10 +15,9 @@ public class TableGroup {
     public TableGroup() {
     }
 
-    public TableGroup(final List<OrderTable> orderTables) {
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
-        }
+    public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+        this.id = id;
+        this.createdDate = createdDate;
         this.orderTables = orderTables;
     }
 
@@ -42,5 +43,13 @@ public class TableGroup {
 
     public void setOrderTables(final List<OrderTable> orderTables) {
         this.orderTables = orderTables;
+    }
+
+    public TableGroup initCreatedDate() {
+        return new TableGroup(id, LocalDateTime.now(), orderTables);
+    }
+
+    public boolean hasValidOrderTableSize() {
+        return !CollectionUtils.isEmpty(orderTables) && orderTables.size() >= MINIMUM_ORDER_TABLE_SIZE;
     }
 }

@@ -2,26 +2,30 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
-import org.springframework.util.CollectionUtils;
 
 public class Order {
 
     private Long id;
     private Long orderTableId;
-    private OrderTable orderTable;
-    private String orderStatus;
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
 
     public Order() {
     }
 
-    public Order(final List<OrderLineItem> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
-        }
+    public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus,
+                 final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
+        this.id = id;
+        this.orderTableId = orderTableId;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
+    }
+
+    public static Order create(final Order targetOrder) {
+        return new Order(null, targetOrder.orderTableId, OrderStatus.COOKING, LocalDateTime.now(),
+                targetOrder.orderLineItems);
     }
 
     public Long getId() {
@@ -40,11 +44,11 @@ public class Order {
         this.orderTableId = orderTableId;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(final String orderStatus) {
+    public void setOrderStatus(final OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
 
@@ -64,15 +68,15 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public boolean canChangeOrderStatus() {
-        return Objects.equals(OrderStatus.COMPLETION.name(), orderStatus);
+    public Order updateOrderStatus(final OrderStatus newOrderStatus) {
+        return new Order(id, orderTableId, newOrderStatus, orderedTime, orderLineItems);
     }
 
-    public void setOrderTable(final OrderTable orderTable) {
-        this.orderTable = orderTable;
+    public boolean isCompletion() {
+        return OrderStatus.COMPLETION == orderStatus;
     }
 
-    public boolean hasEmptyTable() {
-        return orderTable.isEmpty();
+    public boolean isEmptyOrderLineItems() {
+        return orderLineItems.isEmpty();
     }
 }

@@ -7,7 +7,6 @@ public class MenuProduct {
     private Long seq;
     private Long menuId;
     private Long productId;
-    private BigDecimal price;
     private long quantity;
 
     public Long getSeq() {
@@ -42,11 +41,7 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
-    public BigDecimal calculateAmount() {
+    public BigDecimal calculateAmount(final BigDecimal price) {
         return price.multiply(BigDecimal.valueOf(quantity));
-    }
-
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
     }
 }

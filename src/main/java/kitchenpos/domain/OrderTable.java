@@ -1,10 +1,25 @@
 package kitchenpos.domain;
 
 public class OrderTable {
+
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
+
+    public OrderTable() {
+    }
+
+    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        this.id = id;
+        this.tableGroupId = tableGroupId;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
+    public static OrderTable create(final OrderTable orderTable) {
+        return new OrderTable(null, null, orderTable.numberOfGuests, orderTable.empty);
+    }
 
     public Long getId() {
         return id;
@@ -36,5 +51,25 @@ public class OrderTable {
 
     public void setEmpty(final boolean empty) {
         this.empty = empty;
+    }
+
+    public boolean hasTableGroupId() {
+        return tableGroupId != null;
+    }
+
+    public boolean isNegativeNumberOfGuests() {
+        return numberOfGuests < 0;
+    }
+
+    public OrderTable ungroup() {
+        return new OrderTable(id, null, numberOfGuests, false);
+    }
+
+    public OrderTable updateEmpty(final boolean newEmpty) {
+        return new OrderTable(id, tableGroupId, numberOfGuests, newEmpty);
+    }
+
+    public OrderTable updateNumberOfGuests(final int newNumberOfGuests) {
+        return new OrderTable(id, tableGroupId, newNumberOfGuests, empty);
     }
 }
