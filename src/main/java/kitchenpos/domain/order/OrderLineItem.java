@@ -31,23 +31,11 @@ public class OrderLineItem {
         return seq;
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
-    }
-
     public Long getMenuId() {
         return menuId;
     }
 
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
-    }
-
     public long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
     }
 }
