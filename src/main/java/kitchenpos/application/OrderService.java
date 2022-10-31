@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static java.util.stream.Collectors.toList;
-import static kitchenpos.domain.OrderStatus.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -61,7 +60,7 @@ public class OrderService {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        final OrderStatus orderStatus = valueOf(request.getOrderStatus());
+        final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
         savedOrder.changeOrderStatus(orderStatus);
 
         return OrderResponse.from(savedOrder);
