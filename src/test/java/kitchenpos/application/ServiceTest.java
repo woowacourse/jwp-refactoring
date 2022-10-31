@@ -1,17 +1,7 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.DomainCreator.createMenu;
-import static kitchenpos.fixture.DomainCreator.createMenuGroup;
-import static kitchenpos.fixture.DomainCreator.createMenuProduct;
-import static kitchenpos.fixture.DomainCreator.createOrder;
-import static kitchenpos.fixture.DomainCreator.createOrderLineItem;
-import static kitchenpos.fixture.DomainCreator.createOrderTable;
-import static kitchenpos.fixture.DomainCreator.createProduct;
-import static kitchenpos.fixture.DomainCreator.createTableGroup;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
@@ -30,6 +20,18 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.MenuCreateRequest;
+import kitchenpos.dto.request.MenuGroupCreateRequest;
+import kitchenpos.dto.request.MenuProductCreateRequest;
+import kitchenpos.dto.request.OrderCreateRequest;
+import kitchenpos.dto.request.OrderLineItemCreateRequest;
+import kitchenpos.dto.request.OrderTableCreateRequest;
+import kitchenpos.dto.request.OrderTableIdRequest;
+import kitchenpos.dto.request.OrderTableUpdateEmptyRequest;
+import kitchenpos.dto.request.OrderTableUpdateNumberOfGuestsRequest;
+import kitchenpos.dto.request.OrderUpdateStatusRequest;
+import kitchenpos.dto.request.ProductCreateRequest;
+import kitchenpos.dto.request.TableGroupCreateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,105 +82,123 @@ public class ServiceTest {
     @Autowired
     protected TableGroupService tableGroupService;
 
-    protected MenuGroup saveMenuGroup(MenuGroup menuGroup) {
-        return menuGroupDao.save(menuGroup);
-    }
-
-    protected Menu saveMenu(Menu menu) {
-        return menuDao.save(menu);
-    }
-
-    protected OrderLineItem saveOrderLineItem(OrderLineItem orderLineItem) {
-        return orderLineItemDao.save(orderLineItem);
-    }
-
-    protected Product saveProduct(Product product) {
-        return productDao.save(product);
-    }
-
-    protected MenuProduct saveMenuProduct(MenuProduct menuProduct) {
-        return menuProductDao.save(menuProduct);
-    }
-
-    protected OrderTable saveOrderTable(OrderTable orderTable) {
-        return orderTableDao.save(orderTable);
-    }
-
-    protected Order saveOrder(Order order) {
-        return orderDao.save(order);
-    }
-
     protected TableGroup saveAndGetTableGroup() {
-        return tableGroupDao.save(createTableGroup(null, new ArrayList<>()));
+        return tableGroupDao.save(new TableGroup(null, LocalDateTime.now()));
     }
 
     protected OrderTable saveAndGetOrderTable() {
-        return saveOrderTable(createOrderTable(null, null, 1, true));
+        return saveAndGetOrderTable(true);
     }
 
-    protected OrderTable saveAndGetOrderTable(boolean empty) {
-        return saveOrderTable(createOrderTable(null, null, 1, empty));
+    protected OrderTable saveAndGetOrderTable(final boolean empty) {
+        return orderTableDao.save(new OrderTable(null, null, 1, empty));
     }
 
-    protected Menu saveAndGetMenu(Long menuGroupId) {
-        return saveMenu(createMenu(null, "후라이드치킨", BigDecimal.valueOf(16_000L), menuGroupId, new ArrayList<>()));
+    protected Menu saveAndGetMenu(final Long menuGroupId) {
+        final Menu menu = menuDao.save(new Menu(
+            null, "후라이드치킨", BigDecimal.valueOf(16_000L), menuGroupId));
+
+        final Product product = saveAndGetProduct();
+        saveAndGetMenuProduct(menu.getId(), product.getId());
+
+        return menu;
     }
 
     protected MenuGroup saveAndGetMenuGroup() {
-        return saveMenuGroup(createMenuGroup(null, "한마리메뉴"));
+        return menuGroupDao.save(new MenuGroup(null, "한마리메뉴"));
     }
 
     protected Product saveAndGetProduct() {
-        return saveProduct(createProduct(null, "후라이드", BigDecimal.valueOf(16_000L)));
+        return productDao.save(new Product(null, "후라이드", BigDecimal.valueOf(16_000L)));
     }
 
-    protected MenuProduct saveAndGetMenuProduct(Long menuId, Long productId) {
-        return saveMenuProduct(createMenuProduct(null, menuId, productId, 1));
+    protected MenuProduct saveAndGetMenuProduct(final Long menuId, final Long productId) {
+        return menuProductDao.save(new MenuProduct(null, menuId, productId, 1));
     }
 
-    private OrderLineItem saveAndGetOrderLineItem(Long menuId, Long orderId) {
-        return saveOrderLineItem(createOrderLineItem(null, orderId, menuId, 1));
+    private OrderLineItem saveAndGetOrderLineItem(final Long menuId, final Long orderId) {
+        return orderLineItemDao.save(new OrderLineItem(null, orderId, menuId, 1));
     }
 
     protected Order saveAndGetOrder() {
-        MenuGroup menuGroup = saveAndGetMenuGroup();
-        Menu menu = saveAndGetMenu(menuGroup.getId());
+        return saveAndGetOrder(OrderStatus.COOKING.name());
+    }
 
-        Product product = saveAndGetProduct();
-        MenuProduct menuProduct = saveAndGetMenuProduct(menu.getId(), product.getId());
-        menu.setMenuProducts(List.of(menuProduct));
-        menuDao.save(menu);
+    protected Order saveAndGetOrder(final String status) {
+        final MenuGroup menuGroup = saveAndGetMenuGroup();
+        final Menu menu = saveAndGetMenu(menuGroup.getId());
 
-        TableGroup tableGroup = saveAndGetTableGroup();
-        OrderTable orderTable = saveAndGetOrderTable();
-        tableGroup.setOrderTables(List.of(orderTable));
-        tableGroupDao.save(tableGroup);
+        final OrderTable orderTable = saveAndGetOrderTable();
+        saveAndGetTableGroup();
 
-        Order order = saveOrder(createOrder(
-                null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>()));
-        OrderLineItem orderLineItem = saveAndGetOrderLineItem(menu.getId(), order.getId());
-        order.setOrderLineItems(List.of(orderLineItem));
-        orderDao.save(order);
+        final Order order = orderDao.save(new Order(
+            null, orderTable.getId(), status, LocalDateTime.now()));
+        saveAndGetOrderLineItem(menu.getId(), order.getId());
 
         return orderDao.save(order);
     }
 
-    protected Order saveAndGetOrder(String status) {
-        Order order = saveAndGetOrder();
-        order.setOrderStatus(status);
-
-        return orderDao.save(order);
+    protected ProductCreateRequest createProductCreateRequest(final BigDecimal price) {
+        return new ProductCreateRequest("후라이드", price);
     }
 
-    protected Menu createMenuRequest(BigDecimal price) {
-        Product product = saveAndGetProduct();
-        MenuProduct menuProduct = createMenuProduct(null, null, product.getId(), 1);
-        List<MenuProduct> menuProducts = List.of(menuProduct);
-
-        return createMenu(null, "후라이드", price, saveAndGetMenuGroup().getId(), menuProducts);
+    protected static MenuGroupCreateRequest createMenuGroupCreateRequest(final String name) {
+        return new MenuGroupCreateRequest(name);
     }
 
-    protected Product createProductRequest(BigDecimal price) {
-        return createProduct(null, "후라이드치킨", price);
+    protected static MenuProductCreateRequest createMenuProductCreateRequest(final Long productId,
+        final long quantity) {
+        return new MenuProductCreateRequest(productId, quantity);
+    }
+
+    protected MenuCreateRequest createMenuCreateRequest(final BigDecimal price) {
+        final Product product = saveAndGetProduct();
+        final MenuProductCreateRequest menuProductRequest =
+            createMenuProductCreateRequest(product.getId(), 1);
+        final List<MenuProductCreateRequest> menuProducts = List.of(menuProductRequest);
+
+        return createMenuCreateRequest(
+            "후라이드", price, saveAndGetMenuGroup().getId(), menuProducts);
+    }
+
+    protected static MenuCreateRequest createMenuCreateRequest(final String name,
+        final BigDecimal price, final Long menuGroupId,
+        final List<MenuProductCreateRequest> menuProducts) {
+        return new MenuCreateRequest(name, price, menuGroupId, menuProducts);
+    }
+
+    protected TableGroupCreateRequest createTableGroupCreateRequest(
+        final List<OrderTableIdRequest> orderTableIdRequest) {
+        return new TableGroupCreateRequest(orderTableIdRequest);
+    }
+
+    protected OrderTableCreateRequest createOrderTableCreateRequest(
+        final int numberOfGuests, final boolean empty) {
+        return new OrderTableCreateRequest(numberOfGuests, empty);
+    }
+
+    protected OrderTableUpdateEmptyRequest createOrderTableUpdateRequest(
+        final boolean empty) {
+        return new OrderTableUpdateEmptyRequest(empty);
+    }
+
+    protected OrderTableUpdateNumberOfGuestsRequest createOrderTableUpdateRequest(
+        final int numberOfGuests) {
+        return new OrderTableUpdateNumberOfGuestsRequest(numberOfGuests);
+    }
+
+    protected OrderLineItemCreateRequest createOrderLineItemCreateRequest(
+        final Long menuId, final int quantity) {
+        return new OrderLineItemCreateRequest(menuId, quantity);
+    }
+
+    protected OrderCreateRequest createOrderCreateRequest(
+        final Long orderTableId, final List<OrderLineItemCreateRequest> orderLineItem) {
+        return new OrderCreateRequest(orderTableId, orderLineItem);
+    }
+
+    protected OrderUpdateStatusRequest createOrderUpdateStatusRequest(
+        final OrderStatus orderStatus) {
+        return new OrderUpdateStatusRequest(orderStatus.name());
     }
 }

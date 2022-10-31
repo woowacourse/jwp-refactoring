@@ -1,13 +1,13 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.DomainCreator.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Product;
+import kitchenpos.dto.request.ProductCreateRequest;
+import kitchenpos.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,15 +19,16 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void create() {
         // given
-        Product request = createProduct(null, "후라이드", BigDecimal.valueOf(16000));
+        final ProductCreateRequest request = new ProductCreateRequest("후라이드",
+            BigDecimal.valueOf(16000));
 
         // when
-        Product actual = productService.create(request);
+        final ProductResponse actual = productService.create(request);
 
         // then
         assertAll(
-                () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getName()).isEqualTo("후라이드")
+            () -> assertThat(actual.getId()).isNotNull(),
+            () -> assertThat(actual.getName()).isEqualTo("후라이드")
         );
     }
 
@@ -35,25 +36,25 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void create_null_price_throwException() {
         // given
-        BigDecimal price = null;
-        Product request = createProductRequest(price);
+        final BigDecimal price = null;
+        final ProductCreateRequest request = createProductCreateRequest(price);
 
         // when & then
         assertThatThrownBy(() -> productService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("create 메서드는 상품 가격이 음수면 예외를 발생시킨다.")
     @ParameterizedTest
     @ValueSource(longs = {-1L, -10_000L})
-    void create_invalid_price_throwException(Long input) {
+    void create_invalid_price_throwException(final Long input) {
         // given
-        BigDecimal price = BigDecimal.valueOf(input);
-        Product request = createProductRequest(price);
+        final BigDecimal price = BigDecimal.valueOf(input);
+        final ProductCreateRequest request = createProductCreateRequest(price);
 
         // when & then
         assertThatThrownBy(() -> productService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("상품 목록을 조회한다.")
@@ -63,7 +64,7 @@ class ProductServiceTest extends ServiceTest {
         saveAndGetProduct();
 
         // when
-        List<Product> actual = productService.list();
+        final List<ProductResponse> actual = productService.list();
 
         // then
         assertThat(actual).hasSize(1);
