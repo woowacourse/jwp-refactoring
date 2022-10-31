@@ -22,6 +22,8 @@ public class JdbcTemplateTableGroupDao implements TableGroupDao {
     private static final String KEY_COLUMN = "id";
     private static final String CREATED_DATE_COLUMN = "created_date";
 
+    private static final TableGroupRowMapper ROW_MAPPER = new TableGroupRowMapper();
+
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
@@ -57,13 +59,13 @@ public class JdbcTemplateTableGroupDao implements TableGroupDao {
     @Override
     public List<TableGroup> findAll() {
         final String sql = "SELECT id, created_date FROM table_group";
-        return jdbcTemplate.query(sql, new TableGroupRowMapper());
+        return jdbcTemplate.query(sql, ROW_MAPPER);
     }
 
     private TableGroup select(final Long id) {
         final String sql = "SELECT id, created_date FROM table_group WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource(KEY_COLUMN, id);
-        return jdbcTemplate.queryForObject(sql, parameters, new TableGroupRowMapper());
+        return jdbcTemplate.queryForObject(sql, parameters, ROW_MAPPER);
     }
 
     private static class TableGroupRowMapper implements RowMapper<TableGroup> {

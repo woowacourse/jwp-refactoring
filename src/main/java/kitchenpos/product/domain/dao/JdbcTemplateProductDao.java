@@ -24,6 +24,8 @@ public class JdbcTemplateProductDao implements ProductDao {
     private static final String NAME_COLUMN = "name";
     private static final String PRICE_COLUMN = "price";
 
+    private static final ProductRowMapper ROW_MAPPER = new ProductRowMapper();
+
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
@@ -59,13 +61,13 @@ public class JdbcTemplateProductDao implements ProductDao {
     @Override
     public List<Product> findAll() {
         final String sql = "SELECT id, name, price FROM product";
-        return jdbcTemplate.query(sql, new ProductRowMapper());
+        return jdbcTemplate.query(sql, ROW_MAPPER);
     }
 
     private Product select(final Long id) {
         final String sql = "SELECT id, name, price FROM product WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource(KEY_COLUMN, id);
-        return jdbcTemplate.queryForObject(sql, parameters, new ProductRowMapper());
+        return jdbcTemplate.queryForObject(sql, parameters, ROW_MAPPER);
     }
 
     private static class ProductRowMapper implements RowMapper<Product> {

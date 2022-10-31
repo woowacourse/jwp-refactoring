@@ -19,6 +19,4 @@ public class MenuGroupResponse {
     public Long getId() {
         return id;
     }
-
-
 }

@@ -25,6 +25,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
     private static final String TABLE_GROUP_ID_COLUMN = "table_group_id";
     private static final String NUMBER_OF_GUESTS_COLUMN = "number_of_guests";
     private static final String EMPTY_COLUMN = "empty";
+    private static final OrderTableRowMapper ROW_MAPPER = new OrderTableRowMapper();
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
@@ -60,14 +61,14 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
     @Override
     public List<OrderTable> findAll() {
         final String sql = "SELECT id, table_group_id, number_of_guests, empty FROM order_table";
-        return jdbcTemplate.query(sql, new OrderTableRowMapper());
+        return jdbcTemplate.query(sql, ROW_MAPPER);
     }
 
     @Override
     public List<OrderTable> findAllByIdIn(final List<Long> ids) {
         final String sql = "SELECT id, table_group_id, number_of_guests, empty FROM order_table WHERE id IN (:ids)";
         final SqlParameterSource parameters = new MapSqlParameterSource("ids", ids);
-        return jdbcTemplate.query(sql, parameters, new OrderTableRowMapper());
+        return jdbcTemplate.query(sql, parameters, ROW_MAPPER);
     }
 
     @Override
@@ -75,14 +76,14 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
         final String sql = "SELECT id, table_group_id, number_of_guests, empty" +
             " FROM order_table WHERE table_group_id = (:tableGroupId)";
         final SqlParameterSource parameters = new MapSqlParameterSource("tableGroupId", tableGroupId);
-        return jdbcTemplate.query(sql, parameters, new OrderTableRowMapper());
+        return jdbcTemplate.query(sql, parameters, ROW_MAPPER);
     }
 
     private OrderTable select(final Long id) {
         final String sql = "SELECT id, table_group_id, number_of_guests, empty FROM order_table WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
             .addValue(KEY_COLUMN, id);
-        return jdbcTemplate.queryForObject(sql, parameters, new OrderTableRowMapper());
+        return jdbcTemplate.queryForObject(sql, parameters, ROW_MAPPER);
     }
 
     private void update(final OrderTable entity) {

@@ -24,6 +24,8 @@ public class JdbcTemplateMenuProductDao implements MenuProductDao {
     private static final String PRODUCT_ID_COLUMN = "product_id";
     private static final String QUANTITY_COLUMN = "quantity";
 
+    private static final MenuProductRowMapper ROW_MAPPER = new MenuProductRowMapper();
+
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
@@ -62,7 +64,7 @@ public class JdbcTemplateMenuProductDao implements MenuProductDao {
     @Override
     public List<MenuProduct> findAll() {
         final String sql = "SELECT seq, menu_id, product_id, quantity FROM menu_product";
-        return jdbcTemplate.query(sql, new MenuProductRowMapper());
+        return jdbcTemplate.query(sql, ROW_MAPPER);
     }
 
     @Override
@@ -70,14 +72,14 @@ public class JdbcTemplateMenuProductDao implements MenuProductDao {
         final String sql = "SELECT seq, menu_id, product_id, quantity FROM menu_product WHERE menu_id = (:menuId)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
             .addValue("menuId", menuId);
-        return jdbcTemplate.query(sql, parameters, new MenuProductRowMapper());
+        return jdbcTemplate.query(sql, parameters, ROW_MAPPER);
     }
 
     private MenuProduct select(final Long id) {
         final String sql = "SELECT seq, menu_id, product_id, quantity FROM menu_product WHERE seq = (:seq)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
             .addValue(KEY_COLUMN, id);
-        return jdbcTemplate.queryForObject(sql, parameters, new MenuProductRowMapper());
+        return jdbcTemplate.queryForObject(sql, parameters, ROW_MAPPER);
     }
 
     private static class MenuProductRowMapper implements RowMapper<MenuProduct> {

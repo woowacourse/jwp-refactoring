@@ -27,6 +27,8 @@ public class JdbcTemplateOrderDao implements OrderDao {
     private static final String ORDER_STATUS_COLUMN = "order_status";
     private static final String ORDERED_TIME_COLUMN = "ordered_time";
 
+    private static final OrderRowMapper ROW_MAPPER = new OrderRowMapper();
+
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
@@ -69,7 +71,7 @@ public class JdbcTemplateOrderDao implements OrderDao {
     @Override
     public List<Order> findAll() {
         final String sql = "SELECT id, order_table_id, order_status, ordered_time FROM orders";
-        return jdbcTemplate.query(sql, new OrderRowMapper());
+        return jdbcTemplate.query(sql, ROW_MAPPER);
     }
 
     @Override
@@ -97,7 +99,7 @@ public class JdbcTemplateOrderDao implements OrderDao {
         final String sql = "SELECT id, order_table_id, order_status, ordered_time FROM orders WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
             .addValue(KEY_COLUMN, id);
-        return jdbcTemplate.queryForObject(sql, parameters, new OrderRowMapper());
+        return jdbcTemplate.queryForObject(sql, parameters, ROW_MAPPER);
     }
 
     private void update(final Order order) {

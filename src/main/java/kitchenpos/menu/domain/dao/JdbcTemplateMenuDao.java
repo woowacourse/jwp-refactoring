@@ -26,6 +26,8 @@ public class JdbcTemplateMenuDao implements MenuDao {
     private static final String PRICE_COLUMN = "price";
     private static final String MENU_GROUP_ID = "menu_group_id";
 
+    private static final MenuRowMapper ROW_MAPPER = new MenuRowMapper();
+
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
@@ -64,7 +66,7 @@ public class JdbcTemplateMenuDao implements MenuDao {
     @Override
     public List<Menu> findAll() {
         final String sql = "SELECT id, name, price, menu_group_id FROM menu ";
-        return jdbcTemplate.query(sql, new MenuRowMapper());
+        return jdbcTemplate.query(sql, ROW_MAPPER);
     }
 
     @Override
@@ -79,7 +81,7 @@ public class JdbcTemplateMenuDao implements MenuDao {
         final String sql = "SELECT id, name, price, menu_group_id FROM menu WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
             .addValue("id", id);
-        return jdbcTemplate.queryForObject(sql, parameters, new MenuRowMapper());
+        return jdbcTemplate.queryForObject(sql, parameters, ROW_MAPPER);
     }
 
     private static class MenuRowMapper implements RowMapper<Menu> {

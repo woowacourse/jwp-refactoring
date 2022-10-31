@@ -24,6 +24,8 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
     private static final String MENU_ID_COLUMN = "menu_id";
     private static final String QUANTITY_COLUMN = "quantity";
 
+    private static final OrderLineItemRowMapper ROW_MAPPER = new OrderLineItemRowMapper();
+
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
@@ -60,7 +62,7 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
     @Override
     public List<OrderLineItem> findAll() {
         final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item";
-        return jdbcTemplate.query(sql, new OrderLineItemRowMapper());
+        return jdbcTemplate.query(sql, ROW_MAPPER);
     }
 
     @Override
@@ -68,14 +70,14 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
         final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item WHERE order_id = (:orderId)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
             .addValue("orderId", orderId);
-        return jdbcTemplate.query(sql, parameters, new OrderLineItemRowMapper());
+        return jdbcTemplate.query(sql, parameters, ROW_MAPPER);
     }
 
     private OrderLineItem select(final Long id) {
         final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item WHERE seq = (:seq)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
             .addValue(KEY_COLUMN, id);
-        return jdbcTemplate.queryForObject(sql, parameters, new OrderLineItemRowMapper());
+        return jdbcTemplate.queryForObject(sql, parameters, ROW_MAPPER);
     }
 
     private static class OrderLineItemRowMapper implements RowMapper<OrderLineItem> {

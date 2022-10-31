@@ -15,7 +15,7 @@ public enum MenuProductFixture {
     }
 
     public MenuProduct getMenuProduct(Long productId) {
-        return new MenuProduct(productId, quantity);
+        return new MenuProduct(null, productId, quantity);
     }
 
     public MenuProduct getMenuProduct(Long menuId, Long productId) {

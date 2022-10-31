@@ -5,9 +5,9 @@ import kitchenpos.common.domain.Price;
 public class MenuProduct {
 
     private final Long id;
-    private Long menuId;
+    private final Long menuId;
     private final Long productId;
-    private long quantity;
+    private final long quantity;
 
     public MenuProduct(Long id, Long menuId, Long productId, long quantity) {
         this.id = id;
@@ -18,10 +18,6 @@ public class MenuProduct {
 
     public MenuProduct(Long menuId, Long productId, long quantity) {
         this(null, menuId, productId, quantity);
-    }
-
-    public MenuProduct(Long productId, long quantity) {
-        this(null, productId, quantity);
     }
 
     public Long getId() {
