@@ -25,7 +25,7 @@ public class TableService {
     @Transactional
     public TableDto create(TableDto tableDto) {
         OrderTable orderTable =
-                new OrderTable(GuestNumber.from(tableDto.getNumberOfGuests()), tableDto.isEmpty(), null);
+                new OrderTable(new GuestNumber(tableDto.getNumberOfGuests()), tableDto.isEmpty(), null);
         OrderTable savedOrderTable = tableRepository.save(orderTable);
         return new TableDto(savedOrderTable);
     }
@@ -49,7 +49,7 @@ public class TableService {
     public TableDto changeNumberOfGuests(Long orderTableId, TableDto table) {
         OrderTable savedOrderTable = tableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-        savedOrderTable.changeGuestNumber(GuestNumber.from(table.getNumberOfGuests()));
+        savedOrderTable.changeGuestNumber(new GuestNumber(table.getNumberOfGuests()));
         return new TableDto(tableRepository.save(savedOrderTable));
     }
 }

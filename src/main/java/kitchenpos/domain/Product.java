@@ -19,16 +19,12 @@ public class Product {
 
     private String name;
 
-    private Product(String name, Price price) {
+    public Product(String name, Price price) {
         this.name = name;
         this.price = price;
     }
 
     protected Product() {
-    }
-
-    public static Product of(String name, BigDecimal price) {
-        return new Product(name, Price.from(price));
     }
 
     public Long getId() {

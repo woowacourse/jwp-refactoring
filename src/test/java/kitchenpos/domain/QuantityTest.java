@@ -12,7 +12,7 @@ class QuantityTest {
     @DisplayName("null로 Quantity를 생성하려고 하면 예외를 발생시킨다.")
     @Test
     void from_Exception_Null() {
-        assertThatThrownBy(() -> Quantity.from(null))
+        assertThatThrownBy(() -> new Quantity(null))
                 .isInstanceOf(EmptyDataException.class)
                 .hasMessageContaining(Quantity.class.getSimpleName())
                 .hasMessageContaining("입력되지 않았습니다");
@@ -22,7 +22,7 @@ class QuantityTest {
     @Test
     void from_Exception_InvalidQuantity() {
         Long invalidQuantity = -1L;
-        assertThatThrownBy(() -> Quantity.from(invalidQuantity))
+        assertThatThrownBy(() -> new Quantity(invalidQuantity))
                 .isInstanceOf(InvalidQuantityException.class);
     }
 }

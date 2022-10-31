@@ -56,7 +56,7 @@ public class OrderService {
             OrderLineItem orderLineItem = new OrderLineItem(
                     savedOrder,
                     findMenu(orderLineItemDto.getMenuId()),
-                    Quantity.from(orderLineItemDto.getQuantity()));
+                    new Quantity(orderLineItemDto.getQuantity()));
             orderLineItemRepository.save(orderLineItem);
         }
     }

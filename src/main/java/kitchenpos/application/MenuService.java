@@ -34,9 +34,9 @@ public class MenuService {
 
     @Transactional
     public MenuDto create(MenuDto menuDto) {
-        Price menuPrice = Price.from(menuDto.getPrice());
+        Price menuPrice = new Price(menuDto.getPrice());
         List<MenuProduct> menuProducts = toMenuProducts(menuDto.getMenuProducts());
-        Menu menu = Menu.of(menuDto.getName(), menuPrice, findMenuGroup(menuDto), menuProducts);
+        Menu menu = new Menu(menuDto.getName(), menuPrice, findMenuGroup(menuDto), menuProducts);
         return new MenuDto(menuRepository.save(menu));
     }
 
@@ -45,7 +45,7 @@ public class MenuService {
         for (MenuProductDto menuProductDto : menuProductDtos) {
             Product product = productRepository.findById(menuProductDto.getProductId())
                     .orElseThrow(ProductNotFoundException::new);
-            MenuProduct menuProduct = new MenuProduct(product, Quantity.from(menuProductDto.getQuantity()));
+            MenuProduct menuProduct = new MenuProduct(product, new Quantity(menuProductDto.getQuantity()));
             menuProducts.add(menuProduct);
         }
         return menuProducts;

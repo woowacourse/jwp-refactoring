@@ -15,19 +15,15 @@ public class Price {
     @Column(name = "price")
     private BigDecimal value;
 
-    private Price(BigDecimal value) {
+    public Price(BigDecimal value) {
+        validate(value);
         this.value = value;
     }
 
     protected Price() {
     }
 
-    public static Price from(BigDecimal value) {
-        validate(value);
-        return new Price(value);
-    }
-
-    private static void validate(BigDecimal value) {
+    private void validate(BigDecimal value) {
         if (Objects.isNull(value)) {
             throw new EmptyDataException(Price.class.getSimpleName());
         }

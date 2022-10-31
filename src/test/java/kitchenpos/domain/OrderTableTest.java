@@ -15,7 +15,7 @@ class OrderTableTest {
     @Test
     void changeGuestNumber() {
         OrderTable orderTable = new OrderTable(GUEST_NUMBER, false);
-        GuestNumber guestNumber = GuestNumber.from(3);
+        GuestNumber guestNumber = new GuestNumber(3);
 
         orderTable.changeGuestNumber(guestNumber);
 
@@ -27,7 +27,7 @@ class OrderTableTest {
     void changeGuestNumber_Exception_NotEmpty() {
         OrderTable orderTable = new OrderTable(GUEST_NUMBER, true);
 
-        assertThatThrownBy(() -> orderTable.changeGuestNumber(GuestNumber.from(10)))
+        assertThatThrownBy(() -> orderTable.changeGuestNumber(new GuestNumber(10)))
                 .isInstanceOf(GuestNumberChangeDisabledException.class);
     }
 

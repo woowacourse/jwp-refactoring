@@ -17,16 +17,12 @@ public class GuestNumber {
     protected GuestNumber() {
     }
 
-    private GuestNumber(int value) {
+    public GuestNumber(int value) {
+        validate(value);
         this.value = value;
     }
 
-    public static GuestNumber from(Integer value) {
-        validate(value);
-        return new GuestNumber(value);
-    }
-
-    private static void validate(Integer value) {
+    private void validate(Integer value) {
         if (Objects.isNull(value)) {
             throw new EmptyDataException(GuestNumber.class.getSimpleName());
         }

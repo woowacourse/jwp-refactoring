@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuDto;
 import kitchenpos.dto.MenuProductDto;
@@ -25,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 class MenuServiceTest extends ServiceTest {
 
+    private static final Price PRICE = new Price(new BigDecimal(5000));
     @Autowired
     private MenuService menuService;
 
@@ -32,7 +34,7 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void create() {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
-        Product product = productRepository.save(Product.of("상품1", new BigDecimal(5000)));
+        Product product = productRepository.save(new Product("상품1", PRICE));
         MenuProductDto menuProductDto = new MenuProductDto(product.getId(), 2L);
         MenuDto menu = new MenuDto("메뉴1", new BigDecimal(10000), menuGroup.getId(), List.of(menuProductDto));
 
@@ -56,7 +58,7 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void create_Exception_NotFoundMenuGroup() {
         Long notFoundMenuGroupId = 100L;
-        Product product = productRepository.save(Product.of("상품1", new BigDecimal(5000)));
+        Product product = productRepository.save(new Product("상품1", PRICE));
         MenuProductDto menuProductDto = new MenuProductDto(product.getId(), 2L);
         MenuDto menu = new MenuDto("메뉴1", new BigDecimal(10000), notFoundMenuGroupId, List.of(menuProductDto));
 
@@ -70,8 +72,8 @@ class MenuServiceTest extends ServiceTest {
     @MethodSource("provideInvalidMenuPriceAndExpectedExceptionType")
     void create_Exception_InvalidPrice(int price, Class<?> expectedExceptionType) {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
-        Product product1 = productRepository.save(Product.of("상품1", new BigDecimal(5000)));
-        Product product2 = productRepository.save(Product.of("상품2", new BigDecimal(6000)));
+        Product product1 = productRepository.save(new Product("상품1", PRICE));
+        Product product2 = productRepository.save(new Product("상품2", PRICE));
         MenuProductDto menuProductDto1 = new MenuProductDto(product1.getId(), 2L);
         MenuProductDto menuProductDto2 = new MenuProductDto(product2.getId(), 1L);
         MenuDto menu = new MenuDto("메뉴1", new BigDecimal(price), menuGroup.getId(),
@@ -84,7 +86,7 @@ class MenuServiceTest extends ServiceTest {
     private static Stream<Arguments> provideInvalidMenuPriceAndExpectedExceptionType() {
         return Stream.of(
                 Arguments.of(-1, LowerThanZeroPriceException.class),
-                Arguments.of(16001, InvalidMenuPriceException.class)
+                Arguments.of(15001, InvalidMenuPriceException.class)
         );
     }
 }

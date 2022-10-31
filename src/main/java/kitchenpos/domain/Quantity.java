@@ -15,16 +15,12 @@ public class Quantity {
     protected Quantity() {
     }
 
-    private Quantity(long value) {
+    public Quantity(Long value) {
+        validate(value);
         this.value = value;
     }
 
-    public static Quantity from(Long value) {
-        validate(value);
-        return new Quantity(value);
-    }
-
-    private static void validate(Long value) {
+    private void validate(Long value) {
         if (Objects.isNull(value)) {
             throw new EmptyDataException(Quantity.class.getSimpleName());
         }

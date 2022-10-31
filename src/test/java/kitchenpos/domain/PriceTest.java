@@ -16,7 +16,7 @@ class PriceTest {
     @DisplayName("null로 Price를 생성하려고 하면 예외를 발생시킨다.")
     @Test
     void from_Exception_Null() {
-        assertThatThrownBy(() -> Price.from(null))
+        assertThatThrownBy(() -> new Price(null))
                 .isInstanceOf(EmptyDataException.class)
                 .hasMessageContaining(Price.class.getSimpleName())
                 .hasMessageContaining("입력되지 않았습니다.");
@@ -27,7 +27,7 @@ class PriceTest {
     void from_Exception_InvalidPrice() {
         BigDecimal invalidPrice = new BigDecimal(-1);
 
-        assertThatThrownBy(() -> Price.from(invalidPrice))
+        assertThatThrownBy(() -> new Price(invalidPrice))
                 .isInstanceOf(LowerThanZeroPriceException.class);
     }
 
@@ -35,7 +35,7 @@ class PriceTest {
     @ParameterizedTest
     @CsvSource({"999, true", "1001, false"})
     void isHigher(int another, boolean expected) {
-        Price price = Price.from(new BigDecimal(1000));
+        Price price = new Price(new BigDecimal(1000));
 
         boolean actual = price.isHigher(new BigDecimal(another));
 
