@@ -3,7 +3,7 @@ package kitchenpos.domain;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import kitchenpos.exception.CustomErrorCode;
+import kitchenpos.exception.CustomError;
 import kitchenpos.exception.DomainLogicException;
 
 @Embeddable
@@ -26,7 +26,7 @@ public class Empty {
 
     private void validateNotSame(final boolean value) {
         if (this.value == value) {
-            throw new DomainLogicException(CustomErrorCode.TABLE_EMPTY_CHANGE_SAME_ERROR);
+            throw new DomainLogicException(CustomError.TABLE_EMPTY_CHANGE_SAME_ERROR);
         }
     }
 

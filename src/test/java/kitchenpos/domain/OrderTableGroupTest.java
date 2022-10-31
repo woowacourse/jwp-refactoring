@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.exception.CustomErrorCode;
+import kitchenpos.exception.CustomError;
 import kitchenpos.exception.DomainLogicException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -28,7 +28,7 @@ class OrderTableGroupTest {
             assertThatThrownBy(() -> new TableGroup(List.of(table), LocalDateTime.now()))
                     .isInstanceOf(DomainLogicException.class)
                     .extracting("errorCode")
-                    .isEqualTo(CustomErrorCode.TABLE_GROUP_MIN_TABLES_ERROR);
+                    .isEqualTo(CustomError.TABLE_GROUP_MIN_TABLES_ERROR);
         }
 
         @Test
@@ -40,7 +40,7 @@ class OrderTableGroupTest {
             assertThatThrownBy(() -> new TableGroup(List.of(table, table), LocalDateTime.now()))
                     .isInstanceOf(DomainLogicException.class)
                     .extracting("errorCode")
-                    .isEqualTo(CustomErrorCode.TABLE_GROUP_TABLE_NOT_EMPTY_ERROR);
+                    .isEqualTo(CustomError.TABLE_GROUP_TABLE_NOT_EMPTY_ERROR);
         }
 
         @Test
@@ -54,7 +54,7 @@ class OrderTableGroupTest {
             assertThatThrownBy(() -> new TableGroup(List.of(tableA, tableB), LocalDateTime.now()))
                     .isInstanceOf(DomainLogicException.class)
                     .extracting("errorCode")
-                    .isEqualTo(CustomErrorCode.TABLE_ALREADY_GROUPED_ERROR);
+                    .isEqualTo(CustomError.TABLE_ALREADY_GROUPED_ERROR);
         }
     }
     
@@ -91,7 +91,7 @@ class OrderTableGroupTest {
             assertThatThrownBy(group::ungroup)
                     .isInstanceOf(DomainLogicException.class)
                     .extracting("errorCode")
-                    .isEqualTo(CustomErrorCode.TABLE_GROUP_UNGROUP_NOT_COMPLETED_ORDER);
+                    .isEqualTo(CustomError.TABLE_GROUP_UNGROUP_NOT_COMPLETED_ORDER);
         }
     }
 }

@@ -2,7 +2,7 @@ package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import kitchenpos.exception.CustomErrorCode;
+import kitchenpos.exception.CustomError;
 import kitchenpos.exception.DomainLogicException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -16,6 +16,6 @@ class GuestNumberTest {
         assertThatThrownBy(() -> new GuestNumber(number))
                 .isInstanceOf(DomainLogicException.class)
                 .extracting("errorCode")
-                .isEqualTo(CustomErrorCode.TABLE_GUEST_NUMBER_NEGATIVE_ERROR);
+                .isEqualTo(CustomError.TABLE_GUEST_NUMBER_NEGATIVE_ERROR);
     }
 }

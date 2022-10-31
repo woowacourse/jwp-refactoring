@@ -3,7 +3,7 @@ package kitchenpos.domain;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import kitchenpos.exception.CustomErrorCode;
+import kitchenpos.exception.CustomError;
 import kitchenpos.exception.DomainLogicException;
 
 @Embeddable
@@ -22,7 +22,7 @@ public class GuestNumber {
 
     private void validatePositive(final int value) {
         if (value < 0) {
-            throw new DomainLogicException(CustomErrorCode.TABLE_GUEST_NUMBER_NEGATIVE_ERROR);
+            throw new DomainLogicException(CustomError.TABLE_GUEST_NUMBER_NEGATIVE_ERROR);
         }
     }
 

@@ -12,7 +12,7 @@ import java.util.List;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuProductCreateRequest;
-import kitchenpos.exception.CustomErrorCode;
+import kitchenpos.exception.CustomError;
 import kitchenpos.exception.NotFoundException;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
@@ -95,7 +95,7 @@ class MenuServiceTest {
         assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(NotFoundException.class)
                 .extracting("errorCode")
-                .isEqualTo(CustomErrorCode.MENU_GROUP_NOT_FOUND_ERROR);
+                .isEqualTo(CustomError.MENU_GROUP_NOT_FOUND_ERROR);
     }
 
     @Test
@@ -109,7 +109,7 @@ class MenuServiceTest {
         assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(NotFoundException.class)
                 .extracting("errorCode")
-                .isEqualTo(CustomErrorCode.PRODUCT_NOT_FOUND_ERROR);
+                .isEqualTo(CustomError.PRODUCT_NOT_FOUND_ERROR);
     }
 
     @Test

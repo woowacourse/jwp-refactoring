@@ -11,7 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import kitchenpos.exception.ApplicationException;
-import kitchenpos.exception.CustomErrorCode;
+import kitchenpos.exception.CustomError;
 import kitchenpos.exception.DomainLogicException;
 
 @Entity
@@ -53,7 +53,7 @@ public class Menu {
     private void validateNotOverMenuProductAmounts(final Price price, final List<MenuProduct> products) {
         final Price sum = sumMenuProductAmounts(products);
         if (price.isGreaterThan(sum)) {
-            throw new DomainLogicException(CustomErrorCode.MENU_PRICE_ERROR);
+            throw new DomainLogicException(CustomError.MENU_PRICE_ERROR);
         }
     }
 
@@ -61,7 +61,7 @@ public class Menu {
         return products.stream()
                 .map(MenuProduct::calculateAmount)
                 .reduce(Price::sum)
-                .orElseThrow(() -> new ApplicationException(CustomErrorCode.APPLICATION_ERROR));
+                .orElseThrow(() -> new ApplicationException(CustomError.APPLICATION_ERROR));
     }
 
     public Long getId() {

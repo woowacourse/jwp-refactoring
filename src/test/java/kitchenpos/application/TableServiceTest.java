@@ -14,7 +14,7 @@ import kitchenpos.dto.request.TableChangeEmptyRequest;
 import kitchenpos.dto.request.TableChangeGuestNumberRequest;
 import kitchenpos.dto.request.TableCreateRequest;
 import kitchenpos.dto.response.TableResponse;
-import kitchenpos.exception.CustomErrorCode;
+import kitchenpos.exception.CustomError;
 import kitchenpos.exception.DomainLogicException;
 import kitchenpos.exception.NotFoundException;
 import kitchenpos.repository.OrderTableRepository;
@@ -99,7 +99,7 @@ class TableServiceTest {
         assertThatThrownBy(() -> tableService.changeEmpty(0L, changeRequest))
                 .isInstanceOf(NotFoundException.class)
                 .extracting("errorCode")
-                .isEqualTo(CustomErrorCode.TABLE_NOT_FOUND_ERROR);
+                .isEqualTo(CustomError.TABLE_NOT_FOUND_ERROR);
     }
 
     @Test
@@ -114,7 +114,7 @@ class TableServiceTest {
         assertThatThrownBy(() -> tableService.changeEmpty(table.getId(), changeRequest))
                 .isInstanceOf(DomainLogicException.class)
                 .extracting("errorCode")
-                .isEqualTo(CustomErrorCode.TABLE_ALREADY_GROUPED_ERROR);
+                .isEqualTo(CustomError.TABLE_ALREADY_GROUPED_ERROR);
     }
 
     @Test
@@ -143,7 +143,7 @@ class TableServiceTest {
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(table.getId(), request))
                 .isInstanceOf(DomainLogicException.class)
                 .extracting("errorCode")
-                .isEqualTo(CustomErrorCode.TABLE_GUEST_NUMBER_NEGATIVE_ERROR);
+                .isEqualTo(CustomError.TABLE_GUEST_NUMBER_NEGATIVE_ERROR);
     }
 
 
@@ -156,7 +156,7 @@ class TableServiceTest {
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(0L, request))
                 .isInstanceOf(NotFoundException.class)
                 .extracting("errorCode")
-                .isEqualTo(CustomErrorCode.TABLE_NOT_FOUND_ERROR);
+                .isEqualTo(CustomError.TABLE_NOT_FOUND_ERROR);
     }
 
     @Test
@@ -169,6 +169,6 @@ class TableServiceTest {
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(table.getId(), request))
                 .isInstanceOf(DomainLogicException.class)
                 .extracting("errorCode")
-                .isEqualTo(CustomErrorCode.TABLE_EMPTY_BUT_CHANGE_GUEST_NUMBER_ERROR);
+                .isEqualTo(CustomError.TABLE_EMPTY_BUT_CHANGE_GUEST_NUMBER_ERROR);
     }
 }

@@ -13,7 +13,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.TableGroupCreateRequest;
 import kitchenpos.dto.request.TableGroupCreateWithTableRequest;
-import kitchenpos.exception.CustomErrorCode;
+import kitchenpos.exception.CustomError;
 import kitchenpos.exception.DomainLogicException;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -77,7 +77,7 @@ class TableGroupServiceTest {
         assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(DomainLogicException.class)
                 .extracting("errorCode")
-                .isEqualTo(CustomErrorCode.TABLE_GROUP_MIN_TABLES_ERROR);
+                .isEqualTo(CustomError.TABLE_GROUP_MIN_TABLES_ERROR);
     }
 
     @Test
@@ -93,7 +93,7 @@ class TableGroupServiceTest {
         assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(DomainLogicException.class)
                 .extracting("errorCode")
-                .isEqualTo(CustomErrorCode.TABLE_GROUP_TABLE_NOT_EMPTY_ERROR);
+                .isEqualTo(CustomError.TABLE_GROUP_TABLE_NOT_EMPTY_ERROR);
     }
 
     @Test
@@ -112,7 +112,7 @@ class TableGroupServiceTest {
         assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(DomainLogicException.class)
                 .extracting("errorCode")
-                .isEqualTo(CustomErrorCode.TABLE_ALREADY_GROUPED_ERROR);
+                .isEqualTo(CustomError.TABLE_ALREADY_GROUPED_ERROR);
     }
 
     @Test

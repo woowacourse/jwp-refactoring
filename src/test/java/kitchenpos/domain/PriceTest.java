@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import kitchenpos.exception.CustomErrorCode;
+import kitchenpos.exception.CustomError;
 import kitchenpos.exception.DomainLogicException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -20,7 +20,7 @@ class PriceTest {
         assertThatThrownBy(() -> Price.valueOf(price))
                 .isInstanceOf(DomainLogicException.class)
                 .extracting("errorCode")
-                .isEqualTo(CustomErrorCode.PRICE_MIN_VALUE_ERROR);
+                .isEqualTo(CustomError.PRICE_MIN_VALUE_ERROR);
     }
 
     @Test

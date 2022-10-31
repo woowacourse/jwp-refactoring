@@ -2,7 +2,7 @@ package kitchenpos.domain;
 
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
-import kitchenpos.exception.CustomErrorCode;
+import kitchenpos.exception.CustomError;
 import kitchenpos.exception.DomainLogicException;
 
 @Embeddable
@@ -25,7 +25,7 @@ public class TableStatus {
 
     private void validate(final Empty empty, final GuestNumber numberOfGuests) {
         if (numberOfGuests.isGreaterThan(0) && empty.isEmpty()) {
-            throw new DomainLogicException(CustomErrorCode.TABLE_STATUS_INVALID_ERROR);
+            throw new DomainLogicException(CustomError.TABLE_STATUS_INVALID_ERROR);
         }
     }
 
@@ -47,7 +47,7 @@ public class TableStatus {
 
     private void validateNotEmpty() {
         if (empty.isEmpty()) {
-            throw new DomainLogicException(CustomErrorCode.TABLE_EMPTY_BUT_CHANGE_GUEST_NUMBER_ERROR);
+            throw new DomainLogicException(CustomError.TABLE_EMPTY_BUT_CHANGE_GUEST_NUMBER_ERROR);
         }
     }
 

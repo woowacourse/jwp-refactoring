@@ -10,7 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import kitchenpos.exception.CustomErrorCode;
+import kitchenpos.exception.CustomError;
 import kitchenpos.exception.DomainLogicException;
 
 @Entity
@@ -52,19 +52,19 @@ public class TableGroup {
 
     private void validateSize(final List<OrderTable> orderTables) {
         if (orderTables.isEmpty() || orderTables.size() < 2) {
-            throw new DomainLogicException(CustomErrorCode.TABLE_GROUP_MIN_TABLES_ERROR);
+            throw new DomainLogicException(CustomError.TABLE_GROUP_MIN_TABLES_ERROR);
         }
     }
 
     private void validateEmpty(final OrderTable orderTable) {
         if (!orderTable.isEmpty()) {
-            throw new DomainLogicException(CustomErrorCode.TABLE_GROUP_TABLE_NOT_EMPTY_ERROR);
+            throw new DomainLogicException(CustomError.TABLE_GROUP_TABLE_NOT_EMPTY_ERROR);
         }
     }
 
     private void validateNotGrouped(final OrderTable orderTable) {
         if (orderTable.isGrouped()) {
-            throw new DomainLogicException(CustomErrorCode.TABLE_ALREADY_GROUPED_ERROR);
+            throw new DomainLogicException(CustomError.TABLE_ALREADY_GROUPED_ERROR);
         }
     }
 

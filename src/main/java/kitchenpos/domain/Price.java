@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import kitchenpos.exception.CustomErrorCode;
+import kitchenpos.exception.CustomError;
 import kitchenpos.exception.DomainLogicException;
 
 @Embeddable
@@ -27,7 +27,7 @@ public class Price {
 
     private void validatePositive(final BigDecimal value) {
         if (value.compareTo(BigDecimal.ZERO) < 0) {
-            throw new DomainLogicException(CustomErrorCode.PRICE_MIN_VALUE_ERROR);
+            throw new DomainLogicException(CustomError.PRICE_MIN_VALUE_ERROR);
         }
     }
 

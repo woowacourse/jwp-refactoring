@@ -14,7 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import kitchenpos.exception.CustomErrorCode;
+import kitchenpos.exception.CustomError;
 import kitchenpos.exception.DomainLogicException;
 
 @Entity
@@ -58,7 +58,7 @@ public class Order {
 
     private void validateOrderLineItemsNotEmpty(final List<OrderLineItem> items) {
         if (items == null || items.isEmpty()) {
-            throw new DomainLogicException(CustomErrorCode.ORDER_ITEM_EMPTY_ERROR);
+            throw new DomainLogicException(CustomError.ORDER_ITEM_EMPTY_ERROR);
         }
     }
 

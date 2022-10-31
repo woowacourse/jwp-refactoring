@@ -9,7 +9,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderChangeStatusRequest;
 import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.response.OrderResponse;
-import kitchenpos.exception.CustomErrorCode;
+import kitchenpos.exception.CustomError;
 import kitchenpos.exception.NotFoundException;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
@@ -53,11 +53,11 @@ public class OrderService {
 
     private OrderTable findOrderTableById(final OrderCreateRequest request) {
         return orderTableRepository.findById(request.getTableId())
-                .orElseThrow(() -> new NotFoundException(CustomErrorCode.TABLE_NOT_FOUND_ERROR));
+                .orElseThrow(() -> new NotFoundException(CustomError.TABLE_NOT_FOUND_ERROR));
     }
 
     private Order findOrderById(final Long orderId) {
         return orderRepository.findById(orderId)
-                .orElseThrow(() -> new NotFoundException(CustomErrorCode.ORDER_NOT_FOUND_ERROR));
+                .orElseThrow(() -> new NotFoundException(CustomError.ORDER_NOT_FOUND_ERROR));
     }
 }

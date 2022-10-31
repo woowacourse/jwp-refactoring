@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import kitchenpos.exception.CustomErrorCode;
+import kitchenpos.exception.CustomError;
 import kitchenpos.exception.DomainLogicException;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +16,7 @@ class OrderTableStatusTest {
         assertThatThrownBy(() -> new TableStatus(new Empty(true), new GuestNumber(2)))
                 .isInstanceOf(DomainLogicException.class)
                 .extracting("errorCode")
-                .isEqualTo(CustomErrorCode.TABLE_STATUS_INVALID_ERROR);
+                .isEqualTo(CustomError.TABLE_STATUS_INVALID_ERROR);
     }
 
     @Test
@@ -43,6 +43,6 @@ class OrderTableStatusTest {
         assertThatThrownBy(() -> tableStatus.changeGuestNumber(5))
                 .isInstanceOf(DomainLogicException.class)
                 .extracting("errorCode")
-                .isEqualTo(CustomErrorCode.TABLE_EMPTY_BUT_CHANGE_GUEST_NUMBER_ERROR);
+                .isEqualTo(CustomError.TABLE_EMPTY_BUT_CHANGE_GUEST_NUMBER_ERROR);
     }
 }

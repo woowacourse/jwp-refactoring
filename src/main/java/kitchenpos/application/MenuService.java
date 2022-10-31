@@ -8,7 +8,7 @@ import kitchenpos.domain.Quantity;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuProductCreateRequest;
 import kitchenpos.dto.response.MenuResponse;
-import kitchenpos.exception.CustomErrorCode;
+import kitchenpos.exception.CustomError;
 import kitchenpos.exception.NotFoundException;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
@@ -39,7 +39,7 @@ public class MenuService {
 
     private void validateExistMenuGroup(final MenuCreateRequest request) {
         if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
-            throw new NotFoundException(CustomErrorCode.MENU_GROUP_NOT_FOUND_ERROR);
+            throw new NotFoundException(CustomError.MENU_GROUP_NOT_FOUND_ERROR);
         }
     }
 
@@ -53,7 +53,7 @@ public class MenuService {
 
     private Product findProductById(final Long id) {
         return productRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(CustomErrorCode.PRODUCT_NOT_FOUND_ERROR));
+                .orElseThrow(() -> new NotFoundException(CustomError.PRODUCT_NOT_FOUND_ERROR));
     }
 
     public List<MenuResponse> list() {

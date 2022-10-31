@@ -1,6 +1,6 @@
 package kitchenpos.exception;
 
-public enum CustomErrorCode {
+public enum CustomError {
 
     PRICE_MIN_VALUE_ERROR("가격은 0원 이상이어야 합니다."),
     QUANTITY_NEGATIVE_ERROR("수량은 0개 이상이어야 합니다."),
@@ -36,7 +36,7 @@ public enum CustomErrorCode {
 
     private final String message;
 
-    CustomErrorCode(final String message) {
+    CustomError(final String message) {
         this.message = message;
     }
 

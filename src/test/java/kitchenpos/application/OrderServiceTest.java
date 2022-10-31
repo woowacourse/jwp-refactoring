@@ -21,7 +21,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderChangeStatusRequest;
 import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderLineItemCreateRequest;
-import kitchenpos.exception.CustomErrorCode;
+import kitchenpos.exception.CustomError;
 import kitchenpos.exception.DomainLogicException;
 import kitchenpos.exception.NotFoundException;
 import kitchenpos.repository.MenuGroupRepository;
@@ -102,7 +102,7 @@ class OrderServiceTest {
         assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(DomainLogicException.class)
                 .extracting("errorCode")
-                .isEqualTo(CustomErrorCode.ORDER_ITEM_EMPTY_ERROR);
+                .isEqualTo(CustomError.ORDER_ITEM_EMPTY_ERROR);
     }
 
     @Test
@@ -126,7 +126,7 @@ class OrderServiceTest {
         assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(NotFoundException.class)
                 .extracting("errorCode")
-                .isEqualTo(CustomErrorCode.TABLE_NOT_FOUND_ERROR);
+                .isEqualTo(CustomError.TABLE_NOT_FOUND_ERROR);
     }
 
     @Test
@@ -140,7 +140,7 @@ class OrderServiceTest {
         assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(DomainLogicException.class)
                 .extracting("errorCode")
-                .isEqualTo(CustomErrorCode.ORDER_TABLE_EMPTY_ERROR);
+                .isEqualTo(CustomError.ORDER_TABLE_EMPTY_ERROR);
     }
 
     @Test
@@ -201,7 +201,7 @@ class OrderServiceTest {
         assertThatThrownBy(() -> orderService.changeOrderStatus(0L, request))
                 .isInstanceOf(NotFoundException.class)
                 .extracting("errorCode")
-                .isEqualTo(CustomErrorCode.ORDER_NOT_FOUND_ERROR);
+                .isEqualTo(CustomError.ORDER_NOT_FOUND_ERROR);
     }
 
     @Test
@@ -215,6 +215,6 @@ class OrderServiceTest {
         assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, request))
                 .isInstanceOf(DomainLogicException.class)
                 .extracting("errorCode")
-                .isEqualTo(CustomErrorCode.ORDER_STATUS_ALREADY_COMPLETED_ERROR);
+                .isEqualTo(CustomError.ORDER_STATUS_ALREADY_COMPLETED_ERROR);
     }
 }

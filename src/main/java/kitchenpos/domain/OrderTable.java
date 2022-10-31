@@ -12,7 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import kitchenpos.exception.CustomErrorCode;
+import kitchenpos.exception.CustomError;
 import kitchenpos.exception.DomainLogicException;
 
 @Entity
@@ -57,7 +57,7 @@ public class OrderTable {
 
     public void changeEmpty(final boolean empty) {
         if (isGrouped()) {
-            throw new DomainLogicException(CustomErrorCode.TABLE_ALREADY_GROUPED_ERROR);
+            throw new DomainLogicException(CustomError.TABLE_ALREADY_GROUPED_ERROR);
         }
         status.changeEmpty(empty);
     }
@@ -78,7 +78,7 @@ public class OrderTable {
 
     private void validateOrderCompleted(final Order order) {
         if (!order.isCompleted()) {
-            throw new DomainLogicException(CustomErrorCode.TABLE_GROUP_UNGROUP_NOT_COMPLETED_ORDER);
+            throw new DomainLogicException(CustomError.TABLE_GROUP_UNGROUP_NOT_COMPLETED_ORDER);
         }
     }
 
@@ -95,7 +95,7 @@ public class OrderTable {
 
     private void validateNotEmpty() {
         if (status.isEmpty()) {
-            throw new DomainLogicException(CustomErrorCode.ORDER_TABLE_EMPTY_ERROR);
+            throw new DomainLogicException(CustomError.ORDER_TABLE_EMPTY_ERROR);
         }
     }
 

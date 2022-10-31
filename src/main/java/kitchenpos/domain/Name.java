@@ -3,7 +3,7 @@ package kitchenpos.domain;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import kitchenpos.exception.CustomErrorCode;
+import kitchenpos.exception.CustomError;
 import kitchenpos.exception.DomainLogicException;
 
 @Embeddable
@@ -22,7 +22,7 @@ public class Name {
 
     private void validateNotBlank(final String value) {
         if (value.isBlank()) {
-            throw new DomainLogicException(CustomErrorCode.NAME_BLANK_ERROR);
+            throw new DomainLogicException(CustomError.NAME_BLANK_ERROR);
         }
     }
 

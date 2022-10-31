@@ -7,7 +7,7 @@ import static kitchenpos.support.DomainFixture.한개;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import kitchenpos.exception.CustomErrorCode;
+import kitchenpos.exception.CustomError;
 import kitchenpos.exception.DomainLogicException;
 import org.junit.jupiter.api.Test;
 
@@ -24,6 +24,6 @@ class MenuTest {
                 )
         ).isInstanceOf(DomainLogicException.class)
                 .extracting("errorCode")
-                .isEqualTo(CustomErrorCode.MENU_PRICE_ERROR);
+                .isEqualTo(CustomError.MENU_PRICE_ERROR);
     }
 }

@@ -7,7 +7,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.TableGroupCreateRequest;
 import kitchenpos.dto.response.TableGroupResponse;
-import kitchenpos.exception.CustomErrorCode;
+import kitchenpos.exception.CustomError;
 import kitchenpos.exception.NotFoundException;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -43,13 +43,13 @@ public class TableGroupService {
 
     private OrderTable findOrderTableById(final Long id) {
         return orderTableRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(CustomErrorCode.TABLE_NOT_FOUND_ERROR));
+                .orElseThrow(() -> new NotFoundException(CustomError.TABLE_NOT_FOUND_ERROR));
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
-                .orElseThrow(() -> new NotFoundException(CustomErrorCode.TABLE_GROUP_NOT_FOUND_ERROR));
+                .orElseThrow(() -> new NotFoundException(CustomError.TABLE_GROUP_NOT_FOUND_ERROR));
         tableGroup.ungroup();
     }
 }

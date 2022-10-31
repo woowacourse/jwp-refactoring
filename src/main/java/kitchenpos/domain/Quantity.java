@@ -2,7 +2,7 @@ package kitchenpos.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import kitchenpos.exception.CustomErrorCode;
+import kitchenpos.exception.CustomError;
 import kitchenpos.exception.DomainLogicException;
 
 @Embeddable
@@ -21,7 +21,7 @@ public class Quantity {
 
     private void validatePositive(final long value) {
         if (value < 0) {
-            throw new DomainLogicException(CustomErrorCode.QUANTITY_NEGATIVE_ERROR);
+            throw new DomainLogicException(CustomError.QUANTITY_NEGATIVE_ERROR);
         }
     }
 

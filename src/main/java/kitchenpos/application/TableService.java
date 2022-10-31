@@ -8,7 +8,7 @@ import kitchenpos.dto.request.TableChangeEmptyRequest;
 import kitchenpos.dto.request.TableChangeGuestNumberRequest;
 import kitchenpos.dto.request.TableCreateRequest;
 import kitchenpos.dto.response.TableResponse;
-import kitchenpos.exception.CustomErrorCode;
+import kitchenpos.exception.CustomError;
 import kitchenpos.exception.NotFoundException;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -52,6 +52,6 @@ public class TableService {
 
     private OrderTable findOrderTableById(final Long tableId) {
         return orderTableRepository.findById(tableId)
-                .orElseThrow(() -> new NotFoundException(CustomErrorCode.TABLE_NOT_FOUND_ERROR));
+                .orElseThrow(() -> new NotFoundException(CustomError.TABLE_NOT_FOUND_ERROR));
     }
 }

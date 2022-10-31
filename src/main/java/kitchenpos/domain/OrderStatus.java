@@ -1,7 +1,7 @@
 package kitchenpos.domain;
 
 import java.util.Arrays;
-import kitchenpos.exception.CustomErrorCode;
+import kitchenpos.exception.CustomError;
 import kitchenpos.exception.DomainLogicException;
 
 public enum OrderStatus {
@@ -25,13 +25,13 @@ public enum OrderStatus {
 
     private void validateNotSame(final OrderStatus status) {
         if (this == status) {
-            throw new DomainLogicException(CustomErrorCode.ORDER_STATUS_CHANGE_SAME_ERROR);
+            throw new DomainLogicException(CustomError.ORDER_STATUS_CHANGE_SAME_ERROR);
         }
     }
 
     private void validateUncompleted() {
         if (this == COMPLETION) {
-            throw new DomainLogicException(CustomErrorCode.ORDER_STATUS_ALREADY_COMPLETED_ERROR);
+            throw new DomainLogicException(CustomError.ORDER_STATUS_ALREADY_COMPLETED_ERROR);
         }
     }
 

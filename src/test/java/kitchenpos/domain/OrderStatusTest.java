@@ -3,7 +3,7 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import kitchenpos.exception.CustomErrorCode;
+import kitchenpos.exception.CustomError;
 import kitchenpos.exception.DomainLogicException;
 import org.junit.jupiter.api.Test;
 
@@ -42,7 +42,7 @@ class OrderStatusTest {
         assertThatThrownBy(() -> status.change(OrderStatus.MEAL))
                 .isInstanceOf(DomainLogicException.class)
                 .extracting("errorCode")
-                .isEqualTo(CustomErrorCode.ORDER_STATUS_ALREADY_COMPLETED_ERROR);
+                .isEqualTo(CustomError.ORDER_STATUS_ALREADY_COMPLETED_ERROR);
     }
 
     @Test
@@ -54,6 +54,6 @@ class OrderStatusTest {
         assertThatThrownBy(() -> status.change(OrderStatus.MEAL))
                 .isInstanceOf(DomainLogicException.class)
                 .extracting("errorCode")
-                .isEqualTo(CustomErrorCode.ORDER_STATUS_CHANGE_SAME_ERROR);
+                .isEqualTo(CustomError.ORDER_STATUS_CHANGE_SAME_ERROR);
     }
 }
