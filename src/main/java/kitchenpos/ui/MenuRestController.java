@@ -1,15 +1,15 @@
 package kitchenpos.ui;
 
+import java.net.URI;
+import java.util.List;
 import kitchenpos.application.MenuService;
 import kitchenpos.domain.Menu;
+import kitchenpos.ui.dto.request.MenuRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.net.URI;
-import java.util.List;
 
 @RestController
 public class MenuRestController {
@@ -20,12 +20,12 @@ public class MenuRestController {
     }
 
     @PostMapping("/api/menus")
-    public ResponseEntity<Menu> create(@RequestBody final Menu menu) {
-        final Menu created = menuService.create(menu);
+    public ResponseEntity<Menu> create(@RequestBody final MenuRequest request) {
+        // : todo 여기서 바인딩 될 때 리플랙션 써서 검증 안탐 DTO로 변경?
+        final Menu created = menuService.create(request);
         final URI uri = URI.create("/api/menus/" + created.getId());
         return ResponseEntity.created(uri)
-                .body(created)
-                ;
+                .body(created);
     }
 
     @GetMapping("/api/menus")
@@ -35,3 +35,4 @@ public class MenuRestController {
                 ;
     }
 }
+

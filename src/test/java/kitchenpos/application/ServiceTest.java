@@ -21,6 +21,9 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.request.OrderLineItemRequest;
+import kitchenpos.ui.dto.request.OrderRequest;
+import kitchenpos.ui.dto.request.OrderTableIdRequest;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -51,7 +54,7 @@ public class ServiceTest {
      * order test fixture
      */
     protected void 완료된_주문_조회() {
-        Mockito.when(orderDao.findById(anyLong())).thenReturn(Optional.of(주문_생성(OrderStatus.COMPLETION)));
+        Mockito.when(orderDao.findById(anyLong())).thenReturn(주문_생성(OrderStatus.COMPLETION));
     }
 
     protected void 메뉴존재유뮤세팅(Long count) {
@@ -64,6 +67,14 @@ public class ServiceTest {
 
     protected OrderTable 테이블_생성(Long id) {
         return new OrderTable(id, 1L, 1, false);
+    }
+
+    protected OrderTable 테이블_그룹_없는_테이블_생성(Long id) {
+        return new OrderTable(id, null, 1, false);
+    }
+
+    protected OrderTableIdRequest 테이블_요청_생성(Long id) {
+        return new OrderTableIdRequest(1L);
     }
 
     protected void 테이블_그룹이_없는_테이블_세팅(Long id) {
@@ -80,6 +91,12 @@ public class ServiceTest {
 
         주문.setOrderLineItems(Arrays.asList(주문_수량));
 
+        return 주문;
+    }
+
+    protected OrderRequest 주문_요청_생성(OrderStatus status) {
+        final OrderLineItemRequest 주문_수량 = new OrderLineItemRequest(1L, 1L, 1L, 1);
+        final OrderRequest 주문 = new OrderRequest(1L, 1L, status.name(), LocalDateTime.now(), Arrays.asList(주문_수량));
         return 주문;
     }
 
@@ -139,9 +156,4 @@ public class ServiceTest {
      * table  test fixture
      */
 
-    protected OrderTable 게스트_숫자_음수인_테이블_생성() {
-        final OrderTable 테이블 = 테이블_생성(1L);
-        테이블.setNumberOfGuests(-1);
-        return 테이블;
-    }
 }

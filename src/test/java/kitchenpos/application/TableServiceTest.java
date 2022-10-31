@@ -42,7 +42,7 @@ class TableServiceTest extends ServiceTest {
 
     @Test
     void 테이블_초기화_시도시_존재하지않는_테이블이면_예외를_반환한다() {
-        Assertions.assertThatThrownBy(() -> tableService.changeEmpty(1L, 테이블_생성(1L)))
+        Assertions.assertThatThrownBy(() -> tableService.changeEmpty(1L))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage(NOT_FOUND_TABLE_EXCEPTION.getMessage());
     }
@@ -51,7 +51,7 @@ class TableServiceTest extends ServiceTest {
     void 테이블_초기화_시도시_테이블_그룹이_null_이_아니면_예외를_반환한다() {
         존재하는_테이블_세팅();
 
-        Assertions.assertThatThrownBy(() -> tableService.changeEmpty(1L, 테이블_생성(1L)))
+        Assertions.assertThatThrownBy(() -> tableService.changeEmpty(1L))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage(INVALID_PROCEEDING_TABLE_GROUP_EXCEPTION.getMessage());
     }
@@ -61,25 +61,16 @@ class TableServiceTest extends ServiceTest {
         테이블_그룹이_없는_테이블_세팅(1L);
         테이블_내_주문_상태를_진행중으로_설정();
 
-        Assertions.assertThatThrownBy(() -> tableService.changeEmpty(1L, 테이블_생성(1L)))
+        Assertions.assertThatThrownBy(() -> tableService.changeEmpty(1L))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage(INVALID_TABLE_UNGROUP_EXCEPTION.getMessage());
-    }
-
-    @Test
-    void 게스트_숫자가_음수일_경우_예외를_반환한다() {
-        final OrderTable 음수_테이블 = 게스트_숫자_음수인_테이블_생성();
-
-        Assertions.assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, 음수_테이블))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage(INVALID_CHANGE_NUMBER_OF_GUEST.getMessage());
     }
 
     @Test
     void 테이블_게스트_숫자_변경시_빈테이블이면_예외를_반환한다() {
         존재하지않는_테이블_세팅();
 
-        Assertions.assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, 테이블_생성(1L)))
+        Assertions.assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L,3))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage(NOT_FOUND_TABLE_EXCEPTION.getMessage());
     }
