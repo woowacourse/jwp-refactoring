@@ -7,6 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.List;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.TableChangeEmptyResponse;
+import kitchenpos.dto.TableChangeNumberOfGuestsResponse;
+import kitchenpos.dto.TableCreateResponse;
+import kitchenpos.dto.TableFindResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +18,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     @DisplayName("테이블을 생성한다")
     void create() {
-        final OrderTable actual = tableService.create(1, true);
+        final TableCreateResponse actual = tableService.create(1, true);
 
         assertThat(actual.getId()).isEqualTo(1L);
     }
@@ -25,7 +29,7 @@ class TableServiceTest extends ServiceTest {
         saveAndGetOrderTable(1L, true);
         saveAndGetOrderTable(2L, false);
 
-        final List<OrderTable> actual = tableService.list();
+        final List<TableFindResponse> actual = tableService.list();
 
         assertAll(
                 () -> assertThat(actual).hasSize(2),
@@ -40,7 +44,7 @@ class TableServiceTest extends ServiceTest {
     void changeEmpty() {
         saveAndGetOrder(1L, OrderStatus.COMPLETION.name());
 
-        final OrderTable actual = tableService.changeEmpty(1L, true);
+        final TableChangeEmptyResponse actual = tableService.changeEmpty(1L, true);
 
         assertThat(actual.isEmpty()).isTrue();
     }
@@ -69,7 +73,8 @@ class TableServiceTest extends ServiceTest {
         final OrderTable orderTable = saveAndGetOrderTable(1L, false);
         final int expected = 6;
 
-        final OrderTable actual = tableService.changeNumberOfGuests(orderTable.getId(), expected);
+        final TableChangeNumberOfGuestsResponse actual =
+                tableService.changeNumberOfGuests(orderTable.getId(), expected);
 
         assertThat(actual.getNumberOfGuests()).isEqualTo(expected);
     }
