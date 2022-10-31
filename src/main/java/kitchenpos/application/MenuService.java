@@ -1,9 +1,11 @@
 package kitchenpos.application;
 
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.CreateMenuDto;
 import kitchenpos.application.dto.request.CreateMenuProductDto;
 import kitchenpos.application.dto.response.MenuDto;
+import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.ProductQuantities;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuProductRepository;
@@ -41,10 +43,9 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
         final ProductQuantities productQuantities = getMenuProductQuantities(createMenuDto.getMenuProducts());
-        final Menu menu = menuRepository.save(Menu.of(createMenuDto.getName(), createMenuDto.getPrice(), createMenuDto.getMenuGroupId(), productQuantities));
-        return MenuDto.of(menu, productQuantities.toMenuProducts(menu.getId()).stream()
-                .map(menuProductRepository::save)
-                .collect(Collectors.toList()));
+        final Menu savedMenu = menuRepository.save(Menu.of(createMenuDto.getName(), createMenuDto.getPrice(), createMenuDto.getMenuGroupId(), productQuantities));
+        final List<MenuProduct> savedMenuProducts = saveMenuProducts(productQuantities, savedMenu);
+        return MenuDto.of(savedMenu, savedMenuProducts);
     }
 
     private ProductQuantities getMenuProductQuantities(List<CreateMenuProductDto> menuProductDtos) {
@@ -55,6 +56,14 @@ public class MenuService {
 
     private Product getProductById(Long productId) {
         return productRepository.findById(productId).orElseThrow(IllegalArgumentException::new);
+    }
+
+    private List<MenuProduct> saveMenuProducts(ProductQuantities productQuantities, Menu menu) {
+        ArrayList<MenuProduct> menuProducts = new ArrayList<>();
+        for (MenuProduct menuProduct : productQuantities.toMenuProducts(menu.getId())) {
+            menuProducts.add(menuProductRepository.save(menuProduct));
+        }
+        return menuProducts;
     }
 
     public List<MenuDto> list() {
