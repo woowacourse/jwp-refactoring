@@ -54,7 +54,7 @@ public class TableGroupService {
         tableGroupDao.save(tableGroup);
     }
 
-    public TableGroup getTableGroupWithOrderTables(final Long tableGroupId) {
+    private TableGroup getTableGroupWithOrderTables(final Long tableGroupId) {
         final TableGroup tableGroup = getTableGroup(tableGroupId);
         final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroup.getId());
         tableGroup.changeOrderTables(orderTables);
