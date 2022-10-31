@@ -1,6 +1,14 @@
 package kitchenpos.dao;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import javax.sql.DataSource;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -8,14 +16,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-
-import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Repository
 public class JdbcTemplateOrderDao {
@@ -84,7 +84,7 @@ public class JdbcTemplateOrderDao {
     private void update(final Order entity) {
         final String sql = "UPDATE orders SET order_status = (:orderStatus) WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("orderStatus", entity.getOrderStatus())
+                .addValue("orderStatus", entity.getOrderStatus().name())
                 .addValue("id", entity.getId());
         jdbcTemplate.update(sql, parameters);
     }
@@ -93,7 +93,7 @@ public class JdbcTemplateOrderDao {
         final Order entity = new Order();
         entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
         entity.setOrderTableId(resultSet.getLong("order_table_id"));
-        entity.setOrderStatus(resultSet.getString("order_status"));
+        entity.setOrderStatus(OrderStatus.valueOf(resultSet.getString("order_status")));
         entity.setOrderedTime(resultSet.getObject("ordered_time", LocalDateTime.class));
         return entity;
     }
