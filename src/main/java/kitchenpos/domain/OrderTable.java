@@ -60,6 +60,9 @@ public class OrderTable {
     public void setTableGroupId(final Long tableGroupId) {
         this.tableGroupId = tableGroupId;
     }
+    public void clearTableGroup() {
+        this.tableGroupId = null;
+    }
 
     public int getNumberOfGuests() {
         return numberOfGuests;
@@ -69,7 +72,8 @@ public class OrderTable {
         return empty;
     }
 
-    public void ClearTable() {
+
+    public void clearTable() {
         this.empty = true;
     }
 }

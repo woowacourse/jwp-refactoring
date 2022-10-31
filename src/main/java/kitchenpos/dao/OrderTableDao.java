@@ -1,12 +1,11 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.OrderTable;
-
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Repository;
 
-public interface  OrderTableDao {
+public interface OrderTableDao {
     OrderTable save(OrderTable entity);
 
     Optional<OrderTable> findById(Long id);
@@ -19,7 +18,7 @@ public interface  OrderTableDao {
 }
 
 @Repository
-class OrderTableRepository implements OrderTableDao{
+class OrderTableRepository implements OrderTableDao {
     private final JdbcTemplateOrderTableDao orderTableDao;
 
     public OrderTableRepository(final JdbcTemplateOrderTableDao orderTableDao) {
@@ -28,8 +27,6 @@ class OrderTableRepository implements OrderTableDao{
 
     @Override
     public OrderTable save(final OrderTable entity) {
-        entity.setId(null);
-        entity.setTableGroupId(null);
         return orderTableDao.save(entity);
     }
 
@@ -42,6 +39,7 @@ class OrderTableRepository implements OrderTableDao{
     public List<OrderTable> findAll() {
         return orderTableDao.findAll();
     }
+
     @Override
     public List<OrderTable> findAllByIdIn(final List<Long> ids) {
         return orderTableDao.findAllByIdIn(ids);

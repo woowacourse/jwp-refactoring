@@ -15,16 +15,8 @@ public class TableGroup {
     public TableGroup() {
     }
 
-    public TableGroup(final List<OrderTable> orderTables) {
-        this(null, null, orderTables);
-    }
-
     public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         this(null, createdDate, orderTables);
-    }
-
-    public TableGroup(final Long id, final LocalDateTime createdDate) {
-        this(id, createdDate, null);
     }
 
     public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
@@ -62,9 +54,5 @@ public class TableGroup {
 
     public List<OrderTable> getOrderTables() {
         return orderTables.getValues();
-    }
-
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = new OrderTables(orderTables);
     }
 }

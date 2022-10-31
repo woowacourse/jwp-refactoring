@@ -46,7 +46,7 @@ public class TableService {
 
         validTableGroupCondition(savedOrderTable);
         validExistOrderTables(orderTableId);
-        savedOrderTable.ClearTable();
+        savedOrderTable.clearTable();
         orderTableDao.save(savedOrderTable);
 
         return OrderTableResponse.from(savedOrderTable);
