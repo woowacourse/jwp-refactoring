@@ -42,7 +42,7 @@ public class Menu {
 
     public Menu(final Long id, final Name name, final Price price, final Long menuGroupId,
                 final List<MenuProduct> products) {
-        validateNotOverMenuProductPrices(price, products);
+        validateNotOverMenuProductAmounts(price, products);
         this.id = id;
         this.name = name;
         this.price = price;
@@ -50,16 +50,16 @@ public class Menu {
         this.products = products;
     }
 
-    private void validateNotOverMenuProductPrices(final Price price, final List<MenuProduct> products) {
-        final Price sum = sumMenuProductTotalPrices(products);
+    private void validateNotOverMenuProductAmounts(final Price price, final List<MenuProduct> products) {
+        final Price sum = sumMenuProductAmounts(products);
         if (price.isGreaterThan(sum)) {
             throw new DomainLogicException(CustomErrorCode.MENU_PRICE_ERROR);
         }
     }
 
-    private Price sumMenuProductTotalPrices(final List<MenuProduct> products) {
+    private Price sumMenuProductAmounts(final List<MenuProduct> products) {
         return products.stream()
-                .map(MenuProduct::calculateTotalPrice)
+                .map(MenuProduct::calculateAmount)
                 .reduce(Price::sum)
                 .orElseThrow(() -> new ApplicationException(CustomErrorCode.APPLICATION_ERROR));
     }

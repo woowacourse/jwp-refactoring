@@ -33,7 +33,6 @@ public class MenuService {
     @Transactional
     public MenuResponse create(final MenuCreateRequest request) {
         validateExistMenuGroup(request);
-        // TODO: 2022/10/26 to pretty
         final List<MenuProduct> menuProducts = mapToMenuProduct(request.getMenuProducts());
         return MenuResponse.from(menuRepository.save(request.toMenu(menuProducts)));
     }

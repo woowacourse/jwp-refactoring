@@ -3,21 +3,21 @@ package kitchenpos.application;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.transaction.Transactional;
-import kitchenpos.exception.CustomErrorCode;
-import kitchenpos.exception.NotFoundException;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.exception.CustomErrorCode;
+import kitchenpos.exception.NotFoundException;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.ui.dto.OrderChangeStatusRequest;
 import kitchenpos.ui.dto.OrderCreateRequest;
 import kitchenpos.ui.dto.OrderResponse;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@org.springframework.transaction.annotation.Transactional(readOnly = true)
+@Transactional(readOnly = true)
 public class OrderService {
 
     private final OrderTableRepository orderTableRepository;
