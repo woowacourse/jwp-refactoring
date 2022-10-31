@@ -9,9 +9,9 @@ import kitchenpos.acceptance.common.httpcommunication.MenuGroupHttpCommunication
 import kitchenpos.acceptance.common.httpcommunication.MenuHttpCommunication;
 import kitchenpos.acceptance.common.httpcommunication.ProductHttpCommunication;
 import kitchenpos.common.fixture.RequestBody;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.response.MenuGroupResponse;
+import kitchenpos.ui.dto.response.MenuResponse;
+import kitchenpos.ui.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -22,11 +22,11 @@ public class MenuAcceptanceTest extends AcceptanceTest {
     @DisplayName("메뉴를 생성해야 한다.")
     @Test
     void createMenu() {
-        final Product product = ProductHttpCommunication.create(RequestBody.PRODUCT)
-                .getResponseBodyAsObject(Product.class);
+        final ProductResponse product = ProductHttpCommunication.create(RequestBody.PRODUCT)
+                .getResponseBodyAsObject(ProductResponse.class);
 
-        final MenuGroup menuGroup = MenuGroupHttpCommunication.create(RequestBody.MENU_GROUP)
-                .getResponseBodyAsObject(MenuGroup.class);
+        final MenuGroupResponse menuGroup = MenuGroupHttpCommunication.create(RequestBody.MENU_GROUP)
+                .getResponseBodyAsObject(MenuGroupResponse.class);
 
         final ExtractableResponse<Response> response = MenuHttpCommunication.create(
                         RequestBody.getMenuProductFixture(product.getId(), menuGroup.getId()))
@@ -39,16 +39,16 @@ public class MenuAcceptanceTest extends AcceptanceTest {
     @DisplayName("모든 메뉴들을 조회해야 한다.")
     @Test
     void getMenus() {
-        final Product product = ProductHttpCommunication.create(RequestBody.PRODUCT)
-                .getResponseBodyAsObject(Product.class);
+        final ProductResponse product = ProductHttpCommunication.create(RequestBody.PRODUCT)
+                .getResponseBodyAsObject(ProductResponse.class);
 
-        final MenuGroup menuGroup = MenuGroupHttpCommunication.create(RequestBody.MENU_GROUP)
-                .getResponseBodyAsObject(MenuGroup.class);
+        final MenuGroupResponse menuGroup = MenuGroupHttpCommunication.create(RequestBody.MENU_GROUP)
+                .getResponseBodyAsObject(MenuGroupResponse.class);
 
         MenuHttpCommunication.create(RequestBody.getMenuProductFixture(product.getId(), menuGroup.getId()));
 
-        final List<Menu> menus = MenuHttpCommunication.getMenus()
-                .getResponseBodyAsList(Menu.class);
+        final List<MenuResponse> menus = MenuHttpCommunication.getMenus()
+                .getResponseBodyAsList(MenuResponse.class);
 
         assertThat(menus.size()).isEqualTo(1);
     }

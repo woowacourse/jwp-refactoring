@@ -13,11 +13,11 @@ import kitchenpos.acceptance.common.httpcommunication.OrderHttpCommunication;
 import kitchenpos.acceptance.common.httpcommunication.OrderTableHttpCommunication;
 import kitchenpos.acceptance.common.httpcommunication.ProductHttpCommunication;
 import kitchenpos.common.fixture.RequestBody;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.response.MenuGroupResponse;
+import kitchenpos.ui.dto.response.MenuResponse;
+import kitchenpos.ui.dto.response.OrderResponse;
+import kitchenpos.ui.dto.response.OrderTableResponse;
+import kitchenpos.ui.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -38,8 +38,8 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     @Test
     void getOrders() {
         order();
-        final List<Order> orders = OrderHttpCommunication.getOrders()
-                .getResponseBodyAsList(Order.class);
+        final List<OrderResponse> orders = OrderHttpCommunication.getOrders()
+                .getResponseBodyAsList(OrderResponse.class);
 
         assertThat(orders.size()).isEqualTo(1);
     }
@@ -47,27 +47,27 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     @DisplayName("주문 상태를 변경한다")
     @Test
     void changeOrderStatus() {
-        final Order order = order().getResponseBodyAsObject(Order.class);
-        final Order result = OrderHttpCommunication.changeOrderStatus(order.getId(),
+        final OrderResponse order = order().getResponseBodyAsObject(OrderResponse.class);
+        final OrderResponse result = OrderHttpCommunication.changeOrderStatus(order.getId(),
                         Map.of("orderStatus", "MEAL"))
-                .getResponseBodyAsObject(Order.class);
+                .getResponseBodyAsObject(OrderResponse.class);
 
-        assertThat(result.getOrderStatus()).isEqualTo("MEAL");
+        assertThat(result.getOrderStatus().name()).isEqualTo("MEAL");
     }
 
     private HttpCommunication order() {
-        final Product product = ProductHttpCommunication.create(RequestBody.PRODUCT)
-                .getResponseBodyAsObject(Product.class);
-        final MenuGroup menuGroup = MenuGroupHttpCommunication.create(RequestBody.MENU_GROUP)
-                .getResponseBodyAsObject(MenuGroup.class);
-        final Menu menu = MenuHttpCommunication.create(
+        final ProductResponse product = ProductHttpCommunication.create(RequestBody.PRODUCT)
+                .getResponseBodyAsObject(ProductResponse.class);
+        final MenuGroupResponse menuGroup = MenuGroupHttpCommunication.create(RequestBody.MENU_GROUP)
+                .getResponseBodyAsObject(MenuGroupResponse.class);
+        final MenuResponse menu = MenuHttpCommunication.create(
                         RequestBody.getMenuProductFixture(product.getId(), menuGroup.getId()))
-                .getResponseBodyAsObject(Menu.class);
-        final OrderTable orderTable = OrderTableHttpCommunication.create(RequestBody.ORDER_TABLE_1)
-                .getResponseBodyAsObject(OrderTable.class);
-        final OrderTable nonEmptyOrderTable = OrderTableHttpCommunication.changeEmpty(orderTable.getId(),
+                .getResponseBodyAsObject(MenuResponse.class);
+        final OrderTableResponse orderTable = OrderTableHttpCommunication.create(RequestBody.ORDER_TABLE_1)
+                .getResponseBodyAsObject(OrderTableResponse.class);
+        final OrderTableResponse nonEmptyOrderTable = OrderTableHttpCommunication.changeEmpty(orderTable.getId(),
                         RequestBody.NON_EMPTY_TABLE)
-                .getResponseBodyAsObject(OrderTable.class);
+                .getResponseBodyAsObject(OrderTableResponse.class);
 
         return OrderHttpCommunication.create(RequestBody.getOrder(menu.getId(), nonEmptyOrderTable.getId()));
     }

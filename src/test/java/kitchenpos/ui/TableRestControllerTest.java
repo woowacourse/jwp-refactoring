@@ -2,6 +2,8 @@ package kitchenpos.ui;
 
 import static javax.management.openmbean.SimpleType.BOOLEAN;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -17,10 +19,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 import java.util.Map;
-import kitchenpos.common.fixture.RequestBody;
 import kitchenpos.application.TableService;
+import kitchenpos.application.dto.OrderTableCreationDto;
 import kitchenpos.common.ControllerTest;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.common.fixture.RequestBody;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -38,9 +40,10 @@ class TableRestControllerTest extends ControllerTest {
     @DisplayName("주문 테이블을 생성한다.")
     @Test
     void createOrderTable() throws Exception {
-        when(tableService.create(any(OrderTable.class))).thenReturn(DomainFixture.getOrderTable(true));
+        when(tableService.createOrderTable(any(OrderTableCreationDto.class))).thenReturn(
+                DtoFixture.getOrderTableDto(true));
 
-        final ResultActions resultActions = mockMvc.perform(post("/api/tables")
+        final ResultActions resultActions = mockMvc.perform(post("/api/v2/tables")
                         .content(objectMapper.writeValueAsString(RequestBody.ORDER_TABLE_1))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -50,7 +53,6 @@ class TableRestControllerTest extends ControllerTest {
                 getRequestPreprocessor(),
                 getResponsePreprocessor(),
                 requestFields(
-                        fieldWithPath("numberOfGuests").type(NUMBER).description("number of guest"),
                         fieldWithPath("empty").type(BOOLEAN).description("check empty")
                 ),
                 responseFields(
@@ -65,9 +67,9 @@ class TableRestControllerTest extends ControllerTest {
     @DisplayName("주문 테이블 목록을 조회한다.")
     @Test
     void getOrderTables() throws Exception {
-        when(tableService.list()).thenReturn(List.of(DomainFixture.getOrderTable(true)));
+        when(tableService.getOrderTables()).thenReturn(List.of(DtoFixture.getOrderTableDto(true)));
 
-        final ResultActions resultActions = mockMvc.perform(get("/api/tables")
+        final ResultActions resultActions = mockMvc.perform(get("/api/v2/tables")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -86,10 +88,10 @@ class TableRestControllerTest extends ControllerTest {
     @DisplayName("주문 테이블 사용 중 여부를 변경한다.")
     @Test
     void changeEmpty() throws Exception {
-        when(tableService.changeEmpty(anyLong(), any(OrderTable.class))).thenReturn(DomainFixture.getOrderTable(true));
+        when(tableService.changeEmpty(anyLong(), anyBoolean())).thenReturn(DtoFixture.getOrderTableDto(true));
 
-        final ResultActions resultActions = mockMvc.perform(put("/api/tables/1/empty")
-                        .content(objectMapper.writeValueAsString(Map.of("isEmpty", true)))
+        final ResultActions resultActions = mockMvc.perform(put("/api/v2/tables/1/empty")
+                        .content(objectMapper.writeValueAsString(Map.of("empty", true)))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -98,7 +100,7 @@ class TableRestControllerTest extends ControllerTest {
                 getRequestPreprocessor(),
                 getResponsePreprocessor(),
                 requestFields(
-                        fieldWithPath("isEmpty").type(BOOLEAN).description("table empty status")
+                        fieldWithPath("empty").type(BOOLEAN).description("table empty status")
                 ),
                 responseFields(
                         fieldWithPath("id").type(NUMBER).description("table order id"),
@@ -112,9 +114,9 @@ class TableRestControllerTest extends ControllerTest {
     @DisplayName("주문 테이블의 게스트 수를 변경한다.")
     @Test
     void changeNumberOfGuests() throws Exception {
-        when(tableService.changeNumberOfGuests(anyLong(), any(OrderTable.class))).thenReturn(DomainFixture.getOrderTable(true));
+        when(tableService.changeNumberOfGuests(anyLong(), anyInt())).thenReturn(DtoFixture.getOrderTableDto(false));
 
-        final ResultActions resultActions = mockMvc.perform(put("/api/tables/1/number-of-guests")
+        final ResultActions resultActions = mockMvc.perform(put("/api/v2/tables/1/number-of-guests")
                         .content(objectMapper.writeValueAsString(Map.of("numberOfGuests", 0)))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())

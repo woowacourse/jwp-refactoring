@@ -1,5 +1,10 @@
 package kitchenpos.application;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.OrderCreationDto;
+import kitchenpos.application.dto.OrderDto;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -10,16 +15,10 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
+
     private final MenuDao menuDao;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
@@ -38,73 +37,70 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final Order order) {
+    public OrderDto create(final OrderCreationDto orderCreationDto) {
+        final Order order = OrderCreationDto.toEntity(orderCreationDto);
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
+        validateOrderCondition(order);
 
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
-        }
+        final Order savedOrder = orderDao.save(
+                new Order(order.getOrderTableId(), OrderStatus.COOKING, LocalDateTime.now(), orderLineItems));
 
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
+        final Long orderId = savedOrder.getId();
+        final List<OrderLineItem> savedOrderLineItems = orderLineItems.stream()
+                .map(orderLineItem -> orderLineItemDao.save(
+                        new OrderLineItem(orderId, orderLineItem.getMenuId(), orderLineItem.getQuantity())))
                 .collect(Collectors.toList());
 
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
+        return OrderDto.from(savedOrder.saveOrderLineItems(savedOrderLineItems));
+    }
+
+    private void validateOrderCondition(final Order order) {
+        validateMenus(order.getOrderLineItemsMenuId());
+        validateOrderTable(order);
+    }
+
+    private void validateMenus(final List<Long> menuIds) {
+        if (menuIds.size() != menuDao.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
+    }
 
-        order.setId(null);
-
+    private void validateOrderTable(final Order order) {
         final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
-
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
-
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
-
-        final Order savedOrder = orderDao.save(order);
-
-        final Long orderId = savedOrder.getId();
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.setOrderId(orderId);
-            savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
-        }
-        savedOrder.setOrderLineItems(savedOrderLineItems);
-
-        return savedOrder;
     }
 
-    public List<Order> list() {
-        final List<Order> orders = orderDao.findAll();
-
-        for (final Order order : orders) {
-            order.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
-        }
-
-        return orders;
+    @Transactional(readOnly = true)
+    public List<OrderDto> getOrders() {
+        return orderDao.findAll()
+                .stream()
+                .map(order -> order.saveOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId())))
+                .map(OrderDto::from)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final Order order) {
+    public OrderDto changeOrderStatus(final Long orderId, final String orderStatus) {
         final Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
+        validateOrderStatus(savedOrder);
+
+        final Order order = orderDao.save(new Order(savedOrder.getId(),
+                savedOrder.getOrderTableId(),
+                OrderStatus.valueOf(orderStatus),
+                savedOrder.getOrderedTime(),
+                orderLineItemDao.findAllByOrderId(orderId)));
+
+        return OrderDto.from(order);
+    }
+
+    private void validateOrderStatus(final Order order) {
+        if (order.isInCompletionStatus()) {
             throw new IllegalArgumentException();
         }
-
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
-
-        orderDao.save(savedOrder);
-
-        savedOrder.setOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
-
-        return savedOrder;
     }
 }

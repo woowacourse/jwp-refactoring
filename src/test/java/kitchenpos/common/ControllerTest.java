@@ -1,12 +1,9 @@
 package kitchenpos.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kitchenpos.ui.MenuGroupRestController;
-import kitchenpos.ui.ProductRestController;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.operation.preprocess.OperationRequestPreprocessor;
 import org.springframework.restdocs.operation.preprocess.OperationResponsePreprocessor;

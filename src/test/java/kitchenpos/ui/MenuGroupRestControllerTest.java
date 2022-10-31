@@ -8,16 +8,16 @@ import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
-import kitchenpos.common.fixture.RequestBody;
 import kitchenpos.application.MenuGroupService;
+import kitchenpos.application.dto.MenuGroupCreationDto;
 import kitchenpos.common.ControllerTest;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.common.fixture.RequestBody;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -35,9 +35,9 @@ class MenuGroupRestControllerTest extends ControllerTest {
     @DisplayName("메뉴 그룹을 생성한다.")
     @Test
     void createMenuGroup() throws Exception {
-        when(menuGroupService.create(any(MenuGroup.class))).thenReturn(DomainFixture.getMenuGroup());
+        when(menuGroupService.create(any(MenuGroupCreationDto.class))).thenReturn(DtoFixture.getMenuGroup());
 
-        final ResultActions resultActions = mockMvc.perform(post("/api/menu-groups")
+        final ResultActions resultActions = mockMvc.perform(post("/api/v2/menu-groups")
                         .content(objectMapper.writeValueAsString(RequestBody.MENU_GROUP))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -58,9 +58,9 @@ class MenuGroupRestControllerTest extends ControllerTest {
     @DisplayName("메뉴 그룹들을 가져온다.")
     @Test
     void getMenuGroups() throws Exception {
-        when(menuGroupService.list()).thenReturn(List.of(DomainFixture.getMenuGroup()));
+        when(menuGroupService.getMenuGroups()).thenReturn(List.of(DtoFixture.getMenuGroup()));
 
-        final ResultActions resultActions = mockMvc.perform(get("/api/menu-groups")
+        final ResultActions resultActions = mockMvc.perform(get("/api/v2/menu-groups")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());

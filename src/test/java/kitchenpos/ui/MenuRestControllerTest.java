@@ -8,16 +8,16 @@ import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
-import kitchenpos.common.fixture.RequestBody;
 import kitchenpos.application.MenuService;
+import kitchenpos.application.dto.MenuCreationDto;
 import kitchenpos.common.ControllerTest;
-import kitchenpos.domain.Menu;
+import kitchenpos.common.fixture.RequestBody;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -35,9 +35,9 @@ class MenuRestControllerTest extends ControllerTest {
     @DisplayName("메뉴를 생성해야 한다.")
     @Test
     void createMenu() throws Exception {
-        when(menuService.create(any(Menu.class))).thenReturn(DomainFixture.getMenu());
+        when(menuService.create(any(MenuCreationDto.class))).thenReturn(DtoFixture.getMenuDto());
 
-        final ResultActions resultActions = mockMvc.perform(post("/api/menus")
+        final ResultActions resultActions = mockMvc.perform(post("/api/v2/menus")
                         .content(objectMapper.writeValueAsString(RequestBody.getMenuProductFixture(1L, 1L)))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -68,9 +68,9 @@ class MenuRestControllerTest extends ControllerTest {
     @DisplayName("메뉴 항목을 조회한다.")
     @Test
     void getMenus() throws Exception {
-        when(menuService.list()).thenReturn(List.of(DomainFixture.getMenu()));
+        when(menuService.getMenus()).thenReturn(List.of(DtoFixture.getMenuDto()));
 
-        final ResultActions resultActions = mockMvc.perform(get("/api/menus")
+        final ResultActions resultActions = mockMvc.perform(get("/api/v2/menus")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());

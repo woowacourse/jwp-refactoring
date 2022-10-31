@@ -9,15 +9,15 @@ import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import kitchenpos.common.fixture.RequestBody;
 import kitchenpos.application.TableGroupService;
+import kitchenpos.application.dto.TableGroupCreationDto;
 import kitchenpos.common.ControllerTest;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.common.fixture.RequestBody;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -35,9 +35,9 @@ class TableGroupRestControllerTest extends ControllerTest {
     @DisplayName("테이블 그룹을 지정한다.")
     @Test
     void createGroupTable() throws Exception {
-        when(tableGroupService.create(any(TableGroup.class))).thenReturn(DomainFixture.getTableGroup());
+        when(tableGroupService.create(any(TableGroupCreationDto.class))).thenReturn(DtoFixture.getTableGroupDto());
 
-        final ResultActions resultActions = mockMvc.perform(post("/api/table-groups")
+        final ResultActions resultActions = mockMvc.perform(post("/api/v2/table-groups")
                         .content(objectMapper.writeValueAsString(RequestBody.getOrderTableGroups(1L, 2L)))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())

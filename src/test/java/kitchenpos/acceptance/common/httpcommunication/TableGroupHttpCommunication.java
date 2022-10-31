@@ -6,7 +6,7 @@ public class TableGroupHttpCommunication {
 
     public static HttpCommunication create(final Map<String, Object> requestBody) {
         return HttpCommunication.request()
-                .create("/api/table-groups", requestBody)
+                .create("/api/v2/table-groups", requestBody)
                 .build();
     }
 

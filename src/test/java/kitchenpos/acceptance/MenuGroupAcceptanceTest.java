@@ -7,7 +7,7 @@ import io.restassured.response.Response;
 import java.util.List;
 import kitchenpos.acceptance.common.httpcommunication.MenuGroupHttpCommunication;
 import kitchenpos.common.fixture.RequestBody;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.ui.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -30,8 +30,8 @@ public class MenuGroupAcceptanceTest extends AcceptanceTest {
     void getMenuGroups() {
         MenuGroupHttpCommunication.create(RequestBody.MENU_GROUP);
 
-        final List<MenuGroup> menuGroups = MenuGroupHttpCommunication.getMenuGroups()
-                .getResponseBodyAsList(MenuGroup.class);
+        final List<MenuGroupResponse> menuGroups = MenuGroupHttpCommunication.getMenuGroups()
+                .getResponseBodyAsList(MenuGroupResponse.class);
 
         assertThat(menuGroups.size()).isEqualTo(1);
     }

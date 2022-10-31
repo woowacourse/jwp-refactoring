@@ -6,13 +6,13 @@ public class MenuHttpCommunication {
 
     public static HttpCommunication create(final Map<String, Object> requestBody) {
         return HttpCommunication.request()
-                .create("/api/menus", requestBody)
+                .create("/api/v2/menus", requestBody)
                 .build();
     }
 
     public static HttpCommunication getMenus() {
         return HttpCommunication.request()
-                .get("/api/menus")
+                .get("/api/v2/menus")
                 .build();
     }
 }
