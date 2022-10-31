@@ -26,6 +26,7 @@ public class TableGroup {
 
     public TableGroup addOrderTables(final List<OrderTable> orderTables) {
         verifyOrderTableSize(orderTables);
+        verifyDuplicate(orderTables);
         orderTables.forEach(OrderTable::verifyCanGroup);
 
         final List<OrderTable> groupedOrderTables = orderTables.stream()
@@ -38,6 +39,9 @@ public class TableGroup {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException();
         }
+    }
+
+    private void verifyDuplicate(final List<OrderTable> orderTables) {
         final long distinctOrderTableSize = orderTables.stream()
                 .map(OrderTable::getId)
                 .distinct()
