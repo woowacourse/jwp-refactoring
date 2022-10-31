@@ -1,76 +1,78 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
+@Entity
+@Table(name = "menu")
 public class Menu {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private BigDecimal price;
-    private Long menuGroupId;
-    private List<MenuProduct> menuProducts = new ArrayList<>();
 
-    public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
+    @Embedded
+    private Price price;
+    private Long menuGroupId;
+
+    @Embedded
+    private MenuProducts menuProducts;
+
+    public Menu(final Long id,
+                final String name,
+                final BigDecimal price,
+                final Long menuGroupId,
                 final List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
-        this.price = price;
+        this.price = new Price(price);
         this.menuGroupId = menuGroupId;
-        this.menuProducts.addAll(menuProducts);
+        this.menuProducts = new MenuProducts(menuProducts);
     }
 
-    public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId) {
-        this(id, name, price, menuGroupId, Collections.emptyList());
+    public static Menu create(final String name,
+                              final BigDecimal price,
+                              final Long menuGroupId,
+                              final List<MenuProduct> menuProducts,
+                              final MenuValidator menuValidator) {
+        menuValidator.validate(menuGroupId, menuProducts, price);
+        return new Menu(null, name, price, menuGroupId, menuProducts);
     }
 
-    public Menu(final String name, final BigDecimal price, final Long menuGroupId) {
-        this(null, name, price, menuGroupId, Collections.emptyList());
+    public Menu(final String name, final BigDecimal price, final Long menuGroupId,
+                final List<MenuProduct> menuProducts) {
+        this(null, name, price, menuGroupId, menuProducts);
     }
 
-    private Menu() {
+    protected Menu() {
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
     public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
+        return price.getValue();
     }
 
     public Long getMenuGroupId() {
         return menuGroupId;
     }
 
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
-    }
-
     public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
-    }
-
-    public void addMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts.addAll(menuProducts);
+        return menuProducts.getValues();
     }
 
     @Override
@@ -81,11 +83,22 @@ public class Menu {
         if (!(o instanceof Menu menu)) {
             return false;
         }
-        return Objects.equals(id, menu.id);
+        return Objects.equals(id, menu.getId());
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Menu{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", menuGroupId=" + menuGroupId +
+                ", menuProducts=" + menuProducts +
+                '}';
     }
 }

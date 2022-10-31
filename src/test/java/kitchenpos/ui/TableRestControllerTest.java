@@ -11,7 +11,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.application.dto.request.OrderTableCreateCommand;
+import kitchenpos.application.dto.request.OrderTableEmptyCommand;
+import kitchenpos.application.dto.request.OrderTableGuestCommand;
+import kitchenpos.application.dto.response.OrderTableResponse;
+import kitchenpos.ui.dto.OrderTableEmptyRequest;
+import kitchenpos.ui.dto.OrderTableGuestRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -22,12 +27,13 @@ class TableRestControllerTest extends ControllerTest {
     @Test
     @DisplayName("OrderTable을 생성한다.")
     void create() throws Exception {
-        OrderTable orderTable = new OrderTable(1L, 1L, 10, false);
+        OrderTableCreateCommand orderTableCreateCommand = new OrderTableCreateCommand(10, false);
+        OrderTableResponse orderTableResponse = new OrderTableResponse(1L, 1L, 10, false);
 
-        given(tableService.create(any(OrderTable.class))).willReturn(orderTable);
+        given(tableService.create(any(OrderTableCreateCommand.class))).willReturn(orderTableResponse);
         mockMvc.perform(post("/api/tables")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(orderTable)))
+                        .content(objectMapper.writeValueAsString(orderTableCreateCommand)))
                 .andExpectAll(status().isCreated(),
                         header().string(HttpHeaders.LOCATION, "/api/tables/1"));
     }
@@ -35,10 +41,10 @@ class TableRestControllerTest extends ControllerTest {
     @Test
     @DisplayName("OrderTable List를 반환한다.")
     void list() throws Exception {
-        OrderTable orderTable1 = new OrderTable(1L, 1L, 10, false);
-        OrderTable orderTable2 = new OrderTable(2L, 2L, 5, false);
+        OrderTableResponse orderTable1 = new OrderTableResponse(1L, 1L, 10, false);
+        OrderTableResponse orderTable2 = new OrderTableResponse(2L, 2L, 5, false);
 
-        List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
+        List<OrderTableResponse> orderTables = List.of(orderTable1, orderTable2);
         given(tableService.list()).willReturn(orderTables);
         mockMvc.perform(get("/api/tables"))
                 .andExpectAll(status().isOk(),
@@ -48,25 +54,26 @@ class TableRestControllerTest extends ControllerTest {
     @Test
     @DisplayName("비어있는 상태로 변경한다.")
     void changeEmpty() throws Exception {
-        OrderTable orderTable = new OrderTable(1L, 1L, 10, true);
-        given(tableService.changeEmpty(anyLong(), any(OrderTable.class))).willReturn(orderTable);
+        OrderTableResponse orderTableResponse = new OrderTableResponse(1L, 1L, 10, true);
+        given(tableService.changeEmpty(anyLong(), any(OrderTableEmptyCommand.class))).willReturn(orderTableResponse);
 
         mockMvc.perform(put("/api/tables/1/empty")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(orderTable)))
+                        .content(objectMapper.writeValueAsString(new OrderTableEmptyRequest(true))))
                 .andExpectAll(status().isOk(),
-                        content().string(objectMapper.writeValueAsString(orderTable)));
+                        content().string(objectMapper.writeValueAsString(orderTableResponse)));
     }
 
     @Test
     void changeNumberOfGuests() throws Exception {
-        OrderTable orderTable = new OrderTable(1L, 1L, 10, true);
-        given(tableService.changeNumberOfGuests(anyLong(), any(OrderTable.class))).willReturn(orderTable);
+        OrderTableResponse orderTableResponse = new OrderTableResponse(1L, 1L, 10, false);
+        given(tableService.changeNumberOfGuests(anyLong(), any(OrderTableGuestCommand.class))).willReturn(
+                orderTableResponse);
 
         mockMvc.perform(put("/api/tables/1/number-of-guests")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(orderTable)))
+                        .content(objectMapper.writeValueAsString(new OrderTableGuestRequest(10))))
                 .andExpectAll(status().isOk(),
-                        content().string(objectMapper.writeValueAsString(orderTable)));
+                        content().string(objectMapper.writeValueAsString(orderTableResponse)));
     }
 }

@@ -3,8 +3,11 @@ package kitchenpos.application;
 import static kitchenpos.support.fixtures.DomainFixtures.MENU_GROUP_NAME1;
 import static kitchenpos.support.fixtures.DomainFixtures.MENU_GROUP_NAME2;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.application.dto.request.MenuGroupCommand;
+import kitchenpos.application.dto.response.MenuGroupResponse;
+import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.support.cleaner.ApplicationTest;
 import org.junit.jupiter.api.DisplayName;
@@ -18,22 +21,26 @@ class MenuGroupServiceTest {
     private MenuGroupService menuGroupService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Test
     @DisplayName("MenuGroup을 생성한다.")
     void create() {
-        MenuGroup menuGroup = menuGroupService.create(new MenuGroup(MENU_GROUP_NAME1));
+        MenuGroupCommand menuGroupCommand = new MenuGroupCommand(MENU_GROUP_NAME1);
+        MenuGroupResponse menuGroupResponse = menuGroupService.create(menuGroupCommand);
 
-        assertThat(menuGroupDao.existsById(menuGroup.getId())).isTrue();
+        assertAll(
+                () -> assertThat(menuGroupResponse.id()).isNotNull(),
+                () -> assertThat(menuGroupResponse.name()).isEqualTo(MENU_GROUP_NAME1)
+        );
     }
 
     @Test
     @DisplayName("MenuGroup을 모두 조회한다.")
     void list() {
-        MenuGroup menuGroup1 = menuGroupService.create(new MenuGroup(MENU_GROUP_NAME1));
-        MenuGroup menuGroup2 = menuGroupService.create(new MenuGroup(MENU_GROUP_NAME2));
+        menuGroupRepository.save(new MenuGroup(MENU_GROUP_NAME1));
+        menuGroupRepository.save(new MenuGroup(MENU_GROUP_NAME2));
 
-        assertThat(menuGroupService.list()).containsExactly(menuGroup1, menuGroup2);
+        assertThat(menuGroupService.list()).hasSize(2);
     }
 }
