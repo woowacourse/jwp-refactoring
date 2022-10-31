@@ -23,7 +23,11 @@ dependencies {
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
-    testImplementation 'io.rest-assured:scala-support'
+
+    // for rest assured
+    testImplementation 'io.rest-assured:rest-assured:5.2.0'
+    testImplementation 'io.rest-assured:json-path:5.2.0'
+    testImplementation 'io.rest-assured:xml-path:5.2.0'
 }
 
 test {
