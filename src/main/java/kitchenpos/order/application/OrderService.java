@@ -6,17 +6,18 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.menu.repository.MenuRepository;
-import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
+import kitchenpos.order.domain.OrderedMenu;
 import kitchenpos.order.dto.OrderLineItemRequest;
 import kitchenpos.order.dto.OrderRequest;
 import kitchenpos.order.dto.OrderResponse;
+import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.repository.OrderTableRepository;
 
 @Service
 @Transactional(readOnly = true)
@@ -61,7 +62,10 @@ public class OrderService {
 
     private List<OrderLineItem> createLineItems(OrderRequest orderRequest, List<Menu> menus) {
         return menus.stream()
-            .map(menu -> new OrderLineItem(menu, orderRequest.getQuantity(menu.getId())))
+            .map(menu -> new OrderLineItem(
+                new OrderedMenu(menu.getName(), menu.getPrice()),
+                orderRequest.getQuantity(menu.getId())
+            ))
             .collect(Collectors.toList());
     }
 
