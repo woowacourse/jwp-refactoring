@@ -39,11 +39,22 @@ public class OrderTable {
         this.empty = empty;
     }
 
-
     public void changeNumberOfGuests(final int numberOfGuests) {
-        validateNotEmpty();
+        validateEmpty();
         validateNumberOfGuests(numberOfGuests);
         this.numberOfGuests = numberOfGuests;
+    }
+
+    private void validateEmpty() {
+        if (this.empty) {
+            throw new IllegalArgumentException("주문 테이블은 비어있을 수 없습니다.");
+        }
+    }
+
+    private void validateNumberOfGuests(final int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("주문 테이블의 손님의 수는 0명 미만일 수 없습니다.");
+        }
     }
 
     public boolean isUsing() {
@@ -53,18 +64,6 @@ public class OrderTable {
     public void unBindGroup() {
         this.tableGroupId = null;
         this.empty = false;
-    }
-
-    public void validateNotEmpty() {
-        if (this.empty) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateNumberOfGuests(final int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
     }
 
     public Long getId() {
