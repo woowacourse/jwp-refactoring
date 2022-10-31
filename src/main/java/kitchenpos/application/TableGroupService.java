@@ -11,6 +11,8 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.TableGroupCreateRequest;
+import kitchenpos.dto.TableGroupCreateResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,21 +29,24 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final OrderTables tables) {
-        if (!tables.isGroupAble()) {
-            throw new IllegalArgumentException();
-        }
-        final List<Long> orderTableIds = tables.getOrderTableIds();
-        final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
-        validateOrderTables(tables, savedOrderTables);
+    public TableGroupCreateResponse create(final TableGroupCreateRequest tableGroupCreateRequest) {
+        final OrderTables orderTables = new OrderTables(tableGroupCreateRequest.getOrderTables());
 
-        final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), tables));
-        groupTables(tables, savedTableGroup);
-        return savedTableGroup;
+        final List<Long> orderTableIds = orderTables.getOrderTableIds();
+        final OrderTables savedOrderTables = new OrderTables(orderTableDao.findAllByIdIn(orderTableIds));
+        validateOrderTables(orderTables, savedOrderTables);
+
+        final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), orderTables));
+        groupTables(orderTables, savedTableGroup);
+
+        return TableGroupCreateResponse.from(savedTableGroup);
     }
 
-    private void validateOrderTables(final OrderTables tables, final List<OrderTable> savedOrderTables) {
-        if (!tables.hasValidOrderTables(savedOrderTables.size())) {
+    private void validateOrderTables(final OrderTables tables, final OrderTables savedOrderTables) {
+        if (!savedOrderTables.isGroupAble()) {
+            throw new IllegalArgumentException();
+        }
+        if (!tables.hasValidOrderTables(savedOrderTables.getOrderTables())) {
             throw new IllegalArgumentException();
         }
     }

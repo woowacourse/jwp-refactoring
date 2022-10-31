@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTables;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.TableGroupCreateRequest;
+import kitchenpos.dto.TableGroupCreateResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -21,9 +21,10 @@ class TableGroupServiceTest extends ServiceTest {
         orderTables.add(saveAndGetOrderTable(1L, true));
         orderTables.add(saveAndGetOrderTable(2L, true));
 
-        final TableGroup actual = tableGroupService.create(new OrderTables(orderTables));
+        final TableGroupCreateResponse actual =
+                tableGroupService.create(new TableGroupCreateRequest(orderTables));
 
-        assertThat(actual.getAllOrderTables()).hasSize(2);
+        assertThat(actual.getOrderTables()).hasSize(2);
     }
 
     @Test
@@ -32,7 +33,7 @@ class TableGroupServiceTest extends ServiceTest {
         final List<OrderTable> orderTables = new ArrayList<>();
         orderTables.add(saveAndGetOrderTable(1L, true));
 
-        assertThatThrownBy(() -> tableGroupService.create(new OrderTables(orderTables)))
+        assertThatThrownBy(() -> tableGroupService.create(new TableGroupCreateRequest(orderTables)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -43,7 +44,7 @@ class TableGroupServiceTest extends ServiceTest {
         orderTables.add(saveAndGetOrderTable(1L, true));
         orderTables.add(saveAndGetOrderTable(2L, false));
 
-        assertThatThrownBy(() -> tableGroupService.create(new OrderTables(orderTables)))
+        assertThatThrownBy(() -> tableGroupService.create(new TableGroupCreateRequest(orderTables)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -56,7 +57,8 @@ class TableGroupServiceTest extends ServiceTest {
         orderTables.add(orderTable1);
         orderTables.add(orderTable2);
 
-        final TableGroup tableGroup = tableGroupService.create(new OrderTables(orderTables));
+        final TableGroupCreateResponse tableGroup =
+                tableGroupService.create(new TableGroupCreateRequest(orderTables));
 
         tableGroupService.ungroup(tableGroup.getId());
 
@@ -80,8 +82,9 @@ class TableGroupServiceTest extends ServiceTest {
         orderTables.add(orderTable1);
         orderTables.add(orderTable2);
 
-        final TableGroup tableGroup = tableGroupService.create(new OrderTables(orderTables));
-        final List<OrderTable> orderTablesInGroup = tableGroup.getAllOrderTables();
+        final TableGroupCreateResponse tableGroup =
+                tableGroupService.create(new TableGroupCreateRequest(orderTables));
+        final List<OrderTable> orderTablesInGroup = tableGroup.getOrderTables();
 
         saveAndGetOrderInOrderTable(1L, orderTablesInGroup.get(0), OrderStatus.COOKING.name());
 

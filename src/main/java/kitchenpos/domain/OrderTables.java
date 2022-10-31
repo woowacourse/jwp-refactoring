@@ -8,14 +8,17 @@ import org.springframework.util.CollectionUtils;
 public class OrderTables {
     private static final int MINIMUM_GROUP_TABLE_COUNTS = 2;
 
-    private final List<OrderTable> orderTables;
+    private List<OrderTable> orderTables;
+
+    private OrderTables() {
+    }
 
     public OrderTables(final List<OrderTable> orderTables) {
         this.orderTables = orderTables;
     }
 
-    public boolean hasValidOrderTables(final long registeredTableCounts) {
-        return getOrderTableIds().size() == registeredTableCounts;
+    public boolean hasValidOrderTables(final List<OrderTable> registeredTables) {
+        return getOrderTableIds().size() == registeredTables.size();
     }
 
     public void groupTables(final Long tableGroupId) {
@@ -25,8 +28,7 @@ public class OrderTables {
     }
 
     public boolean isGroupAble() {
-        return !isEmpty()
-                && orderTables.size() >= MINIMUM_GROUP_TABLE_COUNTS
+        return orderTables.size() >= MINIMUM_GROUP_TABLE_COUNTS
                 && orderTables.stream()
                 .allMatch(OrderTable::isGroupAble);
     }
