@@ -32,14 +32,14 @@ public class JdbcTemplateTableGroupDao implements TableGroupDao {
     }
 
     @Override
-    public TableGroup save(final TableGroup entity) {
+    public TableGroupDto save(final TableGroup entity) {
         final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
         final Number key = jdbcInsert.executeAndReturnKey(parameters);
         return select(key.longValue());
     }
 
     @Override
-    public Optional<TableGroup> findById(final Long id) {
+    public Optional<TableGroupDto> findById(final Long id) {
         try {
             return Optional.of(select(id));
         } catch (final EmptyResultDataAccessException e) {
@@ -48,22 +48,26 @@ public class JdbcTemplateTableGroupDao implements TableGroupDao {
     }
 
     @Override
-    public List<TableGroup> findAll() {
+    public List<TableGroupDto> findAll() {
         final String sql = "SELECT id, created_date FROM table_group";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    private TableGroup select(final Long id) {
+    private TableGroupDto select(final Long id) {
         final String sql = "SELECT id, created_date FROM table_group WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("id", id);
         return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    private TableGroup toEntity(final ResultSet resultSet) throws SQLException {
-        final TableGroup entity = new TableGroup();
-        entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setCreatedDate(resultSet.getObject("created_date", LocalDateTime.class));
-        return entity;
+    private TableGroupDto toEntity(final ResultSet resultSet) throws SQLException {
+        return new TableGroupDto(
+                resultSet.getLong(KEY_COLUMN_NAME),
+                resultSet.getObject("created_date", LocalDateTime.class)
+        );
+//        final TableGroup entity = new TableGroup();
+//        entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
+//        entity.setCreatedDate(resultSet.getObject("created_date", LocalDateTime.class));
+//        return entity;
     }
 }

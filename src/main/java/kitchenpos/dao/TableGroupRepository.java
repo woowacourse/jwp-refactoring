@@ -17,7 +17,8 @@ public class TableGroupRepository {
     }
 
     public TableGroup save(final TableGroup entity) {
-        final TableGroup savedTableGroup = tableGroupDao.save(entity);
+        final TableGroup savedTableGroup = tableGroupDao.save(entity)
+                .toEntity();
 
         final List<OrderTable> orderTables = entity.getOrderTables();
         for (final OrderTable orderTable : orderTables) {
