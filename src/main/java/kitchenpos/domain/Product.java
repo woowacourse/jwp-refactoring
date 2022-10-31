@@ -3,9 +3,9 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 
 public class Product {
-    private Long id;
-    private String name;
-    private Long price;
+    private final Long id;
+    private final String name;
+    private final Long price;
 
     public Product(Long id, String name, Long price) {
         validateName(name);
@@ -35,23 +35,11 @@ public class Product {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
     public Long getPrice() {
         return price;
-    }
-
-    public void setPrice(final Long price) {
-        this.price = price;
     }
 }

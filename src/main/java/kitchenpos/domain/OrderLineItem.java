@@ -3,10 +3,10 @@ package kitchenpos.domain;
 import java.util.Objects;
 
 public class OrderLineItem {
-    private Long seq;
-    private Long orderId;
-    private Long menuId;
-    private long quantity;
+    private final Long seq;
+    private final Long orderId;
+    private final Long menuId;
+    private final long quantity;
 
     public OrderLineItem(Long seq, Long orderId, Long menuId, long quantity) {
         validateMenuId(menuId);

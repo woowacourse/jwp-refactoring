@@ -4,11 +4,11 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class Menu {
-    private Long id;
-    private String name;
-    private Long price;
-    private Long menuGroupId;
-    private List<MenuProduct> menuProducts;
+    private final Long id;
+    private final String name;
+    private final Long price;
+    private final Long menuGroupId;
+    private final List<MenuProduct> menuProducts;
 
     public Menu(Long id, String name, Long price, Long menuGroupId, List<MenuProduct> menuProducts) {
         validateName(name);
@@ -58,9 +58,5 @@ public class Menu {
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
-    }
-
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
     }
 }

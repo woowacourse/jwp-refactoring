@@ -1,8 +1,8 @@
 package kitchenpos.domain;
 
 public class MenuGroup {
-    private Long id;
-    private String name;
+    private final Long id;
+    private final String name;
 
     public MenuGroup(Long id, String name) {
         validateName(name);

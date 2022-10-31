@@ -17,9 +17,9 @@ public class FakeProductDao implements ProductDao {
     @Override
     public Product save(Product entity) {
         if (entity.getId() == null) {
-            entity.setId(++id);
-            repository.put(entity.getId(), entity);
-            return entity;
+            Product addEntity = new Product(++id, entity.getName(), entity.getPrice());
+            repository.put(addEntity.getId(), addEntity);
+            return addEntity;
         }
         return repository.computeIfAbsent(entity.getId(), (id) -> entity);
     }
