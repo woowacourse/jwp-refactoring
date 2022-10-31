@@ -25,6 +25,33 @@ public class OrderLineItem {
     @JoinColumn(name = "orders_id")
     private Order order;
 
+    private long quantity;
+
     protected OrderLineItem() {
+    }
+
+    public OrderLineItem(Menu menu, long quantity) {
+        this.menu = menu;
+        this.quantity = quantity;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Menu getMenu() {
+        return menu;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public long getQuantity() {
+        return quantity;
+    }
+
+    public void associateOrder(Order order) {
+        this.order = order;
     }
 }
