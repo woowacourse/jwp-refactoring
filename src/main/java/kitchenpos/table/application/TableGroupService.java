@@ -9,6 +9,7 @@ import kitchenpos.table.domain.OrderTables;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.domain.dao.OrderTableDao;
 import kitchenpos.table.domain.dao.TableGroupDao;
+import kitchenpos.table.exception.InvalidFindAllOrderTablesException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,8 +30,6 @@ public class TableGroupService {
     public TableGroupResponse create(TableGroupSaveRequest request) {
         List<Long> orderTableIds = request.toEntities();
         OrderTables orderTables = findOrderTables(orderTableIds);
-        orderTables.validateSameSize(orderTableIds);
-
         TableGroup tableGroup = tableGroupDao.save(TableGroup.from());
         orderTables.joinWithTableGroup(tableGroup);
         saveOrderTables(orderTables);
@@ -52,7 +51,14 @@ public class TableGroupService {
     }
 
     private OrderTables findOrderTables(List<Long> orderTableIds) {
-        return new OrderTables(orderTableDao.findAllByIdIn(orderTableIds));
+        List<OrderTable> orderTables = orderTableDao.findAllByIdIn(orderTableIds);
+        validateFindOrderTables(orderTableIds, orderTables);
+        return new OrderTables(orderTables);
+    }
+    private void validateFindOrderTables(List<Long> orderTablesIds, List<OrderTable> orderTables) {
+        if (orderTables.size() != orderTablesIds.size()) {
+            throw new InvalidFindAllOrderTablesException();
+        }
     }
 
     private OrderTables findOrderTables(Long tableGroupId) {
