@@ -39,12 +39,14 @@ public class OrderService {
 
     public OrderResponse create(final OrderCreateRequest request) {
         validateOrderCreateRequest(request);
+        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
+            .orElseThrow(IllegalArgumentException::new);
 
-        final Order order = orderRepository.save(new Order(request.getOrderTableId(), OrderStatus.COOKING.name(), LocalDateTime.now()));
-        order.addOrderLineItems(new OrderLineItems(request.getOrderLineItems()
-            .stream()
-            .map(orderLineItem -> createOrderLineItem(order, orderLineItem))
-            .collect(Collectors.toList())));
+        final Order order = orderRepository.save(
+            new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), new OrderLineItems(request.getOrderLineItems()
+                .stream()
+                .map(this::createOrderLineItem)
+                .collect(Collectors.toList()))));
 
         return OrderResponse.createResponse(order);
     }
@@ -53,16 +55,12 @@ public class OrderService {
         if (CollectionUtils.isEmpty(request.getOrderLineItems())) {
             throw new IllegalArgumentException();
         }
-
-        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
-        orderTable.validateNotEmpty();
     }
 
-    private OrderLineItem createOrderLineItem(final Order order, final OrderLineItemRequest request) {
+    private OrderLineItem createOrderLineItem(final OrderLineItemRequest request) {
         final Menu menu = menuRepository.findById(request.getMenuId())
             .orElseThrow(IllegalArgumentException::new);
-        return new OrderLineItem(order.getId(), menu.getId(), request.getQuantity());
+        return new OrderLineItem(menu.getId(), request.getQuantity());
     }
 
     @Transactional(readOnly = true)

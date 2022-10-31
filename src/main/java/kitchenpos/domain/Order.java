@@ -28,8 +28,8 @@ public class Order {
     protected Order() {
     }
 
-    public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
-        this(null, orderTableId, orderStatus, orderedTime, null);
+    public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime, final OrderLineItems orderLineItems) {
+        this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
     public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
@@ -38,6 +38,7 @@ public class Order {
 
     public Order(final Long id, final Long orderTableId, final String orderStatus,
                  final LocalDateTime orderedTime, final OrderLineItems orderLineItems) {
+        validateOrderLineItems(orderLineItems);
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -45,8 +46,10 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public void addOrderLineItems(final OrderLineItems orderLineItems) {
-        this.orderLineItems = orderLineItems;
+    private void validateOrderLineItems(final OrderLineItems orderLineItems) {
+        if (orderLineItems.getOrderLineItems().size() < 1) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Order changeOrderStatus(final OrderStatus orderStatus) {
