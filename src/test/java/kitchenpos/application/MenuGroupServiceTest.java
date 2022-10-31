@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.request.MenuGroupCreateRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -45,9 +44,9 @@ class MenuGroupServiceTest extends ServiceTest {
 
             @Test
             void 메뉴_그룹_목록을_반환한다() {
-                List<MenuGroup> menuGroups = menuGroupService.list();
+                List<MenuGroupResponse> responses = menuGroupService.list();
 
-                assertThat(menuGroups).isNotEmpty();
+                assertThat(responses).isNotEmpty();
             }
         }
     }

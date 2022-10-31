@@ -27,8 +27,8 @@ public class Price {
         return new Price(this.value.add(price.value));
     }
 
-    public int compareTo(final Price totalPrice) {
-        return this.value.compareTo(totalPrice.value);
+    public int compareTo(final Price price) {
+        return this.value.compareTo(price.value);
     }
 
     private void validate(final BigDecimal value) {

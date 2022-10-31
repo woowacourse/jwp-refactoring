@@ -2,12 +2,15 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import kitchenpos.domain.vo.Price;
 
@@ -25,8 +28,8 @@ public class Menu {
     @Embedded
     private Price price;
 
-    @Column(name = "menu_group_id", nullable = false)
-    private Long menuGroupId;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    private MenuGroup menuGroup;
 
     @Embedded
     private MenuProducts menuProducts;
@@ -34,13 +37,24 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(final Long id, final String name, final Price price, final Long menuGroupId,
+    public Menu(final Long id, final String name, final Price price, final MenuGroup menuGroup,
                 final MenuProducts menuProducts) {
+        validatePrice(price, menuProducts);
         this.id = id;
         this.name = name;
         this.price = price;
-        this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
+        this.menuGroup = menuGroup;
+        this.menuProducts = menuProducts.arrangeMenu(this);
+    }
+
+    private void validatePrice(final Price price, final MenuProducts menuProducts) {
+        Price totalPrice = menuProducts.getMenuProducts()
+                .stream()
+                .map(MenuProduct::getPrice)
+                .reduce(new Price(BigDecimal.ZERO), Price::add);
+        if (price.compareTo(totalPrice) > 0) {
+            throw new IllegalArgumentException("메뉴의 가격은 메뉴에 속한 상품의 합보다 클 수 없습니다.");
+        }
     }
 
     public static Builder builder() {
@@ -59,8 +73,8 @@ public class Menu {
         return price;
     }
 
-    public Long getMenuGroupId() {
-        return menuGroupId;
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
     }
 
     public MenuProducts getMenuProducts() {
@@ -72,7 +86,7 @@ public class Menu {
         private Long id;
         private String name;
         private Price price;
-        private Long menuGroupId;
+        private MenuGroup menuGroup;
         private MenuProducts menuProducts;
 
         public Builder id(final Long id) {
@@ -95,8 +109,8 @@ public class Menu {
             return this;
         }
 
-        public Builder menuGroupId(final Long menuGroupId) {
-            this.menuGroupId = menuGroupId;
+        public Builder menuGroup(final MenuGroup menuGroup) {
+            this.menuGroup = menuGroup;
             return this;
         }
 
@@ -111,7 +125,7 @@ public class Menu {
         }
 
         public Menu build() {
-            return new Menu(id, name, price, menuGroupId, menuProducts);
+            return new Menu(id, name, price, menuGroup, menuProducts);
         }
     }
 }

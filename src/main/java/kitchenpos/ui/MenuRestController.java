@@ -23,17 +23,17 @@ public class MenuRestController {
     }
 
     @PostMapping
-    public ResponseEntity<MenuResponse> create(@RequestBody final MenuCreateRequest menuCreateRequest) {
-        MenuResponse menuResponse = menuService.create(menuCreateRequest);
-        URI uri = URI.create("/api/menus/" + menuResponse.getId());
+    public ResponseEntity<MenuResponse> create(@RequestBody final MenuCreateRequest request) {
+        MenuResponse response = menuService.create(request);
+        URI uri = URI.create("/api/menus/" + response.getId());
         return ResponseEntity.created(uri)
-                .body(menuResponse);
+                .body(response);
     }
 
     @GetMapping
     public ResponseEntity<List<MenuResponse>> list() {
-        List<MenuResponse> menuResponses = menuService.list();
+        List<MenuResponse> responses = menuService.list();
         return ResponseEntity.ok()
-                .body(menuResponses);
+                .body(responses);
     }
 }

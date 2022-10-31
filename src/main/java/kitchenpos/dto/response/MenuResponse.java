@@ -25,7 +25,7 @@ public class MenuResponse {
     }
 
     public static MenuResponse from(final Menu menu) {
-        return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice().getValue(), menu.getMenuGroupId(),
+        return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice().getValue(), menu.getMenuGroup().getId(),
                 MenuProductResponse.from(menu.getMenuProducts()));
     }
 

@@ -2,10 +2,14 @@ package kitchenpos.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import kitchenpos.domain.vo.Price;
 
 @Entity
 @Table(name = "menu_product")
@@ -15,11 +19,13 @@ public class MenuProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @Column(name = "menu_id")
-    private Long menuId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "menu_id")
+    private Menu menu;
 
-    @Column(name = "product_id", nullable = false)
-    private Long productId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    private Product product;
 
     @Column(name = "quantity", nullable = false)
     private long quantity;
@@ -27,10 +33,10 @@ public class MenuProduct {
     protected MenuProduct() {
     }
 
-    public MenuProduct(final Long seq, final Long menuId, final Long productId, final long quantity) {
+    public MenuProduct(final Long seq, final Menu menu, final Product product, final long quantity) {
         this.seq = seq;
-        this.menuId = menuId;
-        this.productId = productId;
+        this.menu = menu;
+        this.product = product;
         this.quantity = quantity;
     }
 
@@ -38,16 +44,26 @@ public class MenuProduct {
         return new Builder();
     }
 
+    public Price getPrice() {
+        return this.product
+                .getPrice()
+                .multiply(quantity);
+    }
+
+    public void arrangeMenu(final Menu menu) {
+        this.menu = menu;
+    }
+
     public Long getSeq() {
         return seq;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public Menu getMenu() {
+        return menu;
     }
 
-    public Long getProductId() {
-        return productId;
+    public Product getProduct() {
+        return product;
     }
 
     public long getQuantity() {
@@ -57,8 +73,8 @@ public class MenuProduct {
     public static class Builder {
 
         private Long seq;
-        private Long menuId;
-        private Long productId;
+        private Menu menu;
+        private Product product;
         private long quantity;
 
         public Builder seq(final Long seq) {
@@ -66,13 +82,13 @@ public class MenuProduct {
             return this;
         }
 
-        public Builder menuId(final Long menuId) {
-            this.menuId = menuId;
+        public Builder menu(final Menu menu) {
+            this.menu = menu;
             return this;
         }
 
-        public Builder productId(final Long productId) {
-            this.productId = productId;
+        public Builder product(final Product product) {
+            this.product = product;
             return this;
         }
 
@@ -82,7 +98,7 @@ public class MenuProduct {
         }
 
         public MenuProduct build() {
-            return new MenuProduct(seq, menuId, productId, quantity);
+            return new MenuProduct(seq, menu, product, quantity);
         }
     }
 }
