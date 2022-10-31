@@ -20,15 +20,15 @@ public class OrderServiceJpa {
 
     private OrderRepository orderRepository;
     private MenuRepository menuRepository;
-    private TableServiceJpa tableService;
+    private TableServiceAssistant tableServiceAssistant;
     private OrderLineItemServiceJpa orderLineItemService;
 
     public OrderServiceJpa(OrderRepository orderRepository, MenuRepository menuRepository,
-                           TableServiceJpa tableService,
+                           TableServiceAssistant tableServiceAssistant,
                            OrderLineItemServiceJpa orderLineItemService) {
         this.orderRepository = orderRepository;
         this.menuRepository = menuRepository;
-        this.tableService = tableService;
+        this.tableServiceAssistant = tableServiceAssistant;
         this.orderLineItemService = orderLineItemService;
     }
 
@@ -46,7 +46,7 @@ public class OrderServiceJpa {
             throw new IllegalArgumentException();
         }
 
-        OrderTable orderTable = tableService.findTable(orderCreateRequest.getOrderTableId());
+        OrderTable orderTable = tableServiceAssistant.findTable(orderCreateRequest.getOrderTableId());
 
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
@@ -79,5 +79,9 @@ public class OrderServiceJpa {
 
         return new ChangeOrderStatusResponse(savedOrder.getId(), savedOrder.getOrderTable().getId(),
                 savedOrder.getOrderStatus().getValue(), savedOrder.getOrderedTime(), savedOrder.getOrderLineItems());
+    }
+
+    public boolean isNotAllOrderFinish(OrderTable orderTable) {
+        return orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTable.getId(), List.of(OrderStatus.COOKING.getValue(), OrderStatus.MEAL.getValue()));
     }
 }

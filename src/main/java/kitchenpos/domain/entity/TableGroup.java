@@ -23,4 +23,12 @@ public class TableGroup {
 
     protected TableGroup() {
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public List<OrderTable> getOrderTables() {
+        return orderTables;
+    }
 }

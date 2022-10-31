@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 
 @Entity(name = "orders")
 public class Order {
@@ -28,7 +29,7 @@ public class Order {
     @JoinColumn(name = "order_table_id")
     private OrderTable orderTable;
 
-    @OneToMany(mappedBy = "order")
+    @Transient
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     @Column(name = "order_status")
@@ -45,6 +46,13 @@ public class Order {
         this.orderStatus = OrderStatus.COOKING;
         this.orderTable = orderTable;
         this.orderLineItems = orderLineItems;
+    }
+
+    // for test
+    public Order(OrderTable orderTable, OrderStatus orderStatus) {
+        this.orderedTime = LocalDateTime.now();
+        this.orderTable = orderTable;
+        this.orderStatus = orderStatus;
     }
 
     public Long getId() {
