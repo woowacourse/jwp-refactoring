@@ -5,11 +5,14 @@ import java.util.List;
 import java.util.Objects;
 
 public class Menu {
-    private final Long id;
-    private final String name;
-    private final BigDecimal price;
-    private final Long menuGroupId;
-    private final MenuProducts menuProducts;
+    private Long id;
+    private String name;
+    private BigDecimal price;
+    private Long menuGroupId;
+    private MenuProducts menuProducts;
+
+    public Menu() {
+    }
 
     public Menu(final Long id,
                 final String name,

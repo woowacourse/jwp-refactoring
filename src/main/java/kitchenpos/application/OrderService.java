@@ -73,7 +73,7 @@ public class OrderService {
 
     private OrderTable searchOrderTable(final Order order) {
         return orderTableDao.findById(order.getOrderTableId())
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR] OrderTable 을 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 주문 테이블을 찾을 수 없습니다."));
     }
 
     private void validateOrderTable(final OrderTable orderTable) {
