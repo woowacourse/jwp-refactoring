@@ -71,7 +71,7 @@ public class Order {
         }
     }
 
-    public void addOrderLineItems(List<OrderLineItem> orderLineItems) {
+    private void addOrderLineItems(List<OrderLineItem> orderLineItems) {
         validateItemSize(orderLineItems);
         orderLineItems.forEach(item -> item.updateOrder(this));
         this.orderLineItems.addAll(orderLineItems);
