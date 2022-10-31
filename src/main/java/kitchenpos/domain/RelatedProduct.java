@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import static javax.persistence.FetchType.EAGER;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
@@ -8,7 +10,7 @@ import javax.persistence.ManyToOne;
 @Embeddable
 public class RelatedProduct {
 
-    @ManyToOne
+    @ManyToOne(fetch = EAGER)
     @JoinColumn(name = "product_id")
     private Product product;
 

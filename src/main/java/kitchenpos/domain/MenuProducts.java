@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import static javax.persistence.FetchType.EAGER;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +13,7 @@ import javax.persistence.JoinColumn;
 @Embeddable
 public class MenuProducts {
 
-    @ElementCollection
+    @ElementCollection(fetch = EAGER)
     @CollectionTable(name = "menu_product", joinColumns = @JoinColumn(name = "menu_id"))
     private List<RelatedProduct> relatedProducts = new ArrayList<>();
 

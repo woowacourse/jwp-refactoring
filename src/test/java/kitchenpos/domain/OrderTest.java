@@ -17,7 +17,7 @@ class OrderTest {
     @DisplayName("주문을 할 때 하나 이상의 메뉴를 주문해야한다.")
     @Test
     void createOrderWithOneMenu() {
-        assertThatThrownBy(() -> Order.of(ORDER_TABLE_ID, COOKING, LocalDateTime.now(), List.of()))
+        assertThatThrownBy(() -> Order.of(ORDER_TABLE_ID, LocalDateTime.now(), List.of()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -27,7 +27,8 @@ class OrderTest {
         // given
         final Menu menu = new Menu("메뉴 이름", BigDecimal.ONE, 1L, new MenuProducts(List.of()));
         final OrderLineItem orderLineItem = new OrderLineItem(menu, QUANTITY);
-        final Order order = Order.of(1L, COMPLETION, LocalDateTime.now(), List.of(orderLineItem));
+        final Order order = Order.of(1L, LocalDateTime.now(), List.of(orderLineItem));
+        order.changeOrderStatus(COMPLETION);
 
         // when & then
         assertThatThrownBy(() -> order.changeOrderStatus(COOKING))
