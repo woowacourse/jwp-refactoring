@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.application.dto.TableGroupResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -32,7 +33,7 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final OrderTableRequest request) {
+    public TableGroupResponse create(final OrderTableRequest request) {
         validateRequestOrderTablesSize(request);
 
         final List<OrderTable> orderTables = findOrderTables(request);
@@ -45,7 +46,7 @@ public class TableGroupService {
 
         updateOrderTables(savedTableGroup);
 
-        return savedTableGroup;
+        return TableGroupResponse.of(savedTableGroup);
     }
 
     private void validateRequestOrderTablesSize(final OrderTableRequest request) {

@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import kitchenpos.application.dto.TableGroupResponse;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -28,7 +29,7 @@ class TableGroupServiceTest extends ServiceTestBase {
         OrderTableRequest request = toRequest(orderTable1, orderTable2);
 
         // when
-        TableGroup savedTableGroup = tableGroupService.create(request);
+        TableGroupResponse savedTableGroup = tableGroupService.create(request);
 
         // then
         Optional<TableGroup> actual = tableGroupDao.findById(savedTableGroup.getId());
@@ -82,7 +83,7 @@ class TableGroupServiceTest extends ServiceTestBase {
     void 단체_지정_정상_해제() {
         // given
         OrderTableRequest request = toRequest(빈_주문_테이블_생성(), 빈_주문_테이블_생성());
-        TableGroup savedTableGroup = tableGroupService.create(request);
+        TableGroupResponse savedTableGroup = tableGroupService.create(request);
         Long tableGroupId = savedTableGroup.getId();
 
         // when
