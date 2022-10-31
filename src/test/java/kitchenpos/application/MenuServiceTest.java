@@ -12,8 +12,9 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
-import kitchenpos.dto.MenuDto;
-import kitchenpos.dto.MenuProductDto;
+import kitchenpos.dto.request.MenuCreateRequest;
+import kitchenpos.dto.request.MenuProductCreateRequest;
+import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.exception.InvalidMenuPriceException;
 import kitchenpos.exception.LowerThanZeroPriceException;
 import kitchenpos.exception.MenuGroupNotFoundException;
@@ -35,16 +36,15 @@ class MenuServiceTest extends ServiceTest {
     void create() {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
         Product product = productRepository.save(new Product("상품1", PRICE));
-        MenuProductDto menuProductDto = new MenuProductDto(product.getId(), 2L);
-        MenuDto menu = new MenuDto("메뉴1", new BigDecimal(10000), menuGroup.getId(), List.of(menuProductDto));
+        MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(product.getId(), 2L);
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("메뉴1", new BigDecimal(10000),
+                menuGroup.getId(), List.of(menuProductCreateRequest));
 
-        System.out.println("size : " + menuProductRepository.findAll().size());
+        menuService.create(menuCreateRequest);
 
-        menuService.create(menu);
-
-        List<MenuDto> menus = menuService.list();
+        List<MenuResponse> menus = menuService.list();
         List<String> menuNames = menus.stream()
-                .map(MenuDto::getName)
+                .map(MenuResponse::getName)
                 .collect(Collectors.toUnmodifiableList());
         List<MenuProduct> menuProducts = menuProductRepository.findAll();
         assertAll(
@@ -59,10 +59,11 @@ class MenuServiceTest extends ServiceTest {
     void create_Exception_NotFoundMenuGroup() {
         Long notFoundMenuGroupId = 100L;
         Product product = productRepository.save(new Product("상품1", PRICE));
-        MenuProductDto menuProductDto = new MenuProductDto(product.getId(), 2L);
-        MenuDto menu = new MenuDto("메뉴1", new BigDecimal(10000), notFoundMenuGroupId, List.of(menuProductDto));
+        MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(product.getId(), 2L);
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("메뉴1", new BigDecimal(10000),
+                notFoundMenuGroupId, List.of(menuProductCreateRequest));
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
                 .isInstanceOf(MenuGroupNotFoundException.class)
                 .hasMessage("존재하지 않는 메뉴 그룹입니다.");
     }
@@ -74,12 +75,12 @@ class MenuServiceTest extends ServiceTest {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
         Product product1 = productRepository.save(new Product("상품1", PRICE));
         Product product2 = productRepository.save(new Product("상품2", PRICE));
-        MenuProductDto menuProductDto1 = new MenuProductDto(product1.getId(), 2L);
-        MenuProductDto menuProductDto2 = new MenuProductDto(product2.getId(), 1L);
-        MenuDto menu = new MenuDto("메뉴1", new BigDecimal(price), menuGroup.getId(),
-                List.of(menuProductDto1, menuProductDto2));
+        MenuProductCreateRequest menuProductCreateRequest1 = new MenuProductCreateRequest(product1.getId(), 2L);
+        MenuProductCreateRequest menuProductCreateRequest2 = new MenuProductCreateRequest(product2.getId(), 1L);
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("메뉴1", new BigDecimal(price),
+                menuGroup.getId(), List.of(menuProductCreateRequest1, menuProductCreateRequest2));
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
                 .isInstanceOf(expectedExceptionType);
     }
 

@@ -10,7 +10,8 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.TableGroupDto;
+import kitchenpos.dto.request.TableGroupCreateRequest;
+import kitchenpos.dto.response.TableGroupResponse;
 import kitchenpos.exception.GroupTableNotEnoughException;
 import kitchenpos.exception.GroupedTableNotEmptyException;
 import kitchenpos.exception.NotCompleteTableUngroupException;
@@ -40,23 +41,23 @@ class TableGroupServiceTest extends ServiceTest {
     void create() {
         OrderTable orderTable2 = tableRepository.save(new OrderTable(GUEST_NUMBER, true));
 
-        TableGroupDto tableGroupDto = tableGroupService.create(
-                new TableGroupDto(List.of(orderTable1.getId(), orderTable2.getId())));
+        TableGroupResponse tableGroupResponse = tableGroupService.create(
+                new TableGroupCreateRequest(List.of(orderTable1.getId(), orderTable2.getId())));
 
         OrderTable groupedOrderOrderTable1 = tableRepository.findById(orderTable1.getId())
                 .orElseThrow(OrderTableNotFoundException::new);
         OrderTable groupedOrderOrderTable2 = tableRepository.findById(orderTable2.getId())
                 .orElseThrow(OrderTableNotFoundException::new);
         assertAll(
-                () -> assertThat(groupedOrderOrderTable1.getTableGroup().getId()).isEqualTo(tableGroupDto.getId()),
-                () -> assertThat(groupedOrderOrderTable2.getTableGroup().getId()).isEqualTo(tableGroupDto.getId())
+                () -> assertThat(groupedOrderOrderTable1.getTableGroup().getId()).isEqualTo(tableGroupResponse.getId()),
+                () -> assertThat(groupedOrderOrderTable2.getTableGroup().getId()).isEqualTo(tableGroupResponse.getId())
         );
     }
 
     @DisplayName("2개 미만의 OrderTable로 TableGroup을 생성하려고 하면 예외를 발생시킨다.")
     @Test
     void create_Exception_NotEnoughOrderTableNumber() {
-        assertThatThrownBy(() -> tableGroupService.create(new TableGroupDto(List.of(orderTable1.getId()))))
+        assertThatThrownBy(() -> tableGroupService.create(new TableGroupCreateRequest(List.of(orderTable1.getId()))))
                 .isInstanceOf(GroupTableNotEnoughException.class);
     }
 
@@ -67,7 +68,7 @@ class TableGroupServiceTest extends ServiceTest {
         Long notFountTableId2 = 1001L;
 
         assertThatThrownBy(() -> tableGroupService.create(
-                new TableGroupDto(List.of(orderTable1.getId(), notFountTableId1, notFountTableId2))))
+                new TableGroupCreateRequest(List.of(orderTable1.getId(), notFountTableId1, notFountTableId2))))
                 .isInstanceOf(OrderTableNotFoundException.class);
     }
 
@@ -77,7 +78,8 @@ class TableGroupServiceTest extends ServiceTest {
         OrderTable orderTable2 = tableRepository.save(new OrderTable(GUEST_NUMBER, false));
 
         assertThatThrownBy(
-                () -> tableGroupService.create(new TableGroupDto(List.of(orderTable1.getId(), orderTable2.getId()))))
+                () -> tableGroupService
+                        .create(new TableGroupCreateRequest(List.of(orderTable1.getId(), orderTable2.getId()))))
                 .isInstanceOf(GroupedTableNotEmptyException.class);
     }
 
@@ -88,7 +90,8 @@ class TableGroupServiceTest extends ServiceTest {
         OrderTable orderTable2 = tableRepository.save(new OrderTable(GUEST_NUMBER, true, tableGroup));
 
         assertThatThrownBy(
-                () -> tableGroupService.create(new TableGroupDto(List.of(orderTable1.getId(), orderTable2.getId()))))
+                () -> tableGroupService
+                        .create(new TableGroupCreateRequest(List.of(orderTable1.getId(), orderTable2.getId()))))
                 .isInstanceOf(TableAlreadyGroupedException.class);
     }
 
@@ -96,10 +99,10 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void ungroup() {
         OrderTable orderTable2 = tableRepository.save(new OrderTable(GUEST_NUMBER, true));
-        TableGroupDto tableGroupDto = tableGroupService
-                .create(new TableGroupDto(List.of(orderTable1.getId(), orderTable2.getId())));
+        TableGroupResponse tableGroupResponse = tableGroupService
+                .create(new TableGroupCreateRequest(List.of(orderTable1.getId(), orderTable2.getId())));
 
-        tableGroupService.ungroup(tableGroupDto.getId());
+        tableGroupService.ungroup(tableGroupResponse.getId());
 
         OrderTable groupedOrderOrderTable1 = tableRepository.findById(orderTable1.getId())
                 .orElseThrow(OrderTableNotFoundException::new);
@@ -116,13 +119,13 @@ class TableGroupServiceTest extends ServiceTest {
     @ValueSource(strings = {"MEAL", "COOKING"})
     void ungroup_Exception_NotCompleteOrderTableStatus(String orderStatus) {
         OrderTable orderOrderTable2 = tableRepository.save(new OrderTable(GUEST_NUMBER, true, null));
-        TableGroupDto tableGroupDto = tableGroupService.create(
-                new TableGroupDto(List.of(orderTable1.getId(), orderOrderTable2.getId())));
+        TableGroupResponse tableGroupResponse = tableGroupService.create(
+                new TableGroupCreateRequest(List.of(orderTable1.getId(), orderOrderTable2.getId())));
         Order order = Order.newOrder(orderOrderTable2);
         order.changeOrderStatus(OrderStatus.COOKING);
         orderRepository.save(order);
 
-        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupDto.getId()))
+        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupResponse.getId()))
                 .isInstanceOf(NotCompleteTableUngroupException.class);
     }
 }

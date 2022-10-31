@@ -9,7 +9,10 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.TableDto;
+import kitchenpos.dto.request.OrderTableCreateRequest;
+import kitchenpos.dto.request.OrderTableEmptyChangeRequest;
+import kitchenpos.dto.request.OrderTableGuestNumberChangeRequest;
+import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.exception.GuestNumberChangeDisabledException;
 import kitchenpos.exception.InvalidGuestNumberException;
 import kitchenpos.exception.TableEmptyDisabledException;
@@ -27,9 +30,9 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("Table을 생성할 수 있다.")
     @Test
     void create() {
-        TableDto tableDto = new TableDto(null, 3, false);
+        OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(3, false);
 
-        tableService.create(tableDto);
+        tableService.create(orderTableCreateRequest);
 
         assertThat(tableService.list()).hasSize(1);
     }
@@ -38,18 +41,18 @@ class TableServiceTest extends ServiceTest {
     @Test
     void create_Exception_InvalidGuestNumber() {
         int invalidGuestNumber = 0;
-        TableDto tableDto = new TableDto(null, invalidGuestNumber, false);
+        OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(invalidGuestNumber, false);
 
-        assertThatThrownBy(() -> tableService.create(tableDto))
+        assertThatThrownBy(() -> tableService.create(orderTableCreateRequest))
                 .isInstanceOf(InvalidGuestNumberException.class);
     }
 
     @DisplayName("Table의 empty 상태를 변경할 수 있다.")
     @Test
     void changeEmpty() {
-        TableDto tableDto = tableService.create(new TableDto(null, 3, false));
+        OrderTableResponse orderTableResponse = tableService.create(new OrderTableCreateRequest(3, false));
 
-        tableService.changeEmpty(tableDto.getId(), new TableDto(tableDto.getId(), 3, true));
+        tableService.changeEmpty(orderTableResponse.getId(), new OrderTableEmptyChangeRequest(true));
 
         OrderTable changedOrderTable = tableRepository.findAll()
                 .stream()
@@ -66,7 +69,7 @@ class TableServiceTest extends ServiceTest {
         OrderTable orderTable = tableRepository.save(new OrderTable(GUEST_NUMBER, true, tableGroup));
 
         assertThatThrownBy(
-                () -> tableService.changeEmpty(orderTable.getId(), new TableDto(tableGroup.getId(), 3, true)))
+                () -> tableService.changeEmpty(orderTable.getId(), new OrderTableEmptyChangeRequest(true)))
                 .isInstanceOf(TableEmptyDisabledException.class)
                 .hasMessage("Table Group으로 묶인 테이블은 empty를 변경할 수 없습니다.");
     }
@@ -80,7 +83,7 @@ class TableServiceTest extends ServiceTest {
         order.changeOrderStatus(OrderStatus.from(orderStatus));
         orderRepository.save(order);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), new TableDto(null, 3, true)))
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), new OrderTableEmptyChangeRequest(true)))
                 .isInstanceOf(TableEmptyDisabledException.class)
                 .hasMessage("조리중이거나 식사중인 테이블의 empty를 변경할 수 없습니다.");
     }
@@ -90,7 +93,7 @@ class TableServiceTest extends ServiceTest {
     void changeNumberOfGuests() {
         OrderTable orderTable = tableRepository.save(new OrderTable(GUEST_NUMBER, false));
 
-        tableService.changeNumberOfGuests(orderTable.getId(), new TableDto(null, 200, false));
+        tableService.changeNumberOfGuests(orderTable.getId(), new OrderTableGuestNumberChangeRequest(200));
 
         Optional<OrderTable> changedOrderTable = tableRepository.findAll()
                 .stream()
@@ -107,7 +110,7 @@ class TableServiceTest extends ServiceTest {
 
         assertThatThrownBy(
                 () -> tableService.changeNumberOfGuests(
-                        orderTable.getId(), new TableDto(null, invalidNumberOfGuests, false)))
+                        orderTable.getId(), new OrderTableGuestNumberChangeRequest(invalidNumberOfGuests)))
                 .isInstanceOf(InvalidGuestNumberException.class);
     }
 
@@ -117,7 +120,8 @@ class TableServiceTest extends ServiceTest {
         OrderTable orderTable = tableRepository.save(new OrderTable(GUEST_NUMBER, true));
 
         assertThatThrownBy(
-                () -> tableService.changeNumberOfGuests(orderTable.getId(), new TableDto(null, 10, true)))
+                () -> tableService.changeNumberOfGuests(orderTable.getId(),
+                        new OrderTableGuestNumberChangeRequest(10)))
                 .isInstanceOf(GuestNumberChangeDisabledException.class);
     }
 }

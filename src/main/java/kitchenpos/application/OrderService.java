@@ -12,9 +12,10 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Quantity;
-import kitchenpos.dto.OrderLineItemDto;
-import kitchenpos.dto.OrderRequest;
-import kitchenpos.dto.OrderResponse;
+import kitchenpos.dto.request.OrderCreateRequest;
+import kitchenpos.dto.request.OrderLineItemCreateRequest;
+import kitchenpos.dto.request.OrderStatusChangeRequest;
+import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.exception.EmptyTableOrderException;
 import kitchenpos.exception.MenuNotEnoughException;
 import kitchenpos.exception.MenuNotFoundException;
@@ -39,23 +40,23 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse create(OrderRequest orderRequest) {
-        List<OrderLineItemDto> orderLineItemDtos = orderRequest.getOrderLineItems();
-        validateMenuCount(orderLineItemDtos);
-        OrderTable orderTable = findOrderTable(orderRequest);
+    public OrderResponse create(OrderCreateRequest orderCreateRequest) {
+        List<OrderLineItemCreateRequest> orderLineItemResponses = orderCreateRequest.getOrderLineItems();
+        validateMenuCount(orderLineItemResponses);
+        OrderTable orderTable = findOrderTable(orderCreateRequest);
         validateOrderTableEmptiness(orderTable);
         Order order = Order.newOrder(orderTable);
         Order savedOrder = orderRepository.save(order);
-        createOrderLineItem(orderLineItemDtos, savedOrder);
+        createOrderLineItem(orderLineItemResponses, savedOrder);
         return new OrderResponse(savedOrder);
     }
 
-    private void createOrderLineItem(List<OrderLineItemDto> orderLineItemDtos, Order savedOrder) {
-        for (OrderLineItemDto orderLineItemDto : orderLineItemDtos) {
+    private void createOrderLineItem(List<OrderLineItemCreateRequest> orderLineItemCreateRequests, Order savedOrder) {
+        for (OrderLineItemCreateRequest orderLineItemResponse : orderLineItemCreateRequests) {
             OrderLineItem orderLineItem = new OrderLineItem(
                     savedOrder,
-                    findMenu(orderLineItemDto.getMenuId()),
-                    new Quantity(orderLineItemDto.getQuantity()));
+                    findMenu(orderLineItemResponse.getMenuId()),
+                    new Quantity(orderLineItemResponse.getQuantity()));
             orderLineItemRepository.save(orderLineItem);
         }
     }
@@ -71,12 +72,12 @@ public class OrderService {
         }
     }
 
-    private OrderTable findOrderTable(OrderRequest orderRequest) {
-        return tableRepository.findById(orderRequest.getOrderTableId())
+    private OrderTable findOrderTable(OrderCreateRequest orderCreateRequest) {
+        return tableRepository.findById(orderCreateRequest.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
     }
 
-    private void validateMenuCount(List<OrderLineItemDto> orderLineItems) {
+    private void validateMenuCount(List<OrderLineItemCreateRequest> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new MenuNotEnoughException();
         }
@@ -90,10 +91,10 @@ public class OrderService {
     }
 
     @Transactional
-    public Order changeOrderStatus(Long orderId, OrderRequest orderRequest) {
+    public Order changeOrderStatus(Long orderId, OrderStatusChangeRequest orderCreateRequest) {
         Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
-        OrderStatus orderStatus = OrderStatus.from(orderRequest.getOrderStatus());
+        OrderStatus orderStatus = OrderStatus.from(orderCreateRequest.getOrderStatus());
         savedOrder.changeOrderStatus(orderStatus);
         return savedOrder;
     }

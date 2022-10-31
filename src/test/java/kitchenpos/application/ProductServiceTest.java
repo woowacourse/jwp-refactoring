@@ -8,7 +8,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Price;
-import kitchenpos.dto.ProductDto;
+import kitchenpos.dto.request.ProductCreateRequest;
+import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.exception.EmptyDataException;
 import kitchenpos.exception.LowerThanZeroPriceException;
 import org.junit.jupiter.api.DisplayName;
@@ -26,13 +27,13 @@ class ProductServiceTest extends ServiceTest {
     @DisplayName("상품을 생성할 수 있다.")
     @Test
     void create() {
-        ProductDto product = new ProductDto(PRODUCE_NAME, PRICE);
+        ProductCreateRequest productCreateRequest = new ProductCreateRequest(PRODUCE_NAME, PRICE);
 
-        productService.create(product);
+        productService.create(productCreateRequest);
 
-        List<ProductDto> products = productService.list();
+        List<ProductResponse> products = productService.list();
         List<String> productNames = products.stream()
-                .map(ProductDto::getName)
+                .map(ProductResponse::getName)
                 .collect(Collectors.toUnmodifiableList());
         assertAll(
                 () -> assertThat(products).hasSize(1),
@@ -43,9 +44,9 @@ class ProductServiceTest extends ServiceTest {
     @DisplayName("상품 가격이 존재하지 않으면 예외를 발생시킨다.")
     @Test
     void create_NullPrice() {
-        ProductDto product = new ProductDto(PRODUCE_NAME, null);
+        ProductCreateRequest productCreateRequest = new ProductCreateRequest(PRODUCE_NAME, null);
 
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(productCreateRequest))
                 .isInstanceOf(EmptyDataException.class)
                 .hasMessageContaining(Price.class.getSimpleName())
                 .hasMessageContaining("입력되지 않았습니다.");
@@ -55,9 +56,9 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void create_InvalidPrice() {
         BigDecimal invalidPrice = new BigDecimal(-1);
-        ProductDto product = new ProductDto(PRODUCE_NAME, invalidPrice);
+        ProductCreateRequest productCreateRequest = new ProductCreateRequest(PRODUCE_NAME, invalidPrice);
 
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(productCreateRequest))
                 .isInstanceOf(LowerThanZeroPriceException.class);
     }
 }

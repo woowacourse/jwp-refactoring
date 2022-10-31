@@ -17,9 +17,10 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.Quantity;
-import kitchenpos.dto.OrderLineItemDto;
-import kitchenpos.dto.OrderRequest;
-import kitchenpos.dto.OrderResponse;
+import kitchenpos.dto.request.OrderCreateRequest;
+import kitchenpos.dto.request.OrderLineItemCreateRequest;
+import kitchenpos.dto.request.OrderStatusChangeRequest;
+import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.exception.AlreadyCompletionOrderStatusException;
 import kitchenpos.exception.EmptyTableOrderException;
 import kitchenpos.exception.MenuNotEnoughException;
@@ -33,8 +34,8 @@ class OrderServiceTest extends ServiceTest {
     @Autowired
     private OrderService orderService;
 
-    private OrderLineItemDto orderLineItemDto1;
-    private OrderLineItemDto orderLineItemDto2;
+    private OrderLineItemCreateRequest orderLineItemResponse1;
+    private OrderLineItemCreateRequest orderLineItemResponse2;
 
     @BeforeEach
     void setUp() {
@@ -47,18 +48,18 @@ class OrderServiceTest extends ServiceTest {
         Menu menu2 = menuRepository
                 .save(new Menu("메뉴2", new Price(new BigDecimal(4500)), menuGroup, List.of(menuProduct2)));
 
-        orderLineItemDto1 = new OrderLineItemDto(menu1.getId(), 2L);
-        orderLineItemDto2 = new OrderLineItemDto(menu2.getId(), 1L);
+        orderLineItemResponse1 = new OrderLineItemCreateRequest(menu1.getId(), 2L);
+        orderLineItemResponse2 = new OrderLineItemCreateRequest(menu2.getId(), 1L);
     }
 
     @DisplayName("Order를 등록할 수 있다.")
     @Test
     void create() {
         OrderTable orderTable = tableRepository.save(new OrderTable(GUEST_NUMBER, false));
-        OrderRequest orderRequest = new OrderRequest(orderTable.getId(), null,
-                List.of(orderLineItemDto1, orderLineItemDto2));
+        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(), null,
+                List.of(orderLineItemResponse1, orderLineItemResponse2));
 
-        orderService.create(orderRequest);
+        orderService.create(orderCreateRequest);
 
         assertThat(orderRepository.findAll()).hasSize(1);
     }
@@ -67,20 +68,22 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void create_Exception_EmptyMenu() {
         OrderTable emptyOrderTable = tableRepository.save(new OrderTable(GUEST_NUMBER, true));
-        OrderRequest orderRequest = new OrderRequest(emptyOrderTable.getId(), null, Collections.emptyList());
+        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(emptyOrderTable.getId(), null,
+                Collections.emptyList());
 
-        assertThatThrownBy(() -> orderService.create(orderRequest))
+        assertThatThrownBy(() -> orderService.create(orderCreateRequest))
                 .isInstanceOf(MenuNotEnoughException.class);
     }
 
     @DisplayName("존재하지 않는 Menu로 Order를 등록하려고 하면 예외를 발생시킨다.")
     @Test
     void create_Exception_NotFoundMenu() {
-        OrderLineItemDto notFoundOrderLineItem = new OrderLineItemDto(1000L, 2L);
+        OrderLineItemCreateRequest notFoundOrderLineItem = new OrderLineItemCreateRequest(1000L, 2L);
         OrderTable emptyOrderTable = tableRepository.save(new OrderTable(GUEST_NUMBER, false));
-        OrderRequest orderRequest = new OrderRequest(emptyOrderTable.getId(), null, List.of(notFoundOrderLineItem));
+        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(emptyOrderTable.getId(), null,
+                List.of(notFoundOrderLineItem));
 
-        assertThatThrownBy(() -> orderService.create(orderRequest))
+        assertThatThrownBy(() -> orderService.create(orderCreateRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("메뉴를 찾을 수 없습니다.");
     }
@@ -89,10 +92,10 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void create_Exception_EmptyTable() {
         OrderTable emptyOrderTable = tableRepository.save(new OrderTable(GUEST_NUMBER, true));
-        OrderRequest orderRequest = new OrderRequest(emptyOrderTable.getId(), null,
-                List.of(orderLineItemDto1, orderLineItemDto2));
+        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(emptyOrderTable.getId(), null,
+                List.of(orderLineItemResponse1, orderLineItemResponse2));
 
-        assertThatThrownBy(() -> orderService.create(orderRequest))
+        assertThatThrownBy(() -> orderService.create(orderCreateRequest))
                 .isInstanceOf(EmptyTableOrderException.class);
     }
 
@@ -101,10 +104,11 @@ class OrderServiceTest extends ServiceTest {
     void changeOrderStatus() {
         OrderTable orderTable = tableRepository.save(new OrderTable(GUEST_NUMBER, false));
         OrderResponse order = orderService.create(
-                new OrderRequest(orderTable.getId(), null, List.of(orderLineItemDto1, orderLineItemDto2)));
+                new OrderCreateRequest(orderTable.getId(), null,
+                        List.of(orderLineItemResponse1, orderLineItemResponse2)));
 
         orderService.changeOrderStatus(
-                order.getId(), new OrderRequest(orderTable.getId(), "MEAL", Collections.emptyList()));
+                order.getId(), new OrderStatusChangeRequest("MEAL"));
 
         Order changedOrder = orderRepository.findAll().get(0);
         assertThat(changedOrder.getOrderStatus()).isEqualTo(MEAL);
@@ -119,7 +123,7 @@ class OrderServiceTest extends ServiceTest {
         Order savedOrder = orderRepository.save(order);
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(
-                savedOrder.getId(), new OrderRequest(orderTable.getId(), "MEAL", Collections.emptyList())))
+                savedOrder.getId(), new OrderStatusChangeRequest("MEAL")))
                 .isInstanceOf(AlreadyCompletionOrderStatusException.class);
     }
 }

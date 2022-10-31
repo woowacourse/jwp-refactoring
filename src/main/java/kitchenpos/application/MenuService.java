@@ -12,8 +12,9 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.Quantity;
-import kitchenpos.dto.MenuDto;
-import kitchenpos.dto.MenuProductDto;
+import kitchenpos.dto.request.MenuCreateRequest;
+import kitchenpos.dto.request.MenuProductCreateRequest;
+import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.exception.MenuGroupNotFoundException;
 import kitchenpos.exception.ProductNotFoundException;
 import org.springframework.stereotype.Service;
@@ -33,34 +34,34 @@ public class MenuService {
     }
 
     @Transactional
-    public MenuDto create(MenuDto menuDto) {
-        Price menuPrice = new Price(menuDto.getPrice());
-        List<MenuProduct> menuProducts = toMenuProducts(menuDto.getMenuProducts());
-        Menu menu = new Menu(menuDto.getName(), menuPrice, findMenuGroup(menuDto), menuProducts);
-        return new MenuDto(menuRepository.save(menu));
+    public MenuResponse create(MenuCreateRequest menuCreateRequest) {
+        Price menuPrice = new Price(menuCreateRequest.getPrice());
+        List<MenuProduct> menuProducts = toMenuProducts(menuCreateRequest.getMenuProducts());
+        Menu menu = new Menu(menuCreateRequest.getName(), menuPrice, findMenuGroup(menuCreateRequest), menuProducts);
+        return new MenuResponse(menuRepository.save(menu));
     }
 
-    private List<MenuProduct> toMenuProducts(List<MenuProductDto> menuProductDtos) {
+    private List<MenuProduct> toMenuProducts(List<MenuProductCreateRequest> menuProductCreateRequests) {
         List<MenuProduct> menuProducts = new ArrayList<>();
-        for (MenuProductDto menuProductDto : menuProductDtos) {
-            Product product = productRepository.findById(menuProductDto.getProductId())
+        for (MenuProductCreateRequest menuProductResponse : menuProductCreateRequests) {
+            Product product = productRepository.findById(menuProductResponse.getProductId())
                     .orElseThrow(ProductNotFoundException::new);
-            MenuProduct menuProduct = new MenuProduct(product, new Quantity(menuProductDto.getQuantity()));
+            MenuProduct menuProduct = new MenuProduct(product, new Quantity(menuProductResponse.getQuantity()));
             menuProducts.add(menuProduct);
         }
         return menuProducts;
     }
 
-    private MenuGroup findMenuGroup(MenuDto menuDto) {
-        return menuGroupRepository.findById(menuDto.getMenuGroupId())
+    private MenuGroup findMenuGroup(MenuCreateRequest menuCreateRequest) {
+        return menuGroupRepository.findById(menuCreateRequest.getMenuGroupId())
                 .orElseThrow(MenuGroupNotFoundException::new);
     }
 
     @Transactional(readOnly = true)
-    public List<MenuDto> list() {
+    public List<MenuResponse> list() {
         return menuRepository.findAll()
                 .stream()
-                .map(MenuDto::new)
+                .map(MenuResponse::new)
                 .collect(Collectors.toUnmodifiableList());
     }
 }

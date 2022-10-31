@@ -1,21 +1,21 @@
-package kitchenpos.dto;
+package kitchenpos.dto.response;
 
 import kitchenpos.domain.OrderLineItem;
 
-public class OrderLineItemDto {
+public class OrderLineItemResponse {
 
     private Long menuId;
     private Long quantity;
 
-    public OrderLineItemDto() {
+    public OrderLineItemResponse() {
     }
 
-    public OrderLineItemDto(Long menuId, Long quantity) {
+    public OrderLineItemResponse(Long menuId, Long quantity) {
         this.menuId = menuId;
         this.quantity = quantity;
     }
 
-    public OrderLineItemDto(OrderLineItem orderLineItem) {
+    public OrderLineItemResponse(OrderLineItem orderLineItem) {
         this.menuId = orderLineItem.getMenu().getId();
         this.quantity = orderLineItem.getQuantity();
     }

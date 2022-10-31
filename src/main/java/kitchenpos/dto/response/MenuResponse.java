@@ -1,33 +1,34 @@
-package kitchenpos.dto;
+package kitchenpos.dto.response;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 
-public class MenuDto {
+public class MenuResponse {
 
     private Long id;
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
-    private List<MenuProductDto> menuProductDtos;
+    private List<MenuProductResponse> menuProductResponses;
 
-    public MenuDto(String name, BigDecimal price, Long menuGroupId, List<MenuProductDto> menuProductDtos) {
+    public MenuResponse(String name, BigDecimal price, Long menuGroupId,
+                        List<MenuProductResponse> menuProductResponses) {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProductDtos = menuProductDtos;
+        this.menuProductResponses = menuProductResponses;
     }
 
-    public MenuDto(Menu menu) {
+    public MenuResponse(Menu menu) {
         this.id = menu.getId();
         this.name = menu.getName();
         this.price = menu.getPrice();
         this.menuGroupId = menu.getMenuGroup().getId();
-        this.menuProductDtos = menu.getProducts()
+        this.menuProductResponses = menu.getProducts()
                 .stream()
-                .map(MenuProductDto::new)
+                .map(MenuProductResponse::new)
                 .collect(Collectors.toUnmodifiableList());
     }
 
@@ -47,7 +48,7 @@ public class MenuDto {
         return menuGroupId;
     }
 
-    public List<MenuProductDto> getMenuProducts() {
-        return menuProductDtos;
+    public List<MenuProductResponse> getMenuProducts() {
+        return menuProductResponses;
     }
 }
