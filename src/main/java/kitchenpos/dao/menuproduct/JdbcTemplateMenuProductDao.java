@@ -68,7 +68,7 @@ public class JdbcTemplateMenuProductDao implements MenuProductDao {
     }
 
     private MenuProduct toEntity(final ResultSet resultSet) throws SQLException {
-        return new MenuProduct(
+        return MenuProduct.createForEntity(
                 resultSet.getLong(KEY_COLUMN_NAME),
                 resultSet.getLong("menu_id"),
                 resultSet.getLong("product_id"),

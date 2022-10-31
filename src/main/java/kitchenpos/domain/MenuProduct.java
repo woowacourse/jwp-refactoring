@@ -28,11 +28,11 @@ public class MenuProduct {
         this(null, menuId, productId, quantity, price);
     }
 
-    public MenuProduct(final Long seq,
-                       final Long menuId,
-                       final Long productId,
-                       final long quantity) {
-        this(seq, menuId, productId, quantity, null);
+    public static MenuProduct createForEntity(final Long seq,
+                                              final Long menuId,
+                                              final Long productId,
+                                              final long quantity) {
+        return new MenuProduct(seq, menuId, productId, quantity, null);
     }
 
     public Long getSeq() {

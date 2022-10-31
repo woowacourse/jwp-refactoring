@@ -42,14 +42,15 @@ public class MenuFixture {
     }
 
     public static MenuProduct getMenuProduct(final Long id) {
-        return getMenuProduct(id, 1L, 1L, 1L);
+        return getMenuProduct(id, 1L, 1L, 1L, BigDecimal.valueOf(10000));
     }
 
     public static MenuProduct getMenuProduct(final Long id,
                                              final Long productId,
                                              final Long menuId,
-                                             final long quantity) {
-        return new MenuProduct(id, menuId, productId, quantity);
+                                             final long quantity,
+                                             final BigDecimal price) {
+        return new MenuProduct(id, menuId, productId, quantity, price);
     }
 
     public static MenuGroup getMenuGroupRequest(final Long id) {
