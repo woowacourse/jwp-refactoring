@@ -7,8 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.List;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.OrderTableResponse;
-import kitchenpos.fixtures.domain.TableGroupFixture.TableGroupRequestBuilder;
 import kitchenpos.repository.OrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -112,9 +112,8 @@ class TableServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderTableHasTableGroup() {
             // given
-            tableGroupService.create(new TableGroupRequestBuilder()
-                    .addOrderTables(savedOrderTable1, savedOrderTable2)
-                    .build());
+            tableGroupService.create(new TableGroupRequest(
+                    List.of(savedOrderTable1.getId(), savedOrderTable2.getId())));
 
             OrderTableRequest request = new OrderTableRequest(10, false);
 
