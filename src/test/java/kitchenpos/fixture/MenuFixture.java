@@ -38,7 +38,7 @@ public class MenuFixture {
     }
 
     public static MenuProduct getMenuProductRequest(final Long productId, final Long menuId, final long quantity, final BigDecimal price) {
-        return new MenuProduct(menuId, productId, quantity, price);
+        return MenuProduct.of(menuId, productId, quantity, price);
     }
 
     public static MenuProduct getMenuProduct(final Long id) {
@@ -50,7 +50,7 @@ public class MenuFixture {
                                              final Long menuId,
                                              final long quantity,
                                              final BigDecimal price) {
-        return new MenuProduct(id, menuId, productId, quantity, price);
+        return MenuProduct.of(id, menuId, productId, quantity, price);
     }
 
     public static MenuGroup getMenuGroupRequest(final Long id) {

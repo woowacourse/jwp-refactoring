@@ -22,7 +22,7 @@ class MenuTest {
     @DisplayName("메뉴의 가격이 메뉴안의 상품들의 가격의 합을 넘을 경우 메뉴를 생성하면 예외가 발생한다.")
     void createWithOverSumProductsPrice() {
         final LinkedList<MenuProduct> menuProducts = new LinkedList<>();
-        menuProducts.add(new MenuProduct(1L, 1L, 2, BigDecimal.valueOf(10000)));
+        menuProducts.add(MenuProduct.of(1L, 1L, 2, BigDecimal.valueOf(10000)));
         assertThatThrownBy(() -> Menu.of(1L, "추천메뉴", BigDecimal.valueOf(21000), 1L, menuProducts))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("메뉴의 가격이 메뉴 상품의 가격의 합을 넘을 수 없습니다.");

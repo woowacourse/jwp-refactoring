@@ -9,7 +9,7 @@ public class MenuProduct {
     private final long quantity;
     private BigDecimal price;
 
-    public MenuProduct(final Long seq,
+    private MenuProduct(final Long seq,
                        final Long menuId,
                        final Long productId,
                        final long quantity,
@@ -21,11 +21,19 @@ public class MenuProduct {
         this.price = price;
     }
 
-    public MenuProduct(final Long menuId,
+    public static MenuProduct of(final Long seq,
+                                 final Long menuId,
+                                 final Long productId,
+                                 final long quantity,
+                                 final BigDecimal price) {
+        return new MenuProduct(seq, menuId, productId, quantity, price);
+    }
+
+    public static MenuProduct of(final Long menuId,
                        final Long productId,
                        final long quantity,
                        final BigDecimal price) {
-        this(null, menuId, productId, quantity, price);
+        return of(null, menuId, productId, quantity, price);
     }
 
     public static MenuProduct createForEntity(final Long seq,
