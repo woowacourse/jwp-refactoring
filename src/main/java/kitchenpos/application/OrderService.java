@@ -18,6 +18,7 @@ import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 @Service
 public class OrderService {
     private final MenuRepository menuRepository;
@@ -74,7 +75,6 @@ public class OrderService {
         return new OrderResponse(savedOrder);
     }
 
-    @Transactional(readOnly = true)
     public List<OrderResponse> list() {
         final List<Order> orders = orderRepository.findAll();
 
@@ -89,10 +89,6 @@ public class OrderService {
                 .orElseThrow(IllegalArgumentException::new);
 
         savedOrder.changeOrderStatus(request.getOrderStatus());
-
-//        orderRepository.save(savedOrder);
-
-//        savedOrder.setOrderLineItems(orderLineItemRepository.findAllByOrderId(orderId));
 
         return new OrderResponse(savedOrder);
     }
