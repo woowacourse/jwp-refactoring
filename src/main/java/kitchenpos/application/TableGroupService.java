@@ -14,7 +14,7 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.ui.dto.OrderTableRequest;
+import kitchenpos.ui.dto.OrderTableIdRequest;
 import kitchenpos.ui.dto.TableGroupRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,19 +36,24 @@ public class TableGroupService {
     public TableGroup create(final TableGroupRequest request) {
         final List<OrderTable> savedOrderTables = getRequestOrderTables(request.getOrderTables());
         validateSize(request.getOrderTables(), savedOrderTables);
-        return tableGroupDao.save(request.toTableGroup());
+        final TableGroup tableGroup = convertSavaTableGroup(request, savedOrderTables);
+        return tableGroupDao.save(tableGroup);
     }
 
-    private void validateSize(final List<OrderTableRequest> targetOrderTables,
+    private TableGroup convertSavaTableGroup(final TableGroupRequest request, final List<OrderTable> savedOrderTables) {
+        return new TableGroup(request.getId(), request.getCreatedDate(), savedOrderTables);
+    }
+
+    private void validateSize(final List<OrderTableIdRequest> targetOrderTables,
                               final List<OrderTable> savedOrderTables) {
         if (targetOrderTables.size() != savedOrderTables.size()) {
             throw new CustomIllegalArgumentException(NOT_FOUND_TABLE_EXCEPTION);
         }
     }
 
-    private List<OrderTable> getRequestOrderTables(final List<OrderTableRequest> orderTables) {
+    private List<OrderTable> getRequestOrderTables(final List<OrderTableIdRequest> orderTables) {
         final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTableRequest::getId)
+                .map(OrderTableIdRequest::getId)
                 .collect(Collectors.toList());
         return orderTableDao.findAllByIdIn(orderTableIds);
     }
@@ -64,7 +69,7 @@ public class TableGroupService {
 
         for (final OrderTable orderTable : orderTables) {
             orderTable.setTableGroupId(null);
-            orderTable.setEmpty(false);
+            orderTable.ClearTable();
             orderTableDao.save(orderTable);
         }
     }

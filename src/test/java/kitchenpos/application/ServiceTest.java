@@ -23,7 +23,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.OrderLineItemRequest;
 import kitchenpos.ui.dto.OrderRequest;
-import kitchenpos.ui.dto.OrderTableRequest;
+import kitchenpos.ui.dto.OrderTableIdRequest;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -54,7 +54,7 @@ public class ServiceTest {
      * order test fixture
      */
     protected void 완료된_주문_조회() {
-        Mockito.when(orderDao.findById(anyLong())).thenReturn(Optional.of(주문_생성(OrderStatus.COMPLETION)));
+        Mockito.when(orderDao.findById(anyLong())).thenReturn(주문_생성(OrderStatus.COMPLETION));
     }
 
     protected void 메뉴존재유뮤세팅(Long count) {
@@ -69,8 +69,8 @@ public class ServiceTest {
         return new OrderTable(id, 1L, 1, false);
     }
 
-    protected OrderTableRequest 테이블_요청_생성(Long id) {
-        return new OrderTableRequest(id, 1L, 1, false);
+    protected OrderTableIdRequest 테이블_요청_생성(Long id) {
+        return new OrderTableIdRequest(1L);
     }
 
     protected void 테이블_그룹이_없는_테이블_세팅(Long id) {
@@ -152,9 +152,4 @@ public class ServiceTest {
      * table  test fixture
      */
 
-    protected OrderTable 게스트_숫자_음수인_테이블_생성() {
-        final OrderTable 테이블 = 테이블_생성(1L);
-        테이블.changeNumberOfGuests(-1);
-        return 테이블;
-    }
 }

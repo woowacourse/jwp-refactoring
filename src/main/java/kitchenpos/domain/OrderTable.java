@@ -1,6 +1,9 @@
 package kitchenpos.domain;
 
+import static kitchenpos.application.exception.ExceptionType.INVALID_CHANGE_NUMBER_OF_GUEST;
+
 import java.util.Objects;
+import kitchenpos.application.exception.CustomIllegalArgumentException;
 
 public class OrderTable {
     private Long id;
@@ -11,19 +14,20 @@ public class OrderTable {
     public OrderTable() {
     }
 
-    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
-        this.id = id;
-        this.tableGroupId = tableGroupId;
-        this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
-    }
-
     public OrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         this(null, tableGroupId, numberOfGuests, empty);
     }
 
-    public boolean hasGuest() {
-        return numberOfGuests > 0;
+    public OrderTable(final int numberOfGuests, final boolean empty) {
+        this(null, null, numberOfGuests, empty);
+    }
+
+    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        validNumberOfGuests(numberOfGuests);
+        this.id = id;
+        this.tableGroupId = tableGroupId;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
     }
 
     public boolean hasTableGroup() {
@@ -31,7 +35,14 @@ public class OrderTable {
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
+        validNumberOfGuests(numberOfGuests);
         this.numberOfGuests = numberOfGuests;
+    }
+
+    private void validNumberOfGuests(final int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new CustomIllegalArgumentException(INVALID_CHANGE_NUMBER_OF_GUEST);
+        }
     }
 
     public Long getId() {
@@ -58,7 +69,7 @@ public class OrderTable {
         return empty;
     }
 
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
+    public void ClearTable() {
+        this.empty = true;
     }
 }

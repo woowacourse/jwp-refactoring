@@ -32,7 +32,6 @@ class TableGroupRepository implements TableGroupDao {
         final List<OrderTable> savedOrderTables = entity.getOrderTables();
         for (final OrderTable savedOrderTable : savedOrderTables) {
             savedOrderTable.setTableGroupId(tableGroupId);
-            savedOrderTable.setEmpty(false);
             orderTableDao.save(savedOrderTable);
         }
         entity.setOrderTables(savedOrderTables);
