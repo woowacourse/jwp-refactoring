@@ -32,13 +32,11 @@ public class Menu {
     }
 
     public BigDecimal calculateTotalSum(final Map<Long, Product> products) {
-        BigDecimal totalSum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = products.get(menuProduct.getProductId());
-            final BigDecimal multiplePrice = product.multiplePrice(menuProduct.getQuantity());
-            totalSum = totalSum.add(multiplePrice);
-        }
-        return totalSum;
+        return menuProducts.stream()
+                .map(it -> {
+                    Product product = products.get(it.getProductId());
+                    return product.multiplePrice(it.getQuantity());
+                }).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     public void addMenuProducts(final List<MenuProduct> menuProducts) {
