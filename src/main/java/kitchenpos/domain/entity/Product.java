@@ -1,5 +1,6 @@
 package kitchenpos.domain.entity;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -38,5 +39,22 @@ public class Product {
 
     public long getPrice() {
         return price.getValue();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Product)) {
+            return false;
+        }
+        Product product = (Product) o;
+        return Objects.equals(name, product.getName()) && Objects.equals(price, product.price);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, price);
     }
 }

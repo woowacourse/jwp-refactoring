@@ -30,4 +30,9 @@ public class MenuGroupServiceJpa {
                 .map(menuGroup -> new MenuGroupListResponse(menuGroup.getId(), menuGroup.getName()))
                 .collect(Collectors.toList());
     }
+
+    public MenuGroup findMenuGroup(Long menuGroupId) {
+        return menuGroupRepository.findById(menuGroupId)
+                .orElseThrow(IllegalArgumentException::new);
+    }
 }

@@ -1,5 +1,6 @@
 package kitchenpos.application.jpa;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.entity.Product;
@@ -31,5 +32,18 @@ public class ProductServiceJpa {
         return products.stream()
                 .map(product -> new ProductListResponse(product.getId(), product.getName(), product.getPrice()))
                 .collect(Collectors.toList());
+    }
+
+    public List<Product> findProducts(List<Long> ids) {
+        List<Product> products = new ArrayList<>();
+        for (Long id : ids) {
+            products.add(findProduct(id));
+        }
+        return products;
+    }
+
+    public Product findProduct(Long id) {
+        return productRepository.findById(id)
+                .orElseThrow(IllegalArgumentException::new);
     }
 }
