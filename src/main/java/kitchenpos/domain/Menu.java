@@ -19,10 +19,6 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
-        this(id, name, price,menuGroupId, null);
-    }
-
     public void updateMenuProducts(final List<MenuProduct> menuProducts) {
         this.menuProducts = menuProducts;
     }

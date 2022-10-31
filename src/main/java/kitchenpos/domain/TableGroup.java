@@ -9,10 +9,23 @@ public class TableGroup {
     private List<OrderTable> orderTables;
 
     public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
+        validateTableSize(orderTables);
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
     }
+
+    public TableGroup(Long id, LocalDateTime createdDate) {
+        this.id = id;
+        this.createdDate = createdDate;
+    }
+
+    private void validateTableSize(List<OrderTable> orderTables) {
+        if (orderTables.size() < 2) {
+            throw new IllegalArgumentException("등록되는 테이블 수가 2 이상이어야 한다.");
+        }
+    }
+
 
     public void updateOrderTables(final List<OrderTable> orderTables) {
         this.orderTables = orderTables;
