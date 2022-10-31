@@ -63,12 +63,7 @@ public class Order {
     }
 
     public void changeStatus(final OrderStatus status) {
-        // TODO: 2022/10/28 변경해야한다!
-        if (status.isSame(OrderStatus.MEAL)) {
-            this.orderStatus = this.orderStatus.meal();
-            return;
-        }
-        this.orderStatus = this.orderStatus.complete();
+        this.orderStatus = this.orderStatus.change(status);
     }
 
     public void setTable(final OrderTable table) {

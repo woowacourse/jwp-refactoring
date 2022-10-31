@@ -209,7 +209,7 @@ class OrderServiceTest {
         // given
         final var orderId = orderRepository.save(new Order(null, table, OrderStatus.COMPLETION, LocalDateTime.now(),
                 List.of(new OrderLineItem(menu.getId(), 한개)))).getId();
-        final var request = new OrderChangeStatusRequest(OrderStatus.COMPLETION.name());
+        final var request = new OrderChangeStatusRequest(OrderStatus.MEAL.name());
 
         // when & then
         assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, request))

@@ -15,26 +15,23 @@ public enum OrderStatus {
                 .orElseThrow();
     }
 
-    public OrderStatus meal() {
-        validateUncompleted();
-        validateNotSame(MEAL);
-        return MEAL;
-    }
-
-    public OrderStatus complete() {
-        validateUncompleted();
-        return COMPLETION;
-    }
-
-    private void validateUncompleted() {
-        if (this == COMPLETION) {
-            throw new DomainLogicException(CustomErrorCode.ORDER_STATUS_ALREADY_COMPLETED_ERROR);
+    public OrderStatus change(final OrderStatus status) {
+        validateNotSame(status);
+        if (status != COMPLETION) {
+            validateUncompleted();
         }
+        return status;
     }
 
     private void validateNotSame(final OrderStatus status) {
         if (this == status) {
             throw new DomainLogicException(CustomErrorCode.ORDER_STATUS_CHANGE_SAME_ERROR);
+        }
+    }
+
+    private void validateUncompleted() {
+        if (this == COMPLETION) {
+            throw new DomainLogicException(CustomErrorCode.ORDER_STATUS_ALREADY_COMPLETED_ERROR);
         }
     }
 

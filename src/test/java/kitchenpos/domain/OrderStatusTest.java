@@ -15,7 +15,7 @@ class OrderStatusTest {
         final var status = OrderStatus.COOKING;
 
         // when
-        final var changed = status.meal();
+        final var changed = status.change(OrderStatus.MEAL);
 
         // then
         assertThat(changed).isEqualTo(OrderStatus.MEAL);
@@ -27,7 +27,7 @@ class OrderStatusTest {
         final var status = OrderStatus.MEAL;
 
         // when
-        final var changed = status.complete();
+        final var changed = status.change(OrderStatus.COMPLETION);
 
         // then
         assertThat(changed).isEqualTo(OrderStatus.COMPLETION);
@@ -39,7 +39,7 @@ class OrderStatusTest {
         final var status = OrderStatus.COMPLETION;
 
         // when & then
-        assertThatThrownBy(status::complete)
+        assertThatThrownBy(() -> status.change(OrderStatus.MEAL))
                 .isInstanceOf(DomainLogicException.class)
                 .extracting("errorCode")
                 .isEqualTo(CustomErrorCode.ORDER_STATUS_ALREADY_COMPLETED_ERROR);
@@ -51,7 +51,7 @@ class OrderStatusTest {
         final var status = OrderStatus.MEAL;
 
         // when & then
-        assertThatThrownBy(status::meal)
+        assertThatThrownBy(() -> status.change(OrderStatus.MEAL))
                 .isInstanceOf(DomainLogicException.class)
                 .extracting("errorCode")
                 .isEqualTo(CustomErrorCode.ORDER_STATUS_CHANGE_SAME_ERROR);
