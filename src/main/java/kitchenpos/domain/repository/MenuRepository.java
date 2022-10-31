@@ -3,6 +3,7 @@ package kitchenpos.domain.repository;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
@@ -13,13 +14,19 @@ public class MenuRepository {
 
     private final MenuDao menuDao;
     private final MenuProductDao menuProductDao;
+    private final MenuGroupDao menuGroupDao;
 
-    public MenuRepository(MenuDao menuDao, MenuProductDao menuProductDao) {
+    public MenuRepository(MenuDao menuDao, MenuProductDao menuProductDao, MenuGroupDao menuGroupDao) {
         this.menuDao = menuDao;
         this.menuProductDao = menuProductDao;
+        this.menuGroupDao = menuGroupDao;
     }
 
     public Menu save(Menu menu) {
+        if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
+            throw new IllegalArgumentException();
+        }
+
         Long menuId = menuDao.save(menu).getId();
         List<MenuProduct> savedMenuProducts = saveMenuProducts(menu, menuId);
 

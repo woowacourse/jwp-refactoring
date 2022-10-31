@@ -31,16 +31,9 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(MenuCreateRequest request) {
-        validateMenuGroupExistence(request);
         validateMenuPrice(request.getPrice(), request.getMenuProducts());
 
         return MenuResponse.from(menuRepository.save(request.toEntity()));
-    }
-
-    private void validateMenuGroupExistence(MenuCreateRequest request) {
-        if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
-            throw new IllegalArgumentException();
-        }
     }
 
     private void validateMenuPrice(BigDecimal menuPrice, List<MenuProductCreateRequest> menuProductsRequest) {
