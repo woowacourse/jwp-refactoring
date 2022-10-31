@@ -4,12 +4,11 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.CreateMenuDto;
 import kitchenpos.application.dto.request.CreateMenuProductDto;
 import kitchenpos.application.dto.response.MenuDto;
+import kitchenpos.domain.menu.ProductQuantities;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuProductRepository;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.menu.Price;
 import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.menu.ProductQuantity;
 import kitchenpos.domain.repository.ProductRepository;
@@ -41,19 +40,17 @@ public class MenuService {
         if (!menuGroupRepository.existsById(createMenuDto.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
-        final List<ProductQuantity> menuProductQuantities = getMenuProductQuantities(createMenuDto.getMenuProducts());
-        final Price menuPrice = Price.ofMenu(createMenuDto.getPrice(), menuProductQuantities);
-        final Menu menu = menuRepository.save(new Menu(createMenuDto.getName(), menuPrice, createMenuDto.getMenuGroupId()));
-        return MenuDto.of(menu, menuProductQuantities.stream()
-                .map(it -> new MenuProduct(menu.getId(), it.getProductId(), it.getQuantity()))
+        final ProductQuantities productQuantities = getMenuProductQuantities(createMenuDto.getMenuProducts());
+        final Menu menu = menuRepository.save(Menu.of(createMenuDto.getName(), createMenuDto.getPrice(), createMenuDto.getMenuGroupId(), productQuantities));
+        return MenuDto.of(menu, productQuantities.toMenuProducts(menu.getId()).stream()
                 .map(menuProductRepository::save)
                 .collect(Collectors.toList()));
     }
 
-    private List<ProductQuantity> getMenuProductQuantities(List<CreateMenuProductDto> menuProductDtos) {
-        return menuProductDtos.stream()
+    private ProductQuantities getMenuProductQuantities(List<CreateMenuProductDto> menuProductDtos) {
+        return new ProductQuantities(menuProductDtos.stream()
                 .map(it -> new ProductQuantity(getProductById(it.getProductId()), it.getQuantity()))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
 
     private Product getProductById(Long productId) {

@@ -34,8 +34,16 @@ public class Menu {
         this.menuGroupId = menuGroupId;
     }
 
-    public Menu(String name, Price price, Long menuGroupId) {
-        this(null, name, price, menuGroupId);
+    public static Menu of(String name, BigDecimal price, Long menuGroupId, ProductQuantities productQuantities) {
+        validateMenuPrice(price, productQuantities);
+        return new Menu(null, name, new Price(price), menuGroupId);
+    }
+
+    private static void validateMenuPrice(BigDecimal price, ProductQuantities productQuantities) {
+        BigDecimal individualPriceSum = productQuantities.calculateTotalPrice();
+        if (price == null || price.compareTo(individualPriceSum) > 0) {
+            throw new IllegalArgumentException("메뉴의 가격은 구성품을 개별적으로 구매했을 때에 비해 비싸면 안됩니다.");
+        }
     }
 
     public Long getId() {
