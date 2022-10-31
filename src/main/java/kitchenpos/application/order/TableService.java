@@ -55,7 +55,7 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final ChangeEmptyRequest request) {
-        return ifOrderTableExist(orderTableId, orderTable -> {
+        return whenOrderTableExist(orderTableId, orderTable -> {
             validateOrderTableNotGrouped(orderTable);
             validateAllOrderTablesCompleted(orderTable.getId());
 
@@ -79,16 +79,16 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final ChangeNumberOfGuestsRequest request) {
-        return ifOrderTableExist(orderTableId, orderTable -> {
+        return whenOrderTableExist(orderTableId, orderTable -> {
             final var numberOfGuests = request.getNumberOfGuests();
             orderTable.updateNumberOfGuests(numberOfGuests);
         });
     }
 
-    private OrderTableResponse ifOrderTableExist(final Long orderTableId, final Consumer<OrderTable> whenOrderTableExist) {
+    private OrderTableResponse whenOrderTableExist(final Long orderTableId, final Consumer<OrderTable> ifOrderTableExist) {
         final OrderTable orderTable = asOrderTable(orderTableId);
 
-        whenOrderTableExist.accept(orderTable);
+        ifOrderTableExist.accept(orderTable);
 
         return responseAssembler.asOrderTableResponse(orderTable);
     }
