@@ -62,9 +62,9 @@ public class OrderService {
         Map<Long, Long> groupByMenuId = orderCreateRequest.getOrderLineItems().stream()
                 .collect(Collectors.toMap(OrderLineItemRequest::getMenuId, OrderLineItemRequest::getQuantity));
 
-        List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        groupByMenuId.keySet()
-                .forEach(each -> savedOrderLineItems.add(new OrderLineItem(each, groupByMenuId.get(each))));
+        List<OrderLineItem> savedOrderLineItems = groupByMenuId.keySet().stream()
+                .map(each -> new OrderLineItem(each, groupByMenuId.get(each)))
+                .collect(Collectors.toUnmodifiableList());
 
         return new OrderLineItems(savedOrderLineItems);
     }
