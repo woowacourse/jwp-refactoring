@@ -1,10 +1,10 @@
 package kitchenpos.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
 import org.springframework.stereotype.Repository;
 
 public interface MenuDao {
@@ -23,47 +23,29 @@ class MenuRepository implements MenuDao {
 
     private final JdbcTemplateMenuProductDao jdbcTemplateMenuProductDao;
     private final JdbcTemplateMenuDao jdbcTemplateMenuDao;
-    private final JdbcTemplateProductDao jdbcTemplateProductDao;
-    private final JdbcTemplateMenuGroupDao jdbcTemplateMenuGroupDao;
 
     public MenuRepository(final JdbcTemplateMenuProductDao jdbcTemplateMenuProductDao,
-                          final JdbcTemplateMenuDao jdbcTemplateMenuDao,
-                          final JdbcTemplateProductDao jdbcTemplateProductDao,
-                          final JdbcTemplateMenuGroupDao jdbcTemplateMenuGroupDao) {
+                          final JdbcTemplateMenuDao jdbcTemplateMenuDao) {
         this.jdbcTemplateMenuProductDao = jdbcTemplateMenuProductDao;
         this.jdbcTemplateMenuDao = jdbcTemplateMenuDao;
-        this.jdbcTemplateProductDao = jdbcTemplateProductDao;
-        this.jdbcTemplateMenuGroupDao = jdbcTemplateMenuGroupDao;
     }
 
     @Override
     public Menu save(final Menu entity) {
-        if (!jdbcTemplateMenuGroupDao.existsById(entity.getMenuGroupId())) {
-            throw new IllegalArgumentException();
-        }
         final Menu savedMenu = jdbcTemplateMenuDao.save(entity);
-        final List<MenuProduct> menuProducts = entity.getMenuProducts();
-        for (final MenuProduct menuProduct : menuProducts) {
-            setPrice(menuProduct);
+        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
+        for (final MenuProduct menuProduct : entity.getMenuProducts()) {
             menuProduct.setMenuId(savedMenu.getId());
-            jdbcTemplateMenuProductDao.save(menuProduct);
+            savedMenuProducts.add(jdbcTemplateMenuProductDao.save(menuProduct));
         }
-        savedMenu.setMenuProducts(menuProducts);
+        savedMenu.setMenuProducts(savedMenuProducts);
         return savedMenu;
-    }
-
-    private void setPrice(final MenuProduct menuProduct) {
-        final Optional<Product> product = jdbcTemplateProductDao.findById(menuProduct.getProductId());
-        product.ifPresent(it -> menuProduct.setPrice(it.getPrice()));
     }
 
     @Override
     public Optional<Menu> findById(final Long id) {
-        final List<MenuProduct> menuProducts = jdbcTemplateMenuProductDao.findAllByMenuId(id);
-        for (final MenuProduct menuProduct : menuProducts) {
-            setPrice(menuProduct);
-        }
         final Optional<Menu> menu = jdbcTemplateMenuDao.findById(id);
+        final List<MenuProduct> menuProducts = jdbcTemplateMenuProductDao.findAllByMenuId(id);
         menu.ifPresent(it -> it.setMenuProducts(menuProducts));
         return menu;
     }

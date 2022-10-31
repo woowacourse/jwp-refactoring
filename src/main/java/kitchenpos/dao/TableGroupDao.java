@@ -1,6 +1,6 @@
 package kitchenpos.dao;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.OrderTable;
@@ -8,6 +8,7 @@ import kitchenpos.domain.TableGroup;
 import org.springframework.stereotype.Repository;
 
 public interface TableGroupDao {
+
     TableGroup save(TableGroup entity);
 
     Optional<TableGroup> findById(Long id);
@@ -29,26 +30,32 @@ class TableGroupRepository implements TableGroupDao {
 
     @Override
     public TableGroup save(final TableGroup entity) {
-        entity.setCreatedDate(LocalDateTime.now());
         final TableGroup savedTableGroup = jdbcTemplateTableGroupDao.save(entity);
-        final Long tableGroupId = savedTableGroup.getId();
-        final List<OrderTable> orderTables = entity.getOrderTables();
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(tableGroupId);
+        final List<OrderTable> savedOrderTables = new ArrayList<>();
+        for (final OrderTable orderTable : entity.getOrderTables()) {
+            orderTable.setTableGroupId(savedTableGroup.getId());
             orderTable.setEmpty(false);
-            jdbcTemplateOrderTableDao.save(orderTable);
+            savedOrderTables.add(jdbcTemplateOrderTableDao.save(orderTable));
         }
-        savedTableGroup.setOrderTables(orderTables);
+        savedTableGroup.setOrderTables(savedOrderTables);
         return savedTableGroup;
     }
 
     @Override
     public Optional<TableGroup> findById(final Long id) {
-        return Optional.empty();
+        final Optional<TableGroup> tableGroup = jdbcTemplateTableGroupDao.findById(id);
+        final List<OrderTable> orderTables = jdbcTemplateOrderTableDao.findAllByTableGroupId(id);
+        tableGroup.ifPresent(it -> it.setOrderTables(orderTables));
+        return tableGroup;
     }
 
     @Override
     public List<TableGroup> findAll() {
-        return null;
+        final List<TableGroup> tableGroups = jdbcTemplateTableGroupDao.findAll();
+        for (final TableGroup tableGroup : tableGroups) {
+            final List<OrderTable> orderTables = jdbcTemplateOrderTableDao.findAllByTableGroupId(tableGroup.getId());
+            tableGroup.setOrderTables(orderTables);
+        }
+        return tableGroups;
     }
 }
