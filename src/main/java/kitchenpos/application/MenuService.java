@@ -35,8 +35,8 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
-        final Menu menu = Menu.from(menuRequest);
-        final List<MenuProduct> menuProducts = getMenuProducts(menuRequest);
+        final Menu menu = menuRequest.toMenu();
+        final List<MenuProduct> menuProducts = menuRequest.toMenuProducts();
 
         validateMenuGroup(menu);
         menu.validatePrice(getSumOfMenuPrice(menuProducts));
@@ -51,12 +51,6 @@ public class MenuService {
         return menuProducts.stream()
                 .map(menuProduct -> menuProductDao.save(
                         new MenuProduct(savedMenu.getId(), menuProduct.getProductId(), menuProduct.getQuantity())))
-                .collect(Collectors.toList());
-    }
-
-    private List<MenuProduct> getMenuProducts(final MenuRequest menuRequest) {
-        return menuRequest.getMenuProducts().stream()
-                .map(MenuProduct::from)
                 .collect(Collectors.toList());
     }
 

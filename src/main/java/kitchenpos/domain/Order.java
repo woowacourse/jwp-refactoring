@@ -24,11 +24,8 @@ public class Order {
         this(null, orderTableId, orderStatus, orderedTime);
     }
 
-    public static Order from(OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("주문 생성 시 주문 받을 수 없는 주문 테이블일 수 없습니다.");
-        }
-        return new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
+    public Order(Long orderTableId) {
+        this(null, orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now());
     }
 
     public void changeOrderStatus(String orderStatusName) {

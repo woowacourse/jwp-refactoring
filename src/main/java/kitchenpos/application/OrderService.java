@@ -9,7 +9,6 @@ import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.dto.response.OrderResponse;
@@ -37,20 +36,21 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest orderCreateRequest) {
+        final Long orderTableId = orderCreateRequest.getOrderTableId();
         final List<OrderLineItemRequest> orderLineItemRequests = orderCreateRequest.getOrderLineItems();
 
         validateEmptyOrderLineItemRequests(orderLineItemRequests);
         validateExistOrderLineItemRequestInMenu(orderLineItemRequests);
+        validateOrderTableRequest(orderTableId);
 
-        final OrderTable orderTable = findOrderTable(orderCreateRequest);
-        final Order savedOrder = orderDao.save(Order.from(orderTable));
+        final Order savedOrder = orderDao.save(orderCreateRequest.toOrder());
         final List<OrderLineItem> orderLineItems = saveOrderLineItems(orderLineItemRequests, savedOrder);
 
         return OrderResponse.of(savedOrder, orderLineItems);
     }
 
-    private OrderTable findOrderTable(final OrderCreateRequest orderCreateRequest) {
-        return orderTableDao.findById(orderCreateRequest.getOrderTableId())
+    private void validateOrderTableRequest(final Long orderTableId) {
+        orderTableDao.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블입니다."));
     }
 

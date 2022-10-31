@@ -43,7 +43,7 @@
 
 ## 1차 피드백
 
-- [ ] DTO -> Domain 전환 방식
+- [x] DTO -> Domain 전환 방식
     - DTO가 바뀐다면 도메인도 변경될 수 있는 구조
 - [ ] MenuService - getSumOfMenuPrice()
     - 네이밍 : get메서드는 값을 가져온다는 의미

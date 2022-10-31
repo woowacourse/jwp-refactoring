@@ -1,7 +1,5 @@
 package kitchenpos.domain;
 
-import kitchenpos.dto.request.MenuProductRequest;
-
 public class MenuProduct {
 
     private final Long seq;
@@ -22,10 +20,6 @@ public class MenuProduct {
 
     public MenuProduct(Long productId, long quantity) {
         this(null, null, productId, quantity);
-    }
-
-    public static MenuProduct from(final MenuProductRequest menuProductRequest) {
-        return new MenuProduct(null, menuProductRequest.getProductId(), menuProductRequest.getQuantity());
     }
 
     public Long getSeq() {

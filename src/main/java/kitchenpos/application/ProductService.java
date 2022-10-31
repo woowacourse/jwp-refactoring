@@ -20,7 +20,7 @@ public class ProductService {
 
     @Transactional
     public ProductResponse create(final ProductRequest productRequest) {
-        final Product product = productDao.save(Product.from(productRequest));
+        final Product product = productDao.save(productRequest.toProduct());
         return ProductResponse.from(product);
     }
 

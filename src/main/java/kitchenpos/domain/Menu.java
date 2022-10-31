@@ -1,7 +1,6 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
-import kitchenpos.dto.request.MenuRequest;
 
 public class Menu {
 
@@ -19,12 +18,6 @@ public class Menu {
 
     public Menu(String name, Price price, Long menuGroupId) {
         this(null, name, price, menuGroupId);
-    }
-
-    public static Menu from(MenuRequest menuRequest) {
-        return new Menu(menuRequest.getName(),
-                new Price(menuRequest.getPrice()),
-                menuRequest.getMenuGroupId());
     }
 
     public void validatePrice(BigDecimal sum) {

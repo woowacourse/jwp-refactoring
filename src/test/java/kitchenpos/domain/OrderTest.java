@@ -35,16 +35,4 @@ public class OrderTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("완료된 주문은 상태를 변경할 수 없습니다.");
     }
-
-    @DisplayName("주문의 상태를 변경 시 완료된 주문을 변경하면 예외를 반환한다.")
-    @Test
-    void create_WhenEmptyOrderTable() {
-        // given
-        OrderTable orderTable = generateOrderTable(1L, 0, true);
-
-        // when & then
-        assertThatThrownBy(() -> Order.from(orderTable))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("주문 생성 시 주문 받을 수 없는 주문 테이블일 수 없습니다.");
-    }
 }
