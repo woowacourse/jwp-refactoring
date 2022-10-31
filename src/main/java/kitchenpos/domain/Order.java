@@ -20,7 +20,7 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public static Order of(OrderTable orderTable) {
+    public static Order from(OrderTable orderTable) {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException("주문 테이블이 비어있습니다.");
         }

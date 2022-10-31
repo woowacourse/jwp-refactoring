@@ -61,12 +61,12 @@ public class MenuService {
 
     private BigDecimal getMenuProductTotalPrice(final List<MenuProductRequest> menuProducts) {
         return menuProducts.stream()
-                .map(it -> new MenuProductQuantity(findProductById(it.getProductId()), it.getQuantity()))
+                .map(it -> new MenuProductQuantity(getProductById(it.getProductId()), it.getQuantity()))
                 .map(MenuProductQuantity::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    private Product findProductById(final Long productId) {
+    private Product getProductById(final Long productId) {
         return productDao.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 product입니다."));
     }

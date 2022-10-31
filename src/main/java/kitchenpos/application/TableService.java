@@ -55,7 +55,7 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableGuestModifyRequest request) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
 
         if (savedOrderTable.isEmpty()) {
             throw new IllegalArgumentException("빈 테이블입니다.");

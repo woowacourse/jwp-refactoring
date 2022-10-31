@@ -3,6 +3,8 @@ package kitchenpos.domain;
 import java.util.Objects;
 
 public class OrderTable {
+    private static final int STANDARD_GUEST_NUMBER = 0;
+
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
@@ -46,7 +48,7 @@ public class OrderTable {
     }
 
     public void changeNumberOfGuest(final int numberOfGuests) {
-        if (numberOfGuests < 0) {
+        if (numberOfGuests < STANDARD_GUEST_NUMBER) {
             throw new IllegalArgumentException("Guest는 0명 미만일 수 없습니다.");
         }
         this.numberOfGuests = numberOfGuests;

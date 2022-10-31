@@ -65,7 +65,7 @@ public class OrderService {
     }
 
     private OrderResponse createOrder(final List<OrderLineItem> orderLineItems, final OrderTable orderTable) {
-        Order order = orderDao.save(Order.of(orderTable));
+        Order order = orderDao.save(Order.from(orderTable));
         Long orderId = order.getId();
         return OrderResponse.of(order, createOrderLineItems(orderLineItems, orderId));
     }
