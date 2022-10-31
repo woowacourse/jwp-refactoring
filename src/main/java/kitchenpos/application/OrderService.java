@@ -43,11 +43,16 @@ public class OrderService {
     public OrderResponse create(final OrderCreateRequest orderCreateRequest) {
         List<OrderLineItem> orderLineItems = orderLineItemMapper.toOrderLineItems(
                 orderCreateRequest.getOrderLineItems());
+        Order order = orderMapper.toOrder(orderCreateRequest, orderLineItems);
+        validateOrder(order);
+        return orderDtoMapper.toOrderResponse(orderRepository.save(order));
+    }
+
+    private void validateOrder(final Order order) {
+        List<OrderLineItem> orderLineItems = order.getOrderLineItems();
         List<Long> menuIds = toMenuIds(orderLineItems);
         validateOrderLineItemCount(orderLineItems, menuIds);
-        Order order = orderMapper.toOrder(orderCreateRequest, orderLineItems);
         validateOrderTableIsEmpty(order);
-        return orderDtoMapper.toOrderResponse(orderRepository.save(order));
     }
 
     private List<Long> toMenuIds(final List<OrderLineItem> orderLineItems) {
