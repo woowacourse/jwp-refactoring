@@ -4,20 +4,14 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.MenuProducts;
-import kitchenpos.domain.Product;
-import kitchenpos.dto.MenuCreateRequest;
-import kitchenpos.dto.MenuProductsRequest;
+import kitchenpos.domain.*;
+import kitchenpos.dto.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,24 +34,38 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuCreateRequest menuCreateRequest) {
+    public MenuResponse create(final MenuCreateRequest menuCreateRequest) {
         MenuProducts menuProducts = generateMenuProducts(menuCreateRequest);
         Menu menu = menuDao.save(generateMenu(menuCreateRequest, menuProducts));
 
         final Long menuId = menu.getId();
         List<MenuProduct> results = menuProducts.changeMenuId(menuId).getMenuProducts();
-        results.forEach(menuProductDao::save);
-        return menu.changeMenuProducts(results);
+        results = results.stream()
+                .map(menuProductDao::save)
+                .collect(Collectors.toUnmodifiableList());
+        menu = menu.changeMenuProducts(results);
+        List<MenuProductResponse> menuProductResponses = menu.getMenuProducts().stream()
+                .map(each -> new MenuProductResponse(each.getSeq(), each.getMenuId(), each.getProductId(), each.getQuantity()))
+                .collect(Collectors.toUnmodifiableList());
+        return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menuProductResponses);
     }
 
-    public List<Menu> list() {
-        final List<Menu> menus = menuDao.findAll();
-
-        for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
+    public List<MenuResponse> list() {
+        List<Menu> menus = menuDao.findAll();
+        List<Menu> fullMenus = new ArrayList<>();
+        for (Menu menu : menus) {
+            List<MenuProduct> menuProducts = menuProductDao.findAllByMenuId(menu.getId());
+            fullMenus.add(menu.changeMenuProducts(menuProducts));
         }
 
-        return menus;
+        List<MenuResponse> menuResponses = new ArrayList<>();
+        for (Menu menu : fullMenus) {
+            List<MenuProductResponse> menuProductResponses = menu.getMenuProducts().stream()
+                    .map(each -> new MenuProductResponse(each.getSeq(), each.getMenuId(), each.getProductId(), each.getQuantity()))
+                    .collect(Collectors.toUnmodifiableList());
+            menuResponses.add(new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menuProductResponses));
+        }
+        return menuResponses;
     }
 
     private void validateExistMenuGroup(Long menuGroupId) {

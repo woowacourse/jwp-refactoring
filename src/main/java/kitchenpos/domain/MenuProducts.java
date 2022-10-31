@@ -17,8 +17,8 @@ public class MenuProducts {
             Long quantity = groupedQuantityByProduct.computeIfAbsent(menuProduct.getProductId(), (id) -> 0L);
             groupedQuantityByProduct.put(menuProduct.getProductId(), quantity + menuProduct.getQuantity());
         }
-        return groupedQuantityByProduct.entrySet().stream()
-                .map(each -> new MenuProduct(each.getKey(), each.getValue()))
+        return menuProducts.stream()
+                .map(each -> new MenuProduct(each.getSeq(), each.getMenuId(), each.getProductId(), groupedQuantityByProduct.get(each.getProductId())))
                 .collect(Collectors.toUnmodifiableList());
     }
 

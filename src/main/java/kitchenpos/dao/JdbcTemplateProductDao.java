@@ -57,7 +57,7 @@ public class JdbcTemplateProductDao implements ProductDao {
     @Override
     public List<Product> findAllByIds(List<Long> ids) {
         final String multiples = ids.stream()
-                .map(each -> "'" + ids + "'")
+                .map(each -> "'" + each + "'")
                 .collect(Collectors.joining(", "));
         final String sql = "SELECT id, name, price FROM product WHERE id IN (" + multiples + ")";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
