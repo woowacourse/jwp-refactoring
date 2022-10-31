@@ -12,7 +12,7 @@ public class OrderCreateRequest {
     private LocalDateTime orderedTime;
     private List<OrderLineItemDto> orderLineItems;
 
-    OrderCreateRequest() {
+    private OrderCreateRequest() {
     }
 
     public OrderCreateRequest(final Long id, final Long orderTableId, final LocalDateTime orderedTime,
