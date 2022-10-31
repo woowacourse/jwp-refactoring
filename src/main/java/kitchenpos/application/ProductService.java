@@ -21,6 +21,7 @@ public class ProductService {
         return productRepository.save(new Product(productRequest.getName(), productRequest.getPrice()));
     }
 
+    @Transactional(readOnly = true)
     public List<Product> list() {
         return productRepository.findAll();
     }
