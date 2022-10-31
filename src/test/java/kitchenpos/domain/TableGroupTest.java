@@ -2,7 +2,9 @@ package kitchenpos.domain;
 
 import static kitchenpos.support.TestFixtureFactory.단체_지정을_생성한다;
 import static kitchenpos.support.TestFixtureFactory.주문_테이블을_생성한다;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,5 +37,19 @@ class TableGroupTest {
 
         assertThatThrownBy(() -> new TableGroup(null, LocalDateTime.now(), List.of(orderTable1, orderTable2)))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 단체_지정된_테이블들의_단체_지정을_해제할_수_있다() {
+        OrderTable orderTable1 = 주문_테이블을_생성한다(null, 0, true);
+        OrderTable orderTable2 = 주문_테이블을_생성한다(null, 0, true);
+        TableGroup tableGroup = 단체_지정을_생성한다(LocalDateTime.now(), List.of(orderTable1, orderTable2));
+
+        tableGroup.ungroup();
+        
+        assertAll(
+                () -> assertThat(orderTable1.getTableGroup()).isNull(),
+                () -> assertThat(orderTable2.getTableGroup()).isNull()
+        );
     }
 }

@@ -65,6 +65,12 @@ public class TableGroup {
         }
     }
 
+    public void ungroup() {
+        for (OrderTable orderTable : orderTables) {
+            orderTable.ungroup();
+        }
+    }
+
     public Long getId() {
         return id;
     }

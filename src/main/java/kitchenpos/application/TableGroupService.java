@@ -53,12 +53,11 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
-        List<Long> orderTableIds = this.getOrderTableIds(orderTables);
+        TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
+                .orElseThrow(IllegalArgumentException::new);
+        List<Long> orderTableIds = getOrderTableIds(tableGroup.getOrderTables());
         validateOrderTableNotCompleted(orderTableIds);
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.ungroup();
-        }
+        tableGroup.ungroup();
     }
 
     private List<Long> getOrderTableIds(final List<OrderTable> orderTables) {
