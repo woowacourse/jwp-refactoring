@@ -1,8 +1,8 @@
 package kitchenpos.dao.repository;
 
 import java.util.List;
-import kitchenpos.dao.jdbctemplate.JdbcTemplateOrderTableDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.jdbctemplate.JdbcTemplateOrderTableDao;
 import kitchenpos.domain.OrderTable;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Repository;
