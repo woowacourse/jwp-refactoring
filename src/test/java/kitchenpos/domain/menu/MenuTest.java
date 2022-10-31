@@ -37,5 +37,20 @@ class MenuTest {
             assertThatThrownBy(() -> new Menu("메뉴", BigDecimal.valueOf(-1), menuGroup, List.of(menuProduct)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
+
+        @DisplayName("Menu 가격이 MenuProduct 들의 가격 * 수량 합보다 크다면, IAE를 던진다.")
+        @Test
+        void Should_ThrowIAE_When_MenuPriceIsGreaterThanSumOfProductOfPriceAndQuantity() {
+            // given
+            MenuGroup menuGroup = new MenuGroup("메뉴 그룹");
+
+            MenuProduct menuProduct1 = new MenuProduct(new Product("상품1", BigDecimal.valueOf(10_000)), 5L);
+            MenuProduct menuProduct2 = new MenuProduct(new Product("상품2", BigDecimal.valueOf(50_000)), 1L);
+
+            // when & then
+            assertThatThrownBy(
+                    () -> new Menu("메뉴", BigDecimal.valueOf(200_000), menuGroup, List.of(menuProduct1, menuProduct2)))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
     }
 }

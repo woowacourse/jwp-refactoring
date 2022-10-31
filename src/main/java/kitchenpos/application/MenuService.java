@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.menu.Menu;
@@ -56,16 +55,6 @@ public class MenuService {
                 menuGroup,
                 menuProducts
         );
-
-        final BigDecimal price = menu.getPrice();
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
-            sum = sum.add(menuProduct.getProduct().getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
-
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
 
         final Menu savedMenu = menuRepository.save(menu);
         return new MenuResponse(savedMenu);
