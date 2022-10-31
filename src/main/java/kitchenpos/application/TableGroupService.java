@@ -16,6 +16,7 @@ import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class TableGroupService {
@@ -35,6 +36,8 @@ public class TableGroupService {
     @Transactional
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
         final List<OrderTableRequest> orderTableRequests = tableGroupRequest.getOrderTables();
+        validateOrderTableRequestSize(orderTableRequests);
+
         final List<Long> orderTableIds = tableGroupRequest.getOrderTablesIds();
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
 
@@ -45,6 +48,12 @@ public class TableGroupService {
         final List<OrderTable> orderTables = saveOrderTables(savedOrderTables, savedTableGroup);
 
         return TableGroupResponse.of(savedTableGroup, orderTables);
+    }
+
+    private void validateOrderTableRequestSize(List<OrderTableRequest> orderTableRequests) {
+        if (CollectionUtils.isEmpty(orderTableRequests) || orderTableRequests.size() < 2) {
+            throw new IllegalArgumentException("주문 테이블의 수는 최소 2개 이상이어야합니다.");
+        }
     }
 
     private void validateNonEmptyOrderTableAndNullTableGroup(OrderTable savedOrderTable) {
