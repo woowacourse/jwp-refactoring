@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductCreateResponse;
+import kitchenpos.dto.ProductFindResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +16,7 @@ class ProductServiceTest extends ServiceTest {
     void create() {
         final Product product = saveAndGetProduct(1L);
 
-        final Product actual = productService.create(product.getName(), product.getPrice());
+        final ProductCreateResponse actual = productService.create(product.getName(), product.getPrice());
 
         assertThat(actual.getName()).isEqualTo("하와이안피자");
     }
@@ -24,7 +26,7 @@ class ProductServiceTest extends ServiceTest {
     void list() {
         saveAndGetProduct(1L);
 
-        final List<Product> actual = productService.list();
+        final List<ProductFindResponse> actual = productService.list();
 
         assertAll(
                 () -> assertThat(actual).hasSize(1),
