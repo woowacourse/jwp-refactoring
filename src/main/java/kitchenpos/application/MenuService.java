@@ -39,7 +39,7 @@ public class MenuService {
         final List<MenuProduct> menuProducts = menuRequest.toMenuProducts();
 
         validateMenuGroup(menu);
-        menu.validatePrice(getSumOfMenuPrice(menuProducts));
+        menu.validatePrice(calculateSumOfMenuPrice(menuProducts));
 
         final Menu savedMenu = menuDao.save(menu);
         final List<MenuProduct> savedMenuProducts = saveMenuProducts(menuProducts, savedMenu);
@@ -54,14 +54,18 @@ public class MenuService {
                 .collect(Collectors.toList());
     }
 
-    private BigDecimal getSumOfMenuPrice(final List<MenuProduct> menuProducts) {
+    private BigDecimal calculateSumOfMenuPrice(final List<MenuProduct> menuProducts) {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = productDao.findById(menuProduct.getProductId())
-                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
+            final Product product = getProduct(menuProduct);
             sum = sum.add(product.multiply(menuProduct.getQuantity()));
         }
         return sum;
+    }
+
+    private Product getProduct(final MenuProduct menuProduct) {
+        return productDao.findById(menuProduct.getProductId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
     }
 
     private void validateMenuGroup(final Menu menu) {

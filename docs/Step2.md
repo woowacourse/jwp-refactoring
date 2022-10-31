@@ -45,7 +45,7 @@
 
 - [x] DTO -> Domain 전환 방식
     - DTO가 바뀐다면 도메인도 변경될 수 있는 구조
-- [ ] MenuService - getSumOfMenuPrice()
+- [x] MenuService - getSumOfMenuPrice()
     - 네이밍 : get메서드는 값을 가져온다는 의미
     - 메서드에서 상품 조회와 가격의 합을 구하는 일 2개 수행 중, 분리 필요
 - [ ] OderService - orderLineItemDao.save() 메서드 분리
