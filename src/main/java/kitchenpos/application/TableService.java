@@ -3,7 +3,6 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.transaction.Transactional;
 import kitchenpos.exception.CustomErrorCode;
 import kitchenpos.exception.NotFoundException;
 import kitchenpos.domain.OrderTable;
@@ -13,8 +12,10 @@ import kitchenpos.ui.dto.TableChangeGuestNumberRequest;
 import kitchenpos.ui.dto.TableCreateRequest;
 import kitchenpos.ui.dto.TableResponse;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class TableService {
 
     private final OrderTableRepository orderTableRepository;

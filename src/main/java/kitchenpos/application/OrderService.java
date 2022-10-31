@@ -17,6 +17,7 @@ import kitchenpos.ui.dto.OrderResponse;
 import org.springframework.stereotype.Service;
 
 @Service
+@org.springframework.transaction.annotation.Transactional(readOnly = true)
 public class OrderService {
 
     private final OrderTableRepository orderTableRepository;
