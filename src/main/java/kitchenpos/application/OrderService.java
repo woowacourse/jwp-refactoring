@@ -37,28 +37,19 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(OrderRequest request) {
-        OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
-        List<OrderLineItemRequest> itemRequests = request.getOrderLineItemRequests();
-        validateOrderLineItem(itemRequests);
+        OrderTable orderTable = orderTableRepository.getById(request.getOrderTableId());
+        List<OrderLineItem> orderLineItems = getOrderLineItems(request);
 
-        List<OrderLineItem> orderLineItems = itemRequests.stream()
-                .map(itemRequest -> new OrderLineItem(itemRequest.getMenuId(), itemRequest.getQuantity()))
-                .collect(Collectors.toList());
-
-        Order order = new Order(
-                orderTable,
-                OrderStatus.COOKING,
-                LocalDateTime.now(),
-                orderLineItems
-        );
-
+        Order order = new Order(orderTable, orderLineItems);
         return OrderResponse.from(orderRepository.save(order));
     }
 
-    private static List<Long> toMenuIds(List<OrderLineItemRequest> orderLineItems) {
-        return orderLineItems.stream()
-                .map(OrderLineItemRequest::getMenuId)
+    private List<OrderLineItem> getOrderLineItems(OrderRequest request) {
+        List<OrderLineItemRequest> itemRequests = request.getOrderLineItemRequests();
+        validateOrderLineItem(itemRequests);
+
+        return itemRequests.stream()
+                .map(itemRequest -> new OrderLineItem(itemRequest.getMenuId(), itemRequest.getQuantity()))
                 .collect(Collectors.toList());
     }
 
@@ -67,9 +58,15 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
         List<Long> menuIds = toMenuIds(itemRequests);
-        if (itemRequests.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
+        if (!menuRepository.existsAllByInIn(menuIds)) {
+            throw new IllegalArgumentException("존재하지 않는 메뉴가 있습니다 : " + menuIds);
         }
+    }
+
+    private static List<Long> toMenuIds(List<OrderLineItemRequest> orderLineItems) {
+        return orderLineItems.stream()
+                .map(OrderLineItemRequest::getMenuId)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
@@ -81,8 +78,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse changeOrderStatus(Long orderId, OrderStatusChangeRequest request) {
-        Order savedOrder = orderRepository.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+        Order savedOrder = orderRepository.getById(orderId);
         savedOrder.changeOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
         return OrderResponse.from(savedOrder);
     }

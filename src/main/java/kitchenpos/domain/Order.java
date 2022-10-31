@@ -40,6 +40,10 @@ public class Order {
     protected Order() {
     }
 
+    public Order(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+        this(orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+    }
+
     public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime,
                  List<OrderLineItem> orderLineItems) {
         validateOrderTable(orderTable);

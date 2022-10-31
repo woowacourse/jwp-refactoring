@@ -8,11 +8,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import kitchenpos.MenuFixtures;
 import kitchenpos.OrderTableFixtures;
 import kitchenpos.TableGroupFixtures;
+import kitchenpos.application.dto.request.OrderLineItemRequest;
 import kitchenpos.application.dto.request.OrderRequest;
 import kitchenpos.application.dto.request.OrderStatusChangeRequest;
 import kitchenpos.application.dto.response.OrderResponse;
+import kitchenpos.domain.Menu;
+import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -32,18 +36,21 @@ class OrderServiceTest {
     private final TableGroupRepository tableGroupRepository;
     private final OrderTableRepository orderTableRepository;
     private final OrderRepository orderRepository;
+    private final MenuRepository menuRepository;
 
     @Autowired
     public OrderServiceTest(
             OrderService orderService,
             TableGroupRepository tableGroupRepository,
             OrderTableRepository orderTableRepository,
-            OrderRepository orderRepository
+            OrderRepository orderRepository,
+            MenuRepository menuRepository
     ) {
         this.orderService = orderService;
         this.tableGroupRepository = tableGroupRepository;
         this.orderTableRepository = orderTableRepository;
         this.orderRepository = orderRepository;
+        this.menuRepository = menuRepository;
     }
 
     private TableGroup tableGroup;
@@ -60,7 +67,11 @@ class OrderServiceTest {
     @Test
     void create() {
         // given
-        OrderRequest request = createOrderRequest(filledOrderTable.getId());
+        Menu menu = menuRepository.save(MenuFixtures.createMenu());
+        OrderRequest request = createOrderRequest(
+                filledOrderTable.getId(),
+                List.of(createOrderLineItemRequest(menu.getId()))
+        );
 
         // when
         OrderResponse response = orderService.create(request);
@@ -101,7 +112,7 @@ class OrderServiceTest {
 
         // when & then
         assertThatThrownBy(() -> orderService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .hasCauseInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -147,7 +158,7 @@ class OrderServiceTest {
         assertThatThrownBy(() -> orderService.changeOrderStatus(
                 invalidOrderId,
                 createOrderChangeRequest()
-        )).isInstanceOf(IllegalArgumentException.class);
+        )).hasCauseInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
