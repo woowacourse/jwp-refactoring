@@ -24,7 +24,8 @@ import kitchenpos.repository.OrderTableRepository;
 @Transactional
 class TableGroupServiceTest {
 
-    private static final long NOT_EXIST_ID = 999L;
+    private static final long NOT_EXIST_ID = 0L;
+
     @Autowired
     private OrderTableService orderTableService;
 

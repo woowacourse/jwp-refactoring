@@ -20,7 +20,7 @@ import kitchenpos.dto.OrderTableRequest;
 @Transactional
 class OrderTableServiceTest {
 
-    private static final long NOT_EXIST_ID = 9999L;
+    private static final long NOT_EXIST_ID = 0L;
 
     @Autowired
     private OrderTableService orderTableService;
