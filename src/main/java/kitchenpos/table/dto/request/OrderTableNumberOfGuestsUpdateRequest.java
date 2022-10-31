@@ -4,7 +4,8 @@ public class OrderTableNumberOfGuestsUpdateRequest {
 
     private int numberOfGuests;
 
-    private OrderTableNumberOfGuestsUpdateRequest() {}
+    private OrderTableNumberOfGuestsUpdateRequest() {
+    }
 
     public OrderTableNumberOfGuestsUpdateRequest(int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;

@@ -16,11 +16,11 @@ public class TableGroupTest {
     void setId() {
         // given
         OrderTable orderTable = new OrderTable(99, false);
-        TableGroup tableGroup = new TableGroup(List.of());
-        orderTable.setTableGroup(tableGroup);
+        OrderTable orderTable2 = new OrderTable(99, false);
+        TableGroup tableGroup = new TableGroup(List.of(orderTable, orderTable2));
 
         // when, then
-        assertThatThrownBy(() -> new TableGroup(List.of(orderTable)))
+        assertThatThrownBy(() -> new TableGroup(List.of(orderTable, orderTable2)))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -29,7 +29,8 @@ public class TableGroupTest {
     void ungroup() {
         // given
         OrderTable orderTable = new OrderTable(99, false);
-        TableGroup tableGroup = new TableGroup(new ArrayList<>(List.of(orderTable)));
+        OrderTable orderTable2 = new OrderTable(99, false);
+        TableGroup tableGroup = new TableGroup(new ArrayList<>(List.of(orderTable, orderTable2)));
 
         // when
         tableGroup.ungroup();

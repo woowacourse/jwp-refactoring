@@ -7,13 +7,11 @@ import java.math.BigDecimal;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import kitchenpos.product.domain.Product;
-
 public class ProductTest {
 
     @Test
     @DisplayName("가격은 비어있을 수 없다")
-    void nullPrice(){
+    void nullPrice() {
         // given
 
         // when, then
@@ -23,7 +21,7 @@ public class ProductTest {
 
     @Test
     @DisplayName("가격은 음수일 수 없다")
-    void minusPrice(){
+    void minusPrice() {
         // given
 
         // when, then

@@ -9,11 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.dto.request.GroupedTableCreateRequest;
 import kitchenpos.table.dto.request.TableGroupCreateRequest;
-import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.table.repository.TableGroupRepository;
 
@@ -34,9 +34,6 @@ public class TableGroupService {
     public TableGroup create(final TableGroupCreateRequest request) {
         List<GroupedTableCreateRequest> orderTableRequests = request.getOrderTables();
 
-        if (CollectionUtils.isEmpty(orderTableRequests) || orderTableRequests.size() < 2) {
-            throw new IllegalArgumentException();
-        }
 
         List<OrderTable> orderTables = extractOrderTables(orderTableRequests);
         TableGroup tableGroup = new TableGroup(orderTables);
@@ -44,7 +41,7 @@ public class TableGroupService {
         return tableGroupRepository.save(tableGroup);
     }
 
-    private List<OrderTable> extractOrderTables(List<GroupedTableCreateRequest> requests){
+    private List<OrderTable> extractOrderTables(List<GroupedTableCreateRequest> requests) {
         List<OrderTable> orderTables = new ArrayList<>();
 
         for (GroupedTableCreateRequest request : requests) {
@@ -63,8 +60,8 @@ public class TableGroupService {
 
         List<OrderTable> orderTables = tableGroup.getOrderTables();
 
-        if(orderRepository.existsByOrderTableInAndOrderStatusIn(
-            orderTables, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))){
+        if (orderRepository.existsByOrderTableInAndOrderStatusIn(
+            orderTables, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
 

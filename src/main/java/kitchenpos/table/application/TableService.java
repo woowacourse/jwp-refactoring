@@ -7,11 +7,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.dto.request.OrderTableCreateRequest;
 import kitchenpos.table.dto.request.OrderTableEmptyUpdateRequest;
 import kitchenpos.table.dto.request.OrderTableNumberOfGuestsUpdateRequest;
-import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.repository.OrderTableRepository;
 
 @Service
@@ -37,6 +37,7 @@ public class TableService {
 
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final OrderTableEmptyUpdateRequest request) {
+
         OrderTable orderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
 

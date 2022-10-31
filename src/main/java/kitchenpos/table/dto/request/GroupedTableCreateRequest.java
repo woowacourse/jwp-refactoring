@@ -4,7 +4,8 @@ public class GroupedTableCreateRequest {
 
     private Long id;
 
-    private GroupedTableCreateRequest() {}
+    private GroupedTableCreateRequest() {
+    }
 
     public GroupedTableCreateRequest(Long id) {
         this.id = id;

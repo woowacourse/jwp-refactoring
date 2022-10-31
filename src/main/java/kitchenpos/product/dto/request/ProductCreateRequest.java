@@ -8,7 +8,8 @@ public class ProductCreateRequest {
 
     private BigDecimal price;
 
-    private ProductCreateRequest() {}
+    private ProductCreateRequest() {
+    }
 
     public ProductCreateRequest(String name, BigDecimal price) {
         this.name = name;

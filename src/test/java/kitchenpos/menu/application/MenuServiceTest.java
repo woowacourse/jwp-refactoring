@@ -13,11 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import kitchenpos.ServiceTest;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.product.domain.Product;
 import kitchenpos.menu.dto.request.MenuCreateRequest;
 import kitchenpos.menu.dto.request.MenuProductCreateRequest;
 import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.product.domain.Product;
 import kitchenpos.product.repository.ProductRepository;
 
 class MenuServiceTest extends ServiceTest {

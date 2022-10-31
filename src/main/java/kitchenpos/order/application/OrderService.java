@@ -8,14 +8,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
-import kitchenpos.table.domain.OrderTable;
 import kitchenpos.order.dto.request.OrderCreateRequest;
 import kitchenpos.order.dto.request.OrderLineItemCreateRequest;
 import kitchenpos.order.dto.request.OrderStatusUpdateRequest;
 import kitchenpos.order.dto.service.OrderLineItemCreateDto;
-import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.repository.OrderTableRepository;
 
 @Service

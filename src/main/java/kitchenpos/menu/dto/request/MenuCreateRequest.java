@@ -10,7 +10,8 @@ public class MenuCreateRequest {
     private Long menuGroupId;
     private List<MenuProductCreateRequest> menuProducts;
 
-    private MenuCreateRequest() {}
+    private MenuCreateRequest() {
+    }
 
     public MenuCreateRequest(String name, BigDecimal price, Long menuGroupId,
         List<MenuProductCreateRequest> menuProducts) {

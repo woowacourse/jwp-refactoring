@@ -4,7 +4,8 @@ public class OrderTableEmptyUpdateRequest {
 
     private boolean empty;
 
-    private OrderTableEmptyUpdateRequest() {}
+    private OrderTableEmptyUpdateRequest() {
+    }
 
     public OrderTableEmptyUpdateRequest(boolean empty) {
         this.empty = empty;

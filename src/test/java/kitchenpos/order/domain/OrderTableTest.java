@@ -17,10 +17,10 @@ public class OrderTableTest {
     void setTableGroup() {
         // given
         OrderTable orderTable = new OrderTable(99, false);
-        TableGroup tableGroup = new TableGroup(List.of());
+        OrderTable orderTable2 = new OrderTable(99, false);
 
         // when
-        orderTable.setTableGroup(tableGroup);
+        TableGroup tableGroup = new TableGroup(List.of(orderTable, orderTable2));
 
         // then
         assertThat(orderTable.getTableGroup()).isEqualTo(tableGroup);
@@ -31,10 +31,10 @@ public class OrderTableTest {
     void setTableGroupForEmptyTable() {
         // given
         OrderTable orderTable = new OrderTable(99, true);
-        TableGroup tableGroup = new TableGroup(List.of());
+        OrderTable orderTable2 = new OrderTable(99, true);
 
         // when, then
-        assertThatThrownBy(() -> orderTable.setTableGroup(tableGroup))
+        assertThatThrownBy(() -> new TableGroup(List.of(orderTable, orderTable2)))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -102,8 +102,8 @@ public class OrderTableTest {
     void setEmptyForGroupedTable() {
         // given
         OrderTable orderTable = new OrderTable(99, false);
-        TableGroup tableGroup = new TableGroup(List.of());
-        orderTable.setTableGroup(tableGroup);
+        OrderTable orderTable2 = new OrderTable(99, false);
+        TableGroup tableGroup = new TableGroup(List.of(orderTable, orderTable2));
 
         // when, then
         assertThatThrownBy(() -> orderTable.setEmpty(true))

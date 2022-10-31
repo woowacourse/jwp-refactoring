@@ -8,12 +8,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.product.domain.Product;
 import kitchenpos.menu.dto.request.MenuCreateRequest;
 import kitchenpos.menu.dto.request.MenuProductCreateRequest;
 import kitchenpos.menu.dto.service.MenuProductCreateDto;
 import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.product.domain.Product;
 import kitchenpos.product.repository.ProductRepository;
 
 @Service
@@ -56,7 +56,6 @@ public class MenuService {
     }
 
     public List<Menu> list() {
-
         return menuRepository.findAll();
     }
 }

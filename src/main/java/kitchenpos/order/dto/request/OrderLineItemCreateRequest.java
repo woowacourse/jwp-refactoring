@@ -5,7 +5,8 @@ public class OrderLineItemCreateRequest {
     private Long menuId;
     private long quantity;
 
-    private OrderLineItemCreateRequest() {}
+    private OrderLineItemCreateRequest() {
+    }
 
     public OrderLineItemCreateRequest(Long menuId, long quantity) {
         this.menuId = menuId;

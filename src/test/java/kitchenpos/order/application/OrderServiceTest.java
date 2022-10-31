@@ -11,24 +11,22 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.ServiceTest;
+import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.menu.application.MenuService;
-import kitchenpos.order.application.OrderService;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.product.domain.Product;
-
 import kitchenpos.menu.dto.request.MenuCreateRequest;
 import kitchenpos.menu.dto.request.MenuProductCreateRequest;
+import kitchenpos.menu.repository.MenuGroupRepository;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.dto.request.OrderCreateRequest;
 import kitchenpos.order.dto.request.OrderLineItemCreateRequest;
 import kitchenpos.order.dto.request.OrderStatusUpdateRequest;
-import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.table.repository.OrderTableRepository;
+import kitchenpos.product.domain.Product;
 import kitchenpos.product.repository.ProductRepository;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.repository.OrderTableRepository;
 
 class OrderServiceTest extends ServiceTest {
 
@@ -164,7 +162,8 @@ class OrderServiceTest extends ServiceTest {
         Order createdOrder = createOrder();
 
         // when
-        Order changedOrder = orderService.changeOrderStatus(createdOrder.getId(), new OrderStatusUpdateRequest(OrderStatus.MEAL));
+        Order changedOrder = orderService.changeOrderStatus(createdOrder.getId(),
+            new OrderStatusUpdateRequest(OrderStatus.MEAL));
 
         // then
         assertAll(
@@ -180,7 +179,8 @@ class OrderServiceTest extends ServiceTest {
         Long fakeOrderId = 999L;
 
         // when, then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(fakeOrderId, new OrderStatusUpdateRequest(OrderStatus.MEAL)))
+        assertThatThrownBy(
+            () -> orderService.changeOrderStatus(fakeOrderId, new OrderStatusUpdateRequest(OrderStatus.MEAL)))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -192,7 +192,8 @@ class OrderServiceTest extends ServiceTest {
         createdOrder.updateStatus(OrderStatus.COMPLETION);
 
         // then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(createdOrder.getId(), new OrderStatusUpdateRequest(OrderStatus.MEAL)))
+        assertThatThrownBy(
+            () -> orderService.changeOrderStatus(createdOrder.getId(), new OrderStatusUpdateRequest(OrderStatus.MEAL)))
             .isInstanceOf(IllegalArgumentException.class);
     }
 

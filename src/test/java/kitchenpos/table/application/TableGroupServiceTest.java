@@ -14,12 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import kitchenpos.ServiceTest;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.dto.request.GroupedTableCreateRequest;
-import kitchenpos.table.application.TableGroupService;
 import kitchenpos.table.dto.request.TableGroupCreateRequest;
-import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.table.repository.TableGroupRepository;
 

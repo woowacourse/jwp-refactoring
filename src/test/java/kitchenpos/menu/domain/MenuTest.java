@@ -8,13 +8,11 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import kitchenpos.menu.domain.Menu;
-
 public class MenuTest {
 
     @Test
     @DisplayName("가격은 비어있을 수 없다")
-    void nullPrice(){
+    void nullPrice() {
         // given
 
         // when, then
@@ -24,7 +22,7 @@ public class MenuTest {
 
     @Test
     @DisplayName("가격은 비어있을 수 없다")
-    void minusPrice(){
+    void minusPrice() {
         // given
 
         // when, then
@@ -34,7 +32,7 @@ public class MenuTest {
 
     @Test
     @DisplayName("가격은 구성 상품 가격의 총합을 초과할 수 없다")
-    void priceOverProductSum(){
+    void priceOverProductSum() {
         // given
 
         // when, then

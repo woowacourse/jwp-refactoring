@@ -4,8 +4,8 @@ import kitchenpos.product.domain.Product;
 
 public class MenuProductCreateDto {
 
-    private Product product;
-    private long quantity;
+    private final Product product;
+    private final long quantity;
 
     public MenuProductCreateDto(Product product, long quantity) {
         this.product = product;

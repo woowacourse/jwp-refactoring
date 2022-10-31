@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -18,8 +19,8 @@ import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import kitchenpos.product.domain.Product;
 import kitchenpos.menu.dto.service.MenuProductCreateDto;
+import kitchenpos.product.domain.Product;
 
 @Entity
 public class Menu {
@@ -28,11 +29,13 @@ public class Menu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private BigDecimal price;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
 
@@ -81,5 +84,17 @@ public class Menu {
 
     public String getName() {
         return name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
+    }
+
+    public List<MenuProduct> getMenuProducts() {
+        return menuProducts;
     }
 }

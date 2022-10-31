@@ -15,8 +15,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+
+import org.springframework.data.annotation.CreatedDate;
 
 import kitchenpos.order.dto.service.OrderLineItemCreateDto;
 import kitchenpos.table.domain.OrderTable;
@@ -28,13 +31,15 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "order_table_id")
     private OrderTable orderTable;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private OrderStatus orderStatus;
 
+    @CreatedDate
     @Column(nullable = false)
     private LocalDateTime orderedTime;
 
@@ -51,8 +56,8 @@ public class Order {
 
         this.orderTable = orderTable;
         this.orderStatus = OrderStatus.COOKING;
-        this.orderedTime = LocalDateTime.now();
         this.orderLineItems = createOrderLineItems(orderLineItems);
+        this.orderedTime = LocalDateTime.now();
     }
 
     private List<OrderLineItem> createOrderLineItems(List<OrderLineItemCreateDto> orderLineItems) {

@@ -6,7 +6,8 @@ public class OrderTableCreateRequest {
 
     private boolean empty;
 
-    private OrderTableCreateRequest() {}
+    private OrderTableCreateRequest() {
+    }
 
     public OrderTableCreateRequest(int numberOfGuests, boolean empty) {
         this.numberOfGuests = numberOfGuests;

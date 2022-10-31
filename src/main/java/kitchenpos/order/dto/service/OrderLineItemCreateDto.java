@@ -4,9 +4,9 @@ import kitchenpos.menu.domain.Menu;
 
 public class OrderLineItemCreateDto {
 
-    private Menu menu;
+    private final Menu menu;
 
-    private long quantity;
+    private final long quantity;
 
     public OrderLineItemCreateDto(Menu menu, long quantity) {
         this.menu = menu;

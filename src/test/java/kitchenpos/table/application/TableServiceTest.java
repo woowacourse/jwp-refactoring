@@ -12,13 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import kitchenpos.ServiceTest;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
-import kitchenpos.table.application.TableService;
 import kitchenpos.table.dto.request.OrderTableCreateRequest;
 import kitchenpos.table.dto.request.OrderTableEmptyUpdateRequest;
 import kitchenpos.table.dto.request.OrderTableNumberOfGuestsUpdateRequest;
-import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.table.repository.TableGroupRepository;
 
@@ -107,7 +106,8 @@ class TableServiceTest extends ServiceTest {
         tableGroupRepository.save(tableGroup);
 
         // then
-        assertThatThrownBy(() -> tableService.changeEmpty(createdOrderTable.getId(), new OrderTableEmptyUpdateRequest(false)))
+        assertThatThrownBy(
+            () -> tableService.changeEmpty(createdOrderTable.getId(), new OrderTableEmptyUpdateRequest(false)))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -123,7 +123,8 @@ class TableServiceTest extends ServiceTest {
         orderRepository.save(order);
 
         // when, then
-        assertThatThrownBy(() -> tableService.changeEmpty(createdOrderTable.getId(), new OrderTableEmptyUpdateRequest(true)))
+        assertThatThrownBy(
+            () -> tableService.changeEmpty(createdOrderTable.getId(), new OrderTableEmptyUpdateRequest(true)))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -137,7 +138,8 @@ class TableServiceTest extends ServiceTest {
 
         // when
         int expectedNumberOfGuests = 5;
-        OrderTableNumberOfGuestsUpdateRequest updateRequest = new OrderTableNumberOfGuestsUpdateRequest(expectedNumberOfGuests);
+        OrderTableNumberOfGuestsUpdateRequest updateRequest = new OrderTableNumberOfGuestsUpdateRequest(
+            expectedNumberOfGuests);
         OrderTable changedOrderTable = tableService.changeNumberOfGuests(createdOrderTable.getId(), updateRequest);
 
         // then
@@ -157,7 +159,8 @@ class TableServiceTest extends ServiceTest {
 
         // when
         int expectedNumberOfGuests = -1;
-        OrderTableNumberOfGuestsUpdateRequest updateRequest = new OrderTableNumberOfGuestsUpdateRequest(expectedNumberOfGuests);
+        OrderTableNumberOfGuestsUpdateRequest updateRequest = new OrderTableNumberOfGuestsUpdateRequest(
+            expectedNumberOfGuests);
 
         // when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(createdOrderTable.getId(), updateRequest))
@@ -172,7 +175,8 @@ class TableServiceTest extends ServiceTest {
 
         // when
         int expectedNumberOfGuests = 5;
-        OrderTableNumberOfGuestsUpdateRequest updateRequest = new OrderTableNumberOfGuestsUpdateRequest(expectedNumberOfGuests);
+        OrderTableNumberOfGuestsUpdateRequest updateRequest = new OrderTableNumberOfGuestsUpdateRequest(
+            expectedNumberOfGuests);
 
         // then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(fakeOrderTableId, updateRequest))
@@ -188,7 +192,8 @@ class TableServiceTest extends ServiceTest {
 
         // when
         int expectedNumberOfGuests = 5;
-        OrderTableNumberOfGuestsUpdateRequest updateRequest = new OrderTableNumberOfGuestsUpdateRequest(expectedNumberOfGuests);
+        OrderTableNumberOfGuestsUpdateRequest updateRequest = new OrderTableNumberOfGuestsUpdateRequest(
+            expectedNumberOfGuests);
 
         // when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(createdOrderTable.getId(), updateRequest))

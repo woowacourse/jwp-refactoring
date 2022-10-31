@@ -1,5 +1,6 @@
 package kitchenpos.table.domain;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -15,12 +16,14 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
 
+    @Column(nullable = false)
     private int numberOfGuests;
 
+    @Column(nullable = false)
     private boolean empty;
 
     protected OrderTable() {

@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import kitchenpos.ServiceTest;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.dto.request.ProductCreateRequest;
-import kitchenpos.product.application.ProductService;
 import kitchenpos.product.repository.ProductRepository;
 
 public class ProductServiceTest extends ServiceTest {
