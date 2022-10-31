@@ -73,8 +73,8 @@ class OrderServiceTest extends ServiceTest {
         OrderRequest 주문 = new OrderRequest(1L, List.of(주문아이템요청(잘못된_메뉴_ID)));
 
         assertThatThrownBy(() -> orderService.create(주문))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("주문한 메뉴들은 모두 DB에 등록되어야 한다.");
+                .isInstanceOf(InvalidDataAccessApiUsageException.class)
+                .hasMessageContaining("메뉴는 DB에 등록되어야 한다");
     }
 
     @DisplayName("주문 테이블은 DB에 등록되어야 한다.")
@@ -97,7 +97,7 @@ class OrderServiceTest extends ServiceTest {
 
         assertThatThrownBy(() -> orderService.create(new OrderRequest(테이블2.getId(), List.of(주문아이템요청_후라이드()))))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("주문 테이블은 손님이 존재해야 한다.");
+                .hasMessage("테이블은 차있어야 한다.");
     }
 
     @DisplayName("주문 상태를 변경하면 변경된 주문 상태가 반영된다.")

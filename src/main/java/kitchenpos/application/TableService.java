@@ -36,7 +36,6 @@ public class TableService {
                 orderTable.getNumberOfGuests(), orderTable.isEmpty());
     }
 
-
     public List<OrderTableResponse> list() {
         return toOrderTableResponses(orderTableDao.findAll());
     }

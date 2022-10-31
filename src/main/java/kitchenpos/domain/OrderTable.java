@@ -44,14 +44,14 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public void changeToFull() {
-        this.empty = false;
-    }
-
     private void validateNoGroup() {
         if (Objects.nonNull(tableGroupId)) {
             throw new IllegalArgumentException("테이블은 단체지정이 없어야 한다.");
         }
+    }
+
+    public void changeToFull() {
+        this.empty = false;
     }
 
     public Long getId() {
