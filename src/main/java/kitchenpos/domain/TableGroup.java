@@ -36,15 +36,15 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
 
-    private void injectTableGroup(final List<OrderTable> orderTables) {
-        for (OrderTable orderTable : orderTables) {
-            orderTable.updateTableGroup(this);
-        }
-    }
-
     private void validateOrderTables(final List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException();
+        }
+    }
+
+    private void injectTableGroup(final List<OrderTable> orderTables) {
+        for (OrderTable orderTable : orderTables) {
+            orderTable.updateTableGroup(this);
         }
     }
 
