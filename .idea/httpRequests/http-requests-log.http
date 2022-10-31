@@ -1,0 +1,255 @@
+GET http://localhost:8080/api/menus
+
+<> 2022-10-31T170331.200.json
+
+###
+
+POST http://localhost:8080/api/menus
+Content-Type: application/json
+
+{
+  "name": "후라이드+후라이드",
+  "price": 19000,
+  "menuGroupId": 1,
+  "menuProducts": [
+    {
+      "productId": 1,
+      "quantity": 2
+    }
+  ]
+}
+
+<> 2022-10-31T170326.201.json
+
+###
+
+POST http://localhost:8080/api/orders
+Content-Type: application/json
+
+{
+  "orderTableId": 1,
+  "orderLineItems": [
+    {
+      "menuId": 1,
+      "quantity": 1
+    }
+  ]
+}
+
+<> 2022-10-31T170319.500.json
+
+###
+
+GET http://localhost:8080/api/orders
+
+<> 2022-10-31T170316.200.json
+
+###
+
+POST http://localhost:8080/api/orders
+Content-Type: application/json
+
+{
+  "orderTableId": 1,
+  "orderLineItems": [
+    {
+      "menuId": 1,
+      "quantity": 1
+    }
+  ]
+}
+
+<> 2022-10-31T170304.500.json
+
+###
+
+POST http://localhost:8080/api/menu-groups
+Content-Type: application/json
+
+{
+  "name": "추천메뉴"
+}
+
+<> 2022-10-31T170247.201.json
+
+###
+
+POST http://localhost:8080/api/products
+Content-Type: application/json
+
+{
+  "name": "강정치킨",
+  "price": 17000
+}
+
+<> 2022-10-31T170152.201.json
+
+###
+
+GET http://localhost:8080/api/products
+
+<> 2022-10-31T170147.200.json
+
+###
+
+POST http://localhost:8080/api/tables
+Content-Type: application/json
+
+{
+  "numberOfGuests": 0,
+  "empty": true
+}
+
+<> 2022-10-31T170131.500.json
+
+###
+
+GET http://localhost:8080/api/tables
+
+<> 2022-10-31T170124.200.json
+
+###
+
+POST http://localhost:8080/api/tables
+Content-Type: application/json
+
+{
+  "numberOfGuests": 0,
+  "empty": true
+}
+
+<> 2022-10-31T170116.500.json
+
+###
+
+POST http://{{host}}/api/tables
+Content-Type: application/json
+
+{
+  "numberOfGuests": 0,
+  "empty": true
+}
+
+###
+
+POST http://localhost:8080/api/products
+Content-Type: application/json
+
+{
+  "name": "강정치킨",
+  "price": 17000
+}
+
+###
+
+POST http://localhost:8080/api/products
+Content-Type: application/json
+
+{
+  "name": "강정치킨",
+  "price": 17000
+}
+
+###
+
+POST http://localhost:8080/api/products
+Content-Type: application/json
+
+{
+  "name": "강정치킨",
+  "price": 17000
+}
+
+###
+
+GET http://localhost:8080/api/products
+
+###
+
+POST http://localhost:8080/api/products
+Content-Type: application/json
+
+{
+  "name": "강정치킨",
+  "price": 17000
+}
+
+###
+
+GET http://{{host}}/api/products
+
+###
+
+POST http://{{host}}/api/products
+Content-Type: application/json
+
+{
+  "name": "강정치킨",
+  "price": 17000
+}
+
+###
+
+GET http://localhost:8080/api/menus
+
+###
+
+POST http://localhost:8080/api/menus
+Content-Type: application/json
+
+{
+  "name": "후라이드+후라이드",
+  "price": 19000,
+  "menuGroupId": 1,
+  "menuProducts": [
+    {
+      "productId": 1,
+      "quantity": 2
+    }
+  ]
+}
+
+###
+
+GET http://{{host}}/api/menus
+
+###
+
+POST http://{{host}}/api/menus
+Content-Type: application/json
+
+{
+  "name": "후라이드+후라이드",
+  "price": 19000,
+  "menuGroupId": 1,
+  "menuProducts": [
+    {
+      "productId": 1,
+      "quantity": 2
+    }
+  ]
+}
+
+###
+
+GET http://{{host}}/api/menus
+
+###
+
+POST http://{{host}}/api/menus
+Content-Type: application/json
+
+{
+  "name": "후라이드+후라이드",
+  "price": 19000,
+  "menuGroupId": 1,
+  "menuProducts": [
+    {
+      "productId": 1,
+      "quantity": 2
+    }
+  ]
+}
+
+###
+
