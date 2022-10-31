@@ -4,12 +4,15 @@ import java.util.List;
 
 public class OrderCreateRequest {
 
-    private final Long orderTableId;
-    private final List<OrderLineItemRequest> orderLineItems;
+    private Long orderTableId;
+    private List<OrderLineItemRequest> orderLineItems;
 
     public OrderCreateRequest(Long orderTableId, List<OrderLineItemRequest> orderLineItems) {
         this.orderTableId = orderTableId;
         this.orderLineItems = orderLineItems;
+    }
+
+    public OrderCreateRequest() {
     }
 
     public Long getOrderTableId() {

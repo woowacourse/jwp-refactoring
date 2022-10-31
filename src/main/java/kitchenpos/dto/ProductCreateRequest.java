@@ -2,12 +2,15 @@ package kitchenpos.dto;
 
 public class ProductCreateRequest {
 
-    private final String name;
-    private final Long price;
+    private String name;
+    private Long price;
 
     public ProductCreateRequest(String name, Long price) {
         this.name = name;
         this.price = price;
+    }
+
+    public ProductCreateRequest() {
     }
 
     public String getName() {
