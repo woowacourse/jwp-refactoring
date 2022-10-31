@@ -9,7 +9,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.ui.dto.TableGroupCreateRequest;
+import kitchenpos.application.dto.TableGroupCreateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
