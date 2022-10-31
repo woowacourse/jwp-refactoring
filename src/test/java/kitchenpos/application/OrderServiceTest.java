@@ -18,9 +18,11 @@ import kitchenpos.dao.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.dao.OrderRepository;
+import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.domain.OrderValidator;
 import kitchenpos.domain.Product;
 import kitchenpos.dao.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -52,6 +54,9 @@ class OrderServiceTest {
 
     @Autowired
     private OrderTableRepository orderTableRepository;
+
+    @Autowired
+    private OrderValidator orderValidator;
 
     @Nested
     @DisplayName("주문을 생성할 때")
@@ -149,9 +154,9 @@ class OrderServiceTest {
         Menu menu = menuRepository.save(new Menu("강정치킨", BigDecimal.valueOf(37000), menuGroup.getId()));
 
         OrderTable orderTable = orderTableRepository.save(new OrderTable(2, false));
-        List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(menu.getId(), 2));
+        OrderLineItems orderLineItems = new OrderLineItems(List.of(new OrderLineItem(menu.getId(), 2)));
 
-        orderRepository.save(Order.create(orderTable, orderLineItems));
+        orderRepository.save(Order.startCooking(orderTable.getId(), orderLineItems, orderValidator));
 
         List<OrderResponse> orders = orderService.list();
 
@@ -172,7 +177,8 @@ class OrderServiceTest {
 
             OrderTable orderTable = orderTableRepository.save(new OrderTable(2, false));
 
-            Order order = orderRepository.save(Order.create(orderTable, List.of(new OrderLineItem(menu.getId(), 2))));
+            OrderLineItems orderLineItems = new OrderLineItems(List.of(new OrderLineItem(menu.getId(), 2)));
+            Order order = orderRepository.save(Order.startCooking(orderTable.getId(), orderLineItems, orderValidator));
 
             OrderResponse orderResponse = orderService.changeOrderStatus(order.getId(), "MEAL");
 
@@ -200,7 +206,8 @@ class OrderServiceTest {
                 Menu menu = menuRepository.save(new Menu("강정치킨", BigDecimal.valueOf(37000), menuGroup.getId()));
                 menu.addMenuProduct(new MenuProduct(menu.getId(), product.getId(), 2));
                 OrderTable orderTable = orderTableRepository.save(new OrderTable(2, false));
-                Order order = orderRepository.save(Order.create(orderTable, List.of(new OrderLineItem(menu.getId(), 2))));
+                OrderLineItems orderLineItems = new OrderLineItems(List.of(new OrderLineItem(menu.getId(), 2)));
+                Order order = orderRepository.save(Order.startCooking(orderTable.getId(), orderLineItems, orderValidator));
 
                 assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), "COMPLETION"))
                         .hasMessage("계산 완료된 주문입니다.");

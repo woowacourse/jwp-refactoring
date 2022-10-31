@@ -4,40 +4,32 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.OrderCommand;
 import kitchenpos.application.dto.response.OrderResponse;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.dao.OrderRepository;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.domain.OrderValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
-    private final OrderTableRepository orderTableRepository;
+
     private final OrderRepository orderRepository;
     private final OrderValidator orderValidator;
 
-    public OrderService(OrderTableRepository orderTableRepository,
-                        OrderValidator orderValidator,
+    public OrderService(OrderValidator orderValidator,
                         OrderRepository orderRepository) {
-        this.orderTableRepository = orderTableRepository;
         this.orderRepository = orderRepository;
         this.orderValidator = orderValidator;
     }
 
     @Transactional
     public OrderResponse create(OrderCommand orderCommand) {
-        OrderTable orderTable = getOrderTable(orderCommand.getOrderTableId());
-        List<OrderLineItem> orderLineItems = orderCommand.toEntity();
-        orderValidator.validate(orderLineItems);
-        return OrderResponse.from(orderRepository.save(Order.create(orderTable, orderLineItems)));
-    }
+        OrderLineItems orderLineItems = new OrderLineItems(orderCommand.toEntity());
 
-    private OrderTable getOrderTable(Long orderTableId) {
-        return orderTableRepository.findById(orderTableId)
-                .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
+        return OrderResponse.from(orderRepository.save(
+                Order.startCooking(orderCommand.getOrderTableId(), orderLineItems, orderValidator)));
     }
 
     public List<OrderResponse> list() {

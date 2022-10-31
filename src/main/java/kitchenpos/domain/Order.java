@@ -1,7 +1,6 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -46,15 +45,15 @@ public class Order {
         this.orderLineItems.setOrder(this);
     }
 
-    public Order(Long orderTableId, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, orderStatus, LocalDateTime.now(), new OrderLineItems(orderLineItems));
+    private Order(Long orderTableId, OrderStatus orderStatus, OrderLineItems orderLineItems) {
+        this(null, orderTableId, orderStatus, LocalDateTime.now(), orderLineItems);
     }
 
-    public static Order create(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("빈 테이블입니다.");
-        }
-        return new Order(orderTable.getId(), OrderStatus.COOKING, orderLineItems);
+    public static Order startCooking(Long orderTableId,
+                                     OrderLineItems orderLineItems,
+                                     OrderValidator orderValidator) {
+        orderValidator.validate(orderTableId, orderLineItems);
+        return new Order(orderTableId, OrderStatus.COOKING, orderLineItems);
     }
 
     public void changeStatus(OrderStatus status) {

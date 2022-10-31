@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
@@ -28,6 +29,16 @@ public class OrderLineItems {
         for (OrderLineItem orderLineItem : values) {
             orderLineItem.setOrder(order);
         }
+    }
+
+    public int size() {
+        return values.size();
+    }
+
+    public List<Long> getMenuIds() {
+        return values.stream()
+                .map(OrderLineItem::getMenuId)
+                .collect(Collectors.toList());
     }
 
     public List<OrderLineItem> getValues() {
