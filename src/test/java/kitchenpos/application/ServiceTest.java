@@ -1,17 +1,18 @@
 package kitchenpos.application;
 
+import kitchenpos.common.DatabaseInitializer;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.menugroup.MenuGroupRepository;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.ordertable.OrderTableRepository;
 import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.domain.tablegroup.TableGroupRepository;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
-@Transactional
+@ExtendWith(DatabaseInitializer.class)
 public class ServiceTest {
 
     @Autowired
@@ -40,7 +41,7 @@ public class ServiceTest {
 
     @Autowired
     protected ProductRepository productRepository;
-    
+
     @Autowired
     protected OrderRepository orderRepository;
 
