@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
@@ -9,6 +8,7 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuProducts;
+import kitchenpos.domain.Price;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuProductResponse;
 import kitchenpos.dto.MenuRequest;
@@ -32,27 +32,16 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
-        validateMenuGroup(menuRequest.getMenuGroupId());
-        final MenuProducts menuProducts = new MenuProducts(toMenuProducts(menuRequest.getMenuProducts()));
-        validateDiscount(menuRequest.getPrice(), menuProducts);
+        menuGroupDao.findById(menuRequest.getMenuGroupId());
+        final MenuProducts menuProducts = new MenuProducts(
+                new Price(menuRequest.getPrice()),
+                toMenuProducts(menuRequest.getMenuProducts()));
 
         final Menu savedMenu = menuDao.save(toMenu(menuRequest));
 
         menuProducts.updateMenuId(savedMenu.getId());
 
         return toMenuResponse(savedMenu, toMenuProductResponses(savedMenu.getId(), savedMenu.getMenuProducts()));
-    }
-
-    private void validateDiscount(BigDecimal price, MenuProducts menuProducts) {
-        if (price.compareTo(menuProducts.getSum()) > 0) {
-            throw new IllegalArgumentException("메뉴 가격은 내부 모든 상품가격보다 낮아야 한다.");
-        }
-    }
-
-    private void validateMenuGroup(Long menuGroupId) {
-        if (!menuGroupDao.existsById(menuGroupId)) {
-            throw new IllegalArgumentException("메뉴 그룹은 DB에 등록되어야 한다.");
-        }
     }
 
     private Menu toMenu(MenuRequest menuRequest) {
