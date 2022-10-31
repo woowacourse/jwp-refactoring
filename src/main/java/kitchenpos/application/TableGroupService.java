@@ -37,11 +37,7 @@ public class TableGroupService {
         List<Long> orderTableIds = request.getOrderTableIds().stream()
                 .map(TableGroupIdRequest::getId)
                 .collect(Collectors.toList());
-        List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-        if (orderTableIds.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
-        return savedOrderTables;
+        return orderTableRepository.getAllByIdIn(orderTableIds);
     }
 
     public void ungroup(Long tableGroupId) {

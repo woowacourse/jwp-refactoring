@@ -126,6 +126,6 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuestsWithInvalidOrderTableId() {
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(999L, 2))
-                .isInstanceOf(IllegalArgumentException.class);
+                .hasCauseInstanceOf(IllegalArgumentException.class);
     }
 }

@@ -87,7 +87,7 @@ class TableGroupServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .hasCauseInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

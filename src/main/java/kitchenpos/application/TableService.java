@@ -31,17 +31,14 @@ public class TableService {
     }
 
     public OrderTableResponse changeEmpty(Long orderTableId, boolean empty) {
-        OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-        savedOrderTable.changeEmpty(empty);
-        return OrderTableResponse.from(orderTableRepository.save(savedOrderTable));
+        OrderTable orderTable = orderTableRepository.getById(orderTableId);
+        orderTable.changeEmpty(empty);
+        return OrderTableResponse.from(orderTable);
     }
 
     public OrderTableResponse changeNumberOfGuests(Long orderTableId, int numberOfGuests) {
-        OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-
-        savedOrderTable.changeNumberOfGuests(numberOfGuests);
-        return OrderTableResponse.from(orderTableRepository.save(savedOrderTable));
+        OrderTable orderTable = orderTableRepository.getById(orderTableId);
+        orderTable.changeNumberOfGuests(numberOfGuests);
+        return OrderTableResponse.from(orderTableRepository.save(orderTable));
     }
 }

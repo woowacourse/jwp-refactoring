@@ -1,5 +1,6 @@
 package kitchenpos.repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.OrderTable;
@@ -14,7 +15,7 @@ public interface OrderTableRepository extends Repository<OrderTable, Long>, Orde
 
     List<OrderTable> findAll();
 
-    List<OrderTable> findAllByIdIn(List<Long> ids);
+    List<OrderTable> findAllByIdIn(Collection<Long> ids);
 
     @Query("SELECT ot FROM OrderTable ot WHERE ot.tableGroup.id = :tableGroupId")
     List<OrderTable> findAllByTableGroupId(@Param("tableGroupId") Long tableGroupId);
