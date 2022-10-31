@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static kitchenpos.fixtures.domain.OrderFixture.createOrder;
-import static kitchenpos.fixtures.domain.OrderTableFixture.createOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -171,8 +170,8 @@ class TableGroupServiceTest extends ServiceTest {
         @ParameterizedTest
         void Should_ThrowIAE_When_AnyStatusOfOrderTablesIsCookingOrMeal(final OrderStatus orderStatus) {
             // given
-            OrderTable orderTable1 = orderTableRepository.save(createOrderTable(10, true));
-            OrderTable orderTable2 = orderTableRepository.save(createOrderTable(10, true));
+            OrderTable orderTable1 = orderTableRepository.save(new OrderTable(10, true));
+            OrderTable orderTable2 = orderTableRepository.save(new OrderTable(10, true));
 
             orderRepository.save(createOrder(orderTable1.getId(), orderStatus, LocalDateTime.now(), List.of()));
             orderRepository.save(
