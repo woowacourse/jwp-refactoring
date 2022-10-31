@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.application.dto.OrderResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -40,7 +41,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final OrderCreateRequest request) {
+    public OrderResponse create(final OrderCreateRequest request) {
         validateOrderLineItems(request.getOrderLineItems());
 
         final OrderTable orderTable = orderTableDao.findById(request.getOrderTableId())
@@ -51,7 +52,7 @@ public class OrderService {
         final List<OrderLineItem> savedOrderLineItems = saveOrderLineItems(order.getId(), request);
         order.addOrderLineItems(savedOrderLineItems);
 
-        return order;
+        return OrderResponse.of(order);
     }
 
     private void validateOrderLineItems(final List<OrderLineItemDto> orderLineItemDtos) {
@@ -99,18 +100,24 @@ public class OrderService {
         return result;
     }
 
-    public List<Order> list() {
+    public List<OrderResponse> list() {
         final List<Order> orders = orderDao.findAll();
 
         for (final Order order : orders) {
             order.addOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
         }
 
-        return orders;
+        return toRequest(orders);
+    }
+
+    private List<OrderResponse> toRequest(final List<Order> orders) {
+        return orders.stream()
+                .map(OrderResponse::of)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final OrderUpdateRequest request) {
+    public OrderResponse changeOrderStatus(final Long orderId, final OrderUpdateRequest request) {
         final Order order = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -120,6 +127,6 @@ public class OrderService {
         Order savedOrder = orderDao.save(order);
         savedOrder.addOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
 
-        return savedOrder;
+        return OrderResponse.of(savedOrder);
     }
 }

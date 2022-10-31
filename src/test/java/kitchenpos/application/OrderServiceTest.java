@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import kitchenpos.application.dto.OrderResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
@@ -60,7 +61,7 @@ class OrderServiceTest extends ServiceTestBase {
         Order order = 주문(orderTableId, orderLineItems);
 
         // when
-        Order savedOrder = orderService.create(toRequest(order));
+        OrderResponse savedOrder = orderService.create(toRequest(order));
 
         // then
         Optional<Order> actual = orderDao.findById(savedOrder.getId());
@@ -96,13 +97,13 @@ class OrderServiceTest extends ServiceTestBase {
         Order savedOrder = orderDao.save(order);
 
         // when
-        List<Order> orders = orderService.list();
+        List<OrderResponse> orders = orderService.list();
 
         // then
         assertThat(orders)
                 .usingRecursiveComparison()
                 .ignoringFields("orderLineItems")
-                .isEqualTo(Collections.singletonList(savedOrder));
+                .isEqualTo(Collections.singletonList(OrderResponse.of(savedOrder)));
     }
 
     @Test
