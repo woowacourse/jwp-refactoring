@@ -10,7 +10,7 @@ public class MenuProductResponse {
     private long quantity;
 
     public MenuProductResponse(final MenuProduct menuProduct) {
-        this(menuProduct.getSeq(), menuProduct.getProductId(), menuProduct.getQuantity());
+        this(menuProduct.getSeq(), menuProduct.getProduct().getId(), menuProduct.getQuantity());
     }
 
     public MenuProductResponse(final Long seq, final Long productId, final long quantity) {

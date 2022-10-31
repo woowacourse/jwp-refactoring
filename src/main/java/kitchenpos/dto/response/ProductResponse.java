@@ -19,6 +19,10 @@ public class ProductResponse {
         this.price = price;
     }
 
+    public Product toEntity() {
+        return new Product(id, name, price);
+    }
+
     public Long getId() {
         return id;
     }

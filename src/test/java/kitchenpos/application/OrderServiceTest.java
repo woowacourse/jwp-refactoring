@@ -5,18 +5,19 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
+import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.dto.request.OrderStatusUpdateRequest;
-import kitchenpos.dto.response.MenuGroupResponse;
 import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.dto.response.OrderTableResponse;
-import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.repository.OrderRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,20 +35,20 @@ class OrderServiceTest extends ServiceTest {
     @Autowired
     private OrderRepository orderRepository;
 
-    private OrderTableResponse savedOrderTable;
-    private MenuGroupResponse savedMenuGroup;
-    private ProductResponse savedProduct;
+    private OrderTable savedOrderTable;
+    private MenuGroup savedMenuGroup;
+    private Product savedProduct;
     private MenuResponse savedMenu;
 
     private OrderLineItem createdOrderLineItem;
 
     @BeforeEach
     void setUp() {
-        savedOrderTable = saveOrderTable(10, false);
-        savedMenuGroup = saveMenuGroup("메뉴 그룹");
-        savedProduct = saveProduct("상품", 5_000);
-        savedMenu = saveMenu("메뉴", 10_000, savedMenuGroup.toEntity(), List.of(
-                new MenuProduct(savedProduct.getId(), 10)
+        savedOrderTable = saveOrderTable(10, false).toEntity();
+        savedMenuGroup = saveMenuGroup("메뉴 그룹").toEntity();
+        savedProduct = saveProduct("상품", 5_000).toEntity();
+        savedMenu = saveMenu("메뉴", 10_000, savedMenuGroup, List.of(
+                new MenuProduct(savedProduct, 10)
         ));
         createdOrderLineItem = new OrderLineItem(savedMenu.getId(), 10);
 

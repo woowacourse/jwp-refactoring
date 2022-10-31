@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
@@ -30,7 +29,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         body.put("price", price);
         body.put("menuGroupId", menuGroupId);
         body.put("menuProducts", menuProducts.stream()
-                .map(map -> new MenuProduct(map.get("productId"), map.get("quantity")))
+                .map(map -> Map.of("productId", map.get("productId"), "quantity", map.get("quantity")))
                 .collect(Collectors.toList()));
 
         return post("/api/menus", body);

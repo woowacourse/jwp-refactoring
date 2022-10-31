@@ -6,12 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.Product;
 import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
 import kitchenpos.dto.response.MenuResponse;
-import kitchenpos.dto.response.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -23,13 +24,13 @@ class MenuServiceTest extends ServiceTest {
     @Autowired
     private MenuService menuService;
 
-    private MenuGroupResponse savedMenuGroup;
-    private ProductResponse savedProduct;
+    private MenuGroup savedMenuGroup;
+    private Product savedProduct;
 
     @BeforeEach
     void setUp() {
-        savedMenuGroup = saveMenuGroup("메뉴 그룹");
-        savedProduct = saveProduct("상품", 100_000);
+        savedMenuGroup = saveMenuGroup("메뉴 그룹").toEntity();
+        savedProduct = saveProduct("상품", 100_000).toEntity();
     }
 
     @DisplayName("create 메소드는 ")
@@ -40,7 +41,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void Should_CreateMenu() {
             // given
-            MenuProduct menuProduct = new MenuProduct(savedProduct.getId(), 1L);
+            MenuProduct menuProduct = new MenuProduct(savedProduct, 1L);
 
             MenuRequest request = new MenuRequest(
                     "세트1",
@@ -64,7 +65,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_MenuGroupDoesNotExist() {
             // given
-            MenuProduct menuProduct = new MenuProduct(savedProduct.getId(), 1L);
+            MenuProduct menuProduct = new MenuProduct(savedProduct, 1L);
 
             MenuRequest request = new MenuRequest(
                     "세트1",
@@ -82,7 +83,9 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_ProductDoesNotExistInMenuProductList() {
             // given
-            MenuProduct notSavedMenuProduct = new MenuProduct(savedProduct.getId() + 1, 1L);
+            Product notSavedProduct = new Product(savedProduct.getId() + 1, savedProduct.getName(),
+                    savedProduct.getPrice());
+            MenuProduct notSavedMenuProduct = new MenuProduct(notSavedProduct, 1L);
 
             MenuRequest request = new MenuRequest(
                     "세트1",
@@ -100,7 +103,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_MenuPriceIsBiggerThanSumOfProductOfProductPriceAndQuantity() {
             // given
-            MenuProduct menuProduct = new MenuProduct(savedProduct.getId(), 1L);
+            MenuProduct menuProduct = new MenuProduct(savedProduct, 1L);
 
             MenuRequest request = new MenuRequest(
                     "세트1",
@@ -125,8 +128,8 @@ class MenuServiceTest extends ServiceTest {
             // given
             MenuGroupResponse menuGroup = saveMenuGroup("메뉴 그룹");
 
-            ProductResponse product = saveProduct("상품", 1_000_000);
-            MenuProduct menuProduct = new MenuProduct(product.getId(), 1L);
+            Product product = saveProduct("상품", 1_000_000).toEntity();
+            MenuProduct menuProduct = new MenuProduct(product, 1L);
 
             int expected = 4;
             for (int i = 0; i < expected; i++) {

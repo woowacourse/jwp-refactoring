@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.List;
 import java.util.Objects;
 import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
@@ -15,7 +16,6 @@ import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
 import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.dto.response.OrderTableResponse;
-import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.dto.response.TableGroupResponse;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
@@ -166,8 +166,8 @@ class TableGroupServiceTest extends ServiceTest {
             OrderTable orderTable1 = orderTableRepository.save(new OrderTable(10, true));
             OrderTable orderTable2 = orderTableRepository.save(new OrderTable(10, true));
 
-            ProductResponse savedProduct = saveProduct("상품", 10_000);
-            MenuProduct menuProduct = new MenuProduct(savedProduct.getId(), 1L);
+            Product savedProduct = saveProduct("상품", 10_000).toEntity();
+            MenuProduct menuProduct = new MenuProduct(savedProduct, 1L);
             MenuGroupResponse savedMenuGroup = saveMenuGroup("메뉴 그룹");
             MenuResponse savedMenu = saveMenu("메뉴", 10_000, savedMenuGroup.toEntity(), List.of(menuProduct));
             OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getId(), 1L);
