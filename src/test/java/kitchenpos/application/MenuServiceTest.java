@@ -50,7 +50,7 @@ class MenuServiceTest extends ServiceTest {
                 잘못된_메뉴그룹_ID, List.of(메뉴상품요청_후라이드()));
 
         assertThatThrownBy(() -> menuService.create(메뉴_후라이드치킨))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(InvalidDataAccessApiUsageException.class)
                 .hasMessage("메뉴 그룹은 DB에 등록되어야 한다.");
     }
 

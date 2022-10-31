@@ -7,8 +7,14 @@ public class MenuProducts {
 
     private final List<MenuProduct> menuProducts;
 
-    public MenuProducts(List<MenuProduct> menuProducts) {
+    public MenuProducts(Price price, List<MenuProduct> menuProducts) {
         this.menuProducts = menuProducts;
+        validateDiscount(price);
+    }
+    private void validateDiscount(Price price) {
+        if (price.isExpensive(getSum())) {
+            throw new IllegalArgumentException("메뉴 가격은 내부 모든 상품가격보다 낮아야 한다.");
+        }
     }
 
     public void updateMenuId(Long menuId) {
