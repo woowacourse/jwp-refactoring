@@ -137,7 +137,7 @@ class TableServiceTest extends ServiceTest {
                     .empty(false)
                     .build());
             private final Order order = orderRepository.save(Order.builder()
-                    .orderTableId(orderTable.getId())
+                    .orderTable(orderTable)
                     .orderStatus(OrderStatus.COOKING)
                     .orderedTime(LocalDateTime.now())
                     .orderLineItems(new OrderLineItems(List.of()))
@@ -161,10 +161,10 @@ class TableServiceTest extends ServiceTest {
                     .empty(false)
                     .build());
             private final Order order = orderRepository.save(Order.builder()
-                    .orderTableId(orderTable.getId())
+                    .orderTable(orderTable)
                     .orderStatus(OrderStatus.MEAL)
                     .orderedTime(LocalDateTime.now())
-                    .orderLineItems(new OrderLineItems(List.of(new OrderLineItem(null, null, 1L, 1))))
+                    .orderLineItems(new OrderLineItems(List.of(new OrderLineItem(null, null, menuRepository.findById(1L).orElseThrow(), 1))))
                     .build());
             private final EmptyOrderTableRequest emptyOrderTableRequest = new EmptyOrderTableRequest(true);
 

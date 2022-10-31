@@ -4,15 +4,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import org.springframework.util.CollectionUtils;
 
 @Embeddable
 public class OrderLineItems {
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "order_id")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderLineItem> orderLineItems;
 
     protected OrderLineItems() {
@@ -26,10 +24,17 @@ public class OrderLineItems {
         return CollectionUtils.isEmpty(orderLineItems);
     }
 
-    public List<Long> extractMenuIds() {
-        return orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
-                .collect(Collectors.toList());
+    public boolean hasDuplicate() {
+        return orderLineItems.size() != orderLineItems.stream()
+                .map(orderLineItem -> orderLineItem.getMenu()
+                        .getId())
+                .collect(Collectors.toSet())
+                .size();
+    }
+
+    public OrderLineItems arrangeOrder(final Order order) {
+        orderLineItems.forEach(orderLineItem -> orderLineItem.arrangeOrder(order));
+        return this;
     }
 
     public List<OrderLineItem> getOrderLineItems() {

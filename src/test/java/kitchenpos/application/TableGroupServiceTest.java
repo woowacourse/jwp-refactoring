@@ -177,8 +177,8 @@ class TableGroupServiceTest extends ServiceTest {
                     new TableGroupCreateRequest(List.of(new OrderTableRequest(orderTable1.getId()),
                             new OrderTableRequest(orderTable2.getId()))));
             private final Order order = orderRepository.save(
-                    new Order(null, orderTable1.getId(), OrderStatus.COOKING, LocalDateTime.now(),
-                            new OrderLineItems(List.of(new OrderLineItem(null, null, 1L, 1)))));
+                    new Order(null, orderTable1, OrderStatus.COOKING, LocalDateTime.now(),
+                            new OrderLineItems(List.of(new OrderLineItem(null, null, menuRepository.findById(1L).orElseThrow(), 1)))));
 
             @Test
             void 예외가_발생한다() {
@@ -197,8 +197,8 @@ class TableGroupServiceTest extends ServiceTest {
                     new TableGroupCreateRequest(List.of(new OrderTableRequest(orderTable1.getId()),
                             new OrderTableRequest(orderTable2.getId()))));
             private final Order order = orderRepository.save(
-                    new Order(null, orderTable1.getId(), OrderStatus.MEAL, LocalDateTime.now(),
-                            new OrderLineItems(List.of(new OrderLineItem(null, null, 1L, 1)))));
+                    new Order(null, orderTable1, OrderStatus.MEAL, LocalDateTime.now(),
+                            new OrderLineItems(List.of(new OrderLineItem(null, null, menuRepository.findById(1L).orElseThrow(), 1)))));
 
             @Test
             void 예외가_발생한다() {

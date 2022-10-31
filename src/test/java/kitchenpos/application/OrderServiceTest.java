@@ -35,7 +35,8 @@ class OrderServiceTest extends ServiceTest {
                     .numberOfGuests(2)
                     .empty(false)
                     .build());
-            private final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
+            private final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
+                    orderTable.getId(),
                     List.of(new OrderLineItemRequest(1L, 1)));
 
             @Test
@@ -59,7 +60,9 @@ class OrderServiceTest extends ServiceTest {
                     .numberOfGuests(2)
                     .empty(false)
                     .build());
-            private final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(), List.of());
+            private final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
+                    orderTable.getId(),
+                    List.of());
 
             @Test
             void 예외가_발생한다() {
@@ -76,14 +79,16 @@ class OrderServiceTest extends ServiceTest {
                     .numberOfGuests(2)
                     .empty(false)
                     .build());
-            private final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
-                    List.of(new OrderLineItemRequest(1L, 1), new OrderLineItemRequest(1L, 1)));
+            private final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
+                    orderTable.getId(),
+                    List.of(new OrderLineItemRequest(1L, 1),
+                            new OrderLineItemRequest(1L, 1)));
 
             @Test
             void 예외가_발생한다() {
                 assertThatThrownBy(() -> orderService.create(orderCreateRequest))
                         .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessage("주문 항목엔 중복되는 메뉴나 존재하지 않는 메뉴가 있을 수 없습니다.");
+                        .hasMessage("주문 항목엔 중복되는 메뉴가 존재할 수 없습니다.");
             }
         }
 
@@ -94,21 +99,23 @@ class OrderServiceTest extends ServiceTest {
                     .numberOfGuests(2)
                     .empty(false)
                     .build());
-            private final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
+            private final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
+                    orderTable.getId(),
                     List.of(new OrderLineItemRequest(0L, 1)));
 
             @Test
             void 예외가_발생한다() {
                 assertThatThrownBy(() -> orderService.create(orderCreateRequest))
                         .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessage("주문 항목엔 중복되는 메뉴나 존재하지 않는 메뉴가 있을 수 없습니다.");
+                        .hasMessage("메뉴가 존재하지 않습니다.");
             }
         }
 
         @Nested
         class 주문_테이블이_존재하지_않을_경우 {
 
-            private final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(0L,
+            private final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
+                    0L,
                     List.of(new OrderLineItemRequest(1L, 1)));
 
             @Test
@@ -126,7 +133,8 @@ class OrderServiceTest extends ServiceTest {
                     .numberOfGuests(2)
                     .empty(true)
                     .build());
-            private final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
+            private final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
+                    orderTable.getId(),
                     List.of(new OrderLineItemRequest(1L, 1)));
 
             @Test
@@ -144,12 +152,18 @@ class OrderServiceTest extends ServiceTest {
         @Nested
         class 정상적인_요청일_경우 {
 
-            private final OrderTable orderTable = orderTableRepository.save(OrderTable.builder()
-                    .numberOfGuests(2)
-                    .empty(false)
+            private final Order order = orderRepository.save(Order.builder()
+                    .orderTable(OrderTable.builder()
+                            .numberOfGuests(2)
+                            .empty(false)
+                            .build())
+                    .orderStatus(OrderStatus.COOKING)
+                    .orderedTime(LocalDateTime.now())
+                    .orderLineItems(new OrderLineItems(List.of(OrderLineItem.builder()
+                            .menu(menuRepository.findById(1L).orElseThrow())
+                            .quantity(1L)
+                            .build())))
                     .build());
-            private final OrderResponse orderResponse = orderService.create(new OrderCreateRequest(orderTable.getId(),
-                    List.of(new OrderLineItemRequest(1L, 1))));
 
             @Test
             void 주문_목록을_반환한다() {
@@ -166,22 +180,28 @@ class OrderServiceTest extends ServiceTest {
         @Nested
         class 정상적인_요청일_경우 {
 
-            private final OrderTable orderTable = orderTableRepository.save(OrderTable.builder()
-                    .numberOfGuests(2)
-                    .empty(false)
+            private final Order order = orderRepository.save(Order.builder()
+                    .orderTable(OrderTable.builder()
+                            .numberOfGuests(2)
+                            .empty(false)
+                            .build())
+                    .orderStatus(OrderStatus.COOKING)
+                    .orderedTime(LocalDateTime.now())
+                    .orderLineItems(new OrderLineItems(List.of(OrderLineItem.builder()
+                            .menu(menuRepository.findById(1L).orElseThrow())
+                            .quantity(1L)
+                            .build())))
                     .build());
-            private final OrderResponse orderResponse = orderService.create(new OrderCreateRequest(orderTable.getId(),
-                    List.of(new OrderLineItemRequest(1L, 1))));
             private final ChangeOrderStatusRequest changeOrderStatusRequest = new ChangeOrderStatusRequest(
-                    OrderStatus.COOKING.name());
+                    OrderStatus.MEAL.name());
 
             @Test
             void 주문_상태를_변경한다() {
-                OrderResponse actual = orderService.changeOrderStatus(orderResponse.getId(), changeOrderStatusRequest);
+                OrderResponse actual = orderService.changeOrderStatus(order.getId(), changeOrderStatusRequest);
 
                 assertAll(() -> {
-                    assertThat(actual.getId()).isEqualTo(orderResponse.getId());
-                    assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+                    assertThat(actual.getId()).isEqualTo(order.getId());
+                    assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
                 });
             }
         }
@@ -189,12 +209,8 @@ class OrderServiceTest extends ServiceTest {
         @Nested
         class 주문이_존재하지_않을_경우 {
 
-            private final OrderTable orderTable = orderTableRepository.save(OrderTable.builder()
-                    .numberOfGuests(2)
-                    .empty(false)
-                    .build());
             private final ChangeOrderStatusRequest changeOrderStatusRequest = new ChangeOrderStatusRequest(
-                    OrderStatus.COOKING.name());
+                    OrderStatus.MEAL.name());
 
             @Test
             void 예외가_발생한다() {
@@ -207,21 +223,20 @@ class OrderServiceTest extends ServiceTest {
         @Nested
         class 주문이_이미_계산_완료_상태인_경우 {
 
-            private final OrderTable orderTable = orderTableRepository.save(OrderTable.builder()
-                    .numberOfGuests(2)
-                    .empty(false)
-                    .build());
             private final Order order = orderRepository.save(Order.builder()
-                    .orderTableId(orderTable.getId())
+                    .orderTable(OrderTable.builder()
+                            .numberOfGuests(2)
+                            .empty(false)
+                            .build())
                     .orderStatus(OrderStatus.COMPLETION)
                     .orderedTime(LocalDateTime.now())
                     .orderLineItems(new OrderLineItems(List.of(OrderLineItem.builder()
-                            .menuId(1L)
+                            .menu(menuRepository.findById(1L).orElseThrow())
                             .quantity(1L)
                             .build())))
                     .build());
             private final ChangeOrderStatusRequest changeOrderStatusRequest = new ChangeOrderStatusRequest(
-                    OrderStatus.COOKING.name());
+                    OrderStatus.MEAL.name());
 
             @Test
             void 예외가_발생한다() {

@@ -23,7 +23,8 @@ public class OrderLineItemResponse {
     }
 
     public static OrderLineItemResponse from(final OrderLineItem orderLineItem) {
-        return new OrderLineItemResponse(orderLineItem.getSeq(), orderLineItem.getOrderId(), orderLineItem.getMenuId(),
+        return new OrderLineItemResponse(orderLineItem.getSeq(), orderLineItem.getOrder().getId(),
+                orderLineItem.getMenu().getId(),
                 orderLineItem.getQuantity());
     }
 

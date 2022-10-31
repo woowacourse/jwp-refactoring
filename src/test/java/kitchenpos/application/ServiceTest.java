@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.ProductRepository;
@@ -48,4 +49,7 @@ public class ServiceTest {
 
     @Autowired
     protected ProductRepository productRepository;
+
+    @Autowired
+    protected MenuRepository menuRepository;
 }
