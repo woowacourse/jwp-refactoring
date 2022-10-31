@@ -77,7 +77,7 @@ class TableGroupServiceTest {
             List<Long> orderTableIds = List.of(orderTable1.getId(), orderTable2.getId(), orderTable2.getId() + 1L);
 
             assertThatThrownBy(() -> tableGroupService.create(new TableGroupCommand(orderTableIds)))
-                    .hasMessage("주문 테이블의 수가 다릅니다.");
+                    .hasMessage("요청하는 주문 테이블이 존재하지 않습니다.");
         }
     }
 

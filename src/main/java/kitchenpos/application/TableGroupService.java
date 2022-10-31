@@ -2,41 +2,34 @@ package kitchenpos.application;
 
 import java.util.List;
 import kitchenpos.application.dto.request.TableGroupCommand;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.dao.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableGroupService {
 
-    private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
     private final TableGroupValidator tableGroupValidator;
+    private final OrderTableRepository orderTableRepository;
 
-    public TableGroupService(OrderTableRepository orderTableRepository,
-                             TableGroupRepository tableGroupRepository,
-                             TableGroupValidator tableGroupValidator) {
-        this.orderTableRepository = orderTableRepository;
+    public TableGroupService(TableGroupRepository tableGroupRepository,
+                             TableGroupValidator tableGroupValidator,
+                             OrderTableRepository orderTableRepository) {
         this.tableGroupRepository = tableGroupRepository;
         this.tableGroupValidator = tableGroupValidator;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
     public TableGroup create(TableGroupCommand tableGroupCommand) {
-        List<Long> orderTableIds = tableGroupCommand.getOrderTableId();
-        List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-        validate(orderTableIds, orderTables);
-        return tableGroupRepository.save(TableGroup.group(orderTables));
-    }
-
-    private void validate(List<Long> orderTableIds, List<OrderTable> orderTables) {
-        if (orderTables.size() != orderTableIds.size()) {
-            throw new IllegalArgumentException("주문 테이블의 수가 다릅니다.");
-        }
+        List<Long> orderTableId = tableGroupCommand.getOrderTableId();
+        OrderTables orderTables = OrderTables.group(orderTableRepository.findAllByIdIn(orderTableId));
+        tableGroupValidator.validate(orderTables, orderTableId);
+        return tableGroupRepository.save(new TableGroup(orderTables));
     }
 
     @Transactional

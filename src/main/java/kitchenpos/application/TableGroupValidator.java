@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTables;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,6 +14,12 @@ public class TableGroupValidator {
 
     public TableGroupValidator(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
+    }
+
+    public void validate(OrderTables orderTables, List<Long> orderTableId) {
+        if (orderTables.getIds().size() != orderTableId.size()) {
+            throw new IllegalArgumentException("요청하는 주문 테이블이 존재하지 않습니다.");
+        }
     }
 
     public void validate(List<Long> orderTableIds) {

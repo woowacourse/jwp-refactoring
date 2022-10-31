@@ -29,7 +29,7 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
 
-    private TableGroup(OrderTables orderTables) {
+    public TableGroup(OrderTables orderTables) {
         this(null, LocalDateTime.now(), orderTables);
     }
 
