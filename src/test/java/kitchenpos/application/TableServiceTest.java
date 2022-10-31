@@ -138,41 +138,4 @@ public class TableServiceTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문을 등록할 수 없는 주문 테이블입니다.");
     }
-
-    @Test
-    @DisplayName("주문 테이블 상태를 변경한다.")
-    void changeEmpty() {
-        // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(null);
-        orderTable.setNumberOfGuests(0);
-        orderTable.setEmpty(true);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
-        // when
-        OrderTable changeOrderTable = tableService.changeEmpty(savedOrderTable.getId(), orderTable);
-
-        // then
-        assertThat(changeOrderTable.isEmpty()).isEqualTo(true);
-    }
-
-    @Test
-    @DisplayName("주문 테이블 상태를 변경 시 주문 상태가 cooking이나 meal이면 예외를 반환한다.")
-    void changeEmpty_WhenOrderStatusCooking() {
-        // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(null);
-        orderTable.setNumberOfGuests(0);
-        orderTable.setEmpty(true);
-
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
-
-        Order order= new Order();
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderLineItems(new ArrayList<>());
-        orderDao.save(order);
-        // when
-        assertThatThrownBy(()->tableService.changeEmpty(savedOrderTable.getId(), orderTable)).isInstanceOf(IllegalArgumentException.class);
-    }
 }
