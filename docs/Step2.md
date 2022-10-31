@@ -39,4 +39,18 @@
                 - changeNumberOfGuest()
                 - changeEmpty()
     - 추가 수정 사항
-        - 가격 검증 로직 : Price 클래스 생성하여 예외 검증 처리 
+        - 가격 검증 로직 : Price 클래스 생성하여 예외 검증 처리
+
+## 1차 피드백
+
+- [ ] DTO -> Domain 전환 방식
+    - DTO가 바뀐다면 도메인도 변경될 수 있는 구조
+- [ ] MenuService - getSumOfMenuPrice()
+    - 네이밍 : get메서드는 값을 가져온다는 의미
+    - 메서드에서 상품 조회와 가격의 합을 구하는 일 2개 수행 중, 분리 필요
+- [ ] OderService - orderLineItemDao.save() 메서드 분리
+    - 가독성을 위해서
+- [ ] Repository 클래스를 만들어 참조하는 객체의 조립 책임을 분리
+- [ ] Dao에 getId()를 통해 분기처리하는 로직 개선
+- [ ] Menu에는 수량 * 가격이 존재하지 않지만 검증하는 로직이 있음 -> 개선 필요
+- [ ] DTO에서 검증 로직 수행 어색함
