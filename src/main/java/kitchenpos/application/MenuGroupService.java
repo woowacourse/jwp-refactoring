@@ -24,7 +24,7 @@ public class MenuGroupService {
     }
 
     private MenuGroup toMenuGroup(MenuGroupRequest menuGroupRequest) {
-        return new MenuGroup( menuGroupRequest.getName());
+        return new MenuGroup(menuGroupRequest.getName());
     }
 
     private MenuGroupResponse toResponse(MenuGroup menuGroup) {
