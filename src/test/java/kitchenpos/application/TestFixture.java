@@ -49,6 +49,10 @@ public class TestFixture {
         return menu;
     }
 
+    public static OrderTable 주문_테이블_생성() {
+        return new OrderTable();
+    }
+
     public static OrderTable 주문_테이블_생성(final int numberOfGuests, final boolean empty) {
         final OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(numberOfGuests);
@@ -78,12 +82,16 @@ public class TestFixture {
         return tableGroup;
     }
 
-    public static <E> TableGroup 테이블_그룹_생성(final Long id, final List<OrderTable> orderTables) {
+    public static TableGroup 테이블_그룹_생성(final Long id, final List<OrderTable> orderTables) {
         final TableGroup tableGroup = new TableGroup();
         tableGroup.setId(id);
         tableGroup.setCreatedDate(LocalDateTime.now());
         tableGroup.setOrderTables(orderTables);
         return tableGroup;
+    }
+
+    public static TableGroup 테이블_그룹과_주문_테이블_생성() {
+        return new TableGroup(null, LocalDateTime.now(), List.of(new OrderTable(), new OrderTable()));
     }
 
     public static TableGroup 테이블_그룹_생성() {
@@ -100,8 +108,8 @@ public class TestFixture {
 
     public static Order 주문_생성(final List<OrderLineItem> orderLineItems, final Long orderTableId) {
         final Order order = new Order();
-        order.setOrderTableId(orderTableId);
         order.setOrderLineItems(orderLineItems);
+        order.setOrderTableId(orderTableId);
         return order;
     }
 
@@ -111,13 +119,13 @@ public class TestFixture {
         order.setOrderedTime(LocalDateTime.now());
         order.setOrderTableId(orderTableId);
         order.setOrderLineItems(orderLineItems);
-        order.setOrderStatus(orderStatus.name());
+        order.setOrderStatus(orderStatus);
         return order;
     }
 
     public static Order 주문_생성(final OrderStatus orderStatus) {
         final Order order = new Order();
-        order.setOrderStatus(orderStatus.name());
+        order.setOrderStatus(orderStatus);
         return order;
     }
 }
