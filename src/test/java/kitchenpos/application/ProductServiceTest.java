@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixtures.domain.ProductFixture.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -10,7 +9,6 @@ import java.util.List;
 import kitchenpos.domain.menu.Product;
 import kitchenpos.dto.request.ProductRequest;
 import kitchenpos.dto.response.ProductResponse;
-import kitchenpos.fixtures.domain.ProductFixture.ProductRequestBuilder;
 import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -33,7 +31,7 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void Should_CreateProduct() {
             // given
-            ProductRequest request = new ProductRequestBuilder().build();
+            ProductRequest request = new ProductRequest("상품", BigDecimal.valueOf(10_000));
 
             // when
             ProductResponse actual = productService.create(request);
@@ -50,9 +48,7 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_PriceOfProductIsNull() {
             // given
-            ProductRequest request = new ProductRequestBuilder()
-                    .price(null)
-                    .build();
+            ProductRequest request = new ProductRequest("상품", null);
 
             // when & then
             assertThatThrownBy(() -> productService.create(request))
@@ -63,9 +59,7 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_PriceLessThan0() {
             // given
-            ProductRequest request = new ProductRequestBuilder()
-                    .price(-10_000)
-                    .build();
+            ProductRequest request = new ProductRequest("상품", BigDecimal.valueOf(-10_000));
 
             // when & then
             assertThatThrownBy(() -> productService.create(request))
@@ -83,7 +77,7 @@ class ProductServiceTest extends ServiceTest {
             // given
             int expected = 3;
             for (int i = 0; i < expected; i++) {
-                Product product = createProduct("product " + i, new BigDecimal(10_000));
+                Product product = new Product("product " + i, new BigDecimal(10_000));
                 productRepository.save(product);
             }
 
