@@ -1,6 +1,7 @@
 package kitchenpos.application.dto.request;
 
 import java.math.BigDecimal;
+import kitchenpos.domain.menu.Product;
 
 public class CreateProductDto {
 
@@ -18,5 +19,9 @@ public class CreateProductDto {
 
     public BigDecimal getPrice() {
         return price;
+    }
+
+    public Product toEntity() {
+        return new Product(name, price);
     }
 }

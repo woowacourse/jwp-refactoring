@@ -2,6 +2,8 @@ package kitchenpos.application.dto.request;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.ProductQuantities;
 
 public class CreateMenuDto {
 
@@ -34,5 +36,9 @@ public class CreateMenuDto {
 
     public List<CreateMenuProductDto> getMenuProducts() {
         return menuProducts;
+    }
+
+    public Menu toEntity(ProductQuantities productQuantities) {
+        return Menu.of(name, price, menuGroupId, productQuantities);
     }
 }

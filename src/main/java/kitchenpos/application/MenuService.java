@@ -43,7 +43,7 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
         final ProductQuantities productQuantities = getMenuProductQuantities(createMenuDto.getMenuProducts());
-        final Menu savedMenu = menuRepository.save(Menu.of(createMenuDto.getName(), createMenuDto.getPrice(), createMenuDto.getMenuGroupId(), productQuantities));
+        final Menu savedMenu = menuRepository.save(createMenuDto.toEntity(productQuantities));
         final List<MenuProduct> savedMenuProducts = saveMenuProducts(productQuantities, savedMenu);
         return MenuDto.of(savedMenu, savedMenuProducts);
     }

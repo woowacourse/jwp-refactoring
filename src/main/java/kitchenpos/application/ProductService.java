@@ -22,9 +22,7 @@ public class ProductService {
 
     @Transactional
     public ProductDto create(final CreateProductDto createProductDto) {
-        String name = createProductDto.getName();
-        BigDecimal price = createProductDto.getPrice();
-        final Product product = new Product(name, price);
+        final Product product = createProductDto.toEntity();
         return ProductDto.of(productRepository.save(product));
     }
 
