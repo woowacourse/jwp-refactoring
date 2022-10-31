@@ -1,11 +1,11 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,40 +13,38 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderLineItemRequest;
+import kitchenpos.dto.OrderRequest;
+import kitchenpos.dto.OrderStatusRequest;
+import kitchenpos.dto.OrderTableRequest;
 
 @SpringBootTest
 @Transactional
 class OrderServiceTest {
 
+    private static final long NOT_EXIST_ID = 0L;
+
     @Autowired
     private OrderService orderService;
 
     @Autowired
-    private TableService tableService;
+    private OrderTableService orderTableService;
 
-    @Test
-    @DisplayName("orderItem이 비어있으면 예외를 발생시킨다.")
-    void createWithEmptyOrderItemError() {
-        //when
-        Order order = new Order();
+    private Long orderTableId;
 
-        //then
-        assertThatThrownBy(() -> orderService.create(order))
-            .isInstanceOf(IllegalArgumentException.class);
+    @BeforeEach
+    void init() {
+        orderTableId = orderTableService.create(new OrderTableRequest(1, false)).getId();
     }
 
     @Test
     @DisplayName("존재하지 않는 menu가 orderItems에 있을 경우 예외를 발생시킨다.")
     void createWithNotExistOrderItemError() {
-        //when
-        Order order = new Order();
-        order.setOrderLineItems(generateOrderLineItemAsList(999L, 1));
+        OrderRequest orderRequest = new OrderRequest(1L, Arrays.asList(new OrderLineItemRequest(NOT_EXIST_ID, 1)));
 
-        //then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -54,11 +52,10 @@ class OrderServiceTest {
     @DisplayName("존재하지 않는 orderTable이 있을 경우 예외를 발생시킨다.")
     void createWithNotExistOrderTableError() {
         //when
-        Order order = new Order();
-        order.setOrderLineItems(generateOrderLineItemAsList(1L, 1));
+        OrderRequest orderRequest = new OrderRequest(NOT_EXIST_ID, Arrays.asList(new OrderLineItemRequest(1L, 1)));
 
         //then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -66,12 +63,10 @@ class OrderServiceTest {
     @DisplayName("orderTable이 비어있을 경우 예외를 발생시킨다.")
     void createWithEmptyOrderTableError() {
         //when
-        Order order = new Order();
-        order.setOrderLineItems(generateOrderLineItemAsList(1L, 1));
-        order.setOrderTableId(1L);
+        OrderRequest orderRequest = new OrderRequest(1L, Arrays.asList(new OrderLineItemRequest(1L, 1)));
 
         //then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -79,69 +74,49 @@ class OrderServiceTest {
     @DisplayName("전체 주문 목록을 조회한다.")
     void findList() {
         //given
-        Order order = new Order();
-        order.setOrderTableId(tableService.create(new OrderTable()).getId());
-        order.setOrderLineItems(generateOrderLineItemAsList(1L, 1));
-        orderService.create(order);
-        orderService.create(order);
-
         List<Order> orders = orderService.list();
 
-        assertThat(orders).hasSizeGreaterThan(1);
+        //when
+        OrderRequest orderRequest = new OrderRequest(orderTableId, Arrays.asList(new OrderLineItemRequest(1L, 1)));
+        orderService.create(orderRequest);
+
+        //then
+        assertThat(orderService.list()).hasSize(orders.size() + 1);
     }
 
     @Test
     @DisplayName("주문 상태를 변경한다.")
     void changeOrderStatus() {
-        Long orderTableId = tableService.create(new OrderTable()).getId();
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderLineItems(generateOrderLineItemAsList(1L, 1));
-        Long orderId = orderService.create(order).getId();
+        //given
+        OrderRequest orderRequest = new OrderRequest(orderTableId, Arrays.asList(new OrderLineItemRequest(1L, 1)));
+        Long orderId = orderService.create(orderRequest).getId();
 
-        Order orderDto = new Order();
-        orderDto.setOrderStatus(OrderStatus.MEAL.name());
-        Order actual = orderService.changeOrderStatus(orderId, orderDto);
-        assertAll(
-            () -> assertThat(actual.getOrderTableId()).isEqualTo(orderTableId),
-            () -> assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name()),
-            () -> assertThat(actual.getOrderedTime()).isNotNull(),
-            () -> assertThat(actual.getOrderLineItems()).hasSize(1)
-        );
+        //when
+        Order actual = orderService.changeOrderStatus(orderId, new OrderStatusRequest("MEAL"));
+
+        //then
+        assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.MEAL);
     }
 
     @Test
     @DisplayName("존재하지 않는 주문일 경우 예외를 발생시킨다.")
     void changeOrderStatusNotExistOrderError() {
-        assertThatThrownBy(() -> orderService.changeOrderStatus(99999L, new Order()))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(NOT_EXIST_ID, new OrderStatusRequest("MEAL")))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     @DisplayName("COMPLETION 상태의 주문일 경우 예외를 발생시킨다.")
     void changeOrderStatusCompletionError() {
-        Order order = new Order();
-        order.setOrderTableId(tableService.create(new OrderTable()).getId());
-        order.setOrderLineItems(generateOrderLineItemAsList(1L, 1));
-        Long orderId = orderService.create(order).getId();
+        //given
+        OrderRequest orderRequest = new OrderRequest(orderTableId, Arrays.asList(new OrderLineItemRequest(1L, 1)));
+        Long orderId = orderService.create(orderRequest).getId();
 
-        Order orderDto = new Order();
-        orderDto.setOrderStatus(OrderStatus.COMPLETION.name());
-        orderService.changeOrderStatus(orderId, orderDto);
+        //when
+        Order actual = orderService.changeOrderStatus(orderId, new OrderStatusRequest("COMPLETION"));
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, orderDto))
+        //then
+        assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, new OrderStatusRequest("MEAL")))
             .isInstanceOf(IllegalArgumentException.class);
     }
-
-    private ArrayList<OrderLineItem> generateOrderLineItemAsList(Long menuId, int quantity) {
-        ArrayList<OrderLineItem> orderLineItems = new ArrayList<>();
-
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setQuantity(quantity);
-
-        orderLineItems.add(orderLineItem);
-        return orderLineItems;
-    }
-
 }
