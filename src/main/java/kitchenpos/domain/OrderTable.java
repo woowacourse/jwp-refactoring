@@ -32,10 +32,9 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    // Todo: Refactor!
-    public void changeSingleEmpty(final boolean empty) {
+    public void changeEmpty(final boolean empty) {
         if (Objects.nonNull(this.getTableGroupId())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("테이블 그룹이 있어 주문 테이블 상태를 변경할 수 없습니다.");
         }
         this.empty = empty;
     }

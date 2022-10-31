@@ -5,7 +5,6 @@ import kitchenpos.application.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.application.dto.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.application.dto.OrderTableCreateRequest;
 import kitchenpos.application.dto.OrderTableResponse;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.OrderRepository;
@@ -20,14 +19,11 @@ import java.util.List;
 @Service
 public class TableService {
 
-    private final OrderDao orderDao;
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderDao orderDao,
-                        final OrderRepository orderRepository,
+    public TableService(final OrderRepository orderRepository,
                         final OrderTableRepository orderTableRepository) {
-        this.orderDao = orderDao;
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
     }
@@ -45,18 +41,22 @@ public class TableService {
             .collect(Collectors.toList());
     }
 
-    public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
+    public OrderTableResponse changeEmpty(final Long orderTableId,
+                                          final OrderTableChangeEmptyRequest request) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
+        validateTableOrderStatus(orderTable);
 
-        // Todo: 도메인 로직으로 어떻게 밀어넣을까..?
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
+        orderTable.changeEmpty(request.isEmpty());
 
-        orderTable.changeSingleEmpty(request.isEmpty());
         return OrderTableResponse.createResponse(orderTable);
+    }
+
+    private void validateTableOrderStatus(final OrderTable orderTable) {
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
+            orderTable.getId(), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+            throw new IllegalArgumentException("주문의 상태가 '조리, 식사' 입니다.");
+        }
     }
 
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableChangeNumberOfGuestsRequest request) {
