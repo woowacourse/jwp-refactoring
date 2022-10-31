@@ -2,6 +2,7 @@ package kitchenpos.domain.table;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -9,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.springframework.util.CollectionUtils;
 
 @Table(name = "table_group")
 @Entity
@@ -23,18 +25,27 @@ public class TableGroup {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "tableGroup")
     private List<OrderTable> orderTables;
 
-    public TableGroup() {
-        this(null, LocalDateTime.now(), null);
+    protected TableGroup() {
     }
 
-    public TableGroup(final Long id, final LocalDateTime createdDate) {
-        this(id, createdDate, null);
-    }
+    public TableGroup(final Long id, final List<OrderTable> orderTables) {
+        validateOrderTables(orderTables);
 
-    public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         this.id = id;
-        this.createdDate = createdDate;
+        this.createdDate = LocalDateTime.now();
         this.orderTables = orderTables;
+    }
+
+    private void validateOrderTables(final List<OrderTable> orderTables) {
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+            throw new IllegalArgumentException();
+        }
+
+        for (final OrderTable savedOrderTable : orderTables) {
+            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
+                throw new IllegalArgumentException();
+            }
+        }
     }
 
     public Long getId() {
