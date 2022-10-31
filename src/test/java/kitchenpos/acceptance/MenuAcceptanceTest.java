@@ -30,12 +30,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         body.put("price", price);
         body.put("menuGroupId", menuGroupId);
         body.put("menuProducts", menuProducts.stream()
-                .map(map -> {
-                    MenuProduct menuProduct = new MenuProduct();
-                    menuProduct.setProductId(map.get("productId"));
-                    menuProduct.setQuantity(map.get("quantity"));
-                    return menuProduct;
-                })
+                .map(map -> new MenuProduct(map.get("productId"), map.get("quantity")))
                 .collect(Collectors.toList()));
 
         return post("/api/menus", body);
