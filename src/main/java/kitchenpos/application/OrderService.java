@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import java.util.ArrayList;
 import kitchenpos.application.dto.request.CreateOrderDto;
 import kitchenpos.application.dto.request.CreateOrderLineItemDto;
 import kitchenpos.application.dto.response.OrderDto;
@@ -40,11 +41,8 @@ public class OrderService {
     public OrderDto create(final CreateOrderDto createOrderDto) {
         validateMenus(createOrderDto);
         final Order order = orderRepository.save(Order.of(findOrderTable(createOrderDto.getOrderTableId())));
-        return OrderDto.of(order, createOrderDto.getOrderLineItems()
-                .stream()
-                .map(it -> new OrderLineItem(order.getId(), it.getMenuId(), it.getQuantity()))
-                .map(orderLineItemRepository::save)
-                .collect(Collectors.toList()));
+        final List<OrderLineItem> orderLineItems = saveOrderLineItems(createOrderDto, order);
+        return OrderDto.of(order, orderLineItems);
     }
 
     private void validateMenus(CreateOrderDto createOrderDto) {
@@ -60,6 +58,14 @@ public class OrderService {
     private OrderTable findOrderTable(Long orderTableId) {
         return orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
+    }
+
+    private List<OrderLineItem> saveOrderLineItems(CreateOrderDto createOrderDto, Order order) {
+        List<OrderLineItem> orderLineItems = new ArrayList<>();
+        for (OrderLineItem orderLineItem : createOrderDto.toOrderLineItem(order.getId())) {
+            orderLineItems.add(orderLineItemRepository.save(orderLineItem));
+        }
+        return orderLineItems;
     }
 
     public List<OrderDto> list() {
