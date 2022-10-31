@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @RepositoryTest
 class ProductRepositoryTest {
 
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
     @Autowired
     public ProductRepositoryTest(ProductRepository productRepository) {

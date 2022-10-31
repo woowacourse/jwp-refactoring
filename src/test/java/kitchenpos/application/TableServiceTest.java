@@ -21,10 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ServiceTest
 class TableServiceTest {
 
-    private TableService tableService;
-    private OrderRepository orderRepository;
-    private OrderTableRepository orderTableRepository;
-    private TableGroupRepository tableGroupRepository;
+    private final TableService tableService;
+    private final OrderRepository orderRepository;
+    private final OrderTableRepository orderTableRepository;
+    private final TableGroupRepository tableGroupRepository;
 
     @Autowired
     public TableServiceTest(

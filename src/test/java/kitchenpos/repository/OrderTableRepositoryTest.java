@@ -17,8 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 @RepositoryTest
 class OrderTableRepositoryTest {
 
-    private TableGroupRepository tableGroupRepository;
-    private OrderTableRepository orderTableRepository;
+    private final TableGroupRepository tableGroupRepository;
+    private final OrderTableRepository orderTableRepository;
 
     @Autowired
     public OrderTableRepositoryTest(

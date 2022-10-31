@@ -24,7 +24,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 class TableRestControllerTest extends ControllerTest {
 
-    private TableService tableService;
+    private final TableService tableService;
 
     @Autowired
     public TableRestControllerTest(TableService tableService) {

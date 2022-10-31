@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @RepositoryTest
 class MenuRepositoryTest {
 
-    private MenuRepository menuRepository;
+    private final MenuRepository menuRepository;
 
     @Autowired
     public MenuRepositoryTest(MenuRepository menuRepository) {

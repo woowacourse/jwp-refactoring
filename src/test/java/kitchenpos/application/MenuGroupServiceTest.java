@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ServiceTest
 class MenuGroupServiceTest {
 
-    private MenuGroupService menuGroupService;
+    private final MenuGroupService menuGroupService;
 
     @Autowired
     public MenuGroupServiceTest(MenuGroupService menuGroupService) {

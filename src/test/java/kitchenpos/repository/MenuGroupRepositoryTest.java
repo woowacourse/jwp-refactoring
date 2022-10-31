@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @RepositoryTest
 class MenuGroupRepositoryTest {
 
-    private MenuGroupRepository menuGroupRepository;
+    private final MenuGroupRepository menuGroupRepository;
 
     @Autowired
     public MenuGroupRepositoryTest(MenuGroupRepository menuGroupRepository) {

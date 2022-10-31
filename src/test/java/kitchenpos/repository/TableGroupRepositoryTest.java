@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @RepositoryTest
 class TableGroupRepositoryTest {
 
-    private TableGroupRepository tableGroupRepository;
+    private final TableGroupRepository tableGroupRepository;
 
     @Autowired
     public TableGroupRepositoryTest(TableGroupRepository tableGroupRepository) {

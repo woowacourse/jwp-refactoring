@@ -15,19 +15,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class TableGroupRestController {
     private final TableGroupService tableGroupService;
 
-    public TableGroupRestController(final TableGroupService tableGroupService) {
+    public TableGroupRestController(TableGroupService tableGroupService) {
         this.tableGroupService = tableGroupService;
     }
 
     @PostMapping("/api/table-groups")
-    public ResponseEntity<TableGroupResponse> create(@RequestBody final TableGroupCreateRequest request) {
+    public ResponseEntity<TableGroupResponse> create(@RequestBody TableGroupCreateRequest request) {
         TableGroupResponse response = tableGroupService.create(request);
-        final URI uri = URI.create("/api/table-groups/" + response.getId());
+        URI uri = URI.create("/api/table-groups/" + response.getId());
         return ResponseEntity.created(uri).body(response);
     }
 
     @DeleteMapping("/api/table-groups/{tableGroupId}")
-    public ResponseEntity<Void> ungroup(@PathVariable final Long tableGroupId) {
+    public ResponseEntity<Void> ungroup(@PathVariable Long tableGroupId) {
         tableGroupService.ungroup(tableGroupId);
         return ResponseEntity.noContent().build();
     }

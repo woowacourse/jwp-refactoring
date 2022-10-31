@@ -20,15 +20,15 @@ public class TableGroupService {
     private final TableGroupRepository tableGroupRepository;
 
     public TableGroupService(
-            final OrderTableRepository orderTableRepository,
-            final TableGroupRepository tableGroupRepository
+            OrderTableRepository orderTableRepository,
+            TableGroupRepository tableGroupRepository
     ) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
 
-    public TableGroupResponse create(final TableGroupCreateRequest request) {
-        final List<OrderTable> savedOrderTables = findOrderTables(request);
+    public TableGroupResponse create(TableGroupCreateRequest request) {
+        List<OrderTable> savedOrderTables = findOrderTables(request);
         TableGroup tableGroup = new TableGroup(LocalDateTime.now(), savedOrderTables);
         return TableGroupResponse.from(tableGroupRepository.save(tableGroup));
     }
@@ -37,14 +37,14 @@ public class TableGroupService {
         List<Long> orderTableIds = request.getOrderTableIds().stream()
                 .map(TableGroupIdRequest::getId)
                 .collect(Collectors.toList());
-        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+        List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
         if (orderTableIds.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
         return savedOrderTables;
     }
 
-    public void ungroup(final Long tableGroupId) {
+    public void ungroup(Long tableGroupId) {
         TableGroup tableGroup = tableGroupRepository.findById(tableGroupId).orElseThrow(IllegalArgumentException::new);
         tableGroup.ungroupOrderTables();
     }

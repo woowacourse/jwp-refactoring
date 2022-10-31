@@ -26,10 +26,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ServiceTest
 class TableGroupServiceTest {
 
-    private TableGroupService tableGroupService;
-    private TableGroupRepository tableGroupRepository;
-    private OrderTableRepository orderTableRepository;
-    private OrderRepository orderRepository;
+    private final TableGroupService tableGroupService;
+    private final TableGroupRepository tableGroupRepository;
+    private final OrderTableRepository orderTableRepository;
+    private final OrderRepository orderRepository;
 
     @Autowired
     public TableGroupServiceTest(

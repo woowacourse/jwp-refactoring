@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ServiceTest
 class ProductServiceTest {
 
-    private ProductService productService;
+    private final ProductService productService;
 
     @Autowired
     public ProductServiceTest(ProductService productService) {

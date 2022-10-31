@@ -21,8 +21,12 @@ import org.springframework.test.web.servlet.ResultActions;
 
 class MenuGroupRestControllerTest extends ControllerTest {
 
+    private final MenuGroupService menuGroupService;
+
     @Autowired
-    private MenuGroupService menuGroupService;
+    public MenuGroupRestControllerTest(MenuGroupService menuGroupService) {
+        this.menuGroupService = menuGroupService;
+    }
 
     @Test
     void create() throws Exception {

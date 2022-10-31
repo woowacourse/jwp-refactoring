@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @RepositoryTest
 class OrderRepositoryTest {
 
-    private OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
 
     @Autowired
     public OrderRepositoryTest(OrderRepository orderRepository) {

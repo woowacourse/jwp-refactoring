@@ -18,14 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class TableRestController {
     private final TableService tableService;
 
-    public TableRestController(final TableService tableService) {
+    public TableRestController(TableService tableService) {
         this.tableService = tableService;
     }
 
     @PostMapping("/api/tables")
-    public ResponseEntity<OrderTableResponse> create(@RequestBody final OrderTableCreateRequest request) {
-        final OrderTableResponse response = tableService.create(request);
-        final URI uri = URI.create("/api/tables/" + response.getId());
+    public ResponseEntity<OrderTableResponse> create(@RequestBody OrderTableCreateRequest request) {
+        OrderTableResponse response = tableService.create(request);
+        URI uri = URI.create("/api/tables/" + response.getId());
         return ResponseEntity.created(uri).body(response);
     }
 
@@ -36,16 +36,16 @@ public class TableRestController {
 
     @PatchMapping(value = "/api/tables/{orderTableId}", params = "empty")
     public ResponseEntity<OrderTableResponse> changeEmpty(
-            @PathVariable final Long orderTableId,
-            @RequestParam final boolean empty
+            @PathVariable Long orderTableId,
+            @RequestParam boolean empty
     ) {
         return ResponseEntity.ok().body(tableService.changeEmpty(orderTableId, empty));
     }
 
     @PatchMapping(value = "/api/tables/{orderTableId}", params = "numberOfGuests")
     public ResponseEntity<OrderTableResponse> changeNumberOfGuests(
-            @PathVariable final Long orderTableId,
-            @RequestParam final int numberOfGuests
+            @PathVariable Long orderTableId,
+            @RequestParam int numberOfGuests
     ) {
         return ResponseEntity.ok().body(tableService.changeNumberOfGuests(orderTableId, numberOfGuests));
     }

@@ -26,9 +26,9 @@ public class OrderService {
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(
-            final MenuRepository menuRepository,
-            final OrderRepository orderRepository,
-            final OrderTableRepository orderTableRepository
+            MenuRepository menuRepository,
+            OrderRepository orderRepository,
+            OrderTableRepository orderTableRepository
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
@@ -36,7 +36,7 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse create(final OrderRequest request) {
+    public OrderResponse create(OrderRequest request) {
         OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
         List<OrderLineItemRequest> itemRequests = request.getOrderLineItemRequests();
@@ -66,7 +66,7 @@ public class OrderService {
         if (CollectionUtils.isEmpty(itemRequests)) {
             throw new IllegalArgumentException();
         }
-        final List<Long> menuIds = toMenuIds(itemRequests);
+        List<Long> menuIds = toMenuIds(itemRequests);
         if (itemRequests.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
@@ -80,8 +80,8 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusChangeRequest request) {
-        final Order savedOrder = orderRepository.findById(orderId)
+    public OrderResponse changeOrderStatus(Long orderId, OrderStatusChangeRequest request) {
+        Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
         savedOrder.changeOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
         return OrderResponse.from(savedOrder);

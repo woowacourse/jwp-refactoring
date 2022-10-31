@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ServiceTest
 class MenuServiceTest {
 
-    private MenuService menuService;
+    private final MenuService menuService;
 
     @Autowired
     public MenuServiceTest(MenuService menuService) {

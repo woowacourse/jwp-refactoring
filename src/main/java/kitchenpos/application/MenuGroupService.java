@@ -14,11 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenuGroupService {
     private final MenuGroupRepository menuGroupRepository;
 
-    public MenuGroupService(final MenuGroupRepository menuGroupRepository) {
+    public MenuGroupService(MenuGroupRepository menuGroupRepository) {
         this.menuGroupRepository = menuGroupRepository;
     }
 
-    public MenuGroupResponse create(final MenuGroupRequest request) {
+    public MenuGroupResponse create(MenuGroupRequest request) {
         MenuGroup menuGroup = new MenuGroup(request.getName());
         return MenuGroupResponse.from(menuGroupRepository.save(menuGroup));
     }

@@ -22,16 +22,16 @@ public class MenuService {
     private final ProductRepository productRepository;
 
     public MenuService(
-            final MenuRepository menuRepository,
-            final MenuGroupRepository menuGroupRepository,
-            final ProductRepository productRepository
+            MenuRepository menuRepository,
+            MenuGroupRepository menuGroupRepository,
+            ProductRepository productRepository
     ) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
         this.productRepository = productRepository;
     }
 
-    public MenuResponse create(final MenuCreateRequest request) {
+    public MenuResponse create(MenuCreateRequest request) {
         if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다.");
         }
