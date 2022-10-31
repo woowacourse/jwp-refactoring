@@ -3,12 +3,14 @@ package kitchenpos.application;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductCreateRequest;
+import kitchenpos.dto.ProductResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -19,14 +21,17 @@ public class ProductService {
     }
 
     @Transactional
-    public Product create(ProductCreateRequest productCreateRequest) {
+    public ProductResponse create(ProductCreateRequest productCreateRequest) {
         Long price = productCreateRequest.getPrice();
         String name = productCreateRequest.getName();
 
-        return productDao.save(new Product(name, price));
+        Product product = productDao.save(new Product(name, price));
+        return new ProductResponse(product.getId(), product.getName(), product.getPrice());
     }
 
-    public List<Product> list() {
-        return productDao.findAll();
+    public List<ProductResponse> list() {
+        return productDao.findAll().stream()
+                .map(each -> new ProductResponse(each.getId(), each.getName(), each.getPrice()))
+                .collect(Collectors.toUnmodifiableList());
     }
 }

@@ -2,19 +2,16 @@ package kitchenpos.dto;
 
 public class OrderLineItemResponse {
 
-    private Long seq;
-    private Long orderId;
-    private Long menuId;
-    private Long quantity;
+    private final Long seq;
+    private final Long orderId;
+    private final Long menuId;
+    private final Long quantity;
 
     public OrderLineItemResponse(Long seq, Long orderId, Long menuId, Long quantity) {
         this.seq = seq;
         this.orderId = orderId;
         this.menuId = menuId;
         this.quantity = quantity;
-    }
-
-    public OrderLineItemResponse() {
     }
 
     public Long getSeq() {

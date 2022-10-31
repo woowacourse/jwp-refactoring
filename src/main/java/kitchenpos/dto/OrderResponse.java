@@ -5,12 +5,12 @@ import java.util.List;
 
 public class OrderResponse {
 
-    private Long id;
-    private Long orderTableId;
-    private String orderStatus;
-    private LocalDateTime orderedTime;
-    private List<OrderLineItemResponse> orderLineItems;
-    private boolean completion;
+    private final Long id;
+    private final Long orderTableId;
+    private final String orderStatus;
+    private final LocalDateTime orderedTime;
+    private final List<OrderLineItemResponse> orderLineItems;
+    private final boolean completion;
 
     public OrderResponse(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime, List<OrderLineItemResponse> orderLineItems, boolean completion) {
         this.id = id;
@@ -19,9 +19,6 @@ public class OrderResponse {
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
         this.completion = completion;
-    }
-
-    public OrderResponse() {
     }
 
     public Long getId() {
