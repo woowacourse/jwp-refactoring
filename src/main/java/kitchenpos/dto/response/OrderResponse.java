@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
 
 public class OrderResponse {
@@ -16,7 +15,7 @@ public class OrderResponse {
     private List<OrderLineItemResponse> orderLineItems;
 
     public OrderResponse(final Order order) {
-        this(order.getId(), order.getOrderTableId(), order.getOrderStatus(), order.getOrderedTime(),
+        this(order.getId(), order.getOrderTable().getId(), order.getOrderStatus(), order.getOrderedTime(),
                 order.getOrderLineItems().stream().map(OrderLineItemResponse::new).collect(Collectors.toList()));
     }
 
@@ -28,14 +27,6 @@ public class OrderResponse {
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
-    }
-
-    public Order toEntity() {
-        List<OrderLineItem> orderLineItems = this.orderLineItems.stream()
-                .map(OrderLineItemResponse::toEntity)
-                .collect(Collectors.toList());
-
-        return new Order(id, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
     public Long getId() {

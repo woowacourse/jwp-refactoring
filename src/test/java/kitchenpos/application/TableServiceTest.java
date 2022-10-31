@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.order.OrderTable;
 import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.OrderTableResponse;

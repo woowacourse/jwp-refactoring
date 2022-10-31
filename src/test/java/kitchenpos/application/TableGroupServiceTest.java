@@ -11,7 +11,7 @@ import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.order.OrderTable;
 import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
 import kitchenpos.dto.response.MenuResponse;
@@ -171,10 +171,10 @@ class TableGroupServiceTest extends ServiceTest {
             MenuGroupResponse savedMenuGroup = saveMenuGroup("메뉴 그룹");
             MenuResponse savedMenu = saveMenu("메뉴", 10_000, savedMenuGroup.toEntity(), List.of(menuProduct));
 
-            Order order1 = new Order(orderTable1.getId(), List.of(new OrderLineItem(savedMenu.getId(), 1L)));
+            Order order1 = new Order(orderTable1, List.of(new OrderLineItem(savedMenu.getId(), 1L)));
             order1.changeOrderStatus(orderStatus);
 
-            Order order2 = new Order(orderTable1.getId(), List.of(new OrderLineItem(savedMenu.getId(), 1L)));
+            Order order2 = new Order(orderTable1, List.of(new OrderLineItem(savedMenu.getId(), 1L)));
             order2.changeOrderStatus(OrderStatus.COMPLETION);
 
             orderRepository.save(order1);

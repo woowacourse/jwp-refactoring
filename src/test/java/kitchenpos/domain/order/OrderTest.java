@@ -16,8 +16,11 @@ class OrderTest {
         @DisplayName("주문 항목이 비어있다면, IAE를 던진다.")
         @Test
         void Should_ThrowIAE_When_OrderLineItemsIsEmpty() {
-            // given & when & then
-            assertThatThrownBy(() -> new Order(1L, List.of()))
+            // given
+            OrderTable orderTable = new OrderTable(10, false);
+
+            // when & then
+            assertThatThrownBy(() -> new Order(orderTable, List.of()))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -30,7 +33,9 @@ class OrderTest {
         void Should_ThrowIAE_When_OrderStatusIsCompletion() {
             // given
             OrderLineItem orderLineItem = new OrderLineItem(1L, 1L);
-            Order order = new Order(1L, 1L, OrderStatus.COMPLETION, LocalDateTime.now(), List.of(orderLineItem));
+            OrderTable orderTable = new OrderTable(10, false);
+            Order order = new Order(1L, orderTable, OrderStatus.COMPLETION, LocalDateTime.now(),
+                    List.of(orderLineItem));
 
             // when & then
             assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.COOKING))

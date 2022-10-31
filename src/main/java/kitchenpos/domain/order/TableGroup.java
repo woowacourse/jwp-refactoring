@@ -1,4 +1,4 @@
-package kitchenpos.domain.table;
+package kitchenpos.domain.order;
 
 import java.time.LocalDateTime;
 import java.util.List;

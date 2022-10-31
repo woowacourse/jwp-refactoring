@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import org.springframework.util.CollectionUtils;
@@ -24,7 +25,9 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long orderTableId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_table_id")
+    private OrderTable orderTable;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
@@ -38,16 +41,17 @@ public class Order {
     public Order() {
     }
 
-    public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+    public Order(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
+        this(null, orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
     }
 
-    public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime,
+    public Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus,
+                 final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
         validateOrderLineItems(orderLineItems);
 
         this.id = id;
-        this.orderTableId = orderTableId;
+        this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
@@ -59,6 +63,10 @@ public class Order {
         }
     }
 
+    public boolean isCompletion() {
+        return orderStatus.equals(OrderStatus.COMPLETION);
+    }
+
     public Long getId() {
         return id;
     }
@@ -67,12 +75,12 @@ public class Order {
         this.id = id;
     }
 
-    public Long getOrderTableId() {
-        return orderTableId;
+    public OrderTable getOrderTable() {
+        return orderTable;
     }
 
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
+    public void setOrderTableId(final OrderTable orderTable) {
+        this.orderTable = orderTable;
     }
 
     public OrderStatus getOrderStatus() {

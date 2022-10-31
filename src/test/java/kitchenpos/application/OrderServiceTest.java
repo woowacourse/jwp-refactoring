@@ -11,6 +11,7 @@ import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTable;
 import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.dto.request.OrderStatusUpdateRequest;
@@ -18,6 +19,7 @@ import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -33,6 +35,9 @@ class OrderServiceTest extends ServiceTest {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private OrderTableRepository orderTableRepository;
 
     private OrderTableResponse savedOrderTable;
     private MenuGroup savedMenuGroup;
@@ -136,8 +141,9 @@ class OrderServiceTest extends ServiceTest {
             // given
             int expected = 3;
             for (int i = 0; i < expected; i++) {
-                Order order = new Order(savedOrderTable.getId(), List.of(new OrderLineItem(savedMenu.getId(), 10)));
-                orderRepository.save(order);
+                OrderRequest request = new OrderRequest(savedOrderTable.getId(),
+                        List.of(new OrderLineItemRequest(createdOrderLineItem)));
+                orderService.create(request);
             }
 
             // when
@@ -157,12 +163,14 @@ class OrderServiceTest extends ServiceTest {
         @ParameterizedTest
         void Should_ChangeOrderStatus(final OrderStatus after) {
             // given
-            Order oldOrder = orderRepository.save(new Order(savedOrderTable.getId(), List.of(createdOrderLineItem)));
+            OrderRequest createRequest = new OrderRequest(savedOrderTable.getId(),
+                    List.of(new OrderLineItemRequest(createdOrderLineItem)));
+            OrderResponse oldOrder = orderService.create(createRequest);
 
-            OrderStatusUpdateRequest request = new OrderStatusUpdateRequest(after);
+            OrderStatusUpdateRequest updateRequest = new OrderStatusUpdateRequest(after);
 
             // when
-            OrderResponse actual = orderService.changeOrderStatus(oldOrder.getId(), request);
+            OrderResponse actual = orderService.changeOrderStatus(oldOrder.getId(), updateRequest);
 
             // then
             assertThat(actual.getOrderStatus()).isEqualTo(after);
@@ -172,12 +180,14 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderDoesNotExist() {
             // given
-            Order order = orderRepository.save(new Order(savedOrderTable.getId(), List.of(createdOrderLineItem)));
+            OrderRequest createRequest = new OrderRequest(savedOrderTable.getId(),
+                    List.of(new OrderLineItemRequest(createdOrderLineItem)));
+            OrderResponse order = orderService.create(createRequest);
 
-            OrderStatusUpdateRequest request = new OrderStatusUpdateRequest(OrderStatus.MEAL);
+            OrderStatusUpdateRequest updateRequest = new OrderStatusUpdateRequest(OrderStatus.MEAL);
 
             // when & then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId() + 1, request))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId() + 1, updateRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -185,7 +195,8 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderStatusIsCompletion() {
             // given
-            Order completionOrder = new Order(savedOrderTable.getId(), List.of(createdOrderLineItem));
+            OrderTable orderTable = orderTableRepository.save(new OrderTable(10, false));
+            Order completionOrder = new Order(orderTable, List.of(createdOrderLineItem));
             completionOrder.changeOrderStatus(OrderStatus.COMPLETION);
             Order savedOrder = orderRepository.save(completionOrder);
 

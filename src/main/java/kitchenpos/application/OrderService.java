@@ -7,7 +7,8 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.dto.request.OrderStatusUpdateRequest;
 import kitchenpos.dto.response.OrderResponse;
@@ -40,7 +41,12 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderRequest request) {
-        Order order = request.toEntity();
+        Order order = new Order(
+                orderTableRepository.findById(request.getOrderTableId())
+                        .orElseThrow(IllegalArgumentException::new),
+                request.getOrderLineItems().stream().map(OrderLineItemRequest::toEntity)
+                        .collect(Collectors.toList())
+        );
 
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
 
@@ -52,14 +58,14 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final OrderTable orderTable = orderTableRepository.findById(order.getOrderTableId())
+        final OrderTable orderTable = orderTableRepository.findById(order.getOrderTable().getId())
                 .orElseThrow(IllegalArgumentException::new);
 
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
 
-        order.setOrderTableId(orderTable.getId());
+        order.setOrderTableId(orderTable);
         order.changeOrderStatus(OrderStatus.COOKING);
         order.setOrderedTime(LocalDateTime.now());
 

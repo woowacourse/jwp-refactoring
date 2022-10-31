@@ -1,11 +1,9 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.TableGroup;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.order.TableGroup;
 import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.TableGroupResponse;
 import kitchenpos.repository.OrderRepository;
@@ -44,19 +42,13 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
 
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
+        for (OrderTable orderTable : orderTables) {
+            if (orderTable.hasNotCompletedOrder()) {
+                throw new IllegalArgumentException();
+            }
 
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
-
-        for (final OrderTable orderTable : orderTables) {
             orderTable.changeTableGroup(null);
             orderTable.changeEmpty(false);
-            orderTableRepository.save(orderTable);
         }
     }
 }

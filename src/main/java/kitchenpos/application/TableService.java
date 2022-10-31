@@ -1,11 +1,9 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.order.OrderTable;
 import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.repository.OrderRepository;
@@ -46,13 +44,11 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+        if (savedOrderTable.hasNotCompletedOrder()) {
             throw new IllegalArgumentException();
         }
 
         savedOrderTable.changeEmpty(request.isEmpty());
-
         return new OrderTableResponse(orderTableRepository.save(savedOrderTable));
     }
 
