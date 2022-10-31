@@ -37,7 +37,7 @@ public class TableService {
     public OrderTableResponse changeEmpty(Long orderTableId, OrderTableCommand command) {
         OrderTable orderTable = getOrderTable(orderTableId);
         tableValidator.validateChangeEmpty(orderTable);
-        orderTable.decideAvailabilityOfOrderRegistration(OrderAble.of(command.isEmpty()));
+        orderTable.changeEmpty(OrderAble.of(command.isEmpty()));
         return OrderTableResponse.from(orderTable);
     }
 

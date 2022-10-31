@@ -10,10 +10,10 @@ class OrderTableTest {
 
     @Test
     @DisplayName("주문 가능한 상태로 변경한다.")
-    void decideAvailabilityOfOrderRegistration() {
+    void changeEmpty() {
         OrderTable orderTable = new OrderTable(2, false);
 
-        orderTable.decideAvailabilityOfOrderRegistration(OrderAble.POSSIBLE);
+        orderTable.changeEmpty(OrderAble.POSSIBLE);
 
         assertThat(orderTable.isEmpty()).isFalse();
     }
@@ -24,7 +24,7 @@ class OrderTableTest {
         OrderTable orderTable = new OrderTable(1L, 1L, 3, false);
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> orderTable.decideAvailabilityOfOrderRegistration(OrderAble.IMPOSSIBLE))
+                .isThrownBy(() -> orderTable.changeEmpty(OrderAble.IMPOSSIBLE))
                 .withMessage("이미 단체지정이 되어있습니다.");
     }
 

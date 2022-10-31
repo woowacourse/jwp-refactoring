@@ -41,7 +41,7 @@ public class OrderTable {
         return new OrderTable(numberOfGuests, true);
     }
 
-    public void decideAvailabilityOfOrderRegistration(OrderAble orderAble) {
+    public void changeEmpty(OrderAble orderAble) {
         if (Objects.nonNull(tableGroupId)) {
             throw new IllegalArgumentException("이미 단체지정이 되어있습니다.");
         }
