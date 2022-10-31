@@ -13,7 +13,7 @@ public class OrderRepository {
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
 
-    public OrderRepository(OrderDao orderDao, OrderLineItemDao orderLineItemDao) {
+    public OrderRepository(final OrderDao orderDao, final OrderLineItemDao orderLineItemDao) {
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
     }

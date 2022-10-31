@@ -9,7 +9,7 @@ public class TableGroupCreatRequest {
     public TableGroupCreatRequest() {
     }
 
-    public TableGroupCreatRequest(List<OrderTableDto> orderTables) {
+    public TableGroupCreatRequest(final List<OrderTableDto> orderTables) {
         this.orderTables = orderTables;
     }
 

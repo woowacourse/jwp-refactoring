@@ -20,7 +20,7 @@ public class TableGroupRepository {
         final TableGroup savedTableGroup = tableGroupDao.save(entity);
 
         final List<OrderTable> orderTables = entity.getOrderTables();
-        for (OrderTable orderTable : orderTables) {
+        for (final OrderTable orderTable : orderTables) {
             orderTable.setTableGroupId(savedTableGroup.getId());
             orderTable.setEmpty(false);
             orderTableDao.save(orderTable);

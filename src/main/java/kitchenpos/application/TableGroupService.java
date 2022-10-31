@@ -62,7 +62,7 @@ public class TableGroupService {
     }
 
     private void validateOrderStatus(final List<Order> orders) {
-        for (Order order : orders) {
+        for (final Order order : orders) {
             if (order.isStatusCooking() || order.isStatusMeal()) {
                 throw new IllegalArgumentException();
             }

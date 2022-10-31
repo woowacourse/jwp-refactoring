@@ -49,7 +49,7 @@ public class DtoFixture {
     }
 
     public static TableGroupCreatRequest getTableCreateRequest(final List<Long> tableIds) {
-        List<OrderTableDto> orderTableDtos = tableIds.stream()
+        final List<OrderTableDto> orderTableDtos = tableIds.stream()
                 .map(OrderTableDto::new)
                 .collect(Collectors.toList());
         return new TableGroupCreatRequest(orderTableDtos);

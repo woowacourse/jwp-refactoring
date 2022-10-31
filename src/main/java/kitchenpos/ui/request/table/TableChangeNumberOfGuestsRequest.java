@@ -7,7 +7,7 @@ public class TableChangeNumberOfGuestsRequest {
     public TableChangeNumberOfGuestsRequest() {
     }
 
-    public TableChangeNumberOfGuestsRequest(int numberOfGuests) {
+    public TableChangeNumberOfGuestsRequest(final int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
     }
 

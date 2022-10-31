@@ -13,7 +13,7 @@ public class MenuCreateRequest {
     public MenuCreateRequest() {
     }
 
-    public MenuCreateRequest(String name, BigDecimal price, Long menuGroupId, List<MenuProductDto> menuProducts) {
+    public MenuCreateRequest(final String name, final BigDecimal price, final Long menuGroupId, final List<MenuProductDto> menuProducts) {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;

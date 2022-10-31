@@ -7,7 +7,7 @@ public class OrderTableDto {
     public OrderTableDto() {
     }
 
-    public OrderTableDto(Long id) {
+    public OrderTableDto(final Long id) {
         this.id = id;
     }
 

@@ -7,7 +7,7 @@ public class TableChangeEmptyRequest {
     public TableChangeEmptyRequest() {
     }
 
-    public TableChangeEmptyRequest(boolean empty) {
+    public TableChangeEmptyRequest(final boolean empty) {
         this.empty = empty;
     }
 

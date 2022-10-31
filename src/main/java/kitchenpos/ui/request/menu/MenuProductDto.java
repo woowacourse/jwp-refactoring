@@ -11,7 +11,7 @@ public class MenuProductDto {
     public MenuProductDto() {
     }
 
-    public MenuProductDto(Long productId, long quantity) {
+    public MenuProductDto(final Long productId, final long quantity) {
         this.productId = productId;
         this.quantity = quantity;
     }

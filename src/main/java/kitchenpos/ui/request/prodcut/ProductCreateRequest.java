@@ -10,7 +10,7 @@ public class ProductCreateRequest {
     public ProductCreateRequest() {
     }
 
-    public ProductCreateRequest(String name, BigDecimal price) {
+    public ProductCreateRequest(final String name, final BigDecimal price) {
         this.name = name;
         this.price = price;
     }

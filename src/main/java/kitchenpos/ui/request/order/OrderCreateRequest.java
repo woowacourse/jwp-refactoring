@@ -10,7 +10,7 @@ public class OrderCreateRequest {
     public OrderCreateRequest() {
     }
 
-    public OrderCreateRequest(Long orderTableId, List<OrderLineItemDto> orderLineItems) {
+    public OrderCreateRequest(final Long orderTableId, final List<OrderLineItemDto> orderLineItems) {
         this.orderTableId = orderTableId;
         this.orderLineItems = orderLineItems;
     }

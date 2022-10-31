@@ -10,7 +10,7 @@ public class OrderLineItemDto {
     public OrderLineItemDto() {
     }
 
-    public OrderLineItemDto(Long menuId, long quantity) {
+    public OrderLineItemDto(final Long menuId, final long quantity) {
         this.menuId = menuId;
         this.quantity = quantity;
     }
