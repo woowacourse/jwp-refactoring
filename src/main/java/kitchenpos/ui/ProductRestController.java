@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import kitchenpos.application.ProductService;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.ProductCreateRequest;
-import kitchenpos.dto.request.response.ProductResponse;
+import kitchenpos.dto.response.ProductResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

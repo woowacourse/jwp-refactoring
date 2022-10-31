@@ -8,7 +8,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderTableCreateRequest;
 import kitchenpos.dto.request.OrderTableEmptyChangeRequest;
 import kitchenpos.dto.request.OrderTableNumberOfGuestChangeRequest;
-import kitchenpos.dto.request.response.OrderTableResponse;
+import kitchenpos.dto.response.OrderTableResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

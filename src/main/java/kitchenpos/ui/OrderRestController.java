@@ -7,7 +7,7 @@ import kitchenpos.application.OrderService;
 import kitchenpos.domain.Order;
 import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderStatusUpdateRequest;
-import kitchenpos.dto.request.response.OrderResponse;
+import kitchenpos.dto.response.OrderResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
