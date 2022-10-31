@@ -27,7 +27,7 @@ public class TableGroup {
     @Column(name = "createdDate")
     private LocalDateTime createdDate;
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "tableGroup")
+    @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, mappedBy = "tableGroup")
     private List<OrderTable> orderTables;
 
     protected TableGroup() {
