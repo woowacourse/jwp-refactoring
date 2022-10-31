@@ -2,7 +2,6 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.relational.core.mapping.MappedCollection;
@@ -14,7 +13,7 @@ public class Order {
     @Id
     private final Long id;
     private final Long orderTableId;
-    private final String orderStatus;
+    private final OrderStatus orderStatus;
     private final LocalDateTime orderedTime;
 
     @MappedCollection(idColumn = "ORDER_ID")
@@ -22,12 +21,12 @@ public class Order {
 
     public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
+        this(null, orderTableId, OrderStatus.from(orderStatus), orderedTime, orderLineItems);
     }
 
     @PersistenceCreator
-    private Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
-                  final List<OrderLineItem> orderLineItems) {
+    private Order(final Long id, final Long orderTableId, final OrderStatus orderStatus,
+                  final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -44,10 +43,10 @@ public class Order {
     }
 
     public Order changeOrderStatus(final String orderStatus) {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
+        if (this.orderStatus.isCompleted()) {
             throw new IllegalArgumentException();
         }
-        return new Order(id, orderTableId, orderStatus, orderedTime, orderLineItems);
+        return new Order(id, orderTableId, OrderStatus.from(orderStatus), orderedTime, orderLineItems);
     }
 
     public Long getId() {
@@ -59,7 +58,7 @@ public class Order {
     }
 
     public String getOrderStatus() {
-        return orderStatus;
+        return orderStatus.name();
     }
 
     public LocalDateTime getOrderedTime() {
