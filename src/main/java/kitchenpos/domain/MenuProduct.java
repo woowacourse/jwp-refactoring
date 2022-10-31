@@ -39,10 +39,6 @@ public class MenuProduct {
     protected MenuProduct() {
     }
 
-    public void belongsTo(final Long menuId) {
-        this.menuId = menuId;
-    }
-
     public Long getSeq() {
         return seq;
     }

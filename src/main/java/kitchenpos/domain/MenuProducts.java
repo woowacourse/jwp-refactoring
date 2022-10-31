@@ -21,10 +21,6 @@ public class MenuProducts {
     protected MenuProducts() {
     }
 
-    public void addAll(final MenuProducts menuProducts) {
-        values.addAll(menuProducts.getValues());
-    }
-
     public int size() {
         return values.size();
     }

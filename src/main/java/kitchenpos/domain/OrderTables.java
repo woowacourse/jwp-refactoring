@@ -21,10 +21,6 @@ public class OrderTables {
     protected OrderTables() {
     }
 
-    public void addAll(final List<OrderTable> orderTables) {
-        values.addAll(orderTables);
-    }
-
     public boolean isEmpty() {
         return values.isEmpty();
     }

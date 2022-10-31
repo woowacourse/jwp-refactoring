@@ -36,8 +36,7 @@ public class MenuValidator {
         List<Long> productIds = menuProducts.stream()
                 .map(MenuProduct::getProductId)
                 .toList();
-        List<Product> products = productRepository.findAllByIdIn(productIds);
-        return products;
+        return productRepository.findAllByIdIn(productIds);
     }
 
     private void validateProductExists(final List<MenuProduct> menuProducts, final List<Product> products) {
