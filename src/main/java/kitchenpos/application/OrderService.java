@@ -10,6 +10,7 @@ import kitchenpos.dao.orderlineitem.OrderLineItemDao;
 import kitchenpos.dao.ordertable.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -95,7 +96,7 @@ public class OrderService {
     public Order changeOrderStatus(final Long orderId, final Order orderRequest) {
         final Order order = getOrder(orderId);
         order.changeOrderStatus(orderRequest.getOrderStatus());
-        changeOrderStatus(order);
+        changeOrderTableOrderStatus(getOrderTable(order.getOrderTableId()), order.getOrderStatus());
         return orderDao.save(order);
     }
 
@@ -104,14 +105,13 @@ public class OrderService {
                 .orElseThrow(NoSuchElementException::new);
     }
 
-    private void changeOrderStatus(final Order order) {
-        final OrderTable orderTable = getOrderTable(order);
-        orderTable.changeOrderStatus(order.getOrderStatus());
+    private void changeOrderTableOrderStatus(final OrderTable orderTable, final OrderStatus orderStatus) {
+        orderTable.changeOrderStatus(orderStatus);
         orderTableDao.save(orderTable);
     }
 
-    private OrderTable getOrderTable(final Order order) {
-        return orderTableDao.findById(order.getOrderTableId())
+    private OrderTable getOrderTable(final Long id) {
+        return orderTableDao.findById(id)
                 .orElseThrow(NoSuchElementException::new);
     }
 }
