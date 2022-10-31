@@ -56,19 +56,30 @@ public class MenuService {
 
     private MenuProducts getMenuProducts(final MenuRequest request) {
         final List<MenuProductRequest> menuProductRequests = request.getMenuProducts();
+        final List<Product> products = findAllProducts(menuProductRequests);
 
         final List<RelatedProduct> relatedProducts = new ArrayList<>();
-        for (MenuProductRequest menuProductRequest : menuProductRequests) {
-            final Product product = findProduct(menuProductRequest);
-            relatedProducts.add(new RelatedProduct(product, menuProductRequest.getQuantity()));
+        for (Product product : products) {
+            final long quantity = getQuantityFromSameProduct(product.getId(), menuProductRequests);
+            relatedProducts.add(new RelatedProduct(product, quantity));
         }
 
         return new MenuProducts(relatedProducts);
     }
 
-
-    private Product findProduct(final MenuProductRequest menuProductRequest) {
-        return productRepository.findById(menuProductRequest.getProductId())
+    private long getQuantityFromSameProduct(final Long id, final List<MenuProductRequest> menuProductRequests) {
+        return menuProductRequests.stream()
+                .filter(it -> it.getProductId().equals(id))
+                .findAny()
+                .map(MenuProductRequest::getQuantity)
                 .orElseThrow(IllegalArgumentException::new);
+    }
+
+    private List<Product> findAllProducts(final List<MenuProductRequest> menuProductRequests) {
+        final List<Long> productIds = menuProductRequests.stream()
+                .map(MenuProductRequest::getProductId)
+                .collect(toList());
+
+        return productRepository.findAllById(productIds);
     }
 }
