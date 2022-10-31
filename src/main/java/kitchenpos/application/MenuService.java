@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,20 +50,33 @@ public class MenuService {
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴그룹입니다."));
     }
 
-    private Product findProductById(final Long id) {
-        return productRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 제품입니다."));
+    private Map<Product, Long> toEntities(List<CreateMenuProductRequest> menuProducts) {
+        final List<Product> products = findProductsByIds(menuProducts);
+
+        final Map<Long, Long> menuProductsMap = menuProducts.stream()
+            .collect(Collectors.toMap(
+                it -> it.getProductId(),
+                it -> it.getQuantity()
+            ));
+
+        return products.stream()
+            .collect(Collectors.toMap(
+                it -> it,
+                it -> menuProductsMap.get(it.getId())
+            ));
     }
 
-    private Map<Product, Long> toEntities(List<CreateMenuProductRequest> menuProducts) {
-        final Map<Product, Long> entities = new HashMap<>();
-        for (CreateMenuProductRequest menuProduct : menuProducts) {
-            entities.put(
-                findProductById(menuProduct.getProductId()),
-                menuProduct.getQuantity()
-            );
+    private List<Product> findProductsByIds(List<CreateMenuProductRequest> menuProducts) {
+        final List<Long> productIds = menuProducts.stream()
+            .map(it -> it.getProductId())
+            .collect(Collectors.toList());
+
+        final List<Product> products = productRepository.findAllByIdIn(productIds);
+
+        if (productIds.size() != products.size()) {
+            throw new IllegalArgumentException("존재하지 않는 제품입니다.");
         }
 
-        return entities;
+        return products;
     }
 }

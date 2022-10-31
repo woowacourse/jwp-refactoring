@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +37,7 @@ public class OrderService {
     public Order create(final CreateOrderRequest request) {
         return orderRepository.save(new Order(
             findOrderTableById(request.getOrderTableId()),
-            toEntities((request.getOrderLineItems()))
+            toEntities(request.getOrderLineItems())
         ));
     }
 
@@ -58,25 +58,38 @@ public class OrderService {
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블 입니다."));
     }
 
-    private Menu findMenuById(final Long id) {
-        return menuRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴입니다."));
+    private Map<Menu, Long> toEntities(List<CreateOrderLineItemRequest> orderLineItems) {
+        final List<Menu> menus = findMenusByIds(orderLineItems);
+
+        final Map<Long, Long> orderLineItemsMap = orderLineItems.stream()
+            .collect(Collectors.toMap(
+                it -> it.getMenuId(),
+                it -> it.getQuantity()
+            ));
+
+        return menus.stream()
+            .collect(Collectors.toMap(
+                it -> it,
+                it -> orderLineItemsMap.get(it.getId())
+            ));
+    }
+
+    private List<Menu> findMenusByIds(List<CreateOrderLineItemRequest> orderLineItems) {
+        final List<Long> ids = orderLineItems.stream()
+            .map(it -> it.getMenuId())
+            .collect(Collectors.toList());
+
+        final List<Menu> menus = menuRepository.findAllByIdIn(ids);
+
+        if (ids.size() != menus.size()) {
+            throw new IllegalArgumentException("존재하지 않는 메뉴입니다.");
+        }
+
+        return menus;
     }
 
     private Order findOrderById(final Long id) {
         return orderRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않은 주문입니다."));
-    }
-
-    private Map<Menu, Long> toEntities(List<CreateOrderLineItemRequest> orderLineItems) {
-        final Map<Menu, Long> entities = new HashMap<>();
-        for (CreateOrderLineItemRequest orderLineItem : orderLineItems) {
-            entities.put(
-                findMenuById(orderLineItem.getMenuId()),
-                orderLineItem.getQuantity()
-            );
-        }
-
-        return entities;
     }
 }

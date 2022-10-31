@@ -11,7 +11,7 @@ public interface MenuRepository extends Repository<Menu, Long> {
 
     Menu save(Menu entity);
 
-    Optional<Menu> findById(Long id);
+    List<Menu> findAllByIdIn(List<Long> ids);
 
     List<Menu> findAll();
 
