@@ -74,8 +74,8 @@ public class OrderService {
 
     public OrderResponse changeOrderStatus(final Long orderId, final OrderUpdateRequest request) {
         final Order order = orderRepository.findById(orderId)
-            .orElseThrow(IllegalArgumentException::new)
-            .changeOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
+            .orElseThrow(IllegalArgumentException::new);
+        order.changeOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
 
         return OrderResponse.createResponse(order);
     }

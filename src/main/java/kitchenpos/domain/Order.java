@@ -52,12 +52,11 @@ public class Order {
         }
     }
 
-    public Order changeOrderStatus(final OrderStatus orderStatus) {
+    public void changeOrderStatus(final OrderStatus orderStatus) {
         if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("이미 주문의 상태가 완료입니다.");
         }
         this.orderStatus = orderStatus.name();
-        return this;
     }
 
     public Long getId() {
