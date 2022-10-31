@@ -13,9 +13,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.domain.Product;
-import kitchenpos.ui.dto.request.ProductRequest;
 import kitchenpos.ui.dto.ProductResponse;
+import kitchenpos.ui.dto.request.ProductRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
@@ -25,7 +24,7 @@ class ProductRestControllerTest extends RestControllerTest {
     @Test
     void 상품_생성에_성공한다() throws Exception {
         ProductRequest request = new ProductRequest("상품", BigDecimal.valueOf(1_000));
-        Product expected = new Product(1L, "상품", BigDecimal.valueOf(1_000));
+        ProductResponse expected = new ProductResponse(1L, "상품", BigDecimal.valueOf(1_000));
 
         when(productService.create(any())).thenReturn(expected);
 
