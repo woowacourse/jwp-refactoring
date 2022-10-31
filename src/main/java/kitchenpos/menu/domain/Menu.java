@@ -9,7 +9,7 @@ public class Menu {
     private final Long id;
     private final Name name;
     private final Price price;
-    private Long menuGroupId;
+    private final Long menuGroupId;
 
     public Menu(Long id, Name name, Price price, Long menuGroupId) {
         this.id = id;
