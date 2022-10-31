@@ -41,13 +41,15 @@ public class TableService {
         return tableResponses;
     }
 
-    public OrderTable changeEmpty(final Long orderTableId) {
+    public OrderTableResponse changeEmpty(final Long orderTableId) {
         final OrderTable savedOrderTable = getOrderTable(orderTableId);
 
         validTableGroupCondition(savedOrderTable);
         validExistOrderTables(orderTableId);
         savedOrderTable.ClearTable();
-        return orderTableDao.save(savedOrderTable);
+        orderTableDao.save(savedOrderTable);
+
+        return OrderTableResponse.from(savedOrderTable);
     }
 
     private void validExistOrderTables(final Long orderTableId) {
@@ -63,11 +65,11 @@ public class TableService {
         }
     }
 
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {
         final OrderTable savedOrderTable = getOrderTable(orderTableId);
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
-
-        return orderTableDao.save(savedOrderTable);
+        orderTableDao.save(savedOrderTable);
+        return OrderTableResponse.from(savedOrderTable);
     }
 
     private OrderTable getOrderTable(final Long orderTableId) {

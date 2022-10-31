@@ -3,7 +3,7 @@ package kitchenpos.ui;
 import java.net.URI;
 import java.util.List;
 import kitchenpos.application.TableService;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.dto.OrderTableNumberOfGuestsRequest;
 import kitchenpos.ui.dto.OrderTableRequest;
 import kitchenpos.ui.dto.OrderTableResponse;
 import org.springframework.http.ResponseEntity;
@@ -35,14 +35,14 @@ public class TableRestController {
     }
 
     @PutMapping("/api/tables/{orderTableId}/empty")
-    public ResponseEntity<OrderTable> changeEmpty(@PathVariable final Long orderTableId,
-                                                  @RequestBody final OrderTableRequest request) {
+    public ResponseEntity<OrderTableResponse> changeEmpty(@PathVariable final Long orderTableId,
+                                                          @RequestBody final OrderTableRequest request) {
         return ResponseEntity.ok().body(tableService.changeEmpty(orderTableId));
     }
 
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
-    public ResponseEntity<OrderTable> changeNumberOfGuests(@PathVariable final Long orderTableId,
-                                                           @RequestBody final OrderTableRequest request) {
+    public ResponseEntity<OrderTableResponse> changeNumberOfGuests(@PathVariable final Long orderTableId,
+                                                                   @RequestBody final OrderTableNumberOfGuestsRequest request) {
         return ResponseEntity.ok().body(tableService.changeNumberOfGuests(orderTableId, request.getNumberOfGuests()));
     }
 }
