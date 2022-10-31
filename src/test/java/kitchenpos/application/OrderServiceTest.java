@@ -136,7 +136,7 @@ class OrderServiceTest extends ServiceTest {
             // given
             int expected = 3;
             for (int i = 0; i < expected; i++) {
-                Order order = new Order(savedOrderTable.getId(), List.of(createdOrderLineItem));
+                Order order = new Order(savedOrderTable.getId(), List.of(new OrderLineItem(savedMenu.getId(), 10)));
                 orderRepository.save(order);
             }
 

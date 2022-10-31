@@ -170,12 +170,11 @@ class TableGroupServiceTest extends ServiceTest {
             MenuProduct menuProduct = new MenuProduct(savedProduct, 1L);
             MenuGroupResponse savedMenuGroup = saveMenuGroup("메뉴 그룹");
             MenuResponse savedMenu = saveMenu("메뉴", 10_000, savedMenuGroup.toEntity(), List.of(menuProduct));
-            OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getId(), 1L);
 
-            Order order1 = new Order(orderTable1.getId(), List.of(orderLineItem));
+            Order order1 = new Order(orderTable1.getId(), List.of(new OrderLineItem(savedMenu.getId(), 1L)));
             order1.changeOrderStatus(orderStatus);
 
-            Order order2 = new Order(orderTable1.getId(), List.of(orderLineItem));
+            Order order2 = new Order(orderTable1.getId(), List.of(new OrderLineItem(savedMenu.getId(), 1L)));
             order2.changeOrderStatus(OrderStatus.COMPLETION);
 
             orderRepository.save(order1);

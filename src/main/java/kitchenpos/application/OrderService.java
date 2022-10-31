@@ -67,7 +67,6 @@ public class OrderService {
         final Long orderId = savedOrder.getId();
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.setOrderId(orderId);
             savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
         }
         savedOrder.setOrderLineItems(savedOrderLineItems);
@@ -75,12 +74,9 @@ public class OrderService {
         return new OrderResponse(savedOrder);
     }
 
+    @Transactional(readOnly = true)
     public List<OrderResponse> list() {
         final List<Order> orders = orderRepository.findAll();
-
-        for (final Order order : orders) {
-            order.setOrderLineItems(orderLineItemRepository.findAllByOrderId(order.getId()));
-        }
 
         return orders.stream()
                 .map(OrderResponse::new)
@@ -94,9 +90,9 @@ public class OrderService {
 
         savedOrder.changeOrderStatus(request.getOrderStatus());
 
-        orderRepository.save(savedOrder);
+//        orderRepository.save(savedOrder);
 
-        savedOrder.setOrderLineItems(orderLineItemRepository.findAllByOrderId(orderId));
+//        savedOrder.setOrderLineItems(orderLineItemRepository.findAllByOrderId(orderId));
 
         return new OrderResponse(savedOrder);
     }

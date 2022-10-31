@@ -10,6 +10,4 @@ public interface OrderLineItemRepository {
     Optional<OrderLineItem> findById(Long id);
 
     List<OrderLineItem> findAll();
-
-    List<OrderLineItem> findAllByOrderId(Long orderId);
 }
