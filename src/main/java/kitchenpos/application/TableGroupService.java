@@ -35,14 +35,23 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupCreateRequest tableGroupCreateRequest) {
-        List<Long> orderTableIds = toOrderTableIds(tableGroupCreateRequest.getOrderTables());
-        List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-        if (orderTableIds.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
+        List<OrderTable> savedOrderTables = findSavedOrderTables(tableGroupCreateRequest);
         TableGroup savedTableGroup =
                 tableGroupRepository.save(new TableGroup(null, LocalDateTime.now(), savedOrderTables));
         return tableGroupDtoMapper.toTableGroupResponse(savedTableGroup);
+    }
+
+    private List<OrderTable> findSavedOrderTables(final TableGroupCreateRequest tableGroupCreateRequest) {
+        List<Long> orderTableIds = toOrderTableIds(tableGroupCreateRequest.getOrderTables());
+        List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+        validateOrderTablesExists(orderTableIds, savedOrderTables);
+        return savedOrderTables;
+    }
+
+    private void validateOrderTablesExists(final List<Long> orderTableIds, final List<OrderTable> savedOrderTables) {
+        if (orderTableIds.size() != savedOrderTables.size()) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private List<Long> toOrderTableIds(final List<OrderTableIdRequest> orderTableIdRequests) {

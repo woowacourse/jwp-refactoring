@@ -37,12 +37,16 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuCreateRequest menuCreateRequest) {
-        if (!menuGroupRepository.existsById(menuCreateRequest.getMenuGroupId())) {
-            throw new IllegalArgumentException();
-        }
+        validateMenuGroupExists(menuCreateRequest);
         List<MenuProduct> menuProducts = createMenuProducts(menuCreateRequest);
         Menu menu = menuMapper.toMenu(menuCreateRequest, menuProducts);
         return menuDtoMapper.toMenuResponse(menuRepository.save(menu));
+    }
+
+    private void validateMenuGroupExists(final MenuCreateRequest menuCreateRequest) {
+        if (!menuGroupRepository.existsById(menuCreateRequest.getMenuGroupId())) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private List<MenuProduct> createMenuProducts(final MenuCreateRequest menuCreateRequest) {
