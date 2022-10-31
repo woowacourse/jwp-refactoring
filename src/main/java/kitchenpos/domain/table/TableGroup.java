@@ -30,10 +30,18 @@ public class TableGroup {
 
     public TableGroup(final Long id, final List<OrderTable> orderTables) {
         validateOrderTables(orderTables);
+        setOrderTable(orderTables);
 
         this.id = id;
         this.createdDate = LocalDateTime.now();
         this.orderTables = orderTables;
+    }
+
+    private void setOrderTable(final List<OrderTable> orderTables) {
+        for (OrderTable orderTable : orderTables) {
+            orderTable.setTableGroup(this);
+            orderTable.setEmpty(false);
+        }
     }
 
     private void validateOrderTables(final List<OrderTable> orderTables) {

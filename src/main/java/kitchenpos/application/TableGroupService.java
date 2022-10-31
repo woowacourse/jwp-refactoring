@@ -38,13 +38,6 @@ public class TableGroupService {
         TableGroup tableGroup = new TableGroup(null, savedOrderTables);
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroup(savedTableGroup);
-            savedOrderTable.setEmpty(false);
-            orderTableRepository.save(savedOrderTable);
-        }
-        savedTableGroup.setOrderTables(savedOrderTables);
-
         return new TableGroupResponse(savedTableGroup);
     }
 
