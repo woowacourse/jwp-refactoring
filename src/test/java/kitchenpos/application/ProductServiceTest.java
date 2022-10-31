@@ -2,13 +2,14 @@ package kitchenpos.application;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Product;
+import kitchenpos.application.dto.request.CreateProductDto;
+import kitchenpos.application.dto.response.ProductDto;
+import kitchenpos.domain.menu.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataAccessException;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,50 +30,36 @@ class ProductServiceTest {
 
         @Test
         void 생성한_상품을_반환한다() {
-            Product product = new Product();
-            product.setName("강정치킨");
-            product.setPrice(BigDecimal.valueOf(1000));
+            CreateProductDto product = new CreateProductDto("강정치킨", BigDecimal.valueOf(1000));
 
-            Product actual = productService.create(product);
+            ProductDto actual = productService.create(product);
             assertAll(
-                () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getName()).isEqualTo("강정치킨"),
-                () -> assertThat(actual.getPrice()).isNotNull()
+                    () -> assertThat(actual.getId()).isNotNull(),
+                    () -> assertThat(actual.getName()).isEqualTo("강정치킨"),
+                    () -> assertThat(actual.getPrice()).isNotNull()
             );
         }
 
         @Test
         void 가격정보가_누락된_경우_예외발생() {
-            Product product = new Product();
-            product.setName("강정치킨");
+            CreateProductDto product = new CreateProductDto("강정치킨", null);
 
             assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 가격이_음수인_경우_예외발생() {
-            Product product = new Product();
-            product.setName("강정치킨");
-            product.setPrice(BigDecimal.valueOf(-1));
-
-            assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 상품명이_누락된_경우_예외발생() {
-            Product product = new Product();
-            product.setPrice(BigDecimal.valueOf(1000));
+            CreateProductDto product = new CreateProductDto(null, BigDecimal.valueOf(1000));
 
             assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(DataAccessException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
     @Test
     void list_메서드는_상품_목록을_조회한다() {
-        List<Product> products = productService.list();
+        List<ProductDto> products = productService.list();
 
         assertThat(products).hasSizeGreaterThan(1);
     }
