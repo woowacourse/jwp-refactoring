@@ -1,0 +1,54 @@
+package kitchenpos.ui.dto;
+
+import com.sun.istack.NotNull;
+import java.util.List;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Name;
+import kitchenpos.domain.Price;
+
+public class MenuCreateRequest {
+
+    @NotNull
+    private String name;
+
+    @NotNull
+    private Integer price;
+
+    @NotNull
+    private Long menuGroupId;
+
+    @NotNull
+    private List<MenuProductCreateRequest> menuProducts;
+
+    public MenuCreateRequest() {
+    }
+
+    public MenuCreateRequest(final String name, final Integer price, final Long menuGroupId,
+                             final List<MenuProductCreateRequest> menuProducts) {
+        this.name = name;
+        this.price = price;
+        this.menuGroupId = menuGroupId;
+        this.menuProducts = menuProducts;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Integer getPrice() {
+        return price;
+    }
+
+    public Long getMenuGroupId() {
+        return menuGroupId;
+    }
+
+    public List<MenuProductCreateRequest> getMenuProducts() {
+        return menuProducts;
+    }
+
+    public Menu toMenu(final List<MenuProduct> menuProducts) {
+        return new Menu(new Name(this.name), Price.valueOf(this.price), this.menuGroupId, menuProducts);
+    }
+}
