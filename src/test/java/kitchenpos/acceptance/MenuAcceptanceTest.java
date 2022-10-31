@@ -13,11 +13,11 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
-import kitchenpos.ui.dto.MenuCreateRequest;
-import kitchenpos.ui.dto.MenuGroupResponse;
-import kitchenpos.ui.dto.MenuProductCreateRequest;
-import kitchenpos.ui.dto.MenuResponse;
-import kitchenpos.ui.dto.ProductResponse;
+import kitchenpos.dto.request.MenuCreateRequest;
+import kitchenpos.dto.request.MenuProductCreateRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
+import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.support.AcceptanceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

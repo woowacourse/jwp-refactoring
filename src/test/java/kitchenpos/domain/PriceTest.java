@@ -6,8 +6,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import kitchenpos.exception.CustomErrorCode;
 import kitchenpos.exception.DomainLogicException;
-import kitchenpos.domain.Price;
-import kitchenpos.domain.Quantity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;

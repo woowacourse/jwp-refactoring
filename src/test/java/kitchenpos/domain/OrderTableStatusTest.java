@@ -6,9 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import kitchenpos.exception.CustomErrorCode;
 import kitchenpos.exception.DomainLogicException;
-import kitchenpos.domain.Empty;
-import kitchenpos.domain.GuestNumber;
-import kitchenpos.domain.TableStatus;
 import org.junit.jupiter.api.Test;
 
 class OrderTableStatusTest {

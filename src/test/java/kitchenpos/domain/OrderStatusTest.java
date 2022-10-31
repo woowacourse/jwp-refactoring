@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import kitchenpos.exception.CustomErrorCode;
 import kitchenpos.exception.DomainLogicException;
-import kitchenpos.domain.OrderStatus;
 import org.junit.jupiter.api.Test;
 
 class OrderStatusTest {

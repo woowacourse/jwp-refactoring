@@ -6,13 +6,13 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.request.OrderChangeStatusRequest;
+import kitchenpos.dto.request.OrderCreateRequest;
+import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.exception.CustomErrorCode;
 import kitchenpos.exception.NotFoundException;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.ui.dto.OrderChangeStatusRequest;
-import kitchenpos.ui.dto.OrderCreateRequest;
-import kitchenpos.ui.dto.OrderResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

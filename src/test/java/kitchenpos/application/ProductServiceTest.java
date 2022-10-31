@@ -6,9 +6,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import kitchenpos.application.ProductService;
+import kitchenpos.dto.request.ProductCreateRequest;
 import kitchenpos.repository.ProductRepository;
-import kitchenpos.ui.dto.ProductCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

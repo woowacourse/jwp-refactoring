@@ -9,15 +9,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.application.MenuService;
+import kitchenpos.domain.Product;
+import kitchenpos.dto.request.MenuCreateRequest;
+import kitchenpos.dto.request.MenuProductCreateRequest;
 import kitchenpos.exception.CustomErrorCode;
 import kitchenpos.exception.NotFoundException;
-import kitchenpos.domain.Product;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
-import kitchenpos.ui.dto.MenuCreateRequest;
-import kitchenpos.ui.dto.MenuProductCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

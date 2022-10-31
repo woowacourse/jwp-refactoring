@@ -8,9 +8,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import kitchenpos.domain.Product;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

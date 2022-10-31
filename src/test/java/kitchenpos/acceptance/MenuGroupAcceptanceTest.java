@@ -8,8 +8,8 @@ import static kitchenpos.support.SimpleRestAssured.toObjectList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import kitchenpos.ui.dto.MenuGroupCreateRequest;
-import kitchenpos.ui.dto.MenuGroupResponse;
+import kitchenpos.dto.request.MenuGroupCreateRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
 import kitchenpos.support.AcceptanceTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;

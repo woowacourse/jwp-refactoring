@@ -7,8 +7,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import kitchenpos.application.ProductService;
-import kitchenpos.ui.dto.ProductCreateRequest;
-import kitchenpos.ui.dto.ProductResponse;
+import kitchenpos.dto.request.ProductCreateRequest;
+import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.support.ControllerTest;
 import kitchenpos.support.SimpleMockMvc;
 import org.junit.jupiter.api.Test;

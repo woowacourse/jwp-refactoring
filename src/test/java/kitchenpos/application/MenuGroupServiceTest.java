@@ -5,9 +5,8 @@ import static kitchenpos.support.DomainFixture.인기_메뉴;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import kitchenpos.application.MenuGroupService;
+import kitchenpos.dto.request.MenuGroupCreateRequest;
 import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.ui.dto.MenuGroupCreateRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

@@ -1,4 +1,4 @@
-package kitchenpos.ui.dto;
+package kitchenpos.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;

@@ -1,12 +1,11 @@
 package kitchenpos.application;
 
-import kitchenpos.repository.MenuGroupRepository;
+import java.util.List;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.ui.dto.MenuGroupCreateRequest;
+import kitchenpos.dto.request.MenuGroupCreateRequest;
+import kitchenpos.repository.MenuGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

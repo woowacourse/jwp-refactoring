@@ -2,17 +2,17 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.exception.CustomErrorCode;
-import kitchenpos.exception.NotFoundException;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.Quantity;
+import kitchenpos.dto.request.MenuCreateRequest;
+import kitchenpos.dto.request.MenuProductCreateRequest;
+import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.exception.CustomErrorCode;
+import kitchenpos.exception.NotFoundException;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
-import kitchenpos.ui.dto.MenuCreateRequest;
-import kitchenpos.ui.dto.MenuProductCreateRequest;
-import kitchenpos.ui.dto.MenuResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

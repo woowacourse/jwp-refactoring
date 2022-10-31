@@ -9,9 +9,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.List;
 import kitchenpos.exception.CustomErrorCode;
 import kitchenpos.exception.DomainLogicException;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Price;
 import org.junit.jupiter.api.Test;
 
 class MenuTest {

@@ -2,16 +2,16 @@ package kitchenpos.support;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import kitchenpos.domain.Empty;
+import kitchenpos.domain.GuestNumber;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Name;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.Quantity;
-import kitchenpos.domain.Empty;
-import kitchenpos.domain.GuestNumber;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableStatus;
 
 public class DomainFixture {

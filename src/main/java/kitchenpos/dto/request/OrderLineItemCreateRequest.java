@@ -1,8 +1,8 @@
-package kitchenpos.ui.dto;
+package kitchenpos.dto.request;
 
 import javax.validation.constraints.NotNull;
-import kitchenpos.domain.Quantity;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.Quantity;
 
 public class OrderLineItemCreateRequest {
 
