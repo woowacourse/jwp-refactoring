@@ -21,11 +21,11 @@ public class ProductService {
     }
 
     @Transactional
-    public Product create(final CreateProductDto createProductDto) {
+    public ProductDto create(final CreateProductDto createProductDto) {
         String name = createProductDto.getName();
         BigDecimal price = createProductDto.getPrice();
         final Product product = new Product(name, price);
-        return productRepository.save(product);
+        return ProductDto.of(productRepository.save(product));
     }
 
     public List<ProductDto> list() {

@@ -24,7 +24,7 @@ class MenuGroupServiceTest {
     void create_메서드는_생성한_메뉴_그룹을_반환한다() {
         CreateMenuGroupDto menuGroup = new CreateMenuGroupDto("추천메뉴");
 
-        MenuGroup actual = menuGroupService.create(menuGroup);
+        MenuGroupDto actual = menuGroupService.create(menuGroup);
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
                 () -> assertThat(actual.getName()).isEqualTo("추천메뉴")

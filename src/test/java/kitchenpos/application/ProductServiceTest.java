@@ -32,7 +32,7 @@ class ProductServiceTest {
         void 생성한_상품을_반환한다() {
             CreateProductDto product = new CreateProductDto("강정치킨", BigDecimal.valueOf(1000));
 
-            Product actual = productService.create(product);
+            ProductDto actual = productService.create(product);
             assertAll(
                     () -> assertThat(actual.getId()).isNotNull(),
                     () -> assertThat(actual.getName()).isEqualTo("강정치킨"),
