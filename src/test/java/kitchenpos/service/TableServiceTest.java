@@ -7,6 +7,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderTableCreateRequest;
+import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.dto.OrderTableUpdateEmptyRequest;
 import kitchenpos.dto.OrderTableUpdateGuestsRequest;
 import kitchenpos.util.FakeOrderDao;
@@ -32,7 +33,7 @@ public class TableServiceTest {
         preprocessWhenCreate(new OrderTable(3, false));
         OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(3, false);
 
-        OrderTable orderTable = tableService.create(orderTableCreateRequest);
+        OrderTableResponse orderTable = tableService.create(orderTableCreateRequest);
 
         assertAll(
                 () -> assertThat(orderTable.getNumberOfGuests()).isEqualTo(3),
@@ -59,7 +60,7 @@ public class TableServiceTest {
     @Test
     void list() {
         preprocessWhenList(2);
-        List<OrderTable> orderTables = tableService.list();
+        List<OrderTableResponse> orderTables = tableService.list();
 
         assertThat(orderTables.size()).isEqualTo(2);
     }
@@ -71,7 +72,7 @@ public class TableServiceTest {
                         new Order(1L, OrderStatus.COMPLETION, LocalDateTime.now())));
         OrderTableUpdateEmptyRequest orderTableUpdateEmptyRequest = new OrderTableUpdateEmptyRequest(true);
 
-        OrderTable savedOrderTable = tableService.changeEmpty(1L, orderTableUpdateEmptyRequest);
+        OrderTableResponse savedOrderTable = tableService.changeEmpty(1L, orderTableUpdateEmptyRequest);
 
         assertAll(
                 () -> assertThat(savedOrderTable.getTableGroupId()).isNull(),
@@ -119,7 +120,7 @@ public class TableServiceTest {
         preprocessWhenCreate(new OrderTable(2L, null, 2, false));
         OrderTableUpdateGuestsRequest orderTableUpdateGuestsRequest = new OrderTableUpdateGuestsRequest(10);
 
-        OrderTable orderTable = tableService.changeNumberOfGuests(2L, orderTableUpdateGuestsRequest);
+        OrderTableResponse orderTable = tableService.changeNumberOfGuests(2L, orderTableUpdateGuestsRequest);
 
         assertThat(orderTable.getNumberOfGuests()).isEqualTo(10);
     }
