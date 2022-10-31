@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.application.request.TableGroupRequest;
 import kitchenpos.application.response.TableGroupResponse;
@@ -11,10 +10,10 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 @Transactional(readOnly = true)
@@ -33,26 +32,16 @@ public class TableGroupService {
     @Transactional
     public TableGroupResponse create(final TableGroupRequest request) {
         List<Long> orderTableIds = request.getOrderTableIds();
-        if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
-            throw new IllegalArgumentException("단체 테이블은 2 테이블 이상부터 가능합니다.");
-        }
         final List<OrderTable> savedOrderTables = getOrderTables(orderTableIds);
         return createTableGroup(savedOrderTables);
     }
 
     private List<OrderTable> getOrderTables(final List<Long> orderTableIds) {
-        final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
-        if (orderTableIds.size() != savedOrderTables.size()) {
+        OrderTables orderTables = new OrderTables(orderTableDao.findAllByIdIn(orderTableIds));
+        if (!orderTables.matchSize(orderTableIds.size())) {
             throw new IllegalArgumentException("주문 정보가 실제 주문한 정보와 일치하지 않습니다.");
         }
-        savedOrderTables.forEach(this::validateOrderTable);
-        return savedOrderTables;
-    }
-
-    private void validateOrderTable(final OrderTable savedOrderTable) {
-        if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException("이미 예약된 테이블이거나 주문 테이블이 비어있지 않습니다.");
-        }
+        return orderTables.getOrderTables();
     }
 
     private TableGroupResponse createTableGroup(final List<OrderTable> orderTables) {

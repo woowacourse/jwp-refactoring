@@ -64,4 +64,10 @@ public class OrderTable {
         }
         this.empty = empty;
     }
+
+    public void validateOrderTable() {
+        if (this.getTableGroupId() != null) {
+            throw new IllegalArgumentException("이미 예약된 테이블이거나 주문 테이블이 비어있지 않습니다.");
+        }
+    }
 }

@@ -57,15 +57,6 @@ class TableGroupServiceTest {
     }
 
     @Test
-    void createThrowExceptionNotCollectOrderTableInfo() {
-        TableGroupRequest request = new TableGroupRequest(List.of(0L, 1L));
-
-        assertThatThrownBy(() -> tableGroupService.create(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("주문 정보가 실제 주문한 정보와 일치하지 않습니다.");
-    }
-
-    @Test
     void createThrowExceptionAlreadyReservationOrderTable() {
         Long tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()))
                 .getId();
