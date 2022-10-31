@@ -17,6 +17,7 @@ import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
 
 @Service
+@Transactional(readOnly = true)
 public class MenuService {
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;

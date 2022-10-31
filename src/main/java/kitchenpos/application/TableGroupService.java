@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +16,7 @@ import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
 
 @Service
+@Transactional(readOnly = true)
 public class TableGroupService {
 
     private static final List<String> ORDER_STATUS_FOR_CANT_UNGROUP = new ArrayList<String>() {{

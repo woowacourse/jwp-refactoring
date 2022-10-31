@@ -15,6 +15,7 @@ import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 
 @Service
+@Transactional(readOnly = true)
 public class TableService {
 
     private static final List<String> ORDER_STATUS_FOR_CANT_CHANGE_EMPTY = new ArrayList<String>() {{

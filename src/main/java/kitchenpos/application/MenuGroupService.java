@@ -10,6 +10,7 @@ import kitchenpos.dto.request.menuGroup.CreateMenuGroupRequest;
 import kitchenpos.repository.MenuGroupRepository;
 
 @Service
+@Transactional(readOnly = true)
 public class MenuGroupService {
     private final MenuGroupRepository menuGroupRepository;
 
