@@ -33,7 +33,7 @@ public class OrderService {
         final OrderTable orderTable = findOrderTableById(request);
         final Order order = request.toOrder(LocalDateTime.now());
         orderTable.addOrder(order);
-        orderTableRepository.flush(); // TODO: 2022/10/28 고민중..
+        orderTableRepository.flush();
         return OrderResponse.from(order);
     }
 
