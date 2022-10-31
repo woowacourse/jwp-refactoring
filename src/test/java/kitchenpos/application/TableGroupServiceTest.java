@@ -33,13 +33,13 @@ class TableGroupServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        orderTable1 = tableRepository.save(new OrderTable(null, GUEST_NUMBER, true, null));
+        orderTable1 = tableRepository.save(new OrderTable(GUEST_NUMBER, true));
     }
 
     @DisplayName("TableGroup을 생성할 수 있다.")
     @Test
     void create() {
-        OrderTable orderTable2 = tableRepository.save(new OrderTable(null, GUEST_NUMBER, true, null));
+        OrderTable orderTable2 = tableRepository.save(new OrderTable(GUEST_NUMBER, true));
 
         TableGroupDto tableGroupDto = tableGroupService.create(
                 new TableGroupDto(List.of(orderTable1.getId(), orderTable2.getId())));
@@ -75,7 +75,7 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("empty가 아닌 OrderTable로 TableGroup을 생성하려고 하면 예외를 발생시킨다.")
     @Test
     void create_Exception_NotEmptyOrderTable() {
-        OrderTable orderTable2 = tableRepository.save(new OrderTable(null, GUEST_NUMBER, false, null));
+        OrderTable orderTable2 = tableRepository.save(new OrderTable(GUEST_NUMBER, false));
 
         assertThatThrownBy(
                 () -> tableGroupService.create(new TableGroupDto(List.of(orderTable1.getId(), orderTable2.getId()))))
@@ -86,7 +86,7 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void create_Exception_AlreadyGroupedOrderTable() {
         TableGroup tableGroup = tableGroupRepository.save(new TableGroup());
-        OrderTable orderTable2 = tableRepository.save(new OrderTable(null, GUEST_NUMBER, true, tableGroup));
+        OrderTable orderTable2 = tableRepository.save(new OrderTable(GUEST_NUMBER, true, tableGroup));
 
         assertThatThrownBy(
                 () -> tableGroupService.create(new TableGroupDto(List.of(orderTable1.getId(), orderTable2.getId()))))
@@ -96,7 +96,7 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("TableGroup을 그룹 해제할 수 있다.")
     @Test
     void ungroup() {
-        OrderTable orderTable2 = tableRepository.save(new OrderTable(null, GUEST_NUMBER, true, null));
+        OrderTable orderTable2 = tableRepository.save(new OrderTable(GUEST_NUMBER, true));
         TableGroupDto tableGroupDto = tableGroupService
                 .create(new TableGroupDto(List.of(orderTable1.getId(), orderTable2.getId())));
 
@@ -116,7 +116,7 @@ class TableGroupServiceTest extends ServiceTest {
     @ParameterizedTest
     @ValueSource(strings = {"MEAL", "COOKING"})
     void ungroup_Exception_NotCompleteOrderTableStatus(String orderStatus) {
-        OrderTable orderOrderTable2 = tableRepository.save(new OrderTable(null, GUEST_NUMBER, true, null));
+        OrderTable orderOrderTable2 = tableRepository.save(new OrderTable(GUEST_NUMBER, true, null));
         TableGroupDto tableGroupDto = tableGroupService.create(
                 new TableGroupDto(List.of(orderTable1.getId(), orderOrderTable2.getId())));
         orderRepository.save(new Order(orderOrderTable2, OrderStatus.from(orderStatus), Collections.emptyList()));

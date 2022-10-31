@@ -41,8 +41,8 @@ class OrderServiceTest extends ServiceTest {
     void setUp() {
         Product product = productRepository.save(Product.of("상품1", new BigDecimal(2500)));
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
-        MenuProduct menuProduct1 = new MenuProduct(null, product, Quantity.from(2L));
-        MenuProduct menuProduct2 = new MenuProduct(null, product, Quantity.from(3L));
+        MenuProduct menuProduct1 = new MenuProduct(product, Quantity.from(2L));
+        MenuProduct menuProduct2 = new MenuProduct(product, Quantity.from(3L));
         Menu menu1 = menuRepository.save(Menu.of("메뉴1", Price.from(new BigDecimal(5000)), menuGroup,
                 List.of(menuProduct1)));
         Menu menu2 = menuRepository
@@ -55,7 +55,7 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("Order를 등록할 수 있다.")
     @Test
     void create() {
-        OrderTable orderTable = tableRepository.save(new OrderTable(null, GUEST_NUMBER, false, null));
+        OrderTable orderTable = tableRepository.save(new OrderTable(GUEST_NUMBER, false));
         OrderRequest orderRequest = new OrderRequest(orderTable.getId(), null,
                 List.of(orderLineItemDto1, orderLineItemDto2));
 
@@ -67,7 +67,7 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("Menu 없이 Order를 등록하려고 하면 예외를 발생시킨다.")
     @Test
     void create_Exception_EmptyMenu() {
-        OrderTable emptyOrderTable = tableRepository.save(new OrderTable(null, GUEST_NUMBER, true, null));
+        OrderTable emptyOrderTable = tableRepository.save(new OrderTable(GUEST_NUMBER, true));
         OrderRequest orderRequest = new OrderRequest(emptyOrderTable.getId(), null, Collections.emptyList());
 
         assertThatThrownBy(() -> orderService.create(orderRequest))
@@ -78,7 +78,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void create_Exception_NotFoundMenu() {
         OrderLineItemDto notFoundOrderLineItem = new OrderLineItemDto(1000L, 2L);
-        OrderTable emptyOrderTable = tableRepository.save(new OrderTable(null, GUEST_NUMBER, false, null));
+        OrderTable emptyOrderTable = tableRepository.save(new OrderTable(GUEST_NUMBER, false));
         OrderRequest orderRequest = new OrderRequest(emptyOrderTable.getId(), null, List.of(notFoundOrderLineItem));
 
         assertThatThrownBy(() -> orderService.create(orderRequest))
@@ -89,7 +89,7 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("empty인 Table에 해당하는 Order를 등록하려고 하면 예외를 발생시킨다.")
     @Test
     void create_Exception_EmptyTable() {
-        OrderTable emptyOrderTable = tableRepository.save(new OrderTable(null, GUEST_NUMBER, true, null));
+        OrderTable emptyOrderTable = tableRepository.save(new OrderTable(GUEST_NUMBER, true));
         OrderRequest orderRequest = new OrderRequest(emptyOrderTable.getId(), null,
                 List.of(orderLineItemDto1, orderLineItemDto2));
 
@@ -100,7 +100,7 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 상태를 변경할 수 있다.")
     @Test
     void changeOrderStatus() {
-        OrderTable orderTable = tableRepository.save(new OrderTable(null, GUEST_NUMBER, false, null));
+        OrderTable orderTable = tableRepository.save(new OrderTable(GUEST_NUMBER, false));
         OrderResponse order = orderService.create(
                 new OrderRequest(orderTable.getId(), null, List.of(orderLineItemDto1, orderLineItemDto2)));
 
@@ -114,7 +114,7 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 상태가 COMPLETION인 주문의 상태를 변경하려고 하면 예외를 발생시킨다.")
     @Test
     void changeOrderStatus_Exception_AlreadyCompletionOrder() {
-        OrderTable orderTable = tableRepository.save(new OrderTable(null, GUEST_NUMBER, false, null));
+        OrderTable orderTable = tableRepository.save(new OrderTable(GUEST_NUMBER, false));
         Order order = orderRepository.save(
                 new Order(orderTable, COMPLETION, new ArrayList<>()));
 

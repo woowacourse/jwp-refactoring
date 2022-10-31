@@ -25,7 +25,7 @@ public class TableService {
     @Transactional
     public TableDto create(TableDto tableDto) {
         OrderTable orderTable =
-                new OrderTable(null, GuestNumber.from(tableDto.getNumberOfGuests()), tableDto.isEmpty(), null);
+                new OrderTable(GuestNumber.from(tableDto.getNumberOfGuests()), tableDto.isEmpty(), null);
         OrderTable savedOrderTable = tableRepository.save(orderTable);
         return new TableDto(savedOrderTable);
     }

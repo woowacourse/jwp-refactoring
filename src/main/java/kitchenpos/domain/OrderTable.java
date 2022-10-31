@@ -39,11 +39,14 @@ public class OrderTable {
     protected OrderTable() {
     }
 
-    public OrderTable(Long id, GuestNumber guestNumber, boolean empty, TableGroup tableGroup) {
-        this.id = id;
+    public OrderTable(GuestNumber guestNumber, boolean empty, TableGroup tableGroup) {
         this.guestNumber = guestNumber;
         this.empty = empty;
         this.tableGroup = tableGroup;
+    }
+
+    public OrderTable(GuestNumber guestNumber, boolean empty) {
+        this(guestNumber, empty, null);
     }
 
     public Long getId() {

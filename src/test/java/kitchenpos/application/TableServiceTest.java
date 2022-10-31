@@ -64,7 +64,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeEmpty_Exception_GroupedTable() {
         TableGroup tableGroup = tableGroupRepository.save(new TableGroup());
-        OrderTable orderTable = tableRepository.save(new OrderTable(null, GUEST_NUMBER, true, tableGroup));
+        OrderTable orderTable = tableRepository.save(new OrderTable(GUEST_NUMBER, true, tableGroup));
 
         assertThatThrownBy(
                 () -> tableService.changeEmpty(orderTable.getId(), new TableDto(tableGroup.getId(), 3, true)))
@@ -76,7 +76,7 @@ class TableServiceTest extends ServiceTest {
     @ParameterizedTest
     @ValueSource(strings = {"MEAL", "COOKING"})
     void changeEmpty_Exception_NotCompleteOrderStatus(String orderStatus) {
-        OrderTable orderTable = tableRepository.save(new OrderTable(null, GUEST_NUMBER, false, null));
+        OrderTable orderTable = tableRepository.save(new OrderTable(GUEST_NUMBER, false));
         orderRepository.save(new Order(orderTable, OrderStatus.from(orderStatus), Collections.emptyList()));
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), new TableDto(null, 3, true)))
@@ -87,7 +87,7 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("Table의 numberOfGuests 수를 변경할 수 있다.")
     @Test
     void changeNumberOfGuests() {
-        OrderTable orderTable = tableRepository.save(new OrderTable(null, GUEST_NUMBER, false, null));
+        OrderTable orderTable = tableRepository.save(new OrderTable(GUEST_NUMBER, false));
 
         tableService.changeNumberOfGuests(orderTable.getId(), new TableDto(null, 200, false));
 
@@ -101,7 +101,7 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("0보다 작은 numberOfGuests로 Table을 변경하려고 하면 예외를 발생시킨다.")
     @Test
     void changeNumberOfGuests_Exception_InvalidNumberOfGuests() {
-        OrderTable orderTable = tableRepository.save(new OrderTable(null, GUEST_NUMBER, false, null));
+        OrderTable orderTable = tableRepository.save(new OrderTable(GUEST_NUMBER, false));
         int invalidNumberOfGuests = -1;
 
         assertThatThrownBy(
@@ -113,7 +113,7 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("empty 상태인 Table의 numberOfGuests 수를 변경하려고 하면 예외를 발생시킨다.")
     @Test
     void changeNumberOfGuests_Exception_EmptyOrderTable() {
-        OrderTable orderTable = tableRepository.save(new OrderTable(null, GUEST_NUMBER, true, null));
+        OrderTable orderTable = tableRepository.save(new OrderTable(GUEST_NUMBER, true));
 
         assertThatThrownBy(
                 () -> tableService.changeNumberOfGuests(orderTable.getId(), new TableDto(null, 10, true)))

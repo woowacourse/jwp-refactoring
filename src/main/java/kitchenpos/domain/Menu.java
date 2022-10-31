@@ -29,7 +29,7 @@ public class Menu {
     @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
     private List<MenuProduct> products;
 
-    public Menu() {
+    protected Menu() {
     }
 
     private Menu(String name, Price price, MenuGroup menuGroup, List<MenuProduct> products) {
