@@ -34,11 +34,11 @@ public class MenuService {
     public MenuResponse create(final MenuCreateRequest request) {
         validateMenuGroup(request);
 
-        final Menu menu = menuRepository.save(new Menu(
+        final Menu menu = new Menu(
             request.getName(), request.getPrice(), request.getMenuGroupId(), new MenuProducts(request.getMenuProducts()
             .stream()
             .map(this::createMenuProduct)
-            .collect(Collectors.toList()))));
+            .collect(Collectors.toList())));
 
         return MenuResponse.createResponse(menuRepository.save(menu));
     }
