@@ -1,80 +1,90 @@
 package kitchenpos.application;
 
 import static java.lang.Integer.MAX_VALUE;
+import static kitchenpos.fixture.DomainFixture.createMenuGroup;
+import static kitchenpos.fixture.DomainFixture.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.sun.tools.javac.util.List;
 import java.math.BigDecimal;
-import kitchenpos.dao.MenuDao;
+import java.util.List;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Product;
+import kitchenpos.exception.MenuPriceException;
+import kitchenpos.exception.NotFoundMenuGroupException;
+import kitchenpos.exception.NotFoundProductException;
+import kitchenpos.exception.PriceException;
+import kitchenpos.ui.dto.MenuProductDto;
+import kitchenpos.ui.dto.request.MenuCreateRequest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class MenuServiceTest {
+class MenuServiceTest extends ServiceTest {
 
-    @Autowired
-    private MenuService menuService;
+    private MenuGroup menuGroup;
+    private Product product;
 
-    @Autowired
-    private MenuDao menuDao;
+    @BeforeEach
+    void setUp() {
+        menuGroup = menuGroupDao.save(createMenuGroup());
+        product = productDao.save(createProduct());
+    }
 
     @Test
     void 메뉴를_생성한다() {
-        Menu menu = createMenu(1L, 0, List.nil());
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("", BigDecimal.valueOf(0), menuGroup.getId(),
+                List.of(new MenuProductDto(product.getId(), 1)));
 
-        Menu savedMenu = menuService.create(menu);
+        Menu savedMenu = menuService.create(menuCreateRequest);
 
         assertThat(menuDao.findById(savedMenu.getId())).isPresent();
     }
 
     @Test
-    void 메뉴를_생성할때_price_예외를_발생한다() {
-        Menu menu = createMenu(1L, -1, List.nil());
+    void 메뉴를_생성할때_존재하지_않는_productId면_예외를_발생한다() {
+        MenuCreateRequest menuCreateRequest
+                = new MenuCreateRequest("", BigDecimal.valueOf(-1), menuGroup.getId(),
+                List.of(new MenuProductDto(0L, 1)));
 
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
+                .isInstanceOf(NotFoundProductException.class);
+    }
+
+    @Test
+    void 메뉴를_생성할때_price_예외를_발생한다() {
+        MenuCreateRequest menuCreateRequest
+                = new MenuCreateRequest("", BigDecimal.valueOf(-1), menuGroup.getId(), List.of());
+
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
+                .isInstanceOf(PriceException.class);
     }
 
     @Test
     void 메뉴를_생성할때_메뉴그룹아이디_예외를_발생한다() {
-        Menu menu = createMenu(0L, 0, List.nil());
+        MenuCreateRequest menuCreateRequest
+                = new MenuCreateRequest("", BigDecimal.valueOf(0), 0L, List.of());
 
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
+                .isInstanceOf(NotFoundMenuGroupException.class);
     }
 
     @Test
     void 메뉴를_생성할때_product총가격보다_menu가격이높으면_예외를_발생한다() {
-        Menu menu = createMenu(1L, MAX_VALUE, List.nil());
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("", BigDecimal.valueOf(MAX_VALUE),
+                menuGroup.getId(),
+                List.of(new MenuProductDto(product.getId(), 1)));
 
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(1L);
-        menu.setMenuProducts(List.of(menuProduct));
-
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
+                .isInstanceOf(MenuPriceException.class);
     }
 
     @Test
     void 메뉴_리스트를_반환한다() {
-        Menu menu = createMenu(2L, 0, List.nil());
-
+        Menu menu = new Menu("", BigDecimal.valueOf(0), menuGroup.getId());
         int beforeSize = menuService.list().size();
-        menuService.create(menu);
+        menuDao.save(menu);
 
         assertThat(menuService.list().size()).isEqualTo(beforeSize + 1);
-    }
-
-    private Menu createMenu(Long menuGroupId, int price, List<MenuProduct> products) {
-        Menu menu = new Menu();
-        menu.setName("test");
-        menu.setMenuGroupId(menuGroupId);
-        menu.setPrice(BigDecimal.valueOf(price));
-        menu.setMenuProducts(products);
-        return menu;
     }
 }
