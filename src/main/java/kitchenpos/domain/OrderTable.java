@@ -1,18 +1,58 @@
 package kitchenpos.domain;
 
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "order_table")
 public class OrderTable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long tableGroupId;
-    private int numberOfGuests;
+
+    @ManyToOne
+    @JoinColumn(name = "table_group_id")
+    private TableGroup tableGroup;
+
+    @Embedded
+    private NumberOfGuests numberOfGuests;
+
     private boolean empty;
 
-    public OrderTable() {
-        this(null, 0, false);
+    protected OrderTable() {
     }
 
-    public OrderTable(Long tableGroupId, int numberOfGuests, boolean empty) {
-        this.tableGroupId = tableGroupId;
+    public OrderTable(final TableGroup tableGroup, final NumberOfGuests numberOfGuests, final boolean empty) {
+        this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
+    public boolean isEmpty() {
+        return empty;
+    }
+
+    public boolean hasTableGroup() {
+        return tableGroup != null && tableGroup.getId() != null;
+    }
+
+    public void ungroup() {
+        removeTableGroup();
+        updateEmptyStatus(false);
+    }
+
+    private void removeTableGroup() {
+        this.tableGroup = null;
+    }
+
+    public void updateEmptyStatus(final boolean empty) {
         this.empty = empty;
     }
 
@@ -20,31 +60,19 @@ public class OrderTable {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public Long getTableGroupId() {
-        return tableGroupId;
-    }
-
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-    }
-
-    public int getNumberOfGuests() {
-        return numberOfGuests;
-    }
-
-    public void setNumberOfGuests(final int numberOfGuests) {
+    public void updateNumberOfGuests(final NumberOfGuests numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public boolean isEmpty() {
-        return empty;
+    public TableGroup getTableGroup() {
+        return tableGroup;
     }
 
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
+    public void updateTableGroup(final TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+    }
+
+    public int getNumberOfGuests() {
+        return numberOfGuests.getValue();
     }
 }

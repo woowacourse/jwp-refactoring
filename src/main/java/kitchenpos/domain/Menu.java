@@ -3,66 +3,80 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import kitchenpos.exceptions.InvalidMenuPriceException;
 
+@Entity
+@Table(name = "menu")
 public class Menu {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
-    private BigDecimal price;
+
+    @Embedded
+    private Price price;
+
+    @Column(name = "menu_group_id")
     private Long menuGroupId;
-    private List<MenuProduct> menuProducts;
 
-    public Menu() {
-        this(null, null, null);
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
+    private List<MenuProduct> menuProducts = new ArrayList<>();
+
+    protected Menu() {
     }
 
-    public Menu(String name, BigDecimal price, Long menuGroupId) {
-        this(name, price, menuGroupId, new ArrayList<>());
-    }
-
-    public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    public Menu(String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        injectMenu(menuProducts);
+        validatePriceLessThanMenuProductsPrice(price);
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
+    }
+
+    private void injectMenu(final List<MenuProduct> menuProducts) {
+        for (MenuProduct menuProduct : menuProducts) {
+            menuProduct.updateMenu(this);
+        }
+    }
+
+    private void validatePriceLessThanMenuProductsPrice(final Price price) {
+        final Price menuProductsPrice = menuProducts.stream()
+                .map(MenuProduct::calculateProductTotalPrice)
+                .reduce(new Price(BigDecimal.ZERO), Price::add);
+        if (price.isGreaterThan(menuProductsPrice)) {
+            throw new InvalidMenuPriceException();
+        }
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
-    }
-
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
     }
 
     public Long getMenuGroupId() {
         return menuGroupId;
     }
 
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
-    }
-
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
-    }
-
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
     }
 }

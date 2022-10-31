@@ -1,25 +1,54 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import kitchenpos.exceptions.NotEnoughSizeOfOrderTableException;
+import org.springframework.util.CollectionUtils;
 
+@Entity
+@Table(name = "table_group")
 public class TableGroup {
+
+    private static final int MINIMUM_ORDER_TABLES_SIZE = 2;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "created_date")
     private LocalDateTime createdDate;
+
+    @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.PERSIST)
     private List<OrderTable> orderTables;
 
-    public TableGroup() {
-        this(null);
+    protected TableGroup() {
     }
 
-    public TableGroup(LocalDateTime createdDate) {
-        this(createdDate, new ArrayList<>());
-    }
-
-    public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
+    public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+        validateOrderTables(orderTables);
+        injectTableGroup(orderTables);
         this.createdDate = createdDate;
         this.orderTables = orderTables;
+    }
+
+    private void validateOrderTables(final List<OrderTable> orderTables) {
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < MINIMUM_ORDER_TABLES_SIZE) {
+            throw new NotEnoughSizeOfOrderTableException(MINIMUM_ORDER_TABLES_SIZE);
+        }
+    }
+
+    private void injectTableGroup(final List<OrderTable> orderTables) {
+        for (OrderTable orderTable : orderTables) {
+            orderTable.updateTableGroup(this);
+        }
     }
 
     public Long getId() {

@@ -1,6 +1,7 @@
 package kitchenpos.support;
 
 import java.math.BigDecimal;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 
 public enum ProductFixture {
@@ -18,6 +19,6 @@ public enum ProductFixture {
     }
 
     public Product 생성() {
-        return new Product(this.name, new BigDecimal(this.price));
+        return new Product(this.name, new Price(new BigDecimal(this.price)));
     }
 }

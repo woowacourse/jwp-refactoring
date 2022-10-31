@@ -1,6 +1,7 @@
 package kitchenpos.support;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -16,7 +17,7 @@ public enum TableGroupFixture {
     }
 
     public TableGroup 생성() {
-        return new TableGroup(this.localDateTime);
+        return new TableGroup(this.localDateTime, new ArrayList<>());
     }
 
     public TableGroup 생성(final List<OrderTable> orderTables) {
