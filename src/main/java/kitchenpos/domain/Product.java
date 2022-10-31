@@ -1,31 +1,26 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Embedded;
 
 public class Product {
 
     @Id
     private final Long id;
     private final String name;
-    private final BigDecimal price;
 
-    public static Product of(final String name, final BigDecimal price) {
-        return new Product(null, name, price);
-    }
+    @Embedded.Nullable
+    private final Price price;
 
-    private Product(final Long id, final String name, final BigDecimal price) {
+    private Product(final Long id, final String name, final Price price) {
         this.id = id;
         this.name = name;
-        this.price = getVerifiedPrice(price);
+        this.price = price;
     }
 
-    private BigDecimal getVerifiedPrice(final BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-        return price;
+    public static Product of(final String name, final BigDecimal price) {
+        return new Product(null, name, new Price(price));
     }
 
     public Long getId() {
@@ -37,6 +32,6 @@ public class Product {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getPrice();
     }
 }

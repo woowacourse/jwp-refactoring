@@ -13,13 +13,13 @@ public class MenuProduct {
     private final long quantity;
 
     @Transient
-    private BigDecimal price;
+    private Price price;
 
     public MenuProduct(final Long productId, final long quantity, final BigDecimal price) {
         this.seq = null;
         this.productId = productId;
         this.quantity = quantity;
-        this.price = price;
+        this.price = new Price(price);
     }
 
     @PersistenceCreator
@@ -30,7 +30,7 @@ public class MenuProduct {
     }
 
     public BigDecimal calculateAmount() {
-        return price.multiply(BigDecimal.valueOf(quantity));
+        return price.multiply(quantity);
     }
 
     public Long getSeq() {
