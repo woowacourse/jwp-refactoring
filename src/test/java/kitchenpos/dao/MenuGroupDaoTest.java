@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
+import java.util.Optional;
 import kitchenpos.common.annotation.SpringTestWithData;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
@@ -39,5 +40,16 @@ class MenuGroupDaoTest {
                 () -> assertThat(menuGroups.size()).isEqualTo(1),
                 () -> assertThat(menuGroups.get(0).getId()).isEqualTo(menuGroup.getId())
         );
+    }
+
+    @DisplayName("특정 MenuGroup 목록을 가져온다.")
+    @Test
+    void getMenuGroup() {
+        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("menuGroupName"));
+
+        MenuGroup actual = menuGroupDao.findById(menuGroup.getId())
+                .get();
+
+        assertThat(actual.getId()).isEqualTo(menuGroup.getId());
     }
 }
