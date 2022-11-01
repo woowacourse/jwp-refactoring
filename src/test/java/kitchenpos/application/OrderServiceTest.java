@@ -19,7 +19,6 @@ import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -31,13 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 class OrderServiceTest extends ServiceTest {
 
     @Autowired
-    private OrderService orderService;
-
-    @Autowired
     private OrderRepository orderRepository;
-
-    @Autowired
-    private OrderTableRepository orderTableRepository;
 
     private OrderTableResponse savedOrderTable;
     private MenuGroup savedMenuGroup;
@@ -187,9 +180,13 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderStatusIsCompletion() {
             // given
-            OrderTable orderTable = orderTableRepository.save(new OrderTable(10, false));
-            Order completionOrder = new Order(orderTable, List.of(createdOrderLineItem));
+            OrderTableResponse orderTable = saveOrderTable(10, false);
+            Order completionOrder = new Order(
+                    new OrderTable(orderTable.getId(), null, 10, false),
+                    List.of(createdOrderLineItem)
+            );
             completionOrder.changeOrderStatus(OrderStatus.COMPLETION);
+
             Order savedOrder = orderRepository.save(completionOrder);
 
             OrderStatusUpdateRequest request = new OrderStatusUpdateRequest(OrderStatus.MEAL);

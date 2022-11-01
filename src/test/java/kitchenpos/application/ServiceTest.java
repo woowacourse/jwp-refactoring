@@ -7,13 +7,17 @@ import java.util.stream.Collectors;
 import kitchenpos.DatabaseCleaner;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.dto.request.MenuGroupRequest;
 import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.MenuRequest;
+import kitchenpos.dto.request.OrderLineItemRequest;
+import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.request.ProductRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
 import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.dto.response.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,19 +28,25 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class ServiceTest {
 
     @Autowired
+    protected MenuGroupService menuGroupService;
+
+    @Autowired
+    protected MenuService menuService;
+
+    @Autowired
+    protected ProductService productService;
+
+    @Autowired
+    protected OrderService orderService;
+
+    @Autowired
+    protected TableService tableService;
+
+    @Autowired
+    protected TableGroupService tableGroupService;
+
+    @Autowired
     private DatabaseCleaner databaseCleaner;
-
-    @Autowired
-    private MenuGroupService menuGroupService;
-
-    @Autowired
-    private MenuService menuService;
-
-    @Autowired
-    private ProductService productService;
-
-    @Autowired
-    private TableService tableService;
 
     @BeforeEach
     void cleanTables() throws SQLException {
@@ -63,6 +73,15 @@ public class ServiceTest {
         );
 
         return menuService.create(menu);
+    }
+
+    protected OrderResponse saveOrder(final Long orderTableId, List<OrderLineItem> orderLineItems) {
+        List<OrderLineItemRequest> orderLineItemRequests = orderLineItems.stream()
+                .map(orderLineItem -> new OrderLineItemRequest(orderLineItem.getMenuId(), orderLineItem.getQuantity()))
+                .collect(Collectors.toList());
+
+        OrderRequest request = new OrderRequest(orderTableId, orderLineItemRequests);
+        return orderService.create(request);
     }
 
     protected OrderTableResponse saveOrderTable(final int numberOfGuests, final boolean empty) {

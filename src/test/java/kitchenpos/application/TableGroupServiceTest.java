@@ -35,21 +35,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 class TableGroupServiceTest extends ServiceTest {
 
     @Autowired
-    private TableGroupService tableGroupService;
-
-    @Autowired
-    private MenuService menuService;
-
-    @Autowired
-    private MenuGroupService menuGroupService;
-
-    @Autowired
-    private TableService tableService;
-
-    @Autowired
-    private OrderService orderService;
-
-    @Autowired
     private TableGroupRepository tableGroupRepository;
 
     @Autowired

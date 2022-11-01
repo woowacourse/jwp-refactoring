@@ -6,22 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.menu.Product;
 import kitchenpos.dto.request.ProductRequest;
 import kitchenpos.dto.response.ProductResponse;
-import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 class ProductServiceTest extends ServiceTest {
-
-    @Autowired
-    private ProductService productService;
-
-    @Autowired
-    private ProductRepository productRepository;
 
     @DisplayName("create 메소드는 ")
     @Nested
@@ -66,8 +57,7 @@ class ProductServiceTest extends ServiceTest {
             // given
             int expected = 3;
             for (int i = 0; i < expected; i++) {
-                Product product = new Product("product " + i, new BigDecimal(10_000));
-                productRepository.save(product);
+                saveProduct("product " + i, 10_000);
             }
 
             // when

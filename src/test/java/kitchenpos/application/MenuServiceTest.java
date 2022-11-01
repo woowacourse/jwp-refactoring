@@ -17,12 +17,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 class MenuServiceTest extends ServiceTest {
-
-    @Autowired
-    private MenuService menuService;
 
     private MenuGroup savedMenuGroup;
     private Product savedProduct;

@@ -4,22 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.dto.request.MenuGroupRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
-import kitchenpos.repository.MenuGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 class MenuGroupServiceTest extends ServiceTest {
-
-    @Autowired
-    private MenuGroupService menuGroupService;
-
-    @Autowired
-    private MenuGroupRepository menuGroupRepository;
 
     @DisplayName("create 메소드는")
     @Nested
@@ -48,13 +39,9 @@ class MenuGroupServiceTest extends ServiceTest {
         @Test
         void Should_ReturnMenuGroupList() {
             // given
-            MenuGroup menuGroup1 = new MenuGroup("분식");
-            MenuGroup menuGroup2 = new MenuGroup("한식");
-            MenuGroup menuGroup3 = new MenuGroup("중식");
-
-            menuGroupRepository.save(menuGroup1);
-            menuGroupRepository.save(menuGroup2);
-            menuGroupRepository.save(menuGroup3);
+            menuGroupService.create(new MenuGroupRequest("분식"));
+            menuGroupService.create(new MenuGroupRequest("한식"));
+            menuGroupService.create(new MenuGroupRequest("중식"));
 
             // when
             List<MenuGroupResponse> actual = menuGroupService.list();
