@@ -88,8 +88,8 @@ class TableServiceTest extends ServiceTest {
     void 기존_테이블의_주문_상태가_완료_상태가_아니면_빈_테이블로_변경할_수_없다(OrderStatus orderStatus) {
         Product product = productRepository.save(new Product("상품", new BigDecimal(10000)));
         MenuProduct menuProduct = new MenuProduct(product, 1);
-        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
-        Menu menu = menuRepository.save(new Menu("메뉴1", new BigDecimal(10000), menuGroup, List.of(menuProduct)));
+        Long menuGroupId = menuGroupRepository.save(new MenuGroup("메뉴 그룹1")).getId();
+        Menu menu = menuRepository.save(new Menu("메뉴1", new BigDecimal(10000), menuGroupId, List.of(menuProduct)));
 
         OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 2);
 

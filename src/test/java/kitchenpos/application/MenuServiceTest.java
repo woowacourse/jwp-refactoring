@@ -38,12 +38,12 @@ class MenuServiceTest extends ServiceTest {
         Product product1 = productRepository.save(new Product("상품1", new BigDecimal(10000)));
         Product product2 = productRepository.save(new Product("상품2", new BigDecimal(20000)));
 
-        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
+        Long menuGroupId = menuGroupRepository.save(new MenuGroup("메뉴 그룹")).getId();
 
         MenuProductRequest menuProductRequest1 = new MenuProductRequest(product1.getId(), 2);
         MenuProductRequest menuProductRequest2 = new MenuProductRequest(product2.getId(), 1);
 
-        MenuRequest request = new MenuRequest("메뉴", new BigDecimal(35000), menuGroup.getId(),
+        MenuRequest request = new MenuRequest("메뉴", new BigDecimal(35000), menuGroupId,
                 List.of(menuProductRequest1, menuProductRequest2));
 
         MenuResponse actual = menuService.create(request);
@@ -51,10 +51,17 @@ class MenuServiceTest extends ServiceTest {
         assertAll(() -> {
             assertThat(actual.getId()).isNotNull();
             assertThat(actual.getName()).isEqualTo("메뉴");
-            assertThat(actual.getPrice().compareTo(new BigDecimal(35000))).isEqualTo(0);
-            assertThat(actual.getMenuGroupId()).isEqualTo(menuGroup.getId());
+            assertThat(actual.getPrice().compareTo(new BigDecimal(35000))).isZero();
+            assertThat(actual.getMenuGroupId()).isEqualTo(menuGroupId);
             assertThat(actual.getMenuProducts()).hasSize(2);
         });
+    }
+
+    @Test
+    void 존재하지_않는_메뉴_그룹으로_메뉴를_생성할_수_없다() {
+        MenuRequest request = new MenuRequest("메뉴", new BigDecimal(0), 999L, new ArrayList<>());
+
+        assertThatThrownBy(() -> menuService.create(request)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -87,15 +94,15 @@ class MenuServiceTest extends ServiceTest {
         Product product1 = productRepository.save(new Product("상품1", new BigDecimal(10000)));
         Product product2 = productRepository.save(new Product("상품2", new BigDecimal(20000)));
 
-        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
+        Long menuGroupId = menuGroupRepository.save(new MenuGroup("메뉴 그룹")).getId();
 
         MenuProduct menuProduct1 = new MenuProduct(product1, 2);
         MenuProduct menuProduct2 = new MenuProduct(product2, 1);
         MenuProduct menuProduct3 = new MenuProduct(product2, 1);
         MenuProduct menuProduct4 = new MenuProduct(product2, 1);
 
-        Menu menu1 = new Menu("메뉴1", new BigDecimal(35000), menuGroup, List.of(menuProduct1, menuProduct2));
-        Menu menu2 = new Menu("메뉴2", new BigDecimal(38000), menuGroup, List.of(menuProduct3, menuProduct4));
+        Menu menu1 = new Menu("메뉴1", new BigDecimal(35000), menuGroupId, List.of(menuProduct1, menuProduct2));
+        Menu menu2 = new Menu("메뉴2", new BigDecimal(38000), menuGroupId, List.of(menuProduct3, menuProduct4));
 
         menuRepository.save(menu1);
         menuRepository.save(menu2);

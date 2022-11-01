@@ -30,7 +30,7 @@ class ProductServiceTest extends ServiceTest {
         assertAll(() -> {
             assertThat(actual.getId()).isNotNull();
             assertThat(actual.getName()).isEqualTo("제품1");
-            assertThat(actual.getPrice().compareTo(new BigDecimal(10000))).isEqualTo(0);
+            assertThat(actual.getPrice().compareTo(new BigDecimal(10000))).isZero();
         });
     }
 

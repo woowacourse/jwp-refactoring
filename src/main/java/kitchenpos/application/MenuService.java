@@ -3,7 +3,6 @@ package kitchenpos.application;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuGroupRepository;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuRepository;
@@ -30,14 +29,19 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuRequest request) {
-        MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
-                .orElseThrow(IllegalArgumentException::new);
+        validateExistMenuGroupId(request.getMenuGroupId());
+
         List<MenuProduct> menuProducts = request.getMenuProducts().stream()
                 .map(this::getMenuProduct)
                 .collect(Collectors.toList());
-
-        Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup, menuProducts);
+        Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(), menuProducts);
         return new MenuResponse(menuRepository.save(menu));
+    }
+
+    private void validateExistMenuGroupId(final Long menuGroupId) {
+        if (!menuGroupRepository.existsById(menuGroupId)) {
+            throw new IllegalArgumentException("존재하지 않는 메뉴 그룹입니다.");
+        }
     }
 
     private MenuProduct getMenuProduct(MenuProductRequest request) {

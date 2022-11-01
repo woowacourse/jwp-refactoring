@@ -16,7 +16,7 @@ public class MenuResponse {
     }
 
     public MenuResponse(final Menu menu) {
-        this(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroup().getId(), getMenuProductResponses(menu));
+        this(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), getMenuProductResponses(menu));
     }
 
     private static List<MenuProductResponse> getMenuProductResponses(final Menu menu) {

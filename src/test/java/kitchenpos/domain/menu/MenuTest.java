@@ -12,15 +12,14 @@ import org.junit.jupiter.api.Test;
 class MenuTest {
     @Test
     void 메뉴를_생성할_수_있다() {
-        MenuGroup menuGroup = new MenuGroup("메뉴그룹");
         MenuProduct menuProduct = new MenuProduct(new Product("상품1", new BigDecimal(1000)), 1);
-        assertDoesNotThrow(() -> new Menu("메뉴1", new BigDecimal(1000), menuGroup, List.of(menuProduct)));
+        assertDoesNotThrow(() -> new Menu("메뉴1", new BigDecimal(1000), 1L, List.of(menuProduct)));
     }
 
     @Test
     void 메뉴의_가격은_음수일_수_없다() {
         MenuGroup menuGroup = new MenuGroup("메뉴그룹");
-        assertThatThrownBy(() -> new Menu("메뉴1", new BigDecimal(-1), menuGroup, new ArrayList<>()));
+        assertThatThrownBy(() -> new Menu("메뉴1", new BigDecimal(-1), 1L, new ArrayList<>()));
     }
 
     @Test
@@ -28,6 +27,6 @@ class MenuTest {
         MenuGroup menuGroup = new MenuGroup("메뉴그룹");
         MenuProduct menuProduct1 = new MenuProduct(new Product("상품1", new BigDecimal(1000)), 1);
         MenuProduct menuProduct2 = new MenuProduct(new Product("상품1", new BigDecimal(1000)), 2);
-        assertThatThrownBy(() -> new Menu("메뉴1", new BigDecimal(3001), menuGroup, List.of(menuProduct1, menuProduct2)));
+        assertThatThrownBy(() -> new Menu("메뉴1", new BigDecimal(3001), 1L, List.of(menuProduct1, menuProduct2)));
     }
 }

@@ -58,11 +58,11 @@ class OrderServiceTest extends ServiceTest {
         MenuProduct menuProduct3 = new MenuProduct(product2, 2);
         MenuProduct menuProduct4 = new MenuProduct(product2, 2);
 
-        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
+        Long menuGroupId = menuGroupRepository.save(new MenuGroup("메뉴 그룹1")).getId();
 
-        Menu menu1 = menuRepository.save(new Menu("메뉴1", new BigDecimal(40000), menuGroup,
+        Menu menu1 = menuRepository.save(new Menu("메뉴1", new BigDecimal(40000), menuGroupId,
                 List.of(menuProduct1, menuProduct2)));
-        Menu menu2 = menuRepository.save(new Menu("메뉴2", new BigDecimal(40000), menuGroup,
+        Menu menu2 = menuRepository.save(new Menu("메뉴2", new BigDecimal(40000), menuGroupId,
                 List.of(menuProduct3, menuProduct4)));
 
         OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
@@ -103,11 +103,11 @@ class OrderServiceTest extends ServiceTest {
         MenuProduct menuProduct3 = new MenuProduct(product2, 2);
         MenuProduct menuProduct4 = new MenuProduct(product2, 2);
 
-        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
+        Long menuGroupId = menuGroupRepository.save(new MenuGroup("메뉴 그룹1")).getId();
 
-        Menu menu1 = menuRepository.save(new Menu("메뉴1", new BigDecimal(40000), menuGroup,
+        Menu menu1 = menuRepository.save(new Menu("메뉴1", new BigDecimal(40000), menuGroupId,
                 List.of(menuProduct1, menuProduct2)));
-        Menu menu2 = menuRepository.save(new Menu("메뉴2", new BigDecimal(40000), menuGroup,
+        Menu menu2 = menuRepository.save(new Menu("메뉴2", new BigDecimal(40000), menuGroupId,
                 List.of(menuProduct3, menuProduct4)));
 
         OrderLineItemRequest orderLineItemRequest1 = new OrderLineItemRequest(menu1.getId(), 1);
@@ -125,8 +125,8 @@ class OrderServiceTest extends ServiceTest {
     void 전체_주문_목록을_조회할_수_있다() {
         Product product = productRepository.save(new Product("상품", new BigDecimal(10000)));
         MenuProduct menuProduct = new MenuProduct(product, 1);
-        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
-        Menu menu = menuRepository.save(new Menu("메뉴1", new BigDecimal(10000), menuGroup, List.of(menuProduct)));
+        Long menuGroupId = menuGroupRepository.save(new MenuGroup("메뉴 그룹1")).getId();
+        Menu menu = menuRepository.save(new Menu("메뉴1", new BigDecimal(10000), menuGroupId, List.of(menuProduct)));
 
         OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
 
@@ -148,8 +148,8 @@ class OrderServiceTest extends ServiceTest {
     void 주문_상태를_변경할_수_있다() {
         Product product = productRepository.save(new Product("상품", new BigDecimal(10000)));
         MenuProduct menuProduct = new MenuProduct(product, 1);
-        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
-        Menu menu = menuRepository.save(new Menu("메뉴1", new BigDecimal(10000), menuGroup, List.of(menuProduct)));
+        Long menuGroupId = menuGroupRepository.save(new MenuGroup("메뉴 그룹1")).getId();
+        Menu menu = menuRepository.save(new Menu("메뉴1", new BigDecimal(10000), menuGroupId, List.of(menuProduct)));
 
         OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
 
@@ -167,8 +167,8 @@ class OrderServiceTest extends ServiceTest {
     void 기존_주문_상태가_계산_완료_상태인_경우_상태를_변경할_수_없다() {
         Product product = productRepository.save(new Product("상품", new BigDecimal(10000)));
         MenuProduct menuProduct = new MenuProduct(product, 1);
-        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
-        Menu menu = menuRepository.save(new Menu("메뉴1", new BigDecimal(10000), menuGroup, List.of(menuProduct)));
+        Long menuGroupId = menuGroupRepository.save(new MenuGroup("메뉴 그룹1")).getId();
+        Menu menu = menuRepository.save(new Menu("메뉴1", new BigDecimal(10000), menuGroupId, List.of(menuProduct)));
 
         OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
 

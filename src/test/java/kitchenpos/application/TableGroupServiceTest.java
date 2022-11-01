@@ -133,8 +133,8 @@ class TableGroupServiceTest extends ServiceTest {
     void 단체_지정을_취소할_테이블들의_주문이_모두_완료_상태가_아닌_경우_취소할_수_없다(OrderStatus orderStatus) {
         Product product = productRepository.save(new Product("상품", new BigDecimal(10000)));
         MenuProduct menuProduct = new MenuProduct(product, 1);
-        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
-        Menu menu = menuRepository.save(new Menu("메뉴1", new BigDecimal(10000), menuGroup, List.of(menuProduct)));
+        Long menuGroupId = menuGroupRepository.save(new MenuGroup("메뉴 그룹1")).getId();
+        Menu menu = menuRepository.save(new Menu("메뉴1", new BigDecimal(10000), menuGroupId, List.of(menuProduct)));
 
         OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 2);
 
