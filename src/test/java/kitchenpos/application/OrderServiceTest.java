@@ -7,10 +7,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.ApplicationTest;
+import kitchenpos.application.request.OrderChangeStatusRequest;
+import kitchenpos.application.request.OrderRequest;
+import kitchenpos.application.request.OrderRequest.OrderLineItemRequest;
+import kitchenpos.application.response.OrderResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Test;
@@ -30,51 +33,51 @@ class OrderServiceTest {
 
     @Test
     void create() {
-        OrderLineItem orderLineItem = OrderLineItem.of(1L, 1L, 10);
         OrderTable orderTable = OrderTable.of(1L, null, 1, false);
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderLineItemRequest orderLineItem = new OrderLineItemRequest(1L,  10);
+        OrderRequest request = new OrderRequest(savedOrderTable.getId(), List.of(orderLineItem));
 
-        Order order = Order.of(savedOrderTable.getId(), "", LocalDateTime.now(), List.of(orderLineItem));
-        Order savedOrder = orderService.create(order);
+        OrderResponse response = orderService.create(request);
 
-        assertThat(savedOrder.getId()).isNotNull();
+        assertThat(response.getId()).isNotNull();
     }
 
     @Test
     void createThrowExceptionWhenNotCollectOrderLineItems() {
-        OrderLineItem orderLineItem = OrderLineItem.of(0L, 0L, 10);
-        Order order = Order.of(1L, "", LocalDateTime.now(), List.of(orderLineItem));
+        OrderLineItemRequest orderLineItem = new OrderLineItemRequest(0L,  10);
+        OrderRequest request = new OrderRequest(1L, List.of(orderLineItem));
 
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("존재하지 않는 메뉴가 포함되어 있습니다.");
     }
 
     @Test
     void createThrowExceptionWhenEmptyOrderTable() {
-        OrderLineItem orderLineItem = OrderLineItem.of(1L, 1L, 10);
-        Order order = Order.of(null, "", LocalDateTime.now(), List.of(orderLineItem));
+        OrderLineItemRequest orderLineItem = new OrderLineItemRequest(1L,  10);
+        OrderRequest request = new OrderRequest(0L, List.of(orderLineItem));
 
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("주문 테이블을 입력해야 합니다.");
+                .hasMessage("주문 테이블이 존재하지 않습니다.");
     }
 
     @Test
     void createThrowExceptionWhenEmptyTable() {
-        OrderLineItem orderLineItem = OrderLineItem.of(1L, 1L, 10);
-        Order order = Order.of(1L, "", LocalDateTime.now(), List.of(orderLineItem));
+        OrderLineItemRequest orderLineItem = new OrderLineItemRequest(1L,  10);
+        OrderRequest request = new OrderRequest(1L, List.of(orderLineItem));
 
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문 테이블이 비어있습니다.");
     }
 
     @Test
     void list() {
-        List<Order> orders = orderService.list();
+        List<OrderResponse> response = orderService.list();
 
-        assertThat(orders.size()).isEqualTo(0);
+        assertThat(response.size()).isEqualTo(0);
     }
 
     @Test
@@ -82,18 +85,18 @@ class OrderServiceTest {
         Order order = Order.of(1L, OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>());
         Long savedId = orderDao.save(order)
                 .getId();
+        OrderChangeStatusRequest request = new OrderChangeStatusRequest("MEAL");
 
-        Order changeOrder = Order.of(1L, OrderStatus.MEAL.name(), LocalDateTime.now(), new ArrayList<>());
-        Order changedOrder = orderService.changeOrderStatus(savedId, changeOrder);
+        OrderResponse response = orderService.changeOrderStatus(savedId, request);
 
-        assertThat(changedOrder.getOrderStatus()).isEqualTo(changeOrder.getOrderStatus());
+        assertThat(response.getOrderStatus()).isEqualTo(request.getOrderStatus());
     }
 
     @Test
     void changeOrderStatusThrowExceptionWhenNotExistOrder() {
-        Order order = Order.of(0L, OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>());
+        OrderChangeStatusRequest request = new OrderChangeStatusRequest("MEAL");
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, order))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("order가 존재하지 않습니다.");
     }
@@ -103,8 +106,9 @@ class OrderServiceTest {
         Order order = Order.of(1L, OrderStatus.COMPLETION.name(), LocalDateTime.now(), new ArrayList<>());
         Long savedId = orderDao.save(order)
                 .getId();
+        OrderChangeStatusRequest request = new OrderChangeStatusRequest("MEAL");
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(savedId, order))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(savedId, request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문이 이미 완료되었습니다.");
     }

@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.ApplicationTest;
+import kitchenpos.application.request.TableGroupRequest;
+import kitchenpos.application.response.TableGroupResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -34,18 +36,20 @@ class TableGroupServiceTest {
 
     @Test
     void create() {
-        OrderTable orderTable1 = orderTableDao.save(OrderTable.of(null, 10, true));
-        OrderTable orderTable2 = orderTableDao.save(OrderTable.of(null, 10, true));
-        TableGroup tableGroup = TableGroup.of(LocalDateTime.now(), List.of(orderTable1, orderTable2));
+        Long savedId1 = orderTableDao.save(OrderTable.of(null, 10, true))
+                .getId();
+        Long savedId2 = orderTableDao.save(OrderTable.of(null, 10, true))
+                .getId();
+        TableGroupRequest request = new TableGroupRequest(List.of(savedId1, savedId2));
 
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        TableGroupResponse response = tableGroupService.create(request);
 
-        assertThat(savedTableGroup).isNotNull();
+        assertThat(response.getId()).isNotNull();
     }
 
     @Test
     void createThrowExceptionNotCollectOrderTableSize() {
-        TableGroup tableGroup = TableGroup.of(LocalDateTime.now(), new ArrayList<>());
+        TableGroupRequest tableGroup = new TableGroupRequest(new ArrayList<>());
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -53,40 +57,29 @@ class TableGroupServiceTest {
     }
 
     @Test
-    void createThrowExceptionNotCollectOrderTableInfo() {
-        OrderTable orderTable1 = OrderTable.of(1L, 1L, 10, false);
-        OrderTable orderTable2 = OrderTable.of(0L, 2L, 10, false);
-        TableGroup tableGroup = TableGroup.of(LocalDateTime.now(), List.of(orderTable1, orderTable2));
-
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("주문 정보가 실제 주문한 정보와 일치하지 않습니다.");
-    }
-
-    @Test
     void createThrowExceptionAlreadyReservationOrderTable() {
-        Long tableGroupId = tableGroupDao.save(TableGroup.of(LocalDateTime.now(), new ArrayList<>()))
+        Long tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()))
                 .getId();
         OrderTable orderTable1 = orderTableDao.save(OrderTable.of(tableGroupId, 10, true));
         OrderTable orderTable2 = orderTableDao.save(OrderTable.of(tableGroupId, 10, true));
 
-        TableGroup tableGroup = TableGroup.of(LocalDateTime.now(), List.of(orderTable1, orderTable2));
+        TableGroupRequest request = new TableGroupRequest(List.of(orderTable1.getId(), orderTable2.getId()));
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("이미 예약된 테이블이거나 주문 테이블이 비어있지 않습니다.");
     }
 
     @Test
     void createThrowExceptionNotEmptyTable() {
-        Long tableGroupId = tableGroupDao.save(TableGroup.of(LocalDateTime.now(), new ArrayList<>()))
+        Long tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()))
                 .getId();
         OrderTable orderTable1 = orderTableDao.save(OrderTable.of(tableGroupId, 10, false));
         OrderTable orderTable2 = orderTableDao.save(OrderTable.of(tableGroupId, 10, true));
 
-        TableGroup tableGroup = TableGroup.of(LocalDateTime.now(), List.of(orderTable1, orderTable2));
+        TableGroupRequest request = new TableGroupRequest(List.of(orderTable1.getId(), orderTable2.getId()));
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("이미 예약된 테이블이거나 주문 테이블이 비어있지 않습니다.");
     }
@@ -95,7 +88,7 @@ class TableGroupServiceTest {
     void ungroup() {
         OrderTable orderTable1 = orderTableDao.save(OrderTable.of(null, 10, true));
         OrderTable orderTable2 = orderTableDao.save(OrderTable.of(null, 10, true));
-        Long tableGroupId = tableGroupDao.save(TableGroup.of(LocalDateTime.now(), List.of(orderTable1, orderTable2)))
+        Long tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)))
                 .getId();
 
         tableGroupService.ungroup(tableGroupId);
@@ -107,7 +100,7 @@ class TableGroupServiceTest {
 
     @Test
     void ungroupThrowExceptionWhenStillCookingOrderTable() {
-        Long tableGroupId = tableGroupDao.save(TableGroup.of(LocalDateTime.now(), new ArrayList<>()))
+        Long tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()))
                 .getId();
         OrderTable orderTable = orderTableDao.save(OrderTable.of(tableGroupId, 10, true));
         orderDao.save(Order.of(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>()));
@@ -119,7 +112,7 @@ class TableGroupServiceTest {
 
     @Test
     void ungroupThrowExceptionWhenStillMeal() {
-        Long tableGroupId = tableGroupDao.save(TableGroup.of(LocalDateTime.now(), new ArrayList<>()))
+        Long tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()))
                 .getId();
         OrderTable orderTable = orderTableDao.save(OrderTable.of(tableGroupId, 10, true));
         orderDao.save(Order.of(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), new ArrayList<>()));

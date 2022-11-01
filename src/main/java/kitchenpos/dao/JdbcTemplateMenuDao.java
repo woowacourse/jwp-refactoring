@@ -68,7 +68,7 @@ public class JdbcTemplateMenuDao implements MenuDao {
     }
 
     private Menu toEntity(final ResultSet resultSet) throws SQLException {
-        return Menu.of(
+        return new Menu(
                 resultSet.getLong("id"),
                 resultSet.getString("name"),
                 resultSet.getBigDecimal("price"),
