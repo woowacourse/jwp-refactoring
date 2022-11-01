@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menu.MenuGroup;
 
 public class FakeMenuGroupDao implements MenuGroupDao {
 
@@ -15,10 +15,9 @@ public class FakeMenuGroupDao implements MenuGroupDao {
 
     @Override
     public MenuGroup save(final MenuGroup entity) {
-        long savedId = ++id;
-        menuGroups.put(savedId, entity);
-        entity.setId(savedId);
-        return entity;
+        final MenuGroup savedMenuGroup = new MenuGroup(++id, entity.getName());
+        menuGroups.put(savedMenuGroup.getId(), savedMenuGroup);
+        return savedMenuGroup;
     }
 
     @Override

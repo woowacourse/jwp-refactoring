@@ -6,7 +6,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import kitchenpos.dao.OrderDao;
-import kitchenpos.domain.Order;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderStatus;
 
 public class FakeOrderDao implements OrderDao {
 
@@ -15,10 +16,15 @@ public class FakeOrderDao implements OrderDao {
 
     @Override
     public Order save(final Order entity) {
-        long savedId = ++id;
-        orders.put(savedId, entity);
-        entity.setId(savedId);
-        return entity;
+        if (findById(entity.getId()).isPresent()) {
+            orders.put(entity.getId(), entity);
+            return entity;
+        }
+        final Order savedOrder = new Order(
+            ++id, entity.getOrderTableId(), OrderStatus.valueOf(entity.getOrderStatus()), entity.getOrderedTime()
+        );
+        orders.put(savedOrder.getId(), savedOrder);
+        return savedOrder;
     }
 
     @Override

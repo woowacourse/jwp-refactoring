@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItem;
 
 public class FakeOrderLineItemDao implements OrderLineItemDao {
 
@@ -16,10 +16,11 @@ public class FakeOrderLineItemDao implements OrderLineItemDao {
 
     @Override
     public OrderLineItem save(final OrderLineItem entity) {
-        long savedId = ++id;
-        orderLineItems.put(savedId, entity);
-        entity.setSeq(savedId);
-        return entity;
+        final OrderLineItem savedOrderLineItem = new OrderLineItem(
+            ++id, entity.getOrderId(), entity.getMenuId(), entity.getQuantity()
+        );
+        orderLineItems.put(savedOrderLineItem.getSeq(), savedOrderLineItem);
+        return savedOrderLineItem;
     }
 
     @Override

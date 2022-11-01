@@ -1,6 +1,6 @@
 package kitchenpos.domain.fixture;
 
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItem;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class OrderLineItemFixture {
@@ -29,11 +29,6 @@ public class OrderLineItemFixture {
     }
 
     private OrderLineItem build() {
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setSeq(seq);
-        orderLineItem.setOrderId(orderId);
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setQuantity(quantity);
-        return orderLineItem;
+        return new OrderLineItem(seq, orderId, menuId, quantity);
     }
 }
