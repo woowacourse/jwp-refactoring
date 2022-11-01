@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.application.dto.OrderTableResponse;
@@ -55,7 +54,8 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableRequest.NumberOfGuest request) {
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
+                                                   final OrderTableRequest.NumberOfGuest request) {
         final int numberOfGuests = request.getNumberOfGuests();
 
         if (numberOfGuests < 0) {

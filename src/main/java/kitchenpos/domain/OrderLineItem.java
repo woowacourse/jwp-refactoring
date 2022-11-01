@@ -6,7 +6,8 @@ public class OrderLineItem {
     private Long menuId;
     private long quantity;
 
-    public OrderLineItem(){}
+    public OrderLineItem() {
+    }
 
     public OrderLineItem(Long orderId, Long menuId, long quantity) {
         this(null, orderId, menuId, quantity);

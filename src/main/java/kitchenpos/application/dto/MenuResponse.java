@@ -13,11 +13,12 @@ public class MenuResponse {
     private Long menuGroupId;
     private List<MenuProduct> menuProducts;
 
-    public MenuResponse(Menu menu){
+    public MenuResponse(Menu menu) {
         this(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menu.getMenuProducts());
     }
 
-    public MenuResponse(){}
+    public MenuResponse() {
+    }
 
     public MenuResponse(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
         this.id = id;

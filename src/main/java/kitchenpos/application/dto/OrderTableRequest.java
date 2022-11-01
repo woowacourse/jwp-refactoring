@@ -16,15 +16,16 @@ public class OrderTableRequest {
 
     public static class Create {
 
-          private int numberOfGuests;
-          private boolean empty;
+        private int numberOfGuests;
+        private boolean empty;
 
         public Create(int numberOfGuests, boolean empty) {
             this.numberOfGuests = numberOfGuests;
             this.empty = empty;
         }
 
-        private Create(){}
+        private Create() {
+        }
 
         public int getNumberOfGuests() {
             return numberOfGuests;
@@ -38,7 +39,8 @@ public class OrderTableRequest {
     public static class Empty {
         private boolean empty;
 
-        private Empty(){}
+        private Empty() {
+        }
 
         public Empty(boolean empty) {
             this.empty = empty;
@@ -52,7 +54,8 @@ public class OrderTableRequest {
     public static class NumberOfGuest {
         private int numberOfGuests;
 
-        private NumberOfGuest(){}
+        private NumberOfGuest() {
+        }
 
         public NumberOfGuest(int numberOfGuests) {
             this.numberOfGuests = numberOfGuests;

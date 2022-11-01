@@ -18,6 +18,7 @@ public class OrderResponse {
         this(order.getId(), order.getOrderTableId(), order.getOrderStatus(), order.getOrderedTime(),
                 order.getOrderLineItems());
     }
+
     public OrderResponse(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
                          List<OrderLineItem> orderLineItems) {
         this.id = id;

@@ -1,14 +1,13 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 
 public class Product {
     private Long id;
     private String name;
     private BigDecimal price;
 
-    public Product(){
+    public Product() {
     }
 
     public Product(String name, BigDecimal price) {

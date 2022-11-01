@@ -4,8 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
 import java.util.Optional;
 import javax.sql.DataSource;
 import kitchenpos.domain.Order;

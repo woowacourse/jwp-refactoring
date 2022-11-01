@@ -2,7 +2,6 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 
 public class Menu {
     private Long id;
@@ -77,7 +76,7 @@ public class Menu {
         return menuProducts;
     }
 
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
+    public void addMenuProducts(final List<MenuProduct> menuProducts) {
         this.menuProducts = menuProducts;
     }
 

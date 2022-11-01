@@ -6,7 +6,7 @@ public class MenuProduct {
     private Long productId;
     private long quantity;
 
-    public MenuProduct(){
+    public MenuProduct() {
     }
 
     public MenuProduct(Long productId, long quantity) {
