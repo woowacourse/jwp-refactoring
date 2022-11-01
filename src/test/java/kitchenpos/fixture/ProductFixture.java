@@ -2,8 +2,8 @@ package kitchenpos.fixture;
 
 import java.math.BigDecimal;
 
-import kitchenpos.domain.menu.Product;
-import kitchenpos.application.dto.request.ProductRequest;
+import kitchenpos.menu.domain.Product;
+import kitchenpos.menu.application.dto.request.ProductRequest;
 
 @SuppressWarnings("NonAsciiCharacters")
 public enum ProductFixture {

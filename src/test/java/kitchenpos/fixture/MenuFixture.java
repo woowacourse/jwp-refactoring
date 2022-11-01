@@ -5,12 +5,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import kitchenpos.application.dto.request.MenuProductRequest;
-import kitchenpos.application.dto.request.MenuRequest;
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.menu.Product;
+import kitchenpos.menu.application.dto.request.MenuProductRequest;
+import kitchenpos.menu.application.dto.request.MenuRequest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.Product;
 
 @SuppressWarnings("NonAsciiCharacters")
 public enum MenuFixture {
