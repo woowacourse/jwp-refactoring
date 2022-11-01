@@ -1,11 +1,9 @@
-package kitchenpos.domain;
+package kitchenpos.domain.ordertable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
-import kitchenpos.domain.ordertable.OrderTable;
-import kitchenpos.domain.ordertable.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
