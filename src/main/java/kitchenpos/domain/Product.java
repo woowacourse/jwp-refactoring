@@ -19,7 +19,7 @@ public class Product {
     public Product() {
     }
 
-    private Product(Long id, String name, BigDecimal price) {
+    public Product(Long id, String name, BigDecimal price) {
         validatePrice(price);
         this.id = id;
         this.name = name;

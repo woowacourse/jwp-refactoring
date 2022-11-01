@@ -41,14 +41,17 @@ public class MenuService {
                 menuRequest.getMenuProducts(), products);
         final Menu savedMenu = menuRepository.save(menu);
 
-        final List<MenuProduct> savedMenuProducts = menuRequest.getMenuProducts()
-                .stream()
-                .map(menuProduct -> menuProductRepository.save(new MenuProduct(
-                        findMenu(savedMenu), menuProduct.getProductId(), menuProduct.getQuantity())))
-                .collect(Collectors.toList());
-
+        final List<MenuProduct> savedMenuProducts = createMenuProducts(menuRequest, savedMenu);
         return new Menu(savedMenu.getId(), savedMenu.getName(), savedMenu.getPrice(), savedMenu.getMenuGroupId(),
                 savedMenuProducts, products);
+    }
+
+    private List<MenuProduct> createMenuProducts(MenuRequest menuRequest, Menu savedMenu) {
+        return menuRequest.getMenuProducts()
+                .stream()
+                .map(menuProduct -> menuProductRepository.save(
+                        new MenuProduct(findMenu(savedMenu), menuProduct.getProductId(), menuProduct.getQuantity())))
+                .collect(Collectors.toList());
     }
 
     private Menu findMenu(Menu menu) {
@@ -70,12 +73,6 @@ public class MenuService {
 
     @Transactional(readOnly = true)
     public List<Menu> list() {
-        final List<Menu> menus = menuRepository.findAll();
-
-        for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductRepository.findAllByMenuId(menu.getId()));
-        }
-
-        return menus;
+        return menuRepository.findAll();
     }
 }
