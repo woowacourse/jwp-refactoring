@@ -32,7 +32,7 @@ public class TableGroup {
         this(null, orderTables, createdDate);
     }
 
-    public TableGroup(final Long id, final List<OrderTable> orderTables, final LocalDateTime createdDate) {
+    private TableGroup(final Long id, final List<OrderTable> orderTables, final LocalDateTime createdDate) {
         validateTables(orderTables);
         this.id = id;
         this.orderTables = orderTables;

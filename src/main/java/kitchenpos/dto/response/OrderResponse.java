@@ -17,7 +17,7 @@ public class OrderResponse {
     private OrderResponse() {
     }
 
-    public OrderResponse(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+    private OrderResponse(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
                          final List<OrderLineItemResponse> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;

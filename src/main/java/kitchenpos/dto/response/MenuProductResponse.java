@@ -10,7 +10,7 @@ public class MenuProductResponse {
     private MenuProductResponse() {
     }
 
-    public MenuProductResponse(final Long productId, final long quantity) {
+    private MenuProductResponse(final Long productId, final long quantity) {
         this.productId = productId;
         this.quantity = quantity;
     }

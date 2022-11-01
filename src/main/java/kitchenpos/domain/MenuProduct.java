@@ -27,7 +27,7 @@ public class MenuProduct {
         this(null, product, quantity);
     }
 
-    public MenuProduct(final Long seq, final Product product, final Quantity quantity) {
+    private MenuProduct(final Long seq, final Product product, final Quantity quantity) {
         this.seq = seq;
         this.product = product;
         this.quantity = quantity;

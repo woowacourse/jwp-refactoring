@@ -12,7 +12,7 @@ public class TableResponse {
     private TableResponse() {
     }
 
-    public TableResponse(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+    private TableResponse(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;

@@ -23,7 +23,7 @@ public class MenuGroup {
         this(null, name);
     }
 
-    public MenuGroup(final Long id, final Name name) {
+    private MenuGroup(final Long id, final Name name) {
         this.id = id;
         this.name = name;
     }

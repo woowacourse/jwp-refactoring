@@ -16,7 +16,7 @@ public class Price {
     protected Price() {
     }
 
-    public Price(final BigDecimal value) {
+    private Price(final BigDecimal value) {
         validatePositive(value);
         this.value = value;
     }

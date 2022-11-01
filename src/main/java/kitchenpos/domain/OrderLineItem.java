@@ -22,11 +22,10 @@ public class OrderLineItem {
     }
 
     public OrderLineItem(final Long menuId, final Quantity quantity) {
-        this.menuId = menuId;
-        this.quantity = quantity;
+        this(null, menuId, quantity);
     }
 
-    public OrderLineItem(final Long seq, final Long menuId, final Quantity quantity) {
+    private OrderLineItem(final Long seq, final Long menuId, final Quantity quantity) {
         this.seq = seq;
         this.menuId = menuId;
         this.quantity = quantity;

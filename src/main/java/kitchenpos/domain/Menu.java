@@ -40,7 +40,7 @@ public class Menu {
         this(null, name, price, menuGroupId, products);
     }
 
-    public Menu(final Long id, final Name name, final Price price, final Long menuGroupId,
+    private Menu(final Long id, final Name name, final Price price, final Long menuGroupId,
                 final List<MenuProduct> products) {
         validateNotOverMenuProductAmounts(price, products);
         this.id = id;

@@ -27,7 +27,7 @@ public class Product {
         this(null, name, price);
     }
 
-    public Product(final Long id, final Name name, final Price price) {
+    private Product(final Long id, final Name name, final Price price) {
         this.id = id;
         this.name = name;
         this.price = price;

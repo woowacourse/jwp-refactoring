@@ -44,10 +44,6 @@ public class OrderTable {
         this(null, null, status, new ArrayList<>());
     }
 
-    public OrderTable(final TableStatus status, final List<Order> orders) {
-        this(null, null, status, orders);
-    }
-
     public OrderTable(final Long id, final TableGroup tableGroup, final TableStatus status, final List<Order> orders) {
         this.id = id;
         this.tableGroup = tableGroup;
