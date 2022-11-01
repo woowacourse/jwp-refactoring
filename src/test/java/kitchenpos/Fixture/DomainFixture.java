@@ -1,6 +1,6 @@
 package kitchenpos.Fixture;
 
-import kitchenpos.domain.GuestNumber;
+import kitchenpos.ordertable.domain.GuestNumber;
 
 public class DomainFixture {
 
