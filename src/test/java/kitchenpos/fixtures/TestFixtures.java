@@ -53,8 +53,8 @@ public class TestFixtures {
         return new MenuCreateRequest(name, price, menuGroupId, menuProductCreateRequests);
     }
 
-    public static MenuProduct 메뉴_상품_생성(final Long menuId, final Long productId, final long quantity) {
-        return new MenuProduct(null, null, quantity);
+    public static MenuProduct 메뉴_상품_생성(final Menu menu, final Product product, final long quantity) {
+        return new MenuProduct(menu, product, quantity);
     }
 
     public static MenuProductCreateRequest 메뉴_상품_생성_요청(final Long menuId,
