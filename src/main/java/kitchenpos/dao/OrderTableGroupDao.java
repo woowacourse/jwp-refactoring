@@ -11,4 +11,6 @@ public interface OrderTableGroupDao {
     Optional<OrderTableGroup> findById(Long id);
 
     List<OrderTableGroup> findAll();
+
+    boolean existsById(Long orderTableGroupId);
 }

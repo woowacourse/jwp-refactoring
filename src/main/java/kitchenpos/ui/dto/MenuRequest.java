@@ -1,5 +1,6 @@
 package kitchenpos.ui.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 public class MenuRequest {
@@ -7,6 +8,8 @@ public class MenuRequest {
     private String name;
     private long price;
     private long menuGroupId;
+
+    @JsonProperty("menuProducts")
     private List<MenuProductRequest> menuProducts;
 
     public MenuRequest() {

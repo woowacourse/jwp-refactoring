@@ -35,20 +35,21 @@ public class OrderTableService {
     @Transactional
     public OrderTable changeEmpty(Long orderTableId) {
         OrderTable orderTable = search(orderTableId);
-        orderTableGroupDao.findById(orderTable.getOrderTableGroup().getId())
-                .orElseThrow(IllegalArgumentException::new);
-
-        validateIsCompletion(orderTable);
+        if (!canEmpty(orderTable)) {
+            throw new IllegalArgumentException();
+        }
         orderTable.changeEmpty();
         return orderTableDao.save(orderTable);
     }
 
-    private void validateIsCompletion(OrderTable orderTable) {
+    private boolean canEmpty(OrderTable orderTable) {
         List<Order> orders = orderDao.findByOrderTableId(orderTable.getId());
-        if (orders.stream()
-                .noneMatch(Order::isCompletion)) {
-            throw new IllegalArgumentException();
-        }
+        boolean anyMatchStatusIsComplete = orders.stream()
+                .noneMatch(Order::isCompletion);
+        boolean existsOrderTableGroup = orderTableGroupDao.existsById(
+                orderTable.getOrderTableGroup().getId());
+
+        return !anyMatchStatusIsComplete && existsOrderTableGroup;
     }
 
     @Transactional
