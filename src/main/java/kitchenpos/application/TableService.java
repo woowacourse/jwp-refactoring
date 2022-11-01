@@ -45,9 +45,9 @@ public class TableService {
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
-        savedOrderTable.updateEmpty(request.getEmpty());
+        final OrderTable orderTable = savedOrderTable.updateEmpty(request.getEmpty());
 
-        return OrderTableResponse.from(orderTableRepository.save(savedOrderTable));
+        return OrderTableResponse.from(orderTableRepository.save(orderTable));
     }
 
     @Transactional

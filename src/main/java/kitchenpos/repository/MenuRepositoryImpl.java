@@ -54,25 +54,15 @@ public class MenuRepositoryImpl implements MenuRepository {
 
     @Override
     public Optional<Menu> findById(final Long id) {
-        return menuDao.findById(id);
+        final Optional<Menu> menu = menuDao.findById(id);
+        return menu.map(it -> it.setMenuProducts(getByMenuId(id)));
     }
 
     @Override
     public List<Menu> findAll() {
         final List<Menu> menus = menuDao.findAll();
         return menus.stream()
-                .map(menu ->
-                        {
-                            final List<MenuProduct> menuProducts = getByMenuId(menu.getId());
-                            return new Menu(
-                                    menu.getId(),
-                                    menu.getName(),
-                                    menu.getPrice(),
-                                    menu.getMenuGroupId(),
-                                    menuProducts
-                            );
-                        }
-                )
+                .map(menu -> menu.setMenuProducts(getByMenuId(menu.getId())))
                 .collect(Collectors.toList());
     }
 

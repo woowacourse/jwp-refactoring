@@ -5,9 +5,9 @@ import java.util.Objects;
 public class OrderTable {
 
     private final Long id;
-    private Long tableGroupId;
-    private int numberOfGuests;
-    private boolean empty;
+    private final Long tableGroupId;
+    private final int numberOfGuests;
+    private final boolean empty;
 
     public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         validatePositive(numberOfGuests);
@@ -19,6 +19,10 @@ public class OrderTable {
 
     public OrderTable(final int numberOfGuests, final boolean empty) {
         this(null, null, numberOfGuests, empty);
+    }
+
+    public OrderTable(final Long id) {
+        this(id, null, 0, true);
     }
 
     private void validatePositive(final int numberOfGuests) {
@@ -42,6 +46,11 @@ public class OrderTable {
         }
     }
 
+    public OrderTable updateEmpty(final boolean empty) {
+        validateHasTableGroup();
+        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
+    }
+
     private void validateHasTableGroup() {
         if (hasTableGroup()) {
             throw new IllegalArgumentException();
@@ -50,10 +59,6 @@ public class OrderTable {
 
     public boolean hasTableGroup() {
         return Objects.nonNull(tableGroupId);
-    }
-
-    public OrderTable(final Long id) {
-        this.id = id;
     }
 
     public Long getId() {
@@ -70,10 +75,5 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void updateEmpty(final boolean empty) {
-        validateHasTableGroup();
-        this.empty = empty;
     }
 }

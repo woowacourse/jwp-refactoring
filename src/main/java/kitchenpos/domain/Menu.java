@@ -70,4 +70,8 @@ public class Menu {
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
     }
+
+    public Menu setMenuProducts(final List<MenuProduct> menuProducts) {
+        return new Menu(id, name, price, menuGroupId, menuProducts);
+    }
 }

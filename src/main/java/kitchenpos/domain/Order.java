@@ -90,7 +90,7 @@ public class Order {
                 .collect(Collectors.toList());
     }
 
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
+    public Order setOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        return new Order(id, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 }

@@ -18,13 +18,13 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
 
-    public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
-        this(null, createdDate, orderTables);
-    }
-
     public TableGroup(final Long id, final LocalDateTime createdDate) {
         this.id = id;
         this.createdDate = createdDate;
+    }
+
+    public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+        this(null, createdDate, orderTables);
     }
 
     private void validateSize(final List<OrderTable> orderTables) {

@@ -43,22 +43,15 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public Optional<Order> findById(final Long id) {
         final Optional<Order> order = orderDao.findById(id);
-        order.ifPresent(it -> it.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.get().getId())));
-        return order;
+        return order.map(
+                it -> it.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.get().getId())));
     }
 
     @Override
     public List<Order> findAll() {
         final List<Order> orders = orderDao.findAll();
         return orders.stream()
-                .map(order -> new Order(
-                                order.getId(),
-                                order.getOrderTableId(),
-                                order.getOrderStatus(),
-                                order.getOrderedTime(),
-                                orderLineItemDao.findAllByOrderId(order.getId())
-                        )
-                )
+                .map(order -> order.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId())))
                 .collect(Collectors.toList());
     }
 
