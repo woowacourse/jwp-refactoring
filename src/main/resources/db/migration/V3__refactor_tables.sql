@@ -1,2 +1,2 @@
-alter table `order_table`
-    add `order_id` BIGINT(20);
+alter table `order`
+    add `order_table_id` BIGINT(20);
