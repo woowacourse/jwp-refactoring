@@ -11,7 +11,7 @@ import javax.persistence.Id;
 public class OrderTable {
 
     private static final String ALREADY_GROUP_ERROR_MESSAGE = "이미 단체지정되어 있는 테이블은 단체지정 할 수 없습니다";
-    private static final String TABLE_EMPTY_ERROR_MESSAGE = "비어 있지 않은 테이블은 단체지정을 할 수 없습니다.";
+    private static final String CHANGE_EMPTY_ERROR_MESSAGE = "단체 지정되어있는 테이블은 테이블이 비어있는지 여부를 수정할 수 없습니다.";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,6 +41,9 @@ public class OrderTable {
     }
 
     public void changeEmpty(final boolean empty) {
+        if (Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException(OrderTable.CHANGE_EMPTY_ERROR_MESSAGE);
+        }
         this.empty = empty;
     }
 
@@ -79,7 +82,7 @@ public class OrderTable {
             throw new IllegalArgumentException(ALREADY_GROUP_ERROR_MESSAGE);
         }
         if (!empty) {
-            throw new IllegalArgumentException(TABLE_EMPTY_ERROR_MESSAGE);
+            throw new IllegalArgumentException(CHANGE_EMPTY_ERROR_MESSAGE);
         }
     }
 
