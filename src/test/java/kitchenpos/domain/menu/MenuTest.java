@@ -14,7 +14,7 @@ class MenuTest {
     @CsvSource({"1000,false", "1001,false", "999,true"})
     @ParameterizedTest(name = "1000원인 메뉴를 {0}원과 비교한 결과는 {1}이다.")
     void isExpensiveThan(final int priceValue, final boolean expected) {
-        final Menu menu = Menu.ofNew("공기밥", BigDecimal.valueOf(1000), 0L);
+        final Menu menu = Menu.ofUnsaved("공기밥", BigDecimal.valueOf(1000), 0L);
         final Price price = Price.from(priceValue);
 
         assertThat(menu.isExpensiveThan(price)).isEqualTo(expected);

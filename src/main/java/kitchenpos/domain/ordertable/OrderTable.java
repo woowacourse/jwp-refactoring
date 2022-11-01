@@ -27,7 +27,7 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public static OrderTable ofNew(final int numberOfGuests, final boolean empty) {
+    public static OrderTable ofUnsaved(final int numberOfGuests, final boolean empty) {
         return new OrderTable(null, null, numberOfGuests, empty);
     }
 

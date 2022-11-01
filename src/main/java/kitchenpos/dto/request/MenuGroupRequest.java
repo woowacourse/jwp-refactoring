@@ -11,7 +11,7 @@ public class MenuGroupRequest {
     }
 
     public MenuGroup toEntity() {
-        return MenuGroup.ofNew(name);
+        return MenuGroup.ofUnsaved(name);
     }
 
     public String getName() {

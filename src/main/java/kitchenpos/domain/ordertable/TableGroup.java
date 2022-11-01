@@ -32,7 +32,7 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
 
-    public static TableGroup ofNew(final List<OrderTable> orderTables) {
+    public static TableGroup ofUnsaved(final List<OrderTable> orderTables) {
         final TableGroup tableGroup = new TableGroup(null, LocalDateTime.now(), orderTables);
         for (final OrderTable orderTable : orderTables) {
             orderTable.joinGroup(tableGroup);

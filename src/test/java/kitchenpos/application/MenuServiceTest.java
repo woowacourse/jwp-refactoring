@@ -42,7 +42,7 @@ class MenuServiceTest {
     void saveData() {
         savedMenuGroup = dataSupport.saveMenuGroup("추천 메뉴");
         this.savedProduct = dataSupport.saveProduct("치킨마요", PRICE);
-        this.menuProducts = Arrays.asList(MenuProduct.ofNew(null, savedProduct, 1L));
+        this.menuProducts = Arrays.asList(MenuProduct.ofUnsaved(null, savedProduct, 1L));
     }
 
     @DisplayName("새로운 메뉴를 등록할 수 있다.")
@@ -50,7 +50,7 @@ class MenuServiceTest {
     @ParameterizedTest(name = "상품 {0}개를 한 메뉴로 등록한다.")
     void create(final int quantity) {
         // given
-        final List<MenuProduct> menuProducts = Arrays.asList(MenuProduct.ofNew(null, savedProduct, quantity));
+        final List<MenuProduct> menuProducts = Arrays.asList(MenuProduct.ofUnsaved(null, savedProduct, quantity));
 
         // when
         final MenuRequest request = RequestBuilder.ofMenu(savedMenuGroup, menuProducts, PRICE * quantity);
@@ -65,7 +65,7 @@ class MenuServiceTest {
     void create_throwsException_ifProductNotFound() {
         // given
         final Product unsavedProduct = new Product(0L, "없는 메뉴", new BigDecimal(0));
-        final List<MenuProduct> menuProducts = Arrays.asList(MenuProduct.ofNew(null, unsavedProduct, 1L));
+        final List<MenuProduct> menuProducts = Arrays.asList(MenuProduct.ofUnsaved(null, unsavedProduct, 1L));
 
         // when, then
         final MenuRequest request = RequestBuilder.ofMenu(savedMenuGroup, menuProducts, PRICE);
@@ -107,7 +107,7 @@ class MenuServiceTest {
     void list() {
         // given
         final Product savedProduct = this.savedProduct;
-        final MenuProduct menuProduct = MenuProduct.ofNew(null, savedProduct, 1L);
+        final MenuProduct menuProduct = MenuProduct.ofUnsaved(null, savedProduct, 1L);
         final int discountedPrice = PRICE - 500;
 
         final Menu savedMenu1 = dataSupport.saveMenu(

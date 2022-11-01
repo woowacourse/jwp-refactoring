@@ -18,7 +18,7 @@ public class MenuGroup {
         this.name = name;
     }
 
-    public static MenuGroup ofNew(final String name) {
+    public static MenuGroup ofUnsaved(final String name) {
         return new MenuGroup(null, name);
     }
 

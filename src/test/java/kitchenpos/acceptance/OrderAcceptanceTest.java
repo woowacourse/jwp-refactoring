@@ -53,7 +53,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         final OrderTable savedTable = 손님이_있는_테이블_등록();
         final Menu savedMenu = 메뉴_등록();
 
-        final OrderLineItem orderLineItem = OrderLineItem.ofNew(null, savedMenu.getId(), 1);
+        final OrderLineItem orderLineItem = OrderLineItem.ofUnsaved(null, savedMenu.getId(), 1);
         final Order savedOrder = dataSupport.saveOrder(savedTable.getId(), OrderStatus.COOKING, orderLineItem);
 
         // when
@@ -74,7 +74,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         final Product savedProduct = dataSupport.saveProduct("치킨마요", price);
         final MenuGroup savedMenuGroup = dataSupport.saveMenuGroup("추천 메뉴");
 
-        final MenuProduct menuProduct = MenuProduct.ofNew(null, savedProduct, 1L);
+        final MenuProduct menuProduct = MenuProduct.ofUnsaved(null, savedProduct, 1L);
         return dataSupport.saveMenu("치킨마요", price, savedMenuGroup.getId(), menuProduct);
     }
 }

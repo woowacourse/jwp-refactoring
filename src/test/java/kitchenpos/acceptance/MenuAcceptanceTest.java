@@ -23,7 +23,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         final int price = 4000;
         final Product savedProduct = dataSupport.saveProduct("참치마요", price);
         final MenuGroup savedMenuGroup = dataSupport.saveMenuGroup("할인 상품");
-        final List<MenuProduct> menuProducts = Arrays.asList(MenuProduct.ofNew(null, savedProduct, 1L));
+        final List<MenuProduct> menuProducts = Arrays.asList(MenuProduct.ofUnsaved(null, savedProduct, 1L));
         final int discountedPrice = price - 500;
 
         // when

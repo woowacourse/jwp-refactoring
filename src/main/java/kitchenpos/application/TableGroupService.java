@@ -37,7 +37,7 @@ public class TableGroupService {
                 .map(this::getOrderTableFrom)
                 .collect(Collectors.toList());
 
-        final TableGroup tableGroup = TableGroup.ofNew(savedOrderTables);
+        final TableGroup tableGroup = TableGroup.ofUnsaved(savedOrderTables);
 
         tableGroupRepository.save(tableGroup);
         return TableGroupResponse.from(tableGroup);

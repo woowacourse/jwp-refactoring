@@ -36,7 +36,7 @@ public class OrderService {
     public OrderResponse create(final OrderRequest request) {
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
-        final Order order = Order.ofNew(orderTable);
+        final Order order = Order.ofUnsaved(orderTable);
 
         final List<OrderLineItemRequest> orderLineItemRequests = request.getOrderLineItems();
         checkItemsHasEachMenu(orderLineItemRequests);
@@ -67,7 +67,7 @@ public class OrderService {
     }
 
     private OrderLineItem getOrderLineItemOf(final Order order, final OrderLineItemRequest orderLineItemRequest) {
-        return OrderLineItem.ofNew(order, orderLineItemRequest.getMenuId(), orderLineItemRequest.getQuantity());
+        return OrderLineItem.ofUnsaved(order, orderLineItemRequest.getMenuId(), orderLineItemRequest.getQuantity());
     }
 
     private void checkItemsHasEachMenu(final List<OrderLineItemRequest> orderLineItemRequests) {

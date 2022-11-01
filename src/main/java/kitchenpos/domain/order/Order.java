@@ -39,7 +39,7 @@ public class Order {
         this.orderedTime = orderedTime;
     }
 
-    public static Order ofNew(final OrderTable orderTable) {
+    public static Order ofUnsaved(final OrderTable orderTable) {
         checkTableNotEmpty(orderTable);
         final Order order = new Order(null, orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now());
         return order;

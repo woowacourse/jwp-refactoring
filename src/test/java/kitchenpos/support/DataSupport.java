@@ -42,12 +42,12 @@ public class DataSupport {
     private OrderRepository orderRepository;
 
     public Product saveProduct(final String name, final int price) {
-        final Product product = Product.ofNew(name, new BigDecimal(price));
+        final Product product = Product.ofUnsaved(name, new BigDecimal(price));
         return productRepository.save(product);
     }
 
     public MenuGroup saveMenuGroup(final String name) {
-        final MenuGroup menuGroup = MenuGroup.ofNew(name);
+        final MenuGroup menuGroup = MenuGroup.ofUnsaved(name);
         return menuGroupRepository.save(menuGroup);
     }
 
@@ -55,7 +55,7 @@ public class DataSupport {
                          final int price,
                          final Long menuGroupId,
                          final MenuProduct... menuProducts) {
-        final Menu menu = Menu.ofNew(name, new BigDecimal(price), menuGroupId);
+        final Menu menu = Menu.ofUnsaved(name, new BigDecimal(price), menuGroupId);
         final List<MenuProduct> mappedMenuProducts = Arrays.stream(menuProducts)
                 .map(menuProduct -> mapMenuToMenuProduct(menu, menuProduct))
                 .collect(Collectors.toList());
@@ -67,13 +67,13 @@ public class DataSupport {
     public TableGroup saveTableGroup() {
         final OrderTable orderTable1 = saveOrderTable(0, true);
         final OrderTable orderTable2 = saveOrderTable(0, true);
-        final TableGroup tableGroup = TableGroup.ofNew(Arrays.asList(orderTable1, orderTable2));
+        final TableGroup tableGroup = TableGroup.ofUnsaved(Arrays.asList(orderTable1, orderTable2));
 
         return tableGroupRepository.save(tableGroup);
     }
 
     public OrderTable saveOrderTable(final int numberOfGuests, final boolean empty) {
-        final OrderTable orderTable = OrderTable.ofNew(numberOfGuests, empty);
+        final OrderTable orderTable = OrderTable.ofUnsaved(numberOfGuests, empty);
         return orderTableRepository.save(orderTable);
     }
 

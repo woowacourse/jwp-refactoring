@@ -23,7 +23,7 @@ public class Product {
         this.price = new Price(price);
     }
 
-    public static Product ofNew(final String name, final BigDecimal price) {
+    public static Product ofUnsaved(final String name, final BigDecimal price) {
         return new Product(null, name, price);
     }
 

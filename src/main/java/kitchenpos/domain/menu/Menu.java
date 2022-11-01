@@ -32,9 +32,9 @@ public class Menu {
         this.menuGroupId = menuGroupId;
     }
 
-    public static Menu ofNew(final String name,
-                             final BigDecimal price,
-                             final Long menuGroupId) {
+    public static Menu ofUnsaved(final String name,
+                                 final BigDecimal price,
+                                 final Long menuGroupId) {
         return new Menu(null, name, price, menuGroupId);
     }
 

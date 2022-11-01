@@ -13,7 +13,7 @@ public class OrderTableRequest {
     }
 
     public OrderTable toEntity() {
-        return OrderTable.ofNew(numberOfGuests, empty);
+        return OrderTable.ofUnsaved(numberOfGuests, empty);
     }
 
     public int getNumberOfGuests() {

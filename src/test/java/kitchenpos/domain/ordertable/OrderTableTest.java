@@ -17,7 +17,7 @@ class OrderTableTest {
         final TableGroup tableGroup = mock(TableGroup.class);
         when(tableGroup.getId())
                 .thenReturn(1L);
-        final OrderTable orderTable = OrderTable.ofNew(0, true);
+        final OrderTable orderTable = OrderTable.ofUnsaved(0, true);
 
         // when
         orderTable.joinGroup(tableGroup);
@@ -32,7 +32,7 @@ class OrderTableTest {
     @DisplayName("테이블을 단체에서 해제한다.")
     @Test
     void ungroup() {
-        final OrderTable orderTable = OrderTable.ofNew(0, true);
+        final OrderTable orderTable = OrderTable.ofUnsaved(0, true);
         orderTable.ungroup();
 
         assertAll(
@@ -44,7 +44,7 @@ class OrderTableTest {
     @DisplayName("고객이 테이블을 이용한다.")
     @Test
     void acceptGuests() {
-        final OrderTable orderTable = OrderTable.ofNew(0, true);
+        final OrderTable orderTable = OrderTable.ofUnsaved(0, true);
         orderTable.acceptGuests();
 
         assertThat(orderTable.isEmpty()).isFalse();
@@ -53,7 +53,7 @@ class OrderTableTest {
     @DisplayName("특정한 수의 고객이 테이블을 이용한다.")
     @Test
     void acceptGuests_withNumberOfGuests() {
-        final OrderTable orderTable = OrderTable.ofNew(0, false);
+        final OrderTable orderTable = OrderTable.ofUnsaved(0, false);
         final int numberOfGuests = 2;
         orderTable.acceptGuests(numberOfGuests);
 
@@ -66,7 +66,7 @@ class OrderTableTest {
     @DisplayName("테이블을 비운다.")
     @Test
     void clear() {
-        final OrderTable orderTable = OrderTable.ofNew(2, false);
+        final OrderTable orderTable = OrderTable.ofUnsaved(2, false);
         orderTable.clear();
 
         assertThat(orderTable.isEmpty()).isTrue();

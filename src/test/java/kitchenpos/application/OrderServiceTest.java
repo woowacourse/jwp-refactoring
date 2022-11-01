@@ -47,9 +47,9 @@ class OrderServiceTest {
         final int price = 3500;
         final Product savedProduct = dataSupport.saveProduct("치킨마요", price);
         final MenuGroup savedMenuGroup = dataSupport.saveMenuGroup("추천 메뉴");
-        final MenuProduct menuProduct = MenuProduct.ofNew(null, savedProduct, 1L);
+        final MenuProduct menuProduct = MenuProduct.ofUnsaved(null, savedProduct, 1L);
         savedMenu = dataSupport.saveMenu("치킨마요", price, savedMenuGroup.getId(), menuProduct);
-        orderLineItem = OrderLineItem.ofNew(null, savedMenu.getId(), 1);
+        orderLineItem = OrderLineItem.ofUnsaved(null, savedMenu.getId(), 1);
     }
 
     @DisplayName("테이블에 대해 메뉴를 주문하고 주문 상태를 조리로 변경한다.")

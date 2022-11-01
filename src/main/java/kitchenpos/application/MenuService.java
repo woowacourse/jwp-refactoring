@@ -34,7 +34,7 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        final Menu menu = Menu.ofNew(request.getName(), request.getPrice(), request.getMenuGroupId());
+        final Menu menu = Menu.ofUnsaved(request.getName(), request.getPrice(), request.getMenuGroupId());
         final List<MenuProduct> menuProducts = request.getMenuProducts().stream()
                 .map(menuProductRequest -> getMenuProductOf(menu, menuProductRequest))
                 .collect(Collectors.toList());
@@ -51,7 +51,7 @@ public class MenuService {
 
     private MenuProduct getMenuProductOf(final Menu menu, final MenuProductRequest menuProductRequest) {
         final Product product = getProductFrom(menuProductRequest);
-        return MenuProduct.ofNew(menu, product, menuProductRequest.getQuantity());
+        return MenuProduct.ofUnsaved(menu, product, menuProductRequest.getQuantity());
     }
 
     private Product getProductFrom(final MenuProductRequest menuProductRequest) {

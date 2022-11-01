@@ -34,7 +34,7 @@ public class MenuProduct {
         this.price = price;
     }
 
-    public static MenuProduct ofNew(final Menu menu, final Product product, final long quantity) {
+    public static MenuProduct ofUnsaved(final Menu menu, final Product product, final long quantity) {
         return new MenuProduct(null, menu, product.getId(), quantity, product.calculatePrice(quantity));
     }
 
