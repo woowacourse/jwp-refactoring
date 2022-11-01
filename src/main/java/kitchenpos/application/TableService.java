@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
+
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
