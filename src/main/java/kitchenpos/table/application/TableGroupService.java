@@ -1,17 +1,15 @@
 package kitchenpos.table.application;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.application.dto.request.TableGroupCommand;
 import kitchenpos.table.application.dto.response.TableGroupResponse;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
-import kitchenpos.table.domain.OrderTables;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.domain.TableGroupRepository;
+import kitchenpos.table.infrastructure.OrderUngroupValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,12 +19,16 @@ public class TableGroupService {
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final OrderUngroupValidator orderUngroupValidator;
 
-    public TableGroupService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository,
-                             final TableGroupRepository tableGroupRepository) {
+    public TableGroupService(final OrderRepository orderRepository,
+                             final OrderTableRepository orderTableRepository,
+                             final TableGroupRepository tableGroupRepository,
+                             final OrderUngroupValidator orderUngroupValidator) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.orderUngroupValidator = orderUngroupValidator;
     }
 
     public TableGroupResponse create(final TableGroupCommand tableGroupCommand) {
@@ -45,15 +47,8 @@ public class TableGroupService {
     }
 
     public void ungroup(final Long tableGroupId) {
-        OrderTables orderTables = new OrderTables(orderTableRepository.findAllByTableGroupId(tableGroupId));
-        validateTableOrderStatus(orderTables);
-        orderTables.ungroup();
-    }
-
-    private void validateTableOrderStatus(final OrderTables orderTables) {
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTables.getIds(), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException("주문 그룹을 분리할 수 없습니다.");
-        }
+        TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
+                .orElseThrow(() -> new IllegalArgumentException("주문 테이블을 찾을 수 없습니다."));
+        tableGroup.ungroup(orderUngroupValidator);
     }
 }

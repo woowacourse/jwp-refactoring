@@ -6,6 +6,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import kitchenpos.table.infrastructure.OrderUngroupValidator;
 
 @Embeddable
 public class OrderTables {
@@ -40,7 +41,8 @@ public class OrderTables {
                 .toList();
     }
 
-    public void ungroup() {
+    void ungroup(final OrderUngroupValidator orderUngroupValidator) {
+        orderUngroupValidator.validateOrderStatus(getIds());
         for (OrderTable orderTable : values) {
             orderTable.ungroup();
         }

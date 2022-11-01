@@ -2,6 +2,7 @@ package kitchenpos.table.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import kitchenpos.exception.InvalidOrderTableException;
 import org.junit.jupiter.api.DisplayName;
@@ -95,5 +96,17 @@ class OrderTableTest {
 
             assertThat(orderTable.getNumberOfGuests()).isEqualTo(5);
         }
+    }
+
+    @Test
+    @DisplayName("그룹을 해제한다.")
+    void ungroup() {
+        OrderTable orderTable = new OrderTable(1L, 10, true);
+        orderTable.ungroup();
+
+        assertAll(
+                () -> assertThat(orderTable.getTableGroupId()).isNull(),
+                () -> assertThat(orderTable.isEmpty()).isFalse()
+        );
     }
 }

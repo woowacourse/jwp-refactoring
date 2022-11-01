@@ -48,7 +48,7 @@ public class OrderTable {
         return !empty || Objects.nonNull(tableGroupId);
     }
 
-    public void ungroup() {
+    void ungroup() {
         tableGroupId = null;
         empty = false;
     }
