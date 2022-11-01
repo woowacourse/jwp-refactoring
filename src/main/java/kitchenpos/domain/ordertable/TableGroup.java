@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -23,11 +22,11 @@ public class TableGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDateTime createdDate;
-    @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "tableGroup", fetch = FetchType.LAZY)
     private List<OrderTable> orderTables;
 
     private TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
-        validateTables(orderTables);
+        checkTableSize(orderTables);
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = new ArrayList<>(orderTables);
@@ -46,10 +45,9 @@ public class TableGroup {
         for (OrderTable orderTable : orderTables) {
             orderTable.ungroup();
         }
-
     }
 
-    private void validateTables(final List<OrderTable> orderTables) {
+    private void checkTableSize(final List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < MIN_TABLE_SIZE) {
             throw new IllegalArgumentException();
         }
