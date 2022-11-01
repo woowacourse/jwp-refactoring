@@ -104,7 +104,7 @@ class TableGroupServiceTest {
 
         // then
         assertThat(orderTables)
-                .allMatch(orderTable -> orderTable.getTableGroupId() == null);
+                .allMatch(orderTable -> !orderTable.getTableGroupId().isPresent());
     }
 
     @DisplayName("조리중인 테이블이 있는 단체를 해제하면 예외가 발생한다.")

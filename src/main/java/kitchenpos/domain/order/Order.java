@@ -1,6 +1,8 @@
 package kitchenpos.domain.order;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -41,13 +43,12 @@ public class Order {
 
     public static Order ofUnsaved(final OrderTable orderTable) {
         checkTableNotEmpty(orderTable);
-        final Order order = new Order(null, orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now());
-        return order;
+        return new Order(null, orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now());
     }
 
     public void changeOrderLineItems(final List<OrderLineItem> orderLineItems) {
         checkItemsNotEmpty(orderLineItems);
-        this.orderLineItems = orderLineItems;
+        this.orderLineItems = new ArrayList<>(orderLineItems);
     }
 
     public void changeStatus(OrderStatus orderStatus) {
@@ -86,7 +87,7 @@ public class Order {
     }
 
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+        return Collections.unmodifiableList(orderLineItems);
     }
 
     protected Order() {

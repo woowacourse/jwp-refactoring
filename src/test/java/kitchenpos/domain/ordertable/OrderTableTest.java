@@ -24,7 +24,7 @@ class OrderTableTest {
 
         // then
         assertAll(
-                () -> assertThat(orderTable.getTableGroupId()).isEqualTo(1L),
+                () -> assertThat(orderTable.getTableGroupId().get()).isEqualTo(1L),
                 () -> assertThat(orderTable.isEmpty()).isFalse()
         );
     }
@@ -36,7 +36,7 @@ class OrderTableTest {
         orderTable.ungroup();
 
         assertAll(
-                () -> assertThat(orderTable.getTableGroupId()).isNull(),
+                () -> assertThat(orderTable.getTableGroupId()).isEmpty(),
                 () -> assertThat(orderTable.isEmpty()).isFalse()
         );
     }

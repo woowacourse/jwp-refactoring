@@ -1,6 +1,7 @@
 package kitchenpos.domain.ordertable;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,7 +30,7 @@ public class TableGroup {
         validateTables(orderTables);
         this.id = id;
         this.createdDate = createdDate;
-        this.orderTables = orderTables;
+        this.orderTables = new ArrayList<>(orderTables);
     }
 
     public static TableGroup ofUnsaved(final List<OrderTable> orderTables) {
@@ -70,7 +71,7 @@ public class TableGroup {
     }
 
     public List<OrderTable> getOrderTables() {
-        return orderTables;
+        return Collections.unmodifiableList(orderTables);
     }
 
     protected TableGroup() {
