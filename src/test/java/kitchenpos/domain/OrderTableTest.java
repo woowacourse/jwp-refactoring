@@ -1,8 +1,5 @@
 package kitchenpos.domain;
 
-import static kitchenpos.support.Fixture.createEmptyOrderTable;
-import static kitchenpos.support.Fixture.createGroupedOrderTable;
-import static kitchenpos.support.Fixture.createOrderTableWithNumberOfGuests;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -19,10 +16,10 @@ class OrderTableTest {
     @DisplayName("updateEmpty 메서드는")
     class UpdateEmpty {
         @Test
-        @DisplayName("테이블 비움상태를 수정한다.")
+        @DisplayName("테이블 주문 가능 상태를 수정한다.")
         void success() {
             //given
-            OrderTable orderTable = createEmptyOrderTable();
+            OrderTable orderTable = Fixture.createEmptyOrderTable();
 
             //when
             orderTable.updateEmpty(false);
@@ -35,7 +32,7 @@ class OrderTableTest {
         @DisplayName("테이블이 그룹에 속해있으면, 예외를 던진다.")
         void fail_existGroupId() {
             //given
-            OrderTable orderTable = createGroupedOrderTable();
+            OrderTable orderTable = Fixture.createGroupedOrderTable();
 
             //when & then
             assertThatThrownBy(() -> orderTable.updateEmpty(false))
@@ -51,7 +48,7 @@ class OrderTableTest {
         @DisplayName("테이블 인원을 수정한다.")
         void success() {
             //given
-            OrderTable orderTable = createOrderTableWithNumberOfGuests(2);
+            OrderTable orderTable = Fixture.createOrderTableWithNumberOfGuests(2);
             int expected = 4;
 
             //when
@@ -62,7 +59,7 @@ class OrderTableTest {
         }
 
         @Test
-        @DisplayName("테이블이 비어있으면, 예외를 던진다.")
+        @DisplayName("테이블이 주문 불가 상태이면, 예외를 던진다.")
         void fail_empty() {
             //given
             OrderTable orderTable = Fixture.createEmptyOrderTable();
@@ -78,7 +75,7 @@ class OrderTableTest {
     class CheckCanGroup {
 
         @Test
-        @DisplayName("그룹이 지정되어있지 않고 비어있는지 확인한다.")
+        @DisplayName("그룹이 지정되어있지 않고 주문 가능 상태인지 확인한다.")
         void success() {
             //given
             OrderTable orderTable = new OrderTable(1L, null, 0, true);
@@ -99,7 +96,7 @@ class OrderTableTest {
         }
 
         @Test
-        @DisplayName("비어있으면, 예외를 던진다.")
+        @DisplayName("주문 불가 상태이면, 예외를 던진다.")
         void fail_isEmpty() {
             //given
             OrderTable orderTable = new OrderTable(1L, null, 2, false);
