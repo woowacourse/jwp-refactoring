@@ -1,9 +1,11 @@
 package kitchenpos.application;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import kitchenpos.application.request.MenuProductRequest;
 import kitchenpos.application.request.MenuRequest;
 import kitchenpos.application.response.MenuResponse;
@@ -76,9 +78,9 @@ public class MenuService {
     }
 
     private List<Product> findAllProducts(final List<MenuProductRequest> menuProductRequests) {
-        final List<Long> productIds = menuProductRequests.stream()
+        final Set<Long> productIds = menuProductRequests.stream()
                 .map(MenuProductRequest::getProductId)
-                .collect(toList());
+                .collect(toSet());
 
         return productRepository.findAllById(productIds);
     }
