@@ -6,9 +6,9 @@ import kitchenpos.domain.TableGroup;
 
 public interface TableGroupDao {
 
-    TableGroup save(TableGroup entity);
+    TableGroupDto save(TableGroup entity);
 
-    Optional<TableGroup> findById(Long id);
+    Optional<TableGroupDto> findById(Long id);
 
-    List<TableGroup> findAll();
+    List<TableGroupDto> findAll();
 }

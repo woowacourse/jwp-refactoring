@@ -1,11 +1,12 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.DomainFixture.getMenuGroup;
+import static kitchenpos.DtoFixture.getMenuGroupCreateRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.ui.request.menugroup.MenuGroupCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,20 +15,20 @@ class MenuGroupServiceTest extends ServiceTest {
     @DisplayName("메뉴 그룹을 등록한다.")
     @Test
     void create() {
-        final MenuGroup menuGroup = getMenuGroup();
+        final MenuGroupCreateRequest request = getMenuGroupCreateRequest();
 
-        final MenuGroup savedMenuGroup = 메뉴_그룹_등록(menuGroup);
+        final MenuGroup savedMenuGroup = 메뉴_그룹_등록(request);
 
         assertAll(
                 () -> assertThat(savedMenuGroup.getId()).isNotNull(),
-                () -> assertThat(savedMenuGroup.getName()).isEqualTo(menuGroup.getName())
+                () -> assertThat(savedMenuGroup.getName()).isEqualTo(request.getName())
         );
     }
 
     @DisplayName("메뉴 그룹 목록을 조회한다.")
     @Test
     void list() {
-        메뉴_그룹_등록(getMenuGroup());
+        메뉴_그룹_등록(getMenuGroupCreateRequest());
 
         final List<MenuGroup> menuGroups = menuGroupService.list();
 
