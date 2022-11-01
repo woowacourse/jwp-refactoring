@@ -4,8 +4,8 @@ import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_MENU_GROU
 
 import java.util.List;
 import kitchenpos.application.exception.CustomIllegalArgumentException;
+import kitchenpos.dao.JpaMenuGroupRepository;
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.ui.dto.request.MenuRequest;
 import org.springframework.stereotype.Service;
@@ -15,13 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class MenuService {
     private final MenuDao menuDao;
-    private final MenuGroupDao menuGroupDao;
+    private final JpaMenuGroupRepository menuGroupRepository;
 
-    public MenuService(
-            final MenuDao menuDao,
-            final MenuGroupDao menuGroupDao) {
+    public MenuService(final MenuDao menuDao, final JpaMenuGroupRepository menuGroupRepository) {
         this.menuDao = menuDao;
-        this.menuGroupDao = menuGroupDao;
+        this.menuGroupRepository = menuGroupRepository;
     }
 
     public Menu create(final MenuRequest request) {
@@ -30,7 +28,7 @@ public class MenuService {
     }
 
     private void validMenuGroup(final Long menuGroupId) {
-        if (!menuGroupDao.existsById(menuGroupId)) {
+        if (!menuGroupRepository.existsById(menuGroupId)) {
             throw new CustomIllegalArgumentException(NOT_FOUND_MENU_GROUP_EXCEPTION);
         }
     }

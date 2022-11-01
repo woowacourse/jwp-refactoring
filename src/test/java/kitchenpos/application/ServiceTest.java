@@ -7,14 +7,13 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Optional;
+import kitchenpos.dao.JpaMenuGroupRepository;
 import kitchenpos.dao.JpaProductRepository;
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
@@ -39,7 +38,7 @@ public class ServiceTest {
     @MockBean
     protected MenuDao menuDao;
     @MockBean
-    protected MenuGroupDao menuGroupDao;
+    protected JpaMenuGroupRepository menuGroupDao;
     @MockBean
     protected MenuProductDao menuProductDao;
     @MockBean
