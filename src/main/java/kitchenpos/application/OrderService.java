@@ -88,7 +88,7 @@ public class OrderService {
                 .orElseThrow(IllegalArgumentException::new);
 
         validateCompletionStatus(savedOrder);
-        savedOrder.setOrderStatus(request.getOrderStatus());
+        savedOrder.changeOrderStatus(request.getOrderStatus());
 
         orderDao.save(savedOrder);
         savedOrder.addOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));

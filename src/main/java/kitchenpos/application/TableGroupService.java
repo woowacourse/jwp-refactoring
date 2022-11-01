@@ -61,10 +61,9 @@ public class TableGroupService {
             throw new IllegalArgumentException("[ERROR] 주문 상태가 COOKING 또는 MEAL일 때는 그룹을 해제할 수 없습니다.");
         }
 
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(null);
-            orderTable.setEmpty(false);
-            orderTableDao.save(orderTable);
-        }
+        orderTables.forEach(it -> {
+                    it.unGroup();
+                    orderTableDao.save(it);
+                });
     }
 }

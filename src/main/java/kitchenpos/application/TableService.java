@@ -40,18 +40,24 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (savedOrderTable.getTableGroupId() != null) {
-            throw new IllegalArgumentException();
-        }
-
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
-
-        savedOrderTable.setEmpty(request.isEmpty());
+        validateTableGroupId(savedOrderTable);
+        validateOrderStatus(orderTableId);
+        savedOrderTable.changeEmpty(request.isEmpty());
 
         return new OrderTableResponse(orderTableDao.save(savedOrderTable));
+    }
+
+    private void validateTableGroupId(OrderTable savedOrderTable) {
+        if (savedOrderTable.isEmptyTableGroupId()) {
+            throw new IllegalArgumentException("[ERROR] TableGroupId가 null입니다.");
+        }
+    }
+
+    private void validateOrderStatus(Long orderTableId) {
+        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
+                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+            throw new IllegalArgumentException("[ERROR] 주문 상태가 COOKING과 MEAL일때는 빈 주문 테이블로 변경할 수 없습니다.");
+        }
     }
 
     @Transactional
@@ -59,19 +65,27 @@ public class TableService {
                                                    final OrderTableRequest.NumberOfGuest request) {
         final int numberOfGuests = request.getNumberOfGuests();
 
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
+        validateNumberOfGuests(numberOfGuests);
 
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+        validateOrderTableIsEmpty(savedOrderTable);
 
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
+        savedOrderTable.addNumberOfGuests(numberOfGuests);
 
         return new OrderTableResponse(orderTableDao.save(savedOrderTable));
+    }
+
+    private void validateOrderTableIsEmpty(OrderTable savedOrderTable) {
+        if (savedOrderTable.isEmpty()) {
+            throw new IllegalArgumentException("[ERROR] 주문 테이블이 비어있습니다.");
+        }
+    }
+
+    private void validateNumberOfGuests(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("[ERROR] 요청 손님의 수가 음수입니다.");
+        }
     }
 }
