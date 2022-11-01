@@ -15,9 +15,9 @@ public class ProductsResponse {
         this.productResponses = productResponses;
     }
 
-    public static ProductsResponse of(List<Product> products) {
+    public static ProductsResponse from(List<Product> products) {
         List<ProductResponse> productResponses = products.stream()
-                .map(ProductResponse::of)
+                .map(ProductResponse::from)
                 .collect(Collectors.toList());
 
         return new ProductsResponse(productResponses);

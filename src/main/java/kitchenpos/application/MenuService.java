@@ -39,7 +39,7 @@ public class MenuService {
         Menu menu = request.toEntity(menuProducts);
         validateInMenuGroup(menu);
         menuRepository.save(menu);
-        return MenuResponse.of(menu);
+        return MenuResponse.from(menu);
     }
 
     private List<MenuProduct> menuProducts(final List<MenuProductCreateRequest> requests) {
@@ -63,6 +63,6 @@ public class MenuService {
 
     public MenusResponse list() {
         final List<Menu> menus = menuRepository.findAll();
-        return MenusResponse.of(menus);
+        return MenusResponse.from(menus);
     }
 }

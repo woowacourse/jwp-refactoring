@@ -22,11 +22,11 @@ public class MenuGroupService {
     public MenuGroupResponse create(final MenuGroupCreateRequest request) {
         MenuGroup menuGroup = new MenuGroup(request.getName());
         menuGroupRepository.save(menuGroup);
-        return MenuGroupResponse.of(menuGroup);
+        return MenuGroupResponse.from(menuGroup);
     }
 
     public MenuGroupsResponse list() {
         List<MenuGroup> menuGroups = menuGroupRepository.findAll();
-        return MenuGroupsResponse.of(menuGroups);
+        return MenuGroupsResponse.from(menuGroups);
     }
 }

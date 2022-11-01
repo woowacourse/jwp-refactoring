@@ -42,7 +42,7 @@ public class OrderService {
         Order order = request.toEntity(orderLineItems);
         validateExistOrderTable(order);
         orderRepository.save(order);
-        return OrderResponse.of(order);
+        return OrderResponse.from(order);
     }
 
     private List<OrderLineItem> orderLineItems(final List<OrderLineItemRequest> requests) {
@@ -67,7 +67,7 @@ public class OrderService {
 
     public OrdersResponse list() {
         List<Order> orders = orderRepository.findAll();
-        return OrdersResponse.of(orders);
+        return OrdersResponse.from(orders);
     }
 
     @Transactional
@@ -75,6 +75,6 @@ public class OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(OrderNotFoundException::new);
         order.changeStatus(request.getOrderStatus());
-        return OrderResponse.of(order);
+        return OrderResponse.from(order);
     }
 }

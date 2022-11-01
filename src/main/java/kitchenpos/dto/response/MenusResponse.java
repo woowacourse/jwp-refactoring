@@ -15,9 +15,9 @@ public class MenusResponse {
         this.menuResponses = menuResponses;
     }
 
-    public static MenusResponse of(List<Menu> menu) {
+    public static MenusResponse from(List<Menu> menu) {
         List<MenuResponse> menuResponses = menu.stream()
-                .map(MenuResponse::of)
+                .map(MenuResponse::from)
                 .collect(Collectors.toList());
 
         return new MenusResponse(menuResponses);

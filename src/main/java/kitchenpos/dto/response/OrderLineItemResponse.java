@@ -18,7 +18,7 @@ public class OrderLineItemResponse {
         this.quantity = quantity;
     }
 
-    public static OrderLineItemResponse of(final OrderLineItem orderLineItem) {
+    public static OrderLineItemResponse from(final OrderLineItem orderLineItem) {
         Long menuId = orderLineItem.getMenu().getId();
         return new OrderLineItemResponse(orderLineItem.getSeq(), menuId,
                 orderLineItem.getQuantity());

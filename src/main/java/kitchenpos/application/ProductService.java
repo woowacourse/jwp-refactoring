@@ -23,11 +23,11 @@ public class ProductService {
     public ProductResponse create(final ProductCreateRequest request) {
         Product product = request.toEntity();
         productRepository.save(product);
-        return ProductResponse.of(product);
+        return ProductResponse.from(product);
     }
 
     public ProductsResponse list() {
         List<Product> products = productRepository.findAll();
-        return ProductsResponse.of(products);
+        return ProductsResponse.from(products);
     }
 }

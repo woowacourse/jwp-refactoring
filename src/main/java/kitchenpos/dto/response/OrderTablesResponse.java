@@ -15,9 +15,9 @@ public class OrderTablesResponse {
         this.orderTableResponses = orderTableResponses;
     }
 
-    public static OrderTablesResponse of(List<OrderTable> orderTables) {
+    public static OrderTablesResponse from(List<OrderTable> orderTables) {
         List<OrderTableResponse> orderTableResponses = orderTables.stream()
-                .map(OrderTableResponse::of)
+                .map(OrderTableResponse::from)
                 .collect(Collectors.toList());
 
         return new OrderTablesResponse(orderTableResponses);

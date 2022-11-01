@@ -25,10 +25,10 @@ public class OrderResponse {
         this.orderLineItems = orderLineItems;
     }
 
-    public static OrderResponse of(final Order order) {
+    public static OrderResponse from(final Order order) {
         List<OrderLineItemResponse> orderLineItemResponses = order.getOrderLineItems()
                 .stream()
-                .map(OrderLineItemResponse::of)
+                .map(OrderLineItemResponse::from)
                 .collect(Collectors.toList());
 
         return new OrderResponse(order.getId(), order.getOrderTableId(), order.getOrderStatus(), order.getOrderedTime(),

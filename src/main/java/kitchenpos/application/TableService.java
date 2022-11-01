@@ -33,12 +33,12 @@ public class TableService {
     public OrderTableResponse create(final OrderTableCreateRequest request) {
         OrderTable orderTable = request.toEntity();
         orderTableRepository.save(orderTable);
-        return OrderTableResponse.of(orderTable);
+        return OrderTableResponse.from(orderTable);
     }
 
     public OrderTablesResponse list() {
         List<OrderTable> orderTables = orderTableRepository.findAll();
-        return OrderTablesResponse.of(orderTables);
+        return OrderTablesResponse.from(orderTables);
     }
 
     @Transactional
@@ -47,7 +47,7 @@ public class TableService {
         validatePossibleChangeToEmpty(orderTableId);
         OrderTable orderTable = getOrderTable(orderTableId);
         orderTable.changeToEmpty(request.isEmpty());
-        return OrderTableResponse.of(orderTable);
+        return OrderTableResponse.from(orderTable);
     }
 
     private void validatePossibleChangeToEmpty(final Long orderTableId) {
@@ -62,7 +62,7 @@ public class TableService {
                                                    final OrderTableUpdateGuestRequest request) {
         OrderTable orderTable = getOrderTable(orderTableId);
         orderTable.changeNumberOfGuests(request.getNumberOfGuests());
-        return OrderTableResponse.of(orderTable);
+        return OrderTableResponse.from(orderTable);
     }
 
     private OrderTable getOrderTable(final Long orderTableId) {
