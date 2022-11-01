@@ -4,9 +4,9 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.core.menu.domain.Menu;
+import kitchenpos.core.menugroup.domain.MenuGroup;
+import kitchenpos.core.menu.domain.MenuProduct;
 
 public class MenuFixture {
 

@@ -4,9 +4,9 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.core.order.domain.OrderStatus;
+import kitchenpos.core.table.domain.OrderTable;
+import kitchenpos.core.table.domain.TableGroup;
 
 public class TableFixture {
 
