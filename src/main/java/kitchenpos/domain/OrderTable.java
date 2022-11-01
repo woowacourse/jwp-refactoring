@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,6 +9,9 @@ import javax.persistence.Id;
 
 @Entity
 public class OrderTable {
+
+    private static final String ALREADY_GROUP_ERROR_MESSAGE = "이미 단체지정되어 있는 테이블은 단체지정 할 수 없습니다";
+    private static final String TABLE_EMPTY_ERROR_MESSAGE = "비어 있지 않은 테이블은 단체지정을 할 수 없습니다.";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -68,6 +72,15 @@ public class OrderTable {
     public void ungroup() {
         this.tableGroupId = null;
         this.empty = false;
+    }
+
+    public void validateCanGroup() {
+        if (Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException(ALREADY_GROUP_ERROR_MESSAGE);
+        }
+        if (!empty) {
+            throw new IllegalArgumentException(TABLE_EMPTY_ERROR_MESSAGE);
+        }
     }
 
     public static class Builder {

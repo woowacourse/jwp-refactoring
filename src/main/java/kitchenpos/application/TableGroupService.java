@@ -3,7 +3,6 @@ package kitchenpos.application;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -21,8 +20,6 @@ import org.springframework.util.CollectionUtils;
 public class TableGroupService {
 
     private static final String TABLE_GROUP_CREATE_ERROR_MESSAGE = "단체 지정시 개별 주문테이블은 최소 2개 이상이어야 합니다.";
-    private static final String TABLE_EMPTY_ERROR_MESSAGE = "비어 있지 않은 테이블은 단체지정을 할 수 없습니다.";
-    private static final String ALREADY_GROUP_ERROR_MESSAGE = "이미 단체지정되어 있는 테이블은 단체지정 할 수 없습니다";
     private static final String UNGROUP_ERROR_MESSAGE = "조리 또는 식사중인 주문은 단체지정을 해제할 수 없습니다.";
 
     private final OrderRepository orderRepository;
@@ -42,8 +39,7 @@ public class TableGroupService {
         final List<OrderTable> savedOrderTables = findOrderTable(request.getOrderTables());
 
         validateCanGroup(savedOrderTables);
-        final TableGroup savedTableGroup = tableGroupRepository.save(
-                new TableGroup(LocalDateTime.now(), savedOrderTables));
+        final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), savedOrderTables));
 
         final Long tableGroupId = savedTableGroup.getId();
         for (final OrderTable savedOrderTable : savedOrderTables) {
@@ -55,20 +51,7 @@ public class TableGroupService {
 
     private void validateCanGroup(final List<OrderTable> savedOrderTables) {
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            validateNotEmptyTable(savedOrderTable);
-            validateAlreadyHasGroup(savedOrderTable);
-        }
-    }
-
-    private void validateAlreadyHasGroup(final OrderTable savedOrderTable) {
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException(ALREADY_GROUP_ERROR_MESSAGE);
-        }
-    }
-
-    private void validateNotEmptyTable(final OrderTable savedOrderTable) {
-        if (!savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException(TABLE_EMPTY_ERROR_MESSAGE);
+            savedOrderTable.validateCanGroup();
         }
     }
 
