@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import java.util.Collections;
 import java.util.List;
 import org.springframework.util.CollectionUtils;
 
@@ -8,7 +9,7 @@ public class OrderTables {
     private List<OrderTable> value;
 
     public OrderTables(List<OrderTable> orderTables) {
-        checkSize(orderTables);
+        checkSize(Collections.unmodifiableList(orderTables));
         this.value = orderTables;
     }
 
