@@ -38,10 +38,17 @@ public class Order {
 
     public Order(final Long id, final OrderTable orderTable, final String orderStatus,
                  final LocalDateTime orderedTime) {
+        validateTableEmpty(orderTable);
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
+    }
+
+    private void validateTableEmpty(OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("사용 중이지 않은 테이블입니다.");
+        }
     }
 
     public Long getId() {

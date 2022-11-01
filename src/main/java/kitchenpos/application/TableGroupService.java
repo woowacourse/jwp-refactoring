@@ -3,7 +3,6 @@ package kitchenpos.application;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -49,12 +48,6 @@ public class TableGroupService {
 
         if (orderTableRequests.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException("존재하지 않는 테이블은 단체 지정할 수 없습니다.");
-        }
-
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
-                throw new IllegalArgumentException("이미 사용 중이거나 단체 지정된 테이블은 사용할 수 없습니다.");
-            }
         }
 
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now());

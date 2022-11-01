@@ -93,7 +93,7 @@ class TableGroupServiceTest extends ServiceTest {
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class).
-                hasMessage("이미 사용 중이거나 단체 지정된 테이블은 사용할 수 없습니다.");
+                hasMessage("단체 테이블입니다.");
     }
 
     @DisplayName("이미 사용 중인 테이블을 단체 지정하면 예외를 반환한다.")
@@ -107,7 +107,7 @@ class TableGroupServiceTest extends ServiceTest {
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class).
-                hasMessage("이미 사용 중이거나 단체 지정된 테이블은 사용할 수 없습니다.");
+                hasMessage("이미 사용 중인 테이블은 사용할 수 없습니다.");
     }
 
     @DisplayName("테이블 단체 지정을 해제한다.")

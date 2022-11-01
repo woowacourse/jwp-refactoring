@@ -46,18 +46,37 @@ public class OrderTable {
     }
 
 
-    public boolean isAlreadyGrouped() {
-        return Objects.nonNull(tableGroup);
-    }
-
     public void group(final TableGroup tableGroup) {
-        changeTableGroupId(tableGroup);
+        if (!empty) {
+            throw new IllegalArgumentException("이미 사용 중인 테이블은 사용할 수 없습니다.");
+        }
         changeEmpty(false);
+        changeTableGroupId(tableGroup);
     }
 
     public void ungroup() {
-        changeTableGroupId(null);
         changeEmpty(false);
+        changeTableGroupId(null);
+    }
+
+    public void changeEmpty(final boolean empty) {
+        if (Objects.nonNull(tableGroup)) {
+            throw new IllegalArgumentException("단체 테이블입니다.");
+        }
+        this.empty = empty;
+    }
+
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        validateNumberOfGuestsNegative(numberOfGuests);
+
+        if (empty) {
+            throw new IllegalArgumentException("사용 중이지 않은 테이블의 방문한 손님 수를 변경할 수 없습니다.");
+        }
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    public void changeTableGroupId(final TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
     }
 
     private void validateNumberOfGuestsNegative(final int numberOfGuests) {
@@ -74,24 +93,11 @@ public class OrderTable {
         return tableGroup;
     }
 
-    public void changeTableGroupId(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
-    }
-
     public int getNumberOfGuests() {
         return numberOfGuests;
     }
 
-    public void changeNumberOfGuests(final int numberOfGuests) {
-        validateNumberOfGuestsNegative(numberOfGuests);
-        this.numberOfGuests = numberOfGuests;
-    }
-
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void changeEmpty(final boolean empty) {
-        this.empty = empty;
     }
 }

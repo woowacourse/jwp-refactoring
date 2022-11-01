@@ -45,10 +45,6 @@ public class TableService {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
 
-        if (orderTable.isAlreadyGrouped()) {
-            throw new IllegalArgumentException("단체 테이블입니다.");
-        }
-
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException("아직 식사가 완료되지 않은 테이블입나다.");
@@ -63,10 +59,6 @@ public class TableService {
     public TableResponse changeNumberOfGuests(final Long orderTableId, final ChangeTableNumberOfGuestsRequest request) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("테이블이 존재하지 않습니다."));
-
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("사용 중이지 않은 테이블의 방문한 손님 수를 변경할 수 없습니다.");
-        }
 
         orderTable.changeNumberOfGuests(request.getNumberOfGuests());
 
