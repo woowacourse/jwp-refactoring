@@ -43,7 +43,7 @@ public class TableGroupService {
         final List<OrderTable> orderTables = tableGroupDto.getOrderTables();
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(getOrderTableIds(orderTables));
         if (orderTables.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException("[ERROR] OrderTable 의 개수가 저장된 개수와 일치하지 않습니다.");
+            throw new IllegalArgumentException("[ERROR] 주문 테이블의 개수가 저장된 개수와 일치하지 않습니다.");
         }
     }
 

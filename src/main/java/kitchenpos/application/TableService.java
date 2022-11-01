@@ -44,12 +44,12 @@ public class TableService {
 
     private OrderTable searchOrderTable(final Long orderTableId) {
         return orderTableDao.findById(orderTableId)
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR] OrderTable 을 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 주문 테이블을 찾을 수 없습니다."));
     }
 
     private void validateOrderTableAlreadyInGroup(final OrderTable savedOrderTable) {
         if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException("[ERROR] OrderTable 에 단체 지정이 되어 있습니다.");
+            throw new IllegalArgumentException("[ERROR] 주문 테이블에 단체 지정이 되어 있습니다.");
         }
     }
 

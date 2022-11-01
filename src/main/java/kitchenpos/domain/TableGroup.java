@@ -27,7 +27,7 @@ public class TableGroup {
 
     private void validateOrderTableAlreadyInGroup(final List<OrderTable> orderTables) {
         if (orderTables.stream().anyMatch(orderTable -> this.id != orderTable.getTableGroupId())) {
-            throw new IllegalArgumentException("[ERROR] OrderTable 이미 단체로 지정되어 있습니다.");
+            throw new IllegalArgumentException("[ERROR] 주문 테이블이 이미 단체로 지정되어 있습니다.");
         }
     }
 

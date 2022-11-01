@@ -113,7 +113,7 @@ public class OrderService {
 
     private Order searchOrder(final Long orderId) {
         return orderDao.findById(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR] Order 를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 주문을 찾을 수 없습니다."));
     }
 
     private void validateOrderStatus(final Order savedOrder) {
