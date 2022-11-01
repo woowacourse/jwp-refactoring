@@ -37,7 +37,7 @@ public class OrderTable {
         return id;
     }
 
-    public void setId(final Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -45,7 +45,7 @@ public class OrderTable {
         return tableGroupId;
     }
 
-    public void setTableGroupId(final Long tableGroupId) {
+    public void setTableGroupId(Long tableGroupId) {
         this.tableGroupId = tableGroupId;
     }
 
@@ -53,7 +53,7 @@ public class OrderTable {
         return numberOfGuests;
     }
 
-    public void changeNumberOfGuests(final int numberOfGuests) {
+    public void changeNumberOfGuests(int numberOfGuests) {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();
         }
@@ -64,7 +64,7 @@ public class OrderTable {
         return empty;
     }
 
-    public void setEmpty(final boolean empty) {
+    public void setEmpty(boolean empty) {
         this.empty = empty;
     }
 

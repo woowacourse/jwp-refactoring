@@ -24,7 +24,7 @@ public class JdbcTemplateOrderTableGroupDao implements OrderTableGroupDao {
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    public JdbcTemplateOrderTableGroupDao(final DataSource dataSource) {
+    public JdbcTemplateOrderTableGroupDao(DataSource dataSource) {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName(TABLE_NAME)
@@ -33,14 +33,14 @@ public class JdbcTemplateOrderTableGroupDao implements OrderTableGroupDao {
     }
 
     @Override
-    public OrderTableGroup save(final OrderTableGroup entity) {
+    public OrderTableGroup save(OrderTableGroup entity) {
         final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
         final Number key = jdbcInsert.executeAndReturnKey(parameters);
         return select(key.longValue());
     }
 
     @Override
-    public Optional<OrderTableGroup> findById(final Long id) {
+    public Optional<OrderTableGroup> findById(Long id) {
         try {
             return Optional.of(select(id));
         } catch (final EmptyResultDataAccessException e) {
@@ -54,14 +54,14 @@ public class JdbcTemplateOrderTableGroupDao implements OrderTableGroupDao {
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    private OrderTableGroup select(final Long id) {
+    private OrderTableGroup select(Long id) {
         final String sql = "SELECT id, created_date FROM table_group WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("id", id);
         return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    private OrderTableGroup toEntity(final ResultSet resultSet) throws SQLException {
+    private OrderTableGroup toEntity(ResultSet resultSet) throws SQLException {
         final OrderTableGroup entity = new OrderTableGroup();
         entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
         entity.setCreatedDate(resultSet.getObject("created_date", LocalDateTime.class));

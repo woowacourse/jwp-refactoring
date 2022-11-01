@@ -16,7 +16,7 @@ public class MenuGroupRestController {
 
     private final MenuGroupApiService menuGroupApiService;
 
-    public MenuGroupRestController(final MenuGroupApiService menuGroupApiService) {
+    public MenuGroupRestController(MenuGroupApiService menuGroupApiService) {
         this.menuGroupApiService = menuGroupApiService;
     }
 

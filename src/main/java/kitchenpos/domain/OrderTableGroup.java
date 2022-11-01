@@ -32,7 +32,7 @@ public class OrderTableGroup {
         return id;
     }
 
-    public void setId(final Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -40,15 +40,11 @@ public class OrderTableGroup {
         return createdDate;
     }
 
-    public void setCreatedDate(final LocalDateTime createdDate) {
+    public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
     }
 
     public List<OrderTable> getOrderTables() {
         return orderTables;
-    }
-
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
     }
 }

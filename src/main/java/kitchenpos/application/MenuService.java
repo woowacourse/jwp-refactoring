@@ -20,7 +20,7 @@ public class MenuService {
     private final MenuGroupDao menuGroupDao;
     private final ProductDao productDao;
 
-    public MenuService(final MenuDao menuDao, final MenuProductDao menuProductDao,
+    public MenuService(MenuDao menuDao, MenuProductDao menuProductDao,
                        MenuGroupDao menuGroupDao, ProductDao productDao) {
         this.menuDao = menuDao;
         this.menuProductDao = menuProductDao;

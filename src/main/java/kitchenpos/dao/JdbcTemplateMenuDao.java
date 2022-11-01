@@ -23,7 +23,7 @@ public class JdbcTemplateMenuDao implements MenuDao {
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    public JdbcTemplateMenuDao(final DataSource dataSource) {
+    public JdbcTemplateMenuDao(DataSource dataSource) {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName(TABLE_NAME)
@@ -32,14 +32,14 @@ public class JdbcTemplateMenuDao implements MenuDao {
     }
 
     @Override
-    public Menu save(final Menu entity) {
+    public Menu save(Menu entity) {
         final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
         final Number key = jdbcInsert.executeAndReturnKey(parameters);
         return select(key.longValue());
     }
 
     @Override
-    public Optional<Menu> findById(final Long id) {
+    public Optional<Menu> findById(Long id) {
         try {
             return Optional.of(select(id));
         } catch (final EmptyResultDataAccessException e) {
@@ -54,21 +54,21 @@ public class JdbcTemplateMenuDao implements MenuDao {
     }
 
     @Override
-    public long countByIdIn(final List<Long> ids) {
+    public long countByIdIn(List<Long> ids) {
         final String sql = "SELECT COUNT(*) FROM menu WHERE id IN (:ids)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("ids", ids);
         return jdbcTemplate.queryForObject(sql, parameters, Long.class);
     }
 
-    private Menu select(final Long id) {
+    private Menu select(Long id) {
         final String sql = "SELECT id, name, price, menu_group_id FROM menu WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("id", id);
         return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    private Menu toEntity(final ResultSet resultSet) throws SQLException {
+    private Menu toEntity(ResultSet resultSet) throws SQLException {
         final Menu entity = new Menu();
         entity.setId(resultSet.getLong("id"));
         entity.setName(resultSet.getString("name"));

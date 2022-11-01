@@ -42,7 +42,7 @@ public class MenuProduct {
         return seq;
     }
 
-    public void setSeq(final Long seq) {
+    public void setSeq(Long seq) {
         this.seq = seq;
     }
 
@@ -50,7 +50,7 @@ public class MenuProduct {
         return menuId;
     }
 
-    public void setMenuId(final Long menuId) {
+    public void setMenuId(Long menuId) {
         this.menuId = menuId;
     }
 
@@ -58,7 +58,7 @@ public class MenuProduct {
         return productId;
     }
 
-    public void setProductId(final Long productId) {
+    public void setProductId(Long productId) {
         this.productId = productId;
     }
 
@@ -66,7 +66,7 @@ public class MenuProduct {
         return quantity;
     }
 
-    public void setQuantity(final long quantity) {
+    public void setQuantity(long quantity) {
         this.quantity = quantity;
     }
 

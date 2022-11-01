@@ -17,10 +17,7 @@ public class OrderService {
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
 
-    public OrderService(
-            final OrderDao orderDao,
-            final OrderTableDao orderTableDao
-    ) {
+    public OrderService(OrderDao orderDao, OrderTableDao orderTableDao) {
         this.orderDao = orderDao;
         this.orderTableDao = orderTableDao;
     }

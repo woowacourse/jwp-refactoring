@@ -19,7 +19,8 @@ public class OrderTableGroupService {
     private final OrderTableDao orderTableDao;
     private final OrderTableGroupDao orderTableGroupDao;
 
-    public OrderTableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao, final OrderTableGroupDao orderTableGroupDao) {
+    public OrderTableGroupService(OrderDao orderDao, OrderTableDao orderTableDao,
+                                  OrderTableGroupDao orderTableGroupDao) {
         this.orderDao = orderDao;
         this.orderTableDao = orderTableDao;
         this.orderTableGroupDao = orderTableGroupDao;
