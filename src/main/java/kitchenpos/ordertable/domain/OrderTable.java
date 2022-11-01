@@ -3,15 +3,11 @@ package kitchenpos.ordertable.domain;
 import java.util.Objects;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import kitchenpos.order.exception.GuestNumberChangeDisabledException;
 import kitchenpos.order.exception.TableEmptyDisabledException;
-import kitchenpos.tablegroup.domain.TableGroup;
 
 @Entity
 public class OrderTable {
@@ -28,21 +24,14 @@ public class OrderTable {
 
     private boolean empty;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
+    private Long tableGroupId;
 
     protected OrderTable() {
     }
 
-    public OrderTable(GuestNumber guestNumber, boolean empty, TableGroup tableGroup) {
+    public OrderTable(GuestNumber guestNumber, boolean empty) {
         this.guestNumber = guestNumber;
         this.empty = empty;
-        this.tableGroup = tableGroup;
-    }
-
-    public OrderTable(GuestNumber guestNumber, boolean empty) {
-        this(guestNumber, empty, null);
     }
 
     public Long getId() {
@@ -79,19 +68,19 @@ public class OrderTable {
         }
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
-    public void group(TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
+    public void group(Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
     }
 
     public void ungroup() {
-        tableGroup = null;
+        tableGroupId = null;
     }
 
     public boolean hasTableGroup() {
-        return Objects.nonNull(tableGroup);
+        return Objects.nonNull(tableGroupId);
     }
 }

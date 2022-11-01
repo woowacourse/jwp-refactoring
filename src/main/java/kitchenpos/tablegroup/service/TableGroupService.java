@@ -36,15 +36,11 @@ public class TableGroupService {
         List<OrderTable> savedOrderOrderTables = tableRepository.findAllByIdIn(orderTableIds);
         validateNotFoundOrderTable(savedOrderOrderTables.size(), orderTableIds.size());
         OrderTables orderTables = OrderTables.forGrouping(savedOrderOrderTables);
-        TableGroup savedTableGroup = saveTableGroup(orderTables);
-        return new TableGroupResponse(savedTableGroup);
-    }
 
-    private TableGroup saveTableGroup(OrderTables orderTables) {
-        TableGroup tableGroup = new TableGroup(orderTables.getValues());
+        TableGroup tableGroup = new TableGroup();
         TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-        orderTables.group(savedTableGroup);
-        return savedTableGroup;
+        orderTables.group(savedTableGroup.getId());
+        return new TableGroupResponse(savedTableGroup, orderTables.getValues());
     }
 
     private void validateNotFoundOrderTable(int requestedOrderTableSize, int savedOrderTableSize) {
@@ -72,6 +68,5 @@ public class TableGroupService {
         if (notCompletion) {
             throw new NotCompleteTableUngroupException();
         }
-
     }
 }

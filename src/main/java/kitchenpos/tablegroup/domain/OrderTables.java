@@ -54,8 +54,8 @@ public class OrderTables {
         return values;
     }
 
-    public void group(TableGroup tableGroup) {
-        values.forEach(orderTable -> orderTable.group(tableGroup));
+    public void group(Long tableGroupId) {
+        values.forEach(orderTable -> orderTable.group(tableGroupId));
     }
 
     public void ungroup() {

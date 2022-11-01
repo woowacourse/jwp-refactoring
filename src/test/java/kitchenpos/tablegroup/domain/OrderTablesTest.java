@@ -36,7 +36,8 @@ class OrderTablesTest {
     @Test
     void from_Exception_AlreadyGroupedTable() {
         OrderTable orderTable1 = new OrderTable(GUEST_NUMBER, true);
-        OrderTable orderTable2 = new OrderTable(GUEST_NUMBER, true, new TableGroup());
+        OrderTable orderTable2 = new OrderTable(GUEST_NUMBER, true);
+        orderTable2.group(1L);
 
         assertThatThrownBy(() -> OrderTables.forGrouping(List.of(orderTable1, orderTable2)))
                 .isInstanceOf(TableAlreadyGroupedException.class);

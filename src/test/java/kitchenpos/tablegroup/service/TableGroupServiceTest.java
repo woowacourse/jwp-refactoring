@@ -50,8 +50,8 @@ class TableGroupServiceTest extends ServiceTest {
         OrderTable groupedOrderOrderTable2 = tableRepository.findById(orderTable2.getId())
                 .orElseThrow(OrderTableNotFoundException::new);
         assertAll(
-                () -> assertThat(groupedOrderOrderTable1.getTableGroup().getId()).isEqualTo(tableGroupResponse.getId()),
-                () -> assertThat(groupedOrderOrderTable2.getTableGroup().getId()).isEqualTo(tableGroupResponse.getId())
+                () -> assertThat(groupedOrderOrderTable1.getTableGroupId()).isEqualTo(tableGroupResponse.getId()),
+                () -> assertThat(groupedOrderOrderTable2.getTableGroupId()).isEqualTo(tableGroupResponse.getId())
         );
     }
 
@@ -88,11 +88,13 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void create_Exception_AlreadyGroupedOrderTable() {
         TableGroup tableGroup = tableGroupRepository.save(new TableGroup());
-        OrderTable orderTable2 = tableRepository.save(new OrderTable(GUEST_NUMBER, true, tableGroup));
+        OrderTable orderTable2 = new OrderTable(GUEST_NUMBER, true);
+        orderTable2.group(tableGroup.getId());
+        OrderTable savedOrderTable2 = tableRepository.save(orderTable2);
 
         assertThatThrownBy(
                 () -> tableGroupService
-                        .create(new TableGroupCreateRequest(List.of(orderTable1.getId(), orderTable2.getId()))))
+                        .create(new TableGroupCreateRequest(List.of(orderTable1.getId(), savedOrderTable2.getId()))))
                 .isInstanceOf(TableAlreadyGroupedException.class);
     }
 
@@ -110,8 +112,8 @@ class TableGroupServiceTest extends ServiceTest {
         OrderTable groupedOrderOrderTable2 = tableRepository.findById(orderTable2.getId())
                 .orElseThrow(OrderTableNotFoundException::new);
         assertAll(
-                () -> assertThat(groupedOrderOrderTable1.getTableGroup()).isNull(),
-                () -> assertThat(groupedOrderOrderTable2.getTableGroup()).isNull()
+                () -> assertThat(groupedOrderOrderTable1.getTableGroupId()).isNull(),
+                () -> assertThat(groupedOrderOrderTable2.getTableGroupId()).isNull()
         );
     }
 
@@ -119,7 +121,7 @@ class TableGroupServiceTest extends ServiceTest {
     @ParameterizedTest
     @ValueSource(strings = {"MEAL", "COOKING"})
     void ungroup_Exception_NotCompleteOrderTableStatus(String orderStatus) {
-        OrderTable orderOrderTable2 = tableRepository.save(new OrderTable(GUEST_NUMBER, true, null));
+        OrderTable orderOrderTable2 = tableRepository.save(new OrderTable(GUEST_NUMBER, true));
         TableGroupResponse tableGroupResponse = tableGroupService.create(
                 new TableGroupCreateRequest(List.of(orderTable1.getId(), orderOrderTable2.getId())));
         Order order = Order.newOrder(orderOrderTable2.getId());

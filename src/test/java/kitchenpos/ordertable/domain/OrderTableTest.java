@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import kitchenpos.order.exception.GuestNumberChangeDisabledException;
 import kitchenpos.order.exception.TableEmptyDisabledException;
-import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -45,7 +44,8 @@ class OrderTableTest {
     @DisplayName("테이블 그룹에 속한 테이블의 empty 상태를 변경하려고 하면 예외를 발생시킨다.")
     @Test
     void changeEmpty_Exception_GroupedTable() {
-        OrderTable orderTable = new OrderTable(GUEST_NUMBER, false, new TableGroup());
+        OrderTable orderTable = new OrderTable(GUEST_NUMBER, false);
+        orderTable.group(1L);
 
         assertThatThrownBy(() -> orderTable.setEmpty(true))
                 .isInstanceOf(TableEmptyDisabledException.class)

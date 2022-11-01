@@ -66,10 +66,12 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeEmpty_Exception_GroupedTable() {
         TableGroup tableGroup = tableGroupRepository.save(new TableGroup());
-        OrderTable orderTable = tableRepository.save(new OrderTable(GUEST_NUMBER, true, tableGroup));
+        OrderTable orderTable = new OrderTable(GUEST_NUMBER, true);
+        orderTable.group(tableGroup.getId());
+        OrderTable saveOrderTable = tableRepository.save(orderTable);
 
         assertThatThrownBy(
-                () -> tableService.changeEmpty(orderTable.getId(), new OrderTableEmptyChangeRequest(true)))
+                () -> tableService.changeEmpty(saveOrderTable.getId(), new OrderTableEmptyChangeRequest(true)))
                 .isInstanceOf(TableEmptyDisabledException.class)
                 .hasMessage("Table Group으로 묶인 테이블은 empty를 변경할 수 없습니다.");
     }

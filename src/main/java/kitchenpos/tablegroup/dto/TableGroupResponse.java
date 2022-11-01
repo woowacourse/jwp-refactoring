@@ -12,19 +12,15 @@ public class TableGroupResponse {
     private LocalDateTime createdDate;
     private List<Long> orderTables;
 
-    public TableGroupResponse() {
-    }
-
     public TableGroupResponse(List<Long> orderTables) {
         this.createdDate = LocalDateTime.now();
         this.orderTables = orderTables;
     }
 
-    public TableGroupResponse(TableGroup tableGroup) {
+    public TableGroupResponse(TableGroup tableGroup, List<OrderTable> orderTables) {
         this.id = tableGroup.getId();
         this.createdDate = tableGroup.getCreatedDate();
-        this.orderTables = tableGroup.getOrderTables()
-                .stream()
+        this.orderTables = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toUnmodifiableList());
     }
