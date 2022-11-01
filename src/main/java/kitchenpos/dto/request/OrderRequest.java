@@ -5,7 +5,6 @@ import java.util.List;
 public class OrderRequest {
 
     private Long orderTableId;
-    private String orderStatus;
     private List<OrderLineItemRequest> orderLineItems;
 
     private OrderRequest() {
