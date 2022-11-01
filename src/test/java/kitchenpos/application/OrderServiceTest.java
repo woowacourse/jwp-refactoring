@@ -178,7 +178,7 @@ class OrderServiceTest {
 
     private OrderLineItem toOrderLineItem(final OrderLineItemRequest orderLineItemRequest) {
         final Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId()).get();
-        return new OrderLineItem(menu, orderLineItemRequest.getQuantity());
+        return new OrderLineItem(menu.getId(), orderLineItemRequest.getQuantity());
     }
 
     private OrderLineItemRequest createOrderLineItemRequest() {

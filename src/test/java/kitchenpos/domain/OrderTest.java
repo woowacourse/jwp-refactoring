@@ -30,7 +30,7 @@ class OrderTest {
     void canNotChangeOrderStatusWhenAlreadyCompletion() {
         // given
         final Menu menu = new Menu("메뉴 이름", BigDecimal.ONE, 1L, new MenuProducts(List.of()));
-        final OrderLineItem orderLineItem = new OrderLineItem(menu, QUANTITY);
+        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), QUANTITY);
         final Order order = Order.of(1L, LocalDateTime.now(), List.of(orderLineItem));
         order.changeOrderStatus(COMPLETION);
 
