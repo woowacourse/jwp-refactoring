@@ -54,7 +54,7 @@ public class MenuService {
     }
 
     private List<MenuProduct> createMenuProducts(final MenuCreateRequest request) {
-        return request.getMenuProductCreateRequests()
+        return request.getMenuProducts()
                 .stream()
                 .map(it -> {
                     final Product product = productRepository.findById(it.getProductId())

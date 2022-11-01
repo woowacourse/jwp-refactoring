@@ -2,7 +2,10 @@ package kitchenpos.ui.dto;
 
 public class TableUpdateGuestNumberRequest {
 
-    private final Integer numberOfGuests;
+    private Integer numberOfGuests;
+
+    public TableUpdateGuestNumberRequest() {
+    }
 
     public TableUpdateGuestNumberRequest(final int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;

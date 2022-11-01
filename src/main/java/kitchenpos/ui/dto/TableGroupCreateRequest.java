@@ -5,19 +5,21 @@ import java.util.stream.Collectors;
 
 public class TableGroupCreateRequest {
 
-    private final List<OrderTableRequest> orderTableRequests;
+    private List<OrderTableRequest> orderTables;
 
-
-    public TableGroupCreateRequest(final List<OrderTableRequest> orderTableRequests) {
-        this.orderTableRequests = orderTableRequests;
+    public TableGroupCreateRequest() {
     }
 
-    public List<OrderTableRequest> getOrderTableRequests() {
-        return orderTableRequests;
+    public TableGroupCreateRequest(final List<OrderTableRequest> orderTables) {
+        this.orderTables = orderTables;
+    }
+
+    public List<OrderTableRequest> getOrderTables() {
+        return orderTables;
     }
 
     public List<Long> getOrderTableIds() {
-        return orderTableRequests.stream()
+        return orderTables.stream()
                 .map(OrderTableRequest::getId)
                 .collect(Collectors.toList());
     }
