@@ -31,10 +31,15 @@ public class OrderTable {
     protected OrderTable() {
     }
 
-    public OrderTable(final Long id, final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
+    public OrderTable(final int numberOfGuests, final boolean empty) {
+        this(null, null, new NumberOfGuests(numberOfGuests), empty);
+    }
+
+    public OrderTable(final Long id, final TableGroup tableGroup, final NumberOfGuests numberOfGuests,
+                      final boolean empty) {
         this.id = id;
         this.tableGroup = tableGroup;
-        this.numberOfGuests = new NumberOfGuests(numberOfGuests);
+        this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 

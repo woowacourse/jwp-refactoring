@@ -9,6 +9,6 @@ public class ProductMapperImpl implements ProductMapper {
 
     @Override
     public Product toProduct(final ProductCreateRequest productCreateRequest) {
-        return new Product(null, productCreateRequest.getName(), productCreateRequest.getPrice());
+        return new Product(productCreateRequest.getName(), productCreateRequest.getPrice());
     }
 }

@@ -33,6 +33,11 @@ public class Menu {
     protected Menu() {
     }
 
+    public Menu(final String name, final BigDecimal price, final Long menuGroupId,
+                final List<MenuProduct> menuProducts) {
+        this(null, name, new Price(price), menuGroupId, menuProducts);
+    }
+
     public Menu(final Long id, final String name, final Price price, final Long menuGroupId,
                 final List<MenuProduct> menuProducts) {
         validatePrice(menuProducts, price);

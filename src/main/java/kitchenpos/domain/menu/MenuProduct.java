@@ -33,6 +33,10 @@ public class MenuProduct {
     protected MenuProduct() {
     }
 
+    public MenuProduct(final Long productId, final long quantity, final Price price) {
+        this(null, null, productId, quantity, price);
+    }
+
     public MenuProduct(final Long seq, final Menu menu, final Long productId, final long quantity, final Price price) {
         this.seq = seq;
         this.productId = productId;

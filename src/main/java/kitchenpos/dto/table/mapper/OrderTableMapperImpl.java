@@ -9,7 +9,6 @@ public class OrderTableMapperImpl implements OrderTableMapper {
 
     @Override
     public OrderTable toOrderTable(final OrderTableCreateRequest orderTableCreateRequest) {
-        return new OrderTable(null, null, orderTableCreateRequest.getNumberOfGuests(),
-                orderTableCreateRequest.isEmpty());
+        return new OrderTable(orderTableCreateRequest.getNumberOfGuests(), orderTableCreateRequest.isEmpty());
     }
 }

@@ -1,13 +1,12 @@
 package kitchenpos.application.table;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.common.OrderStatus;
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.TableGroup;
 import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
+import kitchenpos.domain.table.TableGroup;
 import kitchenpos.domain.table.TableGroupRepository;
 import kitchenpos.dto.table.mapper.TableGroupDtoMapper;
 import kitchenpos.dto.table.request.OrderTableIdRequest;
@@ -37,7 +36,7 @@ public class TableGroupService {
     public TableGroupResponse create(final TableGroupCreateRequest tableGroupCreateRequest) {
         List<OrderTable> savedOrderTables = findSavedOrderTables(tableGroupCreateRequest);
         TableGroup savedTableGroup =
-                tableGroupRepository.save(new TableGroup(null, LocalDateTime.now(), savedOrderTables));
+                tableGroupRepository.save(new TableGroup(savedOrderTables));
         return tableGroupDtoMapper.toTableGroupResponse(savedTableGroup);
     }
 

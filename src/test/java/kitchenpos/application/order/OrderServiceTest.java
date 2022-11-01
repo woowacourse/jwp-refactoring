@@ -1,9 +1,6 @@
 package kitchenpos.application.order;
 
 import static kitchenpos.domain.common.OrderStatus.MEAL;
-import static kitchenpos.support.TestFixtureFactory.메뉴_그룹을_생성한다;
-import static kitchenpos.support.TestFixtureFactory.메뉴를_생성한다;
-import static kitchenpos.support.TestFixtureFactory.주문_테이블을_생성한다;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -13,8 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.TransactionalTest;
 import kitchenpos.domain.common.OrderStatus;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuGroupRepository;
 import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.dto.order.request.OrderCreateRequest;
 import kitchenpos.dto.order.request.OrderLineItemCreateRequest;
@@ -37,11 +37,11 @@ class OrderServiceTest {
 
     @Test
     void 주문을_생성할_수_있다() {
-        Long menuGroupId = menuGroupRepository.save(메뉴_그룹을_생성한다("메뉴 그룹"))
+        Long menuGroupId = menuGroupRepository.save(new MenuGroup("메뉴 그룹"))
                 .getId();
-        Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.ZERO, menuGroupId, new ArrayList<>()))
+        Long menuId = menuRepository.save(new Menu("메뉴", BigDecimal.ZERO, menuGroupId, new ArrayList<>()))
                 .getId();
-        Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
+        Long orderTableId = orderTableRepository.save(new OrderTable(1, false))
                 .getId();
         OrderLineItemCreateRequest orderLineItemRequest = new OrderLineItemCreateRequest(menuId, 1);
         OrderCreateRequest orderRequest = new OrderCreateRequest(orderTableId, List.of(orderLineItemRequest));
@@ -56,9 +56,9 @@ class OrderServiceTest {
 
     @Test
     void 생성하려는_주문이_속한_주문_테이블이_존재하지_않으면_예외를_반환한다() {
-        Long menuGroupId = menuGroupRepository.save(메뉴_그룹을_생성한다("메뉴 그룹"))
+        Long menuGroupId = menuGroupRepository.save(new MenuGroup("메뉴 그룹"))
                 .getId();
-        Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.ZERO, menuGroupId, new ArrayList<>()))
+        Long menuId = menuRepository.save(new Menu("메뉴", BigDecimal.ZERO, menuGroupId, new ArrayList<>()))
                 .getId();
         OrderLineItemCreateRequest orderLineItemRequest = new OrderLineItemCreateRequest(menuId, 1);
         OrderCreateRequest orderRequest = new OrderCreateRequest(0L,
@@ -69,11 +69,11 @@ class OrderServiceTest {
 
     @Test
     void 생성하려는_주문이_속한_주문_테이블이_빈_주문_테이블이면_예외를_반환한다() {
-        Long menuGroupId = menuGroupRepository.save(메뉴_그룹을_생성한다("메뉴 그룹"))
+        Long menuGroupId = menuGroupRepository.save(new MenuGroup("메뉴 그룹"))
                 .getId();
-        Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.ZERO, menuGroupId, new ArrayList<>()))
+        Long menuId = menuRepository.save(new Menu("메뉴", BigDecimal.ZERO, menuGroupId, new ArrayList<>()))
                 .getId();
-        Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, true))
+        Long orderTableId = orderTableRepository.save(new OrderTable(1, true))
                 .getId();
         OrderLineItemCreateRequest orderLineItemRequest = new OrderLineItemCreateRequest(menuId, 1);
         OrderCreateRequest orderRequest = new OrderCreateRequest(orderTableId, List.of(orderLineItemRequest));
@@ -83,11 +83,11 @@ class OrderServiceTest {
 
     @Test
     void 모든_주문_목록을_조회할_수_있다() {
-        Long menuGroupId = menuGroupRepository.save(메뉴_그룹을_생성한다("메뉴 그룹"))
+        Long menuGroupId = menuGroupRepository.save(new MenuGroup("메뉴 그룹"))
                 .getId();
-        Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.ZERO, menuGroupId, new ArrayList<>()))
+        Long menuId = menuRepository.save(new Menu("메뉴", BigDecimal.ZERO, menuGroupId, new ArrayList<>()))
                 .getId();
-        Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
+        Long orderTableId = orderTableRepository.save(new OrderTable(1, false))
                 .getId();
         OrderLineItemCreateRequest orderLineItemRequest = new OrderLineItemCreateRequest(menuId, 1);
         OrderCreateRequest orderRequest = new OrderCreateRequest(orderTableId, List.of(orderLineItemRequest));
@@ -103,11 +103,11 @@ class OrderServiceTest {
 
     @Test
     void 주문_상태를_변경할_수_있다() {
-        Long menuGroupId = menuGroupRepository.save(메뉴_그룹을_생성한다("메뉴 그룹"))
+        Long menuGroupId = menuGroupRepository.save(new MenuGroup("메뉴 그룹"))
                 .getId();
-        Long menuId = menuRepository.save(메뉴를_생성한다("메뉴", BigDecimal.ZERO, menuGroupId, new ArrayList<>()))
+        Long menuId = menuRepository.save(new Menu("메뉴", BigDecimal.ZERO, menuGroupId, new ArrayList<>()))
                 .getId();
-        Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false))
+        Long orderTableId = orderTableRepository.save(new OrderTable(1, false))
                 .getId();
         OrderLineItemCreateRequest orderLineItemRequest = new OrderLineItemCreateRequest(menuId, 1);
         OrderCreateRequest orderRequest = new OrderCreateRequest(orderTableId, List.of(orderLineItemRequest));

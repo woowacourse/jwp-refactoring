@@ -1,14 +1,11 @@
 package kitchenpos.domain.menu;
 
-import static kitchenpos.support.TestFixtureFactory.메뉴_그룹을_생성한다;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.TransactionalTest;
-import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.MenuGroupRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +18,7 @@ class MenuGroupRepositoryTest {
 
     @Test
     void 메뉴_그룹을_저장하면_id값이_채워진다() {
-        MenuGroup menuGroup = 메뉴_그룹을_생성한다("메뉴 그룹");
+        MenuGroup menuGroup = new MenuGroup("메뉴 그룹");
 
         MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
 
@@ -33,7 +30,7 @@ class MenuGroupRepositoryTest {
 
     @Test
     void 메뉴_그룹을_id로_조회할_수_있다() {
-        MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹을_생성한다("메뉴 그룹"));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
 
         MenuGroup actual = menuGroupRepository.findById(menuGroup.getId())
                 .orElseGet(Assertions::fail);
@@ -50,8 +47,8 @@ class MenuGroupRepositoryTest {
 
     @Test
     void 모든_메뉴그룹을_조회할_수_있다() {
-        MenuGroup menuGroup1 = menuGroupRepository.save(메뉴_그룹을_생성한다("메뉴 그룹1"));
-        MenuGroup menuGroup2 = menuGroupRepository.save(메뉴_그룹을_생성한다("메뉴 그룹2"));
+        MenuGroup menuGroup1 = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
+        MenuGroup menuGroup2 = menuGroupRepository.save(new MenuGroup("메뉴 그룹2"));
 
         List<MenuGroup> actual = menuGroupRepository.findAll();
 
@@ -61,7 +58,7 @@ class MenuGroupRepositoryTest {
 
     @Test
     void 메뉴_그룹이_존재하면_true를_반환한다() {
-        MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹을_생성한다("메뉴 그룹"));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
 
         boolean actual = menuGroupRepository.existsById(menuGroup.getId());
 

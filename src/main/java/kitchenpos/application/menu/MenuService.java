@@ -3,10 +3,10 @@ package kitchenpos.application.menu;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.product.Product;
 import kitchenpos.domain.menu.MenuGroupRepository;
+import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.dto.menu.mapper.MenuDtoMapper;
 import kitchenpos.dto.menu.mapper.MenuMapper;
@@ -59,7 +59,7 @@ public class MenuService {
     private MenuProduct createMenuProduct(final MenuProductCreateRequest menuProductCreateRequest) {
         Product product = productRepository.findById(menuProductCreateRequest.getProductId())
                 .orElseThrow(IllegalArgumentException::new);
-        return new MenuProduct(null, null, product.getId(), menuProductCreateRequest.getQuantity(), product.getPrice());
+        return new MenuProduct(product.getId(), menuProductCreateRequest.getQuantity(), product.getPrice());
     }
 
     public List<MenuResponse> list() {

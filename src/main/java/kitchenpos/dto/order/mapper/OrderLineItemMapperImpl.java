@@ -17,8 +17,6 @@ public class OrderLineItemMapperImpl implements OrderLineItemMapper {
     }
 
     private OrderLineItem createOrderLineItem(final OrderLineItemCreateRequest orderLineItemCreateRequest) {
-        return new OrderLineItem(
-                null, null, orderLineItemCreateRequest.getMenuId(), orderLineItemCreateRequest.getQuantity()
-        );
+        return new OrderLineItem(orderLineItemCreateRequest.getMenuId(), orderLineItemCreateRequest.getQuantity());
     }
 }

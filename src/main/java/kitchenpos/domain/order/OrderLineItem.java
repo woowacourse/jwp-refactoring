@@ -26,7 +26,11 @@ public class OrderLineItem {
     @Column(name = "quantity", nullable = false)
     private long quantity;
 
-    public OrderLineItem() {
+    protected OrderLineItem() {
+    }
+
+    public OrderLineItem(final Long menuId, final long quantity) {
+        this(null, null, menuId, quantity);
     }
 
     public OrderLineItem(final Long seq, final Order order, final Long menuId, final long quantity) {

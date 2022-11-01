@@ -1,16 +1,13 @@
 package kitchenpos.domain.table;
 
-import static kitchenpos.support.TestFixtureFactory.id를_가진_주문_테이블을_생성한다;
-import static kitchenpos.support.TestFixtureFactory.단체_지정을_생성한다;
-import static kitchenpos.support.TestFixtureFactory.주문_테이블을_생성한다;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.TransactionalTest;
+import kitchenpos.domain.common.NumberOfGuests;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +22,7 @@ class OrderTableRepositoryTest {
 
     @Test
     void 주문_테이블을_저장하면_id가_채워진다() {
-        OrderTable orderTable = 주문_테이블을_생성한다(null, 0, true);
+        OrderTable orderTable = new OrderTable(0, true);
 
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
@@ -39,9 +36,9 @@ class OrderTableRepositoryTest {
 
     @Test
     void 저장하는_주문_테이블의_id가_null이_아니면_업데이트한다() {
-        Long orderTableId = orderTableRepository.save(주문_테이블을_생성한다(null, 0, true))
+        Long orderTableId = orderTableRepository.save(new OrderTable(0, true))
                 .getId();
-        OrderTable updateOrderTable = id를_가진_주문_테이블을_생성한다(orderTableId, null, 1, false);
+        OrderTable updateOrderTable = new OrderTable(orderTableId, null, new NumberOfGuests(1), false);
 
         OrderTable savedOrderTable = orderTableRepository.save(updateOrderTable);
 
@@ -55,14 +52,14 @@ class OrderTableRepositoryTest {
 
     @Test
     void 단체_지정_id는_null일_수_있다() {
-        OrderTable orderTable = 주문_테이블을_생성한다(null, 0, true);
+        OrderTable orderTable = new OrderTable(0, true);
 
         assertDoesNotThrow(() -> orderTableRepository.save(orderTable));
     }
 
     @Test
     void id로_주문_테이블을_조회할_수_있다() {
-        OrderTable orderTable = orderTableRepository.save(주문_테이블을_생성한다(null, 0, true));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(0, true));
 
         OrderTable actual = orderTableRepository.findById(orderTable.getId())
                 .orElseGet(Assertions::fail);
@@ -80,8 +77,8 @@ class OrderTableRepositoryTest {
 
     @Test
     void 모든_주문_테이블을_조회할_수_있다() {
-        OrderTable orderTable1 = orderTableRepository.save(주문_테이블을_생성한다(null, 0, true));
-        OrderTable orderTable2 = orderTableRepository.save(주문_테이블을_생성한다(null, 1, false));
+        OrderTable orderTable1 = orderTableRepository.save(new OrderTable(0, true));
+        OrderTable orderTable2 = orderTableRepository.save(new OrderTable(1, false));
 
         List<OrderTable> actual = orderTableRepository.findAll();
 
@@ -92,8 +89,8 @@ class OrderTableRepositoryTest {
 
     @Test
     void id_목록에_있는_주문_테이블을_조회할_수_있다() {
-        OrderTable orderTable1 = orderTableRepository.save(주문_테이블을_생성한다(null, 0, true));
-        orderTableRepository.save(주문_테이블을_생성한다(null, 1, false));
+        OrderTable orderTable1 = orderTableRepository.save(new OrderTable(0, true));
+        orderTableRepository.save(new OrderTable(1, false));
         List<Long> ids = List.of(orderTable1.getId());
 
         List<OrderTable> actual = orderTableRepository.findAllByIdIn(ids);
@@ -105,10 +102,10 @@ class OrderTableRepositoryTest {
 
     @Test
     void 단체_지정_id로_주문_테이블을_조회할_수_있다() {
-        OrderTable orderTable1 = orderTableRepository.save(주문_테이블을_생성한다(null, 0, true));
-        OrderTable orderTable2 = orderTableRepository.save(주문_테이블을_생성한다(null, 0, true));
+        OrderTable orderTable1 = orderTableRepository.save(new OrderTable(0, true));
+        OrderTable orderTable2 = orderTableRepository.save(new OrderTable(0, true));
         TableGroup tableGroup = tableGroupRepository
-                .save(단체_지정을_생성한다(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
+                .save(new TableGroup(List.of(orderTable1, orderTable2)));
 
         List<OrderTable> actual = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
 
