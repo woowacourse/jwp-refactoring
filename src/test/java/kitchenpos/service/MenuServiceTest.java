@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -15,14 +14,13 @@ import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.TestConstructor.AutowireMode;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.TestFixture;
-import kitchenpos.application.MenuGroupService;
+import kitchenpos.TestEntityFactory;
 import kitchenpos.application.MenuService;
-import kitchenpos.application.ProductService;
-import kitchenpos.domain.Menu;
+import kitchenpos.application.dto.request.MenuProductRequest;
+import kitchenpos.application.dto.request.MenuRequest;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.MenuRepository;
 
 @SpringBootTest
 @Transactional
@@ -30,87 +28,79 @@ import kitchenpos.domain.Product;
 public class MenuServiceTest {
 
     private final MenuService menuService;
-    private final MenuGroupService menuGroupService;
-    private final ProductService productService;
-    private final TestFixture testFixture;
+    private final MenuRepository menuRepository;
+    private final TestEntityFactory testEntityFactory;
 
-    private MenuGroup menuGroup;
-    private List<MenuProduct> menuProducts;
+    private Product 삼겹살;
+    private MenuGroup 고기_분류;
 
-    public MenuServiceTest(MenuService menuService, MenuGroupService menuGroupService, ProductService productService,
-                           TestFixture testFixture) {
+    public MenuServiceTest(MenuService menuService, MenuRepository menuRepository, TestEntityFactory testEntityFactory) {
         this.menuService = menuService;
-        this.menuGroupService = menuGroupService;
-        this.productService = productService;
-        this.testFixture = testFixture;
+        this.menuRepository = menuRepository;
+        this.testEntityFactory = testEntityFactory;
     }
 
     @BeforeEach
     void setUp() {
-        Product savedProduct = productService.create(testFixture.삼겹살());
-        MenuGroup savedMenuGroup = menuGroupService.create(testFixture.삼겹살_종류());
-        MenuProduct menuProduct = new MenuProduct(savedProduct.getId(), 1L);
-
-        this.menuGroup = savedMenuGroup;
-        this.menuProducts = List.of(menuProduct);
+        삼겹살 = testEntityFactory.상품을_생성한다("삼겹살", 1000L);
+        고기_분류 = testEntityFactory.메뉴_분류를_생성한다("고기류");
     }
 
     @DisplayName("메뉴의 가격이 존재하지 않는다면 예외가 발생한다.")
     @Test
     public void menuWithNullPrice() {
-        Menu menu = new Menu("맛있는 메뉴", null, menuGroup.getId(), menuProducts);
+        MenuRequest request = new MenuRequest("밥류", null, 고기_분류.getId(), List.of(
+                toMenuProductRequest(삼겹살.getId(), 1L)
+        ));
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("메뉴의 가격이 음수라면 예외가 발생한다.")
     @Test
     public void menuWithNegativePrice() {
-        Menu menu = new Menu("맛있는 메뉴", BigDecimal.valueOf(-1), menuGroup.getId(), menuProducts);
+        MenuRequest request = new MenuRequest("밥류", BigDecimal.valueOf(-1L), 고기_분류.getId(), List.of(
+                toMenuProductRequest(삼겹살.getId(), 1L)
+        ));
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("메뉴 그룹이 존재하지 않다면 예외가 발생한다.")
     @Test
     public void menuGroupNotSaved() {
-        Menu menu = new Menu("맛있는 메뉴", BigDecimal.valueOf(1000), null, menuProducts);
+        MenuRequest request = new MenuRequest("밥류", BigDecimal.valueOf(1000L), null, List.of(
+                toMenuProductRequest(삼겹살.getId(), 1L)
+        ));
 
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("메뉴 내에 존재하지 않는 상품이 있는 경우 예외가 발생한다.")
-    @Test
-    public void menuProductNotContained() {
-        List<MenuProduct> copiedProducts = new ArrayList<>(menuProducts);
-        MenuProduct fakeProduct = new MenuProduct(-1L, 10);
-        copiedProducts.add(fakeProduct);
-        Menu menu = new Menu("맛있는 메뉴", BigDecimal.valueOf(1000), null, copiedProducts);
-
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("상품의 가격 합보다 메뉴의 가격이 비싸다면 예외가 발생한다.")
     @Test
     public void menuProductPriceDoesNotExceedTotalSum() {
-        Menu menu = new Menu("맛있는 메뉴", BigDecimal.valueOf(1500), menuGroup.getId(), menuProducts);
+        MenuRequest request = new MenuRequest("밥류", BigDecimal.valueOf(1500L), 고기_분류.getId(), List.of(
+                toMenuProductRequest(삼겹살.getId(), 1L)
+        ));
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("전체 메뉴들을 출력할 수 있다.")
     @Test
     public void menulist() {
-        Menu menu1 = new Menu("맛있는 메뉴", BigDecimal.valueOf(1000), menuGroup.getId(), menuProducts);
-        Menu menu2 = new Menu("적당히 맛있는 메뉴", BigDecimal.valueOf(1000), menuGroup.getId(), menuProducts);
-        menuService.create(menu1);
-        menuService.create(menu2);
+        Product 항정살 = testEntityFactory.상품을_생성한다("항정살", 1000L);
+        testEntityFactory.메뉴를_각_상품당_한개씩_넣어서_생성한다("고기류", BigDecimal.valueOf(1000L), List.of(항정살), 고기_분류.getId());
+        testEntityFactory.메뉴를_각_상품당_한개씩_넣어서_생성한다("고기류", BigDecimal.valueOf(1000L), List.of(삼겹살), 고기_분류.getId());
 
         assertThat(menuService.list()).hasSize(2);
+    }
+
+    private MenuProductRequest toMenuProductRequest(Long productId, Long quantity) {
+        return new MenuProductRequest(productId, quantity);
     }
 }
