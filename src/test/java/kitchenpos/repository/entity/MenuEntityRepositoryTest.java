@@ -1,10 +1,13 @@
-package kitchenpos.repository;
+package kitchenpos.repository.entity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import kitchenpos.MenuFixtures;
 import kitchenpos.domain.Menu;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.entity.MenuEntityRepository;
+import kitchenpos.repository.entity.MenuEntityRepositoryImpl;
 import kitchenpos.support.RepositoryTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

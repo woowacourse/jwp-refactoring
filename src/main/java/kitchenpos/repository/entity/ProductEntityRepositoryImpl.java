@@ -1,7 +1,8 @@
-package kitchenpos.repository;
+package kitchenpos.repository.entity;
 
 import java.util.List;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.ProductRepository;
 import org.springframework.context.annotation.Lazy;
 
 public class ProductEntityRepositoryImpl implements ProductEntityRepository {

@@ -1,4 +1,4 @@
-package kitchenpos.repository;
+package kitchenpos.repository.entity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -6,6 +6,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.List;
 import kitchenpos.OrderTableFixtures;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.entity.OrderTableEntityRepository;
+import kitchenpos.repository.entity.OrderTableEntityRepositoryImpl;
 import kitchenpos.support.RepositoryTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

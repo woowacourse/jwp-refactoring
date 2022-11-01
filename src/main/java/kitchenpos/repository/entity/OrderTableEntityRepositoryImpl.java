@@ -1,8 +1,9 @@
-package kitchenpos.repository;
+package kitchenpos.repository.entity;
 
 import java.util.Collection;
 import java.util.List;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.repository.OrderTableRepository;
 import org.springframework.context.annotation.Lazy;
 
 public class OrderTableEntityRepositoryImpl implements OrderTableEntityRepository {

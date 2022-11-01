@@ -3,6 +3,7 @@ package kitchenpos.repository;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.entity.ProductEntityRepository;
 import org.springframework.data.repository.Repository;
 
 public interface ProductRepository extends Repository<Product, Long>, ProductEntityRepository {

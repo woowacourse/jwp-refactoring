@@ -1,6 +1,7 @@
-package kitchenpos.repository;
+package kitchenpos.repository.entity;
 
 import java.util.Collection;
+import kitchenpos.repository.MenuRepository;
 import org.springframework.context.annotation.Lazy;
 
 public class MenuEntityRepositoryImpl implements MenuEntityRepository {

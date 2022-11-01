@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.repository.entity.OrderEntityRepository;
 import org.springframework.data.repository.Repository;
 
 public interface OrderRepository extends Repository<Order, Long>, OrderEntityRepository {

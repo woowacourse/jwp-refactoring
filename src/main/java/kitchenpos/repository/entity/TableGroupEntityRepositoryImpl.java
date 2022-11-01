@@ -1,6 +1,7 @@
-package kitchenpos.repository;
+package kitchenpos.repository.entity;
 
 import kitchenpos.domain.TableGroup;
+import kitchenpos.repository.TableGroupRepository;
 import org.springframework.context.annotation.Lazy;
 
 public class TableGroupEntityRepositoryImpl implements TableGroupEntityRepository {

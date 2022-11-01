@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.Menu;
+import kitchenpos.repository.entity.MenuEntityRepository;
 import org.springframework.data.repository.Repository;
 
 public interface MenuRepository extends Repository<Menu, Long>, MenuEntityRepository {
