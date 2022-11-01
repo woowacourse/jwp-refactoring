@@ -148,9 +148,14 @@ class OrderServiceTest {
     @DisplayName("주문 목록을 조회한다")
     @Test
     void list() {
+        int numberOfOrders = 5;
+        for (int i = 0; i < numberOfOrders; i++) {
+             createOrder();
+        }
+
         List<OrderResponse> actual = orderService.list();
 
-        assertThat(actual).hasSize(0);
+        assertThat(actual).hasSize(numberOfOrders);
     }
 
     @DisplayName("주문 상태를 변경한다")
@@ -180,13 +185,13 @@ class OrderServiceTest {
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("존재하지 않는 주문입니다.");
         }
+    }
 
-        private Order createOrder() {
-            Order order = orderRepository.save(new Order(orderTable, OrderStatus.COOKING));
-            OrderLineItem orderLineItem = orderLineItemRepository.save(new OrderLineItem(후라이드_양념치킨_두마리세트, 3L));
+    private Order createOrder() {
+        Order order = orderRepository.save(new Order(orderTable, OrderStatus.COOKING));
+        OrderLineItem orderLineItem = orderLineItemRepository.save(new OrderLineItem(후라이드_양념치킨_두마리세트, 3L));
 
-            order.addOrderLineItem(orderLineItem);
-            return order;
-        }
+        order.addOrderLineItem(orderLineItem);
+        return order;
     }
 }
