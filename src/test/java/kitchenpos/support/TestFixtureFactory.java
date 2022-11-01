@@ -3,14 +3,16 @@ package kitchenpos.support;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.common.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.common.Price;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.table.TableGroup;
 
 public class TestFixtureFactory {
 
@@ -18,66 +20,42 @@ public class TestFixtureFactory {
     }
 
     public static Product 상품을_생성한다(final String name, final BigDecimal price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(price);
-        return product;
+        return new Product(null, name, price);
     }
 
     public static MenuGroup 메뉴_그룹을_생성한다(final String name) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
-        return menuGroup;
+        return new MenuGroup(null, name);
     }
 
     public static Menu 메뉴를_생성한다(final String name, final BigDecimal price, final Long menuGroupId,
                                 final List<MenuProduct> menuProducts) {
-        Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(menuProducts);
-        return menu;
+        return new Menu(null, name, new Price(price), menuGroupId, menuProducts);
     }
 
-    public static MenuProduct 메뉴_상품을_생성한다(final Long menuId, final Long productId, final long quantity) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(menuId);
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-        return menuProduct;
+    public static MenuProduct 메뉴_상품을_생성한다(final Long productId, final long quantity, final Price price) {
+        return new MenuProduct(null, null, productId, quantity, price);
     }
 
-    public static Order 주문을_생성한다(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+    public static Order 주문을_생성한다(final Long orderTableId, final OrderStatus orderStatus,
+                                 final LocalDateTime orderedTime,
                                  List<OrderLineItem> orderLineItems) {
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus(orderStatus);
-        order.setOrderedTime(orderedTime);
-        order.setOrderLineItems(orderLineItems);
-        return order;
+        return new Order(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
-    public static OrderLineItem 주문_항목을_생성한다(final Long orderId, final Long menuId, final long quantity) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setOrderId(orderId);
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setQuantity(quantity);
-        return orderLineItem;
+    public static OrderLineItem 주문_항목을_생성한다(final Order order, final Long menuId, final long quantity) {
+        return new OrderLineItem(null, order, menuId, quantity);
     }
 
-    public static OrderTable 주문_테이블을_생성한다(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        return orderTable;
+    public static OrderTable 주문_테이블을_생성한다(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
+        return new OrderTable(null, tableGroup, numberOfGuests, empty);
+    }
+
+    public static OrderTable id를_가진_주문_테이블을_생성한다(final Long id, final TableGroup tableGroup, final int numberOfGuests,
+                                                 final boolean empty) {
+        return new OrderTable(id, tableGroup, numberOfGuests, empty);
     }
 
     public static TableGroup 단체_지정을_생성한다(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(createdDate);
-        tableGroup.setOrderTables(orderTables);
-        return tableGroup;
+        return new TableGroup(null, createdDate, orderTables);
     }
 }
