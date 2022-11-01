@@ -27,15 +27,15 @@ class OrderRepositoryTest {
         // given
         final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(4, false));
         final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(5, false));
-        final Order order1 = new Order(orderTable1, OrderStatus.COOKING.name(), LocalDateTime.now());
-        final Order order2 = new Order(orderTable2, OrderStatus.MEAL.name(), LocalDateTime.now());
+        final Order order1 = new Order(orderTable1, OrderStatus.COOKING, LocalDateTime.now());
+        final Order order2 = new Order(orderTable2, OrderStatus.MEAL, LocalDateTime.now());
         orderRepository.save(order1);
         orderRepository.save(order2);
 
         // when
         final boolean exists = orderRepository
                 .existsByOrderTableIdInAndOrderStatusIn(List.of(orderTable1.getId(), orderTable2.getId()),
-                        List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()));
+                        List.of(OrderStatus.COOKING, OrderStatus.MEAL));
 
         // then
         assertThat(exists).isTrue();
@@ -47,15 +47,15 @@ class OrderRepositoryTest {
         // given
         final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(4, false));
         final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(5, false));
-        final Order order1 = new Order(orderTable1, OrderStatus.COOKING.name(), LocalDateTime.now());
-        final Order order2 = new Order(orderTable2, OrderStatus.MEAL.name(), LocalDateTime.now());
+        final Order order1 = new Order(orderTable1, OrderStatus.COOKING, LocalDateTime.now());
+        final Order order2 = new Order(orderTable2, OrderStatus.MEAL, LocalDateTime.now());
         orderRepository.save(order1);
         orderRepository.save(order2);
 
         // when
         final boolean exists = orderRepository
                 .existsByOrderTableIdInAndOrderStatusIn(List.of(orderTable1.getId(), orderTable2.getId()),
-                        List.of(OrderStatus.COMPLETION.name()));
+                        List.of(OrderStatus.COMPLETION));
 
         // then
         assertThat(exists).isFalse();
@@ -67,15 +67,15 @@ class OrderRepositoryTest {
         // given
         final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(4, false));
         final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(5, false));
-        final Order order1 = new Order(orderTable1, OrderStatus.COOKING.name(), LocalDateTime.now());
-        final Order order2 = new Order(orderTable2, OrderStatus.MEAL.name(), LocalDateTime.now());
+        final Order order1 = new Order(orderTable1, OrderStatus.COOKING, LocalDateTime.now());
+        final Order order2 = new Order(orderTable2, OrderStatus.MEAL, LocalDateTime.now());
         orderRepository.save(order1);
         orderRepository.save(order2);
 
         // when
         final boolean exists = orderRepository
                 .existsByOrderTableIdInAndOrderStatusIn(List.of(999L),
-                        List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()));
+                        List.of(OrderStatus.COOKING, OrderStatus.MEAL));
 
         // then
         assertThat(exists).isFalse();

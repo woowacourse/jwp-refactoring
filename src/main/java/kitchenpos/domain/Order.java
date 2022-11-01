@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,7 +26,8 @@ public class Order {
     private OrderTable orderTable;
 
     @Column(nullable = false)
-    private String orderStatus;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
 
     @Column(nullable = false)
     private LocalDateTime orderedTime;
@@ -32,11 +35,11 @@ public class Order {
     public Order() {
     }
 
-    public Order(final OrderTable orderTable, final String orderStatus, final LocalDateTime orderedTime) {
+    public Order(final OrderTable orderTable, final OrderStatus orderStatus, final LocalDateTime orderedTime) {
         this(null, orderTable, orderStatus, orderedTime);
     }
 
-    public Order(final Long id, final OrderTable orderTable, final String orderStatus,
+    public Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus,
                  final LocalDateTime orderedTime) {
         validateTableEmpty(orderTable);
         this.id = id;
@@ -59,12 +62,12 @@ public class Order {
         return orderTable;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public void changeOrderStatus(final String orderStatus) {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
+    public void changeOrderStatus(final OrderStatus orderStatus) {
+        if (Objects.equals(OrderStatus.COMPLETION, this.orderStatus)) {
             throw new IllegalArgumentException();
         }
 

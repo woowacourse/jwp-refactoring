@@ -46,7 +46,7 @@ public class TableService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
 
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException("아직 식사가 완료되지 않은 테이블입나다.");
         }
 

@@ -48,7 +48,7 @@ public class OrderService {
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(() -> new IllegalArgumentException("없는 테이블에서는 주문할 수 없습니다."));
 
-        final Order order = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now());
+        final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
         final Order savedOrder = orderRepository.save(order);
 
         final List<OrderLineItem> orderLineItems = saveOrderLineItems(orderLineItemRequests, savedOrder);
@@ -67,7 +67,7 @@ public class OrderService {
     public OrderResponse changeOrderStatus(final Long orderId, final ChangeOrderStatusRequest request) {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
-        savedOrder.changeOrderStatus(request.getOrderStatus());
+        savedOrder.changeOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
 
         final List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(orderId);
 
