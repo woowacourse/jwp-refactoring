@@ -10,6 +10,7 @@ import static kitchenpos.fixture.ProductFixtures.후라이드_상품;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -41,6 +42,23 @@ public class MenuServiceTest {
     @Nested
     @DisplayName("메뉴 등록")
     class CreateTest {
+
+        @DisplayName("정상적으로 메뉴를 등록할 수 있다.")
+        @Test
+        void createMenu() {
+            final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
+            final Product product = productRepository.save(new Product("후라이드", BigDecimal.valueOf(16000)));
+            final MenuProductRequest menuProductRequest = new MenuProductRequest(product.getId(), 5L);
+            final MenuRequest menuRequest = new MenuRequest("신메뉴", BigDecimal.valueOf(15000), menuGroup.getId(),
+                    List.of(menuProductRequest));
+
+            final Menu menu = sut.create(menuRequest);
+
+            assertAll(
+                    () -> assertThat(menu.getId()).isNotNull(),
+                    () -> assertThat(menu.getName()).isEqualTo("신메뉴")
+            );
+        }
 
         @DisplayName("메뉴 그룹이 null인 경우 등록할 수 없다.")
         @Test

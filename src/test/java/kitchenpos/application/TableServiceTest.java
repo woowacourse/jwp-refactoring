@@ -25,9 +25,9 @@ public class TableServiceTest {
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
     void createTable(final Boolean empty) {
-        final OrderTableRequest orderTable = new OrderTableRequest(5, empty);
+        final OrderTableRequest request = new OrderTableRequest(5, empty);
 
-        final OrderTable actual = sut.create(orderTable);
+        final OrderTable actual = sut.create(request);
 
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
