@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.util.CollectionUtils;
 
 public class TableGroup {
@@ -19,6 +20,21 @@ public class TableGroup {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
+    }
+
+    public TableGroup create(final OrderTables savedOrderTables) {
+        savedOrderTables.validateOrderTables();
+        validateOrderTableSize(savedOrderTables.size());
+        return new TableGroup(id, LocalDateTime.now(), savedOrderTables.getOrderTables());
+    }
+
+    private void validateOrderTableSize(final int savedOrderTableSize) {
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < MINIMUM_ORDER_TABLE_SIZE) {
+            throw new IllegalArgumentException();
+        }
+        if (orderTables.size() != savedOrderTableSize) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
@@ -45,11 +61,9 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
 
-    public TableGroup initCreatedDate() {
-        return new TableGroup(id, LocalDateTime.now(), orderTables);
-    }
-
-    public boolean hasValidOrderTableSize() {
-        return !CollectionUtils.isEmpty(orderTables) && orderTables.size() >= MINIMUM_ORDER_TABLE_SIZE;
+    public List<Long> getOrderTableIds() {
+        return orderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
     }
 }

@@ -34,15 +34,16 @@ public class TableService {
 
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
-        final OrderTable savedOrderTable = getOrderTable(orderTableId);
+        validateOrderTableIdAndOrderStatusIn(orderTableId);
+        final OrderTable savedOrderTable = findOrderTableById(orderTableId);
         return orderTableDao.save(savedOrderTable.updateEmpty(orderTable.isEmpty()));
     }
 
-    private OrderTable getOrderTable(final Long orderTableId) {
-        final OrderTable savedOrderTable = findOrderTableById(orderTableId);
-        validateTableGroupId(savedOrderTable);
-        validateOrderTableIdAndOrderStatus(orderTableId);
-        return savedOrderTable;
+    private void validateOrderTableIdAndOrderStatusIn(final Long orderTableId) {
+        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
+                orderTableId, Arrays.asList(COOKING.name(), MEAL.name()))) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private OrderTable findOrderTableById(final Long orderTableId) {
@@ -50,36 +51,10 @@ public class TableService {
                 .orElseThrow(IllegalArgumentException::new);
     }
 
-    private void validateTableGroupId(final OrderTable savedOrderTable) {
-        if (savedOrderTable.hasTableGroupId()) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateOrderTableIdAndOrderStatus(final Long orderTableId) {
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(COOKING.name(), MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
-    }
-
     @Transactional
     public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        validateNumberOfGuests(orderTable);
+        orderTable.validateNumberOfGuests();
         final OrderTable savedOrderTable = findOrderTableById(orderTableId);
-        validateEmpty(savedOrderTable);
         return orderTableDao.save(savedOrderTable.updateNumberOfGuests(orderTable.getNumberOfGuests()));
-    }
-
-    private static void validateNumberOfGuests(final OrderTable orderTable) {
-        if (orderTable.isNegativeNumberOfGuests()) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private static void validateEmpty(final OrderTable savedOrderTable) {
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
     }
 }

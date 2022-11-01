@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 import org.springframework.stereotype.Repository;
 
@@ -44,8 +45,8 @@ class TableGroupRepository implements TableGroupDao {
     @Override
     public Optional<TableGroup> findById(final Long id) {
         final Optional<TableGroup> tableGroup = jdbcTemplateTableGroupDao.findById(id);
-        final List<OrderTable> orderTables = jdbcTemplateOrderTableDao.findAllByTableGroupId(id);
-        tableGroup.ifPresent(it -> it.setOrderTables(orderTables));
+        final OrderTables orderTables = jdbcTemplateOrderTableDao.findAllByTableGroupId(id);
+        tableGroup.ifPresent(it -> it.setOrderTables(orderTables.getOrderTables()));
         return tableGroup;
     }
 
@@ -53,8 +54,8 @@ class TableGroupRepository implements TableGroupDao {
     public List<TableGroup> findAll() {
         final List<TableGroup> tableGroups = jdbcTemplateTableGroupDao.findAll();
         for (final TableGroup tableGroup : tableGroups) {
-            final List<OrderTable> orderTables = jdbcTemplateOrderTableDao.findAllByTableGroupId(tableGroup.getId());
-            tableGroup.setOrderTables(orderTables);
+            final OrderTables orderTables = jdbcTemplateOrderTableDao.findAllByTableGroupId(tableGroup.getId());
+            tableGroup.setOrderTables(orderTables.getOrderTables());
         }
         return tableGroups;
     }

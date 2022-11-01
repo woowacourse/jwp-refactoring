@@ -53,23 +53,31 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public boolean hasTableGroupId() {
-        return tableGroupId != null;
-    }
-
-    public boolean isNegativeNumberOfGuests() {
-        return numberOfGuests < 0;
-    }
-
     public OrderTable ungroup() {
         return new OrderTable(id, null, numberOfGuests, false);
     }
 
     public OrderTable updateEmpty(final boolean newEmpty) {
+        if (hasTableGroupId()) {
+            throw new IllegalArgumentException();
+        }
         return new OrderTable(id, tableGroupId, numberOfGuests, newEmpty);
     }
 
+    boolean hasTableGroupId() {
+        return tableGroupId != null;
+    }
+
     public OrderTable updateNumberOfGuests(final int newNumberOfGuests) {
-        return new OrderTable(id, tableGroupId, newNumberOfGuests, empty);
+        if (empty) {
+            throw new IllegalArgumentException();
+        }
+        return new OrderTable(id, tableGroupId, newNumberOfGuests, false);
+    }
+
+    public void validateNumberOfGuests() {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
     }
 }

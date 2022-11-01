@@ -27,8 +27,10 @@ class MenuServiceTest extends ServiceTest {
         // given
         final MenuGroup menuGroup = 메뉴_그룹을_저장한다(메뉴_그룹_생성("테스트-메뉴-그룹"));
         final Product product = 상품을_저장한다(상품_생성("테스트-상품", BigDecimal.valueOf(99999)));
-        final MenuProduct menuProduct = 메뉴_상품_생성(product.getId(), 1L);
-        final Menu menu = 메뉴_생성("테스트-메뉴", product.getPrice(), menuGroup.getId(), List.of(menuProduct));
+        final Long menuId = 1L;
+        final MenuProduct menuProduct = 메뉴_상품을_저장한다(TestFixture.메뉴_상품_생성(menuId, product.getId(), 1L));
+        final Menu menu = TestFixture.메뉴_생성(menuId, "테스트-메뉴", product.getPrice(), menuGroup.getId(),
+                List.of(menuProduct));
 
         // when
         final Menu actual = menuService.create(menu);

@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Order {
 
@@ -21,11 +22,6 @@ public class Order {
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
-    }
-
-    public static Order create(final Order targetOrder) {
-        return new Order(null, targetOrder.orderTableId, OrderStatus.COOKING, LocalDateTime.now(),
-                targetOrder.orderLineItems);
     }
 
     public Long getId() {
@@ -69,14 +65,37 @@ public class Order {
     }
 
     public Order updateOrderStatus(final OrderStatus newOrderStatus) {
+        validateOrderStatus();
         return new Order(id, orderTableId, newOrderStatus, orderedTime, orderLineItems);
     }
 
-    public boolean isCompletion() {
-        return OrderStatus.COMPLETION == orderStatus;
+    private void validateOrderStatus() {
+        if (orderStatus == OrderStatus.COMPLETION) {
+            throw new IllegalArgumentException();
+        }
     }
 
-    public boolean isEmptyOrderLineItems() {
-        return orderLineItems.isEmpty();
+    public List<Long> getMenuIds() {
+        return orderLineItems.stream()
+                .map(OrderLineItem::getMenuId)
+                .collect(Collectors.toList());
+    }
+
+    public Order init(final OrderTable orderTable, final Long savedMenuCount) {
+        validateOrderTable(orderTable);
+        validateOrderLineItems(savedMenuCount);
+        return new Order(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+    }
+
+    private static void validateOrderTable(final OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateOrderLineItems(final Long savedMenuCount) {
+        if (orderLineItems.isEmpty() || (orderLineItems.size() != savedMenuCount)) {
+            throw new IllegalArgumentException();
+        }
     }
 }
