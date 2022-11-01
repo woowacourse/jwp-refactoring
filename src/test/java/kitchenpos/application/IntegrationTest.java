@@ -1,14 +1,13 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.support.extension.DataCleanerExtension;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @ExtendWith(DataCleanerExtension.class)
 @SpringBootTest
 public abstract class IntegrationTest {
@@ -29,17 +28,5 @@ public abstract class IntegrationTest {
     protected TableGroupService tableGroupService;
 
     @Autowired
-    protected TableService tableService;
-
-    @Autowired
-    protected TableGroupDao tableGroupDao;
-
-    @Autowired
-    protected OrderTableDao orderTableDao;
-
-    @Autowired
-    protected OrderDao orderDao;
-
-    @Autowired
-    protected OrderLineItemDao orderLineItemDao;
+    protected TableService tableService;;
 }

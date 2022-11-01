@@ -6,6 +6,8 @@ spring:
   h2:
     console.enabled: true
   jpa:
+    show-sql: true
+    ddl-auto: validate
     properties:
-      hibernate.format_sql: true
-  show-sql: true
+      hibernate:
+        format_sql: true

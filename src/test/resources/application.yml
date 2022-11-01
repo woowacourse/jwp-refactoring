@@ -6,11 +6,8 @@ spring:
   h2:
     console.enabled: true
   jpa:
+    show-sql: true
+    ddl-auto: validate
     properties:
-      hibernate.format_sql: true
-  show-sql: true
-  flyway:
-    enabled: false
-  datasource:
-    initialization-mode: always
-    schema: classpath:db/migration/V1__Initialize_project_tables.sql
+      hibernate:
+        format_sql: true

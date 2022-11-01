@@ -3,7 +3,8 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.application.dto.MenuGroupRequest;
+import kitchenpos.application.dto.MenuGroupResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -14,10 +15,10 @@ class MenuGroupServiceTest {
         @Test
         void 요청을_할_수_있다() {
             // given
-            final MenuGroup menuGroup = new MenuGroup("세트 1번");
+            final MenuGroupRequest menuGroup = new MenuGroupRequest("세트 1번");
 
             // when
-            final MenuGroup extract = menuGroupService.create(menuGroup);
+            final MenuGroupResponse extract = menuGroupService.create(menuGroup);
 
             // then
             assertThat(extract).isNotNull();
@@ -29,11 +30,11 @@ class MenuGroupServiceTest {
         @Test
         void 요청을_할_수_있다() {
             // given
-            final MenuGroup menuGroup = new MenuGroup("두마리메뉴");
+            final MenuGroupRequest menuGroup = new MenuGroupRequest("두마리메뉴");
             menuGroupService.create(menuGroup);
 
             // when
-            final List<MenuGroup> extract = menuGroupService.list();
+            final List<MenuGroupResponse> extract = menuGroupService.list();
 
             // then
             assertThat(extract).hasSize(1);
