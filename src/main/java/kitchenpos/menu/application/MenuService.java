@@ -10,11 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.product.domain.Product;
 import kitchenpos.menu.dto.MenuProductRequest;
 import kitchenpos.menu.dto.MenuRequest;
 import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.product.domain.Product;
 import kitchenpos.product.repository.ProductRepository;
 
 @Service
@@ -67,7 +67,7 @@ public class MenuService {
             .mapToLong(MenuProduct::getMenuPrice)
             .sum();
 
-        if(price < menuProductSum){
+        if (price < menuProductSum) {
             throw new IllegalArgumentException("각 제품의 합이 메뉴의 가격보다 더 비쌀 수 없습니다.");
         }
     }

@@ -54,8 +54,8 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public void checkIsEmpty(){
-        if(empty){
+    public void checkIsEmpty() {
+        if (empty) {
             throw new IllegalArgumentException("비어있는 테이블에는 주문을 추가할 수 없습니다.");
         }
     }

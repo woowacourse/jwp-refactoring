@@ -43,13 +43,6 @@ public class Menu {
         setMenuProducts(menuProducts);
     }
 
-    private void setMenuProducts(List<MenuProduct> menuProducts) {
-        for (MenuProduct menuProduct : menuProducts) {
-            menuProduct.updateMenu(this);
-        }
-        this.menuProducts.addAll(menuProducts);
-    }
-
     public Long getId() {
         return id;
     }
@@ -68,6 +61,13 @@ public class Menu {
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
+    }
+
+    private void setMenuProducts(List<MenuProduct> menuProducts) {
+        for (MenuProduct menuProduct : menuProducts) {
+            menuProduct.updateMenu(this);
+        }
+        this.menuProducts.addAll(menuProducts);
     }
 
     private void validatePrice(BigDecimal price) {

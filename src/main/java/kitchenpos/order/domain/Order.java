@@ -49,13 +49,6 @@ public class Order {
         setOrderLineItems(orderLineItems);
     }
 
-    private void setOrderLineItems(List<OrderLineItem> orderLineItems) {
-        for (OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.updateOrder(this);
-        }
-        this.orderLineItems.addAll(orderLineItems);
-    }
-
     public void updateStatus(OrderStatus orderStatus) {
         if (this.orderStatus == OrderStatus.COMPLETION) {
             throw new IllegalArgumentException("주문이 완료되어 상태를 변경할 수 없습니다.");
@@ -81,5 +74,12 @@ public class Order {
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
+    }
+
+    private void setOrderLineItems(List<OrderLineItem> orderLineItems) {
+        for (OrderLineItem orderLineItem : orderLineItems) {
+            orderLineItem.updateOrder(this);
+        }
+        this.orderLineItems.addAll(orderLineItems);
     }
 }
