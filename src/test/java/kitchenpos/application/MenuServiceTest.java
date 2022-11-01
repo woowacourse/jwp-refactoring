@@ -16,6 +16,7 @@ import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuValidator;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
@@ -124,7 +125,8 @@ public class MenuServiceTest {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("추천메뉴"));
         Product product = productRepository.save(new Product("강정치킨", BigDecimal.valueOf(18000)));
 
-        Menu menu = menuRepository.save(new Menu("강정치킨", new Price(BigDecimal.valueOf(37000)), menuGroup.getId(), new ArrayList<>()));
+        Menu menu = menuRepository.save(
+                new Menu("강정치킨", new Price(BigDecimal.valueOf(37000)), menuGroup.getId(), new ArrayList<>()));
 
         menu.addMenuProduct(new MenuProduct(menu, product.getId(), 2));
 
