@@ -40,14 +40,14 @@ public class Order {
     }
 
     public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
-        validateEmptyOrderLineItems(orderLineItems);
         this.orderTableId = orderTableId;
         this.orderStatus = OrderStatus.COOKING.name();
         this.orderedTime = LocalDateTime.now();
         this.orderLineItems = orderLineItems;
+        validateEmptyOrderLineItems();
     }
 
-    private void validateEmptyOrderLineItems(final List<OrderLineItem> orderLineItems) {
+    private void validateEmptyOrderLineItems() {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException();
         }
