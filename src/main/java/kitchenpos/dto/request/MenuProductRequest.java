@@ -5,12 +5,12 @@ import kitchenpos.domain.MenuProduct;
 public class MenuProductRequest {
 
     private Long productId;
-    private int quantity;
+    private long quantity;
 
     private MenuProductRequest() {
     }
 
-    public MenuProductRequest(final Long productId, final int quantity) {
+    public MenuProductRequest(final Long productId, final long quantity) {
         this.productId = productId;
         this.quantity = quantity;
     }
@@ -23,7 +23,7 @@ public class MenuProductRequest {
         return productId;
     }
 
-    public int getQuantity() {
+    public long getQuantity() {
         return quantity;
     }
 }

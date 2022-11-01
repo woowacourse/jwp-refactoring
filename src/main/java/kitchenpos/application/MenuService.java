@@ -8,6 +8,7 @@ import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.exception.NotFoundMenuGroupException;
 import kitchenpos.exception.NotFoundProductException;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,8 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final Menu menu) {
+    public Menu create(final MenuCreateRequest menuCreateRequest) {
+        final Menu menu = menuCreateRequest.toMenu();
         if (!menuGroupRepository.existsById(menu.getMenuGroupId())) {
             throw new NotFoundMenuGroupException();
         }

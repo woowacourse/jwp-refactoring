@@ -5,11 +5,15 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.transaction.Transactional;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.dto.request.MenuCreateRequest;
+import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.exception.IllegalPriceException;
 import kitchenpos.exception.MenuTotalPriceException;
 import kitchenpos.exception.NotFoundMenuGroupException;
@@ -35,12 +39,13 @@ class MenuServiceTest {
     @DisplayName("메뉴를 생성한다")
     void create() {
         // given
-        final MenuProduct menuProduct = MenuProductFixtures.create(null, 1L, 2);
-
-        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.createWithMenuProducts(menuProduct);
+        final MenuProductRequest menuProductRequest = new MenuProductRequest(1L, 2);
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
+        final MenuCreateRequest menuCreateRequest = new MenuCreateRequest(menu.getName(), menu.getPrice(),
+                menu.getMenuGroupId(), Collections.singletonList(menuProductRequest));
 
         // when
-        final Menu saved = menuService.create(menu);
+        final Menu saved = menuService.create(menuCreateRequest);
 
         // then
         final MenuProduct actual = MenuProductFixtures.create(saved, 1L, 2);
@@ -61,11 +66,12 @@ class MenuServiceTest {
     @DisplayName("가격을 설정하지 않고 메뉴를 생성하면 예외가 발생한다")
     void createExceptionWithoutPrice() {
         // given
-        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO
-                .createWithPrice(null);
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
+        final MenuCreateRequest menuCreateRequest = new MenuCreateRequest(menu.getName(), null,
+                menu.getMenuGroupId(), new ArrayList<>());
 
         // when, then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
                 .isExactlyInstanceOf(IllegalPriceException.class);
     }
 
@@ -73,11 +79,12 @@ class MenuServiceTest {
     @DisplayName("0원 이하로 가격을 설정하고 메뉴를 생성하면 예외가 발생한다")
     void createExceptionWrongPrice() {
         // given
-        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO
-                .createWithPrice(new BigDecimal(-1));
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
+        final MenuCreateRequest menuCreateRequest = new MenuCreateRequest(menu.getName(), new BigDecimal(-1),
+                menu.getMenuGroupId(), new ArrayList<>());
 
         // when, then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
                 .isExactlyInstanceOf(IllegalPriceException.class);
     }
 
@@ -85,11 +92,12 @@ class MenuServiceTest {
     @DisplayName("존재하지 않는 메뉴 그룹 id로 메뉴를 생성하면 예외가 발생한다")
     void createExceptionWrongMenuGroup() {
         // given
-        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO
-                .createWithMenuGroupId(-1L);
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
+        final MenuCreateRequest menuCreateRequest = new MenuCreateRequest(menu.getName(), menu.getPrice(),
+                -1L, new ArrayList<>());
 
         // when, then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
                 .isExactlyInstanceOf(NotFoundMenuGroupException.class);
     }
 
@@ -97,13 +105,13 @@ class MenuServiceTest {
     @DisplayName("존재하지 않는 상품으로 메뉴를 생성하면 예외가 발생한다")
     void createExceptionWrongMenuProducts() {
         // given
-        final MenuProduct menuProduct = MenuProductFixtures.create(null, -1L, 2);
-
-        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO
-                .createWithMenuProducts(menuProduct);
+        final MenuProductRequest menuProductRequest = new MenuProductRequest(-1L, 2);
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
+        final MenuCreateRequest menuCreateRequest = new MenuCreateRequest(menu.getName(), menu.getPrice(),
+                menu.getMenuGroupId(), Collections.singletonList(menuProductRequest));
 
         // when, then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
                 .isExactlyInstanceOf(NotFoundProductException.class);
     }
 
@@ -111,13 +119,13 @@ class MenuServiceTest {
     @DisplayName("메뉴 가격이 메뉴 상품들의 가격합보다 크거나 같게 생성하면 예외가 발생한다")
     void createExceptionWrongPriceWithMenuProductsPriceSum() {
         // given
-        final MenuProduct menuProduct = MenuProductFixtures.create(null, 1L, 2);
-
-        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO
-                .createWithPriceAndMenuProducts(new BigDecimal(50000), menuProduct);
+        final MenuProductRequest menuProductRequest = new MenuProductRequest(1L, 2);
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
+        final MenuCreateRequest menuCreateRequest = new MenuCreateRequest(menu.getName(), new BigDecimal(50000),
+                1L, Collections.singletonList(menuProductRequest));
 
         // when, then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
                 .isExactlyInstanceOf(MenuTotalPriceException.class);
     }
 

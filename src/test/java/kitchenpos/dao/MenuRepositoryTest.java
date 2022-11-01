@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuPrice;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,8 @@ class MenuRepositoryTest {
     @DisplayName("메뉴를 저장한다")
     void save() {
         // given
-        final Menu menu = new Menu(null, "치킨치킨", new BigDecimal(3000), 1L);
+        final MenuPrice menuPrice = new MenuPrice(new BigDecimal(3000));
+        final Menu menu = new Menu(null, "치킨치킨", menuPrice, 1L);
 
         // when
         final Menu saved = menuRepository.save(menu);
@@ -41,7 +43,8 @@ class MenuRepositoryTest {
     @DisplayName("id로 메뉴를 조회한다")
     void findById() {
         // given
-        final Menu menu = new Menu(null, "치킨치킨", new BigDecimal(3000), 1L);
+        final MenuPrice menuPrice = new MenuPrice(new BigDecimal(3000));
+        final Menu menu = new Menu(null, "치킨치킨", menuPrice, 1L);
         final Menu saved = menuRepository.save(menu);
 
         // when
@@ -67,7 +70,8 @@ class MenuRepositoryTest {
     @DisplayName("모든 메뉴를 조회한다")
     void findByAll() {
         // given
-        final Menu menu = new Menu(null, "치킨치킨", new BigDecimal(3000), 1L);
+        final MenuPrice menuPrice = new MenuPrice(new BigDecimal(3000));
+        final Menu menu = new Menu(null, "치킨치킨", menuPrice, 1L);
         final Menu saved = menuRepository.save(menu);
 
         // when
@@ -85,7 +89,8 @@ class MenuRepositoryTest {
     @DisplayName("id에 일치하는 메뉴들의 개수를 반환한다")
     void countByIdIn() {
         // given
-        final Menu menu = new Menu(null, "치킨치킨", new BigDecimal(3000), 1L);
+        final MenuPrice menuPrice = new MenuPrice(new BigDecimal(3000));
+        final Menu menu = new Menu(null, "치킨치킨", menuPrice, 1L);
         final Menu saved = menuRepository.save(menu);
 
         // when
