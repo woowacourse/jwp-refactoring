@@ -1,22 +1,30 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixtures.domain.OrderFixture.createOrder;
-import static kitchenpos.fixtures.domain.OrderTableFixture.createOrderTable;
-import static kitchenpos.fixtures.domain.TableGroupFixture.createTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.fixtures.domain.TableGroupFixture.TableGroupRequestBuilder;
+import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.dto.request.MenuGroupRequest;
+import kitchenpos.dto.request.MenuProductRequest;
+import kitchenpos.dto.request.MenuRequest;
+import kitchenpos.dto.request.OrderLineItemRequest;
+import kitchenpos.dto.request.OrderRequest;
+import kitchenpos.dto.request.OrderStatusUpdateRequest;
+import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.dto.request.TableGroupRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
+import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.dto.response.TableGroupResponse;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -28,16 +36,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 class TableGroupServiceTest extends ServiceTest {
 
     @Autowired
-    private TableGroupService tableGroupService;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
-
-    @Autowired
-    private OrderTableDao orderTableDao;
-
-    @Autowired
-    private OrderDao orderDao;
+    private OrderTableRepository orderTableRepository;
 
     private OrderTable savedOrderTable1;
     private OrderTable savedOrderTable2;
@@ -56,17 +58,15 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void Should_CreateTableGroup() {
             // given
-            TableGroup request = new TableGroupRequestBuilder()
-                    .addOrderTables(savedOrderTable1, savedOrderTable2)
-                    .build();
+            TableGroupRequest request = new TableGroupRequest(
+                    List.of(savedOrderTable1.getId(), savedOrderTable2.getId()));
 
             // when
-            TableGroup actual = tableGroupService.create(request);
+            TableGroupResponse actual = tableGroupService.create(request);
 
             // then
             assertAll(() -> {
                 assertThat(actual.getId()).isNotNull();
-                assertThat(request.getCreatedDate()).isEqualTo(actual.getCreatedDate());
                 assertThat(request.getOrderTables()).hasSize(actual.getOrderTables().size());
             });
         }
@@ -75,7 +75,7 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderTablesIsEmpty() {
             // given
-            TableGroup request = new TableGroupRequestBuilder().build();
+            TableGroupRequest request = new TableGroupRequest(List.of());
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(request))
@@ -86,9 +86,7 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderTablesSizeIsLessThan2() {
             // given
-            TableGroup request = new TableGroupRequestBuilder()
-                    .addOrderTables(savedOrderTable1)
-                    .build();
+            TableGroupRequest request = new TableGroupRequest(List.of(savedOrderTable1.getId()));
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(request))
@@ -99,11 +97,8 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_TableGroupHasNotExistingTable() {
             // given
-            OrderTable notSavedTable1 = createOrderTable(10, true);
-            OrderTable notSavedTable2 = createOrderTable(15, true);
-            TableGroup request = new TableGroupRequestBuilder()
-                    .addOrderTables(notSavedTable1, notSavedTable2)
-                    .build();
+            TableGroupRequest request = new TableGroupRequest(
+                    List.of(savedOrderTable2.getId() + 1, savedOrderTable2.getId() + 2));
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(request))
@@ -116,9 +111,8 @@ class TableGroupServiceTest extends ServiceTest {
             // given
             OrderTable emptyOrderTable = saveOrderTable(10, true);
             OrderTable notEmptyOrderTable = saveOrderTable(10, false);
-            TableGroup request = new TableGroupRequestBuilder()
-                    .addOrderTables(emptyOrderTable, notEmptyOrderTable)
-                    .build();
+            TableGroupRequest request = new TableGroupRequest(
+                    List.of(emptyOrderTable.getId(), notEmptyOrderTable.getId()));
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(request))
@@ -129,9 +123,8 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderTableHasTableGroup() {
             // given
-            TableGroup request = new TableGroupRequestBuilder()
-                    .addOrderTables(savedOrderTable1, savedOrderTable2)
-                    .build();
+            TableGroupRequest request = new TableGroupRequest(
+                    List.of(savedOrderTable1.getId(), savedOrderTable2.getId()));
             tableGroupService.create(request);
 
             // when & then
@@ -148,19 +141,18 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void Should_Ungroup() {
             // given
-            TableGroup request = new TableGroupRequestBuilder()
-                    .addOrderTables(savedOrderTable1, savedOrderTable2)
-                    .build();
-            TableGroup tableGroup = tableGroupService.create(request);
+            TableGroupRequest request = new TableGroupRequest(
+                    List.of(savedOrderTable1.getId(), savedOrderTable2.getId()));
+            TableGroupResponse tableGroup = tableGroupService.create(request);
 
             // when
             tableGroupService.ungroup(tableGroup.getId());
 
             // then
             assertAll(() -> {
-                assertThat(tableGroupDao.findById(tableGroup.getId())).isNotEmpty();
-                assertThat(orderTableDao.findAll())
-                        .allMatch(orderTable -> Objects.isNull(orderTable.getTableGroupId()))
+                assertThat(tableGroupRepository.findById(tableGroup.getId())).isNotEmpty();
+                assertThat(orderTableRepository.findAll())
+                        .allMatch(orderTable -> Objects.isNull(orderTable.getTableGroup()))
                         .allMatch(orderTable -> !orderTable.isEmpty());
             });
         }
@@ -170,14 +162,32 @@ class TableGroupServiceTest extends ServiceTest {
         @ParameterizedTest
         void Should_ThrowIAE_When_AnyStatusOfOrderTablesIsCookingOrMeal(final OrderStatus orderStatus) {
             // given
-            OrderTable orderTable1 = orderTableDao.save(createOrderTable(10, true));
-            OrderTable orderTable2 = orderTableDao.save(createOrderTable(10, true));
+            Product savedProduct = saveProduct("상품", 10_000);
+            MenuGroupResponse menuGroup = menuGroupService.create(new MenuGroupRequest("메뉴 그룹"));
+            MenuResponse menu = menuService.create(new MenuRequest(
+                    "메뉴", BigDecimal.valueOf(10_000), menuGroup.getId(),
+                    List.of(new MenuProductRequest(savedProduct.getId(), 1L))
+            ));
+            OrderTableResponse orderTable1 = tableService.create(new OrderTableRequest(10, true));
+            OrderTableResponse orderTable2 = tableService.create(new OrderTableRequest(10, true));
 
-            orderDao.save(createOrder(orderTable1.getId(), orderStatus, LocalDateTime.now(), List.of()));
-            orderDao.save(createOrder(orderTable1.getId(), OrderStatus.COMPLETION, LocalDateTime.now(), List.of()));
+            TableGroupResponse request = tableGroupService.create(
+                    new TableGroupRequest(List.of(orderTable1.getId(), orderTable2.getId())));
 
-            TableGroup request = tableGroupService.create(
-                    createTableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
+            OrderResponse order1 = orderService.create(
+                    new OrderRequest(
+                            orderTable1.getId(), List.of(new OrderLineItemRequest(menu.getId(), 1L)
+                    ))
+            );
+            orderService.changeOrderStatus(order1.getId(), new OrderStatusUpdateRequest(orderStatus));
+
+            OrderResponse order2 = orderService.create(
+                    new OrderRequest(
+                            orderTable2.getId(), List.of(new OrderLineItemRequest(menu.getId(), 1L)
+                    ))
+            );
+            orderService.changeOrderStatus(order2.getId(), new OrderStatusUpdateRequest(OrderStatus.COMPLETION));
+            // TODO: 리팩토링
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.ungroup(request.getId()))

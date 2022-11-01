@@ -1,26 +1,25 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixtures.domain.MenuFixture.createMenu;
-import static kitchenpos.fixtures.domain.MenuGroupFixture.createMenuGroupRequest;
-import static kitchenpos.fixtures.domain.OrderFixture.createOrder;
-import static kitchenpos.fixtures.domain.OrderTableFixture.createOrderTable;
-import static kitchenpos.fixtures.domain.ProductFixture.createProduct;
-import static kitchenpos.fixtures.domain.TableGroupFixture.createTableGroup;
-
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.DatabaseCleaner;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.Price;
+import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.dto.request.MenuGroupRequest;
+import kitchenpos.dto.request.MenuProductRequest;
+import kitchenpos.dto.request.MenuRequest;
+import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.dto.request.ProductRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
+import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.dto.response.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,25 +28,25 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class ServiceTest {
 
     @Autowired
+    protected MenuGroupService menuGroupService;
+
+    @Autowired
+    protected MenuService menuService;
+
+    @Autowired
+    protected ProductService productService;
+
+    @Autowired
+    protected OrderService orderService;
+
+    @Autowired
+    protected TableService tableService;
+
+    @Autowired
+    protected TableGroupService tableGroupService;
+
+    @Autowired
     private DatabaseCleaner databaseCleaner;
-
-    @Autowired
-    private MenuGroupService menuGroupService;
-
-    @Autowired
-    private MenuService menuService;
-
-    @Autowired
-    private OrderService orderService;
-
-    @Autowired
-    private ProductService productService;
-
-    @Autowired
-    private TableGroupService tableGroupService;
-
-    @Autowired
-    private TableService tableService;
 
     @BeforeEach
     void cleanTables() throws SQLException {
@@ -55,38 +54,40 @@ public class ServiceTest {
     }
 
     protected MenuGroup saveMenuGroup(final String name) {
-        MenuGroup request = createMenuGroupRequest(name);
-        return menuGroupService.create(request);
+        MenuGroupRequest request = new MenuGroupRequest(name);
+        MenuGroupResponse createdMenuGroup = menuGroupService.create(request);
+        return new MenuGroup(createdMenuGroup.getId(), createdMenuGroup.getName());
     }
 
     protected Menu saveMenu(final String name, final int price, final MenuGroup menuGroup,
                             final List<MenuProduct> menuProducts) {
-        Menu menu = createMenu(name, new BigDecimal(price), menuGroup.getId(), menuProducts);
-        return menuService.create(menu);
-    }
+        MenuRequest menu = new MenuRequest(
+                name,
+                BigDecimal.valueOf(price),
+                menuGroup.getId(),
+                menuProducts.stream()
+                        .map(menuProduct -> new MenuProductRequest(
+                                menuProduct.getProduct().getId(),
+                                menuProduct.getQuantity())
+                        )
+                        .collect(Collectors.toList())
+        );
 
-//    protected MenuProduct saveMenuProduct(final Product product, final long quantity) {
-//        MenuProduct request = createMenuProduct(product.getId(), quantity);
-//    }
+        MenuResponse createdMenu = menuService.create(menu);
+        return new Menu(createdMenu.getId(), createdMenu.getName(), new Price(createdMenu.getPrice()), menuGroup,
+                menuProducts);
+    }
 
     protected OrderTable saveOrderTable(final int numberOfGuests, final boolean empty) {
-        OrderTable request = createOrderTable(numberOfGuests, empty);
-        return tableService.create(request);
-    }
-
-    protected TableGroup saveTableGroup(final OrderTable... orderTables) {
-        TableGroup request = createTableGroup(LocalDateTime.now(), List.of(orderTables));
-        return tableGroupService.create(request);
-    }
-
-    protected Order saveOrder(final OrderStatus orderStatus, final OrderTable orderTable,
-                              final List<OrderLineItem> orderLineItems) {
-        Order request = createOrder(orderTable.getId(), orderStatus, LocalDateTime.now(), orderLineItems);
-        return orderService.create(request);
+        OrderTableRequest request = new OrderTableRequest(numberOfGuests, empty);
+        OrderTableResponse createdOrderTable = tableService.create(request);
+        return new OrderTable(createdOrderTable.getId(), null, createdOrderTable.getNumberOfGuests(),
+                createdOrderTable.isEmpty());
     }
 
     protected Product saveProduct(final String name, final int price) {
-        Product request = createProduct(name, new BigDecimal(price));
-        return productService.create(request);
+        ProductRequest request = new ProductRequest(name, new BigDecimal(price));
+        ProductResponse createdProduct = productService.create(request);
+        return new Product(createdProduct.getId(), createdProduct.getName(), createdProduct.getPrice());
     }
 }

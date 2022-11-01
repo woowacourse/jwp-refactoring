@@ -1,25 +1,16 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixtures.domain.MenuGroupFixture.createMenuGroup;
-import static kitchenpos.fixtures.domain.MenuGroupFixture.createMenuGroupRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.request.MenuGroupRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 class MenuGroupServiceTest extends ServiceTest {
-
-    @Autowired
-    private MenuGroupService menuGroupService;
-
-    @Autowired
-    private MenuGroupDao menuGroupDao;
 
     @DisplayName("create 메소드는")
     @Nested
@@ -28,15 +19,15 @@ class MenuGroupServiceTest extends ServiceTest {
         @Test
         void Should_CreateMenuGroup() {
             // given
-            MenuGroup menuGroup = createMenuGroupRequest();
+            MenuGroupRequest request = new MenuGroupRequest("메뉴 그룹");
 
             // when
-            MenuGroup actual = menuGroupService.create(menuGroup);
+            MenuGroupResponse actual = menuGroupService.create(request);
 
             // then
             assertAll(() -> {
                 assertThat(actual.getId()).isNotNull();
-                assertThat(actual.getName()).isEqualTo(menuGroup.getName());
+                assertThat(actual.getName()).isEqualTo(request.getName());
             });
         }
     }
@@ -48,16 +39,12 @@ class MenuGroupServiceTest extends ServiceTest {
         @Test
         void Should_ReturnMenuGroupList() {
             // given
-            MenuGroup menuGroup1 = createMenuGroup("분식");
-            MenuGroup menuGroup2 = createMenuGroup("한식");
-            MenuGroup menuGroup3 = createMenuGroup("중식");
-
-            menuGroupDao.save(menuGroup1);
-            menuGroupDao.save(menuGroup2);
-            menuGroupDao.save(menuGroup3);
+            menuGroupService.create(new MenuGroupRequest("분식"));
+            menuGroupService.create(new MenuGroupRequest("한식"));
+            menuGroupService.create(new MenuGroupRequest("중식"));
 
             // when
-            List<MenuGroup> actual = menuGroupService.list();
+            List<MenuGroupResponse> actual = menuGroupService.list();
 
             // then
             assertThat(actual).hasSize(3);

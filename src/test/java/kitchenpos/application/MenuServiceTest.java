@@ -1,26 +1,23 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixtures.domain.MenuProductFixture.createMenuProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
-import kitchenpos.fixtures.domain.MenuFixture.MenuRequestBuilder;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.Product;
+import kitchenpos.dto.request.MenuProductRequest;
+import kitchenpos.dto.request.MenuRequest;
+import kitchenpos.dto.response.MenuResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 class MenuServiceTest extends ServiceTest {
-
-    @Autowired
-    private MenuService menuService;
 
     private MenuGroup savedMenuGroup;
     private Product savedProduct;
@@ -39,57 +36,49 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void Should_CreateMenu() {
             // given
-            MenuProduct menuProduct = createMenuProduct(savedProduct.getId(), 1L);
+            MenuProduct menuProduct = new MenuProduct(savedProduct, 1L);
 
-            Menu menu = new MenuRequestBuilder()
-                    .name("세트1")
-                    .price(20_000)
-                    .menuGroupId(savedMenuGroup.getId())
-                    .menuProducts(menuProduct)
-                    .build();
+            MenuProductRequest menuProductRequest = new MenuProductRequest(
+                    menuProduct.getProduct().getId(),
+                    menuProduct.getQuantity()
+            );
+
+            MenuRequest request = new MenuRequest(
+                    "세트1",
+                    BigDecimal.valueOf(20_000),
+                    savedMenuGroup.getId(),
+                    List.of(menuProductRequest)
+            );
 
             // when
-            Menu actual = menuService.create(menu);
+            MenuResponse actual = menuService.create(request);
 
             // then
             assertAll(() -> {
                 assertThat(actual.getId()).isNotNull();
-                assertThat(actual.getName()).isEqualTo(menu.getName());
-                assertThat(actual.getPrice().doubleValue()).isEqualTo(menu.getPrice().doubleValue());
+                assertThat(actual.getName()).isEqualTo(request.getName());
+                assertThat(actual.getPrice().doubleValue()).isEqualTo(request.getPrice().doubleValue());
             });
         }
-
-        @DisplayName("메뉴 가격이 null이라면 IAE를 던진다.")
-        @Test
-        void Should_ThrowIAE_When_PriceOfMenuIsNull() {
-            // given
-            MenuProduct menuProduct = createMenuProduct(savedProduct.getId(), 1L);
-
-            Menu menu = new MenuRequestBuilder()
-                    .price(null)
-                    .menuGroupId(savedMenuGroup.getId())
-                    .menuProducts(menuProduct)
-                    .build();
-
-            // when & then
-            assertThatThrownBy(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
 
         @DisplayName("메뉴의 메뉴 그룹이 존재하지 않는다면 IAE를 던진다.")
         @Test
         void Should_ThrowIAE_When_MenuGroupDoesNotExist() {
             // given
-            MenuProduct menuProduct = createMenuProduct(savedProduct.getId(), 1L);
+            MenuProduct menuProduct = new MenuProduct(savedProduct, 1L);
 
-            Menu menu = new MenuRequestBuilder()
-                    .menuGroupId(savedMenuGroup.getId() + 1)
-                    .menuProducts(menuProduct)
-                    .build();
+            MenuProductRequest menuProductRequest = new MenuProductRequest(menuProduct.getProduct().getId(),
+                    menuProduct.getQuantity());
+
+            MenuRequest request = new MenuRequest(
+                    "세트1",
+                    BigDecimal.valueOf(20_000),
+                    savedMenuGroup.getId() + 1,
+                    List.of(menuProductRequest)
+            );
 
             // when & then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -97,15 +86,21 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_ProductDoesNotExistInMenuProductList() {
             // given
-            MenuProduct notSavedMenuProduct = createMenuProduct(savedProduct.getId() + 1, 1L);
+            Product notSavedProduct = new Product(savedProduct.getId() + 1, savedProduct.getName(),
+                    savedProduct.getPrice().getPrice());
+            MenuProduct notSavedMenuProduct = new MenuProduct(notSavedProduct, 1L);
+            MenuProductRequest menuProductRequest = new MenuProductRequest(notSavedProduct.getId(),
+                    notSavedMenuProduct.getQuantity());
 
-            Menu menu = new MenuRequestBuilder()
-                    .menuGroupId(savedMenuGroup.getId())
-                    .menuProducts(notSavedMenuProduct)
-                    .build();
+            MenuRequest request = new MenuRequest(
+                    "세트1",
+                    BigDecimal.valueOf(20_000),
+                    savedMenuGroup.getId(),
+                    List.of(menuProductRequest)
+            );
 
             // when
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -113,16 +108,19 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_MenuPriceIsBiggerThanSumOfProductOfProductPriceAndQuantity() {
             // given
-            MenuProduct menuProduct = createMenuProduct(savedProduct.getId(), 1L);
+            MenuProduct menuProduct = new MenuProduct(savedProduct, 1L);
+            MenuProductRequest menuProductRequest = new MenuProductRequest(menuProduct.getProduct().getId(),
+                    menuProduct.getQuantity());
 
-            Menu menu = new MenuRequestBuilder()
-                    .price(1_000_000)
-                    .menuGroupId(savedMenuGroup.getId())
-                    .menuProducts(menuProduct)
-                    .build();
+            MenuRequest request = new MenuRequest(
+                    "세트1",
+                    BigDecimal.valueOf(1_000_000),
+                    savedMenuGroup.getId(),
+                    List.of(menuProductRequest)
+            );
 
             // when & then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -138,21 +136,24 @@ class MenuServiceTest extends ServiceTest {
             MenuGroup menuGroup = saveMenuGroup("메뉴 그룹");
 
             Product product = saveProduct("상품", 1_000_000);
-            MenuProduct menuProduct = createMenuProduct(product.getId(), 1L);
+            MenuProduct menuProduct = new MenuProduct(product, 1L);
 
             int expected = 4;
             for (int i = 0; i < expected; i++) {
-                Menu menu = new MenuRequestBuilder()
-                        .name("menu " + i)
-                        .menuGroupId(menuGroup.getId())
-                        .menuProducts(menuProduct)
-                        .build();
+                MenuProductRequest menuProductRequest = new MenuProductRequest(menuProduct.getProduct().getId(),
+                        menuProduct.getQuantity());
+                MenuRequest request = new MenuRequest(
+                        "세트 " + i,
+                        BigDecimal.valueOf(20_000),
+                        menuGroup.getId(),
+                        List.of(menuProductRequest)
+                );
 
-                menuService.create(menu);
+                menuService.create(request);
             }
 
             // when
-            List<Menu> actual = menuService.list();
+            List<MenuResponse> actual = menuService.list();
 
             // then
             assertAll(() -> {
