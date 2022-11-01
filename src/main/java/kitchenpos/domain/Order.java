@@ -5,10 +5,10 @@ import static kitchenpos.domain.OrderStatus.valueOf;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
-import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -22,11 +22,9 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long orderTableId;
-    private String orderStatus;
-
-    @Column(name = "ordered_time")
     private LocalDateTime orderedTime;
-
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
     @Embedded
     private OrderLineItems orderLineItems;
 
@@ -35,19 +33,18 @@ public class Order {
 
     public Order(final Long orderTableId, final String orderStatus, final List<OrderLineItem> orderLineItems) {
         this.orderTableId = orderTableId;
-        this.orderStatus = orderStatus;
+        this.orderStatus = OrderStatus.valueOf(orderStatus);
         this.orderedTime = LocalDateTime.now();
         this.orderLineItems = new OrderLineItems(orderLineItems);
     }
 
     public void changeStatus(final String orderStatus) {
         validateNotCompletion();
-        OrderStatus newOrderStatus = valueOf(orderStatus);
-        this.orderStatus = newOrderStatus.name();
+        this.orderStatus = valueOf(orderStatus);
     }
 
     private void validateNotCompletion() {
-        if (Objects.equals(COMPLETION.name(), this.orderStatus)) {
+        if (COMPLETION == this.orderStatus) {
             throw new IllegalArgumentException("이미 계산이 완료된 테이블 입니다.");
         }
     }
@@ -61,7 +58,7 @@ public class Order {
     }
 
     public String getOrderStatus() {
-        return orderStatus;
+        return orderStatus.name();
     }
 
     public LocalDateTime getOrderedTime() {

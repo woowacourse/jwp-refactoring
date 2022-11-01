@@ -79,7 +79,7 @@ class TableGroupServiceTest extends ServiceTest {
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(단체_테이블_생성_요청))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("단체 지정 3개 이상의 정수로 입력해주세요.");
+                .hasMessage("단체 지정은 3개 이상의 정수로 입력해주세요.");
     }
 
     @DisplayName("단체 지정을 등록할 때, 주문 테이블이 없으면 예외가 발생한다.")
@@ -91,7 +91,8 @@ class TableGroupServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(단체_테이블_생성_요청))
-                .isInstanceOf(TableGroupNotFoundException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("단체 지정은 3개 이상의 정수로 입력해주세요.");
     }
 
     @DisplayName("단체 지정을 등록할 때, 주문 테이블이 빈 테이블이 아니면 예외가 발생한다.")

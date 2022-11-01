@@ -52,7 +52,7 @@ public class TableService {
 
     private void validatePossibleChangeToEmpty(final Long orderTableId) {
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, List.of(COOKING.name(), MEAL.name()))) {
+                orderTableId, List.of(COOKING, MEAL))) {
             throw new IllegalArgumentException("조리중이거나 식사 중인 테이블 입니다.");
         }
     }

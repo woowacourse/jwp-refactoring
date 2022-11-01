@@ -28,7 +28,7 @@ public class OrderTables {
 
     public void validateTableCount() {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException("단체 지정 3개 이상의 정수로 입력해주세요.");
+            throw new IllegalArgumentException("단체 지정은 3개 이상의 정수로 입력해주세요.");
         }
     }
 

@@ -58,7 +58,7 @@ public class TableGroupService {
 
     private void validatePossibleUngrouping(final TableGroup tableGroup) {
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                tableGroup.getOrderTables(), List.of(COOKING.name(), MEAL.name()))) {
+                tableGroup.getOrderTables(), List.of(COOKING, MEAL))) {
             throw new IllegalArgumentException("조리중이거나 식사 중인 테이블이 있습니다.");
         }
     }
