@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.domain.order.OrderTable;
 import kitchenpos.dto.request.OrderTableRequest;
@@ -36,14 +35,6 @@ public class TableService {
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-
-        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
-            throw new IllegalArgumentException();
-        }
-
-        if (savedOrderTable.hasNotCompletedOrder()) {
-            throw new IllegalArgumentException();
-        }
 
         savedOrderTable.changeEmpty(request.isEmpty());
         return new OrderTableResponse(orderTableRepository.save(savedOrderTable));

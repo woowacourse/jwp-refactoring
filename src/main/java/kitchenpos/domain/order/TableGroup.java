@@ -56,7 +56,6 @@ public class TableGroup {
     private void setOrderTable(final List<OrderTable> orderTables) {
         for (OrderTable orderTable : orderTables) {
             orderTable.changeTableGroup(this);
-            orderTable.changeEmpty(false);
         }
     }
 

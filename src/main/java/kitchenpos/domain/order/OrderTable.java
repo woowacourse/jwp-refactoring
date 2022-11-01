@@ -46,6 +46,30 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        validateNumberOfGuests(numberOfGuests);
+
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    private void validateNumberOfGuests(final int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void changeEmpty(final boolean empty) {
+        if (tableGroup != null) {
+            throw new IllegalArgumentException();
+        }
+
+        if (hasNotCompletedOrder()) {
+            throw new IllegalArgumentException();
+        }
+
+        this.empty = empty;
+    }
+
     public boolean hasNotCompletedOrder() {
         return orders.stream()
                 .anyMatch(Order::isCompletion);
@@ -64,6 +88,10 @@ public class OrderTable {
     }
 
     public void changeTableGroup(final TableGroup tableGroup) {
+        if (tableGroup != null) {
+            empty = false;
+        }
+
         this.tableGroup = tableGroup;
     }
 
@@ -71,23 +99,7 @@ public class OrderTable {
         return numberOfGuests;
     }
 
-    public void changeNumberOfGuests(final int numberOfGuests) {
-        validateNumberOfGuests(numberOfGuests);
-
-        this.numberOfGuests = numberOfGuests;
-    }
-
-    private void validateNumberOfGuests(final int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-    }
-
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void changeEmpty(final boolean empty) {
-        this.empty = empty;
     }
 }

@@ -4,20 +4,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
-import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.Product;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.order.OrderTable;
+import kitchenpos.dto.request.MenuGroupRequest;
+import kitchenpos.dto.request.MenuProductRequest;
+import kitchenpos.dto.request.MenuRequest;
+import kitchenpos.dto.request.OrderLineItemRequest;
+import kitchenpos.dto.request.OrderRequest;
+import kitchenpos.dto.request.OrderStatusUpdateRequest;
+import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
 import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.dto.response.TableGroupResponse;
-import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,15 +37,23 @@ class TableGroupServiceTest extends ServiceTest {
     @Autowired
     private TableGroupService tableGroupService;
 
+    @Autowired
+    private MenuService menuService;
+
+    @Autowired
+    private MenuGroupService menuGroupService;
+
+    @Autowired
+    private TableService tableService;
+
+    @Autowired
+    private OrderService orderService;
 
     @Autowired
     private TableGroupRepository tableGroupRepository;
 
     @Autowired
     private OrderTableRepository orderTableRepository;
-
-    @Autowired
-    private OrderRepository orderRepository;
 
     private OrderTableResponse savedOrderTable1;
     private OrderTableResponse savedOrderTable2;
@@ -165,30 +177,30 @@ class TableGroupServiceTest extends ServiceTest {
         void Should_ThrowIAE_When_AnyStatusOfOrderTablesIsCookingOrMeal(final OrderStatus orderStatus) {
             // given
             Product savedProduct = saveProduct("상품", 10_000).toEntity();
-            MenuProduct menuProduct = new MenuProduct(savedProduct, 1L);
-            MenuGroupResponse savedMenuGroup = saveMenuGroup("메뉴 그룹");
-            MenuResponse savedMenu = saveMenu("메뉴", 10_000, savedMenuGroup.toEntity(), List.of(menuProduct));
-
-            OrderTable orderTable1 = orderTableRepository.save(new OrderTable(12, false));
-            OrderTable orderTable2 = orderTableRepository.save(new OrderTable(13, false));
-
-            Order order1 = new Order(orderTable1, List.of(new OrderLineItem(savedMenu.getId(), 1L)));
-            order1.changeOrderStatus(orderStatus);
-
-            Order order2 = new Order(orderTable2, List.of(new OrderLineItem(savedMenu.getId(), 1L)));
-            order2.changeOrderStatus(OrderStatus.COMPLETION);
-
-            orderRepository.save(order1);
-            orderRepository.save(order2);
-
-            orderTable1.changeEmpty(true);
-            orderTable2.changeEmpty(true);
-
-            orderTableRepository.save(orderTable1);
-            orderTableRepository.save(orderTable2);
+            MenuGroupResponse menuGroup = menuGroupService.create(new MenuGroupRequest("메뉴 그룹"));
+            MenuResponse menu = menuService.create(new MenuRequest(
+                    "메뉴", BigDecimal.valueOf(10_000), menuGroup.getId(),
+                    List.of(new MenuProductRequest(savedProduct.getId(), 1L))
+            ));
+            OrderTableResponse orderTable1 = tableService.create(new OrderTableRequest(10, true));
+            OrderTableResponse orderTable2 = tableService.create(new OrderTableRequest(10, true));
 
             TableGroupResponse request = tableGroupService.create(
                     new TableGroupRequest(List.of(orderTable1.getId(), orderTable2.getId())));
+
+            OrderResponse order1 = orderService.create(
+                    new OrderRequest(
+                            orderTable1.getId(), List.of(new OrderLineItemRequest(menu.getId(), 1L)
+                    ))
+            );
+            orderService.changeOrderStatus(order1.getId(), new OrderStatusUpdateRequest(orderStatus));
+
+            OrderResponse order2 = orderService.create(
+                    new OrderRequest(
+                            orderTable2.getId(), List.of(new OrderLineItemRequest(menu.getId(), 1L)
+                    ))
+            );
+            orderService.changeOrderStatus(order2.getId(), new OrderStatusUpdateRequest(OrderStatus.COMPLETION));
             // TODO: 리팩토링
 
             // when & then
