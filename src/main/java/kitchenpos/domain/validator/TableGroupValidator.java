@@ -12,11 +12,7 @@ import org.springframework.util.CollectionUtils;
 
 @Component
 public class TableGroupValidator {
-    private static final int MINIMUM_TABLE_GROUP_SIZE = 2;
-    private static final List<String> ACTIVE_ORDER_STATUS = List.of(
-            OrderStatus.COOKING.name(),
-            OrderStatus.MEAL.name()
-    );
+    private static final List<OrderStatus> ACTIVE_ORDER_STATUS = List.of(OrderStatus.COOKING, OrderStatus.MEAL);
 
     private final OrderTableRepository orderTableRepository;
     private final OrderRepository orderRepository;

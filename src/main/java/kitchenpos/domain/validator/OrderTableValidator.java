@@ -11,8 +11,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class OrderTableValidator {
-    private static final List<String> ACTIVE_ORDER_STATUS =
-            List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name());
+    private static final List<OrderStatus> ACTIVE_ORDER_STATUS = List.of(OrderStatus.COOKING, OrderStatus.MEAL);
 
     private final OrderRepository orderRepository;
 

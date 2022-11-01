@@ -1,6 +1,5 @@
 package kitchenpos.application.concrete;
 
-import java.util.Objects;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.domain.TableGroupMapper;
 import kitchenpos.domain.validator.TableGroupValidator;
@@ -42,17 +41,9 @@ public class JpaTableGroupService implements TableGroupService {
     @Transactional
     @Override
     public void unGroup(final Long tableGroupId) {
-        validateTableGroupId(tableGroupId);
-
         final var tableGroup = tableGroupRepository.getById(tableGroupId)
                 .unGroup(tableGroupValidator);
 
         tableGroupRepository.save(tableGroup);
-    }
-
-    private void validateTableGroupId(final Long tableGroupId) {
-        if (Objects.isNull(tableGroupId)) {
-            throw new IllegalArgumentException();
-        }
     }
 }

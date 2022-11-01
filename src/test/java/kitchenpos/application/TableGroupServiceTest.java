@@ -6,12 +6,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
+import kitchenpos.exception.badrequest.TableGroupIdInvalidException;
+import kitchenpos.exception.notfound.TableGroupNotFoundException;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.ProductRepository;
 import kitchenpos.ui.dto.request.OrderTableCreateRequest;
 import kitchenpos.ui.dto.request.TableGroupCreateRequest;
 import kitchenpos.ui.dto.response.TableGroupResponse;
@@ -28,13 +40,26 @@ class TableGroupServiceTest extends ServiceTest {
     private TableService tableService;
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private MenuRepository menuRepository;
+    @Autowired
+    private ProductRepository productRepository;
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
     private OrderTable tableA;
     private OrderTable tableB;
+    private Product product;
+    private MenuGroup menuGroup;
+    private Menu menu;
 
     @BeforeEach
     void setUpTables() {
-        tableA = tableService.create(삼인용_테이블);
-        tableB = tableService.create(오인용_테이블);
+        this.tableA = tableService.create(삼인용_테이블);
+        this.tableB = tableService.create(오인용_테이블);
+        this.product = productRepository.save(new Product("후라이드 치킨", new BigDecimal("15000.00")));
+        this.menuGroup = menuGroupRepository.save(new MenuGroup("한 마리 메뉴"));
+        this.menu = menuRepository.save(
+                new Menu("후라이드 한 마리", new BigDecimal("15000.00"), menuGroup, List.of(new MenuProduct(product, 1L))));
     }
 
     @DisplayName("테이블 그룹을 지정할 수 있다")
@@ -149,9 +174,9 @@ class TableGroupServiceTest extends ServiceTest {
             assertAll(
                     () -> assertThat(tableGroupResponse.getId()).isEqualTo(1L),
                     () -> assertThatThrownBy(() -> tableGroupService.unGroup(null))
-                            .isInstanceOf(IllegalArgumentException.class),
+                            .isInstanceOf(TableGroupIdInvalidException.class),
                     () -> assertThatThrownBy(() -> tableGroupService.unGroup(-1L))
-                            .isInstanceOf(IllegalArgumentException.class)
+                            .isInstanceOf(TableGroupNotFoundException.class)
             );
         }
 
@@ -160,7 +185,12 @@ class TableGroupServiceTest extends ServiceTest {
         void ungroup_should_fail_when_the_group_contains_table_has_order_with_cooking_status() {
             // given
             final var tableGroupResponse = createTableGroup();
-            orderRepository.save(new Order(tableA.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), null));
+            orderRepository.save(
+                    new Order(
+                            tableA.getId(),
+                            OrderStatus.COOKING,
+                            List.of(new OrderLineItem(menu.getId(), 1L)))
+            );
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.unGroup(tableGroupResponse.getId()))
@@ -172,7 +202,7 @@ class TableGroupServiceTest extends ServiceTest {
         void ungroup_should_fail_when_the_group_contains_table_has_order_with_meal_status() {
             // given
             final var tableGroupResponse = createTableGroup();
-            orderRepository.save(new Order(tableA.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), null));
+            orderRepository.save(new Order(tableA.getId(), OrderStatus.MEAL, LocalDateTime.now(), new ArrayList<>()));
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.unGroup(tableGroupResponse.getId()))

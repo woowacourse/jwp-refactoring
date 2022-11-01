@@ -15,13 +15,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.request.OrderTableCreateRequest;
 import kitchenpos.ui.dto.response.MenuGroupResponse;
 import kitchenpos.ui.dto.response.MenuResponse;
+import kitchenpos.ui.dto.response.OrderResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -65,7 +65,7 @@ public class OrdersAcceptanceTest extends AcceptanceTest {
 
         // when
         final var 주문_생성응답 = 생성요청(주문_URL, 주문_데이터);
-        final var 생성된_주문 = 주문_생성응답.body().as(Order.class);
+        final var 생성된_주문 = 주문_생성응답.body().as(OrderResponse.class);
         final var 주문메뉴 = 생성된_주문.getOrderLineItems().iterator().next();
 
         // then
@@ -93,7 +93,7 @@ public class OrdersAcceptanceTest extends AcceptanceTest {
         // when
         final var 주문_조회응답 = 조회요청(주문_URL);
         final var 첫주문내역 = 주문_조회응답.body().as(List.class).iterator().next();
-        final var 주문정보 = objectMapper.readValue(objectMapper.writeValueAsString(첫주문내역), Order.class);
+        final var 주문정보 = objectMapper.readValue(objectMapper.writeValueAsString(첫주문내역), OrderResponse.class);
 
         // then
         assertAll(
@@ -114,13 +114,13 @@ public class OrdersAcceptanceTest extends AcceptanceTest {
                         Map.of("menuId", 생성된_메뉴.getId(), "quantity", 1)
                 )
         );
-        final var 주문_아이디 = 생성요청(주문_URL, 주문_데이터).body().as(Order.class).getId();
+        final var 주문_아이디 = 생성요청(주문_URL, 주문_데이터).body().as(OrderResponse.class).getId();
 
         // when
         final var 주문_수정_URL = String.format(주문_URL + "/%d/order-status", 주문_아이디);
         final var 계산완료_요청_데이터 = Map.of("orderStatus", "COMPLETION");
         final var 수정요청_응답 = 수정요청(주문_수정_URL, 계산완료_요청_데이터);
-        final var 수정된_주문 = 수정요청_응답.body().as(Order.class);
+        final var 수정된_주문 = 수정요청_응답.body().as(OrderResponse.class);
 
         // then
         assertAll(

@@ -31,10 +31,10 @@ class OrderRestControllerTest extends DocumentationTest {
     void create() {
         given(orderService.create(any()))
                 .willReturn(
-                        new Order(1L, 5L, OrderStatus.COOKING.name(), LocalDateTime.now(),
+                        new Order(1L, 5L, OrderStatus.COOKING, LocalDateTime.now(),
                                 List.of(
-                                        new OrderLineItem(1L, 1L, 1L, 1L),
-                                        new OrderLineItem(2L, 1L, 3L, 2L)
+                                        new OrderLineItem(1L, null, 1L, 1L),
+                                        new OrderLineItem(2L, null, 3L, 2L)
                                 )
                         )
                 );
@@ -79,16 +79,16 @@ class OrderRestControllerTest extends DocumentationTest {
         given(orderService.list())
                 .willReturn(
                         List.of(
-                                new Order(1L, 5L, OrderStatus.COOKING.name(), LocalDateTime.now(),
+                                new Order(1L, 5L, OrderStatus.COOKING, LocalDateTime.now(),
                                         List.of(
-                                                new OrderLineItem(1L, 1L, 1L, 1L),
-                                                new OrderLineItem(2L, 1L, 3L, 2L)
+                                                new OrderLineItem(1L, null, 1L, 1L),
+                                                new OrderLineItem(2L, null, 3L, 2L)
                                         )
                                 ),
-                                new Order(2L, 7L, OrderStatus.COOKING.name(), LocalDateTime.now().plusMinutes(1L),
+                                new Order(2L, 7L, OrderStatus.COOKING, LocalDateTime.now().plusMinutes(1L),
                                         List.of(
-                                                new OrderLineItem(3L, 2L, 11L, 2L),
-                                                new OrderLineItem(4L, 2L, 23L, 1L)
+                                                new OrderLineItem(3L, null, 11L, 2L),
+                                                new OrderLineItem(4L, null, 23L, 1L)
                                         )
                                 )
                         )
@@ -122,10 +122,10 @@ class OrderRestControllerTest extends DocumentationTest {
     void changeOrderStatus() {
         given(orderService.changeOrderStatus(any(), any()))
                 .willReturn(
-                        new Order(1L, 5L, OrderStatus.COMPLETION.name(), LocalDateTime.now().minusHours(1L),
+                        new Order(1L, 5L, OrderStatus.COMPLETION, LocalDateTime.now().minusHours(1L),
                                 List.of(
-                                        new OrderLineItem(1L, 1L, 1L, 1L),
-                                        new OrderLineItem(2L, 1L, 3L, 2L)
+                                        new OrderLineItem(1L, null, 1L, 1L),
+                                        new OrderLineItem(2L, null, 3L, 2L)
                                 )
                         )
                 );
