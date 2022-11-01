@@ -40,7 +40,7 @@ public class MenuService {
         final List<MenuProduct> menuProducts = menuRequest.getMenuProductsRequest().stream()
                 .map(request -> request.toMenuProduct(productRepository.findById(request.getProductId())
                         .orElseThrow(IllegalArgumentException::new)))
-                .collect(Collectors.toList());
+                .collect(Collectors.toUnmodifiableList());
         final Menu menu = menuRequest.toMenu(menuGroup, menuProducts);
 
         return menuRepository.save(menu);

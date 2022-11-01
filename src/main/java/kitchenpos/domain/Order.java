@@ -3,7 +3,6 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -38,7 +37,7 @@ public class Order {
     @OneToMany(mappedBy = "order")
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
-    public Order() {
+    protected Order() {
     }
 
     public Order(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
@@ -71,7 +70,7 @@ public class Order {
     }
 
     private void verifyTheCalculationIsComplete(final OrderStatus orderStatus) {
-        if (Objects.equals(OrderStatus.COMPLETION, this.orderStatus)) {
+        if (this.orderStatus == OrderStatus.COMPLETION) {
             throw new IllegalArgumentException("계산 완료된 주문 테이블은 주문 상태를 변경할 수 없습니다.");
         }
     }
