@@ -8,10 +8,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.transaction.Transactional;
-import kitchenpos.dao.MenuRepository;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.exception.IllegalPriceException;
@@ -19,28 +19,30 @@ import kitchenpos.exception.MenuTotalPriceException;
 import kitchenpos.exception.NotFoundMenuGroupException;
 import kitchenpos.exception.NotFoundProductException;
 import kitchenpos.fixtures.MenuFixtures;
+import kitchenpos.fixtures.MenuGroupFixtures;
 import kitchenpos.fixtures.MenuProductFixtures;
+import kitchenpos.fixtures.ProductFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
+@Sql("classpath:truncate.sql")
 @SpringBootTest
-@Transactional
-class MenuServiceTest {
-
-    @Autowired
-    private MenuService menuService;
-
-    @Autowired
-    private MenuRepository menuRepository;
+class MenuServiceTest extends ServiceTest {
 
     @Test
     @DisplayName("메뉴를 생성한다")
     void create() {
         // given
-        final MenuProductRequest menuProductRequest = new MenuProductRequest(1L, 2);
-        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
+        final MenuGroup menuGroup = MenuGroupFixtures.TWO_CHICKEN_GROUP.create();
+        final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
+
+        final Product product = ProductFixtures.CHICKEN.create();
+        final Product savedProduct = productRepository.save(product);
+
+        final MenuProductRequest menuProductRequest = new MenuProductRequest(savedProduct.getId(), 3);
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.createWithMenuGroup(savedMenuGroup);
         final MenuCreateRequest menuCreateRequest = new MenuCreateRequest(menu.getName(), menu.getPrice(),
                 menu.getMenuGroupId(), Collections.singletonList(menuProductRequest));
 
@@ -48,7 +50,7 @@ class MenuServiceTest {
         final Menu saved = menuService.create(menuCreateRequest);
 
         // then
-        final MenuProduct actual = MenuProductFixtures.create(saved, 1L, 2);
+        final MenuProduct actual = MenuProductFixtures.create(saved, savedProduct.getId(), 3);
 
         assertAll(
                 () -> assertThat(saved.getId()).isNotNull(),
@@ -105,8 +107,11 @@ class MenuServiceTest {
     @DisplayName("존재하지 않는 상품으로 메뉴를 생성하면 예외가 발생한다")
     void createExceptionWrongMenuProducts() {
         // given
+        final MenuGroup menuGroup = MenuGroupFixtures.TWO_CHICKEN_GROUP.create();
+        final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
+
         final MenuProductRequest menuProductRequest = new MenuProductRequest(-1L, 2);
-        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.createWithMenuGroup(savedMenuGroup);
         final MenuCreateRequest menuCreateRequest = new MenuCreateRequest(menu.getName(), menu.getPrice(),
                 menu.getMenuGroupId(), Collections.singletonList(menuProductRequest));
 
@@ -119,10 +124,16 @@ class MenuServiceTest {
     @DisplayName("메뉴 가격이 메뉴 상품들의 가격합보다 크거나 같게 생성하면 예외가 발생한다")
     void createExceptionWrongPriceWithMenuProductsPriceSum() {
         // given
-        final MenuProductRequest menuProductRequest = new MenuProductRequest(1L, 2);
-        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
+        final MenuGroup menuGroup = MenuGroupFixtures.TWO_CHICKEN_GROUP.create();
+        final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
+
+        final Product product = ProductFixtures.CHICKEN.create();
+        final Product savedProduct = productRepository.save(product);
+
+        final MenuProductRequest menuProductRequest = new MenuProductRequest(savedProduct.getId(), 2);
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.createWithMenuGroup(savedMenuGroup);
         final MenuCreateRequest menuCreateRequest = new MenuCreateRequest(menu.getName(), new BigDecimal(50000),
-                1L, Collections.singletonList(menuProductRequest));
+                menu.getMenuGroupId(), Collections.singletonList(menuProductRequest));
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menuCreateRequest))
@@ -133,8 +144,10 @@ class MenuServiceTest {
     @DisplayName("모든 메뉴를 조회한다")
     void list() {
         // given
-        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO
-                .create();
+        final MenuGroup menuGroup = MenuGroupFixtures.TWO_CHICKEN_GROUP.create();
+        final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
+
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.createWithMenuGroup(savedMenuGroup);
         final Menu saved = menuRepository.save(menu);
 
         // when

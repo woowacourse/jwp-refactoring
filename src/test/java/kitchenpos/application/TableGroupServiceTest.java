@@ -8,10 +8,8 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import javax.transaction.Transactional;
-import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.OrderTableRepository;
-import kitchenpos.dao.TableGroupRepository;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
@@ -22,6 +20,8 @@ import kitchenpos.exception.CanNotGroupException;
 import kitchenpos.exception.NotEnoughForGroupingException;
 import kitchenpos.exception.OrderNotCompletionException;
 import kitchenpos.exception.OrderTableSizeException;
+import kitchenpos.fixtures.MenuFixtures;
+import kitchenpos.fixtures.MenuGroupFixtures;
 import kitchenpos.fixtures.OrderFixtures;
 import kitchenpos.fixtures.OrderLineItemFixtures;
 import kitchenpos.fixtures.OrderTableFixtures;
@@ -30,24 +30,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
+@Sql("classpath:truncate.sql")
 @SpringBootTest
-@Transactional
-class TableGroupServiceTest {
-
-    @Autowired
-    private TableGroupService tableGroupService;
-
-    @Autowired
-    private OrderTableRepository orderTableRepository;
-
-    @Autowired
-    private OrderRepository orderRepository;
-
-    @Autowired
-    private TableGroupRepository tableGroupRepository;
+class TableGroupServiceTest extends ServiceTest {
 
     @Test
     @DisplayName("테이블 단체를 지정한다")
@@ -174,6 +162,12 @@ class TableGroupServiceTest {
     @DisplayName("테이블 단체를 해제한다")
     void ungroup() {
         // given
+        final MenuGroup menuGroup = MenuGroupFixtures.TWO_CHICKEN_GROUP.create();
+        final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
+
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.createWithMenuGroup(savedMenuGroup);
+        final Menu savedMenu = menuRepository.save(menu);
+
         final TableGroup tableGroup = TableGroupFixtures.create();
         final TableGroup alreadyGroupedTable = tableGroupRepository.save(tableGroup);
 
@@ -183,7 +177,7 @@ class TableGroupServiceTest {
         final OrderTable orderTable2 = OrderTableFixtures.createWithGuests(alreadyGroupedTable, 2);
         final OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
 
-        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu.getId(), 2);
         final Order order = OrderFixtures.COMPLETION_ORDER.createWithOrderTableIdAndOrderLineItems(
                 savedOrderTable1.getId(), orderLineItem);
         orderRepository.save(order);
@@ -209,6 +203,12 @@ class TableGroupServiceTest {
     @DisplayName("주문의 상태가 COOKING, MEAL인 경우 테이블 단체를 해제하면 예외가 발생한다")
     void ungroupExceptionNotCompletionOrder(final OrderFixtures orderFixtures) {
         // given
+        final MenuGroup menuGroup = MenuGroupFixtures.TWO_CHICKEN_GROUP.create();
+        final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
+
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.createWithMenuGroup(savedMenuGroup);
+        final Menu savedMenu = menuRepository.save(menu);
+
         final TableGroup tableGroup = TableGroupFixtures.create();
         final TableGroup alreadyGroupedTable = tableGroupRepository.save(tableGroup);
 
@@ -218,7 +218,7 @@ class TableGroupServiceTest {
         final OrderTable orderTable2 = OrderTableFixtures.createWithGuests(alreadyGroupedTable, 2);
         orderTableRepository.save(orderTable2);
 
-        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu.getId(), 2);
         final Order order = orderFixtures.createWithOrderTableIdAndOrderLineItems(savedOrderTable1.getId(),
                 orderLineItem);
         orderRepository.save(order);

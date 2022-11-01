@@ -7,9 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import javax.transaction.Transactional;
-import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -22,32 +21,31 @@ import kitchenpos.exception.OrderCompletionException;
 import kitchenpos.exception.OrderLineItemEmptyException;
 import kitchenpos.exception.OrderLineItemSizeException;
 import kitchenpos.exception.TableEmptyException;
+import kitchenpos.fixtures.MenuFixtures;
+import kitchenpos.fixtures.MenuGroupFixtures;
 import kitchenpos.fixtures.OrderFixtures;
 import kitchenpos.fixtures.OrderLineItemFixtures;
 import kitchenpos.fixtures.OrderTableFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
+@Sql("classpath:truncate.sql")
 @SpringBootTest
-@Transactional
-class OrderServiceTest {
-
-    @Autowired
-    private OrderService orderService;
-
-    @Autowired
-    private OrderRepository orderRepository;
-
-    @Autowired
-    private OrderTableRepository orderTableRepository;
+class OrderServiceTest extends ServiceTest {
 
     @Test
     @DisplayName("주문을 생성한다")
     void create() {
         // given
-        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 2);
+        final MenuGroup menuGroup = MenuGroupFixtures.TWO_CHICKEN_GROUP.create();
+        final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
+
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.createWithMenuGroup(savedMenuGroup);
+        final Menu savedMenu = menuRepository.save(menu);
+
+        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(savedMenu.getId(), 2);
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable notEmptyOrderTable = orderTableRepository.save(orderTable);
 
@@ -96,7 +94,13 @@ class OrderServiceTest {
     @DisplayName("주문 테이블이 존재하지 않은 테이블이면 주문을 생성할 때 예외가 발생한다")
     void createExceptionNotExistOrderTable() {
         // given
-        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 2);
+        final MenuGroup menuGroup = MenuGroupFixtures.TWO_CHICKEN_GROUP.create();
+        final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
+
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.createWithMenuGroup(savedMenuGroup);
+        final Menu savedMenu = menuRepository.save(menu);
+
+        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(savedMenu.getId(), 2);
         final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(-1L,
                 Collections.singletonList(orderLineItemRequest));
 
@@ -109,8 +113,17 @@ class OrderServiceTest {
     @DisplayName("주문 테이블이 주문을 등록할 수 없는 상태로 주문을 생성할 때 예외가 발생한다")
     void createExceptionNotEmptyOrderTable() {
         // given
-        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 2);
-        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(1L,
+        final MenuGroup menuGroup = MenuGroupFixtures.TWO_CHICKEN_GROUP.create();
+        final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
+
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.createWithMenuGroup(savedMenuGroup);
+        final Menu savedMenu = menuRepository.save(menu);
+
+        final OrderTable orderTable = OrderTableFixtures.createEmptyTable(null);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
+
+        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(savedMenu.getId(), 2);
+        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(savedOrderTable.getId(),
                 Collections.singletonList(orderLineItemRequest));
 
         // when, then
@@ -122,10 +135,16 @@ class OrderServiceTest {
     @DisplayName("모든 주문을 조회한다")
     void list() {
         // given
+        final MenuGroup menuGroup = MenuGroupFixtures.TWO_CHICKEN_GROUP.create();
+        final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
+
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.createWithMenuGroup(savedMenuGroup);
+        final Menu savedMenu = menuRepository.save(menu);
+
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable notEmptyOrderTable = orderTableRepository.save(orderTable);
 
-        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu.getId(), 2);
         final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableIdAndOrderLineItems(
                 notEmptyOrderTable.getId(), orderLineItem);
         final Order savedOrder = orderRepository.save(order);
@@ -147,8 +166,18 @@ class OrderServiceTest {
     @DisplayName("주문의 상태를 변경한다")
     void changeOrderStatus() {
         // given
-        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
-        final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableIdAndOrderLineItems(1L, orderLineItem);
+        final MenuGroup menuGroup = MenuGroupFixtures.TWO_CHICKEN_GROUP.create();
+        final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
+
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.createWithMenuGroup(savedMenuGroup);
+        final Menu savedMenu = menuRepository.save(menu);
+
+        final OrderTable orderTable = OrderTableFixtures.createEmptyTable(null);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
+
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu.getId(), 2);
+        final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableIdAndOrderLineItems(savedOrderTable.getId(),
+                orderLineItem);
         final Order saved = orderRepository.save(order);
 
         // when
@@ -174,8 +203,18 @@ class OrderServiceTest {
     @DisplayName("주문이 이미 완료된 상태에서 주문의 상태를 변경하려고 하면 예외가 발생한다.")
     void changeOrderStatusExceptionAlreadyCompletion() {
         // given
-        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
-        final Order order = OrderFixtures.COMPLETION_ORDER.createWithOrderTableIdAndOrderLineItems(1L, orderLineItem);
+        final MenuGroup menuGroup = MenuGroupFixtures.TWO_CHICKEN_GROUP.create();
+        final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
+
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.createWithMenuGroup(savedMenuGroup);
+        final Menu savedMenu = menuRepository.save(menu);
+
+        final OrderTable orderTable = OrderTableFixtures.createEmptyTable(null);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
+
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu.getId(), 2);
+        final Order order = OrderFixtures.COMPLETION_ORDER.createWithOrderTableIdAndOrderLineItems(
+                savedOrderTable.getId(), orderLineItem);
         final Order completionOrder = orderRepository.save(order);
 
         // when, then

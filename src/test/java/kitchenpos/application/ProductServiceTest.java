@@ -6,26 +6,18 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import javax.transaction.Transactional;
-import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.ProductCreateRequest;
 import kitchenpos.exception.IllegalPriceException;
 import kitchenpos.fixtures.ProductFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
+@Sql("classpath:truncate.sql")
 @SpringBootTest
-@Transactional
-class ProductServiceTest {
-
-    @Autowired
-    private ProductService productService;
-
-    @Autowired
-    private ProductRepository productRepository;
+class ProductServiceTest extends ServiceTest {
 
     @Test
     @DisplayName("상품을 생성한다")

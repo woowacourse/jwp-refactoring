@@ -5,10 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import javax.transaction.Transactional;
-import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.OrderTableRepository;
-import kitchenpos.dao.TableGroupRepository;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
@@ -20,6 +18,8 @@ import kitchenpos.exception.NotFoundOrderTableException;
 import kitchenpos.exception.NumberOfGuestsSizeException;
 import kitchenpos.exception.OrderNotCompletionException;
 import kitchenpos.exception.TableEmptyException;
+import kitchenpos.fixtures.MenuFixtures;
+import kitchenpos.fixtures.MenuGroupFixtures;
 import kitchenpos.fixtures.OrderFixtures;
 import kitchenpos.fixtures.OrderLineItemFixtures;
 import kitchenpos.fixtures.OrderTableFixtures;
@@ -28,24 +28,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
+@Sql("classpath:truncate.sql")
 @SpringBootTest
-@Transactional
-class TableServiceTest {
-
-    @Autowired
-    private TableService tableService;
-
-    @Autowired
-    private OrderTableRepository orderTableRepository;
-
-    @Autowired
-    private TableGroupRepository tableGroupRepository;
-
-    @Autowired
-    private OrderRepository orderRepository;
+class TableServiceTest extends ServiceTest {
 
     @Test
     @DisplayName("주문 테이블을 생성한다")
@@ -85,10 +73,16 @@ class TableServiceTest {
     @DisplayName("주문 테이블의 주문 가능 여부를 변경한다")
     void changeEmpty() {
         // given
+        final MenuGroup menuGroup = MenuGroupFixtures.TWO_CHICKEN_GROUP.create();
+        final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
+
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.createWithMenuGroup(savedMenuGroup);
+        final Menu savedMenu = menuRepository.save(menu);
+
         final OrderTable orderTable = OrderTableFixtures.createEmptyTable(null);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu.getId(), 2);
         final Order order = OrderFixtures.COMPLETION_ORDER.createWithOrderTableIdAndOrderLineItems(
                 savedOrderTable.getId(), orderLineItem);
         orderRepository.save(order);
@@ -133,10 +127,16 @@ class TableServiceTest {
     @DisplayName("주문이 상태가 COOKING, MEAL인 경우 주문 테이블의 주문 가능 여부를 변경할 때 예외가 발생한다")
     void changeEmptyExceptionNotCompletionOrder(final OrderFixtures orderFixtures) {
         // given
+        final MenuGroup menuGroup = MenuGroupFixtures.TWO_CHICKEN_GROUP.create();
+        final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
+
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.createWithMenuGroup(savedMenuGroup);
+        final Menu savedMenu = menuRepository.save(menu);
+
         final OrderTable orderTable = OrderTableFixtures.createEmptyTable(null);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu.getId(), 2);
         final Order order = orderFixtures.createWithOrderTableIdAndOrderLineItems(
                 savedOrderTable.getId(), orderLineItem);
         orderRepository.save(order);
