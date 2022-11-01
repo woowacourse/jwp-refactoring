@@ -28,15 +28,11 @@ public class Product {
         this(null, name, price);
     }
 
-    public Product(final String name, final Price price) {
-        this(null, name, price);
-    }
-
     public Product(final Long id, final String name, final BigDecimal price) {
         this(id, name, new Price(price));
     }
 
-    public Product(final Long id, final String name, final Price price) {
+    private Product(final Long id, final String name, final Price price) {
         this.id = id;
         this.name = name;
         this.price = price;

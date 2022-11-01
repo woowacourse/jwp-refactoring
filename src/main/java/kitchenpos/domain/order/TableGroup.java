@@ -32,7 +32,7 @@ public class TableGroup {
         this(null, orderTables);
     }
 
-    public TableGroup(final Long id, final List<OrderTable> orderTables) {
+    private TableGroup(final Long id, final List<OrderTable> orderTables) {
         validateOrderTables(orderTables);
         setOrderTable(orderTables);
 
