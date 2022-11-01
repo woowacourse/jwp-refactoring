@@ -2,12 +2,12 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.menu.MenuRepository;
-import kitchenpos.domain.menu.MenuGroupRepository;
-import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroupRepository;
 import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.dto.response.MenuResponse;
@@ -21,7 +21,8 @@ public class MenuService {
     private final MenuGroupRepository menuGroupRepository;
     private final ProductRepository productRepository;
 
-    public MenuService(final MenuRepository menuRepository, final MenuGroupRepository menuGroupRepository, final ProductRepository productRepository) {
+    public MenuService(final MenuRepository menuRepository, final MenuGroupRepository menuGroupRepository,
+                       final ProductRepository productRepository) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
         this.productRepository = productRepository;
@@ -39,8 +40,8 @@ public class MenuService {
                 .collect(Collectors.toList());
         menu.changeMenuProducts(menuProducts);
 
-        final Menu savedMenu = menuRepository.save(menu);
-        return MenuResponse.from(savedMenu);
+        menuRepository.save(menu);
+        return MenuResponse.from(menu);
     }
 
     public List<MenuResponse> list() {
