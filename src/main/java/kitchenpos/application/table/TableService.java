@@ -1,16 +1,14 @@
 package kitchenpos.application.table;
 
 import java.util.List;
-import kitchenpos.domain.common.OrderStatus;
-import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.dto.table.mapper.OrderTableDtoMapper;
 import kitchenpos.dto.table.mapper.OrderTableMapper;
 import kitchenpos.dto.table.request.OrderTableCreateRequest;
 import kitchenpos.dto.table.response.OrderTableResponse;
-import kitchenpos.exception.badrequest.CookingOrMealOrderTableCannotChangeEmptyException;
 import kitchenpos.exception.badrequest.OrderNotExistsException;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,15 +18,16 @@ public class TableService {
 
     private final OrderTableMapper orderTableMapper;
     private final OrderTableDtoMapper orderTableDtoMapper;
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     public TableService(final OrderTableMapper orderTableMapper, final OrderTableDtoMapper orderTableDtoMapper,
-                        final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
+                        final OrderTableRepository orderTableRepository,
+                        final ApplicationEventPublisher applicationEventPublisher) {
         this.orderTableMapper = orderTableMapper;
         this.orderTableDtoMapper = orderTableDtoMapper;
-        this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Transactional
@@ -46,16 +45,9 @@ public class TableService {
     public OrderTableResponse changeEmpty(final Long orderTableId, final boolean empty) {
         OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(OrderNotExistsException::new);
-        validateTableDoesNotHaveCookingOrMealOrder(orderTableId);
+        applicationEventPublisher.publishEvent(new ChangeEmptyEvent(orderTableId));
         savedOrderTable.changeEmpty(empty);
         return orderTableDtoMapper.toOrderTableResponse(savedOrderTable);
-    }
-
-    private void validateTableDoesNotHaveCookingOrMealOrder(final Long orderTableId) {
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, List.of(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new CookingOrMealOrderTableCannotChangeEmptyException();
-        }
     }
 
     @Transactional
