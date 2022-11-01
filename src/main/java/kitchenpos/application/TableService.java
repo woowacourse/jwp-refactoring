@@ -69,7 +69,7 @@ public class TableService {
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
                                                    final OrderTableChangeNumberOfGuestsRequest request) {
         OrderTable savedOrderTable = orderTableDao.getById(orderTableId);
-        savedOrderTable.changeNumberOfStatus(request.getNumberOfGuests());
+        savedOrderTable.changeNumberOfGuests(request.getNumberOfGuests());
         return new OrderTableResponse(savedOrderTable);
     }
 }
