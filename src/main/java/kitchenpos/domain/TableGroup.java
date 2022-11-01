@@ -29,6 +29,7 @@ public class TableGroup {
     }
 
     public TableGroup(final Long id, final LocalDateTime createdDate, final OrderTables orderTables) {
+        orderTables.validateGroup();
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables.arrangeGroup(this);

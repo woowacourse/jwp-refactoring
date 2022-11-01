@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
@@ -21,6 +22,14 @@ public class OrderTables {
     public OrderTables(final List<OrderTable> orderTables) {
         validate(orderTables);
         this.orderTables = orderTables;
+    }
+
+    public void validateGroup() {
+        for (final OrderTable orderTable : orderTables) {
+            if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
+                throw new IllegalArgumentException("주문 테이블은 활성화되어 있거나 이미 단체 지정되어 있을 수 없습니다.");
+            }
+        }
     }
 
     public OrderTables arrangeGroup(final TableGroup tableGroup) {

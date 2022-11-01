@@ -108,11 +108,11 @@ class TableServiceTest extends ServiceTest {
 
             private final OrderTable orderTable1 = OrderTable.builder()
                     .numberOfGuests(2)
-                    .empty(false)
+                    .empty(true)
                     .build();
             private final OrderTable orderTable2 = OrderTable.builder()
                     .numberOfGuests(2)
-                    .empty(false)
+                    .empty(true)
                     .build();
             private final TableGroup tableGroup = tableGroupRepository.save(TableGroup.builder()
                     .createdDate(LocalDateTime.now())
