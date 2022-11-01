@@ -39,11 +39,7 @@ public class MenuProduct {
     }
 
     public void mapMenu(final Menu menu) {
-        if (this.menu != null) {
-            this.menu.getMenuProducts().remove(this);
-        }
         this.menu = menu;
-        menu.getMenuProducts().add(this);
     }
 
     public Long getSeq() {

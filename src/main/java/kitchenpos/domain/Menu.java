@@ -40,6 +40,7 @@ public class Menu {
                 final MenuGroup menuGroup,
                 final List<MenuProduct> menuProducts) {
         validateMenuPrice(menuProducts, price);
+        menuProducts.forEach(it -> it.mapMenu(this));
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
