@@ -2,8 +2,6 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
-import org.springframework.util.CollectionUtils;
 
 public class Order {
 
@@ -11,11 +9,10 @@ public class Order {
     private final Long orderTableId;
     private final String orderStatus;
     private final LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+    private final OrderLineItems orderLineItems;
 
     public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
-                 final List<OrderLineItem> orderLineItems) {
-        validateEmptyOrderLineItems(orderLineItems);
+                 final OrderLineItems orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -24,29 +21,20 @@ public class Order {
     }
 
     public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
-        this.id = id;
-        this.orderTableId = orderTableId;
-        this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
+        this(id, orderTableId, orderStatus, orderedTime, null);
     }
 
     public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
-                 final List<OrderLineItem> orderLineItems) {
+                 final OrderLineItems orderLineItems) {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
-    public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+    public Order(final Long orderTableId, final OrderLineItems orderLineItems) {
         this(null, orderTableId, null, null, orderLineItems);
     }
 
-    private void validateEmptyOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
-        }
-    }
-
     public boolean hasValidSize(final long size) {
-        return orderLineItems.size() == size;
+        return orderLineItems.getSize() == size;
     }
 
     public boolean hasStatus(final OrderStatus status) {
@@ -81,16 +69,14 @@ public class Order {
     }
 
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+        return orderLineItems.getValue();
     }
 
     public List<Long> getMenuIds() {
-        return orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
-                .collect(Collectors.toList());
+        return orderLineItems.getMenuIds();
     }
 
-    public Order setOrderLineItems(final List<OrderLineItem> orderLineItems) {
+    public Order setOrderLineItems(final OrderLineItems orderLineItems) {
         return new Order(id, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 }

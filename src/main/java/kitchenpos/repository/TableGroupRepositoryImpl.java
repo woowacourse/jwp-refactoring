@@ -6,6 +6,7 @@ import java.util.Optional;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 import org.springframework.stereotype.Repository;
 
@@ -31,7 +32,7 @@ public class TableGroupRepositoryImpl implements TableGroupRepository {
                     new OrderTable(orderTable.getId(), tableGroup.getId(), orderTable.getNumberOfGuests(), false));
             savedOrderTables.add(savedOrderTable);
         }
-        return new TableGroup(tableGroup.getId(), tableGroup.getCreatedDate(), savedOrderTables);
+        return new TableGroup(tableGroup.getId(), tableGroup.getCreatedDate(), new OrderTables(savedOrderTables));
     }
 
     @Override

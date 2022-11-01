@@ -12,8 +12,10 @@ import kitchenpos.common.DatabaseCleaner;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
@@ -190,12 +192,12 @@ class OrderServiceTest extends ServiceTest {
         return orderLineItems;
     }
 
-    private List<OrderLineItem> createOrderLineItem(final Long... menuIds) {
+    private OrderLineItems createOrderLineItem(final Long... menuIds) {
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (final Long menuId : menuIds) {
             orderLineItems.add(new OrderLineItem(menuId, 10));
         }
-        return orderLineItems;
+        return new OrderLineItems(orderLineItems);
     }
 
     private List<OrderLineItemRequest> createOrderLineItemRequest(final Long... menuIds) {
@@ -206,11 +208,11 @@ class OrderServiceTest extends ServiceTest {
         return orderLineItems;
     }
 
-    private List<MenuProduct> createMenuProducts(final Long... productIds) {
+    private MenuProducts createMenuProducts(final Long... productIds) {
         final List<MenuProduct> menuProducts = new ArrayList<>();
         for (final Long productId : productIds) {
             menuProducts.add(new MenuProduct(productId, 1L, BigDecimal.valueOf(10000)));
         }
-        return menuProducts;
+        return new MenuProducts(menuProducts);
     }
 }

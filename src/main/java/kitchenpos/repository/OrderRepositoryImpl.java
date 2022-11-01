@@ -8,6 +8,7 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderLineItems;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -36,7 +37,7 @@ public class OrderRepositoryImpl implements OrderRepository {
                 savedOrder.getOrderTableId(),
                 savedOrder.getOrderStatus(),
                 savedOrder.getOrderedTime(),
-                savedOrderLineItems
+                new OrderLineItems(savedOrderLineItems)
         );
     }
 
@@ -44,14 +45,15 @@ public class OrderRepositoryImpl implements OrderRepository {
     public Optional<Order> findById(final Long id) {
         final Optional<Order> order = orderDao.findById(id);
         return order.map(
-                it -> it.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.get().getId())));
+                it -> it.setOrderLineItems(new OrderLineItems(orderLineItemDao.findAllByOrderId(order.get().getId()))));
     }
 
     @Override
     public List<Order> findAll() {
         final List<Order> orders = orderDao.findAll();
         return orders.stream()
-                .map(order -> order.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId())))
+                .map(order -> order.setOrderLineItems(
+                        new OrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()))))
                 .collect(Collectors.toList());
     }
 

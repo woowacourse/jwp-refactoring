@@ -13,9 +13,12 @@ import kitchenpos.common.DatabaseCleaner;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.OrderTableRequest;
@@ -126,7 +129,7 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("테이블 그룹 등록 시 테이블의 테이블 그룹이 존재하면 예외가 발생한다.")
     @Test
     void createWithOrderTableExistingTableGroup() {
-        final List<OrderTable> orderTables = Arrays.asList(firstOrderTable, secondOrderTable);
+        final OrderTables orderTables = new OrderTables(Arrays.asList(firstOrderTable, secondOrderTable));
         tableGroupRepository.save(new TableGroup(LocalDateTime.now(), orderTables));
         final List<OrderTableRequest> request = Arrays.asList(
                 new OrderTableRequest(firstOrderTable.getId()),
@@ -140,7 +143,7 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("테이블 그룹을 해제할 수 있다.")
     @Test
     void ungroup() {
-        final List<OrderTable> orderTables = Arrays.asList(firstOrderTable, secondOrderTable);
+        final OrderTables orderTables = new OrderTables(Arrays.asList(firstOrderTable, secondOrderTable));
         final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), orderTables));
 
         tableGroupService.ungroup(tableGroup.getId());
@@ -164,26 +167,26 @@ class TableGroupServiceTest extends ServiceTest {
         orderRepository.save(
                 new Order(firstOrderTable.getId(), orderStatus, LocalDateTime.now(),
                         createOrderLineItem(menu.getId())));
-        final List<OrderTable> orderTables = Arrays.asList(firstOrderTable, secondOrderTable);
+        final OrderTables orderTables = new OrderTables(Arrays.asList(firstOrderTable, secondOrderTable));
         final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), orderTables));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    private List<MenuProduct> createMenuProducts(final Long... productIds) {
+    private MenuProducts createMenuProducts(final Long... productIds) {
         final List<MenuProduct> menuProducts = new ArrayList<>();
         for (final Long productId : productIds) {
             menuProducts.add(new MenuProduct(productId, 1L, BigDecimal.valueOf(10000)));
         }
-        return menuProducts;
+        return new MenuProducts(menuProducts);
     }
 
-    private List<OrderLineItem> createOrderLineItem(final Long... menuIds) {
+    private OrderLineItems createOrderLineItem(final Long... menuIds) {
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (final Long menuId : menuIds) {
             orderLineItems.add(new OrderLineItem(menuId, 10));
         }
-        return orderLineItems;
+        return new OrderLineItems(orderLineItems);
     }
 }

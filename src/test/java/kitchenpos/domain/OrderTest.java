@@ -15,7 +15,7 @@ class OrderTest {
     @DisplayName("주문 생성 시 주문 항목이 비어있으면 예외가 발생한다.")
     @Test
     void constructWithEmptyOrderLineItem() {
-        assertThatThrownBy(() -> new Order(1L, "COOKING", LocalDateTime.now(), new ArrayList<>()))
+        assertThatThrownBy(() -> new Order(1L, "COOKING", LocalDateTime.now(), new OrderLineItems(new ArrayList<>())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -23,7 +23,8 @@ class OrderTest {
     @Test
     void hasValidSize() {
         Order order = new Order(1L, "COOKING", LocalDateTime.now(),
-                Arrays.asList(new OrderLineItem(1L, 1L, 1L, 10), new OrderLineItem(2L, 1L, 2L, 10)));
+                new OrderLineItems(
+                        Arrays.asList(new OrderLineItem(1L, 1L, 1L, 10), new OrderLineItem(2L, 1L, 2L, 10))));
 
         assertThat(order.hasValidSize(2L)).isTrue();
     }
@@ -32,7 +33,8 @@ class OrderTest {
     @Test
     void hasStatus() {
         Order order = new Order(1L, "COOKING", LocalDateTime.now(),
-                Arrays.asList(new OrderLineItem(1L, 1L, 1L, 10), new OrderLineItem(2L, 1L, 2L, 10)));
+                new OrderLineItems(
+                        Arrays.asList(new OrderLineItem(1L, 1L, 1L, 10), new OrderLineItem(2L, 1L, 2L, 10))));
 
         assertAll(
                 () -> assertThat(order.hasStatus(OrderStatus.COOKING)).isTrue(),

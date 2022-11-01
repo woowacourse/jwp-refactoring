@@ -11,6 +11,7 @@ import kitchenpos.common.DatabaseCleaner;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuProductRequest;
@@ -104,12 +105,12 @@ class MenuServiceTest extends ServiceTest {
         );
     }
 
-    private List<MenuProduct> createMenuProducts(final Long... productIds) {
+    private MenuProducts createMenuProducts(final Long... productIds) {
         final List<MenuProduct> menuProducts = new ArrayList<>();
         for (final Long productId : productIds) {
             menuProducts.add(new MenuProduct(productId, 1L, BigDecimal.valueOf(10000)));
         }
-        return menuProducts;
+        return new MenuProducts(menuProducts);
     }
 
     private List<MenuProductRequest> createMenuProductRequest(final Long... productIds) {

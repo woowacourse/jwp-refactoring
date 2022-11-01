@@ -7,7 +7,7 @@ import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class OrderTableRepositoryImpl implements  OrderTableRepository {
+public class OrderTableRepositoryImpl implements OrderTableRepository {
 
     private final OrderTableDao orderTableDao;
 

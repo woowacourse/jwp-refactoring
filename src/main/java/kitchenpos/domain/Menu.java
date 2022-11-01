@@ -10,10 +10,10 @@ public class Menu {
     private final String name;
     private final BigDecimal price;
     private final Long menuGroupId;
-    private List<MenuProduct> menuProducts;
+    private MenuProducts menuProducts;
 
     public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
-                final List<MenuProduct> menuProducts) {
+                final MenuProducts menuProducts) {
         validatePrice(price);
         validateAmount(price, menuProducts);
         this.id = id;
@@ -31,7 +31,7 @@ public class Menu {
     }
 
     public Menu(final String name, final BigDecimal price, final Long menuGroupId,
-                final List<MenuProduct> menuProducts) {
+                final MenuProducts menuProducts) {
         this(null, name, price, menuGroupId, menuProducts);
     }
 
@@ -41,14 +41,8 @@ public class Menu {
         }
     }
 
-    private void validateAmount(final BigDecimal price, final List<MenuProduct> menuProducts) {
-        final BigDecimal sum = menuProducts.stream()
-                .map(MenuProduct::getAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
+    private void validateAmount(final BigDecimal price, final MenuProducts menuProducts) {
+        menuProducts.checkExceedPrice(price);
     }
 
     public Long getId() {
@@ -68,10 +62,10 @@ public class Menu {
     }
 
     public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
+        return menuProducts.getValue();
     }
 
-    public Menu setMenuProducts(final List<MenuProduct> menuProducts) {
+    public Menu setMenuProducts(final MenuProducts menuProducts) {
         return new Menu(id, name, price, menuGroupId, menuProducts);
     }
 }

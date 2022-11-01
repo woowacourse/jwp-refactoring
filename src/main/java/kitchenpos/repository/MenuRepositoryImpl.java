@@ -9,6 +9,7 @@ import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Product;
 import org.springframework.stereotype.Repository;
 
@@ -49,7 +50,8 @@ public class MenuRepositoryImpl implements MenuRepository {
                     )
             );
         }
-        return new Menu(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), savedMenuProducts);
+        return new Menu(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(),
+                new MenuProducts(savedMenuProducts));
     }
 
     @Override
@@ -76,9 +78,9 @@ public class MenuRepositoryImpl implements MenuRepository {
                 .orElseThrow(IllegalArgumentException::new);
     }
 
-    private List<MenuProduct> getByMenuId(final Long menuId) {
+    private MenuProducts getByMenuId(final Long menuId) {
         final List<MenuProduct> menuProducts = menuProductDao.findAllByMenuId(menuId);
-        return menuProducts.stream()
+        final List<MenuProduct> menuProductsWithPrice = menuProducts.stream()
                 .map(it -> new MenuProduct(
                                 it.getSeq(),
                                 it.getMenuId(),
@@ -88,5 +90,6 @@ public class MenuRepositoryImpl implements MenuRepository {
                         )
                 )
                 .collect(Collectors.toList());
+        return new MenuProducts(menuProductsWithPrice);
     }
 }

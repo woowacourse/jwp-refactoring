@@ -12,9 +12,12 @@ import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.OrderTableCreateRequest;
@@ -102,7 +105,7 @@ class TableServiceTest extends ServiceTest {
     void changeEmptyWithOrderTableGroup() {
         final OrderTable firstOrderTable = orderTableRepository.save(new OrderTable(4, false));
         final OrderTable secondOrderTable = orderTableRepository.save(new OrderTable(4, false));
-        final List<OrderTable> orderTables = createOrderTable(firstOrderTable, secondOrderTable);
+        final OrderTables orderTables = createOrderTable(firstOrderTable, secondOrderTable);
         tableGroupRepository.save(new TableGroup(LocalDateTime.now(), orderTables));
 
         assertThatThrownBy(() -> tableService.changeEmpty(1L, new OrderTableEmptyUpdateRequest(true)))
@@ -162,23 +165,23 @@ class TableServiceTest extends ServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    private List<OrderTable> createOrderTable(final OrderTable... orderTables) {
-        return new ArrayList<>(Arrays.asList(orderTables));
+    private OrderTables createOrderTable(final OrderTable... orderTables) {
+        return new OrderTables(new ArrayList<>(Arrays.asList(orderTables)));
     }
 
-    private List<MenuProduct> createMenuProducts(final Long... productIds) {
+    private MenuProducts createMenuProducts(final Long... productIds) {
         final List<MenuProduct> menuProducts = new ArrayList<>();
         for (final Long productId : productIds) {
             menuProducts.add(new MenuProduct(productId, 1L, BigDecimal.valueOf(10000)));
         }
-        return menuProducts;
+        return new MenuProducts(menuProducts);
     }
 
-    private List<OrderLineItem> createOrderLineItem(final Long... menuIds) {
+    private OrderLineItems createOrderLineItem(final Long... menuIds) {
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (final Long menuId : menuIds) {
             orderLineItems.add(new OrderLineItem(menuId, 10));
         }
-        return orderLineItems;
+        return new OrderLineItems(orderLineItems);
     }
 }

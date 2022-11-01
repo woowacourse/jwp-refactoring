@@ -17,7 +17,7 @@ class MenuTest {
     void constructWithNullPrice() {
         assertThatThrownBy(
                 () -> new Menu("1번 메뉴", null, 1L,
-                        Arrays.asList(new MenuProduct(1L, 1L, BigDecimal.valueOf(10000))))
+                        new MenuProducts(Arrays.asList(new MenuProduct(1L, 1L, BigDecimal.valueOf(10000)))))
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -27,14 +27,14 @@ class MenuTest {
     void constructWithInvalidPrice(int price) {
         assertThatThrownBy(
                 () -> new Menu("1번 메뉴", BigDecimal.valueOf(price), 1L,
-                        Arrays.asList(new MenuProduct(1L, 1L, BigDecimal.valueOf(10000))))
+                        new MenuProducts(Arrays.asList(new MenuProduct(1L, 1L, BigDecimal.valueOf(10000)))))
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("메뉴 생성 시 메뉴상품이 비어 있으면 예외가 발생한다.")
     @Test
     void constructWithNoMenuProduct() {
-        assertThatThrownBy(() -> new Menu("1번 메뉴", BigDecimal.valueOf(10000), 1L, new ArrayList<>()))
+        assertThatThrownBy(() -> new Menu("1번 메뉴", BigDecimal.valueOf(10000), 1L, new MenuProducts(new ArrayList<>())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -44,7 +44,7 @@ class MenuTest {
     void constructWithPriceMoreThanMenuProductSum(int price) {
         assertThatThrownBy(
                 () -> new Menu("1번 메뉴", BigDecimal.valueOf(price), 1L,
-                        Arrays.asList(new MenuProduct(1L, 1L, BigDecimal.valueOf(10000))))
+                        new MenuProducts(Arrays.asList(new MenuProduct(1L, 1L, BigDecimal.valueOf(10000)))))
         ).isInstanceOf(IllegalArgumentException.class);
     }
 }

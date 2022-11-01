@@ -2,9 +2,9 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.response.MenuResponse;
@@ -44,7 +44,7 @@ public class MenuService {
                         request.getName(),
                         request.getPrice(),
                         request.getMenuGroupId(),
-                        menuProducts
+                        new MenuProducts(menuProducts)
                 )
         );
 

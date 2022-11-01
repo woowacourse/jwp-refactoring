@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
 
 public class OrderCreateRequest {
@@ -20,21 +21,23 @@ public class OrderCreateRequest {
         this.orderLineItems = orderLineItems;
     }
 
+    public Order toOrder() {
+        return new Order(orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now(), toOrderLineItem());
+    }
+
+    private OrderLineItems toOrderLineItem() {
+        final List<OrderLineItem> orderLineItems = this.orderLineItems.stream()
+                .map(OrderLineItemRequest::toOrderLineItem)
+                .collect(Collectors.toList());
+
+        return new OrderLineItems(orderLineItems);
+    }
+
     public Long getOrderTableId() {
         return orderTableId;
     }
 
     public List<OrderLineItemRequest> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public Order toOrder() {
-        return new Order(orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now(), toOrderLineItem());
-    }
-
-    private List<OrderLineItem> toOrderLineItem() {
-        return orderLineItems.stream()
-                .map(OrderLineItemRequest::toOrderLineItem)
-                .collect(Collectors.toList());
     }
 }
