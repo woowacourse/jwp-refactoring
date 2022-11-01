@@ -16,11 +16,11 @@ import kitchenpos.application.dto.request.OrderLineItemRequest;
 import kitchenpos.application.dto.request.OrderRequest;
 import kitchenpos.application.dto.request.OrderStatusUpdateRequest;
 import kitchenpos.application.dto.response.OrderResponse;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
+import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -54,7 +54,7 @@ class OrderServiceTest {
     private ProductRepository productRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     MenuGroup 두마리메뉴;
     Menu 후라이드_양념치킨_두마리세트;
@@ -69,8 +69,8 @@ class OrderServiceTest {
         후라이드 = productRepository.save(ProductFixture.후라이드.toProduct());
         양념치킨 = productRepository.save(ProductFixture.양념치킨.toProduct());
 
-        Menu menu = MenuFixture.후라이드_양념치킨_두마리세트.toMenu(두마리메뉴.getId(), 후라이드.getId(), 양념치킨.getId());
-        후라이드_양념치킨_두마리세트 = menuDao.save(menu);
+        Menu menu = MenuFixture.후라이드_양념치킨_두마리세트.toMenu(두마리메뉴, 후라이드, 양념치킨);
+        후라이드_양념치킨_두마리세트 = menuRepository.save(menu);
 
         OrderTable newOrderTable = new OrderTable(3, false);
         orderTable = orderTableDao.save(newOrderTable);

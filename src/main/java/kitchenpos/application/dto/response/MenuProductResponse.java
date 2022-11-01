@@ -9,15 +9,11 @@ public class MenuProductResponse {
     private final Long productId;
     private final long quantity;
 
-    public MenuProductResponse(Long seq, Long menuId, Long productId, long quantity) {
-        this.seq = seq;
-        this.menuId = menuId;
-        this.productId = productId;
-        this.quantity = quantity;
-    }
-
     public MenuProductResponse(MenuProduct menuProduct) {
-        this(menuProduct.getSeq(), menuProduct.getMenuId(), menuProduct.getProductId(), menuProduct.getQuantity());
+        this.seq = menuProduct.getId();
+        this.menuId = menuProduct.getMenu().getId();
+        this.productId = menuProduct.getProduct().getId();
+        this.quantity = menuProduct.getQuantity();
     }
 
     public Long getSeq() {

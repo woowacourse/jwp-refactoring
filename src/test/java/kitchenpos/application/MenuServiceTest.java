@@ -54,15 +54,6 @@ class MenuServiceTest {
     @SpringBootNestedTest
     class CreateTest {
 
-        @DisplayName("메뉴를 생성하면 ID를 할당된 Menu객체가 반환된다")
-        @Test
-        void create() {
-            MenuRequest request = 후라이드_양념치킨_두마리세트.toRequest(두마리메뉴.getId(), 후라이드.getId(), 양념치킨.getId());
-
-            MenuResponse actual = menuService.create(request);
-            assertThat(actual.getId()).isNotNull();
-        }
-
         @DisplayName("메뉴 그룹이 존재하지 않을 경우 예외가 발생한다")
         @Test
         void throwExceptionWithNotExistMenuGroup() {

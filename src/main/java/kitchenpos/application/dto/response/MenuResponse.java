@@ -14,20 +14,15 @@ public class MenuResponse {
     private final Long menuGroupId;
     private final List<MenuProductResponse> menuProducts;
 
-    public MenuResponse(Long id, String name, BigDecimal price, Long menuGroupId,
-                        List<MenuProductResponse> menuProducts) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
-        this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
-    }
-
     public MenuResponse(Menu menu) {
-        this(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), getMenuProductResponses(menu));
+        this.id = menu.getId();
+        this.name = menu.getName();
+        this.price = menu.getPrice();
+        this.menuGroupId = menu.getMenuGroup().getId();
+        this.menuProducts = getMenuProductResponses(menu);
     }
 
-    private static List<MenuProductResponse> getMenuProductResponses(Menu menu) {
+    private List<MenuProductResponse> getMenuProductResponses(Menu menu) {
         return menu.getMenuProducts().stream()
                 .map(MenuProductResponse::new)
                 .collect(Collectors.toList());

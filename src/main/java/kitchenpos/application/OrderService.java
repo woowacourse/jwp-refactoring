@@ -10,10 +10,10 @@ import org.springframework.util.CollectionUtils;
 import kitchenpos.application.dto.request.OrderRequest;
 import kitchenpos.application.dto.request.OrderStatusUpdateRequest;
 import kitchenpos.application.dto.response.OrderResponse;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -24,15 +24,15 @@ import kitchenpos.repository.OrderRepository;
 @Transactional
 public class OrderService {
 
-    private final MenuDao menuDao;
+    private final MenuRepository menuRepository;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
     private final OrderRepository orderRepository;
     private final OrderTableDao orderTableDao;
 
-    public OrderService(MenuDao menuDao, OrderDao orderDao, OrderLineItemDao orderLineItemDao,
+    public OrderService(MenuRepository menuRepository, OrderDao orderDao, OrderLineItemDao orderLineItemDao,
                         OrderRepository orderRepository, OrderTableDao orderTableDao) {
-        this.menuDao = menuDao;
+        this.menuRepository = menuRepository;
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
         this.orderRepository = orderRepository;
@@ -65,7 +65,7 @@ public class OrderService {
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
 
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
+        if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException("존재하지 않는 메뉴가 있습니다.");
         }
     }

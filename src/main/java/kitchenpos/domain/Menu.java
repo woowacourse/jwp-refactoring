@@ -4,32 +4,58 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "menu")
 public class Menu {
 
-    private final Long id;
-    private final String name;
-    private final Price price;
-    private final Long menuGroupId;
-    private final List<MenuProduct> menuProducts;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
 
-    public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
-        this(id, name, price, menuGroupId, new ArrayList<>());
+    @Embedded
+    private Price price;
+
+    @ManyToOne
+    @JoinColumn(name = "menu_group_id")
+    private MenuGroup menuGroup;
+
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
+    private final List<MenuProduct> menuProducts = new ArrayList<>();
+
+    protected Menu() {
     }
 
-    public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        this(null, name, price, menuGroupId, menuProducts);
-    }
-
-    public Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        this.id = id;
+    public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
         this.name = name;
         this.price = new Price(price);
-        this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
+        this.menuGroup = menuGroup;
     }
 
-    public void validatePriceIsCheaperThanSum(BigDecimal sumOfPrice) {
-        if (price.isMoreExpensive(sumOfPrice)) {
+    public void addMenuProducts(List<MenuProduct> menuProducts) {
+        validatePriceIsCheaperThanSum(menuProducts);
+
+        this.menuProducts.addAll(menuProducts);
+    }
+
+    private void validatePriceIsCheaperThanSum(List<MenuProduct> menuProducts) {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (MenuProduct menuProduct : menuProducts) {
+            sum = sum.add(menuProduct.getProduct().getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+        }
+
+        if (price.isMoreExpensive(sum)) {
             throw new IllegalArgumentException("메뉴 가격은 상품 가격의 합보다 적어야 합니다.");
         }
     }
@@ -46,15 +72,12 @@ public class Menu {
         return price.getValue();
     }
 
-    public Long getMenuGroupId() {
-        return menuGroupId;
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
     }
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
     }
-
-    public void addMenuProduct(MenuProduct menuProduct) {
-        menuProducts.add(menuProduct);
-    }
 }
+
