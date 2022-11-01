@@ -3,7 +3,9 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.time.LocalDateTime;
 import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.ordertable.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -13,11 +15,11 @@ class OrderTableTest {
     @Test
     void joinGroup() {
         final OrderTable orderTable = OrderTable.ofNew(0, true);
-        final long tableGroupId = 1L;
-        orderTable.joinGroup(tableGroupId);
+        final TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now());
+        orderTable.joinGroup(tableGroup);
 
         assertAll(
-                () -> assertThat(orderTable.getTableGroupId()).isEqualTo(tableGroupId),
+                () -> assertThat(orderTable.getTableGroupId()).isEqualTo(tableGroup.getId()),
                 () -> assertThat(orderTable.isEmpty()).isFalse()
         );
     }

@@ -8,9 +8,9 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.menu.MenuGroupRepository;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.ordertable.OrderTableRepository;
 import kitchenpos.domain.product.ProductRepository;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.ordertable.TableGroupRepository;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
@@ -35,9 +35,9 @@ public class DataSupport {
     @Autowired
     private MenuRepository menuRepository;
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
     @Autowired
     private OrderDao orderDao;
     @Autowired
@@ -68,19 +68,16 @@ public class DataSupport {
 
     public TableGroup saveTableGroup() {
         final TableGroup tableGroup = TableGroup.ofNew();
-        return tableGroupDao.save(tableGroup);
+        final OrderTable orderTable1 = saveOrderTable(0, true);
+        final OrderTable orderTable2 = saveOrderTable(0, true);
+        tableGroup.groupTables(Arrays.asList(orderTable1, orderTable2));
+
+        return tableGroupRepository.save(tableGroup);
     }
 
     public OrderTable saveOrderTable(final int numberOfGuests, final boolean empty) {
         final OrderTable orderTable = OrderTable.ofNew(numberOfGuests, empty);
-        return orderTableDao.save(orderTable);
-    }
-
-    public OrderTable saveOrderTableWithGroup(final Long tableGroupId, final int numberOfGuests) {
-        final OrderTable orderTable = OrderTable.ofNew(numberOfGuests, true);
-        orderTable.joinGroup(tableGroupId);
-
-        return orderTableDao.save(orderTable);
+        return orderTableRepository.save(orderTable);
     }
 
     public Order saveOrder(final Long orderTableId, final String orderStatus, final OrderLineItem... orderLineItems) {
@@ -96,17 +93,13 @@ public class DataSupport {
     }
 
     public OrderTable findOrderTable(final Long id) {
-        return orderTableDao.findById(id)
+        return orderTableRepository.findById(id)
                 .get();
     }
 
     public Order findOrder(final Long id) {
         return orderDao.findById(id)
                 .get();
-    }
-
-    public List<OrderTable> findTableByTableGroupId(final Long tableGroupId) {
-        return orderTableDao.findAllByTableGroupId(tableGroupId);
     }
 
     private MenuProduct mapManuProductWithMenu(final Menu menu, final MenuProduct menuProduct) {

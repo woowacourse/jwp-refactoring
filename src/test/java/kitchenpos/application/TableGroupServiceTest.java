@@ -11,6 +11,7 @@ import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.TableGroupResponse;
 import kitchenpos.support.DataSupport;
 import kitchenpos.support.RequestBuilder;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,15 +27,20 @@ class TableGroupServiceTest {
     @Autowired
     private DataSupport dataSupport;
 
+    private OrderTable savedEmptyTable1;
+    private OrderTable savedEmptyTable2;
+
+    @BeforeEach
+    void saveData() {
+        savedEmptyTable1 = dataSupport.saveOrderTable(0, true);
+        savedEmptyTable2 = dataSupport.saveOrderTable(0, true);
+    }
+
     @DisplayName("여러 테이블을 단체로 지정할 수 있다.")
     @Test
     void create() {
-        // given
-        final OrderTable savedOrderTable1 = dataSupport.saveOrderTable(0, true);
-        final OrderTable savedOrderTable2 = dataSupport.saveOrderTable(0, true);
-
-        // when
-        final TableGroupRequest request = RequestBuilder.ofTableGroup(savedOrderTable1, savedOrderTable2);
+        // given, when
+        final TableGroupRequest request = RequestBuilder.ofTableGroup(savedEmptyTable1, savedEmptyTable2);
         final TableGroupResponse savedTableGroup = tableGroupService.create(request);
 
         // then
@@ -45,11 +51,10 @@ class TableGroupServiceTest {
     @Test
     void create_throwsException_ifTableNotFound() {
         // given
-        final OrderTable savedOrderTable = dataSupport.saveOrderTable(0, true);
         final OrderTable unsavedOrderTable = new OrderTable(0L, null, 0, true);
 
         // when, then
-        final TableGroupRequest request = RequestBuilder.ofTableGroup(savedOrderTable, unsavedOrderTable);
+        final TableGroupRequest request = RequestBuilder.ofTableGroup(savedEmptyTable1, unsavedOrderTable);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> tableGroupService.create(request));
     }
@@ -57,11 +62,7 @@ class TableGroupServiceTest {
     @DisplayName("2개 미만의 테이블을 그룹으로 지정하면 예외가 발생한다.")
     @Test
     void create_throwsException_ifTableUnder2() {
-        // given
-        final OrderTable savedOrderTable = dataSupport.saveOrderTable(0, true);
-
-        // when, then
-        final TableGroupRequest request = RequestBuilder.ofTableGroup(savedOrderTable);
+        final TableGroupRequest request = RequestBuilder.ofTableGroup(savedEmptyTable1);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> tableGroupService.create(request));
     }
@@ -70,11 +71,10 @@ class TableGroupServiceTest {
     @Test
     void create_throwsException_ifTableNotEmpty() {
         // given
-        final OrderTable savedEmptyTable = dataSupport.saveOrderTable(0, true);
         final OrderTable savedNotEmptyTable = dataSupport.saveOrderTable(0, false);
 
         // when, then
-        final TableGroupRequest request = RequestBuilder.ofTableGroup(savedEmptyTable, savedNotEmptyTable);
+        final TableGroupRequest request = RequestBuilder.ofTableGroup(savedEmptyTable1, savedNotEmptyTable);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> tableGroupService.create(request));
     }
@@ -84,11 +84,10 @@ class TableGroupServiceTest {
     void create_throwsException_ifTableGrouped() {
         // given
         final TableGroup savedTableGroup = dataSupport.saveTableGroup();
-        final OrderTable savedUngroupedTable = dataSupport.saveOrderTable(0, true);
-        final OrderTable savedGroupedTable = dataSupport.saveOrderTableWithGroup(savedTableGroup.getId(), 0);
+        final OrderTable groupedTable = savedTableGroup.getOrderTables().get(0);
 
         // when, then
-        final TableGroupRequest request = RequestBuilder.ofTableGroup(savedUngroupedTable, savedGroupedTable);
+        final TableGroupRequest request = RequestBuilder.ofTableGroup(savedEmptyTable1, groupedTable);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> tableGroupService.create(request));
     }
@@ -98,16 +97,14 @@ class TableGroupServiceTest {
     void ungroup() {
         // given
         final TableGroup savedTableGroup = dataSupport.saveTableGroup();
-        final Long tableGroupId = savedTableGroup.getId();
-        dataSupport.saveOrderTableWithGroup(tableGroupId, 0);
-        dataSupport.saveOrderTableWithGroup(tableGroupId, 0);
+        final List<OrderTable> orderTables = savedTableGroup.getOrderTables();
 
         // when
-        tableGroupService.ungroup(tableGroupId);
-        final List<OrderTable> groupedTablesAfterUngroup = dataSupport.findTableByTableGroupId(tableGroupId);
+        tableGroupService.ungroup(savedTableGroup.getId());
 
         // then
-        assertThat(groupedTablesAfterUngroup).isEmpty();
+        assertThat(orderTables)
+                .allMatch(orderTable -> orderTable.getTableGroupId() == null);
     }
 
     @DisplayName("조리중인 테이블이 있는 단체를 해제하면 예외가 발생한다.")
@@ -115,8 +112,7 @@ class TableGroupServiceTest {
     void ungroup_throwsException_ifCooking() {
         // given
         final TableGroup savedTableGroup = dataSupport.saveTableGroup();
-        final OrderTable groupedTable = dataSupport.saveOrderTableWithGroup(savedTableGroup.getId(), 0);
-        dataSupport.saveOrderTableWithGroup(savedTableGroup.getId(), 0);
+        final OrderTable groupedTable = savedTableGroup.getOrderTables().get(0);
         dataSupport.saveOrder(groupedTable.getId(), OrderStatus.COOKING.name());
 
         // when, then
@@ -129,8 +125,7 @@ class TableGroupServiceTest {
     void ungroup_throwsException_ifMeal() {
         // given
         final TableGroup savedTableGroup = dataSupport.saveTableGroup();
-        final OrderTable groupedTable = dataSupport.saveOrderTableWithGroup(savedTableGroup.getId(), 0);
-        dataSupport.saveOrderTableWithGroup(savedTableGroup.getId(), 0);
+        final OrderTable groupedTable = savedTableGroup.getOrderTables().get(0);
         dataSupport.saveOrder(groupedTable.getId(), OrderStatus.MEAL.name());
 
         // when, then

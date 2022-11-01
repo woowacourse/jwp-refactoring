@@ -34,12 +34,9 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
     void ungroup() {
         // given
         final TableGroup savedTableGroup = dataSupport.saveTableGroup();
-        final Long savedTableGroupId = savedTableGroup.getId();
-        dataSupport.saveOrderTableWithGroup(savedTableGroupId, 2);
-        dataSupport.saveOrderTableWithGroup(savedTableGroupId, 2);
 
         // when
-        final ValidatableResponse response = delete("/api/table-groups/" + savedTableGroupId);
+        final ValidatableResponse response = delete("/api/table-groups/" + savedTableGroup.getId());
 
         // then
         response.statusCode(HttpStatus.NO_CONTENT.value());

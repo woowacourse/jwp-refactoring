@@ -2,40 +2,13 @@ package kitchenpos.domain.ordertable;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-@Repository
-public class OrderTableRepository {
+public interface OrderTableRepository extends JpaRepository<OrderTable, Long> {
 
-    private final OrderTableDao orderTableDao;
-    private final TableGroupDao tableGroupDao;
+    OrderTable save(OrderTable entity);
 
-    public OrderTableRepository(final OrderTableDao orderTableDao, final TableGroupDao tableGroupDao) {
-        this.orderTableDao = orderTableDao;
-        this.tableGroupDao = tableGroupDao;
-    }
+    Optional<OrderTable> findById(Long id);
 
-    public OrderTable save(final OrderTable orderTable) {
-        return orderTableDao.save(orderTable);
-    }
-
-    public void saveAll(final List<OrderTable> orderTables) {
-        for (final OrderTable orderTable : orderTables) {
-            save(orderTable);
-        }
-    }
-
-    public TableGroup saveTableGroup(final TableGroup tableGroup) {
-        return tableGroupDao.save(tableGroup);
-    }
-
-    public Optional<OrderTable> findById(final Long id) {
-        return orderTableDao.findById(id);
-    }
-
-    public List<OrderTable> findGroupedTables(final Long tableGroupId) {
-        return orderTableDao.findAllByTableGroupId(tableGroupId);
-    }
+    List<OrderTable> findAll();
 }
