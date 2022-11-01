@@ -4,8 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import kitchenpos.RepositoryTest;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.application.request.MenuGroupRequest;
+import kitchenpos.application.response.MenuGroupResponse;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.repository.MenuGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,26 +19,27 @@ class MenuGroupServiceTest {
     private MenuGroupService sut;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @BeforeEach
     void setUp() {
-        sut = new MenuGroupService(menuGroupDao);
+        sut = new MenuGroupService(menuGroupRepository);
     }
 
     @DisplayName("메뉴 그룹을 생성할 수 있다.")
     @Test
     void create() {
         // given
+        final MenuGroupRequest request = new MenuGroupRequest("두마리메뉴");
         final MenuGroup menuGroup = new MenuGroup("두마리메뉴");
 
         // when
-        final MenuGroup createdMenuGroup = sut.create(menuGroup);
+        final MenuGroupResponse response = sut.create(request);
 
         // then
-        assertThat(createdMenuGroup).isNotNull();
-        assertThat(createdMenuGroup.getId()).isNotNull();
-        final MenuGroup foundMenuGroup = menuGroupDao.findById(createdMenuGroup.getId()).get();
+        assertThat(response).isNotNull();
+        assertThat(response.getId()).isNotNull();
+        final MenuGroup foundMenuGroup = menuGroupRepository.findById(response.getId()).get();
         assertThat(foundMenuGroup)
                 .usingRecursiveComparison()
                 .ignoringFields("id")
@@ -47,12 +50,12 @@ class MenuGroupServiceTest {
     @Test
     void list() {
         // when
-        final List<MenuGroup> menuGroups = sut.list();
+        final List<MenuGroupResponse> menuGroups = sut.list();
 
         // then
         assertThat(menuGroups)
                 .hasSize(4)
-                .extracting(MenuGroup::getName)
+                .extracting(MenuGroupResponse::getName)
                 .containsExactlyInAnyOrder(
                         "두마리메뉴", "한마리메뉴", "순살파닭두마리메뉴", "신메뉴"
                 );

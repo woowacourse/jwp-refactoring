@@ -20,7 +20,7 @@ class ProductAcceptanceTest extends AcceptanceTest {
     @Test
     void create() {
         // given
-        final Product product = new Product("후라이드", BigDecimal.valueOf(16_000));
+        final Product product = Product.of("후라이드", BigDecimal.valueOf(16_000));
 
         // when
         final Product response = RestAssured.given().log().all()

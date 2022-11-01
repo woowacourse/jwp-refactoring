@@ -19,7 +19,7 @@ class TableAcceptanceTest extends AcceptanceTest {
     @Test
     void create() {
         // given
-        final OrderTable orderTable = new OrderTable(0, true);
+        final OrderTable orderTable = OrderTable.of(0, true);
 
         // when
         final OrderTable response = RestAssured.given().log().all()
@@ -70,7 +70,7 @@ class TableAcceptanceTest extends AcceptanceTest {
     void changeEmpty() {
         // given
         final OrderTable orderTable = saveOrderTable(0, true);
-        final OrderTable changeOrderTable = new OrderTable(1, false);
+        final OrderTable changeOrderTable = OrderTable.of(1, false);
 
         // when
         final OrderTable response = RestAssured.given().log().all()
@@ -92,7 +92,7 @@ class TableAcceptanceTest extends AcceptanceTest {
     void changeNumberOfGuests() {
         // given
         final OrderTable orderTable = saveOrderTable(1, false);
-        final OrderTable changeOrderTable = new OrderTable(2, false);
+        final OrderTable changeOrderTable = OrderTable.of(2, false);
 
         // when
         final OrderTable response = RestAssured.given().log().all()
@@ -110,7 +110,7 @@ class TableAcceptanceTest extends AcceptanceTest {
     }
 
     private static OrderTable saveOrderTable(final int numberOfGuests, final boolean empty) {
-        final OrderTable orderTable = new OrderTable(numberOfGuests, empty);
+        final OrderTable orderTable = OrderTable.of(numberOfGuests, empty);
 
         return RestAssured.given().log().all()
                 .contentType(APPLICATION_JSON_VALUE)

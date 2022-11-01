@@ -4,10 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
 import io.restassured.RestAssured;
-import io.restassured.response.ExtractableResponse;
-import io.restassured.response.Response;
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.application.request.MenuGroupRequest;
+import kitchenpos.application.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -19,17 +18,17 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
     void create() {
         // given
         final String menuGroupName = "한마리메뉴";
-        final MenuGroup menuGroup = new MenuGroup(menuGroupName);
+        final MenuGroupRequest request = new MenuGroupRequest(menuGroupName);
 
         // when
-        final MenuGroup response = RestAssured.given().log().all()
+        final MenuGroupResponse response = RestAssured.given().log().all()
                 .contentType(APPLICATION_JSON_VALUE)
-                .body(menuGroup)
+                .body(request)
                 .when().log().all()
                 .post("/api/menu-groups")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
-                .extract().as(MenuGroup.class);
+                .extract().as(MenuGroupResponse.class);
 
         // then
         assertThat(response.getId()).isNotNull();
@@ -40,26 +39,22 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
     @Test
     void list() {
         // when
-        final ExtractableResponse<Response> response = RestAssured.given().log().all()
+        final List<MenuGroupResponse> menuGroups = RestAssured.given().log().all()
                 .when().log().all()
                 .get("/api/menu-groups")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .extract();
-
-        final List<MenuGroup> menuGroups = getMenuGroups(response);
+                .extract()
+                .jsonPath()
+                .getList(".", MenuGroupResponse.class);
 
         // then
         assertThat(menuGroups)
                 .hasSize(4)
                 .filteredOn(it -> it.getId() != null)
-                .extracting(MenuGroup::getName)
+                .extracting(MenuGroupResponse::getName)
                 .containsExactlyInAnyOrder(
                         "두마리메뉴", "한마리메뉴", "순살파닭두마리메뉴", "신메뉴"
                 );
-    }
-
-    private static List<MenuGroup> getMenuGroups(final ExtractableResponse<Response> response) {
-        return response.jsonPath().getList(".", MenuGroup.class);
     }
 }
