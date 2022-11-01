@@ -35,21 +35,25 @@ class MenuServiceTest {
     private DataSupport dataSupport;
 
     private MenuGroup savedMenuGroup;
-    private List<Product> savedProducts;
+    private Product savedProduct;
+    private List<MenuProduct> menuProducts;
 
     @BeforeEach
     void saveData() {
         savedMenuGroup = dataSupport.saveMenuGroup("추천 메뉴");
-
-        final Product savedProduct = dataSupport.saveProduct("치킨마요", PRICE);
-        savedProducts = Arrays.asList(savedProduct);
+        this.savedProduct = dataSupport.saveProduct("치킨마요", PRICE);
+        this.menuProducts = Arrays.asList(MenuProduct.ofNew(null, savedProduct, 1L));
     }
 
     @DisplayName("새로운 메뉴를 등록할 수 있다.")
-    @Test
-    void create() {
-        // given, when
-        final MenuRequest request = RequestBuilder.ofMenu(savedMenuGroup, savedProducts, PRICE);
+    @ValueSource(ints = {1, 2, 3})
+    @ParameterizedTest(name = "상품 {0}개를 한 메뉴로 등록한다.")
+    void create(final int quantity) {
+        // given
+        final List<MenuProduct> menuProducts = Arrays.asList(MenuProduct.ofNew(null, savedProduct, quantity));
+
+        // when
+        final MenuRequest request = RequestBuilder.ofMenu(savedMenuGroup, menuProducts, PRICE * quantity);
         final MenuResponse response = menuService.create(request);
 
         // then
@@ -61,10 +65,10 @@ class MenuServiceTest {
     void create_throwsException_ifProductNotFound() {
         // given
         final Product unsavedProduct = new Product(0L, "없는 메뉴", new BigDecimal(0));
-        final List<Product> unsavedProducts = Arrays.asList(unsavedProduct);
+        final List<MenuProduct> menuProducts = Arrays.asList(MenuProduct.ofNew(null, unsavedProduct, 1L));
 
         // when, then
-        final MenuRequest request = RequestBuilder.ofMenu(savedMenuGroup, unsavedProducts, PRICE);
+        final MenuRequest request = RequestBuilder.ofMenu(savedMenuGroup, menuProducts, PRICE);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> menuService.create(request));
     }
@@ -72,7 +76,7 @@ class MenuServiceTest {
     @DisplayName("메뉴를 등록할 때 가격을 입력하지 않으면 예외가 발생한다.")
     @Test
     void create_throwsException_ifNoPrice() {
-        final MenuRequest request = RequestBuilder.ofMenu(savedMenuGroup, savedProducts, null);
+        final MenuRequest request = RequestBuilder.ofMenu(savedMenuGroup, menuProducts, null);
 
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> menuService.create(request));
@@ -81,7 +85,7 @@ class MenuServiceTest {
     @ValueSource(ints = {-1, -500, -1000})
     @ParameterizedTest(name = "메뉴를 등록할 때 가격이 0보다 작은 {0}이면 예외가 발생한다.")
     void create_throwsException_ifPriceUnder0(final int price) {
-        final MenuRequest request = RequestBuilder.ofMenu(savedMenuGroup, savedProducts, price);
+        final MenuRequest request = RequestBuilder.ofMenu(savedMenuGroup, menuProducts, price);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> menuService.create(request));
     }
@@ -93,7 +97,7 @@ class MenuServiceTest {
         final int priceOverProduct = PRICE + addedAmount;
 
         // when, then
-        final MenuRequest request = RequestBuilder.ofMenu(savedMenuGroup, savedProducts, priceOverProduct);
+        final MenuRequest request = RequestBuilder.ofMenu(savedMenuGroup, menuProducts, priceOverProduct);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> menuService.create(request));
     }
@@ -102,8 +106,8 @@ class MenuServiceTest {
     @Test
     void list() {
         // given
-        final Product savedProduct = savedProducts.get(0);
-        final MenuProduct menuProduct = MenuProduct.ofNew(null, savedProduct.getId(), 1L);
+        final Product savedProduct = this.savedProduct;
+        final MenuProduct menuProduct = MenuProduct.ofNew(null, savedProduct, 1L);
         final int discountedPrice = PRICE - 500;
 
         final Menu savedMenu1 = dataSupport.saveMenu(

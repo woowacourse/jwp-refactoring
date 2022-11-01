@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.ordertable.OrderTable;
-import kitchenpos.domain.menu.Product;
 import kitchenpos.dto.request.IdRequest;
 import kitchenpos.dto.request.MenuGroupRequest;
 import kitchenpos.dto.request.MenuProductRequest;
@@ -43,16 +43,18 @@ public class RequestBuilder {
         return new MenuGroupRequest(DEFAULT_MENU_GROUP_NAME);
     }
 
-    public static MenuRequest ofMenu(final MenuGroup menuGroup, final List<Product> products, final int price) {
-        return ofMenu(menuGroup, products, new BigDecimal(price));
+    public static MenuRequest ofMenu(final MenuGroup menuGroup, final List<MenuProduct> menuProducts, final int price) {
+        return ofMenu(menuGroup, menuProducts, new BigDecimal(price));
     }
 
-    public static MenuRequest ofMenu(final MenuGroup menuGroup, final List<Product> products, final BigDecimal price) {
-        final List<MenuProductRequest> menuProducts = products.stream()
-                .map(product -> new MenuProductRequest(product.getId(), 1))
+    public static MenuRequest ofMenu(final MenuGroup menuGroup,
+                                     final List<MenuProduct> menuProducts,
+                                     final BigDecimal price) {
+        final List<MenuProductRequest> menuProductRequests = menuProducts.stream()
+                .map(menuProduct -> new MenuProductRequest(menuProduct.getProductId(), menuProduct.getQuantity()))
                 .collect(Collectors.toList());
 
-        return new MenuRequest(DEFAULT_MENU_NAME, price, menuGroup.getId(), menuProducts);
+        return new MenuRequest(DEFAULT_MENU_NAME, price, menuGroup.getId(), menuProductRequests);
     }
 
     public static OrderTableRequest ofEmptyTable() {

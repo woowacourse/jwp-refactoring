@@ -2,7 +2,9 @@ package kitchenpos.acceptance;
 
 import io.restassured.response.ValidatableResponse;
 import java.util.Arrays;
+import java.util.List;
 import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.Product;
 import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.support.RequestBuilder;
@@ -21,10 +23,11 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         final int price = 4000;
         final Product savedProduct = dataSupport.saveProduct("참치마요", price);
         final MenuGroup savedMenuGroup = dataSupport.saveMenuGroup("할인 상품");
+        final List<MenuProduct> menuProducts = Arrays.asList(MenuProduct.ofNew(null, savedProduct, 1L));
         final int discountedPrice = price - 500;
 
         // when
-        final MenuRequest request = RequestBuilder.ofMenu(savedMenuGroup, Arrays.asList(savedProduct), discountedPrice);
+        final MenuRequest request = RequestBuilder.ofMenu(savedMenuGroup, menuProducts, discountedPrice);
         final ValidatableResponse response = post("/api/menus", request);
 
         // then

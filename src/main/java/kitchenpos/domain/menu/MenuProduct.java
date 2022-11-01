@@ -14,18 +14,23 @@ public class MenuProduct {
     private Long seq;
     @ManyToOne
     private Menu menu;
-    private Long productId;
+    @ManyToOne
+    private Product product;
     private long quantity;
 
-    private MenuProduct(final Long seq, final Menu menu, final Long productId, final long quantity) {
+    private MenuProduct(final Long seq, final Menu menu, final Product product, final long quantity) {
         this.seq = seq;
         this.menu = menu;
-        this.productId = productId;
+        this.product = product;
         this.quantity = quantity;
     }
 
-    public static MenuProduct ofNew(final Menu menu, final Long productId, final long quantity) {
-        return new MenuProduct(null, menu, productId, quantity);
+    public static MenuProduct ofNew(final Menu menu, final Product product, final long quantity) {
+        return new MenuProduct(null, menu, product, quantity);
+    }
+
+    public Price calculatePrice() {
+        return product.calculatePrice(quantity);
     }
 
     public Long getSeq() {
@@ -36,8 +41,12 @@ public class MenuProduct {
         return menu.getId();
     }
 
+    public Product getProduct() {
+        return product;
+    }
+
     public Long getProductId() {
-        return productId;
+        return product.getId();
     }
 
     public long getQuantity() {

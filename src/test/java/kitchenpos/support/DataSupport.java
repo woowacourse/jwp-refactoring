@@ -66,11 +66,11 @@ public class DataSupport {
         final List<MenuProduct> savedMenuProducts = Arrays.stream(menuProducts)
                 .map(menuProduct -> {
                     final MenuProduct savedMenuProduct =
-                            MenuProduct.ofNew(menu, menuProduct.getProductId(), menuProduct.getQuantity());
+                            MenuProduct.ofNew(menu, menuProduct.getProduct(), menuProduct.getQuantity());
                     return menuProductDao.save(savedMenuProduct);
                 })
                 .collect(Collectors.toList());
-        savedMenu.addMenuProducts(savedMenuProducts);
+        savedMenu.changeMenuProducts(savedMenuProducts);
 
         return savedMenu;
     }

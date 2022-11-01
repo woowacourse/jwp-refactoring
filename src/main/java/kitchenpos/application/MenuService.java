@@ -4,12 +4,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.Price;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.menu.Product;
 import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.dto.response.MenuResponse;
-import kitchenpos.domain.menu.MenuRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,16 +27,15 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuRequest request) {
-        final Menu menu = request.toEntity();
-        if (!menuRepository.isGroupExist(menu)) {
+        if (!menuRepository.isGroupExist(request.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
 
-        final List<Product> products = getProducts(request);
-        final Price totalPriceOfProducts = Product.calculateTotalPrice(products);
-        if (menu.isExpensiveThan(totalPriceOfProducts)) {
-            throw new IllegalArgumentException();
-        }
+        final Menu menu = Menu.ofNew(request.getName(), request.getPrice(), request.getMenuGroupId());
+        final List<MenuProduct> menuProducts = request.getMenuProducts().stream()
+                .map(menuProductRequest -> getMenuProductOf(menu, menuProductRequest))
+                .collect(Collectors.toList());
+        menu.changeMenuProducts(menuProducts);
 
         final Menu savedMenu = menuRepository.save(menu);
         return MenuResponse.from(savedMenu);
@@ -47,11 +46,9 @@ public class MenuService {
         return MenuResponse.from(menus);
     }
 
-    private List<Product> getProducts(final MenuRequest request) {
-        final List<MenuProductRequest> menuProductRequests = request.getMenuProducts();
-        return menuProductRequests.stream()
-                .map(this::getProductFrom)
-                .collect(Collectors.toList());
+    private MenuProduct getMenuProductOf(final Menu menu, final MenuProductRequest menuProductRequest) {
+        final Product product = getProductFrom(menuProductRequest);
+        return MenuProduct.ofNew(menu, product, menuProductRequest.getQuantity());
     }
 
     private Product getProductFrom(final MenuProductRequest menuProductRequest) {

@@ -1,8 +1,6 @@
 package kitchenpos.domain.menu;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.stream.Collectors;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,12 +27,8 @@ public class Product {
         return new Product(null, name, price);
     }
 
-    public static Price calculateTotalPrice(final List<Product> products) {
-        final List<Price> prices = products.stream()
-                .map(product -> product.price)
-                .collect(Collectors.toList());
-
-        return Price.sum(prices);
+    public Price calculatePrice(final long quantity) {
+        return price.multiply(quantity);
     }
 
     public Long getId() {

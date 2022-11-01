@@ -1,15 +1,12 @@
 package kitchenpos.domain.menu;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 
 @Entity
 public class Menu {
@@ -21,8 +18,8 @@ public class Menu {
     @Embedded
     private Price price;
     private Long menuGroupId;
-    @OneToMany(mappedBy = "menu", fetch = FetchType.LAZY)
-    private List<MenuProduct> menuProducts;
+    @Embedded
+    private MenuProducts menuProducts;
 
     public Menu(final Long id,
                 final String name,
@@ -32,7 +29,6 @@ public class Menu {
         this.name = name;
         this.price = new Price(price);
         this.menuGroupId = menuGroupId;
-        this.menuProducts = new ArrayList<>();
     }
 
     public static Menu ofNew(final String name,
@@ -41,8 +37,12 @@ public class Menu {
         return new Menu(null, name, price, menuGroupId);
     }
 
-    public void addMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts.addAll(menuProducts);
+    public void changeMenuProducts(final List<MenuProduct> rawMenuProducts) {
+        final MenuProducts menuProducts = new MenuProducts(rawMenuProducts);
+        if (this.isExpensiveThan(menuProducts.calculateTotalPrice())) {
+            throw new IllegalArgumentException();
+        }
+        this.menuProducts = menuProducts;
     }
 
     public boolean isExpensiveThan(final Price price) {
@@ -66,7 +66,7 @@ public class Menu {
     }
 
     public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
+        return menuProducts.getValues();
     }
 
     protected Menu() {

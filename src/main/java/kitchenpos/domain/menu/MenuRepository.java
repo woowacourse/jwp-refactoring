@@ -4,7 +4,6 @@ import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.domain.menu.Menu;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -32,7 +31,7 @@ public class MenuRepository {
         return menuDao.findAll();
     }
 
-    public boolean isGroupExist(final Menu menu) {
-        return menuGroupDao.existsById(menu.getMenuGroupId());
+    public boolean isGroupExist(final Long menuGroupId) {
+        return menuGroupDao.existsById(menuGroupId);
     }
 }

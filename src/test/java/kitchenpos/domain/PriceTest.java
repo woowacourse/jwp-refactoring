@@ -24,7 +24,7 @@ class PriceTest {
 
     @DisplayName("가격을 생성할 때, 값이 0보다 작으면 예외가 발생한다.")
     @ValueSource(ints = {-1, -500, -1000})
-    @ParameterizedTest
+    @ParameterizedTest(name = "가격이 0보다 작은 {0}원 이면 예외가 발생한다.")
     void constructor_throwsException_ifPriceUnder0(final int value) {
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> Price.from(value));
