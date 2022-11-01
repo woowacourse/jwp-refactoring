@@ -37,10 +37,10 @@ class TableGroupServiceTest {
     @Autowired
     private OrderRepository orderRepository;
 
-    OrderTable table1;
-    OrderTable table2;
-    OrderTableIdRequest tableRequest1;
-    OrderTableIdRequest tableRequest2;
+    private OrderTable table1;
+    private OrderTable table2;
+    private OrderTableIdRequest tableRequest1;
+    private OrderTableIdRequest tableRequest2;
 
     @BeforeEach
     void setUp() {

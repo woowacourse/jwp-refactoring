@@ -60,11 +60,11 @@ class OrderServiceTest {
     @Autowired
     private MenuRepository menuRepository;
 
-    MenuGroup 두마리메뉴;
-    Menu 후라이드_양념치킨_두마리세트;
-    Product 후라이드;
-    Product 양념치킨;
-    OrderTable orderTable;
+    private MenuGroup 두마리메뉴;
+    private Menu 후라이드_양념치킨_두마리세트;
+    private Product 후라이드;
+    private Product 양념치킨;
+    private OrderTable orderTable;
 
     @BeforeEach
     void setUp() {

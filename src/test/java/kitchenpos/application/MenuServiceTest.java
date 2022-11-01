@@ -38,9 +38,9 @@ class MenuServiceTest {
     @Autowired
     private ProductRepository productRepository;
 
-    MenuGroup 두마리메뉴;
-    Product 후라이드;
-    Product 양념치킨;
+    private MenuGroup 두마리메뉴;
+    private Product 후라이드;
+    private Product 양념치킨;
 
     @BeforeEach
     void setUp() {
