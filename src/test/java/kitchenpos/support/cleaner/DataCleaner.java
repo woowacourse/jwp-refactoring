@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,13 +12,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class DataCleaner implements InitializingBean {
 
     private static final String TRUNCATE_FORMAT = "TRUNCATE TABLE %s";
-    public static final String REFERENTIAL_FORMAT = "SET REFERENTIAL_INTEGRITY %s";
+    private static final String REFERENTIAL_FORMAT = "SET REFERENTIAL_INTEGRITY %s";
 
-    @Autowired
-    private DataSource dataSource;
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-    private List<String> tableNames = new ArrayList<>();
+    private final DataSource dataSource;
+    private final JdbcTemplate jdbcTemplate;
+    private List<String> tableNames;
+
+    public DataCleaner(final DataSource dataSource, final JdbcTemplate jdbcTemplate) {
+        this.dataSource = dataSource;
+        this.jdbcTemplate = jdbcTemplate;
+        this.tableNames = new ArrayList<>();
+    }
 
     @Transactional
     public void clear() {
@@ -42,7 +45,7 @@ public class DataCleaner implements InitializingBean {
             while (rs.next()) {
                 tableNames.add(rs.getString("TABLE_NAME"));
             }
-        } catch (final Exception exception) {
+        } catch (Exception exception) {
             throw new RuntimeException("Error with Database cleaner");
         }
     }
