@@ -31,42 +31,36 @@ public class TableGroupService {
 
     @Transactional
     public TableGroup create(final TableGroupRequest tableGroupRequest) {
-        final OrderTables orderTables = new OrderTables(tableGroupRequest.getOrderTables()
-                .stream()
-                .map(it -> orderTableRepository.findById(it).orElseThrow(IllegalArgumentException::new))
-                .collect(Collectors.toList()));
+        final OrderTables orderTables = createOrderTables(tableGroupRequest);
+        orderTables.validatePossibleBindTableGroup();
 
-        if (!orderTables.isPossibleTableGroup()) {
-            throw new IllegalArgumentException();
-        }
-
-        final List<Long> orderTableIds = mapToOrderTableIds(orderTables);
-        final OrderTables savedOrderTables = new OrderTables(orderTableRepository.findAllById(orderTableIds));
-        if (!savedOrderTables.isSameSize(orderTables.getOrderTablesSize())) {
-            throw new IllegalArgumentException();
-        }
-
-        for (final OrderTable savedOrderTable : savedOrderTables.getOrderTables()) {
-            if (!savedOrderTable.isEmpty() || savedOrderTable.isNonNullTableGroup()) {
-                throw new IllegalArgumentException();
-            }
-        }
+        final OrderTables savedOrderTables = new OrderTables(orderTableRepository.findAllById(mapToIds(orderTables)));
+        orderTables.validateMakeTableGroup(orderTables.getOrderTablesSize());
 
         final TableGroup tableGroup = new TableGroup(tableGroupRequest.getCreatedDate(), orderTables.getOrderTables());
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-
-        final List<OrderTable> target = savedOrderTables.getOrderTables()
-                .stream()
-                .map(orderTable -> new OrderTable(orderTable.getId(), orderTable.getTableGroup(),
-                        orderTable.getNumberOfGuests(), false))
-                .collect(Collectors.toList());
-
-        orderTableRepository.saveAll(target);
+        orderTableRepository.saveAll(getOrderTables(savedOrderTables).getOrderTables());
 
         return savedTableGroup;
     }
 
-    private List<Long> mapToOrderTableIds(OrderTables orderTables) {
+    private OrderTables getOrderTables(OrderTables savedOrderTables) {
+        return new OrderTables(savedOrderTables.getOrderTables()
+                .stream()
+                .map(orderTable -> new OrderTable(orderTable.getId(), orderTable.getTableGroup(),
+                        orderTable.getNumberOfGuests(), false))
+                .collect(Collectors.toList()));
+    }
+
+    private OrderTables createOrderTables(TableGroupRequest tableGroupRequest) {
+        return new OrderTables(tableGroupRequest.getOrderTables()
+                .stream()
+                .map(it -> orderTableRepository.findById(it)
+                        .orElseThrow(IllegalArgumentException::new))
+                .collect(Collectors.toList()));
+    }
+
+    private List<Long> mapToIds(OrderTables orderTables) {
         return orderTables.getOrderTables()
                 .stream()
                 .map(OrderTable::getId)

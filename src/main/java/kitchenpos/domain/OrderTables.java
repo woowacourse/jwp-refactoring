@@ -11,15 +11,22 @@ public class OrderTables {
         this.orderTables = orderTables;
     }
 
-    public boolean isPossibleTableGroup() {
+    public void validatePossibleBindTableGroup() {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            return false;
+            throw new IllegalArgumentException();
         }
-        return true;
     }
 
-    public boolean isSameSize(int size) {
-        return orderTables.size() == size;
+    public void validateMakeTableGroup(int size) {
+        if (orderTables.size() != size) {
+            throw new IllegalArgumentException();
+        }
+
+        for (final OrderTable savedOrderTable : getOrderTables()) {
+            if (!savedOrderTable.isEmpty() || savedOrderTable.isNonNullTableGroup()) {
+                throw new IllegalArgumentException();
+            }
+        }
     }
 
     public List<OrderTable> getOrderTables() {
