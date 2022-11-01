@@ -13,6 +13,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.OrderTableCreateRequest;
 import kitchenpos.exception.AlreadyGroupedException;
 import kitchenpos.exception.NotFoundOrderException;
 import kitchenpos.exception.NotFoundOrderTableException;
@@ -50,10 +51,10 @@ class TableServiceTest {
     @DisplayName("주문 테이블을 생성한다")
     void create() {
         // given
-        final OrderTable orderTable = OrderTableFixtures.createEmptyTable(null);
+        final OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(0, true);
 
         // when
-        final OrderTable saved = tableService.create(orderTable);
+        final OrderTable saved = tableService.create(orderTableCreateRequest);
 
         // then
         assertAll(
@@ -67,8 +68,8 @@ class TableServiceTest {
     @DisplayName("모든 주문 테이블을 조회한다")
     void list() {
         // given
-        final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
-        final OrderTable saved = tableService.create(orderTable);
+        final OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(2, false);
+        final OrderTable saved = tableService.create(orderTableCreateRequest);
 
         // when
         final List<OrderTable> orderTables = tableService.list();
@@ -87,15 +88,13 @@ class TableServiceTest {
         final OrderTable orderTable = OrderTableFixtures.createEmptyTable(null);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        final OrderTable notEmptyOrderTable = OrderTableFixtures.createWithGuests(null, 2);
-
         final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
         final Order order = OrderFixtures.COMPLETION_ORDER.createWithOrderTableIdAndOrderLineItems(
                 savedOrderTable.getId(), orderLineItem);
         orderRepository.save(order);
 
         // when
-        final OrderTable changedOrderTable = tableService.changeEmpty(savedOrderTable.getId(), notEmptyOrderTable);
+        final OrderTable changedOrderTable = tableService.changeEmpty(savedOrderTable.getId(), false);
 
         // then
         assertAll(
@@ -109,11 +108,8 @@ class TableServiceTest {
     @Test
     @DisplayName("주문 테이블이 존재하지 않으면 주문 테이블의 주문 가능 여부를 변경할 때 예외가 발생한다")
     void changeEmptyExceptionNotExistOrderTable() {
-        // given
-        final OrderTable notEmptyOrderTable = OrderTableFixtures.createWithGuests(null, 2);
-
         // when, then
-        assertThatThrownBy(() -> tableService.changeEmpty(-1L, notEmptyOrderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(-1L, true))
                 .isExactlyInstanceOf(NotFoundOrderException.class);
     }
 
@@ -127,10 +123,8 @@ class TableServiceTest {
         final OrderTable orderTable = OrderTableFixtures.createEmptyTable(savedTableGroup);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        final OrderTable notEmptyOrderTable = OrderTableFixtures.createWithGuests(null, 2);
-
         // when, then
-        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), notEmptyOrderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), true))
                 .isExactlyInstanceOf(AlreadyGroupedException.class);
     }
 
@@ -142,15 +136,13 @@ class TableServiceTest {
         final OrderTable orderTable = OrderTableFixtures.createEmptyTable(null);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        final OrderTable notEmptyOrderTable = OrderTableFixtures.createWithGuests(null, 2);
-
         final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
         final Order order = orderFixtures.createWithOrderTableIdAndOrderLineItems(
                 savedOrderTable.getId(), orderLineItem);
         orderRepository.save(order);
 
         // when, then
-        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), notEmptyOrderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), true))
                 .isExactlyInstanceOf(OrderNotCompletionException.class);
     }
 
@@ -161,11 +153,8 @@ class TableServiceTest {
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        final OrderTable threeGuestsOrderTable = OrderTableFixtures.createWithGuests(null, 3);
-
         // when
-        final OrderTable changedOrderTable = tableService.changeNumberOfGuests(savedOrderTable.getId(),
-                threeGuestsOrderTable);
+        final OrderTable changedOrderTable = tableService.changeNumberOfGuests(savedOrderTable.getId(), 3);
 
         // then
         assertAll(
@@ -183,21 +172,16 @@ class TableServiceTest {
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        final OrderTable threeGuestsOrderTable = OrderTableFixtures.createWithGuests(null, -1);
-
         // when, then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), threeGuestsOrderTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), -1))
                 .isExactlyInstanceOf(NumberOfGuestsSizeException.class);
     }
 
     @Test
     @DisplayName("변경하려는 주문 테이블이 존재하지 않으면 주문 테이블의 손님 숫자를 변경할 때 예외가 발생한다")
     void changeNumberOfGuestsExceptionNotExistOrderTable() {
-        // given
-        final OrderTable threeGuestsOrderTable = OrderTableFixtures.createEmptyTable(null);
-
         // when, then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(-1L, threeGuestsOrderTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(-1L, 3))
                 .isExactlyInstanceOf(NotFoundOrderTableException.class);
     }
 
@@ -208,10 +192,8 @@ class TableServiceTest {
         final OrderTable orderTable = OrderTableFixtures.createEmptyTable(null);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        final OrderTable threeGuestsOrderTable = OrderTableFixtures.createWithGuests(null, 1);
-
         // when, then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), threeGuestsOrderTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), 1))
                 .isExactlyInstanceOf(TableEmptyException.class);
     }
 }

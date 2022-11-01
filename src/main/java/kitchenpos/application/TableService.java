@@ -6,6 +6,7 @@ import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.request.OrderTableCreateRequest;
 import kitchenpos.exception.NotFoundOrderException;
 import kitchenpos.exception.NotFoundOrderTableException;
 import kitchenpos.exception.OrderNotCompletionException;
@@ -23,9 +24,9 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        final OrderTable newOrder = new OrderTable(null, null, orderTable.getNumberOfGuests(), orderTable.isEmpty());
-        return orderTableRepository.save(newOrder);
+    public OrderTable create(final OrderTableCreateRequest orderTableCreateRequest) {
+        final OrderTable orderTable = orderTableCreateRequest.toOrderTable();
+        return orderTableRepository.save(orderTable);
     }
 
     public List<OrderTable> list() {
@@ -33,12 +34,12 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
+    public OrderTable changeEmpty(final Long orderTableId, final boolean changeOrderEmpty) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(NotFoundOrderException::new);
 
         validateOrderCompletion(orderTableId);
-        savedOrderTable.updateEmpty(orderTable.isEmpty());
+        savedOrderTable.updateEmpty(changeOrderEmpty);
         return savedOrderTable;
     }
 
@@ -50,11 +51,11 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
+    public OrderTable changeNumberOfGuests(final Long orderTableId, final int changeNumberOfGuests) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(NotFoundOrderTableException::new);
 
-        savedOrderTable.updateNumberOfGuests(orderTable.getNumberOfGuests());
+        savedOrderTable.updateNumberOfGuests(changeNumberOfGuests);
         return savedOrderTable;
     }
 }
