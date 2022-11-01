@@ -1,11 +1,12 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.ServiceTestFixture.MENU_PRODUCTS;
+import static kitchenpos.application.ServiceTestFixture.MENU_PRODUCT_REQUESTS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import kitchenpos.domain.Menu;
+import kitchenpos.dto.MenuRequest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -16,57 +17,56 @@ class MenuServiceTest {
 
         @Test
         void create_fail_when_price_is_null() {
-            Menu menu = new Menu();
-            menu.setMenuGroupId(1L);
-            menu.setMenuProducts(MENU_PRODUCTS);
+            final MenuRequest menuRequest = new MenuRequest("맛있는치킨",
+                    null,
+                    1L,
+                    MENU_PRODUCT_REQUESTS);
 
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(menuRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void create_fail_when_price_is_less_than_0() {
-            Menu menu = new Menu();
-            menu.setMenuGroupId(1L);
-            menu.setMenuProducts(MENU_PRODUCTS);
-            menu.setPrice(BigDecimal.valueOf(-1));
+            final MenuRequest menuRequest = new MenuRequest("맛있는치킨",
+                    BigDecimal.valueOf(-1),
+                    1L,
+                    MENU_PRODUCT_REQUESTS);
 
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(menuRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void create_fail_when_groupId_is_not_exist() {
-            Menu menu = new Menu();
-            menu.setMenuGroupId(100L);
-            menu.setMenuProducts(MENU_PRODUCTS);
-            menu.setPrice(BigDecimal.valueOf(-1));
+            final MenuRequest menuRequest = new MenuRequest("맛있는치킨",
+                    BigDecimal.valueOf(1),
+                    100L,
+                    MENU_PRODUCT_REQUESTS);
 
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(menuRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void create_fail_when_price_is_more_than_product_price_sum() {
-            Menu menu = new Menu();
-            menu.setMenuGroupId(2L);
-            menu.setMenuProducts(MENU_PRODUCTS);
-            menu.setPrice(BigDecimal.valueOf(33000));
-            menu.setName("순삭치킨");
+            final MenuRequest menuRequest = new MenuRequest("맛있는치킨",
+                    BigDecimal.valueOf(333000),
+                    2L,
+                    MENU_PRODUCT_REQUESTS);
 
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(menuRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void create_success() {
-            Menu menu = new Menu();
-            menu.setMenuGroupId(2L);
-            menu.setMenuProducts(MENU_PRODUCTS);
-            menu.setPrice(BigDecimal.valueOf(20000));
-            menu.setName("순삭치킨");
+            final MenuRequest menuRequest = new MenuRequest("순삭치킨",
+                    BigDecimal.valueOf(20000),
+                    1L,
+                    MENU_PRODUCT_REQUESTS);
 
-            Menu savedMenu = menuService.create(menu);
+            final Menu savedMenu = menuService.create(menuRequest);
 
             assertThat(savedMenu.getName()).isEqualTo("순삭치킨");
         }

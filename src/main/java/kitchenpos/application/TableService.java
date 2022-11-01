@@ -1,15 +1,14 @@
 package kitchenpos.application;
 
+import java.util.Arrays;
+import java.util.List;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderTableRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
 
 @Service
 public class TableService {
@@ -22,9 +21,10 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
+    public OrderTable create(final OrderTableRequest orderTableRequest) {
+        final OrderTable orderTable = new OrderTable(null, null,
+                orderTableRequest.getNumberOfGuests(),
+                orderTableRequest.isEmpty());
 
         return orderTableDao.save(orderTable);
     }
@@ -34,32 +34,29 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
+    public OrderTable changeEmpty(final Long orderTableId, final OrderTableRequest orderTableRequest) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
-        }
+        validateAbleToChangeEmpty(orderTableId, savedOrderTable);
+
+        final OrderTable newOrderTable = new OrderTable(savedOrderTable.getId(), savedOrderTable.getTableGroupId(),
+                savedOrderTable.getNumberOfGuests(), orderTableRequest.isEmpty());
+
+        return orderTableDao.save(newOrderTable);
+    }
+
+    private void validateAbleToChangeEmpty(final Long orderTableId, final OrderTable savedOrderTable) {
+        savedOrderTable.validateHasGroupId();
 
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
-
-        savedOrderTable.setEmpty(orderTable.isEmpty());
-
-        return orderTableDao.save(savedOrderTable);
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
-
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-
+    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTableRequest orderTableRequest) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -67,8 +64,11 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
+        final OrderTable newOrderTable = new OrderTable(savedOrderTable.getId(),
+                savedOrderTable.getTableGroupId(),
+                orderTableRequest.getNumberOfGuests(),
+                savedOrderTable.isEmpty());
 
-        return orderTableDao.save(savedOrderTable);
+        return orderTableDao.save(newOrderTable);
     }
 }

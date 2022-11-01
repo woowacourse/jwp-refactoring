@@ -1,17 +1,20 @@
 package kitchenpos.application;
 
 import static kitchenpos.application.ServiceTestFixture.ORDER_LINE_ITEMS;
-import static kitchenpos.application.ServiceTestFixture.ORDER_LINE_ITEM_NOT_EXIST_MENU_ID;
+import static kitchenpos.application.ServiceTestFixture.ORDER_LINE_ITEM_REQUESTS;
+import static kitchenpos.application.ServiceTestFixture.ORDER_LINE_ITEM_REQUEST_NOT_EXIST_MENU_ID;
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderLineItemRequest;
+import kitchenpos.dto.OrderRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -21,64 +24,60 @@ public class OrderServiceTest {
     @Nested
     class CreateOrderServiceTest extends ServiceTest {
 
-        Order order;
-
-        @BeforeEach
-        void setup() {
-            order = new Order();
-            order.setOrderStatus(COOKING.name());
-            order.setOrderLineItems(ORDER_LINE_ITEMS);
-            order.setOrderTableId(1L);
-        }
-
         @Test
         void create_fail_when_orderLineItems_has_zero_size() {
-            assertThatThrownBy(() -> orderService.create(order))
+            final OrderRequest orderRequest = new OrderRequest(1L, "COOKING", new ArrayList<>());
+
+            assertThatThrownBy(() -> orderService.create(orderRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void create_fail_when_orderLineItems_is_null() {
-            order.setOrderLineItems(null);
+            final OrderRequest orderRequest = new OrderRequest(1L, "COOKING", null);
 
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(orderRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void create_fail_when_menuIds_size_is_different_from_orderLineItems() {
-            List<OrderLineItem> differentSizeOrderLineItems = new ArrayList<>(ORDER_LINE_ITEMS);
-            differentSizeOrderLineItems.add(ORDER_LINE_ITEM_NOT_EXIST_MENU_ID);
-            order.setOrderLineItems(differentSizeOrderLineItems);
+            List<OrderLineItemRequest> differentSizeOrderLineItemRequests = new ArrayList<>(ORDER_LINE_ITEM_REQUESTS);
+            differentSizeOrderLineItemRequests.add(ORDER_LINE_ITEM_REQUEST_NOT_EXIST_MENU_ID);
 
-            assertThatThrownBy(() -> orderService.create(order))
+            final OrderRequest orderRequest = new OrderRequest(1L, "COOKING", differentSizeOrderLineItemRequests);
+
+            assertThatThrownBy(() -> orderService.create(orderRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void create_fail_when_orderTableId_not_exist() {
-            order.setOrderTableId(100L);
+            final OrderRequest orderRequest = new OrderRequest(100L, "COOKING",
+                    ORDER_LINE_ITEM_REQUESTS);
 
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(orderRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void create_fail_when_orderTable_is_empty() {
-            assertThatThrownBy(() -> orderService.create(order))
+            final OrderRequest orderRequest = new OrderRequest(100L, "COOKING",
+                    ORDER_LINE_ITEM_REQUESTS);
+
+            assertThatThrownBy(() -> orderService.create(orderRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void create_success() {
-            OrderTable orderTable = new OrderTable();
-            orderTable.setNumberOfGuests(5);
-            orderTable.setEmpty(false);
+            OrderTable orderTable = new OrderTable(1L, 5, false);
             OrderTable savedOrderTable = orderTableDao.save(orderTable);
-            order.setOrderTableId(savedOrderTable.getId());
-            Order savedOrder = orderService.create(order);
 
-            assertThat(savedOrder.getOrderStatus()).isEqualTo(COOKING.name());
+            OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), "COOKING", ORDER_LINE_ITEM_REQUESTS);
+            Order savedOrder = orderService.create(orderRequest);
+
+            assertThat(savedOrder.getOrderStatus()).isEqualTo(COOKING);
         }
     }
 
@@ -97,10 +96,8 @@ public class OrderServiceTest {
 
         @BeforeEach
         void setup() {
-            order = new Order();
-            order.setOrderStatus(COOKING.name());
-            order.setOrderLineItems(ORDER_LINE_ITEMS);
-            order.setOrderTableId(1L);
+            order = new Order(1L, COOKING,
+                    LocalDateTime.now(), ORDER_LINE_ITEMS);
         }
 
         @Test
@@ -113,19 +110,19 @@ public class OrderServiceTest {
 
         @Test
         void changeOrderStatus_success() {
-            OrderTable orderTable = new OrderTable();
-            orderTable.setNumberOfGuests(5);
-            orderTable.setEmpty(false);
+            OrderTable orderTable = new OrderTable(1L, 5, false);
             OrderTable savedOrderTable = orderTableDao.save(orderTable);
-            order.setOrderTableId(savedOrderTable.getId());
 
-            Order savedOrder = orderService.create(order);
+            OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), "COOKING", ORDER_LINE_ITEM_REQUESTS);
 
-            order.setOrderStatus(MEAL.name());
+            Order savedOrder = orderService.create(orderRequest);
 
-            Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), order);
+            Order newOrder = new Order(savedOrder.getId(), savedOrderTable.getId(), MEAL,
+                    savedOrder.getOrderedTime(), savedOrder.getOrderLineItems());
 
-            assertThat(changedOrder.getOrderStatus()).isEqualTo(MEAL.name());
+            Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), newOrder);
+
+            assertThat(changedOrder.getOrderStatus()).isEqualTo(MEAL);
         }
     }
 }

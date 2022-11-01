@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import static kitchenpos.application.ServiceTestFixture.ORDER_LINE_ITEMS;
 import static kitchenpos.domain.OrderStatus.COOKING;
-import static kitchenpos.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -11,6 +10,7 @@ import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderTableRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -21,11 +21,9 @@ class TableServiceTest {
     class CreateTest extends ServiceTest {
         @Test
         void create_success() {
-            OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(false);
-            orderTable.setNumberOfGuests(5);
+            final OrderTableRequest orderTableRequest = new OrderTableRequest(5, false);
 
-            OrderTable savedTable = tableService.create(orderTable);
+            final OrderTable savedTable = tableService.create(orderTableRequest);
 
             assertThat(savedTable.getNumberOfGuests()).isEqualTo(5);
         }
@@ -35,9 +33,6 @@ class TableServiceTest {
     class ListTest extends ServiceTest {
         @Test
         void list_success() {
-            OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(false);
-            orderTable.setNumberOfGuests(5);
             assertThat(tableService.list()).hasSize(8);
         }
     }
@@ -50,72 +45,65 @@ class TableServiceTest {
 
         @BeforeEach
         void setup() {
-            orderTable = new OrderTable();
-            orderTable.setNumberOfGuests(5);
-            orderTable.setEmpty(false);
+            orderTable = new OrderTable(1L, 5, false);
         }
 
         @Test
         void changeEmpty_fail_when_orderTableId_not_exist() {
-            savedOrderTable = tableService.create(orderTable);
+            final OrderTableRequest orderTableRequest = new OrderTableRequest(5, false);
+            savedOrderTable = tableService.create(orderTableRequest);
 
-            assertThatThrownBy(() -> tableService.changeEmpty(100L, orderTable))
+            final OrderTableRequest changeOrderTableRequest = new OrderTableRequest(true);
+
+            assertThatThrownBy(() -> tableService.changeEmpty(100L, changeOrderTableRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void changeEmpty_fail_when_tableGroupId_exist() {
-            TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(List.of(orderTable));
-            tableGroup.setCreatedDate(LocalDateTime.now());
-            TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+            final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable));
+            final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
-            orderTable.setTableGroupId(savedTableGroup.getId());
+            final OrderTable newOrderTable = new OrderTable(1L, savedTableGroup.getId(), 5, false);
 
-            savedOrderTable = orderTableDao.save(orderTable);
+            savedOrderTable = orderTableDao.save(newOrderTable);
 
-            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), orderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), new OrderTableRequest(true)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void changeEmpty_fail_when_orderStatus_in_COOKING() {
-            savedOrderTable = tableService.create(orderTable);
+            final OrderTableRequest orderTableRequest = new OrderTableRequest(5, false);
+            savedOrderTable = tableService.create(orderTableRequest);
 
-            Order order = new Order();
-            order.setOrderStatus(COOKING.name());
-            order.setOrderLineItems(ORDER_LINE_ITEMS);
-            order.setOrderTableId(savedOrderTable.getId());
-            order.setOrderedTime(LocalDateTime.now());
+            final Order order = new Order(savedOrderTable.getId(), COOKING, LocalDateTime.now(), ORDER_LINE_ITEMS);
 
-            Order savedOrder = orderDao.save(order);
+            orderDao.save(order);
 
-            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), orderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), new OrderTableRequest(true)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void changeEmpty_fail_when_orderStatus_in_MEAL() {
-            savedOrderTable = tableService.create(orderTable);
+            final OrderTableRequest orderTableRequest = new OrderTableRequest(5, false);
+            savedOrderTable = tableService.create(orderTableRequest);
 
-            Order order = new Order();
-            order.setOrderStatus(MEAL.name());
-            order.setOrderLineItems(ORDER_LINE_ITEMS);
-            order.setOrderTableId(savedOrderTable.getId());
-            order.setOrderedTime(LocalDateTime.now());
+            final Order order = new Order(savedOrderTable.getId(), COOKING, LocalDateTime.now(), ORDER_LINE_ITEMS);
 
-            Order savedOrder = orderDao.save(order);
+            orderDao.save(order);
 
-            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), orderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), new OrderTableRequest(true)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void changeEmpty_success() {
-            savedOrderTable = tableService.create(orderTable);
-            orderTable.setEmpty(true);
+            final OrderTableRequest orderTableRequest = new OrderTableRequest(5, false);
+            savedOrderTable = tableService.create(orderTableRequest);
 
-            OrderTable changedTable = tableService.changeEmpty(savedOrderTable.getId(), this.orderTable);
+            OrderTable changedTable = tableService.changeEmpty(savedOrderTable.getId(), new OrderTableRequest(true));
 
             assertThat(changedTable.isEmpty()).isTrue();
         }
@@ -124,47 +112,40 @@ class TableServiceTest {
     @Nested
     class ChangeNumberOfGuestsTest extends ServiceTest {
 
-        private OrderTable orderTable;
-        private OrderTable savedOrderTable;
-
-        @BeforeEach
-        void setup() {
-            orderTable = new OrderTable();
-            orderTable.setNumberOfGuests(5);
-            orderTable.setEmpty(false);
-        }
-
         @Test
         void changeNumberOfGuests_fail_when_smaller_than_zero() {
-            savedOrderTable = tableService.create(orderTable);
+            final OrderTableRequest orderTableRequest = new OrderTableRequest(5, false);
 
-            orderTable.setNumberOfGuests(-1);
+            final OrderTable savedOrderTable = tableService.create(orderTableRequest);
 
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTable))
+            assertThatThrownBy(
+                    () -> tableService.changeNumberOfGuests(savedOrderTable.getId(), new OrderTableRequest(-1)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void changeNumberOfGuests_fail_when_orderTable_not_exist() {
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(1000L, orderTable))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(1000L, new OrderTableRequest(6)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void changeNumberOfGuests_fail_when_orderTable_is_empty() {
-            orderTable.setEmpty(true);
-            savedOrderTable = tableService.create(orderTable);
+            final OrderTableRequest orderTableRequest = new OrderTableRequest(5, true);
+            final OrderTable savedOrderTable = tableService.create(orderTableRequest);
 
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTable))
+            assertThatThrownBy(
+                    () -> tableService.changeNumberOfGuests(savedOrderTable.getId(), new OrderTableRequest(6)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void changeNumberOfGuests_success() {
-            savedOrderTable = tableService.create(orderTable);
-            orderTable.setNumberOfGuests(10);
+            final OrderTableRequest orderTableRequest = new OrderTableRequest(5, false);
+            final OrderTable savedOrderTable = tableService.create(orderTableRequest);
 
-            OrderTable changedOrderTable = tableService.changeNumberOfGuests(savedOrderTable.getId(), this.orderTable);
+            final OrderTable changedOrderTable = tableService.changeNumberOfGuests(savedOrderTable.getId(),
+                    new OrderTableRequest(10));
 
             assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(10);
         }
