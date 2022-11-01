@@ -16,17 +16,17 @@ import kitchenpos.application.dto.request.OrderLineItemRequest;
 import kitchenpos.application.dto.request.OrderRequest;
 import kitchenpos.application.dto.request.OrderStatusUpdateRequest;
 import kitchenpos.application.dto.response.OrderResponse;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuGroupRepository;
 import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.menu.ProductRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.menu.Product;
-import kitchenpos.domain.menu.ProductRepository;
+import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.ProductFixture;
@@ -45,7 +45,7 @@ class OrderServiceTest {
     private OrderRepository orderRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private MenuGroupRepository menuGroupRepository;
@@ -73,7 +73,7 @@ class OrderServiceTest {
         후라이드_양념치킨_두마리세트 = menuRepository.save(menu);
 
         OrderTable newOrderTable = new OrderTable(3, false);
-        orderTable = orderTableDao.save(newOrderTable);
+        orderTable = orderTableRepository.save(newOrderTable);
     }
 
     @DisplayName("주문을 생성한다")
@@ -129,7 +129,7 @@ class OrderServiceTest {
         @Test
         void throwExceptionBecauseOfEmptyTable() {
             OrderTable newEmptyTable = new OrderTable(0, true);
-            OrderTable emptyTable = orderTableDao.save(newEmptyTable);
+            OrderTable emptyTable = orderTableRepository.save(newEmptyTable);
 
             List<OrderLineItemRequest> orderLineItemRequests = List.of(
                     new OrderLineItemRequest(후라이드_양념치킨_두마리세트.getId(), 3L));
@@ -190,11 +190,11 @@ class OrderServiceTest {
     }
 
     void changeTableToNotEmpty(Long tableId) {
-        OrderTable orderTable = orderTableDao.findById(tableId)
+        OrderTable orderTable = orderTableRepository.findById(tableId)
                 .orElseThrow();
         orderTable.changeEmptyStatus(false);
         orderTable.changeNumberOfGuests(5);
 
-        orderTableDao.save(orderTable);
+        orderTableRepository.save(orderTable);
     }
 }

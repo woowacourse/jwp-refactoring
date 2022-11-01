@@ -1,11 +1,12 @@
-package kitchenpos.dao;
-
-import kitchenpos.domain.table.TableGroup;
+package kitchenpos.domain.table;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface TableGroupDao {
+import org.springframework.data.repository.Repository;
+
+public interface TableGroupRepository extends Repository<TableGroup, Long> {
+
     TableGroup save(TableGroup entity);
 
     Optional<TableGroup> findById(Long id);

@@ -14,15 +14,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import kitchenpos.application.dto.request.OrderTableIdRequest;
+import kitchenpos.application.dto.request.TableGroupRequest;
+import kitchenpos.application.dto.response.TableGroupResponse;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
-import kitchenpos.application.dto.request.OrderTableIdRequest;
-import kitchenpos.application.dto.request.TableGroupRequest;
-import kitchenpos.application.dto.response.TableGroupResponse;
+import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.support.SpringBootNestedTest;
 
 @Transactional
@@ -33,7 +33,7 @@ class TableGroupServiceTest {
     private TableGroupService tableGroupService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private OrderDao orderDao;
@@ -44,11 +44,11 @@ class TableGroupServiceTest {
     @BeforeEach
     void setUp() {
         OrderTable newTable1 = new OrderTable(3, true);
-        OrderTable table1 = orderTableDao.save(newTable1);
+        OrderTable table1 = orderTableRepository.save(newTable1);
         tableRequest1 = new OrderTableIdRequest(table1.getId());
 
         OrderTable newTable2 = new OrderTable(3, true);
-        OrderTable table2 = orderTableDao.save(newTable2);
+        OrderTable table2 = orderTableRepository.save(newTable2);
         tableRequest2 = new OrderTableIdRequest(table2.getId());
     }
 
@@ -98,7 +98,7 @@ class TableGroupServiceTest {
         @Test
         void throwExceptionBecauseOfEmptyTable() {
             OrderTable newEmptyTable = new OrderTable(1, false);
-            orderTableDao.save(newEmptyTable);
+            orderTableRepository.save(newEmptyTable);
             OrderTableIdRequest notEmptyTableId = new OrderTableIdRequest(newEmptyTable.getId());
 
             TableGroupRequest tableGroup = new TableGroupRequest(List.of(tableRequest1, notEmptyTableId));

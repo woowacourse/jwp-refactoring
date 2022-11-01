@@ -5,8 +5,6 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-import kitchenpos.domain.table.TableGroup;
-
 public class TableGroupRequest {
 
     private final List<OrderTableIdRequest> orderTables;
@@ -14,10 +12,6 @@ public class TableGroupRequest {
     @JsonCreator
     public TableGroupRequest(List<OrderTableIdRequest> orderTables) {
         this.orderTables = orderTables;
-    }
-
-    public TableGroup toTableGroup() {
-        return new TableGroup();
     }
 
     public List<Long> getOrderTableIds() {

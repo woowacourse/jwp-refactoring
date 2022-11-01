@@ -12,18 +12,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.TableGroup;
 import kitchenpos.application.dto.request.ChangeNumOfTableGuestsRequest;
 import kitchenpos.application.dto.request.ChangeOrderTableEmptyRequest;
 import kitchenpos.application.dto.request.OrderTableRequest;
 import kitchenpos.application.dto.response.OrderTableResponse;
+import kitchenpos.dao.OrderDao;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTableRepository;
+import kitchenpos.domain.table.TableGroup;
+import kitchenpos.domain.table.TableGroupRepository;
 import kitchenpos.support.SpringBootNestedTest;
 
 @Transactional
@@ -34,13 +34,13 @@ class TableServiceTest {
     private TableService tableService;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
     private OrderDao orderDao;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @DisplayName("테이블 정보를 생성하면 ID가 할당된 OrderTable객체가 반환된다")
     @Test
@@ -54,10 +54,11 @@ class TableServiceTest {
     @DisplayName("존재하는 모든 테이블 목록을 조회한다")
     @Test
     void list() {
-        OrderTable orderTable = new OrderTable(3, false);
-        orderTableDao.save(orderTable);
-        orderTableDao.save(orderTable);
-        orderTableDao.save(orderTable);
+        int numOfTables = 3;
+        for (int i = 0; i < numOfTables; i++) {
+            OrderTable orderTable = new OrderTable(3, false);
+            orderTableRepository.save(orderTable);
+        }
 
         List<OrderTableResponse> actual = tableService.list();
         assertThat(actual).hasSize(3);
@@ -73,7 +74,7 @@ class TableServiceTest {
         @Test
         void changeEmpty() {
             OrderTable newOrderTable = new OrderTable(3, false);
-            OrderTable orderTable = orderTableDao.save(newOrderTable);
+            OrderTable orderTable = orderTableRepository.save(newOrderTable);
 
             Order order = Order.create(orderTable.getId(), List.of());
             order.changeStatus(OrderStatus.COMPLETION);
@@ -97,11 +98,11 @@ class TableServiceTest {
         @Test
         void throwExceptionBecauseTableBelongsToTableGroup() {
             TableGroup newTableGroup = new TableGroup();
-            TableGroup tableGroup = tableGroupDao.save(newTableGroup);
+            TableGroup tableGroup = tableGroupRepository.save(newTableGroup);
 
             OrderTable newOrderTable = new OrderTable(3, true);
-            newOrderTable.joinTableGroup(tableGroup.getId());
-            OrderTable orderTable = orderTableDao.save(newOrderTable);
+            newOrderTable.joinTableGroup(tableGroup);
+            OrderTable orderTable = orderTableRepository.save(newOrderTable);
 
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), changeOrderTableEmptyRequest))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -112,7 +113,7 @@ class TableServiceTest {
         @Test
         void throwExceptionBecauseOrderStatusIsCookingOrMeal() {
             OrderTable newOrderTable = new OrderTable(3, false);
-            OrderTable orderTable = orderTableDao.save(newOrderTable);
+            OrderTable orderTable = orderTableRepository.save(newOrderTable);
 
             Order order = Order.create(orderTable.getId(), List.of(new OrderLineItem(1L, 3)));
             order.changeStatus(OrderStatus.COOKING);
@@ -134,7 +135,7 @@ class TableServiceTest {
         void setUp() {
             OrderTable newOrderTable = new OrderTable(3, false);
             newOrderTable.changeEmptyStatus(false);
-            orderTable = orderTableDao.save(newOrderTable);
+            orderTable = orderTableRepository.save(newOrderTable);
         }
 
         @DisplayName("손님수를 올바르게 변경한다")
@@ -153,13 +154,13 @@ class TableServiceTest {
             int numberOfGuests = -1;
 
             OrderTable newOrderTable = new OrderTable(3, false);
-            OrderTable orderTable = orderTableDao.save(newOrderTable);
+            OrderTable orderTable = orderTableRepository.save(newOrderTable);
 
             ChangeNumOfTableGuestsRequest changeGuestsRequest = new ChangeNumOfTableGuestsRequest(numberOfGuests);
 
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), changeGuestsRequest))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("테이블에는 1명 이상의 손님이 앉을 수 있습니다.");
+                    .hasMessageContaining("테이블에는 0명 이상의 손님이 앉을 수 있습니다.");
         }
 
         @DisplayName("존재하지 않는 테이블 Id일 경우 예외가 발생한다")
@@ -178,7 +179,7 @@ class TableServiceTest {
         @Test
         void throwExceptionBecauseOfEmptyTable() {
             OrderTable newEmptyTable = new OrderTable(10, true);
-            OrderTable emptyTable = orderTableDao.save(newEmptyTable);
+            OrderTable emptyTable = orderTableRepository.save(newEmptyTable);
 
             ChangeNumOfTableGuestsRequest changeGuestsRequest = new ChangeNumOfTableGuestsRequest(10);
 
