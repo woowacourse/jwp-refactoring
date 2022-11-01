@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import org.springframework.util.CollectionUtils;
 
 @Entity
 public class TableGroup {
@@ -31,19 +32,19 @@ public class TableGroup {
     }
 
     public TableGroup(final List<OrderTable> orderTables) {
-        validateOrderTables(orderTables);
-        groupOrderTables(orderTables);
         this.createdDate = LocalDateTime.now();
         this.orderTables = orderTables;
+        validateOrderTables();
+        groupOrderTables();
     }
 
-    private void validateOrderTables(final List<OrderTable> orderTables) {
-        if (orderTables.isEmpty() || orderTables.size() < 2) {
+    private void validateOrderTables() {
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException();
         }
     }
 
-    private void groupOrderTables(final List<OrderTable> orderTables) {
+    private void groupOrderTables() {
         for (OrderTable orderTable : orderTables) {
             orderTable.group(id);
         }
