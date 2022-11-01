@@ -1,9 +1,11 @@
 package kitchenpos.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import kitchenpos.common.annotation.SpringTestWithData;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -23,6 +25,33 @@ class OrderDaoTest {
     @Autowired
     private OrderDao orderDao;
 
+    @DisplayName("주문을 저장한다.")
+    @Test
+    void save() {
+        final OrderTable orderTable = new OrderTable(0, true);
+        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        final Order order = orderDao.save(
+                new Order(savedOrderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(),
+                        List.of(new OrderLineItem(null, 1L))));
+
+        assertThat(order.getId()).isGreaterThanOrEqualTo(1L);
+    }
+
+    @DisplayName("특정 주문을 찾는다.")
+    @Test
+    void findById() {
+        final OrderTable orderTable = new OrderTable(0, true);
+        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        final Order order = orderDao.save(
+                new Order(savedOrderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(),
+                        List.of(new OrderLineItem(null, 1L))));
+
+        final Order actual = orderDao.findById(order.getId())
+                .get();
+
+        assertThat(actual.getId()).isEqualTo(order.getId());
+    }
+
     @DisplayName("주문 테이블 id로 주문을 찾는다.")
     @Test
     void findByTableId() {
@@ -35,6 +64,22 @@ class OrderDaoTest {
                 .get();
 
         assertThat(actual.getId()).isEqualTo(savedOrder.getId());
+    }
+
+    @DisplayName("주문 테이블 목록을 조회한다.")
+    @Test
+    void findAll() {
+        final OrderTable orderTable = new OrderTable(0, true);
+        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        final Order savedOrder = orderDao.save(new Order(savedOrderTable.getId(), OrderStatus.MEAL, LocalDateTime.now(),
+                List.of(new OrderLineItem(1L, 1L))));
+
+        final List<OrderTable> orderTables = orderTableDao.findAll();
+
+        assertAll(
+                () -> assertThat(orderTables.size()).isEqualTo(1),
+                () -> assertThat(orderTables.get(0).getId()).isEqualTo(savedOrder.getId())
+        );
     }
 
     @DisplayName("주문 테이블 id로 주문 항목을 찾는다.")
