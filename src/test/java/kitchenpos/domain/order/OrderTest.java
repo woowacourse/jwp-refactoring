@@ -23,6 +23,18 @@ class OrderTest {
             assertThatThrownBy(() -> new Order(orderTable, List.of()))
                     .isInstanceOf(IllegalArgumentException.class);
         }
+
+        @DisplayName("주문 테이블이 비어있다면, IAE를 던진다.")
+        @Test
+        void Should_ThrowIAE_When_OrderTableIsEmpty() {
+            // given
+            OrderTable orderTable = new OrderTable(10, true);
+            OrderLineItem orderLineItem = new OrderLineItem(1L, 10L);
+
+            // when & then
+            assertThatThrownBy(() -> new Order(orderTable, List.of(orderLineItem)))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
     }
 
     @DisplayName("상태 변경")

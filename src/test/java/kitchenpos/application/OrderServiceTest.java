@@ -90,20 +90,6 @@ class OrderServiceTest extends ServiceTest {
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
-        @DisplayName("주문의 주문 항목의 메뉴가 존재하지 않다면 IAE를 던진다.")
-        @Test
-        void Should_ThrowIAE_When_MenuDoesNotExist() {
-            // given
-            OrderLineItem orderLineItemHasNotSavedMenu = new OrderLineItem(savedMenu.getId() + 1, 1L);
-
-            OrderRequest request = new OrderRequest(savedOrderTable.getId(),
-                    List.of(new OrderLineItemRequest(orderLineItemHasNotSavedMenu)));
-
-            // when & then
-            assertThatThrownBy(() -> orderService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
         @DisplayName("주문의 주문 테이블이 존재하지 않다면 IAE를 던진다.")
         @Test
         void Should_ThrowIAE_When_OrderTableDoesNotExist() {

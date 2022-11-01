@@ -49,6 +49,7 @@ public class Order {
                  final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
         validateOrderLineItems(orderLineItems);
+        validateOrderTable(orderTable);
 
         this.id = id;
         this.orderTable = orderTable;
@@ -63,6 +64,12 @@ public class Order {
         }
     }
 
+    private void validateOrderTable(final OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public boolean isCompletion() {
         return orderStatus.equals(OrderStatus.COMPLETION);
     }
@@ -71,16 +78,8 @@ public class Order {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public OrderTable getOrderTable() {
         return orderTable;
-    }
-
-    public void setOrderTableId(final OrderTable orderTable) {
-        this.orderTable = orderTable;
     }
 
     public OrderStatus getOrderStatus() {
@@ -99,15 +98,7 @@ public class Order {
         return orderedTime;
     }
 
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
     }
 }

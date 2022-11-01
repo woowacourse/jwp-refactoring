@@ -33,6 +33,7 @@ class TableGroupServiceTest extends ServiceTest {
     @Autowired
     private TableGroupService tableGroupService;
 
+
     @Autowired
     private TableGroupRepository tableGroupRepository;
 
@@ -163,25 +164,32 @@ class TableGroupServiceTest extends ServiceTest {
         @ParameterizedTest
         void Should_ThrowIAE_When_AnyStatusOfOrderTablesIsCookingOrMeal(final OrderStatus orderStatus) {
             // given
-            OrderTable orderTable1 = orderTableRepository.save(new OrderTable(10, true));
-            OrderTable orderTable2 = orderTableRepository.save(new OrderTable(10, true));
-
             Product savedProduct = saveProduct("상품", 10_000).toEntity();
             MenuProduct menuProduct = new MenuProduct(savedProduct, 1L);
             MenuGroupResponse savedMenuGroup = saveMenuGroup("메뉴 그룹");
             MenuResponse savedMenu = saveMenu("메뉴", 10_000, savedMenuGroup.toEntity(), List.of(menuProduct));
 
+            OrderTable orderTable1 = orderTableRepository.save(new OrderTable(12, false));
+            OrderTable orderTable2 = orderTableRepository.save(new OrderTable(13, false));
+
             Order order1 = new Order(orderTable1, List.of(new OrderLineItem(savedMenu.getId(), 1L)));
             order1.changeOrderStatus(orderStatus);
 
-            Order order2 = new Order(orderTable1, List.of(new OrderLineItem(savedMenu.getId(), 1L)));
+            Order order2 = new Order(orderTable2, List.of(new OrderLineItem(savedMenu.getId(), 1L)));
             order2.changeOrderStatus(OrderStatus.COMPLETION);
 
             orderRepository.save(order1);
             orderRepository.save(order2);
 
+            orderTable1.changeEmpty(true);
+            orderTable2.changeEmpty(true);
+
+            orderTableRepository.save(orderTable1);
+            orderTableRepository.save(orderTable2);
+
             TableGroupResponse request = tableGroupService.create(
                     new TableGroupRequest(List.of(orderTable1.getId(), orderTable2.getId())));
+            // TODO: 리팩토링
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.ungroup(request.getId()))

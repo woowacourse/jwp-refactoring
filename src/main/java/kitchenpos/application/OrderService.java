@@ -1,19 +1,14 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order.OrderTable;
 import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.dto.request.OrderStatusUpdateRequest;
 import kitchenpos.dto.response.OrderResponse;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -22,80 +17,49 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 @Service
 public class OrderService {
-    private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public OrderService(
-            final MenuRepository menuRepository,
-            final OrderRepository orderRepository,
-            final OrderLineItemRepository orderLineItemRepository,
-            final OrderTableRepository orderTableRepository
-    ) {
-        this.menuRepository = menuRepository;
+    public OrderService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
         this.orderRepository = orderRepository;
-        this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
     public OrderResponse create(final OrderRequest request) {
-        Order order = new Order(
-                orderTableRepository.findById(request.getOrderTableId())
-                        .orElseThrow(IllegalArgumentException::new),
-                request.getOrderLineItems().stream().map(OrderLineItemRequest::toEntity)
-                        .collect(Collectors.toList())
-        );
+        OrderTable orderTable = getOrderTable(request.getOrderTableId());
+        List<OrderLineItem> orderLineItems = mapToOrderLineItems(request.getOrderLineItems());
 
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
-
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
-                .collect(Collectors.toList());
-
-        if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
-        }
-
-        final OrderTable orderTable = orderTableRepository.findById(order.getOrderTable().getId())
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        order.setOrderTableId(orderTable);
-        order.changeOrderStatus(OrderStatus.COOKING);
-        order.setOrderedTime(LocalDateTime.now());
-
-        final Order savedOrder = orderRepository.save(order);
-
-        final Long orderId = savedOrder.getId();
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
-        }
-        savedOrder.setOrderLineItems(savedOrderLineItems);
+        Order order = new Order(orderTable, orderLineItems);
+        Order savedOrder = orderRepository.save(order);
 
         return new OrderResponse(savedOrder);
     }
 
-    public List<OrderResponse> list() {
-        final List<Order> orders = orderRepository.findAll();
+    private OrderTable getOrderTable(final Long orderTableId) {
+        return orderTableRepository.findById(orderTableId)
+                .orElseThrow(IllegalArgumentException::new);
+    }
 
-        return orders.stream()
+    private List<OrderLineItem> mapToOrderLineItems(final List<OrderLineItemRequest> orderLineItemRequests) {
+        return orderLineItemRequests.stream()
+                .map(OrderLineItemRequest::toEntity)
+                .collect(Collectors.toList());
+    }
+
+    public List<OrderResponse> list() {
+        return orderRepository.findAll()
+                .stream()
                 .map(OrderResponse::new)
                 .collect(Collectors.toList());
     }
 
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusUpdateRequest request) {
-        final Order savedOrder = orderRepository.findById(orderId)
+        Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
         savedOrder.changeOrderStatus(request.getOrderStatus());
-
         return new OrderResponse(savedOrder);
     }
 }

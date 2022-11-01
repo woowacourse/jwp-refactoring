@@ -55,10 +55,6 @@ public class OrderTable {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public List<Order> getOrders() {
         return orders;
     }
