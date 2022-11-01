@@ -9,6 +9,7 @@ import io.restassured.RestAssured;
 import java.util.List;
 import java.util.Map;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.dto.OrderTableResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,7 +28,7 @@ public class TableAcceptanceTest extends AcceptanceTest {
         RestAssured.port = port;
     }
 
-    public static long createTable(OrderTable table) {
+    public static Long createTable(OrderTable table) {
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .body(table)
@@ -45,9 +46,10 @@ public class TableAcceptanceTest extends AcceptanceTest {
         long tableId2 = createTable(new OrderTable(null, 2, false));
         long tableId3 = createTable(new OrderTable(null, 3, false));
 
-        List<OrderTable> tables = getTables();
+        List<OrderTableResponse> tables = getTables();
 
-        assertThat(tables).extracting(OrderTable::getId, OrderTable::getNumberOfGuests, OrderTable::isEmpty)
+        assertThat(tables).extracting(OrderTableResponse::getId, OrderTableResponse::getNumberOfGuests,
+                        OrderTableResponse::isEmpty)
                 .containsExactlyInAnyOrder(
                         tuple(tableId1, 0, true),
                         tuple(tableId2, 2, false),
@@ -55,41 +57,40 @@ public class TableAcceptanceTest extends AcceptanceTest {
                 );
     }
 
-    private List<OrderTable> getTables() {
+    private List<OrderTableResponse> getTables() {
         return RestAssured.given().log().all()
                 .when().log().all()
                 .get("/api/tables")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .extract().body().jsonPath().getList(".", OrderTable.class);
+                .extract().body().jsonPath().getList(".", OrderTableResponse.class);
     }
 
     @DisplayName("테이블의 주문 가능 여부 (empty)를 변경한다.")
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
     void changeEmpty(boolean empty) {
-        long tableId = createTable(new OrderTable(null, 2, true));
+        Long tableId = createTable(new OrderTable(null, 2, true));
 
-        Long updatedTableId = updateTableEmpty(tableId, empty);
+        updateTableEmpty(tableId, empty);
 
-        List<OrderTable> tables = getTables();
-        OrderTable table = tables.stream()
-                .filter(t -> updatedTableId.equals(t.getId()))
+        List<OrderTableResponse> tables = getTables();
+        OrderTableResponse tableResponse = tables.stream()
+                .filter(t -> tableId.equals(t.getId()))
                 .findFirst()
                 .orElseThrow();
 
-        assertThat(table.isEmpty()).isEqualTo(empty);
+        assertThat(tableResponse.isEmpty()).isEqualTo(empty);
     }
 
-    private Long updateTableEmpty(long tableId, boolean empty) {
-        return RestAssured.given().log().all()
+    private void updateTableEmpty(long tableId, boolean empty) {
+        RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .body(Map.of("empty", empty))
                 .when().log().all()
                 .put("/api/tables/" + tableId + "/empty")
                 .then().log().all()
-                .statusCode(HttpStatus.OK.value())
-                .extract().jsonPath().getLong("id");
+                .statusCode(HttpStatus.OK.value());
     }
 
     @DisplayName("테이블의 방문한 손님 수를 변경한다.")
@@ -98,25 +99,24 @@ public class TableAcceptanceTest extends AcceptanceTest {
     void changNumberOfGuests(int numberOfGuests) {
         Long tableId = createTable(new OrderTable(null, 7, false));
 
-        Long updatedTableId = updateTableNumberOfGuests(tableId, numberOfGuests);
+        updateTableNumberOfGuests(tableId, numberOfGuests);
 
-        List<OrderTable> tables = getTables();
-        OrderTable table = tables.stream()
-                .filter(t -> updatedTableId.equals(t.getId()))
+        List<OrderTableResponse> tables = getTables();
+        OrderTableResponse table = tables.stream()
+                .filter(t -> tableId.equals(t.getId()))
                 .findFirst()
                 .orElseThrow();
 
         assertThat(table.getNumberOfGuests()).isEqualTo(numberOfGuests);
     }
 
-    private Long updateTableNumberOfGuests(Long tableId, int numberOfGuests) {
-        return RestAssured.given().log().all()
+    private void updateTableNumberOfGuests(Long tableId, int numberOfGuests) {
+        RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .body(Map.of("numberOfGuests", numberOfGuests))
                 .when().log().all()
                 .put("/api/tables/" + tableId + "/number-of-guests")
                 .then().log().all()
-                .statusCode(HttpStatus.OK.value())
-                .extract().jsonPath().getLong("id");
+                .statusCode(HttpStatus.OK.value());
     }
 }

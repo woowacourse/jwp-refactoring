@@ -4,7 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.application.dto.MenuGroupRequest;
+import kitchenpos.ui.dto.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +19,15 @@ class MenuGroupServiceTest extends ApplicationTest {
     @DisplayName("메뉴 그룹을 조회한다.")
     @Test
     void list() {
-        MenuGroup menuGroup1 = new MenuGroup("치킨 메뉴");
-        MenuGroup menuGroup2 = new MenuGroup("보족 메뉴");
+        MenuGroupRequest menuGroupRequest1 = new MenuGroupRequest("치킨 메뉴");
+        MenuGroupRequest menuGroupRequest2 = new MenuGroupRequest("보족 메뉴");
 
-        MenuGroup savedMenuGroup1 = menuGroupService.create(menuGroup1);
-        MenuGroup savedMenuGroup2 = menuGroupService.create(menuGroup2);
+        MenuGroupResponse savedMenuGroup1 = menuGroupService.create(menuGroupRequest1);
+        MenuGroupResponse savedMenuGroup2 = menuGroupService.create(menuGroupRequest2);
 
-        List<MenuGroup> menuGroups = menuGroupService.list();
+        List<MenuGroupResponse> menuGroups = menuGroupService.list();
 
-        assertThat(menuGroups).extracting(MenuGroup::getId, MenuGroup::getName)
+        assertThat(menuGroups).extracting(MenuGroupResponse::getId, MenuGroupResponse::getName)
                 .containsExactlyInAnyOrder(tuple(savedMenuGroup1.getId(), "치킨 메뉴"),
                         tuple(savedMenuGroup2.getId(), "보족 메뉴"));
     }

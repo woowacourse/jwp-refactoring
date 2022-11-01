@@ -9,6 +9,7 @@ import io.restassured.RestAssured;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -39,9 +40,10 @@ public class ProductAcceptanceTest extends AcceptanceTest {
         long productId3 = createProduct("피자", 31000);
         long productId4 = createProduct("수육", 25000);
 
-        List<Product> products = getProducts();
+        List<ProductResponse> products = getProducts();
 
-        assertThat(products).extracting(Product::getId, Product::getName, p -> p.getPrice().intValueExact())
+        assertThat(products).extracting(ProductResponse::getId, ProductResponse::getName,
+                        p -> p.getPrice().intValueExact())
                 .containsExactlyInAnyOrder(
                         tuple(productId1, "후라이드", 19000),
                         tuple(productId2, "돼지국밥", 9000),
@@ -50,12 +52,12 @@ public class ProductAcceptanceTest extends AcceptanceTest {
                 );
     }
 
-    private List<Product> getProducts() {
+    private List<ProductResponse> getProducts() {
         return RestAssured.given().log().all()
                 .when().log().all()
                 .get("/api/products")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .extract().body().jsonPath().getList(".", Product.class);
+                .extract().body().jsonPath().getList(".", ProductResponse.class);
     }
 }
