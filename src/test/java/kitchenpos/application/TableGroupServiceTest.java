@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static kitchenpos.support.DomainFixture.빈_테이블_생성;
+import static kitchenpos.support.DomainFixture.채워진_테이블_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -9,89 +11,118 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.TableGroupCreateRequest;
+import kitchenpos.dto.request.TableGroupCreateWithTableRequest;
+import kitchenpos.exception.CustomError;
+import kitchenpos.exception.DomainLogicException;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.jdbc.Sql;
 
-class TableGroupServiceTest extends ServiceTest {
+@DataJpaTest
+@Sql(scripts = "classpath:truncate.sql")
+class TableGroupServiceTest {
+
+    private final OrderTableRepository orderTableRepository;
+    private final TableGroupRepository tableGroupRepository;
+
+    private final TableGroupService tableGroupService;
 
     @Autowired
-    private TableGroupService tableGroupService;
+    public TableGroupServiceTest(final OrderTableRepository orderTableRepository,
+                                 final TableGroupRepository tableGroupRepository) {
+        this.orderTableRepository = orderTableRepository;
+        this.tableGroupRepository = tableGroupRepository;
+        this.tableGroupService = new TableGroupService(tableGroupRepository, orderTableRepository);
+    }
 
     private OrderTable tableA;
     private OrderTable tableB;
 
     @BeforeEach
     void setUp() {
-        tableA = 빈_테이블_생성_및_저장();
-        tableB = 빈_테이블_생성_및_저장();
+        tableA = orderTableRepository.save(빈_테이블_생성());
+        tableB = orderTableRepository.save(빈_테이블_생성());
     }
 
-    @DisplayName("단체 지정 생성 테스트")
-    @Nested
-    class CreateTest {
+    @Test
+    void 단체_지정을_생성한다() {
+        // given
+        final var request = new TableGroupCreateRequest(List.of(
+                new TableGroupCreateWithTableRequest(tableA.getId()),
+                new TableGroupCreateWithTableRequest(tableB.getId()))
+        );
 
-        @Test
-        void 단체_지정을_생성한다() {
-            // given
-            final var tableGroup = new TableGroup();
-            tableGroup.setOrderTables(List.of(tableA, tableB));
+        // when
+        final var response = tableGroupService.create(request);
 
-            // when
-            final var createdGroup = tableGroupService.create(tableGroup);
+        // then
+        assertAll(
+                () -> assertThat(response.getId()).isNotNull(),
+                () -> assertThat(response.getCreatedDate()).isBefore(LocalDateTime.now()),
+                () -> assertThat(response.getOrderTables()).hasSize(2)
+        );
+    }
 
-            // then
-            assertAll(
-                    () -> assertThat(createdGroup.getId()).isNotNull(),
-                    () -> assertThat(createdGroup.getCreatedDate()).isBefore(LocalDateTime.now()),
-                    () -> assertThat(createdGroup.getOrderTables()).hasSize(2)
-            );
-        }
+    @Test
+    void 단체_지정하는_테이블의_수가_2보다_작으면_예외를_던진다() {
+        // given
+        final var request = new TableGroupCreateRequest(List.of(new TableGroupCreateWithTableRequest(tableA.getId())));
 
-        @Test
-        void 단체_지정하는_테이블의_수가_2보다_작으면_예외를_던진다() {
-            // given
-            final var tableGroup = new TableGroup();
-            tableGroup.setOrderTables(List.of(tableA));
+        // when & then
+        assertThatThrownBy(() -> tableGroupService.create(request))
+                .isInstanceOf(DomainLogicException.class)
+                .extracting("errorCode")
+                .isEqualTo(CustomError.TABLE_GROUP_MIN_TABLES_ERROR);
+    }
 
-            // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
+    @Test
+    void 단체_지정하는_테이블이_비어있지_않은_경우_예외를_던진다() {
+        // given
+        final var tableC = orderTableRepository.save(채워진_테이블_생성());
+        final var request = new TableGroupCreateRequest(List.of(
+                new TableGroupCreateWithTableRequest(tableA.getId()),
+                new TableGroupCreateWithTableRequest(tableC.getId()))
+        );
 
-        @Test
-        void 단체_지정하는_테이블이_비어있지_않은_경우_예외를_던진다() {
-            // given
-            final var tableGroup = new TableGroup();
-            tableGroup.setOrderTables(List.of(tableA, 테이블_생성_및_저장()));
+        // when & then
+        assertThatThrownBy(() -> tableGroupService.create(request))
+                .isInstanceOf(DomainLogicException.class)
+                .extracting("errorCode")
+                .isEqualTo(CustomError.TABLE_GROUP_TABLE_NOT_EMPTY_ERROR);
+    }
 
-            // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
+    @Test
+    void 단체_지정하는_테이블이_이미_단체_지정되어_있는_경우_예외를_던진다() {
+        // given
+        tableGroupRepository.save(
+                new TableGroup(List.of(tableA, tableB), LocalDateTime.now())
+        );
 
-        @Test
-        void 단체_지정하는_테이블이_이미_단체_지정되어_있는_경우_예외를_던진다() {
-            // given
-            단체_지정(tableA);
+        final var request = new TableGroupCreateRequest(List.of(
+                new TableGroupCreateWithTableRequest(tableA.getId()),
+                new TableGroupCreateWithTableRequest(tableB.getId()))
+        );
 
-            final var newTableGroup = new TableGroup();
-            newTableGroup.setOrderTables(List.of(tableA, tableB));
-
-            // when & then
-            assertThatThrownBy(() -> tableGroupService.create(newTableGroup))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
+        // when & then
+        assertThatThrownBy(() -> tableGroupService.create(request))
+                .isInstanceOf(DomainLogicException.class)
+                .extracting("errorCode")
+                .isEqualTo(CustomError.TABLE_ALREADY_GROUPED_ERROR);
     }
 
     @Test
     void 단체_지정을_삭제한다() {
         // given
-        final var tableGroupId = 단체_지정().getId();
+        final var tableGroup = tableGroupRepository.save(
+                new TableGroup(List.of(tableA, tableB), LocalDateTime.now())
+        );
 
         // when & then
-        assertDoesNotThrow(() -> tableGroupService.ungroup(tableGroupId));
+        assertDoesNotThrow(() -> tableGroupService.ungroup(tableGroup.getId()));
     }
 }

@@ -1,40 +1,128 @@
 package kitchenpos.domain;
 
-public class OrderTable {
-    private Long id;
-    private Long tableGroupId;
-    private int numberOfGuests;
-    private boolean empty;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import kitchenpos.exception.CustomError;
+import kitchenpos.exception.DomainLogicException;
 
-    public Long getId() {
-        return id;
+@Entity
+public class OrderTable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "table_group_id")
+    private TableGroup tableGroup;
+
+    @Embedded
+    private TableStatus status;
+
+    @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @JoinColumn(name = "order_table_id")
+    private List<Order> orders = new ArrayList<>();
+
+    protected OrderTable() {
     }
 
-    public void setId(final Long id) {
+    public OrderTable(final Long id) {
         this.id = id;
     }
 
-    public Long getTableGroupId() {
-        return tableGroupId;
+    public OrderTable(final TableStatus status) {
+        this(null, null, status, new ArrayList<>());
     }
 
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
+    public OrderTable(final Long id, final TableGroup tableGroup, final TableStatus status, final List<Order> orders) {
+        this.id = id;
+        this.tableGroup = tableGroup;
+        this.status = status;
+        this.orders = orders;
     }
 
-    public int getNumberOfGuests() {
-        return numberOfGuests;
+    public void changeEmpty(final boolean empty) {
+        if (isGrouped()) {
+            throw new DomainLogicException(CustomError.TABLE_ALREADY_GROUPED_ERROR);
+        }
+        status.changeEmpty(empty);
     }
 
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
+    public void changeGuestNumber(final int number) {
+        status.changeGuestNumber(number);
+    }
+
+    public void changeTableGroup(final TableGroup group) {
+        this.tableGroup = group;
+    }
+
+    public void validateAllOrderCompleted() {
+        for (Order order : orders) {
+            validateOrderCompleted(order);
+        }
+    }
+
+    private void validateOrderCompleted(final Order order) {
+        if (!order.isCompleted()) {
+            throw new DomainLogicException(CustomError.TABLE_GROUP_UNGROUP_NOT_COMPLETED_ORDER);
+        }
+    }
+
+    public void ungroup() {
+        this.tableGroup = null;
+        this.status.changeEmpty(false);
+    }
+
+    public void addOrder(final Order order) {
+        validateNotEmpty();
+        order.setTable(this);
+        this.orders.add(order);
+    }
+
+    private void validateNotEmpty() {
+        if (status.isEmpty()) {
+            throw new DomainLogicException(CustomError.ORDER_TABLE_EMPTY_ERROR);
+        }
+    }
+
+    public boolean isGrouped() {
+        return tableGroup != null;
     }
 
     public boolean isEmpty() {
-        return empty;
+        return status.isEmpty();
     }
 
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public int getGuestNumber() {
+        return this.status.getNumberOfGuests();
+    }
+
+    public TableGroup getTableGroup() {
+        return tableGroup;
+    }
+
+    public Long getTableGroupId() {
+        if (tableGroup == null) {
+            return null;
+        }
+        return tableGroup.getId();
     }
 }

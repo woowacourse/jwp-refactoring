@@ -1,40 +1,55 @@
 package kitchenpos.application;
 
-import static kitchenpos.DomainFixture.세트_메뉴;
-import static kitchenpos.DomainFixture.인기_메뉴;
+import static kitchenpos.support.DomainFixture.세트_메뉴;
+import static kitchenpos.support.DomainFixture.인기_메뉴;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import kitchenpos.dto.request.MenuGroupCreateRequest;
+import kitchenpos.repository.MenuGroupRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.jdbc.Sql;
 
-class MenuGroupServiceTest extends ServiceTest {
+@DataJpaTest
+@Sql(scripts = "classpath:truncate.sql")
+class MenuGroupServiceTest {
+
+    private final MenuGroupRepository menuGroupRepository;
+    private final MenuGroupService menuGroupService;
 
     @Autowired
-    private MenuGroupService menuGroupService;
+    public MenuGroupServiceTest(final MenuGroupRepository menuGroupRepository) {
+        this.menuGroupRepository = menuGroupRepository;
+        this.menuGroupService = new MenuGroupService(menuGroupRepository);
+    }
 
     @Test
     void 메뉴_그룹을_생성하고_결과를_반환한다() {
+        // given
+        final var request = new MenuGroupCreateRequest(인기_메뉴.getName());
+
         // when
-        final var createdMenuGroup = menuGroupService.create(인기_메뉴);
+        final var created = menuGroupService.create(request);
 
         // then
         assertAll(
-                () -> assertThat(createdMenuGroup.getId()).isNotNull(),
-                () -> assertThat(createdMenuGroup.getName()).isEqualTo(인기_메뉴.getName())
+                () -> assertThat(created.getId()).isNotNull(),
+                () -> assertThat(created.getName()).isEqualTo(인기_메뉴.getName())
         );
     }
 
     @Test
     void 메뉴_그룹_목록을_조회한다() {
         // given
-        menuGroupService.create(인기_메뉴);
-        menuGroupService.create(세트_메뉴);
+        menuGroupRepository.save(인기_메뉴);
+        menuGroupRepository.save(세트_메뉴);
 
         // when
-        final var foundMenuGroups = menuGroupService.list();
+        final var found = menuGroupService.list();
 
         // then
-        assertThat(foundMenuGroups).hasSizeGreaterThanOrEqualTo(2);
+        assertThat(found).hasSizeGreaterThanOrEqualTo(2);
     }
 }

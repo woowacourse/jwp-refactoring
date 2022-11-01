@@ -1,21 +1,32 @@
 package kitchenpos.application;
 
-import static kitchenpos.DomainFixture.뿌링클_생성;
-import static kitchenpos.DomainFixture.치즈볼_생성;
+import static kitchenpos.support.DomainFixture.뿌링클;
+import static kitchenpos.support.DomainFixture.치즈볼;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.math.BigDecimal;
+import kitchenpos.dto.request.ProductCreateRequest;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.jdbc.Sql;
 
-class ProductServiceTest extends ServiceTest {
+@DataJpaTest // (includeFilters = @Filter(type = FilterType.ANNOTATION, value = Service.class))
+@Sql(scripts = "classpath:truncate.sql")
+class ProductServiceTest {
+
+    private ProductRepository productRepository;
+    private ProductService productService;
 
     @Autowired
-    private ProductService productService;
+    public ProductServiceTest(final ProductRepository productRepository) {
+        this.productRepository = productRepository;
+        this.productService = new ProductService(productRepository);
+    }
 
     @DisplayName("상품 생성 테스트")
     @Nested
@@ -23,71 +34,44 @@ class ProductServiceTest extends ServiceTest {
 
         @Test
         void 상품을_생성하고_결과를_반환한다() {
+            // given
+            final var request = new ProductCreateRequest(
+                    뿌링클.getName(),
+                    뿌링클.getPrice().intValue()
+            );
+
             // when
-            final var createdProduct = productService.create(뿌링클_생성());
+            final var created = productService.create(request);
 
             // then
             assertAll(
-                    () -> assertThat(createdProduct.getId()).isNotNull(),
-                    () -> assertThat(createdProduct.getName()).isEqualTo(뿌링클_생성().getName()),
-                    () -> assertThat(createdProduct.getPrice()).isEqualByComparingTo(뿌링클_생성().getPrice())
+                    () -> assertThat(created.getId()).isNotNull(),
+                    () -> assertThat(created.getName()).isEqualTo(뿌링클.getName()),
+                    () -> assertThat(created.getPrice()).isEqualTo(뿌링클.getPrice())
             );
         }
 
         @Test
         void 상품_가격이_없는_경우_예외를_던진다() {
             // given
-            final var product = 뿌링클_생성();
-            product.setPrice(null);
+            final var request = new ProductCreateRequest(뿌링클.getName(), null);
 
             // when & then
-            assertThatThrownBy(() -> productService.create(product))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 상품_가격이_0보다_작은_경우_예외를_던진다() {
-            // given
-            final var product = 뿌링클_생성();
-            product.setPrice(BigDecimal.valueOf(-1));
-
-            // when & then
-            assertThatThrownBy(() -> productService.create(product))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 상품_가격은_0일_수_있다() {
-            // given
-            뿌링클_생성().setPrice(BigDecimal.valueOf(0));
-
-            // when
-            final var createdProduct = productService.create(뿌링클_생성());
-
-            // then
-            assertAll(
-                    () -> assertThat(createdProduct.getId()).isNotNull(),
-                    () -> assertThat(createdProduct.getName()).isEqualTo(뿌링클_생성().getName()),
-                    () -> assertThat(createdProduct.getPrice()).isEqualByComparingTo(뿌링클_생성().getPrice())
-            );
+            assertThatThrownBy(() -> productService.create(request))
+                    .isInstanceOf(NullPointerException.class);
         }
     }
 
-    @DisplayName("상품 목록 조회 테스트")
-    @Nested
-    class ListTest {
+    @Test
+    void 상품_목록을_조회한다() {
+        // given
+        productRepository.save(뿌링클);
+        productRepository.save(치즈볼);
 
-        @Test
-        void 상품_목록을_조회한다() {
-            // given
-            productService.create(뿌링클_생성());
-            productService.create(치즈볼_생성());
+        // when
+        final var found = productService.list();
 
-            // when
-            final var foundProducts = productService.list();
-
-            // then
-            assertThat(foundProducts).hasSizeGreaterThanOrEqualTo(2);
-        }
+        // then
+        assertThat(found).hasSize(2);
     }
 }
