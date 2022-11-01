@@ -84,7 +84,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
     @Test
     void 주문을_수정한다() {
-        Order 주문 = new Order(테이블, OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>());
+        Order 주문 = new Order(테이블, OrderStatus.COOKING.name(), LocalDateTime.now());
         주문.addOrderLineItem(new OrderLineItem(주문, 메뉴1.getId(), 1));
         주문.addOrderLineItem(new OrderLineItem(주문, 메뉴2.getId(), 1));
 

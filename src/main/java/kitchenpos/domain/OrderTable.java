@@ -42,7 +42,7 @@ public class OrderTable {
         }
     }
 
-    public OrderTable(TableGroup tableGroup,  int numberOfGuests, boolean empty) {
+    public OrderTable(TableGroup tableGroup, int numberOfGuests, boolean empty) {
         this(null, tableGroup, numberOfGuests, empty);
     }
 

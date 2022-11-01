@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.aspectj.weaver.ast.Or;
 
 @Entity
 @Table(name = "orders")
@@ -38,24 +40,31 @@ public class Order {
 
     public Order(Long id, OrderTable orderTable, String orderStatus, LocalDateTime orderedTime,
                  List<OrderLineItem> orderLineItems) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
-    }
-
-    public Order(OrderTable orderTable, String orderStatus, LocalDateTime orderedTime,
-                 List<OrderLineItem> orderLineItems) {
-        this(null, orderTable, orderStatus, orderedTime, orderLineItems);
-    }
-
-    public Order(Long id, OrderTable orderTable, String orderStatus, LocalDateTime orderedTime) {
-        this(id, orderTable, orderStatus, orderedTime, new ArrayList<>());
+        this.orderLineItems = new OrderLineItems(orderLineItems).getOrderLineItems();
     }
 
     public Order(OrderTable orderTable, String orderStatus, LocalDateTime orderedTime) {
-        this(null, orderTable, orderStatus, orderedTime, new ArrayList<>());
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        this.id = null;
+        this.orderTable = orderTable;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+        this.orderLineItems = new ArrayList<>();
+    }
+
+    public void validateStatusForChange() {
+        if (Objects.equals(OrderStatus.COMPLETION.name(), getOrderStatus())) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public void addOrderLineItem(OrderLineItem orderLineItem) {

@@ -3,12 +3,6 @@ package kitchenpos.application.dto;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
 
 public class OrderRequest {
 
@@ -20,7 +14,7 @@ public class OrderRequest {
 
     private List<OrderLineItemRequest> orderLineItems;
 
-    public OrderRequest() {
+    private OrderRequest() {
     }
 
     public OrderRequest(Long orderTableId, String orderStatus, LocalDateTime orderedTime,
