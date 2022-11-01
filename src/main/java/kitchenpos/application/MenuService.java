@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.MenuProductRequest;
@@ -63,12 +62,13 @@ public class MenuService {
     }
 
     private void validatePrice(List<MenuProductRequest.Create> requests, Menu menu) {
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProductRequest.Create menuProduct : requests) {
-            final Product product = productDao.findById(menuProduct.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.multiplyPrice(menuProduct.getQuantity()));
-        }
+        BigDecimal sum = requests.stream()
+                .map(it -> {
+                    final Product product = productDao.findById(it.getProductId())
+                            .orElseThrow(IllegalArgumentException::new);
+                    return product.multiplyPrice(it.getQuantity());
+                }).reduce(BigDecimal.ZERO, BigDecimal::add);
+
         if (menu.isBiggerPrice(sum)) {
             throw new IllegalArgumentException("[ERROR] 메뉴의 가격이 상품들의 전체 가격보다 크면 안됩니다.");
         }
