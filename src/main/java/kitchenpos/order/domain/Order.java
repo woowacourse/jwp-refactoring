@@ -60,7 +60,7 @@ public class Order {
     }
 
     public void changeOrderStatus(final OrderStatus orderStatus) {
-        if (orderStatus.isCompletion()) {
+        if (this.orderStatus.isCompletion()) {
             throw new InvalidOrderException("이미 식사가 완료되었습니다.");
         }
         this.orderStatus = orderStatus;
