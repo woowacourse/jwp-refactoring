@@ -12,12 +12,12 @@ public class MenuProductTest {
     @Test
     void calculateAmount() {
         // given
-        MenuProduct menuProduct = new MenuProduct(1L, 2, BigDecimal.valueOf(1000));
+        MenuProduct menuProduct = new MenuProduct(null, new Product("상품1", 2000L), 2);
 
         // when
         BigDecimal amount = menuProduct.getAmount();
 
         // then
-        assertThat(amount).isEqualTo(BigDecimal.valueOf(2000));
+        assertThat(amount).isEqualTo(BigDecimal.valueOf(4000));
     }
 }

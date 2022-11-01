@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +20,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.support.IntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,21 +60,22 @@ public class OrderServiceTest extends IntegrationTest {
         @Test
         void success() {
             // given
-            OrderTable orderTable = orderTableDao.save(new OrderTable(null, 2, false));
+            OrderTable orderTable = orderTableDao.save(new OrderTable(2, false));
             MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
             Product product = productDao.save(new Product("상품", 1000L));
-            MenuProduct menuProduct = new MenuProduct(null, product.getId(), 1, BigDecimal.valueOf(1000));
-            Menu menu = menuDao.save(new Menu("메뉴1", BigDecimal.valueOf(1000), menuGroup.getId(),
+            MenuProduct menuProduct = new MenuProduct(null, product, 1);
+            Menu menu = menuDao.save(new Menu("메뉴1", new Price(1000L), menuGroup,
                     List.of(menuProduct)));
             List<OrderLineItem> orderLineItems = new ArrayList<>();
-            orderLineItems.add(orderLineItemDao.save(new OrderLineItem(menu.getId(), 3)));
+            orderLineItems.add(new OrderLineItem(menu, 3));
+
             // when
             Order order = orderService.create(orderTable.getId(), orderLineItems);
 
             // then
             assertAll(
                     () -> assertThat(orderDao.findById(order.getId())).isPresent(),
-                    () -> assertThat(orderTableDao.findById(order.getOrderTableId())).isPresent(),
+                    () -> assertThat(orderTableDao.findById(order.getOrderTable().getId())).isPresent(),
                     () -> assertThat(menuDao.findById(menu.getId())).isPresent()
             );
         }
@@ -83,7 +84,7 @@ public class OrderServiceTest extends IntegrationTest {
         @Test
         void notFoundOrderLineItem_exception() {
             // given
-            OrderTable orderTable = orderTableDao.save(new OrderTable(null, 2, false));
+            OrderTable orderTable = orderTableDao.save(new OrderTable(2, false));
 
             // then
             assertThatThrownBy(() -> orderService.create(orderTable.getId(), new ArrayList<>()))
@@ -95,7 +96,7 @@ public class OrderServiceTest extends IntegrationTest {
         void notFoundOrderTable_exception() {
             // given
             ArrayList<OrderLineItem> orderLineItems = new ArrayList<>();
-            orderLineItems.add(orderLineItemDao.save(new OrderLineItem(0L, 3)));
+            orderLineItems.add(orderLineItemDao.save(new OrderLineItem(null, 3)));
 
             // then
             assertThatThrownBy(() -> orderService.create(0L, orderLineItems))
@@ -107,20 +108,20 @@ public class OrderServiceTest extends IntegrationTest {
     @Test
     void list() {
         // given
-        OrderTable orderTable = orderTableDao.save(new OrderTable(null, 2, false));
+        OrderTable orderTable = orderTableDao.save(new OrderTable(2, false));
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
-        Menu menu = menuDao.save(new Menu("메뉴1", BigDecimal.valueOf(1000), menuGroup.getId(),
-                List.of(new MenuProduct(null, 3L, 3, BigDecimal.valueOf(1000)))));
+        Product product = productDao.save(new Product("상품", 1000L));
+        Menu menu = menuDao.save(
+                new Menu("메뉴1", new Price(1000L), menuGroup, List.of(new MenuProduct(null, product, 3))));
         ArrayList<OrderLineItem> orderLineItems = new ArrayList<>();
-        orderLineItems.add(orderLineItemDao.save(new OrderLineItem(menu.getId(), 3)));
-        orderDao.save(new Order(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), orderLineItems));
-        orderDao.save(new Order(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), orderLineItems));
+        orderLineItems.add(new OrderLineItem(menu, 3));
+        orderDao.save(new Order(orderTable, OrderStatus.MEAL.name(), LocalDateTime.now(), orderLineItems));
 
         // when
         List<Order> actual = orderService.list();
 
         // then
-        assertThat(actual).hasSize(2);
+        assertThat(actual).hasSize(1);
     }
 
     @DisplayName("주문 상태를 변경한다.")
@@ -133,14 +134,14 @@ public class OrderServiceTest extends IntegrationTest {
 
         @BeforeEach
         void setUp() {
-            orderTable = orderTableDao.save(new OrderTable(null, 2, false));
+            orderTable = orderTableDao.save(new OrderTable(2, false));
             MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
             Product product = productDao.save(new Product("상품", 1000L));
-            MenuProduct menuProduct = new MenuProduct(null, product.getId(), 1, BigDecimal.valueOf(1000));
-            menu = menuDao.save(new Menu("메뉴1", BigDecimal.valueOf(1000), menuGroup.getId(),
+            MenuProduct menuProduct = new MenuProduct(null, product, 1);
+            menu = menuDao.save(new Menu("메뉴1", new Price(1000L), menuGroup,
                     List.of(menuProduct)));
             orderLineItems = new ArrayList<>();
-            orderLineItems.add(orderLineItemDao.save(new OrderLineItem(menu.getId(), 3)));
+            orderLineItems.add(new OrderLineItem(menu, 3));
         }
 
         @DisplayName("성공")
@@ -148,7 +149,7 @@ public class OrderServiceTest extends IntegrationTest {
         void success() {
             // given
             Order order = orderDao.save(
-                    new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems));
+                    new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems));
 
             // when
             Order changedOrder = orderService.changeOrderStatus(order.getId(), OrderStatus.MEAL.name());
@@ -169,8 +170,7 @@ public class OrderServiceTest extends IntegrationTest {
         @Test
         void orderStatusIsCompletion_exception() {
             // given
-            orderDao.save(new Order(orderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now(),
-                    orderLineItems));
+            orderDao.save(new Order(orderTable, OrderStatus.COMPLETION.name(), LocalDateTime.now(), orderLineItems));
 
             // when
             assertThatThrownBy(() -> orderService.changeOrderStatus(0L, OrderStatus.MEAL.name()))

@@ -25,7 +25,7 @@ public class OrderService {
     @Transactional
     public Order create(Long orderTableId, List<OrderLineItem> orderLineItems) {
         OrderTable orderTable = searchValidOrderTable(orderTableId);
-        Order order = new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
+        Order order = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
         return orderDao.save(order);
     }
 

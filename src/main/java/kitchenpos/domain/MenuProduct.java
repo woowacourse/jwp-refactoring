@@ -1,10 +1,13 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class MenuProduct {
@@ -13,76 +16,43 @@ public class MenuProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    private Long menuId;
-    private Long productId;
-    private long quantity;
+    @ManyToOne
+    @JoinColumn
+    private Menu menu;
 
-    private BigDecimal price;
+    @ManyToOne
+    @JoinColumn
+    private Product product;
+
+    private long quantity;
 
     public MenuProduct() {
     }
 
-    public MenuProduct(Long productId, long quantity) {
-        this.productId = productId;
+    public MenuProduct(Menu menu, Product product, long quantity) {
+        this.menu = menu;
+        this.product = product;
         this.quantity = quantity;
     }
 
-    public MenuProduct(Long menuId, Long productId, long quantity) {
-        this.menuId = menuId;
-        this.productId = productId;
-        this.quantity = quantity;
-    }
-
-    public MenuProduct(long menuId, long quantity, BigDecimal price) {
-        this.menuId = menuId;
-        this.quantity = quantity;
-        this.price = price;
-    }
-
-    public MenuProduct(Long menuId, Long productId, long quantity, BigDecimal price) {
-        this.menuId = menuId;
-        this.productId = productId;
-        this.quantity = quantity;
-        this.price = price;
+    public BigDecimal getAmount() {
+        return product.getPrice()
+                .multiply(BigDecimal.valueOf(quantity));
     }
 
     public Long getSeq() {
         return seq;
     }
 
-    public void setSeq(Long seq) {
-        this.seq = seq;
+    public Menu getMenu() {
+        return menu;
     }
 
-    public Long getMenuId() {
-        return menuId;
-    }
-
-    public void setMenuId(Long menuId) {
-        this.menuId = menuId;
-    }
-
-    public Long getProductId() {
-        return productId;
-    }
-
-    public void setProductId(Long productId) {
-        this.productId = productId;
+    public Product getProduct() {
+        return product;
     }
 
     public long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(long quantity) {
-        this.quantity = quantity;
-    }
-
-    public BigDecimal getAmount() {
-        return price.multiply(BigDecimal.valueOf(quantity));
-    }
-
-    public void updatePrice(BigDecimal price) {
-        this.price = price;
     }
 }

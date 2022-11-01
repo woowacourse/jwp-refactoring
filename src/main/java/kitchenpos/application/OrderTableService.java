@@ -35,7 +35,7 @@ public class OrderTableService {
     @Transactional
     public OrderTable changeEmpty(Long orderTableId) {
         OrderTable orderTable = search(orderTableId);
-        orderTableGroupDao.findById(orderTable.getTableGroupId())
+        orderTableGroupDao.findById(orderTable.getOrderTableGroup().getId())
                 .orElseThrow(IllegalArgumentException::new);
 
         validateIsCompletion(orderTable);

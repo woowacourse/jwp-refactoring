@@ -1,14 +1,14 @@
 package kitchenpos.application;
 
+import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 public class MenuGroupService {
+
     private final MenuGroupDao menuGroupDao;
 
     public MenuGroupService(MenuGroupDao menuGroupDao) {
@@ -22,5 +22,10 @@ public class MenuGroupService {
 
     public List<MenuGroup> list() {
         return menuGroupDao.findAll();
+    }
+
+    public MenuGroup search(Long menuGroupId) {
+        return menuGroupDao.findById(menuGroupId)
+                .orElseThrow(IllegalArgumentException::new);
     }
 }

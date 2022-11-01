@@ -15,14 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderTableGroupService {
+
     private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
     private final OrderTableGroupDao orderTableGroupDao;
 
-    public OrderTableGroupService(OrderDao orderDao, OrderTableDao orderTableDao,
-                                  OrderTableGroupDao orderTableGroupDao) {
+    public OrderTableGroupService(OrderDao orderDao, OrderTableGroupDao orderTableGroupDao) {
         this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
         this.orderTableGroupDao = orderTableGroupDao;
     }
 
@@ -41,22 +39,20 @@ public class OrderTableGroupService {
 
     @Transactional
     public void ungroup(Long tableGroupId) {
-        List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
-        validateUpgroupingOrderStatus(orderTables);
-
-        for (OrderTable orderTable : orderTables) {
-            orderTable.upgroup();
-            orderTableDao.save(orderTable);
-        }
+        OrderTableGroup orderTableGroup = orderTableGroupDao.findById(tableGroupId)
+                .orElseThrow(IllegalArgumentException::new);
+        validateUngroupingOrderStatus(orderTableGroup.getOrderTables());
+        orderTableGroup.ungroup();
     }
 
-    private void validateUpgroupingOrderStatus(List<OrderTable> orderTables) {
+    private void validateUngroupingOrderStatus(List<OrderTable> orderTables) {
         List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+        boolean bb = orderDao.existsByOrderTableIdInAndOrderStatusIn(
+                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()));
+        if (bb) {
             throw new IllegalArgumentException();
         }
     }

@@ -1,4 +1,4 @@
-package kitchenpos.repository;
+package kitchenpos.dao.repository;
 
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.MenuProduct;

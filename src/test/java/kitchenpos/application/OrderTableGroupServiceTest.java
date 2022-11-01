@@ -4,14 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.OrderTableGroupDao;
@@ -24,6 +22,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableGroup;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.support.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
@@ -52,9 +51,6 @@ public class OrderTableGroupServiceTest extends IntegrationTest {
     private ProductDao productDao;
 
     @Autowired
-    private MenuProductDao menuProductDao;
-
-    @Autowired
     private OrderTableGroupService orderTableGroupService;
 
     @DisplayName("단체 지정을 생성할 때")
@@ -64,21 +60,21 @@ public class OrderTableGroupServiceTest extends IntegrationTest {
         @DisplayName("성공")
         @Test
         void success() {
-            // given
-            ArrayList<OrderTable> orderTables = new ArrayList<>();
-            orderTables.add(orderTableDao.save(new OrderTable(null, 1, false)));
-            orderTables.add(orderTableDao.save(new OrderTable(null, 2, false)));
-            orderTables.add(orderTableDao.save(new OrderTable(null, 3, false)));
-
             // when
-            OrderTableGroup actual = orderTableGroupService.create(orderTables);
+            OrderTableGroup actual = orderTableGroupService.create(List.of(
+                    new OrderTable(1, false),
+                    new OrderTable(1, false),
+                    new OrderTable(1, false)
+            ));
 
             // then
             Optional<OrderTableGroup> tableGroup = orderTableGroupDao.findById(actual.getId());
+            List<OrderTable> orderTables = orderTableDao.findAllByOrderTableGroupId(
+                    tableGroup.get().getId());
             assertAll(
                     () -> assertThat(tableGroup).isPresent(),
                     () -> assertThat(tableGroup.get().getCreatedDate()).isNotNull(),
-                    () -> assertThat(tableGroup.get().getOrderTables()).allMatch(it -> !it.isEmpty())
+                    () -> assertThat(orderTables).allMatch(it -> !it.isEmpty())
             );
         }
 
@@ -87,21 +83,7 @@ public class OrderTableGroupServiceTest extends IntegrationTest {
         void numberOfOrderTablesLessThanTwo_exception() {
             // given
             ArrayList<OrderTable> orderTables = new ArrayList<>();
-            orderTables.add(orderTableDao.save(new OrderTable(null, 1, false)));
-
-            // then
-            assertThatThrownBy(() -> orderTableGroupService.create(orderTables))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @DisplayName("저장된 주문 테이블의 수와 맞지 않으면 예외를 발생시킨다.")
-        @Test
-        void notMatchNumberOfOrderTables_exception() {
-            // given
-            ArrayList<OrderTable> orderTables = new ArrayList<>();
-            orderTables.add(orderTableDao.save(new OrderTable(null, 1, false)));
-            orderTables.add(orderTableDao.save(new OrderTable(null, 2, false)));
-            orderTables.add(new OrderTable(null, 3, false));
+            orderTables.add(orderTableDao.save(new OrderTable(1, false)));
 
             // then
             assertThatThrownBy(() -> orderTableGroupService.create(orderTables))
@@ -113,8 +95,15 @@ public class OrderTableGroupServiceTest extends IntegrationTest {
         void alreadyOrderTableHasTableGroup_exception() {
             // given
             ArrayList<OrderTable> orderTables = new ArrayList<>();
-            orderTables.add(orderTableDao.save(new OrderTable(1L, 1, false)));
-            orderTables.add(orderTableDao.save(new OrderTable(null, 2, false)));
+
+            OrderTableGroup orderTableGroup = orderTableGroupDao.save(new OrderTableGroup(LocalDateTime.now(), List.of(
+                    new OrderTable(3, false), new OrderTable(2, false)
+            )));
+            OrderTable groupedOrderTable = orderTableGroup.getOrderTables().get(0);
+
+            OrderTable orderTable = orderTableDao.save(new OrderTable(1, false));
+            orderTables.add(orderTable);
+            orderTables.add(groupedOrderTable);
 
             // then
             assertThatThrownBy(() -> orderTableGroupService.create(orderTables))
@@ -130,17 +119,21 @@ public class OrderTableGroupServiceTest extends IntegrationTest {
         @Test
         void success() {
             // given
-            OrderTable orderTable1 = orderTableDao.save(new OrderTable(1L, 1, false));
-            OrderTable orderTable2 = orderTableDao.save(new OrderTable(1L, 1, false));
-            OrderTable orderTable3 = orderTableDao.save(new OrderTable(1L, 1, false));
             OrderTableGroup orderTableGroup = orderTableGroupDao.save(new OrderTableGroup(LocalDateTime.now(),
-                    List.of(orderTable1, orderTable2, orderTable3)));
+                    List.of(
+                            new OrderTable(1, false),
+                            new OrderTable(1, false),
+                            new OrderTable(1, false)
+                    ))
+            );
+            ;
 
             // when
             orderTableGroupService.ungroup(orderTableGroup.getId());
+            OrderTableGroup savedOrderTableGroup = orderTableGroupDao.findById(orderTableGroup.getId()).get();
 
             // then
-            List<OrderTable> actual = orderTableDao.findAllByTableGroupId(orderTableGroup.getId());
+            List<OrderTable> actual = orderTableDao.findAllByOrderTableGroupId(savedOrderTableGroup.getId());
             assertThat(actual).hasSize(0);
         }
 
@@ -148,22 +141,25 @@ public class OrderTableGroupServiceTest extends IntegrationTest {
         @Test
         void orderTablesStatusIsMealOrCooking_exception() {
             // given
-            OrderTable orderTable1 = orderTableDao.save(new OrderTable(1L, 1, false));
-            OrderTable orderTable2 = orderTableDao.save(new OrderTable(1L, 1, false));
-            OrderTable orderTable3 = orderTableDao.save(new OrderTable(1L, 1, false));
             OrderTableGroup orderTableGroup = orderTableGroupDao.save(new OrderTableGroup(LocalDateTime.now(),
-                    List.of(orderTable1, orderTable2, orderTable3)));
+                    List.of(
+                            new OrderTable(1, false),
+                            new OrderTable(1, false),
+                            new OrderTable(1, false)
+                    ))
+            );
+            ;
+            OrderTable orderTable1 = orderTableGroup.getOrderTables().get(0);
+            OrderTable orderTable2 = orderTableGroup.getOrderTables().get(2);
 
             MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
             Product product = productDao.save(new Product("상품", 1000L));
-            MenuProduct menuProduct = menuProductDao.save(
-                    new MenuProduct(product.getId(), 2, product.getPrice()));
-            Menu menu = menuDao.save(new Menu("메뉴", BigDecimal.valueOf(1000), menuGroup.getId(),
-                    List.of(menuProduct)));
-            orderDao.save(new Order(orderTable1.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now(),
-                    List.of(new OrderLineItem(menu.getId(), 2))));
-            orderDao.save(new Order(orderTable2.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(),
-                    List.of(new OrderLineItem(menu.getId(), 2))));
+            Menu menu = menuDao.save(new Menu("메뉴", new Price(1000L), menuGroup,
+                    List.of(new MenuProduct(null, product, 2))));
+            orderDao.save(new Order(orderTable1, OrderStatus.COMPLETION.name(),
+                    LocalDateTime.now(), List.of(new OrderLineItem(menu, 2))));
+            orderDao.save(new Order(orderTable2, OrderStatus.MEAL.name(),
+                    LocalDateTime.now(), List.of(new OrderLineItem(menu, 2))));
 
             // then
             assertThatThrownBy(() -> orderTableGroupService.ungroup(orderTableGroup.getId()))

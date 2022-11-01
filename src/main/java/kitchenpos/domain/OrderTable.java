@@ -1,10 +1,12 @@
 package kitchenpos.domain;
 
-import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class OrderTable {
@@ -12,52 +14,22 @@ public class OrderTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long tableGroupId;
+
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn
+    private OrderTableGroup orderTableGroup;
     private int numberOfGuests;
     private boolean empty;
 
     public OrderTable() {
     }
 
-    public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
-        this.id = id;
-        this.tableGroupId = tableGroupId;
-        this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
-    }
-
-    public OrderTable(Long tableGroupId, int numberOfGuests, boolean empty) {
+    public OrderTable(int numberOfGuests, boolean empty) {
         if (empty) {
             throw new IllegalArgumentException();
         }
-        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
-    }
-
-    public OrderTable(int numberOfGuests, boolean empty) {
-        this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getTableGroupId() {
-        return tableGroupId;
-    }
-
-    public void setTableGroupId(Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-    }
-
-    public int getNumberOfGuests() {
-        return numberOfGuests;
     }
 
     public void changeNumberOfGuests(int numberOfGuests) {
@@ -67,24 +39,36 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public boolean isEmpty() {
-        return empty;
+    public boolean isTableGrouping() {
+        return orderTableGroup != null;
     }
 
-    public void setEmpty(boolean empty) {
-        this.empty = empty;
+    public void ungroup() {
+        orderTableGroup = null;
+        empty = false;
+    }
+
+    public void group(OrderTableGroup orderTableGroup) {
+        this.orderTableGroup = orderTableGroup;
     }
 
     public void changeEmpty() {
-        this.empty = true;
+        empty = true;
     }
 
-    public boolean isTableGrouping() {
-        return Objects.nonNull(tableGroupId);
+    public Long getId() {
+        return id;
     }
 
-    public void upgroup() {
-        tableGroupId = null;
-        empty = false;
+    public OrderTableGroup getOrderTableGroup() {
+        return orderTableGroup;
+    }
+
+    public int getNumberOfGuests() {
+        return numberOfGuests;
+    }
+
+    public boolean isEmpty() {
+        return empty;
     }
 }

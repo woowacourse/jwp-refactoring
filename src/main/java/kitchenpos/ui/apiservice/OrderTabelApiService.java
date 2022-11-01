@@ -21,7 +21,7 @@ public class OrderTabelApiService {
     }
 
     @Transactional
-    public OrderTableResponse create(final OrderTableRequest request) {
+    public OrderTableResponse create(OrderTableRequest request) {
         OrderTable orderTable = orderTableService.create(request.getNumberOfGuests(), request.isEmpty());
         return OrderTableResponse.of(orderTable);
     }
@@ -34,7 +34,8 @@ public class OrderTabelApiService {
     }
 
     @Transactional
-    public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
+    public OrderTableResponse changeEmpty(Long orderTableId, OrderTableChangeEmptyRequest request) {
+
         OrderTable orderTable = orderTableService.changeEmpty(orderTableId);
         return OrderTableResponse.of(orderTable);
     }

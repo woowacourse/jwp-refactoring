@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +15,7 @@ public class OrderTableTest {
     @Test
     void isEmpty_exception() {
         // then
-        assertThatThrownBy(() -> new OrderTable(1L, 3, true))
+        assertThatThrownBy(() -> new OrderTable(3, true))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -21,7 +23,7 @@ public class OrderTableTest {
     @Test
     void changeEmpty() {
         // given
-        OrderTable orderTable = new OrderTable(1L, 3, false);
+        OrderTable orderTable = new OrderTable(3, false);
 
         // when
         orderTable.changeEmpty();
@@ -34,7 +36,7 @@ public class OrderTableTest {
     @Test
     void changeNumberOfGuests() {
         // given
-        OrderTable orderTable = new OrderTable(1L, 3, false);
+        OrderTable orderTable = new OrderTable(3, false);
 
         // when
         orderTable.changeNumberOfGuests(2);
@@ -47,7 +49,7 @@ public class OrderTableTest {
     @Test
     void changeNumberOfGuestsLessThanZero_exception() {
         // given
-        OrderTable orderTable = new OrderTable(1L, 3, false);
+        OrderTable orderTable = new OrderTable(3, false);
 
         // then
         assertThatThrownBy(() -> orderTable.changeNumberOfGuests(-1))
@@ -58,7 +60,11 @@ public class OrderTableTest {
     @Test
     void isTableGrouping() {
         // given
-        OrderTable orderTable = new OrderTable(1L, 3, false);
+        OrderTable orderTable = new OrderTable(3, false);
+        orderTable.group(new OrderTableGroup(LocalDateTime.now(), List.of(
+                new OrderTable(1, false),
+                new OrderTable(1, false)
+        )));
 
         // when
         boolean actual = orderTable.isTableGrouping();
@@ -71,14 +77,14 @@ public class OrderTableTest {
     @Test
     void upgroup() {
         // given
-        OrderTable orderTable = new OrderTable(1L, 3, false);
+        OrderTable orderTable = new OrderTable(3, false);
 
         // when
-        orderTable.upgroup();
+        orderTable.ungroup();
 
         // then
         assertAll(
-                () -> assertThat(orderTable.getTableGroupId()).isNull(),
+                () -> assertThat(orderTable.getOrderTableGroup()).isNull(),
                 () -> assertThat(orderTable.isEmpty()).isFalse()
         );
     }

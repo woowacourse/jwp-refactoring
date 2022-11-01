@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -13,7 +14,8 @@ public class OrderTest {
     @Test
     void notExistOrderLineItem_exception() {
         // then
-        assertThatThrownBy(() -> new Order(1L, OrderStatus.COOKING.name(), LocalDateTime.now(), List.of()))
+        assertThatThrownBy(() -> new Order(new OrderTable(2, false), OrderStatus.COOKING.name(),
+                LocalDateTime.now(), List.of()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -21,15 +23,23 @@ public class OrderTest {
     @Test
     void distinctOrderLineItem_exception() {
         // given
+        Menu 메뉴1 = new Menu("메뉴1", new Price(1000L), new MenuGroup("메뉴 그룹"), List.of(
+                new MenuProduct(null, new Product("상품", 1000L), 2)
+        ));
+        Menu 메뉴2 = new Menu("메뉴2", new Price(1000L), new MenuGroup("메뉴 그룹"), List.of(
+                new MenuProduct(null, new Product("상품", 1000L), 2)
+        ));
+
         List<OrderLineItem> orderLineItems = List.of(
-                new OrderLineItem(1L, 2),
-                new OrderLineItem(1L, 2),
-                new OrderLineItem(2L, 2)
+                new OrderLineItem(메뉴1, 2),
+                new OrderLineItem(메뉴1, 2),
+                new OrderLineItem(메뉴2, 2)
         );
 
         // then
         assertThatThrownBy(
-                () -> new Order(1L, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems)
+                () -> new Order(new OrderTable(2, false), OrderStatus.COOKING.name(),
+                        LocalDateTime.now(), orderLineItems)
         ).isInstanceOf(IllegalArgumentException.class);
     }
 }

@@ -2,6 +2,7 @@ package kitchenpos.ui.apiservice;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.application.MenuService;
 import kitchenpos.application.OrderService;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -15,16 +16,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderApiService {
 
     private final OrderService orderService;
+    private final MenuService menuService;
 
-    public OrderApiService(OrderService orderService) {
+    public OrderApiService(OrderService orderService, MenuService menuService) {
         this.orderService = orderService;
+        this.menuService = menuService;
     }
 
     @Transactional
     public OrderResponse create(final OrderRequest request) {
         List<OrderLineItem> orderLineItems = request.getOrderLineItems()
                 .stream()
-                .map(it -> new OrderLineItem(it.getMenuId(), it.getQuantity()))
+                .map(it -> new OrderLineItem(menuService.search(it.getMenuId()), it.getQuantity()))
                 .collect(Collectors.toList());
 
         Order order = orderService.create(request.getOrderTableId(), orderLineItems);

@@ -1,8 +1,11 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
+import java.util.stream.Collectors;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,9 +21,9 @@ public class OrderTableGroup {
     private Long id;
     private LocalDateTime createdDate;
 
-    @OneToMany
-    @JoinColumn
-    private List<OrderTable> orderTables;
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "order_table_group_id")
+    private List<OrderTable> orderTables = new ArrayList<>();
 
     public OrderTableGroup() {
     }
@@ -29,31 +32,21 @@ public class OrderTableGroup {
         if (orderTables.size() < 2) {
             throw new IllegalArgumentException();
         }
-        if (orderTables.stream()
-                .map(OrderTable::getId)
-                .filter(Objects::nonNull)
-                .distinct()
-                .count() != orderTables.size()) {
-            throw new IllegalArgumentException();
-        }
         this.createdDate = createdDate;
-        this.orderTables = orderTables;
+        this.orderTables.addAll(orderTables);
+        orderTables.forEach(table -> table.group(this));
+    }
+
+    public void ungroup() {
+        orderTables.forEach(OrderTable::ungroup);
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public LocalDateTime getCreatedDate() {
         return createdDate;
-    }
-
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
     }
 
     public List<OrderTable> getOrderTables() {

@@ -1,4 +1,4 @@
-package kitchenpos.repository;
+package kitchenpos.dao.repository;
 
 import java.util.List;
 import java.util.Optional;
