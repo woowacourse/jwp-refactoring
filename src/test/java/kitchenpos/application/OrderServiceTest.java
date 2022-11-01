@@ -24,13 +24,14 @@ import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.menu.ProductRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItemRepository;
+import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.ProductFixture;
-import kitchenpos.repository.OrderRepository;
 import kitchenpos.support.SpringBootNestedTest;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -43,6 +44,9 @@ class OrderServiceTest {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Autowired
     private OrderTableRepository orderTableRepository;
@@ -110,7 +114,7 @@ class OrderServiceTest {
 
             assertThatThrownBy(() -> orderService.create(orderRequest))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("존재하지 않는 메뉴가 있습니다.");
+                    .hasMessageContaining("존재하지 않는 메뉴입니다.");
         }
 
         @DisplayName("존재하지 않는 테이블일 경우 예외가 발생한다")
@@ -178,23 +182,11 @@ class OrderServiceTest {
         }
 
         private Order createOrder() {
-            Long orderTableId = orderTable.getId();
-            changeTableToNotEmpty(orderTableId);
+            Order order = orderRepository.save(new Order(orderTable, OrderStatus.COOKING));
+            OrderLineItem orderLineItem = orderLineItemRepository.save(new OrderLineItem(후라이드_양념치킨_두마리세트, 3L));
 
-            List<OrderLineItem> orderLineItems = List.of(
-                    new OrderLineItem(후라이드_양념치킨_두마리세트.getId(), 3L));
-            Order orderRequest = Order.create(orderTableId, orderLineItems);
-
-            return orderRepository.save(orderRequest);
+            order.addOrderLineItem(orderLineItem);
+            return order;
         }
-    }
-
-    void changeTableToNotEmpty(Long tableId) {
-        OrderTable orderTable = orderTableRepository.findById(tableId)
-                .orElseThrow();
-        orderTable.changeEmptyStatus(false);
-        orderTable.changeNumberOfGuests(5);
-
-        orderTableRepository.save(orderTable);
     }
 }

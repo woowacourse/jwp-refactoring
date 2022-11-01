@@ -8,9 +8,9 @@ import kitchenpos.domain.table.TableGroup;
 
 public class TableGroupResponse {
 
-    private Long id;
-    private LocalDateTime createdDate;
-    private List<OrderTableResponse> orderTables;
+    private final Long id;
+    private final LocalDateTime createdDate;
+    private final List<OrderTableResponse> orderTables;
 
     public TableGroupResponse(TableGroup tableGroup) {
         this.id = tableGroup.getId();

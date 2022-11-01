@@ -16,9 +16,8 @@ import kitchenpos.application.dto.request.ChangeNumOfTableGuestsRequest;
 import kitchenpos.application.dto.request.ChangeOrderTableEmptyRequest;
 import kitchenpos.application.dto.request.OrderTableRequest;
 import kitchenpos.application.dto.response.OrderTableResponse;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
@@ -37,7 +36,7 @@ class TableServiceTest {
     private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
     private OrderTableRepository orderTableRepository;
@@ -76,9 +75,7 @@ class TableServiceTest {
             OrderTable newOrderTable = new OrderTable(3, false);
             OrderTable orderTable = orderTableRepository.save(newOrderTable);
 
-            Order order = Order.create(orderTable.getId(), List.of());
-            order.changeStatus(OrderStatus.COMPLETION);
-            orderDao.save(order);
+            orderRepository.save(new Order(orderTable, OrderStatus.COMPLETION));
 
             OrderTableResponse actual = tableService.changeEmpty(orderTable.getId(), changeOrderTableEmptyRequest);
             assertThat(actual.isEmpty()).isTrue();
@@ -115,9 +112,7 @@ class TableServiceTest {
             OrderTable newOrderTable = new OrderTable(3, false);
             OrderTable orderTable = orderTableRepository.save(newOrderTable);
 
-            Order order = Order.create(orderTable.getId(), List.of(new OrderLineItem(1L, 3)));
-            order.changeStatus(OrderStatus.COOKING);
-            orderDao.save(order);
+            orderRepository.save(new Order(orderTable, OrderStatus.COOKING));
 
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), changeOrderTableEmptyRequest))
                     .isInstanceOf(IllegalArgumentException.class)

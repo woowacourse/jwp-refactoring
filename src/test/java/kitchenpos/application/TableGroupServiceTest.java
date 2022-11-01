@@ -17,9 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import kitchenpos.application.dto.request.OrderTableIdRequest;
 import kitchenpos.application.dto.request.TableGroupRequest;
 import kitchenpos.application.dto.response.TableGroupResponse;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
@@ -36,19 +35,19 @@ class TableGroupServiceTest {
     private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
+    OrderTable table1;
+    OrderTable table2;
     OrderTableIdRequest tableRequest1;
     OrderTableIdRequest tableRequest2;
 
     @BeforeEach
     void setUp() {
-        OrderTable newTable1 = new OrderTable(3, true);
-        OrderTable table1 = orderTableRepository.save(newTable1);
+        table1 = orderTableRepository.save(new OrderTable(3, true));
         tableRequest1 = new OrderTableIdRequest(table1.getId());
 
-        OrderTable newTable2 = new OrderTable(3, true);
-        OrderTable table2 = orderTableRepository.save(newTable2);
+        table2 = orderTableRepository.save(new OrderTable(3, true));
         tableRequest2 = new OrderTableIdRequest(table2.getId());
     }
 
@@ -123,26 +122,22 @@ class TableGroupServiceTest {
     @SpringBootNestedTest
     class Ungroup {
 
-        TableGroupResponse tableGroup;
-
-        @BeforeEach
-        void setUp() {
-            TableGroupRequest request = new TableGroupRequest(List.of(tableRequest1, tableRequest2));
-            tableGroup = tableGroupService.create(request);
-        }
-
         @DisplayName("단체 테이블을 정상적으로 분리한다")
         @Test
         void ungroup() {
+            TableGroupRequest request = new TableGroupRequest(List.of(tableRequest1, tableRequest2));
+            TableGroupResponse tableGroup = tableGroupService.create(request);
+
             assertDoesNotThrow(() -> tableGroupService.ungroup(tableGroup.getId()));
         }
 
         @DisplayName("테이블 중 주문 상태가 Cooking, Meal인 주문이 있을 경우 예외가 발생한다")
         @Test
         void throwExceptionBecauseOrderStatusIsCookingOrMeal() {
-            Order order = Order.create(tableRequest1.getId(), List.of(new OrderLineItem(1L, 3)));
-            order.changeStatus(OrderStatus.COOKING);
-            orderDao.save(order);
+            TableGroupRequest request = new TableGroupRequest(List.of(tableRequest1, tableRequest2));
+            TableGroupResponse tableGroup = tableGroupService.create(request);
+
+            orderRepository.save(new Order(table1, OrderStatus.COOKING));
 
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                     .isInstanceOf(IllegalArgumentException.class)
