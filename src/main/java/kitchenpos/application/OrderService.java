@@ -2,50 +2,32 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.application.mapper.OrderMapper;
 import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderTable;
-import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.dto.request.OrderStatusUpdateRequest;
 import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 @Service
 public class OrderService {
-    private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
 
-    public OrderService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
+    private final OrderRepository orderRepository;
+    private final OrderMapper orderMapper;
+
+    public OrderService(final OrderRepository orderRepository, final OrderMapper orderMapper) {
         this.orderRepository = orderRepository;
-        this.orderTableRepository = orderTableRepository;
+        this.orderMapper = orderMapper;
     }
 
     @Transactional
     public OrderResponse create(final OrderRequest request) {
-        OrderTable orderTable = getOrderTable(request.getOrderTableId());
-        List<OrderLineItem> orderLineItems = mapToOrderLineItems(request.getOrderLineItems());
-
-        Order savedOrder = orderRepository.save(
-                new Order(orderTable, orderLineItems)
-        );
-
+        Order order = orderMapper.from(request);
+        Order savedOrder = orderRepository.save(order);
         return new OrderResponse(savedOrder);
-    }
-
-    private OrderTable getOrderTable(final Long orderTableId) {
-        return orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-    }
-
-    private List<OrderLineItem> mapToOrderLineItems(final List<OrderLineItemRequest> orderLineItemRequests) {
-        return orderLineItemRequests.stream()
-                .map(OrderLineItemRequest::toEntity)
-                .collect(Collectors.toList());
     }
 
     public List<OrderResponse> list() {

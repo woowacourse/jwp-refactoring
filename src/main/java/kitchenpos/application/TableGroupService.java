@@ -1,13 +1,9 @@
 package kitchenpos.application;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import kitchenpos.domain.order.OrderTable;
+import kitchenpos.application.mapper.TableGroupMapper;
 import kitchenpos.domain.order.TableGroup;
 import kitchenpos.dto.request.TableGroupRequest;
-import kitchenpos.dto.request.TableGroupRequest.TableId;
 import kitchenpos.dto.response.TableGroupResponse;
-import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,29 +11,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 @Service
 public class TableGroupService {
-    private final OrderTableRepository orderTableRepository;
-    private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(final OrderTableRepository orderTableRepository,
-                             final TableGroupRepository tableGroupRepository) {
-        this.orderTableRepository = orderTableRepository;
+    private final TableGroupRepository tableGroupRepository;
+    private final TableGroupMapper tableGroupMapper;
+
+    public TableGroupService(final TableGroupRepository tableGroupRepository, final TableGroupMapper tableGroupMapper) {
         this.tableGroupRepository = tableGroupRepository;
+        this.tableGroupMapper = tableGroupMapper;
     }
 
     @Transactional
     public TableGroupResponse create(final TableGroupRequest request) {
-        List<OrderTable> savedOrderTables = request.getOrderTables()
-                .stream()
-                .map(this::getOrderTable)
-                .collect(Collectors.toList());
-
-        final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(savedOrderTables));
+        TableGroup tableGroup = tableGroupMapper.from(request);
+        TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
         return new TableGroupResponse(savedTableGroup);
-    }
-
-    private OrderTable getOrderTable(final TableId tableId) {
-        return orderTableRepository.findById(tableId.getId())
-                .orElseThrow(IllegalArgumentException::new);
     }
 
     @Transactional
