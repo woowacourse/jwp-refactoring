@@ -21,6 +21,7 @@ public class OrderTable {
     public OrderTable(final Long id, final Long tableGroupId,
                       final int numberOfGuests, final boolean empty) {
         validateEmpty();
+        validateNumberOfGuests(numberOfGuests);
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
@@ -29,6 +30,12 @@ public class OrderTable {
 
     private void validateEmpty() {
         if (isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateNumberOfGuests(final int numberOfGuests) {
+        if (numberOfGuests < 0) {
             throw new IllegalArgumentException();
         }
     }

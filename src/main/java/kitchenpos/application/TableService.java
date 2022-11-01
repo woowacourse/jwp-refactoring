@@ -57,8 +57,6 @@ public class TableService {
 
     @Transactional
     public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTableRequest orderTableRequest) {
-        validateNumberOfGuests(orderTableRequest);
-
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -72,13 +70,5 @@ public class TableService {
                 savedOrderTable.isEmpty());
 
         return orderTableDao.save(newOrderTable);
-    }
-
-    private void validateNumberOfGuests(OrderTableRequest orderTableRequest) {
-        final int numberOfGuests = orderTableRequest.getNumberOfGuests();
-
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
     }
 }
