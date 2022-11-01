@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import kitchenpos.domain.common.Price;
+import kitchenpos.domain.common.Quantity;
 
 @Entity
 @Table(name = "menu_product")
@@ -25,8 +26,8 @@ public class MenuProduct {
     private Menu menu;
     @Column(name = "product_id", nullable = false)
     private Long productId;
-    @Column(name = "quantity", nullable = false)
-    private long quantity;
+    @Embedded
+    private Quantity quantity;
     @Embedded
     private Price price;
 
@@ -34,10 +35,11 @@ public class MenuProduct {
     }
 
     public MenuProduct(final Long productId, final long quantity, final Price price) {
-        this(null, null, productId, quantity, price);
+        this(null, null, productId, new Quantity(quantity), price);
     }
 
-    public MenuProduct(final Long seq, final Menu menu, final Long productId, final long quantity, final Price price) {
+    public MenuProduct(final Long seq, final Menu menu, final Long productId, final Quantity quantity,
+                       final Price price) {
         this.seq = seq;
         this.productId = productId;
         this.quantity = quantity;
@@ -66,7 +68,7 @@ public class MenuProduct {
     }
 
     public long getQuantity() {
-        return quantity;
+        return quantity.getValue();
     }
 
     public Price getPrice() {
@@ -74,7 +76,7 @@ public class MenuProduct {
     }
 
     public Price getAmount() {
-        return price.multiply(quantity);
+        return price.multiply(quantity.getValue());
     }
 
     @Override
