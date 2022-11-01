@@ -4,6 +4,7 @@ import kitchenpos.domain.OrderTable;
 
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.domain.OrderTables;
 
 public interface OrderTableDao {
     OrderTable save(OrderTable entity);
@@ -15,4 +16,6 @@ public interface OrderTableDao {
     List<OrderTable> findAllByIdIn(List<Long> ids);
 
     List<OrderTable> findAllByTableGroupId(Long tableGroupId);
+
+    void saveAll(OrderTables orderTables);
 }

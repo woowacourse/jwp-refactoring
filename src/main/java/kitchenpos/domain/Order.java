@@ -2,13 +2,37 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.util.CollectionUtils;
 
 public class Order {
     private Long id;
     private Long orderTableId;
-    private String orderStatus;
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
+
+    public Order() {
+    }
+
+    public Order(final Long orderTableId, final OrderStatus orderStatus, final List<OrderLineItem> orderLineItems) {
+        this(null, orderTableId, orderStatus, LocalDateTime.now(), orderLineItems);
+    }
+
+    public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime,
+                 final List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException();
+        }
+        this.id = id;
+        this.orderTableId = orderTableId;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+        this.orderLineItems = orderLineItems;
+    }
+
+    public void updateOrderStatus(final String orderStatusName) {
+        this.orderStatus = orderStatus.updateTo(orderStatusName);
+    }
 
     public Long getId() {
         return id;
@@ -27,10 +51,10 @@ public class Order {
     }
 
     public String getOrderStatus() {
-        return orderStatus;
+        return orderStatus.name();
     }
 
-    public void setOrderStatus(final String orderStatus) {
+    public void setOrderStatus(final OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
 

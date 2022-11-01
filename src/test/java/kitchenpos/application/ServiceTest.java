@@ -1,13 +1,13 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.MenuFixture.createMenu;
 import static kitchenpos.fixture.MenuFixture.createMenuGroup;
 import static kitchenpos.fixture.MenuFixture.createMenuProduct;
-import static kitchenpos.fixture.OrderFixture.createOrder;
-import static kitchenpos.fixture.OrderFixture.updatedOrder;
-import static kitchenpos.fixture.ProductFixture.createProduct;
-import static kitchenpos.fixture.TableFixture.createOrderTable;
-import static kitchenpos.fixture.TableFixture.createTableGroup;
+import static kitchenpos.fixture.MenuFixture.createMenuRequest;
+import static kitchenpos.fixture.OrderFixture.createOrderRequest;
+import static kitchenpos.fixture.OrderFixture.updatedOrderStatusRequest;
+import static kitchenpos.fixture.ProductFixture.createProductRequest;
+import static kitchenpos.fixture.TableFixture.createOrderTableRequest;
+import static kitchenpos.fixture.TableFixture.createTableGroupRequest;
 
 import java.math.BigDecimal;
 import kitchenpos.dao.MenuDao;
@@ -23,6 +23,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.MenuRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -72,29 +73,30 @@ abstract class ServiceTest {
     }
 
     protected Product saveProduct(String name, BigDecimal price) {
-        return productService.create(createProduct(name, price));
+        return productService.create(createProductRequest(name, price));
     }
 
     protected Menu saveMenu(String menuName, MenuGroup menuGroup, Product product) {
-        MenuProduct menuProduct = createMenuProduct(product.getId(), 1);
-        return menuService.create(
-                createMenu(menuName, product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())),
-                        menuGroup.getId(), menuProduct));
+        MenuProduct menuProduct = createMenuProduct(product.getId(), 1, product.getPrice());
+        MenuRequest request = createMenuRequest(menuName,
+                product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())), menuGroup.getId(),
+                menuProduct);
+        return menuService.create(request);
     }
 
     protected OrderTable saveOrderTable(int numberOfGuests, boolean empty) {
-        return tableService.create(createOrderTable(numberOfGuests, empty));
+        return tableService.create(createOrderTableRequest(numberOfGuests, empty));
     }
 
     protected TableGroup saveTableGroup(OrderTable... orderTables) {
-        return tableGroupService.create(createTableGroup(orderTables));
+        return tableGroupService.create(createTableGroupRequest(orderTables));
     }
 
     protected Order saveOrder(OrderTable orderTable, Menu... menus) {
-        return orderService.create(createOrder(orderTable, menus));
+        return orderService.create(createOrderRequest(orderTable, menus));
     }
 
     protected Order updateOrder(Order order, String status) {
-        return orderService.changeOrderStatus(order.getId(), updatedOrder(status));
+        return orderService.changeOrderStatus(order.getId(), updatedOrderStatusRequest(status));
     }
 }

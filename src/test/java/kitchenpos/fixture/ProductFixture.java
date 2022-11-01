@@ -2,13 +2,11 @@ package kitchenpos.fixture;
 
 import java.math.BigDecimal;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductRequest;
 
 public class ProductFixture {
 
-    public static Product createProduct(String name, BigDecimal price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(price);
-        return product;
+    public static ProductRequest createProductRequest(String name, BigDecimal price) {
+        return new ProductRequest(name, price);
     }
 }

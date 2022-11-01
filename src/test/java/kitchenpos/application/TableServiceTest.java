@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.TableFixture.createOrderTable;
+import static kitchenpos.fixture.TableFixture.createOrderTableRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -13,6 +13,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.OrderTableRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -26,9 +27,7 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("create 메서드는 OrderTable을 생성한다.")
     void create() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(0);
-        orderTable.setEmpty(true);
+        OrderTableRequest orderTable = new OrderTableRequest(0, true);
 
         // when
         OrderTable savedOrderTable = tableService.create(orderTable);
@@ -63,7 +62,7 @@ class TableServiceTest extends ServiceTest {
 
             // when
             OrderTable updatedOrderTable = tableService.changeEmpty(orderTable.getId(),
-                    createOrderTable(0, false));
+                    createOrderTableRequest(0, false));
 
             // then
             assertThat(updatedOrderTable.isEmpty()).isFalse();
@@ -73,10 +72,10 @@ class TableServiceTest extends ServiceTest {
         @DisplayName("orderTable이 존재하지 않는 경우 예외를 던진다.")
         void orderTableId_NotExist_ExceptionThrown() {
             // given
-            OrderTable orderTable = saveOrderTable(0, true);
+            saveOrderTable(0, true);
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(9L, orderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(9L, createOrderTableRequest(2, false)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -89,7 +88,7 @@ class TableServiceTest extends ServiceTest {
             saveTableGroup(orderTable1, orderTable2);
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTable1.getId(), createOrderTable(2, false)))
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTable1.getId(), createOrderTableRequest(2, false)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -110,7 +109,7 @@ class TableServiceTest extends ServiceTest {
             updateOrder(savedOrder, orderStatus.name());
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), createOrderTable(2, false)))
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), createOrderTableRequest(2, false)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -127,7 +126,7 @@ class TableServiceTest extends ServiceTest {
 
             // when
             OrderTable updatedOrderTable = tableService.changeNumberOfGuests(orderTable.getId(),
-                    createOrderTable(4, false));
+                    createOrderTableRequest(4, false));
 
             // then
             Optional<OrderTable> actual = orderTableDao.findById(updatedOrderTable.getId());
@@ -143,14 +142,14 @@ class TableServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(
-                    () -> tableService.changeNumberOfGuests(savedOrderTable.getId(), createOrderTable(-1, true)))
+                    () -> tableService.changeNumberOfGuests(savedOrderTable.getId(), createOrderTableRequest(-1, true)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         @DisplayName("orderTable이 존재하지 않는 경우 예외를 던진다.")
         void orderTableId_NotExist_ExceptionThrown() {
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(9L, createOrderTable(0, false)))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(9L, createOrderTableRequest(0, false)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -162,7 +161,7 @@ class TableServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(
-                    () -> tableService.changeNumberOfGuests(savedOrderTable.getId(), createOrderTable(2, false)))
+                    () -> tableService.changeNumberOfGuests(savedOrderTable.getId(), createOrderTableRequest(2, false)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

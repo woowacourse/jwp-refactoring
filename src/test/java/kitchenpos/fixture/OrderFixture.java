@@ -3,13 +3,14 @@ package kitchenpos.fixture;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderRequest;
+import kitchenpos.dto.OrderStatusRequest;
 
 public class OrderFixture {
 
-    public static Order createOrder(OrderTable orderTable, Menu... menus) {
+    public static OrderRequest createOrderRequest(OrderTable orderTable, Menu... menus) {
         List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (Menu menu : menus) {
             OrderLineItem orderLineItem = new OrderLineItem();
@@ -17,16 +18,10 @@ public class OrderFixture {
             orderLineItem.setQuantity(1);
             orderLineItems.add(orderLineItem);
         }
-
-        Order order = new Order();
-        order.setOrderLineItems(orderLineItems);
-        order.setOrderTableId(orderTable.getId());
-        return order;
+        return new OrderRequest(orderTable.getId(), orderLineItems);
     }
 
-    public static Order updatedOrder(String status) {
-        Order order = new Order();
-        order.setOrderStatus(status);
-        return order;
+    public static OrderStatusRequest updatedOrderStatusRequest(String status) {
+        return new OrderStatusRequest(status);
     }
 }

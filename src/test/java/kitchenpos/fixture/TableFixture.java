@@ -2,20 +2,17 @@ package kitchenpos.fixture;
 
 import java.util.List;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.OrderTables;
+import kitchenpos.dto.OrderTableRequest;
+import kitchenpos.dto.TableGroupRequest;
 
 public class TableFixture {
 
-    public static OrderTable createOrderTable(int numberOfGuests, boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        return orderTable;
+    public static OrderTableRequest createOrderTableRequest(final int numberOfGuests, final boolean empty) {
+        return new OrderTableRequest(numberOfGuests, empty);
     }
 
-    public static TableGroup createTableGroup(OrderTable... orderTables) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(orderTables));
-        return tableGroup;
+    public static TableGroupRequest createTableGroupRequest(final OrderTable... orderTables) {
+        return new TableGroupRequest(new OrderTables(List.of(orderTables)));
     }
 }

@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.MenuFixture.createMenu;
+import static kitchenpos.fixture.MenuFixture.createMenuRequest;
 import static kitchenpos.fixture.MenuFixture.createMenuProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -12,6 +12,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -49,11 +50,11 @@ class MenuServiceTest extends ServiceTest {
             // given
             Product product = saveProduct("크림치킨", BigDecimal.valueOf(10000.00));
             MenuGroup menuGroup = saveMenuGroup("반마리치킨");
-            MenuProduct menuProduct = createMenuProduct(product.getId(), 1);
-            Menu menu = createMenu("맛있는크림치킨", BigDecimal.valueOf(10000.00), menuGroup.getId(), menuProduct);
+            MenuProduct menuProduct = createMenuProduct(product.getId(), 1, BigDecimal.valueOf(10000.00));
+            MenuRequest menuRequest = createMenuRequest("맛있는크림치킨", BigDecimal.valueOf(10000.00), menuGroup.getId(), menuProduct);
 
             // when
-            Menu savedMenu = menuService.create(menu);
+            Menu savedMenu = menuService.create(menuRequest);
 
             // then
             Optional<Menu> actual = menuDao.findById(savedMenu.getId());
@@ -68,11 +69,11 @@ class MenuServiceTest extends ServiceTest {
             // given
             Product product = saveProduct("크림치킨", BigDecimal.valueOf(10000.00));
             MenuGroup menuGroup = saveMenuGroup("반마리치킨");
-            MenuProduct menuProduct = createMenuProduct(product.getId(), 1);
-            Menu menu = createMenu("맛있는크림치킨", price, menuGroup.getId(), menuProduct);
+            MenuProduct menuProduct = createMenuProduct(product.getId(), 1, product.getPrice());
+            MenuRequest menuRequest = createMenuRequest("맛있는크림치킨", price, menuGroup.getId(), menuProduct);
 
             // when & then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(menuRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -81,11 +82,11 @@ class MenuServiceTest extends ServiceTest {
         void menuGroup_NotExist_ExceptionThrown() {
             // given
             Product product = saveProduct("크림치킨", BigDecimal.valueOf(10000.00));
-            MenuProduct menuProduct = createMenuProduct(product.getId(), 1);
-            Menu menu = createMenu("맛있는크림치킨", BigDecimal.valueOf(10000.00), 1L, menuProduct);
+            MenuProduct menuProduct = createMenuProduct(product.getId(), 1, BigDecimal.valueOf(10000.00));
+            MenuRequest menuRequest  = createMenuRequest("맛있는크림치킨", BigDecimal.valueOf(10000.00), 1L, menuProduct);
 
             // when & then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(menuRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -95,11 +96,11 @@ class MenuServiceTest extends ServiceTest {
             // given
             Product product = saveProduct("크림치킨", BigDecimal.valueOf(10000.00));
             MenuGroup menuGroup = saveMenuGroup("반마리치킨");
-            MenuProduct menuProduct = createMenuProduct(product.getId(), 2);
-            Menu menu = createMenu("맛있는크림치킨", BigDecimal.valueOf(30000.00), menuGroup.getId(), menuProduct);
+            MenuProduct menuProduct = createMenuProduct(product.getId(), 2, BigDecimal.valueOf(10000.00));
+            MenuRequest menuRequest  = createMenuRequest("맛있는크림치킨", BigDecimal.valueOf(30000.00), menuGroup.getId(), menuProduct);
 
             // when & then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(menuRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
