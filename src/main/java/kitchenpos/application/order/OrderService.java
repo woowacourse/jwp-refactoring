@@ -2,11 +2,11 @@ package kitchenpos.application.order;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.dto.order.mapper.OrderDtoMapper;
 import kitchenpos.dto.order.mapper.OrderLineItemMapper;
@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class OrderService {
 
     private final OrderMapper orderMapper;
