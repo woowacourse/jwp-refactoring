@@ -1,50 +1,125 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+@Entity
 public class OrderTable {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long tableGroupId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "table_group_id")
+    private TableGroup tableGroup;
+
     private int numberOfGuests;
+
     private boolean empty;
 
     public OrderTable() {
     }
 
-    public OrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
-        this.tableGroupId = tableGroupId;
+    public OrderTable(final int numberOfGuests) {
+        this(null, numberOfGuests, false);
+    }
+
+    public OrderTable(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
+        this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+    }
+
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        this.numberOfGuests = numberOfGuests;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public Long getTableGroupId() {
-        return tableGroupId;
-    }
-
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
+    public TableGroup getTableGroup() {
+        return tableGroup;
     }
 
     public int getNumberOfGuests() {
         return numberOfGuests;
     }
 
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
-
     public boolean isEmpty() {
         return empty;
     }
 
-    public void setEmpty(final boolean empty) {
+    public void updateEmpty(final boolean empty) {
         this.empty = empty;
+    }
+
+    public void ungroup() {
+        tableGroup = null;
+        empty = false;
+    }
+
+    public Long getTableGroupIdOrElseNull() {
+        if (tableGroup == null) {
+            return null;
+        }
+
+        return tableGroup.getId();
+    }
+
+    public void mapTableGroup(final TableGroup tableGroup) {
+        validateCanGroup();
+
+        if (this.tableGroup != null) {
+            this.tableGroup.getOrderTables().remove(this);
+        }
+        this.tableGroup = tableGroup;
+        tableGroup.getOrderTables().add(this);
+    }
+
+    private void validateCanGroup() {
+        if (!empty || Objects.nonNull(tableGroup)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void validateEmptyUpdatable() {
+        if (tableGroup != null) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void updateToUsed() {
+        empty = false;
+    }
+
+    public void validateNotEmpty() {
+        if (empty) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof OrderTable)) {
+            return false;
+        }
+        final OrderTable that = (OrderTable) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
