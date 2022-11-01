@@ -38,12 +38,6 @@ public class OrderRepository {
         return orderDao.save(new Order(orderTable.getId(), entity.getOrderLineItems()));
     }
 
-    private void validateEmptyOrderTable(final OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-    }
-
     private void validateOrderLineItems(final Order entity) {
         final List<Long> menuIds = entity.getOrderLineItems()
                 .stream()
@@ -51,6 +45,12 @@ public class OrderRepository {
                 .collect(toList());
 
         if (menuIds.size() != menuDao.countByIdIn(menuIds)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateEmptyOrderTable(final OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
     }
