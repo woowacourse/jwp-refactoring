@@ -49,8 +49,17 @@ public class Order {
     public Order(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
         validateOrderTable(orderTable);
         validateOrderLineItems(orderLineItems);
-        this.orderTable = orderTable;
+        addOrderTable(orderTable);
         addOrderLineItems(orderLineItems);
+    }
+
+    public boolean isComplete() {
+        return orderStatus.isCompletion();
+    }
+
+    private void addOrderTable(OrderTable orderTable) {
+        this.orderTable = orderTable;
+        orderTable.setOrder(this);
     }
 
     private void addOrderLineItems(List<OrderLineItem> orderLineItems) {
@@ -105,5 +114,16 @@ public class Order {
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "id=" + id +
+                ", orderTableId=" + orderTable.getId() +
+                ", orderStatus=" + orderStatus +
+                ", orderedTime=" + orderedTime +
+                ", orderLineItems=" + orderLineItems +
+                '}';
     }
 }

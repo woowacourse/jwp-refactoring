@@ -7,10 +7,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.fixture.TableGroupFactory;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 class TableServiceTest {
 
     @Autowired
-    OrderTableDao orderTableDao;
+    OrderTableRepository orderTableDao;
 
     @Autowired
     OrderRepository orderRepository;
@@ -44,7 +44,7 @@ class TableServiceTest {
 
         // then
         assertThat(savedOrderTable).isNotNull();
-        assertThat(savedOrderTable.getTableGroupId()).isNull();
+        assertThat(savedOrderTable.getTableGroup()).isNull();
     }
 
     @Test
@@ -76,7 +76,7 @@ class TableServiceTest {
         OrderTable savedOrderTable1 = orderTableDao.save(createEmptyTable());
         OrderTable savedOrderTable2 = orderTableDao.save(createEmptyTable());
         TableGroup tableGroup = TableGroupFactory.createTableGroup(List.of(savedOrderTable1, savedOrderTable2));
-        tableGroupService.create(tableGroup);
+//        tableGroupService.create(tableGroup);
 
         OrderTable orderTable = createChangeOrderTableRequest(true);
 
@@ -120,7 +120,7 @@ class TableServiceTest {
 
         // then
         assertThat(savedOrderTable.getId()).isNotNull();
-        assertThat(savedOrderTable.getTableGroupId()).isNull();
+        assertThat(savedOrderTable.getTableGroup()).isNull();
         assertThat(savedOrderTable.isEmpty()).isFalse();
         assertThat(savedOrderTable.getNumberOfGuests()).isEqualTo(NUMBER_OF_GUEST);
     }

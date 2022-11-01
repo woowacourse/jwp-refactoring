@@ -3,19 +3,19 @@ package kitchenpos.application;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
     private final OrderRepository orderRepository;
-    private final OrderTableDao orderTableDao;
+    private final OrderTableRepository orderTableDao;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableDao orderTableDao) {
+    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableDao) {
         this.orderRepository = TableService.this.orderRepository;
         this.orderTableDao = orderTableDao;
     }
@@ -34,10 +34,10 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다. orderTableId = " + orderTableId));
 
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
+        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
             throw new IllegalArgumentException(
                     String.format("단체 테이블에 속해있습니다. orderTableId = %d, tableGroupId = %d", orderTableId,
-                            savedOrderTable.getTableGroupId()));
+                            savedOrderTable.getTableGroup()));
         }
 
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
