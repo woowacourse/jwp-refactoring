@@ -10,6 +10,4 @@ public interface MenuGroupRepository {
     Optional<MenuGroup> findById(Long id);
 
     List<MenuGroup> findAll();
-
-    boolean existsById(Long id);
 }
