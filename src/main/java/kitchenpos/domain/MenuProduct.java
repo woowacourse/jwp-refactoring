@@ -77,6 +77,6 @@ public class MenuProduct {
 
     @Override
     public int hashCode() {
-        return Objects.hash(seq, menu, product, quantity);
+        return Objects.hash(seq);
     }
 }
