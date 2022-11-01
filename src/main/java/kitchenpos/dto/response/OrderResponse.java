@@ -33,6 +33,16 @@ public class OrderResponse {
                 orderLineItemResponses);
     }
 
+    public static OrderResponse from(final Order order) {
+        final List<OrderLineItemResponse> orderLineItemResponses = order.getOrderLineItems()
+                .stream()
+                .map(OrderLineItemResponse::from)
+                .collect(Collectors.toList());
+        return new OrderResponse(order.getId(), order.getOrderTable().getId(), order.getOrderStatus().name(),
+                order.getOrderedTime(),
+                orderLineItemResponses);
+    }
+
     public Long getId() {
         return id;
     }

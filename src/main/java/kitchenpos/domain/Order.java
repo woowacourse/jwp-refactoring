@@ -1,7 +1,10 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -11,7 +14,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.springframework.util.CollectionUtils;
 
 @Entity
 @Table(name = "orders")
@@ -32,25 +37,32 @@ public class Order {
     @Column(nullable = false)
     private LocalDateTime orderedTime;
 
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+
     public Order() {
     }
 
-    public Order(final OrderTable orderTable, final OrderStatus orderStatus, final LocalDateTime orderedTime) {
-        this(null, orderTable, orderStatus, orderedTime);
-    }
-
-    public Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus,
-                 final LocalDateTime orderedTime) {
+    public Order(final OrderTable orderTable, final OrderStatus orderStatus, final LocalDateTime orderedTime,
+                 final List<OrderLineItem> orderLineItems) {
         validateTableEmpty(orderTable);
-        this.id = id;
+        validateOrderLineItemsEmpty(orderLineItems);
+        orderLineItems.forEach(orderLineItem -> orderLineItem.setOrder(this));
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
+        this.orderLineItems = orderLineItems;
     }
 
     private void validateTableEmpty(OrderTable orderTable) {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException("사용 중이지 않은 테이블입니다.");
+        }
+    }
+
+    private void validateOrderLineItemsEmpty(final List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException("주문 항목이 없습니다.");
         }
     }
 
@@ -76,5 +88,9 @@ public class Order {
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
+    }
+
+    public List<OrderLineItem> getOrderLineItems() {
+        return orderLineItems;
     }
 }

@@ -13,7 +13,6 @@ import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -25,15 +24,12 @@ import org.springframework.util.CollectionUtils;
 public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(MenuRepository menuRepository, OrderRepository orderRepository,
-                        OrderLineItemRepository orderLineItemRepository,
                         OrderTableRepository orderTableRepository) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -48,18 +44,18 @@ public class OrderService {
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(() -> new IllegalArgumentException("없는 테이블에서는 주문할 수 없습니다."));
 
-        final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
+        final List<OrderLineItem> orderLineItems = toOrderLineItems(orderLineItemRequests);
+        final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
         final Order savedOrder = orderRepository.save(order);
 
-        final List<OrderLineItem> orderLineItems = saveOrderLineItems(orderLineItemRequests, savedOrder);
-        return OrderResponse.of(savedOrder, orderLineItems);
+        return OrderResponse.from(savedOrder);
     }
 
     public List<OrderResponse> findAll() {
         final List<Order> orders = orderRepository.findAll();
 
         return orders.stream()
-                .map(this::toResponse)
+                .map(OrderResponse::from)
                 .collect(Collectors.toList());
     }
 
@@ -69,28 +65,18 @@ public class OrderService {
                 .orElseThrow(IllegalArgumentException::new);
         savedOrder.changeOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
 
-        final List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(orderId);
-
-        return OrderResponse.of(savedOrder, orderLineItems);
+        return OrderResponse.from(savedOrder);
     }
 
-    private List<OrderLineItem> saveOrderLineItems(final List<OrderLineItemRequest> orderLineItemRequests,
-                                                   final Order order) {
-        final List<OrderLineItem> orderLineItems = orderLineItemRequests.stream()
-                .map(orderLineItemRequest -> toOrderLineItem(orderLineItemRequest, order))
+    private List<OrderLineItem> toOrderLineItems(final List<OrderLineItemRequest> orderLineItemRequests) {
+        return orderLineItemRequests.stream()
+                .map(this::toOrderLineItem)
                 .collect(Collectors.toList());
-        orderLineItemRepository.saveAll(orderLineItems);
-        return orderLineItems;
     }
 
-    private OrderLineItem toOrderLineItem(final OrderLineItemRequest request, final Order order) {
-        final Menu menu = menuRepository.findById(request.getMenuId())
+    private OrderLineItem toOrderLineItem(final OrderLineItemRequest orderLineItemRequest) {
+        final Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
                 .orElseThrow(() -> new IllegalArgumentException("없는 메뉴는 주문할 수 없습니다."));
-        return new OrderLineItem(order, menu, request.getQuantity());
-    }
-
-    private OrderResponse toResponse(final Order order) {
-        final List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(order.getId());
-        return OrderResponse.of(order, orderLineItems);
+        return new OrderLineItem(menu, orderLineItemRequest.getQuantity());
     }
 }
