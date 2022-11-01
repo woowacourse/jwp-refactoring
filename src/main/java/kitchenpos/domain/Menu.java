@@ -37,18 +37,6 @@ public class Menu {
     public Menu() {
     }
 
-    public Menu(final Long id, final String name, final BigDecimal price, final MenuGroup menuGroup) {
-        validatePriceNegative(price);
-        this.id = id;
-        this.name = name;
-        this.price = price;
-        this.menuGroup = menuGroup;
-    }
-
-    public Menu(final String name, final BigDecimal price, final MenuGroup menuGroup) {
-        this(null, name, price, menuGroup);
-    }
-
     public Menu(final String name, final BigDecimal price, final MenuGroup menuGroup,
                 final List<MenuProduct> menuProducts) {
         validatePriceNegative(price);
@@ -61,17 +49,6 @@ public class Menu {
     }
 
     private void validatePriceAppropriate(final BigDecimal price, final List<MenuProduct> menuProducts) {
-        BigDecimal sum = BigDecimal.ZERO;
-        for (MenuProduct menuProduct : menuProducts) {
-            sum = sum.add(menuProduct.getAmount());
-        }
-
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException("메뉴의 가격은 메뉴 상품들의 총액보다 비쌀 수 없습니다.");
-        }
-    }
-
-    public void validatePriceAppropriate(final List<MenuProduct> menuProducts) {
         BigDecimal sum = BigDecimal.ZERO;
         for (MenuProduct menuProduct : menuProducts) {
             sum = sum.add(menuProduct.getAmount());
