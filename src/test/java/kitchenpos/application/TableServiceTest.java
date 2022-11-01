@@ -100,7 +100,7 @@ class TableServiceTest {
         // given
         final OrderTable savedOrderTable = dataSupport.saveOrderTable(0, true);
         final Long orderTableId = savedOrderTable.getId();
-        dataSupport.saveOrder(orderTableId, OrderStatus.COOKING.name());
+        dataSupport.saveOrderWithoutItem(orderTableId, OrderStatus.COOKING.name());
 
         // when, then
         final OrderTableRequest request = RequestBuilder.ofFullTable();
@@ -114,7 +114,7 @@ class TableServiceTest {
         // given
         final OrderTable savedOrderTable = dataSupport.saveOrderTable(0, true);
         final Long orderTableId = savedOrderTable.getId();
-        dataSupport.saveOrder(orderTableId, OrderStatus.MEAL.name());
+        dataSupport.saveOrderWithoutItem(orderTableId, OrderStatus.MEAL.name());
 
         // when, then
         final OrderTableRequest request = RequestBuilder.ofFullTable();

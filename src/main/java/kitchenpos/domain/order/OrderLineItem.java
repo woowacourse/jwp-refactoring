@@ -24,8 +24,8 @@ public class OrderLineItem {
         this.quantity = quantity;
     }
 
-    public static OrderLineItem ofNew(final Long menuId, final long quantity) {
-        return new OrderLineItem(null, null, menuId, quantity);
+    public static OrderLineItem ofNew(final Order order, final Long menuId, final long quantity) {
+        return new OrderLineItem(null, order, menuId, quantity);
     }
 
     public void order(final Order order) {

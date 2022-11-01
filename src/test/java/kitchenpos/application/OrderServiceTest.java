@@ -38,6 +38,7 @@ class OrderServiceTest {
 
     private OrderTable savedUnEmptyTable;
     private Menu savedMenu;
+    private OrderLineItem orderLineItem;
 
     @BeforeEach
     void saveData() {
@@ -48,6 +49,7 @@ class OrderServiceTest {
         final MenuGroup savedMenuGroup = dataSupport.saveMenuGroup("추천 메뉴");
         final MenuProduct menuProduct = MenuProduct.ofNew(null, savedProduct, 1L);
         savedMenu = dataSupport.saveMenu("치킨마요", price, savedMenuGroup.getId(), menuProduct);
+        orderLineItem = OrderLineItem.ofNew(null, savedMenu.getId(), 1);
     }
 
     @DisplayName("테이블에 대해 메뉴를 주문하고 주문 상태를 조리로 변경한다.")
@@ -112,8 +114,6 @@ class OrderServiceTest {
     @Test
     void list() {
         // given
-        final OrderLineItem orderLineItem = OrderLineItem.ofNew(savedMenu.getId(), 1);
-
         final Order savedOrder1 =
                 dataSupport.saveOrder(savedUnEmptyTable.getId(), OrderStatus.COOKING.name(), orderLineItem);
         final Order savedOrder2 =
@@ -134,7 +134,7 @@ class OrderServiceTest {
     @Test
     void changeOrderStatus() {
         // given
-        final Order savedOrder = dataSupport.saveOrder(savedUnEmptyTable.getId(), OrderStatus.COOKING.name());
+        final Order savedOrder = dataSupport.saveOrder(savedUnEmptyTable.getId(), OrderStatus.COOKING.name(), orderLineItem);
         final OrderStatus status = OrderStatus.MEAL;
 
         // when
@@ -158,7 +158,7 @@ class OrderServiceTest {
     @Test
     void changeOrderStatus_throwsException_whenOrderIsComplete() {
         // given
-        final Order completeOrder = dataSupport.saveOrder(savedUnEmptyTable.getId(), OrderStatus.COMPLETION.name());
+        final Order completeOrder = dataSupport.saveOrder(savedUnEmptyTable.getId(), OrderStatus.COMPLETION.name(), orderLineItem);
 
         // when, then
         final OrderStatusRequest request = RequestBuilder.ofOrder(OrderStatus.MEAL);

@@ -5,8 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
+import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuGroupRepository;
@@ -39,9 +38,7 @@ public class DataSupport {
     @Autowired
     private OrderTableRepository orderTableRepository;
     @Autowired
-    private OrderDao orderDao;
-    @Autowired
-    private OrderLineItemDao orderLineItemDao;
+    private OrderRepository orderRepository;
 
     public Product saveProduct(final String name, final int price) {
         final Product product = Product.ofNew(name, new BigDecimal(price));
@@ -59,7 +56,7 @@ public class DataSupport {
                          final MenuProduct... menuProducts) {
         final Menu menu = Menu.ofNew(name, new BigDecimal(price), menuGroupId);
         final List<MenuProduct> mappedMenuProducts = Arrays.stream(menuProducts)
-                .map(menuProduct -> mapManuProductWithMenu(menu, menuProduct))
+                .map(menuProduct -> mapMenuToMenuProduct(menu, menuProduct))
                 .collect(Collectors.toList());
         menu.changeMenuProducts(mappedMenuProducts);
 
@@ -79,15 +76,20 @@ public class DataSupport {
         return orderTableRepository.save(orderTable);
     }
 
-    public Order saveOrder(final Long orderTableId, final String orderStatus, final OrderLineItem... orderLineItems) {
-        final Order order =
-                new Order(null, orderTableId, orderStatus, LocalDateTime.now(), Arrays.asList(orderLineItems));
-        orderDao.save(order);
+    public Order saveOrderWithoutItem(final Long orderTableId, final String orderStatus) {
+        final Order order = new Order(null, orderTableId, orderStatus, LocalDateTime.now());
 
-        for (OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.order(order);
-            orderLineItemDao.save(orderLineItem);
-        }
+        return orderRepository.save(order);
+    }
+
+    public Order saveOrder(final Long orderTableId, final String orderStatus, final OrderLineItem... orderLineItems) {
+        final Order order = new Order(null, orderTableId, orderStatus, LocalDateTime.now());
+        final List<OrderLineItem> mappedOrderLineItems = Arrays.stream(orderLineItems)
+                .map(orderLineItem -> mapOrderToOrderLineItem(order, orderLineItem))
+                .collect(Collectors.toList());
+        order.changeOrderLineItems(mappedOrderLineItems);
+
+        orderRepository.save(order);
         return order;
     }
 
@@ -97,12 +99,16 @@ public class DataSupport {
     }
 
     public Order findOrder(final Long id) {
-        return orderDao.findById(id)
+        return orderRepository.findById(id)
                 .get();
     }
 
-    private MenuProduct mapManuProductWithMenu(final Menu menu, final MenuProduct menuProduct) {
-        return new MenuProduct(null, menu, menuProduct.getProductId(), menuProduct.getQuantity(),
-                menuProduct.getPrice());
+    private MenuProduct mapMenuToMenuProduct(final Menu menu, final MenuProduct menuProduct) {
+        return new MenuProduct(
+                null, menu, menuProduct.getProductId(), menuProduct.getQuantity(), menuProduct.getPrice());
+    }
+
+    private OrderLineItem mapOrderToOrderLineItem(final Order order, final OrderLineItem orderLineItem) {
+        return new OrderLineItem(null, order, orderLineItem.getMenuId(), orderLineItem.getQuantity());
     }
 }

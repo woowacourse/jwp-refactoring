@@ -3,7 +3,7 @@ package kitchenpos.application;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.ordertable.OrderTableRepository;
@@ -20,14 +20,14 @@ public class TableGroupService {
 
     private final TableGroupRepository tableGroupRepository;
     private final OrderTableRepository orderTableRepository;
-    private final OrderDao orderDao;
+    private final OrderRepository orderRepository;
 
     public TableGroupService(final TableGroupRepository tableGroupRepository,
                              final OrderTableRepository orderTableRepository,
-                             final OrderDao orderDao) {
+                             final OrderRepository orderRepository) {
         this.tableGroupRepository = tableGroupRepository;
         this.orderTableRepository = orderTableRepository;
-        this.orderDao = orderDao;
+        this.orderRepository = orderRepository;
     }
 
     @Transactional
@@ -49,7 +49,7 @@ public class TableGroupService {
                 .orElseThrow(IllegalArgumentException::new);
 
         final List<Long> orderTableIds = tableGroup.getOrderTableIds();
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
+        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }

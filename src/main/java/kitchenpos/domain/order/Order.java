@@ -3,6 +3,7 @@ package kitchenpos.domain.order;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -23,30 +24,29 @@ public class Order {
     private Long orderTableId;
     private String orderStatus;
     private LocalDateTime orderedTime;
-    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private List<OrderLineItem> orderLineItems;
 
     public Order(final Long id,
                  final Long orderTableId,
                  final String orderStatus,
-                 final LocalDateTime orderedTime,
-                 final List<OrderLineItem> orderLineItems) {
+                 final LocalDateTime orderedTime) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
     }
 
-    public static Order ofNew(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
-        checkItems(orderLineItems);
+    public static Order ofNew(final OrderTable orderTable) {
         checkTable(orderTable);
         final Order order =
-                new Order(null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.order(order);
-        }
+                new Order(null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
         return order;
+    }
+
+    public void changeOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        checkItemsNotEmpty(orderLineItems);
+        this.orderLineItems = orderLineItems;
     }
 
     public void changeStatus(OrderStatus orderStatus) {
@@ -56,7 +56,7 @@ public class Order {
         this.orderStatus = orderStatus.name();
     }
 
-    private static void checkItems(final List<OrderLineItem> orderLineItems) {
+    private void checkItemsNotEmpty(final List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException();
         }

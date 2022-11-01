@@ -113,7 +113,7 @@ class TableGroupServiceTest {
         // given
         final TableGroup savedTableGroup = dataSupport.saveTableGroup();
         final OrderTable groupedTable = savedTableGroup.getOrderTables().get(0);
-        dataSupport.saveOrder(groupedTable.getId(), OrderStatus.COOKING.name());
+        dataSupport.saveOrderWithoutItem(groupedTable.getId(), OrderStatus.COOKING.name());
 
         // when, then
         assertThatExceptionOfType(IllegalArgumentException.class)
@@ -126,7 +126,7 @@ class TableGroupServiceTest {
         // given
         final TableGroup savedTableGroup = dataSupport.saveTableGroup();
         final OrderTable groupedTable = savedTableGroup.getOrderTables().get(0);
-        dataSupport.saveOrder(groupedTable.getId(), OrderStatus.MEAL.name());
+        dataSupport.saveOrderWithoutItem(groupedTable.getId(), OrderStatus.MEAL.name());
 
         // when, then
         assertThatExceptionOfType(IllegalArgumentException.class)

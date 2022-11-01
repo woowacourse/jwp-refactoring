@@ -1,11 +1,10 @@
-package kitchenpos.dao;
+package kitchenpos.domain.order;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.order.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface OrderDao extends JpaRepository<Order, Long> {
+public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Order save(Order entity);
 
