@@ -35,8 +35,12 @@ public class Order {
     public Order() {
     }
 
-    public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
-                 OrderLineItems orderLineItems) {
+    public Order(Long id,
+                 Long orderTableId,
+                 OrderStatus orderStatus,
+                 LocalDateTime orderedTime,
+                 OrderLineItems orderLineItems
+    ) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;

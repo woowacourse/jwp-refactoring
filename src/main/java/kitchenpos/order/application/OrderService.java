@@ -26,10 +26,13 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(OrderCommand orderCommand) {
-        OrderLineItems orderLineItems = new OrderLineItems(orderCommand.toEntity());
-
         return OrderResponse.from(orderRepository.save(
-                Order.startCooking(orderCommand.getOrderTableId(), orderLineItems, orderValidator)));
+                        Order.startCooking(
+                                orderCommand.getOrderTableId(),
+                                new OrderLineItems(orderCommand.toEntity()),
+                                orderValidator)
+                )
+        );
     }
 
     public List<OrderResponse> list() {
