@@ -16,8 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.application.dto.request.MenuRequest;
 import kitchenpos.application.dto.response.MenuResponse;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
 import kitchenpos.fixture.MenuGroupFixture;
@@ -33,7 +33,7 @@ class MenuServiceTest {
     private MenuService menuService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private ProductRepository productRepository;
@@ -44,7 +44,7 @@ class MenuServiceTest {
 
     @BeforeEach
     void setUp() {
-        두마리메뉴 = menuGroupDao.save(MenuGroupFixture.두마리메뉴.toMenuGroup());
+        두마리메뉴 = menuGroupRepository.save(MenuGroupFixture.두마리메뉴.toMenuGroup());
 
         후라이드 = productRepository.save(ProductFixture.후라이드.toProduct());
         양념치킨 = productRepository.save(ProductFixture.양념치킨.toProduct());

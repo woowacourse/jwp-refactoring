@@ -9,8 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.application.dto.request.MenuRequest;
 import kitchenpos.application.dto.response.MenuResponse;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
@@ -21,12 +21,13 @@ import kitchenpos.repository.MenuRepository;
 public class MenuService {
 
     private final MenuRepository menuRepository;
-    private final MenuGroupDao menuGroupDao;
+    private final MenuGroupRepository menuGroupRepository;
     private final ProductRepository productRepository;
 
-    public MenuService(MenuRepository menuRepository, MenuGroupDao menuGroupDao, ProductRepository productRepository) {
+    public MenuService(MenuRepository menuRepository, MenuGroupRepository menuGroupRepository,
+                       ProductRepository productRepository) {
         this.menuRepository = menuRepository;
-        this.menuGroupDao = menuGroupDao;
+        this.menuGroupRepository = menuGroupRepository;
         this.productRepository = productRepository;
     }
 
@@ -39,7 +40,7 @@ public class MenuService {
     }
 
     private void validateIsExistMenuGroup(Menu menu) {
-        if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
+        if (!menuGroupRepository.existsById(menu.getMenuGroupId())) {
             throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다.");
         }
     }

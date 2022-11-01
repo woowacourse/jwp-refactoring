@@ -17,10 +17,10 @@ import kitchenpos.application.dto.request.OrderRequest;
 import kitchenpos.application.dto.request.OrderStatusUpdateRequest;
 import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -48,7 +48,7 @@ class OrderServiceTest {
     private OrderTableDao orderTableDao;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private ProductRepository productRepository;
@@ -64,7 +64,7 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        두마리메뉴 = menuGroupDao.save(MenuGroupFixture.두마리메뉴.toMenuGroup());
+        두마리메뉴 = menuGroupRepository.save(MenuGroupFixture.두마리메뉴.toMenuGroup());
 
         후라이드 = productRepository.save(ProductFixture.후라이드.toProduct());
         양념치킨 = productRepository.save(ProductFixture.양념치킨.toProduct());
