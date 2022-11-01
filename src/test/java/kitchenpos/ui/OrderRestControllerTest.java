@@ -26,14 +26,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(OrderRestController.class)
-public class OrderRestControllerTest extends ControllerTest {
+class OrderRestControllerTest extends ControllerTest {
 
     @MockBean
     private OrderService orderService;
 
     @DisplayName("주문을 생성한다.")
     @Test
-    public void create() throws Exception {
+    void create() throws Exception {
         // given
         OrderCreateRequest request = new OrderCreateRequest(1L, Arrays.asList(new OrderLineItemDto(1L, 2)));
         given(orderService.create(any())).willReturn(OrderCreateResponse.of(Order.builder()
@@ -56,7 +56,7 @@ public class OrderRestControllerTest extends ControllerTest {
 
     @DisplayName("주문을 생성할 때 주문항목이 비어있으면 에러를 반환한다.")
     @Test
-    public void create_fail_if_orderLineItems_is_empty() throws Exception {
+    void create_fail_if_orderLineItems_is_empty() throws Exception {
         // given
         OrderCreateRequest request = new OrderCreateRequest(1L, new ArrayList<>());
         given(orderService.create(any())).willReturn(OrderCreateResponse.of(Order.builder()
@@ -79,7 +79,7 @@ public class OrderRestControllerTest extends ControllerTest {
 
     @DisplayName("주문을 조회한다.")
     @Test
-    public void list() throws Exception {
+    void list() throws Exception {
         // when
         ResultActions perform = mockMvc.perform(get("/api/orders")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -92,7 +92,7 @@ public class OrderRestControllerTest extends ControllerTest {
 
     @DisplayName("주문 상태를 변경한다.")
     @Test
-    public void changeOrderStatus() throws Exception {
+    void changeOrderStatus() throws Exception {
         // given
         OrderStatusChangeRequest request = new OrderStatusChangeRequest(OrderStatus.MEAL.name());
 

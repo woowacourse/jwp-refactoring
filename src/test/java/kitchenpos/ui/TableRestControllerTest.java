@@ -20,14 +20,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(TableRestController.class)
-public class TableRestControllerTest extends ControllerTest {
+class TableRestControllerTest extends ControllerTest {
 
     @MockBean
     private TableService tableService;
 
     @DisplayName("테이블을 생성한다.")
     @Test
-    public void create() throws Exception {
+    void create() throws Exception {
         // given
         OrderTable orderTable = createOrderTable(0, true);
         given(tableService.create(any())).willReturn(TableCreateResponse.from(createOrderTable(1L)));
@@ -45,7 +45,7 @@ public class TableRestControllerTest extends ControllerTest {
 
     @DisplayName("테이블을 조회한다.")
     @Test
-    public void list() throws Exception {
+    void list() throws Exception {
         // when
         ResultActions perform = mockMvc.perform(get("/api/tables")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -58,7 +58,7 @@ public class TableRestControllerTest extends ControllerTest {
 
     @DisplayName("빈 테이블로 변경한다.")
     @Test
-    public void changeEmpty() throws Exception {
+    void changeEmpty() throws Exception {
         // given
         OrderTable orderTable = createOrderTable(true);
 
@@ -75,7 +75,7 @@ public class TableRestControllerTest extends ControllerTest {
 
     @DisplayName("테이블 인원 수를 변경한다.")
     @Test
-    public void changeNumberOfGuests() throws Exception {
+    void changeNumberOfGuests() throws Exception {
         // given
         OrderTable orderTable = createOrderTable(4);
 

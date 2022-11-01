@@ -1,9 +1,13 @@
 package kitchenpos.ui.dto.request;
 
 import java.util.List;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 public class TableGroupCreateRequest {
 
+    @NotEmpty
+    @Size(min = 2)
     private List<TableCreateDto> orderTables;
 
     public TableGroupCreateRequest() {

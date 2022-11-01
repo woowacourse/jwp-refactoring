@@ -22,14 +22,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(MenuRestController.class)
-public class MenuRestControllerTest extends ControllerTest {
+class MenuRestControllerTest extends ControllerTest {
 
     @MockBean
     private MenuService menuService;
 
     @DisplayName("메뉴를 생성한다.")
     @Test
-    public void create() throws Exception {
+    void create() throws Exception {
         // given
         MenuCreateRequest request = new MenuCreateRequest("후라이드+후라이드", BigDecimal.valueOf(20_000L), 1L,
                 Collections.singletonList(new MenuProductCreateRequest(1L, 2)));
@@ -52,7 +52,7 @@ public class MenuRestControllerTest extends ControllerTest {
 
     @DisplayName("메뉴를 조회한다.")
     @Test
-    public void list() throws Exception {
+    void list() throws Exception {
         // when
         ResultActions perform = mockMvc.perform(get("/api/menus")
                         .contentType(MediaType.APPLICATION_JSON)

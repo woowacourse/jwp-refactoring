@@ -20,14 +20,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(ProductRestController.class)
-public class ProductRestControllerTest extends ControllerTest {
+class ProductRestControllerTest extends ControllerTest {
 
     @MockBean
     private ProductService productService;
 
     @DisplayName("상품을 생성한다.")
     @Test
-    public void create() throws Exception {
+    void create() throws Exception {
         // given
         Product product = createProduct("강정치킨", 17_000L);
         given(productService.create(any())).willReturn(
@@ -51,7 +51,7 @@ public class ProductRestControllerTest extends ControllerTest {
 
     @DisplayName("상품을 조회한다.")
     @Test
-    public void list() throws Exception {
+    void list() throws Exception {
         // when
         ResultActions perform = mockMvc.perform(get("/api/products")
                         .contentType(MediaType.APPLICATION_JSON)
