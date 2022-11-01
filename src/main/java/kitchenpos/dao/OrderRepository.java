@@ -27,7 +27,7 @@ public class OrderRepository implements OrderDao {
 
         List<OrderLineItem> orderLineItems = saveOrderLineItems(entity, savedOrder);
 
-        savedOrder.setOrderLineItems(orderLineItems);
+        savedOrder.changeOrderLineItems(orderLineItems);
         return savedOrder;
     }
 
@@ -57,7 +57,7 @@ public class OrderRepository implements OrderDao {
         List<Order> orders = jdbcTemplateOrderDao.findAll();
 
         for (final Order order : orders) {
-            order.setOrderLineItems(ordersOrderLineItemDao.findAllByOrderId(order.getId()));
+            order.changeOrderLineItems(ordersOrderLineItemDao.findAllByOrderId(order.getId()));
         }
 
         return orders;

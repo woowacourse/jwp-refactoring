@@ -64,7 +64,8 @@ public class OrderService {
     }
 
     public List<OrderResponse> list() {
-        return orderDao.findAll().stream()
+        return orderDao.findAll()
+                .stream()
                 .map(OrderResponse::new)
                 .collect(Collectors.toList());
     }
@@ -80,7 +81,7 @@ public class OrderService {
 
         savedOrder.changeOrderStatus(orderStatus);
 
-        savedOrder.setOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
+        savedOrder.changeOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
         return new OrderResponse(orderDao.save(savedOrder));
     }
 }

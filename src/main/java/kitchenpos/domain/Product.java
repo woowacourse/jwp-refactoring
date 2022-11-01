@@ -3,7 +3,7 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 
 public class Product {
-    private Long id;
+    private final Long id;
     private final String name;
     private final Price price;
 
@@ -14,8 +14,7 @@ public class Product {
     }
 
     public Product(String name, BigDecimal price) {
-        this.name = name;
-        this.price = new Price(price);
+        this(null, name, price);
     }
 
     public Long getId() {

@@ -30,7 +30,8 @@ public class TableService {
     }
 
     public List<OrderTableResponse> list() {
-        return orderTableDao.findAll().stream()
+        return orderTableDao.findAll()
+                .stream()
                 .map(OrderTableResponse::new)
                 .collect(Collectors.toList());
     }

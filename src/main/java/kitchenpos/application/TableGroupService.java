@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,7 +36,7 @@ public class TableGroupService {
             throw new IllegalArgumentException("주문 테이블의 수가 맞지 않습니다.");
         }
 
-        TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(savedTables));
+        TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), savedTables));
 
         return new TableGroupResponse(savedTableGroup);
     }

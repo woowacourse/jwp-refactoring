@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Menu {
-    private final Long id;
     private final String name;
     private final BigDecimal price;
     private final Long menuGroupId;
+    private Long id;
     private List<MenuProduct> menuProducts;
 
     private Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
@@ -24,8 +24,11 @@ public class Menu {
     }
 
     public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        this(null, name, price, menuGroupId, menuProducts);
         validatePrice(menuProducts, price);
+        this.name = name;
+        this.price = price;
+        this.menuGroupId = menuGroupId;
+        this.menuProducts = menuProducts;
     }
 
     private void validatePrice(List<MenuProduct> menuProducts, BigDecimal price) {

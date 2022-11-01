@@ -10,7 +10,7 @@ public class TableGroup {
 
     public TableGroup(Long id, LocalDateTime createdDate, OrderTables orderTables) {
         this.id = id;
-        this.createdDate = LocalDateTime.now();
+        this.createdDate = createdDate;
         this.orderTables = orderTables;
     }
 
@@ -18,8 +18,8 @@ public class TableGroup {
         this(id, createdDate, null);
     }
 
-    public TableGroup(List<OrderTable> orderTables) {
-        this(null, null, new OrderTables(orderTables));
+    public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
+        this(null, createdDate, new OrderTables(orderTables));
     }
 
     public Long getId() {

@@ -64,7 +64,7 @@ public class Order {
         return orderLineItems;
     }
 
-    public void setOrderLineItems(List<OrderLineItem> orderLineItems) {
+    public void changeOrderLineItems(List<OrderLineItem> orderLineItems) {
         this.orderLineItems = orderLineItems;
     }
 }

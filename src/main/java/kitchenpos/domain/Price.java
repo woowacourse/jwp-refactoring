@@ -5,7 +5,7 @@ import java.util.Objects;
 
 public class Price {
 
-    private BigDecimal value;
+    private final BigDecimal value;
 
     public Price(BigDecimal price) {
         validateNull(price);
@@ -23,9 +23,6 @@ public class Price {
         if (price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("price가 음수입니다.");
         }
-    }
-
-    private Price() {
     }
 
     public BigDecimal getValue() {

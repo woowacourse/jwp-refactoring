@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,6 @@ class TableGroupTest {
 
     @Test
     void 테이블_집합_생성() {
-        Assertions.assertDoesNotThrow(() -> new TableGroup(orderTables));
+        Assertions.assertDoesNotThrow(() -> new TableGroup(LocalDateTime.now(), orderTables));
     }
 }

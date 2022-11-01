@@ -1,6 +1,7 @@
 package kitchenpos;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -48,6 +49,6 @@ public class Fixture {
     }
 
     public static TableGroup 테이블집합(OrderTable... orderTables) {
-        return new TableGroup(List.of(orderTables));
+        return new TableGroup(LocalDateTime.now(), List.of(orderTables));
     }
 }

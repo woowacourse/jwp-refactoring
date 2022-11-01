@@ -24,7 +24,8 @@ public class MenuGroupService {
     }
 
     public List<MenuGroupResponse> list() {
-        return menuGroupDao.findAll().stream()
+        return menuGroupDao.findAll()
+                .stream()
                 .map(MenuGroupResponse::new)
                 .collect(Collectors.toList());
     }
