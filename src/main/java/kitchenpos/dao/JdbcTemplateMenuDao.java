@@ -1,13 +1,13 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.Menu;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
@@ -15,7 +15,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
-@Component
+@Repository
 public class JdbcTemplateMenuDao implements MenuDao {
     private static final String TABLE_NAME = "menu";
     private static final String KEY_COLUMN_NAME = "id";
@@ -69,11 +69,11 @@ public class JdbcTemplateMenuDao implements MenuDao {
     }
 
     private Menu toEntity(final ResultSet resultSet) throws SQLException {
-        return new Menu(
-            resultSet.getLong("id"),
-            resultSet.getString("name"),
-            resultSet.getBigDecimal("price"),
-            resultSet.getLong("menu_group_id")
-        );
+        final Menu entity = new Menu();
+        entity.setId(resultSet.getLong("id"));
+        entity.setName(resultSet.getString("name"));
+        entity.setPrice(resultSet.getBigDecimal("price"));
+        entity.setMenuGroupId(resultSet.getLong("menu_group_id"));
+        return entity;
     }
 }

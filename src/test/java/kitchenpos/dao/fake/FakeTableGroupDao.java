@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.table.TableGroup;
+import kitchenpos.domain.TableGroup;
 
 public class FakeTableGroupDao implements TableGroupDao {
 
@@ -15,9 +15,10 @@ public class FakeTableGroupDao implements TableGroupDao {
 
     @Override
     public TableGroup save(TableGroup entity) {
-        final TableGroup savedTableGroup = new TableGroup(++id, entity.getCreatedDate());
-        tableGroups.put(savedTableGroup.getId(), savedTableGroup);
-        return savedTableGroup;
+        long savedId = ++id;
+        tableGroups.put(savedId, entity);
+        entity.setId(savedId);
+        return entity;
     }
 
     @Override

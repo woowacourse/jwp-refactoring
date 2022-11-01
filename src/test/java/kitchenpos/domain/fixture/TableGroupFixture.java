@@ -3,8 +3,8 @@ package kitchenpos.domain.fixture;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.TableGroup;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class TableGroupFixture {
@@ -25,7 +25,6 @@ public class TableGroupFixture {
     public static TableGroup 테이블_그룹의_주문_테이블들은(final List<OrderTable> orderTables) {
         return 테이블_그룹()
             .주문_테이블들(orderTables)
-            .그룹화한_시간(LocalDateTime.now())
             .build();
     }
 
@@ -44,9 +43,10 @@ public class TableGroupFixture {
     }
 
     private TableGroup build() {
-        if (orderTables == null) {
-            return new TableGroup(id, createdDate);
-        }
-        return new TableGroup(id, createdDate, orderTables);
+        final TableGroup tableGroup = new TableGroup();
+        tableGroup.setId(id);
+        tableGroup.setCreatedDate(createdDate);
+        tableGroup.setOrderTables(orderTables);
+        return tableGroup;
     }
 }

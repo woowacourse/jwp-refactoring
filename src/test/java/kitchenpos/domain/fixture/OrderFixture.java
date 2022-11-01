@@ -3,27 +3,30 @@ package kitchenpos.domain.fixture;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class OrderFixture {
 
     private Long id;
     private Long orderTableId;
-    private OrderStatus orderStatus;
+    private String orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
 
     private OrderFixture() {
     }
 
+    public static Order 주문_1번() {
+        return 주문().build();
+    }
+
     public static Order 주문_1번의_주문_항목들은(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
         return 주문()
             .주문_테이블_아이디(orderTableId)
             .주문_항목들(orderLineItems)
-            .주문_상태(OrderStatus.COOKING)
             .build();
     }
 
@@ -31,7 +34,7 @@ public class OrderFixture {
         return 주문()
             .주문_테이블_아이디(orderTableId)
             .주문한_시간(LocalDateTime.now())
-            .주문_상태(OrderStatus.COOKING)
+            .주문_상태(OrderStatus.COOKING.name())
             .build();
     }
 
@@ -39,7 +42,7 @@ public class OrderFixture {
         return 주문()
             .주문_테이블_아이디(orderTableId)
             .주문한_시간(LocalDateTime.now())
-            .주문_상태(OrderStatus.COMPLETION)
+            .주문_상태(OrderStatus.COMPLETION.name())
             .build();
     }
 
@@ -52,7 +55,7 @@ public class OrderFixture {
         return this;
     }
 
-    private OrderFixture 주문_상태(final OrderStatus orderStatus) {
+    private OrderFixture 주문_상태(final String orderStatus) {
         this.orderStatus = orderStatus;
         return this;
     }
@@ -68,9 +71,12 @@ public class OrderFixture {
     }
 
     private Order build() {
-        if (orderLineItems == null) {
-            return new Order(id, orderTableId, orderStatus, orderedTime);
-        }
-        return new Order(id, orderTableId, orderStatus, orderedTime, orderLineItems);
+        final Order order = new Order();
+        order.setId(id);
+        order.setOrderTableId(orderTableId);
+        order.setOrderStatus(orderStatus);
+        order.setOrderedTime(orderedTime);
+        order.setOrderLineItems(orderLineItems);
+        return order;
     }
 }

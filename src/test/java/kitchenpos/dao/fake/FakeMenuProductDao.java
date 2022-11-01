@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.MenuProduct;
 
 public class FakeMenuProductDao implements MenuProductDao {
 
@@ -16,11 +16,10 @@ public class FakeMenuProductDao implements MenuProductDao {
 
     @Override
     public MenuProduct save(final MenuProduct entity) {
-        final MenuProduct savedMenuProduct = new MenuProduct(
-            ++id, entity.getMenuId(), entity.getProductId(), entity.getQuantity()
-        );
-        menuProducts.put(savedMenuProduct.getSeq(), savedMenuProduct);
-        return savedMenuProduct;
+        long savedId = ++id;
+        menuProducts.put(savedId, entity);
+        entity.setSeq(savedId);
+        return entity;
     }
 
     @Override

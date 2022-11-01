@@ -1,8 +1,11 @@
 package kitchenpos.application;
 
+import static kitchenpos.domain.fixture.MenuFixture.후라이드_치킨_세트;
 import static kitchenpos.domain.fixture.MenuFixture.후라이드_치킨_세트의_가격과_메뉴_상품_리스트는;
+import static kitchenpos.domain.fixture.MenuFixture.후라이드_치킨_세트의_가격은;
+import static kitchenpos.domain.fixture.MenuFixture.후라이드_치킨_세트의_메뉴_상품들은;
 import static kitchenpos.domain.fixture.MenuGroupFixture.치킨_세트;
-import static kitchenpos.domain.fixture.MenuProductFixture.가격_정보가_있는_상품_하나;
+import static kitchenpos.domain.fixture.MenuProductFixture.상품_하나;
 import static kitchenpos.domain.fixture.ProductFixture.후라이드_치킨;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -14,31 +17,26 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import kitchenpos.application.dto.request.MenuProductRequest;
-import kitchenpos.application.dto.request.MenuRequest;
-import kitchenpos.application.dto.response.MenuResponse;
+import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.fake.FakeMenuDao;
 import kitchenpos.dao.fake.FakeMenuGroupDao;
 import kitchenpos.dao.fake.FakeMenuProductDao;
 import kitchenpos.dao.fake.FakeProductDao;
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import kitchenpos.repository.MenuRepository;
+import kitchenpos.domain.fixture.MenuFixture;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayName("Menu 서비스 테스트")
 class MenuServiceTest {
 
-    private static final String MENU_NAME = "후라이드 치킨 세트";
-    private static final BigDecimal PRICE = BigDecimal.valueOf(15_000);
-    private static final int MENU_PRODUCT_QUANTITY = 1;
-
     private MenuService menuService;
-    private MenuRepository menuRepository;
+
+    private MenuDao menuDao;
 
     private MenuGroup 저장된_치킨_세트;
     private Product 저장된_후라이드_치킨;
@@ -48,8 +46,8 @@ class MenuServiceTest {
         final MenuGroupDao menuGroupDao = new FakeMenuGroupDao();
         final ProductDao productDao = new FakeProductDao();
 
-        menuRepository = new MenuRepository(new FakeMenuDao(), new FakeMenuProductDao());
-        menuService = new MenuService(menuRepository, menuGroupDao, productDao);
+        menuDao = new FakeMenuDao();
+        menuService = new MenuService(menuDao, menuGroupDao, new FakeMenuProductDao(), productDao);
 
         저장된_후라이드_치킨 = productDao.save(후라이드_치킨());
         저장된_치킨_세트 = menuGroupDao.save(치킨_세트());
@@ -58,38 +56,63 @@ class MenuServiceTest {
     @DisplayName("메뉴를 등록한다")
     @Test
     void create() {
-        final MenuProductRequest menuProductRequest = new MenuProductRequest(저장된_후라이드_치킨.getId(), MENU_PRODUCT_QUANTITY);
-        final MenuRequest request = new MenuRequest(MENU_NAME, PRICE, 저장된_치킨_세트.getId(), List.of(menuProductRequest));
+        final MenuProduct menuProduct = 상품_하나(저장된_후라이드_치킨.getId());
+        final Menu menu = 후라이드_치킨_세트의_메뉴_상품들은(저장된_치킨_세트.getId(), List.of(menuProduct));
 
-        final MenuResponse response = menuService.create(request);
+        final Menu savedMenu = menuService.create(menu);
 
-        assertThat(response.getId()).isNotNull();
+        assertThat(savedMenu.getId()).isNotNull();
+    }
+
+    @DisplayName("메뉴 등록 시 메뉴의 가격은 null 이 아니어야 한다")
+    @Test
+    void createMenuPriceIsNull() {
+        final Menu menu = 후라이드_치킨_세트의_가격은(저장된_치킨_세트.getId(), null);
+
+        assertThatThrownBy(() -> menuService.create(menu))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("메뉴 등록 시 메뉴의 가격은 0원 이상이어야 한다")
+    @Test
+    void createMenuPriceIsLowerZero() {
+        final Menu menu = 후라이드_치킨_세트의_가격은(저장된_치킨_세트.getId(), new BigDecimal(-1));
+
+        assertThatThrownBy(() -> menuService.create(menu))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("메뉴 등록 시 메뉴 그룹의 아이디가 존재해야 한다")
     @Test
     void createMenuGroupIdIsNotExist() {
         final long notSavedMenuGroupId = 0L;
+        final Menu menu = 후라이드_치킨_세트(notSavedMenuGroupId);
 
-        final MenuProductRequest menuProductRequest = new MenuProductRequest(저장된_후라이드_치킨.getId(), MENU_PRODUCT_QUANTITY);
-        final MenuRequest request = new MenuRequest(MENU_NAME, PRICE, notSavedMenuGroupId, List.of(menuProductRequest));
-
-        assertThatThrownBy(() -> menuService.create(request))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("존재하지 않는 메뉴 그룹입니다.");
+        assertThatThrownBy(() -> menuService.create(menu))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("메뉴 등록 시 메뉴 상품은 등록되어 있는 상품이어야 한다")
     @Test
     void createMenuProductIsNotExist() {
         final long notSavedProductId = 0L;
+        final MenuProduct notSavedMenuProduct = 상품_하나(notSavedProductId);
+        final Menu menu = 후라이드_치킨_세트의_메뉴_상품들은(저장된_치킨_세트.getId(), List.of(notSavedMenuProduct));
 
-        final MenuProductRequest notSavedMenuProductRequest = new MenuProductRequest(notSavedProductId, MENU_PRODUCT_QUANTITY);
-        final MenuRequest request = new MenuRequest(MENU_NAME, PRICE, 저장된_치킨_세트.getId(), List.of(notSavedMenuProductRequest));
+        assertThatThrownBy(() -> menuService.create(menu))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
 
-        assertThatThrownBy(() -> menuService.create(request))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("존재하지 않는 상품입니다.");
+    @DisplayName("메뉴 등록 시 메뉴의 가격은 주문 금액의 총합보다 작거나 같아야 한다")
+    @Test
+    void createMenuPriceIsHigherThanAmount() {
+        final BigDecimal price = 저장된_후라이드_치킨.getPrice().add(new BigDecimal(1L));
+        final MenuProduct menuProduct = 상품_하나(저장된_후라이드_치킨.getId());
+
+        final Menu menu = 후라이드_치킨_세트의_가격과_메뉴_상품_리스트는(저장된_치킨_세트.getId(), price, List.of(menuProduct));
+
+        assertThatThrownBy(() -> menuService.create(menu))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("메뉴의 목록을 조회한다")
@@ -97,15 +120,11 @@ class MenuServiceTest {
     void list() {
         final int numberOfMenu = 5;
         for (int i = 0; i < numberOfMenu; i++) {
-            final MenuProduct menuProduct = 가격_정보가_있는_상품_하나(저장된_후라이드_치킨.getId(), BigDecimal.valueOf(15_000));
-            final Menu menu = 후라이드_치킨_세트의_가격과_메뉴_상품_리스트는(
-                저장된_치킨_세트.getId(), BigDecimal.valueOf(15_000), List.of(menuProduct)
-            );
-            menuRepository.save(menu);
+            menuDao.save(후라이드_치킨_세트());
         }
 
-        final List<MenuResponse> responses = menuService.list();
+        final List<Menu> menus = menuService.list();
 
-        assertThat(responses).hasSize(numberOfMenu);
+        assertThat(menus).hasSize(numberOfMenu);
     }
 }

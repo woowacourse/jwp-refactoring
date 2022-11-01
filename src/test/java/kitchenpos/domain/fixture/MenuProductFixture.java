@@ -1,9 +1,6 @@
 package kitchenpos.domain.fixture;
 
-import java.math.BigDecimal;
-
-import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.Price;
+import kitchenpos.domain.MenuProduct;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class MenuProductFixture {
@@ -12,7 +9,6 @@ public class MenuProductFixture {
     private Long menuId;
     private Long productId;
     private long quantity;
-    private Price price;
 
     private MenuProductFixture() {
     }
@@ -20,15 +16,6 @@ public class MenuProductFixture {
     public static MenuProduct 상품_하나(final Long productId) {
         return 메뉴_그룹()
             .상품_아이디(productId)
-            .가격(BigDecimal.valueOf(15_000))
-            .수량(1)
-            .build();
-    }
-
-    public static MenuProduct 가격_정보가_있는_상품_하나(final Long productId, final BigDecimal price) {
-        return 메뉴_그룹()
-            .상품_아이디(productId)
-            .가격(price)
             .수량(1)
             .build();
     }
@@ -42,17 +29,17 @@ public class MenuProductFixture {
         return this;
     }
 
-    private MenuProductFixture 가격(final BigDecimal price) {
-        this.price = new Price(price);
-        return this;
-    }
-
     private MenuProductFixture 수량(final int quantity) {
         this.quantity = quantity;
         return this;
     }
 
     private MenuProduct build() {
-        return new MenuProduct(seq, menuId, productId, quantity, price);
+        final MenuProduct menuProduct = new MenuProduct();
+        menuProduct.setSeq(seq);
+        menuProduct.setMenuId(menuId);
+        menuProduct.setProductId(productId);
+        menuProduct.setQuantity(quantity);
+        return menuProduct;
     }
 }

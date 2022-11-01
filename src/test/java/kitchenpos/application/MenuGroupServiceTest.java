@@ -9,10 +9,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import kitchenpos.application.dto.request.MenuGroupRequest;
-import kitchenpos.application.dto.response.MenuGroupResponse;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.fake.FakeMenuGroupDao;
+import kitchenpos.domain.MenuGroup;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayName("MenuGroup 서비스 테스트")
@@ -31,11 +30,11 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹을 등록한다")
     @Test
     void create() {
-        final MenuGroupRequest request = new MenuGroupRequest("치킨 세트");
+        final MenuGroup menuGroup = 치킨_세트();
 
-        final MenuGroupResponse response = menuGroupService.create(request);
+        final MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
 
-        assertThat(response.getId()).isNotNull();
+        assertThat(savedMenuGroup.getId()).isNotNull();
     }
 
     @DisplayName("메뉴 그룹의 목록을 조회한다")
@@ -46,8 +45,8 @@ class MenuGroupServiceTest {
             menuGroupDao.save(치킨_세트());
         }
 
-        final List<MenuGroupResponse> responses = menuGroupService.list();
+        final List<MenuGroup> menuGroups = menuGroupService.list();
 
-        assertThat(responses).hasSize(numberOfMenuGroup);
+        assertThat(menuGroups).hasSize(numberOfMenuGroup);
     }
 }
