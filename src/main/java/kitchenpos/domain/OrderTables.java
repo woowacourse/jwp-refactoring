@@ -15,7 +15,7 @@ public class OrderTables {
 
     private void validateExists(List<OrderTable> savedOrderTables) {
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
+            if (!savedOrderTable.isEmpty() || savedOrderTable.getTableGroupId() != null) {
                 throw new IllegalArgumentException("[ERROR] 주문 테이블이 이미 존재합니다.");
             }
         }
