@@ -3,12 +3,10 @@ package acceptance;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.application.dto.response.OrderResponse;
-import kitchenpos.ui.dto.request.OrderLineItemRequest;
+import kitchenpos.order.application.response.OrderResponse;
+import kitchenpos.order.ui.request.OrderLineItemRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
 @DisplayName("주문 인수테스트에서")
 public class OrderAcceptanceTest extends AcceptanceTest {
