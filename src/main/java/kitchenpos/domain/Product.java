@@ -1,8 +1,8 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -11,8 +11,6 @@ import javax.persistence.Id;
 @Entity
 public class Product {
 
-    private static final String PRICE_ERROR_MESSAGE = "가격은 0 이상의 수여야 합니다.";
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,27 +18,20 @@ public class Product {
     @Column
     private String name;
 
-    @Column
-    private BigDecimal price;
+    @Embedded
+    private Price price;
 
     public Product() {
     }
 
     private Product(final Builder builder) {
-        validatePrice(builder.price);
         this.id = builder.id;
         this.name = builder.name;
-        this.price = builder.price;
+        this.price = new Price(builder.price);
     }
 
     public static Builder builder() {
         return new Builder();
-    }
-
-    private void validatePrice(final BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException(PRICE_ERROR_MESSAGE);
-        }
     }
 
     public Long getId() {
@@ -52,7 +43,7 @@ public class Product {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getPrice();
     }
 
     public static class Builder {

@@ -32,7 +32,7 @@ public class MenuFindAllResponse {
     }
 
     private static MenuFindAllResponse from(final Menu menu) {
-        return new MenuFindAllResponse(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(),
+        return new MenuFindAllResponse(menu.getId(), menu.getName(), menu.getPrice().getPrice(), menu.getMenuGroupId(),
                 MenuProductFindAllResponse.from(menu.getMenuProducts()));
     }
 

@@ -68,7 +68,7 @@ class MenuServiceTest {
                 .orElseThrow(NoSuchElementException::new);
         assertAll(
                 () -> assertThat(dbMenu.getName()).isEqualTo(request.getName()),
-                () -> assertThat(dbMenu.getPrice().compareTo(request.getPrice())).isZero(),
+                () -> assertThat(dbMenu.getPrice().getPrice().compareTo(request.getPrice())).isZero(),
                 () -> assertThat(dbMenu.getMenuGroupId()).isEqualTo(request.getMenuGroupId())
         );
     }
