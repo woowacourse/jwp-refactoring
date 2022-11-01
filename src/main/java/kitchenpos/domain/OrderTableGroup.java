@@ -3,11 +3,23 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 
+@Entity
 public class OrderTableGroup {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDateTime createdDate;
+
+    @OneToMany
+    @JoinColumn
     private List<OrderTable> orderTables;
 
     public OrderTableGroup() {

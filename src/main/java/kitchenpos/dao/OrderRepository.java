@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@Primary
 public class OrderRepository implements OrderDao {
 
     private final OrderDao orderDao;

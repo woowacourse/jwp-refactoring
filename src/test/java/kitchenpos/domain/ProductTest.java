@@ -3,7 +3,6 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.math.BigDecimal;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,7 @@ public class ProductTest {
         @DisplayName("성공")
         @Test
         void success() {
-            Product product = new Product("이름", BigDecimal.ONE);
+            Product product = new Product("이름", 1L);
             assertThat(product).isNotNull();
         }
 
@@ -31,7 +30,7 @@ public class ProductTest {
         @DisplayName("가격이 0보다 작으면 예외를 발생시킨다.")
         @Test
         void priceLessThanZero_exception() {
-            assertThatThrownBy(() -> new Product("이름", BigDecimal.valueOf(-1L)))
+            assertThatThrownBy(() -> new Product("이름", -1L))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

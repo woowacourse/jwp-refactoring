@@ -22,28 +22,37 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableGroup;
 import kitchenpos.domain.Product;
-import kitchenpos.fakedao.MenuFakeDao;
-import kitchenpos.fakedao.MenuGroupFakeDao;
-import kitchenpos.fakedao.MenuProductFakeDao;
-import kitchenpos.fakedao.OrderFakeDao;
-import kitchenpos.fakedao.OrderTableFakeDao;
-import kitchenpos.fakedao.OrderTableGroupFakeDao;
-import kitchenpos.fakedao.ProductFakeDao;
+import kitchenpos.support.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-public class OrderTableServiceTest {
+public class OrderTableServiceTest extends IntegrationTest {
 
-    private OrderTableGroupDao orderTableGroupDao = new OrderTableGroupFakeDao();
-    private OrderDao orderDao = new OrderFakeDao();
-    private OrderTableDao orderTableDao = new OrderTableFakeDao();
-    private MenuGroupDao menuGroupDao = new MenuGroupFakeDao();
-    private MenuDao menuDao = new MenuFakeDao();
-    private ProductDao productDao = new ProductFakeDao();
-    private MenuProductDao menuProductDao = new MenuProductFakeDao();
+    @Autowired
+    private OrderTableGroupDao orderTableGroupDao;
 
-    private OrderTableService orderTableService = new OrderTableService(orderDao, orderTableDao, orderTableGroupDao);
+    @Autowired
+    private OrderDao orderDao;
+
+    @Autowired
+    private OrderTableDao orderTableDao;
+
+    @Autowired
+    private MenuGroupDao menuGroupDao;
+
+    @Autowired
+    private MenuDao menuDao;
+
+    @Autowired
+    private ProductDao productDao;
+
+    @Autowired
+    private MenuProductDao menuProductDao;
+
+    @Autowired
+    private OrderTableService orderTableService;
 
     @DisplayName("주문 테이블을 생성한다.")
     @Test
@@ -71,7 +80,7 @@ public class OrderTableServiceTest {
 
     @DisplayName("주문 테이블을 비울 때")
     @Nested
-    class ChangeEmpty {
+    class ChangeEmpty extends IntegrationTest {
 
         @DisplayName("성공")
         @Test
@@ -82,7 +91,7 @@ public class OrderTableServiceTest {
             orderTableGroupDao.save(new OrderTableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
 
             MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
-            Product product = productDao.save(new Product("상품", BigDecimal.valueOf(1000L)));
+            Product product = productDao.save(new Product("상품", 1000L));
             MenuProduct menuProduct = menuProductDao.save(
                     new MenuProduct(product.getId(), 2, product.getPrice()));
             Menu menu = menuDao.save(new Menu("메뉴", BigDecimal.valueOf(1000), menuGroup.getId(),
@@ -124,7 +133,7 @@ public class OrderTableServiceTest {
             orderTableGroupDao.save(new OrderTableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
 
             MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
-            Product product = productDao.save(new Product("상품", BigDecimal.valueOf(1000L)));
+            Product product = productDao.save(new Product("상품", 1000L));
             MenuProduct menuProduct = menuProductDao.save(
                     new MenuProduct(product.getId(), 2, product.getPrice()));
             Menu menu = menuDao.save(new Menu("메뉴", BigDecimal.valueOf(1000), menuGroup.getId(),
@@ -140,7 +149,7 @@ public class OrderTableServiceTest {
 
     @DisplayName("주문 테이블의 손님수를 수정할 때")
     @Nested
-    class ChangeNumberOfGuests {
+    class ChangeNumberOfGuests extends IntegrationTest {
 
         @DisplayName("성공")
         @Test

@@ -47,8 +47,11 @@ public class DatabaseManager {
         log.info("------------------------------------ 테스트 종료 ------------------------------------");
         entityManager.createNativeQuery("SET REFERENTIAL_INTEGRITY FALSE").executeUpdate();
         for (String tableName : tableNames) {
+            if (tableName.equals("ORDER")) {
+                tableName = "ORDERS";
+            }
             entityManager.createNativeQuery("TRUNCATE TABLE " + tableName).executeUpdate();
-            if (tableName.equals("MENU_PRODUCT")) {
+            if (tableName.equals("MENU_PRODUCT") || tableName.equals("ORDER_LINE_ITEM")) {
                 entityManager.createNativeQuery(
                         "ALTER TABLE " + tableName + " ALTER COLUMN " + "seq" + " RESTART WITH 1"
                 ).executeUpdate();

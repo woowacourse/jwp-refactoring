@@ -10,24 +10,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import kitchenpos.fakedao.MenuFakeDao;
-import kitchenpos.fakedao.MenuGroupFakeDao;
-import kitchenpos.fakedao.MenuProductFakeDao;
-import kitchenpos.fakedao.ProductFakeDao;
 import kitchenpos.support.IntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 public class MenuServiceTest extends IntegrationTest {
 
@@ -53,8 +46,8 @@ public class MenuServiceTest extends IntegrationTest {
         @BeforeEach
         void setUp() {
             menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
-            productDao.save(new Product("상품1", BigDecimal.valueOf(1000)));
-            productDao.save(new Product("상품2", BigDecimal.valueOf(2000)));
+            productDao.save(new Product("상품1", 1000L));
+            productDao.save(new Product("상품2", 2000L));
             menuProducts = productDao.findAll().stream()
                     .map(product -> new MenuProduct(product.getId(), 2))
                     .collect(Collectors.toList());
@@ -117,7 +110,7 @@ public class MenuServiceTest extends IntegrationTest {
     void list() {
         // given
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
-        Product product = productDao.save(new Product("상품1", BigDecimal.valueOf(1000)));
+        Product product = productDao.save(new Product("상품1", 1000L));
         MenuProduct menuProduct = new MenuProduct(product.getId(), 2, BigDecimal.valueOf(1000));
         ArrayList<MenuProduct> menuProducts = new ArrayList<>();
         menuProducts.add(menuProduct);

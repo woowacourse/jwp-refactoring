@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@Primary
 public class OrderTableGroupRepository implements OrderTableGroupDao {
 
     private final OrderTableGroupDao orderTableGroupDao;

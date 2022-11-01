@@ -13,7 +13,6 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.OrderTableGroupDao;
 import kitchenpos.dao.ProductDao;
@@ -24,35 +23,43 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
 import kitchenpos.domain.OrderTableGroup;
-import kitchenpos.fakedao.MenuFakeDao;
-import kitchenpos.fakedao.MenuGroupFakeDao;
-import kitchenpos.fakedao.MenuProductFakeDao;
-import kitchenpos.fakedao.OrderFakeDao;
-import kitchenpos.fakedao.OrderLineItemFakeDao;
-import kitchenpos.fakedao.OrderTableFakeDao;
-import kitchenpos.fakedao.OrderTableGroupFakeDao;
-import kitchenpos.fakedao.ProductFakeDao;
+import kitchenpos.domain.Product;
+import kitchenpos.support.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-public class OrderTableGroupServiceTest {
+public class OrderTableGroupServiceTest extends IntegrationTest {
 
-    private OrderDao orderDao = new OrderFakeDao();
-    private OrderTableDao orderTableDao = new OrderTableFakeDao();
-    private OrderTableGroupDao orderTableGroupDao = new OrderTableGroupFakeDao();
-    private MenuDao menuDao = new MenuFakeDao();
-    private MenuGroupDao menuGroupDao = new MenuGroupFakeDao();
-    private ProductDao productDao = new ProductFakeDao();
-    private MenuProductDao menuProductDao = new MenuProductFakeDao();
+    @Autowired
+    private OrderDao orderDao;
 
-    private OrderTableGroupService orderTableGroupService = new OrderTableGroupService(orderDao, orderTableDao, orderTableGroupDao);
+    @Autowired
+    private OrderTableDao orderTableDao;
+
+    @Autowired
+    private OrderTableGroupDao orderTableGroupDao;
+
+    @Autowired
+    private MenuDao menuDao;
+
+    @Autowired
+    private MenuGroupDao menuGroupDao;
+
+    @Autowired
+    private ProductDao productDao;
+
+    @Autowired
+    private MenuProductDao menuProductDao;
+
+    @Autowired
+    private OrderTableGroupService orderTableGroupService;
 
     @DisplayName("단체 지정을 생성할 때")
     @Nested
-    class Create {
+    class Create extends IntegrationTest {
 
         @DisplayName("성공")
         @Test
@@ -117,7 +124,7 @@ public class OrderTableGroupServiceTest {
 
     @DisplayName("단체 지정된 주문 테이블들을 분리할 때")
     @Nested
-    class Ungroup {
+    class Ungroup extends IntegrationTest {
 
         @DisplayName("성공")
         @Test
@@ -148,7 +155,7 @@ public class OrderTableGroupServiceTest {
                     List.of(orderTable1, orderTable2, orderTable3)));
 
             MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
-            Product product = productDao.save(new Product("상품", BigDecimal.valueOf(1000L)));
+            Product product = productDao.save(new Product("상품", 1000L));
             MenuProduct menuProduct = menuProductDao.save(
                     new MenuProduct(product.getId(), 2, product.getPrice()));
             Menu menu = menuDao.save(new Menu("메뉴", BigDecimal.valueOf(1000), menuGroup.getId(),

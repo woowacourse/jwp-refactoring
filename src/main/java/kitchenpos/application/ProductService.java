@@ -17,7 +17,7 @@ public class ProductService {
 
     @Transactional
     public Product create(String name, Long price) {
-        Product product = Product.of(name, price);
+        Product product = new Product(name, price);
         return productDao.save(product);
     }
 

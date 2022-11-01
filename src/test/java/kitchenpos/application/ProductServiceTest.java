@@ -56,9 +56,9 @@ public class ProductServiceTest extends IntegrationTest {
     @Test
     void list() {
         // given
-        productDao.save(new Product("상품1", BigDecimal.valueOf(1000)));
-        productDao.save(new Product("상품2", BigDecimal.valueOf(1000)));
-        productDao.save(new Product("상품3", BigDecimal.valueOf(1000)));
+        productDao.save(new Product("상품1", 1000L));
+        productDao.save(new Product("상품2", 1000L));
+        productDao.save(new Product("상품3", 1000L));
 
         // when
         List<Product> actual = productService.list();
