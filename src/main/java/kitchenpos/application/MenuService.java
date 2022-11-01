@@ -29,7 +29,6 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuSaveRequest request) {
-
         Menu savedMenu = menuRepository.save(new Menu(
                 request.getName(),
                 request.getPrice(),
