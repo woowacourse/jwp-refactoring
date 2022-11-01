@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -52,5 +53,22 @@ public class OrderLineItem {
 
     public long getQuantity() {
         return quantity;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof OrderLineItem)) {
+            return false;
+        }
+        final OrderLineItem that = (OrderLineItem) o;
+        return Objects.equals(seq, that.seq);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(seq);
     }
 }

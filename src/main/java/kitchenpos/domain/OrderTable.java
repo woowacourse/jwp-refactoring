@@ -105,4 +105,21 @@ public class OrderTable {
             throw new IllegalArgumentException();
         }
     }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof OrderTable)) {
+            return false;
+        }
+        final OrderTable that = (OrderTable) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

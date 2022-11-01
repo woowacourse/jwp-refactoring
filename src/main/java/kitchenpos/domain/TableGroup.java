@@ -45,7 +45,6 @@ public class TableGroup {
         });
 
         return tableGroup;
-
     }
 
     public Long getId() {
@@ -87,6 +86,6 @@ public class TableGroup {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, createdDate, orderTables);
+        return Objects.hash(id);
     }
 }
