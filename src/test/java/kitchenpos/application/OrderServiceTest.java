@@ -8,6 +8,10 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import javax.transaction.Transactional;
+import kitchenpos.application.dto.request.OrderCreateRequest;
+import kitchenpos.application.dto.request.OrderLineItemCreateRequest;
+import kitchenpos.application.dto.response.OrderResponse;
+import kitchenpos.application.dto.OrderStatusDto;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
@@ -35,68 +39,53 @@ class OrderServiceTest {
     @DisplayName("주문 항목이 빈 경우, 예외를 발생한다")
     @Test
     void empty_order_line_items_exception() {
-        final Order order = new Order();
-        order.setOrderLineItems(Collections.emptyList());
+        final OrderTable orderTable = orderTableDao.save(new OrderTable(null, null, 1, false));
+        final OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(), Collections.emptyList());
 
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 항목이 비었습니다.");
     }
 
     @DisplayName("주문 테이블이 없는 경우, 예외를 발생한다")
     @Test
     void does_not_exist_order_table_exception() {
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1L);
+        final OrderCreateRequest request = new OrderCreateRequest(null,
+                Collections.singletonList(new OrderLineItemCreateRequest(1L, 1L)));
 
-        final Order order = new Order();
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
-
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 테이블이 없습니다.");
     }
 
     @DisplayName("주문 테이블이 빈 경우, 예외를 발생한다")
     @Test
     void empty_order_table_exception() {
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1L);
+        final OrderCreateRequest request = new OrderCreateRequest(1L,
+                Collections.singletonList(new OrderLineItemCreateRequest(1L, 1L)));
 
-        final Order order = new Order();
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
-        order.setOrderTableId(1L);
-
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 테이블이 비었습니다.");
     }
 
     @DisplayName("주문을 생성한다")
     @Test
     void create() {
         // given
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1L);
+        final OrderTable orderTable = orderTableDao.save(new OrderTable(null, null, 1, false));
 
-        final OrderTable orderTableRequest = new OrderTable();
-        orderTableRequest.setEmpty(false);
-        final OrderTable orderTable = orderTableDao.save(orderTableRequest);
-
-        final Order order = new Order();
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
-        order.setOrderTableId(orderTable.getId());
+        final OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(),
+                Collections.singletonList(new OrderLineItemCreateRequest(1L, 1L)));
 
         // when
-        final Order createdOrder = orderService.create(order);
+        final OrderResponse response = orderService.create(request);
 
         // then
         assertAll(
-                () -> assertThat(createdOrder.getId()).isNotNull(),
-                () -> assertThat(createdOrder.getOrderTableId()).isEqualTo(order.getOrderTableId()),
-                () -> assertThat(createdOrder.getOrderStatus()).isEqualToIgnoringCase(OrderStatus.COOKING.name()),
-                () -> assertThat(createdOrder.getOrderLineItems()).usingElementComparatorOnFields("menuId", "quantity")
-                        .contains(orderLineItem)
+                () -> assertThat(response.getId()).isNotNull(),
+                () -> assertThat(response.getOrderTableId()).isEqualTo(orderTable.getId()),
+                () -> assertThat(response.getOrderStatus()).isEqualToIgnoringCase(OrderStatus.COOKING.name())
         );
     }
 
@@ -104,31 +93,24 @@ class OrderServiceTest {
     @Test
     void findAll() {
         // given
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1L);
+        final OrderTable orderTable = orderTableDao.save(new OrderTable(null, null, 1, false));
 
-        final OrderTable orderTableRequest = new OrderTable();
-        orderTableRequest.setEmpty(false);
-        final OrderTable orderTable = orderTableDao.save(orderTableRequest);
+        final OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(),
+                Collections.singletonList(new OrderLineItemCreateRequest(1L, 1L)));
 
-        final Order order = new Order();
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
-        order.setOrderTableId(orderTable.getId());
-
-        orderService.create(order);
+        orderService.create(request);
 
         // when
-        final List<Order> orders = orderService.list();
+        final List<OrderResponse> responses = orderService.list();
 
         // then
-        assertThat(orders).hasSize(1);
+        assertThat(responses).hasSize(1);
     }
 
     @DisplayName("주문 상태를 변경할 때 주문 번호가 없는 경우, 예외를 발생한다")
     @Test
     void not_found_order_exception() {
-        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, new Order()))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, new OrderStatusDto("MEAL")))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -136,37 +118,29 @@ class OrderServiceTest {
     @Test
     void order_state_completion_exception() {
         // given
-        final Order order = new Order();
-        order.setOrderTableId(1L);
-        order.setOrderStatus(OrderStatus.COMPLETION.name());
-        order.setOrderedTime(LocalDateTime.now());
-        orderDao.save(order);
-
-        final Order changeOrder = new Order();
-        changeOrder.setOrderStatus(OrderStatus.MEAL.name());
+        final Order orderRequest = new Order(1L, OrderStatus.COMPLETION.name(), LocalDateTime.now(),
+                Collections.singletonList(new OrderLineItem(1L, 1L)));
+        final Order order = orderDao.save(orderRequest);
 
         // when, then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), changeOrder))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), new OrderStatusDto("MEAL")))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("완료된 주문 상태는 변경할 수 없습니다.");
     }
 
     @DisplayName("주문 상태를 변경한다")
     @Test
     void change_order_status() {
         // given
-        final Order orderRequest = new Order();
-        orderRequest.setOrderTableId(1L);
-        orderRequest.setOrderStatus(OrderStatus.COOKING.name());
-        orderRequest.setOrderedTime(LocalDateTime.now());
-        final Order savedOrder = orderDao.save(orderRequest);
-
-        final Order changeOrder = new Order();
-        changeOrder.setOrderStatus(OrderStatus.MEAL.name());
+        final Order orderRequest = new Order(1L, OrderStatus.COOKING.name(), LocalDateTime.now(),
+                Collections.singletonList(new OrderLineItem(1L, 1L)));
+        final Order order = orderDao.save(orderRequest);
+        final OrderStatusDto changeOrderStatus = new OrderStatusDto("MEAL");
 
         // when
-        final Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), changeOrder);
+        final OrderStatusDto response = orderService.changeOrderStatus(order.getId(), changeOrderStatus);
 
         // then
-        assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
+        assertThat(response.getOrderStatus()).isEqualTo(changeOrderStatus.getOrderStatus());
     }
 }
