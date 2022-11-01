@@ -25,7 +25,7 @@ public class MenuResponse {
         this.id = menu.getId();
         this.name = menu.getName();
         this.price = menu.getPrice();
-        this.menuGroupId = menu.getMenuGroup().getId();
+        this.menuGroupId = menu.getMenuGroupId();
         this.menuProductResponses = menu.getProducts()
                 .stream()
                 .map(MenuProductResponse::new)

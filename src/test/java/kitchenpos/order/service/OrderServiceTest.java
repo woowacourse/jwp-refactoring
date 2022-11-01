@@ -44,10 +44,10 @@ class OrderServiceTest extends ServiceTest {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
         MenuProduct menuProduct1 = new MenuProduct(product, new Quantity(2L));
         MenuProduct menuProduct2 = new MenuProduct(product, new Quantity(3L));
-        Menu menu1 = menuRepository.save(new Menu("메뉴1", new Price(new BigDecimal(5000)), menuGroup,
-                List.of(menuProduct1)));
-        Menu menu2 = menuRepository
-                .save(new Menu("메뉴2", new Price(new BigDecimal(4500)), menuGroup, List.of(menuProduct2)));
+        Menu menu1 = menuRepository.save(
+                new Menu("메뉴1", new Price(new BigDecimal(5000)), menuGroup.getId(), List.of(menuProduct1)));
+        Menu menu2 = menuRepository.save(
+                new Menu("메뉴2", new Price(new BigDecimal(4500)), menuGroup.getId(), List.of(menuProduct2)));
 
         orderLineItemResponse1 = new OrderLineItemCreateRequest(menu1.getId(), 2L);
         orderLineItemResponse2 = new OrderLineItemCreateRequest(menu2.getId(), 1L);
