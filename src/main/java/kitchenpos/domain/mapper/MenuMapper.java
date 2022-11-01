@@ -7,7 +7,6 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.repository.MenuGroupRepository;
@@ -34,11 +33,11 @@ public class MenuMapper {
 
     public Menu mapFrom(final MenuCreateRequest request) {
         final var name = validateMenuName(request.getName());
-        final var menuGroup = validateMenuGroupId(request.getMenuGroupId());
+        final var menuGroupId = validateMenuGroupId(request.getMenuGroupId());
         final var menuProducts = validateMenuProducts(request.getMenuProducts());
         final var price = validatePrice(menuProducts, request.getPrice());
 
-        return new Menu(name, price, menuGroup, menuProducts);
+        return new Menu(name, price, menuGroupId, menuProducts);
     }
 
     private String validateMenuName(final String name) {
@@ -49,8 +48,8 @@ public class MenuMapper {
         return name;
     }
 
-    private MenuGroup validateMenuGroupId(final Long menuGroupId) {
-        return menuGroupRepository.getById(menuGroupId);
+    private Long validateMenuGroupId(final Long menuGroupId) {
+        return menuGroupRepository.getById(menuGroupId).getId();
     }
 
     private List<MenuProduct> validateMenuProducts(final List<MenuProductRequest> menuProducts) {

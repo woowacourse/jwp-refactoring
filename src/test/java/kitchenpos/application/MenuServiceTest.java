@@ -63,7 +63,7 @@ class MenuServiceTest extends ServiceTest {
         assertAll(
                 () -> assertThat(menu)
                         .usingRecursiveComparison()
-                        .isEqualTo(new Menu(1L, name, price, menuGroup, menu.getMenuProducts())),
+                        .isEqualTo(new Menu(1L, name, price, menuGroup.getId(), menu.getMenuProducts())),
                 () -> assertThat(menu.getMenuProducts())
                         .extracting("menu")
                         .extracting("id")
@@ -166,8 +166,7 @@ class MenuServiceTest extends ServiceTest {
                 () -> assertThat(actual).extracting("id").containsExactly(1L, 2L),
                 () -> assertThat(actual).extracting("name").containsExactly(name, secondName),
                 () -> assertThat(actual).extracting("price").containsExactly(price, secondPrice),
-                () -> assertThat(actual).extracting("menuGroup").extracting("id")
-                        .containsExactly(menuGroupId, menuGroupId),
+                () -> assertThat(actual).extracting("menuGroupId").containsExactly(menuGroupId, menuGroupId),
                 () -> assertThat(menuProducts).extracting("product").extracting("id").containsExactly(1L, 2L, 1L, 2L),
                 () -> assertThat(menuProducts).extracting("quantity").containsExactly(1L, 1L, 1L, 1L)
         );
