@@ -15,7 +15,7 @@ import kitchenpos.product.domain.Product;
 import kitchenpos.menu.domain.RelatedProduct;
 import kitchenpos.menu.domain.repository.MenuGroupRepository;
 import kitchenpos.menu.domain.repository.MenuRepository;
-import kitchenpos.table.domain.repository.ProductRepository;
+import kitchenpos.product.domain.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

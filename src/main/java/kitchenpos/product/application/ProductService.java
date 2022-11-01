@@ -6,7 +6,7 @@ import java.util.List;
 import kitchenpos.product.application.request.ProductRequest;
 import kitchenpos.product.application.response.ProductResponse;
 import kitchenpos.product.domain.Product;
-import kitchenpos.table.domain.repository.ProductRepository;
+import kitchenpos.product.domain.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

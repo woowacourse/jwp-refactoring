@@ -10,7 +10,7 @@ import kitchenpos.product.application.request.ProductRequest;
 import kitchenpos.product.application.response.ProductResponse;
 import kitchenpos.product.application.ProductService;
 import kitchenpos.product.domain.Product;
-import kitchenpos.table.domain.repository.ProductRepository;
+import kitchenpos.product.domain.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
