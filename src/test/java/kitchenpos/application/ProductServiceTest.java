@@ -8,48 +8,49 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.fake.FakeProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
-import org.junit.jupiter.api.BeforeEach;
+import kitchenpos.dto.ProductResponse;
+import kitchenpos.dto.ProductSaveRequest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
+@SpringBootTest
+@Sql("/truncate.sql")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class ProductServiceTest {
 
     private final ProductDao productDao;
     private final ProductService productService;
 
-    private ProductServiceTest() {
-        this.productDao = new FakeProductDao();
-        this.productService = new ProductService(productDao);
-    }
-
-    @BeforeEach
-    void setUp() {
-        FakeProductDao.deleteAll();
+    @Autowired
+    public ProductServiceTest(final ProductDao productDao, final ProductService productService) {
+        this.productDao = productDao;
+        this.productService = productService;
     }
 
     @Test
     void product를_생성한다() {
-        Product 후라이드 = generateProduct("후라이드", BigDecimal.valueOf(16000));
+        ProductSaveRequest request = generateProductSaveRequest("후라이드", BigDecimal.valueOf(16000));
 
-        Product actual = productService.create(후라이드);
+        ProductResponse actual = productService.create(request);
 
         assertAll(() -> {
             assertThat(actual.getId()).isNotNull();
-            assertThat(actual.getName()).isEqualTo(후라이드.getName());
-            assertThat(actual.getPrice().compareTo(후라이드.getPrice())).isEqualTo(0);
+            assertThat(actual.getName()).isEqualTo(request.getName());
+            assertThat(actual.getPrice().compareTo(request.getPrice())).isEqualTo(0);
         });
     }
 
     @Test
     void price가_null인_경우_예외를_던진다() {
-        Product 후라이드 = generateProduct("후라이드", null);
+        ProductSaveRequest 후라이드 = generateProductSaveRequest("후라이드", null);
 
         assertThatThrownBy(() -> productService.create(후라이드))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -58,7 +59,7 @@ class ProductServiceTest {
     @ParameterizedTest(name = "price가 {0}미만인 경우 예외를 던진다")
     @ValueSource(ints = {-15000, -10, Integer.MIN_VALUE})
     void price가_0미만인_경우_예외를_던진다(final int price) {
-        Product 후라이드 = generateProduct("후라이드", BigDecimal.valueOf(price));
+        ProductSaveRequest 후라이드 = generateProductSaveRequest("후라이드", BigDecimal.valueOf(price));
 
         assertThatThrownBy(() -> productService.create(후라이드))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -71,7 +72,7 @@ class ProductServiceTest {
 
         List<String> actual = productService.list()
                 .stream()
-                .map(Product::getName)
+                .map(ProductResponse::getName)
                 .collect(toList());
 
         assertAll(() -> {

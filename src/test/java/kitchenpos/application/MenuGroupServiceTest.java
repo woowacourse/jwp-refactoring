@@ -6,15 +6,19 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
-import kitchenpos.dao.fake.FakeMenuGroupDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
-import org.junit.jupiter.api.BeforeEach;
+import kitchenpos.dto.MenuGroupResponse;
+import kitchenpos.dto.MenuGroupSaveRequest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
+@SpringBootTest
+@Sql("/truncate.sql")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class MenuGroupServiceTest {
 
@@ -22,21 +26,16 @@ class MenuGroupServiceTest {
     private final MenuGroupService menuGroupService;
 
     @Autowired
-    private MenuGroupServiceTest() {
-        this.menuGroupDao = new FakeMenuGroupDao();
-        this.menuGroupService = new MenuGroupService(menuGroupDao);
-    }
-
-    @BeforeEach
-    void setUp() {
-        FakeMenuGroupDao.deleteAll();
+    public MenuGroupServiceTest(final MenuGroupDao menuGroupDao, final MenuGroupService menuGroupService) {
+        this.menuGroupDao = menuGroupDao;
+        this.menuGroupService = menuGroupService;
     }
 
     @Test
     void menuGroup을_생성한다() {
-        MenuGroup 한마리메뉴 = generateMenuGroup("한마리메뉴");
+        MenuGroupSaveRequest 한마리메뉴 = generateMenuGroupSaveRequest("한마리메뉴");
 
-        MenuGroup actual = menuGroupService.create(한마리메뉴);
+        MenuGroupResponse actual = menuGroupService.create(한마리메뉴);
 
         assertThat(actual.getName())
                 .isEqualTo(한마리메뉴.getName());
@@ -50,7 +49,7 @@ class MenuGroupServiceTest {
 
         List<String> actual = menuGroupService.list()
                 .stream()
-                .map(MenuGroup::getName)
+                .map(MenuGroupResponse::getName)
                 .collect(toList());
 
         assertAll(() -> {

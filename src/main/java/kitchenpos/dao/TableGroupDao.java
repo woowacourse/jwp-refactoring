@@ -6,9 +6,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TableGroupDao {
-    TableGroup save(TableGroup entity);
 
-    Optional<TableGroup> findById(Long id);
+    TableGroup save(final TableGroup entity);
+
+    Optional<TableGroup> findById(final Long id);
 
     List<TableGroup> findAll();
 }

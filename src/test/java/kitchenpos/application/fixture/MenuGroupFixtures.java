@@ -1,6 +1,7 @@
 package kitchenpos.application.fixture;
 
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.MenuGroupSaveRequest;
 
 public class MenuGroupFixtures {
 
@@ -13,9 +14,10 @@ public class MenuGroupFixtures {
     }
 
     public static final MenuGroup generateMenuGroup(final Long id, final String name) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(id);
-        menuGroup.setName(name);
-        return menuGroup;
+        return new MenuGroup(name);
+    }
+
+    public static final MenuGroupSaveRequest generateMenuGroupSaveRequest(final String name) {
+        return new MenuGroupSaveRequest(name);
     }
 }

@@ -6,13 +6,19 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OrderTableDao {
-    OrderTable save(OrderTable entity);
 
-    Optional<OrderTable> findById(Long id);
+    OrderTable save(final OrderTable entity);
+
+    Optional<OrderTable> findById(final Long id);
 
     List<OrderTable> findAll();
 
-    List<OrderTable> findAllByIdIn(List<Long> ids);
+    List<OrderTable> findAllByIdIn(final List<Long> ids);
 
-    List<OrderTable> findAllByTableGroupId(Long tableGroupId);
+    List<OrderTable> findAllByTableGroupId(final Long tableGroupId);
+
+    default OrderTable getById(final Long id) {
+        return findById(id)
+                .orElseThrow(IllegalArgumentException::new);
+    }
 }

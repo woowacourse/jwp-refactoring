@@ -1,7 +1,10 @@
 package kitchenpos.application.fixture;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductSaveRequest;
 
 public class ProductFixtures {
 
@@ -18,10 +21,32 @@ public class ProductFixtures {
     }
 
     public static final Product generateProduct(final Long id, final String name, final BigDecimal price) {
-        Product product = new Product();
-        product.setId(id);
-        product.setName(name);
-        product.setPrice(price);
-        return product;
+
+        try {
+            Constructor<Product> constructor = Product.class.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            Product product = constructor.newInstance();
+            Class<? extends Product> clazz = product.getClass();
+
+            Field idField = clazz.getDeclaredField("id");
+            idField.setAccessible(true);
+            idField.set(product, id);
+
+            Field nameField = clazz.getDeclaredField("name");
+            nameField.setAccessible(true);
+            nameField.set(product, name);
+
+            Field priceField = clazz.getDeclaredField("price");
+            priceField.setAccessible(true);
+            priceField.set(product, price);
+
+            return product;
+        } catch (final Exception e) {
+            throw new RuntimeException();
+        }
+    }
+
+    public static final ProductSaveRequest generateProductSaveRequest(final String name, final BigDecimal price) {
+        return new ProductSaveRequest(name, price);
     }
 }
