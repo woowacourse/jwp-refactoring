@@ -49,13 +49,13 @@ public class OrderService {
     public OrderCreateResponse create(final OrderCreateRequest request) {
         final List<OrderLineItemDto> orderItemDtos = request.getOrderLineItems();
         validateExistMenu(orderItemDtos);
-        Long orderTableId = request.getOrderTableId();
+        final Long orderTableId = request.getOrderTableId();
         validateOrderTable(orderTableId);
 
-        Order order = orderRepository.save(new Order(orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now()));
+        final Order order = orderRepository.save(new Order(orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now()));
         List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (final OrderLineItemDto orderLineItemDto : orderItemDtos) {
-            OrderLineItem orderLineItem = orderLineItemRepository.save(
+            final OrderLineItem orderLineItem = orderLineItemRepository.save(
                     new OrderLineItem(order, orderLineItemDto.getMenuId(), orderLineItemDto.getQuantity()));
             orderLineItems.add(orderLineItem);
         }
