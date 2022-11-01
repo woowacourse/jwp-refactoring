@@ -13,6 +13,12 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.exception.badrequest.OrderAlreadyCompletedException;
+import kitchenpos.exception.badrequest.OrderFailureOnEmptyOrderTableException;
+import kitchenpos.exception.badrequest.OrderIdInvalidException;
+import kitchenpos.exception.badrequest.OrderTableIdInvalidException;
+import kitchenpos.exception.notfound.OrderNotFoundException;
+import kitchenpos.exception.notfound.OrderTableNotFoundException;
 import kitchenpos.ui.dto.request.MenuCreateRequest;
 import kitchenpos.ui.dto.request.MenuGroupCreateRequest;
 import kitchenpos.ui.dto.request.MenuProductRequest;
@@ -88,10 +94,11 @@ class OrderServiceTest extends ServiceTest {
         assertAll(
                 () -> assertThat(orderId).isEqualTo(1L),
                 () -> assertThat(actual.getOrderTableId()).isEqualTo(tableA.getId()),
-                () -> assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
+                () -> assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING),
                 () -> assertThat(actual.getOrderedTime()).isAfter(beforeOrder),
                 () -> assertThat(actual.getOrderedTime()).isBefore(afterOrder),
-                () -> assertThat(actual.getOrderLineItems()).extracting("orderId").containsExactly(orderId),
+                () -> assertThat(actual.getOrderLineItems()).extracting("order").extracting("id")
+                        .containsExactly(orderId),
                 () -> assertThat(actual.getOrderLineItems()).extracting("menuId")
                         .containsExactly(menu.getId()),
                 () -> assertThat(actual.getOrderLineItems()).extracting("quantity").containsExactly(1L)
@@ -149,7 +156,7 @@ class OrderServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> orderService.create(orderRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(OrderTableIdInvalidException.class);
         }
 
         @DisplayName("존재하지 않는 테이블 아이디를 전달하면 예외가 발생한다")
@@ -163,7 +170,7 @@ class OrderServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> orderService.create(orderRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(OrderTableNotFoundException.class);
         }
 
         @DisplayName("주문 대상 테이블이 주문 불가 상태(empty=true)면 예외가 발생한다")
@@ -178,7 +185,7 @@ class OrderServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> orderService.create(orderRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(OrderFailureOnEmptyOrderTableException.class);
         }
     }
 
@@ -205,7 +212,7 @@ class OrderServiceTest extends ServiceTest {
                 () -> assertThat(actual.size()).isEqualTo(1),
                 () -> assertThat(order.getId()).isEqualTo(1L),
                 () -> assertThat(order.getOrderTableId()).isEqualTo(tableA.getId()),
-                () -> assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
+                () -> assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING),
                 () -> assertThat(order.getOrderedTime()).isAfter(beforeOrder),
                 () -> assertThat(order.getOrderedTime()).isBefore(afterOrder),
                 () -> assertThat(order.getOrderLineItems()).extracting("menuId").containsExactly(menu.getId()),
@@ -224,15 +231,15 @@ class OrderServiceTest extends ServiceTest {
         final var order = orderService.create(orderRequest);
 
         // when
-        final var expectedStatus = OrderStatus.COMPLETION.name();
+        final var expectedStatus = OrderStatus.COMPLETION;
         final var statusChangedOrder = orderService.changeOrderStatus(
                 order.getId(),
-                new OrderChangeStatusRequest(expectedStatus)
+                new OrderChangeStatusRequest(expectedStatus.name())
         );
 
         // then
         assertAll(
-                () -> assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
+                () -> assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING),
                 () -> assertThat(statusChangedOrder.getOrderStatus()).isEqualTo(expectedStatus),
                 () -> assertThat(order.getId()).isEqualTo(statusChangedOrder.getId())
         );
@@ -257,7 +264,7 @@ class OrderServiceTest extends ServiceTest {
 
             // then
             assertThatThrownBy(() -> orderService.changeOrderStatus(nullOrderId, request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(OrderIdInvalidException.class);
         }
 
         @DisplayName("존재하지 않는 주문 아이디일 경우 예외가 발생한다.")
@@ -269,7 +276,7 @@ class OrderServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> orderService.changeOrderStatus(invalidOrderId, request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(OrderNotFoundException.class);
         }
 
         @DisplayName("주문 아이디로 조회한 주문이 이미 계산 완료라면(OrderStatus=COMPLETION) 예외가 발생한다.")
@@ -293,7 +300,7 @@ class OrderServiceTest extends ServiceTest {
 
             // then
             assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(OrderAlreadyCompletedException.class);
         }
     }
 }

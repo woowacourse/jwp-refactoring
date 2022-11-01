@@ -7,12 +7,12 @@ import io.restassured.config.EncoderConfig;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.module.mockmvc.config.RestAssuredMockMvcConfig;
 import io.restassured.module.mockmvc.specification.MockMvcRequestSpecification;
-import kitchenpos.application.old.JdbcMenuGroupService;
-import kitchenpos.application.old.JdbcMenuService;
-import kitchenpos.application.old.JdbcOrderService;
-import kitchenpos.application.old.JdbcProductService;
-import kitchenpos.application.old.JdbcTableGroupService;
-import kitchenpos.application.old.JdbcTableService;
+import kitchenpos.application.MenuGroupService;
+import kitchenpos.application.MenuService;
+import kitchenpos.application.OrderService;
+import kitchenpos.application.ProductService;
+import kitchenpos.application.TableGroupService;
+import kitchenpos.application.TableService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -27,17 +27,17 @@ import org.springframework.web.context.WebApplicationContext;
 public class DocumentationTest {
     protected MockMvcRequestSpecification docsGiven;
     @MockBean
-    protected JdbcMenuGroupService menuGroupService;
+    protected MenuGroupService menuGroupService;
     @MockBean
-    protected JdbcMenuService menuService;
+    protected MenuService menuService;
     @MockBean
-    protected JdbcOrderService orderService;
+    protected OrderService orderService;
     @MockBean
-    protected JdbcProductService productService;
+    protected ProductService productService;
     @MockBean
-    protected JdbcTableGroupService tableGroupService;
+    protected TableGroupService tableGroupService;
     @MockBean
-    protected JdbcTableService tableService;
+    protected TableService tableService;
 
     @BeforeEach
     void setDocsGiven(final WebApplicationContext webApplicationContext,

@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
+import kitchenpos.exception.notfound.MenuGroupNotFoundException;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.ProductRepository;
 import kitchenpos.ui.dto.request.MenuCreateRequest;
@@ -62,9 +63,10 @@ class MenuServiceTest extends ServiceTest {
         assertAll(
                 () -> assertThat(menu)
                         .usingRecursiveComparison()
-                        .isEqualTo(new Menu(1L, name, price, menuGroupId, menu.getMenuProducts())),
+                        .isEqualTo(new Menu(1L, name, price, menuGroup.getId(), menu.getMenuProducts())),
                 () -> assertThat(menu.getMenuProducts())
-                        .extracting("menuId")
+                        .extracting("menu")
+                        .extracting("id")
                         .containsExactly(menu.getId(), menu.getId())
         );
     }
@@ -103,7 +105,7 @@ class MenuServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menuRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(MenuGroupNotFoundException.class);
         }
 
         @DisplayName("menuProducts가 null이면 예외가 발생한다")
@@ -125,7 +127,7 @@ class MenuServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menuRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(MenuGroupNotFoundException.class);
         }
 
         @DisplayName("price가 menuProducts 총합계액 보다 크면 예외가 발생한다")
@@ -155,9 +157,6 @@ class MenuServiceTest extends ServiceTest {
 
         // when
         final var actual = menuService.list();
-        final var prices = actual.stream()
-                .map(Menu::getPrice)
-                .collect(Collectors.toList());
         final var menuProducts = actual.stream()
                 .flatMap(menu -> menu.getMenuProducts().stream())
                 .collect(Collectors.toList());
@@ -166,9 +165,9 @@ class MenuServiceTest extends ServiceTest {
         assertAll(
                 () -> assertThat(actual).extracting("id").containsExactly(1L, 2L),
                 () -> assertThat(actual).extracting("name").containsExactly(name, secondName),
-                () -> assertThat(prices).containsExactly(price, secondPrice),
+                () -> assertThat(actual).extracting("price").containsExactly(price, secondPrice),
                 () -> assertThat(actual).extracting("menuGroupId").containsExactly(menuGroupId, menuGroupId),
-                () -> assertThat(menuProducts).extracting("productId").containsExactly(1L, 2L, 1L, 2L),
+                () -> assertThat(menuProducts).extracting("product").extracting("id").containsExactly(1L, 2L, 1L, 2L),
                 () -> assertThat(menuProducts).extracting("quantity").containsExactly(1L, 1L, 1L, 1L)
         );
     }

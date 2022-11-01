@@ -11,9 +11,9 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.dto.request.TableGroupCreateRequest;
+import kitchenpos.ui.dto.response.OrderTableResponse;
+import kitchenpos.ui.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -27,10 +27,14 @@ class TableGroupRestControllerTest extends DocumentationTest {
     @Test
     void create() {
         given(tableGroupService.create(any()))
-                .willReturn(new TableGroup(1L, LocalDateTime.now(), List.of(
-                        new OrderTable(3L, 1L, 5, false),
-                        new OrderTable(4L, 1L, 5, false)
-                )));
+                .willReturn(new TableGroupResponse(
+                        1L,
+                        LocalDateTime.now(),
+                        List.of(
+                                new OrderTableResponse(3L, 1L, 5, false),
+                                new OrderTableResponse(4L, 1L, 5, false)
+                        ))
+                );
 
         docsGiven
                 .contentType(MediaType.APPLICATION_JSON_VALUE)

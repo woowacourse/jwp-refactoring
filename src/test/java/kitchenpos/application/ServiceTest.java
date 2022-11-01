@@ -11,7 +11,7 @@ public class ServiceTest {
     private DatabaseCleaner databaseCleaner;
 
     @BeforeEach
-    void setUp() {
+    void clear() {
         databaseCleaner.clear();
     }
 }

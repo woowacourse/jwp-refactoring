@@ -10,6 +10,8 @@ import java.math.BigDecimal;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import kitchenpos.domain.Product;
+import kitchenpos.exception.badrequest.ProductNameInvalidException;
+import kitchenpos.exception.badrequest.ProductPriceInvalidException;
 import kitchenpos.ui.dto.request.ProductCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,35 +43,28 @@ class ProductServiceTest extends ServiceTest {
 
     @MethodSource("createProductFailCases")
     @ParameterizedTest(name = "{0}")
-    void create_fail_cases(final String description, final String name, final BigDecimal price) {
+    void create_fail_cases(final String description, final String name, final BigDecimal price, final Class<?> clazz) {
         // given
         final var productRequest = new ProductCreateRequest(name, price);
 
         // when & then
         assertThatThrownBy(() -> productService.create(productRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(clazz);
     }
 
     private static Stream<Arguments> createProductFailCases() {
         return Stream.of(
-                Arguments.of("Product 생성 시, name이 null이면 예외가 발생한다", null, new BigDecimal("20000.00")),
-                Arguments.of("Product 생성 시, name이 비어있으면 예외가 발생한다", " ", new BigDecimal("20000.00")),
-                Arguments.of("Product 생성 시, name이 비어있으면 예외가 발생한다", "", new BigDecimal("20000.00")),
-                Arguments.of("Product 생성 시, price가 null이면 예외가 발생한다", "상품명", null),
-                Arguments.of("Product 생성 시, price가 0 보다 작으면 예외가 발생한다", "상품명", new BigDecimal("-10000.00"))
+                Arguments.of("Product 생성 시, name이 null이면 예외가 발생한다",
+                        null, new BigDecimal("20000.00"), ProductNameInvalidException.class),
+                Arguments.of("Product 생성 시, name이 비어있으면 예외가 발생한다",
+                        " ", new BigDecimal("20000.00"), ProductNameInvalidException.class),
+                Arguments.of("Product 생성 시, name이 비어있으면 예외가 발생한다",
+                        "", new BigDecimal("20000.00"), ProductNameInvalidException.class),
+                Arguments.of("Product 생성 시, price가 null이면 예외가 발생한다",
+                        "상품명", null, ProductPriceInvalidException.class),
+                Arguments.of("Product 생성 시, price가 0 보다 작으면 예외가 발생한다",
+                        "상품명", new BigDecimal("-10000.00"), ProductPriceInvalidException.class)
         );
-    }
-
-    @DisplayName("Product 생성 시, 이미 존재하는 name일 경우 예외가 발생한다")
-    @Test
-    void should_fail_when_name_is_duplicate() {
-        // given
-        final var productRequest = new ProductCreateRequest("까르보치킨", new BigDecimal("20000.00"));
-        productService.create(productRequest);
-
-        // when & then
-        assertThatThrownBy(() -> productService.create(productRequest))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("전체 프로덕트를 조회할 수 있다")

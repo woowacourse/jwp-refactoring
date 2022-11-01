@@ -3,15 +3,17 @@ package kitchenpos.repository;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.exception.notfound.MenuGroupNotFoundException;
+import org.springframework.data.repository.Repository;
 
-public interface MenuGroupRepository {
+public interface MenuGroupRepository extends Repository<MenuGroup, Long> {
     MenuGroup save(MenuGroup entity);
-
-    Optional<MenuGroup> findById(Long id);
 
     List<MenuGroup> findAll();
 
-    boolean existsById(Long id);
+    default MenuGroup getById(Long menuGroupId) {
+        return findById(menuGroupId).orElseThrow(MenuGroupNotFoundException::new);
+    }
 
-    boolean existsByName(String name);
+    Optional<MenuGroup> findById(Long menuGroupId);
 }

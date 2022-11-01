@@ -5,9 +5,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.exception.badrequest.OrderTableAlreadyInGroupException;
+import kitchenpos.exception.badrequest.OrderTableNegativeNumberOfGuestsException;
+import kitchenpos.exception.badrequest.OrderTableUnableToChangeNumberOfGuestsWhenEmptyException;
+import kitchenpos.exception.notfound.OrderTableNotFoundException;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.ui.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.ui.dto.request.OrderTableChangeNumberOfGuestsRequest;
@@ -53,7 +58,7 @@ class TableServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableService.create(orderTableRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderTableNegativeNumberOfGuestsException.class);
     }
 
     @DisplayName("전체 테이블 목록을 조회할 수 있다")
@@ -106,7 +111,7 @@ class TableServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> tableService.changeEmpty(invalidOrderTableId, request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(OrderTableNotFoundException.class);
         }
 
         @DisplayName("대상 테이블에 그룹 아이디가 존재하면(그룹에 속해 있는 테이블) 예외이다")
@@ -128,9 +133,9 @@ class TableServiceTest extends ServiceTest {
                             .extracting("tableGroupId")
                             .containsExactly(1L, 1L),
                     () -> assertThatThrownBy(() -> tableService.changeEmpty(table1.getId(), table1ChangeRequest))
-                            .isInstanceOf(IllegalArgumentException.class),
+                            .isInstanceOf(OrderTableAlreadyInGroupException.class),
                     () -> assertThatThrownBy(() -> tableService.changeEmpty(table2.getId(), table2ChangeRequest))
-                            .isInstanceOf(IllegalArgumentException.class)
+                            .isInstanceOf(OrderTableAlreadyInGroupException.class)
             );
         }
 
@@ -139,7 +144,8 @@ class TableServiceTest extends ServiceTest {
         void should_fail_when_target_table_has_a_cooking_status_order() {
             // given
             final var groupedTable = tableService.create(new OrderTableCreateRequest(0, true));
-            final var order = new Order(groupedTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), null);
+            final var order = new Order(groupedTable.getId(), OrderStatus.COOKING, LocalDateTime.now(),
+                    new ArrayList<>());
             orderRepository.save(order);
 
             // when
@@ -155,7 +161,8 @@ class TableServiceTest extends ServiceTest {
         void should_fail_when_target_table_has_a_meal_status_order() {
             // given
             final var groupedTable = tableService.create(new OrderTableCreateRequest(0, true));
-            orderRepository.save(new Order(groupedTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), null));
+            orderRepository.save(
+                    new Order(groupedTable.getId(), OrderStatus.MEAL, LocalDateTime.now(), new ArrayList<>()));
 
             // when
             final var request = new OrderTableChangeEmptyRequest(groupedTable.isEmpty());
@@ -199,7 +206,7 @@ class TableServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(table.getId(), changeRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(OrderTableNegativeNumberOfGuestsException.class);
         }
 
         @DisplayName("유효하지 않은 테이블 아이디일 경우 예외이다")
@@ -210,7 +217,7 @@ class TableServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(-1L, changeRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(OrderTableNotFoundException.class);
         }
 
         @DisplayName("주문 불가 상태(empty=true) 테이블의 고객 인원수를 변경하려 하면 예외이다")
@@ -222,7 +229,7 @@ class TableServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(table.getId(), changeRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(OrderTableUnableToChangeNumberOfGuestsWhenEmptyException.class);
         }
     }
 }
