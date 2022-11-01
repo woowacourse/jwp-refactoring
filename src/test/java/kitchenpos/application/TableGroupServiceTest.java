@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Objects;
 import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTable;
 import kitchenpos.dto.request.MenuGroupRequest;
 import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.MenuRequest;
@@ -40,8 +41,8 @@ class TableGroupServiceTest extends ServiceTest {
     @Autowired
     private OrderTableRepository orderTableRepository;
 
-    private OrderTableResponse savedOrderTable1;
-    private OrderTableResponse savedOrderTable2;
+    private OrderTable savedOrderTable1;
+    private OrderTable savedOrderTable2;
 
     @BeforeEach
     void setUp() {
@@ -108,8 +109,8 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_TableIsNotEmpty() {
             // given
-            OrderTableResponse emptyOrderTable = saveOrderTable(10, true);
-            OrderTableResponse notEmptyOrderTable = saveOrderTable(10, false);
+            OrderTable emptyOrderTable = saveOrderTable(10, true);
+            OrderTable notEmptyOrderTable = saveOrderTable(10, false);
             TableGroupRequest request = new TableGroupRequest(
                     List.of(emptyOrderTable.getId(), notEmptyOrderTable.getId()));
 
@@ -161,7 +162,7 @@ class TableGroupServiceTest extends ServiceTest {
         @ParameterizedTest
         void Should_ThrowIAE_When_AnyStatusOfOrderTablesIsCookingOrMeal(final OrderStatus orderStatus) {
             // given
-            Product savedProduct = saveProduct("상품", 10_000).toEntity();
+            Product savedProduct = saveProduct("상품", 10_000);
             MenuGroupResponse menuGroup = menuGroupService.create(new MenuGroupRequest("메뉴 그룹"));
             MenuResponse menu = menuService.create(new MenuRequest(
                     "메뉴", BigDecimal.valueOf(10_000), menuGroup.getId(),

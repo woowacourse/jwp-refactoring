@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
+import kitchenpos.domain.order.OrderTable;
 import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.OrderTableResponse;
@@ -15,8 +16,8 @@ import org.junit.jupiter.api.Test;
 
 class TableServiceTest extends ServiceTest {
 
-    private OrderTableResponse savedOrderTable1;
-    private OrderTableResponse savedOrderTable2;
+    private OrderTable savedOrderTable1;
+    private OrderTable savedOrderTable2;
 
     @BeforeEach
     void setUp() {
@@ -119,7 +120,7 @@ class TableServiceTest extends ServiceTest {
         void Should_ChangeNumberOfGuests() {
             // given
             int expected = 100;
-            OrderTableResponse orderTable = saveOrderTable(1, false);
+            OrderTable orderTable = saveOrderTable(1, false);
             OrderTableRequest request = new OrderTableRequest(expected, false);
 
             // when
@@ -144,7 +145,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderTableDoesNotExist() {
             // given
-            OrderTableResponse orderTable = saveOrderTable(1, false);
+            OrderTable orderTable = saveOrderTable(1, false);
             OrderTableRequest request = new OrderTableRequest(100, false);
 
             // when & then
@@ -156,7 +157,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderTableIsEmpty() {
             // given
-            OrderTableResponse orderTable = saveOrderTable(1, true);
+            OrderTable orderTable = saveOrderTable(1, true);
             OrderTableRequest request = new OrderTableRequest(100, false);
 
             // when & then

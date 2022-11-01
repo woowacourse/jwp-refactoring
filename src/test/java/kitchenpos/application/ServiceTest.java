@@ -5,19 +5,19 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.DatabaseCleaner;
+import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.menu.Price;
+import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.order.OrderTable;
 import kitchenpos.dto.request.MenuGroupRequest;
 import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.MenuRequest;
-import kitchenpos.dto.request.OrderLineItemRequest;
-import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.request.ProductRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
 import kitchenpos.dto.response.MenuResponse;
-import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.dto.response.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,13 +53,14 @@ public class ServiceTest {
         databaseCleaner.clean();
     }
 
-    protected MenuGroupResponse saveMenuGroup(final String name) {
+    protected MenuGroup saveMenuGroup(final String name) {
         MenuGroupRequest request = new MenuGroupRequest(name);
-        return menuGroupService.create(request);
+        MenuGroupResponse createdMenuGroup = menuGroupService.create(request);
+        return new MenuGroup(createdMenuGroup.getId(), createdMenuGroup.getName());
     }
 
-    protected MenuResponse saveMenu(final String name, final int price, final MenuGroup menuGroup,
-                                    final List<MenuProduct> menuProducts) {
+    protected Menu saveMenu(final String name, final int price, final MenuGroup menuGroup,
+                            final List<MenuProduct> menuProducts) {
         MenuRequest menu = new MenuRequest(
                 name,
                 BigDecimal.valueOf(price),
@@ -72,25 +73,21 @@ public class ServiceTest {
                         .collect(Collectors.toList())
         );
 
-        return menuService.create(menu);
+        MenuResponse createdMenu = menuService.create(menu);
+        return new Menu(createdMenu.getId(), createdMenu.getName(), new Price(createdMenu.getPrice()), menuGroup,
+                menuProducts);
     }
 
-    protected OrderResponse saveOrder(final Long orderTableId, List<OrderLineItem> orderLineItems) {
-        List<OrderLineItemRequest> orderLineItemRequests = orderLineItems.stream()
-                .map(orderLineItem -> new OrderLineItemRequest(orderLineItem.getMenuId(), orderLineItem.getQuantity()))
-                .collect(Collectors.toList());
-
-        OrderRequest request = new OrderRequest(orderTableId, orderLineItemRequests);
-        return orderService.create(request);
-    }
-
-    protected OrderTableResponse saveOrderTable(final int numberOfGuests, final boolean empty) {
+    protected OrderTable saveOrderTable(final int numberOfGuests, final boolean empty) {
         OrderTableRequest request = new OrderTableRequest(numberOfGuests, empty);
-        return tableService.create(request);
+        OrderTableResponse createdOrderTable = tableService.create(request);
+        return new OrderTable(createdOrderTable.getId(), null, createdOrderTable.getNumberOfGuests(),
+                createdOrderTable.isEmpty());
     }
 
-    protected ProductResponse saveProduct(final String name, final int price) {
+    protected Product saveProduct(final String name, final int price) {
         ProductRequest request = new ProductRequest(name, new BigDecimal(price));
-        return productService.create(request);
+        ProductResponse createdProduct = productService.create(request);
+        return new Product(createdProduct.getId(), createdProduct.getName(), createdProduct.getPrice());
     }
 }

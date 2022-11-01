@@ -11,7 +11,6 @@ import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.Product;
 import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.MenuRequest;
-import kitchenpos.dto.response.MenuGroupResponse;
 import kitchenpos.dto.response.MenuResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,8 +24,8 @@ class MenuServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        savedMenuGroup = saveMenuGroup("메뉴 그룹").toEntity();
-        savedProduct = saveProduct("상품", 100_000).toEntity();
+        savedMenuGroup = saveMenuGroup("메뉴 그룹");
+        savedProduct = saveProduct("상품", 100_000);
     }
 
     @DisplayName("create 메소드는 ")
@@ -134,9 +133,9 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void Should_ReturnAllMenuList() {
             // given
-            MenuGroupResponse menuGroup = saveMenuGroup("메뉴 그룹");
+            MenuGroup menuGroup = saveMenuGroup("메뉴 그룹");
 
-            Product product = saveProduct("상품", 1_000_000).toEntity();
+            Product product = saveProduct("상품", 1_000_000);
             MenuProduct menuProduct = new MenuProduct(product, 1L);
 
             int expected = 4;

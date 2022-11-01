@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
+import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.Product;
@@ -15,9 +16,7 @@ import kitchenpos.domain.order.OrderTable;
 import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.dto.request.OrderStatusUpdateRequest;
-import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.dto.response.OrderResponse;
-import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.repository.OrderRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,18 +31,18 @@ class OrderServiceTest extends ServiceTest {
     @Autowired
     private OrderRepository orderRepository;
 
-    private OrderTableResponse savedOrderTable;
+    private OrderTable savedOrderTable;
     private MenuGroup savedMenuGroup;
     private Product savedProduct;
-    private MenuResponse savedMenu;
+    private Menu savedMenu;
 
     private OrderLineItem createdOrderLineItem;
 
     @BeforeEach
     void setUp() {
         savedOrderTable = saveOrderTable(10, false);
-        savedMenuGroup = saveMenuGroup("메뉴 그룹").toEntity();
-        savedProduct = saveProduct("상품", 5_000).toEntity();
+        savedMenuGroup = saveMenuGroup("메뉴 그룹");
+        savedProduct = saveProduct("상품", 5_000);
         savedMenu = saveMenu("메뉴", 10_000, savedMenuGroup, List.of(
                 new MenuProduct(savedProduct, 10)
         ));
@@ -101,7 +100,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderTableIsEmpty() {
             // given
-            OrderTableResponse emptyOrderTable = saveOrderTable(10, true);
+            OrderTable emptyOrderTable = saveOrderTable(10, true);
             OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(createdOrderLineItem.getMenuId(),
                     createdOrderLineItem.getQuantity());
 
@@ -180,7 +179,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderStatusIsCompletion() {
             // given
-            OrderTableResponse orderTable = saveOrderTable(10, false);
+            OrderTable orderTable = saveOrderTable(10, false);
             Order completionOrder = new Order(
                     new OrderTable(orderTable.getId(), null, 10, false),
                     List.of(createdOrderLineItem)
