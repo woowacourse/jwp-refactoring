@@ -13,17 +13,17 @@ public class OrderDtoMapperImpl implements OrderDtoMapper {
 
     @Override
     public OrderResponse toOrderResponse(final Order order) {
-        List<OrderLineItemResponse> orderLineItemRespons = order.getOrderLineItems()
+        List<OrderLineItemResponse> orderLineItemResponses = order.getOrderLineItems()
                 .stream()
                 .map(this::toOrderLineItemResponse)
                 .collect(Collectors.toList());
         return new OrderResponse(order.getId(), order.getOrderTableId(), order.getOrderStatus().name(),
-                order.getOrderedTime(), orderLineItemRespons);
+                order.getOrderedTime(), orderLineItemResponses);
     }
 
     private OrderLineItemResponse toOrderLineItemResponse(final OrderLineItem orderLineItem) {
-        return new OrderLineItemResponse(orderLineItem.getSeq(), orderLineItem.getMenuId(),
-                orderLineItem.getQuantity());
+        return new OrderLineItemResponse(orderLineItem.getSeq(), orderLineItem.getQuantity(),
+                orderLineItem.getMenuName(), orderLineItem.getMenuPrice());
     }
 
     @Override

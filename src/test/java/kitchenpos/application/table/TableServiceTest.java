@@ -7,13 +7,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.ServiceTest;
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.MenuGroupRepository;
-import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.common.Price;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.order.OrderedMenu;
 import kitchenpos.dto.table.request.OrderTableCreateRequest;
 import kitchenpos.dto.table.response.OrderTableResponse;
 import kitchenpos.exception.badrequest.CookingOrMealOrderTableCannotChangeEmptyException;
@@ -26,10 +24,6 @@ class TableServiceTest {
 
     @Autowired
     private OrderRepository orderRepository;
-    @Autowired
-    private MenuGroupRepository menuGroupRepository;
-    @Autowired
-    private MenuRepository menuRepository;
     @Autowired
     private TableService tableService;
 
@@ -76,11 +70,7 @@ class TableServiceTest {
     void 변경_대상_테이블의_주문_목록_중_조리_중인_주문이_있을_경우_예외를_반환한다() {
         Long orderTableId = tableService.create(new OrderTableCreateRequest(1, false))
                 .getId();
-        Long menuGroupId = menuGroupRepository.save(new MenuGroup("메뉴 그룹"))
-                .getId();
-        Long menuId = menuRepository.save(new Menu("메뉴", BigDecimal.ZERO, menuGroupId, List.of()))
-                .getId();
-        OrderLineItem orderLineItem = new OrderLineItem(menuId, 1);
+        OrderLineItem orderLineItem = new OrderLineItem(1, new OrderedMenu("메뉴 이름", new Price(BigDecimal.ZERO)));
         orderRepository.save(new Order(orderTableId, MEAL, List.of(orderLineItem)));
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, true))
@@ -91,11 +81,7 @@ class TableServiceTest {
     void 변경_대상_테이블의_주문_목록_중_식사_중인_주문이_있을_경우_예외를_반환한다() {
         Long orderTableId = tableService.create(new OrderTableCreateRequest(1, false))
                 .getId();
-        Long menuGroupId = menuGroupRepository.save(new MenuGroup("메뉴 그룹"))
-                .getId();
-        Long menuId = menuRepository.save(new Menu("메뉴", BigDecimal.ZERO, menuGroupId, List.of()))
-                .getId();
-        OrderLineItem orderLineItem = new OrderLineItem(menuId, 1);
+        OrderLineItem orderLineItem = new OrderLineItem(1, new OrderedMenu("메뉴 이름", new Price(BigDecimal.ZERO)));
         orderRepository.save(new Order(orderTableId, List.of(orderLineItem)));
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, true))

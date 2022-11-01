@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.dto.order.request.OrderCreateRequest;
@@ -24,7 +25,7 @@ class OrderRestControllerTest extends RestControllerTest {
     void 주문_생성에_성공한다() throws Exception {
         OrderLineItemCreateRequest orderLineItemRequest = new OrderLineItemCreateRequest(1L, 1);
         OrderCreateRequest orderRequest = new OrderCreateRequest(1L, List.of(orderLineItemRequest));
-        OrderLineItemResponse expectedItem = new OrderLineItemResponse(1L, 1L, 1);
+        OrderLineItemResponse expectedItem = new OrderLineItemResponse(1L, 1L, "메뉴 이름", BigDecimal.ZERO);
         OrderResponse expected = new OrderResponse(1L, 1L, COOKING.name(), LocalDateTime.now(),
                 List.of(expectedItem));
 

@@ -3,6 +3,7 @@ package kitchenpos.application.order;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
@@ -13,6 +14,7 @@ import kitchenpos.dto.order.mapper.OrderDtoMapper;
 import kitchenpos.dto.order.mapper.OrderLineItemMapper;
 import kitchenpos.dto.order.mapper.OrderMapper;
 import kitchenpos.dto.order.request.OrderCreateRequest;
+import kitchenpos.dto.order.request.OrderLineItemCreateRequest;
 import kitchenpos.dto.order.request.OrderStatusChangeRequest;
 import kitchenpos.dto.order.response.OrderResponse;
 import kitchenpos.exception.badrequest.DuplicateOrderLineItemException;
@@ -48,24 +50,24 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest orderCreateRequest) {
-        List<OrderLineItem> orderLineItems = orderLineItemMapper.toOrderLineItems(
-                orderCreateRequest.getOrderLineItems());
+        List<Menu> menus = findMenus(orderCreateRequest.getOrderLineItems());
+        List<OrderLineItem> orderLineItems = orderLineItemMapper
+                .toOrderLineItems(orderCreateRequest.getOrderLineItems(), menus);
         Order order = orderMapper.toOrder(orderCreateRequest, orderLineItems);
         validateOrder(order);
         return orderDtoMapper.toOrderResponse(orderRepository.save(order));
     }
 
-    private void validateOrder(final Order order) {
-        List<OrderLineItem> orderLineItems = order.getOrderLineItems();
-        List<Long> menuIds = toMenuIds(orderLineItems);
+    private List<Menu> findMenus(final List<OrderLineItemCreateRequest> orderLineItemCreateRequests) {
+        List<Long> menuIds = toMenuIds(orderLineItemCreateRequests);
         validateNotDuplicate(menuIds);
         validateMenuExists(menuIds);
-        validateOrderTableNotEmpty(order);
+        return menuRepository.findAllById(menuIds);
     }
 
-    private List<Long> toMenuIds(final List<OrderLineItem> orderLineItems) {
-        return orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
+    private List<Long> toMenuIds(final List<OrderLineItemCreateRequest> orderLineItemCreateRequests) {
+        return orderLineItemCreateRequests.stream()
+                .map(OrderLineItemCreateRequest::getMenuId)
                 .collect(Collectors.toList());
     }
 
@@ -79,6 +81,10 @@ public class OrderService {
         if (menuIds.size() != menuRepository.countByIdIn(menuIds)) {
             throw new MenuNotExistsException();
         }
+    }
+
+    private void validateOrder(final Order order) {
+        validateOrderTableNotEmpty(order);
     }
 
     private void validateOrderTableNotEmpty(final Order order) {

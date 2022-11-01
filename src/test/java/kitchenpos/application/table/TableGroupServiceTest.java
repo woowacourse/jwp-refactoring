@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.ServiceTest;
+import kitchenpos.domain.common.Price;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuGroupRepository;
@@ -15,6 +16,7 @@ import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.order.OrderedMenu;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.dto.table.request.TableGroupCreateRequest;
@@ -96,7 +98,7 @@ class TableGroupServiceTest {
                 .getId();
         Long menuId = menuRepository.save(new Menu("메뉴", BigDecimal.ZERO, menuGroupId, List.of()))
                 .getId();
-        OrderLineItem orderLineItem = new OrderLineItem(menuId, 1);
+        OrderLineItem orderLineItem = new OrderLineItem(menuId, new OrderedMenu("메뉴 이름", new Price(BigDecimal.ZERO)));
         orderRepository.save(new Order(orderTable1.getId(), List.of(orderLineItem)));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))

@@ -9,10 +9,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.RepositoryTest;
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.MenuGroupRepository;
-import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.common.Price;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
 import org.junit.jupiter.api.Assertions;
@@ -26,20 +23,12 @@ class OrderRepositoryTest {
     private OrderTableRepository orderTableRepository;
     @Autowired
     private OrderRepository orderRepository;
-    @Autowired
-    private MenuGroupRepository menuGroupRepository;
-    @Autowired
-    private MenuRepository menuRepository;
 
     @Test
     void 주문을_저장하면_id가_채워진다() {
         Long orderTableId = orderTableRepository.save(new OrderTable(1, false))
                 .getId();
-        Long menuGroupId = menuGroupRepository.save(new MenuGroup("메뉴 그룹"))
-                .getId();
-        Long menuId = menuRepository.save(new Menu("메뉴", BigDecimal.ZERO, menuGroupId, List.of()))
-                .getId();
-        OrderLineItem orderLineItem = new OrderLineItem(menuId, 1);
+        OrderLineItem orderLineItem = new OrderLineItem(1, new OrderedMenu("메뉴 이름", new Price(BigDecimal.ZERO)));
         Order order = new Order(orderTableId, List.of(orderLineItem));
 
         Order savedOrder = orderRepository.save(order);
@@ -56,11 +45,7 @@ class OrderRepositoryTest {
     void id로_주문을_조회할_수_있다() {
         Long orderTableId = orderTableRepository.save(new OrderTable(1, false))
                 .getId();
-        Long menuGroupId = menuGroupRepository.save(new MenuGroup("메뉴 그룹"))
-                .getId();
-        Long menuId = menuRepository.save(new Menu("메뉴", BigDecimal.ZERO, menuGroupId, List.of()))
-                .getId();
-        OrderLineItem orderLineItem = new OrderLineItem(menuId, 1);
+        OrderLineItem orderLineItem = new OrderLineItem(1, new OrderedMenu("메뉴 이름", new Price(BigDecimal.ZERO)));
         Order order = orderRepository
                 .save(new Order(orderTableId, List.of(orderLineItem)));
 
@@ -82,12 +67,8 @@ class OrderRepositoryTest {
     void 모든_주문을_조회할_수_있다() {
         Long orderTableId = orderTableRepository.save(new OrderTable(1, false))
                 .getId();
-        Long menuGroupId = menuGroupRepository.save(new MenuGroup("메뉴 그룹"))
-                .getId();
-        Long menuId = menuRepository.save(new Menu("메뉴", BigDecimal.ZERO, menuGroupId, List.of()))
-                .getId();
-        OrderLineItem orderLineItem1 = new OrderLineItem(menuId, 1);
-        OrderLineItem orderLineItem2 = new OrderLineItem(menuId, 1);
+        OrderLineItem orderLineItem1 = new OrderLineItem(1, new OrderedMenu("메뉴 이름", new Price(BigDecimal.ZERO)));
+        OrderLineItem orderLineItem2 = new OrderLineItem(1, new OrderedMenu("메뉴 이름", new Price(BigDecimal.ZERO)));
         Order order1 = orderRepository.save(new Order(orderTableId, List.of(orderLineItem1)));
         Order order2 = orderRepository.save(new Order(orderTableId, MEAL, List.of(orderLineItem2)));
 
@@ -102,11 +83,7 @@ class OrderRepositoryTest {
     void 주문_테이블에_해당하고_주문_상태_목록에_있는_주문이_있으면_true를_반환한다() {
         Long orderTableId = orderTableRepository.save(new OrderTable(1, false))
                 .getId();
-        Long menuGroupId = menuGroupRepository.save(new MenuGroup("메뉴 그룹"))
-                .getId();
-        Long menuId = menuRepository.save(new Menu("메뉴", BigDecimal.ZERO, menuGroupId, List.of()))
-                .getId();
-        OrderLineItem orderLineItem = new OrderLineItem(menuId, 1);
+        OrderLineItem orderLineItem = new OrderLineItem(1, new OrderedMenu("메뉴 이름", new Price(BigDecimal.ZERO)));
         orderRepository.save(new Order(orderTableId, List.of(orderLineItem)));
 
         boolean actual = orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, List.of(COOKING));
@@ -128,11 +105,7 @@ class OrderRepositoryTest {
     void 주문_테이블_목록에_있으면서_주문_상태_목록에_있는_주문이_있으면_true를_반환한다() {
         Long orderTableId = orderTableRepository.save(new OrderTable(1, false))
                 .getId();
-        Long menuGroupId = menuGroupRepository.save(new MenuGroup("메뉴 그룹"))
-                .getId();
-        Long menuId = menuRepository.save(new Menu("메뉴", BigDecimal.ZERO, menuGroupId, List.of()))
-                .getId();
-        OrderLineItem orderLineItem = new OrderLineItem(menuId, 1);
+        OrderLineItem orderLineItem = new OrderLineItem(1, new OrderedMenu("메뉴 이름", new Price(BigDecimal.ZERO)));
         orderRepository.save(new Order(orderTableId, List.of(orderLineItem)));
 
         boolean actual = orderRepository.existsByOrderTableIdInAndOrderStatusIn(List.of(orderTableId),

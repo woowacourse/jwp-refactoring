@@ -1,7 +1,7 @@
 package kitchenpos.domain.order;
 
+import java.math.BigDecimal;
 import java.util.Objects;
-import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -23,23 +23,23 @@ public class OrderLineItem {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
-    @Column(name = "menu_id", nullable = false)
-    private Long menuId;
     @Embedded
     private Quantity quantity;
+    @Embedded
+    private OrderedMenu orderedMenu;
 
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(final Long menuId, final long quantity) {
-        this(null, null, menuId, new Quantity(quantity));
+    public OrderLineItem(final long quantity, final OrderedMenu orderedMenu) {
+        this(null, null, new Quantity(quantity), orderedMenu);
     }
 
-    public OrderLineItem(final Long seq, final Order order, final Long menuId, final Quantity quantity) {
+    public OrderLineItem(final Long seq, final Order order, final Quantity quantity, final OrderedMenu orderedMenu) {
         this.seq = seq;
         this.order = order;
-        this.menuId = menuId;
         this.quantity = quantity;
+        this.orderedMenu = orderedMenu;
     }
 
     public void mapOrder(final Order order) {
@@ -58,16 +58,16 @@ public class OrderLineItem {
         return order;
     }
 
-    public void setOrder(final Order order) {
-        this.order = order;
-    }
-
-    public Long getMenuId() {
-        return menuId;
-    }
-
     public long getQuantity() {
         return quantity.getValue();
+    }
+
+    public String getMenuName() {
+        return orderedMenu.getName();
+    }
+
+    public BigDecimal getMenuPrice() {
+        return orderedMenu.getPrice();
     }
 
     @Override
