@@ -59,7 +59,7 @@ public class DataSupport {
                          final MenuProduct... menuProducts) {
         final Menu menu = Menu.ofNew(name, new BigDecimal(price), menuGroupId);
         final List<MenuProduct> mappedMenuProducts = Arrays.stream(menuProducts)
-                .map(menuProduct -> MenuProduct.ofNew(menu, menuProduct.getProduct(), menuProduct.getQuantity()))
+                .map(menuProduct -> mapManuProductWithMenu(menu, menuProduct))
                 .collect(Collectors.toList());
         menu.changeMenuProducts(mappedMenuProducts);
 
@@ -107,5 +107,10 @@ public class DataSupport {
 
     public List<OrderTable> findTableByTableGroupId(final Long tableGroupId) {
         return orderTableDao.findAllByTableGroupId(tableGroupId);
+    }
+
+    private MenuProduct mapManuProductWithMenu(final Menu menu, final MenuProduct menuProduct) {
+        return new MenuProduct(null, menu, menuProduct.getProductId(), menuProduct.getQuantity(),
+                menuProduct.getPrice());
     }
 }

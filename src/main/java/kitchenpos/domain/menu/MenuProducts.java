@@ -21,7 +21,7 @@ public class MenuProducts {
 
     public Price calculateTotalPrice() {
         final List<Price> prices = values.stream()
-                .map(MenuProduct::calculatePrice)
+                .map(MenuProduct::getPrice)
                 .collect(Collectors.toList());
         return Price.sum(prices);
     }

@@ -5,6 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 @Entity
 public class MenuProduct {
@@ -14,23 +15,25 @@ public class MenuProduct {
     private Long seq;
     @ManyToOne
     private Menu menu;
-    @ManyToOne
-    private Product product;
+    private Long productId;
     private long quantity;
+    @Transient
+    private Price price;
 
-    private MenuProduct(final Long seq, final Menu menu, final Product product, final long quantity) {
+    public MenuProduct(final Long seq,
+                        final Menu menu,
+                        final Long productId,
+                        final long quantity,
+                        final Price price) {
         this.seq = seq;
         this.menu = menu;
-        this.product = product;
+        this.productId = productId;
         this.quantity = quantity;
+        this.price = price;
     }
 
     public static MenuProduct ofNew(final Menu menu, final Product product, final long quantity) {
-        return new MenuProduct(null, menu, product, quantity);
-    }
-
-    public Price calculatePrice() {
-        return product.calculatePrice(quantity);
+        return new MenuProduct(null, menu, product.getId(), quantity, product.calculatePrice(quantity));
     }
 
     public Long getSeq() {
@@ -41,16 +44,16 @@ public class MenuProduct {
         return menu.getId();
     }
 
-    public Product getProduct() {
-        return product;
-    }
-
     public Long getProductId() {
-        return product.getId();
+        return productId;
     }
 
     public long getQuantity() {
         return quantity;
+    }
+
+    public Price getPrice() {
+        return price;
     }
 
     protected MenuProduct() {
