@@ -42,7 +42,11 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
         validateChangeEmpty(orderTableId, savedOrderTable);
-        final OrderTable orderTable = orderTableDao.save(new OrderTable(orderTableId, empty));
+
+        orderTableDao.update(new OrderTable(orderTableId, empty));
+
+        final OrderTable orderTable = orderTableDao.findById(orderTableId)
+                .orElseThrow(IllegalArgumentException::new);
         return TableChangeEmptyResponse.from(orderTable);
     }
 
