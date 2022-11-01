@@ -14,12 +14,10 @@ import kitchenpos.ui.dto.request.TableCreateDto;
 import kitchenpos.ui.dto.request.TableGroupCreateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class TableGroupService {
 
-    private static final String TABLE_GROUP_CREATE_ERROR_MESSAGE = "단체 지정시 개별 주문테이블은 최소 2개 이상이어야 합니다.";
     private static final String UNGROUP_ERROR_MESSAGE = "조리 또는 식사중인 주문은 단체지정을 해제할 수 없습니다.";
 
     private final OrderRepository orderRepository;
@@ -35,11 +33,11 @@ public class TableGroupService {
 
     @Transactional
     public TableGroup create(final TableGroupCreateRequest request) {
-        validateTableCount(request);
         final List<OrderTable> savedOrderTables = findOrderTable(request.getOrderTables());
 
         validateCanGroup(savedOrderTables);
-        final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), savedOrderTables));
+        final TableGroup savedTableGroup = tableGroupRepository.save(
+                new TableGroup(LocalDateTime.now(), savedOrderTables));
 
         final Long tableGroupId = savedTableGroup.getId();
         for (final OrderTable savedOrderTable : savedOrderTables) {
@@ -52,13 +50,6 @@ public class TableGroupService {
     private void validateCanGroup(final List<OrderTable> savedOrderTables) {
         for (final OrderTable savedOrderTable : savedOrderTables) {
             savedOrderTable.validateCanGroup();
-        }
-    }
-
-    private void validateTableCount(final TableGroupCreateRequest request) {
-        final List<TableCreateDto> orderTables = request.getOrderTables();
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException(TABLE_GROUP_CREATE_ERROR_MESSAGE);
         }
     }
 

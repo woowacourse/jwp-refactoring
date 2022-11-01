@@ -8,7 +8,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import kitchenpos.domain.OrderTable;
@@ -53,31 +52,6 @@ class TableGroupServiceTest {
         TableGroup dbTableGroup = tableGroupRepository.findById(savedTableGroup.getId())
                 .orElseThrow(NoSuchElementException::new);
         assertThat(dbTableGroup.getId()).isEqualTo(savedTableGroup.getId());
-    }
-
-    @DisplayName("단체 지정을 생성할 때 빈 주문테이블이라면 예외를 반환한다.")
-    @Test
-    void create_fail_if_emptyOrderTable() {
-        // given
-        TableGroupCreateRequest request = new TableGroupCreateRequest(new ArrayList<>());
-
-        // when, then
-        assertThatThrownBy(() -> tableGroupService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("단체 지정을 생성할 때 주문테이블의 개수가 하나라면 예외를 반환한다.")
-    @Test
-    void create_fail_if_orderTable_is_one() {
-        // given
-        TableGroup tableGroup = createTableGroup(LocalDateTime.now(), new ArrayList<>());
-        OrderTable orderTable = orderTableRepository.save(createOrderTable(tableGroup.getId(), 4, true));
-        TableGroupCreateRequest request = new TableGroupCreateRequest(
-                Collections.singletonList(new TableCreateDto(orderTable.getId())));
-
-        // when, then
-        assertThatThrownBy(() -> tableGroupService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("단체 지정을 생성할 때 개별 주문테이블이 존재하지 않으면 예외를 반환한다.")
