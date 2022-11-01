@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.dto.request.TableGroupCreateRequest;
+import kitchenpos.ui.dto.response.TableGroupResponse;
 
 public interface TableGroupService {
-    TableGroup create(TableGroupCreateRequest request);
+    TableGroupResponse create(TableGroupCreateRequest request);
 
     void unGroup(Long tableGroupId);
 }

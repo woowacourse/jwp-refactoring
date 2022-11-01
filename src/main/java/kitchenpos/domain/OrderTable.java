@@ -15,7 +15,7 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", columnDefinition = "bigint(20)")
     private Long id;
-    @Column(name = "table_group_id", columnDefinition = "bigint(20)")
+    @Column(name = "table_group_id")
     private Long tableGroupId;
     @Column(name = "number_of_guests", nullable = false, columnDefinition = "int(11)")
     private int numberOfGuests;

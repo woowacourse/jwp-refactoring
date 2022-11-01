@@ -1,7 +1,6 @@
 package kitchenpos.domain.validator;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -25,26 +24,6 @@ public class TableGroupValidator {
     public TableGroupValidator(final OrderTableRepository orderTableRepository, final OrderRepository orderRepository) {
         this.orderTableRepository = orderTableRepository;
         this.orderRepository = orderRepository;
-    }
-
-    public void validateGroup(final TableGroup tableGroup) {
-        final var requestIds = tableGroup.getOrderTableIds();
-        validateRequestIdsSize(requestIds);
-
-        final var orderTables = orderTableRepository.findAllByIdInAndEmptyIsTrueAndTableGroupIdIsNull(requestIds);
-        validateFoundTableSize(requestIds, orderTables);
-    }
-
-    private void validateRequestIdsSize(final Set<Long> requestIds) {
-        if (CollectionUtils.isEmpty(requestIds) || requestIds.size() < MINIMUM_TABLE_GROUP_SIZE) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateFoundTableSize(final Set<Long> orderTableIds, final List<OrderTable> orderTables) {
-        if (orderTableIds.size() != orderTables.size()) {
-            throw new IllegalArgumentException();
-        }
     }
 
     public void validateUnGroup(final TableGroup tableGroup) {

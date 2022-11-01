@@ -2,11 +2,12 @@ package kitchenpos.application.concrete;
 
 import java.util.Objects;
 import kitchenpos.application.TableGroupService;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.TableGroupMapper;
 import kitchenpos.domain.validator.TableGroupValidator;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.ui.dto.request.TableGroupCreateRequest;
+import kitchenpos.ui.dto.response.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,24 +17,26 @@ public class JpaTableGroupService implements TableGroupService {
     private final TableGroupValidator tableGroupValidator;
     private final TableGroupRepository tableGroupRepository;
     private final OrderTableRepository orderTableRepository;
+    private final TableGroupMapper tableGroupMapper;
 
     public JpaTableGroupService(final TableGroupValidator tableGroupValidator,
                                 final TableGroupRepository tableGroupRepository,
-                                final OrderTableRepository orderTableRepository) {
+                                final OrderTableRepository orderTableRepository,
+                                final TableGroupMapper tableGroupMapper) {
         this.tableGroupValidator = tableGroupValidator;
         this.tableGroupRepository = tableGroupRepository;
         this.orderTableRepository = orderTableRepository;
+        this.tableGroupMapper = tableGroupMapper;
     }
 
     @Transactional
     @Override
-    public TableGroup create(final TableGroupCreateRequest request) {
-        final var tableGroup = new TableGroup(request.ids());
-        tableGroup.group(tableGroupValidator);
-        tableGroupRepository.save(tableGroup);
-        final var groupedTables = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
+    public TableGroupResponse create(final TableGroupCreateRequest request) {
+        final var entity = tableGroupMapper.mapFrom(request);
+        final var tableGroup = tableGroupRepository.save(entity);
+        final var orderTables = orderTableRepository.findAllByTableGroupId(entity.getId());
 
-        return tableGroup.addOrderTables(groupedTables);
+        return TableGroupResponse.of(tableGroup, orderTables);
     }
 
     @Transactional

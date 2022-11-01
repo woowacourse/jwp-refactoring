@@ -22,7 +22,7 @@ public class TableGroupEventListener {
     public void handleTableGroupEvent(final TableGroupEvent tableGroupEvent) {
         final var tableGroup = tableGroupEvent.getTableGroup();
         final var tableGroupId = tableGroup.getId();
-        final var orderTableIds = tableGroup.getOrderTableIds();
+        final var orderTableIds = tableGroupEvent.getOrderTableIds();
 
         orderTableRepository.findAllByIdInAndEmptyIsTrueAndTableGroupIdIsNull(orderTableIds)
                 .forEach(table -> table.group(orderTableValidator, tableGroupId));

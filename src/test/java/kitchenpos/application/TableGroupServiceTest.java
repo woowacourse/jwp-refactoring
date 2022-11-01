@@ -11,10 +11,10 @@ import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.ui.dto.request.OrderTableCreateRequest;
 import kitchenpos.ui.dto.request.TableGroupCreateRequest;
+import kitchenpos.ui.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -143,11 +143,11 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void ungroup_should_fail_when_tableGroupId_is_invalid() {
             // given
-            final TableGroup tableGroup = createTableGroup();
+            final var tableGroupResponse = createTableGroup();
 
             // when & then
             assertAll(
-                    () -> assertThat(tableGroup.getId()).isEqualTo(1L),
+                    () -> assertThat(tableGroupResponse.getId()).isEqualTo(1L),
                     () -> assertThatThrownBy(() -> tableGroupService.unGroup(null))
                             .isInstanceOf(IllegalArgumentException.class),
                     () -> assertThatThrownBy(() -> tableGroupService.unGroup(-1L))
@@ -159,11 +159,11 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void ungroup_should_fail_when_the_group_contains_table_has_order_with_cooking_status() {
             // given
-            final TableGroup tableGroup = createTableGroup();
+            final var tableGroupResponse = createTableGroup();
             orderRepository.save(new Order(tableA.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), null));
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.unGroup(tableGroup.getId()))
+            assertThatThrownBy(() -> tableGroupService.unGroup(tableGroupResponse.getId()))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -171,15 +171,15 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void ungroup_should_fail_when_the_group_contains_table_has_order_with_meal_status() {
             // given
-            final TableGroup tableGroup = createTableGroup();
+            final var tableGroupResponse = createTableGroup();
             orderRepository.save(new Order(tableA.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), null));
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.unGroup(tableGroup.getId()))
+            assertThatThrownBy(() -> tableGroupService.unGroup(tableGroupResponse.getId()))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
-        private TableGroup createTableGroup() {
+        private TableGroupResponse createTableGroup() {
             return tableGroupService.create(new TableGroupCreateRequest(List.of(tableA.getId(), tableB.getId())));
         }
     }
