@@ -26,12 +26,12 @@ public class Products {
                 .reduce(BigDecimal.ZERO, BigDecimal::add));
     }
 
-    private static BigDecimal multiply(Map<Long, Long> productIdsQuantity, Product product) {
+    private BigDecimal multiply(Map<Long, Long> productIdsQuantity, Product product) {
         return product.getPrice().getValue()
                 .multiply(quantity(productIdsQuantity, product));
     }
 
-    private static BigDecimal quantity(Map<Long, Long> productIdsQuantity, Product product) {
+    private BigDecimal quantity(Map<Long, Long> productIdsQuantity, Product product) {
         return BigDecimal.valueOf(productIdsQuantity.get(product.getId()));
     }
 }

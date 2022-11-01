@@ -33,10 +33,6 @@ public class Product {
         this.price = price;
     }
 
-    public Product(String name, Price price) {
-        this(null, name, price);
-    }
-
     public Product(String name, int price) {
         this(null, name, Price.from(price));
     }
