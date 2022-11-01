@@ -9,15 +9,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import kitchenpos.Application;
+import kitchenpos.application.dto.response.MenuGroupResponse;
+import kitchenpos.application.dto.response.MenuResponse;
+import kitchenpos.application.dto.response.OrderResponse;
+import kitchenpos.application.dto.response.OrderTableResponse;
+import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.common.DataClearExtension;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.dto.request.MenuProductRequest;
+import kitchenpos.ui.dto.request.MenuRequest;
+import kitchenpos.ui.dto.request.OrderChangeRequest;
+import kitchenpos.ui.dto.request.OrderLineItemRequest;
+import kitchenpos.ui.dto.request.OrderRequest;
+import kitchenpos.ui.dto.request.OrderTableRequest;
+import kitchenpos.ui.dto.request.ProductRequest;
+import kitchenpos.ui.dto.request.TableGroupRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,14 +46,10 @@ public class AcceptanceTest {
         RestAssured.port = port;
     }
 
-    protected long 상품을_생성한다(final String name, final int price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(BigDecimal.valueOf(price));
-
+    protected long 상품을_생성한다(String name, int price) {
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                .body(product)
+                .body(new ProductRequest(name, BigDecimal.valueOf(price)))
                 .when().log().all()
                 .post("/api/products")
                 .then().log().all()
@@ -55,13 +57,13 @@ public class AcceptanceTest {
                 .extract().jsonPath().getLong("id");
     }
 
-    protected List<Product> 상품을_조회한다() {
+    protected List<ProductResponse> 상품을_조회한다() {
         return RestAssured.given().log().all()
                 .when().log().all()
                 .get("/api/products")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .extract().body().jsonPath().getList(".", Product.class);
+                .extract().body().jsonPath().getList(".", ProductResponse.class);
     }
 
     protected long 메뉴_그룹을_생성한다(String name) {
@@ -76,34 +78,23 @@ public class AcceptanceTest {
     }
 
 
-    protected List<MenuGroup> 메뉴_그룹을_조회한다() {
+    protected List<MenuGroupResponse> 메뉴_그룹을_조회한다() {
         return RestAssured.given().log().all()
                 .when().log().all()
                 .get("/api/menu-groups")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .extract().body().jsonPath().getList(".", MenuGroup.class);
+                .extract().body().jsonPath().getList(".", MenuGroupResponse.class);
     }
 
     protected long 메뉴를_생성한다(String name, int price, long menuGroup, List<Long> products, int quantity) {
-        List<MenuProduct> menuProducts = products.stream()
-                .map(product -> {
-                    MenuProduct menuProduct = new MenuProduct();
-                    menuProduct.setProductId(product);
-                    menuProduct.setQuantity(quantity);
-                    return menuProduct;
-                })
+        List<MenuProductRequest> menuProducts = products.stream()
+                .map(product -> new MenuProductRequest(product, quantity))
                 .collect(Collectors.toList());
-
-        Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(BigDecimal.valueOf(price));
-        menu.setMenuGroupId(menuGroup);
-        menu.setMenuProducts(menuProducts);
 
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                .body(menu)
+                .body(new MenuRequest(name, BigDecimal.valueOf(price), menuGroup, menuProducts))
                 .when().log().all()
                 .post("/api/menus")
                 .then().log().all()
@@ -111,18 +102,16 @@ public class AcceptanceTest {
                 .extract().body().jsonPath().getLong("id");
     }
 
-    protected List<Menu> 메뉴를_조회한다() {
+    protected List<MenuResponse> 메뉴를_조회한다() {
         return RestAssured.given().log().all()
                 .when().log().all()
                 .get("/api/menus")
                 .then().log().all()
-                .extract().body().jsonPath().getList(".", Menu.class);
+                .extract().body().jsonPath().getList(".", MenuResponse.class);
     }
 
     protected long 테이블을_생성한다(int numberOfGuests, boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
+        OrderTableRequest orderTable = new OrderTableRequest(numberOfGuests, empty);
 
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -134,19 +123,18 @@ public class AcceptanceTest {
                 .extract().jsonPath().getLong("id");
     }
 
-    protected List<OrderTable> 테이블_목록을_조회한다() {
+    protected List<OrderTableResponse> 테이블_목록을_조회한다() {
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .when().log().all()
                 .get("/api/tables")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .extract().jsonPath().getList(".", OrderTable.class);
+                .extract().jsonPath().getList(".", OrderTableResponse.class);
     }
 
-    protected OrderTable 테이블_상태를_변경한다(long orderTableId, boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(empty);
+    protected OrderTableResponse 테이블_상태를_변경한다(long orderTableId, boolean empty) {
+        OrderTableRequest orderTable = new OrderTableRequest(0, empty);
 
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -154,12 +142,11 @@ public class AcceptanceTest {
                 .when().log().all()
                 .put("/api/tables/{order_table_id}/empty", orderTableId)
                 .then().log().all()
-                .extract().as(OrderTable.class);
+                .extract().as(OrderTableResponse.class);
     }
 
-    protected TableGroup 테이블_그룹을_생성한다(List<OrderTable> orderTables) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(orderTables);
+    protected TableGroup 테이블_그룹을_생성한다(List<Long> orderTableId) {
+        TableGroupRequest tableGroup = new TableGroupRequest(orderTableId);
 
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -180,9 +167,8 @@ public class AcceptanceTest {
                 .statusCode(HttpStatus.NO_CONTENT.value());
     }
 
-    protected OrderTable 테이블_방문자_수를_변경한다(long orderTableId, int numberOfGuests) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
+    protected OrderTableResponse 테이블_방문자_수를_변경한다(long orderTableId, int numberOfGuests) {
+        OrderTableRequest orderTable = new OrderTableRequest(2, false);
 
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -190,17 +176,15 @@ public class AcceptanceTest {
                 .when().log().all()
                 .put("/api/tables/{order_table_id}/number-of-guests", orderTableId)
                 .then().log().all()
-                .extract().as(OrderTable.class);
+                .extract().as(OrderTableResponse.class);
     }
 
-    protected long 주문을_생성한다(long table, List<OrderLineItem> orderLineItems) {
-        Order order = new Order();
-        order.setOrderTableId(table);
-        order.setOrderLineItems(orderLineItems);
+    protected long 주문을_생성한다(long table, List<OrderLineItemRequest> orderLineItems) {
+        OrderRequest orderRequest = new OrderRequest(table, orderLineItems);
 
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                .body(order)
+                .body(orderRequest)
                 .when().log().all()
                 .post("/api/orders")
                 .then().log().all()
@@ -208,24 +192,23 @@ public class AcceptanceTest {
                 .extract().jsonPath().getLong("id");
     }
 
-    protected Order 주문_상태를_변경한다(long 주문, String status) {
-        Order order = new Order();
-        order.setOrderStatus(status);
+    protected OrderResponse 주문_상태를_변경한다(long orderId, String status) {
+        OrderChangeRequest orderChangeRequest = new OrderChangeRequest(status);
 
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                .body(order)
+                .body(orderChangeRequest)
                 .when().log().all()
-                .put("/api/orders/{order_id}/order-status", 주문)
+                .put("/api/orders/{order_id}/order-status", orderId)
                 .then().log().all()
-                .extract().as(Order.class);
+                .extract().as(OrderResponse.class);
     }
 
-    protected List<Order> 주문_목목을_조회한다() {
+    protected List<OrderResponse> 주문_목목을_조회한다() {
         return RestAssured.given().log().all()
                 .when().log().all()
                 .get("/api/orders")
                 .then().log().all()
-                .extract().jsonPath().getList(".", Order.class);
+                .extract().jsonPath().getList(".", OrderResponse.class);
     }
 }
