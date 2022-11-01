@@ -1,18 +1,30 @@
 package kitchenpos.application;
 
+import static kitchenpos.support.DataFixture.createMenuGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.request.MenuGroupRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.support.DatabaseCleanUp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-class MenuGroupServiceTest extends ServiceTest {
+@SpringBootTest
+class MenuGroupServiceTest {
 
     @Autowired
     private MenuGroupService menuGroupService;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private DatabaseCleanUp databaseCleanUp;
 
     @BeforeEach
     void setUp() {
@@ -23,19 +35,20 @@ class MenuGroupServiceTest extends ServiceTest {
     @Test
     void save() {
         // given
-        final MenuGroup menuGroupRequest = createMenuGroupRequest("추천메뉴");
+        final MenuGroupRequest menuGroupRequest = createMenuGroupRequest("추천메뉴");
 
-        // when, then
-        assertThat(menuGroupService.create(menuGroupRequest)).usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(createMenuGroup("추천메뉴"));
+        // when
+        final MenuGroupResponse response = menuGroupService.create(menuGroupRequest);
+
+        // then
+        assertThat(response.getName()).isEqualTo(menuGroupRequest.getName());
     }
 
     @DisplayName("메뉴 그룸의 이름이 null인 경우 예외를 반환한다.")
     @Test
     void save_throwException_ifNameIsNull() {
         // given
-        final MenuGroup menuGroupRequest = createMenuGroupRequest(null);
+        final MenuGroupRequest menuGroupRequest = createMenuGroupRequest(null);
 
         // when, then
         assertThatThrownBy(() -> menuGroupService.create(menuGroupRequest))
@@ -47,15 +60,13 @@ class MenuGroupServiceTest extends ServiceTest {
     @Test
     void findAll() {
         // given
-        menuGroupDao.save(createMenuGroup("추천메뉴"));
+        menuGroupRepository.save(createMenuGroup("추천메뉴"));
 
         // when, then
         assertThat(menuGroupService.findAll()).hasSize(1);
     }
 
-    private MenuGroup createMenuGroupRequest(final String name) {
-        final MenuGroup menuGroupRequest = new MenuGroup();
-        menuGroupRequest.setName(name);
-        return menuGroupRequest;
+    private MenuGroupRequest createMenuGroupRequest(final String name) {
+        return new MenuGroupRequest(name);
     }
 }

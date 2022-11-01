@@ -1,28 +1,34 @@
 package kitchenpos.application;
 
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
+import java.util.stream.Collectors;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.request.MenuGroupRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
+import kitchenpos.repository.MenuGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class MenuGroupService {
-    private final MenuGroupDao menuGroupDao;
+    private final MenuGroupRepository menuGroupRepository;
 
-    public MenuGroupService(final MenuGroupDao menuGroupDao) {
-        this.menuGroupDao = menuGroupDao;
+    public MenuGroupService(final MenuGroupRepository menuGroupRepository) {
+        this.menuGroupRepository = menuGroupRepository;
     }
 
     @Transactional
-    public MenuGroup create(final MenuGroup menuGroup) {
-        if (menuGroup.getName() == null) {
-            throw new IllegalArgumentException("이름은 null일 수 없습니다.");
-        }
-        return menuGroupDao.save(menuGroup);
+    public MenuGroupResponse create(final MenuGroupRequest request) {
+        final MenuGroup menuGroup = new MenuGroup(request.getName());
+        final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
+        return MenuGroupResponse.from(savedMenuGroup);
     }
 
-    public List<MenuGroup> findAll() {
-        return menuGroupDao.findAll();
+    public List<MenuGroupResponse> findAll() {
+        final List<MenuGroup> menuGroups = menuGroupRepository.findAll();
+        return menuGroups.stream()
+                .map(MenuGroupResponse::from)
+                .collect(Collectors.toList());
     }
 }

@@ -1,62 +1,96 @@
 package kitchenpos.application;
 
+import static kitchenpos.support.DataFixture.createMenu;
+import static kitchenpos.support.DataFixture.createMenuGroup;
+import static kitchenpos.support.DataFixture.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.MenuProductRequest;
+import kitchenpos.dto.request.MenuRequest;
+import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
+import kitchenpos.support.DatabaseCleanUp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-class MenuServiceTest extends ServiceTest {
+@SpringBootTest
+class MenuServiceTest {
+
+    @Autowired
+    private DatabaseCleanUp databaseCleanUp;
 
     @Autowired
     private MenuService menuService;
 
-    private Long validMenuGroupId;
-    private Long validProductId;
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private MenuRepository menuRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    private MenuGroup savedMenuGroup;
+    private Product savedProduct;
 
     @BeforeEach
     void setUp() {
         databaseCleanUp.clear();
-        final MenuGroup menuGroup = menuGroupDao.save(createMenuGroup("추천메뉴"));
-        validMenuGroupId = menuGroup.getId();
-        final Product product = productDao.save(createProduct("후라이드", 16_000L));
-        validProductId = product.getId();
+        savedMenuGroup = menuGroupRepository.save(createMenuGroup("추천메뉴"));
+        savedProduct = productRepository.save(createProduct("후라이드", 16_000L));
     }
 
     @DisplayName("메뉴를 저장한다.")
     @Test
     void create() {
         // given
-        final MenuProduct menuProductRequest = createMenuProductRequest(validProductId, 3);
-        final Menu menuRequest = createMenuRequest("후라후라후라", 19_000L, validMenuGroupId, List.of(menuProductRequest));
+        final MenuProductRequest menuProductRequest = createMenuProductRequest(savedProduct.getId(), 3);
+        final MenuRequest menuRequest = createMenuRequest("후라후라후라", 19_000L, savedMenuGroup.getId(),
+                List.of(menuProductRequest));
 
         // when
-        final Menu savedMenu = menuService.create(menuRequest);
+        final MenuResponse response = menuService.create(menuRequest);
 
         // then
         assertAll(
-                () -> assertThat(savedMenu).usingRecursiveComparison()
+                () -> assertThat(response).usingRecursiveComparison()
                         .ignoringFields("id", "price", "menuProducts")
                         .isEqualTo(menuRequest),
-                () -> assertThat(savedMenu.getMenuProducts()).hasSize(1)
+                () -> assertThat(response.getMenuProducts()).hasSize(1)
         );
+    }
+
+    @DisplayName("메뉴 상품 리스트가 없는 경우 예외를 반환한다.")
+    @Test
+    void create_throwException_ifMenuProductsNull() {
+        // given
+        final MenuRequest menuRequest = createMenuRequest("후라후라후라", 19_000L, savedMenuGroup.getId(), List.of());
+
+        // when, then
+        assertThatThrownBy(() -> menuService.create(menuRequest))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("메뉴 상품들은 null일 수 없습니다.");
     }
 
     @DisplayName("메뉴의 가격이 0보다 작은 경우 예외를 반환한다.")
     @Test
     void create_throwException_ifPriceNotPositive() {
         // given
-        final MenuProduct menuProductRequest = createMenuProductRequest(validProductId, 3);
-        final Menu menuRequest = createMenuRequest("후라후라후라", -1L, validMenuGroupId, List.of(menuProductRequest));
+        final MenuProductRequest menuProductRequest = createMenuProductRequest(savedProduct.getId(), 3);
+        final MenuRequest menuRequest = createMenuRequest("후라후라후라", -1L, savedMenuGroup.getId(),
+                List.of(menuProductRequest));
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menuRequest))
@@ -69,8 +103,9 @@ class MenuServiceTest extends ServiceTest {
     void create_throwException_ifMenuGroupNotExist() {
         // given
         final Long noExistMenuGroupId = 900L;
-        final MenuProduct menuProductRequest = createMenuProductRequest(validProductId, 3);
-        final Menu menuRequest = createMenuRequest("후라후라후라", 19_000L, noExistMenuGroupId, List.of(menuProductRequest));
+        final MenuProductRequest menuProductRequest = createMenuProductRequest(savedProduct.getId(), 3);
+        final MenuRequest menuRequest = createMenuRequest("후라후라후라", 19_000L, noExistMenuGroupId,
+                List.of(menuProductRequest));
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menuRequest))
@@ -83,8 +118,9 @@ class MenuServiceTest extends ServiceTest {
     void create_throwException_ifProductNotExist() {
         // given
         final Long noExistProductId = 900L;
-        final MenuProduct menuProductRequest = createMenuProductRequest(noExistProductId, 3);
-        final Menu menuRequest = createMenuRequest("후라후라", 19_000L, validMenuGroupId, List.of(menuProductRequest));
+        final MenuProductRequest menuProductRequest = createMenuProductRequest(noExistProductId, 3);
+        final MenuRequest menuRequest = createMenuRequest("후라후라", 19_000L, savedMenuGroup.getId(),
+                List.of(menuProductRequest));
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menuRequest))
@@ -95,8 +131,9 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void create_throwException_ifPriceMoreExpensiveThanTotalMenuProduct() {
         // given
-        final MenuProduct menuProductRequest = createMenuProductRequest(validProductId, 3);
-        final Menu menuRequest = createMenuRequest("후라후라후라", 50_000L, validMenuGroupId, List.of(menuProductRequest));
+        final MenuProductRequest menuProductRequest = createMenuProductRequest(savedProduct.getId(), 3);
+        final MenuRequest menuRequest = createMenuRequest("후라후라후라", 50_000L, savedMenuGroup.getId(),
+                List.of(menuProductRequest));
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menuRequest))
@@ -108,26 +145,19 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void findAll() {
         // given
-        menuDao.save(createMenu("후라후라후라", 19_000L, validMenuGroupId));
+        menuRepository.save(createMenu("후라후라후라", 19_000L, savedMenuGroup, List.of(savedProduct)));
 
         // when, then
         assertThat(menuService.findAll()).hasSize(1);
+
     }
 
-    private Menu createMenuRequest(final String name, final Long price, final Long menuGroupId,
-                                   final List<MenuProduct> menuProducts) {
-        final Menu menuRequest = new Menu();
-        menuRequest.setName(name);
-        menuRequest.setPrice(new BigDecimal(price));
-        menuRequest.setMenuGroupId(menuGroupId);
-        menuRequest.setMenuProducts(menuProducts);
-        return menuRequest;
+    private MenuRequest createMenuRequest(final String name, final Long price, final Long menuGroupId,
+                                          final List<MenuProductRequest> menuProductRequests) {
+        return new MenuRequest(name, new BigDecimal(price), menuGroupId, menuProductRequests);
     }
 
-    private MenuProduct createMenuProductRequest(final Long productId, final long quantity) {
-        final MenuProduct menuProductRequest = new MenuProduct();
-        menuProductRequest.setProductId(productId);
-        menuProductRequest.setQuantity(quantity);
-        return menuProductRequest;
+    private MenuProductRequest createMenuProductRequest(final Long productId, final long quantity) {
+        return new MenuProductRequest(productId, quantity);
     }
 }

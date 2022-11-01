@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static kitchenpos.support.DataFixture.createOrderTable;
+import static kitchenpos.support.DataFixture.createTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -8,26 +10,39 @@ import static org.mockito.BDDMockito.given;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.TableForGroupingRequest;
+import kitchenpos.dto.request.TableGroupRequest;
+import kitchenpos.dto.response.TableGroupResponse;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
+import kitchenpos.support.DatabaseCleanUp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-class TableGroupServiceTest extends ServiceTest {
+@SpringBootTest
+class TableGroupServiceTest {
 
     @Autowired
     private TableGroupService tableGroupService;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private OrderTableRepository orderTableRepository;
+
+    @Autowired
+    private TableGroupRepository tableGroupRepository;
+
+    @Autowired
+    private DatabaseCleanUp databaseCleanUp;
 
     @MockBean
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     private Long emptyOrderTableId1;
     private Long emptyOrderTableId2;
@@ -35,8 +50,8 @@ class TableGroupServiceTest extends ServiceTest {
     @BeforeEach
     void setUp() {
         databaseCleanUp.clear();
-        final OrderTable orderTable1 = this.orderTableDao.save(createOrderTable(0, true));
-        final OrderTable orderTable2 = this.orderTableDao.save(createOrderTable(0, true));
+        final OrderTable orderTable1 = this.orderTableRepository.save(createOrderTable(0, true));
+        final OrderTable orderTable2 = this.orderTableRepository.save(createOrderTable(0, true));
         emptyOrderTableId1 = orderTable1.getId();
         emptyOrderTableId2 = orderTable2.getId();
     }
@@ -45,23 +60,21 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void create() {
         // given
-        final TableGroup tableGroupRequest = createTableGroupRequest(
+        final TableGroupRequest tableGroupRequest = createTableGroupRequest(
                 List.of(createOrderTableRequest(emptyOrderTableId1), createOrderTableRequest(emptyOrderTableId2)));
 
         // when
-        final TableGroup savedTableGroup = tableGroupService.create(tableGroupRequest);
+        final TableGroupResponse response = tableGroupService.create(tableGroupRequest);
 
         // then
-        assertThat(savedTableGroup).usingRecursiveComparison()
-                .ignoringFields("id", "orderTables")
-                .isEqualTo(tableGroupRequest);
+        assertThat(response.getId()).isNotNull();
     }
 
     @DisplayName("2개 미만의 테이블을 단체 지정하면 예외를 반환한다.")
     @Test
     void create_throwException_ifOrderTableSizeUnderTwo() {
         // given
-        final TableGroup tableGroupRequest = createTableGroupRequest(
+        final TableGroupRequest tableGroupRequest = createTableGroupRequest(
                 List.of(createOrderTableRequest(emptyOrderTableId1)));
 
         // when, then
@@ -75,7 +88,7 @@ class TableGroupServiceTest extends ServiceTest {
     void create_throwException_ifTableNotExist() {
         // given
         final Long invalidTableId = 999L;
-        final TableGroup tableGroupRequest = createTableGroupRequest(
+        final TableGroupRequest tableGroupRequest = createTableGroupRequest(
                 List.of(createOrderTableRequest(emptyOrderTableId1), createOrderTableRequest(invalidTableId)));
 
         // when, then
@@ -88,36 +101,36 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void create_throwException_ifTableAlreadyGroup() {
         // given
-        final TableGroup savedTableGroup = tableGroupDao.save(createTableGroup(LocalDateTime.now()));
-        final OrderTable orderTable = orderTableDao.save(createOrderTable(savedTableGroup.getId(), 0, true));
-        final TableGroup tableGroupRequest = createTableGroupRequest(
+        final TableGroup savedTableGroup = tableGroupRepository.save(createTableGroup(LocalDateTime.now()));
+        final OrderTable orderTable = orderTableRepository.save(createOrderTable(savedTableGroup, 0, true));
+        final TableGroupRequest tableGroupRequest = createTableGroupRequest(
                 List.of(createOrderTableRequest(orderTable.getId()), createOrderTableRequest(emptyOrderTableId1)));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class).
-                hasMessage("이미 사용 중이거나 단체 지정된 테이블은 사용할 수 없습니다.");
+                hasMessage("단체 테이블입니다.");
     }
 
     @DisplayName("이미 사용 중인 테이블을 단체 지정하면 예외를 반환한다.")
     @Test
     void create_throwException_ifTableNotEmpty() {
         // given
-        final OrderTable orderTable = orderTableDao.save(createOrderTable(4, false));
-        final TableGroup tableGroupRequest = createTableGroupRequest(
+        final OrderTable orderTable = orderTableRepository.save(createOrderTable(4, false));
+        final TableGroupRequest tableGroupRequest = createTableGroupRequest(
                 List.of(createOrderTableRequest(orderTable.getId()), createOrderTableRequest(emptyOrderTableId1)));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class).
-                hasMessage("이미 사용 중이거나 단체 지정된 테이블은 사용할 수 없습니다.");
+                hasMessage("이미 사용 중인 테이블은 사용할 수 없습니다.");
     }
 
     @DisplayName("테이블 단체 지정을 해제한다.")
     @Test
     void ungroup() {
         // given
-        final TableGroup savedTableGroup = tableGroupDao.save(createTableGroup(LocalDateTime.now()));
+        final TableGroup savedTableGroup = tableGroupRepository.save(createTableGroup(LocalDateTime.now()));
 
         // when, then
         assertThatCode(() -> tableGroupService.ungroup(savedTableGroup.getId()))
@@ -128,25 +141,21 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void ungroup_throwException_ifOrderAlreadyOngoing() {
         // given
-        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
+        given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
                 .willReturn(true);
-        final TableGroup savedTableGroup = tableGroupDao.save(createTableGroup(LocalDateTime.now()));
+        final TableGroup savedTableGroup = tableGroupRepository.save(createTableGroup(LocalDateTime.now()));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("이미 주문이 진행 중입니다.");
+                .hasMessage("식사가 완료되지 않았습니다.");
     }
 
-    private TableGroup createTableGroupRequest(final List<OrderTable> orderTableRequests) {
-        final TableGroup tableGroupRequest = new TableGroup();
-        tableGroupRequest.setOrderTables(orderTableRequests);
-        return tableGroupRequest;
+    private TableGroupRequest createTableGroupRequest(final List<TableForGroupingRequest> orderTableRequests) {
+        return new TableGroupRequest(orderTableRequests);
     }
 
-    private OrderTable createOrderTableRequest(final Long id) {
-        final OrderTable orderTableRequest = new OrderTable();
-        orderTableRequest.setId(id);
-        return orderTableRequest;
+    private TableForGroupingRequest createOrderTableRequest(final Long id) {
+        return new TableForGroupingRequest(id);
     }
 }
