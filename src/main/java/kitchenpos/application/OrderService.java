@@ -30,8 +30,9 @@ public class OrderService {
         OrderTable orderTable = getOrderTable(request.getOrderTableId());
         List<OrderLineItem> orderLineItems = mapToOrderLineItems(request.getOrderLineItems());
 
-        Order order = new Order(orderTable, orderLineItems);
-        Order savedOrder = orderRepository.save(order);
+        Order savedOrder = orderRepository.save(
+                new Order(orderTable, orderLineItems)
+        );
 
         return new OrderResponse(savedOrder);
     }

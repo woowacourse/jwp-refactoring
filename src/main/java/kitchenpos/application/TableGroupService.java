@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.order.OrderTable;
 import kitchenpos.domain.order.TableGroup;
 import kitchenpos.dto.request.TableGroupRequest;
+import kitchenpos.dto.request.TableGroupRequest.TableId;
 import kitchenpos.dto.response.TableGroupResponse;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -27,12 +28,16 @@ public class TableGroupService {
     public TableGroupResponse create(final TableGroupRequest request) {
         List<OrderTable> savedOrderTables = request.getOrderTables()
                 .stream()
-                .map(tableId -> orderTableRepository.findById(tableId.getId())
-                        .orElseThrow(IllegalArgumentException::new))
+                .map(this::getOrderTable)
                 .collect(Collectors.toList());
 
         final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(savedOrderTables));
         return new TableGroupResponse(savedTableGroup);
+    }
+
+    private OrderTable getOrderTable(final TableId tableId) {
+        return orderTableRepository.findById(tableId.getId())
+                .orElseThrow(IllegalArgumentException::new);
     }
 
     @Transactional
