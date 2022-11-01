@@ -38,7 +38,7 @@ public class Order {
     @JoinColumn(name = "order_id", nullable = false)
     private List<OrderLineItem> orderLineItems;
 
-    public Order() {
+    protected Order() {
     }
 
     public Order(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
