@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class MenuService {
 
     private final MenuRepository menuRepository;
@@ -36,7 +37,6 @@ public class MenuService {
         this.productRepository = productRepository;
     }
 
-    @Transactional
     public MenuResponse create(final MenuRequest request) {
         if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException("어느 하나의 메뉴 그룹에는 속해야 합니다.");
@@ -48,6 +48,7 @@ public class MenuService {
         return MenuResponse.from(savedMenu);
     }
 
+    @Transactional(readOnly = true)
     public List<MenuResponse> list() {
         final List<Menu> menus = menuRepository.findAll();
 
