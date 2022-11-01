@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
@@ -98,9 +99,11 @@ class TableServiceTest extends IntegrationTest {
         @Test
         void changeEmpty_Exception() {
             final TableGroup savedTableGroup = tableGroupDao
-                    .save(new TableGroup(LocalDateTime.now(), Collections.emptyList()));
-            final OrderTable groupedOrderTable = orderTableDao.save(new OrderTable(savedTableGroup, 0, false));
-            final OrderTableChangeStatusRequest orderTableChangeStatusRequest = new OrderTableChangeStatusRequest(true);
+                    .save(new TableGroup(LocalDateTime.now(),
+                            List.of(new OrderTable(null, 0, true),
+                                    new OrderTable(null, 0, true))));
+            final OrderTable groupedOrderTable = orderTableDao.save(new OrderTable(savedTableGroup, 0, true));
+            final OrderTableChangeStatusRequest orderTableChangeStatusRequest = new OrderTableChangeStatusRequest(false);
 
             assertThatThrownBy(() -> tableService.changeEmpty(groupedOrderTable.getId(), orderTableChangeStatusRequest))
                     .isInstanceOf(IllegalArgumentException.class);

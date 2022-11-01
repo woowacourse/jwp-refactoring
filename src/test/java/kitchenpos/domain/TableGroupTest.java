@@ -3,7 +3,6 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -27,10 +26,13 @@ public class TableGroupTest {
         @DisplayName("테이블의 테이블 그룹이 이미 존재한다면 예외가 발생한다.")
         @Test
         void create_Exception_AlreadyExist() {
-            final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), Collections.emptyList());
-            final OrderTable orderTable = new OrderTable(tableGroup, 0, true);
+            final TableGroup tableGroup = new TableGroup(LocalDateTime.now(),
+                    List.of(new OrderTable(null, 0, true),
+                            new OrderTable(null, 0, true)));
+            final OrderTable orderTable1 = new OrderTable(tableGroup, 0, true);
+            final OrderTable orderTable2 = new OrderTable(tableGroup, 0, true);
 
-            assertThatThrownBy(() -> new TableGroup(LocalDateTime.now(), List.of(orderTable)))
+            assertThatThrownBy(() -> new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

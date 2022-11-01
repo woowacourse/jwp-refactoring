@@ -3,7 +3,7 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -40,8 +40,10 @@ public class OrderTableTest {
         @DisplayName("테이블 그룹이 존재하면 예외가 발생한다.")
         @Test
         void changeEmpty_Exception() {
-            final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), Collections.emptyList());
-            final OrderTable orderTable = new OrderTable(tableGroup, 0, false);
+            final TableGroup tableGroup = new TableGroup(LocalDateTime.now(),
+                    List.of(new OrderTable(null, 0, true),
+                            new OrderTable(null, 0, true)));
+            final OrderTable orderTable = new OrderTable(tableGroup, 0, true);
 
             assertThatThrownBy(() -> orderTable.changeEmptyStatus(true))
                     .isInstanceOf(IllegalArgumentException.class);

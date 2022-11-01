@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import org.springframework.util.CollectionUtils;
 
 @Entity
 public class TableGroup {
@@ -31,8 +32,15 @@ public class TableGroup {
     }
 
     private void validate(List<OrderTable> orderTables) {
+        validateSize(orderTables);
         for (final OrderTable orderTable : orderTables) {
             validateTable(orderTable);
+        }
+    }
+
+    private void validateSize(List<OrderTable> orderTables) {
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+            throw new IllegalArgumentException();
         }
     }
 
