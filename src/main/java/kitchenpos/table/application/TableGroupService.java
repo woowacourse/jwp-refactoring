@@ -7,9 +7,9 @@ import kitchenpos.table.application.dto.request.TableGroupCommand;
 import kitchenpos.table.application.dto.response.TableGroupResponse;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.OrderUngroupValidator;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.domain.TableGroupRepository;
-import kitchenpos.table.infrastructure.OrderUngroupValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

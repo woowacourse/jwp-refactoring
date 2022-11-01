@@ -12,7 +12,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import kitchenpos.exception.InvalidTableGroupException;
-import kitchenpos.table.infrastructure.OrderUngroupValidator;
 
 @Entity
 @Table(name = "table_group")

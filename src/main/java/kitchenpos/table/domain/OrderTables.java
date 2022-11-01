@@ -6,7 +6,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import kitchenpos.table.infrastructure.OrderUngroupValidator;
 
 @Embeddable
 public class OrderTables {

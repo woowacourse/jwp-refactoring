@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.infrastructure.OrderUngroupValidator;
+import kitchenpos.table.domain.OrderUngroupValidator;
 import org.springframework.stereotype.Component;
 
 @Component

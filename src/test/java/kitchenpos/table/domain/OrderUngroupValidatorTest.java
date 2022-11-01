@@ -1,4 +1,4 @@
-package kitchenpos.table.infrastructure;
+package kitchenpos.table.domain;
 
 import static kitchenpos.support.fixtures.DomainFixtures.MENU1_NAME;
 import static kitchenpos.support.fixtures.DomainFixtures.MENU1_PRICE;
@@ -23,8 +23,6 @@ import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;

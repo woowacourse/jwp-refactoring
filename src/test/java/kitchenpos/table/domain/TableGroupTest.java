@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.exception.InvalidTableGroupException;
-import kitchenpos.table.infrastructure.OrderUngroupValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
