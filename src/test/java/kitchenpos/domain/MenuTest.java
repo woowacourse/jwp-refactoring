@@ -1,6 +1,5 @@
 package kitchenpos.domain;
 
-import static kitchenpos.application.fixture.MenuFixtures.*;
 import static kitchenpos.application.fixture.MenuGroupFixtures.generateMenuGroup;
 import static kitchenpos.application.fixture.MenuProductFixtures.generateMenuProduct;
 import static kitchenpos.application.fixture.ProductFixtures.*;
@@ -10,13 +9,12 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator;
+import kitchenpos.common.UnitTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@UnitTest
 class MenuTest {
 
     @Test
