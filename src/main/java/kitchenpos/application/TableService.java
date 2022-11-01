@@ -24,8 +24,8 @@ public class TableService {
     @Transactional
     public OrderTableResponse create(final OrderTableRequest request) {
         final OrderTable orderTable = request.toEntity();
-        final OrderTable savedTable = orderTableDao.save(orderTable);
-        return OrderTableResponse.from(savedTable);
+        orderTableDao.save(orderTable);
+        return OrderTableResponse.from(orderTable);
     }
 
     public List<OrderTableResponse> list() {
@@ -44,8 +44,7 @@ public class TableService {
         }
 
         changeTableStatus(request.isEmpty(), savedOrderTable);
-        final OrderTable changedOrderTable = orderTableDao.save(savedOrderTable);
-        return OrderTableResponse.from(changedOrderTable);
+        return OrderTableResponse.from(savedOrderTable);
     }
 
     @Transactional
@@ -55,9 +54,7 @@ public class TableService {
 
         final int numberOfGuests = request.getNumberOfGuests();
         savedOrderTable.acceptGuests(numberOfGuests);
-
-        final OrderTable changedOrderTable = orderTableDao.save(savedOrderTable);
-        return OrderTableResponse.from(changedOrderTable);
+        return OrderTableResponse.from(savedOrderTable);
     }
 
     private void changeTableStatus(final boolean empty, final OrderTable savedOrderTable) {

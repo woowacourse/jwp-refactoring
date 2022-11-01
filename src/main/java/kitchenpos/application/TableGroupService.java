@@ -35,9 +35,7 @@ public class TableGroupService {
 
         final TableGroup tableGroup = TableGroup.ofNew();
         final TableGroup savedTableGroup = orderTableRepository.saveTableGroup(tableGroup);
-
-        final List<OrderTable> groupedTables = savedTableGroup.groupTables(savedOrderTables);
-        orderTableRepository.saveAll(groupedTables);
+        savedTableGroup.groupTables(savedOrderTables);
 
         return TableGroupResponse.from(savedTableGroup);
     }
@@ -58,7 +56,6 @@ public class TableGroupService {
         for (final OrderTable orderTable : orderTables) {
             orderTable.ungroup();
         }
-        orderTableRepository.saveAll(orderTables);
     }
 
     private OrderTable getOrderTableFrom(final IdRequest request) {

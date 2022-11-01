@@ -1,12 +1,19 @@
 package kitchenpos.domain.ordertable;
 
 import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
+@Entity
 public class OrderTable {
 
     private static final int MIN_NUMBER_OF_GUESTS = 0;
 
-    private final Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
@@ -89,5 +96,8 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
+    }
+
+    protected OrderTable() {
     }
 }
