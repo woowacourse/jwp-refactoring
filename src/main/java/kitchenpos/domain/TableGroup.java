@@ -32,7 +32,7 @@ public class TableGroup {
 
     public TableGroup(final List<OrderTable> orderTables) {
         validateOrderTables(orderTables);
-        updateOrderTables(orderTables);
+        groupOrderTables(orderTables);
         this.createdDate = LocalDateTime.now();
         this.orderTables = orderTables;
     }
@@ -43,21 +43,19 @@ public class TableGroup {
         }
     }
 
-    private void updateOrderTables(final List<OrderTable> orderTables) {
+    private void groupOrderTables(final List<OrderTable> orderTables) {
         for (OrderTable orderTable : orderTables) {
-            orderTable.changeTableGroupId(id);
-            orderTable.changeEmpty(false);
+            orderTable.group(id);
         }
     }
 
-    public void ungroup(Supplier<Boolean> condition) {
+    public void ungroup(final Supplier<Boolean> condition) {
         if (condition.get()) {
             throw new IllegalArgumentException();
         }
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.changeTableGroupId(null);
-            orderTable.changeEmpty(false);
+            orderTable.ungroup();
         }
     }
 

@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import static java.util.stream.Collectors.*;
+import static kitchenpos.domain.OrderStatus.COOKING;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
@@ -14,11 +15,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @Transactional(readOnly = true)
 public class TableService {
+
+    private static final List<String> NONE_EMPTY_ORDER_TABLE = List.of(COOKING.name(), OrderStatus.MEAL.name());
 
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
@@ -44,25 +46,10 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
         final OrderTable savedOrderTable = orderTableDao.getById(orderTableId);
-        validateTableGroupNonNull(savedOrderTable);
-        validateStatusNonCompletion(orderTableId);
-
-        savedOrderTable.changeEmpty(request.isEmpty());
+        savedOrderTable.changeEmpty(() ->
+                orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, NONE_EMPTY_ORDER_TABLE), request.isEmpty());
 
         return new OrderTableResponse(savedOrderTable);
-    }
-
-    private void validateStatusNonCompletion(final Long orderTableId) {
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateTableGroupNonNull(final OrderTable savedOrderTable) {
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
-        }
     }
 
     @Transactional
