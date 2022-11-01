@@ -1,8 +1,11 @@
 package kitchenpos.domain;
 
-import java.math.BigDecimal;
+import static kitchenpos.fixture.MenuBuilder.aMenu;
+import static kitchenpos.fixture.MenuGroupFactory.createMenuGroup;
+import static kitchenpos.fixture.ProductBuilder.aProduct;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.List;
-import javax.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,27 +17,33 @@ class MenuRepositoryTest {
     @Autowired
     MenuRepository sut;
 
+    @Autowired
+    ProductRepository productRepository;
 
     @Autowired
-    EntityManager entityManager;
+    MenuGroupRepository menuGroupRepository;
 
     @Test
     @DisplayName("Menu를 저장하면 MenuProduct도 함께 저장한다")
     void save() {
         // given
-        MenuProduct menuProduct = new MenuProduct(1L, 1L);
-        Menu menu = new Menu("치킨", BigDecimal.valueOf(1000L), 1L);
+        Product product = productRepository.save(aProduct().build());
+
+        Menu menu = aMenu(savedMenuGroup().getId())
+                .withMenuProducts(List.of(new MenuProduct(product, 1L)))
+                .build();
 
         // when
-        Menu save = sut.save(menu);
+        Menu savedMenu = sut.save(menu);
 
-        Long id = save.getId();
-        var find = sut.findById(id).get();
-
-        save.addMenuProducts(List.of(menuProduct));
         // then
+        assertThat(savedMenu.getId()).isNotNull();
+        List<MenuProduct> savedMenuMenuProducts = savedMenu.getMenuProducts();
+        assertThat(savedMenuMenuProducts).hasSize(1);
+        assertThat(savedMenuMenuProducts.get(0).getSeq()).isNotNull();
+    }
 
-        System.out.println(save);
-        System.out.println(find);
+    private MenuGroup savedMenuGroup() {
+        return menuGroupRepository.save(createMenuGroup());
     }
 }

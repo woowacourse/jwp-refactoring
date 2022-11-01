@@ -1,11 +1,14 @@
 package kitchenpos.domain;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -16,11 +19,13 @@ public class MenuProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @Column(length = 20, nullable = false)
-    private Long menuId;
+    @ManyToOne
+    @JoinColumn(name = "menu_id", nullable = false)
+    private Menu menu;
 
-    @Column(length = 20, nullable = false)
-    private Long productId;
+    @ManyToOne
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
 
     @Column(length = 20, nullable = false)
     private long quantity;
@@ -28,31 +33,31 @@ public class MenuProduct {
     protected MenuProduct() {
     }
 
-    public MenuProduct(Long seq, Long menuId, Long productId, long quantity) {
+    public MenuProduct(Long seq, Menu menu, Product product, long quantity) {
         this.seq = seq;
-        this.menuId = menuId;
-        this.productId = productId;
+        this.menu = menu;
+        this.product = product;
         this.quantity = quantity;
     }
 
-    public MenuProduct(Long productId, long quantity) {
-        this(null, null, productId, quantity);
+    public MenuProduct(Product product, long quantity) {
+        this(null, null, product, quantity);
+    }
+
+    public BigDecimal calculateAmount() {
+        return product.getPrice().multiply(BigDecimal.valueOf(quantity));
     }
 
     public Long getSeq() {
         return seq;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    void setMenu(Menu menu) {
+        this.menu = menu;
     }
 
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
-    }
-
-    public Long getProductId() {
-        return productId;
+    public Product getProduct() {
+        return product;
     }
 
     public long getQuantity() {
@@ -76,13 +81,12 @@ public class MenuProduct {
         return Objects.hash(seq);
     }
 
-    @Override
-    public String toString() {
-        return "MenuProduct{" +
-                "seq=" + seq +
-                ", menuId=" + menuId +
-                ", productId=" + productId +
-                ", quantity=" + quantity +
-                '}';
+
+    public Long getMenuId() {
+        return menu.getId();
+    }
+
+    public Long getProductId() {
+        return product.getId();
     }
 }

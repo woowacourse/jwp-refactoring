@@ -7,7 +7,6 @@ import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,7 +30,7 @@ public class Menu {
     @Column(nullable = false)
     private Long menuGroupId;
 
-    @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected Menu() {
@@ -39,29 +38,39 @@ public class Menu {
 
     public Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
         validatePrice(price);
+        validatePrice(menuProducts, price);
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
-    }
-
-    private void validatePrice(BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("가격이 유효하지 않습니다. price = " + price);
-        }
+        addMenuProducts(menuProducts);
     }
 
     public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
         this(null, name, price, menuGroupId, menuProducts);
     }
 
-    public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
-        this(id, name, price, menuGroupId, new ArrayList<>());
+    private void validatePrice(List<MenuProduct> menuProducts, BigDecimal price) {
+        BigDecimal totalPrice = menuProducts.stream()
+                .map(MenuProduct::calculateAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        if (price.compareTo(totalPrice) > 0) {
+            throw new IllegalArgumentException(
+                    String.format("메뉴의 가격은 상품 전체 가격의 합보다 클 수 없습니다. price = %f, total price = %f", price, totalPrice));
+        }
     }
 
-    public Menu(String name, BigDecimal price, Long menuGroupId) {
-        this(null, name, price, menuGroupId, new ArrayList<>());
+    private void addMenuProducts(final List<MenuProduct> menuProducts) {
+        for (MenuProduct menuProduct : menuProducts) {
+            menuProduct.setMenu(this);
+        }
+        this.menuProducts.addAll(menuProducts);
+    }
+
+    private void validatePrice(BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("가격이 유효하지 않습니다. price = " + price);
+        }
     }
 
     public Long getId() {
@@ -82,13 +91,6 @@ public class Menu {
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
-    }
-
-    public void addMenuProducts(final List<MenuProduct> menuProducts) {
-        for (MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(id);
-        }
-        this.menuProducts.addAll(menuProducts);
     }
 
     @Override

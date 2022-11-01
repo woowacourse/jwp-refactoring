@@ -5,7 +5,6 @@ import java.util.List;
 import kitchenpos.application.MenuRequest;
 import kitchenpos.application.MenuResponse;
 import kitchenpos.application.MenuService;
-import kitchenpos.domain.Menu;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,14 +24,12 @@ public class MenuRestController {
         final var created = menuService.create(request);
         final var uri = URI.create("/api/menus/" + created.getId());
         return ResponseEntity.created(uri)
-                .body(created)
-                ;
+                .body(created);
     }
 
     @GetMapping("/api/menus")
-    public ResponseEntity<List<Menu>> list() {
+    public ResponseEntity<List<MenuResponse>> list() {
         return ResponseEntity.ok()
-                .body(menuService.list())
-                ;
+                .body(menuService.list());
     }
 }

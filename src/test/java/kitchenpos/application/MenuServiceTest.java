@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.MenuBuilder.aMenu;
 import static kitchenpos.fixture.MenuGroupFactory.createMenuGroup;
 import static kitchenpos.fixture.MenuRequestBuilder.aMenuRequest;
 import static kitchenpos.fixture.ProductBuilder.aProduct;
@@ -8,19 +9,20 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.ProductRepository;
+import kitchenpos.utils.DataCleanerExtension;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
-@Transactional
+@ExtendWith(DataCleanerExtension.class)
 class MenuServiceTest {
 
     @Autowired
@@ -141,8 +143,10 @@ class MenuServiceTest {
         var savedMenu = sut.create(menu);
 
         // then
+        List<MenuProductResponse> menuProducts = savedMenu.getMenuProducts();
         assertThat(savedMenu).isNotNull();
-        for (var menuProduct : savedMenu.getMenuProducts()) {
+        assertThat(menuProducts).hasSize(1);
+        for (var menuProduct : menuProducts) {
             assertThat(menuProduct.getMenuId()).isEqualTo(savedMenu.getId());
         }
     }
@@ -150,9 +154,14 @@ class MenuServiceTest {
     @Test
     @DisplayName("Menu 목록을 조회한다")
     void listMenus() {
-        List<Menu> menus = sut.list();
+        var product = productRepository.save(aProduct().build());
+        menuRepository.save(aMenu(savedMenuGroup().getId())
+                .withMenuProducts(List.of(new MenuProduct(product, 1L)))
+                .build());
 
-        assertThat(menus).hasSize(7);
+        var menus = sut.list();
+
+        assertThat(menus).hasSize(1);
     }
 
     private MenuGroup savedMenuGroup() {

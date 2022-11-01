@@ -1,7 +1,8 @@
 package kitchenpos.application;
 
-import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
@@ -26,33 +27,30 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuRequest request) {
-        Menu menu = request.toMenu();
-        List<MenuProduct> menuProducts = request.toMenuProducts();
-        validate(menu.getMenuGroupId(), menu.getPrice(), menuProducts);
-        menuRepository.save(menu);
-        menu.addMenuProducts(menuProducts);
-        return MenuResponse.from(menu);
+        List<MenuProduct> menuProducts = mapToMenuProducts(request);
+        if (!menuGroupDao.existsById(request.getMenuGroupId())) {
+            throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다. menuGroupId = " + request.getMenuGroupId());
+        }
+        return MenuResponse.from(
+                menuRepository.save(
+                        new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(), menuProducts))
+        );
     }
 
-    public List<Menu> list() {
-        return menuRepository.findAll();
+    public List<MenuResponse> list() {
+        return menuRepository.findAll().stream()
+                .map(MenuResponse::from)
+                .collect(Collectors.toList());
     }
 
-    private void validate(Long menuGroupId, BigDecimal price, List<MenuProduct> menuProducts) {
-        if (!menuGroupDao.existsById(menuGroupId)) {
-            throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다. menuGroupId = " + menuGroupId);
+    private List<MenuProduct> mapToMenuProducts(MenuRequest request) {
+        List<MenuProduct> result = new ArrayList<>();
+        for (MenuProductRequest menuProductRequest : request.getMenuProducts()) {
+            Long productId = menuProductRequest.getProductId();
+            Product product = productRepository.findById(productId)
+                    .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다. productId = " + productId));
+            result.add(new MenuProduct(product, menuProductRequest.getQuantity()));
         }
-
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = productRepository.findById(menuProduct.getProductId())
-                    .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다. productId = " + menuProduct.getProductId()));
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
-
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException(
-                    String.format("메뉴의 가격은 상품 전체 가격의 합보다 클 수 없습니다. price = %f, product price sum = %f", price, sum));
-        }
+        return result;
     }
 }
