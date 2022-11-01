@@ -25,12 +25,6 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    public void updateMenuIdOfMenuProducts() {
-        for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(id);
-        }
-    }
-
     private void validatePrice(final Price price, final List<MenuProduct> menuProducts) {
         price.validate();
         final BigDecimal sum = menuProducts.stream()
