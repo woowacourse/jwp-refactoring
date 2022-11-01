@@ -42,6 +42,11 @@ public class OrderTable {
         return new Builder();
     }
 
+    public void arrangeGroup(final TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+        this.empty = false;
+    }
+
     public void ungroup() {
         this.tableGroup = null;
         this.empty = false;
@@ -62,10 +67,6 @@ public class OrderTable {
             throw new IllegalArgumentException("비활성화된 주문 테이블의 손님 수는 변경할 수 없습니다.");
         }
         this.numberOfGuests = numberOfGuests;
-    }
-
-    public void arrangeGroup(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
     }
 
     private boolean inTableGroup() {

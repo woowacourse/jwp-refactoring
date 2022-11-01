@@ -35,14 +35,9 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroupResponse create(final TableGroupCreateRequest tableGroupCreateRequest) {
-        List<OrderTableRequest> orderTableRequests = tableGroupCreateRequest.getOrderTables();
-        List<Long> orderTableIds = orderTableRequests.stream()
-                .map(OrderTableRequest::getId)
-                .collect(Collectors.toList());
-
-        List<OrderTable> orderTables = orderTableRepository.findAllById(orderTableIds);
-        validate(orderTableIds, orderTables);
+    public TableGroupResponse create(final TableGroupCreateRequest request) {
+        List<OrderTable> orderTables = getOrderTables(request);
+        validate(request, orderTables);
 
         TableGroup tableGroup = tableGroupRepository.save(TableGroup.builder()
                 .createdDate(LocalDateTime.now())
@@ -59,8 +54,16 @@ public class TableGroupService {
         orderTables.ungroup();
     }
 
-    private void validate(final List<Long> orderTableIds, final List<OrderTable> orderTables) {
-        if (orderTableIds.size() != orderTables.size()) {
+    private List<OrderTable> getOrderTables(final TableGroupCreateRequest request) {
+        List<OrderTableRequest> orderTableRequests = request.getOrderTables();
+        List<Long> orderTableIds = orderTableRequests.stream()
+                .map(OrderTableRequest::getId)
+                .collect(Collectors.toList());
+        return orderTableRepository.findAllById(orderTableIds);
+    }
+
+    private void validate(final TableGroupCreateRequest request, final List<OrderTable> orderTables) {
+        if (request.getOrderTables().size() != orderTables.size()) {
             throw new IllegalArgumentException("주문 테이블은 중복되거나 존재하지 않을 수 없습니다.");
         }
         for (final OrderTable orderTable : orderTables) {

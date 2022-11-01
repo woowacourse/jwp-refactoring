@@ -34,16 +34,16 @@ public class OrderTables {
         }
     }
 
-    public List<Long> getIds() {
-        return orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-    }
-
     private void validate(final List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException("주문 테이블은 비어있거나 2개 미만일 수 없습니다.");
         }
+    }
+
+    public List<Long> getIds() {
+        return orderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
     }
 
     public List<OrderTable> getOrderTables() {
