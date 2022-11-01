@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class MenuService {
 
     private final MenuDao menuDao;
@@ -40,7 +41,7 @@ public class MenuService {
                 request.getName(),
                 request.getPrice(),
                 request.getMenuGroupId(),
-                mapToMenuProducts(request.getProductRequests())
+                mapToMenuProducts(request.getMenuProducts())
         );
         return MenuResponse.from(menuDao.save(menu));
     }
@@ -59,7 +60,6 @@ public class MenuService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품이 존재합니다."));
     }
 
-    @Transactional(readOnly = true)
     public List<MenuResponse> list() {
         final List<Menu> menus = menuDao.findAll();
         return menus.stream()

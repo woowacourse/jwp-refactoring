@@ -7,7 +7,6 @@ import kitchenpos.application.dto.request.OrderStatusChangeRequest;
 import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -17,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class OrderService {
     private final MenuDao menuDao;
     private final OrderDao orderDao;
@@ -36,7 +36,7 @@ public class OrderService {
     public OrderResponse create(final OrderCreateRequest request) {
         final Order order = Order.of(
                 getOrderTableId(request),
-                request.getOrderLineItemRequests()
+                request.getOrderLineItems()
                         .stream()
                         .map(orderLineItemRequest -> new OrderLineItem(
                                 orderLineItemRequest.getMenuId(),
