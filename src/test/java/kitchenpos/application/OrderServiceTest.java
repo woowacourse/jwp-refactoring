@@ -23,6 +23,7 @@ import kitchenpos.table.domain.OrderTable;
 import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.table.domain.repository.OrderTableRepository;
+import kitchenpos.table.validator.TableEmptyValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,7 +51,8 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new OrderService(menuRepository, orderRepository, orderTableRepository);
+        final TableEmptyValidator tableEmptyValidator = new TableEmptyValidator(orderTableRepository);
+        sut = new OrderService(menuRepository, orderRepository, tableEmptyValidator);
         tableService = new TableService(orderTableRepository);
     }
 
