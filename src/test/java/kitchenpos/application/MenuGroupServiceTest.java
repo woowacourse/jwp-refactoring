@@ -7,6 +7,7 @@ import java.util.List;
 import javax.transaction.Transactional;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.request.MenuGroupCreateRequest;
 import kitchenpos.fixtures.MenuGroupFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,9 +29,10 @@ class MenuGroupServiceTest {
     void create() {
         // given
         final MenuGroup menuGroup = MenuGroupFixtures.TWO_CHICKEN_GROUP.create();
+        final MenuGroupCreateRequest menuGroupCreateRequest = new MenuGroupCreateRequest(menuGroup.getName());
 
         // when
-        final MenuGroup actual = menuGroupService.create(menuGroup);
+        final MenuGroup actual = menuGroupService.create(menuGroupCreateRequest);
 
         // then
         assertAll(

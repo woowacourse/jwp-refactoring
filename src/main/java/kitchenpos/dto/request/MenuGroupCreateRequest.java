@@ -9,6 +9,10 @@ public class MenuGroupCreateRequest {
     private MenuGroupCreateRequest() {
     }
 
+    public MenuGroupCreateRequest(final String name) {
+        this.name = name;
+    }
+
     public String getName() {
         return name;
     }
