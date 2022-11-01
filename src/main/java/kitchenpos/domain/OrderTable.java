@@ -12,13 +12,14 @@ public class OrderTable {
         this.id = id;
     }
 
-    public OrderTable(Long id, int numberOfGuests, boolean empty) {
+    public OrderTable(final Long id, final int numberOfGuests, final boolean empty) {
         this.id = id;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
-    public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
+    public OrderTable(final Long id, final Long tableGroupId,
+                      final int numberOfGuests, final boolean empty) {
         validateEmpty();
         this.id = id;
         this.tableGroupId = tableGroupId;
@@ -50,6 +51,12 @@ public class OrderTable {
 
     public void validateHasGroupId() {
         if (Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void validateOrderTableSize() {
+        if (!this.isEmpty() || Objects.nonNull(this.tableGroupId)) {
             throw new IllegalArgumentException();
         }
     }

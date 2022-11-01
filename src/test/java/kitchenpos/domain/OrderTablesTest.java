@@ -24,5 +24,4 @@ class OrderTablesTest {
         assertThatThrownBy(() ->orderTables.validateIsSameSize(List.of()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
-
 }

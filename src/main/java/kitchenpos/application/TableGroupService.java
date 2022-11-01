@@ -3,7 +3,6 @@ package kitchenpos.application;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
@@ -51,6 +50,15 @@ public class TableGroupService {
                 .collect(Collectors.toList());
     }
 
+    private void validateOrderTablesSize(final OrderTables orderTables, final List<OrderTable> savedOrderTables) {
+        orderTables.validateIsSameSize(savedOrderTables);
+
+
+        for (final OrderTable savedOrderTable : savedOrderTables) {
+            savedOrderTable.validateOrderTableSize();
+        }
+    }
+
     private TableGroup updateOrderTableIdAndTableGroupId(final List<OrderTable> savedOrderTables,
                                                          final TableGroup savedTableGroup) {
         final Long tableGroupId = savedTableGroup.getId();
@@ -61,16 +69,6 @@ public class TableGroupService {
             orderTableDao.save(newOrderTable);
         }
         return new TableGroup(savedTableGroup.getId(), savedTableGroup.getCreatedDate(), savedOrderTables);
-    }
-
-    private void validateOrderTablesSize(final OrderTables orderTables, final List<OrderTable> savedOrderTables) {
-        orderTables.validateIsSameSize(savedOrderTables);
-
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new IllegalArgumentException();
-            }
-        }
     }
 
     @Transactional
