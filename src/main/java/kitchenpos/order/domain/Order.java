@@ -6,15 +6,11 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import kitchenpos.order.exception.AlreadyCompletionOrderStatusException;
-import kitchenpos.ordertable.domain.OrderTable;
 
 @Entity(name = "orders")
 public class Order {
@@ -23,9 +19,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_table_id")
-    private OrderTable orderTable;
+    private Long orderTableId;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
@@ -38,22 +32,22 @@ public class Order {
     protected Order() {
     }
 
-    public Order(OrderTable orderTable, OrderStatus orderStatus) {
-        this.orderTable = orderTable;
+    public Order(Long orderTableId, OrderStatus orderStatus) {
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = LocalDateTime.now();
     }
 
-    public static Order newOrder(OrderTable orderTable) {
-        return new Order(orderTable, OrderStatus.COOKING);
+    public static Order newOrder(Long orderTableId) {
+        return new Order(orderTableId, OrderStatus.COOKING);
     }
 
     public Long getId() {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public OrderStatus getOrderStatus() {

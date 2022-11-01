@@ -11,4 +11,6 @@ public interface TableRepository extends JpaRepository<OrderTable, Long> {
     List<OrderTable> findAllByIdIn(List<Long> orderTableIds);
 
     List<OrderTable> findAllByTableGroupId(Long tableGroupId);
+
+    boolean existsByIdAndAndEmptyIsFalse(Long id);
 }

@@ -11,12 +11,11 @@ import kitchenpos.order.dto.OrderCreateRequest;
 import kitchenpos.order.dto.OrderLineItemCreateRequest;
 import kitchenpos.order.dto.OrderResponse;
 import kitchenpos.order.dto.OrderStatusChangeRequest;
-import kitchenpos.order.exception.EmptyTableOrderException;
+import kitchenpos.order.exception.InvalidTableOrderException;
 import kitchenpos.order.exception.MenuNotEnoughException;
 import kitchenpos.order.exception.MenuNotFoundException;
 import kitchenpos.order.repository.OrderLineItemRepository;
 import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.repository.TableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,9 +41,8 @@ public class OrderService {
     public OrderResponse create(OrderCreateRequest orderCreateRequest) {
         List<OrderLineItemCreateRequest> orderLineItemResponses = orderCreateRequest.getOrderLineItems();
         validateMenu(orderLineItemResponses);
-        OrderTable orderTable = findOrderTable(orderCreateRequest);
-        validateOrderTableEmptiness(orderTable);
-        Order order = Order.newOrder(orderTable);
+        validateOrderTable(orderCreateRequest.getOrderTableId());
+        Order order = Order.newOrder(orderCreateRequest.getOrderTableId());
         Order savedOrder = orderRepository.save(order);
         createOrderLineItem(orderLineItemResponses, savedOrder);
         return new OrderResponse(savedOrder);
@@ -71,15 +69,10 @@ public class OrderService {
         }
     }
 
-    private void validateOrderTableEmptiness(OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new EmptyTableOrderException();
+    private void validateOrderTable(Long orderTableId) {
+        if (!tableRepository.existsByIdAndAndEmptyIsFalse(orderTableId)) {
+            throw new InvalidTableOrderException();
         }
-    }
-
-    private OrderTable findOrderTable(OrderCreateRequest orderCreateRequest) {
-        return tableRepository.findById(orderCreateRequest.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
     }
 
     public List<OrderResponse> list() {

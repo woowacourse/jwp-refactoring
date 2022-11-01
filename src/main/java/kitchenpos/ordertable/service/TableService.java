@@ -1,7 +1,10 @@
 package kitchenpos.ordertable.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.exception.TableEmptyDisabledException;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.ordertable.domain.GuestNumber;
 import kitchenpos.ordertable.domain.OrderTable;
@@ -16,6 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
+
+    private static final String SETTING_EMPTY_DISABLED_BY_ORDER_NOT_COMPLETE_EXCEPTION =
+            "조리중이거나 식사중인 테이블의 empty를 변경할 수 없습니다.";
 
     private final OrderRepository orderRepository;
     private final TableRepository tableRepository;
@@ -46,8 +52,16 @@ public class TableService {
                                           OrderTableEmptyChangeRequest orderTableEmptyChangeRequest) {
         OrderTable savedOrderTable = tableRepository.findById(orderTableId)
                 .orElseThrow(OrderTableNotFoundException::new);
+        validateOrderStatusIfExists(orderTableId);
         savedOrderTable.setEmpty(orderTableEmptyChangeRequest.isEmpty());
         return new OrderTableResponse(tableRepository.save(savedOrderTable));
+    }
+
+    private void validateOrderStatusIfExists(Long orderTableId) {
+        Optional<Order> order = orderRepository.findByOrderTableId(orderTableId);
+        if (order.isPresent() && order.get().isNotCompletionOrderStatus()) {
+            throw new TableEmptyDisabledException(SETTING_EMPTY_DISABLED_BY_ORDER_NOT_COMPLETE_EXCEPTION);
+        }
     }
 
     @Transactional

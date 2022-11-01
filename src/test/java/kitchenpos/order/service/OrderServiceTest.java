@@ -21,7 +21,7 @@ import kitchenpos.order.dto.OrderLineItemCreateRequest;
 import kitchenpos.order.dto.OrderResponse;
 import kitchenpos.order.dto.OrderStatusChangeRequest;
 import kitchenpos.order.exception.AlreadyCompletionOrderStatusException;
-import kitchenpos.order.exception.EmptyTableOrderException;
+import kitchenpos.order.exception.InvalidTableOrderException;
 import kitchenpos.order.exception.MenuNotEnoughException;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.product.domain.Product;
@@ -89,6 +89,17 @@ class OrderServiceTest extends ServiceTest {
                 .hasMessage("메뉴를 찾을 수 없습니다.");
     }
 
+    @DisplayName("존재하지 않는 Table에 Order을 등록하려고 하면 예외를 발생시킨다.")
+    @Test
+    void create_Exception_NotFoundTable() {
+        Long notFoundTableId = 1000L;
+        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(notFoundTableId, null,
+                List.of(orderLineItemResponse1, orderLineItemResponse2));
+
+        assertThatThrownBy(() -> orderService.create(orderCreateRequest))
+                .isInstanceOf(InvalidTableOrderException.class);
+    }
+
     @DisplayName("empty인 Table에 해당하는 Order를 등록하려고 하면 예외를 발생시킨다.")
     @Test
     void create_Exception_EmptyTable() {
@@ -97,7 +108,7 @@ class OrderServiceTest extends ServiceTest {
                 List.of(orderLineItemResponse1, orderLineItemResponse2));
 
         assertThatThrownBy(() -> orderService.create(orderCreateRequest))
-                .isInstanceOf(EmptyTableOrderException.class);
+                .isInstanceOf(InvalidTableOrderException.class);
     }
 
     @DisplayName("주문 상태를 변경할 수 있다.")
@@ -119,7 +130,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void changeOrderStatus_Exception_AlreadyCompletionOrder() {
         OrderTable orderTable = tableRepository.save(new OrderTable(GUEST_NUMBER, false));
-        Order order = Order.newOrder(orderTable);
+        Order order = Order.newOrder(orderTable.getId());
         order.changeOrderStatus(COMPLETION);
         Order savedOrder = orderRepository.save(order);
 

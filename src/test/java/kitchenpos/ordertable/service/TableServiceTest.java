@@ -52,7 +52,6 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeEmpty() {
         OrderTableResponse orderTableResponse = tableService.create(new OrderTableCreateRequest(3, false));
-
         tableService.changeEmpty(orderTableResponse.getId(), new OrderTableEmptyChangeRequest(true));
 
         OrderTable changedOrderTable = tableRepository.findAll()
@@ -80,7 +79,7 @@ class TableServiceTest extends ServiceTest {
     @ValueSource(strings = {"MEAL", "COOKING"})
     void changeEmpty_Exception_NotCompleteOrderStatus(String orderStatus) {
         OrderTable orderTable = tableRepository.save(new OrderTable(GUEST_NUMBER, false));
-        Order order = Order.newOrder(orderTable);
+        Order order = Order.newOrder(orderTable.getId());
         order.changeOrderStatus(OrderStatus.from(orderStatus));
         orderRepository.save(order);
 

@@ -1,12 +1,12 @@
-package kitchenpos.ordertable.domain;
+package kitchenpos.tablegroup.domain;
 
 import static kitchenpos.Fixture.DomainFixture.GUEST_NUMBER;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.exception.GroupTableNotEnoughException;
 import kitchenpos.ordertable.exception.GroupedTableNotEmptyException;
-import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.exception.TableAlreadyGroupedException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

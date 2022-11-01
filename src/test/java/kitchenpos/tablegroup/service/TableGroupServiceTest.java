@@ -122,7 +122,7 @@ class TableGroupServiceTest extends ServiceTest {
         OrderTable orderOrderTable2 = tableRepository.save(new OrderTable(GUEST_NUMBER, true, null));
         TableGroupResponse tableGroupResponse = tableGroupService.create(
                 new TableGroupCreateRequest(List.of(orderTable1.getId(), orderOrderTable2.getId())));
-        Order order = Order.newOrder(orderOrderTable2);
+        Order order = Order.newOrder(orderOrderTable2.getId());
         order.changeOrderStatus(OrderStatus.from(orderStatus));
         orderRepository.save(order);
 

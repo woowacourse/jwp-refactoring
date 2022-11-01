@@ -1,10 +1,9 @@
-package kitchenpos.ordertable.domain;
+package kitchenpos.tablegroup.domain;
 
 import java.util.List;
+import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.exception.GroupTableNotEnoughException;
 import kitchenpos.ordertable.exception.GroupedTableNotEmptyException;
-import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.tablegroup.exception.NotCompleteTableUngroupException;
 import kitchenpos.tablegroup.exception.TableAlreadyGroupedException;
 import org.springframework.util.CollectionUtils;
 
@@ -60,16 +59,7 @@ public class OrderTables {
     }
 
     public void ungroup() {
-        validateOrderStatus();
         values.forEach(OrderTable::ungroup);
-    }
-
-    private void validateOrderStatus() {
-        boolean notCompletion = values.stream()
-                .anyMatch(OrderTable::isNotCompletionOrderTable);
-        if (notCompletion) {
-            throw new NotCompleteTableUngroupException();
-        }
     }
 
     public void setEmpty() {
