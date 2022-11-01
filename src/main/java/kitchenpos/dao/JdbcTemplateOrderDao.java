@@ -11,6 +11,7 @@ import java.util.Optional;
 import javax.sql.DataSource;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -133,6 +134,6 @@ public class JdbcTemplateOrderDao implements OrderDao {
         final Long orderTableId = resultSet.getLong("order_table_id");
         final String orderStatus = resultSet.getString("order_status");
         final LocalDateTime orderedTime = resultSet.getObject("ordered_time", LocalDateTime.class);
-        return new Order(id, orderTableId, orderStatus, orderedTime, findAllByOrderId(id));
+        return new Order(id, orderTableId, OrderStatus.valueOf(orderStatus), orderedTime, findAllByOrderId(id));
     }
 }

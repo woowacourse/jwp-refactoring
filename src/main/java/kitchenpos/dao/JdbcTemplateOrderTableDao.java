@@ -9,6 +9,7 @@ import java.util.Optional;
 import javax.sql.DataSource;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTables;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -104,7 +105,8 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
             Long orderTableId = resultSet.getLong("order_table_id");
             String orderStatus = resultSet.getString("order_status");
             LocalDateTime orderedTime = resultSet.getObject("ordered_time", LocalDateTime.class);
-            return new Order(orderId, orderTableId, orderStatus, orderedTime, findAllOrderItemByOrderId(orderId));
+            return new Order(orderId, orderTableId, OrderStatus.valueOf(orderStatus), orderedTime,
+                    findAllOrderItemByOrderId(orderId));
         });
     }
 
@@ -149,7 +151,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
             final Order entity = new Order();
             entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
             entity.setOrderTableId(resultSet.getLong("order_table_id"));
-            entity.setOrderStatus(resultSet.getString("order_status"));
+            entity.setOrderStatus(OrderStatus.valueOf(resultSet.getString("order_status")));
             entity.setOrderedTime(resultSet.getObject("ordered_time", LocalDateTime.class));
             return entity;
         });

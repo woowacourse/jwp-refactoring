@@ -1,26 +1,24 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import org.springframework.util.CollectionUtils;
 
 public class Order {
     private Long id;
     private Long orderTableId;
-    private String orderStatus;
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
 
     public Order() {
     }
 
-    public Order(final Long orderTableId, final String orderStatus, final List<OrderLineItem> orderLineItems) {
+    public Order(final Long orderTableId, final OrderStatus orderStatus, final List<OrderLineItem> orderLineItems) {
         this(null, orderTableId, orderStatus, LocalDateTime.now(), orderLineItems);
     }
 
-    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+    public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException();
@@ -32,11 +30,8 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public void updateOrderStatus(final String orderStatus) {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
-            throw new IllegalArgumentException();
-        }
-        this.orderStatus = orderStatus;
+    public void updateOrderStatus(final String orderStatusName) {
+        this.orderStatus = orderStatus.updateTo(orderStatusName);
     }
 
     public Long getId() {
@@ -56,10 +51,10 @@ public class Order {
     }
 
     public String getOrderStatus() {
-        return orderStatus;
+        return orderStatus.name();
     }
 
-    public void setOrderStatus(final String orderStatus) {
+    public void setOrderStatus(final OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
 

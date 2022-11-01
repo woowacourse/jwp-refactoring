@@ -6,4 +6,11 @@ public enum OrderStatus {
     public static boolean isCompletion(String name) {
         return name.equals(COMPLETION.name());
     }
+
+    public OrderStatus updateTo(final String name) {
+        if (isCompletion(this.name())) {
+            throw new IllegalArgumentException();
+        }
+        return OrderStatus.valueOf(name);
+    }
 }

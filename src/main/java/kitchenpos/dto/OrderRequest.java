@@ -16,7 +16,7 @@ public class OrderRequest {
     }
 
     public Order toEntity() {
-        return new Order(orderTableId, OrderStatus.COOKING.name(), orderLineItems);
+        return new Order(orderTableId, OrderStatus.COOKING, orderLineItems);
     }
 
     public Long getOrderTableId() {
