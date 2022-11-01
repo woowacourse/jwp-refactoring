@@ -4,9 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.util.List;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.ordertable.TableGroup;
 import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.TableGroupResponse;
 import kitchenpos.support.DataSupport;

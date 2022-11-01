@@ -1,8 +1,8 @@
 package kitchenpos.acceptance;
 
 import io.restassured.response.ValidatableResponse;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.ordertable.TableGroup;
 import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.support.RequestBuilder;
 import org.hamcrest.Matchers;

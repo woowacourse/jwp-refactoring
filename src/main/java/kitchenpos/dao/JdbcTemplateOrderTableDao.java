@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import javax.sql.DataSource;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.ordertable.OrderTable;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;

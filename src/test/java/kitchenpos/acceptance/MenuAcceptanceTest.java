@@ -2,8 +2,8 @@ package kitchenpos.acceptance;
 
 import io.restassured.response.ValidatableResponse;
 import java.util.Arrays;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.Product;
 import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.support.RequestBuilder;
 import org.hamcrest.Matchers;

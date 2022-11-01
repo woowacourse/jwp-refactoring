@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.Product;
 import kitchenpos.dto.request.ProductRequest;
 import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.support.DataSupport;

@@ -4,13 +4,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.ordertable.TableGroup;
 import kitchenpos.dto.request.IdRequest;
 import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.TableGroupResponse;
-import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.domain.ordertable.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

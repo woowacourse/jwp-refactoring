@@ -2,7 +2,7 @@ package kitchenpos.application;
 
 import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.dto.request.MenuGroupRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
 import org.springframework.stereotype.Service;

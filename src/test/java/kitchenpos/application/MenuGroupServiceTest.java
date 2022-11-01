@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.dto.request.MenuGroupRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
 import kitchenpos.support.DataSupport;
