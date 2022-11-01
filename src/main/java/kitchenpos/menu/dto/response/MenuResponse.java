@@ -33,4 +33,24 @@ public class MenuResponse {
 
         return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(), menuGroup.getId(), menuProducts);
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public Long getMenuGroupId() {
+        return menuGroupId;
+    }
+
+    public List<MenuProductResponse> getMenuProducts() {
+        return menuProducts;
+    }
 }
