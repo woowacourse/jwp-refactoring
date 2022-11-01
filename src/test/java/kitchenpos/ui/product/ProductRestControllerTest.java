@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.dto.product.request.ProductCreateRequest;
 import kitchenpos.dto.product.response.ProductResponse;
+import kitchenpos.exception.badrequest.NegativePriceException;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
@@ -32,6 +33,19 @@ class ProductRestControllerTest extends RestControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"))
+                .andDo(print());
+    }
+
+    @Test
+    void 상품_가격이_0원_미만이면_400() throws Exception {
+        ProductCreateRequest request = new ProductCreateRequest("상품", BigDecimal.valueOf(-1));
+
+        when(productService.create(any(ProductCreateRequest.class))).thenThrow(new NegativePriceException());
+
+        mockMvc.perform(post("/api/products")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
                 .andDo(print());
     }
 
