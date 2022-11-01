@@ -37,9 +37,7 @@ public class MenuService {
 
     @Transactional
     public Menu create(final MenuRequest menuRequest) {
-        if (!menuGroupDao.existsById(menuRequest.getMenuGroupId())) {
-            throw new IllegalArgumentException();
-        }
+        validateMenuGroup(menuRequest);
         final Menu menu = toMenu(menuRequest);
 
         validatePrice(menuRequest, menu);
@@ -50,20 +48,26 @@ public class MenuService {
         return savedMenu;
     }
 
-    private Menu toMenu(MenuRequest menuRequest) {
+    private void validateMenuGroup(final MenuRequest menuRequest) {
+        if (!menuGroupDao.existsById(menuRequest.getMenuGroupId())) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private Menu toMenu(final MenuRequest menuRequest) {
         return new Menu(menuRequest.getName(),
                 menuRequest.getPrice(),
                 menuRequest.getMenuGroupId(),
                 toMenuProducts(menuRequest.getMenuProducts()));
     }
 
-    private List<MenuProduct> toMenuProducts(List<MenuProductRequest> menuProducts) {
+    private List<MenuProduct> toMenuProducts(final List<MenuProductRequest> menuProducts) {
         return menuProducts.stream()
                 .map(it -> new MenuProduct(it.getProductId(), it.getQuantity()))
                 .collect(Collectors.toList());
     }
 
-    private void validatePrice(MenuRequest menuRequest, Menu menu) {
+    private void validatePrice(final MenuRequest menuRequest, final Menu menu) {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProductRequest menuProductRequest : menuRequest.getMenuProducts()) {
             final Product product = productDao.findById(menuProductRequest.getProductId())
@@ -73,9 +77,9 @@ public class MenuService {
         menu.validatePriceGreaterThan(sum);
     }
 
-    private void saveMenuProducts(List<MenuProduct> menuProducts, Menu savedMenu) {
+    private void saveMenuProducts(final List<MenuProduct> menuProducts, final Menu savedMenu) {
         final Long menuId = savedMenu.getId();
-        List<MenuProduct> savedMenuProducts = new ArrayList<>();
+        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
 
         for (MenuProduct menuProduct : menuProducts) {
             menuProduct.addMenuId(menuId);
