@@ -47,17 +47,6 @@ public class TableGroupServiceTest extends ServiceTest {
     }
 
     @Test
-    @DisplayName("create -> 두 개 미만의 테이블인 경우 예외가 발생한다")
-    void create_underTwoTables_throwException() {
-        // given
-        final OrderTable table = 주문테이블등록(createOrderTable(3, true));
-
-        // when & then
-        assertThatThrownBy(() -> tableGroupService.create(new TableGroupDto(createTableGroup(table))))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
     @DisplayName("create -> 입력한 주문 테이블이 이미 단체로 지정된 경우 예외가 발생한다.")
     void create_alreadyGrouped_throwException() {
         // given
@@ -78,10 +67,11 @@ public class TableGroupServiceTest extends ServiceTest {
         // given
         final OrderTable groupedTable1 = 주문테이블등록(createOrderTable(3, true));
         final OrderTable groupedTable2 = 주문테이블등록(createOrderTable(3, true));
-        final TableGroup group = 테이블그룹등록(createTableGroup(groupedTable1, groupedTable2));
+        TableGroup tableGroup =
+                tableGroupService.create(new TableGroupDto(createTableGroup(groupedTable1, groupedTable2)));
 
         // when
-        tableGroupService.ungroup(group.getId());
+        tableGroupService.ungroup(tableGroup.getId());
         final OrderTable actual = orderTableDao.findById(groupedTable1.getId())
                 .orElseThrow();
 

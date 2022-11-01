@@ -13,7 +13,6 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableGroupDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 @Transactional(readOnly = true)
@@ -31,20 +30,20 @@ public class TableGroupService {
 
     @Transactional
     public TableGroup create(final TableGroupDto tableGroupDto) {
-        final List<OrderTable> orderTables = tableGroupDto.getOrderTables();
-        validateOrderTablesSize(orderTables);
-        final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(getOrderTableIds(orderTables));
-        validateOrderTablesSize(orderTables, savedOrderTables);
-        validateOrderTableAlreadyInGroup(savedOrderTables);
+        validateOrderTablesSize(tableGroupDto);
         tableGroupDto.updateCreatedDateToNow();
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroupDto.toEntity());
-        updateTableGroupOfOrderTables(savedOrderTables, savedTableGroup);
-        return savedTableGroup;
+        TableGroup tableGroup = tableGroupDto.toEntity();
+        validateOrderTableAlreadyInGroup(tableGroup);
+        tableGroup.updateId(tableGroupDao.saveAndGetId(tableGroup));
+        updateTableGroupOfOrderTables(tableGroup.getOrderTables(), tableGroup);
+        return tableGroup;
     }
 
-    private void validateOrderTablesSize(final List<OrderTable> orderTables) {
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException("[ERROR] 테이블이 두 개 미만이거나 비어있을 수 없습니다.");
+    private void validateOrderTablesSize(final TableGroupDto tableGroupDto) {
+        final List<OrderTable> orderTables = tableGroupDto.getOrderTables();
+        final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(getOrderTableIds(orderTables));
+        if (orderTables.size() != savedOrderTables.size()) {
+            throw new IllegalArgumentException("[ERROR] OrderTable 의 개수가 저장된 개수와 일치하지 않습니다.");
         }
     }
 
@@ -54,28 +53,21 @@ public class TableGroupService {
                 .collect(Collectors.toList());
     }
 
-    private void validateOrderTablesSize(final List<OrderTable> orderTables, final List<OrderTable> savedOrderTables) {
-        if (orderTables.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException("[ERROR] OrderTable 의 개수가 저장된 개수와 일치하지 않습니다.");
+    private void validateOrderTableAlreadyInGroup(final TableGroup tableGroup) {
+        final List<OrderTable> orderTables = tableGroup.getOrderTables();
+        if (orderTables.stream().anyMatch(orderTable -> !orderTable.isEmpty())) {
+            throw new IllegalArgumentException("[ERROR] 빈 테이블이 아닙니다.");
         }
     }
 
-    private void validateOrderTableAlreadyInGroup(final List<OrderTable> savedOrderTables) {
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new IllegalArgumentException("[ERROR] OrderTable 이미 단체로 지정되어 있습니다.");
-            }
-        }
-    }
-
-    private void updateTableGroupOfOrderTables(final List<OrderTable> savedOrderTables, final TableGroup savedTableGroup) {
+    private void updateTableGroupOfOrderTables(final List<OrderTable> savedOrderTables,
+                                               final TableGroup savedTableGroup) {
         final Long savedTableGroupId = savedTableGroup.getId();
         for (final OrderTable savedOrderTable : savedOrderTables) {
             savedOrderTable.updateTableGroupId(savedTableGroupId);
             savedOrderTable.updateEmpty(false);
             orderTableDao.save(savedOrderTable);
         }
-        savedTableGroup.addAllOrderTables(savedOrderTables);
     }
 
     @Transactional

@@ -17,6 +17,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.OrderDto;
 import kitchenpos.dto.OrderTableDto;
 import kitchenpos.dto.TableGroupDto;

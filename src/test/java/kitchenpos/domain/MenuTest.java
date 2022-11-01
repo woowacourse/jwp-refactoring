@@ -13,16 +13,16 @@ import org.junit.jupiter.api.Test;
 public class MenuTest {
 
     @Test
-    @DisplayName("create -> 메뉴의 가격이 0원 미만이면 예외가 발생한다.")
-    void create_invalidPrice_throwException() {
+    @DisplayName("메뉴의 가격이 0원 미만이면 예외가 발생한다.")
+    void menu_invalidPrice_throwException() {
         // when & then
         assertThatThrownBy(() -> createMenu("양념치킨메뉴", -1, 메뉴그룹1, 피자))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    @DisplayName("create -> 메뉴의 가격이 메뉴 상품들 가격의 합보다 클 경우 예외가 발생한다.")
-    void create_overProductsPrice_throwException() {
+    @DisplayName("메뉴의 가격이 메뉴 상품들 가격의 합보다 클 경우 예외가 발생한다.")
+    void menu_overProductsPrice_throwException() {
         // given
         final Menu menu = createMenu("치킨피자메뉴", 30_000, 메뉴그룹1, 후라이드치킨, 양념치킨);
 
