@@ -20,8 +20,13 @@ import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.ordertable.OrderTableRepository;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductRepository;
+import kitchenpos.domain.tablegroup.TableGroup;
+import kitchenpos.domain.tablegroup.TableGroupRepository;
+import kitchenpos.dto.request.OrderTableIdRequest;
 import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -31,6 +36,9 @@ class TableServiceTest extends ServiceTest {
 
     @Autowired
     private TableService tableService;
+
+    @Autowired
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
     private OrderTableRepository orderTableRepository;
@@ -127,6 +135,102 @@ class TableServiceTest extends ServiceTest {
         OrderTableRequest request = new OrderTableRequest(5, true);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), request))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 테이블을_단체로_지정할_수_있다() {
+        OrderTable orderTable1 = orderTableRepository.save(new OrderTable(null, 1, true));
+        OrderTable orderTable2 = orderTableRepository.save(new OrderTable(null, 2, true));
+
+        TableGroupRequest request = new TableGroupRequest(
+                List.of(new OrderTableIdRequest(orderTable1.getId()), new OrderTableIdRequest(orderTable2.getId())));
+
+        TableGroupResponse actual = tableService.group(request);
+
+        assertAll(() -> {
+            assertThat(actual.getId()).isNotNull();
+            assertThat(actual.getCreatedDate()).isNotNull();
+            assertThat(actual.getOrderTables()).hasSize(2)
+                    .extracting("tableGroupId")
+                    .isNotNull();
+        });
+    }
+
+    @Test
+    void 단체로_지정할_테이블이_한_개_이하인_경우_지정할_수_없다() {
+        OrderTable orderTable1 = orderTableRepository.save(new OrderTable(null, 1, true));
+
+        TableGroupRequest request = new TableGroupRequest(List.of(new OrderTableIdRequest(orderTable1.getId())));
+
+        assertThatThrownBy(() -> tableService.group(request)).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 단체로_지정할_테이블이_모두_비어있지_않는_경우_지정할_수_없다() {
+        OrderTable orderTable1 = orderTableRepository.save(new OrderTable(null, 1, false));
+        OrderTable orderTable2 = orderTableRepository.save(new OrderTable(null, 2, true));
+
+        TableGroupRequest request = new TableGroupRequest(
+                List.of(new OrderTableIdRequest(orderTable1.getId()), new OrderTableIdRequest(orderTable2.getId())));
+
+        assertThatThrownBy(() -> tableService.group(request)).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 단체로_지정할_테이블_중_이미_단체로_지정된_테이블이_존재하는_경우_지정할_수_없다() {
+        OrderTable alreadyGroupedOrderTable1 = new OrderTable(null, 1, true);
+        OrderTable alreadyGroupedOrderTable2 = new OrderTable(null, 2, true);
+
+        tableGroupRepository.save(new TableGroup(List.of(alreadyGroupedOrderTable1, alreadyGroupedOrderTable2)));
+
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 1, true));
+
+        TableGroupRequest request = new TableGroupRequest(
+                List.of(new OrderTableIdRequest(alreadyGroupedOrderTable1.getId()),
+                        new OrderTableIdRequest(orderTable.getId())));
+
+        assertThatThrownBy(() -> tableService.group(request)).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 테이블_단체_지정을_취소할_수_있다() {
+        OrderTable orderTable1 = new OrderTable(null, 1, true);
+        OrderTable orderTable2 = new OrderTable(null, 2, true);
+
+        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(List.of(orderTable1, orderTable2)));
+
+        tableService.ungroup(tableGroup.getId());
+
+        OrderTable foundOrderTable1 = orderTableRepository.findById(orderTable1.getId()).get();
+        OrderTable foundOrderTable2 = orderTableRepository.findById(orderTable2.getId()).get();
+
+        assertAll(() -> {
+            assertThat(foundOrderTable1.isGrouped()).isFalse();
+            assertThat(foundOrderTable1.isEmpty()).isFalse();
+            assertThat(foundOrderTable2.isGrouped()).isFalse();
+            assertThat(foundOrderTable2.isEmpty()).isFalse();
+        });
+    }
+
+    @ParameterizedTest
+    @EnumSource(mode = EXCLUDE, names = {"COMPLETION"})
+    void 단체_지정을_취소할_테이블들의_주문이_모두_완료_상태가_아닌_경우_취소할_수_없다(OrderStatus orderStatus) {
+        Product product = productRepository.save(new Product("상품", new BigDecimal(10000)));
+        MenuProduct menuProduct = new MenuProduct(product, 1);
+        Long menuGroupId = menuGroupRepository.save(new MenuGroup("메뉴 그룹1")).getId();
+        Menu menu = menuRepository.save(new Menu("메뉴1", new BigDecimal(10000), menuGroupId, List.of(menuProduct)));
+
+        OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 2);
+
+        OrderTable orderTable1 = new OrderTable(null, 1, true);
+        OrderTable orderTable2 = new OrderTable(null, 2, true);
+
+        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(List.of(orderTable1, orderTable2)));
+
+        orderRepository.save(new Order(orderTable1.getId(), orderStatus, List.of(orderLineItem)));
+
+        assertThatThrownBy(() -> tableService.ungroup(tableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
