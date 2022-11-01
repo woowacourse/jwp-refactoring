@@ -3,7 +3,6 @@ package kitchenpos.order.service;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.common.domain.Quantity;
-import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
@@ -42,7 +41,7 @@ public class OrderService {
     @Transactional
     public OrderResponse create(OrderCreateRequest orderCreateRequest) {
         List<OrderLineItemCreateRequest> orderLineItemResponses = orderCreateRequest.getOrderLineItems();
-        validateMenuCount(orderLineItemResponses);
+        validateMenu(orderLineItemResponses);
         OrderTable orderTable = findOrderTable(orderCreateRequest);
         validateOrderTableEmptiness(orderTable);
         Order order = Order.newOrder(orderTable);
@@ -53,17 +52,23 @@ public class OrderService {
 
     private void createOrderLineItem(List<OrderLineItemCreateRequest> orderLineItemCreateRequests, Order savedOrder) {
         for (OrderLineItemCreateRequest orderLineItemResponse : orderLineItemCreateRequests) {
-            OrderLineItem orderLineItem = new OrderLineItem(
-                    savedOrder,
-                    findMenu(orderLineItemResponse.getMenuId()),
-                    new Quantity(orderLineItemResponse.getQuantity()));
+            OrderLineItem orderLineItem = new OrderLineItem(savedOrder,
+                    orderLineItemResponse.getMenuId(), new Quantity(orderLineItemResponse.getQuantity()));
             orderLineItemRepository.save(orderLineItem);
         }
     }
 
-    private Menu findMenu(Long menuId) {
-        return menuRepository.findById(menuId)
-                .orElseThrow(MenuNotFoundException::new);
+    private void validateMenu(List<OrderLineItemCreateRequest> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new MenuNotEnoughException();
+        }
+
+        boolean menuNotFound = orderLineItems.stream()
+                .map(OrderLineItemCreateRequest::getMenuId)
+                .anyMatch(menuId -> !menuRepository.existsById(menuId));
+        if (menuNotFound) {
+            throw new MenuNotFoundException();
+        }
     }
 
     private void validateOrderTableEmptiness(OrderTable orderTable) {
@@ -75,12 +80,6 @@ public class OrderService {
     private OrderTable findOrderTable(OrderCreateRequest orderCreateRequest) {
         return tableRepository.findById(orderCreateRequest.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
-    }
-
-    private void validateMenuCount(List<OrderLineItemCreateRequest> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new MenuNotEnoughException();
-        }
     }
 
     public List<OrderResponse> list() {
