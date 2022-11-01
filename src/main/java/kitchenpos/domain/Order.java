@@ -1,7 +1,6 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -48,9 +47,9 @@ public class Order {
         return new Order(id, orderTableId, orderStatus, orderedTime, null);
     }
 
-    public void checkMenuSize(final long size) {
+    public void checkActualOrderLineItems(final Long size) {
         if (orderLineItems.size() != size) {
-            throw new IllegalArgumentException("주문 항목의 크기가 메뉴의 크기와 같지 않습니다.");
+            throw new IllegalArgumentException("실제 메뉴와 일치하지 않는 메뉴가 존재합니다!");
         }
     }
 

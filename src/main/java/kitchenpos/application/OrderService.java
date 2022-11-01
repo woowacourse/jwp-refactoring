@@ -34,11 +34,8 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest request) {
-        final Order order = Order.of(
-                getOrderTableId(request),
-                mapToOrderLineItems(request)
-        );
-        order.checkMenuSize(menuDao.countByIdIn(order.getMenuIds()));
+        final Order order = Order.of(getOrderTableId(request), mapToOrderLineItems(request));
+        order.checkActualOrderLineItems(menuDao.countByIdIn(order.getMenuIds()));
         return OrderResponse.from(orderDao.save(order));
     }
 

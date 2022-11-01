@@ -24,7 +24,7 @@ class OrderTest {
     void checkMenuSize() {
         final Order order = Order.of(1L, Collections.singletonList(new OrderLineItem(1L, 1L)));
 
-        assertThatThrownBy(() -> order.checkMenuSize(3))
+        assertThatThrownBy(() -> order.checkActualOrderLineItems(3L))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
