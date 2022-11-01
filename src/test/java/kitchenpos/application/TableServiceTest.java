@@ -8,6 +8,8 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -107,12 +109,13 @@ class TableServiceTest {
         }
 
         @DisplayName("테이블 중 주문 상태가 Cooking, Meal인 주문이 있을 경우 예외가 발생한다")
-        @Test
-        void throwExceptionBecauseOrderStatusIsCookingOrMeal() {
+        @ParameterizedTest
+        @ValueSource(strings = {"COOKING", "MEAL"})
+        void throwExceptionBecauseOrderStatusIsCookingOrMeal(String status) {
             OrderTable newOrderTable = new OrderTable(3, false);
             OrderTable orderTable = orderTableRepository.save(newOrderTable);
 
-            orderRepository.save(new Order(orderTable, OrderStatus.COOKING));
+            orderRepository.save(new Order(orderTable, OrderStatus.valueOf(status)));
 
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), changeOrderTableEmptyRequest))
                     .isInstanceOf(IllegalArgumentException.class)

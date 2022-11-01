@@ -10,6 +10,8 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -109,10 +111,16 @@ class TableGroupServiceTest {
         @DisplayName("이미 단체로 묶인 테이블이 있을 경우 예외가 발생한다")
         @Test
         void throwExceptionBecauseOfAlreadyGroupedTable() {
-            TableGroupRequest request = new TableGroupRequest(List.of(tableRequest1, tableRequest2));
-            tableGroupService.create(request);
+            OrderTable table3 = orderTableRepository.save(new OrderTable(3, true));
+            OrderTableIdRequest tableRequest3 = new OrderTableIdRequest(table3.getId());
 
-            assertThatThrownBy(() -> tableGroupService.create(request))
+            TableGroupRequest request1 = new TableGroupRequest(List.of(tableRequest1, tableRequest3));
+            tableGroupService.create(request1);
+
+            // table1번이 이미 Group에 형성되어 있다.
+            TableGroupRequest request2 = new TableGroupRequest(List.of(tableRequest1, tableRequest2));
+
+            assertThatThrownBy(() -> tableGroupService.create(request2))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("이미 테이블 그룹이 형성된 테이블입니다.");
         }
@@ -136,12 +144,13 @@ class TableGroupServiceTest {
         }
 
         @DisplayName("테이블 중 주문 상태가 Cooking, Meal인 주문이 있을 경우 예외가 발생한다")
-        @Test
-        void throwExceptionBecauseOrderStatusIsCookingOrMeal() {
+        @ParameterizedTest
+        @ValueSource(strings = {"COOKING", "MEAL"})
+        void throwExceptionBecauseOrderStatusIsCookingOrMeal(String status) {
             TableGroupRequest request = new TableGroupRequest(List.of(tableRequest1, tableRequest2));
             TableGroupResponse tableGroup = tableGroupService.create(request);
 
-            orderRepository.save(new Order(table1, OrderStatus.COOKING));
+            orderRepository.save(new Order(table1, OrderStatus.valueOf(status)));
 
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                     .isInstanceOf(IllegalArgumentException.class)
