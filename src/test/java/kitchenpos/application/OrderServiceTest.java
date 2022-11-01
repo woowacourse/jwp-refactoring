@@ -79,8 +79,8 @@ class OrderServiceTest extends ServiceTest {
             assertThat(actual.getId()).isNotNull();
             assertThat(actual.getOrderStatus()).isEqualTo(COOKING);
             assertThat(actual.getOrderLineItems()).hasSize(2)
-                    .extracting("seq")
-                    .isNotNull();
+                    .extracting("menuName")
+                    .containsOnly("메뉴1", "메뉴2");
         });
     }
 
@@ -123,15 +123,10 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 전체_주문_목록을_조회할_수_있다() {
-        Product product = productRepository.save(new Product("상품", new BigDecimal(10000)));
-        MenuProduct menuProduct = new MenuProduct(product, 1);
-        Long menuGroupId = menuGroupRepository.save(new MenuGroup("메뉴 그룹1")).getId();
-        Menu menu = menuRepository.save(new Menu("메뉴1", new BigDecimal(10000), menuGroupId, List.of(menuProduct)));
-
         Long orderTableId = orderTableRepository.save(new OrderTable(null, 5, false)).getId();
 
-        OrderLineItem orderLineItem1 = new OrderLineItem(menu.getId(), 1);
-        OrderLineItem orderLineItem2 = new OrderLineItem(menu.getId(), 1);
+        OrderLineItem orderLineItem1 = new OrderLineItem("메뉴", new BigDecimal(10000), 1);
+        OrderLineItem orderLineItem2 = new OrderLineItem("메뉴", new BigDecimal(10000), 1);
 
         Order order1 = new Order(orderTableId, COOKING, List.of(orderLineItem1));
         Order order2 = new Order(orderTableId, COOKING, List.of(orderLineItem2));
@@ -146,14 +141,9 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문_상태를_변경할_수_있다() {
-        Product product = productRepository.save(new Product("상품", new BigDecimal(10000)));
-        MenuProduct menuProduct = new MenuProduct(product, 1);
-        Long menuGroupId = menuGroupRepository.save(new MenuGroup("메뉴 그룹1")).getId();
-        Menu menu = menuRepository.save(new Menu("메뉴1", new BigDecimal(10000), menuGroupId, List.of(menuProduct)));
-
         Long orderTableId = orderTableRepository.save(new OrderTable(null, 5, false)).getId();
 
-        OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1);
+        OrderLineItem orderLineItem = new OrderLineItem("메뉴", new BigDecimal(10000), 1);
 
         Order order = orderRepository.save(new Order(orderTableId, COOKING, List.of(orderLineItem)));
         OrderStatusRequest request = new OrderStatusRequest(MEAL);
@@ -165,14 +155,9 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 기존_주문_상태가_계산_완료_상태인_경우_상태를_변경할_수_없다() {
-        Product product = productRepository.save(new Product("상품", new BigDecimal(10000)));
-        MenuProduct menuProduct = new MenuProduct(product, 1);
-        Long menuGroupId = menuGroupRepository.save(new MenuGroup("메뉴 그룹1")).getId();
-        Menu menu = menuRepository.save(new Menu("메뉴1", new BigDecimal(10000), menuGroupId, List.of(menuProduct)));
-
         Long orderTableId = orderTableRepository.save(new OrderTable(null, 5, false)).getId();
 
-        OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1);
+        OrderLineItem orderLineItem = new OrderLineItem("메뉴", new BigDecimal(10000), 1);
 
         Order order = orderRepository.save(new Order(orderTableId, COMPLETION, List.of(orderLineItem)));
         OrderStatusRequest request = new OrderStatusRequest(MEAL);

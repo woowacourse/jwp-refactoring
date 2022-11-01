@@ -7,19 +7,12 @@ import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.menu.MenuRepository;
-import kitchenpos.domain.menugroup.MenuGroup;
-import kitchenpos.domain.menugroup.MenuGroupRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.ordertable.OrderTableRepository;
-import kitchenpos.domain.product.Product;
-import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.domain.tablegroup.TableGroup;
 import kitchenpos.domain.tablegroup.TableGroupRepository;
 import kitchenpos.dto.request.OrderTableIdRequest;
@@ -45,15 +38,6 @@ class TableServiceTest extends ServiceTest {
 
     @Autowired
     private OrderRepository orderRepository;
-
-    @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
-    private MenuGroupRepository menuGroupRepository;
-
-    @Autowired
-    private MenuRepository menuRepository;
 
     @Test
     void 테이블을_생성할_수_있다() {
@@ -94,12 +78,7 @@ class TableServiceTest extends ServiceTest {
     @ParameterizedTest
     @EnumSource(mode = EXCLUDE, names = {"COMPLETION"})
     void 기존_테이블의_주문_상태가_완료_상태가_아니면_빈_테이블로_변경할_수_없다(OrderStatus orderStatus) {
-        Product product = productRepository.save(new Product("상품", new BigDecimal(10000)));
-        MenuProduct menuProduct = new MenuProduct(product, 1);
-        Long menuGroupId = menuGroupRepository.save(new MenuGroup("메뉴 그룹1")).getId();
-        Menu menu = menuRepository.save(new Menu("메뉴1", new BigDecimal(10000), menuGroupId, List.of(menuProduct)));
-
-        OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 2);
+        OrderLineItem orderLineItem = new OrderLineItem("메뉴", new BigDecimal(10000), 2);
 
         Long orderTableId = orderTableRepository.save(new OrderTable(null, 5, false)).getId();
         orderRepository.save(new Order(orderTableId, orderStatus, List.of(orderLineItem)));
@@ -216,12 +195,7 @@ class TableServiceTest extends ServiceTest {
     @ParameterizedTest
     @EnumSource(mode = EXCLUDE, names = {"COMPLETION"})
     void 단체_지정을_취소할_테이블들의_주문이_모두_완료_상태가_아닌_경우_취소할_수_없다(OrderStatus orderStatus) {
-        Product product = productRepository.save(new Product("상품", new BigDecimal(10000)));
-        MenuProduct menuProduct = new MenuProduct(product, 1);
-        Long menuGroupId = menuGroupRepository.save(new MenuGroup("메뉴 그룹1")).getId();
-        Menu menu = menuRepository.save(new Menu("메뉴1", new BigDecimal(10000), menuGroupId, List.of(menuProduct)));
-
-        OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 2);
+        OrderLineItem orderLineItem = new OrderLineItem("메뉴", new BigDecimal(10000), 2);
 
         OrderTable orderTable1 = new OrderTable(null, 1, true);
         OrderTable orderTable2 = new OrderTable(null, 2, true);
