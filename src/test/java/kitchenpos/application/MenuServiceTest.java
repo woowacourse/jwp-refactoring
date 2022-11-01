@@ -3,7 +3,7 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import static kitchenpos.fixture.MenuFixture.*;
+import static kitchenpos.fixture.MenuFixture.후라이드_양념치킨_두마리세트;
 
 import java.util.List;
 
@@ -14,12 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Product;
 import kitchenpos.application.dto.request.MenuRequest;
 import kitchenpos.application.dto.response.MenuResponse;
+import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductRepository;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.ProductFixture;
 import kitchenpos.support.SpringBootNestedTest;
@@ -36,7 +36,7 @@ class MenuServiceTest {
     private MenuGroupDao menuGroupDao;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     MenuGroup 두마리메뉴;
     Product 후라이드;
@@ -46,8 +46,8 @@ class MenuServiceTest {
     void setUp() {
         두마리메뉴 = menuGroupDao.save(MenuGroupFixture.두마리메뉴.toMenuGroup());
 
-        후라이드 = productDao.save(ProductFixture.후라이드.toProduct());
-        양념치킨 = productDao.save(ProductFixture.양념치킨.toProduct());
+        후라이드 = productRepository.save(ProductFixture.후라이드.toProduct());
+        양념치킨 = productRepository.save(ProductFixture.양념치킨.toProduct());
     }
 
     @DisplayName("메뉴를 생성한다")

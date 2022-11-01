@@ -10,10 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 import kitchenpos.application.dto.request.MenuRequest;
 import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductRepository;
 import kitchenpos.repository.MenuRepository;
 
 @Service
@@ -22,12 +22,12 @@ public class MenuService {
 
     private final MenuRepository menuRepository;
     private final MenuGroupDao menuGroupDao;
-    private final ProductDao productDao;
+    private final ProductRepository productRepository;
 
-    public MenuService(MenuRepository menuRepository, MenuGroupDao menuGroupDao, ProductDao productDao) {
+    public MenuService(MenuRepository menuRepository, MenuGroupDao menuGroupDao, ProductRepository productRepository) {
         this.menuRepository = menuRepository;
         this.menuGroupDao = menuGroupDao;
-        this.productDao = productDao;
+        this.productRepository = productRepository;
     }
 
     public MenuResponse create(MenuRequest request) {
@@ -47,7 +47,7 @@ public class MenuService {
     private void validateProductAndPrice(Menu menu) {
         BigDecimal sum = BigDecimal.ZERO;
         for (MenuProduct menuProduct : menu.getMenuProducts()) {
-            Product product = productDao.findById(menuProduct.getProductId())
+            Product product = productRepository.findById(menuProduct.getProductId())
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
