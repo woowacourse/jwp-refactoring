@@ -1,32 +1,60 @@
 package kitchenpos.domain;
 
+import java.math.BigDecimal;
+
 public class MenuProduct {
     private Long seq;
     private Long menuId;
     private Long productId;
     private long quantity;
+    private BigDecimal price;
 
-    public MenuProduct() {
+    private MenuProduct() {
     }
 
-    public MenuProduct(final Long productId, final long quantity) {
+    private MenuProduct(final Long seq,
+                        final Long menuId,
+                        final Long productId,
+                        final long quantity,
+                        final BigDecimal price) {
+        this.seq = seq;
+        this.menuId = menuId;
         this.productId = productId;
         this.quantity = quantity;
+        this.price = price;
+    }
+
+    public static MenuProduct of(final Long seq,
+                                 final Long menuId,
+                                 final Long productId,
+                                 final long quantity,
+                                 final BigDecimal price) {
+        return new MenuProduct(seq, menuId, productId, quantity, price);
+    }
+
+    public static MenuProduct of(final Long menuId,
+                       final Long productId,
+                       final long quantity,
+                       final BigDecimal price) {
+        return of(null, menuId, productId, quantity, price);
+    }
+
+    public static MenuProduct createForEntity(final Long seq,
+                                              final Long menuId,
+                                              final Long productId,
+                                              final long quantity) {
+        return new MenuProduct(seq, menuId, productId, quantity, null);
     }
 
     public Long getSeq() {
         return seq;
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
-    }
-
     public Long getMenuId() {
         return menuId;
     }
 
-    public void setMenuId(final Long menuId) {
+    public void changeMenu(final Long menuId) {
         this.menuId = menuId;
     }
 
@@ -34,15 +62,11 @@ public class MenuProduct {
         return productId;
     }
 
-    public void setProductId(final Long productId) {
-        this.productId = productId;
-    }
-
     public long getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
+    public BigDecimal getPrice() {
+        return price;
     }
 }

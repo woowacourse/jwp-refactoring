@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 public class Menu {
     private Long id;
@@ -10,54 +11,82 @@ public class Menu {
     private Long menuGroupId;
     private List<MenuProduct> menuProducts;
 
-    public Menu() {
+    private Menu() {
     }
 
-    public Menu(final String name, final BigDecimal price, final Long menuGroupId,
-                final List<MenuProduct> menuProducts) {
+    private Menu(final Long id,
+                 final String name,
+                 final BigDecimal price,
+                 final Long menuGroupId,
+                 final List<MenuProduct> menuProducts) {
+        this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
+    }
+
+    public static Menu of(final Long id,
+                          final String name,
+                          final BigDecimal price,
+                          final Long menuGroupId,
+                          final List<MenuProduct> menuProducts) {
+        validateNegativePrice(price);
+        validateSumPrice(price, menuProducts);
+        return new Menu(id, name, price, menuGroupId, menuProducts);
+    }
+
+    public static Menu of(final String name,
+                          final BigDecimal price,
+                          final Long menuGroupId,
+                          final List<MenuProduct> menuProducts) {
+        return Menu.of(null, name, price, menuGroupId, menuProducts);
+    }
+
+    public static Menu createForEntity(final Long id,
+                                       final String name,
+                                       final BigDecimal price,
+                                       final Long menuGroupId) {
+        return new Menu(id, name, price, menuGroupId, null);
+    }
+
+    private static void validateSumPrice(final BigDecimal price, final List<MenuProduct> menuProducts) {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (MenuProduct menuProduct : menuProducts) {
+            sum = sum.add(menuProduct.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+        }
+        if (price.compareTo(sum) > 0) {
+            throw new IllegalArgumentException("메뉴의 가격이 메뉴 상품의 가격의 합을 넘을 수 없습니다.");
+        }
+    }
+
+    private static void validateNegativePrice(final BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("메뉴의 가격은 음수일 수 없습니다.");
+        }
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
     }
 
     public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
-    }
-
     public Long getMenuGroupId() {
         return menuGroupId;
-    }
-
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
     }
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
     }
 
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
+    public void addMenuProducts(final List<MenuProduct> menuProducts) {
+        this.menuProducts.addAll(menuProducts);
     }
 }

@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.dao.tablegroup;
 
 import kitchenpos.domain.TableGroup;
 

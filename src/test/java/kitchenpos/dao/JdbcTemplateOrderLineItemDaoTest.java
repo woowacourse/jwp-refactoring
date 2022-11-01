@@ -1,10 +1,16 @@
 package kitchenpos.dao;
 
+import static kitchenpos.fixture.OrderFixture.getOrderLineItem;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import kitchenpos.dao.order.JdbcTemplateOrderDao;
+import kitchenpos.dao.order.OrderDao;
+import kitchenpos.dao.orderlineitem.JdbcTemplateOrderLineItemDao;
+import kitchenpos.dao.orderlineitem.OrderLineItemDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.fixture.OrderFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,11 +43,11 @@ class JdbcTemplateOrderLineItemDaoTest extends JdbcTemplateTest{
         final List<OrderLineItem> actual = orderLineItemDao.findAll();
 
         // then
-        assertThat(actual.size()).isEqualTo(1);
+        assertThat(actual).hasSize(1);
     }
 
     private OrderLineItem saveOrderLineItem() {
-        final Order saveOrder = orderDao.save(getOrder());
+        final Order saveOrder = orderDao.save(OrderFixture.getOrderRequest());
         return orderLineItemDao.save(getOrderLineItem(saveOrder.getId()));
     }
 }

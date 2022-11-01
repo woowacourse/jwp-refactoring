@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.dao.menuproduct;
 
 import kitchenpos.domain.MenuProduct;
 

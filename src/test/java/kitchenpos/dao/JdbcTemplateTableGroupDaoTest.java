@@ -3,14 +3,16 @@ package kitchenpos.dao;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import kitchenpos.dao.tablegroup.JdbcTemplateTableGroupDao;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.fixture.TableFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class JdbcTemplateTableGroupDaoTest extends JdbcTemplateTest{
 
-    private TableGroupDao tableGroupDao;
+    private JdbcTemplateTableGroupDao tableGroupDao;
 
     @BeforeEach
     void setUp() {
@@ -20,7 +22,7 @@ class JdbcTemplateTableGroupDaoTest extends JdbcTemplateTest{
     @Test
     @DisplayName("데이터 베이스에 저장할 경우 id 값을 가진 엔티티로 반환한다.")
     void save() {
-        final TableGroup tableGroup = tableGroupDao.save(getTableGroup());
+        final TableGroup tableGroup = tableGroupDao.save(TableFixture.getTableGroupRequest());
         assertThat(tableGroup.getId()).isNotNull();
     }
 
@@ -28,12 +30,12 @@ class JdbcTemplateTableGroupDaoTest extends JdbcTemplateTest{
     @DisplayName("목록을 조회한다.")
     void list() {
         // given
-        tableGroupDao.save(getTableGroup());
+        tableGroupDao.save(TableFixture.getTableGroupRequest());
 
         // when
         final List<TableGroup> actual = tableGroupDao.findAll();
 
         // then
-        assertThat(actual.size()).isEqualTo(1);
+        assertThat(actual).hasSize(1);
     }
 }
