@@ -36,8 +36,8 @@ public class Order {
         }
     }
 
-    public boolean equalStatus(OrderStatus orderStatus) {
-        return Objects.equals(orderStatus, this.orderStatus);
+    public boolean isNotChangeStatus() {
+        return Objects.equals(OrderStatus.COMPLETION, this.orderStatus);
     }
 
     public Long getId() {

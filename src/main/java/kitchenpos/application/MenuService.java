@@ -31,9 +31,9 @@ public class MenuService {
             throw new IllegalArgumentException("메뉴 집합이 존재하지 않습니다.");
         }
 
-        Menu savedMenu = menuDao.save(new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(),
-                findMenuProduct(request.getMenuProducts())));
-        return new MenuResponse(savedMenu);
+        Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(),
+                findMenuProduct(request.getMenuProducts()));
+        return new MenuResponse(menuDao.save(menu));
     }
 
     private List<MenuProduct> findMenuProduct(List<MenuProduct> menuProducts) {
