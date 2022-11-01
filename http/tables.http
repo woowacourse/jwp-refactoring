@@ -11,20 +11,12 @@ Content-Type: application/json
 GET {{host}}/api/tables
 
 ###
-PUT {{host}}/api/tables/1/empty
+PUT {{host}}/api/tables/1?empty=false
 Content-Type: application/json
-
-{
-  "empty": false
-}
 
 ###
-PUT {{host}}/api/tables/1/number-of-guests
+PUT {{host}}/api/tables/1?numberOfGuests=4
 Content-Type: application/json
-
-{
-  "numberOfGuests": 4
-}
 
 ###
 PUT {{host}}/api/tables/1/empty
