@@ -28,7 +28,7 @@ public class Menu {
     private Price price;
     @Column(name = "menu_group_id", nullable = false)
     private Long menuGroupId;
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "menu", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     private List<MenuProduct> menuProducts;
 
     protected Menu() {

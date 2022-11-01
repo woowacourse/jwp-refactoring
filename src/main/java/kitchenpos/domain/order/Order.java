@@ -34,7 +34,7 @@ public class Order {
     private OrderStatus orderStatus;
     @Column(name = "ordered_time", nullable = false)
     private LocalDateTime orderedTime;
-    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "order", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     private List<OrderLineItem> orderLineItems;
 
     protected Order() {
