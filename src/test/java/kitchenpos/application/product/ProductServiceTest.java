@@ -4,14 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.TransactionalTest;
-import kitchenpos.application.product.ProductService;
+import kitchenpos.ServiceTest;
 import kitchenpos.dto.product.request.ProductCreateRequest;
 import kitchenpos.dto.product.response.ProductResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@TransactionalTest
+@ServiceTest
 class ProductServiceTest {
 
     @Autowired

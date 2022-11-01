@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.TransactionalTest;
+import kitchenpos.ServiceTest;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuGroupRepository;
 import kitchenpos.domain.product.Product;
@@ -18,7 +18,7 @@ import kitchenpos.dto.menu.response.MenuResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@TransactionalTest
+@ServiceTest
 class MenuServiceTest {
 
     @Autowired

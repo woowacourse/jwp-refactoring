@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.TransactionalTest;
+import kitchenpos.ServiceTest;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuGroupRepository;
@@ -22,7 +22,7 @@ import kitchenpos.dto.table.response.TableGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@TransactionalTest
+@ServiceTest
 class TableGroupServiceTest {
 
     @Autowired

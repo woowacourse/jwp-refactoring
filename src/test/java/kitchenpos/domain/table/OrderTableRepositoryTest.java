@@ -6,13 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.TransactionalTest;
+import kitchenpos.RepositoryTest;
 import kitchenpos.domain.common.NumberOfGuests;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@TransactionalTest
+@RepositoryTest
 class OrderTableRepositoryTest {
 
     @Autowired
