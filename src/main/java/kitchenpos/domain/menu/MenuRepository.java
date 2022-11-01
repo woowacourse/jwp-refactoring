@@ -1,37 +1,16 @@
 package kitchenpos.domain.menu;
 
 import java.util.List;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import org.springframework.stereotype.Repository;
+import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-@Repository
-public class MenuRepository {
+public interface MenuRepository extends JpaRepository<Menu, Long> {
 
-    private final MenuDao menuDao;
-    private final MenuGroupDao menuGroupDao;
-    private final MenuProductDao menuProductDao;
+    Menu save(Menu entity);
 
-    public MenuRepository(final MenuDao menuDao,
-                          final MenuGroupDao menuGroupDao,
-                          final MenuProductDao menuProductDao) {
-        this.menuDao = menuDao;
-        this.menuGroupDao = menuGroupDao;
-        this.menuProductDao = menuProductDao;
-    }
+    Optional<Menu> findById(Long id);
 
-    public Menu save(final Menu menu) {
-        final Menu savedMenu = menuDao.save(menu);
-        menuProductDao.saveAll(menu.getMenuProducts());
-        return savedMenu;
-    }
+    List<Menu> findAll();
 
-    public List<Menu> findAll() {
-        return menuDao.findAll();
-    }
-
-    public boolean isGroupExist(final Long menuGroupId) {
-        return menuGroupDao.existsById(menuGroupId);
-    }
+    long countByIdIn(List<Long> ids);
 }

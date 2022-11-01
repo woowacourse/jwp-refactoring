@@ -5,9 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
@@ -16,10 +14,11 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.ordertable.OrderTable;
-import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.ordertable.TableGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -34,9 +33,7 @@ public class DataSupport {
     @Autowired
     private MenuGroupDao menuGroupDao;
     @Autowired
-    private MenuDao menuDao;
-    @Autowired
-    private MenuProductDao menuProductDao;
+    private MenuRepository menuRepository;
     @Autowired
     private TableGroupDao tableGroupDao;
     @Autowired
@@ -61,18 +58,12 @@ public class DataSupport {
                          final Long menuGroupId,
                          final MenuProduct... menuProducts) {
         final Menu menu = Menu.ofNew(name, new BigDecimal(price), menuGroupId);
-        final Menu savedMenu = menuDao.save(menu);
-
-        final List<MenuProduct> savedMenuProducts = Arrays.stream(menuProducts)
-                .map(menuProduct -> {
-                    final MenuProduct savedMenuProduct =
-                            MenuProduct.ofNew(menu, menuProduct.getProduct(), menuProduct.getQuantity());
-                    return menuProductDao.save(savedMenuProduct);
-                })
+        final List<MenuProduct> mappedMenuProducts = Arrays.stream(menuProducts)
+                .map(menuProduct -> MenuProduct.ofNew(menu, menuProduct.getProduct(), menuProduct.getQuantity()))
                 .collect(Collectors.toList());
-        savedMenu.changeMenuProducts(savedMenuProducts);
+        menu.changeMenuProducts(mappedMenuProducts);
 
-        return savedMenu;
+        return menuRepository.save(menu);
     }
 
     public TableGroup saveTableGroup() {
