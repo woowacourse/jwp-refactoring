@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.application.product;
 
 import static kitchenpos.support.fixture.ProductFixture.createPepperoni;
 import static kitchenpos.support.fixture.ProductFixture.createPineapple;
@@ -7,6 +7,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import kitchenpos.domain.Product;
 import kitchenpos.support.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
@@ -24,11 +25,12 @@ class ProductServiceTest extends IntegrationTest {
     @DisplayName("상품을 등록 할 수 있다.")
     @Test
     void create() {
-        final Product product = createPepperoni();
+        final ProductRequest productRequest = new ProductRequest("pepperoni", BigDecimal.valueOf(1000L));
 
-        final Product savedProduct = productService.create(product);
+        final ProductResponse productResponse = productService.create(productRequest);
 
-        assertThat(savedProduct.getId()).isNotNull();
+        final Optional<Product> savedProduct = productDao.findById(productResponse.getId());
+        assertThat(savedProduct).isPresent();
     }
 
     @DisplayName("가격이 null 이거나 0미만인 상품은 등록할 수 없다.")
@@ -36,9 +38,9 @@ class ProductServiceTest extends IntegrationTest {
     @NullSource
     @ValueSource(strings = {"-1"})
     void create_Exception_Price(BigDecimal price) {
-        final Product product = new Product("pizza", price);
+        final ProductRequest productRequest = new ProductRequest("pizza", price);
 
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(productRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -49,9 +51,9 @@ class ProductServiceTest extends IntegrationTest {
         productDao.save(createPepperoni());
         productDao.save(createPineapple());
 
-        final List<Product> products = productService.list();
+        final List<ProductResponse> productResponses = productService.list();
 
-        final int afterSize = products.size();
+        final int afterSize = productResponses.size();
         assertThat(afterSize - originSize).isEqualTo(2);
     }
 }
