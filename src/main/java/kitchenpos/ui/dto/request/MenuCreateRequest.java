@@ -46,4 +46,8 @@ public class MenuCreateRequest {
                 .map(MenuProductRequest::getProductId)
                 .collect(Collectors.toList());
     }
+
+    public List<MenuProductRequest> getMenuProducts() {
+        return menuProducts;
+    }
 }

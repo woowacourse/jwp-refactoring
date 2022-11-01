@@ -24,10 +24,6 @@ public class OrderCreateRequest {
         }
     }
 
-    public Long getOrderTableId() {
-        return orderTableId;
-    }
-
     public List<OrderLineItem> getOrderLineItemEntities() {
         return orderLineItems.stream()
                 .map(OrderLineItemRequest::toEntity)
@@ -38,5 +34,13 @@ public class OrderCreateRequest {
         return orderLineItems.stream()
                 .map(OrderLineItemRequest::getMenuId)
                 .collect(Collectors.toList());
+    }
+
+    public List<OrderLineItemRequest> getOrderLineItems() {
+        return orderLineItems;
+    }
+
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 }

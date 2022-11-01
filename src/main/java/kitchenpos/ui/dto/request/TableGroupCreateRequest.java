@@ -34,4 +34,8 @@ public class TableGroupCreateRequest {
                 .map(OrderTableIdRequest::getId)
                 .collect(Collectors.toList());
     }
+
+    public List<OrderTableIdRequest> getOrderTables() {
+        return orderTables;
+    }
 }
