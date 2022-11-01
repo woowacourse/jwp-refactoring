@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class Tables {
-    private List<OrderTable> orderTables;
+    private final List<OrderTable> orderTables;
 
     public Tables(List<OrderTable> orderTables) {
         validateNoGroupedTable(orderTables);
@@ -13,15 +13,25 @@ public class Tables {
     }
 
     private void validateTableIsEmpty(List<OrderTable> orderTables) {
-        if (orderTables.stream().anyMatch(orderTable -> !orderTable.isEmpty())) {
+        if (isAllEmpty(orderTables)) {
             throw new IllegalArgumentException("등록되는 모든 테이블들은 비어있어야 한다.");
         }
     }
 
+    private boolean isAllEmpty(List<OrderTable> orderTables) {
+        return orderTables.stream()
+                .anyMatch(orderTable -> !orderTable.isEmpty());
+    }
+
     private void validateNoGroupedTable(List<OrderTable> orderTables) {
-        if (orderTables.stream().anyMatch(orderTable -> Objects.nonNull(orderTable.getTableGroupId()))) {
+        if (isAllNoGroupId(orderTables)) {
             throw new IllegalArgumentException("등록되는 모든 테이블들은 기존 단체 지정이 없어야 한다.");
         }
+    }
+
+    private boolean isAllNoGroupId(List<OrderTable> orderTables) {
+        return orderTables.stream()
+                .anyMatch(orderTable -> Objects.nonNull(orderTable.getTableGroupId()));
     }
 
     public List<OrderTable> getOrderTables() {

@@ -9,9 +9,10 @@ public class MenuProducts {
 
     public MenuProducts(Price price, List<MenuProduct> menuProducts) {
         this.menuProducts = menuProducts;
-        validateDiscount(price);
+        validateAmount(price);
     }
-    private void validateDiscount(Price price) {
+
+    private void validateAmount(Price price) {
         if (price.isExpensive(getSum())) {
             throw new IllegalArgumentException("메뉴 가격은 내부 모든 상품가격보다 낮아야 한다.");
         }
