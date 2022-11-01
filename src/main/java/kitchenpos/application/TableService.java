@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.exception.ExceptionType.INVALID_PROCEEDING_TABLE_GROUP_EXCEPTION;
 import static kitchenpos.application.exception.ExceptionType.INVALID_TABLE_UNGROUP_EXCEPTION;
 import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_TABLE_EXCEPTION;
 
@@ -12,8 +11,8 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.ui.dto.request.OrderTableRequest;
 import kitchenpos.ui.dto.OrderTableResponse;
+import kitchenpos.ui.dto.request.OrderTableRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,7 +43,7 @@ public class TableService {
     public OrderTableResponse changeEmpty(final Long orderTableId) {
         final OrderTable savedOrderTable = getOrderTable(orderTableId);
 
-        validTableGroupCondition(savedOrderTable);
+        savedOrderTable.validTableGroupCondition();
         validExistOrderTables(orderTableId);
         savedOrderTable.clearTable();
         orderTableDao.save(savedOrderTable);
@@ -56,12 +55,6 @@ public class TableService {
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new CustomIllegalArgumentException(INVALID_TABLE_UNGROUP_EXCEPTION);
-        }
-    }
-
-    private void validTableGroupCondition(final OrderTable savedOrderTable) {
-        if (savedOrderTable.hasTableGroup()) {
-            throw new CustomIllegalArgumentException(INVALID_PROCEEDING_TABLE_GROUP_EXCEPTION);
         }
     }
 

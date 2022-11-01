@@ -20,8 +20,13 @@ class ProductRepository implements ProductDao {
 
     private JdbcTemplateProductDao productDao;
 
+    public ProductRepository(final JdbcTemplateProductDao productDao) {
+        this.productDao = productDao;
+    }
+
     @Override
     public Product save(final Product entity) {
+
         return productDao.save(entity);
     }
 

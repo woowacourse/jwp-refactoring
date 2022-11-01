@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import static kitchenpos.application.exception.ExceptionType.INVALID_CHANGE_NUMBER_OF_GUEST;
+import static kitchenpos.application.exception.ExceptionType.INVALID_PROCEEDING_TABLE_GROUP_EXCEPTION;
 
 import java.util.Objects;
 import kitchenpos.application.exception.CustomIllegalArgumentException;
@@ -10,6 +11,8 @@ public class OrderTable {
     private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
+
+    // OrderStatus 넣을까 말까 ..
 
     public OrderTable() {
     }
@@ -30,8 +33,10 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public boolean hasTableGroup() {
-        return Objects.nonNull(tableGroupId);
+    public void validTableGroupCondition() {
+        if (Objects.nonNull(tableGroupId)) {
+            throw new CustomIllegalArgumentException(INVALID_PROCEEDING_TABLE_GROUP_EXCEPTION);
+        }
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
@@ -60,9 +65,6 @@ public class OrderTable {
     public void setTableGroupId(final Long tableGroupId) {
         this.tableGroupId = tableGroupId;
     }
-    public void clearTableGroup() {
-        this.tableGroupId = null;
-    }
 
     public int getNumberOfGuests() {
         return numberOfGuests;
@@ -72,8 +74,17 @@ public class OrderTable {
         return empty;
     }
 
-
     public void clearTable() {
+        validTableGroupCondition();
         this.empty = true;
+    }
+
+    private void clearTableGroup() {
+        this.tableGroupId = null;
+    }
+
+    public void clear() {
+        clearTableGroup();
+        clearTable();
     }
 }

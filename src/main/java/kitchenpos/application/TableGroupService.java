@@ -67,8 +67,8 @@ public class TableGroupService {
         validChangeOrderTableStatusCondition(orderTableIds);
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.clearTableGroup();
-            orderTable.clearTable();
+            orderTable.clear();
+
             orderTableDao.save(orderTable);
         }
     }

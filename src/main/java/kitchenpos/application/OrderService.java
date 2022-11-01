@@ -38,7 +38,7 @@ public class OrderService {
     public Order create(final OrderRequest request) {
         final Order order = request.toOrder();
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
-        validSize(orderLineItems);
+        validMenu(orderLineItems);
         final Order saveConditionOrder = convertSaveConditionOrder(request.getOrderTableId(), order);
         return orderDao.save(saveConditionOrder);
     }
@@ -54,7 +54,7 @@ public class OrderService {
                 .orElseThrow(() -> new CustomIllegalArgumentException(NOT_FOUND_TABLE_EXCEPTION));
     }
 
-    private void validSize(final List<OrderLineItem> orderLineItems) {
+    private void validMenu(final List<OrderLineItem> orderLineItems) {
         final List<Long> menuIds = orderLineItems.stream()
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
