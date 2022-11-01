@@ -1,15 +1,14 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.exception.ExceptionType.INVALID_TABLE_UNGROUP_EXCEPTION;
+import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_ORDER_EXCEPTION;
 import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_TABLE_EXCEPTION;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.exception.CustomIllegalArgumentException;
+import kitchenpos.dao.JpaOrderRepository;
 import kitchenpos.dao.JpaOrderTableRepository;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.dto.OrderTableResponse;
 import kitchenpos.ui.dto.request.OrderTableRequest;
@@ -19,11 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class TableService {
-    private final OrderDao orderDao;
+    private final JpaOrderRepository orderRepository;
     private final JpaOrderTableRepository orderTableRepository;
 
-    public TableService(final OrderDao orderDao, final JpaOrderTableRepository orderTableRepository) {
-        this.orderDao = orderDao;
+    public TableService(final JpaOrderRepository orderRepository, final JpaOrderTableRepository orderTableRepository) {
+        this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -52,10 +51,10 @@ public class TableService {
     }
 
     private void validExistOrderTables(final Long orderTableId) {
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new CustomIllegalArgumentException(INVALID_TABLE_UNGROUP_EXCEPTION);
-        }
+        final Order order = orderRepository.findById(orderTableId)
+                .orElseThrow(() -> new CustomIllegalArgumentException(NOT_FOUND_ORDER_EXCEPTION));
+
+        order.validExistOrderStatus();
     }
 
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {

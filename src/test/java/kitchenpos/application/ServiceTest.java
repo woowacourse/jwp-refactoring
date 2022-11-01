@@ -8,13 +8,12 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Optional;
 import kitchenpos.dao.JpaMenuGroupRepository;
+import kitchenpos.dao.JpaOrderRepository;
 import kitchenpos.dao.JpaOrderTableRepository;
 import kitchenpos.dao.JpaProductRepository;
 import kitchenpos.dao.JpaTableGroupRepository;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
@@ -46,9 +45,7 @@ public class ServiceTest {
     @MockBean
     protected JpaProductRepository productDao;
     @MockBean
-    protected OrderDao orderDao;
-    @MockBean
-    protected OrderLineItemDao orderLineItemDao;
+    protected JpaOrderRepository orderRepository;
     @MockBean
     protected JpaOrderTableRepository orderTableRepository;
     @MockBean
@@ -58,7 +55,8 @@ public class ServiceTest {
      * order test fixture
      */
     protected void 완료된_주문_조회() {
-        Mockito.when(orderDao.findById(anyLong())).thenReturn(주문_생성(OrderStatus.COMPLETION));
+        Mockito.when(orderRepository.findById(anyLong()))
+                .thenReturn(Optional.ofNullable(주문_생성(OrderStatus.COMPLETION)));
     }
 
     protected void 메뉴존재유뮤세팅(Long count) {
@@ -97,7 +95,7 @@ public class ServiceTest {
 
     protected Order 주문_생성(OrderStatus status) {
         final Order 주문 = new Order(1L, 1L, status.name(), LocalDateTime.now(), null);
-        final OrderLineItem 주문_수량 = new OrderLineItem(1L, 1L, 1L, 1);
+        final OrderLineItem 주문_수량 = new OrderLineItem(1L, 1L, 1);
 
         주문.setOrderLineItems(Arrays.asList(주문_수량));
 
@@ -148,14 +146,13 @@ public class ServiceTest {
      * table Group test fixture
      */
 
-    protected void 그룹_내_주문_상태를_진행중으로_설정() {
-        Mockito.when(orderDao.existsByOrderTableIdInAndOrderStatusIn(any(), any())).thenReturn(true);
-    }
-
-    protected void 테이블_내_주문_상태를_진행중으로_설정() {
-        Mockito.when(orderDao.existsByOrderTableIdAndOrderStatusIn(any(), any())).thenReturn(true);
-    }
-
+//    protected void 그룹_내_주문_상태를_진행중으로_설정() {
+//        Mockito.when(orderRepository.existsByOrderTableIdInAndOrderStatusIn(any(), any())).thenReturn(true);
+//    }
+//
+//    protected void 테이블_내_주문_상태를_진행중으로_설정() {
+//        Mockito.when(orderRepository.existsByOrderTableIdAndOrderStatusIn(any(), any())).thenReturn(true);
+//    }
     protected void 그룹_id로_조회시_객체_반환하도록_세팅() {
         Mockito.when(tableGroupRepository.findById(anyLong()))
                 .thenReturn(Optional.of(테이블_그룹_생성()));

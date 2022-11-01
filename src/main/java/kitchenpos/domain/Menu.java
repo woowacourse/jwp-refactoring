@@ -7,8 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.application.exception.CustomIllegalArgumentException;
 
-public class
-Menu {
+public class Menu {
     private Long id;
     private String name;
     private Price price;

@@ -1,18 +1,16 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.exception.ExceptionType.INVALID_TABLE_UNGROUP_EXCEPTION;
+import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_ORDER_EXCEPTION;
 import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_TABLE_EXCEPTION;
-import static kitchenpos.domain.OrderStatus.COOKING;
-import static kitchenpos.domain.OrderStatus.MEAL;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.exception.CustomIllegalArgumentException;
+import kitchenpos.dao.JpaOrderRepository;
 import kitchenpos.dao.JpaOrderTableRepository;
 import kitchenpos.dao.JpaTableGroupRepository;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.dto.TableGroupResponse;
@@ -24,14 +22,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class TableGroupService {
-    private final OrderDao orderDao;
+
+    private final JpaOrderRepository orderRepository;
     private final JpaOrderTableRepository orderTableRepository;
     private final JpaTableGroupRepository tableGroupRepository;
 
-    public TableGroupService(final OrderDao orderDao, final JpaOrderTableRepository JpaOrderTableRepository,
+    public TableGroupService(final JpaOrderRepository orderRepository,
+                             final JpaOrderTableRepository orderTableRepository,
                              final JpaTableGroupRepository tableGroupRepository) {
-        this.orderDao = orderDao;
-        this.orderTableRepository = JpaOrderTableRepository;
+        this.orderRepository = orderRepository;
+        this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
 
@@ -70,11 +70,11 @@ public class TableGroupService {
         }
     }
 
-    private void validChangeOrderTableStatusCondition(final List<OrderTable> orderTable) {
-        final List<Long> orderTableId = orderTable.stream().map(OrderTable::getId).collect(Collectors.toList());
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableId, Arrays.asList(COOKING.name(), MEAL.name()))) {
-            throw new CustomIllegalArgumentException(INVALID_TABLE_UNGROUP_EXCEPTION);
+    private void validChangeOrderTableStatusCondition(final List<OrderTable> orderTables) {
+        for (OrderTable orderTable : orderTables) {
+            final Order order = orderRepository.findById(orderTable.getId())
+                    .orElseThrow(() -> new CustomIllegalArgumentException(NOT_FOUND_ORDER_EXCEPTION));
+            order.validExistOrderStatus();
         }
     }
 }

@@ -35,6 +35,6 @@ public class OrderLineItemRequest {
     }
 
     public OrderLineItem toOrderLineItem() {
-        return new OrderLineItem(seq, orderId, menuId, quantity);
+        return new OrderLineItem(seq, menuId, quantity);
     }
 }
