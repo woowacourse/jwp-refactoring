@@ -36,10 +36,10 @@ class OrderRestControllerTest extends ControllerTest {
             LocalDateTime.now(),
             List.of(
                 new OrderLineItemResponse(
-                    1L, 1L, new OrderedMenu("치킨", BigDecimal.valueOf(20000)), 2L
+                    1L, new OrderedMenu("치킨", BigDecimal.valueOf(20000)), 2L
                 ),
                 new OrderLineItemResponse(
-                    2L, 1L, new OrderedMenu("콜라", BigDecimal.valueOf(1500)), 1L
+                    2L, new OrderedMenu("콜라", BigDecimal.valueOf(1500)), 1L
                 )
             )
         );
@@ -78,10 +78,10 @@ class OrderRestControllerTest extends ControllerTest {
                 LocalDateTime.now(),
                 List.of(
                     new OrderLineItemResponse(
-                        1L, 1L, new OrderedMenu("치킨", BigDecimal.valueOf(20000)), 2L
+                        1L, new OrderedMenu("치킨", BigDecimal.valueOf(20000)), 2L
                     ),
                     new OrderLineItemResponse(
-                        2L, 1L, new OrderedMenu("콜라", BigDecimal.valueOf(1500)), 1L
+                        2L, new OrderedMenu("콜라", BigDecimal.valueOf(1500)), 1L
                     )
                 )
             ));
