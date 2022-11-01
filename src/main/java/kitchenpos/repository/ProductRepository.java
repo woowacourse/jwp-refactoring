@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.data.repository.Repository;
 
-import kitchenpos.domain.Product;
+import kitchenpos.product.domain.Product;
 
 public interface ProductRepository extends Repository<Product, Long> {
 
