@@ -1,7 +1,7 @@
 package kitchenpos.repository;
 
 import kitchenpos.domain.menu.Product;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.Repository;
 
-public interface JpaProductRepository extends JpaRepository<Product, Long>, ProductRepository {
+public interface JpaProductRepository extends Repository<Product, Long>, ProductRepository {
 }
