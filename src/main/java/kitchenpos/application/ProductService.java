@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class ProductService {
+
     private final ProductRepository productRepository;
 
     public ProductService(final ProductRepository productRepository) {
@@ -20,7 +21,7 @@ public class ProductService {
 
     @Transactional
     public ProductResponse create(final ProductCreateRequest request) {
-        Product product = new Product(request.getName(), request.getPrice());
+        Product product = request.toEntity();
         productRepository.save(product);
         return ProductResponse.of(product);
     }

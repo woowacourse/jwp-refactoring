@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class TableService {
+
     private final OrderTableRepository orderTableRepository;
     private final OrderRepository orderRepository;
 
@@ -29,7 +30,7 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse create(final OrderTableCreateRequest request) {
-        OrderTable orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
+        OrderTable orderTable = request.toEntity();
         orderTableRepository.save(orderTable);
         return OrderTableResponse.of(orderTable);
     }
@@ -48,6 +49,13 @@ public class TableService {
         return OrderTableResponse.of(orderTable);
     }
 
+    private void validatePossibleChangeToEmpty(final Long orderTableId) {
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
+                orderTableId, List.of(COOKING.name(), MEAL.name()))) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
                                                    final OrderTableUpdateGuestRequest request) {
@@ -59,12 +67,5 @@ public class TableService {
     private OrderTable getOrderTable(final Long orderTableId) {
         return orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-    }
-
-    private void validatePossibleChangeToEmpty(final Long orderTableId) {
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, List.of(COOKING.name(), MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
     }
 }
