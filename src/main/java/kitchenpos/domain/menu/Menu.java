@@ -55,14 +55,20 @@ public class Menu {
     }
 
     private void validateMenuProductsPrice(final BigDecimal price, final List<MenuProduct> menuProducts) {
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
-            sum = sum.add(menuProduct.getProduct().getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
-
+        BigDecimal sum = calculateSumOfMenuProductsPrice(menuProducts);
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }
+    }
+
+    private BigDecimal calculateSumOfMenuProductsPrice(final List<MenuProduct> menuProducts) {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (final MenuProduct menuProduct : menuProducts) {
+            BigDecimal productPrice = menuProduct.getProduct().getPrice();
+            BigDecimal menuProductQuantity = BigDecimal.valueOf(menuProduct.getQuantity());
+            sum = sum.add(productPrice.multiply(menuProductQuantity));
+        }
+        return sum;
     }
 
     private void validatePrice(final BigDecimal price) {
