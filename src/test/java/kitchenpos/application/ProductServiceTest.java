@@ -44,17 +44,6 @@ class ProductServiceTest extends ServiceTest {
             });
         }
 
-        @DisplayName("Product의 price가 null인 경우 IAE를 던진다.")
-        @Test
-        void Should_ThrowIAE_When_PriceOfProductIsNull() {
-            // given
-            ProductRequest request = new ProductRequest("상품", null);
-
-            // when & then
-            assertThatThrownBy(() -> productService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
         @DisplayName("Proudct의 price가 0보다 작을 경우 IAE를 던진다.")
         @Test
         void Should_ThrowIAE_When_PriceLessThan0() {

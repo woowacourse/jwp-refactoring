@@ -5,19 +5,21 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
-class ProductTest {
+class PriceTest {
 
-    @DisplayName("상품 생성자")
+    @DisplayName("가격 생성자")
     @Nested
     class Constructor {
 
         @DisplayName("가격이 0보다 작다면, IAE를 던진다.")
-        @Test
-        void Should_ThrowIAE_When_PriceIsLessThan0() {
+        @ValueSource(ints = {-1, -100, -1000})
+        @ParameterizedTest
+        void Should_ThrowIAE_When_PriceIsLessThan0(final int price) {
             // given & when & then
-            assertThatThrownBy(() -> new Product("상품", BigDecimal.valueOf(-1)))
+            assertThatThrownBy(() -> new Price(BigDecimal.valueOf(price)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

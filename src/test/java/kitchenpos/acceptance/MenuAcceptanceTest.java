@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
@@ -45,16 +44,16 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         // given
         MenuGroup 치킨 = 메뉴_그룹을_생성한다("치킨").as(MenuGroup.class);
 
-        Product 후라이드 = 상품을_생성한다("후라이드", 19_000).as(Product.class);
-        Product 양념 = 상품을_생성한다("양념", 19_000).as(Product.class);
-        Product 간장 = 상품을_생성한다("간장", 19_000).as(Product.class);
+        Long 후라이드_ID = 상품을_생성한다("후라이드", 19_000).jsonPath().getLong("id");
+        Long 양념_ID = 상품을_생성한다("양념", 19_000).jsonPath().getLong("id");
+        Long 간장_ID = 상품을_생성한다("간장", 19_000).jsonPath().getLong("id");
 
         return Stream.of(
                 dynamicTest("메뉴를 생성한다.", () -> {
                     // when
-                    Map<String, Long> menuProduct1 = Map.of("productId", 후라이드.getId(), "quantity", 1L);
-                    Map<String, Long> menuProduct2 = Map.of("productId", 양념.getId(), "quantity", 1L);
-                    Map<String, Long> menuProduct3 = Map.of("productId", 간장.getId(), "quantity", 1L);
+                    Map<String, Long> menuProduct1 = Map.of("productId", 후라이드_ID, "quantity", 1L);
+                    Map<String, Long> menuProduct2 = Map.of("productId", 양념_ID, "quantity", 1L);
+                    Map<String, Long> menuProduct3 = Map.of("productId", 간장_ID, "quantity", 1L);
 
                     ExtractableResponse<Response> response = 메뉴를_생성한다("후라이드+후라이드", 35_000, 치킨.getId(), List.of(
                             menuProduct1, menuProduct2, menuProduct3

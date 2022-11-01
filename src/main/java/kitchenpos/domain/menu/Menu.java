@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -24,7 +25,8 @@ public class Menu {
 
     private String name;
 
-    private BigDecimal price;
+    @Embedded
+    private Price price;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_group_id")
@@ -49,7 +51,7 @@ public class Menu {
 
         this.id = id;
         this.name = name;
-        this.price = price;
+        this.price = new Price(price);
         this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
     }
@@ -64,9 +66,7 @@ public class Menu {
     private BigDecimal calculateSumOfMenuProductsPrice(final List<MenuProduct> menuProducts) {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
-            BigDecimal productPrice = menuProduct.getProduct().getPrice();
-            BigDecimal menuProductQuantity = BigDecimal.valueOf(menuProduct.getQuantity());
-            sum = sum.add(productPrice.multiply(menuProductQuantity));
+            sum = sum.add(menuProduct.calculateAmount().getValue());
         }
         return sum;
     }
@@ -85,7 +85,7 @@ public class Menu {
         return name;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
     }
 

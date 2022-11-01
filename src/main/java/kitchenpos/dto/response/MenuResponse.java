@@ -14,10 +14,11 @@ public class MenuResponse {
     private List<MenuProductResponse> menuProducts;
 
     public MenuResponse(final Menu menu) {
-        this(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroup().getId(), menu.getMenuProducts()
-                .stream()
-                .map(MenuProductResponse::new)
-                .collect(Collectors.toList()));
+        this(menu.getId(), menu.getName(), menu.getPrice().getValue(), menu.getMenuGroup().getId(),
+                menu.getMenuProducts()
+                        .stream()
+                        .map(MenuProductResponse::new)
+                        .collect(Collectors.toList()));
     }
 
     public MenuResponse(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
