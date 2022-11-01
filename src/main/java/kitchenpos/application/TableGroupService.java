@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
@@ -89,7 +88,7 @@ public class TableGroupService {
                 .collect(Collectors.toList());
 
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+                orderTableIds, OrderStatus.getCookingAndMealStatusNames())) {
             throw new IllegalArgumentException();
         }
     }
