@@ -66,8 +66,9 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void Should_CreateOrder() {
             // given
-            OrderRequest request = new OrderRequest(savedOrderTable.getId(),
-                    List.of(new OrderLineItemRequest(createdOrderLineItem)));
+            OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(createdOrderLineItem.getMenuId(),
+                    createdOrderLineItem.getQuantity());
+            OrderRequest request = new OrderRequest(savedOrderTable.getId(), List.of(orderLineItemRequest));
 
             // when
             OrderResponse actual = orderService.create(request);
@@ -94,8 +95,9 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderTableDoesNotExist() {
             // given
-            OrderRequest request = new OrderRequest(savedOrderTable.getId() + 1,
-                    List.of(new OrderLineItemRequest(createdOrderLineItem)));
+            OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(createdOrderLineItem.getMenuId(),
+                    createdOrderLineItem.getQuantity());
+            OrderRequest request = new OrderRequest(savedOrderTable.getId() + 1, List.of(orderLineItemRequest));
 
             // when & then
             assertThatThrownBy(() -> orderService.create(request))
@@ -107,9 +109,10 @@ class OrderServiceTest extends ServiceTest {
         void Should_ThrowIAE_When_OrderTableIsEmpty() {
             // given
             OrderTableResponse emptyOrderTable = saveOrderTable(10, true);
+            OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(createdOrderLineItem.getMenuId(),
+                    createdOrderLineItem.getQuantity());
 
-            OrderRequest request = new OrderRequest(emptyOrderTable.getId(),
-                    List.of(new OrderLineItemRequest(createdOrderLineItem)));
+            OrderRequest request = new OrderRequest(emptyOrderTable.getId(), List.of(orderLineItemRequest));
 
             // when & then
             assertThatThrownBy(() -> orderService.create(request))
@@ -127,8 +130,9 @@ class OrderServiceTest extends ServiceTest {
             // given
             int expected = 3;
             for (int i = 0; i < expected; i++) {
-                OrderRequest request = new OrderRequest(savedOrderTable.getId(),
-                        List.of(new OrderLineItemRequest(createdOrderLineItem)));
+                OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(createdOrderLineItem.getMenuId(),
+                        createdOrderLineItem.getQuantity());
+                OrderRequest request = new OrderRequest(savedOrderTable.getId(), List.of(orderLineItemRequest));
                 orderService.create(request);
             }
 
@@ -149,8 +153,9 @@ class OrderServiceTest extends ServiceTest {
         @ParameterizedTest
         void Should_ChangeOrderStatus(final OrderStatus after) {
             // given
-            OrderRequest createRequest = new OrderRequest(savedOrderTable.getId(),
-                    List.of(new OrderLineItemRequest(createdOrderLineItem)));
+            OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(createdOrderLineItem.getMenuId(),
+                    createdOrderLineItem.getQuantity());
+            OrderRequest createRequest = new OrderRequest(savedOrderTable.getId(), List.of(orderLineItemRequest));
             OrderResponse oldOrder = orderService.create(createRequest);
 
             OrderStatusUpdateRequest updateRequest = new OrderStatusUpdateRequest(after);
@@ -166,8 +171,9 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderDoesNotExist() {
             // given
-            OrderRequest createRequest = new OrderRequest(savedOrderTable.getId(),
-                    List.of(new OrderLineItemRequest(createdOrderLineItem)));
+            OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(createdOrderLineItem.getMenuId(),
+                    createdOrderLineItem.getQuantity());
+            OrderRequest createRequest = new OrderRequest(savedOrderTable.getId(), List.of(orderLineItemRequest));
             OrderResponse order = orderService.create(createRequest);
 
             OrderStatusUpdateRequest updateRequest = new OrderStatusUpdateRequest(OrderStatus.MEAL);

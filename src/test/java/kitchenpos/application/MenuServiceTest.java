@@ -43,11 +43,16 @@ class MenuServiceTest extends ServiceTest {
             // given
             MenuProduct menuProduct = new MenuProduct(savedProduct, 1L);
 
+            MenuProductRequest menuProductRequest = new MenuProductRequest(
+                    menuProduct.getProduct().getId(),
+                    menuProduct.getQuantity()
+            );
+
             MenuRequest request = new MenuRequest(
                     "세트1",
                     BigDecimal.valueOf(20_000),
                     savedMenuGroup.getId(),
-                    List.of(new MenuProductRequest(menuProduct))
+                    List.of(menuProductRequest)
             );
 
             // when
@@ -67,11 +72,14 @@ class MenuServiceTest extends ServiceTest {
             // given
             MenuProduct menuProduct = new MenuProduct(savedProduct, 1L);
 
+            MenuProductRequest menuProductRequest = new MenuProductRequest(menuProduct.getProduct().getId(),
+                    menuProduct.getQuantity());
+
             MenuRequest request = new MenuRequest(
                     "세트1",
                     BigDecimal.valueOf(20_000),
                     savedMenuGroup.getId() + 1,
-                    List.of(new MenuProductRequest(menuProduct))
+                    List.of(menuProductRequest)
             );
 
             // when & then
@@ -86,12 +94,14 @@ class MenuServiceTest extends ServiceTest {
             Product notSavedProduct = new Product(savedProduct.getId() + 1, savedProduct.getName(),
                     savedProduct.getPrice());
             MenuProduct notSavedMenuProduct = new MenuProduct(notSavedProduct, 1L);
+            MenuProductRequest menuProductRequest = new MenuProductRequest(notSavedProduct.getId(),
+                    notSavedMenuProduct.getQuantity());
 
             MenuRequest request = new MenuRequest(
                     "세트1",
                     BigDecimal.valueOf(20_000),
                     savedMenuGroup.getId(),
-                    List.of(new MenuProductRequest(notSavedMenuProduct))
+                    List.of(menuProductRequest)
             );
 
             // when
@@ -104,12 +114,14 @@ class MenuServiceTest extends ServiceTest {
         void Should_ThrowIAE_When_MenuPriceIsBiggerThanSumOfProductOfProductPriceAndQuantity() {
             // given
             MenuProduct menuProduct = new MenuProduct(savedProduct, 1L);
+            MenuProductRequest menuProductRequest = new MenuProductRequest(menuProduct.getProduct().getId(),
+                    menuProduct.getQuantity());
 
             MenuRequest request = new MenuRequest(
                     "세트1",
                     BigDecimal.valueOf(1_000_000),
                     savedMenuGroup.getId(),
-                    List.of(new MenuProductRequest(menuProduct))
+                    List.of(menuProductRequest)
             );
 
             // when & then
@@ -133,11 +145,13 @@ class MenuServiceTest extends ServiceTest {
 
             int expected = 4;
             for (int i = 0; i < expected; i++) {
+                MenuProductRequest menuProductRequest = new MenuProductRequest(menuProduct.getProduct().getId(),
+                        menuProduct.getQuantity());
                 MenuRequest request = new MenuRequest(
                         "세트 " + i,
                         BigDecimal.valueOf(20_000),
                         menuGroup.getId(),
-                        List.of(new MenuProductRequest(menuProduct))
+                        List.of(menuProductRequest)
                 );
 
                 menuService.create(request);

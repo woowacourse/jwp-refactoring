@@ -10,10 +10,6 @@ public class OrderLineItemRequest {
     private OrderLineItemRequest() {
     }
 
-    public OrderLineItemRequest(final OrderLineItem orderLineItem) {
-        this(orderLineItem.getMenuId(), orderLineItem.getQuantity());
-    }
-
     public OrderLineItemRequest(final Long menuId, final long quantity) {
         this.menuId = menuId;
         this.quantity = quantity;

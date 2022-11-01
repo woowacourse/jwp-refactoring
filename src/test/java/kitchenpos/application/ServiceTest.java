@@ -50,9 +50,17 @@ public class ServiceTest {
 
     protected MenuResponse saveMenu(final String name, final int price, final MenuGroup menuGroup,
                                     final List<MenuProduct> menuProducts) {
-        MenuRequest menu = new MenuRequest(name, BigDecimal.valueOf(price), menuGroup.getId(), menuProducts.stream()
-                .map(MenuProductRequest::new)
-                .collect(Collectors.toList()));
+        MenuRequest menu = new MenuRequest(
+                name,
+                BigDecimal.valueOf(price),
+                menuGroup.getId(),
+                menuProducts.stream()
+                        .map(menuProduct -> new MenuProductRequest(
+                                menuProduct.getProduct().getId(),
+                                menuProduct.getQuantity())
+                        )
+                        .collect(Collectors.toList())
+        );
 
         return menuService.create(menu);
     }
