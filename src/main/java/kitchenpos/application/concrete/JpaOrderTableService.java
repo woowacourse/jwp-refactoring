@@ -39,8 +39,7 @@ public class JpaOrderTableService implements TableService {
     @Transactional
     @Override
     public OrderTable changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
-        return orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new)
+        return orderTableRepository.getById(orderTableId)
                 .changeEmpty(orderTableValidator, request.isEmpty());
     }
 
@@ -48,8 +47,7 @@ public class JpaOrderTableService implements TableService {
     @Override
     public OrderTable changeNumberOfGuests(final Long orderTableId,
                                            final OrderTableChangeNumberOfGuestsRequest request) {
-        return orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new)
+        return orderTableRepository.getById(orderTableId)
                 .changeNumberOfGuests(orderTableValidator, request.getNumberOfGuests());
     }
 }

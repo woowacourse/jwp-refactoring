@@ -44,8 +44,7 @@ public class JpaTableGroupService implements TableGroupService {
     public void unGroup(final Long tableGroupId) {
         validateTableGroupId(tableGroupId);
 
-        final var tableGroup = tableGroupRepository.findById(tableGroupId)
-                .orElseThrow(IllegalArgumentException::new)
+        final var tableGroup = tableGroupRepository.getById(tableGroupId)
                 .unGroup(tableGroupValidator);
 
         tableGroupRepository.save(tableGroup);

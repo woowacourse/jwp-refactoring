@@ -3,7 +3,7 @@ package kitchenpos.repository;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.exception.badrequest.MenuGroupNotFoundException;
+import kitchenpos.exception.notfound.MenuGroupNotFoundException;
 import org.springframework.data.repository.Repository;
 
 public interface MenuGroupRepository extends Repository<MenuGroup, Long> {

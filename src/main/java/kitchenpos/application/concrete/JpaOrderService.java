@@ -1,4 +1,4 @@
-package kitchenpos.application.old;
+package kitchenpos.application.concrete;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -22,13 +22,13 @@ import org.springframework.util.CollectionUtils;
 
 @Transactional(readOnly = true)
 @Service
-public class JdbcOrderService implements OrderService {
+public class JpaOrderService implements OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public JdbcOrderService(
+    public JpaOrderService(
             final MenuRepository menuRepository,
             final OrderRepository orderRepository,
             final OrderLineItemRepository orderLineItemRepository,
@@ -67,8 +67,7 @@ public class JdbcOrderService implements OrderService {
         if (Objects.isNull(order.getOrderTableId())) {
             throw new IllegalArgumentException();
         }
-        final OrderTable orderTable = orderTableRepository.findById(order.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
+        final OrderTable orderTable = orderTableRepository.getById(order.getOrderTableId());
 
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
@@ -105,8 +104,7 @@ public class JdbcOrderService implements OrderService {
     @Transactional
     @Override
     public Order changeOrderStatus(final Long orderId, final OrderChangeStatusRequest request) {
-        final Order savedOrder = orderRepository.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+        final Order savedOrder = orderRepository.getById(orderId);
 
         if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
             throw new IllegalArgumentException();
