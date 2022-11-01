@@ -9,6 +9,10 @@ public class OrderTableRequest {
     private OrderTableRequest() {
     }
 
+    public OrderTableRequest(final Long id) {
+        this.id = id;
+    }
+
     public OrderTable toOrderTable() {
         return new OrderTable(id, null, 0, false);
     }

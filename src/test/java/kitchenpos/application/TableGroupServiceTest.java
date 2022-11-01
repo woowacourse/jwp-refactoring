@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import javax.transaction.Transactional;
 import kitchenpos.dao.OrderRepository;
@@ -15,6 +16,8 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.dto.request.TableGroupCreateRequest;
 import kitchenpos.exception.CanNotGroupException;
 import kitchenpos.exception.NotEnoughForGroupingException;
 import kitchenpos.exception.OrderNotCompletionException;
@@ -52,14 +55,17 @@ class TableGroupServiceTest {
         // given
         final OrderTable orderTable1 = OrderTableFixtures.createEmptyTable(null);
         final OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
+        final OrderTableRequest orderTableRequest1 = new OrderTableRequest(savedOrderTable1.getId());
 
         final OrderTable orderTable2 = OrderTableFixtures.createEmptyTable(null);
         final OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
+        final OrderTableRequest orderTableRequest2 = new OrderTableRequest(savedOrderTable2.getId());
 
-        final TableGroup tableGroup = TableGroupFixtures.createWithOrderTables(savedOrderTable1, savedOrderTable2);
+        final TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(
+                Arrays.asList(orderTableRequest1, orderTableRequest2));
 
         // when
-        final TableGroup saved = tableGroupService.create(tableGroup);
+        final TableGroup saved = tableGroupService.create(tableGroupCreateRequest);
 
         // then
         assertAll(
@@ -79,10 +85,10 @@ class TableGroupServiceTest {
     @DisplayName("주문 테이블이 비어있을 때 단체를 지정하려고 하면 예외가 발생한다")
     void createWithEmptyOrderTable() {
         // given
-        final TableGroup tableGroup = TableGroupFixtures.create();
+        final TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(Collections.emptyList());
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
                 .isExactlyInstanceOf(NotEnoughForGroupingException.class);
     }
 
@@ -90,24 +96,30 @@ class TableGroupServiceTest {
     @DisplayName("주문 테이블이 1개 이하일 때 단체를 지정하려고 하면 예외가 발생한다")
     void createWithFewOrderTable() {
         // given
-        final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
-        final TableGroup tableGroup = TableGroupFixtures.createWithOrderTables(orderTable);
+        final OrderTable orderTable = OrderTableFixtures.createEmptyTable(null);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(savedOrderTable.getId());
+
+        final TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(
+                Collections.singletonList(orderTableRequest));
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isExactlyInstanceOf(OrderTableSizeException.class);
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
+                .isExactlyInstanceOf(NotEnoughForGroupingException.class);
     }
 
     @Test
     @DisplayName("존재하지 않은 주문 테이블에 대해서 단체를 지정하려고 하면 예외가 발생한다")
     void createWithNotExistOrderTables() {
         // given
-        final OrderTable orderTable1 = OrderTableFixtures.createWithGuests(null, 2);
-        final OrderTable orderTable2 = OrderTableFixtures.createWithGuests(null, 2);
-        final TableGroup tableGroup = TableGroupFixtures.createWithOrderTables(orderTable1, orderTable2);
+        final OrderTableRequest orderTableRequest1 = new OrderTableRequest(-1L);
+        final OrderTableRequest orderTableRequest2 = new OrderTableRequest(-2L);
+
+        final TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(
+                Arrays.asList(orderTableRequest1, orderTableRequest2));
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
                 .isExactlyInstanceOf(OrderTableSizeException.class);
     }
 
@@ -117,13 +129,17 @@ class TableGroupServiceTest {
         // given
         final OrderTable orderTable1 = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable NotEmptyOrderTable = orderTableRepository.save(orderTable1);
+        final OrderTableRequest NotEmptyOrderTableRequest = new OrderTableRequest(NotEmptyOrderTable.getId());
+
         final OrderTable orderTable2 = OrderTableFixtures.createEmptyTable(null);
         final OrderTable emptyOrderTable = orderTableRepository.save(orderTable2);
+        final OrderTableRequest emptyOrderTableRequest = new OrderTableRequest(emptyOrderTable.getId());
 
-        final TableGroup tableGroup = TableGroupFixtures.createWithOrderTables(NotEmptyOrderTable, emptyOrderTable);
+        final TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(
+                Arrays.asList(NotEmptyOrderTableRequest, emptyOrderTableRequest));
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
                 .isExactlyInstanceOf(CanNotGroupException.class);
     }
 
@@ -136,18 +152,21 @@ class TableGroupServiceTest {
 
         final OrderTable orderTable1 = OrderTableFixtures.createWithGuests(alreadyGroupedTable, 2);
         final OrderTable alreadyGroupedOrderTable1 = orderTableRepository.save(orderTable1);
+        final OrderTableRequest alreadyGroupedOrderTableRequest = new OrderTableRequest(
+                alreadyGroupedOrderTable1.getId());
 
         final OrderTable orderTable2 = OrderTableFixtures.createWithGuests(alreadyGroupedTable, 2);
         orderTableRepository.save(orderTable2);
 
         final OrderTable orderTable3 = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable orderTable = orderTableRepository.save(orderTable3);
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(orderTable.getId());
 
-        final TableGroup newTableGroup = TableGroupFixtures.createWithOrderTables(orderTable,
-                alreadyGroupedOrderTable1);
+        final TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(
+                Arrays.asList(orderTableRequest, alreadyGroupedOrderTableRequest));
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(newTableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
                 .isExactlyInstanceOf(CanNotGroupException.class);
     }
 

@@ -12,6 +12,10 @@ public class TableGroupCreateRequest {
     private TableGroupCreateRequest() {
     }
 
+    public TableGroupCreateRequest(final List<OrderTableRequest> orderTables) {
+        this.orderTables = orderTables;
+    }
+
     public TableGroup toTableGroup() {
         final List<OrderTable> orderTables = this.orderTables.stream()
                 .map(OrderTableRequest::toOrderTable)
