@@ -9,13 +9,13 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuRepository;
-import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.product.Product;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.ordertable.OrderTable;
@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class DataSupport {
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
     @Autowired
     private MenuGroupDao menuGroupDao;
     @Autowired
@@ -45,7 +45,7 @@ public class DataSupport {
 
     public Product saveProduct(final String name, final int price) {
         final Product product = Product.ofNew(name, new BigDecimal(price));
-        return productDao.save(product);
+        return productRepository.save(product);
     }
 
     public MenuGroup saveMenuGroup(final String name) {

@@ -9,7 +9,7 @@ import java.util.List;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.product.Product;
 import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.support.DataSupport;

@@ -8,6 +8,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
+import kitchenpos.domain.product.Price;
 
 @Embeddable
 public class MenuProducts {

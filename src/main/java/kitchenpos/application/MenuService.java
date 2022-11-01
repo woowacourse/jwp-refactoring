@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.product.Product;
 import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.dto.response.MenuResponse;
@@ -19,12 +19,12 @@ public class MenuService {
 
     private final MenuRepository menuRepository;
     private final MenuGroupDao menuGroupDao;
-    private final ProductDao productDao;
+    private final ProductRepository productRepository;
 
-    public MenuService(final MenuRepository menuRepository, final MenuGroupDao menuGroupDao, final ProductDao productDao) {
+    public MenuService(final MenuRepository menuRepository, final MenuGroupDao menuGroupDao, final ProductRepository productRepository) {
         this.menuRepository = menuRepository;
         this.menuGroupDao = menuGroupDao;
-        this.productDao = productDao;
+        this.productRepository = productRepository;
     }
 
     @Transactional
@@ -54,7 +54,7 @@ public class MenuService {
     }
 
     private Product getProductFrom(final MenuProductRequest menuProductRequest) {
-        return productDao.findById(menuProductRequest.getProductId())
+        return productRepository.findById(menuProductRequest.getProductId())
                 .orElseThrow(IllegalArgumentException::new);
     }
 }
