@@ -67,7 +67,7 @@ class TableGroupServiceTest extends IntegrationServiceTest {
             @BeforeEach
             void setUp() {
 
-                OrderTable table = orderTableRepository.save(new OrderTable(0, 비어있지_않음, null));
+                OrderTable table = tableRepository.save(new OrderTable(0, 비어있지_않음, null));
                 OrderTable table2 = 주문테이블_저장();
 
                 OrderTableRequest 비어있지_않은_테이블_요청 = convertTableRequestFrom(table);
@@ -95,7 +95,7 @@ class TableGroupServiceTest extends IntegrationServiceTest {
 
                 TableGroup 테이블_그룹 = tableGroupRepository.save(new TableGroup());
 
-                OrderTable 이미_그룹화된_주문테이블 = orderTableRepository.save(new OrderTable(0, true, 테이블_그룹));
+                OrderTable 이미_그룹화된_주문테이블 = tableRepository.save(new OrderTable(0, true, 테이블_그룹));
                 OrderTable 정상_주문테이블 = 주문테이블_저장();
 
                 OrderTableRequest 그룹화된_주문테이블_요청 = convertTableRequestFrom(이미_그룹화된_주문테이블);
@@ -114,18 +114,22 @@ class TableGroupServiceTest extends IntegrationServiceTest {
         @Nested
         class 정상적인_경우 extends IntegrationServiceTest {
 
+            private OrderTable 저장된_테이블_1;
+            private OrderTable 저장된_테이블_2;
+
             private OrderTableRequest 테이블_요청_1;
             private OrderTableRequest 테이블_요청_2;
+
             private TableGroupRequest 정상_테이블그룹;
 
             @BeforeEach
             void setUp() {
 
-                final OrderTable table1 = 주문테이블_저장();
-                final OrderTable table2 = 주문테이블_저장();
+                저장된_테이블_1 = 주문테이블_저장();
+                저장된_테이블_2 = 주문테이블_저장();
 
-                테이블_요청_1 = convertTableRequestFrom(table1);
-                테이블_요청_2 = convertTableRequestFrom(table2);
+                테이블_요청_1 = convertTableRequestFrom(저장된_테이블_1);
+                테이블_요청_2 = convertTableRequestFrom(저장된_테이블_2);
 
                 정상_테이블그룹 = new TableGroupRequest(now(), List.of(테이블_요청_1, 테이블_요청_2));
             }
@@ -134,8 +138,14 @@ class TableGroupServiceTest extends IntegrationServiceTest {
             void 저장하고_ID를_내포한_것을_반환한다() {
 
                 final TableGroup savedTableGroup = tableGroupService.create(정상_테이블그룹);
+                final OrderTable 검증할_테이블_1 = tableRepository.findWithTableGroupById(저장된_테이블_1.getId()).get();
+                final OrderTable 검증할_테이블_2 = tableRepository.findWithTableGroupById(저장된_테이블_2.getId()).get();
 
-                assertThat(savedTableGroup.getId()).isNotNull();
+                assertAll(
+                        () -> assertThat(savedTableGroup.getId()).isNotNull(),
+                        () -> assertThat(검증할_테이블_1.getTableGroup()).isNotNull(),
+                        () -> assertThat(검증할_테이블_2.getTableGroup()).isNotNull()
+                );
             }
         }
 
@@ -159,11 +169,11 @@ class TableGroupServiceTest extends IntegrationServiceTest {
             @BeforeEach
             void setUp() {
 
-                final OrderTable orderTable1 = new OrderTable(0, true);
-                final OrderTable orderTable2 = new OrderTable(0, true);
+                final OrderTable orderTable1 = new OrderTable(1, true);
+                final OrderTable orderTable2 = new OrderTable(2, true);
 
-                final OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
-                final OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
+                final OrderTable savedOrderTable1 = tableRepository.save(orderTable1);
+                final OrderTable savedOrderTable2 = tableRepository.save(orderTable2);
 
                 final OrderTableRequest orderTableResponse1 = convertTableRequestFrom(savedOrderTable1);
                 final OrderTableRequest orderTableResponse2 = convertTableRequestFrom(savedOrderTable2);
@@ -193,21 +203,23 @@ class TableGroupServiceTest extends IntegrationServiceTest {
         class 정상적인_경우 extends IntegrationServiceTest {
 
             private Long savedTableGroupId;
-            private Long orderTableId1;
-            private Long orderTableId2;
+            private Long tableId1;
+            private Long tableId2;
 
             @BeforeEach
             void setUp() {
 
-                final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(4, true));
-                final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(4, true));
-                final OrderTableRequest orderTableRequest1 = convertTableRequestFrom(orderTable1);
-                final OrderTableRequest orderTableRequest2 = convertTableRequestFrom(orderTable2);
-                this.orderTableId1 = orderTable1.getId();
-                this.orderTableId2 = orderTable2.getId();
+                final OrderTable table1 = tableRepository.save(new OrderTable(1, true));
+                final OrderTable table2 = tableRepository.save(new OrderTable(2, true));
 
-                TableGroupRequest tableGroupRequest = new TableGroupRequest(now(),
-                        List.of(orderTableRequest1, orderTableRequest2));
+                final OrderTableRequest tableRequest1 = convertTableRequestFrom(table1);
+                final OrderTableRequest tableRequest2 = convertTableRequestFrom(table2);
+
+                this.tableId1 = table1.getId();
+                this.tableId2 = table2.getId();
+
+                TableGroupRequest tableGroupRequest =
+                        new TableGroupRequest(now(), List.of(tableRequest1, tableRequest2));
 
                 this.savedTableGroupId = tableGroupService.create(tableGroupRequest).getId();
             }
@@ -216,12 +228,13 @@ class TableGroupServiceTest extends IntegrationServiceTest {
             void 그룹을_해제한다() {
 
                 tableGroupService.ungroup(savedTableGroupId);
-                final OrderTable orderTable1 = orderTableRepository.findById(orderTableId1).get();
-                final OrderTable orderTable2 = orderTableRepository.findById(orderTableId2).get();
+
+                final OrderTable 검증할_테이블_1 = tableRepository.findWithTableGroupById(tableId1).get();
+                final OrderTable 검증할_테이블_2 = tableRepository.findWithTableGroupById(tableId2).get();
 
                 assertAll(
-                        () -> assertThat(orderTable1.getTableGroup().getId()).isNull(),
-                        () -> assertThat(orderTable2.getTableGroup().getId()).isNull()
+                        () -> assertThat(검증할_테이블_1.getTableGroup()).isNull(),
+                        () -> assertThat(검증할_테이블_2.getTableGroup()).isNull()
                 );
             }
         }

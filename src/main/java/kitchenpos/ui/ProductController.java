@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class ProductRestController {
+public class ProductController {
     private final ProductService productService;
 
-    public ProductRestController(final ProductService productService) {
+    public ProductController(final ProductService productService) {
         this.productService = productService;
     }
 

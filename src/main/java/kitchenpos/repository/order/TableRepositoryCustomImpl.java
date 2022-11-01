@@ -9,21 +9,37 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
-import kitchenpos.domain.order.OrderTable;
 import kitchenpos.domain.QOrderTable;
+import kitchenpos.domain.order.OrderTable;
 
-public class OrderTableRepositoryImpl implements OrderTableRepositoryCustom {
+public class TableRepositoryCustomImpl implements TableRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
     private final QOrderTable qOrderTable = new QOrderTable("orderTable");
 
-    public OrderTableRepositoryImpl(EntityManager entityManager) {
+    public TableRepositoryCustomImpl(EntityManager entityManager) {
         this.queryFactory = new JPAQueryFactory(entityManager);
     }
 
     @Override
-    public List<OrderTable> findWithTableGroupByIdIn(List<Long> ids) {
+    public List<OrderTable> findAllWithTableGroup(Long tableGroupId) {
+
+        if (tableGroupId == null) {
+            return emptyList();
+        }
+
+        return queryFactory
+                .selectFrom(orderTable)
+                .distinct()
+                .where(orderTable.tableGroup.id.eq(tableGroupId))
+                .leftJoin(orderTable.tableGroup, tableGroup)
+                .fetchJoin()
+                .fetch();
+    }
+
+    @Override
+    public List<OrderTable> findAllWithTableGroupByIdIn(List<Long> ids) {
 
         if (ids == null || ids.isEmpty() || ids.contains(null)) {
             return emptyList();
@@ -39,7 +55,7 @@ public class OrderTableRepositoryImpl implements OrderTableRepositoryCustom {
     }
 
     @Override
-    public Optional<OrderTable> findWithOrdersAndTableGroupById(Long id) {
+    public Optional<OrderTable> findWithTableGroupById(Long id) {
 
         final OrderTable orderTable = queryFactory
                 .selectFrom(qOrderTable)

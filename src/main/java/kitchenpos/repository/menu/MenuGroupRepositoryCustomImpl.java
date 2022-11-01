@@ -2,24 +2,27 @@ package kitchenpos.repository.menu;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import javax.persistence.EntityManager;
-import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.QMenuGroup;
 
-public class MenuGroupRepositoryImpl implements MenuGroupRepositoryCustom {
+public class MenuGroupRepositoryCustomImpl implements MenuGroupRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
     private final QMenuGroup qMenuGroup = new QMenuGroup("menuGroup");
 
-    public MenuGroupRepositoryImpl(EntityManager entityManager) {
+    public MenuGroupRepositoryCustomImpl(EntityManager entityManager) {
         this.queryFactory = new JPAQueryFactory(entityManager);
     }
 
     @Override
-    public boolean existsBy(MenuGroup menuGroup) {
+    public boolean existsBy(Long menuGroupId) {
+
+        if (menuGroupId == null) {
+            return false;
+        }
 
         return queryFactory
                 .selectFrom(qMenuGroup)
-                .where(qMenuGroup.in(menuGroup))
+                .where(qMenuGroup.id.in(menuGroupId))
                 .fetchFirst() != null;
     }
 }

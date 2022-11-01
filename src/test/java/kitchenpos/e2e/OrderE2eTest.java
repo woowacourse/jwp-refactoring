@@ -10,14 +10,15 @@ import io.restassured.response.Response;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order.OrderTable;
+import kitchenpos.dto.response.OrderLineItemResponse;
 import kitchenpos.dto.response.OrderResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 public class OrderE2eTest extends KitchenPosE2eTest {
+
 
     @Test
     void create() {
@@ -29,7 +30,7 @@ public class OrderE2eTest extends KitchenPosE2eTest {
         // when
         ExtractableResponse<Response> 응답 = 주문_생성(주문테이블_ID, 주문일시);
         OrderResponse 처리된_주문 = 응답.as(OrderResponse.class);
-        OrderLineItem 처리된_주문항목 = 처리된_주문.getOrderLineItems().get(0);
+        OrderLineItemResponse 처리된_주문항목 = 처리된_주문.getOrderLineItems().get(0);
 
         // then
         assertAll(
@@ -37,7 +38,6 @@ public class OrderE2eTest extends KitchenPosE2eTest {
                 NOT_NULL_검증(처리된_주문.getId()),
                 NOT_NULL_검증(처리된_주문항목.getSeq()),
                 단일_검증(처리된_주문.getOrderTableId(), 주문테이블_ID),
-                단일_검증(처리된_주문항목.getOrder().getId(), 처리된_주문.getId()),
                 단일_검증(처리된_주문.getOrderStatus(), OrderStatus.COOKING.name()),
                 () -> assertThat(처리된_주문.getOrderedTime().isAfter(주문일시)).isTrue()
         );
@@ -64,13 +64,13 @@ public class OrderE2eTest extends KitchenPosE2eTest {
     void changeOrderStatus() {
 
         // given
-        Order 주문 = 주문_생성(OrderStatus.COOKING);
+        OrderResponse 주문 = 주문_생성후_반환(OrderStatus.COOKING);
 
         // when
         ExtractableResponse<Response> 응답 =
-                PUT_요청("/api/orders/{orderId}/order-status", 주문.getId(), 주문(OrderStatus.MEAL));
+                PUT_요청(ORDER_CHANGE_ORDER_STATUS_API, 주문.getId(), 주문(OrderStatus.MEAL));
 
-        Order 상태바뀐_주문 = 응답.body().as(Order.class);
+        OrderResponse 상태바뀐_주문 = 응답.body().as(OrderResponse.class);
 
         assertAll(
                 HTTP_STATUS_검증(HttpStatus.OK, 응답),

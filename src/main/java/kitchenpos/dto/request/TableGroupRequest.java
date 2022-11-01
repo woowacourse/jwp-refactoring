@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.order.OrderTable;
-import kitchenpos.domain.order.TableGroup;
 
 public class TableGroupRequest {
 
@@ -25,16 +24,10 @@ public class TableGroupRequest {
         this.orderTables = orderTableRequests;
     }
 
-    public TableGroup toDomain() {
+    public List<Long> tableIds() {
 
-        final List<OrderTable> orderTables = extractOrderTables();
-
-        return new TableGroup(id, createdDate, orderTables);
-    }
-
-    private List<OrderTable> extractOrderTables() {
-        return this.orderTables.stream()
-                .map(OrderTableRequest::toDomain)
+        return orderTables.stream()
+                .map(OrderTableRequest::getId)
                 .collect(Collectors.toList());
     }
 

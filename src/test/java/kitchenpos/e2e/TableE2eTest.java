@@ -6,9 +6,11 @@ import static kitchenpos.support.AssertionsSupport.assertAll;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
-import kitchenpos.domain.order.OrderTable;
 import kitchenpos.dto.request.OrderTableRequest;
-import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.dto.response.TableChangeEmptyResponse;
+import kitchenpos.dto.response.TableChangeGuestNumberResponse;
+import kitchenpos.dto.response.TableCreateResponse;
+import kitchenpos.dto.response.TableListResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
@@ -19,7 +21,7 @@ public class TableE2eTest extends KitchenPosE2eTest {
 
         // given & when
         ExtractableResponse<Response> 응답 = 주문테이블_생성(new OrderTableRequest(0, true));
-        OrderTableRequest 주문테이블 = 응답.body().as(OrderTableRequest.class);
+        TableCreateResponse 주문테이블 = 응답.body().as(TableCreateResponse.class);
 
         // then
         assertAll(
@@ -39,7 +41,7 @@ public class TableE2eTest extends KitchenPosE2eTest {
 
         // when
         ExtractableResponse<Response> 응답 = GET_요청(TABLE_URL);
-        List<OrderTable> 주문테이블_리스트 = extractHttpBody(응답);
+        List<TableListResponse> 주문테이블_리스트 = extractHttpBody(응답);
 
         // then
         // TODO row("empty", true, false)의 경우 계속해서 동일 객체로 false가 나옴.(디버거상은 정상(T, F))
@@ -64,15 +66,12 @@ public class TableE2eTest extends KitchenPosE2eTest {
         ExtractableResponse<Response> 응답 =
                 PUT_요청(TABLE_CHANGE_EMPTY_URL, 주문테이블_ID, new OrderTableRequest(0, false));
 
-        OrderTableRequest 바뀐_주문테이블 = 응답.as(OrderTableRequest.class);
+        TableChangeEmptyResponse 바뀐_주문테이블 = 응답.as(TableChangeEmptyResponse.class);
 
         // then
         assertAll(
                 HTTP_STATUS_검증(HttpStatus.OK, 응답),
-                단일_검증(바뀐_주문테이블.getId(), 주문테이블_ID),
-                단일_검증(바뀐_주문테이블.isEmpty(), false),
-                단일_검증(바뀐_주문테이블.getNumberOfGuests(), 0),
-                단일_검증(바뀐_주문테이블.getTableGroupId(), null)
+                단일_검증(바뀐_주문테이블.isEmpty(), false)
         );
     }
 
@@ -91,15 +90,12 @@ public class TableE2eTest extends KitchenPosE2eTest {
                         주문테이블_ID,
                         new OrderTableRequest(4, true));
 
-        OrderTableResponse 바뀐_주문테이블 = 응답.as(OrderTableResponse.class);
+        TableChangeGuestNumberResponse 바뀐_주문테이블 = 응답.as(TableChangeGuestNumberResponse.class);
 
         // then
         assertAll(
                 HTTP_STATUS_검증(HttpStatus.OK, 응답),
-                단일_검증(바뀐_주문테이블.getId(), 주문테이블_ID),
-                단일_검증(바뀐_주문테이블.isEmpty(), false),
-                단일_검증(바뀐_주문테이블.getNumberOfGuests(), 4),
-                단일_검증(바뀐_주문테이블.getTableGroupId(), null)
+                단일_검증(바뀐_주문테이블.getNumberOfGuests(), 4)
         );
     }
 }

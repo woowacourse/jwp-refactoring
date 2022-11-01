@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class MenuGroupRestController {
+public class MenuGroupController {
     private final MenuGroupService menuGroupService;
 
-    public MenuGroupRestController(final MenuGroupService menuGroupService) {
+    public MenuGroupController(final MenuGroupService menuGroupService) {
         this.menuGroupService = menuGroupService;
     }
 

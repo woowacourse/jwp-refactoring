@@ -28,7 +28,7 @@ public class OrderTable {
     @OneToMany(mappedBy = "orderTable")
     private List<Order> orders;
 
-    @JoinColumn(name = "order_group_id")
+    @JoinColumn(name = "table_group_id")
     @ManyToOne(fetch = LAZY)
     private TableGroup tableGroup;
 
@@ -64,9 +64,21 @@ public class OrderTable {
         this.tableGroup = null;
     }
 
+    public void mapTableGroup(TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+    }
+
     public void validateChangeEmptyStatus() {
         validateUnGroup();
         validateCompletionStatus();
+    }
+
+    public void ungroup() {
+        tableGroup = null;
+    }
+
+    public void changeStatusNotEmpty() {
+        empty = false;
     }
 
     public void validateChangeNumberOfGuests() {
@@ -116,7 +128,7 @@ public class OrderTable {
         return empty;
     }
 
-    public void setEmpty(boolean empty) {
+    public void changeEmptyStatus(boolean empty) {
         this.empty = empty;
     }
 

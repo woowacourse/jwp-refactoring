@@ -4,7 +4,7 @@ import java.util.List;
 import kitchenpos.domain.order.OrderTable;
 import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.repository.order.OrderRepository;
-import kitchenpos.repository.order.OrderTableRepository;
+import kitchenpos.repository.order.TableRepository;
 import kitchenpos.specification.TableSpecification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,14 +14,14 @@ public class TableService {
 
     private final TableSpecification tableSpecification;
     private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
+    private final TableRepository tableRepository;
 
     public TableService(TableSpecification tableSpecification,
                         OrderRepository orderRepository,
-                        OrderTableRepository orderTableRepository) {
+                        TableRepository tableRepository) {
         this.tableSpecification = tableSpecification;
         this.orderRepository = orderRepository;
-        this.orderTableRepository = orderTableRepository;
+        this.tableRepository = tableRepository;
     }
 
     @Transactional
@@ -31,26 +31,26 @@ public class TableService {
 
         orderTable.clearKeys();
 
-        return orderTableRepository.save(orderTable);
+        return tableRepository.save(orderTable);
     }
 
     public List<OrderTable> list() {
 
-        return orderTableRepository.findAll();
+        return tableRepository.findAll();
     }
 
     @Transactional
     public OrderTable changeEmpty(Long orderTableId, OrderTableRequest orderTableRequest) {
 
         final OrderTable orderTable =
-                orderTableRepository.findWithOrdersAndTableGroupById(orderTableId)
+                tableRepository.findWithTableGroupById(orderTableId)
                         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블 ID입니다."));
 
         orderTable.validateChangeEmptyStatus();
 
         boolean empty = orderTableRequest.isEmpty();
 
-        orderTable.setEmpty(empty);
+        orderTable.changeEmptyStatus(empty);
 
         return orderTable;
     }
@@ -68,12 +68,12 @@ public class TableService {
             throw new IllegalArgumentException("손님의 수는 음수가 될 수 없습니다.");
         }
 
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
+        final OrderTable savedOrderTable = tableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("변경 요청한 주문테이블이 존재하지 않습니다."));
 
         savedOrderTable.setNumberOfGuests(numberOfGuests);
 
-        return orderTableRepository.save(savedOrderTable);
+        return tableRepository.save(savedOrderTable);
     }
 
     @Transactional
@@ -82,7 +82,7 @@ public class TableService {
 
         tableSpecification.validateChangeNumberOfGuests(request);
 
-        final OrderTable orderTable = orderTableRepository.findById(orderTableId)
+        final OrderTable orderTable = tableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("변경 요청한 주문테이블이 존재하지 않습니다."));
 
         orderTable.validateChangeNumberOfGuests();

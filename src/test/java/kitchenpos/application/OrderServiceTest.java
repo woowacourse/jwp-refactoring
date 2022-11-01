@@ -94,7 +94,7 @@ class OrderServiceTest extends IntegrationServiceTest {
 
             @BeforeEach
             void setUp() {
-                OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(1L, 1, false, null));
+                OrderTable savedOrderTable = tableRepository.save(new OrderTable(1L, 1, false, null));
                 savedOrderTableId = savedOrderTable.getId();
             }
 
@@ -150,7 +150,7 @@ class OrderServiceTest extends IntegrationServiceTest {
             @BeforeEach
             void setUp() {
                 List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(1L, 1L));
-                savedOrderId = orderRepository.save(new Order(COMPLETION, now(), null, orderLineItems))
+                savedOrderId = orderRepository.save(new Order(null, COMPLETION, now(), null, orderLineItems))
                         .getId();
             }
 

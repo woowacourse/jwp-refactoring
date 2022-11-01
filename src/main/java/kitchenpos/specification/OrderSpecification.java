@@ -10,19 +10,19 @@ import kitchenpos.domain.order.Order;
 import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.repository.menu.MenuRepository;
-import kitchenpos.repository.order.OrderTableRepository;
+import kitchenpos.repository.order.TableRepository;
 import org.springframework.stereotype.Component;
 
 @Component
 public class OrderSpecification {
 
-    private final OrderTableRepository orderTableRepository;
+    private final TableRepository tableRepository;
 
     private final MenuRepository menuRepository;
 
-    public OrderSpecification(OrderTableRepository orderTableRepository,
+    public OrderSpecification(TableRepository tableRepository,
                               MenuRepository menuRepository) {
-        this.orderTableRepository = orderTableRepository;
+        this.tableRepository = tableRepository;
         this.menuRepository = menuRepository;
     }
 

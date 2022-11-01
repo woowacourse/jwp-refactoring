@@ -1,32 +1,26 @@
 package kitchenpos.dto.response;
 
+import static java.util.stream.Collectors.toList;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
 
 public class OrderResponse {
     private Long id;
     private Long orderTableId;
     private String orderStatus;
     private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+    private List<OrderLineItemResponse> orderLineItems;
 
     protected OrderResponse() {
-    }
-
-    public OrderResponse(final Long orderTableId,
-                         final String orderStatus,
-                         final LocalDateTime orderedTime,
-                         final List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
     public OrderResponse(final Long id,
                          final Long orderTableId,
                          final String orderStatus,
                          final LocalDateTime orderedTime,
-                         final List<OrderLineItem> orderLineItems) {
+                         final List<OrderLineItemResponse> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -41,15 +35,21 @@ public class OrderResponse {
                 order.getOrderTable().getId(),
                 order.getOrderStatus().name(),
                 order.getOrderedTime(),
-                order.getOrderLineItems()
+                orderLineItemResponses(order)
         );
+    }
+
+    private static List<OrderLineItemResponse> orderLineItemResponses(Order order) {
+        return order.getOrderLineItems().stream()
+                .map(OrderLineItemResponse::new)
+                .collect(toList());
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -57,7 +57,7 @@ public class OrderResponse {
         return orderTableId;
     }
 
-    public void setOrderTableId(final Long orderTableId) {
+    public void setOrderTableId(Long orderTableId) {
         this.orderTableId = orderTableId;
     }
 
@@ -65,7 +65,7 @@ public class OrderResponse {
         return orderStatus;
     }
 
-    public void setOrderStatus(final String orderStatus) {
+    public void setOrderStatus(String orderStatus) {
         this.orderStatus = orderStatus;
     }
 
@@ -73,26 +73,25 @@ public class OrderResponse {
         return orderedTime;
     }
 
-    public void setOrderedTime(final LocalDateTime orderedTime) {
+    public void setOrderedTime(LocalDateTime orderedTime) {
         this.orderedTime = orderedTime;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
+    public List<OrderLineItemResponse> getOrderLineItems() {
         return orderLineItems;
     }
 
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
+    public void setOrderLineItems(List<OrderLineItemResponse> orderLineItems) {
         this.orderLineItems = orderLineItems;
     }
 
     @Override
     public String toString() {
-        return "Order{" +
+        return "OrderResponse{" +
                 "id=" + id +
                 ", orderTableId=" + orderTableId +
                 ", orderStatus='" + orderStatus + '\'' +
                 ", orderedTime=" + orderedTime +
-                ", orderLineItems=" + orderLineItems +
                 '}';
     }
 }

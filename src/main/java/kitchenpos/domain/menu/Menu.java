@@ -44,17 +44,23 @@ public class Menu {
         this.price = price;
         this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
-        mapMenuProducts(menuProducts);
-        validate();
     }
 
-    private void mapMenuProducts(List<MenuProduct> menuProducts) {
+    public void mapMenuProducts(List<MenuProduct> menuProducts) {
+
+        this.menuProducts = menuProducts;
+
         for (MenuProduct menuProduct : menuProducts) {
             menuProduct.setMenu(this);
         }
     }
 
-    private void validate() {
+    public void mapMenuGroup(MenuGroup menuGroup) {
+
+        this.menuGroup = menuGroup;
+    }
+
+    public void validate() {
         validatePrice();
         validatePriceBetweenSelfAndProducts();
     }
@@ -65,18 +71,18 @@ public class Menu {
         }
     }
 
-    public List<Product> products() {
-
-        return menuProducts.stream()
-                .map(menuProduct -> menuProduct.getProduct())
-                .collect(Collectors.toList());
-    }
-
     public void validatePriceBetweenSelfAndProducts() {
 
         if (price.compareTo(totalProductsPrice()) > 0) {
             throw new IllegalArgumentException("메뉴의 가격은 상품들의 총 가격보다 클 수 없습니다.");
         }
+    }
+
+    public List<Product> products() {
+
+        return menuProducts.stream()
+                .map(menuProduct -> menuProduct.getProduct())
+                .collect(Collectors.toList());
     }
 
     protected BigDecimal totalProductsPrice() {
@@ -94,32 +100,16 @@ public class Menu {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public BigDecimal getPrice() {
         return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
     }
 
     public MenuGroup getMenuGroup() {
         return menuGroup;
     }
 
-    public void setMenuGroup(MenuGroup menuGroup) {
-        this.menuGroup = menuGroup;
-    }
-
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
-    }
-
-    public void setMenuProducts(List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
     }
 
     @Override

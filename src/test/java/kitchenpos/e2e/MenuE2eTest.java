@@ -3,7 +3,7 @@ package kitchenpos.e2e;
 import static kitchenpos.e2e.E2eTest.AssertionPair.row;
 import static kitchenpos.support.AssertionsSupport.assertAll;
 import static kitchenpos.support.MenuGroupFixture.단짜_두_마리_메뉴;
-import static kitchenpos.support.MenuProductFixture.menuProductBuilder;
+import static kitchenpos.support.MenuProductFixture.menuProductRequestBuilder;
 import static kitchenpos.support.ProductFixture.간장_치킨_요청_DTO;
 import static kitchenpos.support.ProductFixture.양념_치킨_요청_DTO;
 import static kitchenpos.support.ProductFixture.후라이드_치킨_요청_DTO;
@@ -44,28 +44,26 @@ public class MenuE2eTest extends KitchenPosE2eTest {
         메뉴_요청바디_1 = MenuRequest.builder()
                 .name("후라이드 + 후라이드")
                 .intPrice(30_000)
-                .menuProducts(
-                        menuProductBuilder()
+                .menuProductRequests(
+                        menuProductRequestBuilder()
                                 .product(후라이드_치킨)
                                 .quantity(2L)
-                                .build()
-                )
+                                .build())
                 .menuGroup(메뉴그룹)
                 .build();
 
         메뉴_요청바디_2 = MenuRequest.builder()
                 .name("양념 + 간장")
                 .intPrice(30_000)
-                .menuProducts(
-                        menuProductBuilder()
+                .menuProductRequests(
+                        menuProductRequestBuilder()
                                 .product(후라이드_치킨)
                                 .quantity(2L)
                                 .build(),
-                        menuProductBuilder()
+                        menuProductRequestBuilder()
                                 .product(간장_치킨)
                                 .quantity(1L)
-                                .build()
-                )
+                                .build())
                 .menuGroup(메뉴그룹)
                 .build();
     }

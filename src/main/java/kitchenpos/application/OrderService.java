@@ -7,7 +7,7 @@ import kitchenpos.domain.order.OrderTable;
 import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.repository.order.OrderRepository;
 import kitchenpos.repository.order.OrderLineItemRepository;
-import kitchenpos.repository.order.OrderTableRepository;
+import kitchenpos.repository.order.TableRepository;
 import kitchenpos.repository.menu.MenuRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
@@ -27,20 +27,20 @@ public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
-    private final OrderTableRepository orderTableRepository;
+    private final TableRepository tableRepository;
 
     public OrderService(
             OrderSpecification orderSpecification,
             MenuRepository menuRepository,
             OrderRepository orderRepository,
             OrderLineItemRepository orderLineItemRepository,
-            OrderTableRepository orderTableRepository
+            TableRepository tableRepository
     ) {
         this.orderSpecification = orderSpecification;
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
-        this.orderTableRepository = orderTableRepository;
+        this.tableRepository = tableRepository;
     }
 
     @Transactional
@@ -48,18 +48,17 @@ public class OrderService {
 
         orderSpecification.validateCreate(request);
 
-        OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
+        OrderTable orderTable = tableRepository.findById(request.getOrderTableId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하는 주문 테이블에 대해서만 주문이 가능합니다."));
 
-        Order order = new Order(COOKING, now(), orderTable, null);
+        Order order = new Order(orderTable);
 
         List<OrderLineItemRequest> orderLineItemRequests = request.getOrderLineItems();
 
         List<OrderLineItem> orderLineItems = convertOrderLineItems(order, orderLineItemRequests);
-
         order.mapOrderLineItems(orderLineItems);
 
-        return null;
+        return orderRepository.save(order);
     }
 
     public List<Order> list() {

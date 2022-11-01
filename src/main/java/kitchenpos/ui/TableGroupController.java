@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 
 @RestController
-public class TableGroupRestController {
+public class TableGroupController {
     private final TableGroupService tableGroupService;
 
-    public TableGroupRestController(final TableGroupService tableGroupService) {
+    public TableGroupController(final TableGroupService tableGroupService) {
         this.tableGroupService = tableGroupService;
     }
 

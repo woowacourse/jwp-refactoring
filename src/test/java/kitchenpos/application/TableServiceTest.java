@@ -38,10 +38,10 @@ class TableServiceTest {
 
         @BeforeEach
         void setUp() {
-            orderTableRepository.save(new OrderTable(1, true, null));
-            orderTableRepository.save(new OrderTable(2, true, null));
-            orderTableRepository.save(new OrderTable(3, true, null));
-            orderTableRepository.save(new OrderTable(4, true, null));
+            tableRepository.save(new OrderTable(1, true, null));
+            tableRepository.save(new OrderTable(2, true, null));
+            tableRepository.save(new OrderTable(3, true, null));
+            tableRepository.save(new OrderTable(4, true, null));
         }
 
         @Test
@@ -76,7 +76,7 @@ class TableServiceTest {
             @BeforeEach
             void setUp() {
                 final TableGroup 테이블_그룹 = tableGroupRepository.save(빈_테이블_그룹);
-                final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(0, false, 테이블_그룹));
+                final OrderTable savedOrderTable = tableRepository.save(new OrderTable(0, false, 테이블_그룹));
                 savedOrderTableId = savedOrderTable.getId();
             }
 
@@ -98,7 +98,7 @@ class TableServiceTest {
             void setUp() {
                 final OrderTable 주문_테이블 = 주문테이블_저장();
                 savedTableId = 주문_테이블.getId();
-                orderRepository.save(new Order(COOKING, now(), 주문_테이블, emptyList()));
+                orderRepository.save(new Order(null, COOKING, now(), 주문_테이블, emptyList()));
             }
 
             @Test
@@ -118,7 +118,7 @@ class TableServiceTest {
             @BeforeEach
             void setUp() {
                 OrderTable savedOrderTable = 주문테이블_저장();
-                orderRepository.save(new Order(MEAL, now(), savedOrderTable, emptyList()));
+                orderRepository.save(new Order(null, MEAL, now(), savedOrderTable, emptyList()));
                 savedOrderTableId = savedOrderTable.getId();
             }
 
@@ -138,7 +138,7 @@ class TableServiceTest {
 
             @BeforeEach
             void setUp() {
-                final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(4, true));
+                final OrderTable savedOrderTable = tableRepository.save(new OrderTable(4, true));
                 savedOrderTableId = savedOrderTable.getId();
             }
 
@@ -202,7 +202,7 @@ class TableServiceTest {
 
             @BeforeEach
             void setUp() {
-                orderTableId = orderTableRepository.save(new OrderTable(0, true)).getId();
+                orderTableId = tableRepository.save(new OrderTable(0, true)).getId();
             }
 
             @Test
@@ -223,7 +223,7 @@ class TableServiceTest {
 
             @BeforeEach
             void setUp() {
-                final OrderTable orderTable = orderTableRepository.save(new OrderTable(4, false, null));
+                final OrderTable orderTable = tableRepository.save(new OrderTable(4, false, null));
                 orderTableId = orderTable.getId();
             }
 

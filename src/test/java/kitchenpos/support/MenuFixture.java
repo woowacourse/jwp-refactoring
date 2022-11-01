@@ -6,36 +6,12 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.Product;
+import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.dto.response.MenuResponse;
 
 public abstract class MenuFixture {
-
-    public static MenuRequest menuRequest(MenuGroup menuGroup,
-                                          Product product,
-                                          int price) {
-
-        return MenuRequest.builder()
-                .name("치킨은 살 안쪄요, 살은 내가 쪄요")
-                .intPrice(price)
-                .menuGroup(menuGroup)
-                .menuProducts(List.of(new MenuProduct(product, 1L)))
-                .build();
-    }
-
-    public static MenuRequest menuRequest(MenuGroup menuGroup,
-                                          List<MenuProduct> menuProducts,
-                                          int price) {
-
-        return MenuRequest.builder()
-                .name("치킨은 살 안쪄요, 살은 내가 쪄요")
-                .menuGroup(menuGroup)
-                .intPrice(price)
-                .menuProducts(menuProducts)
-                .build();
-    }
 
     public static MenuRequest menuRequest(int price) {
 
@@ -43,7 +19,7 @@ public abstract class MenuFixture {
                 .name("치킨은 살 안쪄요, 살은 내가 쪄요")
                 .intPrice(price)
                 .menuGroup(new MenuGroup(1L, ""))
-                .menuProducts(emptyList())
+                .menuProductRequests(emptyList())
                 .build();
     }
 
@@ -53,46 +29,26 @@ public abstract class MenuFixture {
                 .name("치킨은 살 안쪄요, 살은 내가 쪄요")
                 .price(price)
                 .menuGroup(new MenuGroup(1L, null))
-                .menuProducts(emptyList())
+                .menuProductRequests(emptyList())
                 .build();
     }
 
-    public static MenuRequest menuRequest(int price,
-                                          long menuGroupId) {
-
-        return MenuRequest.builder()
-                .name("치킨은 살 안쪄요, 살은 내가 쪄요")
-                .intPrice(price)
-                .menuGroup(new MenuGroup(menuGroupId, ""))
-                .menuProducts(emptyList())
-                .build();
-    }
-
-    public static MenuRequest menuRequest(Product product,
+    public static MenuRequest menuRequest(MenuGroup menuGroup,
+                                          Product product,
                                           int price) {
 
         return MenuRequest.builder()
                 .name("치킨은 살 안쪄요, 살은 내가 쪄요")
                 .intPrice(price)
-                .menuGroup(new MenuGroup(1L, ""))
-                .menuProducts(List.of(new MenuProduct(product, 1L)))
-                .build();
-    }
-
-    public static MenuRequest menuRequest(int price, List<MenuProduct> menuProducts) {
-
-        return MenuRequest.builder()
-                .name("치킨은 살 안쪄요, 살은 내가 쪄요")
-                .intPrice(price)
-                .menuGroup(new MenuGroup(1L, null))
-                .menuProducts(menuProducts)
+                .menuGroup(menuGroup)
+                .menuProductRequests(List.of(new MenuProductRequest(product.getId(), 1L)))
                 .build();
     }
 
     public static WrapMenuRequest menuRequest(String name,
                                               int price,
                                               Long menuGroupId,
-                                              List<MenuProduct> menuProducts) {
+                                              List<MenuProductRequest> menuProducts) {
 
         final MenuGroup menuGroup = new MenuGroup(menuGroupId, null);
         return new WrapMenuRequest(name, BigDecimal.valueOf(price), menuGroup, menuProducts);
@@ -106,7 +62,7 @@ public abstract class MenuFixture {
         WrapMenuRequest(String name,
                         BigDecimal bigDecimal,
                         MenuGroup menuGroup,
-                        List<MenuProduct> menuProducts) {
+                        List<MenuProductRequest> menuProducts) {
             super(name, bigDecimal, menuGroup.getId(), menuProducts);
         }
 

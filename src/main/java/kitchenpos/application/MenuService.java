@@ -1,12 +1,17 @@
 package kitchenpos.application;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.List;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.Product;
+import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.repository.menu.MenuGroupRepository;
 import kitchenpos.repository.menu.MenuProductRepository;
 import kitchenpos.repository.menu.MenuRepository;
 import kitchenpos.repository.menu.ProductRepository;
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.specification.MenuSpecification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,23 +39,43 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(MenuRequest menuRequest) {
+    public Menu create(MenuRequest request) {
 
-        /**
-         * TODO MenuProduct : Domain to Request
-         * menuRequest.productIds();
-         * p Repo
-         */
-        final Menu menu = menuRequest.toDomain();
-        menuSpecification.validateCreate(menu);
+        Menu menu = createMenu(request);
 
-        final Menu save = menuRepository.save(menu);
-        return save;
+        menuSpecification.validateCreate(menu, request);
+
+        return menuRepository.save(menu);
+    }
+
+    private Menu createMenu(MenuRequest request) {
+
+        List<MenuProduct> menuProducts = createMenuProducts(request);
+        Long menuGroupId = request.getMenuGroupId();
+        MenuGroup menuGroup = menuGroupRepository.findById(menuGroupId).orElse(null);
+
+        Menu menu = request.toDomain();
+        menu.mapMenuProducts(menuProducts);
+        menu.mapMenuGroup(menuGroup);
+
+        return menu;
+    }
+
+    private List<MenuProduct> createMenuProducts(MenuRequest request) {
+
+        List<Long> productIds = request.productIds();
+
+        List<Product> products = productRepository.findAllByIdIn(productIds);
+
+        return request.getMenuProducts().stream()
+                .flatMap(menuPrdReq -> products.stream()
+                        .filter(product -> menuPrdReq.getProductId().equals(product.getId()))
+                        .map(product -> new MenuProduct(product, menuPrdReq.getQuantity()))
+                ).collect(toList());
     }
 
     public List<Menu> list() {
 
-        final List<Menu> menus = menuRepository.findAllWithMenuProduct();
-        return menus;
+        return menuRepository.findAllWithMenuProduct();
     }
 }

@@ -8,11 +8,11 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import kitchenpos.domain.menu.Menu;
 
-public class MenuRepositoryImpl implements MenuRepositoryCustom {
+public class MenuRepositoryCustomImpl implements MenuRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
-    public MenuRepositoryImpl(EntityManager entityManager) {
+    public MenuRepositoryCustomImpl(EntityManager entityManager) {
         this.queryFactory = new JPAQueryFactory(entityManager);
     }
 

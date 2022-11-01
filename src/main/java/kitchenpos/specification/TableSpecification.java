@@ -1,16 +1,16 @@
 package kitchenpos.specification;
 
 import kitchenpos.dto.request.OrderTableRequest;
-import kitchenpos.repository.order.OrderTableRepository;
+import kitchenpos.repository.order.TableRepository;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TableSpecification {
 
-    private final OrderTableRepository orderTableRepository;
+    private final TableRepository tableRepository;
 
-    public TableSpecification(OrderTableRepository orderTableRepository) {
-        this.orderTableRepository = orderTableRepository;
+    public TableSpecification(TableRepository tableRepository) {
+        this.tableRepository = tableRepository;
     }
 
     public void validateChangeNumberOfGuests(OrderTableRequest request) {

@@ -1,10 +1,13 @@
 package kitchenpos.domain.order;
 
+import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
+import static kitchenpos.domain.order.OrderStatus.COOKING;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
@@ -32,17 +35,14 @@ public class Order {
     @ManyToOne(fetch = LAZY)
     private OrderTable orderTable;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = PERSIST)
     private List<OrderLineItem> orderLineItems;
 
     public Order() {
     }
 
-    public Order(OrderStatus orderStatus,
-                 LocalDateTime orderedTime,
-                 OrderTable orderTable,
-                 List<OrderLineItem> orderLineItems) {
-        this(null, orderStatus, orderedTime, orderTable, orderLineItems);
+    public Order(OrderTable orderTable) {
+        this(null, COOKING, LocalDateTime.now(), orderTable, null);
     }
 
     public Order(Long id,
@@ -62,7 +62,7 @@ public class Order {
         this.orderLineItems = orderLineItems;
 
         for (OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.setOrder(this);
+            orderLineItem.mapOrder(this);
         }
     }
 

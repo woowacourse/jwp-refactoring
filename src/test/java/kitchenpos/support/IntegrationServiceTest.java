@@ -12,7 +12,7 @@ import kitchenpos.domain.order.TableGroup;
 import kitchenpos.repository.menu.MenuGroupRepository;
 import kitchenpos.repository.order.OrderRepository;
 import kitchenpos.repository.order.OrderLineItemRepository;
-import kitchenpos.repository.order.OrderTableRepository;
+import kitchenpos.repository.order.TableRepository;
 import kitchenpos.repository.order.TableGroupRepository;
 import kitchenpos.repository.menu.MenuProductRepository;
 import kitchenpos.repository.menu.ProductRepository;
@@ -66,7 +66,7 @@ abstract public class IntegrationServiceTest {
     protected OrderRepository orderRepository;
 
     @Autowired
-    protected OrderTableRepository orderTableRepository;
+    protected TableRepository tableRepository;
 
     @Autowired
     protected TableGroupRepository tableGroupRepository;
@@ -90,15 +90,15 @@ abstract public class IntegrationServiceTest {
         dbTableCleaner.clearAll();
     }
 
-    protected OrderTableRequest convertTableRequestFrom(OrderTable orderTable) {
+    protected OrderTableRequest convertTableRequestFrom(OrderTable table) {
 
-        Long tableGroupId = extractTableGroupId(orderTable);
+        Long tableGroupId = extractTableGroupId(table);
 
         return new OrderTableRequest(
-                orderTable.getId(),
+                table.getId(),
                 tableGroupId,
-                orderTable.getNumberOfGuests(),
-                orderTable.isEmpty()
+                table.getNumberOfGuests(),
+                table.isEmpty()
         );
     }
 
@@ -115,6 +115,6 @@ abstract public class IntegrationServiceTest {
     }
 
     protected OrderTable 주문테이블_저장() {
-        return orderTableRepository.save(new OrderTable(4, true, null));
+        return tableRepository.save(new OrderTable(4, true, null));
     }
 }

@@ -42,36 +42,24 @@ public class OrderLineItem {
         this.quantity = quantity;
     }
 
-    public Long getSeq() {
-        return seq;
+    public void mapOrder(Order order) {
+        this.order = order;
     }
 
-    public void setSeq(Long seq) {
-        this.seq = seq;
+    public Long getSeq() {
+        return seq;
     }
 
     public Order getOrder() {
         return order;
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
-    }
-
     public Long getMenuId() {
         return menuId;
     }
 
-    public void setMenuId(Long menuId) {
-        this.menuId = menuId;
-    }
-
     public long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(long quantity) {
-        this.quantity = quantity;
     }
 
     @Override

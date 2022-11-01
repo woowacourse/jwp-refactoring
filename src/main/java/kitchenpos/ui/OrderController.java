@@ -14,10 +14,10 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-public class OrderRestController {
+public class OrderController {
     private final OrderService orderService;
 
-    public OrderRestController(final OrderService orderService) {
+    public OrderController(final OrderService orderService) {
         this.orderService = orderService;
     }
 

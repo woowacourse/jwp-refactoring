@@ -200,8 +200,8 @@ public abstract class E2eTest {
 
     protected static class AssertionPair {
 
-        private String fieldName;
-        private Object[] expected;
+        private final String fieldName;
+        private final Object[] expected;
 
         private AssertionPair(String fieldName, Object... expected) {
 
@@ -249,7 +249,7 @@ public abstract class E2eTest {
         private static BigDecimal[] convertBigDecimalToIntegers(int scale, BigDecimal... expected) {
 
             return stream(expected)
-                    .map(it -> it.setScale(2))
+                    .map(it -> it.setScale(scale))
                     .toArray(BigDecimal[]::new);
         }
     }
