@@ -46,7 +46,7 @@ public class MenuMapper {
                         menuProductRequest.getQuantity()
                 ))
                 .collect(Collectors.toList());
-        // TODO: N+1 문제 발생
+        // TODO: 최적화 필요
     }
 
     private Product getProduct(final MenuProductRequest menuProductRequest) {

@@ -23,6 +23,7 @@ public class TableGroupMapper {
                 .stream()
                 .map(this::getOrderTable)
                 .collect(Collectors.toList());
+        // TODO: 최적화 필요
 
         return new TableGroup(savedOrderTables);
     }
