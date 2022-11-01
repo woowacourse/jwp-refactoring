@@ -59,4 +59,9 @@ public class TableGroupRepository {
             throw new IllegalArgumentException();
         }
     }
+
+    public TableGroup getById(final Long id) {
+        return tableGroupDao.findById(id)
+                .orElseThrow(IllegalArgumentException::new);
+    }
 }

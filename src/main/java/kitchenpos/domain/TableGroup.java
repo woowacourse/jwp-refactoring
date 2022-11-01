@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -45,6 +46,17 @@ public class TableGroup {
     private void updateOrderTables(final List<OrderTable> orderTables) {
         for (OrderTable orderTable : orderTables) {
             orderTable.changeTableGroupId(id);
+            orderTable.changeEmpty(false);
+        }
+    }
+
+    public void ungroup(Supplier<Boolean> condition) {
+        if (condition.get()) {
+            throw new IllegalArgumentException();
+        }
+
+        for (final OrderTable orderTable : orderTables) {
+            orderTable.changeTableGroupId(null);
             orderTable.changeEmpty(false);
         }
     }

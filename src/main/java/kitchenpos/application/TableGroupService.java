@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static kitchenpos.domain.OrderStatus.COOKING;
+
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
@@ -17,6 +19,8 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 public class TableGroupService {
+
+    private static final List<String> NONE_UNGROUP_ORDER_STATUS = List.of(COOKING.name(), OrderStatus.MEAL.name());
 
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
@@ -38,26 +42,16 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
-        validateNoneCompletion(orderTables);
-        updateOrderTables(orderTables);
+        TableGroup savedTableGroup = tableGroupRepository.getById(tableGroupId);
+        List<Long> orderTableIds = toOrderTableIds(tableGroupId);
+        savedTableGroup.ungroup(() ->
+                orderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, NONE_UNGROUP_ORDER_STATUS));
     }
 
-    private void validateNoneCompletion(final List<OrderTable> orderTables) {
-        List<Long> orderTableIds = orderTables.stream()
+    private List<Long> toOrderTableIds(final Long tableGroupId) {
+        return orderTableDao.findAllByTableGroupId(tableGroupId)
+                .stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
-
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void updateOrderTables(final List<OrderTable> orderTables) {
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.changeTableGroupId(null);
-            orderTable.changeEmpty(false);
-        }
     }
 }
