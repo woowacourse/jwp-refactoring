@@ -35,20 +35,13 @@ public class TableGroupService {
     @Transactional
     public TableGroupResponse create(final TableGroupRequest request) {
         final List<TableForGroupingRequest> orderTableRequests = request.getOrderTables();
-
-        if (CollectionUtils.isEmpty(orderTableRequests) || orderTableRequests.size() < 2) {
-            throw new IllegalArgumentException("2개 이상의 테이블만 단체 지정이 가능합니다.");
-        }
+        validateTableGroupSize(orderTableRequests);
 
         final List<Long> orderTableIds = orderTableRequests.stream()
                 .map(TableForGroupingRequest::getId)
                 .collect(Collectors.toList());
-
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-
-        if (orderTableRequests.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException("존재하지 않는 테이블은 단체 지정할 수 없습니다.");
-        }
+        validateExistTables(orderTableRequests, savedOrderTables);
 
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
 
@@ -72,5 +65,18 @@ public class TableGroupService {
         }
 
         orderTables.forEach(OrderTable::ungroup);
+    }
+
+    private void validateTableGroupSize(final List<TableForGroupingRequest> orderTableRequests) {
+        if (CollectionUtils.isEmpty(orderTableRequests) || orderTableRequests.size() < 2) {
+            throw new IllegalArgumentException("2개 이상의 테이블만 단체 지정이 가능합니다.");
+        }
+    }
+
+    private void validateExistTables(final List<TableForGroupingRequest> orderTableRequests,
+                                     final List<OrderTable> savedOrderTables) {
+        if (orderTableRequests.size() != savedOrderTables.size()) {
+            throw new IllegalArgumentException("존재하지 않는 테이블은 단체 지정할 수 없습니다.");
+        }
     }
 }
