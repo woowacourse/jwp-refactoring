@@ -5,13 +5,23 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
 
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuGroupRepository;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.ordertable.OrderTableRepository;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductRepository;
+import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -23,16 +33,25 @@ class TableServiceTest extends ServiceTest {
     private TableService tableService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private MenuRepository menuRepository;
 
     @Test
     void 테이블을_생성할_수_있다() {
-        OrderTable orderTable = new OrderTable(null, 5, false);
+        OrderTableRequest request = new OrderTableRequest(5, false);
 
-        OrderTable actual = tableService.create(orderTable);
+        OrderTableResponse actual = tableService.create(request);
 
         assertAll(() -> {
             assertThat(actual.getId()).isNotNull();
@@ -46,20 +65,20 @@ class TableServiceTest extends ServiceTest {
         OrderTable orderTable1 = new OrderTable(null, 3, false);
         OrderTable orderTable2 = new OrderTable(null, 5, false);
 
-        orderTableDao.save(orderTable1);
-        orderTableDao.save(orderTable2);
+        orderTableRepository.save(orderTable1);
+        orderTableRepository.save(orderTable2);
 
-        List<OrderTable> actual = tableService.list();
+        List<OrderTableResponse> actual = tableService.list();
 
         assertThat(actual).hasSize(2);
     }
 
     @Test
     void 기존_테이블의_빈_테이블_여부를_변경할_수_있다() {
-        OrderTable orderTable = orderTableDao.save(new OrderTable(null, 5, false));
-        OrderTable newOrderTable = new OrderTable(null, 0, true);
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
+        OrderTableRequest request = new OrderTableRequest(0, true);
 
-        OrderTable actual = tableService.changeEmpty(orderTable.getId(), newOrderTable);
+        OrderTableResponse actual = tableService.changeEmpty(orderTable.getId(), request);
 
         assertThat(actual.isEmpty()).isTrue();
     }
@@ -67,41 +86,47 @@ class TableServiceTest extends ServiceTest {
     @ParameterizedTest
     @EnumSource(mode = EXCLUDE, names = {"COMPLETION"})
     void 기존_테이블의_주문_상태가_완료_상태가_아니면_빈_테이블로_변경할_수_없다(OrderStatus orderStatus) {
-        OrderTable orderTable = orderTableDao.save(new OrderTable(null, 5, false));
-        OrderTable newOrderTable = new OrderTable(null, 0, true);
+        Product product = productRepository.save(new Product("상품", new BigDecimal(10000)));
+        MenuProduct menuProduct = new MenuProduct(product, 1);
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
+        Menu menu = menuRepository.save(new Menu("메뉴1", new BigDecimal(10000), menuGroup, List.of(menuProduct)));
 
-        Order order = new Order(orderTable.getId(), orderStatus.name(), new ArrayList<>());
-        orderDao.save(order);
+        OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 2);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), newOrderTable))
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
+        orderRepository.save(new Order(orderTable, orderStatus, List.of(orderLineItem)));
+
+        OrderTableRequest request = new OrderTableRequest(0, true);
+
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 기존_테이블의_손님_수를_변경할_수_있다() {
-        OrderTable orderTable = orderTableDao.save(new OrderTable(null, 0, false));
-        OrderTable newOrderTable = new OrderTable(null, 5, false);
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 0, false));
+        OrderTableRequest request = new OrderTableRequest(5, false);
 
-        OrderTable actual = tableService.changeNumberOfGuests(orderTable.getId(), newOrderTable);
+        OrderTableResponse actual = tableService.changeNumberOfGuests(orderTable.getId(), request);
 
         assertThat(actual.getNumberOfGuests()).isEqualTo(5);
     }
 
     @Test
     void 손님_수가_음수인_경우_손님_수를_변경할_수_없다() {
-        OrderTable orderTable = orderTableDao.save(new OrderTable(null, 0, false));
-        OrderTable newOrderTable = new OrderTable(null, -1, false);
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 0, false));
+        OrderTableRequest request = new OrderTableRequest(-1, false);
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), newOrderTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 빈_테이블은_손님_수를_변경할_수_없다() {
-        OrderTable orderTable = orderTableDao.save(new OrderTable(null, 0, true));
-        OrderTable newOrderTable = new OrderTable(null, 5, true);
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 0, true));
+        OrderTableRequest request = new OrderTableRequest(5, true);
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), newOrderTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

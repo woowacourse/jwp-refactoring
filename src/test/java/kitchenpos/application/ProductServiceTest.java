@@ -6,8 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductRepository;
+import kitchenpos.dto.request.ProductRequest;
+import kitchenpos.dto.response.ProductResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,13 +19,13 @@ class ProductServiceTest extends ServiceTest {
     private ProductService productService;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Test
     void 상품을_생성할_수_있다() {
-        Product product = new Product("제품1", new BigDecimal(10000));
+        ProductRequest request = new ProductRequest("제품1", new BigDecimal(10000));
 
-        Product actual = productService.create(product);
+        ProductResponse actual = productService.create(request);
 
         assertAll(() -> {
             assertThat(actual.getId()).isNotNull();
@@ -34,9 +36,9 @@ class ProductServiceTest extends ServiceTest {
 
     @Test
     void 상품의_가격이_음수인_경우_상품을_생성할_수_없다() {
-        Product product = new Product("제품1", new BigDecimal(-1));
+        ProductRequest request = new ProductRequest("제품1", new BigDecimal(-1));
 
-        assertThatThrownBy(() -> productService.create(product)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> productService.create(request)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -44,10 +46,10 @@ class ProductServiceTest extends ServiceTest {
         Product product1 = new Product("제품1", new BigDecimal(10000));
         Product product2 = new Product("제품2", new BigDecimal(20000));
 
-        productDao.save(product1);
-        productDao.save(product2);
+        productRepository.save(product1);
+        productRepository.save(product2);
 
-        List<Product> actual = productService.list();
+        List<ProductResponse> actual = productService.list();
 
         assertThat(actual).hasSize(2);
     }
