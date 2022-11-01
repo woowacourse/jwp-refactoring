@@ -54,10 +54,10 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         final Menu savedMenu = 메뉴_등록();
 
         final OrderLineItem orderLineItem = OrderLineItem.ofNew(null, savedMenu.getId(), 1);
-        final Order savedOrder = dataSupport.saveOrder(savedTable.getId(), OrderStatus.COOKING.name(), orderLineItem);
+        final Order savedOrder = dataSupport.saveOrder(savedTable.getId(), OrderStatus.COOKING, orderLineItem);
 
         // when
-        final OrderStatusRequest request = RequestBuilder.ofOrder(OrderStatus.MEAL);
+        final OrderStatusRequest request = RequestBuilder.ofOrderStatus(OrderStatus.MEAL);
         final ValidatableResponse response = put("/api/orders/" + savedOrder.getId() + "/order-status", request);
 
         // then

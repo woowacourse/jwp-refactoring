@@ -2,9 +2,10 @@ package kitchenpos.domain.order;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,14 +23,15 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long orderTableId;
-    private String orderStatus;
+    @Enumerated(value = EnumType.STRING)
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
     @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private List<OrderLineItem> orderLineItems;
 
     public Order(final Long id,
                  final Long orderTableId,
-                 final String orderStatus,
+                 final OrderStatus orderStatus,
                  final LocalDateTime orderedTime) {
         this.id = id;
         this.orderTableId = orderTableId;
@@ -38,9 +40,8 @@ public class Order {
     }
 
     public static Order ofNew(final OrderTable orderTable) {
-        checkTable(orderTable);
-        final Order order =
-                new Order(null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
+        checkTableNotEmpty(orderTable);
+        final Order order = new Order(null, orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now());
         return order;
     }
 
@@ -50,10 +51,10 @@ public class Order {
     }
 
     public void changeStatus(OrderStatus orderStatus) {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
+        if (this.orderStatus.isNotChangeable()) {
             throw new IllegalArgumentException();
         }
-        this.orderStatus = orderStatus.name();
+        this.orderStatus = orderStatus;
     }
 
     private void checkItemsNotEmpty(final List<OrderLineItem> orderLineItems) {
@@ -62,7 +63,7 @@ public class Order {
         }
     }
 
-    private static void checkTable(final OrderTable orderTable) {
+    private static void checkTableNotEmpty(final OrderTable orderTable) {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
@@ -77,7 +78,7 @@ public class Order {
     }
 
     public String getOrderStatus() {
-        return orderStatus;
+        return orderStatus.name();
     }
 
     public LocalDateTime getOrderedTime() {

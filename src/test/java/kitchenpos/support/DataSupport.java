@@ -13,6 +13,7 @@ import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.ordertable.OrderTableRepository;
 import kitchenpos.domain.ordertable.TableGroup;
@@ -76,13 +77,13 @@ public class DataSupport {
         return orderTableRepository.save(orderTable);
     }
 
-    public Order saveOrderWithoutItem(final Long orderTableId, final String orderStatus) {
+    public Order saveOrderWithoutItem(final Long orderTableId, final OrderStatus orderStatus) {
         final Order order = new Order(null, orderTableId, orderStatus, LocalDateTime.now());
 
         return orderRepository.save(order);
     }
 
-    public Order saveOrder(final Long orderTableId, final String orderStatus, final OrderLineItem... orderLineItems) {
+    public Order saveOrder(final Long orderTableId, final OrderStatus orderStatus, final OrderLineItem... orderLineItems) {
         final Order order = new Order(null, orderTableId, orderStatus, LocalDateTime.now());
         final List<OrderLineItem> mappedOrderLineItems = Arrays.stream(orderLineItems)
                 .map(orderLineItem -> mapOrderToOrderLineItem(order, orderLineItem))

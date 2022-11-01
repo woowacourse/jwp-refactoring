@@ -78,7 +78,7 @@ public class RequestBuilder {
         return new TableGroupRequest(orderTableIds);
     }
 
-    public static OrderStatusRequest ofOrder(final OrderStatus orderStatus) {
+    public static OrderStatusRequest ofOrderStatus(final OrderStatus orderStatus) {
         return new OrderStatusRequest(orderStatus);
     }
 

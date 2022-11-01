@@ -115,9 +115,9 @@ class OrderServiceTest {
     void list() {
         // given
         final Order savedOrder1 =
-                dataSupport.saveOrder(savedUnEmptyTable.getId(), OrderStatus.COOKING.name(), orderLineItem);
+                dataSupport.saveOrder(savedUnEmptyTable.getId(), OrderStatus.COOKING, orderLineItem);
         final Order savedOrder2 =
-                dataSupport.saveOrder(savedUnEmptyTable.getId(), OrderStatus.COOKING.name(), orderLineItem);
+                dataSupport.saveOrder(savedUnEmptyTable.getId(), OrderStatus.COOKING, orderLineItem);
         final List<OrderResponse> expected = OrderResponse.from(Arrays.asList(savedOrder1, savedOrder2));
 
         // when
@@ -134,11 +134,11 @@ class OrderServiceTest {
     @Test
     void changeOrderStatus() {
         // given
-        final Order savedOrder = dataSupport.saveOrder(savedUnEmptyTable.getId(), OrderStatus.COOKING.name(), orderLineItem);
+        final Order savedOrder = dataSupport.saveOrder(savedUnEmptyTable.getId(), OrderStatus.COOKING, orderLineItem);
         final OrderStatus status = OrderStatus.MEAL;
 
         // when
-        final OrderStatusRequest request = RequestBuilder.ofOrder(status);
+        final OrderStatusRequest request = RequestBuilder.ofOrderStatus(status);
         orderService.changeOrderStatus(savedOrder.getId(), request);
 
         // then
@@ -149,7 +149,7 @@ class OrderServiceTest {
     @DisplayName("존재하지 않는 주문의 상태를 변경하면 예외가 발생한다.")
     @Test
     void changeOrderStatus_throwsException_ifOrderNotFound() {
-        final OrderStatusRequest request = RequestBuilder.ofOrder(OrderStatus.MEAL);
+        final OrderStatusRequest request = RequestBuilder.ofOrderStatus(OrderStatus.MEAL);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> orderService.changeOrderStatus(0L, request));
     }
@@ -158,10 +158,10 @@ class OrderServiceTest {
     @Test
     void changeOrderStatus_throwsException_whenOrderIsComplete() {
         // given
-        final Order completeOrder = dataSupport.saveOrder(savedUnEmptyTable.getId(), OrderStatus.COMPLETION.name(), orderLineItem);
+        final Order completeOrder = dataSupport.saveOrder(savedUnEmptyTable.getId(), OrderStatus.COMPLETION, orderLineItem);
 
         // when, then
-        final OrderStatusRequest request = RequestBuilder.ofOrder(OrderStatus.MEAL);
+        final OrderStatusRequest request = RequestBuilder.ofOrderStatus(OrderStatus.MEAL);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> orderService.changeOrderStatus(completeOrder.getId(), request));
     }
