@@ -1,5 +1,6 @@
 package kitchenpos.dto.request;
 
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 
 public class MenuProductRequest {
@@ -12,12 +13,8 @@ public class MenuProductRequest {
         this.quantity = quantity;
     }
 
-    public MenuProduct toEntity() {
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-
-        return menuProduct;
+    public MenuProduct toEntity(final Menu menu) {
+        return MenuProduct.ofNew(menu, productId, quantity);
     }
 
     public Long getProductId() {

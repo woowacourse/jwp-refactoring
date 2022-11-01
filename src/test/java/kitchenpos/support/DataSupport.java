@@ -65,8 +65,9 @@ public class DataSupport {
 
         final List<MenuProduct> savedMenuProducts = Arrays.stream(menuProducts)
                 .map(menuProduct -> {
-                    menuProduct.setMenuId(savedMenu.getId());
-                    return menuProductDao.save(menuProduct);
+                    final MenuProduct savedMenuProduct =
+                            MenuProduct.ofNew(menu, menuProduct.getProductId(), menuProduct.getQuantity());
+                    return menuProductDao.save(savedMenuProduct);
                 })
                 .collect(Collectors.toList());
         savedMenu.addMenuProducts(savedMenuProducts);

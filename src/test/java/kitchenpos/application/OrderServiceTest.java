@@ -46,9 +46,7 @@ class OrderServiceTest {
         final int price = 3500;
         final Product savedProduct = dataSupport.saveProduct("치킨마요", price);
         final MenuGroup savedMenuGroup = dataSupport.saveMenuGroup("추천 메뉴");
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(savedProduct.getId());
-        menuProduct.setQuantity(1);
+        final MenuProduct menuProduct = MenuProduct.ofNew(null, savedProduct.getId(), 1L);
         savedMenu = dataSupport.saveMenu("치킨마요", price, savedMenuGroup.getId(), menuProduct);
     }
 

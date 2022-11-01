@@ -3,12 +3,16 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
+@Embeddable
 public class Price {
 
     private static final BigDecimal MIN_VALUE = BigDecimal.ZERO;
 
-    private final BigDecimal value;
+    @Column(name = "price")
+    private BigDecimal value;
 
     public Price(final BigDecimal value) {
         validateValue(value);
@@ -72,5 +76,8 @@ public class Price {
     @Override
     public int hashCode() {
         return Objects.hash(value);
+    }
+
+    protected Price() {
     }
 }

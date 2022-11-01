@@ -103,9 +103,7 @@ class MenuServiceTest {
     void list() {
         // given
         final Product savedProduct = savedProducts.get(0);
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(savedProduct.getId());
-        menuProduct.setQuantity(1);
+        final MenuProduct menuProduct = MenuProduct.ofNew(null, savedProduct.getId(), 1L);
         final int discountedPrice = PRICE - 500;
 
         final Menu savedMenu1 = dataSupport.saveMenu(

@@ -25,7 +25,7 @@ public class MenuRequest {
         final Menu menu = Menu.ofNew(name, price, menuGroupId);
 
         final List<MenuProduct> menuProductEntities = menuProducts.stream()
-                .map(MenuProductRequest::toEntity)
+                .map(menuProductRequest -> menuProductRequest.toEntity(menu))
                 .collect(Collectors.toList());
         menu.addMenuProducts(menuProductEntities);
 

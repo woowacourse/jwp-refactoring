@@ -3,14 +3,26 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
+@Entity
 public class Menu {
 
-    private final Long id;
-    private final String name;
-    private final Price price;
-    private final Long menuGroupId;
-    private final List<MenuProduct> menuProducts;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
+    @Embedded
+    private Price price;
+    private Long menuGroupId;
+    @OneToMany(mappedBy = "menu", fetch = FetchType.LAZY)
+    private List<MenuProduct> menuProducts;
 
     public Menu(final Long id,
                 final String name,
@@ -55,5 +67,8 @@ public class Menu {
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
+    }
+
+    protected Menu() {
     }
 }
