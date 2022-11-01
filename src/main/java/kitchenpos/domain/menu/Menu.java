@@ -27,7 +27,7 @@ public class Menu {
     private BigDecimal price;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menuGroup_id", nullable = false)
+    @JoinColumn(name = "menu_group_id", nullable = false)
     private MenuGroup menuGroup;
 
     @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
