@@ -17,9 +17,6 @@ public class Menu {
     private Long menuGroupId;
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
-    private Menu() {
-    }
-
     public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId) {
         this.id = id;
         this.name = name;
@@ -27,17 +24,10 @@ public class Menu {
         this.menuGroupId = menuGroupId;
     }
 
-    public static Menu create(final String name, final Long price, final Long menuGroupId, final List<Long> productIds) {
-        final Menu menu = new Menu(null, name, createBigDecimal(price), menuGroupId);
+    public static Menu create(final String name, final BigDecimal price, final Long menuGroupId, final List<Long> productIds) {
+        final Menu menu = new Menu(null, name, price, menuGroupId);
         productIds.forEach(menu::addProduct);
         return menu;
-    }
-
-    private static BigDecimal createBigDecimal(final Long price) {
-        if (price == null) {
-            return null;
-        }
-        return BigDecimal.valueOf(price);
     }
 
     private Optional<MenuProduct> findProduct(final Long productId) {

@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
+import kitchenpos.application.dto.TableDto;
 import kitchenpos.domain.table.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,8 +30,8 @@ public class OrderTableAcceptanceTest extends AcceptanceTest {
     @Test
     @DisplayName("전체 테이블을 조회할 수 있다")
     void getOrderTables() {
-        final OrderTable orderTable1 = 테이블_등록(2, false);
-        final OrderTable orderTable2 = 테이블_등록(0, true);
+        final TableDto orderTable1 = 테이블_등록(2, false);
+        final TableDto orderTable2 = 테이블_등록(0, true);
 
         final ExtractableResponse<Response> response = 테이블_전체_조회_요청();
         final List<OrderTable> responseBody = response.body()
@@ -54,11 +55,10 @@ public class OrderTableAcceptanceTest extends AcceptanceTest {
     @Test
     @DisplayName("테이블을 채우거나 비울 수 있다.")
     void changeEmpty() {
-        final OrderTable orderTable = 테이블_등록(0, true);
-        orderTable.setEmpty(false);
+        final TableDto orderTable = 테이블_등록(0, true);
 
         // when
-        final ExtractableResponse<Response> response = 테이블_empty_변경_요청(orderTable);
+        final ExtractableResponse<Response> response = 테이블_empty_변경_요청(orderTable.getId(), false);
         final OrderTable responseBody = response.body()
                 .as(OrderTable.class);
 
@@ -73,12 +73,11 @@ public class OrderTableAcceptanceTest extends AcceptanceTest {
     @Test
     @DisplayName("테이블의 손님 수를 변경할 수 있다.")
     void changeNumberOfGuests() {
-        final OrderTable orderTable = 테이블_등록(0, true);
-        final OrderTable fullTable = 테이블_채움(orderTable.getId());
+        final TableDto orderTable = 테이블_등록(0, true);
+        final TableDto fullTable = 테이블_채움(orderTable.getId());
         final int numberOfGuests = 5;
-        fullTable.enterGuests(numberOfGuests);
 
-        final ExtractableResponse<Response> response = 테이블_손님_수_변경_요청(fullTable);
+        final ExtractableResponse<Response> response = 테이블_손님_수_변경_요청(fullTable.getId(), numberOfGuests);
         final OrderTable responseBody = response.body()
                 .as(OrderTable.class);
 

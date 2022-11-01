@@ -17,8 +17,12 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public OrderTable(final int numberOfGuests, final boolean empty) {
+        this(null, null, numberOfGuests, empty);
+    }
+
     public static OrderTable create() {
-        return new OrderTable(null, null, 0, true);
+        return new OrderTable(0, true);
     }
 
     public void setEmpty(final boolean empty) {

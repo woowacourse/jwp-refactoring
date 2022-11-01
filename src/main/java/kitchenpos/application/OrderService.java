@@ -1,5 +1,8 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.CreateOrderDto;
+import kitchenpos.application.dto.CreateOrderLineItemDto;
+import kitchenpos.application.dto.OrderDto;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderLineItemRepository;
@@ -12,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -37,16 +39,17 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final Order order) {
+    public OrderDto create(final CreateOrderDto createOrderDto) {
+        final List<Long> menuIds = createOrderDto.getOrderLineItems().stream()
+                .map(CreateOrderLineItemDto::getMenuId)
+                .collect(Collectors.toList());
+
+        final Order order = Order.create(createOrderDto.getOrderTableId(), menuIds);
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
 
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException();
         }
-
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
-                .collect(Collectors.toList());
 
         if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
@@ -69,10 +72,10 @@ public class OrderService {
             savedOrder.addMenu(savedOrderItem);
         }
 
-        return savedOrder;
+        return OrderDto.of(savedOrder);
     }
 
-    public List<Order> list() {
+    public List<OrderDto> list() {
         final List<Order> orders = orderRepository.findAll();
 
         for (final Order order : orders) {
@@ -80,11 +83,14 @@ public class OrderService {
             orderLineItems.forEach(order::addMenu);
         }
 
-        return orders;
+        return orders.stream()
+                .map(OrderDto::of)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final Order order) {
+    public OrderDto changeOrderStatus(final Long orderId, final OrderStatus orderStatus) {
+
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -92,7 +98,6 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
         savedOrder.changeOrderStatus(orderStatus.name());
 
         orderRepository.save(savedOrder);
@@ -100,6 +105,6 @@ public class OrderService {
         final List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(orderId);
         orderLineItems.forEach(savedOrder::addMenu);
 
-        return savedOrder;
+        return OrderDto.of(savedOrder);
     }
 }

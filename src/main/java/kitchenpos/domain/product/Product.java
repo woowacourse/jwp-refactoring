@@ -8,24 +8,14 @@ public class Product {
     private String name;
     private BigDecimal price;
 
-    private Product() {
-    }
-
     public Product(final Long id, final String name, final BigDecimal price) {
         this.id = id;
         this.name = name;
         this.price = price;
     }
 
-    public static Product of(final String name, final Long price) {
-        return new Product(null, name, createBigDecimal(price));
-    }
-
-    private static BigDecimal createBigDecimal(final Long price) {
-        if (price == null) {
-            return null;
-        }
-        return BigDecimal.valueOf(price);
+    public static Product create(final String name, final BigDecimal price) {
+        return new Product(null, name, price);
     }
 
     public Long getId() {

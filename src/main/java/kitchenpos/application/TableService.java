@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.TableDto;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.domain.order.OrderStatus;
@@ -22,16 +24,21 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        return orderTableRepository.save(orderTable);
+    public TableDto create(final Integer numberOfGuests, final Boolean empty) {
+        final OrderTable orderTable = new OrderTable(numberOfGuests, empty);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
+        return TableDto.of(savedOrderTable);
     }
 
-    public List<OrderTable> list() {
-        return orderTableRepository.findAll();
+    public List<TableDto> list() {
+        return orderTableRepository.findAll()
+                .stream()
+                .map(TableDto::of)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
+    public TableDto changeEmpty(final Long orderTableId, final Boolean empty) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -44,15 +51,13 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setEmpty(orderTable.isEmpty());
+        savedOrderTable.setEmpty(empty);
 
-        return orderTableRepository.save(savedOrderTable);
+        return TableDto.of(orderTableRepository.save(savedOrderTable));
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
-
+    public TableDto changeNumberOfGuests(final Long orderTableId, final Integer numberOfGuests) {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();
         }
@@ -66,6 +71,6 @@ public class TableService {
 
         savedOrderTable.enterGuests(numberOfGuests);
 
-        return orderTableRepository.save(savedOrderTable);
+        return TableDto.of(orderTableRepository.save(savedOrderTable));
     }
 }

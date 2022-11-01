@@ -1,5 +1,8 @@
 package kitchenpos.application;
 
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.CreateMenuDto;
+import kitchenpos.application.dto.MenuDto;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.menu.MenuGroupRepository;
 import kitchenpos.domain.menu.MenuProductRepository;
@@ -35,7 +38,16 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final Menu menu) {
+    public MenuDto create(final CreateMenuDto createMenuDto) {
+        final Menu menu = Menu.create(
+                createMenuDto.getName(),
+                createMenuDto.getPrice(),
+                createMenuDto.getMenuGroupId(),
+                new ArrayList<>()
+        );
+        createMenuDto.getMenuProducts().forEach(createMenuProductDto ->
+                menu.addProduct(createMenuProductDto.getProductId(), createMenuProductDto.getQuantity())
+        );
         final BigDecimal price = menu.getPrice();
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
@@ -68,10 +80,10 @@ public class MenuService {
             savedMenu.addProduct(savedMenuProduct);
         }
 
-        return savedMenu;
+        return MenuDto.of(savedMenu);
     }
 
-    public List<Menu> list() {
+    public List<MenuDto> list() {
         final List<Menu> menus = menuRepository.findAll();
 
         for (final Menu menu : menus) {
@@ -79,6 +91,8 @@ public class MenuService {
             menuProducts.forEach(menu::addProduct);
         }
 
-        return menus;
+        return menus.stream()
+                .map(MenuDto::of)
+                .collect(Collectors.toList());
     }
 }

@@ -7,9 +7,6 @@ public class MenuProduct {
     private Long productId;
     private long quantity;
 
-    private MenuProduct() {
-    }
-
     public MenuProduct(final Long seq, final Long menuId, final Long productId, final long quantity) {
         this.seq = seq;
         this.menuId = menuId;
