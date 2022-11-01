@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.math.BigDecimal;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.ProductCreateRequest;
 import kitchenpos.application.dto.ProductResponse;
@@ -21,7 +20,7 @@ public class ProductService {
     }
 
     public ProductResponse create(final ProductCreateRequest request) {
-        final Product product = productRepository.save(new Product(request.getName(), BigDecimal.valueOf(request.getPrice())));
+        final Product product = productRepository.save(new Product(request.getName(), request.getPrice()));
 
         return ProductResponse.createResponse(product);
     }
