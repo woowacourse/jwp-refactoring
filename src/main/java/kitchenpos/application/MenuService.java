@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.MenuCreateRequest;
 import kitchenpos.application.dto.request.MenuProductCreateRequest;
@@ -11,6 +12,7 @@ import kitchenpos.repository.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.util.CustomCollector;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,34 +41,25 @@ public class MenuService {
                 request.getName(),
                 request.getPrice(),
                 request.getMenuGroupId(),
-                createMenuProduct(request.getMenuProducts())
+                createMenuProducts(request.getMenuProducts())
         );
         return MenuResponse.from(menuRepository.save(menu));
     }
 
-    private List<MenuProduct> createMenuProduct(List<MenuProductCreateRequest> requests) {
-        List<Product> products = productRepository.findAllByIdIn(toProductIds(requests));
-        return toMenuProduct(products, requests);
+    private List<MenuProduct> createMenuProducts(List<MenuProductCreateRequest> requests) {
+        List<Product> products = productRepository.getAllByIdIn(toProductIds(requests));
+        Map<Product, MenuProductCreateRequest> productRequestAssociation = products.stream().collect(
+                CustomCollector.associate(requests, Product::getId, MenuProductCreateRequest::getProductId)
+        );
+        return productRequestAssociation.entrySet().stream()
+                .map(association -> new MenuProduct(association.getKey(), association.getValue().getQuantity()))
+                .collect(Collectors.toList());
     }
 
     private List<Long> toProductIds(List<MenuProductCreateRequest> requests) {
         return requests.stream()
                 .map(MenuProductCreateRequest::getProductId)
                 .collect(Collectors.toList());
-    }
-
-    private List<MenuProduct> toMenuProduct(List<Product> products, List<MenuProductCreateRequest> requests) {
-        return products.stream()
-                .map(product -> new MenuProduct(product, findQuantityByproductId(requests, product.getId())))
-                .collect(Collectors.toList());
-    }
-
-    private long findQuantityByproductId(List<MenuProductCreateRequest> requests, Long productId) {
-        return requests.stream()
-                .filter(request -> productId.equals(request.getProductId()))
-                .map(MenuProductCreateRequest::getQuantity)
-                .findAny()
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품이 있습니다 : " + productId));
     }
 
     @Transactional(readOnly = true)

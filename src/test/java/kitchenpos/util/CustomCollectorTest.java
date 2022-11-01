@@ -57,6 +57,6 @@ class CustomCollectorTest {
                 .collect(CustomCollector.associate(listB, A::getAId, B::getBId));
 
         // then
-        assertThat(result).hasSize(2);
+        assertThat(result).hasSize(3);
     }
 }

@@ -73,7 +73,7 @@ class MenuServiceTest {
 
         // when & then
         assertThatThrownBy(() -> menuService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .hasCauseInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

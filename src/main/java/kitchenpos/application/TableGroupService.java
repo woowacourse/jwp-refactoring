@@ -41,7 +41,7 @@ public class TableGroupService {
     }
 
     public void ungroup(Long tableGroupId) {
-        TableGroup tableGroup = tableGroupRepository.findById(tableGroupId).orElseThrow(IllegalArgumentException::new);
+        TableGroup tableGroup = tableGroupRepository.getById(tableGroupId);
         tableGroup.ungroupOrderTables();
     }
 }
