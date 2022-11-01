@@ -29,7 +29,7 @@ public class MenuResponse {
                 menu.getId(),
                 menu.getName(),
                 menu.getPrice(),
-                menu.getMenuGroupId(),
+                menu.getMenuGroup().getId(),
                 MenuProductResponse.from(menu.getMenuProducts())
         );
     }

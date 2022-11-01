@@ -10,6 +10,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.request.MenuCreateRequest;
@@ -31,11 +32,12 @@ class MenuRestControllerTest extends DocumentationTest {
         final var name = "까르보 한 마리 + 짜장 한 마리";
         final var price = new BigDecimal("38000.00");
         final var menuGroupId = 1L;
+        final var menuGroup = new MenuGroup(1L, "두 마리 메뉴");
         given(menuService.create(any()))
-                .willReturn(new Menu(1L, name, price, menuGroupId,
+                .willReturn(new Menu(1L, name, price, menuGroup,
                                 List.of(
-                                        new MenuProduct(1L, 1L, productA, 1L),
-                                        new MenuProduct(2L, 1L, new Product(2L, "짜장 한 마리", new BigDecimal("18000.00")), 1L)
+                                        new MenuProduct(1L, null, productA, 1L),
+                                        new MenuProduct(2L, null, new Product(2L, "짜장 한 마리", new BigDecimal("18000.00")), 1L)
                                 )
                         )
                 );
@@ -77,16 +79,17 @@ class MenuRestControllerTest extends DocumentationTest {
     @DisplayName("GET " + MENU_API_URL)
     @Test
     void list() {
+        final var menuGroup = new MenuGroup(1L, "한 마리 메뉴");
         given(menuService.list())
                 .willReturn(List.of(
-                                new Menu(1L, "까르보 한 마리", new BigDecimal("18000.00"), 1L,
+                                new Menu(1L, "까르보 한 마리", new BigDecimal("18000.00"), menuGroup,
                                         List.of(
-                                                new MenuProduct(1L, 1L, productA, 1L)
+                                                new MenuProduct(1L, null, productA, 1L)
                                         )
                                 ),
-                                new Menu(2L, "까르보 두 마리", new BigDecimal("35000.00"), 2L,
+                                new Menu(2L, "까르보 두 마리", new BigDecimal("35000.00"), menuGroup,
                                         List.of(
-                                                new MenuProduct(2L, 2L, productA, 2L)
+                                                new MenuProduct(2L, null, productA, 2L)
                                         )
                                 )
                         )

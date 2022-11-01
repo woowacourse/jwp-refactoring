@@ -25,7 +25,7 @@ public class JpaMenuService implements MenuService {
     public Menu create(final MenuCreateRequest request) {
         final var menu = menuMapper.mapFrom(request);
 
-        return menu.create();
+        return menuRepository.save(menu);
     }
 
     @Override
