@@ -43,4 +43,27 @@ class OrderTableTest {
             assertThat(orderTable.isEmpty()).isFalse();
         });
     }
+
+    @Test
+    void orderTable을_changeEmpty한다() {
+        OrderTable orderTable = new OrderTable(null, 0, false);
+
+        orderTable.changeEmpty(() -> false, true);
+
+        assertThat(orderTable.isEmpty()).isTrue();
+    }
+
+    @Test
+    void orderTable을_changeEmpty할_때_tableGroupId가_null이_아니면_예외를_던진다() {
+        OrderTable orderTable = new OrderTable(1L, 0, false);
+
+        assertThatThrownBy(() -> orderTable.changeEmpty(() -> false, true));
+    }
+
+    @Test
+    void orderTable을_changeEmpty할_때_특정_조건이_true이면_예외를_던진다() {
+        OrderTable orderTable = new OrderTable(null, 0, false);
+
+        assertThatThrownBy(() -> orderTable.changeEmpty(() -> true, true));
+    }
 }
