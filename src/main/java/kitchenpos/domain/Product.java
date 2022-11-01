@@ -23,7 +23,7 @@ public class Product {
     }
 
     private void validatePositive(BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+        if (price == null || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("[ERROR] 가격은 없거나 음수일 수가 없습니다.");
         }
     }

@@ -36,7 +36,7 @@ public class JdbcTemplateOrderDao implements OrderDao {
 
     @Override
     public Order save(final Order entity) {
-        if (Objects.isNull(entity.getId())) {
+        if (entity.getId() == null) {
             final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
             final Number key = jdbcInsert.executeAndReturnKey(parameters);
             return select(key.longValue());

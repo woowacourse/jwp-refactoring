@@ -40,7 +40,7 @@ public class Order {
     }
 
     private void validateNull(OrderStatus orderStatus, LocalDateTime orderedTime) {
-        if (Objects.isNull(orderedTime) || Objects.isNull(orderStatus)) {
+        if (orderedTime == null || orderStatus == null) {
             throw new IllegalArgumentException("[ERROR] 주문 시간이나 주문 상태는 빈 값이면 안됩니다.");
         }
     }

@@ -15,7 +15,7 @@ public class MenuGroup {
     }
 
     private void validateEmptyName(String name) {
-        if (Objects.isNull(name) || name.isEmpty()) {
+        if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("[ERROR] 이름은 공백일 수 없습니다.");
         }
     }

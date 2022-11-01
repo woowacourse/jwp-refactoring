@@ -20,7 +20,7 @@ public class Menu {
 
     public Menu(Long id, String name, BigDecimal price, Long menuGroupId,
                 List<MenuProduct> menuProducts) {
-        validateEmptyName(name);
+        validateBlankName(name);
         validateNotPositive(price);
         this.id = id;
         this.name = name;
@@ -29,14 +29,14 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    private void validateEmptyName(String name) {
-        if (Objects.isNull(name) || name.isEmpty()) {
+    private void validateBlankName(String name) {
+        if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("[ERROR] 이름은 공백일 수 없습니다.");
         }
     }
 
     private void validateNotPositive(BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+        if (price == null || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("[ERROR] 가격은 없거나 음수일 수가 없습니다.");
         }
     }

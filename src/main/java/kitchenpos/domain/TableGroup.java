@@ -30,7 +30,7 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
     private void validateNull(LocalDateTime createdDate) {
-        if (Objects.isNull(createdDate)) {
+        if (createdDate == null) {
             throw new IllegalArgumentException("[ERROR] 생성 날짜가 없으면 안됩니다.");
         }
     }
