@@ -10,15 +10,6 @@ public class OrderLineItemFixtures {
         return generateOrderLineItem(null, null, menuId, quantity);
     }
 
-    public static final OrderLineItem generateOrderLineItem(final Long seq, final OrderLineItem orderLineItem) {
-        return generateOrderLineItem(
-                seq,
-                orderLineItem.getOrderId(),
-                orderLineItem.getMenuId(),
-                orderLineItem.getQuantity()
-        );
-    }
-
     public static final OrderLineItem generateOrderLineItem(final Long seq,
                                                             final Long orderId,
                                                             final Long menuId,

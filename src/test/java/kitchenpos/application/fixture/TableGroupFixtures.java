@@ -14,10 +14,6 @@ public class TableGroupFixtures {
         return generateTableGroup(null, LocalDateTime.now(), orderTables);
     }
 
-    public static final TableGroup generateTableGroup(final Long id, final TableGroup tableGroup) {
-        return generateTableGroup(id, tableGroup.getCreatedDate(), tableGroup.getOrderTables());
-    }
-
     public static final TableGroup generateTableGroup(final Long id,
                                                       final LocalDateTime createdDate,
                                                       final List<OrderTable> orderTables) {
