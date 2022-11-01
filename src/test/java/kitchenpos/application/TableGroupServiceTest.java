@@ -1,17 +1,22 @@
 package kitchenpos.application;
 
+import static kitchenpos.Fixture.DomainFixture.GUEST_NUMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.util.Collections;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.TableGroupCreateRequest;
+import kitchenpos.dto.response.TableGroupResponse;
+import kitchenpos.exception.GroupTableNotEnoughException;
+import kitchenpos.exception.GroupedTableNotEmptyException;
+import kitchenpos.exception.NotCompleteTableUngroupException;
+import kitchenpos.exception.OrderTableNotFoundException;
+import kitchenpos.exception.TableAlreadyGroupedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,106 +29,103 @@ class TableGroupServiceTest extends ServiceTest {
     @Autowired
     private TableGroupService tableGroupService;
 
-    @Autowired
-    private OrderTableDao orderTableDao;
-
-    @Autowired
-    private TableGroupDao tableGroupDao;
-
-    @Autowired
-    private OrderDao orderDao;
-
     private OrderTable orderTable1;
 
     @BeforeEach
     void setUp() {
-        orderTable1 = orderTableDao.save(new OrderTable(null, 3, true));
+        orderTable1 = tableRepository.save(new OrderTable(GUEST_NUMBER, true));
     }
 
     @DisplayName("TableGroup을 생성할 수 있다.")
     @Test
     void create() {
-        OrderTable orderTable2 = orderTableDao.save(new OrderTable(null, 5, true));
+        OrderTable orderTable2 = tableRepository.save(new OrderTable(GUEST_NUMBER, true));
 
-        TableGroup tableGroup = tableGroupService.create(new TableGroup(List.of(orderTable1, orderTable2)));
+        TableGroupResponse tableGroupResponse = tableGroupService.create(
+                new TableGroupCreateRequest(List.of(orderTable1.getId(), orderTable2.getId())));
 
-        OrderTable groupedOrderTable1 = orderTableDao.findById(orderTable1.getId())
-                .orElseThrow();
-        OrderTable groupedOrderTable2 = orderTableDao.findById(orderTable2.getId())
-                .orElseThrow();
+        OrderTable groupedOrderOrderTable1 = tableRepository.findById(orderTable1.getId())
+                .orElseThrow(OrderTableNotFoundException::new);
+        OrderTable groupedOrderOrderTable2 = tableRepository.findById(orderTable2.getId())
+                .orElseThrow(OrderTableNotFoundException::new);
         assertAll(
-                () -> assertThat(groupedOrderTable1.getTableGroupId()).isEqualTo(tableGroup.getId()),
-                () -> assertThat(groupedOrderTable2.getTableGroupId()).isEqualTo(tableGroup.getId())
+                () -> assertThat(groupedOrderOrderTable1.getTableGroup().getId()).isEqualTo(tableGroupResponse.getId()),
+                () -> assertThat(groupedOrderOrderTable2.getTableGroup().getId()).isEqualTo(tableGroupResponse.getId())
         );
     }
 
     @DisplayName("2개 미만의 OrderTable로 TableGroup을 생성하려고 하면 예외를 발생시킨다.")
     @Test
     void create_Exception_NotEnoughOrderTableNumber() {
-        assertThatThrownBy(() -> tableGroupService.create(new TableGroup(List.of(orderTable1))))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Table Group은 2개 이상의 테이블로 생성할 수 있습니다.");
+        assertThatThrownBy(() -> tableGroupService.create(new TableGroupCreateRequest(List.of(orderTable1.getId()))))
+                .isInstanceOf(GroupTableNotEnoughException.class);
     }
 
     @DisplayName("존재하지 않는 OrderTable로 TableGroup을 생성하려고 하면 예외를 발생시킨다.")
     @Test
     void create_Exception_NotFoundOrderTable() {
-        OrderTable unsavedOrderTable = new OrderTable();
+        Long notFountTableId1 = 1000L;
+        Long notFountTableId2 = 1001L;
 
-        assertThatThrownBy(() -> tableGroupService.create(new TableGroup(List.of(orderTable1, unsavedOrderTable))))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("존재하지 않는 테이블로는 Table Group을 생성할 수 없습니다.");
+        assertThatThrownBy(() -> tableGroupService.create(
+                new TableGroupCreateRequest(List.of(orderTable1.getId(), notFountTableId1, notFountTableId2))))
+                .isInstanceOf(OrderTableNotFoundException.class);
     }
 
     @DisplayName("empty가 아닌 OrderTable로 TableGroup을 생성하려고 하면 예외를 발생시킨다.")
     @Test
     void create_Exception_NotEmptyOrderTable() {
-        OrderTable orderTable2 = orderTableDao.save(new OrderTable(null, 5, false));
+        OrderTable orderTable2 = tableRepository.save(new OrderTable(GUEST_NUMBER, false));
 
-        assertThatThrownBy(() -> tableGroupService.create(new TableGroup(List.of(orderTable1, orderTable2))))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("empty 상태가 아닌 테이블로는 Table Group을 생성할 수 없습니다.");
+        assertThatThrownBy(
+                () -> tableGroupService
+                        .create(new TableGroupCreateRequest(List.of(orderTable1.getId(), orderTable2.getId()))))
+                .isInstanceOf(GroupedTableNotEmptyException.class);
     }
 
     @DisplayName("이미 TableGroup에 속해 있는 OrderTable로 TableGroup을 생성하려고 하면 예외를 발생시킨다.")
     @Test
     void create_Exception_AlreadyGroupedOrderTable() {
-        TableGroup tableGroup = tableGroupDao.save(new TableGroup());
-        OrderTable orderTable2 = orderTableDao.save(new OrderTable(tableGroup.getId(), 5, true));
+        TableGroup tableGroup = tableGroupRepository.save(new TableGroup());
+        OrderTable orderTable2 = tableRepository.save(new OrderTable(GUEST_NUMBER, true, tableGroup));
 
-        assertThatThrownBy(() -> tableGroupService.create(new TableGroup(List.of(orderTable1, orderTable2))))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("이미 Table Group에 속해있는 테이블로는 Table Group을 생성할 수 없습니다.");
+        assertThatThrownBy(
+                () -> tableGroupService
+                        .create(new TableGroupCreateRequest(List.of(orderTable1.getId(), orderTable2.getId()))))
+                .isInstanceOf(TableAlreadyGroupedException.class);
     }
 
     @DisplayName("TableGroup을 그룹 해제할 수 있다.")
     @Test
     void ungroup() {
-        OrderTable orderTable2 = orderTableDao.save(new OrderTable(null, 5, true));
-        TableGroup tableGroup = tableGroupService.create(new TableGroup(List.of(orderTable1, orderTable2)));
+        OrderTable orderTable2 = tableRepository.save(new OrderTable(GUEST_NUMBER, true));
+        TableGroupResponse tableGroupResponse = tableGroupService
+                .create(new TableGroupCreateRequest(List.of(orderTable1.getId(), orderTable2.getId())));
 
-        tableGroupService.ungroup(tableGroup.getId());
+        tableGroupService.ungroup(tableGroupResponse.getId());
 
-        OrderTable groupedOrderTable1 = orderTableDao.findById(orderTable1.getId())
-                .orElseThrow();
-        OrderTable groupedOrderTable2 = orderTableDao.findById(orderTable2.getId())
-                .orElseThrow();
+        OrderTable groupedOrderOrderTable1 = tableRepository.findById(orderTable1.getId())
+                .orElseThrow(OrderTableNotFoundException::new);
+        OrderTable groupedOrderOrderTable2 = tableRepository.findById(orderTable2.getId())
+                .orElseThrow(OrderTableNotFoundException::new);
         assertAll(
-                () -> assertThat(groupedOrderTable1.getTableGroupId()).isNull(),
-                () -> assertThat(groupedOrderTable2.getTableGroupId()).isNull()
+                () -> assertThat(groupedOrderOrderTable1.getTableGroup()).isNull(),
+                () -> assertThat(groupedOrderOrderTable2.getTableGroup()).isNull()
         );
     }
 
     @DisplayName("조리중이거나 식사중인 테이블이 존재하는 TableGroup을 그룹 해제할 수 없다.")
     @ParameterizedTest
-    @ValueSource(strings = {"COOKING", "MEAL"})
+    @ValueSource(strings = {"MEAL", "COOKING"})
     void ungroup_Exception_NotCompleteOrderTableStatus(String orderStatus) {
-        OrderTable orderTable2 = orderTableDao.save(new OrderTable(null, 5, true));
-        TableGroup tableGroup = tableGroupService.create(new TableGroup(List.of(orderTable1, orderTable2)));
-        orderDao.save(new Order(orderTable2.getId(), orderStatus, Collections.emptyList()));
+        OrderTable orderOrderTable2 = tableRepository.save(new OrderTable(GUEST_NUMBER, true, null));
+        TableGroupResponse tableGroupResponse = tableGroupService.create(
+                new TableGroupCreateRequest(List.of(orderTable1.getId(), orderOrderTable2.getId())));
+        Order order = Order.newOrder(orderOrderTable2);
+        order.changeOrderStatus(OrderStatus.COOKING);
+        orderRepository.save(order);
 
-        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("조리중이거나 식사중인 테이블이 포함된 Table Group은 그룹 해제 할 수 없습니다.");
+        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupResponse.getId()))
+                .isInstanceOf(NotCompleteTableUngroupException.class);
     }
 }

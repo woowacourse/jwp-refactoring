@@ -29,10 +29,9 @@ public class DatabaseCleaner implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        try {
-            final DatabaseMetaData metaData = dataSource.getConnection()
-                    .getMetaData();
-            final ResultSet tables = metaData.getTables(null, null, null, new String[]{"TABLE"});
+        try (Connection connection = dataSource.getConnection()) {
+            DatabaseMetaData metaData = connection.getMetaData();
+            ResultSet tables = metaData.getTables(null, null, null, new String[]{"TABLE"});
             while (tables.next()) {
                 tableNames.add(tables.getString("TABLE_NAME"));
             }
@@ -44,7 +43,7 @@ public class DatabaseCleaner implements InitializingBean {
 
     @Transactional
     public void clear() {
-        try (final Connection connection = dataSource.getConnection()) {
+        try (Connection connection = dataSource.getConnection()) {
             connection.prepareStatement(REFERENTIAL_INTEGRITY + "FALSE")
                     .execute();
             for (String tableName : tableNames) {
