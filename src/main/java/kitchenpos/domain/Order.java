@@ -1,35 +1,43 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import org.springframework.util.CollectionUtils;
 
 public class Order {
     private Long id;
     private Long orderTableId;
-    private String orderStatus;
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
 
-    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime,
-                 List<OrderLineItem> orderLineItems) {
+    public Order(final Long orderTableId,
+                 final OrderStatus orderStatus,
+                 final LocalDateTime orderedTime,
+                 final List<OrderLineItem> orderLineItems) {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
     }
 
-    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
+    public Order(final Long id,
+                 final Long orderTableId,
+                 final OrderStatus orderStatus,
+                 final LocalDateTime orderedTime) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
     }
 
-    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
-                 List<OrderLineItem> orderLineItems) {
+    public Order(final Long id,
+                 final Long orderTableId,
+                 final OrderStatus orderStatus,
+                 final LocalDateTime orderedTime,
+                 final List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -37,15 +45,16 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public Order(Long orderTableId, String orderStatus,
-                 List<OrderLineItem> orderLineItems) {
+    public Order(final Long orderTableId,
+                 final OrderStatus orderStatus,
+                 final List<OrderLineItem> orderLineItems) {
         validateOrderLineItems(orderLineItems);
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderLineItems = orderLineItems;
     }
 
-    private void validateOrderLineItems(List<OrderLineItem> orderLineItems) {
+    private void validateOrderLineItems(final List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException();
         }
@@ -59,7 +68,7 @@ public class Order {
         return orderTableId;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
@@ -68,7 +77,7 @@ public class Order {
     }
 
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+        return new ArrayList<>(orderLineItems);
     }
 
     public void changeOrderLineItems(final List<OrderLineItem> orderLineItems) {
@@ -88,13 +97,12 @@ public class Order {
     }
 
     public void validateOrderStatus() {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), orderStatus)) {
+        if (orderStatus.isCompletion()) {
             throw new IllegalArgumentException();
         }
     }
 
-    public void changeOrderStatus(Order order) {
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
-        this.orderStatus = orderStatus.name();
+    public void changeOrderStatus(final Order order) {
+        this.orderStatus = order.getOrderStatus();
     }
 }

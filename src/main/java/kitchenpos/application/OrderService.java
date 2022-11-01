@@ -52,13 +52,13 @@ public class OrderService {
         return savedOrder;
     }
 
-    private Order toOrder(OrderRequest orderRequest) {
+    private Order toOrder(final OrderRequest orderRequest) {
         return new Order(orderRequest.getOrderTableId(),
-                orderRequest.getOrderStatus(),
+                OrderStatus.from(orderRequest.getOrderStatus()),
                 toOrderLineItems(orderRequest.getOrderLineItemRequests()));
     }
 
-    private List<OrderLineItem> toOrderLineItems(List<OrderLineItemRequest> orderLineItemRequests) {
+    private List<OrderLineItem> toOrderLineItems(final List<OrderLineItemRequest> orderLineItemRequests) {
         if (orderLineItemRequests == null) {
             throw new IllegalArgumentException();
         }
@@ -73,13 +73,13 @@ public class OrderService {
         order.validateOrderLineItemsSize(menuDao.countByIdIn(menuIds));
     }
 
-    private Order saveOrder(Order order, OrderTable orderTable) {
-        final Order newOrder = new Order(orderTable.getId(), OrderStatus.COOKING.name(),
+    private Order saveOrder(final Order order, final OrderTable orderTable) {
+        final Order newOrder = new Order(orderTable.getId(), OrderStatus.COOKING,
                 LocalDateTime.now(), order.getOrderLineItems());
         return orderDao.save(newOrder);
     }
 
-    private void saveOrderLineItems(Order savedOrder, List<OrderLineItem> orderLineItems) {
+    private void saveOrderLineItems(final Order savedOrder, final List<OrderLineItem> orderLineItems) {
         final Long orderId = savedOrder.getId();
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (final OrderLineItem orderLineItem : orderLineItems) {

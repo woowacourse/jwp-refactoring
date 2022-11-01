@@ -71,7 +71,7 @@ class TableGroupServiceTest {
 
         @Test
         void create_success() {
-            TableGroup savedTableGroup = tableGroupService.create(new TableGroupRequest(ORDER_TABLE_REQUESTS));
+            final TableGroup savedTableGroup = tableGroupService.create(new TableGroupRequest(ORDER_TABLE_REQUESTS));
 
             assertThat(savedTableGroup.getOrderTables()).hasSize(3);
         }
@@ -89,10 +89,10 @@ class TableGroupServiceTest {
 
         @Test
         void ungroup_fail_when_orderStatus_MEAL() {
-            Order order = new Order(1L, MEAL.name(), LocalDateTime.now(), null);
+            final Order order = new Order(1L, MEAL, LocalDateTime.now(), null);
             orderDao.save(order);
 
-            TableGroup savedTableGroup = tableGroupService.create(new TableGroupRequest(ORDER_TABLE_REQUESTS));
+            final TableGroup savedTableGroup = tableGroupService.create(new TableGroupRequest(ORDER_TABLE_REQUESTS));
 
             assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -100,20 +100,20 @@ class TableGroupServiceTest {
 
         @Test
         void ungroup_success() {
-            List<Order> orders = orderDao.findAll().stream()
-                    .filter(it -> it.getOrderStatus().equals(MEAL.name()) || it.getOrderStatus().equals(COOKING.name()))
+            final List<Order> orders = orderDao.findAll().stream()
+                    .filter(it -> it.getOrderStatus().equals(MEAL) || it.getOrderStatus().equals(COOKING))
                     .collect(Collectors.toList());
 
             for (Order order : orders) {
-                Order newOrder = new Order(order.getOrderTableId(), COMPLETION.name(),
+                final Order newOrder = new Order(order.getOrderTableId(), COMPLETION,
                         order.getOrderedTime(), order.getOrderLineItems());
                 orderDao.save(newOrder);
             }
 
-            TableGroup savedTableGroup = tableGroupService.create(new TableGroupRequest(ORDER_TABLE_REQUESTS));
+            final TableGroup savedTableGroup = tableGroupService.create(new TableGroupRequest(ORDER_TABLE_REQUESTS));
             tableGroupService.ungroup(savedTableGroup.getId());
 
-            OrderTable changedOrderTable = orderTableDao.findById(1L)
+            final OrderTable changedOrderTable = orderTableDao.findById(1L)
                     .orElseThrow(IllegalArgumentException::new);
 
             assertThat(changedOrderTable.getTableGroupId()).isNull();

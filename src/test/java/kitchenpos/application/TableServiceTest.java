@@ -23,7 +23,7 @@ class TableServiceTest {
         void create_success() {
             final OrderTableRequest orderTableRequest = new OrderTableRequest(5, false);
 
-            OrderTable savedTable = tableService.create(orderTableRequest);
+            final OrderTable savedTable = tableService.create(orderTableRequest);
 
             assertThat(savedTable.getNumberOfGuests()).isEqualTo(5);
         }
@@ -61,10 +61,10 @@ class TableServiceTest {
 
         @Test
         void changeEmpty_fail_when_tableGroupId_exist() {
-            TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable));
-            TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+            final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable));
+            final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
-            OrderTable newOrderTable = new OrderTable(1L, savedTableGroup.getId(), 5, false);
+            final OrderTable newOrderTable = new OrderTable(1L, savedTableGroup.getId(), 5, false);
 
             savedOrderTable = orderTableDao.save(newOrderTable);
 
@@ -77,9 +77,9 @@ class TableServiceTest {
             final OrderTableRequest orderTableRequest = new OrderTableRequest(5, false);
             savedOrderTable = tableService.create(orderTableRequest);
 
-            final Order order = new Order(savedOrderTable.getId(), COOKING.name(), LocalDateTime.now(), ORDER_LINE_ITEMS);
+            final Order order = new Order(savedOrderTable.getId(), COOKING, LocalDateTime.now(), ORDER_LINE_ITEMS);
 
-            Order savedOrder = orderDao.save(order);
+            orderDao.save(order);
 
             assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), new OrderTableRequest(true)))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -90,9 +90,9 @@ class TableServiceTest {
             final OrderTableRequest orderTableRequest = new OrderTableRequest(5, false);
             savedOrderTable = tableService.create(orderTableRequest);
 
-            final Order order = new Order(savedOrderTable.getId(), COOKING.name(), LocalDateTime.now(), ORDER_LINE_ITEMS);
+            final Order order = new Order(savedOrderTable.getId(), COOKING, LocalDateTime.now(), ORDER_LINE_ITEMS);
 
-            Order savedOrder = orderDao.save(order);
+            orderDao.save(order);
 
             assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), new OrderTableRequest(true)))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -115,7 +115,8 @@ class TableServiceTest {
         @Test
         void changeNumberOfGuests_fail_when_smaller_than_zero() {
             final OrderTableRequest orderTableRequest = new OrderTableRequest(5, false);
-            OrderTable savedOrderTable = tableService.create(orderTableRequest);
+
+            final OrderTable savedOrderTable = tableService.create(orderTableRequest);
 
             assertThatThrownBy(
                     () -> tableService.changeNumberOfGuests(savedOrderTable.getId(), new OrderTableRequest(-1)))
@@ -143,7 +144,7 @@ class TableServiceTest {
             final OrderTableRequest orderTableRequest = new OrderTableRequest(5, false);
             final OrderTable savedOrderTable = tableService.create(orderTableRequest);
 
-            OrderTable changedOrderTable = tableService.changeNumberOfGuests(savedOrderTable.getId(),
+            final OrderTable changedOrderTable = tableService.changeNumberOfGuests(savedOrderTable.getId(),
                     new OrderTableRequest(10));
 
             assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(10);

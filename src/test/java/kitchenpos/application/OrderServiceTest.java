@@ -77,7 +77,7 @@ public class OrderServiceTest {
             OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), "COOKING", ORDER_LINE_ITEM_REQUESTS);
             Order savedOrder = orderService.create(orderRequest);
 
-            assertThat(savedOrder.getOrderStatus()).isEqualTo(COOKING.name());
+            assertThat(savedOrder.getOrderStatus()).isEqualTo(COOKING);
         }
     }
 
@@ -96,7 +96,7 @@ public class OrderServiceTest {
 
         @BeforeEach
         void setup() {
-            order = new Order(1L, COOKING.name(),
+            order = new Order(1L, COOKING,
                     LocalDateTime.now(), ORDER_LINE_ITEMS);
         }
 
@@ -117,12 +117,12 @@ public class OrderServiceTest {
 
             Order savedOrder = orderService.create(orderRequest);
 
-            Order newOrder = new Order(savedOrder.getId(), savedOrderTable.getId(), MEAL.name(),
+            Order newOrder = new Order(savedOrder.getId(), savedOrderTable.getId(), MEAL,
                     savedOrder.getOrderedTime(), savedOrder.getOrderLineItems());
 
             Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), newOrder);
 
-            assertThat(changedOrder.getOrderStatus()).isEqualTo(MEAL.name());
+            assertThat(changedOrder.getOrderStatus()).isEqualTo(MEAL);
         }
     }
 }
