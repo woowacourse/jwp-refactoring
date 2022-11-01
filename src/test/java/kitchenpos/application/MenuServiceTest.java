@@ -4,17 +4,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.application.dto.request.MenuCommand;
 import kitchenpos.application.dto.request.MenuProductCommand;
 import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.common.DataClearExtension;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.dao.ProductRepository;
-import kitchenpos.dao.MenuRepository;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -39,6 +41,9 @@ public class MenuServiceTest {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private MenuValidator menuValidator;
 
     @Nested
     @DisplayName("메뉴를 생성할 때")
@@ -119,9 +124,9 @@ public class MenuServiceTest {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("추천메뉴"));
         Product product = productRepository.save(new Product("강정치킨", BigDecimal.valueOf(18000)));
 
-        Menu menu = menuRepository.save(new Menu("강정치킨", BigDecimal.valueOf(37000), menuGroup.getId()));
+        Menu menu = menuRepository.save(new Menu("강정치킨", new Price(BigDecimal.valueOf(37000)), menuGroup.getId(), new ArrayList<>()));
 
-        menu.addMenuProduct(new MenuProduct(menu.getId(), product.getId(), 2));
+        menu.addMenuProduct(new MenuProduct(menu, product.getId(), 2));
 
         assertThat(menuService.list()).hasSize(1);
     }

@@ -12,15 +12,7 @@ public class MenuProductCommand {
         this.quantity = quantity;
     }
 
-    public Long getProductId() {
-        return productId;
-    }
-
-    public long getQuantity() {
-        return quantity;
-    }
-
-    public MenuProduct toEntity(Long menuId) {
-        return new MenuProduct(menuId, productId, quantity);
+    public MenuProduct toEntity() {
+        return new MenuProduct(productId, quantity);
     }
 }

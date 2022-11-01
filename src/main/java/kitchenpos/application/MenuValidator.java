@@ -3,9 +3,10 @@ package kitchenpos.application;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Price;
-import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Products;
 import org.springframework.stereotype.Component;
 
@@ -13,9 +14,19 @@ import org.springframework.stereotype.Component;
 public class MenuValidator {
 
     private final ProductRepository productRepository;
+    private final MenuGroupRepository menuGroupRepository;
 
-    public MenuValidator(ProductRepository productRepository) {
+    public MenuValidator(ProductRepository productRepository,
+                         MenuGroupRepository menuGroupRepository) {
         this.productRepository = productRepository;
+        this.menuGroupRepository = menuGroupRepository;
+    }
+
+    public void validate(long menuGroupId, Price price, List<MenuProduct> menuProducts) {
+        if (!menuGroupRepository.existsById(menuGroupId)) {
+            throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다.");
+        }
+        validate(price, menuProducts);
     }
 
     public void validate(Price menuPrice, List<MenuProduct> menuProducts) {

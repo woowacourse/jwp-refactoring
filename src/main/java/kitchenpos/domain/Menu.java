@@ -1,6 +1,5 @@
 package kitchenpos.domain;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -11,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import kitchenpos.application.MenuValidator;
 
 @Entity
 public class Menu {
@@ -29,30 +29,38 @@ public class Menu {
     @Column(name = "menu_group_id", nullable = false)
     private Long menuGroupId;
 
-    @OneToMany(mappedBy = "menuId", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected Menu() {
     }
 
-    public Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    public Menu(Long id, String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
-        this.price = new Price(price);
+        this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
+        for (MenuProduct menuProduct : menuProducts) {
+            menuProduct.setMenu(this);
+        }
     }
 
-    public Menu(String name, BigDecimal price, Long menuGroupId) {
-        this(null, name, price, menuGroupId, new ArrayList<>());
+    public Menu(String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        this(null, name, price, menuGroupId, menuProducts);
+    }
+
+    public static Menu create(String name,
+                              Price price,
+                              Long menuGroupId,
+                              List<MenuProduct> menuProducts,
+                              MenuValidator menuValidator) {
+        menuValidator.validate(menuGroupId, price, menuProducts);
+        return new Menu(name, price, menuGroupId, menuProducts);
     }
 
     public void addMenuProduct(MenuProduct menuProduct) {
         menuProducts.add(menuProduct);
-    }
-
-    public void addMenuProducts(List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
     }
 
     public Long getId() {

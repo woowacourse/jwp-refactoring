@@ -4,19 +4,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.application.dto.request.OrderTableCommand;
 import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.common.DataClearExtension;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderRepository;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.dao.OrderTableRepository;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.dao.TableGroupRepository;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderLineItems;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderValidator;
+import kitchenpos.domain.Price;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -47,6 +53,12 @@ class TableServiceTest {
 
     @Autowired
     private TableGroupRepository tableGroupRepository;
+
+    @Autowired
+    private OrderValidator orderValidator;
+
+    @Autowired
+    private MenuValidator menuValidator;
 
     @Test
     @DisplayName("테이블을 정상적으로 생성한다.")
@@ -121,10 +133,13 @@ class TableServiceTest {
             @DisplayName("조리중인 경우 예외가 발생한다.")
             void changeEmptyOrderStatusCooking() {
                 MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("추천메뉴"));
-                Menu menu = menuRepository.save(new Menu("강정치킨", BigDecimal.valueOf(37000), menuGroup.getId()));
+                Menu menu = menuRepository.save(
+                        new Menu("강정치킨", new Price(BigDecimal.valueOf(37000)), menuGroup.getId(), new ArrayList<>()));
                 OrderTable orderTable = orderTableRepository.save(new OrderTable(2, true));
 
-//                orderRepository.save(new Order(orderTable.getId(), List.of(new OrderLineItem(menu.getId(), 2))));
+                orderRepository.save(
+                        Order.startCooking(orderTable.getId(),
+                                new OrderLineItems(List.of(new OrderLineItem(menu.getId(), 2))), orderValidator));
 
                 assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), new OrderTableCommand(2, true)))
                         .hasMessage("조리중이거나 식사 상태입니다.");
