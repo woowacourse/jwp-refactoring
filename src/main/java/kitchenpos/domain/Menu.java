@@ -40,21 +40,21 @@ public class Menu {
                 final BigDecimal price,
                 final Long menuGroupId,
                 final List<MenuProduct> menuProducts) {
-        validatePrice(price);
-        validateMenuTotalPrice(price, menuProducts);
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
+        validatePrice();
+        validateMenuTotalPrice();
     }
 
-    private void validatePrice(final BigDecimal price) {
+    private void validatePrice() {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
     }
 
-    private void validateMenuTotalPrice(final BigDecimal price, final List<MenuProduct> menuProducts) {
+    private void validateMenuTotalPrice() {
         BigDecimal menuTotalPrice = menuProducts.stream()
                 .map(MenuProduct::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
