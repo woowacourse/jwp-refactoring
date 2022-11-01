@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import kitchenpos.exception.IllegalPriceException;
-import kitchenpos.fixtures.ProductFixtures;
+import kitchenpos.support.fixtures.ProductFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

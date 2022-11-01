@@ -9,7 +9,7 @@ import java.util.List;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.ProductCreateRequest;
 import kitchenpos.exception.IllegalPriceException;
-import kitchenpos.fixtures.ProductFixtures;
+import kitchenpos.support.fixtures.ProductFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

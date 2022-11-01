@@ -1,4 +1,4 @@
-package kitchenpos.fixtures;
+package kitchenpos.support.fixtures;
 
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;

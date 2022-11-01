@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import kitchenpos.exception.MenuTotalPriceException;
-import kitchenpos.fixtures.MenuFixtures;
+import kitchenpos.support.fixtures.MenuFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

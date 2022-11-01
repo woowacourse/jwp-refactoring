@@ -1,4 +1,4 @@
-package kitchenpos.fixtures;
+package kitchenpos.support.fixtures;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

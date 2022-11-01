@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.request.MenuGroupCreateRequest;
-import kitchenpos.fixtures.MenuGroupFixtures;
+import kitchenpos.support.fixtures.MenuGroupFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

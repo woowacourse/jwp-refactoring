@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import kitchenpos.exception.OrderCompletionException;
 import kitchenpos.exception.OrderLineItemEmptyException;
 import kitchenpos.exception.OrderLineItemSizeException;
-import kitchenpos.fixtures.OrderFixtures;
-import kitchenpos.fixtures.OrderLineItemFixtures;
+import kitchenpos.support.fixtures.OrderFixtures;
+import kitchenpos.support.fixtures.OrderLineItemFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

@@ -1,4 +1,4 @@
-package kitchenpos.fixtures;
+package kitchenpos.support.fixtures;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.fixtures.TableGroupFixtures;
+import kitchenpos.support.fixtures.TableGroupFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -13,11 +13,11 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.fixtures.MenuFixtures;
-import kitchenpos.fixtures.OrderFixtures;
-import kitchenpos.fixtures.OrderLineItemFixtures;
-import kitchenpos.fixtures.OrderTableFixtures;
-import kitchenpos.repositorysupport.OrderLineItemRepository;
+import kitchenpos.support.fixtures.MenuFixtures;
+import kitchenpos.support.fixtures.OrderFixtures;
+import kitchenpos.support.fixtures.OrderLineItemFixtures;
+import kitchenpos.support.fixtures.OrderTableFixtures;
+import kitchenpos.support.repository.OrderLineItemRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -176,7 +176,7 @@ class OrderLineItemRepositoryTest {
         final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(),
                 Collections.singletonList(orderLineItem));
         final Order savedOrder = orderRepository.save(order);
-        
+
         // when
         final List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(savedOrder.getId());
 

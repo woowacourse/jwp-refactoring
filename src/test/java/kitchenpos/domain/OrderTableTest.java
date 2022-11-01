@@ -6,8 +6,8 @@ import kitchenpos.exception.AlreadyGroupedException;
 import kitchenpos.exception.CanNotGroupException;
 import kitchenpos.exception.NumberOfGuestsSizeException;
 import kitchenpos.exception.TableEmptyException;
-import kitchenpos.fixtures.OrderTableFixtures;
-import kitchenpos.fixtures.TableGroupFixtures;
+import kitchenpos.support.fixtures.OrderTableFixtures;
+import kitchenpos.support.fixtures.TableGroupFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

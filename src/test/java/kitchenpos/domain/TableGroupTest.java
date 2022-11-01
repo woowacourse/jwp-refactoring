@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.Collections;
 import kitchenpos.exception.NotEnoughForGroupingException;
 import kitchenpos.exception.OrderTableSizeException;
-import kitchenpos.fixtures.OrderTableFixtures;
-import kitchenpos.fixtures.TableGroupFixtures;
+import kitchenpos.support.fixtures.OrderTableFixtures;
+import kitchenpos.support.fixtures.TableGroupFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
