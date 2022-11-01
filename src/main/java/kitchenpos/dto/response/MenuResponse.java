@@ -32,6 +32,15 @@ public class MenuResponse {
                 menuProductResponses);
     }
 
+    public static MenuResponse from(final Menu menu) {
+        final List<MenuProductResponse> menuProductResponses = menu.getMenuProducts().stream()
+                .map(menuProduct -> new MenuProductResponse(menuProduct.getSeq(), menuProduct.getMenu().getId(),
+                        menuProduct.getProduct().getId(), menuProduct.getQuantity()))
+                .collect(Collectors.toList());
+        return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroup().getId(),
+                menuProductResponses);
+    }
+
     public Long getId() {
         return id;
     }

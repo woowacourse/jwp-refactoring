@@ -2,8 +2,11 @@ package kitchenpos.application;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
@@ -45,9 +48,12 @@ public class ServiceTest {
         return new Product(name, new BigDecimal(price));
     }
 
-    protected Menu createMenu(final String name, final Long price, final Long menuGroupId) {
-        final MenuGroup menuGroup = menuGroupRepository.findById(menuGroupId).get();
-        return new Menu(name, new BigDecimal(price), menuGroup);
+    protected Menu createMenu(final String name, final Long price, final MenuGroup menuGroup,
+                              final List<Product> products) {
+        final List<MenuProduct> menuProducts = products.stream()
+                .map(product -> new MenuProduct(product, 100))
+                .collect(Collectors.toList());
+        return new Menu(name, new BigDecimal(price), menuGroup, menuProducts);
     }
 
     protected OrderTable createOrderTable(final Long id, final Long tableGroupId, final int numberOfGuests,

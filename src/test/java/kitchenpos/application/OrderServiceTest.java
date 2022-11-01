@@ -9,9 +9,15 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
 import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.ProductRepository;
+import kitchenpos.support.DatabaseCleanUp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,27 +26,36 @@ import org.springframework.beans.factory.annotation.Autowired;
 class OrderServiceTest extends ServiceTest {
 
     @Autowired
+    protected DatabaseCleanUp databaseCleanUp;
+    @Autowired
     private OrderService orderService;
-
-    private Long validOrderTableId;
-    private Long validMenuId;
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+    @Autowired
+    private ProductRepository productRepository;
+    @Autowired
+    private MenuRepository menuRepository;
+    @Autowired
+    private OrderTableRepository orderTableRepository;
+    private OrderTable savedOrderTable;
+    private Menu savedMenu;
 
     @BeforeEach
     void setUp() {
         databaseCleanUp.clear();
-        final OrderTable orderTable = orderTableRepository.save(createOrderTable(1, false));
-        validOrderTableId = orderTable.getId();
+        savedOrderTable = orderTableRepository.save(createOrderTable(1, false));
+
         final MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup("추가메뉴"));
-        final Menu menu = menuRepository.save(createMenu("후라후라후라", 27_000L, menuGroup.getId()));
-        validMenuId = menu.getId();
+        final Product product = productRepository.save(createProduct("후라이드", 19_000L));
+        savedMenu = menuRepository.save(createMenu("후라후라후라", 27_000L, menuGroup, List.of(product)));
     }
 
     @DisplayName("주문을 저장한다.")
     @Test
     void create() {
         // given
-        final OrderLineItemRequest orderLineItemRequest = createOrderLineItemRequest(validMenuId, 2);
-        final OrderRequest orderRequest = createOrderRequest(validOrderTableId, List.of(orderLineItemRequest));
+        final OrderLineItemRequest orderLineItemRequest = createOrderLineItemRequest(savedMenu.getId(), 2);
+        final OrderRequest orderRequest = createOrderRequest(savedOrderTable.getId(), List.of(orderLineItemRequest));
 
         // when
         final OrderResponse response = orderService.create(orderRequest);
@@ -56,7 +71,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void create_throwException_ifOrderLineItemsEmpty() {
         // given
-        final OrderRequest orderRequest = createOrderRequest(validOrderTableId, List.of());
+        final OrderRequest orderRequest = createOrderRequest(savedOrderTable.getId(), List.of());
 
         // when, then
         assertThatThrownBy(() -> orderService.create(orderRequest))
@@ -70,7 +85,7 @@ class OrderServiceTest extends ServiceTest {
         // given
         final Long noExistMenuId = 999L;
         final OrderLineItemRequest orderLineItemRequest = createOrderLineItemRequest(noExistMenuId, 2);
-        final OrderRequest orderRequest = createOrderRequest(validOrderTableId, List.of(orderLineItemRequest));
+        final OrderRequest orderRequest = createOrderRequest(savedOrderTable.getId(), List.of(orderLineItemRequest));
 
         // when, then
         assertThatThrownBy(() -> orderService.create(orderRequest))
@@ -83,7 +98,7 @@ class OrderServiceTest extends ServiceTest {
     void create_throwException_ifTableNotExist() {
         // given
         final Long noExistTableId = 999L;
-        final OrderLineItemRequest orderLineItemRequest = createOrderLineItemRequest(validMenuId, 2);
+        final OrderLineItemRequest orderLineItemRequest = createOrderLineItemRequest(savedMenu.getId(), 2);
         final OrderRequest orderRequest = createOrderRequest(noExistTableId, List.of(orderLineItemRequest));
 
         // when, then
@@ -97,7 +112,7 @@ class OrderServiceTest extends ServiceTest {
     void create_throwException_ifTableNotEmpty() {
         // given
         final OrderTable emptyOrderTable = orderTableRepository.save(createOrderTable(0, true));
-        final OrderLineItemRequest orderLineItemRequest = createOrderLineItemRequest(validMenuId, 2);
+        final OrderLineItemRequest orderLineItemRequest = createOrderLineItemRequest(savedMenu.getId(), 2);
         final OrderRequest orderRequest = createOrderRequest(emptyOrderTable.getId(), List.of(orderLineItemRequest));
 
         // when, then
@@ -110,8 +125,8 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void findAll() {
         // given
-        final OrderLineItemRequest orderLineItemRequest = createOrderLineItemRequest(validMenuId, 2);
-        final OrderRequest orderRequest = createOrderRequest(validOrderTableId, List.of(orderLineItemRequest));
+        final OrderLineItemRequest orderLineItemRequest = createOrderLineItemRequest(savedMenu.getId(), 2);
+        final OrderRequest orderRequest = createOrderRequest(savedOrderTable.getId(), List.of(orderLineItemRequest));
         orderService.create(orderRequest);
 
         // when, then
