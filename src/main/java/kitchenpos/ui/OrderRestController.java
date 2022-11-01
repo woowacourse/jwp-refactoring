@@ -24,8 +24,8 @@ public class OrderRestController {
 
     @PostMapping("/api/orders")
     public ResponseEntity<OrderResponse> create(@RequestBody OrderRequest orderRequest) {
-        final OrderResponse created = orderService.create(orderRequest);
-        final URI uri = URI.create("/api/orders/" + created.getId());
+        OrderResponse created = orderService.create(orderRequest);
+        URI uri = URI.create("/api/orders/" + created.getId());
         return ResponseEntity.created(uri)
                 .body(created);
     }

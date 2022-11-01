@@ -61,7 +61,7 @@ public class Menu {
         return menuProducts;
     }
 
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
+    public void setMenuProducts(List<MenuProduct> menuProducts) {
         this.menuProducts = menuProducts;
     }
 }

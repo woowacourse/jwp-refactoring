@@ -5,9 +5,9 @@ import kitchenpos.domain.Product;
 
 public class ProductResponse {
 
-    private Long id;
-    private String name;
-    private BigDecimal price;
+    private final Long id;
+    private final String name;
+    private final BigDecimal price;
 
     public ProductResponse(Product product) {
         this.id = product.getId();

@@ -24,7 +24,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    public JdbcTemplateOrderTableDao(final DataSource dataSource) {
+    public JdbcTemplateOrderTableDao(DataSource dataSource) {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName(TABLE_NAME)
@@ -33,10 +33,10 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
     }
 
     @Override
-    public OrderTable save(final OrderTable entity) {
+    public OrderTable save(OrderTable entity) {
         if (Objects.isNull(entity.getId())) {
-            final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
-            final Number key = jdbcInsert.executeAndReturnKey(parameters);
+            SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
+            Number key = jdbcInsert.executeAndReturnKey(parameters);
             return select(key.longValue());
         }
         update(entity);
@@ -44,48 +44,48 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
     }
 
     @Override
-    public Optional<OrderTable> findById(final Long id) {
+    public Optional<OrderTable> findById(Long id) {
         try {
             return Optional.of(select(id));
-        } catch (final EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }
     }
 
     @Override
     public List<OrderTable> findAll() {
-        final String sql = "SELECT id, table_group_id, number_of_guests, empty FROM order_table";
+        String sql = "SELECT id, table_group_id, number_of_guests, empty FROM order_table";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     @Override
-    public List<OrderTable> findAllByIdIn(final List<Long> ids) {
-        final String sql = "SELECT id, table_group_id, number_of_guests, empty FROM order_table WHERE id IN (:ids)";
-        final SqlParameterSource parameters = new MapSqlParameterSource()
+    public List<OrderTable> findAllByIdIn(List<Long> ids) {
+        String sql = "SELECT id, table_group_id, number_of_guests, empty FROM order_table WHERE id IN (:ids)";
+        SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("ids", ids);
         return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     @Override
-    public List<OrderTable> findAllByTableGroupId(final Long tableGroupId) {
-        final String sql = "SELECT id, table_group_id, number_of_guests, empty" +
+    public List<OrderTable> findAllByTableGroupId(Long tableGroupId) {
+        String sql = "SELECT id, table_group_id, number_of_guests, empty" +
                 " FROM order_table WHERE table_group_id = (:tableGroupId)";
-        final SqlParameterSource parameters = new MapSqlParameterSource()
+        SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("tableGroupId", tableGroupId);
         return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    private OrderTable select(final Long id) {
-        final String sql = "SELECT id, table_group_id, number_of_guests, empty FROM order_table WHERE id = (:id)";
-        final SqlParameterSource parameters = new MapSqlParameterSource()
+    private OrderTable select(Long id) {
+        String sql = "SELECT id, table_group_id, number_of_guests, empty FROM order_table WHERE id = (:id)";
+        SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("id", id);
         return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    private void update(final OrderTable entity) {
-        final String sql = "UPDATE order_table SET table_group_id = (:tableGroupId)," +
+    private void update(OrderTable entity) {
+        String sql = "UPDATE order_table SET table_group_id = (:tableGroupId)," +
                 " number_of_guests = (:numberOfGuests), empty = (:empty) WHERE id = (:id)";
-        final SqlParameterSource parameters = new MapSqlParameterSource()
+        SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("tableGroupId", entity.getTableGroupId())
                 .addValue("numberOfGuests", entity.getNumberOfGuests())
                 .addValue("empty", entity.isEmpty())
@@ -93,7 +93,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
         jdbcTemplate.update(sql, parameters);
     }
 
-    private OrderTable toEntity(final ResultSet resultSet) throws SQLException {
+    private OrderTable toEntity(ResultSet resultSet) throws SQLException {
         return new OrderTable(
                 resultSet.getLong(KEY_COLUMN_NAME),
                 isEmpty(resultSet.getLong("table_group_id")),

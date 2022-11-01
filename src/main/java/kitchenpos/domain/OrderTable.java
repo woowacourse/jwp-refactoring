@@ -40,7 +40,7 @@ public class OrderTable {
         return numberOfGuests;
     }
 
-    public void changeNumberOfGuests(final int numberOfGuests) {
+    public void changeNumberOfGuests(int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
     }
 
@@ -48,7 +48,7 @@ public class OrderTable {
         return empty;
     }
 
-    public void changeEmpty(final boolean empty) {
+    public void changeEmpty(boolean empty) {
         this.empty = empty;
     }
 }

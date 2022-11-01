@@ -8,8 +8,8 @@ import org.springframework.util.CollectionUtils;
 public class Order {
     private final Long id;
     private final Long orderTableId;
-    private OrderStatus orderStatus;
     private final LocalDateTime orderedTime;
+    private OrderStatus orderStatus;
     private List<OrderLineItem> orderLineItems;
 
     private Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
@@ -52,7 +52,7 @@ public class Order {
         return orderStatus;
     }
 
-    public void changeOrderStatus(final OrderStatus orderStatus) {
+    public void changeOrderStatus(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
 
@@ -64,7 +64,7 @@ public class Order {
         return orderLineItems;
     }
 
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
+    public void setOrderLineItems(List<OrderLineItem> orderLineItems) {
         this.orderLineItems = orderLineItems;
     }
 }

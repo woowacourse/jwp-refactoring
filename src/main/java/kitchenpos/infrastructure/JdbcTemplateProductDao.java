@@ -23,7 +23,7 @@ public class JdbcTemplateProductDao implements ProductDao {
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    public JdbcTemplateProductDao(final DataSource dataSource) {
+    public JdbcTemplateProductDao(DataSource dataSource) {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName(TABLE_NAME)
@@ -32,35 +32,35 @@ public class JdbcTemplateProductDao implements ProductDao {
     }
 
     @Override
-    public Product save(final Product entity) {
-        final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
-        final Number key = jdbcInsert.executeAndReturnKey(parameters);
+    public Product save(Product entity) {
+        SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
+        Number key = jdbcInsert.executeAndReturnKey(parameters);
         return select(key.longValue());
     }
 
     @Override
-    public Optional<Product> findById(final Long id) {
+    public Optional<Product> findById(Long id) {
         try {
             return Optional.of(select(id));
-        } catch (final EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }
     }
 
     @Override
     public List<Product> findAll() {
-        final String sql = "SELECT id, name, price FROM product";
+        String sql = "SELECT id, name, price FROM product";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    private Product select(final Long id) {
-        final String sql = "SELECT id, name, price FROM product WHERE id = (:id)";
-        final SqlParameterSource parameters = new MapSqlParameterSource()
+    private Product select(Long id) {
+        String sql = "SELECT id, name, price FROM product WHERE id = (:id)";
+        SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("id", id);
         return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    private Product toEntity(final ResultSet resultSet) throws SQLException {
+    private Product toEntity(ResultSet resultSet) throws SQLException {
         return new Product(
                 resultSet.getLong(KEY_COLUMN_NAME),
                 resultSet.getString("name"),

@@ -34,7 +34,7 @@ public class TableGroup {
         return orderTables.getOrderTables();
     }
 
-    public void setOrderTables(final List<OrderTable> orderTables) {
+    public void setOrderTables(List<OrderTable> orderTables) {
         this.orderTables = new OrderTables(orderTables);
     }
 }
