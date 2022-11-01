@@ -2,7 +2,7 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.Collections;
 import java.util.List;
@@ -128,7 +128,11 @@ class TableGroupServiceTest {
             TableGroupRequest request = new TableGroupRequest(List.of(tableRequest1, tableRequest2));
             TableGroupResponse tableGroup = tableGroupService.create(request);
 
-            assertDoesNotThrow(() -> tableGroupService.ungroup(tableGroup.getId()));
+            tableGroupService.ungroup(tableGroup.getId());
+            assertAll(
+                    () -> assertThat(table1.getTableGroup()).isNull(),
+                    () -> assertThat(table2.getTableGroup()).isNull()
+            );
         }
 
         @DisplayName("테이블 중 주문 상태가 Cooking, Meal인 주문이 있을 경우 예외가 발생한다")
