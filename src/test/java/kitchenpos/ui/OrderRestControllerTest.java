@@ -7,8 +7,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import common.IntegrationTest;
 import java.util.List;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.request.OrderLineItemRequest;
+import kitchenpos.ui.request.OrderRequest;
+import kitchenpos.ui.request.OrderStatusRequest;
+import kitchenpos.ui.request.OrderTableRequest;
+import kitchenpos.ui.response.OrderResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +43,7 @@ class OrderRestControllerTest {
         changeOrderTableToExistStatus(1L);
 
         // act & assert
-        assertThatThrownBy(() -> createOrder(1L, createOrderLineItemRequest(존재하지_않는_메뉴_ID(), 1L)))
+        assertThatThrownBy(() -> createOrder(1L, new OrderLineItemRequest(존재하지_않는_메뉴_ID(), 1L)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -51,11 +54,10 @@ class OrderRestControllerTest {
         changeOrderTableToExistStatus(1L);
 
         // act & assert
-        assertThatThrownBy(() ->
-                createOrder(1L,
-                        createOrderLineItemRequest(후라이드치킨_메뉴.id(), 1L),
-                        createOrderLineItemRequest(후라이드치킨_메뉴.id(), 2L)
-                )
+        assertThatThrownBy(() -> createOrder(1L,
+                new OrderLineItemRequest(후라이드치킨_메뉴.id(), 1L),
+                new OrderLineItemRequest(후라이드치킨_메뉴.id(), 2L)
+        )
         )
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -67,7 +69,7 @@ class OrderRestControllerTest {
         changeOrderTableToEmptyStatus(1L);
 
         // act & assert
-        assertThatThrownBy(() -> createOrder(1L, createOrderLineItemRequest(후라이드치킨_메뉴.id(), 1L)))
+        assertThatThrownBy(() -> createOrder(1L, new OrderLineItemRequest(후라이드치킨_메뉴.id(), 1L)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -78,7 +80,7 @@ class OrderRestControllerTest {
         long notFoundOrderTableId = -1L;
 
         // act & assert
-        assertThatThrownBy(() -> createOrder(notFoundOrderTableId, createOrderLineItemRequest(후라이드치킨_메뉴.id(), 1L)))
+        assertThatThrownBy(() -> createOrder(notFoundOrderTableId, new OrderLineItemRequest(후라이드치킨_메뉴.id(), 1L)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -97,7 +99,7 @@ class OrderRestControllerTest {
     void changeCompletionOrderStatus() {
         // arrange
         changeOrderTableToExistStatus(1L);
-        Order order = createOrder(1L, createOrderLineItemRequest(후라이드치킨_메뉴.id(), 1L));
+        OrderResponse order = createOrder(1L, new OrderLineItemRequest(후라이드치킨_메뉴.id(), 1L));
 
         changeOrderStatus(order.getId(), "MEAL");
         changeOrderStatus(order.getId(), "COMPLETION");
@@ -107,39 +109,23 @@ class OrderRestControllerTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    private OrderLineItem createOrderLineItemRequest(long menuId, long quantity) {
-        OrderLineItem item = new OrderLineItem();
-        item.setMenuId(menuId);
-        item.setQuantity(quantity);
-        return item;
+    private OrderResponse createOrder(final long orderTableId, final OrderLineItemRequest... itemRequests) {
+        final OrderRequest request = new OrderRequest(orderTableId, List.of(itemRequests));
+        return sut.create(request).getBody();
     }
 
-    private Order createOrder(long orderTableId, OrderLineItem... itemRequests) {
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderLineItems(List.of(itemRequests));
-        return sut.create(order).getBody();
-    }
-
-    private void changeOrderTableToEmptyStatus(long orderTableId) {
-        OrderTable orderTableRequest = createOrderTableRequest(true);
+    private void changeOrderTableToEmptyStatus(final long orderTableId) {
+        OrderTableRequest orderTableRequest = new OrderTableRequest(true);
         tableRestController.changeEmpty(orderTableId, orderTableRequest);
     }
 
-    private void changeOrderTableToExistStatus(long orderTableId) {
-        OrderTable orderTableRequest = createOrderTableRequest(false);
+    private void changeOrderTableToExistStatus(final long orderTableId) {
+        OrderTableRequest orderTableRequest = new OrderTableRequest(false);
         tableRestController.changeEmpty(orderTableId, orderTableRequest);
     }
 
-    private OrderTable createOrderTableRequest(boolean isEmpty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(isEmpty);
-        return orderTable;
-    }
-
-    private void changeOrderStatus(long orderId, String status) {
-        Order order = new Order();
-        order.setOrderStatus(status);
-        sut.changeOrderStatus(orderId, order);
+    private void changeOrderStatus(final long orderId, final String status) {
+        OrderStatusRequest request = new OrderStatusRequest(status);
+        sut.changeOrderStatus(orderId, request);
     }
 }

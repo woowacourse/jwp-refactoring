@@ -7,10 +7,11 @@ import common.IntegrationTest;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.request.OrderLineItemRequest;
+import kitchenpos.ui.request.OrderRequest;
+import kitchenpos.ui.request.OrderTableRequest;
+import kitchenpos.ui.request.TableGroupRequest;
+import kitchenpos.ui.request.TableIdRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,8 +56,7 @@ class TableRestControllerTest {
         // arrange
         changeOrderTableStatus(1L, false);
 
-        OrderLineItem item = createOrderLineItemRequest(후라이드치킨_메뉴.id(), 1L);
-        createOrder(1L, item);
+        createOrder(1L, new OrderLineItemRequest(후라이드치킨_메뉴.id(), 1L));
 
         // act & assert
         assertThatThrownBy(() -> changeOrderTableStatus(1L, true))
@@ -88,46 +88,25 @@ class TableRestControllerTest {
     }
 
     private void groupTables(long... tableIds) {
-        List<OrderTable> orderTables = Arrays.stream(tableIds)
-                .mapToObj(id -> {
-                    OrderTable orderTable = new OrderTable();
-                    orderTable.setId(id);
-                    return orderTable;
-                })
+        List<TableIdRequest> orderTables = Arrays.stream(tableIds)
+                .mapToObj(TableIdRequest::new)
                 .collect(Collectors.toList());
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(orderTables);
-        tableGroupRestController.create(tableGroup);
+        TableGroupRequest request = new TableGroupRequest(orderTables);
+        tableGroupRestController.create(request);
     }
 
     private void changeOrderTableStatus(long orderTableId, boolean isEmpty) {
-        OrderTable orderTableRequest = createOrderTableRequest(isEmpty);
+        OrderTableRequest orderTableRequest = new OrderTableRequest(isEmpty);
         sut.changeEmpty(orderTableId, orderTableRequest);
     }
 
-    private OrderTable createOrderTableRequest(boolean isEmpty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(isEmpty);
-        return orderTable;
-    }
-
-    private OrderLineItem createOrderLineItemRequest(long menuId, long quantity) {
-        OrderLineItem item = new OrderLineItem();
-        item.setMenuId(menuId);
-        item.setQuantity(quantity);
-        return item;
-    }
-
-    private void createOrder(long orderTableId, OrderLineItem... itemRequests) {
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderLineItems(List.of(itemRequests));
-        orderRestController.create(order);
+    private void createOrder(long orderTableId, OrderLineItemRequest... itemRequests) {
+        final OrderRequest request = new OrderRequest(orderTableId, List.of(itemRequests));
+        orderRestController.create(request);
     }
 
     private void changeNumberOfGuest(long orderTableId, int numberOfGuest) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuest);
-        sut.changeNumberOfGuests(orderTableId, orderTable);
+        OrderTableRequest request = new OrderTableRequest(numberOfGuest);
+        sut.changeNumberOfGuests(orderTableId, request);
     }
 }

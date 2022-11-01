@@ -2,6 +2,8 @@ package acceptance;
 
 import static fixture.MenuFixtures.양념치킨_메뉴;
 import static fixture.MenuFixtures.후라이드치킨_메뉴;
+import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -14,31 +16,14 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.request.OrderLineItemRequest;
+import kitchenpos.ui.request.OrderRequest;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 public class OrderAcceptanceTest extends AcceptanceTest {
-
-    private static class OrderLineItemRequest {
-
-        private final long menuId;
-        private final long quantity;
-
-        public OrderLineItemRequest(long menuId, long quantity) {
-            this.menuId = menuId;
-            this.quantity = quantity;
-        }
-
-        public long getMenuId() {
-            return menuId;
-        }
-
-        public long getQuantity() {
-            return quantity;
-        }
-    }
 
     @DisplayName("주문을 생성한다.")
     @Test
@@ -54,7 +39,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
         // assert
         assertThat(order.getId()).isNotNull();
-        assertThat(order.getOrderStatus()).isEqualTo("COOKING");
+        assertThat(order.getOrderStatus()).isEqualTo(COOKING);
         assertThat(order.getOrderTableId()).isEqualTo(1L);
         assertThat(order.getOrderLineItems())
                 .extracting(OrderLineItem::getMenuId, OrderLineItem::getQuantity)
@@ -102,7 +87,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
         // assert
         assertThat(changedOrder.getId()).isEqualTo(order.getId());
-        assertThat(changedOrder.getOrderStatus()).isEqualTo("MEAL");
+        assertThat(changedOrder.getOrderStatus()).isEqualTo(MEAL);
     }
 
     private Order changeOrderStatus(long id, String status) {
@@ -145,14 +130,11 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     }
 
     private Order createOrder(long tableId, OrderLineItemRequest... itemRequests) {
-        Map<String, Object> body = Map.of(
-                "orderTableId", tableId,
-                "orderLineItems", List.of(itemRequests)
-        );
+        OrderRequest request = new OrderRequest(tableId, List.of(itemRequests));
 
         return RestAssured.given().log().all()
                 .contentType(APPLICATION_JSON_VALUE)
-                .body(body)
+                .body(request)
                 .when().log().all()
                 .post("/api/orders")
                 .then().log().all()

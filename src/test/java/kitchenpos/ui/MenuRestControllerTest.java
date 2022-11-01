@@ -9,8 +9,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import common.IntegrationTest;
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.ui.request.MenuProductRequest;
+import kitchenpos.ui.request.MenuRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +25,8 @@ class MenuRestControllerTest {
     @Test
     void priceMustOverZero() {
         // arrange
-        MenuProduct menuProductRequest = createMenuProductRequest(후라이드_상품.id(), 2);
-        Menu menuRequest = createMenuRequest("후라이드+후라이드", BigDecimal.ONE.negate(), 두마리메뉴_그룹.id(),
+        MenuProductRequest menuProductRequest = createMenuProductRequest(후라이드_상품.id(), 2);
+        MenuRequest menuRequest = createMenuRequest("후라이드+후라이드", BigDecimal.ONE.negate(), 두마리메뉴_그룹.id(),
                 menuProductRequest);
 
         // act & assert
@@ -38,8 +38,8 @@ class MenuRestControllerTest {
     @Test
     void priceMustNotNull() {
         // arrange
-        MenuProduct menuProductRequest = createMenuProductRequest(후라이드_상품.id(), 2);
-        Menu menuRequest = createMenuRequest("후라이드+후라이드", null, 두마리메뉴_그룹.id(), menuProductRequest);
+        MenuProductRequest menuProductRequest = createMenuProductRequest(후라이드_상품.id(), 2);
+        MenuRequest menuRequest = createMenuRequest("후라이드+후라이드", null, 두마리메뉴_그룹.id(), menuProductRequest);
 
         // act & assert
         assertThatThrownBy(() -> sut.create(menuRequest))
@@ -50,8 +50,8 @@ class MenuRestControllerTest {
     @Test
     void menuGroupMustExist() {
         // arrange
-        MenuProduct menuProductRequest = createMenuProductRequest(후라이드_상품.id(), 2);
-        Menu menuRequest = createMenuRequest("후라이드+후라이드", BigDecimal.ZERO, 존재하지않는_그룹_ID(),
+        MenuProductRequest menuProductRequest = createMenuProductRequest(후라이드_상품.id(), 2);
+        MenuRequest menuRequest = createMenuRequest("후라이드+후라이드", BigDecimal.ZERO, 존재하지않는_그룹_ID(),
                 menuProductRequest);
 
         // act & assert
@@ -63,8 +63,8 @@ class MenuRestControllerTest {
     @Test
     void productMustExist() {
         // arrange
-        MenuProduct menuProductRequest = createMenuProductRequest(존재하지_않는_상품_ID(), 1);
-        Menu menuRequest = createMenuRequest("후라이드+후라이드", BigDecimal.ZERO, 두마리메뉴_그룹.id(),
+        MenuProductRequest menuProductRequest = createMenuProductRequest(존재하지_않는_상품_ID(), 1);
+        MenuRequest menuRequest = createMenuRequest("후라이드+후라이드", BigDecimal.ZERO, 두마리메뉴_그룹.id(),
                 menuProductRequest);
 
         // act & assert
@@ -76,30 +76,21 @@ class MenuRestControllerTest {
     @Test
     void priceMustUnderTotalOfMenuProductPrice() {
         // arrange
-        MenuProduct menuProductRequest = createMenuProductRequest(후라이드_상품.id(), 1);
+        MenuProductRequest menuProductRequest = createMenuProductRequest(후라이드_상품.id(), 1);
         BigDecimal overPrice = BigDecimal.valueOf(후라이드_상품.가격() + 1);
-        Menu menuRequest = createMenuRequest("후라이드+후라이드", overPrice, 두마리메뉴_그룹.id(), menuProductRequest);
+        MenuRequest menuRequest = createMenuRequest("후라이드+후라이드", overPrice, 두마리메뉴_그룹.id(), menuProductRequest);
 
         // act & assert
         assertThatThrownBy(() -> sut.create(menuRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    private Menu createMenuRequest(String name, BigDecimal price, long menuGroupId,
-                                   MenuProduct... menuProduct) {
-        Menu menu = new Menu();
-        menu.setName(name);
-        menu.setMenuGroupId(menuGroupId);
-        menu.setPrice(price);
-        menu.setMenuProducts(List.of(menuProduct));
-        return menu;
+    private MenuRequest createMenuRequest(String name, BigDecimal price, long menuGroupId,
+                                          MenuProductRequest... menuProduct) {
+        return new MenuRequest(name, price, menuGroupId, List.of(menuProduct));
     }
 
-    private MenuProduct createMenuProductRequest(long productId, int quantity) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-        return menuProduct;
+    private MenuProductRequest createMenuProductRequest(long productId, int quantity) {
+        return new MenuProductRequest(productId, quantity);
     }
-
 }

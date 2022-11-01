@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import common.IntegrationTest;
 import java.math.BigDecimal;
-import kitchenpos.domain.Product;
+import kitchenpos.ui.request.ProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,25 +18,19 @@ class ProductRestControllerTest {
     @DisplayName("가격은 0원 미만일 수 없다.")
     @Test
     void priceMustOverZero() {
-        Product productRequest = createProductRequest("국밥", BigDecimal.ONE.negate());
-
-        assertThatThrownBy(() -> sut.create(productRequest))
+        assertThatThrownBy(() -> createProduct("국밥", BigDecimal.ONE.negate()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("가격은 null일 수 없다.")
     @Test
     void priceMustNotNull() {
-        Product productRequest = createProductRequest("국밥", null);
-
-        assertThatThrownBy(() -> sut.create(productRequest))
+        assertThatThrownBy(() -> createProduct("국밥", null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    private Product createProductRequest(String name, BigDecimal price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(price);
-        return product;
+    private void createProduct(String name, BigDecimal price) {
+        ProductRequest request = new ProductRequest(name, price);
+        sut.create(request);
     }
 }
