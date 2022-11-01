@@ -1,6 +1,5 @@
 package kitchenpos.ui;
 
-import static kitchenpos.fixture.domain.OrderFixture.createOrder;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -53,6 +52,29 @@ public class OrderRestControllerTest extends ControllerTest {
 
         // then
         perform.andExpect(status().isCreated());
+    }
+
+    @DisplayName("주문을 생성할 때 주문항목이 비어있으면 에러를 반환한다.")
+    @Test
+    public void create_fail_if_orderLineItems_is_empty() throws Exception {
+        // given
+        OrderCreateRequest request = new OrderCreateRequest(1L, new ArrayList<>());
+        given(orderService.create(any())).willReturn(OrderCreateResponse.of(Order.builder()
+                .id(1L)
+                .orderStatus(OrderStatus.COOKING.name())
+                .orderTableId(1L)
+                .orderedTime(LocalDateTime.now())
+                .build(), new ArrayList<>()));
+
+        // when
+        ResultActions perform = mockMvc.perform(post("/api/orders")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+                        .content(objectMapper.writeValueAsString(request)))
+                .andDo(print());
+
+        // then
+        perform.andExpect(status().isBadRequest());
     }
 
     @DisplayName("주문을 조회한다.")

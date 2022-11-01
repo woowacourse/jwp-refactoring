@@ -7,7 +7,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -66,18 +65,6 @@ class OrderServiceTest {
         Order dbOrder = orderRepository.findById(response.getId())
                 .orElseThrow(RuntimeException::new);
         assertThat(dbOrder.getOrderTableId()).isEqualTo(request.getOrderTableId());
-    }
-
-    @DisplayName("주문을 생성할 때 주문항목이 비어있다면 예외를 반환한다.")
-    @Test
-    void create_fail_if_orderLineItems_is_empty() {
-        // given
-        OrderTable orderTable = orderTableRepository.save(createOrderTable());
-        OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(), new ArrayList<>());
-
-        // when, then
-        assertThatThrownBy(() -> orderService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문을 생성할 때 존재하지 않는 메뉴라면 예외를 반환한다.")

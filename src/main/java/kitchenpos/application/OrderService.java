@@ -20,7 +20,6 @@ import kitchenpos.ui.dto.response.OrderCreateResponse;
 import kitchenpos.ui.dto.response.OrderFindAllResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
@@ -49,7 +48,6 @@ public class OrderService {
     @Transactional
     public OrderCreateResponse create(final OrderCreateRequest request) {
         final List<OrderLineItemDto> orderItemDtos = request.getOrderLineItems();
-        validateEmptySize(orderItemDtos);
         validateExistMenu(orderItemDtos);
         Long orderTableId = request.getOrderTableId();
         validateOrderTable(orderTableId);
@@ -63,12 +61,6 @@ public class OrderService {
         }
 
         return OrderCreateResponse.of(order, orderLineItems);
-    }
-
-    private void validateEmptySize(final List<OrderLineItemDto> orderItemDtos) {
-        if (CollectionUtils.isEmpty(orderItemDtos)) {
-            throw new IllegalArgumentException();
-        }
     }
 
     private void validateExistMenu(final List<OrderLineItemDto> orderItemDtos) {
