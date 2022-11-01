@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import kitchenpos.exception.badrequest.NegativePriceException;
 
 @Embeddable
 public class Price {
@@ -19,9 +20,9 @@ public class Price {
         this.value = value;
     }
 
-    private static void validateValue(final BigDecimal value) {
+    private void validateValue(final BigDecimal value) {
         if (value.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+            throw new NegativePriceException();
         }
     }
 

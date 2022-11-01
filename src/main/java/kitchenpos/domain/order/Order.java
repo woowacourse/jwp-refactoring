@@ -16,6 +16,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import kitchenpos.domain.common.OrderStatus;
+import kitchenpos.exception.badrequest.CompletedOrderCannotChangeException;
+import kitchenpos.exception.badrequest.OrderLineItemNotExistsException;
 import org.springframework.util.CollectionUtils;
 
 @Entity
@@ -65,7 +67,7 @@ public class Order {
 
     private void validateItemExists(final List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
+            throw new OrderLineItemNotExistsException();
         }
     }
 
@@ -76,7 +78,7 @@ public class Order {
 
     private void validateNotCompleted() {
         if (orderStatus == COMPLETION) {
-            throw new IllegalArgumentException();
+            throw new CompletedOrderCannotChangeException();
         }
     }
 

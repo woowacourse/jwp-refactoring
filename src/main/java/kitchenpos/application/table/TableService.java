@@ -9,6 +9,8 @@ import kitchenpos.dto.table.mapper.OrderTableDtoMapper;
 import kitchenpos.dto.table.mapper.OrderTableMapper;
 import kitchenpos.dto.table.request.OrderTableCreateRequest;
 import kitchenpos.dto.table.response.OrderTableResponse;
+import kitchenpos.exception.badrequest.CookingOrMealOrderTableCannotChangeEmptyException;
+import kitchenpos.exception.badrequest.OrderNotExistsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +45,7 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final boolean empty) {
         OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(OrderNotExistsException::new);
         validateTableDoesNotHaveCookingOrMealOrder(orderTableId);
         savedOrderTable.changeEmpty(empty);
         return orderTableDtoMapper.toOrderTableResponse(savedOrderTable);
@@ -52,14 +54,14 @@ public class TableService {
     private void validateTableDoesNotHaveCookingOrMealOrder(final Long orderTableId) {
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, List.of(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
+            throw new CookingOrMealOrderTableCannotChangeEmptyException();
         }
     }
 
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {
         OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(OrderNotExistsException::new);
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
         return orderTableDtoMapper.toOrderTableResponse(savedOrderTable);
     }

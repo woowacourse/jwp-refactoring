@@ -19,6 +19,9 @@ import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.dto.table.request.TableGroupCreateRequest;
 import kitchenpos.dto.table.response.TableGroupResponse;
+import kitchenpos.exception.badrequest.CookingOrMealOrderTableCannotUngroupedException;
+import kitchenpos.exception.badrequest.OrderTableNotExistsException;
+import kitchenpos.exception.badrequest.TableGroupNotExistsException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -57,9 +60,9 @@ class TableGroupServiceTest {
     void 단체_지정하려는_테이블이_존재하지_않으면_예외를_반환한다() {
         OrderTable orderTable = orderTableRepository.save(new OrderTable(1, true));
 
-        TableGroupCreateRequest request = new TableGroupCreateRequest(orderTable.getId());
+        TableGroupCreateRequest request = new TableGroupCreateRequest(orderTable.getId(), orderTable.getId() + 1);
 
-        assertThatThrownBy(() -> tableGroupService.create(request)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(request)).isInstanceOf(OrderTableNotExistsException.class);
     }
 
     @Test
@@ -73,6 +76,11 @@ class TableGroupServiceTest {
                 .getId();
 
         assertDoesNotThrow(() -> tableGroupService.ungroup(tableGroupId));
+    }
+
+    @Test
+    void 해제하려는_단체_지정이_존재하지_않을_경우_예외를_반환한다() {
+        assertThatThrownBy(() -> tableGroupService.ungroup(0L)).isInstanceOf(TableGroupNotExistsException.class);
     }
 
     @Test
@@ -91,6 +99,7 @@ class TableGroupServiceTest {
         OrderLineItem orderLineItem = new OrderLineItem(menuId, 1);
         orderRepository.save(new Order(orderTable1.getId(), List.of(orderLineItem)));
 
-        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
+                .isInstanceOf(CookingOrMealOrderTableCannotUngroupedException.class);
     }
 }

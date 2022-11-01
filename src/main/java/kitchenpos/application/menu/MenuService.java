@@ -13,6 +13,8 @@ import kitchenpos.dto.menu.mapper.MenuMapper;
 import kitchenpos.dto.menu.request.MenuCreateRequest;
 import kitchenpos.dto.menu.request.MenuProductCreateRequest;
 import kitchenpos.dto.menu.response.MenuResponse;
+import kitchenpos.exception.badrequest.MenuGroupNotExistsException;
+import kitchenpos.exception.badrequest.ProductNotExistsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,7 +48,7 @@ public class MenuService {
 
     private void validateMenuGroupExists(final MenuCreateRequest menuCreateRequest) {
         if (!menuGroupRepository.existsById(menuCreateRequest.getMenuGroupId())) {
-            throw new IllegalArgumentException();
+            throw new MenuGroupNotExistsException();
         }
     }
 
@@ -59,7 +61,7 @@ public class MenuService {
 
     private MenuProduct createMenuProduct(final MenuProductCreateRequest menuProductCreateRequest) {
         Product product = productRepository.findById(menuProductCreateRequest.getProductId())
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(ProductNotExistsException::new);
         return new MenuProduct(product.getId(), menuProductCreateRequest.getQuantity(), product.getPrice());
     }
 

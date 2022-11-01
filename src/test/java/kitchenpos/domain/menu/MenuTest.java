@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.common.Price;
+import kitchenpos.exception.badrequest.ExpensiveMenuPriceException;
 import org.junit.jupiter.api.Test;
 
 class MenuTest {
@@ -23,6 +24,6 @@ class MenuTest {
     void 가격이_메뉴_상품_가격의_총합보다_비싸면_예외를_반환한다() {
         MenuProduct menuProduct = new MenuProduct(1L, 1, new Price(BigDecimal.ZERO));
         assertThatThrownBy(() -> new Menu("메뉴", BigDecimal.ONE, 1L, List.of(menuProduct)))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(ExpensiveMenuPriceException.class);
     }
 }

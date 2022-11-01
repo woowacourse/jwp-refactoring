@@ -15,6 +15,8 @@ import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.dto.menu.request.MenuCreateRequest;
 import kitchenpos.dto.menu.request.MenuProductCreateRequest;
 import kitchenpos.dto.menu.response.MenuResponse;
+import kitchenpos.exception.badrequest.MenuGroupNotExistsException;
+import kitchenpos.exception.badrequest.ProductNotExistsException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -51,7 +53,7 @@ class MenuServiceTest {
     void 메뉴_그룹이_존재하지_않으면_예외를_반환한다() {
         MenuCreateRequest request = new MenuCreateRequest("메뉴", BigDecimal.ZERO, 0L, new ArrayList<>());
 
-        assertThatThrownBy(() -> menuService.create(request)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(request)).isInstanceOf(MenuGroupNotExistsException.class);
     }
 
     @Test
@@ -62,7 +64,7 @@ class MenuServiceTest {
         MenuCreateRequest menuRequest = new MenuCreateRequest("메뉴", BigDecimal.valueOf(2_000), menuGroupId,
                 List.of(menuProductRequest));
 
-        assertThatThrownBy(() -> menuService.create(menuRequest)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(menuRequest)).isInstanceOf(ProductNotExistsException.class);
     }
 
     @Test

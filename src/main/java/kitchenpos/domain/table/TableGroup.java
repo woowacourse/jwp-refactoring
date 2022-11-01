@@ -10,6 +10,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import kitchenpos.exception.badrequest.AlreadyGroupedException;
+import kitchenpos.exception.badrequest.InvalidOrderTableSizeException;
+import kitchenpos.exception.badrequest.OrderTableNotEmptyException;
 import org.springframework.util.CollectionUtils;
 
 @Entity
@@ -47,25 +50,25 @@ public class TableGroup {
         validateOrderTablesSize(orderTables);
         for (final OrderTable orderTable : orderTables) {
             validateEmptyTable(orderTable);
-            validateTableGroupNotDesignated(orderTable);
+            validateNotGrouped(orderTable);
         }
     }
 
     private void validateOrderTablesSize(final List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
+            throw new InvalidOrderTableSizeException();
         }
     }
 
     private void validateEmptyTable(final OrderTable orderTable) {
         if (!orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new OrderTableNotEmptyException();
         }
     }
 
-    private void validateTableGroupNotDesignated(final OrderTable orderTable) {
-        if (orderTable.isDesignatedTableGroup()) {
-            throw new IllegalArgumentException();
+    private void validateNotGrouped(final OrderTable orderTable) {
+        if (orderTable.isGrouped()) {
+            throw new AlreadyGroupedException();
         }
     }
 

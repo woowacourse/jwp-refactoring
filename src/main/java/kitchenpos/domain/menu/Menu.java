@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import kitchenpos.domain.common.Price;
+import kitchenpos.exception.badrequest.ExpensiveMenuPriceException;
 
 @Entity
 @Table(name = "menu")
@@ -60,7 +61,7 @@ public class Menu {
                 .map(MenuProduct::getAmount)
                 .reduce(new Price(BigDecimal.ZERO), Price::add);
         if (price.isExpensiveThan(sum)) {
-            throw new IllegalArgumentException();
+            throw new ExpensiveMenuPriceException();
         }
     }
 

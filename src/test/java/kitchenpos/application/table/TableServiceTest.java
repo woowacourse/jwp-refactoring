@@ -16,6 +16,8 @@ import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.dto.table.request.OrderTableCreateRequest;
 import kitchenpos.dto.table.response.OrderTableResponse;
+import kitchenpos.exception.badrequest.CookingOrMealOrderTableCannotChangeEmptyException;
+import kitchenpos.exception.badrequest.OrderNotExistsException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -67,7 +69,7 @@ class TableServiceTest {
     @Test
     void 변경_대상_테이블이_존재하지_않으면_예외를_반환한다() {
         assertThatThrownBy(() -> tableService.changeEmpty(0L, true))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderNotExistsException.class);
     }
 
     @Test
@@ -82,7 +84,7 @@ class TableServiceTest {
         orderRepository.save(new Order(orderTableId, MEAL, List.of(orderLineItem)));
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, true))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(CookingOrMealOrderTableCannotChangeEmptyException.class);
     }
 
     @Test
@@ -97,7 +99,7 @@ class TableServiceTest {
         orderRepository.save(new Order(orderTableId, List.of(orderLineItem)));
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, true))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(CookingOrMealOrderTableCannotChangeEmptyException.class);
     }
 
     @Test
@@ -113,6 +115,6 @@ class TableServiceTest {
     @Test
     void 인원_변경_테이블이_존재하지_않으면_예외를_반환한다() {
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(0L, 1))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderNotExistsException.class);
     }
 }

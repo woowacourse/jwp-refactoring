@@ -5,6 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
+import kitchenpos.exception.badrequest.AlreadyGroupedException;
+import kitchenpos.exception.badrequest.InvalidOrderTableSizeException;
+import kitchenpos.exception.badrequest.OrderTableNotEmptyException;
 import org.junit.jupiter.api.Test;
 
 class TableGroupTest {
@@ -14,7 +17,7 @@ class TableGroupTest {
         OrderTable orderTable = new OrderTable(0, true);
 
         assertThatThrownBy(() -> new TableGroup(List.of(orderTable)))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidOrderTableSizeException.class);
     }
 
     @Test
@@ -23,7 +26,7 @@ class TableGroupTest {
         OrderTable orderTable2 = new OrderTable(0, false);
 
         assertThatThrownBy(() -> new TableGroup(List.of(orderTable1, orderTable2)))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderTableNotEmptyException.class);
     }
 
     @Test
@@ -33,7 +36,7 @@ class TableGroupTest {
         new TableGroup(List.of(orderTable1, orderTable2));
 
         assertThatThrownBy(() -> new TableGroup(List.of(orderTable1, orderTable2)))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(AlreadyGroupedException.class);
     }
 
     @Test

@@ -12,6 +12,9 @@ import kitchenpos.dto.table.mapper.TableGroupDtoMapper;
 import kitchenpos.dto.table.request.OrderTableIdRequest;
 import kitchenpos.dto.table.request.TableGroupCreateRequest;
 import kitchenpos.dto.table.response.TableGroupResponse;
+import kitchenpos.exception.badrequest.CookingOrMealOrderTableCannotUngroupedException;
+import kitchenpos.exception.badrequest.OrderTableNotExistsException;
+import kitchenpos.exception.badrequest.TableGroupNotExistsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,8 +39,7 @@ public class TableGroupService {
     @Transactional
     public TableGroupResponse create(final TableGroupCreateRequest tableGroupCreateRequest) {
         List<OrderTable> savedOrderTables = findSavedOrderTables(tableGroupCreateRequest);
-        TableGroup savedTableGroup =
-                tableGroupRepository.save(new TableGroup(savedOrderTables));
+        TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(savedOrderTables));
         return tableGroupDtoMapper.toTableGroupResponse(savedTableGroup);
     }
 
@@ -50,7 +52,7 @@ public class TableGroupService {
 
     private void validateOrderTablesExists(final List<Long> orderTableIds, final List<OrderTable> savedOrderTables) {
         if (orderTableIds.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
+            throw new OrderTableNotExistsException();
         }
     }
 
@@ -63,7 +65,7 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(TableGroupNotExistsException::new);
         List<Long> orderTableIds = getOrderTableIds(tableGroup.getOrderTables());
         validateOrderTableNotCompleted(orderTableIds);
         tableGroup.ungroup();
@@ -78,7 +80,7 @@ public class TableGroupService {
     private void validateOrderTableNotCompleted(final List<Long> orderTableIds) {
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, List.of(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
+            throw new CookingOrMealOrderTableCannotUngroupedException();
         }
     }
 }

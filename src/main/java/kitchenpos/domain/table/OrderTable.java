@@ -12,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import kitchenpos.domain.common.NumberOfGuests;
+import kitchenpos.exception.badrequest.EmptyTableCannotChangeNumberOfGuestsException;
+import kitchenpos.exception.badrequest.GroupedTableCannotChangeEmptyException;
 
 @Entity
 @Table(name = "order_table")
@@ -44,13 +46,13 @@ public class OrderTable {
     }
 
     public void changeEmpty(final boolean empty) {
-        validateTableGroupNotDesignated();
+        validateNotGrouped();
         this.empty = empty;
     }
 
-    private void validateTableGroupNotDesignated() {
+    private void validateNotGrouped() {
         if (tableGroup != null) {
-            throw new IllegalArgumentException();
+            throw new GroupedTableCannotChangeEmptyException();
         }
     }
 
@@ -61,11 +63,11 @@ public class OrderTable {
 
     private void validateNotEmpty() {
         if (empty) {
-            throw new IllegalArgumentException();
+            throw new EmptyTableCannotChangeNumberOfGuestsException();
         }
     }
 
-    public boolean isDesignatedTableGroup() {
+    public boolean isGrouped() {
         return this.tableGroup != null;
     }
 

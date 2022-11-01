@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
+import kitchenpos.exception.badrequest.NegativePriceException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -12,7 +13,7 @@ class PriceTest {
 
     @Test
     void 가격은_음수일_수_없다() {
-        assertThatThrownBy(() -> new Price(BigDecimal.valueOf(-1))).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> new Price(BigDecimal.valueOf(-1))).isInstanceOf(NegativePriceException.class);
     }
 
     @Test

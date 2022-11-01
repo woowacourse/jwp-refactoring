@@ -3,6 +3,7 @@ package kitchenpos.domain.common;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import kitchenpos.exception.badrequest.NotPositiveQuantityException;
 
 @Embeddable
 public class Quantity {
@@ -20,7 +21,7 @@ public class Quantity {
 
     private void validatePositive(final long value) {
         if (value <= 0) {
-            throw new IllegalArgumentException("수량은 1개 이상이어야 합니다.");
+            throw new NotPositiveQuantityException();
         }
     }
 
