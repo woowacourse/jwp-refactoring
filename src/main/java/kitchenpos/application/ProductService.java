@@ -9,6 +9,7 @@ import kitchenpos.ui.dto.ProductRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Service
 public class ProductService {
     private final ProductDao productDao;
@@ -17,12 +18,12 @@ public class ProductService {
         this.productDao = productDao;
     }
 
-    @Transactional
     public ProductResponse create(ProductRequest request) {
         Product savedProduct = productDao.save(request.toProduct());
         return new ProductResponse(savedProduct);
     }
 
+    @Transactional(readOnly = true)
     public List<ProductResponse> list() {
         return productDao.findAll()
                 .stream()

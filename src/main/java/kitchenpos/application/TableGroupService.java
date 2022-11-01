@@ -15,6 +15,7 @@ import kitchenpos.ui.dto.TableGroupRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Service
 public class TableGroupService {
     private final OrderDao orderDao;
@@ -27,7 +28,6 @@ public class TableGroupService {
         this.tableGroupDao = tableGroupDao;
     }
 
-    @Transactional
     public TableGroupResponse create(TableGroupRequest request) {
         List<OrderTable> requestTables = request.getOrderTables();
         List<OrderTable> savedTables = orderTableDao.findAllByIdIn(getTableIds(requestTables));
@@ -47,7 +47,6 @@ public class TableGroupService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     public void ungroup(Long tableGroupId) {
         List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
 

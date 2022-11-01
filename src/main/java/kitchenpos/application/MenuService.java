@@ -13,6 +13,7 @@ import kitchenpos.ui.dto.MenuRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Service
 public class MenuService {
     private final MenuDao menuDao;
@@ -25,7 +26,6 @@ public class MenuService {
         this.productDao = productDao;
     }
 
-    @Transactional
     public MenuResponse create(MenuRequest request) {
         if (!menuGroupDao.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException("메뉴 집합이 존재하지 않습니다.");
@@ -49,6 +49,7 @@ public class MenuService {
                 .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
     }
 
+    @Transactional(readOnly = true)
     public List<MenuResponse> list() {
         return menuDao.findAll()
                 .stream()

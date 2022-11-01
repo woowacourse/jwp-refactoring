@@ -15,6 +15,7 @@ import kitchenpos.ui.dto.OrderRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Service
 public class OrderService {
     private final MenuDao menuDao;
@@ -34,7 +35,6 @@ public class OrderService {
         this.orderTableDao = orderTableDao;
     }
 
-    @Transactional
     public OrderResponse create(OrderRequest request) {
         validateOrderLineItems(request);
 
@@ -63,6 +63,7 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<OrderResponse> list() {
         return orderDao.findAll()
                 .stream()
@@ -70,7 +71,6 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     public OrderResponse changeOrderStatus(Long orderId, OrderStatus orderStatus) {
         final Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("상태를 변화시키기 위한 주문이 없습니다."));
