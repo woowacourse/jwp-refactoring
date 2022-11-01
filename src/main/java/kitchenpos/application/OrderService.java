@@ -60,10 +60,7 @@ public class OrderService {
                 .map(it -> new OrderLineItem(null, it.getMenuId(), it.getQuantity()))
                 .collect(Collectors.toList()));
 
-        final List<Long> menuIds = mapToMenuIds(orderRequest);
-        if (!orderLineItems.isSameMenuSize(menuRepository.countByIdIn(menuIds))) {
-            throw new IllegalArgumentException();
-        }
+        orderLineItems.validateMenuSize(menuRepository.countByIdIn(mapToMenuIds(orderRequest)));
         return orderLineItems;
     }
 

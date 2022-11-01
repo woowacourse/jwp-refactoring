@@ -14,8 +14,10 @@ public class OrderLineItems {
         this.orderLineItems = orderLineItems;
     }
 
-    public boolean isSameMenuSize(Long menuSize) {
-        return orderLineItems.size() == menuSize;
+    public void validateMenuSize(Long menuSize) {
+        if (orderLineItems.size() != menuSize) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public List<OrderLineItem> getOrderLineItems() {
