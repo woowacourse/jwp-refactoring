@@ -5,7 +5,6 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import kitchenpos.dao.menu.MenuDao;
 import kitchenpos.dao.menugroup.MenuGroupDao;
-import kitchenpos.dao.menuproduct.MenuProductDao;
 import kitchenpos.dao.product.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
@@ -17,18 +16,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenuService {
     private final MenuDao menuDao;
     private final MenuGroupDao menuGroupDao;
-    private final MenuProductDao menuProductDao;
     private final ProductDao productDao;
 
     public MenuService(
             final MenuDao menuDao,
             final MenuGroupDao menuGroupDao,
-            final MenuProductDao menuProductDao,
             final ProductDao productDao
     ) {
         this.menuDao = menuDao;
         this.menuGroupDao = menuGroupDao;
-        this.menuProductDao = menuProductDao;
         this.productDao = productDao;
     }
 
@@ -61,12 +57,6 @@ public class MenuService {
     }
 
     public List<Menu> list() {
-        final List<Menu> menus = menuDao.findAll();
-
-        for (final Menu menu : menus) {
-            menu.addMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
-        }
-
-        return menus;
+        return menuDao.findAll();
     }
 }
