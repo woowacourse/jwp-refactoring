@@ -102,7 +102,7 @@ public class Order {
         }
     }
 
-    public void changeOrderStatus(final Order order) {
-        this.orderStatus = order.getOrderStatus();
+    public void changeOrderStatus(final OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
     }
 }

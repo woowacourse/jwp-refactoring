@@ -105,7 +105,7 @@ public class OrderService {
                 .orElseThrow(IllegalArgumentException::new);
 
         savedOrder.validateOrderStatus();
-        savedOrder.changeOrderStatus(order);
+        savedOrder.changeOrderStatus(order.getOrderStatus());
         orderDao.save(savedOrder);
 
         savedOrder.changeOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));

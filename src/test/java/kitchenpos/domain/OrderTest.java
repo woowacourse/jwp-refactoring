@@ -34,9 +34,7 @@ class OrderTest {
     @Test
     void changeOrderStatus() {
         final Order order = new Order(1L, OrderStatus.MEAL, ORDER_LINE_ITEMS);
-        final Order newOrder = new Order(1L, OrderStatus.COOKING, ORDER_LINE_ITEMS);
-
-        order.changeOrderStatus(newOrder);
+        order.changeOrderStatus(OrderStatus.COOKING);
 
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
     }
