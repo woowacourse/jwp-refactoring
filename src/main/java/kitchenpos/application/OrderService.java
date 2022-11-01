@@ -66,11 +66,11 @@ public class OrderService {
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final Order order) {
+    public Order changeOrderStatus(final Long orderId, final String orderStatus) {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(NotFoundOrderException::new);
 
-        savedOrder.updateOrderStatus(OrderStatus.valueOf(order.getOrderStatus()).name());
+        savedOrder.updateOrderStatus(OrderStatus.valueOf(orderStatus).name());
         return savedOrder;
     }
 }

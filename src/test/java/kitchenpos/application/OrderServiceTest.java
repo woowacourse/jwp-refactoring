@@ -149,10 +149,9 @@ class OrderServiceTest {
         // given
         final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableId(1L);
         final Order saved = orderRepository.save(order);
-        final Order orderInMeal = OrderFixtures.MEAL_ORDER.create();
 
         // when
-        final Order changedOrder = orderService.changeOrderStatus(saved.getId(), orderInMeal);
+        final Order changedOrder = orderService.changeOrderStatus(saved.getId(), OrderStatus.MEAL.name());
 
         // when, then
         assertAll(
@@ -165,11 +164,8 @@ class OrderServiceTest {
     @Test
     @DisplayName("변경하려는 주문이 존재하지 않을 때 주문의 상태를 변경하려고 하면 예외가 발생한다.")
     void changeOrderStatusExceptionWrongOrderId() {
-        // given
-        final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableId(1L);
-
         // when, then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(-1L, order))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(-1L, OrderStatus.COOKING.name()))
                 .isExactlyInstanceOf(NotFoundOrderException.class);
     }
 
@@ -179,10 +175,9 @@ class OrderServiceTest {
         // given
         final Order order = OrderFixtures.COMPLETION_ORDER.createWithOrderTableId(1L);
         final Order completionOrder = orderRepository.save(order);
-        final Order orderInMeal = OrderFixtures.MEAL_ORDER.create();
 
         // when, then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(completionOrder.getId(), orderInMeal))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(completionOrder.getId(), OrderStatus.MEAL.name()))
                 .isExactlyInstanceOf(OrderCompletionException.class);
     }
 }
