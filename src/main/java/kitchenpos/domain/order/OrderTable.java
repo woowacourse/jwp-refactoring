@@ -48,12 +48,19 @@ public class OrderTable {
 
     public void changeNumberOfGuests(final int numberOfGuests) {
         validateNumberOfGuests(numberOfGuests);
+        validateTableEmpty();
 
         this.numberOfGuests = numberOfGuests;
     }
 
     private void validateNumberOfGuests(final int numberOfGuests) {
         if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateTableEmpty() {
+        if (empty) {
             throw new IllegalArgumentException();
         }
     }
@@ -77,10 +84,6 @@ public class OrderTable {
 
     public Long getId() {
         return id;
-    }
-
-    public List<Order> getOrders() {
-        return orders;
     }
 
     public TableGroup getTableGroup() {
