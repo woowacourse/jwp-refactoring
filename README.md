@@ -182,6 +182,6 @@
 
 ### 중점 개선 사항
 
- * [ ] JdbcTemplate -> Spring Data JPA 변경
- * [ ] 비즈니스 로직 도메인 내로 이동 및 테스트 추가
- * [ ] setter 제거
+ * [x] JdbcTemplate -> Spring Data JPA 변경
+ * [x] 비즈니스 로직 도메인 내로 이동 및 테스트 추가
+ * [x] setter 제거
