@@ -46,9 +46,9 @@ public class Menu {
     }
 
     private void validatePriceCheaperThanTotal(Price price, List<MenuProduct> menuProducts) {
-        BigDecimal sum = menuProducts.stream()
-                .map(MenuProduct::calculatePrice)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        Price sum = menuProducts.stream()
+                .map(MenuProduct::getPrice)
+                .reduce(Price.ZERO, Price::add);
         if (price.isMoreExpensiveThan(sum)) {
             throw new IllegalArgumentException("메뉴의 가격은 메뉴 상품 가격의 합계보다 비쌀 수 없습니다.");
         }

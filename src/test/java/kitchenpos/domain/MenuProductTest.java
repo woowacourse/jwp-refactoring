@@ -19,12 +19,12 @@ class MenuProductTest {
     }
 
     @Test
-    void calculatePrice() {
+    void getPrice() {
         // given
         MenuProduct menuProduct = new MenuProduct(new Product("상품", BigDecimal.valueOf(1000L)), 2L);
         // when
-        BigDecimal actual = menuProduct.calculatePrice();
+        Price actual = menuProduct.getPrice();
         // then
-        assertThat(actual).isEqualTo(BigDecimal.valueOf(2000L));
+        assertThat(actual).isEqualTo(new Price(BigDecimal.valueOf(2000L)));
     }
 }
