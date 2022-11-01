@@ -6,6 +6,8 @@ import org.springframework.util.CollectionUtils;
 
 public class OrderTables {
 
+    private static final int MINIMUM_ORDER_TABLES_SIZE = 2;
+
     private final List<OrderTable> orderTables;
 
     public OrderTables(List<OrderTable> orderTables) {
@@ -14,7 +16,7 @@ public class OrderTables {
     }
 
     private void validateSize(final List<OrderTable> orderTables) {
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < MINIMUM_ORDER_TABLES_SIZE) {
             throw new IllegalArgumentException();
         }
     }
