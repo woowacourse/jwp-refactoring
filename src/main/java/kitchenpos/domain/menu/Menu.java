@@ -1,33 +1,43 @@
 package kitchenpos.domain.menu;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.vo.Price;
 
 public class Menu {
 
     private Long id;
     private String name;
-    private BigDecimal price;
+    private Price price;
     private Long menuGroupId;
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
-    public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId) {
+    public Menu(final Long id,
+                final String name,
+                final Price price,
+                final Long menuGroupId,
+                final List<MenuProduct> menuProducts) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.menuGroupId = menuGroupId;
+        this.menuProducts = menuProducts;
+    }
+
+    public Menu(final Long id, final String name, final Price price, final Long menuGroupId) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
     }
 
-    public static Menu create(final String name, final BigDecimal price, final Long menuGroupId, final List<Long> productIds) {
-        final Menu menu = new Menu(null, name, price, menuGroupId);
-        productIds.forEach(menu::addProduct);
-        return menu;
+    public static Menu create(final String name,
+                              final BigDecimal price,
+                              final Long menuGroupId,
+                              final List<MenuProduct> menuProducts) {
+        return new Menu(null, name, Price.valueOf(price), menuGroupId, menuProducts);
     }
 
     private Optional<MenuProduct> findProduct(final Long productId) {
@@ -40,16 +50,24 @@ public class Menu {
         final Optional<MenuProduct> menuProduct = findProduct(productId);
         menuProduct.ifPresentOrElse(
                 findMenuProduct -> findMenuProduct.addQuantity(quantity),
-                () -> menuProducts.add(new MenuProduct(this.id, productId, 1))
+                () -> menuProducts.add(new MenuProduct(this.id, productId, quantity))
         );
-    }
-
-    public void addProduct(final Long productId) {
-        addProduct(productId, 1);
     }
 
     public void addProduct(final MenuProduct menuProduct) {
         addProduct(menuProduct.getProductId(), menuProduct.getQuantity());
+    }
+
+    public void validateOverPrice(final CalculateProductPriceService calculateProductPriceService) {
+        if (isOverPrice(calculateProductPriceService)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private boolean isOverPrice(final CalculateProductPriceService calculateProductPriceService) {
+        final BigDecimal productPriceSum = calculateProductPriceService.calculateMenuProductPriceSum(getMenuProducts());
+        return price.getValue()
+                .compareTo(productPriceSum) > 0;
     }
 
     public Long getId() {
@@ -61,7 +79,7 @@ public class Menu {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getValue();
     }
 
     public Long getMenuGroupId() {

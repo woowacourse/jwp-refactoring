@@ -11,6 +11,7 @@ import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.vo.Price;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +27,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     @DisplayName("존재하지 않는 메뉴는 주문할 수 없다.")
     void createNoExistMenu() {
-        final Menu notExistMenu = new Menu(-1L, "없는메뉴", BigDecimal.valueOf(999_999L), -1L);
+        final Menu notExistMenu = new Menu(-1L, "없는메뉴", Price.valueOf(BigDecimal.valueOf(999_999L)), -1L);
 
         assertThatThrownBy(() -> 주문_요청한다(손님있는_테이블, notExistMenu.getId()))
                 .isInstanceOf(IllegalArgumentException.class);

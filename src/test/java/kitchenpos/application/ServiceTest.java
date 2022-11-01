@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -23,6 +24,7 @@ import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
+import kitchenpos.domain.vo.Price;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -134,7 +136,10 @@ public abstract class ServiceTest {
     }
 
     public Menu 메뉴_등록(final String name, final Long price, final MenuGroup menuGroup, final Long... productIds) {
-        final Menu menu = Menu.create(name, createBigDecimalPrice(price), menuGroup.getId(), List.of(productIds));
+        final List<MenuProduct> menuProducts = Arrays.stream(productIds)
+                .map(MenuProduct::new)
+                .collect(Collectors.toList());
+        final Menu menu = Menu.create(name, createBigDecimalPrice(price), menuGroup.getId(), menuProducts);
         final List<CreateMenuProductDto> createMenuProductDtos = menu.getMenuProducts()
                 .stream()
                 .map(menuProduct ->
@@ -166,16 +171,16 @@ public abstract class ServiceTest {
     }
 
     private Menu makeMenu(final MenuDto menuDto) {
-        final Menu menu1 = new Menu(
+        final Menu menu = new Menu(
                 menuDto.getId(),
                 menuDto.getName(),
-                menuDto.getPrice(),
+                Price.valueOf(menuDto.getPrice()),
                 menuDto.getMenuGroupId()
         );
         menuDto.getMenuProducts().forEach(menuProductDto ->
-                menu1.addProduct(menuProductDto.getProductId(), menuProductDto.getQuantity())
+                menu.addProduct(menuProductDto.getProductId(), menuProductDto.getQuantity())
         );
-        return menu1;
+        return menu;
     }
 
     public Menu 메뉴_찾기(final Long id) {

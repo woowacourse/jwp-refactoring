@@ -22,6 +22,10 @@ public class MenuProduct {
         this(null, productId, quantity);
     }
 
+    public MenuProduct(final Long productId) {
+        this(productId, 1);
+    }
+
     public boolean isSameProduct(final Long productId) {
         return this.productId.equals(productId);
     }

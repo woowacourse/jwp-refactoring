@@ -13,6 +13,7 @@ import java.util.Objects;
 
 @Service
 public class ProductService {
+
     private final ProductRepository productRepository;
 
     public ProductService(final ProductRepository productRepository) {
@@ -22,10 +23,6 @@ public class ProductService {
     @Transactional
     public ProductDto create(final String productName, final BigDecimal price) {
         final Product product = Product.create(productName, price);
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
         final Product savedProduct = productRepository.save(product);
         return ProductDto.from(savedProduct);
     }

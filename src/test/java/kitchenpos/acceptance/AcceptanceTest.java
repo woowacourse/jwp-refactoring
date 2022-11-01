@@ -22,6 +22,7 @@ import kitchenpos.application.dto.ProductDto;
 import kitchenpos.application.dto.TableDto;
 import kitchenpos.application.dto.TableGroupDto;
 import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTableRepository;
@@ -158,7 +159,10 @@ public class AcceptanceTest {
     }
 
     protected ExtractableResponse<Response> 메뉴_등록_요청(final String name, final Long price, final Long menuGroupId, final List<Long> productIds) {
-        final Menu menu = Menu.create(name, BigDecimal.valueOf(price), menuGroupId, productIds);
+        final List<MenuProduct> menuProducts = productIds.stream()
+                .map(MenuProduct::new)
+                .collect(Collectors.toList());
+        final Menu menu = Menu.create(name, BigDecimal.valueOf(price), menuGroupId, menuProducts);
         final List<CreateMenuProductRequest> createMenuProductRequests = menu.getMenuProducts()
                 .stream()
                 .map(menuProduct -> new CreateMenuProductRequest(menuProduct.getProductId(), menuProduct.getQuantity()))
