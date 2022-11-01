@@ -41,13 +41,6 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
 
-    private void setOrderTable(final List<OrderTable> orderTables) {
-        for (OrderTable orderTable : orderTables) {
-            orderTable.changeTableGroup(this);
-            orderTable.changeEmpty(false);
-        }
-    }
-
     private void validateOrderTables(final List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException();
@@ -57,6 +50,23 @@ public class TableGroup {
             if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
                 throw new IllegalArgumentException();
             }
+        }
+    }
+
+    private void setOrderTable(final List<OrderTable> orderTables) {
+        for (OrderTable orderTable : orderTables) {
+            orderTable.changeTableGroup(this);
+            orderTable.changeEmpty(false);
+        }
+    }
+
+    public void ungroup() {
+        for (OrderTable orderTable : orderTables) {
+            if (orderTable.hasNotCompletedOrder()) {
+                throw new IllegalArgumentException();
+            }
+
+            orderTable.changeTableGroup(null);
         }
     }
 
