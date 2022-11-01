@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,8 +39,6 @@ public class MenuService {
         validateMenuGroup(menuRequest);
         final Menu menu = toMenu(menuRequest);
 
-        validatePrice(menuRequest, menu);
-
         final Menu savedMenu = menuDao.save(menu);
         saveMenuProducts(menu.getMenuProducts(), savedMenu);
 
@@ -61,29 +58,28 @@ public class MenuService {
                 toMenuProducts(menuRequest.getMenuProducts()));
     }
 
-    private List<MenuProduct> toMenuProducts(final List<MenuProductRequest> menuProducts) {
-        return menuProducts.stream()
-                .map(it -> new MenuProduct(it.getProductId(), it.getQuantity()))
+    private List<MenuProduct> toMenuProducts(final List<MenuProductRequest> menuProductRequests) {
+        return menuProductRequests.stream()
+                .map(it -> {
+                    final Product product = findProductById(it.getProductId());
+                    return new MenuProduct(product.getId(), it.getQuantity(), product.getPrice());
+                })
                 .collect(Collectors.toList());
     }
 
-    private void validatePrice(final MenuRequest menuRequest, final Menu menu) {
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProductRequest menuProductRequest : menuRequest.getMenuProducts()) {
-            final Product product = productDao.findById(menuProductRequest.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProductRequest.getQuantity())));
-        }
-        menu.validatePriceGreaterThan(sum);
+    private Product findProductById(final Long productId) {
+        return productDao.findById(productId)
+                .orElseThrow(IllegalArgumentException::new);
     }
 
     private void saveMenuProducts(final List<MenuProduct> menuProducts, final Menu savedMenu) {
         final Long menuId = savedMenu.getId();
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
 
-        for (MenuProduct menuProduct : menuProducts) {
+        for (final MenuProduct menuProduct : menuProducts) {
             menuProduct.addMenuId(menuId);
             savedMenuProducts.add(menuProductDao.save(menuProduct));
+
         }
         savedMenu.changeMenuProducts(savedMenuProducts);
     }

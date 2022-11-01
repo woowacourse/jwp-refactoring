@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -12,8 +13,8 @@ import kitchenpos.dto.OrderTableRequest;
 public class ServiceTestFixture {
     public static final MenuGroup MENU_GROUP1 = new MenuGroup(1L, "한마리메뉴");
 
-    public static final MenuProduct MENU_PRODUCT1 = new MenuProduct(1L, 1L);
-    public static final MenuProduct MENU_PRODUCT2 = new MenuProduct(2L, 1L);
+    public static final MenuProduct MENU_PRODUCT1 = new MenuProduct(1L, 1, BigDecimal.valueOf(16000));
+    public static final MenuProduct MENU_PRODUCT2 = new MenuProduct(1L, 1L, BigDecimal.valueOf(16000));
 
     public static final MenuProductRequest MENU_PRODUCT_REQUEST1 = new MenuProductRequest(1L, 1L);
     public static final MenuProductRequest MENU_PRODUCT_REQUEST2 = new MenuProductRequest(2L, 1L);

@@ -12,28 +12,47 @@ public class Menu {
     private Long menuGroupId;
     private List<MenuProduct> menuProducts;
 
-    public Menu(Long id, String name, BigDecimal price, Long menuGroupId,
-                List<MenuProduct> menuProducts) {
+//    public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
+//                final List<MenuProduct> menuProducts) {
+//        this.id = id;
+//        this.name = name;
+//        this.price = price;
+//        this.menuGroupId = menuGroupId;
+//        this.menuProducts = new ArrayList<>(menuProducts);
+//    }
+
+    public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
     }
 
-    public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
-        this.menuGroupId = menuGroupId;
-    }
-
-    public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    public Menu(final String name, final BigDecimal price, final Long menuGroupId,
+                final List<MenuProduct> menuProducts) {
         validatePrice(price);
+        validateMenuProductPriceGreaterThan(price, menuProducts);
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
+        this.menuProducts = new ArrayList<>(menuProducts);
+    }
+
+    private void validatePrice(final BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateMenuProductPriceGreaterThan(final BigDecimal price, final List<MenuProduct> menuProducts) {
+        BigDecimal sum = BigDecimal.ZERO;
+
+        for (final MenuProduct menuProduct : menuProducts) {
+            sum = sum.add(menuProduct.calculateMultiplyPrice());
+        }
+        if (price.compareTo(sum) > 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
@@ -53,22 +72,10 @@ public class Menu {
     }
 
     public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
+        return new ArrayList<>(menuProducts);
     }
 
     public void changeMenuProducts(final List<MenuProduct> menuProducts) {
         this.menuProducts = new ArrayList<>(menuProducts);
-    }
-
-    public void validatePrice(final BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    public void validatePriceGreaterThan(final BigDecimal sum) {
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
     }
 }

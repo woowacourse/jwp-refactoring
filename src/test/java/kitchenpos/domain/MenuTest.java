@@ -1,7 +1,6 @@
 package kitchenpos.domain;
 
 import static kitchenpos.application.ServiceTestFixture.MENU_PRODUCTS;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
@@ -22,18 +21,8 @@ class MenuTest {
     }
 
     @Test
-    void validatePriceGreaterThan_fail() {
-        Menu menu = new Menu("순삭치킨", BigDecimal.valueOf(10000), 1L, MENU_PRODUCTS);
-
-        assertThatThrownBy(() -> menu.validatePriceGreaterThan(BigDecimal.valueOf(9000)))
+    void throw_exception_when_price_is_greater_than_AllMenuProductSum() {
+        assertThatThrownBy(() -> new Menu("순삭치킨", BigDecimal.valueOf(33000), 1L, MENU_PRODUCTS))
                 .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void validatePriceGreaterThan_success() {
-        Menu menu = new Menu("순삭치킨", BigDecimal.valueOf(10000), 1L, MENU_PRODUCTS);
-
-        assertThatCode(() -> menu.validatePriceGreaterThan(BigDecimal.valueOf(11000)))
-                .doesNotThrowAnyException();
     }
 }
