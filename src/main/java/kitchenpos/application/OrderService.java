@@ -67,9 +67,9 @@ public class OrderService {
                 .orElseThrow(IllegalArgumentException::new);
 
         final OrderStatus orderStatus = OrderStatus.from(request.getOrderStatus());
-        savedOrder.updateOrderStatus(orderStatus.name());
+        final Order changedOrder = savedOrder.updateOrderStatus(orderStatus.name());
 
-        final Order order = orderRepository.save(savedOrder);
+        final Order order = orderRepository.save(changedOrder);
         return OrderResponse.from(order);
     }
 }

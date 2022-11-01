@@ -9,7 +9,7 @@ public class Order {
 
     private final Long id;
     private final Long orderTableId;
-    private String orderStatus;
+    private final String orderStatus;
     private final LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
 
@@ -53,6 +53,17 @@ public class Order {
         return orderStatus.equals(status.name());
     }
 
+    public Order updateOrderStatus(final String orderStatus) {
+        validateCompletion();
+        return new Order(id, orderTableId, orderStatus, orderedTime, orderLineItems);
+    }
+
+    private void validateCompletion() {
+        if (hasStatus(OrderStatus.COMPLETION)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public Long getId() {
         return id;
     }
@@ -65,17 +76,6 @@ public class Order {
         return orderStatus;
     }
 
-    public void updateOrderStatus(final String orderStatus) {
-        validateCompletion();
-        this.orderStatus = orderStatus;
-    }
-
-    private void validateCompletion() {
-        if (hasStatus(OrderStatus.COMPLETION)) {
-            throw new IllegalArgumentException();
-        }
-    }
-
     public LocalDateTime getOrderedTime() {
         return orderedTime;
     }
@@ -84,13 +84,13 @@ public class Order {
         return orderLineItems;
     }
 
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
-    }
-
     public List<Long> getMenuIds() {
         return orderLineItems.stream()
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
+    }
+
+    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        this.orderLineItems = orderLineItems;
     }
 }
