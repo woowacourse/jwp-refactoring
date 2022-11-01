@@ -6,6 +6,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.repository.MenuGroupRepository;
@@ -42,11 +43,7 @@ public class MenuService {
         final Menu savedMenu = menuRepository.save(menu);
 
         final List<MenuProduct> menuProducts = request.getMenuProducts().stream()
-                .map(menuProductRequest -> {
-                    final Product product = productRepository.findById(menuProductRequest.getProductId())
-                            .orElseThrow(() -> new IllegalArgumentException("없는 상품은 메뉴에 추가할 수 없습니다."));
-                    return new MenuProduct(savedMenu, product, menuProductRequest.getQuantity());
-                })
+                .map(menuProductRequest -> toMenuProduct(menuProductRequest, savedMenu))
                 .collect(Collectors.toList());
 
         savedMenu.validatePriceAppropriate(menuProducts);
@@ -61,5 +58,11 @@ public class MenuService {
         return menus.stream()
                 .map(menu -> MenuResponse.of(menu, menuProductRepository.findAllByMenuId(menu.getId())))
                 .collect(Collectors.toList());
+    }
+
+    private MenuProduct toMenuProduct(final MenuProductRequest request, final Menu menu) {
+        final Product product = productRepository.findById(request.getProductId())
+                .orElseThrow(() -> new IllegalArgumentException("없는 상품은 메뉴에 추가할 수 없습니다."));
+        return new MenuProduct(menu, product, request.getQuantity());
     }
 }
