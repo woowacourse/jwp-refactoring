@@ -1,5 +1,6 @@
 package kitchenpos.domain.menu;
 
+import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -30,6 +31,10 @@ public class MenuProduct {
     public MenuProduct(final Product product, final long quantity) {
         this.product = product;
         this.quantity = quantity;
+    }
+
+    public BigDecimal calculateAmount() {
+        return product.getPrice().multiply(BigDecimal.valueOf(quantity));
     }
 
     public Long getSeq() {

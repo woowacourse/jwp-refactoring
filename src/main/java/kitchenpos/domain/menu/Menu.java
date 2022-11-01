@@ -56,9 +56,8 @@ public class Menu {
     private void validateSumOfProducts(final BigDecimal price, final List<MenuProduct> menuProducts) {
         BigDecimal sum = BigDecimal.ZERO;
         for (MenuProduct menuProduct : menuProducts) {
-            sum = sum.add(menuProduct.getProduct().getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+            sum = sum.add(menuProduct.calculateAmount());
         }
-
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException("메뉴의 가격이 상품의 총 가격포다 클 수 없습니다.");
         }
