@@ -46,7 +46,7 @@ public class Menu {
     public void validatePriceAppropriate(final List<MenuProduct> menuProducts) {
         BigDecimal sum = BigDecimal.ZERO;
         for (MenuProduct menuProduct : menuProducts) {
-            sum = sum.add(menuProduct.getPrice());
+            sum = sum.add(menuProduct.getAmount());
         }
 
         if (price.compareTo(sum) > 0) {
