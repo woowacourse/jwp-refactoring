@@ -42,14 +42,14 @@ public class MenuService {
 
         final List<MenuProductRequest> menuProductRequests = menuRequest.getMenuProducts();
         final List<MenuProduct> menuProducts = menuProductRequests.stream()
-                .map((menuProductRequest) -> findProduct(menu, menuProductRequest))
+                .map((menuProductRequest) -> convertToMenuProduct(menu, menuProductRequest))
                 .collect(Collectors.toList());
 
         menu.changeMenuProducts(menuProducts);
         return MenuResponse.from(menuDao.save(menu));
     }
 
-    private MenuProduct findProduct(Menu menu, MenuProductRequest menuProductRequest) {
+    private MenuProduct convertToMenuProduct(Menu menu, MenuProductRequest menuProductRequest) {
         final Product product = productDao.findById(menuProductRequest.getProductId())
                 .orElseThrow(() -> new IllegalArgumentException("메뉴에 등록하려는 상품이 존재하지 않습니다."));
         return new MenuProduct(menu, product, menuProductRequest.getQuantity());
