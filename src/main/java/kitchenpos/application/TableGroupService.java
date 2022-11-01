@@ -30,7 +30,7 @@ public class TableGroupService {
     @Transactional
     public TableGroup create(final TableGroup tableGroup) {
         final OrderTables savedOrderTables = orderTableDao.findAllByIdIn(tableGroup.getOrderTableIds());
-        return tableGroupDao.save(tableGroup.create(savedOrderTables));
+        return tableGroupDao.save(tableGroup.init(savedOrderTables));
     }
 
     @Transactional

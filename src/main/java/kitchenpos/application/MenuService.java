@@ -39,7 +39,7 @@ public class MenuService {
     }
 
     private void validatePrice(final Menu menu) {
-        final Products products = productDao.findAllByIdIn(menu.getMenuProductIds());
+        final Products products = productDao.findAllByIdIn(menu.getProductIds());
         menu.validatePrice(products);
     }
 

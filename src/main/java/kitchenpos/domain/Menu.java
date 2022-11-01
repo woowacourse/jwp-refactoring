@@ -52,17 +52,9 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    public boolean isGreaterPriceThan(final BigDecimal sum) {
-        return price.compareTo(sum) > 0;
-    }
-
-    private boolean isNullOrNegativePrice() {
-        return null == price || price.compareTo(BigDecimal.ZERO) < 0;
-    }
-
-    public List<Long> getMenuProductIds() {
+    public List<Long> getProductIds() {
         return menuProducts.stream()
-                .map(MenuProduct::getSeq)
+                .map(MenuProduct::getProductId)
                 .collect(Collectors.toList());
     }
 
@@ -71,5 +63,13 @@ public class Menu {
         if (isNullOrNegativePrice() || isGreaterPriceThan(amount)) {
             throw new IllegalArgumentException();
         }
+    }
+
+    private boolean isNullOrNegativePrice() {
+        return null == price || price.compareTo(BigDecimal.ZERO) < 0;
+    }
+
+    private boolean isGreaterPriceThan(final BigDecimal sum) {
+        return price.compareTo(sum) > 0;
     }
 }

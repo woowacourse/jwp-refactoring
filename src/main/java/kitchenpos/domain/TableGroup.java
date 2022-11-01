@@ -22,7 +22,7 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
 
-    public TableGroup create(final OrderTables savedOrderTables) {
+    public TableGroup init(final OrderTables savedOrderTables) {
         savedOrderTables.validateOrderTables();
         validateOrderTableSize(savedOrderTables.size());
         return new TableGroup(id, LocalDateTime.now(), savedOrderTables.getOrderTables());

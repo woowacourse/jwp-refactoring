@@ -17,10 +17,6 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public static OrderTable create(final OrderTable orderTable) {
-        return new OrderTable(null, null, orderTable.numberOfGuests, orderTable.empty);
-    }
-
     public Long getId() {
         return id;
     }
@@ -79,5 +75,9 @@ public class OrderTable {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();
         }
+    }
+
+    public OrderTable init() {
+        return new OrderTable(null, null, numberOfGuests, empty);
     }
 }
