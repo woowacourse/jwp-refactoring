@@ -11,7 +11,6 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.ui.dto.OrderRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +34,7 @@ public class OrderService {
         this.orderTableDao = orderTableDao;
     }
 
-    public OrderResponse create(OrderRequest request) {
+    public OrderResponse create(Order request) {
         validateOrderLineItems(request);
 
         OrderTable orderTable = orderTableDao.findById(request.getOrderTableId())
@@ -49,7 +48,7 @@ public class OrderService {
         return new OrderResponse(order);
     }
 
-    private void validateOrderLineItems(OrderRequest request) {
+    private void validateOrderLineItems(Order request) {
         List<OrderLineItem> orderLineItems = request.getOrderLineItems();
 
         if (orderLineItems.size() != menuDao.countByIdIn(getMenuIds(orderLineItems))) {

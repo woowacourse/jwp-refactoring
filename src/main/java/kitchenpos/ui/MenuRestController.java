@@ -21,7 +21,7 @@ public class MenuRestController {
 
     @PostMapping("/api/menus")
     public ResponseEntity<MenuResponse> create(@RequestBody MenuRequest menuRequest) {
-        MenuResponse created = menuService.create(menuRequest);
+        MenuResponse created = menuService.create(menuRequest.toMenu());
         URI uri = URI.create("/api/menus/" + created.getId());
         return ResponseEntity.created(uri)
                 .body(created);

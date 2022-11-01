@@ -6,12 +6,12 @@ import java.util.List;
 
 public class Menu {
     private final String name;
-    private final BigDecimal price;
+    private final Price price;
     private final Long menuGroupId;
     private Long id;
     private List<MenuProduct> menuProducts;
 
-    private Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    private Menu(Long id, String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -20,13 +20,14 @@ public class Menu {
     }
 
     public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
-        this(id, name, price, menuGroupId, new ArrayList<>());
+        this(id, name, new Price(price), menuGroupId, new ArrayList<>());
     }
 
     public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        Price validPrice = new Price(price);
         validatePrice(menuProducts, price);
         this.name = name;
-        this.price = price;
+        this.price = validPrice;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
     }
@@ -39,7 +40,8 @@ public class Menu {
     }
 
     private BigDecimal calculateSum(List<MenuProduct> menuProducts) {
-        return menuProducts.stream().map(MenuProduct::getAmount)
+        return menuProducts.stream()
+                .map(MenuProduct::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
     }
@@ -53,7 +55,7 @@ public class Menu {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getValue();
     }
 
     public Long getMenuGroupId() {

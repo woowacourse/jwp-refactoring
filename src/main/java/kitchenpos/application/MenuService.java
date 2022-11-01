@@ -9,7 +9,6 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import kitchenpos.ui.dto.MenuRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +25,7 @@ public class MenuService {
         this.productDao = productDao;
     }
 
-    public MenuResponse create(MenuRequest request) {
+    public MenuResponse create(Menu request) {
         if (!menuGroupDao.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException("메뉴 집합이 존재하지 않습니다.");
         }

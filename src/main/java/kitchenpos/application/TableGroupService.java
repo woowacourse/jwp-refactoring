@@ -11,7 +11,6 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.ui.dto.TableGroupRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +27,7 @@ public class TableGroupService {
         this.tableGroupDao = tableGroupDao;
     }
 
-    public TableGroupResponse create(TableGroupRequest request) {
+    public TableGroupResponse create(TableGroup request) {
         List<OrderTable> requestTables = request.getOrderTables();
         List<OrderTable> savedTables = orderTableDao.findAllByIdIn(getTableIds(requestTables));
 
