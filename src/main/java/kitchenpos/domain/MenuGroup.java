@@ -8,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.hibernate.Hibernate;
+
 @Entity
 public class MenuGroup {
 
@@ -44,15 +46,15 @@ public class MenuGroup {
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || !(o instanceof MenuGroup))
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o))
             return false;
         MenuGroup menuGroup = (MenuGroup)o;
-        return Objects.equals(id, menuGroup.getId());
+        return id != null && Objects.equals(id, menuGroup.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return getClass().hashCode();
     }
 
 }

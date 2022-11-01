@@ -9,6 +9,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.hibernate.Hibernate;
+
 @Entity
 public class Product {
 
@@ -68,15 +70,15 @@ public class Product {
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || !(o instanceof Product))
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o))
             return false;
         Product product = (Product)o;
-        return Objects.equals(id, product.getId());
+        return id != null && Objects.equals(id, product.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return getClass().hashCode();
     }
 
 }

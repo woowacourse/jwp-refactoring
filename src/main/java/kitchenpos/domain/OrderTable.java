@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.Hibernate;
+
 @Entity
 public class OrderTable {
 
@@ -102,15 +104,15 @@ public class OrderTable {
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || !(o instanceof OrderTable))
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o))
             return false;
         OrderTable orderTable = (OrderTable)o;
-        return Objects.equals(id, orderTable.getId());
+        return id != null && Objects.equals(id, orderTable.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return getClass().hashCode();
     }
 
 }

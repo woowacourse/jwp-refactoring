@@ -17,6 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.Hibernate;
 import org.springframework.util.CollectionUtils;
 
 @Entity
@@ -105,15 +106,15 @@ public class Order {
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || !(o instanceof Order))
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o))
             return false;
         Order order = (Order)o;
-        return Objects.equals(id, order.getId());
+        return id != null && Objects.equals(id, order.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return getClass().hashCode();
     }
 
 }

@@ -16,6 +16,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import org.hibernate.Hibernate;
+
 @Entity
 public class Menu {
 
@@ -106,15 +108,15 @@ public class Menu {
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || !(o instanceof Menu))
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o))
             return false;
         Menu menu = (Menu)o;
-        return Objects.equals(id, menu.getId());
+        return id != null && Objects.equals(id, menu.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return getClass().hashCode();
     }
 
 }

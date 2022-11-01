@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import org.hibernate.Hibernate;
 import org.springframework.util.CollectionUtils;
 
 @Entity
@@ -63,15 +64,15 @@ public class TableGroup {
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || !(o instanceof TableGroup))
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o))
             return false;
         TableGroup tableGroup = (TableGroup)o;
-        return Objects.equals(id, tableGroup.getId());
+        return id != null && Objects.equals(id, tableGroup.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return getClass().hashCode();
     }
 
 }

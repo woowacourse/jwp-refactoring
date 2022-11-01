@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
+import org.hibernate.Hibernate;
+
 @Entity
 public class OrderLineItem {
 
@@ -57,15 +59,15 @@ public class OrderLineItem {
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || !(o instanceof OrderLineItem))
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o))
             return false;
         OrderLineItem orderLineItem = (OrderLineItem)o;
-        return Objects.equals(seq, orderLineItem.getSeq());
+        return seq != null && Objects.equals(seq, orderLineItem.getSeq());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(seq);
+        return getClass().hashCode();
     }
 
 }
