@@ -46,7 +46,7 @@ class OrderServiceTest extends ServiceTest {
     void 없는_메뉴를_주문_할_경우_예외를_반환한다() {
         final OrderRequest 주문 = 주문_요청_생성(OrderStatus.COOKING);
 
-        메뉴존재유뮤세팅(0L);
+        메뉴_리스트_세팅(0L);
 
         Assertions.assertThatThrownBy(() -> orderService.create(주문))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -57,7 +57,7 @@ class OrderServiceTest extends ServiceTest {
     void 없는_테이블에_주문_할_경우_예외를_반환한다() {
         final OrderRequest 주문 = 주문_요청_생성(OrderStatus.COOKING);
 
-        메뉴존재유뮤세팅(1L);
+        메뉴_리스트_세팅(1L);
         존재하지않는_테이블_세팅();
 
         Assertions.assertThatThrownBy(() -> orderService.create(주문))

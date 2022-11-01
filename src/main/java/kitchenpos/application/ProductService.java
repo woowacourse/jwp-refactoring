@@ -3,7 +3,6 @@ package kitchenpos.application;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.JpaProductRepository;
-import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.ProductResponse;
 import kitchenpos.ui.dto.request.ProductRequest;

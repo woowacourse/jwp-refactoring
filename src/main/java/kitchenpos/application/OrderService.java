@@ -9,9 +9,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.exception.CustomIllegalArgumentException;
+import kitchenpos.dao.JpaMenuRepository;
 import kitchenpos.dao.JpaOrderRepository;
 import kitchenpos.dao.JpaOrderTableRepository;
-import kitchenpos.dao.MenuDao;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
@@ -22,13 +23,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class OrderService {
-    private final MenuDao menuDao;
+    private final JpaMenuRepository menuRepository;
     private final JpaOrderRepository orderRepository;
     private final JpaOrderTableRepository orderTableRepository;
 
-    public OrderService(final MenuDao menuDao, final JpaOrderRepository orderRepository,
+    public OrderService(final JpaMenuRepository menuRepository, final JpaOrderRepository orderRepository,
                         final JpaOrderTableRepository orderTableRepository) {
-        this.menuDao = menuDao;
+        this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
     }
@@ -57,7 +58,9 @@ public class OrderService {
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
 
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
+        final List<Menu> menus = menuRepository.findAllById(menuIds);
+
+        if (orderLineItems.size() != menus.size()) {
             throw new CustomIllegalArgumentException(NOT_FOUND_MENU_EXCEPTION);
         }
     }

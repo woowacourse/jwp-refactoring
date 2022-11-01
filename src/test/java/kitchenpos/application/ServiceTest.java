@@ -5,15 +5,16 @@ import static org.mockito.ArgumentMatchers.anyLong;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import kitchenpos.dao.JpaMenuGroupRepository;
+import kitchenpos.dao.JpaMenuRepository;
 import kitchenpos.dao.JpaOrderRepository;
 import kitchenpos.dao.JpaOrderTableRepository;
 import kitchenpos.dao.JpaProductRepository;
 import kitchenpos.dao.JpaTableGroupRepository;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
@@ -37,13 +38,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 public class ServiceTest {
 
     @MockBean
-    protected MenuDao menuDao;
+    protected JpaMenuRepository menuRepository;
     @MockBean
-    protected JpaMenuGroupRepository menuGroupDao;
+    protected JpaMenuGroupRepository menuGroupRepository;
     @MockBean
-    protected MenuProductDao menuProductDao;
-    @MockBean
-    protected JpaProductRepository productDao;
+    protected JpaProductRepository productRepository;
     @MockBean
     protected JpaOrderRepository orderRepository;
     @MockBean
@@ -59,8 +58,12 @@ public class ServiceTest {
                 .thenReturn(Optional.ofNullable(주문_생성(OrderStatus.COMPLETION)));
     }
 
-    protected void 메뉴존재유뮤세팅(Long count) {
-        Mockito.when(menuDao.countByIdIn(any())).thenReturn(count);
+    protected void 메뉴_리스트_세팅(Long count) {
+        List<Menu> menus = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            menus.add(new Menu());
+        }
+        Mockito.when(menuRepository.findAllById(any())).thenReturn(menus);
     }
 
     protected void 존재하지않는_테이블_세팅() {
@@ -113,17 +116,17 @@ public class ServiceTest {
      */
 
     protected void 메뉴그룹에서_없는_메뉴로_세팅한다() {
-        Mockito.when(menuGroupDao.existsById(any()))
+        Mockito.when(menuGroupRepository.existsById(any()))
                 .thenReturn(false);
     }
 
     protected void 메뉴그룹에서_있는_메뉴로_세팅한다() {
-        Mockito.when(menuGroupDao.existsById(any()))
+        Mockito.when(menuGroupRepository.existsById(any()))
                 .thenReturn(true);
     }
 
     protected void 없는_상품으로_세팅한다() {
-        Mockito.when(productDao.findById(any()))
+        Mockito.when(productRepository.findById(any()))
                 .thenReturn(Optional.empty());
     }
 
