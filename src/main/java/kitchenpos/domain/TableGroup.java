@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 @Entity
@@ -20,9 +21,9 @@ public class TableGroup {
     @Column(name = "created_date", nullable = false)
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "tableGroupId",
-            orphanRemoval = true,
+    @OneToMany(orphanRemoval = true,
             cascade = CascadeType.ALL)
+    @JoinColumn(name = "table_group_id")
     private List<OrderTable> orderTables;
 
     protected TableGroup() {
