@@ -84,14 +84,14 @@ public class OrderTable {
         tableGroup.getOrderTables().add(this);
     }
 
-    public void validateEmptyUpdatable() {
-        if (tableGroup != null) {
+    private void validateCanGroup() {
+        if (!empty || Objects.nonNull(tableGroup)) {
             throw new IllegalArgumentException();
         }
     }
 
-    private void validateCanGroup() {
-        if (!empty || Objects.nonNull(tableGroup)) {
+    public void validateEmptyUpdatable() {
+        if (tableGroup != null) {
             throw new IllegalArgumentException();
         }
     }
