@@ -16,7 +16,6 @@ import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuValidator;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderLineItems;
@@ -57,9 +56,6 @@ class TableServiceTest {
 
     @Autowired
     private OrderValidator orderValidator;
-
-    @Autowired
-    private MenuValidator menuValidator;
 
     @Test
     @DisplayName("테이블을 정상적으로 생성한다.")

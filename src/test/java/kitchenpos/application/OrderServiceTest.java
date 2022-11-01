@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.application.dto.request.OrderCommand;
@@ -19,6 +18,7 @@ import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuValidator;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderLineItems;
@@ -60,6 +60,9 @@ class OrderServiceTest {
     @Autowired
     private OrderValidator orderValidator;
 
+    @Autowired
+    private MenuValidator menuValidator;
+
     @Nested
     @DisplayName("주문을 생성할 때")
     class CreateOrder {
@@ -67,8 +70,7 @@ class OrderServiceTest {
         @Test
         @DisplayName("조리상태로 주문이 생성된다.")
         void create() {
-            Menu menu = createMenu();
-
+            Menu menu = createMenu("강정치킨", 37000);
             OrderTable orderTable = orderTableRepository.save(new OrderTable(2, false));
 
             OrderLineItemCommand orderLineItemCommand = new OrderLineItemCommand(menu.getId(), 2);
@@ -87,7 +89,7 @@ class OrderServiceTest {
             @Test
             @DisplayName("주문항목이 비어있으면 예외가 발생한다.")
             void createOrderLineEmpty() {
-                createMenu();
+                createMenu("강정치킨", 37000);
                 OrderTable orderTable = orderTableRepository.save(new OrderTable(2, false));
 
                 assertThatThrownBy(
@@ -98,7 +100,7 @@ class OrderServiceTest {
             @Test
             @DisplayName("주문항목의 수와 메뉴의 수가 일치하지 않으면 에외가 발생한다.")
             void createInvalidOrderLine() {
-                Menu menu = createMenu();
+                Menu menu = createMenu("강정치킨", 37000);
                 OrderTable orderTable = orderTableRepository.save(new OrderTable(2, false));
                 OrderLineItemCommand orderLineItemCommand = new OrderLineItemCommand(menu.getId(), 2);
 
@@ -110,7 +112,7 @@ class OrderServiceTest {
             @Test
             @DisplayName("주문 테이블이 존재하지 않으면 예외가 발생한다.")
             void createNotFoundOrderTable() {
-                Menu menu = createMenu();
+                Menu menu = createMenu("강정치킨", 37000);
                 OrderLineItemCommand orderLineItemCommand = new OrderLineItemCommand(menu.getId(), 2);
 
                 assertThatThrownBy(
@@ -121,10 +123,8 @@ class OrderServiceTest {
             @Test
             @DisplayName("빈 테이블이면 예외가 발새한다.")
             void createOrderTableIsEmpty() {
-                Menu menu = createMenu();
-
+                Menu menu = createMenu("강정치킨", 37000);
                 OrderTable orderTable = orderTableRepository.save(new OrderTable(2, true));
-
                 OrderLineItemCommand orderLineItemCommand = new OrderLineItemCommand(menu.getId(), 2);
 
                 assertThatThrownBy(
@@ -137,9 +137,7 @@ class OrderServiceTest {
     @Test
     @DisplayName("존재하는 주문을 모두 조회한다.")
     void list() {
-        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("추천메뉴"));
-        Menu menu = menuRepository.save(
-                new Menu("강정치킨", new Price(BigDecimal.valueOf(37000)), menuGroup.getId(), new ArrayList<>()));
+        Menu menu = createMenu("강정치킨", 37000);
 
         OrderTable orderTable = orderTableRepository.save(new OrderTable(2, false));
         OrderLineItems orderLineItems = new OrderLineItems(List.of(new OrderLineItem(menu.getId(), 2)));
@@ -158,7 +156,7 @@ class OrderServiceTest {
         @Test
         @DisplayName("식사 상태로 변경한다.")
         void changeOrderStatus() {
-            Menu menu = createMenu();
+            Menu menu = createMenu("강정치킨", 37000);
 
             OrderTable orderTable = orderTableRepository.save(new OrderTable(2, false));
 
@@ -186,7 +184,7 @@ class OrderServiceTest {
             @Test
             @DisplayName("계산 완료 상태로 변경하면 예외가 발생한다.")
             void changeOrderStatusCompletion() {
-                Menu menu = createMenu();
+                Menu menu = createMenu("강정치킨", 37000);
                 OrderTable orderTable = orderTableRepository.save(new OrderTable(2, false));
                 OrderLineItems orderLineItems = new OrderLineItems(List.of(new OrderLineItem(menu.getId(), 2)));
                 Order order = orderRepository.save(Order.startCooking(orderTable.getId(), orderLineItems, orderValidator));
@@ -197,11 +195,12 @@ class OrderServiceTest {
         }
     }
 
-    private Menu createMenu() {
+    private Menu createMenu(String name, int price) {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("추천메뉴"));
         Product product = productRepository.save(new Product("강정치킨", BigDecimal.valueOf(18000)));
-        Menu menu = menuRepository.save(new Menu("강정치킨", new Price(BigDecimal.valueOf(37000)), menuGroup.getId(), new ArrayList<>()));
-        menu.addMenuProduct(new MenuProduct(menu, product.getId(), 2));
+        List<MenuProduct> menuProducts = List.of(new MenuProduct(product.getId(), 2L));
+        Menu menu = menuRepository.save(Menu.create(name, new Price(BigDecimal.valueOf(price)), menuGroup.getId(), menuProducts, menuValidator));
+        menu.addMenuProduct(new MenuProduct(product.getId(), 2));
         return menu;
     }
 }
