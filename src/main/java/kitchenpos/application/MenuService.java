@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.MenuCreateRequest;
 import kitchenpos.application.dto.MenuProductCreateRequest;
 import kitchenpos.application.dto.MenuResponse;
+import kitchenpos.application.dto.MenuUpdateValuesRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuProducts;
@@ -62,5 +63,12 @@ public class MenuService {
         return menus.stream()
             .map(MenuResponse::createResponse)
             .collect(Collectors.toList());
+    }
+
+    public void updateValues(final Long id, final MenuUpdateValuesRequest request) {
+        final Menu menu = menuRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴입니다."));
+
+        menu.updateValues(request.getName(), request.getPrice());
     }
 }

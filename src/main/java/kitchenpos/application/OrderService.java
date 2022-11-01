@@ -60,7 +60,7 @@ public class OrderService {
     private OrderLineItem createOrderLineItem(final OrderLineItemRequest request) {
         final Menu menu = menuRepository.findById(request.getMenuId())
             .orElseThrow(IllegalArgumentException::new);
-        return new OrderLineItem(menu.getId(), request.getQuantity());
+        return new OrderLineItem(menu.getName(), menu.getPrice(), request.getQuantity());
     }
 
     @Transactional(readOnly = true)

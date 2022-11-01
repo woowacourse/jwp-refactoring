@@ -70,6 +70,12 @@ public class Menu {
         }
     }
 
+    public void updateValues(final String name, final BigDecimal price) {
+        validatePrice(price);
+        this.name = name;
+        this.price = price;
+    }
+
     public Long getId() {
         return id;
     }
