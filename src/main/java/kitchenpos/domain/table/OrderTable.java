@@ -1,5 +1,10 @@
 package kitchenpos.domain.table;
 
+import java.util.List;
+import java.util.Objects;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.service.FindOrderTableInOrderStatusService;
+
 public class OrderTable {
 
     private Long id;
@@ -25,11 +30,18 @@ public class OrderTable {
         return new OrderTable(0, true);
     }
 
-    public void setEmpty(final boolean empty) {
+    public boolean isGrouped() {
+        return Objects.nonNull(getTableGroupId());
+    }
+
+    public void changeEmpty(final boolean empty) {
         this.empty = empty;
     }
 
     public void enterGuests(final int numberOfGuests) {
+        if (isEmpty()) {
+            throw new IllegalArgumentException();
+        }
         this.numberOfGuests = numberOfGuests;
     }
 
@@ -56,5 +68,12 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
+    }
+
+    public void validateEmptyAvailable(final FindOrderTableInOrderStatusService findOrderTableInOrderStatusService) {
+        final List<OrderStatus> availableStatuses = List.of(OrderStatus.MEAL, OrderStatus.COOKING);
+        if (findOrderTableInOrderStatusService.existByOrderStatus(getId(), availableStatuses)) {
+            throw new IllegalArgumentException();
+        }
     }
 }

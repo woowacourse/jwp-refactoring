@@ -2,7 +2,7 @@ package kitchenpos.application;
 
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.TableDto;
-import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.service.FindOrderTableInOrderStatusService;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
@@ -11,23 +11,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class TableService {
-    private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    private final OrderTableRepository orderTableRepository;
+    private final FindOrderTableInOrderStatusService findOrderTableInOrderStatusService;
+
+    public TableService(final OrderTableRepository orderTableRepository,
+                        final FindOrderTableInOrderStatusService findOrderTableInOrderStatusService) {
         this.orderTableRepository = orderTableRepository;
+        this.findOrderTableInOrderStatusService = findOrderTableInOrderStatusService;
     }
 
     @Transactional
     public TableDto create(final Integer numberOfGuests, final Boolean empty) {
         final OrderTable orderTable = new OrderTable(numberOfGuests, empty);
-        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
-        return TableDto.of(savedOrderTable);
+        return TableDto.of(orderTableRepository.save(orderTable));
     }
 
     public List<TableDto> list() {
@@ -41,36 +41,34 @@ public class TableService {
     public TableDto changeEmpty(final Long orderTableId, final Boolean empty) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
+        validateGroupedTable(savedOrderTable);
+        savedOrderTable.validateEmptyAvailable(findOrderTableInOrderStatusService);
 
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
-        }
-
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
-
-        savedOrderTable.setEmpty(empty);
+        savedOrderTable.changeEmpty(empty);
 
         return TableDto.of(orderTableRepository.save(savedOrderTable));
     }
 
+    private void validateGroupedTable(final OrderTable savedOrderTable) {
+        if (savedOrderTable.isGrouped()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     @Transactional
     public TableDto changeNumberOfGuests(final Long orderTableId, final Integer numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-
+        validateNumberOfGuests(numberOfGuests);
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
 
         savedOrderTable.enterGuests(numberOfGuests);
 
         return TableDto.of(orderTableRepository.save(savedOrderTable));
+    }
+
+    private void validateNumberOfGuests(final Integer numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
     }
 }

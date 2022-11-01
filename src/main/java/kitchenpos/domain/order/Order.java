@@ -3,7 +3,9 @@ package kitchenpos.domain.order;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import org.springframework.util.CollectionUtils;
 
 public class Order {
 
@@ -13,6 +15,18 @@ public class Order {
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
+    public Order(final Long id,
+                 final Long orderTableId,
+                 final String orderStatus,
+                 final LocalDateTime orderedTime,
+                 final List<OrderLineItem> orderLineItems) {
+        this.id = id;
+        this.orderTableId = orderTableId;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+        this.orderLineItems = orderLineItems;
+    }
+
     public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
         this.id = id;
         this.orderTableId = orderTableId;
@@ -20,35 +34,21 @@ public class Order {
         this.orderedTime = orderedTime;
     }
 
-    public static Order create(final Long orderTableId, final List<Long> menuIds) {
-        final Order order = new Order(null, orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now());
-        menuIds.forEach(order::addMenu);
-        return order;
+    public static Order create(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+        validateEmptyMenu(orderLineItems);
+        return new Order(null, orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
     }
 
-    private Optional<OrderLineItem> findMenu(final Long menuId) {
-        return orderLineItems.stream()
-                .filter(orderLineItem -> orderLineItem.isSameMenu(menuId))
-                .findAny();
-    }
-
-    public void addMenu(final Long menuId, final long quantity) {
-        final Optional<OrderLineItem> orderLineItem = findMenu(menuId);
-        orderLineItem.ifPresentOrElse(
-                findOrderLineItem -> findOrderLineItem.addQuantity(quantity),
-                () -> orderLineItems.add(new OrderLineItem(this.id, menuId, 1))
-        );
-    }
-
-    public void addMenu(final Long menuId) {
-        addMenu(menuId, 1);
-    }
-
-    public void addMenu(final OrderLineItem savedOrderItem) {
-        addMenu(savedOrderItem.getMenuId(), savedOrderItem.getQuantity());
+    private static void validateEmptyMenu(final List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public void changeOrderStatus(final String orderStatus) {
+        if (Objects.equals(OrderStatus.COMPLETION.name(), getOrderStatus())) {
+            throw new IllegalArgumentException();
+        }
         this.orderStatus = orderStatus;
     }
 

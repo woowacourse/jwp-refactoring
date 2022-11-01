@@ -20,6 +20,7 @@ import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuProductRepository;
 import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.table.OrderTable;
@@ -171,16 +172,17 @@ public abstract class ServiceTest {
     }
 
     private Menu makeMenu(final MenuDto menuDto) {
-        final Menu menu = new Menu(
+        final List<MenuProduct> menuProducts = menuDto.getMenuProducts()
+                .stream()
+                .map(dto -> new MenuProduct(dto.getSeq(), dto.getMenuId(), dto.getProductId(), dto.getQuantity()))
+                .collect(Collectors.toList());
+        return new Menu(
                 menuDto.getId(),
                 menuDto.getName(),
                 Price.valueOf(menuDto.getPrice()),
-                menuDto.getMenuGroupId()
+                menuDto.getMenuGroupId(),
+                menuProducts
         );
-        menuDto.getMenuProducts().forEach(menuProductDto ->
-                menu.addProduct(menuProductDto.getProductId(), menuProductDto.getQuantity())
-        );
-        return menu;
     }
 
     public Menu 메뉴_찾기(final Long id) {
@@ -286,7 +288,10 @@ public abstract class ServiceTest {
     }
 
     public Order 주문_요청한다(final OrderTable orderTable, final Long... menuIds) {
-        final Order order = Order.create(orderTable.getId(), List.of(menuIds));
+        final List<OrderLineItem> orderLineItems = Arrays.stream(menuIds)
+                .map(menuId -> new OrderLineItem(menuId, 1))
+                .collect(Collectors.toList());
+        final Order order = Order.create(orderTable.getId(), orderLineItems);
         final List<CreateOrderLineItemDto> createOrderLineItemDtos = order.getOrderLineItems()
                 .stream()
                 .map(orderLineItem ->
@@ -301,18 +306,17 @@ public abstract class ServiceTest {
                 createOrderLineItemDtos
         );
         final OrderDto orderDto = orderService.create(createOrderDto);
-        final Order result = new Order(
+        final List<OrderLineItem> savedOrderLineItems = orderDto.getOrderLineItems().stream()
+                .map(dto -> new OrderLineItem(dto.getSeq(), dto.getOrderId(), dto.getMenuId(), dto.getQuantity()))
+                .collect(Collectors.toList());
+
+        return new Order(
                 orderDto.getId(),
                 orderDto.getOrderTableId(),
                 orderDto.getOrderStatus(),
-                orderDto.getOrderedTime()
+                orderDto.getOrderedTime(),
+                savedOrderLineItems
         );
-
-        createOrderLineItemDtos.forEach(createOrderLineItemDto ->
-                result.addMenu(createOrderLineItemDto.getMenuId(), createOrderLineItemDto.getQuantity())
-        );
-
-        return result;
     }
 
     public List<Order> 모든_주문_조회() {

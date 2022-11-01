@@ -11,6 +11,7 @@ import kitchenpos.application.dto.OrderDto;
 import kitchenpos.application.dto.OrderLineItemDto;
 import kitchenpos.application.dto.TableDto;
 import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ public class OrdersAcceptanceTest extends AcceptanceTest {
     @Test
     @DisplayName("신규 주문을 생성할 수 있다")
     void createOrder() {
-        final Order order = Order.create(손님있는_테이블.getId(), List.of(파스타한상.getId()));
+        final Order order = Order.create(손님있는_테이블.getId(), List.of(new OrderLineItem(파스타한상.getId(), 1)));
 
         final ExtractableResponse<Response> response = 메뉴_주문_요청(order);
         final OrderDto responseBody = response.body().as(OrderDto.class);

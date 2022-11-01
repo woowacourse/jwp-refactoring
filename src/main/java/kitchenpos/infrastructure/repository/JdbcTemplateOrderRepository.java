@@ -1,6 +1,8 @@
 package kitchenpos.infrastructure.repository;
 
 import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItemRepository;
 import kitchenpos.domain.order.OrderRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -20,18 +22,21 @@ import java.util.Optional;
 
 @Repository
 public class JdbcTemplateOrderRepository implements OrderRepository {
+
     private static final String TABLE_NAME = "orders";
     private static final String KEY_COLUMN_NAME = "id";
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
+    private final OrderLineItemRepository orderLineItemRepository;
 
-    public JdbcTemplateOrderRepository(final DataSource dataSource) {
+    public JdbcTemplateOrderRepository(final DataSource dataSource,
+                                       final OrderLineItemRepository orderLineItemRepository) {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName(TABLE_NAME)
-                .usingGeneratedKeyColumns(KEY_COLUMN_NAME)
-        ;
+                .usingGeneratedKeyColumns(KEY_COLUMN_NAME);
+        this.orderLineItemRepository = orderLineItemRepository;
     }
 
     @Override
@@ -39,10 +44,22 @@ public class JdbcTemplateOrderRepository implements OrderRepository {
         if (Objects.isNull(entity.getId())) {
             final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
             final Number key = jdbcInsert.executeAndReturnKey(parameters);
+            saveOrderLineItems(entity, key);
             return select(key.longValue());
         }
         update(entity);
         return entity;
+    }
+
+    private void saveOrderLineItems(final Order entity, final Number key) {
+        entity.getOrderLineItems().forEach(orderLineItem -> {
+            final OrderLineItem saveOrderLineItem = new OrderLineItem(
+                    key.longValue(),
+                    orderLineItem.getMenuId(),
+                    orderLineItem.getQuantity()
+            );
+            orderLineItemRepository.save(saveOrderLineItem);
+        });
     }
 
     @Override
@@ -96,11 +113,14 @@ public class JdbcTemplateOrderRepository implements OrderRepository {
     }
 
     private Order toEntity(final ResultSet resultSet) throws SQLException {
+        final long orderId = resultSet.getLong(KEY_COLUMN_NAME);
+        final List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(orderId);
         return new Order(
-                resultSet.getLong(KEY_COLUMN_NAME),
+                orderId,
                 resultSet.getLong("order_table_id"),
                 resultSet.getString("order_status"),
-                resultSet.getObject("ordered_time", LocalDateTime.class)
+                resultSet.getObject("ordered_time", LocalDateTime.class),
+                orderLineItems
         );
     }
 }

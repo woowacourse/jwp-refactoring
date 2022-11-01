@@ -24,6 +24,7 @@ import kitchenpos.application.dto.TableGroupDto;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.ui.dto.ChangeTableEmptyRequest;
@@ -257,7 +258,10 @@ public class AcceptanceTest {
     }
 
     public OrderDto 메뉴_주문(final Long orderTableId, final Long... menuIds) {
-        final Order order = Order.create(orderTableId, List.of(menuIds));
+        final List<OrderLineItem> orderLineItems = Arrays.stream(menuIds)
+                .map(menuId -> new OrderLineItem(menuId, 1))
+                .collect(Collectors.toList());
+        final Order order = Order.create(orderTableId, orderLineItems);
         return 메뉴_주문_요청(order).body()
                 .as(OrderDto.class);
     }

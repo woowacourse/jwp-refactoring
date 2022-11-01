@@ -23,8 +23,7 @@ public class ProductService {
     @Transactional
     public ProductDto create(final String productName, final BigDecimal price) {
         final Product product = Product.create(productName, price);
-        final Product savedProduct = productRepository.save(product);
-        return ProductDto.from(savedProduct);
+        return ProductDto.from(productRepository.save(product));
     }
 
     public List<ProductDto> list() {

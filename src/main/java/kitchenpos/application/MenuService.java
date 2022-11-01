@@ -7,27 +7,23 @@ import kitchenpos.application.dto.MenuDto;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroupRepository;
 import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.menu.MenuProductRepository;
 import kitchenpos.domain.menu.MenuRepository;
-import kitchenpos.domain.menu.CalculateProductPriceService;
-import kitchenpos.domain.product.ProductRepository;
+import kitchenpos.domain.service.CalculateProductPriceService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MenuService {
+
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
-    private final MenuProductRepository menuProductRepository;
     private final CalculateProductPriceService calculateProductPriceService;
 
     public MenuService(final MenuRepository menuRepository,
                        final MenuGroupRepository menuGroupRepository,
-                       final MenuProductRepository menuProductRepository,
                        final CalculateProductPriceService calculateProductPriceService) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
-        this.menuProductRepository = menuProductRepository;
         this.calculateProductPriceService = calculateProductPriceService;
     }
 
@@ -70,11 +66,6 @@ public class MenuService {
 
     public List<MenuDto> list() {
         final List<Menu> menus = menuRepository.findAll();
-
-        for (final Menu menu : menus) {
-            final List<MenuProduct> menuProducts = menuProductRepository.findAllByMenuId(menu.getId());
-            menuProducts.forEach(menu::addProduct);
-        }
 
         return menus.stream()
                 .map(MenuDto::of)

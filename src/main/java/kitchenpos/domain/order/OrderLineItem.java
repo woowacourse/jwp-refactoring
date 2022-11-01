@@ -18,16 +18,8 @@ public class OrderLineItem {
         this(null, orderId, menuId, quantity);
     }
 
-    public void addQuantity(final long addQuantity) {
-        this.quantity += addQuantity;
-    }
-
-    public void addQuantity() {
-        this.quantity++;
-    }
-
-    public boolean isSameMenu(final Long menuId) {
-        return this.menuId.equals(menuId);
+    public OrderLineItem(final Long menuId, final long quantity) {
+        this(null, menuId, quantity);
     }
 
     public Long getSeq() {
@@ -36,10 +28,6 @@ public class OrderLineItem {
 
     public Long getOrderId() {
         return orderId;
-    }
-
-    public void setOrderId(final Long orderId) {
-        this.orderId = orderId;
     }
 
     public Long getMenuId() {

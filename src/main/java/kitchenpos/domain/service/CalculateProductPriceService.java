@@ -1,7 +1,8 @@
-package kitchenpos.domain.menu;
+package kitchenpos.domain.service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductRepository;
 import org.springframework.stereotype.Service;

@@ -3,7 +3,7 @@ package kitchenpos.domain.menu;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import kitchenpos.domain.service.CalculateProductPriceService;
 import kitchenpos.domain.vo.Price;
 
 public class Menu {
@@ -38,24 +38,6 @@ public class Menu {
                               final Long menuGroupId,
                               final List<MenuProduct> menuProducts) {
         return new Menu(null, name, Price.valueOf(price), menuGroupId, menuProducts);
-    }
-
-    private Optional<MenuProduct> findProduct(final Long productId) {
-        return menuProducts.stream()
-                .filter(menuProduct -> menuProduct.isSameProduct(productId))
-                .findAny();
-    }
-
-    public void addProduct(final Long productId, final long quantity) {
-        final Optional<MenuProduct> menuProduct = findProduct(productId);
-        menuProduct.ifPresentOrElse(
-                findMenuProduct -> findMenuProduct.addQuantity(quantity),
-                () -> menuProducts.add(new MenuProduct(this.id, productId, quantity))
-        );
-    }
-
-    public void addProduct(final MenuProduct menuProduct) {
-        addProduct(menuProduct.getProductId(), menuProduct.getQuantity());
     }
 
     public void validateOverPrice(final CalculateProductPriceService calculateProductPriceService) {

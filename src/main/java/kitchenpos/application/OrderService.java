@@ -13,7 +13,6 @@ import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -21,6 +20,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
+
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
@@ -40,48 +40,41 @@ public class OrderService {
 
     @Transactional
     public OrderDto create(final CreateOrderDto createOrderDto) {
-        final List<Long> menuIds = createOrderDto.getOrderLineItems().stream()
-                .map(CreateOrderLineItemDto::getMenuId)
+        final Order order = Order.create(
+                createOrderDto.getOrderTableId(),
+                mapToOrderLineItems(createOrderDto.getOrderLineItems())
+        );
+        validateExistMenus(createOrderDto.getMenuIds(), order.getOrderLineItems());
+        validateTableFull(order);
+
+        final Order savedOrder = orderRepository.save(order);
+
+        return OrderDto.of(savedOrder);
+    }
+
+    private List<OrderLineItem> mapToOrderLineItems(final List<CreateOrderLineItemDto> createOrderLineItemDtos) {
+        return createOrderLineItemDtos.stream()
+                .map(it -> new OrderLineItem(it.getMenuId(), it.getQuantity()))
                 .collect(Collectors.toList());
+    }
 
-        final Order order = Order.create(createOrderDto.getOrderTableId(), menuIds);
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
-
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
-        }
-
+    private void validateExistMenus(final List<Long> menuIds, final List<OrderLineItem> orderLineItems) {
         if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
+    }
 
+    private void validateTableFull(final Order order) {
         final OrderTable orderTable = orderTableRepository.findById(order.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        final Order createdOrder = Order.create(orderTable.getId(), menuIds);
-
-        final Order savedOrder = orderRepository.save(createdOrder);
-
-        final Long orderId = savedOrder.getId();
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.setOrderId(orderId);
-            final OrderLineItem savedOrderItem = orderLineItemRepository.save(orderLineItem);
-            savedOrder.addMenu(savedOrderItem);
-        }
-
-        return OrderDto.of(savedOrder);
     }
 
     public List<OrderDto> list() {
         final List<Order> orders = orderRepository.findAll();
-
-        for (final Order order : orders) {
-            final List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(order.getId());
-            orderLineItems.forEach(order::addMenu);
-        }
 
         return orders.stream()
                 .map(OrderDto::of)
@@ -90,21 +83,11 @@ public class OrderService {
 
     @Transactional
     public OrderDto changeOrderStatus(final Long orderId, final OrderStatus orderStatus) {
-
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
-        }
-
         savedOrder.changeOrderStatus(orderStatus.name());
 
-        orderRepository.save(savedOrder);
-
-        final List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(orderId);
-        orderLineItems.forEach(savedOrder::addMenu);
-
-        return OrderDto.of(savedOrder);
+        return OrderDto.of(orderRepository.save(savedOrder));
     }
 }

@@ -1,6 +1,7 @@
 package kitchenpos.application.dto;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CreateOrderDto {
 
@@ -19,5 +20,11 @@ public class CreateOrderDto {
 
     public List<CreateOrderLineItemDto> getOrderLineItems() {
         return orderLineItems;
+    }
+
+    public List<Long> getMenuIds() {
+        return getOrderLineItems().stream()
+                .map(CreateOrderLineItemDto::getMenuId)
+                .collect(Collectors.toList());
     }
 }
