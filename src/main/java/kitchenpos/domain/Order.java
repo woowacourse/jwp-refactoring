@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -12,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import kitchenpos.application.OrderValidator;
 
 @Entity
 @Table(name = "orders")
@@ -31,10 +33,9 @@ public class Order {
     @Column(name = "ordered_time", nullable = false)
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "orderId",
-            orphanRemoval = true,
-            cascade = CascadeType.ALL)
-    private List<OrderLineItem> orderLineItems;
+    @OneToMany(mappedBy = "order",
+            cascade = CascadeType.PERSIST)
+    private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     protected Order() {
     }
@@ -45,11 +46,19 @@ public class Order {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
+        this.orderLineItems.addAll(orderLineItems);
+        for (OrderLineItem orderLineItem : orderLineItems) {
+            orderLineItem.mapOrder(this);
+        }
     }
 
-    public static Order createFrom(Long orderTableId) {
-        return new Order(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), null);
+    public static Order create(Long orderTableId, List<OrderLineItem> orderLineItems, OrderValidator orderValidator) {
+        orderValidator.validate(orderTableId, orderLineItems);
+        return new Order(null,
+                orderTableId,
+                OrderStatus.COOKING,
+                LocalDateTime.now(),
+                orderLineItems);
     }
 
     public Long getId() {

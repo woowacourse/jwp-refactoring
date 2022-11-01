@@ -1,6 +1,7 @@
 package kitchenpos.support;
 
 import java.math.BigDecimal;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
@@ -12,7 +13,7 @@ public class Fixture {
     }
 
     public static OrderLineItem createOrderLineItem() {
-        return new OrderLineItem(1L, 1L, 1L, 1L);
+        return new OrderLineItem(1L, new Order(null, null, null, null, null), 1L, 1L);
     }
 
     public static OrderTable createOrderTableWithNumberOfGuests(int numberOfGuests) {

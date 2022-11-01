@@ -3,14 +3,13 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import kitchenpos.application.dto.MenuProductCreateRequest;
+import kitchenpos.application.MenuValidator;
 
 @Entity
 public class Menu {
@@ -27,27 +26,24 @@ public class Menu {
     @Column(name = "menu_group_id", nullable = false)
     private Long menuGroupId;
 
-    @OneToMany(mappedBy = "menuId",
-            orphanRemoval = true,
-            cascade = CascadeType.ALL)
-    private List<MenuProduct> menuProducts;
+    @Embedded
+    private MenuProducts menuProducts;
 
-    public Menu() {
+    protected Menu() {
     }
 
     public Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        checkPrice(price);
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
+        this.menuProducts = new MenuProducts(this, menuProducts);
     }
 
-    private void checkPrice(BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
+    public static Menu create(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts,
+                              MenuValidator menuValidator) {
+        menuValidator.validate(menuGroupId, menuProducts, price);
+        return new Menu(null, name, price, menuGroupId, menuProducts);
     }
 
     public Long getId() {
@@ -66,15 +62,11 @@ public class Menu {
         return menuGroupId;
     }
 
-    public List<MenuProduct> getMenuProducts() {
+    public MenuProducts getMenuProducts() {
         return menuProducts;
     }
 
     public void setMenuProducts(List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
-    }
-
-    public void checkMenuable(List<MenuProductCreateRequest> menuProducts) {
-
+        this.menuProducts.addAll(menuProducts);
     }
 }
