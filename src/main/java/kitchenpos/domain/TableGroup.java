@@ -11,7 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import kitchenpos.exception.CompletedOrderTableException;
+import kitchenpos.exception.NotCompletedOrderTableException;
 import kitchenpos.exception.InvalidOrderTableToGroupException;
 import kitchenpos.exception.NotEnoughOrderTablesSizeException;
 import org.springframework.util.CollectionUtils;
@@ -63,7 +63,7 @@ public class TableGroup {
 
     private void validateOrderTableNotCompleted(final OrderTable orderTable) {
         if (orderTable.isNotCompleted()) {
-            throw new CompletedOrderTableException(); }
+            throw new NotCompletedOrderTableException(); }
     }
 
     public Long getId() {

@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import kitchenpos.application.dto.request.OrderCreateRequest;
 import kitchenpos.application.dto.request.OrderLineItemCreateRequest;
@@ -17,11 +17,8 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
-import kitchenpos.exception.CompletedOrderStatusChangeException;
-import kitchenpos.exception.NotContainsOrderLineItemException;
 import kitchenpos.exception.OrderLineItemMenuException;
 import kitchenpos.exception.OrderNotFoundException;
-import kitchenpos.exception.OrderTableEmptyException;
 import kitchenpos.exception.OrderTableNotFoundException;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
@@ -48,9 +45,10 @@ class OrderServiceTest extends ServiceTestEnvironment {
 
         final Menu savedMenu1 = saveValidMenu();
 
-        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(savedTable.getId(), Arrays.asList(
-                new OrderLineItemCreateRequest(savedMenu1.getId(), 1L)
-        ));
+        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(savedTable.getId(),
+                Collections.singletonList(
+                        new OrderLineItemCreateRequest(savedMenu1.getId(), 1L)
+                ));
 
         // when
         final Order actual = orderService.create(orderCreateRequest);
@@ -60,7 +58,8 @@ class OrderServiceTest extends ServiceTestEnvironment {
                 () -> assertThat(actual.getId()).isPositive(),
                 () -> assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING),
                 () -> assertThat(actual.getOrderedTime()).isNotNull(),
-                () -> assertThat(actual.getOrderTable()).usingRecursiveComparison().isEqualTo(savedTable),
+                () -> assertThat(actual.getOrderTable()).usingRecursiveComparison()
+                        .ignoringFields("order").isEqualTo(savedTable),
                 () -> assertThat(actual.getOrderLineItems()).hasSize(1)
         );
     }
@@ -72,41 +71,11 @@ class OrderServiceTest extends ServiceTestEnvironment {
         final Menu savedMenu = saveValidMenu();
 
         OrderCreateRequest request = new OrderCreateRequest(-1L,
-                Arrays.asList(new OrderLineItemCreateRequest(savedMenu.getId(), 1L)));
+                Collections.singletonList(new OrderLineItemCreateRequest(savedMenu.getId(), 1L)));
 
         // when, then
         assertThatThrownBy(() -> orderService.create(request))
                 .isExactlyInstanceOf(OrderTableNotFoundException.class);
-    }
-
-    @Test
-    @DisplayName("주문하려는 주문 테이블이 비어있으면 안된다.")
-    void create_exceptionOrderTableIsEmpty() {
-        // given
-        final OrderTable orderTable = OrderTableFixture.create(true, 2);
-        final OrderTable savedTable = serviceDependencies.save(orderTable);
-
-        final Menu savedMenu = saveValidMenu();
-        final OrderCreateRequest request = new OrderCreateRequest(savedTable.getId(),
-                Arrays.asList(new OrderLineItemCreateRequest(savedMenu.getId(), 1L)));
-
-        // when, then
-        assertThatThrownBy(() -> orderService.create(request))
-                .isExactlyInstanceOf(OrderTableEmptyException.class);
-    }
-
-    @Test
-    @DisplayName("주문 항목이 0개면 안된다.")
-    void create_exceptionOrderLIneItemZero() {
-        // given
-        final OrderTable orderTable = OrderTableFixture.create(false, 2);
-        final OrderTable savedTable = serviceDependencies.save(orderTable);
-
-        OrderCreateRequest request = new OrderCreateRequest(savedTable.getId(), new ArrayList<>());
-
-        // when, then
-        assertThatThrownBy(() -> orderService.create(request))
-                .isExactlyInstanceOf(NotContainsOrderLineItemException.class);
     }
 
     @Test
@@ -115,7 +84,7 @@ class OrderServiceTest extends ServiceTestEnvironment {
         // given
         final OrderTable orderTable = OrderTableFixture.create(false, 2);
         final OrderTable savedTable = serviceDependencies.save(orderTable);
-        final Menu savedMenu = saveValidMenu();
+        saveValidMenu();
         final OrderCreateRequest request = new OrderCreateRequest(savedTable.getId(),
                 Arrays.asList(new OrderLineItemCreateRequest(-1L, 1L),
                         new OrderLineItemCreateRequest(-1L, 1L)));
@@ -162,42 +131,6 @@ class OrderServiceTest extends ServiceTestEnvironment {
     }
 
     @Test
-    @DisplayName("특정 주문의 상태를 변경할 수 있다.")
-    void changeOrderStatus() {
-        // given
-        final OrderTable orderTable = OrderTableFixture.create(false, 2);
-        final OrderTable savedTable = serviceDependencies.save(orderTable);
-        final Menu savedMenu = saveValidMenu();
-        final OrderLineItem orderLineItem = OrderLineItemFixture.create(savedMenu.getId(), null);
-        final Order order = OrderFixture.create(savedTable, OrderStatus.COOKING, orderLineItem);
-        final Order savedOrder = serviceDependencies.save(order);
-
-        // when
-        final Order actual = orderService.changeOrderStatus(savedOrder.getId(),
-                new OrderStatusRequest(OrderStatus.COMPLETION.name()));
-
-        // then
-        assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION);
-    }
-
-    @Test
-    @DisplayName("특정 주문의 상태가 완료 상태면 변경할 수 없다.")
-    void changeOrderStatus_exceptionChangeToCompletion() {
-        // given
-        final OrderTable orderTable = OrderTableFixture.create(false, 2);
-        final OrderTable savedTable = serviceDependencies.save(orderTable);
-        final Menu savedMenu = saveValidMenu();
-        final OrderLineItem orderLineItem = OrderLineItemFixture.create(savedMenu.getId(), null);
-        final Order order = OrderFixture.create(savedTable, OrderStatus.COMPLETION, orderLineItem);
-        final Order savedOrder = serviceDependencies.save(order);
-
-        // when, then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(),
-                new OrderStatusRequest(OrderStatus.COOKING.name())))
-                .isExactlyInstanceOf(CompletedOrderStatusChangeException.class);
-    }
-
-    @Test
     @DisplayName("등록되지 않은 특정 주문의 상태를 변경할 수 없다.")
     void changeOrderStatus_exceptionNotExistsOrder() {
         // given
@@ -206,7 +139,8 @@ class OrderServiceTest extends ServiceTestEnvironment {
         // when, then
         assertThatThrownBy(() -> orderService.changeOrderStatus(notExistsId,
                 new OrderStatusRequest(OrderStatus.COOKING.name())))
-                .isExactlyInstanceOf(OrderNotFoundException.class); }
+                .isExactlyInstanceOf(OrderNotFoundException.class);
+    }
 
     private Menu saveValidMenu() {
         final Product product1 = ProductFixture.createWithPrice(1000L);

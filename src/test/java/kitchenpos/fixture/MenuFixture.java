@@ -6,14 +6,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 
 public class MenuFixture {
-
-    public static Menu createDefaultWithoutId(final Long menuGroupId, final Product... product) {
-        final List<MenuProduct> menuProducts = convertToEmptyMenuIdMenuProduct(product);
-        return new Menu("name", BigDecimal.valueOf(2000), menuGroupId, menuProducts);
-    }
 
     public static Menu createWithPrice(final Long menuGroupId, final Long price, final Product... product) {
         return createWithIdAndPrice( menuGroupId, price, product);
@@ -23,9 +19,10 @@ public class MenuFixture {
                                             final Product... product) {
         final List<MenuProduct> menuProducts = convertToEmptyMenuIdMenuProduct(product);
         if (price == null) {
-            return new Menu("name", null, menuGroupId, menuProducts);
+            return new Menu("name", new Price(price), menuGroupId, menuProducts);
         }
-        return new Menu("name", BigDecimal.valueOf(price), menuGroupId, menuProducts);
+        final BigDecimal priceValue = BigDecimal.valueOf(price);
+        return new Menu("name", new Price(priceValue), menuGroupId, menuProducts);
     }
 
     private static List<MenuProduct> convertToEmptyMenuIdMenuProduct(final Product... product) {

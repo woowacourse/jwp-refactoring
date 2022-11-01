@@ -47,6 +47,7 @@ public class Order {
             throw new OrderTableEmptyException();
         }
         orderLineItems.forEach(orderLineItem -> orderLineItem.setOrder(this));
+        orderTable.setOrder(this);
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;

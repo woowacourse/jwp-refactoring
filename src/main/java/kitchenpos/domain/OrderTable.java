@@ -48,7 +48,6 @@ public class OrderTable {
 
     public void releaseGroup() {
         this.tableGroupId = null;
-        this.empty = false;
     }
 
     public Long getId() {

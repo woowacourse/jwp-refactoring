@@ -6,11 +6,11 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 
 public class MenuResponse {
-    private Long id;
-    private String name;
-    private BigDecimal price;
-    private Long menuGroupId;
-    private List<MenuProductResponse> menuProducts;
+    private final Long id;
+    private final String name;
+    private final BigDecimal price;
+    private final Long menuGroupId;
+    private final List<MenuProductResponse> menuProducts;
 
     public MenuResponse(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
                         final List<MenuProductResponse> menuProducts) {
@@ -25,7 +25,7 @@ public class MenuResponse {
         final List<MenuProductResponse> menuProductResponse = menu.getMenuProducts().stream()
                 .map(MenuProductResponse::from)
                 .collect(Collectors.toList());
-        return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menuProductResponse);
+        return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice().getValue(), menu.getMenuGroupId(), menuProductResponse);
     }
 
     public Long getId() {

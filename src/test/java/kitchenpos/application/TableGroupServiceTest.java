@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Arrays;
+import java.util.Collections;
 import kitchenpos.application.dto.request.OrderTableIdRequest;
 import kitchenpos.application.dto.request.TableGroupsCreateRequest;
 import kitchenpos.domain.Menu;
@@ -15,7 +16,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.exception.CompletedOrderTableException;
+import kitchenpos.exception.NotCompletedOrderTableException;
 import kitchenpos.exception.InvalidOrderTableToGroupException;
 import kitchenpos.exception.NotEnoughOrderTablesSizeException;
 import kitchenpos.fixture.MenuFixture;
@@ -69,7 +70,7 @@ class TableGroupServiceTest extends ServiceTestEnvironment {
         final OrderTable orderTable1 = OrderTableFixture.create(true, 1);
         final OrderTable savedTable1 = serviceDependencies.save(orderTable1);
 
-        TableGroupsCreateRequest tableGroupsCreateRequest = new TableGroupsCreateRequest(Arrays.asList(
+        TableGroupsCreateRequest tableGroupsCreateRequest = new TableGroupsCreateRequest(Collections.singletonList(
                 new OrderTableIdRequest(savedTable1.getId())
         ));
 
@@ -211,7 +212,7 @@ class TableGroupServiceTest extends ServiceTestEnvironment {
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
-                .isExactlyInstanceOf(CompletedOrderTableException.class);
+                .isExactlyInstanceOf(NotCompletedOrderTableException.class);
     }
 
     private Menu saveValidMenu() {

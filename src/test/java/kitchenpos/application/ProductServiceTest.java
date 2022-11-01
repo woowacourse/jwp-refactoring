@@ -1,11 +1,12 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
-import java.util.Comparator;
 import java.util.List;
 import kitchenpos.application.dto.request.ProductCreateRequest;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.fixture.ProductFixture;
 import org.junit.jupiter.api.DisplayName;
@@ -27,10 +28,12 @@ class ProductServiceTest extends ServiceTestEnvironment {
         final Product saved = productService.create(productCreateRequest);
 
         // then
-        assertThat(saved).usingRecursiveComparison()
-                .ignoringFields("id")
-                .withComparatorForFields((Comparator<BigDecimal>) BigDecimal::compareTo, "price")
-                .isEqualTo(productCreateRequest);
+        assertAll(
+                () -> assertThat(saved).usingRecursiveComparison()
+                        .ignoringFields("id", "price")
+                        .isEqualTo(productCreateRequest),
+                () -> assertThat(saved.getPrice()).isEqualTo(new Price(BigDecimal.valueOf(1000)))
+        );
     }
 
     @Test

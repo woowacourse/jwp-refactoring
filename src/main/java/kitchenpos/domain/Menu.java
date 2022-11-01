@@ -1,10 +1,10 @@
 package kitchenpos.domain;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.persistence.CascadeType;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,7 +22,8 @@ public class Menu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private BigDecimal price;
+    @Embedded
+    private Price price;
     private Long menuGroupId;
     @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
     private List<MenuProduct> menuProducts = new ArrayList<>();
@@ -30,7 +31,7 @@ public class Menu {
     protected Menu() {
     }
 
-    private Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
+    private Menu(final Long id, final String name, final Price price, final Long menuGroupId,
                 final List<MenuProduct> menuProducts) {
         validatePrice(menuProducts, price);
         menuProducts.forEach(menuProduct -> menuProduct.setMenu(this));
@@ -41,31 +42,26 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    public Menu(final String name, final BigDecimal price, final Long menuGroupId,
-                final List<MenuProduct> menuProducts) {
+    public Menu(final String name, final Price price, final Long menuGroupId, final List<MenuProduct> menuProducts) {
         this(null, name, price, menuGroupId, menuProducts);
     }
 
-    private static void validatePrice(final List<MenuProduct> menuProducts, final BigDecimal price) {
-        if (menuPriceIsNullOrNegative(price) || menuPriceIsExpansiveThanMenuProducts(menuProducts, price)) {
+    private static void validatePrice(final List<MenuProduct> menuProducts, final Price menuPrice) {
+        if (menuPriceIsExpansiveThanMenuProducts(menuProducts, menuPrice)) {
             throw new InvalidMenuPriceException();
         }
     }
 
-    private static boolean menuPriceIsNullOrNegative(final BigDecimal price) {
-        return price == null || price.compareTo(BigDecimal.ZERO) < 0;
-    }
-
     private static boolean menuPriceIsExpansiveThanMenuProducts(final List<MenuProduct> menuProducts,
-                                                                final BigDecimal price) {
-        final BigDecimal amountSum = sumAllAmount(menuProducts);
-        return price.compareTo(amountSum) > 0;
+                                                                final Price menuPrice) {
+        final Price allAmount  = sumAllAmount(menuProducts);
+        return menuPrice.isExpansiveThan(allAmount) ;
     }
 
-    private static BigDecimal sumAllAmount(final List<MenuProduct> menuProducts) {
+    private static Price sumAllAmount(final List<MenuProduct> menuProducts) {
         return menuProducts.stream()
                 .map(MenuProduct::calculateAmount)
-                .reduce(BigDecimal::add)
+                .reduce(Price::add)
                 .orElseThrow(MenuProductAmountException::new);
     }
 
@@ -81,7 +77,7 @@ public class Menu {
         return name;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
     }
 
