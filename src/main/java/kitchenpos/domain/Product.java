@@ -13,7 +13,7 @@ public class Product {
     @Embedded.Nullable
     private final Price price;
 
-    private Product(final Long id, final String name, final Price price) {
+    protected Product(final Long id, final String name, final Price price) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -21,6 +21,10 @@ public class Product {
 
     public static Product of(final String name, final BigDecimal price) {
         return new Product(null, name, new Price(price));
+    }
+
+    public BigDecimal calculateAmount(final long quantity) {
+        return price.multiply(quantity);
     }
 
     public Long getId() {

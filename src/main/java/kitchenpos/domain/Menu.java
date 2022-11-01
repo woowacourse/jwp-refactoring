@@ -27,20 +27,18 @@ public class Menu {
     }
 
     public static Menu of(final String name, final BigDecimal price, final Long menuGroupId,
-                          final List<MenuProduct> menuProducts) {
-        verifyPrice(price, menuProducts);
+                          final List<MenuProduct> menuProducts, final MenuProductService menuProductService) {
+        menuProductService.verifyAllMenuProductExist();
+        verifyPrice(price, menuProducts, menuProductService);
         return new Menu(null, name, price, menuGroupId, menuProducts);
     }
 
-    private static void verifyPrice(final BigDecimal price, final List<MenuProduct> menuProducts) {
+    private static void verifyPrice(final BigDecimal price, final List<MenuProduct> menuProducts,
+                                    final MenuProductService menuProductService) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
-
-        final BigDecimal totalAmount = menuProducts.stream()
-                .map(MenuProduct::calculateAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        if (price.compareTo(totalAmount) > 0) {
+        if (menuProductService.isGraterThanTotalAmount(price)) {
             throw new IllegalArgumentException();
         }
     }

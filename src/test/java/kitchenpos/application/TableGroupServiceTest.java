@@ -163,7 +163,7 @@ class TableGroupServiceTest extends ServiceTest {
             final Product product = saveProduct("감자튀김");
             final MenuGroup menuGroup = saveMenuGroup("감자");
             final Menu menu = saveMenu("감자세트", BigDecimal.ONE, menuGroup,
-                    new MenuProduct(product.getId(), 1L, product.getPrice()));
+                    new MenuProduct(product.getId(), 1L));
             saveOrder(orderTable1, "COOKING", new OrderLineItem(menu.getId(), 1L));
             saveOrder(orderTable2, "COMPLETION", new OrderLineItem(menu.getId(), 2L));
 

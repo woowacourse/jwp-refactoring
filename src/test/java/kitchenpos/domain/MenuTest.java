@@ -19,16 +19,31 @@ class MenuTest {
         @Test
         @DisplayName("가격이 null일 수 없다.")
         void of_priceIsNull_exception() {
+            // given
+            final Product product = getProduct(100);
+            final MenuProductService menuProductService = MenuProductService.of(
+                    List.of(product),
+                    List.of(new MenuProduct(1L, 1L))
+            );
+
             // when & then
-            assertThatThrownBy(() -> Menu.of("치킨", null, 1L, Collections.emptyList()))
+            assertThatThrownBy(() -> Menu.of("치킨", null, 1L, Collections.emptyList(), menuProductService))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         @DisplayName("가격이 음수일 수 없다.")
         void of_priceIsNegative_exception() {
+            // given
+            final Product product = getProduct(100);
+            final MenuProductService menuProductService = MenuProductService.of(
+                    List.of(product),
+                    List.of(new MenuProduct(1L, 1L))
+            );
+
             // when & then
-            assertThatThrownBy(() -> Menu.of("치킨", BigDecimal.valueOf(-1), 1L, Collections.emptyList()))
+            assertThatThrownBy(
+                    () -> Menu.of("치킨", BigDecimal.valueOf(-1), 1L, Collections.emptyList(), menuProductService))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -40,17 +55,22 @@ class MenuTest {
             final Product sushi = getProduct(2_000);
 
             final List<MenuProduct> menuProducts = List.of(
-                    new MenuProduct(1L, 1L, chicken.getPrice()),
-                    new MenuProduct(2L, 2L, sushi.getPrice())
+                    new MenuProduct(1_000L, 1L),
+                    new MenuProduct(2_000L, 2L)
+            );
+
+            final MenuProductService menuProductService = MenuProductService.of(
+                    List.of(chicken, sushi),
+                    menuProducts
             );
 
             // when & then
-            assertThatThrownBy(() -> Menu.of("치킨", BigDecimal.valueOf(5_001L), 1L, menuProducts))
+            assertThatThrownBy(() -> Menu.of("치킨", BigDecimal.valueOf(5_001L), 1L, menuProducts, menuProductService))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         private Product getProduct(final int price) {
-            return Product.of("치킨", BigDecimal.valueOf(price));
+            return new Product((long) price, "치킨", new Price(BigDecimal.valueOf(price)));
         }
     }
 }

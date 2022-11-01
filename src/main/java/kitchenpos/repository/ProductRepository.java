@@ -13,4 +13,7 @@ public interface ProductRepository extends CrudRepository<Product, Long> {
 
     @Override
     List<Product> findAll();
+
+    @Override
+    List<Product> findAllById(Iterable<Long> longs);
 }

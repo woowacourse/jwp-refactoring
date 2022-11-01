@@ -2,10 +2,13 @@ package kitchenpos.application;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProductService;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
@@ -86,7 +89,12 @@ abstract class ServiceTest {
 
     protected Menu saveMenu(final String name, final BigDecimal price, final MenuGroup menuGroup,
                             final MenuProduct... menuProducts) {
-        final Menu menu = Menu.of(name, price, menuGroup.getId(), List.of(menuProducts));
+        final List<Product> products = Arrays.stream(menuProducts)
+                .map(MenuProduct::getProductId)
+                .map(it -> productRepository.getProduct(it))
+                .collect(Collectors.toList());
+        final MenuProductService menuProductService = MenuProductService.of(products, List.of(menuProducts));
+        final Menu menu = Menu.of(name, price, menuGroup.getId(), List.of(menuProducts), menuProductService);
         return menuRepository.save(menu);
     }
 
