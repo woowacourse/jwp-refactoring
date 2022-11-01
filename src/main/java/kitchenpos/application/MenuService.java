@@ -9,6 +9,8 @@ import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuProductCreateRequest;
 import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.dto.response.MenusResponse;
+import kitchenpos.exception.MenuGroupNotFoundException;
+import kitchenpos.exception.ProductNotFoundException;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
@@ -48,14 +50,14 @@ public class MenuService {
 
     private MenuProduct toMenuProduct(final MenuProductCreateRequest request) {
         Product product = productRepository.findById(request.getProductId())
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(ProductNotFoundException::new);
         return new MenuProduct(product, request.getQuantity());
     }
 
     private void validateInMenuGroup(final Menu menu) {
         Long menuGroupId = menu.getMenuGroupId();
         if (!menuGroupRepository.existsById(menuGroupId)) {
-            throw new IllegalArgumentException();
+            throw new MenuGroupNotFoundException("등록되지 않은 메뉴그룹 입니다.");
         }
     }
 

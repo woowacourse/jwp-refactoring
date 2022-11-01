@@ -38,14 +38,14 @@ public class OrderTable {
 
     public void changeToUse() {
         if (!this.empty || this.tableGroup != null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("이미 사용중인 테이블 입니다.");
         }
         this.empty = false;
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
         if (numberOfGuests < 0 || this.empty) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("변경할 손님수는 0명 이상의 정수로 입력해주세요.");
         }
         this.numberOfGuests = numberOfGuests;
     }

@@ -9,6 +9,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.TableGroupCreateRequest;
 import kitchenpos.dto.response.TableGroupResponse;
+import kitchenpos.exception.TableGroupNotFoundException;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -50,7 +51,7 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(TableGroupNotFoundException::new);
         validatePossibleUngrouping(tableGroup);
         tableGroup.ungrouping();
     }
@@ -58,7 +59,7 @@ public class TableGroupService {
     private void validatePossibleUngrouping(final TableGroup tableGroup) {
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 tableGroup.getOrderTables(), List.of(COOKING.name(), MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("조리중이거나 식사 중인 테이블이 있습니다.");
         }
     }
 }

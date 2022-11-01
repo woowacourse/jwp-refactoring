@@ -14,6 +14,7 @@ import kitchenpos.dto.request.OrderTableUpdateEmptyRequest;
 import kitchenpos.dto.request.OrderTableUpdateGuestRequest;
 import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.dto.response.OrderTablesResponse;
+import kitchenpos.exception.OrderTableNotFoundException;
 import kitchenpos.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -90,7 +91,7 @@ class TableServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(잘못된_주문_테이블_아이디, new OrderTableUpdateEmptyRequest(사용가능_테이블)))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderTableNotFoundException.class);
     }
 
     @DisplayName("주문 테이블의 방문한 손님 수를 변경한다.")
@@ -126,7 +127,8 @@ class TableServiceTest extends ServiceTest {
         // when & then
         assertThatThrownBy(
                 () -> tableService.changeNumberOfGuests(야채곱창_주문_테이블_아이디, new OrderTableUpdateGuestRequest(-1)))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("변경할 손님수는 0명 이상의 정수로 입력해주세요.");
     }
 
     @DisplayName("주문 테이블의 방문한 손님 수를 변경할 때, 주문 테이블이 없으면 예외를 발생한다.")
@@ -137,7 +139,7 @@ class TableServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(잘못된_주문_테이블_아이디, new OrderTableUpdateGuestRequest(5)))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderTableNotFoundException.class);
     }
 
     private OrderTable 주문_테이블_생성(final int numberOfGuests, final boolean empty) {

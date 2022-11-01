@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.common.builder.OrderTableBuilder;
 import kitchenpos.common.builder.TableGroupBuilder;
@@ -13,6 +14,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.TableGroupCreateRequest;
 import kitchenpos.dto.response.TableGroupResponse;
+import kitchenpos.exception.TableGroupNotFoundException;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -76,19 +78,20 @@ class TableGroupServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(단체_테이블_생성_요청))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("단체 지정 3개 이상의 정수로 입력해주세요.");
     }
 
-    @DisplayName("단체 지정을 등록할 때, 주문 테이블이 null 이면 예외가 발생한다.")
+    @DisplayName("단체 지정을 등록할 때, 주문 테이블이 없으면 예외가 발생한다.")
     @Test
-    void 단체_지정을_등록할_때_주문_테이블이_null_이면_예외가_발생한다() {
+    void 단체_지정을_등록할_때_주문_테이블이_없으면_예외가_발생한다() {
         // given
-        List<Long> 주문_테이블들_아아디 = null;
+        List<Long> 주문_테이블들_아아디 = new ArrayList<>();
         TableGroupCreateRequest 단체_테이블_생성_요청 = new TableGroupCreateRequest(주문_테이블들_아아디);
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(단체_테이블_생성_요청))
-                .isInstanceOf(NullPointerException.class);
+                .isInstanceOf(TableGroupNotFoundException.class);
     }
 
     @DisplayName("단체 지정을 등록할 때, 주문 테이블이 빈 테이블이 아니면 예외가 발생한다.")
@@ -102,7 +105,8 @@ class TableGroupServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(단체_테이블_생성_요청))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("이미 사용중인 테이블 입니다.");
     }
 
     @DisplayName("단체 지정을 등록할 때, 주문 테이블이 이미 단체 지정되어 있으면 예외가 발생한다.")
@@ -115,8 +119,8 @@ class TableGroupServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(단체_테이블_생성_요청))
-                .isInstanceOf(IllegalArgumentException.class);
-
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("이미 사용중인 테이블 입니다.");
     }
 
     @DisplayName("단체 지정을 해제한다.")

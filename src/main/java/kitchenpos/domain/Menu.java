@@ -36,7 +36,7 @@ public class Menu {
 
     private void validateCorrectPrice() {
         if (Objects.isNull(this.price) || this.price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("가격은 0원 이상의 정수로 입력해주세요.");
         }
     }
 
@@ -44,7 +44,7 @@ public class Menu {
         BigDecimal sumOfPrice = menuProducts.calculateSumOfPrice();
 
         if (this.price.compareTo(sumOfPrice) > 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("메뉴 가격은 상품 가격의 합 보다 작아야 합니다.");
         }
     }
 

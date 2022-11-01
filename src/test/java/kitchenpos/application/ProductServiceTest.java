@@ -56,7 +56,8 @@ class ProductServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> productService.create(상품_생성_요청))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("가격은 0원 이상의 정수로 입력해주세요.");
     }
 
     @DisplayName("상품을 등록할 때, 가격이 null 이면 예외가 발생한다.")
@@ -67,7 +68,8 @@ class ProductServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> productService.create(상품_생성_요청))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("가격은 0원 이상의 정수로 입력해주세요.");
     }
 
     @DisplayName("상품 목록을 조회한다.")

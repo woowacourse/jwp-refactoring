@@ -36,6 +36,8 @@ import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.dto.request.OrderUpdateRequest;
 import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.dto.response.OrdersResponse;
+import kitchenpos.exception.MenuNotFoundException;
+import kitchenpos.exception.OrderNotFoundException;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
@@ -109,7 +111,7 @@ class OrderServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> orderService.create(야채곱창_주문_생성_요청))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(MenuNotFoundException.class);
     }
 
     @DisplayName("주문을 등록할 때, 주문 항목이 없으면 예외가 발생한다")
@@ -120,7 +122,8 @@ class OrderServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> orderService.create(야채곱창_주문_생성_요청))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 목록이 없습니다.");
     }
 
     @DisplayName("주문을 등록할 때, 주문 테이블이 빈 테이블 이면 예외가 발생한다.")
@@ -174,7 +177,7 @@ class OrderServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> orderService.changeOrderStatus(없는_주문_아이디, new OrderUpdateRequest(COOKING.name())))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderNotFoundException.class);
     }
 
     @DisplayName("주문의 주문 상태를 변경할 때 주문 상태가 계산이면 예외가 발생한다.")

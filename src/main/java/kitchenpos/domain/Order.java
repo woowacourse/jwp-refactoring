@@ -48,7 +48,7 @@ public class Order {
 
     private void validateNotCompletion() {
         if (Objects.equals(COMPLETION.name(), this.orderStatus)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("이미 계산이 완료된 테이블 입니다.");
         }
     }
 

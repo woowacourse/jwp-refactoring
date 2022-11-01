@@ -22,6 +22,8 @@ import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuProductCreateRequest;
 import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.dto.response.MenusResponse;
+import kitchenpos.exception.MenuGroupNotFoundException;
+import kitchenpos.exception.ProductNotFoundException;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
@@ -101,7 +103,8 @@ public class MenuServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> menuService.create(야채곱창_메뉴_생성_요청))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("가격은 0원 이상의 정수로 입력해주세요.");
     }
 
     @DisplayName("메뉴를 등록할 때, 가격이 null 이면 예외가 발생한다.")
@@ -113,7 +116,8 @@ public class MenuServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> menuService.create(야채곱창_메뉴_생성_요청))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("가격은 0원 이상의 정수로 입력해주세요.");
     }
 
     @DisplayName("메뉴를 등록할 때, 메뉴 그룹이 존재하지 않으면 예외가 발생한다.")
@@ -126,7 +130,7 @@ public class MenuServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> menuService.create(야채곱창_메뉴_생성_요청))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(MenuGroupNotFoundException.class);
     }
 
     @DisplayName("메뉴를 등록할 때, 등록되지 않은 상품이면 예외가 발생한다.")
@@ -139,7 +143,7 @@ public class MenuServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> menuService.create(야채곱창_메뉴_생성_요청))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(ProductNotFoundException.class);
     }
 
     @DisplayName("메뉴를 등록할 때, 메뉴 가격이 메뉴상품 가격 합보다 크면 예외가 발생한다.")
@@ -152,7 +156,8 @@ public class MenuServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> menuService.create(야채곱창_메뉴_생성_요청))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("메뉴 가격은 상품 가격의 합 보다 작아야 합니다.");
     }
 
     @DisplayName("메뉴 목록을 조회한다.")

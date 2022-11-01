@@ -11,6 +11,8 @@ import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.dto.request.OrderUpdateRequest;
 import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.dto.response.OrdersResponse;
+import kitchenpos.exception.MenuNotFoundException;
+import kitchenpos.exception.OrderNotFoundException;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
@@ -51,7 +53,7 @@ public class OrderService {
 
     private OrderLineItem toOrderLineItem(final OrderLineItemRequest request) {
         Menu menu = menuRepository.findById(request.getMenuId())
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(MenuNotFoundException::new);
         return new OrderLineItem(menu, request.getQuantity());
     }
 
@@ -71,7 +73,7 @@ public class OrderService {
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderUpdateRequest request) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(OrderNotFoundException::new);
         order.changeStatus(request.getOrderStatus());
         return OrderResponse.of(order);
     }

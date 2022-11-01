@@ -25,7 +25,7 @@ public class OrderLineItems {
 
     private void validateNotEmptyOrderLineItems() {
         if (CollectionUtils.isEmpty(this.orderLineItems)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 목록이 없습니다.");
         }
     }
 
