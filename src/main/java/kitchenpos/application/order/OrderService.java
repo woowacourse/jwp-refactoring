@@ -6,6 +6,7 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -40,27 +41,28 @@ public class OrderService {
             throw new IllegalArgumentException("주문메뉴가 존재하지 않습니다.");
         }
 
-        final List<Long> menuIds = orderLineItemRequests.stream()
-                .map(OrderLineItemRequest::getMenuId)
-                .collect(Collectors.toList());
-
-        if (orderLineItemRequests.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException("주문받은 메뉴가 실제 저장되어 있는 메뉴에 속하지 않습니다.");
-        }
-
         final OrderTable orderTable = orderTableDao.findById(orderRequest.getOrderTableId())
                 .orElseThrow(() -> new IllegalArgumentException("주문테이블이 존재하지 않습니다."));
 
         final Order order = Order.newOrder(orderTable);
 
-        final List<OrderLineItem> orderLineItems = orderLineItemRequests.stream()
-                .map(orderLineItemRequest -> new OrderLineItem(order,
-                        menuDao.findById(orderLineItemRequest.getMenuId()).orElseThrow(),
-                        orderLineItemRequest.getQuantity()))
-                .collect(Collectors.toList());
+        final List<OrderLineItem> orderLineItems = convertToOrderLineItems(orderLineItemRequests, order);
         order.changeOrderLineItems(orderLineItems);
         orderDao.save(order);
         return OrderResponse.from(order);
+    }
+
+    private List<OrderLineItem> convertToOrderLineItems(List<OrderLineItemRequest> orderLineItemRequests, Order order) {
+        return orderLineItemRequests.stream()
+                .map(orderLineItemRequest -> new OrderLineItem(order,
+                        findMenu(orderLineItemRequest),
+                        orderLineItemRequest.getQuantity()))
+                .collect(Collectors.toList());
+    }
+
+    private Menu findMenu(OrderLineItemRequest orderLineItemRequest) {
+        return menuDao.findById(orderLineItemRequest.getMenuId())
+                .orElseThrow(() -> new IllegalArgumentException("주문받은 메뉴가 실제 저장되어 있는 메뉴에 속하지 않습니다."));
     }
 
     public List<OrderResponse> list() {
@@ -72,7 +74,7 @@ public class OrderService {
 
     @Transactional
     public ChangeOrderStatusResponse changeOrderStatus(final Long orderId,
-                                                      final ChangeOrderStatusRequest changeOrderStatusRequest) {
+                                                       final ChangeOrderStatusRequest changeOrderStatusRequest) {
         final Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("저장되어 있지 않은 주문입니다."));
 
