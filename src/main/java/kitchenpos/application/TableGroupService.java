@@ -4,11 +4,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.domain.ordertable.OrderTableRepository;
-import kitchenpos.domain.ordertable.TableGroupRepository;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.ordertable.OrderTableRepository;
 import kitchenpos.domain.ordertable.TableGroup;
+import kitchenpos.domain.ordertable.TableGroupRepository;
 import kitchenpos.dto.request.IdRequest;
 import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.TableGroupResponse;
@@ -37,8 +37,7 @@ public class TableGroupService {
                 .map(this::getOrderTableFrom)
                 .collect(Collectors.toList());
 
-        final TableGroup tableGroup = TableGroup.ofNew();
-        tableGroup.groupTables(savedOrderTables);
+        final TableGroup tableGroup = TableGroup.ofNew(savedOrderTables);
 
         tableGroupRepository.save(tableGroup);
         return TableGroupResponse.from(tableGroup);

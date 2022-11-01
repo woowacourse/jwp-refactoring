@@ -1,6 +1,7 @@
 package kitchenpos.domain.ordertable;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
@@ -24,23 +25,20 @@ public class TableGroup {
     @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     private List<OrderTable> orderTables;
 
-    public TableGroup(final Long id, final LocalDateTime createdDate) {
+    private TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+        validateTables(orderTables);
         this.id = id;
         this.createdDate = createdDate;
+        this.orderTables = orderTables;
     }
 
-    public static TableGroup ofNew() {
-        return new TableGroup(null, LocalDateTime.now());
-    }
-
-    public List<OrderTable> groupTables(final List<OrderTable> orderTables) {
-        validateTables(orderTables);
+    public static TableGroup ofNew(final List<OrderTable> orderTables) {
+        final TableGroup tableGroup = new TableGroup(null, LocalDateTime.now(), orderTables);
         for (final OrderTable orderTable : orderTables) {
-            orderTable.joinGroup(this);
+            orderTable.joinGroup(tableGroup);
         }
 
-        this.orderTables = orderTables;
-        return orderTables;
+        return tableGroup;
     }
 
     public void ungroup() {
@@ -50,7 +48,7 @@ public class TableGroup {
 
     }
 
-    private static void validateTables(final List<OrderTable> orderTables) {
+    private void validateTables(final List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < MIN_TABLE_SIZE) {
             throw new IllegalArgumentException();
         }
@@ -65,9 +63,10 @@ public class TableGroup {
     }
 
     public List<Long> getOrderTableIds() {
-        return orderTables.stream()
+        final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
+        return Collections.unmodifiableList(orderTableIds);
     }
 
     public List<OrderTable> getOrderTables() {

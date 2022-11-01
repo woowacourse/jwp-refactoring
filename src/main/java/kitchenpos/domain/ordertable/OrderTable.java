@@ -31,16 +31,16 @@ public class OrderTable {
         return new OrderTable(null, null, numberOfGuests, empty);
     }
 
-    public void joinGroup(final TableGroup tableGroup) {
+    void joinGroup(final TableGroup tableGroup) {
         checkEmpty();
         checkNotGrouped();
         this.tableGroup = tableGroup;
         this.empty = false;
     }
 
-    public void ungroup() {
+    void ungroup() {
         this.tableGroup = null;
-        this.empty = true;
+        this.empty = false;
     }
 
     public void acceptGuests(final int numberOfGuests) {

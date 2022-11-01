@@ -2,8 +2,9 @@ package kitchenpos.domain.ordertable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -12,12 +13,18 @@ class OrderTableTest {
     @DisplayName("테이블을 단체로 지정한다.")
     @Test
     void joinGroup() {
+        // given
+        final TableGroup tableGroup = mock(TableGroup.class);
+        when(tableGroup.getId())
+                .thenReturn(1L);
         final OrderTable orderTable = OrderTable.ofNew(0, true);
-        final TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now());
+
+        // when
         orderTable.joinGroup(tableGroup);
 
+        // then
         assertAll(
-                () -> assertThat(orderTable.getTableGroupId()).isEqualTo(tableGroup.getId()),
+                () -> assertThat(orderTable.getTableGroupId()).isEqualTo(1L),
                 () -> assertThat(orderTable.isEmpty()).isFalse()
         );
     }

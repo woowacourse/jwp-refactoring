@@ -5,21 +5,21 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.menu.MenuGroupRepository;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.domain.ordertable.OrderTableRepository;
-import kitchenpos.domain.product.ProductRepository;
-import kitchenpos.domain.ordertable.TableGroupRepository;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuGroupRepository;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuRepository;
-import kitchenpos.domain.product.Product;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.ordertable.OrderTableRepository;
 import kitchenpos.domain.ordertable.TableGroup;
+import kitchenpos.domain.ordertable.TableGroupRepository;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,10 +67,9 @@ public class DataSupport {
     }
 
     public TableGroup saveTableGroup() {
-        final TableGroup tableGroup = TableGroup.ofNew();
         final OrderTable orderTable1 = saveOrderTable(0, true);
         final OrderTable orderTable2 = saveOrderTable(0, true);
-        tableGroup.groupTables(Arrays.asList(orderTable1, orderTable2));
+        final TableGroup tableGroup = TableGroup.ofNew(Arrays.asList(orderTable1, orderTable2));
 
         return tableGroupRepository.save(tableGroup);
     }
