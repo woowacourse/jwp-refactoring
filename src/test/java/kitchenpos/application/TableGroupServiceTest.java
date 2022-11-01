@@ -31,12 +31,12 @@ class TableGroupServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        notIncludeOrderTable1 = orderTableDao.save(new OrderTable(null, null, 0, true))
+        notIncludeOrderTable1 = orderTableDao.save(new OrderTable(0, true))
                 .getId();
-        notIncludeOrderTable2 = orderTableDao.save(new OrderTable(null, null, 0, true))
+        notIncludeOrderTable2 = orderTableDao.save(new OrderTable(0, true))
                 .getId();
-        final OrderTable orderTable1 = orderTableDao.save(new OrderTable(null, null, 0, true));
-        final OrderTable orderTable2 = orderTableDao.save(new OrderTable(null, null, 0, true));
+        final OrderTable orderTable1 = orderTableDao.save(new OrderTable(0, true));
+        final OrderTable orderTable2 = orderTableDao.save(new OrderTable(0, true));
         tableGroupId = tableGroupDao.save(TableGroup.of(List.of(orderTable1, orderTable2))).getId();
         orderTableId1 = orderTable1.getId();
         orderTableId2 = orderTable2.getId();

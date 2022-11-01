@@ -24,16 +24,27 @@ public class MenuRepository implements MenuDao {
     @Override
     public Menu save(final Menu entity) {
         final Menu menu = jdbcTemplateMenuDao.save(entity);
-        final List<MenuProduct> menuProducts = entity.getMenuProducts()
+        final List<MenuProduct> menuProducts = mapToMenuProducts(entity, menu);
+
+        return mapToMenu(menu, menuProducts);
+    }
+
+    private List<MenuProduct> mapToMenuProducts(final Menu entity, final Menu menu) {
+        return entity.getMenuProducts()
                 .stream()
-                .map(menuProduct -> new MenuProduct(
-                        menu.getId(),
-                        menuProduct.getProductId(),
-                        menuProduct.getQuantity())
-                )
+                .map(menuProduct -> mapToMenuProduct(menu, menuProduct))
                 .map(jdbcTemplateMenuProductDao::save)
                 .collect(Collectors.toList());
+    }
 
+    private static MenuProduct mapToMenuProduct(final Menu menu, final MenuProduct menuProduct) {
+        return new MenuProduct(
+                menu.getId(),
+                menuProduct.getProductId(),
+                menuProduct.getQuantity());
+    }
+
+    private Menu mapToMenu(final Menu menu, final List<MenuProduct> menuProducts) {
         return new Menu(
                 menu.getId(),
                 menu.getName(),
@@ -52,12 +63,7 @@ public class MenuRepository implements MenuDao {
     public List<Menu> findAll() {
         final List<Menu> menus = jdbcTemplateMenuDao.findAll();
         return menus.stream()
-                .map(menu -> new Menu(
-                        menu.getId(),
-                        menu.getName(),
-                        menu.getPrice(),
-                        menu.getMenuGroupId(),
-                        jdbcTemplateMenuProductDao.findAllByMenuId(menu.getId())))
+                .map(menu -> mapToMenu(menu, jdbcTemplateMenuProductDao.findAllByMenuId(menu.getId())))
                 .collect(Collectors.toList());
     }
 

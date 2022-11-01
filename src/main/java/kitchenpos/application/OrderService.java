@@ -36,15 +36,19 @@ public class OrderService {
     public OrderResponse create(final OrderCreateRequest request) {
         final Order order = Order.of(
                 getOrderTableId(request),
-                request.getOrderLineItems()
-                        .stream()
-                        .map(orderLineItemRequest -> new OrderLineItem(
-                                orderLineItemRequest.getMenuId(),
-                                orderLineItemRequest.getQuantity()
-                        )).collect(Collectors.toList())
+                mapToOrderLineItems(request)
         );
         order.checkMenuSize(menuDao.countByIdIn(order.getMenuIds()));
         return OrderResponse.from(orderDao.save(order));
+    }
+
+    private static List<OrderLineItem> mapToOrderLineItems(final OrderCreateRequest request) {
+        return request.getOrderLineItems()
+                .stream()
+                .map(orderLineItemRequest -> new OrderLineItem(
+                        orderLineItemRequest.getMenuId(),
+                        orderLineItemRequest.getQuantity()
+                )).collect(Collectors.toList());
     }
 
     private Long getOrderTableId(final OrderCreateRequest request) {

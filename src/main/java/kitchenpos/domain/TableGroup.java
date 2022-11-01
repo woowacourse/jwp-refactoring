@@ -20,7 +20,7 @@ public class TableGroup {
     public static TableGroup of(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         validateOrderTables(orderTables);
         for (OrderTable orderTable : orderTables) {
-            validateTableGroping(orderTable);
+            validateTableGroping(orderTable, id);
         }
         return new TableGroup(id, createdDate, orderTables);
     }
@@ -31,7 +31,10 @@ public class TableGroup {
         }
     }
 
-    private static void validateTableGroping(final OrderTable orderTable) {
+    private static void validateTableGroping(final OrderTable orderTable, final Long TableGroupId) {
+        if (orderTable.getTableGroupId() != null && orderTable.getTableGroupId().equals(TableGroupId)) {
+            return;
+        }
         if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroupId())) {
             throw new IllegalArgumentException();
         }

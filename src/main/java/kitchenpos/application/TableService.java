@@ -25,7 +25,7 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse create(final OrderTableCreateReqeust request) {
-        final OrderTable orderTable = new OrderTable(null, null, request.getNumberOfGuests(), request.isEmpty());
+        final OrderTable orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
         return OrderTableResponse.from(orderTableDao.save(orderTable));
     }
 
@@ -38,14 +38,18 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final boolean empty) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-        validateCookingOrMeal(orderTableId);
+        final OrderTable savedOrderTable = getOrderTable(orderTableId);
+        validateOrderStatusInCookingOrMeal(orderTableId);
         savedOrderTable.changeEmpty(empty);
         return OrderTableResponse.from(orderTableDao.save(savedOrderTable));
     }
 
-    private void validateCookingOrMeal(final Long orderTableId) {
+    private OrderTable getOrderTable(final Long orderTableId) {
+        return orderTableDao.findById(orderTableId)
+                .orElseThrow(IllegalArgumentException::new);
+    }
+
+    private void validateOrderStatusInCookingOrMeal(final Long orderTableId) {
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException("주문 테이블의 주문 상태가 조리, 식사라면 상태를 변경할 수 없습니다.");
@@ -54,8 +58,7 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+        final OrderTable savedOrderTable = getOrderTable(orderTableId);
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
         return OrderTableResponse.from(orderTableDao.save(savedOrderTable));
     }

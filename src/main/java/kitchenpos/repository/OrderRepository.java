@@ -25,15 +25,27 @@ public class OrderRepository implements OrderDao {
     @Override
     public Order save(final Order entity) {
         final Order order = jdbcTemplateOrderDao.save(entity);
-        final List<OrderLineItem> orderLineItems = entity.getOrderLineItems()
+        final List<OrderLineItem> orderLineItems = mapToOrderLineItems(entity, order);
+        return createOrder(order, orderLineItems);
+    }
+
+    private List<OrderLineItem> mapToOrderLineItems(final Order entity, final Order order) {
+        return entity.getOrderLineItems()
                 .stream()
-                .map(orderLineItem -> new OrderLineItem(
-                        order.getId(),
-                        orderLineItem.getMenuId(),
-                        orderLineItem.getQuantity()
-                ))
+                .map(orderLineItem -> mapToOrderLineItem(order, orderLineItem))
                 .map(jdbcTemplateOrderLineItemDao::save)
                 .collect(Collectors.toList());
+    }
+
+    private OrderLineItem mapToOrderLineItem(final Order order, final OrderLineItem orderLineItem) {
+        return new OrderLineItem(
+                order.getId(),
+                orderLineItem.getMenuId(),
+                orderLineItem.getQuantity()
+        );
+    }
+
+    private static Order createOrder(final Order order, final List<OrderLineItem> orderLineItems) {
         return Order.of(
                 order.getId(),
                 order.getOrderTableId(),
@@ -46,26 +58,15 @@ public class OrderRepository implements OrderDao {
     @Override
     public Optional<Order> findById(final Long id) {
         return jdbcTemplateOrderDao.findById(id)
-                .map(order -> Order.of(
-                        order.getId(),
-                        order.getOrderTableId(),
-                        order.getOrderStatus(),
-                        order.getOrderedTime(),
-                        jdbcTemplateOrderLineItemDao.findAllByOrderId(order.getId())
-                ));
+                .map(order -> createOrder(order, jdbcTemplateOrderLineItemDao.findAllByOrderId(order.getId())));
     }
 
     @Override
     public List<Order> findAll() {
         final List<Order> orders = jdbcTemplateOrderDao.findAll();
         return orders.stream()
-                .map(order -> Order.of(
-                        order.getId(),
-                        order.getOrderTableId(),
-                        order.getOrderStatus(),
-                        order.getOrderedTime(),
-                        jdbcTemplateOrderLineItemDao.findAllByOrderId(order.getId())
-                )).collect(Collectors.toList());
+                .map(order -> createOrder(order, jdbcTemplateOrderLineItemDao.findAllByOrderId(order.getId())))
+                .collect(Collectors.toList());
     }
 
     @Override
