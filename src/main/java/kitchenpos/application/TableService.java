@@ -31,6 +31,7 @@ public class TableService {
         return orderTableRepository.save(orderTable);
     }
 
+    @Transactional(readOnly = true)
     public List<OrderTable> list() {
         return orderTableRepository.findAll();
     }
@@ -40,9 +41,7 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
-            throw new IllegalArgumentException();
-        }
+        savedOrderTable.validateTableGroupForChangeEmpty();
 
         if (orderRepository.existsByOrderTableAndOrderStatusIn(
                 savedOrderTable, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
@@ -58,9 +57,7 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+        savedOrderTable.validateEmptyForChangeGuestNumber();
 
         return orderTableRepository.save(new OrderTable(savedOrderTable.getId(), savedOrderTable.getTableGroup(),
                 orderTableRequest.getNumberOfGuests(), savedOrderTable.isEmpty()));

@@ -46,6 +46,18 @@ public class OrderTable {
         this(null, tableGroup, numberOfGuests, empty);
     }
 
+    public void validateTableGroupForChangeEmpty( ) {
+        if (Objects.nonNull(getTableGroup())) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void validateEmptyForChangeGuestNumber() {
+        if (isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public boolean isNonNullTableGroup() {
         return Objects.nonNull(getTableGroup());
     }
