@@ -49,7 +49,7 @@ public class Menu {
         }
     }
 
-    public void validatePriceUnderThanSumOfProductPrice(final BigDecimal price) {
+    private void validatePriceUnderThanSumOfProductPrice(final BigDecimal price) {
         BigDecimal sumOfPrice = menuProducts.calculateSumOfPrice();
 
         if (price.compareTo(sumOfPrice) > 0) {

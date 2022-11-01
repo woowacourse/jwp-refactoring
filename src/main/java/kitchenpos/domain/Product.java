@@ -26,12 +26,12 @@ public class Product {
     }
 
     public Product(final String name, final BigDecimal price) {
+        validateCorrectPrice(price);
         this.name = name;
         this.price = price;
-        validateCorrectPrice();
     }
 
-    public void validateCorrectPrice() {
+    private void validateCorrectPrice(final BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }

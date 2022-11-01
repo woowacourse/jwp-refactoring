@@ -1,7 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.domain.OrderStatus.COOKING;
-
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
@@ -38,15 +36,15 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest request) {
-        Order order = new Order(request.getOrderTableId(), COOKING.name(), orderLineItems(request));
+        List<OrderLineItem> orderLineItems = orderLineItems(request.getOrderLineItems());
+        Order order = request.toEntity(orderLineItems);
         validateExistOrderTable(order);
         orderRepository.save(order);
         return OrderResponse.of(order);
     }
 
-    private List<OrderLineItem> orderLineItems(final OrderCreateRequest request) {
-        return request.getOrderLineItems()
-                .stream()
+    private List<OrderLineItem> orderLineItems(final List<OrderLineItemRequest> requests) {
+        return requests.stream()
                 .map(this::toOrderLineItem)
                 .collect(Collectors.toList());
     }
