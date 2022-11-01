@@ -30,6 +30,17 @@ class ProductDaoTest {
         );
     }
 
+    @DisplayName("특정 상품을 조회한다.")
+    @Test
+    void findById() {
+        final Product product = productDao.save(new Product("productName", BigDecimal.valueOf(1000L)));
+
+        final Product actual = productDao.findById(product.getId())
+                .get();
+
+        assertThat(actual.getId()).isEqualTo(product.getId());
+    }
+
     @DisplayName("상품 목록을 조회한다")
     @Test
     void getProducts() {
