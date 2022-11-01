@@ -2,9 +2,11 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
+import kitchenpos.application.dto.request.OrderTableCreateRequest;
+import kitchenpos.application.dto.request.OrderTableGuestNumberRequest;
+import kitchenpos.application.dto.request.OrderTableSetEmptyRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
@@ -13,6 +15,11 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.exception.EmptyOrderTableException;
+import kitchenpos.exception.InvalidNumberOfGuestsException;
+import kitchenpos.exception.InvalidOrderStatusException;
+import kitchenpos.exception.OrderTableNotFoundException;
+import kitchenpos.exception.TableGroupNullException;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.OrderFixture;
@@ -36,20 +43,14 @@ class TableServiceTest extends ServiceTestEnvironment {
     @DisplayName("주문 테이블을 추가할 수 있다.")
     void create() {
         // given
-        final OrderTable orderTable = OrderTableFixture.createDefaultWithoutId();
+        final OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(0, true);
 
         // when
-        final OrderTable actual = tableService.create(orderTable);
+        final OrderTable actual = tableService.create(orderTableCreateRequest);
 
         // then
-        assertAll(
-                () -> assertThat(actual).extracting("id")
-                        .isNotNull(),
-                () -> assertThat(actual)
-                        .usingRecursiveComparison()
-                        .ignoringFields("id")
-                        .isEqualTo(orderTable)
-        );
+        assertThat(actual).extracting("id")
+                .isNotNull();
     }
 
     @Test
@@ -76,7 +77,7 @@ class TableServiceTest extends ServiceTestEnvironment {
         final OrderTable savedTable = serviceDependencies.save(orderTable);
 
         // when
-        final OrderTable actual = tableService.changeEmpty(savedTable.getId(), OrderTableFixture.create(true, 10));
+        final OrderTable actual = tableService.changeEmpty(savedTable.getId(), new OrderTableSetEmptyRequest(true));
 
         // then
         assertThat(actual.isEmpty()).isTrue();
@@ -89,8 +90,8 @@ class TableServiceTest extends ServiceTestEnvironment {
         final Long notExistsId = Long.MAX_VALUE;
 
         // when, then
-        assertThatThrownBy(() ->tableService.changeEmpty(notExistsId, OrderTableFixture.create(true, 10)))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeEmpty(notExistsId, new OrderTableSetEmptyRequest(true)))
+                .isExactlyInstanceOf(OrderTableNotFoundException.class);
     }
 
     @Test
@@ -108,8 +109,8 @@ class TableServiceTest extends ServiceTestEnvironment {
         serviceDependencies.save(savedTable1);
 
         // when, then
-        assertThatThrownBy(() ->tableService.changeEmpty(savedTable1.getId(), OrderTableFixture.create(true, 10)))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeEmpty(savedTable1.getId(), new OrderTableSetEmptyRequest(true)))
+                .isExactlyInstanceOf(TableGroupNullException.class);
     }
 
     @ParameterizedTest
@@ -118,7 +119,7 @@ class TableServiceTest extends ServiceTestEnvironment {
     void changeEmpty_exceptionOrderStatusNotCompleted(final OrderStatus orderStatus) {
         // given
         final OrderTable orderTable1 = OrderTableFixture.create(false, 1);
-        final OrderTable savedTable =  serviceDependencies.save(orderTable1);
+        final OrderTable savedTable = serviceDependencies.save(orderTable1);
 
         final MenuGroup menuGroup1 = MenuGroupFixture.createDefaultWithoutId();
         final MenuGroup savedMenuGroup1 = serviceDependencies.save(menuGroup1);
@@ -128,16 +129,16 @@ class TableServiceTest extends ServiceTestEnvironment {
         final Product savedProduct1 = serviceDependencies.save(product1);
         final Product savedProduct2 = serviceDependencies.save(product2);
 
-        final Menu menu = MenuFixture.createWithPrice(savedMenuGroup1, 2000L, savedProduct1, savedProduct2);
+        final Menu menu = MenuFixture.createWithPrice(savedMenuGroup1.getId(), 2000L, savedProduct1, savedProduct2);
         final Menu savedMenu = serviceDependencies.save(menu);
 
-        final OrderLineItem orderLineItem = OrderLineItemFixture.create(savedMenu);
+        final OrderLineItem orderLineItem = OrderLineItemFixture.create(savedMenu.getId());
         final Order order = OrderFixture.create(savedTable, orderStatus, orderLineItem);
         serviceDependencies.save(order);
 
         // when, then
-        assertThatThrownBy(() ->tableService.changeEmpty(savedTable.getId(), OrderTableFixture.create(true, 10)))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeEmpty(savedTable.getId(), new OrderTableSetEmptyRequest(true)))
+                .isExactlyInstanceOf(InvalidOrderStatusException.class);
     }
 
     @Test
@@ -149,7 +150,7 @@ class TableServiceTest extends ServiceTestEnvironment {
 
         // when
         final OrderTable actual = tableService.changeNumberOfGuests(saved.getId(),
-                OrderTableFixture.create(false, 10));
+                new OrderTableGuestNumberRequest(10));
 
         // then
         assertThat(actual).extracting("numberOfGuests")
@@ -164,8 +165,8 @@ class TableServiceTest extends ServiceTestEnvironment {
 
         // when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(notExistsId,
-                OrderTableFixture.create(false, 10)))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                new OrderTableGuestNumberRequest(10)))
+                .isExactlyInstanceOf(OrderTableNotFoundException.class);
     }
 
     @Test
@@ -177,8 +178,8 @@ class TableServiceTest extends ServiceTestEnvironment {
 
         // when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(saved.getId(),
-                OrderTableFixture.create(false, -1)))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                new OrderTableGuestNumberRequest(-1)))
+                .isExactlyInstanceOf(InvalidNumberOfGuestsException.class);
     }
 
     @Test
@@ -190,7 +191,7 @@ class TableServiceTest extends ServiceTestEnvironment {
 
         // when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(saved.getId(),
-                OrderTableFixture.create(false, 10)))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                new OrderTableGuestNumberRequest(10)))
+                .isExactlyInstanceOf(EmptyOrderTableException.class);
     }
 }
