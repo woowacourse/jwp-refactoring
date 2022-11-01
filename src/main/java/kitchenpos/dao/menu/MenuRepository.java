@@ -21,7 +21,8 @@ public class MenuRepository implements MenuDao {
 
     @Override
     public Menu save(final Menu entity) {
-        final Long menuId = entity.getId();
+        final Menu menu = menuDao.save(entity);
+        final Long menuId = menu.getId();
         final LinkedList<MenuProduct> savedMenuProducts = new LinkedList<>();
         for (final MenuProduct menuProduct : entity.getMenuProducts()) {
             menuProduct.changeMenu(menuId);

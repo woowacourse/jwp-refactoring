@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -47,7 +48,7 @@ public class Menu {
                                        final String name,
                                        final BigDecimal price,
                                        final Long menuGroupId) {
-        return new Menu(id, name, price, menuGroupId, null);
+        return new Menu(id, name, price, menuGroupId, new LinkedList<>());
     }
 
     private static void validateSumPrice(final BigDecimal price, final List<MenuProduct> menuProducts) {

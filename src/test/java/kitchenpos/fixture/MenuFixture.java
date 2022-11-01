@@ -53,7 +53,11 @@ public class MenuFixture {
         return MenuProduct.of(id, menuId, productId, quantity, price);
     }
 
-    public static MenuGroup getMenuGroupRequest(final Long id) {
+    public static MenuGroup getMenuGroupRequest() {
+        return new MenuGroup("추천메뉴");
+    }
+
+    public static MenuGroup getMenuGroup(final Long id) {
         return new MenuGroup(id, "추천메뉴");
     }
 }
