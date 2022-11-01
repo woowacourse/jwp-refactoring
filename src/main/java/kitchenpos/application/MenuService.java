@@ -45,7 +45,7 @@ public class MenuService {
         validatePrice(menuRequest, menu);
 
         final Menu savedMenu = menuDao.save(menu);
-        saveProducts(menu.getMenuProducts(), savedMenu);
+        saveMenuProducts(menu.getMenuProducts(), savedMenu);
 
         return savedMenu;
     }
@@ -73,7 +73,7 @@ public class MenuService {
         menu.validatePriceGreaterThan(sum);
     }
 
-    private void saveProducts(List<MenuProduct> menuProducts, Menu savedMenu) {
+    private void saveMenuProducts(List<MenuProduct> menuProducts, Menu savedMenu) {
         final Long menuId = savedMenu.getId();
         List<MenuProduct> savedMenuProducts = new ArrayList<>();
 
