@@ -1,19 +1,17 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.fixture.OrderFixture.forUpdateStatus;
-
-import kitchenpos.dao.MenuDao;
+import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
@@ -44,16 +42,19 @@ public abstract class ServiceTest {
     protected TableService tableService;
 
     @Autowired
-    protected MenuDao menuDao;
+    protected TableGroupDao tableGroupDao;
+
+    @Autowired
+    protected MenuRepository menuRepository;
+
+    @Autowired
+    protected OrderRepository orderRepository;
 
     @Autowired
     protected MenuGroupDao menuGroupDao;
 
     @Autowired
     protected MenuProductDao menuProductDao;
-
-    @Autowired
-    protected OrderDao orderDao;
 
     @Autowired
     protected OrderLineItemDao orderLineItemDao;
@@ -64,9 +65,6 @@ public abstract class ServiceTest {
     @Autowired
     protected ProductDao productDao;
 
-    @Autowired
-    protected TableGroupDao tableGroupDao;
-
     protected Product 상품등록(final Product product) {
         return productDao.save(product);
     }
@@ -76,7 +74,7 @@ public abstract class ServiceTest {
     }
 
     protected Menu 메뉴등록(final Menu menu) {
-        return menuService.create(menu);
+        return menuRepository.save(menu);
     }
 
     protected OrderTable 테이블등록(final OrderTable orderTable) {
@@ -84,14 +82,15 @@ public abstract class ServiceTest {
     }
 
     protected TableGroup 단체지정(final TableGroup tableGroup) {
-        return tableGroupService.create(tableGroup);
+        final List<OrderTable> orderTables = tableGroup.getOrderTables();
+        final TableGroup group = tableGroupDao.save(tableGroup)
+                .group(orderTables);
+
+        orderTableDao.updateAll(group.getOrderTables());
+        return group;
     }
 
     protected Order 주문등록(final Order order) {
-        return orderService.create(order);
-    }
-
-    protected void 주문상태변경(final Order order, final OrderStatus orderStatus) {
-        orderService.changeOrderStatus(order.getId(), forUpdateStatus(orderStatus));
+        return orderRepository.save(order);
     }
 }

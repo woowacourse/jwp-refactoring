@@ -1,21 +1,24 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.fixture.MenuFixture.createMenu;
-import static kitchenpos.application.fixture.MenuGroupFixture.메뉴그룹A;
-import static kitchenpos.application.fixture.OrderFixture.createOrder;
-import static kitchenpos.application.fixture.OrderTableFixture.createOrderTable;
-import static kitchenpos.application.fixture.OrderTableFixture.forUpdateEmpty;
-import static kitchenpos.application.fixture.OrderTableFixture.forUpdateGuestNumber;
-import static kitchenpos.application.fixture.ProductFixture.탕수육;
-import static kitchenpos.application.fixture.TableGroupFixture.createTableGroup;
+import static kitchenpos.fixture.domain.MenuFixture.createMenu;
+import static kitchenpos.fixture.domain.MenuGroupFixture.메뉴그룹A;
+import static kitchenpos.fixture.domain.OrderFixture.createOrder;
+import static kitchenpos.fixture.domain.OrderTableFixture.createOrderTable;
+import static kitchenpos.fixture.domain.ProductFixture.탕수육;
+import static kitchenpos.fixture.domain.TableGroupFixture.createTableGroup;
+import static kitchenpos.fixture.dto.OrderTableDtoFixture.createOrderTableRequest;
+import static kitchenpos.fixture.dto.OrderTableDtoFixture.forUpdateEmpty;
+import static kitchenpos.fixture.dto.OrderTableDtoFixture.forUpdateGuestNumber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.List;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -27,17 +30,31 @@ public class TableServiceTest extends ServiceTest {
     @DisplayName("주문테이블을 등록한다.")
     void create() {
         // given
-        final OrderTable table = createOrderTable(3, false);
+        final OrderTableRequest request = createOrderTableRequest(3, false);
 
         // when
-        final OrderTable createdTable = tableService.create(table);
-        final Long createdTableId = createdTable.getId();
+        final OrderTableResponse actual = tableService.create(request);
+        final Long actualId = actual.getId();
 
         // then
         assertAll(
-                () -> assertThat(createdTableId).isNotNull(),
-                () -> assertThat(orderTableDao.findById(createdTableId)).isPresent()
+                () -> assertThat(actualId).isNotNull(),
+                () -> assertThat(orderTableDao.findById(actualId)).isPresent()
         );
+    }
+
+    @Test
+    @DisplayName("주문테이블 목록을 조회한다.")
+    void list() {
+        // given
+        테이블등록(createOrderTable(5, false));
+        테이블등록(createOrderTable(5, false));
+
+        // when
+        final List<OrderTableResponse> actual = tableService.list();
+
+        // then
+        assertThat(actual).hasSize(2);
     }
 
     @Test
@@ -47,7 +64,7 @@ public class TableServiceTest extends ServiceTest {
         final OrderTable table = 테이블등록(createOrderTable(5, false));
 
         // when
-        final OrderTable updatedTable = tableService.changeEmpty(table.getId(), forUpdateEmpty(true));
+        final OrderTableResponse updatedTable = tableService.changeEmpty(table.getId(), forUpdateEmpty(true));
 
         // then
         assertThat(updatedTable.isEmpty()).isTrue();
@@ -60,7 +77,7 @@ public class TableServiceTest extends ServiceTest {
         final OrderTable table = 테이블등록(createOrderTable(5, true));
 
         // when
-        final OrderTable updatedTable = tableService.changeEmpty(table.getId(), forUpdateEmpty(false));
+        final OrderTableResponse updatedTable = tableService.changeEmpty(table.getId(), forUpdateEmpty(false));
 
         // then
         assertThat(updatedTable.isEmpty()).isFalse();
@@ -95,8 +112,7 @@ public class TableServiceTest extends ServiceTest {
         final OrderTable table = 테이블등록(createOrderTable(3, false));
         final Menu menu = 메뉴등록(createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
 
-        final Order order = 주문등록(createOrder(table, menu));
-        주문상태변경(order, orderStatus);
+        주문등록(createOrder(table, orderStatus, menu));
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(table.getId(), forUpdateEmpty(true)))
@@ -110,7 +126,7 @@ public class TableServiceTest extends ServiceTest {
         final OrderTable table = 테이블등록(createOrderTable(5, false));
 
         // when
-        final OrderTable actual = tableService.changeNumberOfGuests(table.getId(), forUpdateGuestNumber(3));
+        final OrderTableResponse actual = tableService.changeNumberOfGuests(table.getId(), forUpdateGuestNumber(3));
 
         // then
         assertThat(actual.getNumberOfGuests()).isEqualTo(3);

@@ -1,16 +1,17 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.fixture.MenuFixture.createMenu;
-import static kitchenpos.application.fixture.MenuGroupFixture.메뉴그룹A;
-import static kitchenpos.application.fixture.MenuGroupFixture.메뉴그룹B;
-import static kitchenpos.application.fixture.OrderFixture.createOrder;
-import static kitchenpos.application.fixture.OrderFixture.forUpdateStatus;
-import static kitchenpos.application.fixture.OrderTableFixture.createOrderTable;
-import static kitchenpos.application.fixture.OrderTableFixture.forUpdateEmpty;
-import static kitchenpos.application.fixture.ProductFixture.짜장면;
-import static kitchenpos.application.fixture.ProductFixture.탕수육;
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
+import static kitchenpos.fixture.domain.MenuFixture.createMenu;
+import static kitchenpos.fixture.domain.MenuGroupFixture.메뉴그룹A;
+import static kitchenpos.fixture.domain.MenuGroupFixture.메뉴그룹B;
+import static kitchenpos.fixture.domain.OrderFixture.createOrder;
+import static kitchenpos.fixture.domain.OrderTableFixture.createOrderTable;
+import static kitchenpos.fixture.domain.ProductFixture.짜장면;
+import static kitchenpos.fixture.domain.ProductFixture.탕수육;
+import static kitchenpos.fixture.dto.OrderDtoFixture.createOrderRequest;
+import static kitchenpos.fixture.dto.OrderDtoFixture.forUpdateStatus;
+import static kitchenpos.fixture.dto.OrderTableDtoFixture.forUpdateEmpty;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -20,6 +21,8 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.request.OrderRequest;
+import kitchenpos.dto.response.OrderResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -32,27 +35,26 @@ public class OrderServiceTest extends ServiceTest {
         final OrderTable table = 테이블등록(createOrderTable(3, false));
         final Menu menu = 메뉴등록(createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
 
-        final Order order = createOrder(table, menu);
+        final OrderRequest request = createOrderRequest(table, menu);
 
         // when
-        final Order createdOrder = orderService.create(order);
+        final OrderResponse actual = orderService.create(request);
 
         // then
         assertAll(
-                () -> assertThat(createdOrder.getId()).isNotNull(),
-                () -> assertThat(createdOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name())
+                () -> assertThat(actual.getId()).isNotNull(),
+                () -> assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name())
         );
     }
 
     @Test
-    @DisplayName("craete : 주문 항목에 기재된 메뉴가 존재하지 않을 경우 예외가 발생한다.")
+    @DisplayName("create : 주문 항목에 기재된 메뉴가 존재하지 않을 경우 예외가 발생한다.")
     void create_noMenu_throwException() {
         // given
         final OrderTable table = 테이블등록(createOrderTable(3, false));
         final Menu notRegisteredMenu = createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육));
-        notRegisteredMenu.setId(999L);
 
-        final Order order = createOrder(table, notRegisteredMenu);
+        final OrderRequest order = createOrderRequest(table, notRegisteredMenu);
 
         // when & then
         assertThatThrownBy(() -> orderService.create(order))
@@ -60,7 +62,7 @@ public class OrderServiceTest extends ServiceTest {
     }
 
     @Test
-    @DisplayName("craete : 주문 테이블이 비어있을 경우 등록할 수 없다")
+    @DisplayName("create : 주문 테이블이 비어있을 경우 등록할 수 없다")
     void create_emptyTable_throwException() {
         // given
         final OrderTable table = 테이블등록(createOrderTable(3, false));
@@ -68,7 +70,7 @@ public class OrderServiceTest extends ServiceTest {
 
         tableService.changeEmpty(table.getId(), forUpdateEmpty(true));
 
-        final Order order = createOrder(table, menu);
+        final OrderRequest order = createOrderRequest(table, menu);
 
         // when & then
         assertThatThrownBy(() -> orderService.create(order))
@@ -82,15 +84,15 @@ public class OrderServiceTest extends ServiceTest {
         final OrderTable table1 = 테이블등록(createOrderTable(3, false));
         final Menu menu1 = 메뉴등록(createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
 
-        주문등록(createOrder(table1, menu1));
+        주문등록(createOrder(table1, OrderStatus.COOKING, menu1));
 
         final OrderTable table2 = 테이블등록(createOrderTable(3, false));
         final Menu menu2 = 메뉴등록(createMenu("짜장면_메뉴", 8_000, 메뉴그룹등록(메뉴그룹B), 상품등록(짜장면)));
 
-        주문등록(createOrder(table2, menu2));
+        주문등록(createOrder(table2, OrderStatus.COOKING, menu2));
 
         // when
-        final List<Order> actual = orderService.list();
+        final List<OrderResponse> actual = orderService.list();
 
         // then
         assertThat(actual).hasSize(2);
@@ -103,10 +105,10 @@ public class OrderServiceTest extends ServiceTest {
         final OrderTable table = 테이블등록(createOrderTable(3, false));
         final Menu menu = 메뉴등록(createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
 
-        final Order order = 주문등록(createOrder(table, menu));
+        final Order order = 주문등록(createOrder(table, OrderStatus.COOKING, menu));
 
         // when
-        final Order actual = orderService.changeOrderStatus(order.getId(), forUpdateStatus(MEAL));
+        final OrderResponse actual = orderService.changeOrderStatus(order.getId(), forUpdateStatus(MEAL));
 
         // then
         assertThat(actual.getOrderStatus()).isEqualTo(MEAL.name());
@@ -115,14 +117,8 @@ public class OrderServiceTest extends ServiceTest {
     @Test
     @DisplayName("changeOrderStatus : 주문이 존재하지 않으면 예외가 발생한다.")
     void changeOrderStatus_noOrder_throwException() {
-        // given
-        final OrderTable table = 테이블등록(createOrderTable(3, false));
-        final Menu menu = 메뉴등록(createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
-
-        final Order notRegisteredOrder = createOrder(table, menu);
-
         // when & then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(notRegisteredOrder.getId(), forUpdateStatus(MEAL)))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(999L, forUpdateStatus(MEAL)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -133,28 +129,10 @@ public class OrderServiceTest extends ServiceTest {
         final OrderTable table = 테이블등록(createOrderTable(3, false));
         final Menu menu = 메뉴등록(createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
 
-        final Order order = 주문등록(createOrder(table, menu));
-        주문상태변경(order, OrderStatus.COMPLETION);
+        final Order order = 주문등록(createOrder(table, OrderStatus.COMPLETION, menu));
 
         // when & then
         assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), forUpdateStatus(COOKING)))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    @DisplayName("changeOrderStatus : 유효하지 않은 주문상태를 입력한 경우 예외가 발생한다.")
-    void changeOrderStatus_invalidOrderStatus_throwException() {
-        // given
-        final OrderTable table = 테이블등록(createOrderTable(3, false));
-        final Menu menu = 메뉴등록(createMenu("탕수육_메뉴", 10_000, 메뉴그룹등록(메뉴그룹A), 상품등록(탕수육)));
-
-        final Order order = 주문등록(createOrder(table, menu));
-
-        final Order forUpdate = new Order();
-        forUpdate.setOrderStatus("TEST");
-
-        // when & then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), forUpdate))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
