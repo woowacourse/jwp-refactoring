@@ -5,7 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.request.ProductCreateRequest;
+import kitchenpos.ui.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -21,16 +22,14 @@ class ProductServiceTest extends ServiceTest {
         @DisplayName("상품을 생성한다.")
         void create_validProduct_success() {
             // given
-            final Product expected = new Product();
-            expected.setName("치킨");
-            expected.setPrice(BigDecimal.valueOf(1000));
+            final ProductCreateRequest request = new ProductCreateRequest("치킨", BigDecimal.valueOf(1000));
 
             // when
-            final Product actual = productService.create(expected);
+            final ProductResponse actual = productService.create(request);
 
             // then
-            softly.assertThat(actual.getName()).isEqualTo(expected.getName());
-            softly.assertThat(actual.getPrice()).isEqualByComparingTo(expected.getPrice());
+            softly.assertThat(actual.getName()).isEqualTo(request.getName());
+            softly.assertThat(actual.getPrice()).isEqualByComparingTo(request.getPrice());
             softly.assertThat(actual.getId()).isNotNull()
                     .isPositive();
             softly.assertAll();
@@ -40,12 +39,10 @@ class ProductServiceTest extends ServiceTest {
         @DisplayName("상품의 가격이 null일 수 없다.")
         void create_priceIsNull_exception() {
             // given
-            final Product product = new Product();
-            product.setName("치킨");
-            product.setPrice(null);
+            final ProductCreateRequest request = new ProductCreateRequest("치킨", null);
 
             // when & then
-            assertThatThrownBy(() -> productService.create(product))
+            assertThatThrownBy(() -> productService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -53,12 +50,10 @@ class ProductServiceTest extends ServiceTest {
         @DisplayName("상품의 가격이 음수일 수 없다.")
         void create_priceIsNegative_exception() {
             // given
-            final Product product = new Product();
-            product.setName("치킨");
-            product.setPrice(BigDecimal.valueOf(-1));
+            final ProductCreateRequest request = new ProductCreateRequest("치킨", BigDecimal.valueOf(-1));
 
             // when & then
-            assertThatThrownBy(() -> productService.create(product))
+            assertThatThrownBy(() -> productService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -82,10 +77,10 @@ class ProductServiceTest extends ServiceTest {
             saveProduct(name4);
 
             // when
-            final List<Product> actual = productService.list();
+            final List<ProductResponse> actual = productService.list();
 
             // then
-            assertThat(actual).extracting(Product::getName)
+            assertThat(actual).extracting(ProductResponse::getName)
                     .containsExactly(name1, name2, name3, name4);
         }
     }

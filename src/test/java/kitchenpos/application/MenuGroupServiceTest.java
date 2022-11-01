@@ -3,7 +3,8 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.ui.dto.request.MenuGroupCreateRequest;
+import kitchenpos.ui.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,14 +20,14 @@ class MenuGroupServiceTest extends ServiceTest {
         @DisplayName("메뉴 그룹을 생성한다.")
         void create_validMenuGroup_success() {
             // given
-            final MenuGroup expected = new MenuGroup();
-            expected.setName("반반치킨");
+            final String name = "반반치킨";
+            final MenuGroupCreateRequest request = new MenuGroupCreateRequest(name);
 
             // when
-            final MenuGroup actual = menuGroupService.create(expected);
+            final MenuGroupResponse actual = menuGroupService.create(request);
 
             // then
-            softly.assertThat(actual.getName()).isEqualTo(expected.getName());
+            softly.assertThat(actual.getName()).isEqualTo(name);
             softly.assertThat(actual.getId()).isNotNull()
                     .isPositive();
             softly.assertAll();
@@ -50,10 +51,10 @@ class MenuGroupServiceTest extends ServiceTest {
             saveMenuGroup(name3);
 
             // when
-            final List<MenuGroup> actual = menuGroupService.list();
+            final List<MenuGroupResponse> actual = menuGroupService.list();
 
             // then
-            assertThat(actual).extracting(MenuGroup::getName)
+            assertThat(actual).extracting(MenuGroupResponse::getName)
                     .containsExactly(name1, name2, name3);
         }
     }

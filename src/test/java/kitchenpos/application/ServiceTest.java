@@ -2,27 +2,28 @@ package kitchenpos.application;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
+import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProductService;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.ProductRepository;
+import kitchenpos.repository.TableGroupRepository;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.util.Pair;
 import org.springframework.test.context.jdbc.Sql;
 
 @Sql("/tear_down.sql")
@@ -50,22 +51,22 @@ abstract class ServiceTest {
     protected OrderService orderService;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @BeforeEach
     void setUp() {
@@ -73,81 +74,50 @@ abstract class ServiceTest {
     }
 
     protected Product saveProduct(final String name) {
-        return saveProduct(name, BigDecimal.ONE);
+        return saveProduct(name, BigDecimal.valueOf(10_000));
     }
 
     protected Product saveProduct(final String name, final BigDecimal price) {
-        final Product product = new Product();
-        product.setName(name);
-        product.setPrice(price);
-        return productDao.save(product);
+        final Product product = Product.of(name, price);
+        return productRepository.save(product);
     }
 
     protected MenuGroup saveMenuGroup(final String name) {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
-        return menuGroupDao.save(menuGroup);
-    }
-
-    protected List<MenuProduct> getMenuProducts(final Pair<Product, Long>... pairs) {
-        final List<MenuProduct> menuProducts = new ArrayList<>();
-        for (final Pair<Product, Long> pair : pairs) {
-            final MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProductId(pair.getFirst().getId());
-            menuProduct.setQuantity(pair.getSecond());
-            menuProducts.add(menuProduct);
-        }
-        return menuProducts;
+        final MenuGroup menuGroup = new MenuGroup(name);
+        return menuGroupRepository.save(menuGroup);
     }
 
     protected Menu saveMenu(final String name, final BigDecimal price, final MenuGroup menuGroup,
-                            final Pair<Product, Long>... menuProductPairs) {
-        final Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroup.getId());
-
-        final List<MenuProduct> menuProducts = getMenuProducts(menuProductPairs);
-        menu.setMenuProducts(menuProducts);
-
-        return menuDao.save(menu);
+                            final MenuProduct... menuProducts) {
+        final List<Product> products = Arrays.stream(menuProducts)
+                .map(MenuProduct::getProductId)
+                .map(it -> productRepository.getProduct(it))
+                .collect(Collectors.toList());
+        final MenuProductService menuProductService = MenuProductService.of(products, List.of(menuProducts));
+        final Menu menu = Menu.of(name, price, menuGroup.getId(), List.of(menuProducts), menuProductService);
+        return menuRepository.save(menu);
     }
 
     protected OrderTable saveOrderTable(final int numberOfGuests, final boolean empty) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        return orderTableDao.save(orderTable);
+        final OrderTable orderTable = OrderTable.of(numberOfGuests, empty);
+        return orderTableRepository.save(orderTable);
     }
 
     protected Order saveOrder(final OrderTable orderTable, final String orderStatus,
-                              final Pair<Menu, Long>... orderLineItemPairs) {
-        final Order order = new Order();
-        order.setOrderTableId(orderTable.getId());
-
-        final List<OrderLineItem> orderLineItems = new ArrayList<>();
-        for (final Pair<Menu, Long> pair : orderLineItemPairs) {
-            final OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setMenuId(pair.getFirst().getId());
-            orderLineItem.setQuantity(pair.getSecond());
-            orderLineItems.add(orderLineItem);
-        }
-        order.setOrderLineItems(orderLineItems);
-        order.setOrderStatus(orderStatus);
-        order.setOrderedTime(LocalDateTime.now());
-
-        return orderDao.save(order);
+                              final OrderLineItem... orderLineItems) {
+        final Order order = new Order(orderTable.getId(), orderStatus, LocalDateTime.now(), List.of(orderLineItems));
+        return orderRepository.save(order);
     }
 
     protected TableGroup saveTableGroup(final OrderTable... orderTables) {
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(orderTables));
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        final TableGroup tableGroup = TableGroup.from(LocalDateTime.now());
+        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(savedTableGroup.getId());
-            orderTableDao.save(orderTable);
+            final OrderTable saved = new OrderTable(orderTable.getId(), savedTableGroup.getId(),
+                    orderTable.getNumberOfGuests(),
+                    orderTable.isEmpty());
+            orderTableRepository.save(saved);
         }
 
         return savedTableGroup;

@@ -9,13 +9,16 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.dto.request.TableGroupCreateRequest;
+import kitchenpos.ui.dto.response.OrderTableResponse;
+import kitchenpos.ui.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.data.util.Pair;
 
 @DisplayName("TableGroupService의")
 class TableGroupServiceTest extends ServiceTest {
@@ -31,15 +34,15 @@ class TableGroupServiceTest extends ServiceTest {
             final OrderTable orderTable1 = saveOrderTable(1, true);
             final OrderTable orderTable2 = saveOrderTable(2, true);
 
-            final TableGroup expected = new TableGroup();
-            expected.setOrderTables(List.of(orderTable1, orderTable2));
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    List.of(orderTable1.getId(), orderTable2.getId()));
 
             // when
-            final TableGroup actual = tableGroupService.create(expected);
+            final TableGroupResponse actual = tableGroupService.create(request);
 
             // then
-            assertThat(actual.getOrderTables()).extracting(OrderTable::getTableGroupId, OrderTable::isEmpty,
-                            OrderTable::getId)
+            assertThat(actual.getOrderTables()).extracting(OrderTableResponse::getTableGroupId,
+                            OrderTableResponse::isEmpty, OrderTableResponse::getId)
                     .containsExactly(
                             tuple(actual.getId(), false, orderTable1.getId()),
                             tuple(actual.getId(), false, orderTable2.getId())
@@ -51,12 +54,10 @@ class TableGroupServiceTest extends ServiceTest {
         void create_orderTableLessThenTwo_success() {
             // given
             final OrderTable orderTable = saveOrderTable(1, true);
-
-            final TableGroup expected = new TableGroup();
-            expected.setOrderTables(List.of(orderTable));
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(orderTable.getId()));
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(expected))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -66,13 +67,35 @@ class TableGroupServiceTest extends ServiceTest {
             // given
             final OrderTable orderTable1 = saveOrderTable(1, true);
             final OrderTable orderTable2 = saveOrderTable(2, true);
-            orderTable2.setId(999L);
-
-            final TableGroup expected = new TableGroup();
-            expected.setOrderTables(List.of(orderTable1, orderTable2));
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    List.of(
+                            orderTable1.getId(),
+                            orderTable2.getId(),
+                            999L
+                    )
+            );
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(expected))
+            assertThatThrownBy(() -> tableGroupService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        @DisplayName("중복된 주문 테이블은 존재하지 않아야한다.")
+        void create_duplicateOrderTable_success() {
+            // given
+            final OrderTable orderTable1 = saveOrderTable(1, true);
+            final OrderTable orderTable2 = saveOrderTable(2, true);
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    List.of(
+                            orderTable1.getId(),
+                            orderTable2.getId(),
+                            orderTable1.getId()
+                    )
+            );
+
+            // when & then
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -83,11 +106,11 @@ class TableGroupServiceTest extends ServiceTest {
             final OrderTable orderTable1 = saveOrderTable(1, true);
             final OrderTable orderTable2 = saveOrderTable(2, false);
 
-            final TableGroup expected = new TableGroup();
-            expected.setOrderTables(List.of(orderTable1, orderTable2));
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    List.of(orderTable1.getId(), orderTable2.getId()));
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(expected))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -101,11 +124,11 @@ class TableGroupServiceTest extends ServiceTest {
 
             saveTableGroup(orderTable2, orderTable3);
 
-            final TableGroup expected = new TableGroup();
-            expected.setOrderTables(List.of(orderTable1, orderTable2));
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    List.of(orderTable1.getId(), orderTable2.getId()));
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(expected))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -139,9 +162,10 @@ class TableGroupServiceTest extends ServiceTest {
 
             final Product product = saveProduct("감자튀김");
             final MenuGroup menuGroup = saveMenuGroup("감자");
-            final Menu menu = saveMenu("감자세트", BigDecimal.ONE, menuGroup, Pair.of(product, 1L));
-            saveOrder(orderTable1, "COOKING", Pair.of(menu, 1L));
-            saveOrder(orderTable2, "COMPLETION", Pair.of(menu, 2L));
+            final Menu menu = saveMenu("감자세트", BigDecimal.ONE, menuGroup,
+                    new MenuProduct(product.getId(), 1L));
+            saveOrder(orderTable1, "COOKING", new OrderLineItem(menu.getId(), 1L));
+            saveOrder(orderTable2, "COMPLETION", new OrderLineItem(menu.getId(), 2L));
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
