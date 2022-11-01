@@ -1,40 +1,30 @@
 package kitchenpos.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+
+@Embeddable
 public class MenuProduct {
-    private Long seq;
-    private Long menuId;
+
+    @Column(nullable = false)
     private Long productId;
+
+    @Column(nullable = false)
     private long quantity;
 
-    public Long getSeq() {
-        return seq;
+    public MenuProduct() {
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
-    }
-
-    public Long getMenuId() {
-        return menuId;
-    }
-
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
+    public MenuProduct(final Long productId, final long quantity) {
+        this.productId = productId;
+        this.quantity = quantity;
     }
 
     public Long getProductId() {
         return productId;
     }
 
-    public void setProductId(final Long productId) {
-        this.productId = productId;
-    }
-
     public long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
     }
 }

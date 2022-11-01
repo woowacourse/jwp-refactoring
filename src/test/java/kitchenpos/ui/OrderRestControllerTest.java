@@ -1,7 +1,5 @@
 package kitchenpos.ui;
 
-import static kitchenpos.fixture.OrderFixture.createOrder;
-import static kitchenpos.fixture.OrderLineItemFixture.createOrderLineItem;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -12,9 +10,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import kitchenpos.application.OrderService;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.ui.dto.request.OrderCreateRequest;
+import kitchenpos.ui.dto.request.OrderLineItemDto;
+import kitchenpos.ui.dto.request.OrderStatusChangeRequest;
+import kitchenpos.ui.dto.response.OrderCreateResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -23,33 +26,60 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(OrderRestController.class)
-public class OrderRestControllerTest extends ControllerTest {
+class OrderRestControllerTest extends ControllerTest {
 
     @MockBean
     private OrderService orderService;
 
     @DisplayName("주문을 생성한다.")
     @Test
-    public void create() throws Exception {
+    void create() throws Exception {
         // given
-        Order order = createOrder(1L, "MEAL", LocalDateTime.now(),
-                Collections.singletonList(createOrderLineItem(1L, 1)));
-        given(orderService.create(any())).willReturn(createOrder(1L));
+        OrderCreateRequest request = new OrderCreateRequest(1L, Arrays.asList(new OrderLineItemDto(1L, 2)));
+        given(orderService.create(any())).willReturn(OrderCreateResponse.of(Order.builder()
+                .id(1L)
+                .orderStatus(OrderStatus.COOKING.name())
+                .orderTableId(1L)
+                .orderedTime(LocalDateTime.now())
+                .build(), new ArrayList<>()));
 
         // when
         ResultActions perform = mockMvc.perform(post("/api/orders")
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8")
-                        .content(objectMapper.writeValueAsString(order)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andDo(print());
 
         // then
         perform.andExpect(status().isCreated());
     }
 
+    @DisplayName("주문을 생성할 때 주문항목이 비어있으면 에러를 반환한다.")
+    @Test
+    void create_fail_if_orderLineItems_is_empty() throws Exception {
+        // given
+        OrderCreateRequest request = new OrderCreateRequest(1L, new ArrayList<>());
+        given(orderService.create(any())).willReturn(OrderCreateResponse.of(Order.builder()
+                .id(1L)
+                .orderStatus(OrderStatus.COOKING.name())
+                .orderTableId(1L)
+                .orderedTime(LocalDateTime.now())
+                .build(), new ArrayList<>()));
+
+        // when
+        ResultActions perform = mockMvc.perform(post("/api/orders")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+                        .content(objectMapper.writeValueAsString(request)))
+                .andDo(print());
+
+        // then
+        perform.andExpect(status().isBadRequest());
+    }
+
     @DisplayName("주문을 조회한다.")
     @Test
-    public void list() throws Exception {
+    void list() throws Exception {
         // when
         ResultActions perform = mockMvc.perform(get("/api/orders")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -62,15 +92,15 @@ public class OrderRestControllerTest extends ControllerTest {
 
     @DisplayName("주문 상태를 변경한다.")
     @Test
-    public void changeOrderStatus() throws Exception {
+    void changeOrderStatus() throws Exception {
         // given
-        Order order = createOrder(1L, "MEAL", LocalDateTime.now(), new ArrayList<>());
+        OrderStatusChangeRequest request = new OrderStatusChangeRequest(OrderStatus.MEAL.name());
 
         // when
         ResultActions perform = mockMvc.perform(put("/api/orders/1/order-status")
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8")
-                        .content(objectMapper.writeValueAsString(order)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andDo(print());
 
         // then
