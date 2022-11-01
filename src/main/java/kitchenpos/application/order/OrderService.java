@@ -54,7 +54,7 @@ public class OrderService {
         List<OrderLineItem> orderLineItems = orderLineItemMapper
                 .toOrderLineItems(orderCreateRequest.getOrderLineItems(), menus);
         Order order = orderMapper.toOrder(orderCreateRequest, orderLineItems);
-        validateOrder(order);
+        validateOrderTableNotEmpty(order.getOrderTableId());
         return orderDtoMapper.toOrderResponse(orderRepository.save(order));
     }
 
@@ -83,12 +83,8 @@ public class OrderService {
         }
     }
 
-    private void validateOrder(final Order order) {
-        validateOrderTableNotEmpty(order);
-    }
-
-    private void validateOrderTableNotEmpty(final Order order) {
-        OrderTable orderTable = orderTableRepository.findById(order.getOrderTableId())
+    private void validateOrderTableNotEmpty(final Long orderTableId) {
+        OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(OrderTableNotExistsException::new);
         if (orderTable.isEmpty()) {
             throw new OrderTableEmptyException();
