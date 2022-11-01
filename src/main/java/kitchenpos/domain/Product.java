@@ -28,6 +28,7 @@ public class Product {
     }
 
     public Product(final Long id, final String name, final BigDecimal price) {
+        validatePrice(price);
         this.id = id;
         this.name = name;
         this.price = price;
@@ -37,7 +38,7 @@ public class Product {
         return price.multiply(BigDecimal.valueOf(quantity));
     }
 
-    public void validatePrice() {
+    private void validatePrice(final BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalPriceException();
         }

@@ -24,18 +24,14 @@ class ProductTest {
     @Test
     @DisplayName("상품의 가격은 비어 있을 수 없다")
     void validateNullPrice() {
-        final Product product = ProductFixtures.CHICKEN.createWithPrice(null);
-
-        assertThatThrownBy(product::validatePrice)
+        assertThatThrownBy(() -> ProductFixtures.CHICKEN.createWithPrice(null))
                 .isExactlyInstanceOf(IllegalPriceException.class);
     }
 
     @Test
     @DisplayName("상품의 가격은 0원보다 작을 수 없다")
     void validateNegativePrice() {
-        final Product product = ProductFixtures.CHICKEN.createWithPrice(new BigDecimal(-1));
-
-        assertThatThrownBy(product::validatePrice)
+        assertThatThrownBy(() -> ProductFixtures.CHICKEN.createWithPrice(new BigDecimal(-1)))
                 .isExactlyInstanceOf(IllegalPriceException.class);
     }
 }
