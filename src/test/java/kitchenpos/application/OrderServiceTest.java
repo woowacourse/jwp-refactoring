@@ -62,18 +62,13 @@ class OrderServiceTest extends ServiceTest {
     @Autowired
     private DatabaseCleaner databaseCleaner;
 
-    private Product product;
-
-    private MenuGroup menuGroup;
-
     private Menu menu;
 
-    @BeforeEach
-    void setUp() {
-        databaseCleaner.tableClear();
 
-        product = productRepository.save(new Product("치킨", BigDecimal.valueOf(10000)));
-        menuGroup = menuGroupRepository.save(new MenuGroup("1번 메뉴 그룹"));
+    @Override
+    void setObject() {
+        Product product = productRepository.save(new Product("치킨", BigDecimal.valueOf(10000)));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("1번 메뉴 그룹"));
         menu = menuRepository.save(new Menu("1번 메뉴", BigDecimal.valueOf(10000), menuGroup.getId(),
                 createMenuProducts(product.getId())));
     }

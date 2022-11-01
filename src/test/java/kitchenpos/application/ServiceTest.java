@@ -14,5 +14,9 @@ public class ServiceTest {
     @BeforeEach
     void setUp() {
         databaseCleaner.tableClear();
+        setObject();
+    }
+
+    void setObject() {
     }
 }

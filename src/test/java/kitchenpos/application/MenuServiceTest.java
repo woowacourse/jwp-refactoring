@@ -51,10 +51,8 @@ class MenuServiceTest extends ServiceTest {
 
     private MenuGroup menuGroup;
 
-    @BeforeEach
-    void setUp() {
-        databaseCleaner.tableClear();
-
+    @Override
+    void setObject() {
         product = productRepository.save(new Product("치킨", BigDecimal.valueOf(10000)));
         menuGroup = menuGroupRepository.save(new MenuGroup("1번 메뉴 그룹"));
     }

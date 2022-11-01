@@ -69,10 +69,8 @@ class TableGroupServiceTest extends ServiceTest {
 
     private OrderTable secondOrderTable;
 
-    @BeforeEach
-    void setUp() {
-        databaseCleaner.tableClear();
-
+    @Override
+    void setObject() {
         firstOrderTable = orderTableRepository.save(new OrderTable(0, true));
         secondOrderTable = orderTableRepository.save(new OrderTable(0, true));
     }
