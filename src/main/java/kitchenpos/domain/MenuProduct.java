@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 @Entity
 public class MenuProduct {
@@ -17,7 +18,7 @@ public class MenuProduct {
     private Long menuId;
     @Column(name = "product_id", nullable = false)
     private Long productId;
-    @Column(name = "price", nullable = false)
+    @Transient
     private BigDecimal price;
     @Column(name = "quantity", nullable = false)
     private long quantity;
