@@ -75,19 +75,6 @@ class OrderLineItemRepositoryTest {
         assertThat(foundOrderLineItems).hasSize(2);
     }
 
-    @Test
-    @DisplayName("Order에 포함된 모든 OrderLineItem을 조회한다.")
-    void findAllByOrderId() {
-        Menu menu = createMenu();
-
-        List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(menu.getId(), 1),
-                new OrderLineItem(menu.getId(), 2));
-        Order order = createOrder(orderLineItems);
-
-        List<OrderLineItem> foundOrderLineItems = orderLineItemRepository.findAllByOrderId(order.getId());
-        assertThat(foundOrderLineItems).hasSize(2);
-    }
-
     private Menu createMenu() {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup(MENU_GROUP_NAME1));
         Product product1 = productRepository.save(new Product(PRODUCT1_NAME, PRODUCT1_PRICE));

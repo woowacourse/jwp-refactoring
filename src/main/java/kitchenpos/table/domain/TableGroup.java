@@ -1,7 +1,6 @@
 package kitchenpos.table.domain;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
@@ -45,10 +44,6 @@ public class TableGroup {
         if (orderTables.anyUsing()) {
             throw new InvalidTableGroupException("주문 테이블이 이미 사용 중입니다.");
         }
-    }
-
-    public TableGroup(final Long id, final LocalDateTime createdDate) {
-        this(id, createdDate, new OrderTables(Collections.emptyList()));
     }
 
     public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {

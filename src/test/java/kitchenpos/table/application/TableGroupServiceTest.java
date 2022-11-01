@@ -9,6 +9,7 @@ import static kitchenpos.support.fixtures.DomainFixtures.PRODUCT2_NAME;
 import static kitchenpos.support.fixtures.DomainFixtures.PRODUCT2_PRICE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -129,7 +130,14 @@ class TableGroupServiceTest {
                     new Order(orderTable1.getId(), OrderStatus.COMPLETION, LocalDateTime.now(), orderLineItems));
             tableGroupService.ungroup(tableGroupResponse.id());
 
-            assertThat(orderTableRepository.findAllByTableGroupId(tableGroupResponse.id())).isEmpty();
+            OrderTable savedOrderTable1 = orderTableRepository.findById(orderTable1.getId()).orElseThrow();
+            OrderTable savedOrderTable2 = orderTableRepository.findById(orderTable2.getId()).orElseThrow();
+            assertAll(
+                    () -> assertThat(savedOrderTable1.getTableGroupId()).isNull(),
+                    () -> assertThat(savedOrderTable1.isEmpty()).isFalse(),
+                    () -> assertThat(savedOrderTable2.getTableGroupId()).isNull(),
+                    () -> assertThat(savedOrderTable2.isEmpty()).isFalse()
+            );
         }
     }
 
