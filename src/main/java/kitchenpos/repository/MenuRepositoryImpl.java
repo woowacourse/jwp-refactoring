@@ -51,20 +51,20 @@ public class MenuRepositoryImpl implements MenuRepository {
             );
         }
         return new Menu(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(),
-                new MenuProducts(savedMenuProducts));
+                new MenuProducts(savedMenuProducts, menu.getPrice()));
     }
 
     @Override
     public Optional<Menu> findById(final Long id) {
         final Optional<Menu> menu = menuDao.findById(id);
-        return menu.map(it -> it.setMenuProducts(getByMenuId(id)));
+        return menu.map(it -> it.setMenuProducts(new MenuProducts(getByMenuId(id), it.getPrice())));
     }
 
     @Override
     public List<Menu> findAll() {
         final List<Menu> menus = menuDao.findAll();
         return menus.stream()
-                .map(menu -> menu.setMenuProducts(getByMenuId(menu.getId())))
+                .map(menu -> menu.setMenuProducts(new MenuProducts(getByMenuId(menu.getId()), menu.getPrice())))
                 .collect(Collectors.toList());
     }
 
@@ -78,9 +78,9 @@ public class MenuRepositoryImpl implements MenuRepository {
                 .orElseThrow(IllegalArgumentException::new);
     }
 
-    private MenuProducts getByMenuId(final Long menuId) {
+    private List<MenuProduct> getByMenuId(final Long menuId) {
         final List<MenuProduct> menuProducts = menuProductDao.findAllByMenuId(menuId);
-        final List<MenuProduct> menuProductsWithPrice = menuProducts.stream()
+        return menuProducts.stream()
                 .map(it -> new MenuProduct(
                                 it.getSeq(),
                                 it.getMenuId(),
@@ -90,6 +90,5 @@ public class MenuRepositoryImpl implements MenuRepository {
                         )
                 )
                 .collect(Collectors.toList());
-        return new MenuProducts(menuProductsWithPrice);
     }
 }

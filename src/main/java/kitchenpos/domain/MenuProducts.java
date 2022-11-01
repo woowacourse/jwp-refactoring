@@ -7,11 +7,12 @@ public class MenuProducts {
 
     private final List<MenuProduct> value;
 
-    public MenuProducts(final List<MenuProduct> value) {
+    public MenuProducts(final List<MenuProduct> value, final BigDecimal menuPrice) {
+        validateExceedPrice(value, menuPrice);
         this.value = value;
     }
 
-    public void checkExceedPrice(final BigDecimal price) {
+    private void validateExceedPrice(final List<MenuProduct> value, final BigDecimal price) {
         final BigDecimal sum = value.stream()
                 .map(MenuProduct::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);

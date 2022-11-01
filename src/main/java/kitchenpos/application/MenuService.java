@@ -44,7 +44,7 @@ public class MenuService {
                         request.getName(),
                         request.getPrice(),
                         request.getMenuGroupId(),
-                        new MenuProducts(menuProducts)
+                        new MenuProducts(menuProducts, request.getPrice())
                 )
         );
 

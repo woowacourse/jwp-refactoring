@@ -110,7 +110,7 @@ class MenuServiceTest extends ServiceTest {
         for (final Long productId : productIds) {
             menuProducts.add(new MenuProduct(productId, 1L, BigDecimal.valueOf(10000)));
         }
-        return new MenuProducts(menuProducts);
+        return new MenuProducts(menuProducts, BigDecimal.valueOf(9000));
     }
 
     private List<MenuProductRequest> createMenuProductRequest(final Long... productIds) {
