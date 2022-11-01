@@ -1,11 +1,11 @@
-package kitchenpos.dao;
-
-import kitchenpos.domain.menu.MenuGroup;
+package kitchenpos.domain.menu;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface MenuGroupDao {
+public interface MenuGroupRepository extends JpaRepository<MenuGroup, Long> {
+
     MenuGroup save(MenuGroup entity);
 
     Optional<MenuGroup> findById(Long id);

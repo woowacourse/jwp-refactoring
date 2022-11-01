@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.domain.menu.MenuGroupRepository;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
@@ -31,7 +31,7 @@ public class DataSupport {
     @Autowired
     private ProductRepository productRepository;
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
     @Autowired
     private MenuRepository menuRepository;
     @Autowired
@@ -50,7 +50,7 @@ public class DataSupport {
 
     public MenuGroup saveMenuGroup(final String name) {
         final MenuGroup menuGroup = MenuGroup.ofNew(name);
-        return menuGroupDao.save(menuGroup);
+        return menuGroupRepository.save(menuGroup);
     }
 
     public Menu saveMenu(final String name,
