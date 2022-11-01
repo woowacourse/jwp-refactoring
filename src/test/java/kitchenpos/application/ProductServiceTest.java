@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.support.DataFixture.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -7,15 +8,25 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import kitchenpos.dto.request.ProductRequest;
 import kitchenpos.dto.response.ProductResponse;
+import kitchenpos.repository.ProductRepository;
+import kitchenpos.support.DatabaseCleanUp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-class ProductServiceTest extends ServiceTest {
+@SpringBootTest
+class ProductServiceTest {
+
+    @Autowired
+    private DatabaseCleanUp databaseCleanUp;
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     @BeforeEach
     void setUp() {

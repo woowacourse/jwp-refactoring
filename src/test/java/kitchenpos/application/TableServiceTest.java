@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static kitchenpos.support.DataFixture.createOrderTable;
+import static kitchenpos.support.DataFixture.createTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -14,16 +16,30 @@ import kitchenpos.dto.request.ChangeTableNumberOfGuestsRequest;
 import kitchenpos.dto.request.TableRequest;
 import kitchenpos.dto.response.TableResponse;
 import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
+import kitchenpos.support.DatabaseCleanUp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-class TableServiceTest extends ServiceTest {
+@SpringBootTest
+class TableServiceTest {
 
     @Autowired
     private TableService tableService;
+
+    @Autowired
+    private OrderTableRepository orderTableRepository;
+
+    @Autowired
+    private TableGroupRepository tableGroupRepository;
+
+    @Autowired
+    private DatabaseCleanUp databaseCleanUp;
 
     @MockBean
     private OrderRepository orderRepository;
@@ -62,7 +78,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeEmpty() {
         // given
-        final OrderTable orderTable = orderTableRepository.save(new OrderTable(4, false));
+        final OrderTable orderTable = orderTableRepository.save(createOrderTable(4, false));
 
         // when
         final ChangeTableEmptyRequest orderTableForUpdateRequest = createChangeEmptyRequest(true);
@@ -90,7 +106,7 @@ class TableServiceTest extends ServiceTest {
     void changeEmpty_throwException_ifTableGrouping() {
         // given
         final TableGroup tableGroup = tableGroupRepository.save(createTableGroup(LocalDateTime.now()));
-        final OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup, 4, false));
+        final OrderTable orderTable = orderTableRepository.save(createOrderTable(tableGroup, 4, false));
 
         // when, then
         assertThatThrownBy(
@@ -105,7 +121,7 @@ class TableServiceTest extends ServiceTest {
         // given
         given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList()))
                 .willReturn(true);
-        final OrderTable orderTable = orderTableRepository.save(new OrderTable(4, false));
+        final OrderTable orderTable = orderTableRepository.save(createOrderTable(4, false));
 
         // when, then
         assertThatThrownBy(
@@ -118,7 +134,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeNumberOfGuests() {
         // given
-        final OrderTable orderTable = orderTableRepository.save(new OrderTable(4, false));
+        final OrderTable orderTable = orderTableRepository.save(createOrderTable(4, false));
 
         // when
         final ChangeTableNumberOfGuestsRequest orderTableForUpdate = createChangeNumberOfGuestsRequest(5);
@@ -134,7 +150,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeNumberOfGuests_throwException_ifNumberOfGuestsIsNegative() {
         // given
-        final OrderTable orderTable = orderTableRepository.save(new OrderTable(4, false));
+        final OrderTable orderTable = orderTableRepository.save(createOrderTable(4, false));
 
         // when, then
         final ChangeTableNumberOfGuestsRequest orderTableForUpdate = createChangeNumberOfGuestsRequest(-1);
@@ -162,7 +178,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeNumberOfGuests_throwException_ifTableEmpty() {
         // given
-        final OrderTable orderTable = orderTableRepository.save(new OrderTable(0, true));
+        final OrderTable orderTable = orderTableRepository.save(createOrderTable(0, true));
 
         // when, then
         final ChangeTableNumberOfGuestsRequest orderTableForUpdate = createChangeNumberOfGuestsRequest(5);

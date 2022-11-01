@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static kitchenpos.support.DataFixture.createOrderTable;
+import static kitchenpos.support.DataFixture.createTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -14,16 +16,30 @@ import kitchenpos.dto.request.TableForGroupingRequest;
 import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.TableGroupResponse;
 import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
+import kitchenpos.support.DatabaseCleanUp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-class TableGroupServiceTest extends ServiceTest {
+@SpringBootTest
+class TableGroupServiceTest {
 
     @Autowired
     private TableGroupService tableGroupService;
+
+    @Autowired
+    private OrderTableRepository orderTableRepository;
+
+    @Autowired
+    private TableGroupRepository tableGroupRepository;
+
+    @Autowired
+    private DatabaseCleanUp databaseCleanUp;
 
     @MockBean
     private OrderRepository orderRepository;
@@ -86,7 +102,7 @@ class TableGroupServiceTest extends ServiceTest {
     void create_throwException_ifTableAlreadyGroup() {
         // given
         final TableGroup savedTableGroup = tableGroupRepository.save(createTableGroup(LocalDateTime.now()));
-        final OrderTable orderTable = orderTableRepository.save(createOrderTable(savedTableGroup.getId(), 0, true));
+        final OrderTable orderTable = orderTableRepository.save(createOrderTable(savedTableGroup, 0, true));
         final TableGroupRequest tableGroupRequest = createTableGroupRequest(
                 List.of(createOrderTableRequest(orderTable.getId()), createOrderTableRequest(emptyOrderTableId1)));
 

@@ -1,5 +1,9 @@
 package kitchenpos.application;
 
+import static kitchenpos.support.DataFixture.createMenu;
+import static kitchenpos.support.DataFixture.createMenuGroup;
+import static kitchenpos.support.DataFixture.createOrderTable;
+import static kitchenpos.support.DataFixture.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -22,21 +26,29 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-class OrderServiceTest extends ServiceTest {
+@SpringBootTest
+class OrderServiceTest {
 
     @Autowired
-    protected DatabaseCleanUp databaseCleanUp;
+    private DatabaseCleanUp databaseCleanUp;
+
     @Autowired
     private OrderService orderService;
+
     @Autowired
     private MenuGroupRepository menuGroupRepository;
+
     @Autowired
     private ProductRepository productRepository;
+
     @Autowired
     private MenuRepository menuRepository;
+
     @Autowired
     private OrderTableRepository orderTableRepository;
+
     private OrderTable savedOrderTable;
     private Menu savedMenu;
 
