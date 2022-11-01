@@ -37,15 +37,15 @@ public class MenuValidator {
                 .collect(Collectors.toMap(MenuProduct::getProductId, MenuProduct::getQuantity));
     }
 
-    private void validateAmount(Price menuPrice, Price amount) {
-        if (menuPrice.isGreaterThan(amount)) {
-            throw new IllegalArgumentException("메뉴의 가격이 상품의 가격보다 높습니다.");
-        }
-    }
-
     private List<Long> collectProductId(List<MenuProduct> menuProducts) {
         return menuProducts.stream()
                 .map(MenuProduct::getProductId)
                 .collect(Collectors.toList());
+    }
+
+    private void validateAmount(Price menuPrice, Price amount) {
+        if (menuPrice.isGreaterThan(amount)) {
+            throw new IllegalArgumentException("메뉴의 가격이 상품의 가격보다 높습니다.");
+        }
     }
 }

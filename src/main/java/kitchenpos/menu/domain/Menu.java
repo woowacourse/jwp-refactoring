@@ -46,7 +46,7 @@ public class Menu {
         }
     }
 
-    public Menu(String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    private Menu(String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
         this(null, name, price, menuGroupId, menuProducts);
     }
 
@@ -57,10 +57,6 @@ public class Menu {
                               MenuValidator menuValidator) {
         menuValidator.validate(menuGroupId, price, menuProducts);
         return new Menu(name, price, menuGroupId, menuProducts);
-    }
-
-    public void addMenuProduct(MenuProduct menuProduct) {
-        menuProducts.add(menuProduct);
     }
 
     public Long getId() {

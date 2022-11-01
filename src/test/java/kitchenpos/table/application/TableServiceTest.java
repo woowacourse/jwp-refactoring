@@ -4,19 +4,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.common.DataClearExtension;
 import kitchenpos.domain.Price;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuGroupRepository;
+import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menu.domain.MenuValidator;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItems;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderValidator;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.table.application.request.OrderTableCommand;
 import kitchenpos.table.application.response.OrderTableResponse;
 import kitchenpos.table.domain.OrderTable;
@@ -56,6 +59,12 @@ class TableServiceTest {
 
     @Autowired
     private OrderValidator orderValidator;
+
+    @Autowired
+    private MenuValidator menuValidator;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     @Test
     @DisplayName("테이블을 정상적으로 생성한다.")
@@ -129,9 +138,7 @@ class TableServiceTest {
             @Disabled
             @DisplayName("조리중인 경우 예외가 발생한다.")
             void changeEmptyOrderStatusCooking() {
-                MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("추천메뉴"));
-                Menu menu = menuRepository.save(
-                        new Menu("강정치킨", new Price(BigDecimal.valueOf(37000)), menuGroup.getId(), new ArrayList<>()));
+                Menu menu = createMenu("강정치킨", 37000);
                 OrderTable orderTable = orderTableRepository.save(new OrderTable(2, true));
 
                 orderRepository.save(
@@ -191,6 +198,15 @@ class TableServiceTest {
                 assertThat(orderTableResponse.getNumberOfGuests()).isEqualTo(4);
             }
         }
+    }
+
+    private Menu createMenu(String name, int price) {
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("추천메뉴"));
+        Product product = productRepository.save(new Product("강정치킨", BigDecimal.valueOf(18000)));
+        List<MenuProduct> menuProducts = List.of(new MenuProduct(product.getId(), 2L));
+        return menuRepository.save(
+                Menu.create(name, new Price(BigDecimal.valueOf(price)), menuGroup.getId(), menuProducts,
+                        menuValidator));
     }
 }
 

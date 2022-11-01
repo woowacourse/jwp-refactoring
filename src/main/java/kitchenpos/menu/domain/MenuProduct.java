@@ -41,10 +41,6 @@ public class MenuProduct {
         this(null, null, productId, quantity);
     }
 
-    public MenuProduct(Menu menu, Long productId, long quantity) {
-        this(null, menu, productId, quantity);
-    }
-
     public Long getProductId() {
         return productId;
     }
