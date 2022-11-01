@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Order {
     private Long id;
@@ -38,6 +39,10 @@ public class Order {
         if (OrderStatus.isAvailable(status)) {
             this.orderStatus = status;
         }
+    }
+
+    public boolean isCompletion() {
+        return Objects.equals(OrderStatus.COMPLETION.name(), this.getOrderStatus());
     }
 
     public Long getId() {

@@ -117,7 +117,7 @@ public class OrderService {
     }
 
     private void validateOrderStatus(final Order savedOrder) {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
+        if (savedOrder.isCompletion()) {
             throw new IllegalArgumentException("[ERROR] 주문이 이미 계산 완료 되었습니다.");
         }
     }
