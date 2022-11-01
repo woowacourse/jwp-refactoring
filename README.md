@@ -130,20 +130,22 @@ getter, setter 를 줄여본다. 현재 객체의 변경 포인트가 분산되�
 
 ### JPA 로 변경하는 여정
 
-- [ ] build.gradle에 JPA dependency 추가하기
-- [ ] application.yml에 JPA 설정 추가하기
-- [ ] JPA Entity 생성
+- [x] build.gradle에 JPA dependency 추가하기
+- [x] application.yml에 JPA 설정 추가하기
+- [x] JPA Entity 생성
+  - [ ] 영속성 전이 사용해서 연관관계 맺도록 변경
+  - [ ] Jpa Repository 사용하도록 변경 
 - [ ] 기존 DB 와 변경된 내역에 대한 마이그레이션 필요, flyway 고려해보기
 - [ ] 기존 Repository JPA CRUD 로 마이그레이션
 
 
 ### controller 변경에 따른 검증 테스트 코드 보강
-- [ ] MenuGroupRestController
-- [ ] MenuRestController
-- [ ] OrderRestController
-- [ ] ProductRestController
-- [ ] TableGroupRestController
-- [ ] TableRestController
+- [x] MenuGroupRestController
+- [x] MenuRestController
+- [x] OrderRestController
+- [x] ProductRestController
+- [x] TableGroupRestController
+- [x] TableRestController
 = 총 15개 API 에 대한 테스트 필요
 
 ### 인수테스트 테스트 코드 보강
