@@ -4,14 +4,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.fixtures.MenuFixtures;
 import kitchenpos.fixtures.OrderFixtures;
+import kitchenpos.fixtures.OrderLineItemFixtures;
 import kitchenpos.fixtures.OrderTableFixtures;
 import kitchenpos.repositorysupport.OrderLineItemRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -42,13 +46,13 @@ class OrderLineItemRepositoryTest {
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableId(savedOrderTable.getId());
-        final Order savedOrder = orderRepository.save(order);
-
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuRepository.save(menu);
 
-        final OrderLineItem orderLineItem = new OrderLineItem(null, savedOrder, savedMenu.getId(), 2);
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu.getId(), 2);
+        final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableIdAndOrderLineItems(savedOrderTable.getId(),
+                orderLineItem);
+        final Order savedOrder = orderRepository.save(order);
 
         // when
         final OrderLineItem saved = orderLineItemRepository.save(orderLineItem);
@@ -72,8 +76,7 @@ class OrderLineItemRepositoryTest {
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuRepository.save(menu);
 
-        final Order notSavedOrder = OrderFixtures.COOKING_ORDER.create();
-        final OrderLineItem orderLineItem = new OrderLineItem(null, notSavedOrder, savedMenu.getId(), 2);
+        final OrderLineItem orderLineItem = new OrderLineItem(null, null, savedMenu.getId(), 2);
 
         // when, then
         assertThatThrownBy(() -> orderLineItemRepository.save(orderLineItem))
@@ -87,13 +90,15 @@ class OrderLineItemRepositoryTest {
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableId(savedOrderTable.getId());
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
+        final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableIdAndOrderLineItems(savedOrderTable.getId(),
+                orderLineItem);
         final Order savedOrder = orderRepository.save(order);
 
-        final OrderLineItem orderLineItem = new OrderLineItem(null, savedOrder, -1L, 2);
+        final OrderLineItem invalidOrderLineItem = new OrderLineItem(null, savedOrder, -1L, 2);
 
         // when, then
-        assertThatThrownBy(() -> orderLineItemRepository.save(orderLineItem))
+        assertThatThrownBy(() -> orderLineItemRepository.save(invalidOrderLineItem))
                 .isExactlyInstanceOf(DataIntegrityViolationException.class);
     }
 
@@ -104,22 +109,21 @@ class OrderLineItemRepositoryTest {
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableId(savedOrderTable.getId());
-        final Order savedOrder = orderRepository.save(order);
-
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuRepository.save(menu);
 
-        final OrderLineItem orderLineItem = new OrderLineItem(null, savedOrder, savedMenu.getId(), 2);
-        final OrderLineItem saved = orderLineItemRepository.save(orderLineItem);
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu.getId(), 2);
+        final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableIdAndOrderLineItems(savedOrderTable.getId(),
+                orderLineItem);
+        orderRepository.save(order);
 
         // when
-        final OrderLineItem foundOrderLineItem = orderLineItemRepository.findById(saved.getSeq())
+        final OrderLineItem foundOrderLineItem = orderLineItemRepository.findById(orderLineItem.getSeq())
                 .get();
 
         // then
         assertThat(foundOrderLineItem).usingRecursiveComparison()
-                .isEqualTo(saved);
+                .isEqualTo(orderLineItem);
     }
 
     @Test
@@ -139,14 +143,13 @@ class OrderLineItemRepositoryTest {
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableId(savedOrderTable.getId());
-        final Order savedOrder = orderRepository.save(order);
-
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuRepository.save(menu);
 
-        final OrderLineItem orderLineItem = new OrderLineItem(null, savedOrder, savedMenu.getId(), 2);
-        final OrderLineItem saved = orderLineItemRepository.save(orderLineItem);
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu.getId(), 2);
+        final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableIdAndOrderLineItems(savedOrderTable.getId(),
+                orderLineItem);
+        orderRepository.save(order);
 
         // when
         final List<OrderLineItem> orderLineItems = orderLineItemRepository.findAll();
@@ -155,7 +158,7 @@ class OrderLineItemRepositoryTest {
         assertAll(
                 () -> assertThat(orderLineItems).hasSizeGreaterThanOrEqualTo(1),
                 () -> assertThat(orderLineItems).extracting("seq")
-                        .contains(saved.getSeq())
+                        .contains(orderLineItem.getSeq())
         );
     }
 
@@ -166,15 +169,14 @@ class OrderLineItemRepositoryTest {
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableId(savedOrderTable.getId());
-        final Order savedOrder = orderRepository.save(order);
-
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuRepository.save(menu);
 
-        final OrderLineItem orderLineItem = new OrderLineItem(null, savedOrder, savedMenu.getId(), 2);
-        final OrderLineItem saved = orderLineItemRepository.save(orderLineItem);
-
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu.getId(), 2);
+        final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(),
+                Collections.singletonList(orderLineItem));
+        final Order savedOrder = orderRepository.save(order);
+        
         // when
         final List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(savedOrder.getId());
 
@@ -182,7 +184,7 @@ class OrderLineItemRepositoryTest {
         assertAll(
                 () -> assertThat(orderLineItems).hasSize(1),
                 () -> assertThat(orderLineItems).extracting("seq")
-                        .containsExactly(saved.getSeq())
+                        .isNotEmpty()
         );
     }
 }

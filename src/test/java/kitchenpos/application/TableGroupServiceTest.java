@@ -12,6 +12,7 @@ import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.exception.CanNotGroupException;
@@ -19,6 +20,7 @@ import kitchenpos.exception.NotEnoughForGroupingException;
 import kitchenpos.exception.OrderNotCompletionException;
 import kitchenpos.exception.OrderTableSizeException;
 import kitchenpos.fixtures.OrderFixtures;
+import kitchenpos.fixtures.OrderLineItemFixtures;
 import kitchenpos.fixtures.OrderTableFixtures;
 import kitchenpos.fixtures.TableGroupFixtures;
 import org.junit.jupiter.api.DisplayName;
@@ -162,7 +164,9 @@ class TableGroupServiceTest {
         final OrderTable orderTable2 = OrderTableFixtures.createWithGuests(alreadyGroupedTable, 2);
         final OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
 
-        final Order order = OrderFixtures.COMPLETION_ORDER.createWithOrderTableId(savedOrderTable1.getId());
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
+        final Order order = OrderFixtures.COMPLETION_ORDER.createWithOrderTableIdAndOrderLineItems(
+                savedOrderTable1.getId(), orderLineItem);
         orderRepository.save(order);
 
         // when
@@ -195,7 +199,9 @@ class TableGroupServiceTest {
         final OrderTable orderTable2 = OrderTableFixtures.createWithGuests(alreadyGroupedTable, 2);
         orderTableRepository.save(orderTable2);
 
-        final Order order = orderFixtures.createWithOrderTableId(savedOrderTable1.getId());
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
+        final Order order = orderFixtures.createWithOrderTableIdAndOrderLineItems(savedOrderTable1.getId(),
+                orderLineItem);
         orderRepository.save(order);
 
         // when, then

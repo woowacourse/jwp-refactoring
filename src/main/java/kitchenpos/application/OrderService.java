@@ -10,6 +10,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.exception.NotFoundOrderException;
 import kitchenpos.exception.NotFoundOrderTableException;
 import org.springframework.stereotype.Service;
@@ -32,16 +33,16 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final Order order) {
-        order.validateNotEmptyOrderLineItems();
+    public Order create(final OrderCreateRequest orderCreateRequest) {
+        final Order order = orderCreateRequest.toOrder();
         validateOrderLineItemMatchMenu(order);
 
         final OrderTable orderTable = orderTableRepository.findById(order.getOrderTableId())
                 .orElseThrow(NotFoundOrderTableException::new);
         orderTable.validateOrderable();
 
-        final Order newOrder = new Order(null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
-        updateOrderLineItems(order.getOrderLineItems(), newOrder);
+        final Order newOrder = new Order(null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
+                order.getOrderLineItems());
 
         return orderRepository.save(newOrder);
     }
@@ -52,13 +53,6 @@ public class OrderService {
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
         order.validateOrderLineItemSize(menuRepository.countByIdIn(menuIds));
-    }
-
-    private void updateOrderLineItems(final List<OrderLineItem> orderLineItems, final Order order) {
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.updateOrder(order);
-        }
-        order.updateOrderLineItems(orderLineItems);
     }
 
     public List<Order> list() {

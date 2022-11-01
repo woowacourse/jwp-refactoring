@@ -15,9 +15,7 @@ class OrderTest {
     @Test
     @DisplayName("주문 항목은 비어있을 수 없다")
     void validateNotEmptyOrderLineItems() {
-        final Order order = OrderFixtures.COOKING_ORDER.create();
-
-        assertThatThrownBy(order::validateNotEmptyOrderLineItems)
+        assertThatThrownBy(OrderFixtures.COOKING_ORDER::create)
                 .isExactlyInstanceOf(OrderLineItemEmptyException.class);
     }
 
@@ -34,7 +32,8 @@ class OrderTest {
     @Test
     @DisplayName("주문이 이미 완료된 상태라면 상태를 변경할 수 없다")
     void validateOrderNotCompletion() {
-        final Order order = OrderFixtures.COMPLETION_ORDER.create();
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
+        final Order order = OrderFixtures.COMPLETION_ORDER.createWithOrderLineItems(orderLineItem);
 
         assertThatThrownBy(() -> order.updateOrderStatus(OrderFixtures.COOKING_ORDER.name()))
                 .isExactlyInstanceOf(OrderCompletionException.class);

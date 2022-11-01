@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import javax.transaction.Transactional;
 import kitchenpos.dao.OrderRepository;
@@ -13,6 +14,8 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.request.OrderCreateRequest;
+import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.exception.NotFoundOrderException;
 import kitchenpos.exception.NotFoundOrderTableException;
 import kitchenpos.exception.OrderCompletionException;
@@ -22,7 +25,6 @@ import kitchenpos.exception.TableEmptyException;
 import kitchenpos.fixtures.OrderFixtures;
 import kitchenpos.fixtures.OrderLineItemFixtures;
 import kitchenpos.fixtures.OrderTableFixtures;
-import kitchenpos.repositorysupport.OrderLineItemRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,23 +43,19 @@ class OrderServiceTest {
     @Autowired
     private OrderTableRepository orderTableRepository;
 
-    @Autowired
-    private OrderLineItemRepository orderLineItemRepository;
-
     @Test
     @DisplayName("주문을 생성한다")
     void create() {
         // given
-        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
-
+        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 2);
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable notEmptyOrderTable = orderTableRepository.save(orderTable);
 
-        final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableIdAndOrderLineItems(
-                notEmptyOrderTable.getId(), orderLineItem);
+        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(notEmptyOrderTable.getId(),
+                Collections.singletonList(orderLineItemRequest));
 
         // when
-        final Order saved = orderService.create(order);
+        final Order saved = orderService.create(orderCreateRequest);
 
         // then
         assertAll(
@@ -74,10 +72,10 @@ class OrderServiceTest {
     @DisplayName("주문 항목이 비어있는 상태로 주문을 생성하면 예외가 발생한다")
     void createExceptionEmptyOrderLineItems() {
         // given
-        final Order order = OrderFixtures.COOKING_ORDER.create();
+        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(1L, Collections.emptyList());
 
         // when, then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderCreateRequest))
                 .isExactlyInstanceOf(OrderLineItemEmptyException.class);
     }
 
@@ -85,11 +83,12 @@ class OrderServiceTest {
     @DisplayName("주문 항목의 메뉴들이 실제 존재하지 않은 메뉴로 주문을 생성하면 예외가 발생한다")
     void createExceptionWrongOrderLineItems() {
         // given
-        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, -1L, 2);
-        final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableIdAndOrderLineItems(1L, orderLineItem);
+        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(-1L, 2);
+        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(1L,
+                Collections.singletonList(orderLineItemRequest));
 
         // when, then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderCreateRequest))
                 .isExactlyInstanceOf(OrderLineItemSizeException.class);
     }
 
@@ -97,11 +96,12 @@ class OrderServiceTest {
     @DisplayName("주문 테이블이 존재하지 않은 테이블이면 주문을 생성할 때 예외가 발생한다")
     void createExceptionNotExistOrderTable() {
         // given
-        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
-        final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableIdAndOrderLineItems(-1L, orderLineItem);
+        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 2);
+        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(-1L,
+                Collections.singletonList(orderLineItemRequest));
 
         // when, then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderCreateRequest))
                 .isExactlyInstanceOf(NotFoundOrderTableException.class);
     }
 
@@ -109,11 +109,12 @@ class OrderServiceTest {
     @DisplayName("주문 테이블이 주문을 등록할 수 없는 상태로 주문을 생성할 때 예외가 발생한다")
     void createExceptionNotEmptyOrderTable() {
         // given
-        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
-        final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableIdAndOrderLineItems(1L, orderLineItem);
+        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 2);
+        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(1L,
+                Collections.singletonList(orderLineItemRequest));
 
         // when, then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderCreateRequest))
                 .isExactlyInstanceOf(TableEmptyException.class);
     }
 
@@ -124,11 +125,10 @@ class OrderServiceTest {
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable notEmptyOrderTable = orderTableRepository.save(orderTable);
 
-        final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableId(notEmptyOrderTable.getId());
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
+        final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableIdAndOrderLineItems(
+                notEmptyOrderTable.getId(), orderLineItem);
         final Order savedOrder = orderRepository.save(order);
-
-        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(savedOrder, 1L, 2);
-        orderLineItemRepository.save(orderLineItem);
 
         // when
         final List<Order> orders = orderService.list();
@@ -147,7 +147,8 @@ class OrderServiceTest {
     @DisplayName("주문의 상태를 변경한다")
     void changeOrderStatus() {
         // given
-        final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableId(1L);
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
+        final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableIdAndOrderLineItems(1L, orderLineItem);
         final Order saved = orderRepository.save(order);
 
         // when
@@ -173,7 +174,8 @@ class OrderServiceTest {
     @DisplayName("주문이 이미 완료된 상태에서 주문의 상태를 변경하려고 하면 예외가 발생한다.")
     void changeOrderStatusExceptionAlreadyCompletion() {
         // given
-        final Order order = OrderFixtures.COMPLETION_ORDER.createWithOrderTableId(1L);
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
+        final Order order = OrderFixtures.COMPLETION_ORDER.createWithOrderTableIdAndOrderLineItems(1L, orderLineItem);
         final Order completionOrder = orderRepository.save(order);
 
         // when, then

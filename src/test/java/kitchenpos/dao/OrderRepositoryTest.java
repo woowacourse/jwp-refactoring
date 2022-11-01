@@ -9,8 +9,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.fixtures.OrderLineItemFixtures;
 import kitchenpos.fixtures.OrderTableFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,7 +36,9 @@ class OrderRepositoryTest {
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
+        final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(),
+                Collections.singletonList(orderLineItem));
 
         // when
         final Order saved = orderRepository.save(order);
@@ -52,7 +56,9 @@ class OrderRepositoryTest {
     @DisplayName("존재하지 않는 주문 테이블로 주문을 저장하려고 하면 예외가 발생한다")
     void saveExceptionNotExistOrderTable() {
         // given
-        final Order order = new Order(null, -1L, OrderStatus.MEAL.name(), LocalDateTime.now());
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
+        final Order order = new Order(null, -1L, OrderStatus.MEAL.name(), LocalDateTime.now(),
+                Collections.singletonList(orderLineItem));
 
         // when, then
         assertThatThrownBy(() -> orderRepository.save(order))
@@ -66,7 +72,9 @@ class OrderRepositoryTest {
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
+        final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(),
+                Collections.singletonList(orderLineItem));
         final Order saved = orderRepository.save(order);
 
         // when
@@ -95,7 +103,9 @@ class OrderRepositoryTest {
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
+        final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(),
+                Collections.singletonList(orderLineItem));
         final Order saved = orderRepository.save(order);
 
         // when
@@ -116,7 +126,9 @@ class OrderRepositoryTest {
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
+        final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(),
+                Collections.singletonList(orderLineItem));
         orderRepository.save(order);
 
         // when
@@ -145,7 +157,9 @@ class OrderRepositoryTest {
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
+        final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(),
+                Collections.singletonList(orderLineItem));
         orderRepository.save(order);
 
         // when

@@ -13,6 +13,11 @@ public class OrderCreateRequest {
     private OrderCreateRequest() {
     }
 
+    public OrderCreateRequest(final Long orderTableId, final List<OrderLineItemRequest> orderLineItems) {
+        this.orderTableId = orderTableId;
+        this.orderLineItems = orderLineItems;
+    }
+
     public Order toOrder() {
         final List<OrderLineItem> orderLineItems = this.orderLineItems.stream()
                 .map(OrderLineItemRequest::toOrderLineItem)

@@ -5,13 +5,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.exception.AlreadyGroupedException;
@@ -21,6 +20,7 @@ import kitchenpos.exception.NumberOfGuestsSizeException;
 import kitchenpos.exception.OrderNotCompletionException;
 import kitchenpos.exception.TableEmptyException;
 import kitchenpos.fixtures.OrderFixtures;
+import kitchenpos.fixtures.OrderLineItemFixtures;
 import kitchenpos.fixtures.OrderTableFixtures;
 import kitchenpos.fixtures.TableGroupFixtures;
 import org.junit.jupiter.api.DisplayName;
@@ -45,9 +45,6 @@ class TableServiceTest {
 
     @Autowired
     private OrderRepository orderRepository;
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Test
     @DisplayName("주문 테이블을 생성한다")
@@ -92,7 +89,9 @@ class TableServiceTest {
 
         final OrderTable notEmptyOrderTable = OrderTableFixtures.createWithGuests(null, 2);
 
-        final Order order = OrderFixtures.COMPLETION_ORDER.createWithOrderTableId(savedOrderTable.getId());
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
+        final Order order = OrderFixtures.COMPLETION_ORDER.createWithOrderTableIdAndOrderLineItems(
+                savedOrderTable.getId(), orderLineItem);
         orderRepository.save(order);
 
         // when
@@ -145,7 +144,9 @@ class TableServiceTest {
 
         final OrderTable notEmptyOrderTable = OrderTableFixtures.createWithGuests(null, 2);
 
-        final Order order = orderFixtures.createWithOrderTableId(savedOrderTable.getId());
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
+        final Order order = orderFixtures.createWithOrderTableIdAndOrderLineItems(
+                savedOrderTable.getId(), orderLineItem);
         orderRepository.save(order);
 
         // when, then

@@ -31,8 +31,8 @@ public enum OrderFixtures {
         return new Order(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
-    public Order createWithOrderTableId(final Long orderTableId) {
-        return new Order(null, orderTableId, orderStatus, orderedTime, orderLineItems);
+    public Order createWithOrderLineItems(final OrderLineItem... orderLineItems) {
+        return new Order(null, orderTableId, orderStatus, orderedTime, Arrays.asList(orderLineItems));
     }
 
     public Order createWithOrderTableIdAndOrderLineItems(final Long orderTableId,

@@ -36,13 +36,15 @@ public class Order {
     private LocalDateTime orderedTime;
 
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    private List<OrderLineItem> orderLineItems;
+    private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     protected Order() {
     }
 
     public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
+        validateNotEmptyOrderLineItems(orderLineItems);
+        insertOrderToOrderLineItems(orderLineItems);
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -50,13 +52,15 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
-        this(id, orderTableId, orderStatus, orderedTime, new ArrayList<>());
-    }
-
-    public void validateNotEmptyOrderLineItems() {
+    private void validateNotEmptyOrderLineItems(final List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new OrderLineItemEmptyException();
+        }
+    }
+
+    private void insertOrderToOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        for (OrderLineItem orderLineItem : orderLineItems) {
+            orderLineItem.updateOrder(this);
         }
     }
 
@@ -64,10 +68,6 @@ public class Order {
         if (orderLineItems.size() != menuCount) {
             throw new OrderLineItemSizeException();
         }
-    }
-
-    public void updateOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = new ArrayList<>(orderLineItems);
     }
 
     public void updateOrderStatus(final String orderStatus) {
