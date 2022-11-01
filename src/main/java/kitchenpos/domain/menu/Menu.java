@@ -1,6 +1,7 @@
 package kitchenpos.domain.menu;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
@@ -14,6 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import kitchenpos.domain.common.Price;
 import kitchenpos.exception.badrequest.ExpensiveMenuPriceException;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Table(name = "menu")
@@ -28,8 +30,9 @@ public class Menu {
     private Price price;
     @Column(name = "menu_group_id", nullable = false)
     private Long menuGroupId;
+    @BatchSize(size = 100)
     @OneToMany(mappedBy = "menu", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
-    private List<MenuProduct> menuProducts;
+    private List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected Menu() {
     }

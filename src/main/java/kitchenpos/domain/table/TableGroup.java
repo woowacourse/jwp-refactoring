@@ -13,6 +13,7 @@ import javax.persistence.Table;
 import kitchenpos.exception.badrequest.AlreadyGroupedException;
 import kitchenpos.exception.badrequest.InvalidOrderTableSizeException;
 import kitchenpos.exception.badrequest.OrderTableNotEmptyException;
+import org.hibernate.annotations.BatchSize;
 import org.springframework.util.CollectionUtils;
 
 @Entity
@@ -24,6 +25,7 @@ public class TableGroup {
     private Long id;
     @Column(name = "created_date")
     private LocalDateTime createdDate;
+    @BatchSize(size = 100)
     @OneToMany(mappedBy = "tableGroup")
     private List<OrderTable> orderTables = new ArrayList<>();
 

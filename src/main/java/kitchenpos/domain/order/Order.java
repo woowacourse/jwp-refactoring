@@ -3,6 +3,7 @@ package kitchenpos.domain.order;
 import static kitchenpos.domain.common.OrderStatus.COMPLETION;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
@@ -18,6 +19,7 @@ import javax.persistence.Table;
 import kitchenpos.domain.common.OrderStatus;
 import kitchenpos.exception.badrequest.CompletedOrderCannotChangeException;
 import kitchenpos.exception.badrequest.OrderLineItemNotExistsException;
+import org.hibernate.annotations.BatchSize;
 import org.springframework.util.CollectionUtils;
 
 @Entity
@@ -34,8 +36,9 @@ public class Order {
     private OrderStatus orderStatus;
     @Column(name = "ordered_time", nullable = false)
     private LocalDateTime orderedTime;
+    @BatchSize(size = 100)
     @OneToMany(mappedBy = "order", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
-    private List<OrderLineItem> orderLineItems;
+    private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     protected Order() {
     }
