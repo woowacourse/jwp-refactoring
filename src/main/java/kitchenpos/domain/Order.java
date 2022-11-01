@@ -1,18 +1,17 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 
 @Entity(name = "orders")
 public class Order {
+
+    private static final String CHANGE_STATUS_ERROR_MESSAGE = "계산이 완료된 주문은 수정할 수 없습니다.";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,34 +26,23 @@ public class Order {
     @Column(nullable = false)
     private LocalDateTime orderedTime;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id")
-    private List<OrderLineItem> orderLineItems;
-
     public Order() {
     }
 
-    public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
-                 final List<OrderLineItem> orderLineItems) {
+    public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
     }
 
     private Order(Builder builder) {
         this.orderTableId = builder.orderTableId;
         this.orderStatus = builder.orderStatus;
         this.orderedTime = builder.orderedTime;
-        this.orderLineItems = builder.orderLineItems;
     }
 
     public static Builder builder() {
         return new Builder();
-    }
-
-    public void addOrderItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
     }
 
     public Long getId() {
@@ -73,14 +61,11 @@ public class Order {
         return orderedTime;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
-    }
-
-    public void changeOrderStatus(final String orderStatus,
-                                  final List<OrderLineItem> orderLineItems) {
+    public void changeOrderStatus(final String orderStatus) {
+        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
+            throw new IllegalArgumentException(CHANGE_STATUS_ERROR_MESSAGE);
+        }
         this.orderStatus = OrderStatus.valueOf(orderStatus).name();
-        this.orderLineItems = orderLineItems;
     }
 
     public static class Builder {
@@ -88,7 +73,6 @@ public class Order {
         private Long orderTableId;
         private String orderStatus;
         private LocalDateTime orderedTime;
-        private List<OrderLineItem> orderLineItems;
 
         public Builder id(final Long id) {
             this.id = id;
@@ -107,11 +91,6 @@ public class Order {
 
         public Builder orderedTime(final LocalDateTime orderedTime) {
             this.orderedTime = orderedTime;
-            return this;
-        }
-
-        public Builder orderLineItems(final List<OrderLineItem> orderLineItems) {
-            this.orderLineItems = orderLineItems;
             return this;
         }
 

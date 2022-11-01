@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class OrderLineItem {
@@ -14,8 +16,9 @@ public class OrderLineItem {
     @Column(name = "seq")
     private Long seq;
 
-    @Column(name = "order_id")
-    private Long orderId;
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
 
     @Column
     private Long menuId;
@@ -26,15 +29,20 @@ public class OrderLineItem {
     public OrderLineItem() {
     }
 
-    public OrderLineItem(final Long orderId, final Long menuId, final long quantity) {
-        this.orderId = orderId;
+    public OrderLineItem(final Long menuId, final long quantity) {
+        this.menuId = menuId;
+        this.quantity = quantity;
+    }
+
+    public OrderLineItem(final Order order, final Long menuId, final long quantity) {
+        this.order = order;
         this.menuId = menuId;
         this.quantity = quantity;
     }
 
     private OrderLineItem(Builder builder) {
         this.seq = builder.seq;
-        this.orderId = builder.orderId;
+        this.order = builder.order;
         this.menuId = builder.menuId;
         this.quantity = builder.quantity;
     }
@@ -47,8 +55,8 @@ public class OrderLineItem {
         return seq;
     }
 
-    public Long getOrderId() {
-        return orderId;
+    public Order getOrder() {
+        return order;
     }
 
     public Long getMenuId() {
@@ -61,7 +69,7 @@ public class OrderLineItem {
 
     public static class Builder {
         private Long seq;
-        private Long orderId;
+        private Order order;
         private Long menuId;
         private long quantity;
 
@@ -70,8 +78,8 @@ public class OrderLineItem {
             return this;
         }
 
-        public Builder orderId(final Long orderId) {
-            this.orderId = orderId;
+        public Builder order(final Order order) {
+            this.order = order;
             return this;
         }
 

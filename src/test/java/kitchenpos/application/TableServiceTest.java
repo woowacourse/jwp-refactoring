@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import static kitchenpos.fixture.domain.MenuFixture.createMenu;
 import static kitchenpos.fixture.domain.OrderFixture.createOrder;
-import static kitchenpos.fixture.domain.OrderLineItemFixture.createOrderLineItem;
 import static kitchenpos.fixture.domain.OrderTableFixture.createOrderTable;
 import static kitchenpos.fixture.domain.TableGroupFixture.createTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -10,7 +9,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -120,8 +118,7 @@ class TableServiceTest {
         // given
         Menu menu = menuRepository.save(createMenu());
         OrderTable orderTable = orderTableRepository.save(createOrderTable(4, true));
-        orderRepository.save(createOrder(orderTable.getId(), status, LocalDateTime.now(),
-                Collections.singletonList(createOrderLineItem(menu.getId(), 1))));
+        orderRepository.save(createOrder(orderTable.getId(), status, LocalDateTime.now()));
 
         // when, then
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), createOrderTable(true)))

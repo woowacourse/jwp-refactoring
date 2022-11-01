@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import static kitchenpos.fixture.domain.MenuFixture.createMenu;
 import static kitchenpos.fixture.domain.OrderFixture.createOrder;
-import static kitchenpos.fixture.domain.OrderLineItemFixture.createOrderLineItem;
 import static kitchenpos.fixture.domain.OrderTableFixture.createOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -25,6 +24,8 @@ import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.ui.dto.request.OrderCreateRequest;
 import kitchenpos.ui.dto.request.OrderLineItemDto;
 import kitchenpos.ui.dto.request.OrderStatusChangeRequest;
+import kitchenpos.ui.dto.response.OrderCreateResponse;
+import kitchenpos.ui.dto.response.OrderFindAllResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,10 +60,10 @@ class OrderServiceTest {
                 new OrderLineItemDto(1L, 1)));
 
         // when
-        Order savedOrder = orderService.create(request);
+        OrderCreateResponse response = orderService.create(request);
 
         // then
-        Order dbOrder = orderRepository.findById(savedOrder.getId())
+        Order dbOrder = orderRepository.findById(response.getId())
                 .orElseThrow(RuntimeException::new);
         assertThat(dbOrder.getOrderTableId()).isEqualTo(request.getOrderTableId());
     }
@@ -138,17 +139,16 @@ class OrderServiceTest {
         Menu menu = menuRepository.save(createMenu());
         OrderTable orderTable = orderTableRepository.save(createOrderTable());
         Order order = orderRepository.save(
-                createOrder(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
-                        Collections.singletonList(createOrderLineItem(menu.getId(), 1))));
+                createOrder(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now()));
 
         // when
-        List<Order> orders = orderService.list();
+        List<OrderFindAllResponse> responses = orderService.list();
 
         // then
-        List<Long> orderTableIds = orders.stream()
-                .map(Order::getOrderTableId)
+        List<Long> orderIds = responses.stream()
+                .map(OrderFindAllResponse::getId)
                 .collect(Collectors.toList());
-        assertThat(orderTableIds).contains(order.getOrderTableId());
+        assertThat(orderIds).contains(order.getId());
     }
 
     @DisplayName("주문 상태를 수정한다.")
@@ -158,14 +158,14 @@ class OrderServiceTest {
         OrderTable orderTable = orderTableRepository.save(createOrderTable());
         OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(), Collections.singletonList(
                 new OrderLineItemDto(1L, 1)));
-        Order savedOrder = orderService.create(request);
+        OrderCreateResponse response = orderService.create(request);
 
         // when
         String changedOrderStatus = OrderStatus.MEAL.name();
-        orderService.changeOrderStatus(savedOrder.getId(), new OrderStatusChangeRequest(changedOrderStatus));
+        orderService.changeOrderStatus(response.getId(), new OrderStatusChangeRequest(changedOrderStatus));
 
         // then
-        Order dbOrder = orderRepository.findById(savedOrder.getId())
+        Order dbOrder = orderRepository.findById(response.getId())
                 .orElseThrow(RuntimeException::new);
         assertThat(dbOrder.getOrderStatus()).isEqualTo(changedOrderStatus);
     }
@@ -176,13 +176,11 @@ class OrderServiceTest {
         // given
         Menu menu = menuRepository.save(createMenu());
         OrderTable orderTable = orderTableRepository.save(createOrderTable());
-        Order order = createOrder(orderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now(),
-                Collections.singletonList(createOrderLineItem(menu.getId(), 1)));
+        Order order = createOrder(orderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now());
         Order savedOrder = orderRepository.save(order);
 
         // when, then
-        assertThatThrownBy(
-                () -> orderService.changeOrderStatus(savedOrder.getId(),
+        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(),
                         new OrderStatusChangeRequest(OrderStatus.COOKING.name())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
