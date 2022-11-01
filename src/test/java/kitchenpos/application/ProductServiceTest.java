@@ -4,8 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
-import kitchenpos.domain.Product;
 import kitchenpos.application.dto.ProductCreateRequest;
+import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductPrice;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -44,7 +45,7 @@ class ProductServiceTest extends ServiceTest {
             assertAll(
                     () -> assertThat(actual.getId()).isNotNull(),
                     () -> assertThat(actual.getName()).isEqualTo(PRODUCT_NAME),
-                    () -> assertThat(actual.getPrice().compareTo(BigDecimal.valueOf(PRODUCT_PRICE))).isSameAs(0)
+                    () -> assertThat(actual.getPrice()).isEqualTo(new ProductPrice(BigDecimal.valueOf(PRODUCT_PRICE)))
             );
 
         }

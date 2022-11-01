@@ -38,7 +38,7 @@ class ProductTest {
             Product product = new Product(1L, "productA", BigDecimal.valueOf(1000L));
 
             //when
-            BigDecimal total = product.multiplyPrice(10L);
+            BigDecimal total = product.getTotalPrice(10L);
 
             //then
             Assertions.assertThat(total).isEqualTo(BigDecimal.valueOf(10000L));

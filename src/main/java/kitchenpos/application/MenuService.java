@@ -59,7 +59,7 @@ public class MenuService {
         for (final MenuProductCreateRequest menuProductRequest : menuProductsCreateRequest) {
             Product product = productDao.getById(menuProductRequest.getProductId());
             long quantity = menuProductRequest.getQuantity();
-            sum = sum.add(product.multiplyPrice(quantity));
+            sum = sum.add(product.getTotalPrice(quantity));
         }
 
         if (menu.getPrice().compareTo(sum) > 0) {
