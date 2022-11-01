@@ -4,17 +4,15 @@ import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@Primary
-public class MenuRepository implements MenuDao {
+public class MenuRepository1 implements MenuDao {
 
     private final JdbcTemplateMenuDao menuDao;
     private final JdbcTemplateMenuProductDao menuProductDao;
 
-    public MenuRepository(JdbcTemplateMenuDao menuDao, JdbcTemplateMenuProductDao menuProductDao) {
+    public MenuRepository1(JdbcTemplateMenuDao menuDao, JdbcTemplateMenuProductDao menuProductDao) {
         this.menuDao = menuDao;
         this.menuProductDao = menuProductDao;
     }

@@ -20,23 +20,32 @@ import kitchenpos.fakedao.MenuFakeDao;
 import kitchenpos.fakedao.MenuGroupFakeDao;
 import kitchenpos.fakedao.MenuProductFakeDao;
 import kitchenpos.fakedao.ProductFakeDao;
+import kitchenpos.support.IntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
-public class MenuServiceTest {
+public class MenuServiceTest extends IntegrationTest {
 
-    private MenuDao menuDao = new MenuFakeDao();
-    private MenuGroupDao menuGroupDao = new MenuGroupFakeDao();
-    private MenuProductDao menuProductDao = new MenuProductFakeDao();
-    private ProductDao productDao = new ProductFakeDao();
+    @Autowired
+    private MenuDao menuDao;
 
-    private MenuService menuService = new MenuService(menuDao, menuProductDao, menuGroupDao, productDao);
+    @Autowired
+    private MenuGroupDao menuGroupDao;
+
+    @Autowired
+    private ProductDao productDao;
+
+    @Autowired
+    private MenuService menuService;
 
     @DisplayName("메뉴를 생성할 때")
     @Nested
-    class Create {
+    class Create extends IntegrationTest {
 
         private MenuGroup menuGroup;
         private List<MenuProduct> menuProducts;

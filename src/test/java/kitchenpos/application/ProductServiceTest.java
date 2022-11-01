@@ -7,20 +7,23 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
-import kitchenpos.fakedao.ProductFakeDao;
+import kitchenpos.support.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-public class ProductServiceTest {
+public class ProductServiceTest extends IntegrationTest {
 
-    private ProductDao productDao = new ProductFakeDao();
+    @Autowired
+    private ProductDao productDao;
 
-    private ProductService productService = new ProductService(productDao);
+    @Autowired
+    private ProductService productService;
 
     @DisplayName("상품을 생성할 때")
     @Nested
-    class Create {
+    class Create extends IntegrationTest {
 
         @DisplayName("성공")
         @Test
