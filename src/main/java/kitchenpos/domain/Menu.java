@@ -37,11 +37,12 @@ public class Menu {
     public Menu() {}
 
     public Menu(String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
-        validatePriceIsLessThanProductPriceSum(price, menuProducts);
         this.name = name;
         this.price = new Price(price);
         this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
+
+        validatePriceIsLessThanProductPriceSum(price, menuProducts);
     }
 
     private void validatePriceIsLessThanProductPriceSum(BigDecimal price, List<MenuProduct> menuProducts) {
