@@ -123,7 +123,7 @@ class TableGroupServiceTest extends ServiceTest {
         TableGroupResponse tableGroupResponse = tableGroupService.create(
                 new TableGroupCreateRequest(List.of(orderTable1.getId(), orderOrderTable2.getId())));
         Order order = Order.newOrder(orderOrderTable2);
-        order.changeOrderStatus(OrderStatus.COOKING);
+        order.changeOrderStatus(OrderStatus.from(orderStatus));
         orderRepository.save(order);
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupResponse.getId()))
