@@ -35,27 +35,24 @@ public class Menu {
 
     public Menu(final String name, final BigDecimal price, final Long menuGroupId,
                 final List<MenuProduct> menuProducts) {
+        validateCorrectPrice(price);
+        validatePriceUnderThanSumOfProductPrice(price);
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = new MenuProducts(menuProducts);
     }
 
-    public void validate() {
-        validateCorrectPrice();
-        validatePriceUnderThanSumOfProductPrice();
-    }
-
-    private void validateCorrectPrice() {
-        if (Objects.isNull(this.price) || this.price.compareTo(BigDecimal.ZERO) < 0) {
+    private void validateCorrectPrice(final BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
     }
 
-    public void validatePriceUnderThanSumOfProductPrice() {
+    public void validatePriceUnderThanSumOfProductPrice(final BigDecimal price) {
         BigDecimal sumOfPrice = menuProducts.calculateSumOfPrice();
 
-        if (this.price.compareTo(sumOfPrice) > 0) {
+        if (price.compareTo(sumOfPrice) > 0) {
             throw new IllegalArgumentException();
         }
     }

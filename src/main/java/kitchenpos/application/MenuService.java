@@ -33,16 +33,15 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuCreateRequest request) {
-        Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(), menuProducts(request));
-        menu.validate();
+        List<MenuProduct> menuProducts = menuProducts(request.getMenuProducts());
+        Menu menu = request.toEntity(menuProducts);
         validateInMenuGroup(menu);
         menuRepository.save(menu);
         return MenuResponse.of(menu);
     }
 
-    private List<MenuProduct> menuProducts(final MenuCreateRequest request) {
-        return request.getMenuProducts()
-                .stream()
+    private List<MenuProduct> menuProducts(final List<MenuProductCreateRequest> requests) {
+        return requests.stream()
                 .map(this::toMenuProduct)
                 .collect(Collectors.toList());
     }
