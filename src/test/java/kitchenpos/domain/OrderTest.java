@@ -8,6 +8,9 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderStatus;
+
 class OrderTest {
 
     @DisplayName("상태를 올바르게 변경한다")

@@ -8,6 +8,8 @@ import java.math.BigDecimal;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import kitchenpos.domain.menu.Price;
+
 class PriceTest {
 
     @DisplayName("가격이 null일 경우 예외가 발생한다")

@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.table.TableGroup;
 
 public class TableGroupRequest {
 
