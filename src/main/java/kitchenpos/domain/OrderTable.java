@@ -4,37 +4,53 @@ import static kitchenpos.application.exception.ExceptionType.INVALID_CHANGE_NUMB
 import static kitchenpos.application.exception.ExceptionType.INVALID_PROCEEDING_TABLE_GROUP_EXCEPTION;
 
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import kitchenpos.application.exception.CustomIllegalArgumentException;
 
+@Entity
+@Table(name = "order_table")
 public class OrderTable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long tableGroupId;
-    private int numberOfGuests;
-    private boolean empty;
 
-    // OrderStatus 넣을까 말까 ..
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "table_group_id")
+    private TableGroup tableGroup;
+    @Column
+    private int numberOfGuests;
+    @Column
+    private boolean empty;
 
     public OrderTable() {
     }
 
-    public OrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
-        this(null, tableGroupId, numberOfGuests, empty);
+    public OrderTable(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
+        this(null, tableGroup, numberOfGuests, empty);
     }
 
     public OrderTable(final int numberOfGuests, final boolean empty) {
         this(null, null, numberOfGuests, empty);
     }
 
-    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+    public OrderTable(final Long id, final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
         validNumberOfGuests(numberOfGuests);
         this.id = id;
-        this.tableGroupId = tableGroupId;
+        this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
     public void validTableGroupCondition() {
-        if (Objects.nonNull(tableGroupId)) {
+        if (Objects.nonNull(tableGroup)) {
             throw new CustomIllegalArgumentException(INVALID_PROCEEDING_TABLE_GROUP_EXCEPTION);
         }
     }
@@ -59,12 +75,9 @@ public class OrderTable {
     }
 
     public Long getTableGroupId() {
-        return tableGroupId;
+        return tableGroup.getId();
     }
 
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-    }
 
     public int getNumberOfGuests() {
         return numberOfGuests;
@@ -80,7 +93,7 @@ public class OrderTable {
     }
 
     private void clearTableGroup() {
-        this.tableGroupId = null;
+        this.tableGroup = null;
     }
 
     public void clear() {

@@ -8,9 +8,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.exception.CustomIllegalArgumentException;
+import kitchenpos.dao.JpaOrderTableRepository;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
@@ -23,16 +23,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderService {
     private final MenuDao menuDao;
     private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
+    private final JpaOrderTableRepository orderTableRepository;
 
-    public OrderService(
-            final MenuDao menuDao,
-            final OrderDao orderDao,
-            final OrderTableDao orderTableDao
-    ) {
+    public OrderService(final MenuDao menuDao, final OrderDao orderDao,
+                        final JpaOrderTableRepository orderTableRepository) {
         this.menuDao = menuDao;
         this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
+        this.orderTableRepository = orderTableRepository;
     }
 
     public Order create(final OrderRequest request) {
@@ -45,12 +42,12 @@ public class OrderService {
 
     private Order convertSaveConditionOrder(final Long orderTableId, final Order order) {
         final OrderTable orderTable = getOrderTable(orderTableId);
-        return new Order(orderTable.getTableGroupId(), COOKING.name(), LocalDateTime.now(),
+        return new Order(orderTable.getId(), COOKING.name(), LocalDateTime.now(),
                 order.getOrderLineItems());
     }
 
     private OrderTable getOrderTable(final Long orderTableId) {
-        return orderTableDao.findById(orderTableId)
+        return orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new CustomIllegalArgumentException(NOT_FOUND_TABLE_EXCEPTION));
     }
 

@@ -7,8 +7,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.exception.CustomIllegalArgumentException;
+import kitchenpos.dao.JpaOrderTableRepository;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.dto.OrderTableResponse;
@@ -20,21 +20,21 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class TableService {
     private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
+    private final JpaOrderTableRepository orderTableRepository;
 
-    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
+    public TableService(final OrderDao orderDao, final JpaOrderTableRepository orderTableRepository) {
         this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
+        this.orderTableRepository = orderTableRepository;
     }
 
     public OrderTableResponse create(final OrderTableRequest request) {
-        final OrderTable savedOrderTable = orderTableDao.save(request.toOrder());
+        final OrderTable savedOrderTable = orderTableRepository.save(request.toOrder());
         return OrderTableResponse.from(savedOrderTable);
     }
 
     @Transactional(readOnly = true)
     public List<OrderTableResponse> list() {
-        final List<OrderTable> orderTables = orderTableDao.findAll();
+        final List<OrderTable> orderTables = orderTableRepository.findAll();
         final List<OrderTableResponse> tableResponses = orderTables.stream().map(OrderTableResponse::from)
                 .collect(Collectors.toList());
         return tableResponses;
@@ -46,7 +46,7 @@ public class TableService {
         savedOrderTable.validTableGroupCondition();
         validExistOrderTables(orderTableId);
         savedOrderTable.clearTable();
-        orderTableDao.save(savedOrderTable);
+        orderTableRepository.save(savedOrderTable);
 
         return OrderTableResponse.from(savedOrderTable);
     }
@@ -61,12 +61,12 @@ public class TableService {
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {
         final OrderTable savedOrderTable = getOrderTable(orderTableId);
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
-        orderTableDao.save(savedOrderTable);
+        orderTableRepository.save(savedOrderTable);
         return OrderTableResponse.from(savedOrderTable);
     }
 
     private OrderTable getOrderTable(final Long orderTableId) {
-        return orderTableDao.findById(orderTableId)
+        return orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new CustomIllegalArgumentException(NOT_FOUND_TABLE_EXCEPTION));
     }
 }

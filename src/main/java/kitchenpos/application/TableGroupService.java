@@ -10,9 +10,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.exception.CustomIllegalArgumentException;
+import kitchenpos.dao.JpaOrderTableRepository;
+import kitchenpos.dao.JpaTableGroupRepository;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.dto.TableGroupResponse;
@@ -25,19 +25,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class TableGroupService {
     private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
-    private final TableGroupDao tableGroupDao;
+    private final JpaOrderTableRepository orderTableRepository;
+    private final JpaTableGroupRepository tableGroupRepository;
 
-    public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao,
-                             final TableGroupDao tableGroupDao) {
+    public TableGroupService(final OrderDao orderDao, final JpaOrderTableRepository JpaOrderTableRepository,
+                             final JpaTableGroupRepository tableGroupRepository) {
         this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
-        this.tableGroupDao = tableGroupDao;
+        this.orderTableRepository = JpaOrderTableRepository;
+        this.tableGroupRepository = tableGroupRepository;
     }
 
     public TableGroupResponse create(final TableGroupRequest request) {
         final List<OrderTable> savedOrderTables = getSavedOrderTables(request.getOrderTables());
-        final TableGroup saveTableGroup = tableGroupDao.save(TableGroup.of(LocalDateTime.now(), savedOrderTables));
+        final TableGroup saveTableGroup = tableGroupRepository.save(
+                TableGroup.of(LocalDateTime.now(), savedOrderTables));
         return TableGroupResponse.from(saveTableGroup);
     }
 
@@ -52,30 +53,27 @@ public class TableGroupService {
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTableIdRequest::getId)
                 .collect(Collectors.toList());
-        final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
+        final List<OrderTable> savedOrderTables = orderTableRepository.findAllById(orderTableIds);
         validateSize(orderTables, savedOrderTables);
         return savedOrderTables;
     }
 
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
+        TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
+                .orElseThrow(() -> new CustomIllegalArgumentException(NOT_FOUND_TABLE_EXCEPTION));
 
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
+        //:todo 더 예쁘게 변경해보기
+        validChangeOrderTableStatusCondition(tableGroup.getOrderTables());
 
-        validChangeOrderTableStatusCondition(orderTableIds);
-
-        for (final OrderTable orderTable : orderTables) {
+        for (final OrderTable orderTable : tableGroup.getOrderTables()) {
             orderTable.clear();
-
-            orderTableDao.save(orderTable);
         }
     }
 
-    private void validChangeOrderTableStatusCondition(final List<Long> orderTableIds) {
+    private void validChangeOrderTableStatusCondition(final List<OrderTable> orderTable) {
+        final List<Long> orderTableId = orderTable.stream().map(OrderTable::getId).collect(Collectors.toList());
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(COOKING.name(), MEAL.name()))) {
+                orderTableId, Arrays.asList(COOKING.name(), MEAL.name()))) {
             throw new CustomIllegalArgumentException(INVALID_TABLE_UNGROUP_EXCEPTION);
         }
     }

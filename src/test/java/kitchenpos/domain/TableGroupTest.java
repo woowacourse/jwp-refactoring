@@ -19,7 +19,7 @@ class TableGroupTest {
 
     @Test
     void 테이블_개수가_두개_미만일때_그룹을_생성하면_예외를_반환한다() {
-        final OrderTable 테이블1 = new OrderTable(1L, 1L, 1, false);
+        final OrderTable 테이블1 = new OrderTable(1L, null, 1, false);
 
         Assertions.assertThatThrownBy(() -> new TableGroup(1L, LocalDateTime.now(), Arrays.asList(테이블1)))
                 .isInstanceOf(IllegalArgumentException.class)

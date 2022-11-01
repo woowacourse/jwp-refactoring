@@ -4,13 +4,27 @@ import static kitchenpos.application.exception.ExceptionType.INVALID_TABLE_GROUP
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import kitchenpos.application.exception.CustomIllegalArgumentException;
 import org.springframework.util.CollectionUtils;
 
+@Table(name = "table_group")
+@Entity
 public class TableGroup {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private LocalDateTime createdDate;
-    private OrderTables orderTables;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "tableGroup")
+    private List<OrderTable> orderTables;
 
     public TableGroup() {
     }
@@ -23,7 +37,7 @@ public class TableGroup {
         validateTableGroup(orderTables);
         this.id = id;
         this.createdDate = createdDate;
-        this.orderTables = new OrderTables(orderTables);
+        this.orderTables = orderTables;
     }
 
     public static TableGroup of(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
@@ -53,6 +67,6 @@ public class TableGroup {
     }
 
     public List<OrderTable> getOrderTables() {
-        return orderTables.getValues();
+        return orderTables;
     }
 }

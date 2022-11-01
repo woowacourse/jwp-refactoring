@@ -8,12 +8,13 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Optional;
 import kitchenpos.dao.JpaMenuGroupRepository;
+import kitchenpos.dao.JpaOrderTableRepository;
 import kitchenpos.dao.JpaProductRepository;
+import kitchenpos.dao.JpaTableGroupRepository;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
@@ -21,6 +22,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.dto.request.OrderLineItemRequest;
 import kitchenpos.ui.dto.request.OrderRequest;
 import kitchenpos.ui.dto.request.OrderTableIdRequest;
@@ -48,7 +50,9 @@ public class ServiceTest {
     @MockBean
     protected OrderLineItemDao orderLineItemDao;
     @MockBean
-    protected OrderTableDao orderTableDao;
+    protected JpaOrderTableRepository orderTableRepository;
+    @MockBean
+    protected JpaTableGroupRepository tableGroupRepository;
 
     /**
      * order test fixture
@@ -62,11 +66,16 @@ public class ServiceTest {
     }
 
     protected void 존재하지않는_테이블_세팅() {
-        Mockito.when(orderTableDao.findById(anyLong())).thenReturn(Optional.empty());
+        Mockito.when(orderTableRepository.findById(anyLong())).thenReturn(Optional.empty());
     }
 
     protected OrderTable 테이블_생성(Long id) {
-        return new OrderTable(id, 1L, 1, false);
+        final TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now(), Arrays.asList(테이블_생성(1L), 테이블_생성(2L)));
+        return new OrderTable(id, tableGroup, 1, false);
+    }
+
+    protected TableGroup 테이블_그룹_생성() {
+        return new TableGroup(1L, LocalDateTime.now(), Arrays.asList(테이블_생성(1L), 테이블_생성(2L)));
     }
 
     protected OrderTable 테이블_그룹_없는_테이블_생성(Long id) {
@@ -78,11 +87,12 @@ public class ServiceTest {
     }
 
     protected void 테이블_그룹이_없는_테이블_세팅(Long id) {
-        Mockito.when(orderTableDao.findById(anyLong())).thenReturn(Optional.of(new OrderTable(id, null, 1, false)));
+        Mockito.when(orderTableRepository.findById(anyLong()))
+                .thenReturn(Optional.of(new OrderTable(id, null, 1, false)));
     }
 
     protected void 존재하는_테이블_세팅() {
-        Mockito.when(orderTableDao.findById(anyLong())).thenReturn(Optional.of(테이블_생성(1L)));
+        Mockito.when(orderTableRepository.findById(anyLong())).thenReturn(Optional.of(테이블_생성(1L)));
     }
 
     protected Order 주문_생성(OrderStatus status) {
@@ -146,10 +156,9 @@ public class ServiceTest {
         Mockito.when(orderDao.existsByOrderTableIdAndOrderStatusIn(any(), any())).thenReturn(true);
     }
 
-
-    protected void 그룹_id로_조회시_두개_반환하도록_세팅() {
-        Mockito.when(orderTableDao.findAllByTableGroupId(any()))
-                .thenReturn(Arrays.asList(테이블_생성(1L), 테이블_생성(2L)));
+    protected void 그룹_id로_조회시_객체_반환하도록_세팅() {
+        Mockito.when(tableGroupRepository.findById(anyLong()))
+                .thenReturn(Optional.of(테이블_그룹_생성()));
     }
 
     /**
