@@ -7,8 +7,8 @@
 ---
 
 ![Generic badge](https://img.shields.io/badge/Level4-Kitchen_POS-green.svg)
-![Generic badge](https://img.shields.io/badge/test-87_passed-blue.svg)
-![Generic badge](https://img.shields.io/badge/version-1.0.0-brightgreen.svg)
+![Generic badge](https://img.shields.io/badge/test-100_passed-blue.svg)
+![Generic badge](https://img.shields.io/badge/version-2.0.0-brightgreen.svg)
 
 > 우아한테크코스 웹 백엔드 4기, 레거시 코드 리팩터링 - Kitchen POS 저장소입니다.
 
@@ -37,14 +37,13 @@
 - [x] Request, Response DTO 도입
 - [x] 서비스 인터페이스 추상화
 - [x] 1단계 테스트를 통한 코드 보호 PR
-- [ ] JdbcTempalte -> JPA 전환
+- [x] JdbcTempalte -> JPA 전환
 - [x] 프로덕트, 메뉴그룹 name 유니크 제약조건 제거. 기존 프로덕션 로직 및 스키마에 없는 제약조건.
-- [ ] Bean Validation 도입
 - [ ] 일급 컬렉션 도입
 - [ ] 도메인 엔티티 VO 적용
-- [ ] 도메인 엔티티에 유효성 검증 및 비즈니스 로직 내재화
+- [x] 도메인 엔티티에 유효성 검증 및 비즈니스 로직 내재화
 - [ ] 도메인 엔티티 단위 테스트 구현
-- [ ] 2단계 서비스 리팩터링 PR
+- [x] 2단계 서비스 리팩터링 PR
 
 <br><br>
 
