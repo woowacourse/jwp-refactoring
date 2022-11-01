@@ -9,11 +9,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -36,7 +34,7 @@ class TableGroupServiceTest {
     TableGroupDao tableGroupDao;
 
     @Autowired
-    OrderDao orderDao;
+    OrderRepository orderRepository;
 
     @Autowired
     TableGroupService sut;
@@ -137,14 +135,14 @@ class TableGroupServiceTest {
         TableGroup tableGroup = sut.create(newTableGroup());
         List<OrderTable> orderTables = tableGroup.getOrderTables();
 
-        for (OrderTable orderTable : orderTables) {
-            Order order = new Order();
-            order.setOrderTableId(orderTable.getId());
-            order.setOrderedTime(LocalDateTime.now());
-            order.setOrderStatus(orderStatus.name());
-            order.setOrderLineItems(List.of(newOrderLineItem()));
-            orderDao.save(order);
-        }
+//        for (OrderTable orderTable : orderTables) {
+//            Order order = new Order();
+//            order.setOrderTableId(orderTable.getId());
+//            order.setOrderedTime(LocalDateTime.now());
+//            order.setOrderStatus(orderStatus.name());
+//            order.setOrderLineItems(List.of(newOrderLineItem()));
+//            orderDao.save(order);
+//        }
 
         // when && then
         assertThatThrownBy(() -> sut.ungroup(tableGroup.getId()))
@@ -177,13 +175,5 @@ class TableGroupServiceTest {
         return createTableGroup(List.of(
                 orderTableDao.save(createEmptyTable()),
                 orderTableDao.save(createEmptyTable())));
-    }
-
-    private OrderLineItem newOrderLineItem() {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1);
-
-        return orderLineItem;
     }
 }

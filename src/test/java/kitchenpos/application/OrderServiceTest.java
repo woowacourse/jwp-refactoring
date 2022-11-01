@@ -1,16 +1,26 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.OrderTableFactory.createOrderTable;
+import static kitchenpos.fixture.MenuBuilder.aMenu;
+import static kitchenpos.fixture.ProductBuilder.aProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuGroupRepository;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTableRepository;
+import kitchenpos.domain.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,20 +35,33 @@ class OrderServiceTest {
     OrderService sut;
 
     @Autowired
-    OrderTableDao orderTableDao;
+    OrderTableRepository orderTableRepository;
 
     @Autowired
-    OrderDao orderDao;
+    OrderRepository orderRepository;
+
+    @Autowired
+    MenuRepository menuRepository;
+
+    @Autowired
+    MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    ProductRepository productRepository;
+
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Test
     @DisplayName("주문 항목이 없으면 주문을 생성할 수 없다")
     void throwExceptionWhenNoOrderLineItems() {
         // given
-        Order order = new Order();
-        order.setOrderTableId(1L);
+        var orderTable = orderTableRepository.save(new OrderTable(1, false));
+
+        var request = new OrderRequest(orderTable.getId(), Collections.emptyList());
 
         // when && then
-        assertThatThrownBy(() -> sut.create(order))
+        assertThatThrownBy(() -> sut.create(request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("주문 항목이 존재하지 않습니다");
     }
@@ -47,66 +70,55 @@ class OrderServiceTest {
     @DisplayName("주문 항목에 포함된 메뉴는 중복될 수 없다")
     void throwExceptionWhenDuplicateMenu() {
         // given
-        OrderLineItem orderLineItem1 = new OrderLineItem();
-        orderLineItem1.setMenuId(1L);
-        orderLineItem1.setQuantity(1);
+        var orderTable = orderTableRepository.save(new OrderTable(1, false));
+        var menuGroupId = menuGroupRepository.save(new MenuGroup("후라이드 치킨")).getId();
 
-        OrderLineItem orderLineItem2 = new OrderLineItem();
-        orderLineItem2.setMenuId(1L);
-        orderLineItem2.setQuantity(2);
+        var product = productRepository.save(aProduct().build());
+        var menu = menuRepository.save(aMenu(menuGroupId)
+                .withMenuProducts(List.of(new MenuProduct(product, 1L)))
+                .build());
 
-        List<OrderLineItem> orderLineItems = List.of(orderLineItem1, orderLineItem2);
+        var orderLineItemRequest1 = new OrderLineItemRequest(menu.getId(), 1L);
+        var orderLineItemRequest2 = new OrderLineItemRequest(menu.getId(), 2L);
 
-        Order order = new Order();
-        order.setOrderTableId(1L);
-        order.setOrderLineItems(orderLineItems);
+        var request = new OrderRequest(orderTable.getId(), List.of(orderLineItemRequest1, orderLineItemRequest2));
 
         // when && then
-        assertThatThrownBy(() -> sut.create(order))
+        assertThatThrownBy(() -> sut.create(request))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("주문 항목의 메뉴가 유효하지 않습니다");
+                .hasMessageContaining("주문 항목의 메뉴가 중복되어 있습니다");
     }
 
     @Test
     @DisplayName("주문 항목에 포함된 메뉴가 존재하지 않을 경우 예외가 발생한다")
     void throwExceptionWhenNonExistMenu() {
         // given
-        OrderLineItem orderLineItem1 = new OrderLineItem();
-        orderLineItem1.setMenuId(0L);
-        orderLineItem1.setQuantity(1);
-
-        OrderLineItem orderLineItem2 = new OrderLineItem();
-        orderLineItem2.setMenuId(1L);
-        orderLineItem2.setQuantity(2);
-
-        List<OrderLineItem> orderLineItems = List.of(orderLineItem1, orderLineItem2);
-
-        Order order = new Order();
-        order.setOrderTableId(1L);
-        order.setOrderLineItems(orderLineItems);
+        var orderTable = orderTableRepository.save(new OrderTable(1, false));
+        var orderLineItemRequest = new OrderLineItemRequest(0L, 1L);
+        var request = new OrderRequest(orderTable.getId(), List.of(orderLineItemRequest));
 
         // when && then
-        assertThatThrownBy(() -> sut.create(order))
+        assertThatThrownBy(() -> sut.create(request))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("주문 항목의 메뉴가 유효하지 않습니다");
+                .hasMessageContaining("주문 항목의 메뉴가 존재하지 않습니다");
     }
 
     @Test
     @DisplayName("주문 테이블이 존재하지 않으면 주문을 생성할 수 없다")
     void throwExceptionWhenOrderTableDoesNotExist() {
         // given
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1);
+        var menuGroupId = menuGroupRepository.save(new MenuGroup("후라이드 치킨")).getId();
 
-        List<OrderLineItem> orderLineItems = List.of(orderLineItem);
+        var product = productRepository.save(aProduct().build());
+        var menu = menuRepository.save(aMenu(menuGroupId)
+                .withMenuProducts(List.of(new MenuProduct(product, 1L)))
+                .build());
 
-        Order order = new Order();
-        order.setOrderTableId(0L);
-        order.setOrderLineItems(orderLineItems);
+        var orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1L);
+        var request = new OrderRequest(0L, List.of(orderLineItemRequest));
 
         // when && then
-        assertThatThrownBy(() -> sut.create(order))
+        assertThatThrownBy(() -> sut.create(request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("주문 테이블이 존재하지 않습니다");
     }
@@ -115,20 +127,18 @@ class OrderServiceTest {
     @DisplayName("주문 테이블이 비어있으면 주문을 생성할 수 없다.")
     void throwExceptionWhenOrderTableIsEmpty() {
         // given
-        Long orderTableId = orderTableDao.save(createOrderTable(0, true)).getId();
+        var orderTable = orderTableRepository.save(new OrderTable(0, true));
+        var menuGroupId = menuGroupRepository.save(new MenuGroup("후라이드 치킨")).getId();
+        var product = productRepository.save(aProduct().build());
+        var menu = menuRepository.save(aMenu(menuGroupId)
+                .withMenuProducts(List.of(new MenuProduct(product, 1L)))
+                .build());
 
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1);
-
-        List<OrderLineItem> orderLineItems = List.of(orderLineItem);
-
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderLineItems(orderLineItems);
+        var orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1L);
+        var request = new OrderRequest(orderTable.getId(), List.of(orderLineItemRequest));
 
         // when && then
-        assertThatThrownBy(() -> sut.create(order))
+        assertThatThrownBy(() -> sut.create(request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("주문 테이블이 비어있습니다");
     }
@@ -137,51 +147,52 @@ class OrderServiceTest {
     @DisplayName("주문을 생성한다")
     void createOrder() {
         // given
-        Long orderTableId = orderTableDao.save(createOrderTable(1, false)).getId();
+        var orderTable = orderTableRepository.save(new OrderTable(1, false));
+        var menuGroupId = menuGroupRepository.save(new MenuGroup("후라이드 치킨")).getId();
+        var product = productRepository.save(aProduct().build());
+        var menu = menuRepository.save(aMenu(menuGroupId)
+                .withMenuProducts(List.of(new MenuProduct(product, 1L)))
+                .build());
 
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1);
-
-        List<OrderLineItem> orderLineItems = List.of(orderLineItem);
-
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderLineItems(orderLineItems);
+        var orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1L);
+        var request = new OrderRequest(orderTable.getId(), List.of(orderLineItemRequest));
 
         // when
-        Order savedOrder = sut.create(order);
+        var response = sut.create(request);
 
         // then
-        assertThat(savedOrder.getOrderTableId()).isEqualTo(orderTableId);
-        assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
-        assertThat(savedOrder.getOrderedTime()).isBeforeOrEqualTo(LocalDateTime.now());
-        assertThat(savedOrder.getOrderLineItems()).hasSize(1);
-        assertThatOrderIdIsSet(savedOrder.getOrderLineItems(), savedOrder.getId());
+        assertThat(response.getOrderTableId()).isEqualTo(orderTable.getId());
+        assertThat(response.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+        assertThat(response.getOrderedTime()).isBeforeOrEqualTo(LocalDateTime.now());
+        assertThat(response.getOrderLineItems()).hasSize(1);
+        assertThatOrderIdIsSet(response.getOrderLineItems(), response.getId());
     }
 
     @Test
     @DisplayName("주문 목록을 조회한다")
     void listOrders() {
-        List<Order> expected = orderDao.findAll();
+        var orderTable = orderTableRepository.save(new OrderTable(1, false));
+        var menuGroupId = menuGroupRepository.save(new MenuGroup("후라이드 치킨")).getId();
+        var product = productRepository.save(aProduct().build());
+        var menu = menuRepository.save(aMenu(menuGroupId)
+                .withMenuProducts(List.of(new MenuProduct(product, 1L)))
+                .build());
+        var savedOrder = orderRepository.save(new Order(orderTable, List.of(new OrderLineItem(menu.getId(), 1L))));
 
-        List<Order> actual = sut.list();
+        var response = sut.list();
 
-        assertThat(actual).hasSize(expected.size());
-        for (Order order : actual) {
-            assertThatOrderIdIsSet(order.getOrderLineItems(), order.getId());
-        }
+        assertThat(response).hasSize(1);
+        assertThat(response.get(0)).usingRecursiveComparison().isEqualTo(OrderResponse.from(savedOrder));
     }
 
     @Test
     @DisplayName("입력받은 Id에 해당하는 주문이 존재하지 않으면 주문 상태를 변경할 수 없다")
     void throwExceptionWhenOrderDoesNotExist() {
         // given
-        Order order = new Order();
-        order.setOrderStatus(OrderStatus.MEAL.name());
+        var request = new OrderStatusRequest("MEAL");
 
         // when && then
-        assertThatThrownBy(() -> sut.changeOrderStatus(0L, order))
+        assertThatThrownBy(() -> sut.changeOrderStatus(0L, request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("주문이 존재하지 않습니다");
     }
@@ -190,17 +201,20 @@ class OrderServiceTest {
     @DisplayName("주문 상태가 이미 완료 상태인 주문은 상태를 변경할 수 없다")
     void throwExceptionWhenTryToChangeCompletedOrder() {
         // given
-        Order savedOrder = createValidOrder();
+        var orderTable = orderTableRepository.save(new OrderTable(1, false));
+        var menuGroupId = menuGroupRepository.save(new MenuGroup("후라이드 치킨")).getId();
+        var product = productRepository.save(aProduct().build());
+        var menu = menuRepository.save(aMenu(menuGroupId)
+                .withMenuProducts(List.of(new MenuProduct(product, 1L)))
+                .build());
+        var order = orderRepository.save(new Order(orderTable, List.of(new OrderLineItem(menu.getId(), 1L))));
+        order.changeStatus(OrderStatus.COMPLETION);
+        entityManager.flush();
 
-        Order completeStatusOrder = new Order();
-        completeStatusOrder.setOrderStatus(OrderStatus.COMPLETION.name());
-        sut.changeOrderStatus(savedOrder.getId(), completeStatusOrder);
-
-        Order mealStatusOrder = new Order();
-        mealStatusOrder.setOrderStatus(OrderStatus.MEAL.name());
+        var request = new OrderStatusRequest("MEAL");
 
         // when && then
-        assertThatThrownBy(() -> sut.changeOrderStatus(savedOrder.getId(), mealStatusOrder))
+        assertThatThrownBy(() -> sut.changeOrderStatus(order.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("이미 완료된 주문입니다");
     }
@@ -209,40 +223,26 @@ class OrderServiceTest {
     @DisplayName("주문 상태를 변경한다")
     void changeOrderStatus() {
         // given
-        Order savedOrder = createValidOrder();
+        var orderTable = orderTableRepository.save(new OrderTable(1, false));
+        var menuGroupId = menuGroupRepository.save(new MenuGroup("후라이드 치킨")).getId();
+        var product = productRepository.save(aProduct().build());
+        var menu = menuRepository.save(aMenu(menuGroupId)
+                .withMenuProducts(List.of(new MenuProduct(product, 1L)))
+                .build());
+        var order = orderRepository.save(new Order(orderTable, List.of(new OrderLineItem(menu.getId(), 1L))));
 
-        Order completeStatusOrder = new Order();
-        completeStatusOrder.setOrderStatus(OrderStatus.COMPLETION.name());
+        var request = new OrderStatusRequest("MEAL");
 
         // when
-        Order changedOrder = sut.changeOrderStatus(savedOrder.getId(), completeStatusOrder);
+        var response = sut.changeOrderStatus(order.getId(), request);
 
         // then
-        assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
-        assertThat(changedOrder).usingRecursiveComparison()
-                .ignoringFields("orderStatus")
-                .isEqualTo(savedOrder);
+        assertThat(response.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
     }
 
-    private void assertThatOrderIdIsSet(List<OrderLineItem> orderLineItems, Long orderId) {
-        for (OrderLineItem orderLineItem : orderLineItems) {
+    private void assertThatOrderIdIsSet(List<OrderLineItemResponse> orderLineItems, Long orderId) {
+        for (var orderLineItem : orderLineItems) {
             assertThat(orderLineItem.getOrderId()).isEqualTo(orderId);
         }
-    }
-
-    private Order createValidOrder() {
-        Long orderTableId = orderTableDao.save(createOrderTable(1, false)).getId();
-
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1);
-
-        List<OrderLineItem> orderLineItems = List.of(orderLineItem);
-
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderLineItems(orderLineItems);
-
-        return sut.create(order);
     }
 }

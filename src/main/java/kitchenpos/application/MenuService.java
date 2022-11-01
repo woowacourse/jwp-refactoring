@@ -27,13 +27,13 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuRequest request) {
-        List<MenuProduct> menuProducts = mapToMenuProducts(request);
         if (!menuGroupDao.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다. menuGroupId = " + request.getMenuGroupId());
         }
         return MenuResponse.from(
                 menuRepository.save(
-                        new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(), menuProducts))
+                        new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(),
+                                mapToMenuProducts(request)))
         );
     }
 

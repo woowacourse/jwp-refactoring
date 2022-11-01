@@ -6,11 +6,9 @@ import static kitchenpos.fixture.OrderTableFactory.createOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -31,7 +29,7 @@ class TableServiceTest {
     OrderTableDao orderTableDao;
 
     @Autowired
-    OrderDao orderDao;
+    OrderRepository orderRepository;
 
     @Autowired
     TableGroupService tableGroupService;
@@ -95,11 +93,11 @@ class TableServiceTest {
         // given
         Long orderTableId = orderTableDao.save(createOrderTable(1, false)).getId();
 
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus(orderStatus.name());
-        order.setOrderedTime(LocalDateTime.now());
-        orderDao.save(order);
+//        Order order = new Order();
+//        order.setOrderTableId(orderTableId);
+//        order.setOrderStatus(orderStatus.name());
+//        order.setOrderedTime(LocalDateTime.now());
+//        orderDao.save(order);
 
         OrderTable changeRequest = createChangeOrderTableRequest(true);
 

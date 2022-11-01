@@ -1,14 +1,31 @@
 package kitchenpos.domain;
 
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
+@Entity
+@Table(name = "order_table")
 public class OrderTable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "table_group_id")
     private Long tableGroupId;
+
+    @Column(name = "number_of_guests", nullable = false)
     private int numberOfGuests;
+
+    @Column(name = "empty", nullable = false)
     private boolean empty;
 
-    private OrderTable() {
+    protected OrderTable() {
     }
 
     public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {

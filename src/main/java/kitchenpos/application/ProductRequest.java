@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import java.math.BigDecimal;
-import kitchenpos.domain.Product;
 
 public class ProductRequest {
 
