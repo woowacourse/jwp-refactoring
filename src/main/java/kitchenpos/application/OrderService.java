@@ -55,6 +55,7 @@ public class OrderService {
         order.validateOrderLineItemSize(menuRepository.countByIdIn(menuIds));
     }
 
+    @Transactional(readOnly = true)
     public List<Order> list() {
         return orderRepository.findAll();
     }

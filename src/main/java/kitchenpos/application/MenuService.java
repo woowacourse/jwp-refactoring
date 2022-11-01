@@ -58,6 +58,7 @@ public class MenuService {
         menu.updateMenuProducts(menuProducts);
     }
 
+    @Transactional(readOnly = true)
     public List<Menu> list() {
         return menuRepository.findAll();
     }
