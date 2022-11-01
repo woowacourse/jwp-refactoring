@@ -6,7 +6,6 @@ import static kitchenpos.fixture.ProductFixture.짜장맛_떡볶이;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -71,7 +70,7 @@ class OrderServiceTest extends ServiceTestBase {
     @Test
     void 주문_항목_0개인_경우_실패() {
         // given
-        OrderCreateRequest request = new OrderCreateRequest(null, orderTableId, LocalDateTime.now(), new ArrayList<>());
+        OrderCreateRequest request = new OrderCreateRequest(orderTableId, new ArrayList<>());
 
         // when & then
         assertThatThrownBy(() -> orderService.create(request))
@@ -164,14 +163,13 @@ class OrderServiceTest extends ServiceTestBase {
     }
 
     private OrderCreateRequest toRequest(final Order order) {
-        return new OrderCreateRequest(order.getId(), order.getOrderTableId(),
-                order.getOrderedTime(), toDtos(order));
+        return new OrderCreateRequest(order.getOrderTableId(), toDtos(order));
     }
 
     private List<OrderLineItemDto> toDtos(final Order order) {
         return order.getOrderLineItems()
                 .stream()
-                .map(it -> new OrderLineItemDto(it.getSeq(), it.getOrderId(), it.getMenuId(), it.getQuantity()))
+                .map(it -> new OrderLineItemDto(it.getMenuId(), it.getQuantity()))
                 .collect(Collectors.toList());
     }
 }

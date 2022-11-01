@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -79,7 +80,7 @@ public class OrderService {
         Order order = new Order(
                 orderTable.getId(),
                 OrderStatus.COOKING,
-                requestOrder.getOrderedTime(),
+                LocalDateTime.now(),
                 requestOrder.toOrderLineItems()
         );
         return orderDao.save(order);
@@ -90,7 +91,6 @@ public class OrderService {
 
         for (final OrderLineItemDto orderLineItem : orderCreateRequest.getOrderLineItems()) {
             OrderLineItem updateOrderLineItem = new OrderLineItem(
-                    orderLineItem.getSeq(),
                     orderId,
                     orderLineItem.getMenuId(),
                     orderLineItem.getQuantity()

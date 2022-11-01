@@ -7,19 +7,14 @@ import kitchenpos.domain.OrderLineItem;
 
 public class OrderCreateRequest {
 
-    private Long id;
     private Long orderTableId;
-    private LocalDateTime orderedTime;
     private List<OrderLineItemDto> orderLineItems;
 
     private OrderCreateRequest() {
     }
 
-    public OrderCreateRequest(final Long id, final Long orderTableId, final LocalDateTime orderedTime,
-                              final List<OrderLineItemDto> orderLineItems) {
-        this.id = id;
+    public OrderCreateRequest(final Long orderTableId, final List<OrderLineItemDto> orderLineItems) {
         this.orderTableId = orderTableId;
-        this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
     }
 
@@ -29,16 +24,8 @@ public class OrderCreateRequest {
                 .collect(Collectors.toList());
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public Long getOrderTableId() {
         return orderTableId;
-    }
-
-    public LocalDateTime getOrderedTime() {
-        return orderedTime;
     }
 
     public List<OrderLineItemDto> getOrderLineItems() {
