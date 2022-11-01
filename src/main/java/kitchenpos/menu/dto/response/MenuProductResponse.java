@@ -1,16 +1,16 @@
-package kitchenpos.dto.response;
+package kitchenpos.menu.dto.response;
 
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProduct;
 
 public class MenuProductResponse {
 
     private Long seq;
-    private ProductResponse product;
+    private Long productId;
     private long quantity;
 
     public MenuProductResponse(MenuProduct menuProduct) {
         seq = menuProduct.getSeq();
-        product = new ProductResponse(menuProduct.getProduct());
+        productId = menuProduct.getProductId();
         quantity = menuProduct.getQuantity();
     }
 
@@ -18,8 +18,8 @@ public class MenuProductResponse {
         return seq;
     }
 
-    public ProductResponse getProduct() {
-        return product;
+    public Long getProductId() {
+        return productId;
     }
 
     public long getQuantity() {

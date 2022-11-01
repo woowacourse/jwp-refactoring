@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.menu.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -8,11 +8,18 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import kitchenpos.domain.Product;
-import kitchenpos.dto.request.product.CreateProductRequest;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.dto.request.CreateProductRequest;
+import kitchenpos.product.dto.response.ProductResponse;
 
-class ProductServiceTest extends ServiceTest {
+@SpringBootTest
+class ProductServiceTest {
+
+    @Autowired
+    private ProductService productService;
 
     @Nested
     @DisplayName("create()")
@@ -25,7 +32,7 @@ class ProductServiceTest extends ServiceTest {
             CreateProductRequest product = new CreateProductRequest("이름", new BigDecimal(1000));
 
             // when
-            Product savedProduct = productService.create(product);
+            ProductResponse savedProduct = productService.create(product);
 
             // then
             assertThat(savedProduct.getId()).isNotNull();
@@ -40,7 +47,7 @@ class ProductServiceTest extends ServiceTest {
         @Test
         @DisplayName("전체 상품을 조회한다.")
         void list() {
-            List<Product> products = productService.list();
+            List<ProductResponse> products = productService.list();
             assertThat(products).isNotNull();
         }
 

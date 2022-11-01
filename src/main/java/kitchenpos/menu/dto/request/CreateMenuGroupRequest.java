@@ -1,4 +1,4 @@
-package kitchenpos.dto.request.menuGroup;
+package kitchenpos.menu.dto.request;
 
 public class CreateMenuGroupRequest {
 
@@ -14,4 +14,5 @@ public class CreateMenuGroupRequest {
     public String getName() {
         return name;
     }
+
 }

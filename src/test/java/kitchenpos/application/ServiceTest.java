@@ -10,16 +10,12 @@ import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.ProductRepository;
 import kitchenpos.repository.TableGroupRepository;
+import kitchenpos.table.application.TableGroupService;
+import kitchenpos.table.application.TableService;
 
 @SpringBootTest
 public class ServiceTest {
 
-    @Autowired
-    protected ProductService productService;
-    @Autowired
-    protected MenuService menuService;
-    @Autowired
-    protected MenuGroupService menuGroupService;
     @Autowired
     protected TableService tableService;
     @Autowired

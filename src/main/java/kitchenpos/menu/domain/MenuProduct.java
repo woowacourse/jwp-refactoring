@@ -12,8 +12,6 @@ import javax.persistence.ManyToOne;
 
 import org.hibernate.Hibernate;
 
-import kitchenpos.domain.Menu;
-
 @Entity
 public class MenuProduct {
 
@@ -45,16 +43,16 @@ public class MenuProduct {
         return seq;
     }
 
+    public long getQuantity() {
+        return quantity;
+    }
+
     public Menu getMenu() {
         return menu;
     }
 
     public Long getProductId() {
         return productId;
-    }
-
-    public long getQuantity() {
-        return quantity;
     }
 
     private void validate(long quantity) {

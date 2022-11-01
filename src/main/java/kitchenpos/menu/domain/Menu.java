@@ -1,9 +1,8 @@
-package kitchenpos.domain;
+package kitchenpos.menu.domain;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
@@ -12,11 +11,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import org.hibernate.Hibernate;
+
+import kitchenpos.menu.dto.application.MenuProductDto;
 
 @Entity
 public class Menu {
@@ -31,9 +30,8 @@ public class Menu {
     @Column(nullable = false)
     private BigDecimal price;
 
-    @ManyToOne
-    @JoinColumn(name = "menu_group_id")
-    private MenuGroup menuGroup;
+    @Column(name = "menu_group_id", nullable = false)
+    private Long menuGroupId;
 
     @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "menu")
     private List<MenuProduct> menuProducts = new ArrayList<>();
@@ -41,13 +39,13 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(String name, BigDecimal price, MenuGroup menuGroup, Map<Product, Long> menuProducts) {
-        validate(name, price, menuProducts);
+    public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProductDto> menuProducts) {
+        validate(name, price);
         this.name = name;
         this.price = price;
-        this.menuGroup = menuGroup;
-        for (Product product : menuProducts.keySet()) {
-            MenuProduct menuProduct = new MenuProduct(this, product, menuProducts.get(product));
+        this.menuGroupId = menuGroupId;
+        for (MenuProductDto product : menuProducts) {
+            MenuProduct menuProduct = new MenuProduct(this, product.getProductId(), product.getQuantity());
             this.menuProducts.add(menuProduct);
         }
     }
@@ -64,18 +62,17 @@ public class Menu {
         return price;
     }
 
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
+    public Long getMenuGroupId() {
+        return menuGroupId;
     }
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
     }
 
-    private void validate(String name, BigDecimal price, Map<Product, Long> menuProducts) {
+    private void validate(String name, BigDecimal price) {
         validateName(name);
         validatePrice(price);
-        validateProperPrice(price, menuProducts);
     }
 
     private void validateName(String name) {
@@ -94,12 +91,8 @@ public class Menu {
         }
     }
 
-    private void validateProperPrice(BigDecimal price, Map<Product, Long> menuProducts) {
-        BigDecimal sum = menuProducts.keySet().stream()
-            .map(it -> it.getPrice().multiply(BigDecimal.valueOf(menuProducts.get(it))))
-            .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        if (price.compareTo(sum) > 0) {
+    private void validateProperPrice(BigDecimal price, BigDecimal totalPrice) {
+        if (price.compareTo(totalPrice) > 0) {
             throw new IllegalArgumentException("각 상품 가격의 합보다 큰 가격을 적용할 수 없습니다.");
         }
     }

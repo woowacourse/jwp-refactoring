@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.menu.application;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -9,14 +9,28 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Product;
-import kitchenpos.dto.request.menu.CreateMenuProductRequest;
-import kitchenpos.dto.request.menu.CreateMenuRequest;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.dto.request.CreateMenuProductRequest;
+import kitchenpos.menu.dto.request.CreateMenuRequest;
+import kitchenpos.menu.dto.response.MenuResponse;
+import kitchenpos.product.domain.Product;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.ProductRepository;
 
-class MenuServiceTest extends ServiceTest {
+@SpringBootTest
+class MenuServiceTest {
+
+    @Autowired
+    private MenuService menuService;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
 
     @Nested
     @DisplayName("create()")
@@ -32,7 +46,7 @@ class MenuServiceTest extends ServiceTest {
             CreateMenuRequest request = createMenuCreateRequest(menuGroup.getId(), product.getId());
 
             // when
-            Menu savedMenu = menuService.create(request);
+            MenuResponse savedMenu = menuService.create(request);
 
             // then
             assertThat(savedMenu.getId()).isNotNull();
@@ -75,7 +89,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         @DisplayName("전체 메뉴를 조회한다.")
         void list() {
-            List<Menu> menus = menuService.list();
+            List<MenuResponse> menus = menuService.list();
             assertThat(menus).isNotNull();
         }
 
