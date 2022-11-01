@@ -14,18 +14,6 @@ class MenuTest {
     @Nested
     class Constructor {
 
-        @DisplayName("가격이 null이라면, IAE를 던진다.")
-        @Test
-        void Should_ThrowIAE_When_PriceIsNull() {
-            // given
-            MenuProduct menuProduct = new MenuProduct();
-            MenuGroup menuGroup = new MenuGroup("메뉴 그룹");
-
-            // when & then
-            assertThatThrownBy(() -> new Menu("메뉴", null, menuGroup, List.of(menuProduct)))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
         @DisplayName("가격이 0보다 작다면, IAE를 던진다.")
         @Test
         void Should_ThrowIAE_When_PriceIsLessThan0() {
@@ -34,7 +22,7 @@ class MenuTest {
             MenuGroup menuGroup = new MenuGroup("메뉴 그룹");
 
             // when & then
-            assertThatThrownBy(() -> new Menu("메뉴", BigDecimal.valueOf(-1), menuGroup, List.of(menuProduct)))
+            assertThatThrownBy(() -> new Menu("메뉴", new Price(BigDecimal.valueOf(-1)), menuGroup, List.of(menuProduct)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -49,7 +37,8 @@ class MenuTest {
 
             // when & then
             assertThatThrownBy(
-                    () -> new Menu("메뉴", BigDecimal.valueOf(200_000), menuGroup, List.of(menuProduct1, menuProduct2)))
+                    () -> new Menu("메뉴", new Price(BigDecimal.valueOf(200_000)), menuGroup,
+                            List.of(menuProduct1, menuProduct2)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

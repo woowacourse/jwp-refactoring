@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.Price;
 import kitchenpos.domain.menu.Product;
 import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.MenuRequest;
@@ -26,7 +27,7 @@ public class MenuMapper {
     public Menu from(final MenuRequest menuRequest) {
         return new Menu(
                 menuRequest.getName(),
-                menuRequest.getPrice(),
+                new Price(menuRequest.getPrice()),
                 getMenuGroup(menuRequest),
                 getMenuProducts(menuRequest)
         );

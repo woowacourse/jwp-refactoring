@@ -8,6 +8,8 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class Price {
 
+    public static Price ZERO = new Price(BigDecimal.ZERO);
+
     @Column
     private BigDecimal price;
 
@@ -25,12 +27,21 @@ public class Price {
         }
     }
 
+    public Price add(final Price other) {
+        BigDecimal added = other.price.add(price);
+        return new Price(added);
+    }
+
     public Price multiply(final long number) {
         BigDecimal multiplied = price.multiply(BigDecimal.valueOf(number));
         return new Price(multiplied);
     }
 
-    public BigDecimal getValue() {
+    public boolean isGreaterThan(final Price other) {
+        return price.compareTo(other.price) > 0;
+    }
+
+    public BigDecimal getPrice() {
         return price;
     }
 

@@ -1,8 +1,6 @@
 package kitchenpos.domain.menu;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -39,40 +37,29 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(final String name, final BigDecimal price, final MenuGroup menuGroup,
+    public Menu(final String name, final Price price, final MenuGroup menuGroup,
                 final List<MenuProduct> menuProducts) {
         this(null, name, price, menuGroup, menuProducts);
     }
 
-    public Menu(final Long id, final String name, final BigDecimal price, final MenuGroup menuGroup,
+    public Menu(final Long id, final String name, final Price price, final MenuGroup menuGroup,
                 final List<MenuProduct> menuProducts) {
-        validatePrice(price);
         validateMenuProductsPrice(price, menuProducts);
 
         this.id = id;
         this.name = name;
-        this.price = new Price(price);
+        this.price = price;
         this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
     }
 
-    private void validateMenuProductsPrice(final BigDecimal price, final List<MenuProduct> menuProducts) {
-        BigDecimal sum = calculateSumOfMenuProductsPrice(menuProducts);
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
-    }
+    private void validateMenuProductsPrice(final Price price, final List<MenuProduct> menuProducts) {
+        Price sum = menuProducts.stream()
+                .map(MenuProduct::calculateAmount)
+                .reduce(Price::add)
+                .orElse(Price.ZERO);
 
-    private BigDecimal calculateSumOfMenuProductsPrice(final List<MenuProduct> menuProducts) {
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
-            sum = sum.add(menuProduct.calculateAmount().getValue());
-        }
-        return sum;
-    }
-
-    private void validatePrice(final BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+        if (price.isGreaterThan(sum)) {
             throw new IllegalArgumentException();
         }
     }

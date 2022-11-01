@@ -10,7 +10,7 @@ public class ProductResponse {
     private final BigDecimal price;
 
     public ProductResponse(final Product product) {
-        this(product.getId(), product.getName(), product.getPrice().getValue());
+        this(product.getId(), product.getName(), product.getPrice().getPrice());
     }
 
     public ProductResponse(final Long id, final String name, final BigDecimal price) {
