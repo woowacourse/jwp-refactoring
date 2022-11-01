@@ -9,11 +9,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.ControllerTest;
-import kitchenpos.application.TableService;
-import kitchenpos.application.dto.request.OrderTableChangeNumberOfGuestsRequest;
-import kitchenpos.application.dto.request.OrderTableChangeStatusRequest;
-import kitchenpos.application.dto.request.OrderTableCreateRequest;
-import kitchenpos.application.dto.response.OrderTableResponse;
+import kitchenpos.table.application.TableService;
+import kitchenpos.table.application.dto.OrderTableChangeNumberOfGuestsRequest;
+import kitchenpos.table.application.dto.OrderTableChangeStatusRequest;
+import kitchenpos.table.application.dto.OrderTableCreateRequest;
+import kitchenpos.table.application.dto.OrderTableResponse;
+import kitchenpos.table.ui.TableRestController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
