@@ -2,86 +2,100 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.List;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import org.junit.jupiter.api.BeforeEach;
+import kitchenpos.dto.TableChangeEmptyResponse;
+import kitchenpos.dto.TableChangeNumberOfGuestsResponse;
+import kitchenpos.dto.TableCreateResponse;
+import kitchenpos.dto.TableFindResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Transactional
-class TableServiceTest {
-
-    @Autowired
-    private TableService tableService;
-
-    private OrderTable orderTable;
-
-    @BeforeEach
-    void setUp() {
-        orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(5);
-        orderTable.setEmpty(false);
-    }
-
+class TableServiceTest extends ServiceTest {
     @Test
     @DisplayName("테이블을 생성한다")
     void create() {
-        final OrderTable createOrderTable = tableService.create(orderTable);
+        final TableCreateResponse actual = tableService.create(1, true);
 
-        assertThat(createOrderTable.getNumberOfGuests())
-                .isEqualTo(5);
+        assertThat(actual.getId()).isEqualTo(1L);
     }
 
     @Test
     @DisplayName("테이블 전체를 조회한다")
     void list() {
-        assertThat(tableService.list())
-                .hasSizeGreaterThan(1);
+        saveAndGetOrderTable(1L, true);
+        saveAndGetOrderTable(2L, false);
+
+        final List<TableFindResponse> actual = tableService.list();
+
+        assertAll(
+                () -> assertThat(actual).hasSize(2),
+                () -> assertThat(actual)
+                        .extracting("id")
+                        .containsExactly(1L, 2L)
+        );
     }
 
     @Test
     @DisplayName("테이블을 비운다")
     void changeEmpty() {
-        final OrderTable createOrderTable = tableService.create(orderTable);
+        saveAndGetOrder(1L, OrderStatus.COMPLETION.name());
 
-        final OrderTable emptyOrderTable = new OrderTable();
-        emptyOrderTable.setEmpty(true);
+        final TableChangeEmptyResponse actual = tableService.changeEmpty(1L, true);
 
-        final OrderTable actual = tableService.changeEmpty(createOrderTable.getId(), emptyOrderTable);
+        assertThat(actual.isEmpty()).isTrue();
+    }
 
-        assertThat(actual.isEmpty())
-                .isTrue();
+    @Test
+    @DisplayName("`계산 완료` 상태가 아니라면 테이블을 비울 수 없다")
+    void changeEmpty_notCompletionException() {
+        saveAndGetOrder(1L, OrderStatus.COOKING.name());
+
+        assertThatThrownBy(() -> tableService.changeEmpty(1L, true))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("그룹에 포함된 테이블이라면 테이블을 비울 수 없다")
+    void changeEmpty_existGroupException() {
+        final OrderTable orderTable = saveAndGetNotEmptyOrderTableInGroup(1L, 1L);
+
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), true))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     @DisplayName("손님 수를 변경한다")
     void changeNumberOfGuests() {
-        final OrderTable createOrderTable = tableService.create(orderTable);
+        final OrderTable orderTable = saveAndGetOrderTable(1L, false);
+        final int expected = 6;
 
-        final OrderTable expected = new OrderTable();
-        expected.setEmpty(false);
-        expected.setNumberOfGuests(6);
+        final TableChangeNumberOfGuestsResponse actual =
+                tableService.changeNumberOfGuests(orderTable.getId(), expected);
 
-        final OrderTable actual = tableService.changeNumberOfGuests(createOrderTable.getId(), expected);
-
-        assertThat(actual.getNumberOfGuests())
-                .isEqualTo(6);
+        assertThat(actual.getNumberOfGuests()).isEqualTo(expected);
     }
 
     @Test
     @DisplayName("손님 수를 0 미만으로 변경하면 예외를 반환한다")
     void changeNumberOfGuests_negativeNumberException() {
-        final OrderTable createOrderTable = tableService.create(orderTable);
+        final OrderTable orderTable = saveAndGetOrderTable(1L, false);
+        final int expected = -1;
 
-        final OrderTable expected = new OrderTable();
-        expected.setEmpty(false);
-        expected.setNumberOfGuests(-1);
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), expected))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(createOrderTable.getId(), expected))
+    @Test
+    @DisplayName("비어 있는 테이블의 손님 수를 변경하면 예외를 반환한다")
+    void changeNumberOfGuests_notEmptyTableException() {
+        final OrderTable orderTable = saveAndGetOrderTable(1L, true);
+        final int expected = 2;
+
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), expected))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

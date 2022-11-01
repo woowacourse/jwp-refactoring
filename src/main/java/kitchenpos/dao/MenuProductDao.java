@@ -1,9 +1,8 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.MenuProduct;
-
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.domain.MenuProduct;
 
 public interface MenuProductDao {
     MenuProduct save(MenuProduct entity);
@@ -12,5 +11,5 @@ public interface MenuProductDao {
 
     List<MenuProduct> findAll();
 
-    List<MenuProduct> findAllByMenuId(Long menuId);
+    void update(MenuProduct entity);
 }

@@ -1,36 +1,40 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.List;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.MenuGroupCreateRequest;
+import kitchenpos.dto.MenuGroupCreateResponse;
+import kitchenpos.dto.MenuGroupFindResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Transactional
-class MenuGroupServiceTest {
-
-    @Autowired
-    private MenuGroupService menuGroupService;
-
+class MenuGroupServiceTest extends ServiceTest {
     @Test
     @DisplayName("메뉴 그룹을 생성한다")
     void create() {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("메뉴그룹");
-        final MenuGroup createMenuGroup = menuGroupService.create(menuGroup);
+        final MenuGroup menuGroup = saveAndGetMenuGroup(1L);
 
-        assertThat(createMenuGroup.getName())
-                .isEqualTo("메뉴그룹");
+        final MenuGroupCreateResponse actual =
+                menuGroupService.create(new MenuGroupCreateRequest(menuGroup.getName()));
+
+        assertThat(actual.getName()).isEqualTo("애기메뉴목록");
     }
 
     @Test
     @DisplayName("메뉴 그룹 전체를 조회한다")
     void list() {
-        assertThat(menuGroupService.list())
-                .hasSizeGreaterThan(1);
+        saveAndGetMenuGroup(1L);
+
+        final List<MenuGroupFindResponse> actual = menuGroupService.list();
+
+        assertAll(
+                () -> assertThat(actual).hasSize(1),
+                () -> assertThat(actual)
+                        .extracting("id")
+                        .containsExactly(1L)
+        );
     }
 }

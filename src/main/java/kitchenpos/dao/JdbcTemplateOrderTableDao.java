@@ -34,13 +34,9 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
 
     @Override
     public OrderTable save(final OrderTable entity) {
-        if (Objects.isNull(entity.getId())) {
-            final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
-            final Number key = jdbcInsert.executeAndReturnKey(parameters);
-            return select(key.longValue());
-        }
-        update(entity);
-        return entity;
+        final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
+        final Number key = jdbcInsert.executeAndReturnKey(parameters);
+        return select(key.longValue());
     }
 
     @Override
@@ -82,7 +78,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
         return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    private void update(final OrderTable entity) {
+    public void update(final OrderTable entity) {
         final String sql = "UPDATE order_table SET table_group_id = (:tableGroupId)," +
                 " number_of_guests = (:numberOfGuests), empty = (:empty) WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
@@ -94,11 +90,10 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
     }
 
     private OrderTable toEntity(final ResultSet resultSet) throws SQLException {
-        final OrderTable entity = new OrderTable();
-        entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setTableGroupId(resultSet.getObject("table_group_id", Long.class));
-        entity.setNumberOfGuests(resultSet.getInt("number_of_guests"));
-        entity.setEmpty(resultSet.getBoolean("empty"));
-        return entity;
+        final long id = resultSet.getLong(KEY_COLUMN_NAME);
+        final Long tableGroupId = resultSet.getObject("table_group_id", Long.class);
+        final int numberOfGuests = resultSet.getInt("number_of_guests");
+        final boolean empty = resultSet.getBoolean("empty");
+        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
     }
 }

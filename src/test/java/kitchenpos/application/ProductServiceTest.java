@@ -1,39 +1,38 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.math.BigDecimal;
+import java.util.List;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductCreateResponse;
+import kitchenpos.dto.ProductFindResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Transactional
-class ProductServiceTest {
-
-    @Autowired
-    private ProductService productService;
-
+class ProductServiceTest extends ServiceTest {
     @Test
     @DisplayName("상품을 생성한다")
     void create() {
-        final Product product = new Product();
-        product.setId(1L);
-        product.setName("피자");
-        product.setPrice(BigDecimal.valueOf(20000L));
+        final Product product = saveAndGetProduct(1L);
 
-        final Product createProduct = productService.create(product);
+        final ProductCreateResponse actual = productService.create(product.getName(), product.getPrice());
 
-        assertThat(createProduct.getName()).isEqualTo("피자");
+        assertThat(actual.getName()).isEqualTo("하와이안피자");
     }
 
     @Test
     @DisplayName("상품 전체를 조회한다")
     void list() {
-        assertThat(productService.list())
-                .hasSizeGreaterThan(1);
+        saveAndGetProduct(1L);
+
+        final List<ProductFindResponse> actual = productService.list();
+
+        assertAll(
+                () -> assertThat(actual).hasSize(1),
+                () -> assertThat(actual)
+                        .extracting("name")
+                        .containsExactly("하와이안피자")
+        );
     }
 }
