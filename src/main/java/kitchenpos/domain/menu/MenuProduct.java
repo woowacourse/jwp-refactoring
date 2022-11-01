@@ -26,28 +26,12 @@ public class MenuProduct {
         this(productId, 1);
     }
 
-    public boolean isSameProduct(final Long productId) {
-        return this.productId.equals(productId);
-    }
-
-    public void addQuantity(final long quantity) {
-        this.quantity += quantity;
-    }
-
-    public void addQuantity() {
-        this.quantity++;
-    }
-
     public Long getSeq() {
         return seq;
     }
 
     public Long getMenuId() {
         return menuId;
-    }
-
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
     }
 
     public Long getProductId() {
