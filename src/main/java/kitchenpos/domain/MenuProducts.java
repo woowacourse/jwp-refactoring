@@ -11,11 +11,11 @@ import javax.persistence.OneToMany;
 @Embeddable
 public class MenuProducts {
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.EAGER)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinColumn(name = "menu_id", nullable = false, updatable = false)
     private List<MenuProduct> menuProducts;
 
-    private MenuProducts() {
+    protected MenuProducts() {
     }
 
     public MenuProducts(final List<MenuProduct> menuProducts) {

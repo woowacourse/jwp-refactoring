@@ -2,7 +2,6 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,12 +13,8 @@ public class TableGroup {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
-
-    @Column(name = "created_date")
     private LocalDateTime createdDate;
-
     @Embedded
     private OrderTables orderTables;
 

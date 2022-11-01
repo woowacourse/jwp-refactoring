@@ -11,20 +11,20 @@ import org.springframework.util.CollectionUtils;
 @Embeddable
 public class OrderLineItems {
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.EAGER)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id", nullable = false, updatable = false)
     private List<OrderLineItem> orderLineItems;
 
-    private OrderLineItems() {
+    protected OrderLineItems() {
     }
 
     public OrderLineItems(final List<OrderLineItem> orderLineItems) {
-        validateNotEmptyOrderLineItems(orderLineItems);
         this.orderLineItems = orderLineItems;
+        validateNotEmptyOrderLineItems();
     }
 
-    private void validateNotEmptyOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
+    private void validateNotEmptyOrderLineItems() {
+        if (CollectionUtils.isEmpty(this.orderLineItems)) {
             throw new IllegalArgumentException();
         }
     }

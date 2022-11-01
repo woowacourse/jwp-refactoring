@@ -1,7 +1,6 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -15,16 +14,14 @@ public class MenuProduct {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "seq")
     private Long seq;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
     private long quantity;
 
-    private MenuProduct() {
+    protected MenuProduct() {
     }
 
     public MenuProduct(final Product product, final long quantity) {

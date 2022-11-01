@@ -20,13 +20,8 @@ public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
-
-    @Column(name = "order_table_id")
     private Long orderTableId;
-
-    @Column(name = "order_status")
     private String orderStatus;
 
     @Column(name = "ordered_time")
@@ -35,7 +30,7 @@ public class Order {
     @Embedded
     private OrderLineItems orderLineItems;
 
-    public Order() {
+    protected Order() {
     }
 
     public Order(final Long orderTableId, final String orderStatus, final List<OrderLineItem> orderLineItems) {

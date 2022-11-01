@@ -11,13 +11,11 @@ public class MenuGroup {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
-
-    @Column(name = "name", nullable = false)
+    @Column(nullable = false)
     private String name;
 
-    private MenuGroup() {
+    protected MenuGroup() {
     }
 
     public MenuGroup(final String name) {
