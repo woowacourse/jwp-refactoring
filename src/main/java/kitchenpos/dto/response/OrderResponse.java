@@ -17,7 +17,7 @@ public class OrderResponse {
     }
 
     public OrderResponse(final Order order) {
-        this(order.getId(), order.getOrderTable().getId(), order.getOrderStatus(), order.getOrderedTime(),
+        this(order.getId(), order.getOrderTableId(), order.getOrderStatus(), order.getOrderedTime(),
                 getOrderLineItemResponses(order));
     }
 

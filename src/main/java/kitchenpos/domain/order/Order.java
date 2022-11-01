@@ -13,10 +13,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import kitchenpos.domain.ordertable.OrderTable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.util.CollectionUtils;
@@ -30,9 +28,8 @@ public class Order {
     @Column(name = "id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_table_id", nullable = false)
-    private OrderTable orderTable;
+    @Column(name = "order_table_id", nullable = false)
+    private Long orderTableId;
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "order_status", nullable = false)
@@ -49,21 +46,14 @@ public class Order {
     protected Order() {
     }
 
-    public Order(final OrderTable orderTable, final OrderStatus orderStatus, final List<OrderLineItem> orderLineItems) {
-        validateOrderTableEmpty(orderTable);
-        validateOrderLineItems(orderLineItems);
-        this.orderTable = orderTable;
+    public Order(final Long orderTableId, final OrderStatus orderStatus, final List<OrderLineItem> orderLineItems) {
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderLineItems = orderLineItems;
+        validateOrderLineItems();
     }
 
-    private void validateOrderTableEmpty(final OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("빈 테이블은 주문할 수 없습니다.");
-        }
-    }
-
-    private void validateOrderLineItems(final List<OrderLineItem> orderLineItems) {
+    private void validateOrderLineItems() {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException("주문 항목은 비어있을 수 없습니다.");
         }
@@ -84,8 +74,8 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public OrderStatus getOrderStatus() {

@@ -143,7 +143,7 @@ class TableGroupServiceTest extends ServiceTest {
 
         TableGroup tableGroup = tableGroupRepository.save(new TableGroup(List.of(orderTable1, orderTable2)));
 
-        orderRepository.save(new Order(orderTable1, orderStatus, List.of(orderLineItem)));
+        orderRepository.save(new Order(orderTable1.getId(), orderStatus, List.of(orderLineItem)));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class);

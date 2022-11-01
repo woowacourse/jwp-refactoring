@@ -8,10 +8,10 @@ import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menugroup.MenuGroup;
-import kitchenpos.domain.menugroup.MenuGroupRepository;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.domain.menugroup.MenuGroupRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderRepository;
@@ -93,12 +93,12 @@ class TableServiceTest extends ServiceTest {
 
         OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 2);
 
-        OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
-        orderRepository.save(new Order(orderTable, orderStatus, List.of(orderLineItem)));
+        Long orderTableId = orderTableRepository.save(new OrderTable(null, 5, false)).getId();
+        orderRepository.save(new Order(orderTableId, orderStatus, List.of(orderLineItem)));
 
         OrderTableRequest request = new OrderTableRequest(0, true);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), request))
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

@@ -32,11 +32,15 @@ public class OrderService {
         OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("빈 테이블은 주문할 수 없습니다.");
+        }
+
         List<OrderLineItem> orderLineItems = request.getOrderLineItems().stream()
                 .map(item -> new OrderLineItem(item.getMenuId(), item.getQuantity()))
                 .collect(Collectors.toList());
 
-        Order order = new Order(orderTable, FIRST_STATUS, orderLineItems);
+        Order order = new Order(orderTable.getId(), FIRST_STATUS, orderLineItems);
         return new OrderResponse(orderRepository.save(order));
     }
 
