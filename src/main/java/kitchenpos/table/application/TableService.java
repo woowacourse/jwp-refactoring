@@ -1,13 +1,11 @@
 package kitchenpos.table.application;
 
-import java.util.Arrays;
 import java.util.List;
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.application.dto.request.OrderTableCreateCommand;
 import kitchenpos.table.application.dto.request.OrderTableEmptyCommand;
 import kitchenpos.table.application.dto.request.OrderTableGuestCommand;
 import kitchenpos.table.application.dto.response.OrderTableResponse;
+import kitchenpos.table.domain.OrderEmptyValidator;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -16,12 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class TableService {
-    private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    private final OrderTableRepository orderTableRepository;
+    private final OrderEmptyValidator orderEmptyValidator;
+
+    public TableService(final OrderTableRepository orderTableRepository,
+                        final OrderEmptyValidator orderEmptyValidator) {
         this.orderTableRepository = orderTableRepository;
+        this.orderEmptyValidator = orderEmptyValidator;
     }
 
     public OrderTableResponse create(final OrderTableCreateCommand orderTableCreateCommand) {
@@ -39,17 +39,9 @@ public class TableService {
     public OrderTableResponse changeEmpty(final Long orderTableId,
                                           final OrderTableEmptyCommand orderTableEmptyCommand) {
         final OrderTable foundOrderTable = getOrderTable(orderTableId);
-        validateOrderStatus(orderTableId);
-        foundOrderTable.changeEmpty(orderTableEmptyCommand.empty());
+        foundOrderTable.changeEmpty(orderEmptyValidator, orderTableEmptyCommand.empty());
 
         return OrderTableResponse.from(foundOrderTable);
-    }
-
-    private void validateOrderStatus(final Long orderTableId) {
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException("현재 조리 / 식사 중입니다.");
-        }
     }
 
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId,

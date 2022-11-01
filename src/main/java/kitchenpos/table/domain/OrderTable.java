@@ -53,7 +53,8 @@ public class OrderTable {
         empty = false;
     }
 
-    public void changeEmpty(final boolean empty) {
+    public void changeEmpty(final OrderEmptyValidator orderEmptyValidator, final boolean empty) {
+        orderEmptyValidator.validateOrderStatus(id);
         validateAffiliatedTable();
         this.empty = empty;
     }
