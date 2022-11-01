@@ -1,7 +1,6 @@
 package kitchenpos.dao.ordertable;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import kitchenpos.dao.order.JdbcTemplateOrderDao;
 import kitchenpos.domain.Order;
@@ -28,13 +27,22 @@ public class OrderTableRepository implements OrderTableDao {
     @Override
     public Optional<OrderTable> findById(final Long orderTableId) {
         final Optional<OrderTable> orderTableWrap = orderTableDao.findById(orderTableId);
-        if (orderTableWrap.isPresent()) {
-            final Order order = orderDao.findByOrderTableId(orderTableId)
-                    .orElseThrow(NoSuchElementException::new);
-            final OrderTable orderTable = orderTableWrap.get();
-            orderTable.changeOrderStatus(order.getOrderStatus());
-        }
+
+        orderTableWrap.ifPresent(it -> changeOrderStatus(orderTableId, it));
+
+//        if (orderTableWrap.isPresent()) {
+//            changeOrderStatus(orderTableId, orderTableWrap);
+//        }
         return orderTableWrap;
+    }
+
+    private void changeOrderStatus(final Long orderTableId, final OrderTable orderTable) {
+        final Optional<Order> orderWrap = orderDao.findByOrderTableId(orderTableId);
+        orderWrap.ifPresent(it -> orderTable.changeOrderStatus(it.getOrderStatus()));
+//        if (orderWrap.isPresent()) {
+//            final OrderTable orderTable = orderTableWrap.get();
+//            orderTable.changeOrderStatus(orderWrap.get().getOrderStatus());
+//        }
     }
 
     @Override

@@ -7,10 +7,8 @@ import java.util.List;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-public class MenuGroupIntegrationTest {
+public class MenuGroupIntegrationTest extends IntegrationTest{
 
     @Autowired
     private MenuGroupService menuGroupService;
