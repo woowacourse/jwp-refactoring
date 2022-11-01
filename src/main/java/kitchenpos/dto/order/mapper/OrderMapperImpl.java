@@ -2,9 +2,9 @@ package kitchenpos.dto.order.mapper;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.domain.common.OrderStatus;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.common.OrderStatus;
 import kitchenpos.dto.order.request.OrderCreateRequest;
 import org.springframework.stereotype.Component;
 
