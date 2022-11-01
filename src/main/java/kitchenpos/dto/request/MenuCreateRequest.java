@@ -8,14 +8,14 @@ import kitchenpos.domain.Menu;
 public class MenuCreateRequest {
 
     private String name;
-    private int price;
+    private BigDecimal price;
     private Long menuGroupId;
     private List<MenuProductRequest> menuProducts;
 
     private MenuCreateRequest() {
     }
 
-    public MenuCreateRequest(final String name, final int price, final Long menuGroupId,
+    public MenuCreateRequest(final String name, final BigDecimal price, final Long menuGroupId,
                              final List<MenuProductRequest> menuProducts) {
         this.name = name;
         this.price = price;
@@ -27,7 +27,7 @@ public class MenuCreateRequest {
         return new Menu(
                 null,
                 name,
-                new BigDecimal(price),
+                price,
                 menuGroupId,
                 menuProducts.stream()
                         .map(MenuProductRequest::toMenuProduct)
@@ -39,7 +39,7 @@ public class MenuCreateRequest {
         return name;
     }
 
-    public int getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
