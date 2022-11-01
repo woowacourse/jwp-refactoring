@@ -40,11 +40,11 @@ public class OrderTable {
 
     public void updateNumberOfGuests(int numberOfGuests) {
         checkEmpty();
-        checkNumberOfGuests(numberOfGuests);
+        checkNumberOfGuestsIsNegative(numberOfGuests);
         this.numberOfGuests = numberOfGuests;
     }
 
-    private void checkNumberOfGuests(int numberOfGuests) {
+    private void checkNumberOfGuestsIsNegative(int numberOfGuests) {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();
         }
