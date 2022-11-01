@@ -27,7 +27,7 @@ class MenuTest {
         @ValueSource(strings = {"-1", "-1000"})
         @DisplayName("메뉴의 가격이 null이거나 음수인 경우 예외를 던진다.")
         void price_LessThanZero_ExceptionThrown(final BigDecimal price) {
-            assertThatThrownBy(() -> new Menu("크림치킨", price, 1L, List.of(new MenuProduct(1L, 1L, BigDecimal.TEN))))
+            assertThatThrownBy(() -> new Menu("크림치킨", Price.valueOf(price), 1L, List.of(new MenuProduct(1L, 1L, BigDecimal.TEN))))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -35,7 +35,7 @@ class MenuTest {
         @DisplayName("메뉴 상품의 (수량 * 금액) 보다 메뉴의 가격이 높은 경우 예외를 던진다.")
         void price_MoreThanSumOfMenuProducts_ExceptionThrown() {
             assertThatThrownBy(
-                    () -> new Menu("크림치킨", BigDecimal.valueOf(100L), 1L,
+                    () -> new Menu("크림치킨", Price.valueOf(BigDecimal.valueOf(100L)), 1L,
                             List.of(new MenuProduct(1L, 1L, BigDecimal.TEN))))
                     .isInstanceOf(IllegalArgumentException.class);
         }
@@ -48,7 +48,7 @@ class MenuTest {
         @Test
         @DisplayName("메뉴 상품들의 메뉴 id를 업데이트한다.")
         void success() {
-            final Menu menu = new Menu(1L, "크림치킨", BigDecimal.valueOf(30L), 1L,
+            final Menu menu = new Menu(1L, "크림치킨", Price.valueOf(BigDecimal.valueOf(30L)), 1L,
                     List.of(new MenuProduct(1L, 1L, BigDecimal.TEN), new MenuProduct(1L, 2L, BigDecimal.TEN)));
             menu.updateMenuIdOfMenuProducts();
 

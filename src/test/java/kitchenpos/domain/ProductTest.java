@@ -21,7 +21,7 @@ class ProductTest {
         @ValueSource(strings = {"-1", "-1000"})
         @DisplayName("상품의 가격이 null이거나 0미만인 경우 예외를 던진다.")
         void price_NullOrLessThanZero_ExceptionThrown(final BigDecimal price) {
-            assertThatThrownBy(() -> new Product("두마리치킨", price))
+            assertThatThrownBy(() -> new Product("두마리치킨", Price.valueOf(price)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

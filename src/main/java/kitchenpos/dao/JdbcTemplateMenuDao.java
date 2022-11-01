@@ -1,8 +1,14 @@
 package kitchenpos.dao;
 
 import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
+import javax.sql.DataSource;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -10,12 +16,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-
-import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class JdbcTemplateMenuDao implements MenuDao {
@@ -82,7 +82,7 @@ public class JdbcTemplateMenuDao implements MenuDao {
         String name = resultSet.getString("name");
         BigDecimal price = resultSet.getBigDecimal("price");
         long menuGroupId = resultSet.getLong("menu_group_id");
-        return new Menu(id, name, price, menuGroupId, findAllMenuProductsByMenuId(id));
+        return new Menu(id, name, Price.valueOf(price), menuGroupId, findAllMenuProductsByMenuId(id));
     }
 
     private MenuProduct toMenuProduct(final Long menuId, final ResultSet resultSet) throws SQLException {
