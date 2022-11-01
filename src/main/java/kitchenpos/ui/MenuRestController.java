@@ -26,9 +26,7 @@ public class MenuRestController {
         final Menu created = menuService.create(menuCreateRequest.toMenu());
         final MenuResponse menuResponse = MenuResponse.from(created);
         final URI uri = URI.create("/api/menus/" + created.getId());
-        return ResponseEntity.created(uri)
-                .body(menuResponse)
-                ;
+        return ResponseEntity.created(uri).body(menuResponse);
     }
 
     @GetMapping("/api/menus")
@@ -37,8 +35,6 @@ public class MenuRestController {
         final List<MenuResponse> menuResponses = menus.stream()
                 .map(MenuResponse::from)
                 .collect(Collectors.toList());
-        return ResponseEntity.ok()
-                .body(menuResponses)
-                ;
+        return ResponseEntity.ok().body(menuResponses);
     }
 }

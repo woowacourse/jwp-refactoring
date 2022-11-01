@@ -26,9 +26,7 @@ public class MenuGroupRestController {
         final MenuGroup created = menuGroupService.create(menuGroupCreateRequest.toMenuGroup());
         final MenuGroupResponse menuGroupResponse = MenuGroupResponse.from(created);
         final URI uri = URI.create("/api/menu-groups/" + created.getId());
-        return ResponseEntity.created(uri)
-                .body(menuGroupResponse)
-                ;
+        return ResponseEntity.created(uri).body(menuGroupResponse);
     }
 
     @GetMapping("/api/menu-groups")
@@ -37,8 +35,6 @@ public class MenuGroupRestController {
         final List<MenuGroupResponse> menuGroupResponses = menuGroups.stream()
                 .map(MenuGroupResponse::from)
                 .collect(Collectors.toList());
-        return ResponseEntity.ok()
-                .body(menuGroupResponses)
-                ;
+        return ResponseEntity.ok().body(menuGroupResponses);
     }
 }

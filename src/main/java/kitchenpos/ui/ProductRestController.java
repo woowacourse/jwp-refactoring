@@ -26,9 +26,7 @@ public class ProductRestController {
         final Product created = productService.create(productCreateRequest.toProduct());
         final ProductResponse productResponse = ProductResponse.from(created);
         final URI uri = URI.create("/api/products/" + created.getId());
-        return ResponseEntity.created(uri)
-                .body(productResponse)
-                ;
+        return ResponseEntity.created(uri).body(productResponse);
     }
 
     @GetMapping("/api/products")
@@ -37,8 +35,6 @@ public class ProductRestController {
                 .stream()
                 .map(ProductResponse::from)
                 .collect(Collectors.toList());
-        return ResponseEntity.ok()
-                .body(productResponses)
-                ;
+        return ResponseEntity.ok().body(productResponses);
     }
 }

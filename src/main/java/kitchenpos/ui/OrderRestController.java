@@ -29,9 +29,7 @@ public class OrderRestController {
         final Order created = orderService.create(orderCreateRequest.toOrder());
         final OrderResponse orderResponse = OrderResponse.from(created);
         final URI uri = URI.create("/api/orders/" + created.getId());
-        return ResponseEntity.created(uri)
-                .body(orderResponse)
-                ;
+        return ResponseEntity.created(uri).body(orderResponse);
     }
 
     @GetMapping("/api/orders")
@@ -40,9 +38,7 @@ public class OrderRestController {
         final List<OrderResponse> orderResponses = orders.stream()
                 .map(OrderResponse::from)
                 .collect(Collectors.toList());
-        return ResponseEntity.ok()
-                .body(orderResponses)
-                ;
+        return ResponseEntity.ok().body(orderResponses);
     }
 
     @PutMapping("/api/orders/{orderId}/order-status")
