@@ -5,14 +5,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.common.domain.Price;
+import kitchenpos.common.domain.Quantity;
 import kitchenpos.common.service.ServiceTest;
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.dto.OrderTableEmptyChangeRequest;
 import kitchenpos.ordertable.exception.GroupTableNotEnoughException;
 import kitchenpos.ordertable.exception.GroupedTableNotEmptyException;
 import kitchenpos.ordertable.exception.OrderTableNotFoundException;
+import kitchenpos.ordertable.service.TableService;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.dto.TableGroupCreateRequest;
 import kitchenpos.tablegroup.dto.TableGroupResponse;
@@ -29,6 +35,9 @@ class TableGroupServiceTest extends ServiceTest {
 
     @Autowired
     private TableGroupService tableGroupService;
+
+    @Autowired
+    private TableService tableService;
 
     private OrderTable orderTable1;
 
@@ -121,10 +130,14 @@ class TableGroupServiceTest extends ServiceTest {
     @ParameterizedTest
     @ValueSource(strings = {"MEAL", "COOKING"})
     void ungroup_Exception_NotCompleteOrderTableStatus(String orderStatus) {
-        OrderTable orderOrderTable2 = tableRepository.save(new OrderTable(GUEST_NUMBER, true));
+        OrderTable orderTable2 = tableRepository.save(new OrderTable(GUEST_NUMBER, true));
         TableGroupResponse tableGroupResponse = tableGroupService.create(
-                new TableGroupCreateRequest(List.of(orderTable1.getId(), orderOrderTable2.getId())));
-        Order order = Order.newOrder(orderOrderTable2.getId());
+                new TableGroupCreateRequest(List.of(orderTable1.getId(), orderTable2.getId())));
+        tableService.changeEmpty(orderTable1.getId(), new OrderTableEmptyChangeRequest(false));
+        tableService.changeEmpty(orderTable2.getId(), new OrderTableEmptyChangeRequest(false));
+        OrderLineItem orderLineItem = new OrderLineItem(
+                "메뉴1", new Price(new BigDecimal(2500)), new Quantity(2L));
+        Order order = Order.newOrder(orderTable2.getId(), List.of(orderLineItem), orderValidator);
         order.changeOrderStatus(OrderStatus.from(orderStatus));
         orderRepository.save(order);
 

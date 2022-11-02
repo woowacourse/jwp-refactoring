@@ -18,6 +18,7 @@ import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.validator.MenuValidator;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.dto.OrderCreateRequest;
 import kitchenpos.order.dto.OrderLineItemCreateRequest;
 import kitchenpos.order.dto.OrderResponse;
@@ -79,7 +80,7 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("Menu 없이 Order를 등록하려고 하면 예외를 발생시킨다.")
     @Test
     void create_Exception_EmptyMenu() {
-        OrderTable emptyOrderTable = tableRepository.save(new OrderTable(GUEST_NUMBER, true));
+        OrderTable emptyOrderTable = tableRepository.save(new OrderTable(GUEST_NUMBER, false));
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(emptyOrderTable.getId(), null,
                 Collections.emptyList());
 
@@ -141,7 +142,9 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void changeOrderStatus_Exception_AlreadyCompletionOrder() {
         OrderTable orderTable = tableRepository.save(new OrderTable(GUEST_NUMBER, false));
-        Order order = Order.newOrder(orderTable.getId());
+        OrderLineItem orderLineItem = new OrderLineItem(
+                "메뉴1", new Price(new BigDecimal(2500)), new Quantity(2L));
+        Order order = Order.newOrder(orderTable.getId(), List.of(orderLineItem), orderValidator);
         order.changeOrderStatus(COMPLETION);
         Order savedOrder = orderRepository.save(order);
 

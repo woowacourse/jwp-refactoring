@@ -4,6 +4,7 @@ import kitchenpos.menu.repository.MenuProductRepository;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.menugroup.repository.MenuGroupRepository;
 import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.order.validator.OrderValidator;
 import kitchenpos.ordertable.repository.TableRepository;
 import kitchenpos.product.resitory.ProductRepository;
 import kitchenpos.support.DatabaseCleaner;
@@ -38,6 +39,9 @@ public class ServiceTest {
 
     @Autowired
     protected MenuProductRepository menuProductRepository;
+
+    @Autowired
+    protected OrderValidator orderValidator;
 
     @BeforeEach
     void cleanUp() {

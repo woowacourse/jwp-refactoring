@@ -4,9 +4,14 @@ import static kitchenpos.Fixture.DomainFixture.GUEST_NUMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
+import kitchenpos.common.domain.Price;
+import kitchenpos.common.domain.Quantity;
 import kitchenpos.common.service.ServiceTest;
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.exception.GuestNumberChangeDisabledException;
 import kitchenpos.order.exception.InvalidGuestNumberException;
@@ -81,7 +86,9 @@ class TableServiceTest extends ServiceTest {
     @ValueSource(strings = {"MEAL", "COOKING"})
     void changeEmpty_Exception_NotCompleteOrderStatus(String orderStatus) {
         OrderTable orderTable = tableRepository.save(new OrderTable(GUEST_NUMBER, false));
-        Order order = Order.newOrder(orderTable.getId());
+        OrderLineItem orderLineItem = new OrderLineItem(
+                "메뉴1", new Price(new BigDecimal(2500)), new Quantity(2L));
+        Order order = Order.newOrder(orderTable.getId(), List.of(orderLineItem), orderValidator);
         order.changeOrderStatus(OrderStatus.from(orderStatus));
         orderRepository.save(order);
 

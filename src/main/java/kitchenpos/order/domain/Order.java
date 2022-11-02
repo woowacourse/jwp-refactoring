@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import kitchenpos.order.exception.AlreadyCompletionOrderStatusException;
+import kitchenpos.order.validator.OrderValidator;
 
 @Entity(name = "orders")
 public class Order {
@@ -33,14 +34,19 @@ public class Order {
     protected Order() {
     }
 
-    public Order(Long orderTableId, OrderStatus orderStatus) {
+    private Order(Long orderTableId, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = LocalDateTime.now();
+        this.orderLineItems = orderLineItems;
+        for (OrderLineItem orderLineItem : orderLineItems) {
+            orderLineItem.belong(this);
+        }
     }
 
-    public static Order newOrder(Long orderTableId) {
-        return new Order(orderTableId, OrderStatus.COOKING);
+    public static Order newOrder(Long orderTableId, List<OrderLineItem> orderLineItems, OrderValidator orderValidator) {
+        orderValidator.validateCreation(orderTableId, orderLineItems);
+        return new Order(orderTableId, OrderStatus.COOKING, orderLineItems);
     }
 
     public Long getId() {

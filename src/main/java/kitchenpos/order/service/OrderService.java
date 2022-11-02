@@ -1,5 +1,6 @@
 package kitchenpos.order.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -13,17 +14,14 @@ import kitchenpos.order.dto.OrderCreateRequest;
 import kitchenpos.order.dto.OrderLineItemCreateRequest;
 import kitchenpos.order.dto.OrderResponse;
 import kitchenpos.order.dto.OrderStatusChangeRequest;
-import kitchenpos.order.exception.InvalidTableOrderException;
-import kitchenpos.order.exception.MenuNotEnoughException;
 import kitchenpos.order.exception.MenuNotFoundException;
 import kitchenpos.order.exception.TableEmptyDisabledException;
 import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.order.validator.OrderValidator;
 import kitchenpos.ordertable.dto.OrderTableValidateEvent;
-import kitchenpos.ordertable.repository.TableRepository;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
@@ -33,46 +31,33 @@ public class OrderService {
 
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final TableRepository tableRepository;
+    private final OrderValidator orderValidator;
 
-    public OrderService(MenuRepository menuRepository, OrderRepository orderRepository,
-                        TableRepository tableRepository) {
+    public OrderService(MenuRepository menuRepository, OrderRepository orderRepository, OrderValidator orderValidator) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.tableRepository = tableRepository;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
     public OrderResponse create(OrderCreateRequest orderCreateRequest) {
         List<OrderLineItemCreateRequest> orderLineItemCreateRequests = orderCreateRequest.getOrderLineItems();
-        validateMenuMinSize(orderLineItemCreateRequests);
-        validateOrderTable(orderCreateRequest.getOrderTableId());
-        Order order = Order.newOrder(orderCreateRequest.getOrderTableId());
-        addOrderLineItem(order, orderLineItemCreateRequests);
+        List<OrderLineItem> orderLineItems = addOrderLineItem(orderLineItemCreateRequests);
+        Order order = Order.newOrder(orderCreateRequest.getOrderTableId(), orderLineItems, orderValidator);
         Order savedOrder = orderRepository.save(order);
         return new OrderResponse(savedOrder);
     }
 
-    private void addOrderLineItem(Order order, List<OrderLineItemCreateRequest> orderLineItemCreateRequests) {
+    private List<OrderLineItem> addOrderLineItem(List<OrderLineItemCreateRequest> orderLineItemCreateRequests) {
+        List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (OrderLineItemCreateRequest orderLineItemCreateRequest : orderLineItemCreateRequests) {
             Menu menu = menuRepository.findById(orderLineItemCreateRequest.getMenuId())
                     .orElseThrow(MenuNotFoundException::new);
             OrderLineItem orderLineItem = new OrderLineItem(menu.getName(),
                     menu.getPrice(), new Quantity(orderLineItemCreateRequest.getQuantity()));
-            order.addOrderLineItem(orderLineItem);
+            orderLineItems.add(orderLineItem);
         }
-    }
-
-    private void validateMenuMinSize(List<OrderLineItemCreateRequest> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new MenuNotEnoughException();
-        }
-    }
-
-    private void validateOrderTable(Long orderTableId) {
-        if (!tableRepository.existsByIdAndAndEmptyIsFalse(orderTableId)) {
-            throw new InvalidTableOrderException();
-        }
+        return orderLineItems;
     }
 
     public List<OrderResponse> list() {
