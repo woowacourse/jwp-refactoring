@@ -4,6 +4,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import kitchenpos.menu.domain.Menu;
 import org.junit.jupiter.api.Test;
 
 class MenuTest {
