@@ -10,11 +10,6 @@ import org.junit.jupiter.api.Test;
 
 class MenuTest {
 
-//    public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-//        this(null, name, price, menuGroupId, menuProducts);
-//        validateMenuProducts(menuProducts, price);
-//    }
-
     @Test
     void 메뉴를_생성한다() {
         //given
