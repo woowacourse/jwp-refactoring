@@ -48,18 +48,17 @@ public class MenuService {
         return menuRepository.save(menu);
     }
 
-    private MenuGroup getMenuGroup(MenuRequest menuRequest) {
-        return menuGroupRepository.findById(menuRequest.getMenuGroupId())
-            .orElseThrow(() -> new IllegalArgumentException("해당 group이 존재하지 않습니다."));
-    }
-
     private MenuProduct makeMenuProduct(MenuProductRequest menuProductRequest) {
         return new MenuProduct(getProduct(menuProductRequest.getProductId()), menuProductRequest.getQuantity());
     }
 
-    private Product getProduct(Long id) {
-        return productRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("해당 제품이 존재하지 않습니다."));
+    public List<Menu> list() {
+        return menuRepository.findAll();
+    }
+
+    private MenuGroup getMenuGroup(MenuRequest menuRequest) {
+        return menuGroupRepository.findById(menuRequest.getMenuGroupId())
+            .orElseThrow(() -> new IllegalArgumentException("해당 group이 존재하지 않습니다."));
     }
 
     private void checkPrice(List<MenuProduct> menuProducts, int price) {
@@ -72,7 +71,8 @@ public class MenuService {
         }
     }
 
-    public List<Menu> list() {
-        return menuRepository.findAll();
+    private Product getProduct(Long id) {
+        return productRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("해당 제품이 존재하지 않습니다."));
     }
 }

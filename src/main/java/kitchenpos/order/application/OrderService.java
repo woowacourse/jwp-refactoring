@@ -50,6 +50,21 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
+    public List<Order> list() {
+        return orderRepository.findAll();
+    }
+
+    @Transactional
+    public Order changeOrderStatus(final Long orderId, final OrderStatusRequest orderStatusRequest) {
+        final Order order = orderRepository.findById(orderId)
+            .orElseThrow(IllegalArgumentException::new);
+
+        OrderStatus orderStatus = OrderStatus.valueOf(orderStatusRequest.getOrderStatus());
+
+        order.updateStatus(orderStatus);
+        return order;
+    }
+
     private OrderTable findOrderTable(OrderRequest orderRequest) {
         return orderTableRepository.findById(orderRequest.getOrderTableId())
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블입니다"));
@@ -66,20 +81,5 @@ public class OrderService {
         }
 
         return orderLineItems;
-    }
-
-    public List<Order> list() {
-        return orderRepository.findAll();
-    }
-
-    @Transactional
-    public Order changeOrderStatus(final Long orderId, final OrderStatusRequest orderStatusRequest) {
-        final Order order = orderRepository.findById(orderId)
-            .orElseThrow(IllegalArgumentException::new);
-
-        OrderStatus orderStatus = OrderStatus.valueOf(orderStatusRequest.getOrderStatus());
-
-        order.updateStatus(orderStatus);
-        return order;
     }
 }

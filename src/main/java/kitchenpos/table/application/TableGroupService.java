@@ -40,11 +40,15 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
-            .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
+        TableGroup tableGroup = getTableGroup(tableGroupId);
 
         applicationEventPublisher.publishEvent(new UngroupEvent(tableGroup.getOrderTables()));
 
         tableGroup.ungroup();
+    }
+
+    private TableGroup getTableGroup(Long tableGroupId) {
+        return tableGroupRepository.findById(tableGroupId)
+            .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
     }
 }

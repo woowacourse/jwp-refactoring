@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.dto.ChangeEmptyRequest;
+import kitchenpos.table.dto.ChangeGuestNumberRequest;
 import kitchenpos.table.dto.OrderTableRequest;
 import kitchenpos.table.event.ChangeEmptyEvent;
 import kitchenpos.table.repository.OrderTableRepository;
@@ -35,21 +37,22 @@ public class OrderTableService {
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final boolean request) {
+    public OrderTable changeEmpty(final Long orderTableId, final ChangeEmptyRequest changeEmptyRequest) {
         OrderTable orderTable = getOrderTable(orderTableId);
 
         applicationEventPublisher.publishEvent(new ChangeEmptyEvent(orderTable));
 
-        orderTable.changeEmpty(request);
+        orderTable.changeEmpty(changeEmptyRequest.isEmpty());
 
         return orderTable;
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {
+    public OrderTable changeNumberOfGuests(final Long orderTableId,
+        final ChangeGuestNumberRequest changeGuestNumberRequest) {
         OrderTable orderTable = getOrderTable(orderTableId);
 
-        orderTable.updateNumberOfGuests(numberOfGuests);
+        orderTable.updateNumberOfGuests(changeGuestNumberRequest.getNumberOfGuests());
 
         return orderTable;
     }

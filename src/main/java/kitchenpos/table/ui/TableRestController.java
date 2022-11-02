@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import kitchenpos.table.application.OrderTableService;
 import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.dto.ChangeEmptyRequest;
+import kitchenpos.table.dto.ChangeGuestNumberRequest;
 import kitchenpos.table.dto.OrderTableRequest;
 
 @RestController
@@ -43,18 +45,18 @@ public class TableRestController {
     @PutMapping("/api/tables/{orderTableId}/empty")
     public ResponseEntity<OrderTable> changeEmpty(
         @PathVariable final Long orderTableId,
-        @RequestBody final boolean isEmpty
+        @RequestBody final ChangeEmptyRequest changeEmptyRequest
     ) {
         return ResponseEntity.ok()
-            .body(orderTableService.changeEmpty(orderTableId, isEmpty));
+            .body(orderTableService.changeEmpty(orderTableId, changeEmptyRequest));
     }
 
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
     public ResponseEntity<OrderTable> changeNumberOfGuests(
         @PathVariable final Long orderTableId,
-        @RequestBody final int numberOfGuests
+        @RequestBody final ChangeGuestNumberRequest changeGuestNumberRequest
     ) {
         return ResponseEntity.ok()
-            .body(orderTableService.changeNumberOfGuests(orderTableId, numberOfGuests));
+            .body(orderTableService.changeNumberOfGuests(orderTableId, changeGuestNumberRequest));
     }
 }

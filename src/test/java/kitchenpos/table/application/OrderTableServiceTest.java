@@ -14,6 +14,8 @@ import kitchenpos.order.application.OrderService;
 import kitchenpos.order.dto.OrderLineItemRequest;
 import kitchenpos.order.dto.OrderRequest;
 import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.dto.ChangeEmptyRequest;
+import kitchenpos.table.dto.ChangeGuestNumberRequest;
 import kitchenpos.table.dto.OrderTableGroupRequest;
 import kitchenpos.table.dto.OrderTableRequest;
 
@@ -35,7 +37,7 @@ class OrderTableServiceTest {
     @Test
     @DisplayName("존재하지 않는 테이블을 빈 테이블로 수정하려고 하면 예외를 발생시킨다.")
     void changeEmptyNotExistTableError() {
-        assertThatThrownBy(() -> orderTableService.changeEmpty(NOT_EXIST_ID, true))
+        assertThatThrownBy(() -> orderTableService.changeEmpty(NOT_EXIST_ID, new ChangeEmptyRequest(true)))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -51,7 +53,7 @@ class OrderTableServiceTest {
         tableGroupService.create(new OrderTableGroupRequest(Arrays.asList(orderTableId1, orderTableId2)));
 
         //then
-        assertThatThrownBy(() -> orderTableService.changeEmpty(orderTableId1, true))
+        assertThatThrownBy(() -> orderTableService.changeEmpty(orderTableId1, new ChangeEmptyRequest(true)))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -67,7 +69,7 @@ class OrderTableServiceTest {
         orderService.create(orderRequest);
 
         //then
-        assertThatThrownBy(() -> orderTableService.changeEmpty(orderTableId1, true))
+        assertThatThrownBy(() -> orderTableService.changeEmpty(orderTableId1, new ChangeEmptyRequest(true)))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -80,7 +82,7 @@ class OrderTableServiceTest {
         Long orderTableId1 = orderTableService.create(orderTableRequest).getId();
 
         //when
-        OrderTable actual = orderTableService.changeNumberOfGuests(orderTableId1, 5);
+        OrderTable actual = orderTableService.changeNumberOfGuests(orderTableId1, new ChangeGuestNumberRequest(5));
 
         //then
         assertThat(actual.getNumberOfGuests()).isEqualTo(5);
@@ -89,7 +91,7 @@ class OrderTableServiceTest {
     @Test
     @DisplayName("존재하지 않는 테이블의 고객 수를 수정하려고 할 경우 예외를 발생시킨다.")
     void changeNumberOfGuestsNotExistTableError() {
-        assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(NOT_EXIST_ID, 10))
+        assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(NOT_EXIST_ID, new ChangeGuestNumberRequest(10)))
             .isInstanceOf(IllegalArgumentException.class);
     }
 }
