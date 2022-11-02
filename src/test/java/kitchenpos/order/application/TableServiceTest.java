@@ -168,7 +168,7 @@ class TableServiceTest {
         final var expectedSize = 4;
         saveOrderTableAsTimes(expectedSize);
 
-        final List<OrderTableResponse> actual = tableService.list();
+        final var actual = tableService.list();
         assertThat(actual).hasSize(expectedSize);
     }
 

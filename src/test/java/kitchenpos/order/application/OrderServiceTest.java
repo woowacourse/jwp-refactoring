@@ -185,7 +185,7 @@ class OrderServiceTest {
         final var expectedSize = 4;
         saveOrderAsTimes(expectedSize);
 
-        final List<OrderResponse> actual = orderService.list();
+        final var actual = orderService.list();
         assertThat(actual).hasSize(expectedSize);
     }
 

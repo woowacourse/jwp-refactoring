@@ -123,7 +123,7 @@ class MenuServiceTest {
         final var expectedSize = 4;
         saveMenuForTimes(expectedSize);
 
-        final List<MenuResponse> actual = menuService.list();
+        final var actual = menuService.list();
         assertThat(actual).hasSize(expectedSize);
     }
 

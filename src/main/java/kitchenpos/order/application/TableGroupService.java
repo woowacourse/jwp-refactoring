@@ -43,15 +43,15 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupRequest request) {
-        final List<Long> orderTableIds = requestAssembler.asOrderTableIds(request);
+        final var orderTableIds = requestAssembler.asOrderTableIds(request);
         validateOrderTablesMoreThanSingle(orderTableIds);
 
-        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+        final var savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
         validateAllOrderTablesNotDuplicated(orderTableIds, savedOrderTables);
         validateAllOrderTablesNotGrouped(savedOrderTables);
 
-        final TableGroup tableGroup = new TableGroup(savedOrderTables);
-        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
+        final var tableGroup = new TableGroup(savedOrderTables);
+        final var savedTableGroup = tableGroupRepository.save(tableGroup);
         return responseAssembler.asTableGroupResponse(savedTableGroup);
     }
 
@@ -80,7 +80,7 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = asTableGroup(tableGroupId).getOrderTables();
+        final var orderTables = asTableGroup(tableGroupId).getOrderTables();
         validateAllOrderTablesCompleted(orderTables);
 
         tableGroupRepository.removeById(tableGroupId);
@@ -92,7 +92,7 @@ public class TableGroupService {
     }
 
     private void validateAllOrderTablesCompleted(final List<OrderTable> orderTables) {
-        final List<Long> orderTableIds = asOrderTableIds(orderTables);
+        final var orderTableIds = asOrderTableIds(orderTables);
 
         if (existNonCompletedOrderTable(orderTableIds)) {
             throw new IllegalArgumentException("계산이 완료되지 않은 테이블이 존재합니다.");

@@ -41,7 +41,7 @@ class MenuGroupServiceTest {
         final var expectedSize = 4;
         saveMenuGroupAsTimes(expectedSize);
 
-        final List<MenuGroupResponse> actual = menuGroupService.list();
+        final var actual = menuGroupService.list();
         assertThat(actual).hasSize(expectedSize);
     }
 

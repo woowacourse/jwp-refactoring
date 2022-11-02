@@ -36,7 +36,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderRequest request) {
-        final OrderTable orderTable = asOrderTable(request.getOrderTableId());
+        final var orderTable = asOrderTable(request.getOrderTableId());
         validateOrderTableNotEmpty(orderTable);
 
         final var order = requestAssembler.asOrder(request);
@@ -56,13 +56,13 @@ public class OrderService {
     }
 
     public List<OrderResponse> list() {
-        final List<Order> orders = orderRepository.findAll();
+        final var orders = orderRepository.findAll();
         return responseAssembler.asOrderResponses(orders);
     }
 
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final ChangeOrderStatusRequest request) {
-        final Order order = asOrder(orderId);
+        final var order = asOrder(orderId);
         order.updateOrderStatus(request.getOrderStatus());
 
         return responseAssembler.asOrderResponse(order);

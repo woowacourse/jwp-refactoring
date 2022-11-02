@@ -86,7 +86,7 @@ public class TableService {
     }
 
     private OrderTableResponse whenOrderTableExist(final Long orderTableId, final Consumer<OrderTable> ifOrderTableExist) {
-        final OrderTable orderTable = asOrderTable(orderTableId);
+        final var orderTable = asOrderTable(orderTableId);
 
         ifOrderTableExist.accept(orderTable);
 
