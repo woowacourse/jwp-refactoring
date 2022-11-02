@@ -1,6 +1,45 @@
 # 키친포스
 
-## 요구 사항
+## 단계별 요구 사항
+
+### 1단계
+
+- [x] kitchenpos 패키지의 코드를 보고 키친포스의 요구 사항을 README.md에 작성한다. 미션을 진행함에 있어 아래 문서를 적극 활용한다.
+  - [마크다운(Markdown) - Dooray!](https://dooray.com/htmls/guides/markdown_ko_KR.html)
+- [x] 정리한 키친포스의 요구 사항을 토대로 테스트 코드를 작성한다. 
+  - 모든 Business Object에 대한 테스트 코드를 작성한다. 
+  - @SpringBootTest를 이용한 통합 테스트 코드 또는 @ExtendWith(MockitoExtension.class)를 이용한 단위 테스트 코드를 작성한다.
+  - [Testing in Spring Boot - Baeldung](https://www.baeldung.com/spring-boot-testing)
+  - [Exploring the Spring Boot TestRestTemplate](https://www.baeldung.com/spring-boot-testresttemplate)
+
+### 2단계
+
+- [ ] 단위 테스트하기 어려운 코드와 단위 테스트 가능한 코드를 분리해 단위 테스트 가능한 코드에 대해 단위 테스트를 구현한다.
+
+### 3단계
+
+이전 단계에서 객체 지향 설계를 의식하였다면 아래의 문제가 존재한다. 의존성 관점에서 설계를 검토해 본다.
+
+- [x] 메뉴의 이름과 가격이 변경되면 주문 항목도 함께 변경된다. 메뉴 정보가 변경되더라도 주문 항목이 변경되지 않게 구현한다.
+- [ ] 클래스 간의 방향도 중요하고 패키지 간의 방향도 중요하다. 클래스 사이, 패키지 사이의 의존 관계는 단방향이 되도록 해야 한다.
+    - 클래스
+        - [ ] menu
+        - [ ] menuGroup
+        - [ ] order
+        - [ ] orderTable
+        - [ ] tableGroup
+        - [ ] product
+    - 패키지
+        - [ ] menu
+        - [ ] menuGroup
+        - [ ] order
+        - [ ] orderTable
+        - [ ] tableGroup
+        - [ ] product
+- [x] 데이터베이스 스키마 변경 및 마이그레이션이 필요하다면 아래 문서를 적극 활용한다.
+    - [DB도 형상관리를 해보자!](https://meetup.toast.com/posts/173)
+
+## 서비스 요구 사항
 
 - Menu(메뉴)
     - 메뉴를 추가할 수 있다.
