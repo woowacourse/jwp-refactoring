@@ -1,17 +1,16 @@
 package kitchenpos.table.application;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.dto.OrderTableGroupRequest;
+import kitchenpos.table.event.UngroupEvent;
 import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.table.repository.TableGroupRepository;
 
@@ -19,15 +18,15 @@ import kitchenpos.table.repository.TableGroupRepository;
 @Transactional(readOnly = true)
 public class TableGroupService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
-    public TableGroupService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository,
-        final TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
+    public TableGroupService(OrderTableRepository orderTableRepository, TableGroupRepository tableGroupRepository,
+        ApplicationEventPublisher applicationEventPublisher) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Transactional
@@ -44,15 +43,8 @@ public class TableGroupService {
         TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
             .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
 
-        validTableGroup(tableGroup);
+        applicationEventPublisher.publishEvent(new UngroupEvent(tableGroup.getOrderTables()));
 
         tableGroup.ungroup();
-    }
-
-    private void validTableGroup(TableGroup tableGroup) {
-        if (orderRepository.existsByOrderTableInAndOrderStatusIn(
-            tableGroup.getOrderTables(), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException("주문이 완료되지 않아서 그룹을 해제할 수 없습니다.");
-        }
     }
 }
