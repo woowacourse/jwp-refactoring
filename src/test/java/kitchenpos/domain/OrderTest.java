@@ -22,7 +22,7 @@ public class OrderTest {
         orderLineItemList = new ArrayList<>();
         MenuGroup menuGroup = new MenuGroup("찌개류");
         Menu menu = new Menu("김치찌개세트", BigDecimal.valueOf(1000L), menuGroup);
-        orderLineItemList.add(new OrderLineItem(null, menu, 1));
+        orderLineItemList.add(new OrderLineItem(null, "김치찌개세트", BigDecimal.valueOf(1000L), 1));
     }
 
     @DisplayName("정상적으로 생성되었다면 주문테이블에 주문이 등록된다.")

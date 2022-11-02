@@ -12,10 +12,13 @@ import kitchenpos.application.dto.request.OrderLineItemRequest;
 import kitchenpos.application.dto.request.OrderRequest;
 import kitchenpos.application.dto.request.OrderStatusRequest;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
+import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
@@ -25,6 +28,7 @@ import kitchenpos.repository.OrderTableRepository;
 public class OrderService {
 
     private final MenuRepository menuRepository;
+    private final MenuProductRepository menuProductRepository;
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final OrderLineItemRepository orderLineItemRepository;
@@ -33,12 +37,13 @@ public class OrderService {
             MenuRepository menuRepository,
             OrderRepository orderRepository,
             OrderTableRepository orderTableRepository,
-            OrderLineItemRepository orderLineItemRepository) {
-
+            OrderLineItemRepository orderLineItemRepository,
+            MenuProductRepository menuProductRepository) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
         this.orderLineItemRepository = orderLineItemRepository;
+        this.menuProductRepository = menuProductRepository;
     }
 
     @Transactional
@@ -77,10 +82,16 @@ public class OrderService {
     }
 
     private OrderLineItem toOrderLineItem(Order order, OrderLineItemRequest orderLineItemRequest) {
-        final Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
+        final MenuProduct menuProduct = menuProductRepository.findById(
+                orderLineItemRequest.getMenuId())
                 .orElseThrow(IllegalArgumentException::new);
+        final Product product = menuProduct.getProduct();
 
-        return orderLineItemRepository.save(new OrderLineItem(order, menu, orderLineItemRequest.getQuantity()));
+        return orderLineItemRepository.save(new OrderLineItem(
+                order,
+                product.getName(),
+                product.getPrice(),
+                orderLineItemRequest.getQuantity()));
     }
 
     public List<Order> list() {
