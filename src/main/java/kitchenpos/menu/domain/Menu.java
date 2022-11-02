@@ -39,8 +39,13 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProductDto> menuProducts) {
-        validate(name, price);
+    public Menu(
+        final String name,
+        final BigDecimal price,
+        final Long menuGroupId,
+        final List<MenuProductDto> menuProducts,
+        final MenuValidator validator) {
+        validator.validateCreateMenu(name, price, menuGroupId,menuProducts);
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
@@ -68,27 +73,6 @@ public class Menu {
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
-    }
-
-    private void validate(String name, BigDecimal price) {
-        validateName(name);
-        validatePrice(price);
-    }
-
-    private void validateName(String name) {
-        if (name == null || name.isEmpty()) {
-            throw new IllegalArgumentException("메뉴의 이름은 비어있을 수 없습니다.");
-        }
-    }
-
-    private void validatePrice(BigDecimal price) {
-        if (price == null) {
-            throw new IllegalArgumentException("메뉴의 가격은 비어있을 수 없습니다.");
-        }
-
-        if (price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("메뉴의 가격은 0원 미만일 수 없습니다.");
-        }
     }
 
     @Override

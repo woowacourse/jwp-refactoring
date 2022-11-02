@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuValidator;
 import kitchenpos.menu.dto.application.MenuProductDto;
 import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.menu.repository.MenuRepository;
@@ -51,6 +52,9 @@ class TableServiceTest {
 
     @Autowired
     private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private MenuValidator menuValidator;
 
     @Nested
     @DisplayName("create()")
@@ -181,7 +185,8 @@ class TableServiceTest {
             menuGroup.getId(),
             new ArrayList<MenuProductDto>() {{
                 add(new MenuProductDto(product.getId(), 1L));
-            }}
+            }},
+            menuValidator
         ));
 
         return new Order(

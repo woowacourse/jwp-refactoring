@@ -7,10 +7,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
-import kitchenpos.menu.dto.request.CreateMenuProductRequest;
-import kitchenpos.menu.dto.request.CreateMenuRequest;
+import kitchenpos.menu.dto.application.MenuProductDto;
 import kitchenpos.menu.repository.MenuGroupRepository;
-import kitchenpos.product.domain.Product;
 import kitchenpos.product.repository.ProductRepository;
 
 @Component
@@ -23,12 +21,31 @@ public class MenuValidator {
         this.productRepository = productRepository;
     }
 
-    public void validateCreateMenu(final CreateMenuRequest request) {
-        final Long menuGroupId = request.getMenuGroupId();
+    public void validateCreateMenu(
+        final String name,
+        final BigDecimal price,
+        final Long menuGroupId,
+        final List<MenuProductDto> menuProducts) {
+        validateName(name);
+        validatePrice(price);
         validateMenuGroupById(menuGroupId);
+        validateProperPrice(price, menuProducts);
+    }
 
-        final List<Product> products = getProducts(request.getMenuProducts());
-        validateProperPrice(products, request);
+    private void validateName(final String name) {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("메뉴의 이름은 비어있을 수 없습니다.");
+        }
+    }
+
+    private void validatePrice(final BigDecimal price) {
+        if (price == null) {
+            throw new IllegalArgumentException("메뉴의 가격은 비어있을 수 없습니다.");
+        }
+
+        if (price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("메뉴의 가격은 0원 미만일 수 없습니다.");
+        }
     }
 
     private void validateMenuGroupById(final Long menuGroupId) {
@@ -36,29 +53,23 @@ public class MenuValidator {
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴그룹입니다."));
     }
 
-    private List<Product> getProducts(final List<CreateMenuProductRequest> menuProducts) {
+    private void validateProperPrice(final BigDecimal price, final List<MenuProductDto> menuProducts) {
         final List<Long> productIds = menuProducts.stream()
-            .map(CreateMenuProductRequest::getProductId)
+            .map(MenuProductDto::getProductId)
             .collect(Collectors.toList());
 
-        final List<Product> products = productRepository.findAllByIdIn(productIds);
+        final Map<Long, BigDecimal> productsPriceMap = productRepository.findAllByIdIn(productIds).stream()
+            .collect(Collectors.toMap(it -> it.getId(), it -> it.getPrice()));
 
-        if (productIds.size() != products.size()) {
+        if (productIds.size() != productsPriceMap.size()) {
             throw new IllegalArgumentException("존재하지 않는 제품입니다.");
         }
 
-        return products;
-    }
-
-    private void validateProperPrice(final List<Product> products, final CreateMenuRequest request) {
-        final Map<Long, BigDecimal> productsPriceMap = products.stream()
-            .collect(Collectors.toMap(it -> it.getId(), it -> it.getPrice()));
-
-        final BigDecimal totalPrice = request.getMenuProducts().stream()
+        final BigDecimal totalPrice = menuProducts.stream()
             .map(it -> productsPriceMap.get(it.getProductId()).multiply(BigDecimal.valueOf(it.getQuantity())))
             .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        if (request.getPrice().compareTo(totalPrice) > 0) {
+        if (price.compareTo(totalPrice) > 0) {
             throw new IllegalArgumentException("각 상품 가격의 합보다 큰 가격을 적용할 수 없습니다.");
         }
     }

@@ -26,8 +26,6 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final CreateMenuRequest request) {
-        menuValidator.validateCreateMenu(request);
-
         final List<MenuProductDto> menuProducts = request.getMenuProducts().stream()
             .map(it -> new MenuProductDto(it.getProductId(), it.getQuantity()))
             .collect(Collectors.toList());
@@ -36,7 +34,8 @@ public class MenuService {
             request.getName(),
             request.getPrice(),
             request.getMenuGroupId(),
-            menuProducts
+            menuProducts,
+            menuValidator
         ));
 
         return new MenuResponse(menu);
