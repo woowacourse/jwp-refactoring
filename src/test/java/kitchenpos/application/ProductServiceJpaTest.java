@@ -1,7 +1,6 @@
-package kitchenpos.application.jpa;
+package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import kitchenpos.ui.jpa.dto.product.ProductCreateRequest;
 import kitchenpos.ui.jpa.dto.product.ProductCreateResponse;

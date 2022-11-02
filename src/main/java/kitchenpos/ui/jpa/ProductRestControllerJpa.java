@@ -2,7 +2,7 @@ package kitchenpos.ui.jpa;
 
 import java.net.URI;
 import java.util.List;
-import kitchenpos.application.jpa.ProductServiceJpa;
+import kitchenpos.application.ProductServiceJpa;
 import kitchenpos.ui.jpa.dto.product.ProductCreateRequest;
 import kitchenpos.ui.jpa.dto.product.ProductCreateResponse;
 import kitchenpos.ui.jpa.dto.product.ProductListResponse;

@@ -1,4 +1,4 @@
-package kitchenpos.application.jpa;
+package kitchenpos.application;
 
 import com.google.common.base.CaseFormat;
 import java.util.List;

@@ -2,7 +2,7 @@ package kitchenpos.ui.jpa;
 
 import java.net.URI;
 import java.util.List;
-import kitchenpos.application.jpa.TableServiceJpa;
+import kitchenpos.application.TableServiceJpa;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.jpa.dto.ordertable.ChangeEmptyRequest;
 import kitchenpos.ui.jpa.dto.ordertable.ChangeEmptyResponse;

@@ -2,7 +2,7 @@ package kitchenpos.ui.jpa;
 
 import java.net.URI;
 import java.util.List;
-import kitchenpos.application.jpa.MenuServiceJpa;
+import kitchenpos.application.MenuServiceJpa;
 import kitchenpos.ui.jpa.dto.menu.MenuCreateRequest;
 import kitchenpos.ui.jpa.dto.menu.MenuCreateResponse;
 import kitchenpos.ui.jpa.dto.menu.MenuListResponse;

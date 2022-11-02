@@ -1,4 +1,4 @@
-package kitchenpos.application.jpa;
+package kitchenpos.application;
 
 import java.util.List;
 import kitchenpos.domain.collection.OrderTables;

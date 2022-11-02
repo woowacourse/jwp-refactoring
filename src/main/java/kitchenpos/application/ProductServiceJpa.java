@@ -1,4 +1,4 @@
-package kitchenpos.application.jpa;
+package kitchenpos.application;
 
 import java.util.ArrayList;
 import java.util.List;

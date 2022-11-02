@@ -1,4 +1,4 @@
-package kitchenpos.application.jpa;
+package kitchenpos.application;
 
 import kitchenpos.domain.collection.OrderLineItems;
 import kitchenpos.repository.OrderLineItemRepository;
