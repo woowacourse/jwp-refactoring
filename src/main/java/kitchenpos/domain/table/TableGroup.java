@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import kitchenpos.exception.CustomError;
 import kitchenpos.exception.DomainLogicException;
@@ -20,7 +20,8 @@ public class TableGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "tableGroup", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "table_group_id")
     private List<OrderTable> orderTables = new ArrayList<>();
 
     private LocalDateTime createdDate;
@@ -37,9 +38,6 @@ public class TableGroup {
         this.id = id;
         this.orderTables = orderTables;
         this.createdDate = createdDate;
-        for (OrderTable orderTable : this.orderTables) {
-            orderTable.changeTableGroup(this);
-        }
     }
 
     private void validateTables(final List<OrderTable> orderTables) {

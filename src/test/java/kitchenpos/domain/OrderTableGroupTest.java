@@ -54,9 +54,8 @@ class OrderTableGroupTest {
         @Test
         void 단체_지정하는_테이블이_이미_단체_지정되어_있는_경우_예외를_던진다() {
             // given
-            final var tableA = new OrderTable(new TableStatus(new Empty(true), new GuestNumber(0)));
-            final var tableB = new OrderTable(new TableStatus(new Empty(true), new GuestNumber(0)));
-            new TableGroup(List.of(tableA, tableB), LocalDateTime.now());
+            final var tableA = new OrderTable(1L, new TableStatus(new Empty(true), new GuestNumber(0)));
+            final var tableB = new OrderTable(1L, new TableStatus(new Empty(true), new GuestNumber(0)));
 
             // when & then
             assertThatThrownBy(() -> new TableGroup(List.of(tableA, tableB), LocalDateTime.now()))
