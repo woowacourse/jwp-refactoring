@@ -108,18 +108,19 @@ class TableServiceTest {
         @Nested
         class 단체_지정이_null이_아니면 extends ServiceTest {
 
-            private final TableGroup tableGroup = 단체_지정_생성(LocalDateTime.now(), null);
-            private final OrderTable orderTable = 주문_테이블_생성(tableGroup, 5, false);
-            private final TableUpdateEmptyRequest updateEmptyRequest = 주문_테이블_Empty_변경_요청(false);
+            private final OrderTable orderTable = 주문_테이블_생성(1L, 5, false);
+            private final TableGroup tableGroup = 단체_지정_생성(LocalDateTime.now(), List.of(orderTable));
+            private final TableUpdateEmptyRequest updateEmptyRequest = 주문_테이블_Empty_변경_요청(true);
 
             @BeforeEach
             void setUp() {
                 tableGroupRepository.save(tableGroup);
-                orderTableRepository.save(orderTable);
+//                orderTableRepository.save(orderTable);
             }
 
             @Test
             void 예외가_발생한다() {
+                System.out.println(orderTable);
                 assertThatThrownBy(() -> tableService.changeEmpty(1L, updateEmptyRequest))
                         .isInstanceOf(IllegalArgumentException.class);
             }

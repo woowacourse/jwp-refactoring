@@ -1,15 +1,11 @@
 package kitchenpos.domain;
 
-import static kitchenpos.fixtures.TestFixtures.단체_지정_생성;
 import static kitchenpos.fixtures.TestFixtures.주문_테이블_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.time.LocalDateTime;
-import java.util.Collections;
 import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.TableGroup;
 import org.junit.jupiter.api.Test;
 
 class OrderTableTest {
@@ -42,15 +38,14 @@ class OrderTableTest {
     @Test
     void ungroup() {
         // given
-        final TableGroup tableGroup = 단체_지정_생성(LocalDateTime.now(), Collections.emptyList());
-        final OrderTable orderTable = 주문_테이블_생성(tableGroup, 5, false);
+        final OrderTable orderTable = 주문_테이블_생성(1L, 5, false);
 
         // when
         orderTable.ungroup();
 
         // then
         assertAll(
-                () -> assertThat(orderTable.getTableGroup()).isNull(),
+                () -> assertThat(orderTable.getTableGroupId()).isNull(),
                 () -> assertThat(orderTable.isEmpty()).isFalse()
         );
     }
@@ -58,14 +53,13 @@ class OrderTableTest {
     @Test
     void 단체_지정이_설정되었다면_해당하는_id를_반환한다() {
         // given
-        final TableGroup tableGroup = 단체_지정_생성(LocalDateTime.now(), Collections.emptyList());
-        final OrderTable orderTable = 주문_테이블_생성(tableGroup, 5, false);
+        final OrderTable orderTable = 주문_테이블_생성(1L, 5, false);
 
         // when
         final Long actual = orderTable.getTableGroupIdOrElseNull();
 
         // then
-        assertThat(actual).isEqualTo(tableGroup.getId());
+        assertThat(actual).isEqualTo(1L);
     }
 
     @Test
@@ -105,8 +99,7 @@ class OrderTableTest {
     @Test
     void validateEmptyUpdatable_주문_테이블에_단체지정이_null이_아니라면_예외가_발생한다() {
         // given
-        final TableGroup tableGroup = 단체_지정_생성(LocalDateTime.now(), Collections.emptyList());
-        final OrderTable orderTable = 주문_테이블_생성(tableGroup, 5, false);
+        final OrderTable orderTable = 주문_테이블_생성(1L, 5, false);
 
         // when, then
         assertThatThrownBy(orderTable::validateEmptyUpdatable)

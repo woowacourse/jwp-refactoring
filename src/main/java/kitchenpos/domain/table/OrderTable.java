@@ -1,13 +1,11 @@
 package kitchenpos.domain.table;
 
 import java.util.Objects;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 @Entity
 public class OrderTable {
@@ -16,9 +14,8 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
+    @Column(name = "table_group_id")
+    private Long tableGroupId;
 
     private int numberOfGuests;
 
@@ -31,8 +28,8 @@ public class OrderTable {
         this(null, numberOfGuests, false);
     }
 
-    public OrderTable(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
-        this.tableGroup = tableGroup;
+    public OrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -45,8 +42,8 @@ public class OrderTable {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {
@@ -62,36 +59,26 @@ public class OrderTable {
     }
 
     public void ungroup() {
-        tableGroup = null;
+        tableGroupId = null;
         empty = false;
     }
 
     public Long getTableGroupIdOrElseNull() {
-        if (tableGroup == null) {
+        if (tableGroupId == null) {
             return null;
         }
 
-        return tableGroup.getId();
+        return tableGroupId;
     }
 
-    public void mapTableGroup(final TableGroup tableGroup) {
-        validateCanGroup();
-
-        if (this.tableGroup != null) {
-            this.tableGroup.getOrderTables().remove(this);
-        }
-        this.tableGroup = tableGroup;
-        tableGroup.getOrderTables().add(this);
-    }
-
-    private void validateCanGroup() {
-        if (!empty || Objects.nonNull(tableGroup)) {
+    public void validateCanGroup() {
+        if (!empty || Objects.nonNull(tableGroupId)) {
             throw new IllegalArgumentException();
         }
     }
 
     public void validateEmptyUpdatable() {
-        if (tableGroup != null) {
+        if (tableGroupId != null) {
             throw new IllegalArgumentException();
         }
     }

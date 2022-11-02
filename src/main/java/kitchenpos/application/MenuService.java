@@ -5,11 +5,11 @@ import java.util.stream.Collectors;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.ProductRepository;
+import kitchenpos.domain.Product;
+import kitchenpos.domain.common.Price;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.common.Price;
-import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.MenuCreateRequest;
 import kitchenpos.ui.dto.MenuGroupResponse;
 import kitchenpos.ui.dto.MenuProductResponse;
@@ -64,13 +64,13 @@ public class MenuService {
                 .collect(Collectors.toList());
     }
 
-    private MenuResponse generateMenuResponse(final Menu it) {
+    private MenuResponse generateMenuResponse(final Menu menu) {
         return new MenuResponse(
-                it.getId(),
-                it.getName(),
-                it.getPrice().getAmount(),
-                new MenuGroupResponse(it.getMenuGroup().getId(), it.getMenuGroup().getName()),
-                generateMenuProductResponses(it)
+                menu.getId(),
+                menu.getName(),
+                menu.getPrice().getAmount(),
+                new MenuGroupResponse(menu.getMenuGroup().getId(), menu.getMenuGroup().getName()),
+                generateMenuProductResponses(menu)
         );
     }
 

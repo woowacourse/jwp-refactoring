@@ -3,16 +3,16 @@ package kitchenpos.fixtures;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.domain.Product;
+import kitchenpos.domain.common.Price;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.order.OrderedMenu;
-import kitchenpos.domain.common.Price;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
 import kitchenpos.ui.dto.MenuCreateRequest;
 import kitchenpos.ui.dto.MenuGroupCreateRequest;
@@ -93,8 +93,8 @@ public class TestFixtures {
         return new OrderedMenu(name, price);
     }
 
-    public static OrderTable 주문_테이블_생성(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
-        return new OrderTable(tableGroup, numberOfGuests, empty);
+    public static OrderTable 주문_테이블_생성(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        return new OrderTable(tableGroupId, numberOfGuests, empty);
     }
 
     public static TableUpdateEmptyRequest 주문_테이블_Empty_변경_요청(final boolean empty) {
