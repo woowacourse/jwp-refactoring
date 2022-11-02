@@ -1,16 +1,13 @@
 package kitchenpos.table.application;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.dao.OrderDao;
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.exception.InvalidOrderException;
 import kitchenpos.table.application.dto.request.TableGroupOrderTableRequest;
 import kitchenpos.table.application.dto.request.TableGroupRequest;
 import kitchenpos.table.dao.OrderTableDao;
 import kitchenpos.table.dao.TableGroupDao;
+import kitchenpos.table.domain.OrderStatusChangeValidator;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.exception.InvalidTableException;
@@ -21,14 +18,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class TableGroupService {
 
-    private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
     private final TableGroupDao tableGroupDao;
+    private final OrderStatusChangeValidator orderStatusChangeValidator;
 
-    public TableGroupService(OrderDao orderDao, OrderTableDao orderTableDao, TableGroupDao tableGroupDao) {
-        this.orderDao = orderDao;
+    public TableGroupService(OrderTableDao orderTableDao, TableGroupDao tableGroupDao,
+                             OrderStatusChangeValidator orderStatusChangeValidator) {
         this.orderTableDao = orderTableDao;
         this.tableGroupDao = tableGroupDao;
+        this.orderStatusChangeValidator = orderStatusChangeValidator;
     }
 
     public Long create(TableGroupRequest tableGroupRequest) {
@@ -64,27 +62,10 @@ public class TableGroupService {
 
     public void ungroup(Long tableGroupId) {
         List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
-        List<Long> orderTableIds = getOrderTableIds(orderTables);
-        validateOrderTableStatus(orderTableIds);
-        ungroupOrderTables(orderTables);
-    }
-
-    private List<Long> getOrderTableIds(List<OrderTable> orderTables) {
-        return orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-    }
-
-    private void validateOrderTableStatus(List<Long> orderTableIds) {
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new InvalidOrderException("주문이 완료 상태가 아닙니다.");
-        }
-    }
-
-    private void ungroupOrderTables(List<OrderTable> orderTables) {
         for (OrderTable orderTable : orderTables) {
-            orderTableDao.updateTableGroupIdAndEmpty(orderTable.getId(), null, false);
+            orderTable.ungroup(orderStatusChangeValidator);
+            orderTableDao.updateTableGroupIdAndEmpty(orderTable.getId(), orderTable.getTableGroupId(),
+                    orderTable.isEmpty());
         }
     }
 }

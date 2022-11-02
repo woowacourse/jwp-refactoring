@@ -1,15 +1,11 @@
 package kitchenpos.table.application;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import kitchenpos.order.dao.OrderDao;
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.exception.InvalidOrderException;
 import kitchenpos.table.application.dto.request.OrderTableRequest;
 import kitchenpos.table.application.dto.request.TableEmptyRequest;
 import kitchenpos.table.application.dto.request.TableNumberOfGuestsRequest;
 import kitchenpos.table.dao.OrderTableDao;
+import kitchenpos.table.domain.OrderStatusChangeValidator;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.exception.InvalidTableException;
 import org.springframework.stereotype.Service;
@@ -19,12 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class TableService {
 
-    private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
+    private final OrderStatusChangeValidator orderStatusChangeValidator;
 
-    public TableService(OrderDao orderDao, OrderTableDao orderTableDao) {
-        this.orderDao = orderDao;
+    public TableService(OrderTableDao orderTableDao, OrderStatusChangeValidator orderStatusChangeValidator) {
         this.orderTableDao = orderTableDao;
+        this.orderStatusChangeValidator = orderStatusChangeValidator;
     }
 
     @Transactional
@@ -40,29 +36,13 @@ public class TableService {
     @Transactional
     public void changeEmpty(Long orderTableId, TableEmptyRequest tableEmptyRequest) {
         OrderTable orderTable = getOrderTable(orderTableId);
-        validateTableGroup(orderTable);
-        validateOrderStatus(orderTable.getId());
-
-        orderTable.updateEmpty(tableEmptyRequest.getEmpty());
+        orderTable.updateEmpty(tableEmptyRequest.getEmpty(), orderStatusChangeValidator);
         orderTableDao.updateEmpty(orderTable.getId(), orderTable.isEmpty());
     }
 
     private OrderTable getOrderTable(Long orderTableId) {
         return orderTableDao.findById(orderTableId)
                 .orElseThrow(() -> new InvalidTableException("테이블이 존재하지 않습니다."));
-    }
-
-    private void validateTableGroup(OrderTable orderTable) {
-        if (Objects.nonNull(orderTable.getTableGroupId())) {
-            throw new InvalidTableException("단체 지정 정보가 존재합니다.");
-        }
-    }
-
-    private void validateOrderStatus(Long orderTableId) {
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId,
-                Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new InvalidOrderException("주문이 완료 상태가 아닙니다.");
-        }
     }
 
     @Transactional

@@ -1,10 +1,11 @@
 package kitchenpos.table.domain;
 
+import java.util.Objects;
 import kitchenpos.table.exception.InvalidTableException;
 
 public class OrderTable {
 
-    private final Long id;
+    private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
@@ -39,8 +40,18 @@ public class OrderTable {
         }
     }
 
-    public void updateEmpty(final boolean empty) {
+    public void updateEmpty(boolean empty, OrderStatusChangeValidator orderStatusChangeValidator) {
+        if (Objects.nonNull(tableGroupId)) {
+            throw new InvalidTableException("단체 지정 정보가 존재합니다.");
+        }
+        orderStatusChangeValidator.validate(id);
         this.empty = empty;
+    }
+
+    public void ungroup(OrderStatusChangeValidator orderStatusChangeValidator) {
+        orderStatusChangeValidator.validate(id);
+        this.empty = false;
+        this.tableGroupId = null;
     }
 
     public Long getId() {
