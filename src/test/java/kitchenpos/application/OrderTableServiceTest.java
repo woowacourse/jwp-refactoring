@@ -10,10 +10,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.request.TableChangeEmptyRequest;
-import kitchenpos.dto.request.TableChangeGuestNumberRequest;
-import kitchenpos.dto.request.TableCreateRequest;
-import kitchenpos.dto.response.TableResponse;
+import kitchenpos.dto.request.OrderTableChangeEmptyRequest;
+import kitchenpos.dto.request.OrderTableChangeGuestNumberRequest;
+import kitchenpos.dto.request.OrderTableCreateRequest;
+import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.exception.CustomError;
 import kitchenpos.exception.DomainLogicException;
 import kitchenpos.exception.NotFoundException;
@@ -26,27 +26,27 @@ import org.springframework.test.context.jdbc.Sql;
 
 @DataJpaTest
 @Sql(scripts = "classpath:truncate.sql")
-class TableServiceTest {
+class OrderTableServiceTest {
 
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    private final TableService tableService;
+    private final OrderTableService orderTableService;
 
     @Autowired
-    public TableServiceTest(final OrderTableRepository orderTableRepository, final TableGroupRepository tableGroupRepository) {
+    public OrderTableServiceTest(final OrderTableRepository orderTableRepository, final TableGroupRepository tableGroupRepository) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
-        this.tableService = new TableService(orderTableRepository);
+        this.orderTableService = new OrderTableService(orderTableRepository);
     }
 
     @Test
     void 테이블을_생성하고_결과를_반환한다() {
         // given
-        final var request = new TableCreateRequest(0, true);
+        final var request = new OrderTableCreateRequest(0, true);
 
         // when
-        final var response = tableService.create(request);
+        final var response = orderTableService.create(request);
 
         // then
         assertAll(
@@ -64,7 +64,7 @@ class TableServiceTest {
         테이블_생성_및_저장();
 
         // when
-        List<TableResponse> responses = tableService.list();
+        List<OrderTableResponse> responses = orderTableService.list();
 
         // then
         assertThat(responses).hasSizeGreaterThanOrEqualTo(2);
@@ -78,10 +78,10 @@ class TableServiceTest {
     void 비어있는지_여부를_변경한다() {
         // given
         final var table = 테이블_생성_및_저장();
-        final var changeRequest = new TableChangeEmptyRequest(false);
+        final var changeRequest = new OrderTableChangeEmptyRequest(false);
 
         // when
-        final var response = tableService.changeEmpty(table.getId(), changeRequest);
+        final var response = orderTableService.changeEmpty(table.getId(), changeRequest);
 
         // then
         assertAll(
@@ -93,10 +93,10 @@ class TableServiceTest {
     @Test
     void 비어있는지_여부_변경시_없는_테이블인_경우_예외를_던진다() {
         // given
-        final var changeRequest = new TableChangeEmptyRequest(false);
+        final var changeRequest = new OrderTableChangeEmptyRequest(false);
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(0L, changeRequest))
+        assertThatThrownBy(() -> orderTableService.changeEmpty(0L, changeRequest))
                 .isInstanceOf(NotFoundException.class)
                 .extracting("errorCode")
                 .isEqualTo(CustomError.TABLE_NOT_FOUND_ERROR);
@@ -108,10 +108,10 @@ class TableServiceTest {
         final var table = 빈_테이블_생성();
         tableGroupRepository.save(new TableGroup(List.of(table, 빈_테이블_생성()), LocalDateTime.now()));
 
-        final var changeRequest = new TableChangeEmptyRequest(false);
+        final var changeRequest = new OrderTableChangeEmptyRequest(false);
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(table.getId(), changeRequest))
+        assertThatThrownBy(() -> orderTableService.changeEmpty(table.getId(), changeRequest))
                 .isInstanceOf(DomainLogicException.class)
                 .extracting("errorCode")
                 .isEqualTo(CustomError.TABLE_ALREADY_GROUPED_ERROR);
@@ -121,10 +121,10 @@ class TableServiceTest {
     void 방문_손님_수를_변경한다() {
         // given
         final var table = orderTableRepository.save(채워진_테이블_생성());
-        final var request = new TableChangeGuestNumberRequest(5);
+        final var request = new OrderTableChangeGuestNumberRequest(5);
 
         // when
-        final var response = tableService.changeNumberOfGuests(table.getId(), request);
+        final var response = orderTableService.changeNumberOfGuests(table.getId(), request);
 
         // then
         assertAll(
@@ -137,10 +137,10 @@ class TableServiceTest {
     void 방문_손님_수_변경시_방문_손님_수가_0보다_작으면_예외를_던진다() {
         // given
         final var table = orderTableRepository.save(채워진_테이블_생성());
-        final var request = new TableChangeGuestNumberRequest(-1);
+        final var request = new OrderTableChangeGuestNumberRequest(-1);
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(table.getId(), request))
+        assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(table.getId(), request))
                 .isInstanceOf(DomainLogicException.class)
                 .extracting("errorCode")
                 .isEqualTo(CustomError.TABLE_GUEST_NUMBER_NEGATIVE_ERROR);
@@ -150,10 +150,10 @@ class TableServiceTest {
     @Test
     void 방문_손님_수_변경시_없는_테이블인_경우_예외를_던진다() {
         // given
-        final var request = new TableChangeGuestNumberRequest(5);
+        final var request = new OrderTableChangeGuestNumberRequest(5);
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(0L, request))
+        assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(0L, request))
                 .isInstanceOf(NotFoundException.class)
                 .extracting("errorCode")
                 .isEqualTo(CustomError.TABLE_NOT_FOUND_ERROR);
@@ -163,10 +163,10 @@ class TableServiceTest {
     void 방문_손님_수_변경시_비어있는_테이블인_경우_예외를_던진다() {
         // given
         final var table = orderTableRepository.save(빈_테이블_생성());
-        final var request = new TableChangeGuestNumberRequest(4);
+        final var request = new OrderTableChangeGuestNumberRequest(4);
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(table.getId(), request))
+        assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(table.getId(), request))
                 .isInstanceOf(DomainLogicException.class)
                 .extracting("errorCode")
                 .isEqualTo(CustomError.TABLE_EMPTY_BUT_CHANGE_GUEST_NUMBER_ERROR);

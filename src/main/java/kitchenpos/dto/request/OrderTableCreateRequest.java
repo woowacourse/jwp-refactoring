@@ -6,7 +6,7 @@ import kitchenpos.domain.GuestNumber;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableStatus;
 
-public class TableCreateRequest {
+public class OrderTableCreateRequest {
 
     @NotNull
     private Integer numberOfGuests;
@@ -14,10 +14,10 @@ public class TableCreateRequest {
     @NotNull
     private Boolean empty;
 
-    private TableCreateRequest() {
+    private OrderTableCreateRequest() {
     }
 
-    public TableCreateRequest(final int numberOfGuests, final boolean empty) {
+    public OrderTableCreateRequest(final int numberOfGuests, final boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
