@@ -61,10 +61,6 @@ public class OrderTable {
         this.tableGroup = tableGroup;
     }
 
-    public void deleteTableGroup() {
-        this.tableGroup = null;
-    }
-
     public void enrollOrder(Order order) {
         this.order = order;
     }
@@ -95,5 +91,15 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
+    }
+
+    public void registerTableGroup(final TableGroup tableGroup) {
+        this.full();
+        this.tableGroup = tableGroup;
+    }
+
+    public void unregisterTableGroup() {
+        this.empty();
+        this.tableGroup = null;
     }
 }

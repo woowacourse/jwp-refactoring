@@ -25,61 +25,13 @@ public class TableGroup {
 
     private LocalDateTime createdDate;
 
-    @OneToMany
-    @JoinColumn(name = "table_group_id")
-    private List<OrderTable> orderTables;
-
     public TableGroup() {}
 
-    public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
-        validateMoreThanTwoOrderTable(orderTables);
-        validateIsEmptyAndNotContainTableGroup(orderTables);
-        enrollTableGroupToOrderTable(orderTables);
+    public TableGroup(LocalDateTime createdDate) {
         this.createdDate = createdDate;
-        this.orderTables = orderTables;
-    }
-
-    private void validateMoreThanTwoOrderTable(List<OrderTable> orderTables) {
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateIsEmptyAndNotContainTableGroup(List<OrderTable> orderTables) {
-        for (final OrderTable orderTable : orderTables) {
-            validateOrderTableIsEmptyAndNotContainTableGroup(orderTable);
-        }
-    }
-
-    private void validateOrderTableIsEmptyAndNotContainTableGroup(OrderTable orderTable) {
-        if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void enrollTableGroupToOrderTable(List<OrderTable> orderTables) {
-        for (OrderTable orderTable : orderTables) {
-            orderTable.enrollTableGroup(this);
-            orderTable.full();
-        }
-    }
-
-    public void deleteOrderTable(OrderTable orderTable) {
-        this.orderTables.remove(orderTable);
-        orderTable.deleteTableGroup();
-        orderTable.empty();
-    }
-
-    public boolean hasOrderTableWhichStatusIsCookingOrMeal() {
-        return orderTables.stream()
-            .anyMatch(OrderTable::isCookingOrMeal);
     }
 
     public Long getId() {
         return id;
-    }
-
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
     }
 }
