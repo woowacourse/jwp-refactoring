@@ -34,11 +34,11 @@ public class OrderTables {
 
     public boolean isReadyToGroup(OrderTables unsavedOrderTables) {
         if (elements.size() != unsavedOrderTables.elements.size()) {
-            throw new IllegalArgumentException();
+            return false;
         }
 
-        for (OrderTable savedOrder : elements) {
-            if (!savedOrder.isReadyToGroup()) {
+        for (OrderTable savedOrderTable : elements) {
+            if (!savedOrderTable.isReadyToGroup()) {
                 return false;
             }
         }
