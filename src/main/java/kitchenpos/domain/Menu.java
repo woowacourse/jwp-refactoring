@@ -16,8 +16,11 @@ public class Menu {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
+
     private BigDecimal price;
+
     private Long menuGroupId;
 
     @JsonIgnore
