@@ -42,7 +42,7 @@ class OrderTableTest {
         void 테이블의_주문_중_계산_완료가_아닌_주문이_있는_경우_예외를_던진다() {
             // given
             final var orderTable = new OrderTable(new TableStatus(new Empty(true), new GuestNumber(0)),
-                    List.of(new Order(OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(1L, 한개)))));
+                    List.of(new Order(1L, OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(1L, 한개)))));
 
             // when & then
             assertThatThrownBy(() -> orderTable.changeEmpty(false))

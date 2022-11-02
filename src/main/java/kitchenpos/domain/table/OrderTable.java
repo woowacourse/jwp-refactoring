@@ -95,13 +95,7 @@ public class OrderTable {
         this.status.changeEmpty(false);
     }
 
-    public void addOrder(final Order order) {
-        validateNotEmpty();
-        order.setTable(this);
-        this.orders.add(order);
-    }
-
-    private void validateNotEmpty() {
+    public void validateNotEmpty() {
         if (status.isEmpty()) {
             throw new DomainLogicException(CustomError.ORDER_TABLE_EMPTY_ERROR);
         }

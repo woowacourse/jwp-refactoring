@@ -27,8 +27,8 @@ public class OrderCreateRequest {
         this.orderLineItems = orderLineItems;
     }
 
-    public Order toOrder(final LocalDateTime orderedTime) {
-        return new Order(OrderStatus.COOKING, orderedTime, toOrderLineItems());
+    public Order toOrder(final Long orderTableId, final LocalDateTime orderedTime) {
+        return new Order(orderTableId, OrderStatus.COOKING, orderedTime, toOrderLineItems());
     }
 
     private List<OrderLineItem> toOrderLineItems() {

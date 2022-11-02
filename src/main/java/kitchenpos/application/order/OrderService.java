@@ -31,9 +31,9 @@ public class OrderService {
     @Transactional
     public OrderResponse create(final OrderCreateRequest request) {
         final OrderTable orderTable = findOrderTableById(request);
-        final Order order = request.toOrder(LocalDateTime.now());
-        orderTable.addOrder(order);
-        orderTableRepository.flush();
+        orderTable.validateNotEmpty();
+        final Order order = request.toOrder(orderTable.getId(), LocalDateTime.now());
+        orderRepository.save(order);
         return OrderResponse.from(order);
     }
 

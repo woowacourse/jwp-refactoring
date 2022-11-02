@@ -147,9 +147,9 @@ class OrderServiceTest {
     @Test
     void 주문_목록을_조회한다() {
         // given
-        orderRepository.save(new Order(null, table, OrderStatus.COOKING, LocalDateTime.now(),
+        orderRepository.save(new Order(null, table.getId(), OrderStatus.COOKING, LocalDateTime.now(),
                 List.of(new OrderLineItem(menu.getId(), 한개))));
-        orderRepository.save(new Order(null, table, OrderStatus.COOKING, LocalDateTime.now(),
+        orderRepository.save(new Order(null, table.getId(), OrderStatus.COOKING, LocalDateTime.now(),
                 List.of(new OrderLineItem(menu.getId(), 한개))));
 
         // when
@@ -162,7 +162,7 @@ class OrderServiceTest {
     @Test
     void 주문_상태를_식사로_변경한다() {
         // given
-        final var orderId = orderRepository.save(new Order(null, table, OrderStatus.COOKING, LocalDateTime.now(),
+        final var orderId = orderRepository.save(new Order(null, table.getId(), OrderStatus.COOKING, LocalDateTime.now(),
                 List.of(new OrderLineItem(menu.getId(), 한개)))).getId();
         final var request = new OrderChangeStatusRequest(OrderStatus.MEAL.name());
 
@@ -179,7 +179,7 @@ class OrderServiceTest {
     @Test
     void 주문_상태를_계산완료로_변경한다() {
         // given
-        final var orderId = orderRepository.save(new Order(null, table, OrderStatus.COOKING, LocalDateTime.now(),
+        final var orderId = orderRepository.save(new Order(null, table.getId(), OrderStatus.COOKING, LocalDateTime.now(),
                 List.of(new OrderLineItem(menu.getId(), 한개)))).getId();
         final var request = new OrderChangeStatusRequest(OrderStatus.COMPLETION.name());
 
@@ -208,7 +208,7 @@ class OrderServiceTest {
     @Test
     void 주문_상태가_이미_계산완료인_경우_예외를_던진다() {
         // given
-        final var orderId = orderRepository.save(new Order(null, table, OrderStatus.COMPLETION, LocalDateTime.now(),
+        final var orderId = orderRepository.save(new Order(null, table.getId(), OrderStatus.COMPLETION, LocalDateTime.now(),
                 List.of(new OrderLineItem(menu.getId(), 한개)))).getId();
         final var request = new OrderChangeStatusRequest(OrderStatus.MEAL.name());
 
