@@ -3,18 +3,16 @@ package kitchenpos.domain.order;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import kitchenpos.domain.table.OrderTable;
 import kitchenpos.exception.CustomError;
 import kitchenpos.exception.DomainLogicException;
 
@@ -26,9 +24,8 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_table_id")
-    private OrderTable orderTable;
+    @Column(name = "order_table_id")
+    private Long orderTableId;
 
     @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
@@ -42,16 +39,16 @@ public class Order {
     protected Order() {
     }
 
-    public Order(final OrderStatus orderStatus, final LocalDateTime orderedTime,
+    public Order(final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
-        this(null, null, orderStatus, orderedTime, orderLineItems);
+        this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
-    public Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus,
+    public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus,
                  final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
         validateOrderLineItemsNotEmpty(orderLineItems);
         this.id = id;
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
@@ -67,10 +64,6 @@ public class Order {
         this.orderStatus = this.orderStatus.change(status);
     }
 
-    public void setTable(final OrderTable table) {
-        this.orderTable = table;
-    }
-
     public boolean isCompleted() {
         return this.orderStatus.isSame(OrderStatus.COMPLETION);
     }
@@ -79,8 +72,8 @@ public class Order {
         return id;
     }
 
-    public Long getTableId() {
-        return this.orderTable.getId();
+    public Long getOrderTableId() {
+        return this.orderTableId;
     }
 
     public OrderStatus getOrderStatus() {

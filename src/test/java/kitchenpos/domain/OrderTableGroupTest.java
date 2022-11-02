@@ -89,9 +89,10 @@ class OrderTableGroupTest {
         @Test
         void 계산이_완료되지않은_주문이_있는_경우_예외를_던진다() {
             // given
-            final var tableA = new OrderTable(null, null, new TableStatus(new Empty(true), new GuestNumber(0)), List.of(new Order(
-                    OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(1L, 한개)))));
-            final var tableB = new OrderTable(null, null, new TableStatus(new Empty(true), new GuestNumber(0)), List.of(new Order(OrderStatus.COMPLETION, LocalDateTime.now(), List.of(new OrderLineItem(1L, 한개)))));
+            final var tableA = new OrderTable(null, null, new TableStatus(new Empty(true), new GuestNumber(0)),
+                    List.of(new Order(1L, OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(1L, 한개)))));
+            final var tableB = new OrderTable(null, null, new TableStatus(new Empty(true), new GuestNumber(0)),
+                    List.of(new Order(1L, OrderStatus.COMPLETION, LocalDateTime.now(), List.of(new OrderLineItem(1L, 한개)))));
             final var group = new TableGroup(List.of(tableA, tableB), LocalDateTime.now());
 
             // when & then
