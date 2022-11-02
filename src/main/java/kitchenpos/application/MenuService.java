@@ -59,7 +59,7 @@ public class MenuService {
                 .map(it -> {
                     final Product product = productRepository.findById(it.getProductId())
                             .orElseThrow(IllegalArgumentException::new);
-                    return new MenuProduct(null, product, it.getQuantity());
+                    return new MenuProduct(product, it.getQuantity());
                 })
                 .collect(Collectors.toList());
     }

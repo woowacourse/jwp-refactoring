@@ -12,6 +12,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -31,7 +32,8 @@ public class Menu {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private MenuGroup menuGroup;
 
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "menu_id")
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     public Menu() {
@@ -42,7 +44,6 @@ public class Menu {
                 final MenuGroup menuGroup,
                 final List<MenuProduct> menuProducts) {
         validateMenuPrice(menuProducts, price);
-        menuProducts.forEach(it -> it.mapMenu(this));
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;

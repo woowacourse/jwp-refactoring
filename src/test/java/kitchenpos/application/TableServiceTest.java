@@ -2,7 +2,9 @@ package kitchenpos.application;
 
 import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.fixtures.TestFixtures.가격_생성;
 import static kitchenpos.fixtures.TestFixtures.단체_지정_생성;
+import static kitchenpos.fixtures.TestFixtures.주문_내역_생성;
 import static kitchenpos.fixtures.TestFixtures.주문_생성;
 import static kitchenpos.fixtures.TestFixtures.주문_테이블_Empty_변경_요청;
 import static kitchenpos.fixtures.TestFixtures.주문_테이블_생성;
@@ -73,7 +75,7 @@ class TableServiceTest {
         class 주문_테이블이_완료_상태면 extends ServiceTest {
 
             private final OrderTable orderTable = 주문_테이블_생성(null, 5, false);
-            private final OrderLineItem orderLineItem = 주문_항목_생성(1L, 5);
+            private final OrderLineItem orderLineItem = 주문_항목_생성(주문_내역_생성("피자", 가격_생성(0L)), 5);
             private final Order order = 주문_생성(orderTable, COMPLETION, LocalDateTime.now(), List.of(orderLineItem));
             private final TableUpdateEmptyRequest updateEmptyRequest = 주문_테이블_Empty_변경_요청(true);
 
@@ -127,7 +129,7 @@ class TableServiceTest {
         class 이미_주문이_존재하면 extends ServiceTest {
 
             private final OrderTable orderTable = 주문_테이블_생성(null, 5, true);
-            private final OrderLineItem orderLineItem = 주문_항목_생성(1L, 5);
+            private final OrderLineItem orderLineItem = 주문_항목_생성(주문_내역_생성("피자", 가격_생성(0L)), 5);
             private final Order order = 주문_생성(orderTable, COOKING, LocalDateTime.now(), List.of(orderLineItem));
             private final TableUpdateEmptyRequest updateEmptyRequest = 주문_테이블_Empty_변경_요청(false);
 

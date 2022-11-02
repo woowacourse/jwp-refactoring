@@ -9,6 +9,8 @@ spring:
       hibernate:
         format_sql: true
         show_sql: false
+    hibernate:
+      ddl-auto: create
 logging:
   level:
     org:

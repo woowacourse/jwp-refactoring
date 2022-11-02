@@ -10,6 +10,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderedMenu;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
@@ -55,7 +56,7 @@ public class TestFixtures {
     }
 
     public static MenuProduct 메뉴_상품_생성(final Menu menu, final Product product, final long quantity) {
-        return new MenuProduct(menu, product, quantity);
+        return new MenuProduct(product, quantity);
     }
 
     public static MenuProductCreateRequest 메뉴_상품_생성_요청(final Long menuId,
@@ -80,8 +81,16 @@ public class TestFixtures {
         return new OrderLineItemRequest(menuId, quantity);
     }
 
-    public static OrderLineItem 주문_항목_생성(final Long menuId, final long quantity) {
-        return new OrderLineItem(menuId, quantity);
+    public static OrderLineItem 주문_항목_생성(final OrderedMenu orderedMenu, final long quantity) {
+        return new OrderLineItem(orderedMenu, quantity);
+    }
+
+    public static Price 가격_생성(final Long amount) {
+        return new Price(BigDecimal.valueOf(amount));
+    }
+
+    public static OrderedMenu 주문_내역_생성(final String name, final Price price) {
+        return new OrderedMenu(name, price);
     }
 
     public static OrderTable 주문_테이블_생성(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
