@@ -3,7 +3,7 @@ package kitchenpos.dto.request;
 import javax.validation.constraints.NotNull;
 import kitchenpos.domain.Name;
 import kitchenpos.domain.Price;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
 
 public class ProductCreateRequest {
 

@@ -1,10 +1,10 @@
 package kitchenpos.dto.request;
 
 import javax.validation.constraints.NotNull;
-import kitchenpos.domain.Empty;
-import kitchenpos.domain.GuestNumber;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableStatus;
+import kitchenpos.domain.table.Empty;
+import kitchenpos.domain.table.GuestNumber;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.TableStatus;
 
 public class OrderTableCreateRequest {
 

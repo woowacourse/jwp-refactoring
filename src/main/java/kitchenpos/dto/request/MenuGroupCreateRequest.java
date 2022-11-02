@@ -1,8 +1,8 @@
 package kitchenpos.dto.request;
 
 import com.sun.istack.NotNull;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Name;
+import kitchenpos.domain.menu.MenuGroup;
 
 public class MenuGroupCreateRequest {
 

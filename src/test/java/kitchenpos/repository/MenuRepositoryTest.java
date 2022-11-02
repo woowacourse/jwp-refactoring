@@ -7,7 +7,10 @@ import static kitchenpos.support.DomainFixture.치즈볼;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
+import kitchenpos.repository.menu.MenuGroupRepository;
+import kitchenpos.repository.menu.MenuRepository;
+import kitchenpos.repository.product.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

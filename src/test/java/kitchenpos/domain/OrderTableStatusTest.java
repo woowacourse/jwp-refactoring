@@ -4,6 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import kitchenpos.domain.table.Empty;
+import kitchenpos.domain.table.GuestNumber;
+import kitchenpos.domain.table.TableStatus;
 import kitchenpos.exception.CustomError;
 import kitchenpos.exception.DomainLogicException;
 import org.junit.jupiter.api.Test;
