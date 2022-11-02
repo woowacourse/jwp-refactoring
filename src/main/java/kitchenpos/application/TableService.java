@@ -2,8 +2,8 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTable;
 import kitchenpos.exception.NotFoundException;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;

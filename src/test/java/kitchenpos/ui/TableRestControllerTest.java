@@ -10,7 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import kitchenpos.application.TableService;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.order.OrderTable;
 import kitchenpos.ui.dto.request.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.ui.dto.response.TableCreateResponse;
 import org.junit.jupiter.api.DisplayName;

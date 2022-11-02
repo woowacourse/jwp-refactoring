@@ -2,7 +2,7 @@ package kitchenpos.ui.dto.response;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItem;
 
 public class OrderLineItemFindAllResponse {
 

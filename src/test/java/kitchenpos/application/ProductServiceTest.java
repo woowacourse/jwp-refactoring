@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.Product;
 import kitchenpos.repository.ProductRepository;
 import kitchenpos.ui.dto.request.ProductCreateRequest;
 import kitchenpos.ui.dto.response.ProductCreateResponse;

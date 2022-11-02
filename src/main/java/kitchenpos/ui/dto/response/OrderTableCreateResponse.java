@@ -2,7 +2,7 @@ package kitchenpos.ui.dto.response;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.order.OrderTable;
 
 public class OrderTableCreateResponse {
 

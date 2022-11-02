@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.ui.dto.request.MenuGroupCreateRequest;
 import kitchenpos.ui.dto.response.MenuGroupCreateResponse;

@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.ui.dto.request.MenuGroupCreateRequest;
 import kitchenpos.ui.dto.response.MenuGroupCreateResponse;
