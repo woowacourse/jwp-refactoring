@@ -7,6 +7,7 @@ import static kitchenpos.order.domain.OrderStatus.COOKING;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
@@ -26,8 +27,10 @@ public class Order {
     private Long id;
 
     @Enumerated(STRING)
+    @Column(nullable = false)
     private OrderStatus orderStatus;
 
+    @Column(nullable = false)
     private LocalDateTime orderedTime;
 
     @JoinColumn(name = "order_table_id")

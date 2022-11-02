@@ -3,6 +3,7 @@ package kitchenpos.menu.domain;
 import static javax.persistence.FetchType.LAZY;
 
 import java.math.BigDecimal;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -25,6 +26,7 @@ public class MenuProduct {
     @ManyToOne(fetch = LAZY)
     private Product product;
 
+    @Column(nullable = false)
     private long quantity;
 
     protected MenuProduct() {
@@ -65,7 +67,7 @@ public class MenuProduct {
         return menu;
     }
 
-    public void setMenu(Menu menu) {
+    public void mapMenu(Menu menu) {
         this.menu = menu;
     }
 

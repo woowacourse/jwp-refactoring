@@ -5,7 +5,6 @@ import kitchenpos.menu.domain.MenuGroup;
 public class MenuGroupResponse {
 
     private Long id;
-
     private String name;
 
     protected MenuGroupResponse() {

@@ -10,22 +10,22 @@ import java.util.List;
 
 @Service
 public class MenuGroupService {
-    private final MenuGroupRepository menuGroupDao;
+    private final MenuGroupRepository menuGroupRepository;
 
-    public MenuGroupService(final MenuGroupRepository menuGroupDao) {
-        this.menuGroupDao = menuGroupDao;
+    public MenuGroupService(MenuGroupRepository menuGroupRepository) {
+        this.menuGroupRepository = menuGroupRepository;
     }
 
     @Transactional
-    public MenuGroup create(final MenuGroupRequest menuGroupRequest) {
+    public MenuGroup create(MenuGroupRequest menuGroupRequest) {
 
         final MenuGroup menuGroup = menuGroupRequest.toDomain();
 
-        return menuGroupDao.save(menuGroup);
+        return menuGroupRepository.save(menuGroup);
     }
 
     public List<MenuGroup> list() {
 
-        return menuGroupDao.findAll();
+        return menuGroupRepository.findAll();
     }
 }

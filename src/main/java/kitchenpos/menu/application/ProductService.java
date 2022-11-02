@@ -21,7 +21,10 @@ public class ProductService {
 
     @Transactional
     public Product create(final ProductRequest productRequest) {
-        final Product product = productRequest.toDomain();
+
+        Product product = productRequest.toDomain();
+
+        product.validate();
 
         return productRepository.save(product);
     }

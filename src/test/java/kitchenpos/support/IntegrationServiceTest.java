@@ -104,7 +104,7 @@ abstract public class IntegrationServiceTest {
     protected EntityManager entityManager;
 
     @BeforeEach
-    void setUp() {
+    void integrationSetUp() {
         dbTableCleaner.clearAll();
     }
 
@@ -139,12 +139,12 @@ abstract public class IntegrationServiceTest {
     protected Menu 메뉴_저장후_반환() {
 
         MenuGroup 메뉴그룹 = menuGroupRepository.save(메뉴_그룹);
-
         Product 후라이드_치킨 = productRepository.save(product("후라이드 치킨", 18_000));
+        MenuProduct 메뉴상품 = new MenuProduct(후라이드_치킨, 1L);
+        Menu 메뉴 = new Menu("[메뉴] 후라이드 치킨 한 마리", BigDecimal.valueOf(18_000), 메뉴그룹, List.of(메뉴상품));
+        메뉴.mapMenuProducts(List.of(메뉴상품));
 
-        Menu 메뉴 = menuRepository.save(new Menu("[메뉴] 후라이드 치킨 한 마리", BigDecimal.valueOf(18_000), 메뉴그룹, List.of(new MenuProduct(후라이드_치킨, 1L))));
-
-        return 메뉴;
+        return menuRepository.save(메뉴);
     }
 
     protected void 주문_저장() {

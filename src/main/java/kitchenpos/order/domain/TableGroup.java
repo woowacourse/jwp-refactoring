@@ -4,6 +4,7 @@ import static javax.persistence.CascadeType.PERSIST;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,6 +18,7 @@ public class TableGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private LocalDateTime createdDate;
 
     @OneToMany(mappedBy = "tableGroup", cascade = PERSIST)

@@ -1,23 +1,20 @@
 package kitchenpos.order.application;
 
-import static java.time.LocalDateTime.now;
-
-import kitchenpos.order.domain.OrderTable;
-import kitchenpos.order.presentation.dto.request.OrderLineItemRequest;
-import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.order.repository.OrderLineItemRepository;
-import kitchenpos.order.repository.TableRepository;
+import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.presentation.dto.request.OrderLineItemRequest;
 import kitchenpos.order.presentation.dto.request.OrderRequest;
+import kitchenpos.order.repository.OrderLineItemRepository;
+import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.order.repository.TableRepository;
 import kitchenpos.order.specification.OrderSpecification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -33,8 +30,7 @@ public class OrderService {
             MenuRepository menuRepository,
             OrderRepository orderRepository,
             OrderLineItemRepository orderLineItemRepository,
-            TableRepository tableRepository
-    ) {
+            TableRepository tableRepository) {
         this.orderSpecification = orderSpecification;
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;

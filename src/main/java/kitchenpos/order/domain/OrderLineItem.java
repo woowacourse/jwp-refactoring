@@ -2,6 +2,7 @@ package kitchenpos.order.domain;
 
 import static javax.persistence.FetchType.LAZY;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,8 +21,10 @@ public class OrderLineItem {
     @ManyToOne(fetch = LAZY)
     private Order order;
 
+    @Column(nullable = false)
     private Long menuId;
 
+    @Column(nullable = false)
     private long quantity;
 
     public OrderLineItem() {

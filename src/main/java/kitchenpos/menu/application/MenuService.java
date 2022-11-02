@@ -9,7 +9,6 @@ import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.Product;
 import kitchenpos.menu.presentation.dto.request.MenuRequest;
 import kitchenpos.menu.repository.MenuGroupRepository;
-import kitchenpos.menu.repository.MenuProductRepository;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.menu.repository.ProductRepository;
 import kitchenpos.menu.specification.MenuSpecification;
@@ -21,19 +20,15 @@ public class MenuService {
 
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
-    private final MenuProductRepository menuProductRepository;
     private final ProductRepository productRepository;
     private final MenuSpecification menuSpecification;
 
     public MenuService(MenuRepository menuRepository,
                        MenuGroupRepository menuGroupRepository,
-                       MenuProductRepository menuProductRepository,
                        ProductRepository productRepository,
                        MenuSpecification menuSpecification) {
-
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
-        this.menuProductRepository = menuProductRepository;
         this.productRepository = productRepository;
         this.menuSpecification = menuSpecification;
     }

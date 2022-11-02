@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,8 +23,10 @@ public class Menu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private BigDecimal price;
 
     @JoinColumn(name = "menu_group_id")
@@ -51,7 +54,7 @@ public class Menu {
         this.menuProducts = menuProducts;
 
         for (MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenu(this);
+            menuProduct.mapMenu(this);
         }
     }
 
