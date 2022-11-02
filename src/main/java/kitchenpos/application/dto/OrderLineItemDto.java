@@ -4,10 +4,13 @@ import kitchenpos.domain.order.OrderLineItem;
 
 public class OrderLineItemDto {
 
-    private final Long seq;
-    private final Long orderId;
-    private final Long menuId;
-    private final Long quantity;
+    private Long seq;
+    private Long orderId;
+    private Long menuId;
+    private Long quantity;
+
+    private OrderLineItemDto() {
+    }
 
     public OrderLineItemDto(Long seq, Long orderId, Long menuId, Long quantity) {
         this.seq = seq;

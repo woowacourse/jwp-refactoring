@@ -7,11 +7,14 @@ import kitchenpos.domain.menu.Menu;
 
 public class MenuDto {
 
-    private final Long id;
-    private final String name;
-    private final BigDecimal price;
-    private final Long menuGroupId;
-    private final List<MenuProductDto> menuProducts;
+    private Long id;
+    private String name;
+    private BigDecimal price;
+    private Long menuGroupId;
+    private List<MenuProductDto> menuProducts;
+
+    private MenuDto() {
+    }
 
     public MenuDto(Long id,
                    String name,

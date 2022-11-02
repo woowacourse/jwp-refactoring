@@ -5,10 +5,13 @@ import java.util.List;
 
 public class CreateMenuDto {
 
-    private final String name;
-    private final BigDecimal price;
-    private final Long menuGroupId;
-    private final List<CreateMenuProductDto> menuProducts;
+    private String name;
+    private BigDecimal price;
+    private Long menuGroupId;
+    private List<CreateMenuProductDto> menuProducts;
+
+    private CreateMenuDto() {
+    }
 
     public CreateMenuDto(final String name,
                          final BigDecimal price,

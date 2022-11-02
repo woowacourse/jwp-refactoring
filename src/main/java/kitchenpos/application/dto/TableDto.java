@@ -4,10 +4,13 @@ import kitchenpos.domain.table.OrderTable;
 
 public class TableDto {
 
-    private final Long id;
-    private final Long tableGroupId;
-    private final Integer numberOfGuests;
-    private final Boolean empty;
+    private Long id;
+    private Long tableGroupId;
+    private Integer numberOfGuests;
+    private Boolean empty;
+
+    private TableDto() {
+    }
 
     public TableDto(Long id, Long tableGroupId, Integer numberOfGuests, Boolean empty) {
         this.id = id;

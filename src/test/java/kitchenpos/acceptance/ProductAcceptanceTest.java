@@ -19,11 +19,11 @@ public class ProductAcceptanceTest extends AcceptanceTest {
         final Product requestBody = Product.create("까르보나라", BigDecimal.valueOf(16000L));
 
         final ExtractableResponse<Response> response = 상품_등록_요청(requestBody);
-        final Product responseBody = response.body().as(Product.class);
+        final ProductDto responseBody = response.body().as(ProductDto.class);
 
         assertAll(
                 () -> 응답_코드_일치_검증(response, HttpStatus.CREATED),
-                //() -> 단일_데이터_검증(responseBody.getPrice(), requestBody.getPrice()),
+                () -> 단일_데이터_검증(responseBody.getPrice().longValue(), requestBody.getPrice().longValue()),
                 () -> 단일_데이터_검증(responseBody.getName(), requestBody.getName())
         );
     }
@@ -37,12 +37,11 @@ public class ProductAcceptanceTest extends AcceptanceTest {
         final var response = 모든_상품_조회_요청();
         final var responseBody = response.body()
                 .jsonPath()
-                .getList(".", Product.class);
+                .getList(".", ProductDto.class);
 
         assertAll(
                 () -> 응답_코드_일치_검증(response, HttpStatus.OK),
                 () -> 리스트_데이터_검증(responseBody, "id", product1.getId(), product2.getId()),
-                //() -> 리스트_데이터_검증(responseBody, "price", product1.getPrice(), product2.getPrice()),
                 () -> 리스트_데이터_검증(responseBody, "name", product1.getName(), product2.getName())
         );
     }

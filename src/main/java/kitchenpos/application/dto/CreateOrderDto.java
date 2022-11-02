@@ -5,8 +5,11 @@ import java.util.stream.Collectors;
 
 public class CreateOrderDto {
 
-    private final Long orderTableId;
-    private final List<CreateOrderLineItemDto> orderLineItems;
+    private Long orderTableId;
+    private List<CreateOrderLineItemDto> orderLineItems;
+
+    private CreateOrderDto() {
+    }
 
     public CreateOrderDto(final Long orderTableId,
                           final List<CreateOrderLineItemDto> orderLineItems) {

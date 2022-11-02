@@ -4,10 +4,13 @@ import kitchenpos.domain.menu.MenuProduct;
 
 public class MenuProductDto {
 
-    private final Long seq;
-    private final Long menuId;
-    private final Long productId;
-    private final Long quantity;
+    private Long seq;
+    private Long menuId;
+    private Long productId;
+    private Long quantity;
+
+    private MenuProductDto() {
+    }
 
     public MenuProductDto(Long seq, Long menuId, Long productId, Long quantity) {
         this.seq = seq;

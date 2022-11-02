@@ -8,11 +8,14 @@ import kitchenpos.domain.order.OrderLineItem;
 
 public class OrderDto {
 
-    private final Long id;
-    private final Long orderTableId;
-    private final String orderStatus;
-    private final LocalDateTime orderedTime;
-    private final List<OrderLineItemDto> orderLineItems;
+    private Long id;
+    private Long orderTableId;
+    private String orderStatus;
+    private LocalDateTime orderedTime;
+    private List<OrderLineItemDto> orderLineItems;
+
+    private OrderDto() {
+    }
 
     public OrderDto(Long id,
                     Long orderTableId,
