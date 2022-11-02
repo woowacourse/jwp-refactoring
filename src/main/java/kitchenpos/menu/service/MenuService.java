@@ -13,7 +13,6 @@ import kitchenpos.menu.dto.MenuProductCreateRequest;
 import kitchenpos.menu.dto.MenuResponse;
 import kitchenpos.menu.exception.InvalidMenuPriceException;
 import kitchenpos.menu.exception.MenuGroupNotFoundException;
-import kitchenpos.menu.exception.ProductNotFoundException;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.menugroup.repository.MenuGroupRepository;
 import kitchenpos.order.exception.MenuNotFoundException;
@@ -48,10 +47,9 @@ public class MenuService {
 
     private List<MenuProduct> toMenuProducts(List<MenuProductCreateRequest> menuProductCreateRequests) {
         List<MenuProduct> menuProducts = new ArrayList<>();
-        for (MenuProductCreateRequest menuProductResponse : menuProductCreateRequests) {
-            Product product = productRepository.findById(menuProductResponse.getProductId())
-                    .orElseThrow(ProductNotFoundException::new);
-            MenuProduct menuProduct = new MenuProduct(product.getId(), new Quantity(menuProductResponse.getQuantity()));
+        for (MenuProductCreateRequest menuProductRequest : menuProductCreateRequests) {
+            MenuProduct menuProduct = new MenuProduct(
+                    menuProductRequest.getProductId(), new Quantity(menuProductRequest.getQuantity()));
             menuProducts.add(menuProduct);
         }
         return menuProducts;
