@@ -104,7 +104,7 @@ class TableGroupServiceTest {
         Long tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()))
                 .getId();
         OrderTable orderTable = orderTableDao.save(OrderTable.of(tableGroupId, 10, true));
-        orderDao.save(Order.of(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>()));
+        orderDao.save(new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>()));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -116,7 +116,7 @@ class TableGroupServiceTest {
         Long tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()))
                 .getId();
         OrderTable orderTable = orderTableDao.save(OrderTable.of(tableGroupId, 10, true));
-        orderDao.save(Order.of(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), new ArrayList<>()));
+        orderDao.save(new Order(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), new ArrayList<>()));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
                 .isInstanceOf(IllegalArgumentException.class)

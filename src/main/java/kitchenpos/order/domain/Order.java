@@ -28,13 +28,13 @@ public class Order {
         return new Order(null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), null);
     }
 
-    public static Order of(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
-        return new Order(id, orderTableId, orderStatus, orderedTime, new ArrayList<>());
+    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
+        this(id, orderTableId, orderStatus, orderedTime, new ArrayList<>());
     }
 
-    public static Order of(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+    public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
-        return new Order(null, orderTableId, orderStatus, orderedTime, orderLineItems);
+        this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
     public Long getId() {

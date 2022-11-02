@@ -13,7 +13,7 @@ class OrderTest {
 
     @Test
     void changeStatus() {
-        Order order = Order.of(1L, OrderStatus.COOKING.name(), LocalDateTime.now(), List.of());
+        Order order = new Order(1L, OrderStatus.COOKING.name(), LocalDateTime.now(), List.of());
 
         order.changeStatus(OrderStatus.MEAL.name());
 
@@ -22,7 +22,7 @@ class OrderTest {
 
     @Test
     void changeStatusThrowExceptionWhenCompletionStatus() {
-        Order order = Order.of(1L, OrderStatus.COMPLETION.name(), LocalDateTime.now(), List.of());
+        Order order = new Order(1L, OrderStatus.COMPLETION.name(), LocalDateTime.now(), List.of());
 
         assertThatThrownBy(() -> order.changeStatus(OrderStatus.MEAL.name()))
                 .isInstanceOf(IllegalArgumentException.class)

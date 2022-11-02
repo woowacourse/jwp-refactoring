@@ -83,7 +83,7 @@ class OrderServiceTest {
 
     @Test
     void changeOrderStatus() {
-        Order order = Order.of(1L, OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>());
+        Order order = new Order(1L, OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>());
         Long savedId = orderDao.save(order)
                 .getId();
         OrderChangeStatusRequest request = new OrderChangeStatusRequest("MEAL");
@@ -104,7 +104,7 @@ class OrderServiceTest {
 
     @Test
     void changeOrderStatusThrowExceptionWhenAlreadyCompleteOrder() {
-        Order order = Order.of(1L, OrderStatus.COMPLETION.name(), LocalDateTime.now(), new ArrayList<>());
+        Order order = new Order(1L, OrderStatus.COMPLETION.name(), LocalDateTime.now(), new ArrayList<>());
         Long savedId = orderDao.save(order)
                 .getId();
         OrderChangeStatusRequest request = new OrderChangeStatusRequest("MEAL");

@@ -64,7 +64,7 @@ class TableServiceTest {
     @Test
     void changeEmptyThrowExceptionWhenStillCookingOrderTable() {
         OrderTableEmptyRequest request = new OrderTableEmptyRequest(false);
-        orderDao.save(Order.of(1L, OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>()));
+        orderDao.save(new Order(1L, OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>()));
 
         assertThatThrownBy(() -> tableService.changeEmpty(1L, request))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -74,7 +74,7 @@ class TableServiceTest {
     @Test
     void changeEmptyThrowExceptionWhenStillMeal() {
         OrderTableEmptyRequest request = new OrderTableEmptyRequest(false);
-        orderDao.save(Order.of(1L, OrderStatus.MEAL.name(), LocalDateTime.now(), new ArrayList<>()));
+        orderDao.save(new Order(1L, OrderStatus.MEAL.name(), LocalDateTime.now(), new ArrayList<>()));
 
         assertThatThrownBy(() -> tableService.changeEmpty(1L, request
         ))
