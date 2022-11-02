@@ -77,7 +77,7 @@ public class ApplicationTest {
         return productDao.save(product);
     }
 
-    protected Order 주문_생성(Order order) {
+    protected Long 주문_생성(Order order) {
         return orderDao.save(order);
     }
 }

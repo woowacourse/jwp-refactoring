@@ -41,18 +41,13 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse create(OrderRequest orderRequest) {
+    public Long create(OrderRequest orderRequest) {
         validateOrderRequest(orderRequest);
 
         OrderTable orderTable = getOrderTable(orderRequest.getOrderTableId());
         validateOrderTable(orderTable);
 
-        Order order = orderDao.save(
-                new Order(orderRequest.getOrderTableId(), OrderStatus.COOKING, LocalDateTime.now()));
-
-        List<OrderLineItem> orderLineItems = getOrderLineItems(order, orderRequest.getOrderLineItems());
-
-        return mapToOrderResponse(order, orderLineItems);
+        return orderDao.save(new Order(orderRequest.getOrderTableId(), OrderStatus.COOKING, LocalDateTime.now()));
     }
 
     private void validateOrderRequest(OrderRequest orderRequest) {
@@ -127,8 +122,7 @@ public class OrderService {
         OrderStatus orderStatus = OrderStatus.find(orderRequest.getOrderStatus());
         Order order = getOrder(orderId);
         validateOrder(order);
-
-        orderDao.save(new Order(order.getId(), order.getOrderTableId(), orderStatus, order.getOrderedTime()));
+        orderDao.updateStatus(order.getId(), orderStatus);
     }
 
     private void validateOrder(Order order) {

@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import javax.sql.DataSource;
 import kitchenpos.domain.Order;
@@ -33,17 +32,13 @@ public class JdbcTemplateOrderDao implements OrderDao {
     }
 
     @Override
-    public Order save(Order entity) {
-        if (Objects.isNull(entity.getId())) {
-            SqlParameterSource parameters = new MapSqlParameterSource()
-                    .addValue("orderTableId", entity.getOrderTableId())
-                    .addValue("orderStatus", entity.getOrderStatus().name())
-                    .addValue("orderedTime", entity.getOrderedTime());
-            Number key = jdbcInsert.executeAndReturnKey(parameters);
-            return select(key.longValue());
-        }
-        update(entity);
-        return entity;
+    public Long save(Order entity) {
+        SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("orderTableId", entity.getOrderTableId())
+                .addValue("orderStatus", entity.getOrderStatus().name())
+                .addValue("orderedTime", entity.getOrderedTime());
+        Number key = jdbcInsert.executeAndReturnKey(parameters);
+        return key.longValue();
     }
 
     @Override
@@ -88,11 +83,12 @@ public class JdbcTemplateOrderDao implements OrderDao {
         return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    private void update(Order entity) {
+    @Override
+    public void updateStatus(Long id, OrderStatus orderStatus) {
         String sql = "UPDATE orders SET order_status = (:orderStatus) WHERE id = (:id)";
         SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("orderStatus", entity.getOrderStatus().name())
-                .addValue("id", entity.getId());
+                .addValue("orderStatus", orderStatus.name())
+                .addValue("id", id);
         jdbcTemplate.update(sql, parameters);
     }
 

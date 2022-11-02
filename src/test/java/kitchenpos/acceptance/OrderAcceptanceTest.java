@@ -65,14 +65,16 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                 .collect(Collectors.toList());
         OrderRequest orderRequest = new OrderRequest(tableId, orderLineItems);
 
-        return RestAssured.given().log().all()
+        String location = RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .body(orderRequest)
                 .when().log().all()
                 .post("/api/orders")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
-                .extract().jsonPath().getLong("id");
+                .extract().header("Location");
+
+        return Long.parseLong(location.split("/api/orders/")[1]);
     }
 
     private List<OrderResponse> getOrders() {

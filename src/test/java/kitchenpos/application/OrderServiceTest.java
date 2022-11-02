@@ -126,13 +126,11 @@ class OrderServiceTest extends ApplicationTest {
         MenuProduct menuProduct = new MenuProduct(product.getId(), 1, BigDecimal.valueOf(19_000));
         Menu menu = 메뉴_생성(Menu.create("메뉴111", BigDecimal.valueOf(17_000), menuGroup.getId(), List.of(menuProduct)));
         OrderTable orderTable = 주문테이블_생성(new OrderTable(null, 5, false));
-        OrderResponse orderResponse = orderService.create(
+        Long orderId = orderService.create(
                 new OrderRequest(orderTable.getId(), List.of(new OrderLineItemRequest(menu.getId(), 2))));
 
-        orderService.changeOrderStatus(orderResponse.getId(), new OrderStatusRequest(status));
-
-        Order order = orderDao.findById(orderResponse.getId())
-                .orElseThrow();
+        orderService.changeOrderStatus(orderId, new OrderStatusRequest(status));
+        Order order = orderDao.findById(orderId).orElseThrow();
 
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.find(status));
     }
@@ -141,9 +139,9 @@ class OrderServiceTest extends ApplicationTest {
     @Test
     void changeOrderStatusWithCompletionOrder() {
         OrderTable orderTable = 주문테이블_생성(new OrderTable(null, 5, false));
-        Order order = 주문_생성(new Order(orderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now()));
+        Long orderId = 주문_생성(new Order(orderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now()));
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), new OrderStatusRequest("COOKING")))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, new OrderStatusRequest("COOKING")))
                 .isInstanceOf(InvalidOrderException.class)
                 .hasMessage("주문이 완료 상태입니다.");
     }
