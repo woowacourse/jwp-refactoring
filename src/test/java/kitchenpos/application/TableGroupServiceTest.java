@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import static kitchenpos.OrderFixtures.*;
-import static kitchenpos.OrderTableFixtures.*;
+import static kitchenpos.OrderFixtures.createOrder;
+import static kitchenpos.OrderTableFixtures.createOrderTable;
 import static kitchenpos.TableGroupFixtures.createTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -10,13 +10,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
-import kitchenpos.OrderFixtures;
-import kitchenpos.OrderTableFixtures;
 import kitchenpos.application.dto.request.TableGroupCreateRequest;
 import kitchenpos.application.dto.request.TableGroupIdRequest;
 import kitchenpos.application.dto.response.TableGroupResponse;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.order.Order;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.tablegroup.TableGroup;
 import kitchenpos.repository.OrderRepository;

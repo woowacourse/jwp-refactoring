@@ -14,7 +14,7 @@ public class MenuEntityRepositoryImpl implements MenuEntityRepository {
     }
 
     @Override
-    public boolean existsAllByInIn(Collection<Long> ids) {
+    public boolean existsAllByIdIn(Collection<Long> ids) {
         long counts = menuRepository.countByIdIn(ids);
         return ids.size() == counts;
     }

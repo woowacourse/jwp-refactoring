@@ -7,9 +7,9 @@ import kitchenpos.application.dto.request.OrderRequest;
 import kitchenpos.application.dto.request.OrderStatusChangeRequest;
 import kitchenpos.application.dto.response.OrderLineItemResponse;
 import kitchenpos.application.dto.response.OrderResponse;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 
 public class OrderFixtures {

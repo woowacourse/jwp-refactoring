@@ -1,6 +1,7 @@
 package kitchenpos.repository.entity;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import kitchenpos.TableGroupFixtures;
 import kitchenpos.domain.tablegroup.TableGroup;

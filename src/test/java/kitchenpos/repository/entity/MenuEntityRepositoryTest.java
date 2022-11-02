@@ -27,7 +27,7 @@ class MenuEntityRepositoryTest {
         // given
         Menu menu = menuRepository.save(MenuFixtures.createMenu());
         // when
-        boolean exists = menuEntityRepository.existsAllByInIn(List.of(menu.getId()));
+        boolean exists = menuEntityRepository.existsAllByIdIn(List.of(menu.getId()));
         // then
         assertThat(exists).isTrue();
     }
@@ -37,7 +37,7 @@ class MenuEntityRepositoryTest {
         // given
         Long invalidId = 999L;
         // when
-        boolean exists = menuEntityRepository.existsAllByInIn(List.of(invalidId));
+        boolean exists = menuEntityRepository.existsAllByIdIn(List.of(invalidId));
         // then
         assertThat(exists).isFalse();
     }

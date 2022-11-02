@@ -6,13 +6,13 @@ import kitchenpos.application.dto.request.OrderLineItemRequest;
 import kitchenpos.application.dto.request.OrderRequest;
 import kitchenpos.application.dto.request.OrderStatusChangeRequest;
 import kitchenpos.application.dto.response.OrderResponse;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.table.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -58,12 +58,12 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
         List<Long> menuIds = toMenuIds(itemRequests);
-        if (!menuRepository.existsAllByInIn(menuIds)) {
+        if (!menuRepository.existsAllByIdIn(menuIds)) {
             throw new IllegalArgumentException("존재하지 않는 메뉴가 있습니다 : " + menuIds);
         }
     }
 
-    private static List<Long> toMenuIds(List<OrderLineItemRequest> orderLineItems) {
+    private List<Long> toMenuIds(List<OrderLineItemRequest> orderLineItems) {
         return orderLineItems.stream()
                 .map(OrderLineItemRequest::getMenuId)
                 .collect(Collectors.toList());
