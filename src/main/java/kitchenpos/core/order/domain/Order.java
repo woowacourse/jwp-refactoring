@@ -34,12 +34,6 @@ public class Order {
                            final List<OrderLineItem> orderLineItems,
                            final OrderValidator orderValidator) {
         orderValidator.validate(new Order(id, orderTableId, orderStatus, orderedTime, orderLineItems));
-        if (orderLineItems == null) {
-            throw new IllegalArgumentException("주문 상품 목록이 없으면 주문을 생성할 수 없습니다.");
-        }
-        if (orderLineItems.isEmpty()) {
-            throw new IllegalArgumentException("주문 상품 목록이 없으면 주문을 생성할 수 없습니다.");
-        }
         return new Order(id, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 

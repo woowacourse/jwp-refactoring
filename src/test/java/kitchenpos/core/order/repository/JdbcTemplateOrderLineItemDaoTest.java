@@ -1,15 +1,15 @@
 package kitchenpos.core.order.repository;
 
 import static kitchenpos.fixture.OrderFixture.getOrderLineItem;
+import static kitchenpos.fixture.OrderFixture.getUnSavedOrder;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import kitchenpos.common.JdbcTemplateTest;
 import kitchenpos.core.order.domain.Order;
 import kitchenpos.core.order.domain.OrderDao;
 import kitchenpos.core.order.domain.OrderLineItem;
 import kitchenpos.core.order.domain.OrderLineItemDao;
-import kitchenpos.common.JdbcTemplateTest;
-import kitchenpos.fixture.OrderFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,7 +46,7 @@ class JdbcTemplateOrderLineItemDaoTest extends JdbcTemplateTest {
     }
 
     private OrderLineItem saveOrderLineItem() {
-        final Order saveOrder = orderDao.save(OrderFixture.getOrderRequest());
+        final Order saveOrder = orderDao.save(getUnSavedOrder());
         return orderLineItemDao.save(getOrderLineItem(saveOrder.getId()));
     }
 }

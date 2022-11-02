@@ -1,5 +1,7 @@
 package kitchenpos.core.order.application;
 
+import static kitchenpos.core.order.domain.OrderStatus.COMPLETION;
+import static kitchenpos.core.order.domain.OrderStatus.COOKING;
 import static kitchenpos.core.order.domain.OrderStatus.MEAL;
 import static kitchenpos.fixture.OrderFixture.getOrder;
 import static kitchenpos.fixture.OrderFixture.getOrderLineItem;
@@ -16,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 import kitchenpos.common.ServiceTest;
+import kitchenpos.core.order.application.dto.OrderRequest;
 import kitchenpos.core.order.domain.Order;
 import kitchenpos.core.order.domain.OrderLineItem;
 import kitchenpos.core.table.domain.OrderTable;
@@ -31,19 +34,20 @@ class OrderServiceTest extends ServiceTest {
 
     @Autowired
     private OrderService orderService;
-    private Order order;
+    private OrderRequest orderRequest;
 
     @BeforeEach
     void setUp() {
         final OrderTable orderTable = getOrderTable();
-        order = getOrder();
+        orderRequest = getOrderRequest();
+        final Order order = getOrder();
         order.changeOrderLineItems(Arrays.asList(getOrderLineItem(order.getId())));
         final OrderLineItem orderLineItem = getOrderLineItem(order.getId());
 
         given(orderTableDao.findById(any())).willReturn(Optional.of(orderTable));
         given(orderLineItemDao.save(any())).willReturn(orderLineItem);
         given(menuDao.countByIdIn(any())).willReturn(1L);
-        given(orderDao.findById(any())).willReturn(Optional.ofNullable(order));
+        given(orderDao.findById(any())).willReturn(Optional.of(order));
         given(orderDao.save(any())).willReturn(order);
     }
 
@@ -55,8 +59,8 @@ class OrderServiceTest extends ServiceTest {
         given(orderTableDao.findById(1L)).willReturn(Optional.of(orderTable));
 
         // when
-        order = getOrderRequest(1L, Arrays.asList(getOrderLineItemRequest()));
-        final Order savedOrder = orderService.create(this.order);
+        orderRequest = getOrderRequest(1L, COMPLETION.name(), Arrays.asList(getOrderLineItemRequest()));
+        final Order savedOrder = orderService.create(this.orderRequest);
 
         // then
         final List<OrderLineItem> orderLineItems = savedOrder.getOrderLineItems();
@@ -65,15 +69,17 @@ class OrderServiceTest extends ServiceTest {
 
     @ParameterizedTest(name = "{1} 주문을 생성하면 예외가 발생한다.")
     @MethodSource("invalidParams")
-    void createWithInvalidOrder(final Order order, final String testName) {
+    void createWithInvalidOrder(final OrderRequest order, final String testName) {
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     private static Stream<Arguments> invalidParams() {
         return Stream.of(
-                Arguments.of(Order.of(1L, Arrays.asList(getOrderLineItemRequest(), getOrderLineItemRequest()), order -> {}),
+                Arguments.of(getOrderRequest(1L, COOKING.name(), Arrays.asList(getOrderLineItemRequest(), getOrderLineItemRequest())),
                         "주문 상품 목록에 등록되지 않은 메뉴가 존재할 경우")
+//                Arguments.of(Order.of(1L, Arrays.asList(getOrderLineItemRequest(), getOrderLineItemRequest()), order -> {}),
+//                        "주문 상품 목록에 등록되지 않은 메뉴가 존재할 경우")
         );
     }
 
@@ -85,10 +91,10 @@ class OrderServiceTest extends ServiceTest {
         given(orderTableDao.findById(1L)).willReturn(Optional.of(orderTable));
 
         // when
-        order = getOrderRequest(1L);
+        orderRequest = getOrderRequest(1L);
 
         // when
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문 테이블이 비워져있으면 주문을 생성할 수 없습니다.");
     }
@@ -97,8 +103,8 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 상태를 변경할 수 있다.")
     void changeOrderStatus() {
         // given
-        final Order savedOrder = orderService.create(order);
-        final Order newStatusOrder = getOrderRequest(MEAL.name());
+        final Order savedOrder = orderService.create(orderRequest);
+        final OrderRequest newStatusOrder = getOrderRequest(MEAL.name());
 
         // when
         final Order updateOrder = orderService.changeOrderStatus(savedOrder.getId(), newStatusOrder);

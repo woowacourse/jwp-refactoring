@@ -18,6 +18,12 @@ public class OrderCreationValidator implements OrderValidator {
 
     @Override
     public void validate(final Order order) {
+        if (order.getOrderLineItems() == null) {
+            throw new IllegalArgumentException("주문 상품 목록이 없으면 주문을 생성할 수 없습니다.");
+        }
+        if (order.getOrderLineItems().isEmpty()) {
+            throw new IllegalArgumentException("주문 상품 목록이 없으면 주문을 생성할 수 없습니다.");
+        }
         final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
                 .orElseThrow(NoSuchElementException::new);
         if (orderTable.isEmpty()) {
