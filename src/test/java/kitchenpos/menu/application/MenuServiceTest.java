@@ -62,7 +62,6 @@ public class MenuServiceTest extends ServiceTest {
     private void assertMenuWithRequest(final MenuRequest request, final MenuResponse response) {
         assertThat(response.getName()).isEqualTo(request.getName());
         assertThat(response.getPrice().compareTo(request.getPrice())).isEqualTo(0);
-        assertThat(response.getMenuProducts()).isNotNull();
     }
 
     private void assertMenuResponse(final MenuResponse actual, final MenuResponse expected) {

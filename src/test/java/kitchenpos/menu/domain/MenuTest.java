@@ -22,16 +22,14 @@ public class MenuTest {
     @DisplayName("메뉴를 생성한다.")
     void create() {
         // when, then
-        assertDoesNotThrow(() -> new Menu(noId, "후라이드+후라이드+후라이드", new BigDecimal(0), noId,
-            List.of(new MenuProduct(noId, noId, noId, 3))));
+        assertDoesNotThrow(() -> new Menu(noId, "후라이드+후라이드+후라이드", new BigDecimal(0), noId));
     }
 
     @Test
     @DisplayName("가격이 음수이면 예외를 던진다.")
     void create_price_negative() {
         // when, then
-        assertThatThrownBy(() -> new Menu(noId, "후라이드+후라이드+후라이드", new BigDecimal(-1), noId,
-            List.of(new MenuProduct(noId, noId, noId, 3))))
+        assertThatThrownBy(() -> new Menu(noId, "후라이드+후라이드+후라이드", new BigDecimal(-1), noId))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -41,12 +39,17 @@ public class MenuTest {
     void validatePriceUnderProductsSum(int priceValue) {
         // given
         Menu menu = createMenu(priceValue);
+        List<MenuProduct> menuProducts = List.of(new MenuProduct(noId, noId, 1L, 2),
+            new MenuProduct(noId, noId, 2L, 3));
 
         List<Product> products = List.of(new Product(1L, "후라이드", BigDecimal.valueOf(10000)),
             new Product(2L, "양념", BigDecimal.valueOf(10000)));
 
+        MenuValidator validator = new MenuValidator();
+
         // when, then
-        Assertions.assertDoesNotThrow(() -> menu.validatePriceUnderProductsSum(products));
+        Assertions.assertDoesNotThrow(
+            () -> validator.validatePriceUnderProductsSum(menu.getPrice(), menuProducts, products));
     }
 
     @Test
@@ -54,13 +57,16 @@ public class MenuTest {
     void validatePriceUnderProductsSum_exception() {
         // given
         int priceValue = 50001;
+        List<MenuProduct> menuProducts = List.of(new MenuProduct(noId, noId, 1L, 2),
+            new MenuProduct(noId, noId, 2L, 3));
         Menu menu = createMenu(priceValue);
 
         List<Product> products = List.of(new Product(1L, "후라이드", BigDecimal.valueOf(10000)),
             new Product(2L, "양념", BigDecimal.valueOf(10000)));
+        MenuValidator validator = new MenuValidator();
 
         // when, then
-        assertThatThrownBy(() -> menu.validatePriceUnderProductsSum(products))
+        assertThatThrownBy(() -> validator.validatePriceUnderProductsSum(menu.getPrice(), menuProducts, products))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessageContaining("price must be equal to or less than the sum of product prices");
     }
@@ -70,19 +76,21 @@ public class MenuTest {
     void validateMenuProductMatchProduct() {
         // given
         int priceValue = 50000;
+        List<MenuProduct> menuProducts = List.of(new MenuProduct(noId, noId, 1L, 2),
+            new MenuProduct(noId, noId, 2L, 3));
         Menu menu = createMenu(priceValue);
 
         List<Product> products = List.of(new Product(2L, "후라이드", BigDecimal.valueOf(10000)),
             new Product(1L, "양념", BigDecimal.valueOf(10000)));
+        MenuValidator validator = new MenuValidator();
 
         // when, then
-        assertThatThrownBy(() -> menu.validatePriceUnderProductsSum(products))
+        assertThatThrownBy(() -> validator.validatePriceUnderProductsSum(menu.getPrice(), menuProducts, products))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessageContaining("menu product not match product");
     }
 
     private Menu createMenu(final int priceValue) {
-        return new Menu(noId, "후라이드+양념", new BigDecimal(priceValue), noId,
-            List.of(new MenuProduct(noId, noId, 1L, 2), new MenuProduct(noId, noId, 2L, 3)));
+        return new Menu(noId, "후라이드+양념", new BigDecimal(priceValue), noId);
     }
 }

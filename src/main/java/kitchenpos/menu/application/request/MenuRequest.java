@@ -49,8 +49,4 @@ public class MenuRequest {
             .map(MenuProductRequest::toEntity)
             .collect(Collectors.toUnmodifiableList());
     }
-
-    public Menu toEntity() {
-        return new Menu(id, name, price, menuGroupId, getMenuProducts());
-    }
 }

@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 import kitchenpos.common.AcceptanceTest;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.application.request.MenuProductRequest;
+import kitchenpos.menu.application.request.MenuRequest;
 import kitchenpos.menu.application.request.MenuGroupRequest;
 import kitchenpos.product.application.request.ProductCreateRequest;
 
@@ -19,28 +19,28 @@ public class MenuAcceptanceTest extends AcceptanceTest {
     @DisplayName("메뉴를 등록한다.")
     void createMenu() {
         // given
-        Menu menu = createMenuFixture();
+        MenuRequest request = createMenuFixture();
 
         // when, then
-        _메뉴등록검증(menu);
+        _메뉴등록검증(request);
     }
 
     @Test
     @DisplayName("전체 메뉴를 조회한다.")
     void findAll() {
         // given
-        Menu menu1 = createMenuFixture();
-        Menu menu2 = createMenuFixture();
+        MenuRequest request1 = createMenuFixture();
+        MenuRequest request2 = createMenuFixture();
 
-        _메뉴등록검증(menu1);
-        _메뉴등록검증(menu2);
+        _메뉴등록검증(request1);
+        _메뉴등록검증(request1);
 
         // when, then
         _메뉴조회검증();
     }
 
-    private void _메뉴등록검증(final Menu menu) {
-        post("/api/menus", menu).assertThat()
+    private void _메뉴등록검증(final MenuRequest request) {
+        post("/api/menus", request).assertThat()
             .statusCode(HttpStatus.CREATED.value());
     }
 
@@ -49,14 +49,14 @@ public class MenuAcceptanceTest extends AcceptanceTest {
             .statusCode(HttpStatus.OK.value());
     }
 
-    private Menu createMenuFixture() {
+    private MenuRequest createMenuFixture() {
         MenuGroupRequest menuGroup = new MenuGroupRequest(NO_ID, "세마리메뉴");
         long menuGroupId = _메뉴그룹등록_Id반환(menuGroup);
 
         ProductCreateRequest product = new ProductCreateRequest("후라이드", BigDecimal.valueOf(16000));
         long productId = _상품등록_Id반환(product);
 
-        return new Menu(NO_ID, "후라이드+후라이드+후라이드", new BigDecimal(48000), menuGroupId,
-            List.of(new MenuProduct(NO_ID, NO_ID, productId, 3)));
+        List<MenuProductRequest> menuProducts = List.of(new MenuProductRequest(NO_ID, NO_ID, productId, 3));
+        return new MenuRequest(NO_ID, "후라이드+후라이드+후라이드", new BigDecimal(48000), menuGroupId, menuProducts);
     }
 }

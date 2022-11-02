@@ -15,6 +15,7 @@ import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.application.request.MenuRequest;
 import kitchenpos.menu.dao.MenuOrderDao;
 import kitchenpos.menu.domain.MenuOrder;
+import kitchenpos.menu.domain.MenuValidator;
 import kitchenpos.product.dao.ProductDao;
 import kitchenpos.product.domain.Product;
 
@@ -51,14 +52,19 @@ public class MenuService {
         MenuOrder orderMenu = new MenuOrder(menu.getName(), menu.getPrice());
         menuOrderDao.save(orderMenu);
 
+        MenuValidator validator = new MenuValidator();
+        validator.validatePriceUnderProductsSum(savedMenu.getPrice(), menuProducts, getProducts(menuProducts));
         savedMenu.addMenuProducts(menuProducts);
-        menu.validatePriceUnderProductsSum(getProducts(menuProducts));
 
+        saveMenuProducts(menuProducts);
+
+        return MenuResponse.from(savedMenu);
+    }
+
+    private void saveMenuProducts(final List<MenuProduct> menuProducts) {
         for (final MenuProduct menuProduct : menuProducts) {
             menuProductDao.save(menuProduct);
         }
-
-        return MenuResponse.from(savedMenu);
     }
 
     private void validateMenuGroupExists(final Long menuGroupId) {

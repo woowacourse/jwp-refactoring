@@ -1,12 +1,10 @@
 package kitchenpos.menu.application.response;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuProduct;
 
 public class MenuResponse {
 
@@ -14,23 +12,16 @@ public class MenuResponse {
     private final String name;
     private final BigDecimal price;
     private final Long menuGroupId;
-    private final List<MenuProductResponse> menuProducts;
 
-    public MenuResponse(Long id, String name, BigDecimal price, Long menuGroupId,
-        List<MenuProductResponse> menuProducts) {
+    public MenuResponse(Long id, String name, BigDecimal price, Long menuGroupId) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
     }
 
     public static MenuResponse from(Menu menu) {
-        List<MenuProductResponse> menuProducts = menu.getMenuProducts().stream()
-            .map(MenuProductResponse::from)
-            .collect(Collectors.toUnmodifiableList());
-
-        return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menuProducts);
+        return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId());
     }
 
     public static List<MenuResponse> fromAll(final List<Menu> menus) {
@@ -53,9 +44,5 @@ public class MenuResponse {
 
     public Long getMenuGroupId() {
         return menuGroupId;
-    }
-
-    public List<MenuProductResponse> getMenuProducts() {
-        return menuProducts;
     }
 }
