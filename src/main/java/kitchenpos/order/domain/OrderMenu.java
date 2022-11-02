@@ -1,4 +1,4 @@
-package kitchenpos.menu.domain;
+package kitchenpos.order.domain;
 
 import java.math.BigDecimal;
 
@@ -10,8 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "menu_order")
-public class MenuOrder {
+@Table(name = "order_menu")
+public class OrderMenu {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,16 +23,16 @@ public class MenuOrder {
     @Column(name = "price")
     private BigDecimal price;
 
-    protected MenuOrder() {
+    protected OrderMenu() {
     }
 
-    public MenuOrder(final Long id, final String name, final BigDecimal price) {
+    public OrderMenu(final Long id, final String name, final BigDecimal price) {
         this.id = id;
         this.name = name;
         this.price = price;
     }
 
-    public MenuOrder(final String name, final BigDecimal price) {
+    public OrderMenu(final String name, final BigDecimal price) {
         this(null, name, price);
     }
 

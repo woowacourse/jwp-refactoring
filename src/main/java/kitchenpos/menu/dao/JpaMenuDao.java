@@ -30,6 +30,12 @@ public class JpaMenuDao implements MenuDao {
     }
 
     @Override
+    public Menu getById(final Long id) {
+        return menuRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("menu not found"));
+    }
+
+    @Override
     public List<Menu> findAll() {
         return menuRepository.findAll();
     }

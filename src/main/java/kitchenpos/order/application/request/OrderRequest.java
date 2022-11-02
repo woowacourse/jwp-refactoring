@@ -32,15 +32,6 @@ public class OrderRequest {
         return orderStatus;
     }
 
-    // public List<OrderLineItem> getOrderLineItems() {
-    //     List<OrderLineItem> list = new ArrayList<>();
-    //     for (OrderLineItemRequest orderLineItem : orderLineItemRequests) {
-    //         OrderLineItem toEntity = orderLineItem.toEntity();
-    //         list.add(toEntity);
-    //     }
-    //     return Collections.unmodifiableList(list);
-    // }
-
     public List<OrderLineItemRequest> getOrderLineItemRequests() {
         return orderLineItemRequests;
     }

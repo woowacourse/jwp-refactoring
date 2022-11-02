@@ -17,8 +17,8 @@ truncate table menu_group;
 alter table menu_group
     alter column id restart with 1;
 
-truncate table menu_order;
-alter table menu_order
+truncate table order_menu;
+alter table order_menu
     alter column id restart with 1;
 
 truncate table menu_product;

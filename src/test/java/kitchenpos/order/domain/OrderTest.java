@@ -49,6 +49,6 @@ public class OrderTest {
     private Order createOrder() {
         OrderTable orderTable = new OrderTable(1, false);
         OrderLineItem orderLineItem = new OrderLineItem(noId, noId, noId, 1);
-        return new Order(orderTable, List.of(orderLineItem));
+        return new Order(orderTable);
     }
 }
