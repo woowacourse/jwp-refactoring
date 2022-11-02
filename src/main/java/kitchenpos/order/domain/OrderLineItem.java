@@ -55,15 +55,4 @@ public class OrderLineItem {
     public Long getQuantity() {
         return quantity;
     }
-
-    @Override
-    public String toString() {
-        return "OrderLineItem{" +
-                "seq=" + seq +
-                ", menuId=" + menuId +
-                ", menuName='" + menuName + '\'' +
-                ", menuPrice=" + menuPrice +
-                ", quantity=" + quantity +
-                '}';
-    }
 }
