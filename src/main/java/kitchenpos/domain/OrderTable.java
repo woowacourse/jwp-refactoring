@@ -54,6 +54,12 @@ public class OrderTable {
     }
 
     public void changeNumberOfGuest(final int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("손님 수는 음수일 수 없습니다. numberOfGuests = " + numberOfGuests);
+        }
+        if (empty) {
+            throw new IllegalArgumentException("빈 테이블입니다.");
+        }
         this.numberOfGuests = numberOfGuests;
     }
 
@@ -62,6 +68,13 @@ public class OrderTable {
     }
 
     public void changeEmpty(final boolean empty) {
+        if (isGrouped()) {
+            throw new IllegalArgumentException(
+                    String.format("단체 테이블에 속해있습니다. orderTableId = %d, tableGroupId = %d", id, tableGroup.getId()));
+        }
+        if (order != null && !order.isComplete()) {
+            throw new IllegalArgumentException("요리 중 혹은 식사 중인 테이블입니다.");
+        }
         this.empty = empty;
     }
 

@@ -33,9 +33,10 @@ public class OrderTableResponse {
     }
 
     public static OrderTableResponse from(final OrderTable orderTable) {
+        var tableGroup = orderTable.getTableGroup();
         return new OrderTableResponse(
                 orderTable.getId(),
-                orderTable.getTableGroup().getId(),
+                tableGroup == null ? null : tableGroup.getId(),
                 orderTable.getNumberOfGuests(),
                 orderTable.isEmpty());
     }

@@ -69,10 +69,14 @@ public class TableGroup {
 
     private void addOrderTables(List<OrderTable> orderTables) {
         for (OrderTable orderTable : orderTables) {
-            orderTable.setTableGroup(this);
-            orderTable.changeEmpty(false);
+            setGroup(orderTable);
         }
         this.orderTables.addAll(orderTables);
+    }
+
+    private void setGroup(OrderTable orderTable) {
+        orderTable.changeEmpty(false);
+        orderTable.setTableGroup(this);
     }
 
     private void validateSize(List<OrderTable> orderTables) {

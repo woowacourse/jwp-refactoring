@@ -160,8 +160,9 @@ class TableGroupServiceTest {
     @DisplayName("테이블 단체에 속한 주문 테이블의 주문 상태가 MEAL 또는 COOKING이면 그룹 해제를 할 수 없다")
     void cannotUngroup_WhenIncludedOrderTables_MEAL_or_COOKING(OrderStatus orderStatus) {
         // given
-        var orderTable1 = orderTableRepository.save(createOrderTable(1, false));
-        var orderTable2 = orderTableRepository.save(createOrderTable(1, false));
+        var orderTable1 = orderTableRepository.save(createEmptyTable());
+        var orderTable2 = orderTableRepository.save(createEmptyTable());
+        var tableGroup = tableGroupRepository.save(new TableGroup(List.of(orderTable1, orderTable2)));
 
         var menuGroupId = menuGroupRepository.save(new MenuGroup("후라이드 치킨")).getId();
         var product = productRepository.save(aProduct().build());
@@ -172,11 +173,7 @@ class TableGroupServiceTest {
         var order2 = orderRepository.save(new Order(orderTable2, List.of(new OrderLineItem(menu.getId(), 1L))));
         order1.changeStatus(orderStatus);
         order2.changeStatus(OrderStatus.COMPLETION);
-        orderTable1.changeEmpty(true);
-        orderTable2.changeEmpty(true);
         entityManager.flush();
-
-        var tableGroup = tableGroupRepository.save(new TableGroup(List.of(orderTable1, orderTable2)));
 
         // when && then
         assertThatThrownBy(() -> sut.ungroup(tableGroup.getId()))

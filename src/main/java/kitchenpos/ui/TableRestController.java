@@ -2,6 +2,9 @@ package kitchenpos.ui;
 
 import java.net.URI;
 import java.util.List;
+import kitchenpos.application.ChangeEmptyRequest;
+import kitchenpos.application.ChangeNumberOfGuestsRequest;
+import kitchenpos.application.OrderTableResponse;
 import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.reqeust.CreateTableRequest;
@@ -31,29 +34,26 @@ public class TableRestController {
     }
 
     @GetMapping("/api/tables")
-    public ResponseEntity<List<OrderTable>> list() {
+    public ResponseEntity<List<OrderTableResponse>> list() {
         return ResponseEntity.ok()
-                .body(tableService.list())
-                ;
+                .body(tableService.list());
     }
 
     @PutMapping("/api/tables/{orderTableId}/empty")
-    public ResponseEntity<OrderTable> changeEmpty(
+    public ResponseEntity<OrderTableResponse> changeEmpty(
             @PathVariable final Long orderTableId,
-            @RequestBody final OrderTable orderTable
+            @RequestBody final ChangeEmptyRequest request
     ) {
         return ResponseEntity.ok()
-                .body(tableService.changeEmpty(orderTableId, orderTable))
-                ;
+                .body(tableService.changeEmpty(orderTableId, request));
     }
 
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
-    public ResponseEntity<OrderTable> changeNumberOfGuests(
+    public ResponseEntity<OrderTableResponse> changeNumberOfGuests(
             @PathVariable final Long orderTableId,
-            @RequestBody final OrderTable orderTable
+            @RequestBody final ChangeNumberOfGuestsRequest request
     ) {
         return ResponseEntity.ok()
-                .body(tableService.changeNumberOfGuests(orderTableId, orderTable))
-                ;
+                .body(tableService.changeNumberOfGuests(orderTableId, request));
     }
 }
