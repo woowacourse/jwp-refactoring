@@ -21,6 +21,10 @@ public class TableGroupRequest {
         return new TableGroup(LocalDateTime.now(), orderTables);
     }
 
+    public List<OrderTableIdRequest> getOrderTables() {
+        return orderTables;
+    }
+
     public List<Long> getOrderTableIds() {
         return orderTables.stream()
                 .map(OrderTableIdRequest::getId)

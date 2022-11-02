@@ -3,10 +3,13 @@ package kitchenpos.application;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderMenuDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderMenuRequest;
@@ -22,16 +25,21 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
+
+    private final MenuGroupDao menuGroupDao;
     private final MenuDao menuDao;
+    private final OrderMenuDao orderMenuDao;
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
 
     public OrderService(
-            final MenuDao menuDao,
+            final MenuGroupDao menuGroupDao, final MenuDao menuDao, final OrderMenuDao orderMenuDao,
             final OrderDao orderDao,
             final OrderTableDao orderTableDao
     ) {
+        this.menuGroupDao = menuGroupDao;
         this.menuDao = menuDao;
+        this.orderMenuDao = orderMenuDao;
         this.orderDao = orderDao;
         this.orderTableDao = orderTableDao;
     }
@@ -41,6 +49,11 @@ public class OrderService {
         final Order order = convertToOrder(orderRequest);
         validateMenusExist(orderRequest.getOrderLineItems().size(), order);
         validateOrderTableExistAndNotEmpty(orderRequest);
+
+        for (OrderLineItem orderLineItem : order.getOrderLineItems()) {
+            orderMenuDao.save(orderLineItem.getOrderMenu());
+        }
+
         orderDao.save(order);
         return OrderResponse.from(order);
     }
@@ -51,6 +64,7 @@ public class OrderService {
                 .map(OrderMenuRequest::getMenuId)
                 .collect(Collectors.toList());
         final List<Menu> menus = menuDao.findByIdIn(menuIds);
+
         return orderRequest.toEntity(menus);
     }
 

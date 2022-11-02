@@ -5,17 +5,17 @@ import kitchenpos.domain.OrderLineItem;
 public class OrderLineItemResponse {
 
     private Long seq;
-    private MenuResponse menuResponse;
+    private OrderMenuResponse orderMenu;
     private long quantity;
 
-    private OrderLineItemResponse(final Long seq, final MenuResponse menuResponse, final long quantity) {
+    public OrderLineItemResponse(final Long seq, final OrderMenuResponse orderMenu, final long quantity) {
         this.seq = seq;
-        this.menuResponse = menuResponse;
+        this.orderMenu = orderMenu;
         this.quantity = quantity;
     }
 
     public static OrderLineItemResponse from(final OrderLineItem orderLineItem) {
-        return new OrderLineItemResponse(orderLineItem.getSeq(), MenuResponse.from(orderLineItem.getMenu()),
+        return new OrderLineItemResponse(orderLineItem.getSeq(), OrderMenuResponse.from(orderLineItem.getOrderMenu()),
                 orderLineItem.getQuantity());
     }
 
@@ -23,8 +23,8 @@ public class OrderLineItemResponse {
         return seq;
     }
 
-    public MenuResponse getMenuResponse() {
-        return menuResponse;
+    public OrderMenuResponse getOrderMenu() {
+        return orderMenu;
     }
 
     public long getQuantity() {

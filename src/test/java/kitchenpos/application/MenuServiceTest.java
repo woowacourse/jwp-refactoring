@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuProductRequest;
@@ -97,9 +98,9 @@ class MenuServiceTest extends ServiceTest {
     void 모든_메뉴를_조회할_때_메뉴제품도_함께_조회되어야_한다() {
         // given
         final Product product = 제품을_저장한다(PRODUCT_PRICE_10000.생성());
-        final Long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
+        final MenuGroup menuGroup = 메뉴그룹을_저장한다(MENU_GROUP_1.생성());
         final MenuProduct menuProduct = MENU_PRODUCT_1.생성(product);
-        final Menu savedMenu = 메뉴를_저장한다(MENU_PRICE_10000.생성(menuGroupId, List.of(menuProduct)));
+        final Menu savedMenu = 메뉴를_저장한다(MENU_PRICE_10000.생성(menuGroup, List.of(menuProduct)));
 
         final MenuResponse expectedMenuResponse = MenuResponse.from(savedMenu);
         final MenuProductResponse expectedMenuProductResponse = MenuProductResponse.from(menuProduct);

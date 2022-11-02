@@ -16,17 +16,24 @@ import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderMenu;
+import kitchenpos.domain.OrderMenuProduct;
+import kitchenpos.domain.Product;
 import kitchenpos.dto.request.OrderMenuRequest;
 import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.dto.request.OrderStatusRequest;
 import kitchenpos.dto.response.OrderLineItemResponse;
+import kitchenpos.dto.response.OrderMenuProductResponse;
+import kitchenpos.dto.response.OrderMenuResponse;
 import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.exceptions.EntityNotExistException;
 import kitchenpos.exceptions.OrderAlreadyCompletionException;
 import kitchenpos.exceptions.OrderLineItemsEmptyException;
 import kitchenpos.exceptions.OrderTableEmptyException;
+import kitchenpos.support.ProductFixture;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -35,8 +42,8 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void 주문을_저장한다() {
         // given
-        final Long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
-        final Long menuId = 상품과_함께_메뉴를_저장한다(menuGroupId).getId();
+        final MenuGroup menuGroup = 메뉴그룹을_저장한다(MENU_GROUP_1.생성());
+        final Long menuId = 상품과_함께_메뉴를_저장한다(menuGroup).getId();
 
         final Long orderTableId = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성()).getId();
         final OrderRequest orderRequest = new OrderRequest(orderTableId,
@@ -44,9 +51,17 @@ class OrderServiceTest extends ServiceTest {
 
         // when
         final OrderResponse orderResponse = orderService.create(orderRequest);
+        final OrderLineItemResponse expected = new OrderLineItemResponse(1L,
+                new OrderMenuResponse(1L, "메뉴1", new BigDecimal(10_000), "메뉴그룹1",
+                        List.of(new OrderMenuProductResponse(1L, "제품1", new BigDecimal(10_000), 1L))),
+                1L);
 
         //then
-        assertThat(orderResponse.getId()).isEqualTo(1L);
+        assertAll(
+                () -> assertThat(orderResponse.getId()).isEqualTo(1L),
+                () -> assertThat(orderResponse.getOrderLineItems()).usingRecursiveFieldByFieldElementComparator()
+                        .usingComparatorForType(Comparator.comparingInt(BigDecimal::intValue), BigDecimal.class)
+                        .containsOnly(expected));
     }
 
     @Test
@@ -76,9 +91,8 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void 주문을_저장할_때_존재하지_않는_테이블_번호로_주문하면_예외를_발생한다() {
         // given
-        final Long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
-        final Long menuId = 상품과_함께_메뉴를_저장한다(menuGroupId)
-                .getId();
+        final MenuGroup menuGroup = 메뉴그룹을_저장한다(MENU_GROUP_1.생성());
+        final Long menuId = 상품과_함께_메뉴를_저장한다(menuGroup).getId();
 
         final long notExistOrderTableId = Long.MAX_VALUE;
         final OrderRequest orderRequest = new OrderRequest(notExistOrderTableId,
@@ -92,8 +106,8 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void 주문을_저장할_때_테이블이_비어있다면_예외를_발생한다() {
         // given
-        final Long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
-        final Long menuId = 상품과_함께_메뉴를_저장한다(menuGroupId).getId();
+        final MenuGroup menuGroup = 메뉴그룹을_저장한다(MENU_GROUP_1.생성());
+        final Long menuId = 상품과_함께_메뉴를_저장한다(menuGroup).getId();
 
         final Long orderTableId = 주문테이블을_저장한다(ORDER_TABLE_EMPTY_1.생성()).getId();
         final OrderRequest orderRequest = new OrderRequest(orderTableId,
@@ -107,11 +121,18 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void 모든_주문을_조회할_때_주문한_메뉴도_함께_조회한다() {
         // given
-        final Long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
-        final Menu menu = 상품과_함께_메뉴를_저장한다(menuGroupId);
+        final MenuGroup menuGroup = 메뉴그룹을_저장한다(MENU_GROUP_1.생성());
+        final Menu menu = 상품과_함께_메뉴를_저장한다(menuGroup);
+        final Product product = ProductFixture.PRODUCT_PRICE_10000.생성();
+
+        final OrderMenuProduct orderMenuProduct = new OrderMenuProduct(null, null, product.getName(),
+                product.getPrice().getValue(), 1);
+        final OrderMenu orderMenu = new OrderMenu(menu.getName(), menu.getPrice().getValue(), menuGroup.getName(),
+                List.of(orderMenuProduct));
+        주문메뉴를_저장한다(orderMenu);
 
         final Long orderTableId = 주문테이블을_저장한다(ORDER_TABLE_NOT_EMPTY_1.생성()).getId();
-        final OrderLineItem orderLineItem = ORDER_LINE_ITEM_1.생성(menu);
+        final OrderLineItem orderLineItem = ORDER_LINE_ITEM_1.생성(orderMenu);
         final Order savedOrder = 주문을_저장한다(ORDER_COOKING_1.생성(orderTableId, List.of(orderLineItem)));
 
         final OrderResponse expectedOrderResponse = OrderResponse.from(savedOrder);

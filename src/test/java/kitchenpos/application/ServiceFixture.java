@@ -13,14 +13,17 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
+import kitchenpos.dao.OrderMenuDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.jpa.OrderMenuProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderMenu;
+import kitchenpos.domain.OrderMenuProduct;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
@@ -50,6 +53,10 @@ public class ServiceFixture {
     private OrderDao orderDao;
     @Autowired
     private OrderLineItemDao orderLineItemDao;
+    @Autowired
+    private OrderMenuDao orderMenuDao;
+    @Autowired
+    private OrderMenuProductRepository orderMenuProductRepository;
 
     protected Product 제품을_저장한다(final Product product) {
         return productDao.save(product);
@@ -63,13 +70,9 @@ public class ServiceFixture {
         return menuDao.save(menu);
     }
 
-    protected Menu 상품과_함께_메뉴를_저장한다(final Long menuGroupId) {
+    protected Menu 상품과_함께_메뉴를_저장한다(final MenuGroup menuGroup) {
         final Product product = 제품을_저장한다(PRODUCT_PRICE_10000.생성());
-        return 메뉴를_저장한다(MENU_PRICE_10000.생성(menuGroupId, List.of(MENU_PRODUCT_1.생성(product))));
-    }
-
-    protected MenuProduct 메뉴상품을_저장한다(final MenuProduct menuProduct) {
-        return menuProductDao.save(menuProduct);
+        return 메뉴를_저장한다(MENU_PRICE_10000.생성(menuGroup, List.of(MENU_PRODUCT_1.생성(product))));
     }
 
     protected TableGroup 테이블그룹을_저장한다(final TableGroup tableGroup) {
@@ -85,14 +88,25 @@ public class ServiceFixture {
     }
 
     protected Order 주문항목과_함께_주문을_저장한다(final Long orderTableId, final OrderStatus orderStatus) {
-        final Long menuGroupId = 메뉴그룹을_저장한다(MENU_GROUP_1.생성()).getId();
+        final MenuGroup menuGroup = 메뉴그룹을_저장한다(MENU_GROUP_1.생성());
         final Product product = 제품을_저장한다(PRODUCT_PRICE_10000.생성());
-        final Menu menu = 메뉴를_저장한다(MENU_PRICE_10000.생성(menuGroupId, List.of(MENU_PRODUCT_1.생성(product))));
-        final List<OrderLineItem> orderLineItems = List.of(ORDER_LINE_ITEM_1.생성(menu));
+        final Menu menu = 메뉴를_저장한다(MENU_PRICE_10000.생성(menuGroup, List.of(MENU_PRODUCT_1.생성(product))));
+
+        final OrderMenuProduct orderMenuProduct = new OrderMenuProduct(null, null, product.getName(),
+                product.getPrice().getValue(), 1);
+        final OrderMenu orderMenu = new OrderMenu(menu.getName(), menu.getPrice().getValue(), menuGroup.getName(),
+                List.of(orderMenuProduct));
+        주문메뉴를_저장한다(orderMenu);
+
+        final List<OrderLineItem> orderLineItems = List.of(ORDER_LINE_ITEM_1.생성(orderMenu));
         return 주문을_저장한다(new Order(orderTableId, orderStatus, LocalDateTime.now(), orderLineItems));
     }
 
-    protected OrderLineItem 주문항목을_저장한다(final OrderLineItem orderLineItem) {
-        return orderLineItemDao.save(orderLineItem);
+    protected OrderMenu 주문메뉴를_저장한다(final OrderMenu orderMenu) {
+        return orderMenuDao.save(orderMenu);
+    }
+
+    protected OrderMenuProduct 주문상품을_저장한다(final OrderMenuProduct orderMenuProduct) {
+        return orderMenuProductRepository.save(orderMenuProduct);
     }
 }

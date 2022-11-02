@@ -4,12 +4,13 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import kitchenpos.exceptions.InvalidMenuPriceException;
@@ -27,8 +28,9 @@ public class Menu {
     @Embedded
     private Price price;
 
-    @Column(name = "menu_group_id")
-    private Long menuGroupId;
+    @ManyToOne
+    @JoinColumn(name = "menu_group_id")
+    private MenuGroup menuGroup;
 
     @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
     private List<MenuProduct> menuProducts = new ArrayList<>();
@@ -36,12 +38,12 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    public Menu(String name, Price price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
         injectMenu(menuProducts);
         validatePriceLessThanMenuProductsPrice(price);
         this.name = name;
         this.price = price;
-        this.menuGroupId = menuGroupId;
+        this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
     }
 
@@ -72,8 +74,8 @@ public class Menu {
         return price;
     }
 
-    public Long getMenuGroupId() {
-        return menuGroupId;
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
     }
 
     public List<MenuProduct> getMenuProducts() {

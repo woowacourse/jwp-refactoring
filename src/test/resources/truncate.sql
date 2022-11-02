@@ -15,4 +15,8 @@ truncate table table_group;
 alter table table_group alter column id restart with 1;
 truncate table product;
 alter table product alter column id restart with 1;
+truncate table order_menu;
+alter table order_menu alter column id restart with 1;
+truncate table order_menu_product;
+alter table order_menu_product alter column seq restart with 1;
 SET FOREIGN_KEY_CHECKS=1;

@@ -15,7 +15,7 @@ class MenuTest {
         final MenuProduct menuProduct = new MenuProduct(null, new Product("야끼만두", new Price(new BigDecimal(1_000))), 2);
 
         // when, then
-        assertThatThrownBy(() -> new Menu("모둠만두", new Price(new BigDecimal(2_100)), 1L, List.of(menuProduct)))
+        assertThatThrownBy(() -> new Menu("모둠만두", new Price(new BigDecimal(2_100)), new MenuGroup(1L), List.of(menuProduct)))
                 .isInstanceOf(InvalidMenuPriceException.class);
     }
 }

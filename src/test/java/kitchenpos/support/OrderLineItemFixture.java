@@ -1,8 +1,7 @@
 package kitchenpos.support;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderMenu;
 
 public enum OrderLineItemFixture {
 
@@ -14,11 +13,7 @@ public enum OrderLineItemFixture {
         this.quantity = quantity;
     }
 
-    public OrderLineItem 생성(final Menu menu) {
-        return new OrderLineItem(null, null, menu, quantity);
-    }
-
-    public OrderLineItem 생성(final Order order, final Menu menu) {
-        return new OrderLineItem(null, order, menu, quantity);
+    public OrderLineItem 생성(final OrderMenu orderMenu) {
+        return new OrderLineItem(null, null, orderMenu, quantity);
     }
 }
