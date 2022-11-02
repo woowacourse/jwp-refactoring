@@ -7,7 +7,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -20,10 +19,6 @@ public class MenuProduct {
     @Column(name = "seq")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_id")
-    private Menu menu;
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
@@ -32,18 +27,13 @@ public class MenuProduct {
     protected MenuProduct() {
     }
 
-    public MenuProduct(Menu menu, Product product, long quantity) {
-        this.menu = menu;
+    public MenuProduct(Product product, long quantity) {
         this.product = product;
         this.quantity = quantity;
     }
 
     public Long getId() {
         return id;
-    }
-
-    public Menu getMenu() {
-        return menu;
     }
 
     public Product getProduct() {

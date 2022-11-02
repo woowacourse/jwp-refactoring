@@ -1,7 +1,6 @@
 package kitchenpos.menu.domain;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -32,25 +31,24 @@ public class Menu {
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
 
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
-    private final List<MenuProduct> menuProducts = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "menu_id")
+    private List<MenuProduct> menuProducts;
 
     protected Menu() {
     }
 
-    public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
+    public Menu(String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+        Price menuPrice = new Price(price);
+        validatePriceIsCheaperThanSum(menuPrice, menuProducts);
+
         this.name = name;
-        this.price = new Price(price);
+        this.price = menuPrice;
         this.menuGroup = menuGroup;
+        this.menuProducts = menuProducts;
     }
 
-    public void addMenuProducts(List<MenuProduct> menuProducts) {
-        validatePriceIsCheaperThanSum(menuProducts);
-
-        this.menuProducts.addAll(menuProducts);
-    }
-
-    private void validatePriceIsCheaperThanSum(List<MenuProduct> menuProducts) {
+    private void validatePriceIsCheaperThanSum(Price price, List<MenuProduct> menuProducts) {
         BigDecimal sum = BigDecimal.ZERO;
         for (MenuProduct menuProduct : menuProducts) {
             sum = sum.add(menuProduct.getProduct().getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));

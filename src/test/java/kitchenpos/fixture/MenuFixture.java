@@ -34,16 +34,13 @@ public enum MenuFixture {
     }
 
     public Menu toMenu(MenuGroup menuGroup, Product... products) {
-        Menu menu = new Menu(name, price, menuGroup);
-        addMenuProducts(menu, products);
-        return menu;
+        List<MenuProduct> menuProducts = createMenuProducts(products);
+        return new Menu(name, price, menuGroup, menuProducts);
     }
 
-    private void addMenuProducts(Menu menu, Product... products) {
-        List<MenuProduct> menuProducts = Arrays.stream(products)
-                .map(p -> new MenuProduct(menu, p, 1))
+    private List<MenuProduct> createMenuProducts(Product... products) {
+        return Arrays.stream(products)
+                .map(p -> new MenuProduct(p, 1))
                 .collect(Collectors.toList());
-
-        menu.addMenuProducts(menuProducts);
     }
 }

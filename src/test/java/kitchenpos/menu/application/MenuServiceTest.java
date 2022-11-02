@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static kitchenpos.fixture.MenuFixture.후라이드_양념치킨_두마리세트;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,14 +15,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.menu.application.request.MenuRequest;
-import kitchenpos.menu.application.response.MenuResponse;
-import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.menu.domain.MenuGroupRepository;
-import kitchenpos.menu.domain.Product;
-import kitchenpos.menu.domain.ProductRepository;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.ProductFixture;
+import kitchenpos.menu.application.request.MenuRequest;
+import kitchenpos.menu.application.response.MenuResponse;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuGroupRepository;
+import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menu.domain.Product;
+import kitchenpos.menu.domain.ProductRepository;
 import kitchenpos.support.SpringBootNestedTest;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -31,6 +34,9 @@ class MenuServiceTest {
 
     @Autowired
     private MenuService menuService;
+
+    @Autowired
+    private MenuRepository menuRepository;
 
     @Autowired
     private MenuGroupRepository menuGroupRepository;
@@ -53,6 +59,17 @@ class MenuServiceTest {
     @DisplayName("메뉴를 생성한다")
     @SpringBootNestedTest
     class CreateTest {
+
+        @DisplayName("메뉴와 메뉴 상품을 저장한다")
+        @Test
+        void create() {
+            MenuRequest request = 후라이드_양념치킨_두마리세트.toRequest(두마리메뉴.getId(), 후라이드.getId(), 양념치킨.getId());
+            MenuResponse menuResponse = menuService.create(request);
+
+            Optional<Menu> actual = menuRepository.findById(menuResponse.getId());
+            assertThat(actual).isPresent();
+            assertThat(actual.get().getMenuProducts()).hasSize(2);
+        }
 
         @DisplayName("메뉴 그룹이 존재하지 않을 경우 예외가 발생한다")
         @Test
