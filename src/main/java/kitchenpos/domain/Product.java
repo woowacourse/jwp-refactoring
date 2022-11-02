@@ -7,28 +7,20 @@ public class Product {
 
     private final Long id;
     private final String name;
-    private final BigDecimal price;
+    private final Price price;
 
     public Product(Long id, String name, BigDecimal price) {
-        validatePrice(price);
-
         this.id = id;
         this.name = name;
-        this.price = price;
+        this.price = new Price(price);
     }
 
     public Product(String name, BigDecimal price) {
         this(null, name, price);
     }
 
-    private void validatePrice(BigDecimal price) {
-        if (price == null || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-    }
-
     public BigDecimal calculatePrice(long quantity) {
-        return price.multiply(BigDecimal.valueOf(quantity));
+        return price.calculateTotalAmount(quantity);
     }
 
     public Long getId() {
@@ -40,6 +32,6 @@ public class Product {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getAmount();
     }
 }
