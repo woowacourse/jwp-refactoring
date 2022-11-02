@@ -1,15 +1,15 @@
 package kitchenpos.application;
 
-import static kitchenpos.support.ProductFixture.product;
+import static kitchenpos.support.fixture.ProductFixture.product;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.menu.Product;
-import kitchenpos.dto.request.ProductRequest;
+import kitchenpos.menu.domain.Product;
+import kitchenpos.menu.presentation.dto.request.ProductRequest;
 import kitchenpos.support.IntegrationServiceTest;
-import kitchenpos.support.ProductFixture;
+import kitchenpos.support.fixture.ProductFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

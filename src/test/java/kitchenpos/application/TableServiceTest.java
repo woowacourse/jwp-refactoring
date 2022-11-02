@@ -1,19 +1,19 @@
 package kitchenpos.application;
 
 import static java.time.LocalDateTime.now;
-import static kitchenpos.domain.order.OrderStatus.COOKING;
-import static kitchenpos.domain.order.OrderStatus.MEAL;
-import static kitchenpos.support.OrderTableFixture.주문테이블_요청;
-import static kitchenpos.support.TableGroupFixture.빈_테이블_그룹;
+import static kitchenpos.order.domain.OrderStatus.COOKING;
+import static kitchenpos.order.domain.OrderStatus.MEAL;
+import static kitchenpos.support.fixture.OrderTableFixture.주문테이블_요청;
+import static kitchenpos.support.fixture.TableGroupFixture.빈_테이블_그룹;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.util.Lists.emptyList;
 
 import java.util.List;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderTable;
-import kitchenpos.domain.order.TableGroup;
-import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.domain.TableGroup;
+import kitchenpos.order.presentation.dto.request.OrderTableRequest;
 import kitchenpos.support.IntegrationServiceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -96,7 +96,7 @@ class TableServiceTest {
 
             @BeforeEach
             void setUp() {
-                final OrderTable 주문_테이블 = 주문테이블_저장();
+                final OrderTable 주문_테이블 = 주문테이블_저장후_반환(true);
                 savedTableId = 주문_테이블.getId();
                 orderRepository.save(new Order(null, COOKING, now(), 주문_테이블, emptyList()));
             }
@@ -117,7 +117,7 @@ class TableServiceTest {
 
             @BeforeEach
             void setUp() {
-                OrderTable savedOrderTable = 주문테이블_저장();
+                OrderTable savedOrderTable = 주문테이블_저장후_반환(true);
                 orderRepository.save(new Order(null, MEAL, now(), savedOrderTable, emptyList()));
                 savedOrderTableId = savedOrderTable.getId();
             }

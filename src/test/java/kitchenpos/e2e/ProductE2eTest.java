@@ -1,15 +1,16 @@
 package kitchenpos.e2e;
 
-import static kitchenpos.e2e.E2eTest.AssertionPair.row;
-import static kitchenpos.e2e.E2eTest.BigDecimalAssertionPair.rowBigDecimal;
+import static kitchenpos.support.E2eTest.AssertionPair.row;
+import static kitchenpos.support.E2eTest.BigDecimalAssertionPair.rowBigDecimal;
 import static kitchenpos.support.AssertionsSupport.assertAll;
-import static kitchenpos.support.ProductFixture.productRequest;
+import static kitchenpos.support.fixture.ProductFixture.productRequest;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
-import kitchenpos.support.ProductFixture.WrapProductRequest;
-import kitchenpos.support.ProductFixture.WrapProductResponse;
+import kitchenpos.support.KitchenPosE2eTest;
+import kitchenpos.support.fixture.ProductFixture.WrapProductRequest;
+import kitchenpos.support.fixture.ProductFixture.WrapProductResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 

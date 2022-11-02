@@ -1,16 +1,17 @@
 package kitchenpos.e2e;
 
-import static kitchenpos.e2e.E2eTest.AssertionPair.row;
+import static kitchenpos.support.E2eTest.AssertionPair.row;
 import static kitchenpos.support.AssertionsSupport.assertAll;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
-import kitchenpos.dto.request.OrderTableRequest;
-import kitchenpos.dto.response.TableChangeEmptyResponse;
-import kitchenpos.dto.response.TableChangeGuestNumberResponse;
-import kitchenpos.dto.response.TableCreateResponse;
-import kitchenpos.dto.response.TableListResponse;
+import kitchenpos.order.presentation.dto.request.OrderTableRequest;
+import kitchenpos.order.presentation.dto.response.TableChangeEmptyResponse;
+import kitchenpos.order.presentation.dto.response.TableChangeGuestNumberResponse;
+import kitchenpos.order.presentation.dto.response.TableCreateResponse;
+import kitchenpos.order.presentation.dto.response.TableListResponse;
+import kitchenpos.support.KitchenPosE2eTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 

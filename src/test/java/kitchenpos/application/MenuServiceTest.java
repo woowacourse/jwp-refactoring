@@ -1,19 +1,19 @@
 package kitchenpos.application;
 
-import static kitchenpos.support.MenuFixture.menuRequest;
-import static kitchenpos.support.MenuGroupFixture.메뉴_그룹;
-import static kitchenpos.support.ProductFixture.product;
+import static kitchenpos.support.fixture.MenuFixture.menuRequest;
+import static kitchenpos.support.fixture.MenuGroupFixture.메뉴_그룹;
+import static kitchenpos.support.fixture.ProductFixture.product;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.Product;
-import kitchenpos.dto.request.MenuProductRequest;
-import kitchenpos.dto.request.MenuRequest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.Product;
+import kitchenpos.menu.presentation.dto.request.MenuProductRequest;
+import kitchenpos.menu.presentation.dto.request.MenuRequest;
 import kitchenpos.support.IntegrationServiceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -98,7 +98,6 @@ class MenuServiceTest extends IntegrationServiceTest {
                         .menuGroupId(NOT_EXIST_MENU_GROUP_ID)
                         .menuProductRequests(List.of(후라이드_두마리))
                         .build();
-
             }
 
             @Test

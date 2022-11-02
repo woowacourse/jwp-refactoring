@@ -1,23 +1,37 @@
 package kitchenpos.support;
 
+import static java.time.LocalDateTime.now;
+import static java.util.Collections.singletonList;
+import static kitchenpos.support.fixture.MenuGroupFixture.메뉴_그룹;
+import static kitchenpos.support.fixture.ProductFixture.product;
+
+import java.math.BigDecimal;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import kitchenpos.application.MenuGroupService;
-import kitchenpos.application.MenuService;
-import kitchenpos.application.OrderService;
-import kitchenpos.application.ProductService;
-import kitchenpos.application.TableGroupService;
-import kitchenpos.application.TableService;
-import kitchenpos.domain.order.TableGroup;
-import kitchenpos.repository.menu.MenuGroupRepository;
-import kitchenpos.repository.order.OrderRepository;
-import kitchenpos.repository.order.OrderLineItemRepository;
-import kitchenpos.repository.order.TableRepository;
-import kitchenpos.repository.order.TableGroupRepository;
-import kitchenpos.repository.menu.MenuProductRepository;
-import kitchenpos.repository.menu.ProductRepository;
-import kitchenpos.domain.order.OrderTable;
-import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.menu.application.MenuGroupService;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.Product;
+import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.menu.application.ProductService;
+import kitchenpos.order.application.TableGroupService;
+import kitchenpos.order.application.TableService;
+import kitchenpos.order.domain.TableGroup;
+import kitchenpos.menu.repository.MenuGroupRepository;
+import kitchenpos.order.presentation.dto.request.OrderLineItemRequest;
+import kitchenpos.order.presentation.dto.request.OrderRequest;
+import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.order.repository.OrderLineItemRepository;
+import kitchenpos.order.repository.TableRepository;
+import kitchenpos.order.repository.TableGroupRepository;
+import kitchenpos.menu.repository.MenuProductRepository;
+import kitchenpos.menu.repository.ProductRepository;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.presentation.dto.request.OrderTableRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -56,12 +70,22 @@ abstract public class IntegrationServiceTest {
     protected TableGroupService tableGroupService;
 
 
-    // DAO's
+    // Repository's
     @Autowired
     protected ProductRepository productRepository;
 
     @Autowired
+    protected MenuProductRepository menuProductRepository;
+
+    @Autowired
+    protected MenuRepository menuRepository;
+
+    @Autowired
+    protected MenuGroupRepository menuGroupRepository;
+
+    @Autowired
     protected OrderLineItemRepository orderLineItemRepository;
+
     @Autowired
     protected OrderRepository orderRepository;
 
@@ -70,12 +94,6 @@ abstract public class IntegrationServiceTest {
 
     @Autowired
     protected TableGroupRepository tableGroupRepository;
-
-    @Autowired
-    protected MenuProductRepository menuProductRepository;
-
-    @Autowired
-    protected MenuGroupRepository menuGroupRepository;
 
 
     // Support's
@@ -114,7 +132,27 @@ abstract public class IntegrationServiceTest {
         return tableGroupId;
     }
 
-    protected OrderTable 주문테이블_저장() {
-        return tableRepository.save(new OrderTable(4, true, null));
+    protected OrderTable 주문테이블_저장후_반환(boolean empty) {
+        return tableRepository.save(new OrderTable(4, empty, null));
     }
+
+    protected Menu 메뉴_저장후_반환() {
+
+        MenuGroup 메뉴그룹 = menuGroupRepository.save(메뉴_그룹);
+
+        Product 후라이드_치킨 = productRepository.save(product("후라이드 치킨", 18_000));
+
+        Menu 메뉴 = menuRepository.save(new Menu("[메뉴] 후라이드 치킨 한 마리", BigDecimal.valueOf(18_000), 메뉴그룹, List.of(new MenuProduct(후라이드_치킨, 1L))));
+
+        return 메뉴;
+    }
+
+    protected void 주문_저장() {
+        Menu 메뉴 = 메뉴_저장후_반환();
+        List<OrderLineItemRequest> 주문항목_요청들 = singletonList(new OrderLineItemRequest(메뉴.getId(), 1L));
+        OrderTable 주문테이블 = tableRepository.save(new OrderTable(1L, 1, false, null));
+        OrderRequest orderRequest = new OrderRequest(주문테이블.getId(), null, now(), 주문항목_요청들);
+        orderService.create(orderRequest);
+    }
+
 }

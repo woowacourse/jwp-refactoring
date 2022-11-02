@@ -1,7 +1,7 @@
 package kitchenpos.e2e;
 
 import static java.time.LocalDateTime.now;
-import static kitchenpos.support.OrderFixture.주문;
+import static kitchenpos.support.fixture.OrderFixture.주문;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -9,11 +9,12 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.order.OrderTable;
-import kitchenpos.dto.response.OrderLineItemResponse;
-import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.presentation.dto.response.OrderLineItemResponse;
+import kitchenpos.order.presentation.dto.response.OrderResponse;
+import kitchenpos.support.KitchenPosE2eTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 

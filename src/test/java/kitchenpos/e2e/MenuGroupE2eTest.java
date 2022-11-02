@@ -1,15 +1,16 @@
 package kitchenpos.e2e;
 
-import static kitchenpos.support.MenuGroupFixture.간장_양념_세_마리_메뉴;
-import static kitchenpos.support.MenuGroupFixture.단짜_두_마리_메뉴;
+import static kitchenpos.support.fixture.MenuGroupFixture.간장_양념_세_마리_메뉴;
+import static kitchenpos.support.fixture.MenuGroupFixture.단짜_두_마리_메뉴;
 import static org.assertj.core.api.Assertions.assertThat;
 import static kitchenpos.support.AssertionsSupport.assertAll;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
-import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.Product;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.Product;
+import kitchenpos.support.KitchenPosE2eTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 

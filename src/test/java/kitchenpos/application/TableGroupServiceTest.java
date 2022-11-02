@@ -1,19 +1,19 @@
 package kitchenpos.application;
 
 import static java.time.LocalDateTime.now;
-import static kitchenpos.domain.order.OrderStatus.COOKING;
-import static kitchenpos.domain.order.OrderStatus.MEAL;
+import static kitchenpos.order.domain.OrderStatus.COOKING;
+import static kitchenpos.order.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.util.Lists.emptyList;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderTable;
-import kitchenpos.domain.order.TableGroup;
-import kitchenpos.dto.request.OrderTableRequest;
-import kitchenpos.dto.request.TableGroupRequest;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.domain.TableGroup;
+import kitchenpos.order.presentation.dto.request.OrderTableRequest;
+import kitchenpos.order.presentation.dto.request.TableGroupRequest;
 import kitchenpos.support.IntegrationServiceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -48,7 +48,7 @@ class TableGroupServiceTest extends IntegrationServiceTest {
 
             @BeforeEach
             void setUp() {
-                주문테이블_저장();
+                주문테이블_저장후_반환(true);
             }
 
             @Test
@@ -68,7 +68,7 @@ class TableGroupServiceTest extends IntegrationServiceTest {
             void setUp() {
 
                 OrderTable table = tableRepository.save(new OrderTable(0, 비어있지_않음, null));
-                OrderTable table2 = 주문테이블_저장();
+                OrderTable table2 = 주문테이블_저장후_반환(true);
 
                 OrderTableRequest 비어있지_않은_테이블_요청 = convertTableRequestFrom(table);
                 OrderTableRequest 정상_테이블_요청 = convertTableRequestFrom(table2);
@@ -96,7 +96,7 @@ class TableGroupServiceTest extends IntegrationServiceTest {
                 TableGroup 테이블_그룹 = tableGroupRepository.save(new TableGroup());
 
                 OrderTable 이미_그룹화된_주문테이블 = tableRepository.save(new OrderTable(0, true, 테이블_그룹));
-                OrderTable 정상_주문테이블 = 주문테이블_저장();
+                OrderTable 정상_주문테이블 = 주문테이블_저장후_반환(true);
 
                 OrderTableRequest 그룹화된_주문테이블_요청 = convertTableRequestFrom(이미_그룹화된_주문테이블);
                 OrderTableRequest 정상_주문테이블_요청 = convertTableRequestFrom(정상_주문테이블);
@@ -125,8 +125,8 @@ class TableGroupServiceTest extends IntegrationServiceTest {
             @BeforeEach
             void setUp() {
 
-                저장된_테이블_1 = 주문테이블_저장();
-                저장된_테이블_2 = 주문테이블_저장();
+                저장된_테이블_1 = 주문테이블_저장후_반환(true);
+                저장된_테이블_2 = 주문테이블_저장후_반환(true);
 
                 테이블_요청_1 = convertTableRequestFrom(저장된_테이블_1);
                 테이블_요청_2 = convertTableRequestFrom(저장된_테이블_2);

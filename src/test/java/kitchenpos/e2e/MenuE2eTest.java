@@ -1,24 +1,25 @@
 package kitchenpos.e2e;
 
-import static kitchenpos.e2e.E2eTest.AssertionPair.row;
+import static kitchenpos.support.E2eTest.AssertionPair.row;
 import static kitchenpos.support.AssertionsSupport.assertAll;
-import static kitchenpos.support.MenuGroupFixture.단짜_두_마리_메뉴;
-import static kitchenpos.support.MenuProductFixture.menuProductRequestBuilder;
-import static kitchenpos.support.ProductFixture.간장_치킨_요청_DTO;
-import static kitchenpos.support.ProductFixture.양념_치킨_요청_DTO;
-import static kitchenpos.support.ProductFixture.후라이드_치킨_요청_DTO;
+import static kitchenpos.support.fixture.MenuGroupFixture.단짜_두_마리_메뉴;
+import static kitchenpos.support.fixture.MenuProductFixture.menuProductRequestBuilder;
+import static kitchenpos.support.fixture.ProductFixture.간장_치킨_요청_DTO;
+import static kitchenpos.support.fixture.ProductFixture.양념_치킨_요청_DTO;
+import static kitchenpos.support.fixture.ProductFixture.후라이드_치킨_요청_DTO;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.restassured.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
-import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.Product;
-import kitchenpos.dto.request.MenuRequest;
-import kitchenpos.dto.response.MenuProductResponse;
-import kitchenpos.dto.response.MenuResponse;
-import kitchenpos.support.MenuFixture.WrapMenuRequest.WrapMenuResponse;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.Product;
+import kitchenpos.menu.presentation.dto.request.MenuRequest;
+import kitchenpos.menu.presentation.dto.response.MenuProductResponse;
+import kitchenpos.menu.presentation.dto.response.MenuResponse;
+import kitchenpos.support.KitchenPosE2eTest;
+import kitchenpos.support.fixture.MenuFixture.WrapMenuRequest.WrapMenuResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
