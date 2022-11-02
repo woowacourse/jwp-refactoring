@@ -74,44 +74,28 @@ public class Order {
         }
     }
 
-    public Long getId() {
-        return id;
+    public void mapOrderStatus(OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
     public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
-    }
-
     public LocalDateTime getOrderedTime() {
         return orderedTime;
-    }
-
-    public void setOrderedTime(LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
     }
 
     public OrderTable getOrderTable() {
         return orderTable;
     }
 
-    public void setOrderTable(OrderTable orderTable) {
-        this.orderTable = orderTable;
-    }
-
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public void setOrderLineItems(List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.order.application;
 
 import static java.time.LocalDateTime.now;
 import static kitchenpos.order.domain.OrderStatus.COOKING;

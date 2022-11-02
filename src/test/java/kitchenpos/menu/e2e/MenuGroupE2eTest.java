@@ -1,4 +1,4 @@
-package kitchenpos.e2e;
+package kitchenpos.menu.e2e;
 
 import static kitchenpos.support.fixture.MenuGroupFixture.간장_양념_세_마리_메뉴;
 import static kitchenpos.support.fixture.MenuGroupFixture.단짜_두_마리_메뉴;

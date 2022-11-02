@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.menu.application;
 
 import static kitchenpos.support.fixture.MenuFixture.menuRequest;
 import static kitchenpos.support.fixture.MenuGroupFixture.메뉴_그룹;

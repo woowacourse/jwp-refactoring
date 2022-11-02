@@ -74,8 +74,8 @@ public class OrderService {
 
         orderSpecification.validateChangeOrderStatus(savedOrder);
 
-        final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus);
+        OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
+        savedOrder.mapOrderStatus(orderStatus);
 
         orderRepository.save(savedOrder);
 

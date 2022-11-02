@@ -1,4 +1,4 @@
-package kitchenpos.e2e;
+package kitchenpos.order.e2e;
 
 import static java.time.LocalDateTime.now;
 import static kitchenpos.support.fixture.OrderFixture.주문;

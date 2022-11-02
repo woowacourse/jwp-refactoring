@@ -1,4 +1,4 @@
-package kitchenpos.e2e;
+package kitchenpos.menu.e2e;
 
 import static kitchenpos.support.E2eTest.AssertionPair.row;
 import static kitchenpos.support.E2eTest.BigDecimalAssertionPair.rowBigDecimal;

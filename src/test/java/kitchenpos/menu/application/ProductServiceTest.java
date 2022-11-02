@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.menu.application;
 
 import static kitchenpos.support.fixture.ProductFixture.product;
 import static org.assertj.core.api.Assertions.assertThat;
