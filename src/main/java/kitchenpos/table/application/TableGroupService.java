@@ -3,8 +3,6 @@ package kitchenpos.table.application;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.dao.OrderDao;
-import kitchenpos.order.dao.OrderDto;
 import kitchenpos.product.domain.OrderStatus;
 import kitchenpos.table.dao.OrderTableDao;
 import kitchenpos.table.dao.TableGroupRepository;
@@ -19,13 +17,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class TableGroupService {
 
-    private final OrderDao orderDao;
+    private final OrderStatusValidator orderStatusValidator;
     private final OrderTableDao orderTableDao;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao,
+    public TableGroupService(final OrderStatusValidator orderStatusValidator,
+                             final OrderTableDao orderTableDao,
                              final TableGroupRepository tableGroupRepository) {
-        this.orderDao = orderDao;
+        this.orderStatusValidator = orderStatusValidator;
         this.orderTableDao = orderTableDao;
         this.tableGroupRepository = tableGroupRepository;
     }
@@ -62,15 +61,10 @@ public class TableGroupService {
     }
 
     private void validateOrderStatus(final List<Long> orderTableIds) {
-        final List<OrderStatus> orderStatuses = orderDao.findAllByOrderTableIdIn(orderTableIds).stream()
-                .map(OrderDto::getOrderStatus)
-                .map(OrderStatus::valueOf)
-                .collect(Collectors.toList());
-
-        for (final OrderStatus status : orderStatuses) {
-            if (OrderStatus.COOKING.equals(status) || OrderStatus.MEAL.equals(status)) {
-                throw new IllegalArgumentException();
-            }
+        if (orderStatusValidator.existsByIdInAndStatusIn(orderTableIds,
+                List.of(OrderStatus.COOKING, OrderStatus.MEAL))) {
+            throw new IllegalArgumentException();
         }
+
     }
 }

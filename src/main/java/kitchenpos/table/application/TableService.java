@@ -2,8 +2,6 @@ package kitchenpos.table.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.dao.OrderDao;
-import kitchenpos.order.dao.OrderDto;
 import kitchenpos.product.domain.OrderStatus;
 import kitchenpos.table.dao.OrderTableDao;
 import kitchenpos.table.domain.OrderTable;
@@ -18,11 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class TableService {
 
-    private final OrderDao orderDao;
+    private final OrderStatusValidator orderStatusValidator;
     private final OrderTableDao orderTableDao;
 
-    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
-        this.orderDao = orderDao;
+    public TableService(final OrderStatusValidator orderStatusValidator, final OrderTableDao orderTableDao) {
+        this.orderStatusValidator = orderStatusValidator;
         this.orderTableDao = orderTableDao;
     }
 
@@ -49,11 +47,7 @@ public class TableService {
     }
 
     private void validateOrderStatus(final Long orderTableId) {
-        final OrderDto savedOrder = orderDao.findByOrderTableId(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (OrderStatus.COOKING.isStatus(savedOrder.getOrderStatus()) ||
-                OrderStatus.MEAL.isStatus(savedOrder.getOrderStatus())) {
+        if (orderStatusValidator.existsByIdAndStatusIn(orderTableId, List.of(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
     }
