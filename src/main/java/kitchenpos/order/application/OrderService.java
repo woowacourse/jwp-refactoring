@@ -2,15 +2,15 @@ package kitchenpos.order.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.menu.repository.MenuDao;
-import kitchenpos.order.repository.OrderDao;
-import kitchenpos.order.repository.OrderLineItemDao;
-import kitchenpos.table.repository.OrderTableDao;
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.repository.MenuDao;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderMenu;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.repository.OrderDao;
 import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.repository.OrderTableDao;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -19,18 +19,15 @@ import org.springframework.util.CollectionUtils;
 public class OrderService {
     private final MenuDao menuDao;
     private final OrderDao orderDao;
-    private final OrderLineItemDao orderLineItemDao;
     private final OrderTableDao orderTableDao;
 
     public OrderService(
             final MenuDao menuDao,
             final OrderDao orderDao,
-            final OrderLineItemDao orderLineItemDao,
             final OrderTableDao orderTableDao
     ) {
         this.menuDao = menuDao;
         this.orderDao = orderDao;
-        this.orderLineItemDao = orderLineItemDao;
         this.orderTableDao = orderTableDao;
     }
 
@@ -60,9 +57,10 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    private Menu findMenu(OrderLineItemRequest orderLineItemRequest) {
-        return menuDao.findById(orderLineItemRequest.getMenuId())
+    private OrderMenu findMenu(OrderLineItemRequest orderLineItemRequest) {
+        final Menu menu = menuDao.findById(orderLineItemRequest.getMenuId())
                 .orElseThrow(() -> new IllegalArgumentException("주문받은 메뉴가 실제 저장되어 있는 메뉴에 속하지 않습니다."));
+        return new OrderMenu(menu.getId(), menu.getName(), menu.getPrice());
     }
 
     public List<OrderResponse> list() {

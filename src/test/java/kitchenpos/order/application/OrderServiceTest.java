@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderMenu;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.support.IntegrationTest;
 import kitchenpos.table.domain.OrderTable;
@@ -32,7 +33,7 @@ class OrderServiceTest extends IntegrationTest {
     void setupFixture() {
         nonEmptyOrderTable = orderTableDao.save(createNonEmptyStatusTable());
         final Order order = Order.newOrder(nonEmptyOrderTable);
-        orderLineItem = new OrderLineItem(order, menu, 1L);
+        orderLineItem = new OrderLineItem(order, new OrderMenu(menu.getId(), menu.getName(), menu.getPrice()), 1L);
     }
 
     @DisplayName("주문 생성 기능")
@@ -43,7 +44,7 @@ class OrderServiceTest extends IntegrationTest {
         @Test
         void create() {
             final OrderRequest orderRequest = new OrderRequest(nonEmptyOrderTable.getId(),
-                    List.of(new OrderLineItemRequest(orderLineItem.getMenu().getId(), orderLineItem.getQuantity())));
+                    List.of(new OrderLineItemRequest(orderLineItem.getOrderMenu().getMenuId(), orderLineItem.getQuantity())));
 
             final OrderResponse orderResponse = orderService.create(orderRequest);
 
@@ -76,7 +77,7 @@ class OrderServiceTest extends IntegrationTest {
         @Test
         void create_Exception_NonExistsOrderTable() {
             final OrderRequest orderRequest = new OrderRequest(Long.MAX_VALUE,
-                    List.of(new OrderLineItemRequest(orderLineItem.getMenu().getId(), orderLineItem.getQuantity())));
+                    List.of(new OrderLineItemRequest(orderLineItem.getOrderMenu().getMenuId(), orderLineItem.getQuantity())));
 
             assertThatThrownBy(() -> orderService.create(orderRequest))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -88,7 +89,7 @@ class OrderServiceTest extends IntegrationTest {
         void create_Exception_EmptyOrderTable() {
             final Long emptyOrderTableId = orderTableDao.save(createEmptyStatusTable()).getId();
             final OrderRequest orderRequest = new OrderRequest(emptyOrderTableId,
-                    List.of(new OrderLineItemRequest(orderLineItem.getMenu().getId(), orderLineItem.getQuantity())));
+                    List.of(new OrderLineItemRequest(orderLineItem.getOrderMenu().getMenuId(), orderLineItem.getQuantity())));
 
             assertThatThrownBy(() -> orderService.create(orderRequest))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -105,7 +106,8 @@ class OrderServiceTest extends IntegrationTest {
         void changeOrderStatus_Exception_CompletionStatus() {
             final Order order = new Order(nonEmptyOrderTable, OrderStatus.COMPLETION, LocalDateTime.now(),
                     Collections.emptyList());
-            final OrderLineItem orderLineItem = new OrderLineItem(order, menu, 1L);
+            final OrderLineItem orderLineItem = new OrderLineItem(order,
+                    new OrderMenu(menu.getId(), menu.getName(), menu.getPrice()), 1L);
             order.changeOrderLineItems(List.of(orderLineItem));
             final Long savedOrderId = orderDao.save(order).getId();
             final ChangeOrderStatusRequest changeOrderStatusRequest = new ChangeOrderStatusRequest(

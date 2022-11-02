@@ -1,11 +1,11 @@
 package kitchenpos.order.domain;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import kitchenpos.menu.domain.Menu;
 
 @Entity
 public class OrderLineItem {
@@ -17,17 +17,17 @@ public class OrderLineItem {
     @ManyToOne
     private Order order;
 
-    @ManyToOne
-    private Menu menu;
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    private OrderMenu orderMenu;
 
     private long quantity;
 
     private OrderLineItem() {
     }
 
-    public OrderLineItem(Order order, Menu menu, long quantity) {
+    public OrderLineItem(Order order, OrderMenu orderMenu, long quantity) {
         this.order = order;
-        this.menu = menu;
+        this.orderMenu = orderMenu;
         this.quantity = quantity;
     }
 
@@ -39,8 +39,8 @@ public class OrderLineItem {
         return order;
     }
 
-    public Menu getMenu() {
-        return menu;
+    public OrderMenu getOrderMenu() {
+        return orderMenu;
     }
 
     public long getQuantity() {
