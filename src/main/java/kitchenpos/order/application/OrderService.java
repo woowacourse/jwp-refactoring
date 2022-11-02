@@ -3,34 +3,31 @@ package kitchenpos.order.application;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.menu.event.VerifiedMenusEvent;
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderValidator;
 import kitchenpos.order.dto.application.OrderLineItemDto;
 import kitchenpos.order.dto.request.ChangeOrderStatusRequest;
-import kitchenpos.order.dto.request.CreateOrderLineItemRequest;
 import kitchenpos.order.dto.request.CreateOrderRequest;
 import kitchenpos.order.dto.response.OrderResponse;
-import kitchenpos.order.event.VerifiedOrderTableEvent;
 import kitchenpos.order.repository.OrderRepository;
 
 @Service
 @Transactional(readOnly = true)
 public class OrderService {
     private final OrderRepository orderRepository;
-    private final ApplicationEventPublisher publisher;
+    private final OrderValidator orderValidator;
 
-    public OrderService(OrderRepository orderRepository, ApplicationEventPublisher publisher) {
+    public OrderService(OrderRepository orderRepository, OrderValidator orderValidator) {
         this.orderRepository = orderRepository;
-        this.publisher = publisher;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
     public OrderResponse create(final CreateOrderRequest request) {
-        validateCreateOrderRequest(request);
+        orderValidator.validateCreateOrder(request);
 
         List<OrderLineItemDto> orderLineItems = request.getOrderLineItems().stream()
             .map(it -> new OrderLineItemDto(it.getMenuId(), it.getQuantity()))
@@ -55,16 +52,6 @@ public class OrderService {
         order.changeStatus(request.getStatus());
 
         return new OrderResponse(order);
-    }
-
-    private void validateCreateOrderRequest(final CreateOrderRequest request) {
-        publisher.publishEvent(new VerifiedOrderTableEvent(request.getOrderTableId()));
-
-        final List<Long> menuIds = request.getOrderLineItems().stream()
-            .map(CreateOrderLineItemRequest::getMenuId)
-            .collect(Collectors.toList());
-
-        publisher.publishEvent(new VerifiedMenusEvent(menuIds));
     }
 
 }
