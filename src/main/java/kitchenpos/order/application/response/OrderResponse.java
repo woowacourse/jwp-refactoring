@@ -50,4 +50,12 @@ public class OrderResponse {
     public String getOrderStatus() {
         return orderStatus;
     }
+
+    public LocalDateTime getOrderedTime() {
+        return orderedTime;
+    }
+
+    public List<OrderLineItemResponse> getOrderLineItems() {
+        return orderLineItems;
+    }
 }

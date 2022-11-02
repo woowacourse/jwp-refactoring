@@ -89,10 +89,11 @@ public class OrderService {
         return getOrderLineItems(menuAndQuantity, menus);
     }
 
-    private static List<OrderLineItem> getOrderLineItems(final Map<Long, Long> menuAndQuantity, final List<Menu> menus) {
+    private static List<OrderLineItem> getOrderLineItems(final Map<Long, Long> menuAndQuantity,
+                                                         final List<Menu> menus) {
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (Menu menu : menus) {
-            final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), menuAndQuantity.get(menu.getId()));
+            final OrderLineItem orderLineItem = new OrderLineItem(menu, menuAndQuantity.get(menu.getId()));
             orderLineItems.add(orderLineItem);
         }
 
