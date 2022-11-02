@@ -31,7 +31,7 @@ public class TableGroupService {
     public TableGroupResponse create(final TableGroupCreateRequest request) {
         final List<OrderTable> orderTables = findOrderTables(request);
         final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(orderTables));
-        List<OrderTable> savedOrderTables = saveOrderTables(savedTableGroup.getId(), orderTables);
+        final List<OrderTable> savedOrderTables = saveOrderTables(savedTableGroup.getId(), orderTables);
 
         return TableGroupResponse.of(savedTableGroup,  savedOrderTables);
     }
