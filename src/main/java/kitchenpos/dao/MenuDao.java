@@ -9,7 +9,7 @@ public interface MenuDao {
 
     Menu save(final Menu entity);
 
-    List<Menu> findAll();
+    Optional<Menu> findById(final Long id);
 
-    long countByIdIn(final List<Long> ids);
+    List<Menu> findAll();
 }
