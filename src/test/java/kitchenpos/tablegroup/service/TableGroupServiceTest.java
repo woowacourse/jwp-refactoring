@@ -135,11 +135,14 @@ class TableGroupServiceTest extends ServiceTest {
                 new TableGroupCreateRequest(List.of(orderTable1.getId(), orderTable2.getId())));
         tableService.changeEmpty(orderTable1.getId(), new OrderTableEmptyChangeRequest(false));
         tableService.changeEmpty(orderTable2.getId(), new OrderTableEmptyChangeRequest(false));
-        OrderLineItem orderLineItem = new OrderLineItem(
-                "메뉴1", new Price(new BigDecimal(2500)), new Quantity(2L));
-        Order order = Order.newOrder(orderTable2.getId(), List.of(orderLineItem), orderValidator);
-        order.changeOrderStatus(OrderStatus.from(orderStatus));
-        orderRepository.save(order);
+        OrderLineItem orderLineItem1 = new OrderLineItem("메뉴1", new Price(new BigDecimal(2500)), new Quantity(2L));
+        OrderLineItem orderLineItem2 = new OrderLineItem("메뉴1", new Price(new BigDecimal(2500)), new Quantity(2L));
+        Order order1 = Order.newOrder(orderTable1.getId(), List.of(orderLineItem1), orderValidator);
+        Order order2 = Order.newOrder(orderTable2.getId(), List.of(orderLineItem2), orderValidator);
+        order1.changeOrderStatus(OrderStatus.from(orderStatus));
+        order2.changeOrderStatus(OrderStatus.COMPLETION);
+        orderRepository.save(order1);
+        orderRepository.save(order2);
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupResponse.getId()))
                 .isInstanceOf(NotCompleteTableUngroupException.class);

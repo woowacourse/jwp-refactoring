@@ -1,10 +1,12 @@
 package kitchenpos.tablegroup.domain;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.exception.GroupTableNotEnoughException;
 import kitchenpos.ordertable.exception.GroupedTableNotEmptyException;
 import kitchenpos.tablegroup.exception.TableAlreadyGroupedException;
+import kitchenpos.tablegroup.validator.TableGroupValidator;
 import org.springframework.util.CollectionUtils;
 
 public class OrderTables {
@@ -58,7 +60,11 @@ public class OrderTables {
         values.forEach(orderTable -> orderTable.group(tableGroupId));
     }
 
-    public void ungroup() {
+    public void ungroup(TableGroupValidator tableGroupValidator) {
+        List<Long> orderTableIds = values.stream()
+                .map(OrderTable::getTableGroupId)
+                .collect(Collectors.toUnmodifiableList());
+        tableGroupValidator.validateOrderStatuses(orderTableIds);
         values.forEach(OrderTable::ungroup);
     }
 

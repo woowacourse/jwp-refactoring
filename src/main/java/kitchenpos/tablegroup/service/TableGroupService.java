@@ -1,9 +1,6 @@
 package kitchenpos.tablegroup.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.exception.OrderTableNotFoundException;
 import kitchenpos.ordertable.repository.TableRepository;
@@ -11,8 +8,8 @@ import kitchenpos.tablegroup.domain.OrderTables;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.dto.TableGroupCreateRequest;
 import kitchenpos.tablegroup.dto.TableGroupResponse;
-import kitchenpos.tablegroup.exception.NotCompleteTableUngroupException;
 import kitchenpos.tablegroup.repository.TableGroupRepository;
+import kitchenpos.tablegroup.validator.TableGroupValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,13 +18,13 @@ public class TableGroupService {
 
     private final TableRepository tableRepository;
     private final TableGroupRepository tableGroupRepository;
-    private final OrderRepository orderRepository;
+    private final TableGroupValidator tableGroupValidator;
 
     public TableGroupService(TableRepository tableRepository, TableGroupRepository tableGroupRepository,
-                             OrderRepository orderRepository) {
+                             TableGroupValidator tableGroupValidator) {
         this.tableRepository = tableRepository;
         this.tableGroupRepository = tableGroupRepository;
-        this.orderRepository = orderRepository;
+        this.tableGroupValidator = tableGroupValidator;
     }
 
     @Transactional
@@ -52,21 +49,8 @@ public class TableGroupService {
     @Transactional
     public void ungroup(Long tableGroupId) {
         List<OrderTable> orderTablesInTableGroup = tableRepository.findAllByTableGroupId(tableGroupId);
-        validateOrderStatusInTable(orderTablesInTableGroup);
         OrderTables orderTables = OrderTables.forUnGrouping(orderTablesInTableGroup);
-        orderTables.ungroup();
+        orderTables.ungroup(tableGroupValidator);
         orderTables.setEmpty();
-    }
-
-    private void validateOrderStatusInTable(List<OrderTable> orderTables) {
-        List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toUnmodifiableList());
-        List<Order> orders = orderRepository.findAllByIdIn(orderTableIds);
-        boolean notCompletion = orders.stream()
-                .anyMatch(Order::isNotCompletionOrderStatus);
-        if (notCompletion) {
-            throw new NotCompleteTableUngroupException();
-        }
     }
 }

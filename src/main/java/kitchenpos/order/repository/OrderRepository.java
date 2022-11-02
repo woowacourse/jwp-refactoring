@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    List<Order> findAllByIdIn(List<Long> ids);
+    List<Order> findAllByOrderTableIdIn(List<Long> orderTableIds);
 
     Optional<Order> findByOrderTableId(Long orderTableId);
 }
