@@ -2,6 +2,8 @@ package kitchenpos.order.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.application.dto.OrderChangeRequest;
 import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderLineItemDto;
@@ -9,7 +11,6 @@ import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,9 +29,13 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest request) {
-        final List<OrderLineItem> orderLineItems = extractOrderLineItemFrom(request.getOrderLineItems());
+        List<OrderLineItemDto> orderLineItemsDto = request.getOrderLineItems();
+        final List<OrderLineItem> orderLineItems = extractOrderLineItemFrom(orderLineItemsDto);
         validateOrderLineItemsCount(orderLineItems);
-        final Order savedOrder = orderRepository.save(request.toOrder());
+        final Order savedOrder = orderRepository.save(new Order(
+                request.getOrderTableId(),
+                orderLineItems
+        ));
         return OrderResponse.from(savedOrder);
     }
 
@@ -65,7 +70,20 @@ public class OrderService {
 
     private List<OrderLineItem> extractOrderLineItemFrom(final List<OrderLineItemDto> orderLineItemsDto) {
         return orderLineItemsDto.stream()
-                .map(OrderLineItemDto::toOrderLineItem)
+                .map(orderLineItemDto -> {
+                    Menu menu = getMenu(orderLineItemDto);
+                    return new OrderLineItem(
+                            orderLineItemDto.getMenuId(),
+                            orderLineItemDto.getMenuId(),
+                            menu.getName(),
+                            menu.getPrice(),
+                            orderLineItemDto.getQuantity()
+                    );
+                })
                 .collect(Collectors.toList());
+    }
+
+    private Menu getMenu(final OrderLineItemDto orderLineItemDto) {
+        return menuRepository.findById(orderLineItemDto.getMenuId()).orElseThrow(IllegalArgumentException::new);
     }
 }

@@ -48,6 +48,10 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
+    public void changeMenuName(String name) {
+        this.name = name;
+    }
+
     public Long getId() {
         return id;
     }

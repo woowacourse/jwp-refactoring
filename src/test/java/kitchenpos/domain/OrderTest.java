@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,7 +20,7 @@ class OrderTest {
     private Long orderTableId = 11L;
     private OrderStatus orderStatus = OrderStatus.COOKING;
     private LocalDateTime orderedTime = LocalDateTime.now();
-    private OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 3L);
+    private OrderLineItem orderLineItem = new OrderLineItem(1L, "pasta", BigDecimal.valueOf(13000), 3L);
     private List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
 
     @Test
