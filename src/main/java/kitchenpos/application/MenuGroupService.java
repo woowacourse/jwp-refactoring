@@ -8,6 +8,7 @@ import kitchenpos.ui.jpa.dto.menugroup.MenuGroupCreateRequest;
 import kitchenpos.ui.jpa.dto.menugroup.MenuGroupCreateResponse;
 import kitchenpos.ui.jpa.dto.menugroup.MenuGroupListResponse;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MenuGroupService {
@@ -18,6 +19,7 @@ public class MenuGroupService {
         this.menuGroupRepository = menuGroupRepository;
     }
 
+    @Transactional
     public MenuGroupCreateResponse create(MenuGroupCreateRequest menuGroupCreateRequest) {
         MenuGroup menuGroup = new MenuGroup(menuGroupCreateRequest.getName());
         menuGroupRepository.save(menuGroup);
