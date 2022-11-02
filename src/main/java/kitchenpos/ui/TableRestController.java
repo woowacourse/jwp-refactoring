@@ -2,9 +2,12 @@ package kitchenpos.ui;
 
 import java.net.URI;
 import java.util.List;
+import javax.validation.Valid;
 import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.ui.dto.request.TableCreateRequest;
+import kitchenpos.ui.dto.response.OrderTableChangeEmptyResponse;
 import kitchenpos.ui.dto.response.TableCreateResponse;
 import kitchenpos.ui.dto.response.TableFindAllResponse;
 import org.springframework.http.ResponseEntity;
@@ -40,11 +43,12 @@ public class TableRestController {
     }
 
     @PutMapping("/api/tables/{orderTableId}/empty")
-    public ResponseEntity<OrderTable> changeEmpty(
+    public ResponseEntity<OrderTableChangeEmptyResponse> changeEmpty(
             @PathVariable final Long orderTableId,
-            @RequestBody final OrderTable orderTable) {
+            @RequestBody @Valid final OrderTableChangeEmptyRequest request) {
+        final OrderTableChangeEmptyResponse response = tableService.changeEmpty(orderTableId, request);
         return ResponseEntity.ok()
-                .body(tableService.changeEmpty(orderTableId, orderTable));
+                .body(response);
     }
 
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")

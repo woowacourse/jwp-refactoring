@@ -7,7 +7,9 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.exception.NotFoundException;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.ui.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.ui.dto.request.TableCreateRequest;
+import kitchenpos.ui.dto.response.OrderTableChangeEmptyResponse;
 import kitchenpos.ui.dto.response.TableCreateResponse;
 import kitchenpos.ui.dto.response.TableFindAllResponse;
 import org.springframework.stereotype.Service;
@@ -45,7 +47,7 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
+    public OrderTableChangeEmptyResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new NotFoundException(NOT_FOUND_ORDER_TABLE_ERROR_MESSAGE));
 
@@ -54,9 +56,8 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.changeEmpty(orderTable.isEmpty());
-
-        return orderTableRepository.save(savedOrderTable);
+        savedOrderTable.changeEmpty(request.getEmpty());
+        return OrderTableChangeEmptyResponse.from(savedOrderTable);
     }
 
     @Transactional

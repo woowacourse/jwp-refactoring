@@ -20,6 +20,7 @@ import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
+import kitchenpos.ui.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.ui.dto.request.TableCreateRequest;
 import kitchenpos.ui.dto.response.TableCreateResponse;
 import kitchenpos.ui.dto.response.TableFindAllResponse;
@@ -88,7 +89,7 @@ class TableServiceTest {
         OrderTable savedOrderTable = orderTableRepository.save(createOrderTable(4, false));
 
         // when
-        tableService.changeEmpty(savedOrderTable.getId(), createOrderTable(true));
+        tableService.changeEmpty(savedOrderTable.getId(), new OrderTableChangeEmptyRequest(true));
 
         // then
         OrderTable changedTable = orderTableRepository.findById(savedOrderTable.getId())
@@ -108,7 +109,7 @@ class TableServiceTest {
         orderTableRepository.save(orderTable1);
 
         // when, then
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable1.getId(), createOrderTable(true)))
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTable1.getId(), new OrderTableChangeEmptyRequest(true)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -122,7 +123,7 @@ class TableServiceTest {
         orderRepository.save(createOrder(orderTable.getId(), OrderStatus.valueOf(status), LocalDateTime.now()));
 
         // when, then
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), createOrderTable(true)))
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), new OrderTableChangeEmptyRequest(true)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
