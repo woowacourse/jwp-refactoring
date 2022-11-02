@@ -20,6 +20,7 @@ import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.domain.OrderValidator;
 import kitchenpos.order.dto.application.OrderLineItemDto;
 import kitchenpos.order.dto.request.ChangeOrderStatusRequest;
 import kitchenpos.order.dto.request.CreateOrderLineItemRequest;
@@ -35,6 +36,9 @@ class OrderServiceTest {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private OrderValidator orderValidator;
 
     @Autowired
     private MenuGroupRepository menuGroupRepository;
@@ -96,24 +100,6 @@ class OrderServiceTest {
                 .hasMessageContaining("존재하지 않는 메뉴입니다.");
         }
 
-        @Test
-        @DisplayName("존재하지 않는 주문 테이블 id인 경우 예외가 발생한다.")
-        void invalidOrderTableId() {
-            // given
-            Menu savedMenu = createAndSaveMenu();
-
-            CreateOrderRequest request = createOrderCreateRequest(
-                0L,
-                savedMenu.getId(),
-                10
-            );
-
-            // when, then
-            assertThatThrownBy(() -> orderService.create(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("존재하지 않는 주문 테이블 입니다.");
-        }
-
     }
 
     @Nested
@@ -169,7 +155,8 @@ class OrderServiceTest {
             orderTable.getId(),
             new ArrayList<OrderLineItemDto>() {{
                 add(new OrderLineItemDto(menu.getName(), menu.getPrice(), 1L));
-            }}
+            }},
+            orderValidator
         );
 
         return orderRepository.save(order);

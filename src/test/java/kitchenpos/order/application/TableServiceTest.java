@@ -22,6 +22,7 @@ import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.domain.OrderValidator;
 import kitchenpos.order.dto.application.OrderLineItemDto;
 import kitchenpos.order.dto.request.ChangeOrderTableEmptyRequest;
 import kitchenpos.order.dto.request.ChangeOrderTableNumberOfGuestRequest;
@@ -43,6 +44,9 @@ class TableServiceTest {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private OrderValidator orderValidator;
 
     @Autowired
     private ProductRepository productRepository;
@@ -125,7 +129,7 @@ class TableServiceTest {
             // given
             OrderTable savedOrderTable = createAndSaveOrderTable(true);
             Order order = createOrder(savedOrderTable.getId());
-            order.changeStatus(status);
+            order.changeStatus(status, orderValidator);
             orderRepository.save(order);
 
             ChangeOrderTableEmptyRequest request = new ChangeOrderTableEmptyRequest(false);
@@ -193,7 +197,8 @@ class TableServiceTest {
             orderTableId,
             new ArrayList<OrderLineItemDto>() {{
                 add(new OrderLineItemDto(menu.getName(), menu.getPrice(), 1L));
-            }}
+            }},
+            orderValidator
         );
     }
 

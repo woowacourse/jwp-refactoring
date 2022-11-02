@@ -34,22 +34,10 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final CreateOrderRequest request) {
-        orderValidator.validateCreateOrder(request);
-
-        final Map<Long, Menu> menus = getMenus(request.getOrderLineItems());
-        final List<OrderLineItemDto> orderLineItems = new ArrayList<>();
-        for (CreateOrderLineItemRequest orderLineItem : request.getOrderLineItems()) {
-            final Menu menu = menus.get(orderLineItem.getMenuId());
-            final OrderLineItemDto orderLineItemDto = new OrderLineItemDto(
-                menu.getName(),
-                menu.getPrice(),
-                orderLineItem.getQuantity()
-            );
-
-            orderLineItems.add(orderLineItemDto);
-        }
-
-        final Order order = orderRepository.save(new Order(request.getOrderTableId(), orderLineItems));
+        final Order order = orderRepository.save(new Order(
+            request.getOrderTableId(),
+            convertToOrderLineItemDtos(request.getOrderLineItems()),
+            orderValidator));
 
         return new OrderResponse(order);
     }
@@ -65,9 +53,27 @@ public class OrderService {
         final Order order = orderRepository.findById(orderId)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않은 주문입니다."));
 
-        order.changeStatus(request.getStatus());
+        order.changeStatus(request.getStatus(), orderValidator);
 
         return new OrderResponse(order);
+    }
+
+    private List<OrderLineItemDto> convertToOrderLineItemDtos(List<CreateOrderLineItemRequest> orderLineItems) {
+        final Map<Long, Menu> menus = getMenus(orderLineItems);
+        final List<OrderLineItemDto> result = new ArrayList<>();
+
+        for (CreateOrderLineItemRequest orderLineItem : orderLineItems) {
+            final Menu menu = menus.get(orderLineItem.getMenuId());
+            final OrderLineItemDto orderLineItemDto = new OrderLineItemDto(
+                menu.getName(),
+                menu.getPrice(),
+                orderLineItem.getQuantity()
+            );
+
+            result.add(orderLineItemDto);
+        }
+
+        return result;
     }
 
     private Map<Long, Menu> getMenus(final List<CreateOrderLineItemRequest> orderLineItems) {

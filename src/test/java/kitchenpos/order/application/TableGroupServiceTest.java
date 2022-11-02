@@ -21,6 +21,7 @@ import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.domain.OrderValidator;
 import kitchenpos.order.dto.application.OrderLineItemDto;
 import kitchenpos.order.dto.request.AddOrderTableToTableGroupRequest;
 import kitchenpos.order.dto.request.CreateTableGroupRequest;
@@ -44,6 +45,9 @@ class TableGroupServiceTest {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private OrderValidator orderValidator;
 
     @Autowired
     private MenuGroupRepository menuGroupRepository;
@@ -134,7 +138,7 @@ class TableGroupServiceTest {
             long savedGroupId = createAndSaveTableGroup(orderTable1, orderTable2).getId();
 
             Order order = createOrder(orderTable1.getId());
-            order.changeStatus(status);
+            order.changeStatus(status, orderValidator);
             orderRepository.save(order);
 
             // when, then
@@ -179,7 +183,8 @@ class TableGroupServiceTest {
             orderTableId,
             new ArrayList<OrderLineItemDto>() {{
                 add(new OrderLineItemDto(menu.getName(), menu.getPrice(), 1L));
-            }}
+            }},
+            orderValidator
         );
     }
 

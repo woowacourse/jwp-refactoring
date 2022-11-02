@@ -15,7 +15,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.Hibernate;
-import org.springframework.util.CollectionUtils;
 
 import kitchenpos.order.dto.application.OrderLineItemDto;
 
@@ -42,8 +41,11 @@ public class Order {
     protected Order() {
     }
 
-    public Order(Long orderTableId, List<OrderLineItemDto> orderLineItems) {
-        validate(orderTableId, orderLineItems);
+    public Order(
+        final Long orderTableId,
+        final List<OrderLineItemDto> orderLineItems,
+        final OrderValidator orderValidator) {
+        orderValidator.validateCreateOrder(orderTableId, orderLineItems);
 
         this.orderTableId = orderTableId;
         this.orderStatus = OrderStatus.COOKING.name();
@@ -61,11 +63,8 @@ public class Order {
         }
     }
 
-    public void changeStatus(String status) {
-        if (OrderStatus.isCompletion(orderStatus)) {
-            throw new IllegalArgumentException("이미 완료된 주문 상태를 변경할 수 없습니다.");
-        }
-
+    public void changeStatus(String status, OrderValidator orderValidator) {
+        orderValidator.validateChangeStatus(this);
         orderStatus = status;
     }
 
@@ -87,23 +86,6 @@ public class Order {
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    private void validate(Long orderTableId, List<OrderLineItemDto> orderLineItems) {
-        validateEmptyOrderTable(orderTableId);
-        validateOrderLineItems(orderLineItems);
-    }
-
-    private void validateEmptyOrderTable(Long orderTableId) {
-        if (orderTableId == null) {
-            throw new IllegalArgumentException("주문 테이블은 비어있을 수 없습니다.");
-        }
-    }
-
-    private void validateOrderLineItems(List<OrderLineItemDto> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException("주문 항목은 비어있을 수 없습니다.");
-        }
     }
 
     @Override
