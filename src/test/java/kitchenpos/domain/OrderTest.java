@@ -1,14 +1,16 @@
 package kitchenpos.domain;
 
-import static kitchenpos.domain.OrderStatus.COMPLETION;
-import static kitchenpos.domain.OrderStatus.COOKING;
-import static kitchenpos.domain.OrderStatus.MEAL;
+import static kitchenpos.domain.order.OrderStatus.COMPLETION;
+import static kitchenpos.domain.order.OrderStatus.COOKING;
+import static kitchenpos.domain.order.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.fixtures.TestFixtures;
 import org.junit.jupiter.api.Test;
 

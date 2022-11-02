@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import static kitchenpos.domain.OrderStatus.COOKING;
-import static kitchenpos.domain.OrderStatus.MEAL;
+import static kitchenpos.domain.order.OrderStatus.COOKING;
+import static kitchenpos.domain.order.OrderStatus.MEAL;
 import static kitchenpos.fixtures.TestFixtures.메뉴_그룹_생성;
 import static kitchenpos.fixtures.TestFixtures.메뉴_생성;
 import static kitchenpos.fixtures.TestFixtures.주문_생성;
@@ -17,10 +17,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.ui.dto.OrderCreateRequest;
 import kitchenpos.ui.dto.OrderLineItemRequest;
 import kitchenpos.ui.dto.OrderResponse;

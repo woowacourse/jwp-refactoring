@@ -1,10 +1,11 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import java.util.Objects;
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
+import kitchenpos.domain.common.Price;
 
 @Embeddable
 public class OrderedMenu {

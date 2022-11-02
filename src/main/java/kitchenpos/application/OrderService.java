@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.domain.order.OrderStatus.COOKING;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -8,12 +8,12 @@ import java.util.stream.Collectors;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderedMenu;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.order.OrderedMenu;
 import kitchenpos.ui.dto.OrderCreateRequest;
 import kitchenpos.ui.dto.OrderLineItemRequest;
 import kitchenpos.ui.dto.OrderLineItemResponse;

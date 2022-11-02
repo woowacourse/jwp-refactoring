@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.domain.order.OrderStatus.COOKING;
 import static kitchenpos.fixtures.TestFixtures.단체_지정_생성_요청;
 import static kitchenpos.fixtures.TestFixtures.주문_생성;
 import static kitchenpos.fixtures.TestFixtures.주문_테이블_생성;
@@ -12,8 +12,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.ui.dto.TableGroupCreateRequest;
 import kitchenpos.ui.dto.TableGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
