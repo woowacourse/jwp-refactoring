@@ -122,24 +122,6 @@ class TableServiceTest {
                 .hasMessageContaining("존재하지 않은 테이블입니다.");
         }
 
-        @ParameterizedTest
-        @ValueSource(strings = {"COOKING", "MEAL"})
-        @DisplayName("COOKING 혹은 MEAL 상태인 경우 예외가 발생한다.")
-        void invalidStatus(String status) {
-            // given
-            OrderTable savedOrderTable = createAndSaveOrderTable(true);
-            Order order = createOrder(savedOrderTable.getId());
-            order.changeStatus(status, orderValidator);
-            orderRepository.save(order);
-
-            ChangeOrderTableEmptyRequest request = new ChangeOrderTableEmptyRequest(false);
-
-            // when, then
-            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("변경할 수 있는 상태가 아닙니다.");
-        }
-
     }
 
     @Nested
@@ -177,29 +159,6 @@ class TableServiceTest {
     private OrderTable createAndSaveOrderTable(boolean empty) {
         OrderTable orderTable = new OrderTable(10, empty);
         return orderTableRepository.save(orderTable);
-    }
-
-    private Order createOrder(Long orderTableId) {
-        Product product = productRepository.save(new Product("product", new BigDecimal(5000)));
-        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
-
-        Menu menu = menuRepository.save(new Menu(
-            "menu",
-            new BigDecimal(2000),
-            menuGroup.getId(),
-            new ArrayList<MenuProductDto>() {{
-                add(new MenuProductDto(product.getId(), 1L));
-            }},
-            menuValidator
-        ));
-
-        return new Order(
-            orderTableId,
-            new ArrayList<OrderLineItemDto>() {{
-                add(new OrderLineItemDto(menu.getName(), menu.getPrice(), 1L));
-            }},
-            orderValidator
-        );
     }
 
 }

@@ -34,8 +34,8 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public void group(Long tableGroupId) {
-        validateGroup();
+    public void group(Long tableGroupId, OrderTableValidator orderTableValidator) {
+        orderTableValidator.validateGroup(this);
         this.tableGroupId = tableGroupId;
         empty = false;
     }
@@ -45,13 +45,13 @@ public class OrderTable {
         empty = false;
     }
 
-    public void changeEmpty(boolean empty) {
-        validateChangeEmpty();
+    public void changeEmpty(boolean empty, OrderTableValidator orderTableValidator) {
+        orderTableValidator.validateChangeEmpty(this);
         this.empty = empty;
     }
 
-    public void changeNumberOfGuests(int numberOfGuests) {
-        validateNumberOfGuestsChangeable(numberOfGuests);
+    public void changeNumberOfGuests(int numberOfGuests, OrderTableValidator orderTableValidator) {
+        orderTableValidator.validateChangeNumberOfGuests(numberOfGuests,this);
         this.numberOfGuests = numberOfGuests;
     }
 
@@ -69,32 +69,6 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    private void validateGroup() {
-        if (tableGroupId != null) {
-            throw new IllegalArgumentException("이미 다른 그룹에 존재하는 테이블입니다.");
-        }
-
-        if (!empty) {
-            throw new IllegalArgumentException("비어있지 않은 테이블입니다.");
-        }
-    }
-
-    private void validateChangeEmpty() {
-        if (tableGroupId != null) {
-            throw new IllegalArgumentException("테이블 그룹에 묶여있어 상태를 변경할 수 없습니다.");
-        }
-    }
-
-    private void validateNumberOfGuestsChangeable(int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException("손님 수는 0 이상이어야 합니다.");
-        }
-
-        if (empty) {
-            throw new IllegalArgumentException("비어있는 테이블입니다.");
-        }
     }
 
     @Override

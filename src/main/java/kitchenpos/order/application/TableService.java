@@ -43,9 +43,8 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final ChangeOrderTableEmptyRequest request) {
         final OrderTable orderTable = findOrderTableById(orderTableId);
-        orderTableValidator.validateChangeEmpty(orderTable.getId());
 
-        orderTable.changeEmpty(request.isEmpty());
+        orderTable.changeEmpty(request.isEmpty(), orderTableValidator);
 
         return new OrderTableResponse(orderTable);
     }
@@ -57,7 +56,7 @@ public class TableService {
         final int numberOfGuests = request.getNumberOfGuests();
         final OrderTable orderTable = findOrderTableById(orderTableId);
 
-        orderTable.changeNumberOfGuests(numberOfGuests);
+        orderTable.changeNumberOfGuests(numberOfGuests, orderTableValidator);
 
         return new OrderTableResponse(orderTable);
     }
