@@ -7,6 +7,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import kitchenpos.order.domain.OrderTable;
+
 class OrderTableTest {
 
     @Nested

@@ -1,4 +1,4 @@
-package kitchenpos.table.application;
+package kitchenpos.order.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -8,12 +8,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.order.event.VerifiedAbleToUngroupEvent;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.TableGroup;
-import kitchenpos.table.dto.request.CreateTableGroupRequest;
-import kitchenpos.table.dto.response.TableGroupResponse;
-import kitchenpos.table.repository.OrderTableRepository;
-import kitchenpos.table.repository.TableGroupRepository;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.domain.TableGroup;
+import kitchenpos.order.dto.request.CreateTableGroupRequest;
+import kitchenpos.order.dto.response.TableGroupResponse;
+import kitchenpos.order.repository.OrderTableRepository;
+import kitchenpos.order.repository.TableGroupRepository;
 
 @Service
 @Transactional(readOnly = true)

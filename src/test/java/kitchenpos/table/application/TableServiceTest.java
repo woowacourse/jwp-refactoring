@@ -19,17 +19,18 @@ import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.dto.application.MenuProductDto;
 import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.order.application.TableService;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.dto.application.OrderLineItemDto;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.product.domain.Product;
-import kitchenpos.table.dto.response.OrderTableResponse;
-import kitchenpos.table.repository.OrderTableRepository;
+import kitchenpos.order.dto.response.OrderTableResponse;
+import kitchenpos.order.repository.OrderTableRepository;
 import kitchenpos.product.repository.ProductRepository;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.dto.request.ChangeOrderTableEmptyRequest;
-import kitchenpos.table.dto.request.ChangeOrderTableNumberOfGuestRequest;
-import kitchenpos.table.dto.request.CreateOrderTableRequest;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.dto.request.ChangeOrderTableEmptyRequest;
+import kitchenpos.order.dto.request.ChangeOrderTableNumberOfGuestRequest;
+import kitchenpos.order.dto.request.CreateOrderTableRequest;
 
 @SpringBootTest
 class TableServiceTest {

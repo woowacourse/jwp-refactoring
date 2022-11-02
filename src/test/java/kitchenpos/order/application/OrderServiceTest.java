@@ -25,9 +25,9 @@ import kitchenpos.order.dto.request.CreateOrderRequest;
 import kitchenpos.order.dto.response.OrderResponse;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.product.domain.Product;
-import kitchenpos.table.repository.OrderTableRepository;
+import kitchenpos.order.repository.OrderTableRepository;
 import kitchenpos.product.repository.ProductRepository;
-import kitchenpos.table.domain.OrderTable;
+import kitchenpos.order.domain.OrderTable;
 
 @SpringBootTest
 class OrderServiceTest {

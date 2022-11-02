@@ -1,4 +1,4 @@
-package kitchenpos.table.application;
+package kitchenpos.order.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -8,12 +8,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.order.event.VerifiedAbleToChangeEmptyEvent;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.dto.request.ChangeOrderTableEmptyRequest;
-import kitchenpos.table.dto.request.ChangeOrderTableNumberOfGuestRequest;
-import kitchenpos.table.dto.request.CreateOrderTableRequest;
-import kitchenpos.table.dto.response.OrderTableResponse;
-import kitchenpos.table.repository.OrderTableRepository;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.dto.request.ChangeOrderTableEmptyRequest;
+import kitchenpos.order.dto.request.ChangeOrderTableNumberOfGuestRequest;
+import kitchenpos.order.dto.request.CreateOrderTableRequest;
+import kitchenpos.order.dto.response.OrderTableResponse;
+import kitchenpos.order.repository.OrderTableRepository;
 
 @Service
 @Transactional(readOnly = true)

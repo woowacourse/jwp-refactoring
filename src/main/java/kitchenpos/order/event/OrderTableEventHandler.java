@@ -3,7 +3,7 @@ package kitchenpos.order.event;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import kitchenpos.table.repository.OrderTableRepository;
+import kitchenpos.order.repository.OrderTableRepository;
 
 @Component
 public class OrderTableEventHandler {

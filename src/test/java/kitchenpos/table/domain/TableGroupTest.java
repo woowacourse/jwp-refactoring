@@ -10,6 +10,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.domain.TableGroup;
+
 class TableGroupTest {
 
     @ParameterizedTest
