@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 @Service
 public class ProductService {
-
     private final ProductRepository productRepository;
 
     public ProductService(final ProductRepository productRepository) {

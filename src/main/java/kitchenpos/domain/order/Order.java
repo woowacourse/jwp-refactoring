@@ -45,6 +45,10 @@ public class Order {
     protected Order() {
     }
 
+    public static Order start(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+        return new Order(orderTableId, OrderStatus.COOKING, orderLineItems);
+    }
+
     public Order(final Long orderTableId, final OrderStatus orderStatus, final List<OrderLineItem> orderLineItems) {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;

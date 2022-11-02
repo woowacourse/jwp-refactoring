@@ -7,7 +7,6 @@ import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderRepository;
-import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.ordertable.OrderTableRepository;
 import kitchenpos.dto.request.OrderLineItemRequest;
@@ -20,8 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class OrderService {
-    private static final OrderStatus FIRST_STATUS = OrderStatus.COOKING;
-
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final MenuRepository menuRepository;
@@ -46,7 +43,7 @@ public class OrderService {
                 .map(this::getOrderLineItem)
                 .collect(Collectors.toList());
 
-        Order order = new Order(orderTable.getId(), FIRST_STATUS, orderLineItems);
+        Order order = Order.start(orderTable.getId(), orderLineItems);
         return new OrderResponse(orderRepository.save(order));
     }
 
