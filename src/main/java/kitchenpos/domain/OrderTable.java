@@ -48,6 +48,9 @@ public class OrderTable {
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
+        if (empty) {
+            throw new IllegalArgumentException();
+        }
         this.numberOfGuests = numberOfGuests;
     }
 

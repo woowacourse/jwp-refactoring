@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.dto.request.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.ui.dto.response.TableCreateResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -88,5 +89,22 @@ class TableRestControllerTest extends ControllerTest {
 
         // then
         perform.andExpect(status().isOk());
+    }
+
+    @DisplayName("테이블 인원 수를 변경할 때 음수이면 에러를 반환한다.")
+    @Test
+    void changeNumberOfGuests_fail_if_numberOfGuests_is_negative() throws Exception {
+        // given
+        OrderTableChangeNumberOfGuestsRequest request = new OrderTableChangeNumberOfGuestsRequest(-1);
+
+        // when
+        ResultActions perform = mockMvc.perform(put("/api/tables/1/number-of-guests")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+                        .content(objectMapper.writeValueAsString(request)))
+                .andDo(print());
+
+        // then
+        perform.andExpect(status().isBadRequest());
     }
 }

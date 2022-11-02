@@ -8,8 +8,10 @@ import kitchenpos.exception.NotFoundException;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.ui.dto.request.OrderTableChangeEmptyRequest;
+import kitchenpos.ui.dto.request.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.ui.dto.request.TableCreateRequest;
 import kitchenpos.ui.dto.response.OrderTableChangeEmptyResponse;
+import kitchenpos.ui.dto.response.OrderTableChangeNumberOfGuestsResponse;
 import kitchenpos.ui.dto.response.TableCreateResponse;
 import kitchenpos.ui.dto.response.TableFindAllResponse;
 import org.springframework.stereotype.Service;
@@ -47,7 +49,8 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTableChangeEmptyResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
+    public OrderTableChangeEmptyResponse changeEmpty(final Long orderTableId,
+                                                     final OrderTableChangeEmptyRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new NotFoundException(NOT_FOUND_ORDER_TABLE_ERROR_MESSAGE));
 
@@ -61,22 +64,14 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
-
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-
+    public OrderTableChangeNumberOfGuestsResponse changeNumberOfGuests(final Long orderTableId,
+                                                                       final OrderTableChangeNumberOfGuestsRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
+        final int numberOfGuests = request.getNumberOfGuests();
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
 
-        return orderTableRepository.save(savedOrderTable);
+        return OrderTableChangeNumberOfGuestsResponse.from(savedOrderTable);
     }
 }

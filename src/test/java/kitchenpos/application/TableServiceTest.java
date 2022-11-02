@@ -21,6 +21,7 @@ import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.ui.dto.request.OrderTableChangeEmptyRequest;
+import kitchenpos.ui.dto.request.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.ui.dto.request.TableCreateRequest;
 import kitchenpos.ui.dto.response.TableCreateResponse;
 import kitchenpos.ui.dto.response.TableFindAllResponse;
@@ -135,23 +136,13 @@ class TableServiceTest {
 
         // when
         int numberOfGuests = 3;
-        tableService.changeNumberOfGuests(savedOrderTable.getId(), createOrderTable(numberOfGuests));
+        tableService.changeNumberOfGuests(savedOrderTable.getId(),
+                new OrderTableChangeNumberOfGuestsRequest(numberOfGuests));
 
         // then
         OrderTable changedTable = orderTableRepository.findById(savedOrderTable.getId())
                 .orElseThrow(NoSuchElementException::new);
         assertThat(changedTable.getNumberOfGuests()).isEqualTo(numberOfGuests);
-    }
-
-    @DisplayName("테이블의 방문한 손님수를 변경할 때 손님수가 음수이면 에러를 반환한다.")
-    @Test
-    void changeNumberOfGuests_fail_if_numberOfGuests_is_negative() {
-        // given
-        OrderTable savedOrderTable = orderTableRepository.save(createOrderTable(4, false));
-
-        // when, then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), createOrderTable(-1)))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("테이블의 방문한 손님수를 변경할 때 테이블이 비어있으면 예외를 발생한다.")
@@ -161,7 +152,8 @@ class TableServiceTest {
         OrderTable savedOrderTable = orderTableRepository.save(createOrderTable(4, true));
 
         // when, then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), createOrderTable(-1)))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(),
+                new OrderTableChangeNumberOfGuestsRequest(3)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
