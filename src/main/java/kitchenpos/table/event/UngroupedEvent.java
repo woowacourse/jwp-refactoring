@@ -4,11 +4,11 @@ import java.util.List;
 
 import kitchenpos.table.domain.OrderTable;
 
-public class UngroupEvent {
+public class UngroupedEvent {
 
     private final List<OrderTable> orderTables;
 
-    public UngroupEvent(List<OrderTable> orderTables) {
+    public UngroupedEvent(List<OrderTable> orderTables) {
         this.orderTables = orderTables;
     }
 

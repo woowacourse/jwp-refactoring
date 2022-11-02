@@ -10,7 +10,7 @@ import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.dto.ChangeEmptyRequest;
 import kitchenpos.table.dto.ChangeGuestNumberRequest;
 import kitchenpos.table.dto.OrderTableRequest;
-import kitchenpos.table.event.ChangeEmptyEvent;
+import kitchenpos.table.event.EmptyChangedEvent;
 import kitchenpos.table.repository.OrderTableRepository;
 
 @Service
@@ -40,7 +40,7 @@ public class OrderTableService {
     public OrderTable changeEmpty(final Long orderTableId, final ChangeEmptyRequest changeEmptyRequest) {
         OrderTable orderTable = getOrderTable(orderTableId);
 
-        applicationEventPublisher.publishEvent(new ChangeEmptyEvent(orderTable));
+        applicationEventPublisher.publishEvent(new EmptyChangedEvent(orderTable));
 
         orderTable.changeEmpty(changeEmptyRequest.isEmpty());
 

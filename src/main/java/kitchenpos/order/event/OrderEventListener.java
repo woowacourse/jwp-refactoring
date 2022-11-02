@@ -9,8 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.table.event.ChangeEmptyEvent;
-import kitchenpos.table.event.UngroupEvent;
+import kitchenpos.table.event.EmptyChangedEvent;
+import kitchenpos.table.event.UngroupedEvent;
 
 @Transactional(readOnly = true)
 @Service
@@ -25,15 +25,15 @@ public class OrderEventListener {
         this.orderRepository = orderRepository;
     }
 
-    @EventListener(UngroupEvent.class)
-    public void validateOrderCompleted(UngroupEvent event) {
+    @EventListener(UngroupedEvent.class)
+    public void validateOrderCompleted(UngroupedEvent event) {
         if (orderRepository.existsByOrderTableInAndOrderStatusIn(event.getOrderTables(), ORDER_UNCOMPLETED_STATUS)) {
             throw new IllegalArgumentException("주문이 완료되지 않아서 그룹을 해제할 수 없습니다.");
         }
     }
 
-    @EventListener(ChangeEmptyEvent.class)
-    public void validateOrderCompleted(ChangeEmptyEvent event) {
+    @EventListener(EmptyChangedEvent.class)
+    public void validateOrderCompleted(EmptyChangedEvent event) {
         if (orderRepository.existsByOrderTableAndOrderStatusIn(event.getOrderTable(), ORDER_UNCOMPLETED_STATUS)) {
             throw new IllegalArgumentException("주문이 완료되지 않았습니다.");
         }

@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.dto.OrderTableGroupRequest;
-import kitchenpos.table.event.UngroupEvent;
+import kitchenpos.table.event.UngroupedEvent;
 import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.table.repository.TableGroupRepository;
 
@@ -42,7 +42,7 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         TableGroup tableGroup = getTableGroup(tableGroupId);
 
-        applicationEventPublisher.publishEvent(new UngroupEvent(tableGroup.getOrderTables()));
+        applicationEventPublisher.publishEvent(new UngroupedEvent(tableGroup.getOrderTables()));
 
         tableGroup.ungroup();
     }
