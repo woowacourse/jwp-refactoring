@@ -8,16 +8,16 @@ public class MenuCreateRequest {
     private String name;
     private long price;
     private Long menuGroupId;
-    private List<MenuProduct> menuProducts;
+    private List<Long> menuProductIds;
 
     public MenuCreateRequest() {
     }
 
-    public MenuCreateRequest(String name, long price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    public MenuCreateRequest(String name, long price, Long menuGroupId, List<Long> menuProductIds) {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
+        this.menuProductIds = menuProductIds;
     }
 
     public String getName() {
@@ -32,7 +32,7 @@ public class MenuCreateRequest {
         return menuGroupId;
     }
 
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
+    public List<Long> getMenuProductIds() {
+        return menuProductIds;
     }
 }

@@ -8,16 +8,16 @@ public class TableGroupCreateResponse {
 
     private Long id;
     private LocalDateTime createdDate;
-    private List<OrderTable> orderTables;
+    private List<Long> orderTableIds;
 
     public TableGroupCreateResponse() {
     }
 
     public TableGroupCreateResponse(Long id, LocalDateTime createdDate,
-                                    List<OrderTable> orderTables) {
+                                    List<Long> orderTableIds) {
         this.id = id;
         this.createdDate = createdDate;
-        this.orderTables = orderTables;
+        this.orderTableIds = orderTableIds;
     }
 
     public Long getId() {
@@ -28,7 +28,7 @@ public class TableGroupCreateResponse {
         return createdDate;
     }
 
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
+    public List<Long> getOrderTableIds() {
+        return orderTableIds;
     }
 }

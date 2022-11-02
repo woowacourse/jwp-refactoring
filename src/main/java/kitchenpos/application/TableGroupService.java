@@ -31,7 +31,7 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupCreateResponse create(TableGroupCreateRequest tableGroupCreateRequest) {
-        OrderTables orderTables = new OrderTables(tableGroupCreateRequest.getOrderTables());
+        OrderTables orderTables = tableServiceAssistant.findOrderTables(tableGroupCreateRequest.getOrderTableIds());
         List<Long> orderTableIds = orderTables.getOrderTableIds();
         OrderTables savedOrderTables = new OrderTables(orderTableRepository.findAllById(orderTableIds));
 
@@ -44,7 +44,7 @@ public class TableGroupService {
         savedOrderTables.group(tableGroup);
 
 
-        return new TableGroupCreateResponse(tableGroup.getId(), tableGroup.getCreatedDate(), tableGroup.getOrderTables());
+        return new TableGroupCreateResponse(tableGroup.getId(), tableGroup.getCreatedDate(), new OrderTables(tableGroup.getOrderTables()).getOrderTableIds());
     }
 
     @Transactional

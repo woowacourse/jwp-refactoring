@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.MenuProductFixture.MENU_PRODUCT_1;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 class MenuServiceTest extends ServiceTest {
 
@@ -42,7 +44,8 @@ class MenuServiceTest extends ServiceTest {
     @DisplayName("메뉴를 생성한다.")
     @Test
     void create() {
-        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("이름", 5000L, menuGroup.getId(), List.of(menuProduct));
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("이름", 5000L, menuGroup.getId(), List.of(
+                MENU_PRODUCT_1.getId()));
 
         MenuCreateResponse menuCreateResponse = menuService.create(menuCreateRequest);
 
@@ -52,9 +55,10 @@ class MenuServiceTest extends ServiceTest {
 
     @DisplayName("메뉴를 모두 조회한다.")
     @Test
+    @Transactional
     void list() {
         int numberOfMenuBeforeCreate = menuService.list().size();
-        menuService.create(new MenuCreateRequest("이름", 5000L, menuGroup.getId(), List.of(menuProduct)));
+        menuService.create(new MenuCreateRequest("이름", 5000L, menuGroup.getId(), List.of(MENU_PRODUCT_1.getId())));
 
         int numberOfMenu = menuService.list().size();
 

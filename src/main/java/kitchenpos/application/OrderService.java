@@ -6,6 +6,7 @@ import kitchenpos.domain.collection.OrderLineItems;
 import kitchenpos.domain.collection.OrderTables;
 import kitchenpos.domain.collection.Orders;
 import kitchenpos.domain.entity.Order;
+import kitchenpos.domain.entity.OrderLineItem;
 import kitchenpos.domain.entity.OrderStatus;
 import kitchenpos.domain.entity.OrderTable;
 import kitchenpos.repository.MenuRepository;
@@ -54,21 +55,21 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        Order order = new Order(orderTable, orderCreateRequest.getOrderLineItems());
+        Order order = new Order(orderTable, orderLineItems.getElements());
         orderRepository.save(order);
 
         orderLineItems.associateOrder(order);
         orderLineItemService.saveOrderLineItems(orderLineItems);
 
         return new OrderCreateResponse(order.getId(), orderTable.getId(), order.getOrderStatus().getValue(),
-                order.getOrderedTime(), orderLineItems.getElements());
+                order.getOrderedTime(), orderLineItems.getOrderLineItemIds());
     }
 
     public List<OrderListResponse> list() {
         List<Order> orders = orderRepository.findAll();
         return orders.stream()
                 .map(order -> new OrderListResponse(order.getId(), order.getOrderTable().getId(),
-                        order.getOrderStatus().getValue(), order.getOrderedTime(), order.getOrderLineItems()))
+                        order.getOrderStatus().getValue(), order.getOrderedTime(), new OrderLineItems(order.getOrderLineItems()).getOrderLineItemIds()))
                 .collect(Collectors.toList());
     }
 
@@ -80,7 +81,7 @@ public class OrderService {
         savedOrder.changeOrderStatus(OrderStatus.valueOf(orderStatus));
 
         return new ChangeOrderStatusResponse(savedOrder.getId(), savedOrder.getOrderTable().getId(),
-                savedOrder.getOrderStatus().getValue(), savedOrder.getOrderedTime(), savedOrder.getOrderLineItems());
+                savedOrder.getOrderStatus().getValue(), savedOrder.getOrderedTime(), new OrderLineItems(savedOrder.getOrderLineItems()).getOrderLineItemIds());
     }
 
     public boolean isNotAllOrderFinish(OrderTable orderTable) {

@@ -25,6 +25,13 @@ public class OrderLineItems {
                 .collect(Collectors.toList());
     }
 
+    public List<Long> getOrderLineItemIds() {
+        return elements.stream()
+                .map(OrderLineItem::getOrder)
+                .map(Order::getId)
+                .collect(Collectors.toList());
+    }
+
     public int numberOfElements() {
         return elements.size();
     }

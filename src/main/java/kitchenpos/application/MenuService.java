@@ -20,20 +20,22 @@ public class MenuService {
     private final MenuRepository menuRepository;
     private final MenuGroupService menuGroupService;
     private final ProductService productService;
+    private final MenuProductService menuProductService;
 
     public MenuService(MenuRepository menuRepository,
                        MenuGroupService menuGroupService,
-                       ProductService productService) {
+                       ProductService productService, MenuProductService menuProductService) {
         this.menuRepository = menuRepository;
         this.menuGroupService = menuGroupService;
         this.productService = productService;
+        this.menuProductService = menuProductService;
     }
 
     @Transactional
     public MenuCreateResponse create(MenuCreateRequest menuCreateRequest) {
         MenuGroup menuGroup = menuGroupService.findMenuGroup(menuCreateRequest.getMenuGroupId());
 
-        MenuProducts menuProducts = new MenuProducts(menuCreateRequest.getMenuProducts());
+        MenuProducts menuProducts = menuProductService.findMenuProducts(menuCreateRequest.getMenuProductIds());
         final List<Product> products = productService.findProducts(menuProducts.getProductIds());
         long sum = menuProducts.sumPrice(products);
 
@@ -45,13 +47,13 @@ public class MenuService {
         menuRepository.save(menu);
 
         return new MenuCreateResponse(menu.getId(), menuCreateRequest.getName(), menuCreateRequest.getPrice(),
-                menuCreateRequest.getMenuGroupId(), menu.getMenuProducts());
+                menuCreateRequest.getMenuGroupId(), menuProducts.getProductIds());
     }
 
     public List<MenuListResponse> list() {
         List<Menu> menus = menuRepository.findAll();
         return menus.stream()
-                .map(menu -> new MenuListResponse(menu.getId(), menu.getName(), menu.getPrice().getValue(), menu.getMenuGroup().getId(), menu.getMenuProducts()))
+                .map(menu -> new MenuListResponse(menu.getId(), menu.getName(), menu.getPrice().getValue(), menu.getMenuGroup().getId(), (new MenuProducts(menu.getMenuProducts())).getProductIds()))
                 .collect(Collectors.toList());
     }
 }

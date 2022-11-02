@@ -15,17 +15,20 @@ import kitchenpos.domain.entity.Product;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.ProductRepository;
 import kitchenpos.ui.jpa.dto.order.OrderCreateRequest;
 import kitchenpos.ui.jpa.dto.order.OrderCreateResponse;
+import org.aspectj.weaver.ast.Or;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 class OrderServiceTest extends ServiceTest {
 
@@ -43,9 +46,6 @@ class OrderServiceTest extends ServiceTest {
 
     @Autowired
     private ProductRepository productRepository;
-
-    @Autowired
-    private MenuProductRepository menuProductRepository;
 
     @Autowired
     private MenuRepository menuRepository;
@@ -68,6 +68,7 @@ class OrderServiceTest extends ServiceTest {
 
         Menu menu = new Menu("name", menuGroup, List.of(menuProduct), new Price(5000L));
         menuRepository.save(menu);
+
         orderLineItem = new OrderLineItem(menu, 1L);
     }
 
@@ -94,6 +95,7 @@ class OrderServiceTest extends ServiceTest {
 
     @DisplayName("모든 주문을 조회한다.")
     @Test
+    @Transactional
     void list() {
         int numberOfOrderBeforeCreate = orderService.list().size();
         orderService.create(new OrderCreateRequest(orderTable.getId(), List.of(orderLineItem)));

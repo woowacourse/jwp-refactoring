@@ -46,8 +46,8 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("테이블 그룹을 생성한다.")
     @Test
     void create() {
-        TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(List.of(emptyOrderTable1,
-                emptyOrderTable2));
+        TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(List.of(emptyOrderTable1.getId(),
+                emptyOrderTable2.getId()));
 
         TableGroupCreateResponse tableGroupCreateResponse = tableGroupService.create(tableGroupCreateRequest);
 
@@ -57,7 +57,7 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("테이블 그룹엔 테이블이 1개 이하일 수 없다.")
     @Test
     void create_Exception_Lack_Table() {
-        TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(List.of(emptyOrderTable1));
+        TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(List.of(emptyOrderTable1.getId()));
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -67,7 +67,7 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void create_Exception_NotEmpty_Table() {
         TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(
-                List.of(emptyOrderTable1, notEmptyOrderTable));
+                List.of(emptyOrderTable1.getId(), notEmptyOrderTable.getId()));
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -76,8 +76,8 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("다른 테이블 그룹에 이미 포함된 테이블로 새로운 테이블 그룹을 만들 수 없다.")
     @Test
     void create_Exception_Already_Join_TableGroup() {
-        TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(List.of(emptyOrderTable1,
-                emptyOrderTable2));
+        TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(List.of(emptyOrderTable1.getId(),
+                emptyOrderTable2.getId()));
         tableGroupService.create(tableGroupCreateRequest);
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
@@ -87,8 +87,8 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("테이블 그룹을 해제한다.")
     @Test
     void ungroup() {
-        TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(List.of(emptyOrderTable1,
-                emptyOrderTable2));
+        TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(List.of(emptyOrderTable1.getId(),
+                emptyOrderTable2.getId()));
         TableGroupCreateResponse tableGroupCreateResponse = tableGroupService.create(tableGroupCreateRequest);
 
         tableGroupService.ungroup(tableGroupCreateResponse.getId());
@@ -107,8 +107,8 @@ class TableGroupServiceTest extends ServiceTest {
     void ungroup_Exception_Not_Completion_Order() {
         Order order = new Order(emptyOrderTable1, Collections.emptyList());
         orderRepository.save(order);
-        TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(List.of(emptyOrderTable1,
-                emptyOrderTable2));
+        TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(List.of(emptyOrderTable1.getId(),
+                emptyOrderTable2.getId()));
 
         TableGroupCreateResponse tableGroupCreateResponse = tableGroupService.create(tableGroupCreateRequest);
 
