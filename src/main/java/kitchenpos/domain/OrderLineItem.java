@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import java.math.BigDecimal;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -19,29 +20,32 @@ public class OrderLineItem {
     @JoinColumn(name = "order_id")
     private Order order;
 
-    private Long menuId;
+    private String name;
+
+    private BigDecimal price;
 
     private long quantity;
 
     public OrderLineItem() {
     }
 
-    public OrderLineItem(Long seq, Order order, Long menuId, long quantity) {
+    private OrderLineItem(Long seq, Order order, String name, BigDecimal price, long quantity) {
         this.seq = seq;
         this.order = order;
-        this.menuId = menuId;
+        this.name = name;
+        this.price = price;
         this.quantity = quantity;
     }
 
-    public OrderLineItem(Order order, Long menuId, long quantity) {
-        this(null, order, menuId, quantity);
+    public OrderLineItem(Order order, String name, BigDecimal price, long quantity) {
+        this(null, order, name, price, quantity);
     }
 
     public Long getSeq() {
         return seq;
     }
 
-    public void setSeq(final Long seq) {
+    public void setSeq(Long seq) {
         this.seq = seq;
     }
 
@@ -53,19 +57,27 @@ public class OrderLineItem {
         this.order = order;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public String getName() {
+        return name;
     }
 
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
     public long getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(final long quantity) {
+    public void setQuantity(long quantity) {
         this.quantity = quantity;
     }
 }

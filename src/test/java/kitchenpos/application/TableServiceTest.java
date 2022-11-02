@@ -9,13 +9,17 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderLineItemRequest;
 import kitchenpos.application.dto.OrderRequest;
 import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.application.dto.TableGroupRequest;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -99,14 +103,8 @@ class TableServiceTest extends ServiceTest {
     void 주문_테이블을_빈_테이블로_변경하려_할_때_주문_테이블이_식사중이거나_요리중이면_예외가_발생한다() {
         OrderTable orderTable = tableService.create(주문_테이블_3인());
         Order 요리중_주문 = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now());
-        주문_항목을_추가한다(요리중_주문);
 
-        final List<OrderLineItemRequest> orderLineItemRequests = 요리중_주문.getOrderLineItems()
-                .stream()
-                .map(orderLineItem -> new OrderLineItemRequest(orderLineItem.getOrder().getId(),
-                        orderLineItem.getMenuId(),
-                        orderLineItem.getQuantity()))
-                .collect(Collectors.toList());
+        List<OrderLineItemRequest> orderLineItemRequests = 주문_항목_요청을_생성한다(요리중_주문);
 
         orderService.create(new OrderRequest(요리중_주문.getOrderTable().getId(), 요리중_주문.getOrderStatus(),
                 요리중_주문.getOrderedTime(), orderLineItemRequests));

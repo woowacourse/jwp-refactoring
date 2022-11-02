@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderLineItemRequest;
 import kitchenpos.application.dto.OrderRequest;
 import kitchenpos.application.dto.OrderTableRequest;
@@ -43,13 +43,7 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문을_생성할_수_있다() {
-        주문_항목을_추가한다(요리중_주문);
-
-        final List<OrderLineItemRequest> orderLineItemRequests = 요리중_주문.getOrderLineItems()
-                .stream()
-                .map(orderLineItem -> new OrderLineItemRequest(orderLineItem.getOrder().getId(),
-                        orderLineItem.getMenuId(), orderLineItem.getQuantity()))
-                .collect(Collectors.toList());
+        List<OrderLineItemRequest> orderLineItemRequests = 주문_항목_요청을_생성한다(요리중_주문);
 
         final OrderRequest orderRequest = new OrderRequest(요리중_주문.getOrderTable().getId(),
                 요리중_주문.getOrderStatus(),
@@ -79,14 +73,16 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void 주문_항목_수와_메뉴_수가_같지_않으면_예외가_발생한다() {
         Menu ramen = 메뉴를_생성한다("라면");
-        요리중_주문.addOrderLineItem(new OrderLineItem(요리중_주문, ramen.getId(), 1));
-        요리중_주문.addOrderLineItem(new OrderLineItem(요리중_주문, ramen.getId(), 1));
+        Menu chapagetti = 메뉴를_생성한다("짜파게티");
+        요리중_주문.addOrderLineItem(new OrderLineItem(요리중_주문, ramen.getName(), ramen.getPrice(), 1));
+        요리중_주문.addOrderLineItem(new OrderLineItem(요리중_주문, chapagetti.getName(), ramen.getPrice(), 1));
 
-        final List<OrderLineItemRequest> orderLineItemRequests = 요리중_주문.getOrderLineItems()
-                .stream()
-                .map(orderLineItem -> new OrderLineItemRequest(orderLineItem.getOrder().getId(),
-                        orderLineItem.getMenuId(), orderLineItem.getQuantity()))
-                .collect(Collectors.toList());
+        List<OrderLineItemRequest> orderLineItemRequests =
+                Arrays.asList(new OrderLineItemRequest(요리중_주문.getId(), ramen.getId(),
+                        ramen.getName(), ramen.getPrice(), 요리중_주문.getOrderLineItems().get(0).getQuantity()),
+                new OrderLineItemRequest(요리중_주문.getId(), ramen.getId(), ramen.getName(),
+                        ramen.getPrice(), 요리중_주문.getOrderLineItems().get(1).getQuantity())
+        );
 
         final OrderRequest orderRequest = new OrderRequest(요리중_주문.getOrderTable().getId(), 요리중_주문.getOrderStatus(),
                 요리중_주문.getOrderedTime(), orderLineItemRequests);
@@ -98,7 +94,10 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문에_적혀있는_주문_테이블이_존재하지_않으면_예외가_발생한다() {
-        주문_항목을_추가한다(요리중_주문);
+        Menu ramen = 메뉴를_생성한다("라면");
+        Menu chapagetti = 메뉴를_생성한다("짜파게티");
+        요리중_주문.addOrderLineItem(new OrderLineItem(요리중_주문, ramen.getName(), ramen.getPrice(), 1));
+        요리중_주문.addOrderLineItem(new OrderLineItem(요리중_주문, chapagetti.getName(), ramen.getPrice(), 1));
 
         assertThatThrownBy(
                 () -> orderService.create(new OrderRequest(0L, OrderStatus.COOKING.name(), LocalDateTime.now()))
@@ -109,15 +108,9 @@ class OrderServiceTest extends ServiceTest {
     void 주문을_생성할_때_테이블이_비어있으면_예외가_발생한다() {
         주문_테이블 = tableService.create(new OrderTableRequest( 3, true));
         요리중_주문.setOrderTable(주문_테이블);
-        주문_항목을_추가한다(요리중_주문);
 
-        final List<OrderLineItemRequest> orderLineItemRequests = 요리중_주문.getOrderLineItems()
-                .stream()
-                .map(orderLineItem -> new OrderLineItemRequest(orderLineItem.getOrder().getId(),
-                        orderLineItem.getMenuId(), orderLineItem.getQuantity()))
-                .collect(Collectors.toList());
-
-        final OrderRequest orderRequest = new OrderRequest(요리중_주문.getOrderTable().getId(), 요리중_주문.getOrderStatus(),
+        List<OrderLineItemRequest> orderLineItemRequests = 주문_항목_요청을_생성한다(요리중_주문);
+        OrderRequest orderRequest = new OrderRequest(요리중_주문.getOrderTable().getId(), 요리중_주문.getOrderStatus(),
                 요리중_주문.getOrderedTime(), orderLineItemRequests);
 
         assertThatThrownBy(
@@ -127,15 +120,8 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문을_조회할_수_있다() {
-        주문_항목을_추가한다(요리중_주문);
-
-        final List<OrderLineItemRequest> orderLineItemRequests = 요리중_주문.getOrderLineItems()
-                .stream()
-                .map(orderLineItem -> new OrderLineItemRequest(orderLineItem.getOrder().getId(),
-                        orderLineItem.getMenuId(), orderLineItem.getQuantity()))
-                .collect(Collectors.toList());
-
-        final OrderRequest orderRequest = new OrderRequest(요리중_주문.getOrderTable().getId(), 요리중_주문.getOrderStatus(),
+        List<OrderLineItemRequest> orderLineItemRequests = 주문_항목_요청을_생성한다(요리중_주문);
+        OrderRequest orderRequest = new OrderRequest(요리중_주문.getOrderTable().getId(), 요리중_주문.getOrderStatus(),
                 요리중_주문.getOrderedTime(), orderLineItemRequests);
 
         orderService.create(orderRequest);
@@ -151,15 +137,8 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문을_변경할_수_있다() {
-        주문_항목을_추가한다(요리중_주문);
-
-        final List<OrderLineItemRequest> orderLineItemRequests = 요리중_주문.getOrderLineItems()
-                .stream()
-                .map(orderLineItem -> new OrderLineItemRequest(orderLineItem.getOrder().getId(),
-                        orderLineItem.getMenuId(), orderLineItem.getQuantity()))
-                .collect(Collectors.toList());
-
-        final OrderRequest orderRequest = new OrderRequest(요리중_주문.getOrderTable().getId(), 요리중_주문.getOrderStatus(),
+        List<OrderLineItemRequest> orderLineItemRequests = 주문_항목_요청을_생성한다(요리중_주문);
+        OrderRequest orderRequest = new OrderRequest(요리중_주문.getOrderTable().getId(), 요리중_주문.getOrderStatus(),
                 요리중_주문.getOrderedTime(), orderLineItemRequests);
 
         요리중_주문 = orderService.create(orderRequest);
@@ -171,7 +150,10 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 존재하지_않는_주문을_변경하려_하면_예외가_발생한다() {
-        주문_항목을_추가한다(요리중_주문);
+        Menu ramen = 메뉴를_생성한다("라면");
+        Menu chapagetti = 메뉴를_생성한다("짜파게티");
+        요리중_주문.addOrderLineItem(new OrderLineItem(요리중_주문, ramen.getName(), ramen.getPrice(), 1));
+        요리중_주문.addOrderLineItem(new OrderLineItem(요리중_주문, chapagetti.getName(), ramen.getPrice(), 1));
 
         assertThatThrownBy(
                 () -> orderService.changeOrderStatus(null, new Order(주문_테이블,
@@ -181,15 +163,8 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 배달이_완료된_상태에서_주문을_변경하려_하면_예외가_발생한다() {
-        주문_항목을_추가한다(요리중_주문);
-
-        final List<OrderLineItemRequest> orderLineItemRequests = 요리중_주문.getOrderLineItems()
-                .stream()
-                .map(orderLineItem -> new OrderLineItemRequest(orderLineItem.getOrder().getId(),
-                        orderLineItem.getMenuId(), orderLineItem.getQuantity()))
-                .collect(Collectors.toList());
-
-        final OrderRequest orderRequest = new OrderRequest(요리중_주문.getOrderTable().getId(), OrderStatus.COMPLETION.name(),
+        List<OrderLineItemRequest> orderLineItemRequests = 주문_항목_요청을_생성한다(요리중_주문);
+        OrderRequest orderRequest = new OrderRequest(요리중_주문.getOrderTable().getId(), OrderStatus.COMPLETION.name(),
                 요리중_주문.getOrderedTime(), orderLineItemRequests);
 
         Order targetOrder = orderService.create(orderRequest);

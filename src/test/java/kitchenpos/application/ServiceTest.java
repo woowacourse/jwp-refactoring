@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.application.dto.MenuRequest;
+import kitchenpos.application.dto.OrderLineItemRequest;
 import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.application.dto.ProductRequest;
 import kitchenpos.domain.Menu;
@@ -33,11 +34,17 @@ public class ServiceTest {
     @Autowired
     private TableService tableService;
 
-    protected void 주문_항목을_추가한다(Order order) {
+    protected List<OrderLineItemRequest> 주문_항목_요청을_생성한다(Order 주문) {
         Menu ramen = 메뉴를_생성한다("라면");
         Menu chapagetti = 메뉴를_생성한다("짜파게티");
-        order.addOrderLineItem(new OrderLineItem(order, ramen.getId(), 1));
-        order.addOrderLineItem(new OrderLineItem(order, chapagetti.getId(), 1));
+        주문.addOrderLineItem(new OrderLineItem(주문, ramen.getName(), ramen.getPrice(), 1));
+        주문.addOrderLineItem(new OrderLineItem(주문, chapagetti.getName(), ramen.getPrice(), 1));
+
+        return Arrays.asList(new OrderLineItemRequest(주문.getId(), ramen.getId(),
+                        ramen.getName(), ramen.getPrice(), 주문.getOrderLineItems().get(0).getQuantity()),
+                new OrderLineItemRequest(주문.getId(), chapagetti.getId(), chapagetti.getName(),
+                        chapagetti.getPrice(), 주문.getOrderLineItems().get(1).getQuantity())
+        );
     }
 
     protected Menu 메뉴를_생성한다(String name) {

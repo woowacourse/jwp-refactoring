@@ -50,14 +50,14 @@ public class OrderService {
         return new OrderLineItems(orderLineItems.getOrderLineItems()
                 .stream()
                 .map(orderLineItem -> orderLineItemRepository.save(new OrderLineItem(order,
-                        orderLineItem.getMenuId(), orderLineItem.getQuantity())))
+                        orderLineItem.getName(), orderLineItem.getPrice(), orderLineItem.getQuantity())))
                 .collect(Collectors.toList()));
     }
 
     private OrderLineItems createOrderLineItemsByRequest(OrderRequest orderRequest) {
         final OrderLineItems orderLineItems = new OrderLineItems(orderRequest.getOrderLineItems()
                 .stream()
-                .map(it -> new OrderLineItem(null, it.getMenuId(), it.getQuantity()))
+                .map(it -> new OrderLineItem(null, it.getName(), it.getPrice(), it.getQuantity()))
                 .collect(Collectors.toList()));
 
         orderLineItems.validateMenuSize(menuRepository.countByIdIn(mapToMenuIds(orderRequest)));

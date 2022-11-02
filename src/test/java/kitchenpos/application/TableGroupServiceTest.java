@@ -14,7 +14,9 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderLineItemRequest;
 import kitchenpos.application.dto.OrderRequest;
 import kitchenpos.application.dto.TableGroupRequest;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -118,14 +120,7 @@ class TableGroupServiceTest extends ServiceTest {
         List<OrderTable> orderTables = 주문_테이블들(false, false);
 
         Order 요리중_주문 = new Order(orderTables.get(0), OrderStatus.COOKING.name(), LocalDateTime.now());
-        주문_항목을_추가한다(요리중_주문);
-
-        final List<OrderLineItemRequest> orderLineItemRequests = 요리중_주문.getOrderLineItems()
-                .stream()
-                .map(orderLineItem -> new OrderLineItemRequest(orderLineItem.getOrder().getId(),
-                        orderLineItem.getMenuId(),
-                        orderLineItem.getQuantity()))
-                .collect(Collectors.toList());
+        List<OrderLineItemRequest> orderLineItemRequests = 주문_항목_요청을_생성한다(요리중_주문);
 
         orderTables.get(0).setEmpty(true);
         orderTables.get(1).setEmpty(true);
