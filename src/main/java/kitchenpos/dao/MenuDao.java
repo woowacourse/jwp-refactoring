@@ -9,8 +9,6 @@ public interface MenuDao {
 
     Menu save(final Menu entity);
 
-    Optional<Menu> findById(final Long id);
-
     List<Menu> findAll();
 
     long countByIdIn(final List<Long> ids);

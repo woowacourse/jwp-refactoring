@@ -1,11 +1,9 @@
 package kitchenpos.application;
 
 import static java.util.stream.Collectors.*;
-import static kitchenpos.domain.OrderStatus.COOKING;
 
-import kitchenpos.dao.OrderDao;
+import kitchenpos.application.validator.TableValidator;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.dto.OrderTableSaveRequest;
@@ -20,14 +18,12 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class TableService {
 
-    private static final List<String> NONE_EMPTY_ORDER_TABLE = List.of(COOKING.name(), OrderStatus.MEAL.name());
-
-    private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
+    private final TableValidator tableValidator;
 
-    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
-        this.orderDao = orderDao;
+    public TableService(final OrderTableDao orderTableDao, final TableValidator tableValidator) {
         this.orderTableDao = orderTableDao;
+        this.tableValidator = tableValidator;
     }
 
     @Transactional
@@ -46,9 +42,7 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
         final OrderTable savedOrderTable = orderTableDao.getById(orderTableId);
-        savedOrderTable.changeEmpty(() ->
-                orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, NONE_EMPTY_ORDER_TABLE), request.isEmpty());
-
+        savedOrderTable.changeEmpty(tableValidator.validate(savedOrderTable), request.isEmpty());
         return new OrderTableResponse(savedOrderTable);
     }
 
