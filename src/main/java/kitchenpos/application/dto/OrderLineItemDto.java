@@ -19,7 +19,7 @@ public class OrderLineItemDto {
     public static OrderLineItemDto from(final OrderLineItem orderLineItem) {
         return new OrderLineItemDto(orderLineItem.getId(),
                 orderLineItem.getOrderId(),
-                orderLineItem.getMenuId(),
+                orderLineItem.getOrderedMenuId(),
                 orderLineItem.getQuantity());
     }
 

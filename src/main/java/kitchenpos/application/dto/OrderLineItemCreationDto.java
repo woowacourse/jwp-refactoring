@@ -18,7 +18,7 @@ public class OrderLineItemCreationDto {
     }
 
     public static OrderLineItem toEntity(final OrderLineItemCreationDto orderLineItemCreationDto) {
-        return new OrderLineItem(orderLineItemCreationDto.getMenuId(), orderLineItemCreationDto.getQuantity());
+        return new OrderLineItem(orderLineItemCreationDto.getQuantity());
     }
 
     public Long getMenuId() {

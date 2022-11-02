@@ -55,7 +55,7 @@ public class Order {
 
     public List<Long> getOrderLineItemsMenuId() {
         return orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
+                .map(OrderLineItem::getOrderedMenuId)
                 .collect(Collectors.toList());
     }
 

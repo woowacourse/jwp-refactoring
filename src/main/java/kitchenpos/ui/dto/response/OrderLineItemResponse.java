@@ -6,16 +6,16 @@ public class OrderLineItemResponse {
 
     private Long id;
     private Long orderId;
-    private Long menuId;
+    private Long orderedMenuId;
     private long quantity;
 
     private OrderLineItemResponse() {
     }
 
-    private OrderLineItemResponse(final Long id, final Long orderId, final Long menuId, final long quantity) {
+    private OrderLineItemResponse(final Long id, final Long orderId, final Long orderedMenuId, final long quantity) {
         this.id = id;
         this.orderId = orderId;
-        this.menuId = menuId;
+        this.orderedMenuId = orderedMenuId;
         this.quantity = quantity;
     }
 
@@ -34,8 +34,8 @@ public class OrderLineItemResponse {
         return orderId;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public Long getOrderedMenuId() {
+        return orderedMenuId;
     }
 
     public long getQuantity() {
@@ -47,7 +47,7 @@ public class OrderLineItemResponse {
         return "OrderLineItemResponse{" +
                 "id=" + id +
                 ", orderId=" + orderId +
-                ", menuId=" + menuId +
+                ", orderedMenuId=" + orderedMenuId +
                 ", quantity=" + quantity +
                 '}';
     }
