@@ -6,9 +6,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
-import kitchenpos.dto.request.ProductRequest;
-import kitchenpos.dto.response.ProductResponse;
-import kitchenpos.repository.ProductRepository;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.domain.ProductRepository;
+import kitchenpos.product.dto.request.ProductRequest;
+import kitchenpos.product.dto.response.ProductResponse;
 import kitchenpos.support.DatabaseCleanUp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
