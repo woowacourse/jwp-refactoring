@@ -15,6 +15,13 @@ public class OrderFixture {
         return getOrderRequest(orderTableId, Arrays.asList(getOrderLineItemRequest()));
     }
 
+    public static Order getOrderRequest(final Long orderTableId, final String orderStatus) {
+        final Order orderRequest = getOrderRequest(orderTableId, Arrays.asList(getOrderLineItemRequest()));
+        orderRequest.changeOrderStatus(OrderStatus.from(orderStatus));
+        return orderRequest;
+//        return getOrderRequest(orderTableId, Arrays.asList(getOrderLineItemRequest()));
+    }
+
     public static Order getOrderRequest(final String orderStatus) {
         final Order orderRequest = getOrderRequest(1L, Arrays.asList(getOrderLineItemRequest()));
         orderRequest.changeOrderStatus(OrderStatus.from(orderStatus));

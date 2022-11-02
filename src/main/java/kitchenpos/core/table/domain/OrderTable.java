@@ -37,14 +37,6 @@ public class OrderTable {
         this(null, tableGroupId, numberOfGuests, empty, null);
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public Long getTableGroupId() {
-        return tableGroupId;
-    }
-
     public void changeTableGroup(final Long tableGroupId) {
         this.tableGroupId = tableGroupId;
     }
@@ -90,5 +82,17 @@ public class OrderTable {
 
     public boolean isMeal() {
         return orderStatus.isMeal();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getTableGroupId() {
+        return tableGroupId;
+    }
+
+    public OrderStatus getOrderStatus() {
+        return orderStatus;
     }
 }

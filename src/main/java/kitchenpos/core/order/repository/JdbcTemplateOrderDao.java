@@ -55,7 +55,7 @@ public class JdbcTemplateOrderDao implements OrderDao {
 
     public Optional<Order> findByOrderTableId(final Long orderTableId) {
         try {
-            return Optional.of(selectOrderTable(orderTableId));
+            return Optional.of(selectByOrderTableId(orderTableId));
         } catch (final EmptyResultDataAccessException e) {
             return Optional.empty();
         }
@@ -94,17 +94,17 @@ public class JdbcTemplateOrderDao implements OrderDao {
         return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    private Order selectOrderTable(final Long id) {
-        final String sql = "SELECT id, order_table_id, order_status, ordered_time FROM orders WHERE order_table_id = (:id)";
+    private Order selectByOrderTableId(final Long orderTableId) {
+        final String sql = "SELECT id, order_table_id, order_status, ordered_time FROM orders WHERE order_table_id = (:orderTableId)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("id", id);
+                .addValue("orderTableId", orderTableId);
         return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     private void update(final Order entity) {
         final String sql = "UPDATE orders SET order_status = (:orderStatus) WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("orderStatus", entity.getOrderStatus())
+                .addValue("orderStatus", entity.getOrderStatus().name())
                 .addValue("id", entity.getId());
         jdbcTemplate.update(sql, parameters);
     }

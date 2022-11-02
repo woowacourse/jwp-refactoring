@@ -4,14 +4,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
-import kitchenpos.core.order.domain.Order;
-import kitchenpos.core.order.domain.OrderLineItemDao;
-import kitchenpos.core.table.domain.OrderTableDao;
 import kitchenpos.core.menu.domain.MenuDao;
+import kitchenpos.core.order.domain.Order;
+import kitchenpos.core.order.domain.OrderChangeEvent;
 import kitchenpos.core.order.domain.OrderDao;
 import kitchenpos.core.order.domain.OrderLineItem;
-import kitchenpos.core.order.domain.OrderStatus;
-import kitchenpos.core.table.domain.OrderTable;
+import kitchenpos.core.order.domain.OrderLineItemDao;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,16 +19,20 @@ public class OrderService {
     private final MenuDao menuDao;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
-    private final OrderTableDao orderTableDao;
     private final OrderValidator orderValidator;
+    private final ApplicationEventPublisher publisher;
 
-    public OrderService(final MenuDao menuDao, final OrderDao orderDao, final OrderLineItemDao orderLineItemDao,
-                        final OrderTableDao orderTableDao, final OrderValidator orderValidator) {
+
+    public OrderService(final MenuDao menuDao,
+                        final OrderDao orderDao,
+                        final OrderLineItemDao orderLineItemDao,
+                        final OrderValidator orderValidator,
+                        final ApplicationEventPublisher publisher) {
         this.menuDao = menuDao;
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
-        this.orderTableDao = orderTableDao;
         this.orderValidator = orderValidator;
+        this.publisher = publisher;
     }
 
     @Transactional
@@ -84,22 +87,12 @@ public class OrderService {
     public Order changeOrderStatus(final Long orderId, final Order orderRequest) {
         final Order order = getOrder(orderId);
         order.changeOrderStatus(orderRequest.getOrderStatus());
-        changeOrderTableOrderStatus(getOrderTable(order.getOrderTableId()), order.getOrderStatus());
+        publisher.publishEvent(new OrderChangeEvent(orderId, order.getOrderTableId(), orderRequest.getOrderStatus().name()));
         return orderDao.save(order);
     }
 
     private Order getOrder(final Long orderId) {
         return orderDao.findById(orderId)
-                .orElseThrow(NoSuchElementException::new);
-    }
-
-    private void changeOrderTableOrderStatus(final OrderTable orderTable, final OrderStatus orderStatus) {
-        orderTable.changeOrderStatus(orderStatus);
-        orderTableDao.save(orderTable);
-    }
-
-    private OrderTable getOrderTable(final Long id) {
-        return orderTableDao.findById(id)
                 .orElseThrow(NoSuchElementException::new);
     }
 }
