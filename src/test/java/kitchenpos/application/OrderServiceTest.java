@@ -143,7 +143,7 @@ class OrderServiceTest extends ApplicationTest {
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, new OrderStatusRequest("COOKING")))
                 .isInstanceOf(InvalidOrderException.class)
-                .hasMessage("주문이 완료 상태입니다.");
+                .hasMessage("이미 주문 완료 상태입니다.");
     }
 
     @DisplayName("주문 상태 변경시 주문이 존재하지 않으면 예외가 발생한다.")

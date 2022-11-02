@@ -118,14 +118,8 @@ public class OrderService {
     public void changeOrderStatus(Long orderId, OrderStatusRequest orderRequest) {
         OrderStatus orderStatus = OrderStatus.find(orderRequest.getOrderStatus());
         Order order = getOrder(orderId);
-        validateOrder(order);
-        orderDao.updateStatus(order.getId(), orderStatus);
-    }
-
-    private void validateOrder(Order order) {
-        if (order.isCompleted()) {
-            throw new InvalidOrderException("주문이 완료 상태입니다.");
-        }
+        order.changeStatus(orderStatus);
+        orderDao.updateStatus(order.getId(), order.getOrderStatus());
     }
 
     private Order getOrder(Long orderId) {
