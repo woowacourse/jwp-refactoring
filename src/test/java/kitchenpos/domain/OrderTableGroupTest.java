@@ -91,7 +91,7 @@ class OrderTableGroupTest {
             assertThatThrownBy(group::ungroup)
                     .isInstanceOf(DomainLogicException.class)
                     .extracting("errorCode")
-                    .isEqualTo(CustomError.TABLE_GROUP_UNGROUP_NOT_COMPLETED_ORDER);
+                    .isEqualTo(CustomError.UNCOMPLETED_ORDER_IN_TABLE_ERROR);
         }
     }
 }
