@@ -2,10 +2,12 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.MenuCreateRequest;
 import kitchenpos.application.dto.request.MenuProductCreateRequest;
 import kitchenpos.application.dto.response.MenuResponse;
+import kitchenpos.domain.Quantity;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.product.Product;
@@ -52,8 +54,13 @@ public class MenuService {
                 CustomCollector.associate(requests, Product::getId, MenuProductCreateRequest::getProductId)
         );
         return productRequestAssociation.entrySet().stream()
-                .map(association -> new MenuProduct(association.getKey(), association.getValue().getQuantity()))
+                .map(MenuService::createMenuProduct)
                 .collect(Collectors.toList());
+    }
+
+    private static MenuProduct createMenuProduct(Entry<Product, MenuProductCreateRequest> association) {
+        Product product = association.getKey();
+        return new MenuProduct(product.getId(), product.getPrice(), new Quantity(association.getValue().getQuantity()));
     }
 
     private List<Long> toProductIds(List<MenuProductCreateRequest> requests) {

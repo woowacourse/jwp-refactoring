@@ -1,24 +1,22 @@
 package kitchenpos;
 
+import static kitchenpos.MenuProductFixtures.createMenuProduct;
+import static kitchenpos.MenuProductFixtures.createMenuProductCreateRequest;
+import static kitchenpos.MenuProductFixtures.createMenuProductResponse;
+
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.dto.request.MenuCreateRequest;
 import kitchenpos.application.dto.request.MenuProductCreateRequest;
-import kitchenpos.application.dto.response.MenuProductResponse;
 import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.product.Product;
 
 public class MenuFixtures {
 
     private static final String NAME = "메뉴";
     private static final int PRICE = 1000;
     private static final long MENU_GROUP_ID = 1L;
-
-    private static final int QUANTITY = 3;
-    private static final long MENU_ID = 1L;
-    private static final long PRODUCT_ID = 1L;
 
     private MenuFixtures() {
     }
@@ -42,14 +40,6 @@ public class MenuFixtures {
                 menuGroupId,
                 menuProducts
         );
-    }
-
-    public static MenuProduct createMenuProduct() {
-        return createMenuProduct(ProductFixtures.createProduct(), QUANTITY);
-    }
-
-    public static MenuProduct createMenuProduct(Product product, int quantity) {
-        return new MenuProduct(product, quantity);
     }
 
     public static MenuCreateRequest createMenuCreateRequest() {
@@ -82,14 +72,6 @@ public class MenuFixtures {
         return new MenuCreateRequest("메뉴", price, menuGroupId, productCreateRequests);
     }
 
-    public static MenuProductCreateRequest createMenuProductCreateRequest() {
-        return createMenuProductCreateRequest(PRODUCT_ID, QUANTITY);
-    }
-
-    public static MenuProductCreateRequest createMenuProductCreateRequest(Long productId, int quantity) {
-        return new MenuProductCreateRequest(productId, quantity);
-    }
-
     public static MenuResponse createMenuResponse() {
         return new MenuResponse(
                 1L,
@@ -99,10 +81,4 @@ public class MenuFixtures {
                 List.of(createMenuProductResponse())
         );
     }
-
-    private static MenuProductResponse createMenuProductResponse() {
-        return new MenuProductResponse(1L, 1L, 1L, 2);
-    }
-
-
 }

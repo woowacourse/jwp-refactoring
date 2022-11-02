@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.MenuFixtures;
+import kitchenpos.MenuProductFixtures;
 import kitchenpos.application.dto.request.MenuCreateRequest;
 import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.support.ServiceTest;
@@ -68,7 +69,7 @@ class MenuServiceTest {
         // given
         long invalidProductId = 999L;
         MenuCreateRequest request = MenuFixtures.createMenuCreateRequest(
-                List.of(MenuFixtures.createMenuProductCreateRequest(invalidProductId, 3))
+                List.of(MenuProductFixtures.createMenuProductCreateRequest(invalidProductId, 3))
         );
 
         // when & then

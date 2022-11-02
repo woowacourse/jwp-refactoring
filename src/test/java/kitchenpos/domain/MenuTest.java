@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.ProductFixtures;
+import kitchenpos.MenuProductFixtures;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuProduct;
 import org.junit.jupiter.api.Test;
@@ -19,8 +19,8 @@ class MenuTest {
         String name = "메뉴";
         long menuGroupId = 1L;
         List<MenuProduct> menuProducts = List.of(
-                new MenuProduct(ProductFixtures.createProduct(), 1L),
-                new MenuProduct(ProductFixtures.createProduct(), 2L)
+                MenuProductFixtures.createMenuProduct(1L, 1000L, 2),
+                MenuProductFixtures.createMenuProduct(1L, 1000L, 2)
         );
 
         // when
@@ -46,8 +46,8 @@ class MenuTest {
                         price,
                         1L,
                         List.of(
-                                new MenuProduct(ProductFixtures.createProduct(), 1L),
-                                new MenuProduct(ProductFixtures.createProduct(), 2L)
+                                MenuProductFixtures.createMenuProduct(1L, 1000L, 1),
+                                MenuProductFixtures.createMenuProduct(1L, 1000L, 2)
                         )
                 )
         ).isInstanceOf(IllegalArgumentException.class);

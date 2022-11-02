@@ -6,7 +6,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import kitchenpos.domain.Price;
-import kitchenpos.domain.product.Product;
 import kitchenpos.domain.Quantity;
 
 @Entity
@@ -17,27 +16,22 @@ public class MenuProduct {
     private Long seq;
 
     private Long productId;
+    private Price productPrice;
 
     @Embedded
     private Quantity quantity;
 
-    private Price price;
-
     protected MenuProduct() {
     }
 
-    public MenuProduct(Product product, long quantity) {
-        this(product, new Quantity(quantity));
-    }
-
-    public MenuProduct(Product product, Quantity quantity) {
-        this(product.getId(), quantity, product.getPrice().multiply(quantity));
-    }
-
-    public MenuProduct(Long productId, Quantity quantity, Price price) {
+    public MenuProduct(Long productId, Price productPrice, Quantity quantity) {
         this.productId = productId;
         this.quantity = quantity;
-        this.price = price;
+        this.productPrice = productPrice;
+    }
+
+    public Price calculateTotalPrice() {
+        return productPrice.multiply(quantity);
     }
 
     public Long getSeq() {
@@ -52,7 +46,7 @@ public class MenuProduct {
         return quantity;
     }
 
-    public Price getPrice() {
-        return price;
+    public Price getProductPrice() {
+        return productPrice;
     }
 }
