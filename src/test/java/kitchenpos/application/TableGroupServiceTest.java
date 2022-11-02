@@ -84,7 +84,8 @@ class TableGroupServiceTest {
     void create_throwsException_ifTableGrouped() {
         // given
         final TableGroup savedTableGroup = dataSupport.saveTableGroup();
-        final OrderTable groupedTable = savedTableGroup.getOrderTables().get(0);
+        final List<OrderTable> groupedTables = dataSupport.saveTwoGroupedTables(savedTableGroup);
+        final OrderTable groupedTable = groupedTables.get(0);
 
         // when, then
         final TableGroupRequest request = RequestBuilder.ofTableGroup(savedEmptyTable1, groupedTable);
@@ -97,7 +98,7 @@ class TableGroupServiceTest {
     void ungroup() {
         // given
         final TableGroup savedTableGroup = dataSupport.saveTableGroup();
-        final List<OrderTable> orderTables = savedTableGroup.getOrderTables();
+        final List<OrderTable> orderTables = dataSupport.saveTwoGroupedTables(savedTableGroup);
 
         // when
         tableGroupService.ungroup(savedTableGroup.getId());
@@ -112,7 +113,8 @@ class TableGroupServiceTest {
     void ungroup_throwsException_ifCooking() {
         // given
         final TableGroup savedTableGroup = dataSupport.saveTableGroup();
-        final OrderTable groupedTable = savedTableGroup.getOrderTables().get(0);
+        final List<OrderTable> groupedTables = dataSupport.saveTwoGroupedTables(savedTableGroup);
+        final OrderTable groupedTable = groupedTables.get(0);
         dataSupport.saveOrderWithoutItem(groupedTable.getId(), OrderStatus.COOKING);
 
         // when, then
@@ -125,7 +127,8 @@ class TableGroupServiceTest {
     void ungroup_throwsException_ifMeal() {
         // given
         final TableGroup savedTableGroup = dataSupport.saveTableGroup();
-        final OrderTable groupedTable = savedTableGroup.getOrderTables().get(0);
+        final List<OrderTable> groupedTables = dataSupport.saveTwoGroupedTables(savedTableGroup);
+        final OrderTable groupedTable = groupedTables.get(0);
         dataSupport.saveOrderWithoutItem(groupedTable.getId(), OrderStatus.MEAL);
 
         // when, then

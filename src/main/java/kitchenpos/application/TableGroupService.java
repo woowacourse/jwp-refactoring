@@ -7,6 +7,7 @@ import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.ordertable.OrderTableRepository;
+import kitchenpos.domain.ordertable.OrderTables;
 import kitchenpos.domain.ordertable.TableGroup;
 import kitchenpos.domain.ordertable.TableGroupRepository;
 import kitchenpos.dto.request.IdRequest;
@@ -36,25 +37,27 @@ public class TableGroupService {
         final List<OrderTable> savedOrderTables = orderTableIdRequests.stream()
                 .map(this::getOrderTableFrom)
                 .collect(Collectors.toList());
+        final OrderTables orderTables = new OrderTables(savedOrderTables);
 
-        final TableGroup tableGroup = TableGroup.ofUnsaved(savedOrderTables);
-
+        final TableGroup tableGroup = TableGroup.ofUnsaved();
         tableGroupRepository.save(tableGroup);
-        return TableGroupResponse.from(tableGroup);
+        orderTables.joinGroup(tableGroup);
+
+        return TableGroupResponse.from(tableGroup, orderTables);
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
-                .orElseThrow(IllegalArgumentException::new);
+        final List<OrderTable> orderTables = orderTableRepository.findByTableGroupId(tableGroupId);
+        final OrderTables groupedTables = new OrderTables(orderTables);
 
-        final List<Long> orderTableIds = tableGroup.getOrderTableIds();
+        final List<Long> orderTableIds = groupedTables.getIds();
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
 
-        tableGroup.ungroup();
+        groupedTables.ungroup();
     }
 
     private OrderTable getOrderTableFrom(final IdRequest request) {

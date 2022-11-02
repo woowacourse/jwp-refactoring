@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,17 +14,20 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class OrderTableTest {
 
+    private final static TableGroup TABLE_GROUP = mock(TableGroup.class);
+
+    @BeforeAll
+    static void setUp() {
+        when(TABLE_GROUP.getId())
+                .thenReturn(1L);
+    }
+
     @DisplayName("테이블을 단체로 지정한다.")
     @Test
     void joinGroup() {
-        // given
+        // given, when
         final OrderTable orderTable = OrderTable.ofUnsaved(0, true);
-        final TableGroup tableGroup = mock(TableGroup.class);
-        when(tableGroup.getId())
-                .thenReturn(1L);
-
-        // when
-        orderTable.joinGroup(tableGroup);
+        orderTable.joinGroup(TABLE_GROUP);
 
         // then
         assertAll(
@@ -37,11 +41,10 @@ class OrderTableTest {
     void joinGroup_throwsException_ifNotEmpty() {
         // given
         final OrderTable notEmptyTable = OrderTable.ofUnsaved(0, false);
-        final TableGroup tableGroup = new TableGroup();
 
         // when, then
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> notEmptyTable.joinGroup(tableGroup));
+                .isThrownBy(() -> notEmptyTable.joinGroup(TABLE_GROUP));
     }
 
     @DisplayName("이미 단체로 지정된 테이블을 단체로 지정하면 예외가 발생한다.")
@@ -49,12 +52,11 @@ class OrderTableTest {
     void joinGroup_throwsException_ifAlreadyGrouped() {
         // given
         final OrderTable groupedTable = OrderTable.ofUnsaved(0, true);
-        final TableGroup tableGroup = new TableGroup();
-        groupedTable.joinGroup(tableGroup);
+        groupedTable.joinGroup(TABLE_GROUP);
 
         // when, then
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> groupedTable.joinGroup(tableGroup));
+                .isThrownBy(() -> groupedTable.joinGroup(TABLE_GROUP));
     }
 
     @DisplayName("테이블을 단체에서 해제한다.")
@@ -83,8 +85,7 @@ class OrderTableTest {
     void acceptGuests_throwsException_ifGrouped() {
         // given
         final OrderTable groupedTable = OrderTable.ofUnsaved(0, true);
-        final TableGroup tableGroup = new TableGroup();
-        groupedTable.joinGroup(tableGroup);
+        groupedTable.joinGroup(TABLE_GROUP);
 
         // when, then
         assertThatExceptionOfType(IllegalArgumentException.class)

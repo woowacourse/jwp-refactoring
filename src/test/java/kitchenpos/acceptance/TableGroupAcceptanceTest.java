@@ -34,6 +34,7 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
     void ungroup() {
         // given
         final TableGroup savedTableGroup = dataSupport.saveTableGroup();
+        dataSupport.saveTwoGroupedTables(savedTableGroup);
 
         // when
         final ValidatableResponse response = delete("/api/table-groups/" + savedTableGroup.getId());

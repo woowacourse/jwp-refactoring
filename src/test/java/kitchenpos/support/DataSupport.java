@@ -16,6 +16,7 @@ import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.ordertable.OrderTableRepository;
+import kitchenpos.domain.ordertable.OrderTables;
 import kitchenpos.domain.ordertable.TableGroup;
 import kitchenpos.domain.ordertable.TableGroupRepository;
 import kitchenpos.domain.product.Product;
@@ -64,17 +65,23 @@ public class DataSupport {
         return menuRepository.save(menu);
     }
 
-    public TableGroup saveTableGroup() {
-        final OrderTable orderTable1 = saveOrderTable(0, true);
-        final OrderTable orderTable2 = saveOrderTable(0, true);
-        final TableGroup tableGroup = TableGroup.ofUnsaved(Arrays.asList(orderTable1, orderTable2));
-
-        return tableGroupRepository.save(tableGroup);
-    }
-
     public OrderTable saveOrderTable(final int numberOfGuests, final boolean empty) {
         final OrderTable orderTable = OrderTable.ofUnsaved(numberOfGuests, empty);
         return orderTableRepository.save(orderTable);
+    }
+
+    public TableGroup saveTableGroup() {
+        final TableGroup tableGroup = TableGroup.ofUnsaved();
+        return tableGroupRepository.save(tableGroup);
+    }
+
+    public List<OrderTable> saveTwoGroupedTables(final TableGroup tableGroup) {
+        final OrderTable orderTable1 = saveOrderTable(0, true);
+        final OrderTable orderTable2 = saveOrderTable(0, true);
+        final OrderTables orderTables = new OrderTables(Arrays.asList(orderTable1, orderTable2));
+        orderTables.joinGroup(tableGroup);
+
+        return orderTables.getValues();
     }
 
     public Order saveOrderWithoutItem(final Long orderTableId, final OrderStatus orderStatus) {

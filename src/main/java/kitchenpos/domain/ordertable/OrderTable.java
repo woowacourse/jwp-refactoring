@@ -6,7 +6,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 
 @Entity
 public class OrderTable {
@@ -16,14 +15,13 @@ public class OrderTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
-    private TableGroup tableGroup;
+    private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
 
-    public OrderTable(final Long id, final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
+    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         this.id = id;
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -35,12 +33,12 @@ public class OrderTable {
     void joinGroup(final TableGroup tableGroup) {
         checkEmpty();
         checkNotGrouped();
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroup.getId();
         this.empty = false;
     }
 
     void ungroup() {
-        this.tableGroup = null;
+        this.tableGroupId = null;
         this.empty = false;
     }
 
@@ -68,7 +66,7 @@ public class OrderTable {
     }
 
     private void checkNotGrouped() {
-        if (Objects.nonNull(tableGroup)) {
+        if (Objects.nonNull(tableGroupId)) {
             throw new IllegalArgumentException();
         }
     }
@@ -90,10 +88,7 @@ public class OrderTable {
     }
 
     public Optional<Long> getTableGroupId() {
-        if (tableGroup == null) {
-            return Optional.empty();
-        }
-        return Optional.of(tableGroup.getId());
+        return Optional.ofNullable(tableGroupId);
     }
 
     public int getNumberOfGuests() {
