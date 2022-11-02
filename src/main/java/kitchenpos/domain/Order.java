@@ -2,13 +2,27 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Order {
+
     private Long id;
     private Long orderTableId;
-    private String orderStatus;
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
+
+    public Order() {
+    }
+
+    public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus,
+                 final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
+        this.id = id;
+        this.orderTableId = orderTableId;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+        this.orderLineItems = orderLineItems;
+    }
 
     public Long getId() {
         return id;
@@ -26,11 +40,11 @@ public class Order {
         this.orderTableId = orderTableId;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(final String orderStatus) {
+    public void setOrderStatus(final OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
 
@@ -48,5 +62,40 @@ public class Order {
 
     public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
         this.orderLineItems = orderLineItems;
+    }
+
+    public Order updateOrderStatus(final OrderStatus newOrderStatus) {
+        validateOrderStatus();
+        return new Order(id, orderTableId, newOrderStatus, orderedTime, orderLineItems);
+    }
+
+    private void validateOrderStatus() {
+        if (orderStatus == OrderStatus.COMPLETION) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public List<Long> getMenuIds() {
+        return orderLineItems.stream()
+                .map(OrderLineItem::getMenuId)
+                .collect(Collectors.toList());
+    }
+
+    public Order init(final OrderTable orderTable, final Long savedMenuCount) {
+        validateOrderTable(orderTable);
+        validateOrderLineItems(savedMenuCount);
+        return new Order(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+    }
+
+    private static void validateOrderTable(final OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateOrderLineItems(final Long savedMenuCount) {
+        if (orderLineItems.isEmpty() || (orderLineItems.size() != savedMenuCount)) {
+            throw new IllegalArgumentException();
+        }
     }
 }

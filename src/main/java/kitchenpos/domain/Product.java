@@ -3,9 +3,13 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 
 public class Product {
+
     private Long id;
     private String name;
     private BigDecimal price;
+
+    public Product() {
+    }
 
     public Long getId() {
         return id;
@@ -29,5 +33,9 @@ public class Product {
 
     public void setPrice(final BigDecimal price) {
         this.price = price;
+    }
+
+    public boolean isSameProductId(final Long productId) {
+        return id.equals(productId);
     }
 }

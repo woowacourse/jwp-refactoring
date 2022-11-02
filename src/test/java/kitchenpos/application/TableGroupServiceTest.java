@@ -8,6 +8,7 @@ import static kitchenpos.application.TestFixture.주문_상품_생성;
 import static kitchenpos.application.TestFixture.주문_생성;
 import static kitchenpos.application.TestFixture.주문_테이블_생성;
 import static kitchenpos.application.TestFixture.테이블_그룹_생성;
+import static kitchenpos.application.TestFixture.테이블_그룹과_주문_테이블_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -85,11 +86,9 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void 테이블_그룹_생성시_주문_테이블이_이미_테이블_그룹을_가진_경우_예외가_발생한다() {
         // given
-        final TableGroup tableGroupWithoutOrderTables = 테이블_그룹을_저장한다(테이블_그룹_생성());
-        final OrderTable orderTable1 = 주문_테이블을_저장한다(주문_테이블_생성(tableGroupWithoutOrderTables.getId(), true));
-        final OrderTable orderTable2 = 주문_테이블을_저장한다(주문_테이블_생성(1, true));
+        final TableGroup tableGroupWithoutOrderTables = 테이블_그룹을_저장한다(테이블_그룹과_주문_테이블_생성());
         final TableGroup tableGroup = 테이블_그룹_생성(tableGroupWithoutOrderTables.getId(),
-                List.of(orderTable1, orderTable2));
+                tableGroupWithoutOrderTables.getOrderTables());
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -117,17 +116,16 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void 테이블_그룹_해제시_주문_테이블에_등록되어_있고_주문_상태가_COOKING_인_경우_예외가_발생한다() {
         // given
-        final TableGroup tableGroup = 테이블_그룹을_저장한다(테이블_그룹_생성());
-        final OrderTable orderTable1 = 주문_테이블을_저장한다(주문_테이블_생성(tableGroup.getId(), true));
-        final OrderTable orderTable2 = 주문_테이블을_저장한다(주문_테이블_생성(tableGroup.getId(), true));
+        final TableGroup tableGroup = 테이블_그룹을_저장한다(테이블_그룹과_주문_테이블_생성());
         final Product product = 상품을_저장한다(상품_생성("테스트-상품", BigDecimal.valueOf(99999)));
         final MenuProduct menuProduct = 메뉴_상품_생성(product.getId(), 1L);
         final MenuGroup menuGroup = 메뉴_그룹을_저장한다(메뉴_그룹_생성("테스트-메뉴-그룹"));
         final Menu menu = 메뉴를_저장한다(
                 메뉴_생성("테스트-메뉴-1", BigDecimal.valueOf(99999), menuGroup.getId(), List.of(menuProduct)));
         final OrderLineItem orderLineItem = 주문_상품_생성(menu.getId());
-        주문을_저장한다(주문_생성(List.of(orderLineItem), orderTable1.getId(), OrderStatus.COOKING));
-        주문을_저장한다(주문_생성(List.of(orderLineItem), orderTable2.getId(), OrderStatus.COOKING));
+        final List<OrderTable> orderTables = tableGroup.getOrderTables();
+        주문을_저장한다(주문_생성(List.of(orderLineItem), orderTables.get(0).getId(), OrderStatus.COOKING));
+        주문을_저장한다(주문_생성(List.of(orderLineItem), orderTables.get(1).getId(), OrderStatus.COOKING));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
@@ -137,17 +135,16 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void 테이블_그룹_해제시_주문_테이블에_등록되어_있고_주문_상태가_MEAL_인_경우_예외가_발생한다() {
         // given
-        final TableGroup tableGroup = 테이블_그룹을_저장한다(테이블_그룹_생성());
-        final OrderTable orderTable1 = 주문_테이블을_저장한다(주문_테이블_생성(tableGroup.getId(), true));
-        final OrderTable orderTable2 = 주문_테이블을_저장한다(주문_테이블_생성(tableGroup.getId(), true));
+        final TableGroup tableGroup = 테이블_그룹을_저장한다(테이블_그룹과_주문_테이블_생성());
         final Product product = 상품을_저장한다(상품_생성("테스트-상품", BigDecimal.valueOf(99999)));
         final MenuProduct menuProduct = 메뉴_상품_생성(product.getId(), 1L);
         final MenuGroup menuGroup = 메뉴_그룹을_저장한다(메뉴_그룹_생성("테스트-메뉴-그룹"));
         final Menu menu = 메뉴를_저장한다(
                 메뉴_생성("테스트-메뉴-1", BigDecimal.valueOf(99999), menuGroup.getId(), List.of(menuProduct)));
         final OrderLineItem orderLineItem = 주문_상품_생성(menu.getId());
-        주문을_저장한다(주문_생성(List.of(orderLineItem), orderTable1.getId(), OrderStatus.MEAL));
-        주문을_저장한다(주문_생성(List.of(orderLineItem), orderTable2.getId(), OrderStatus.MEAL));
+        final List<OrderTable> orderTables = tableGroup.getOrderTables();
+        주문을_저장한다(주문_생성(List.of(orderLineItem), orderTables.get(0).getId(), OrderStatus.MEAL));
+        주문을_저장한다(주문_생성(List.of(orderLineItem), orderTables.get(1).getId(), OrderStatus.MEAL));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))

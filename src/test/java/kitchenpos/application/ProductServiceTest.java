@@ -9,6 +9,7 @@ import java.util.List;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 
 @SuppressWarnings("NonAsciiCharacters")
 class ProductServiceTest extends ServiceTest {
@@ -26,17 +27,10 @@ class ProductServiceTest extends ServiceTest {
     }
 
     @Test
-    void 상품_생성시_상품_금액이_음수_인_경우_예외가_발생한다() {
-        // given, when, then
-        assertThatThrownBy(() -> productService.create(상품_생성("테스트-상품", BigDecimal.valueOf(-1))))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
     void 상품_생성시_상품_금액이_null_인_경우_예외가_발생한다() {
         // given, when, then
         assertThatThrownBy(() -> productService.create(상품_생성("테스트-상품", null)))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(DataIntegrityViolationException.class);
     }
 
     @Test

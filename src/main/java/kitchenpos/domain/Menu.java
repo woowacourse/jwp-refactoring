@@ -2,8 +2,10 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Menu {
+
     private Long id;
     private String name;
     private BigDecimal price;
@@ -48,5 +50,26 @@ public class Menu {
 
     public void setMenuProducts(final List<MenuProduct> menuProducts) {
         this.menuProducts = menuProducts;
+    }
+
+    public List<Long> getProductIds() {
+        return menuProducts.stream()
+                .map(MenuProduct::getProductId)
+                .collect(Collectors.toList());
+    }
+
+    public void validatePrice(final Products products) {
+        final BigDecimal amount = products.calculateAmount(menuProducts);
+        if (isNullOrNegativePrice() || isGreaterPriceThan(amount)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private boolean isNullOrNegativePrice() {
+        return null == price || price.compareTo(BigDecimal.ZERO) < 0;
+    }
+
+    private boolean isGreaterPriceThan(final BigDecimal sum) {
+        return price.compareTo(sum) > 0;
     }
 }

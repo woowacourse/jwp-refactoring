@@ -131,7 +131,7 @@ class OrderServiceTest extends ServiceTest {
         final Order actual = orderService.changeOrderStatus(orderId, 주문_생성(orderStatus));
 
         // then
-        assertThat(actual.getOrderStatus()).isEqualTo(orderStatus.name());
+        assertThat(actual.getOrderStatus()).isEqualTo(orderStatus);
     }
 
     @Test

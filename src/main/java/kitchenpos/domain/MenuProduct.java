@@ -1,6 +1,9 @@
 package kitchenpos.domain;
 
+import java.math.BigDecimal;
+
 public class MenuProduct {
+
     private Long seq;
     private Long menuId;
     private Long productId;
@@ -36,5 +39,12 @@ public class MenuProduct {
 
     public void setQuantity(final long quantity) {
         this.quantity = quantity;
+    }
+
+    public BigDecimal calculateAmount(final Product product) {
+        if (product.isSameProductId(productId)) {
+            return product.getPrice().multiply(BigDecimal.valueOf(quantity));
+        }
+        return BigDecimal.ZERO;
     }
 }

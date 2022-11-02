@@ -1,6 +1,13 @@
 package kitchenpos.dao;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import javax.sql.DataSource;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -9,15 +16,9 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
 @Repository
 public class JdbcTemplateOrderTableDao implements OrderTableDao {
+
     private static final String TABLE_NAME = "order_table";
     private static final String KEY_COLUMN_NAME = "id";
 
@@ -59,20 +60,31 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
     }
 
     @Override
-    public List<OrderTable> findAllByIdIn(final List<Long> ids) {
+    public OrderTables findAllByIdIn(final List<Long> ids) {
         final String sql = "SELECT id, table_group_id, number_of_guests, empty FROM order_table WHERE id IN (:ids)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("ids", ids);
-        return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
+        final List<OrderTable> orderTables = jdbcTemplate.query(sql, parameters,
+                (resultSet, rowNumber) -> toEntity(resultSet));
+        return new OrderTables(orderTables);
     }
 
     @Override
-    public List<OrderTable> findAllByTableGroupId(final Long tableGroupId) {
+    public OrderTables findAllByTableGroupId(final Long tableGroupId) {
         final String sql = "SELECT id, table_group_id, number_of_guests, empty" +
                 " FROM order_table WHERE table_group_id = (:tableGroupId)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("tableGroupId", tableGroupId);
-        return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
+        final List<OrderTable> orderTables = jdbcTemplate.query(sql, parameters,
+                (resultSet, rowNumber) -> toEntity(resultSet));
+        return new OrderTables(orderTables);
+    }
+
+    @Override
+    public void saveAll(final List<OrderTable> entities) {
+        for (final OrderTable entity : entities) {
+            save(entity);
+        }
     }
 
     private OrderTable select(final Long id) {
