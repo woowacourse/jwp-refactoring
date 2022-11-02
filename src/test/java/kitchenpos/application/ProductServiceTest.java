@@ -4,9 +4,11 @@ import static kitchenpos.fixture.ProductFactory.product;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.ProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -22,12 +24,12 @@ class ProductServiceTest extends FakeSpringContext {
         @DisplayName("상품을 저장하고, 저장된 상품을 반환한다")
         @Test
         void saveProduct() {
-            final var product = product("콜라", 1000);
-            final var result = productService.create(product);
+            final var request = new ProductRequest("콜라", BigDecimal.valueOf(1000));
+            final var result = productService.create(request);
 
             assertAll(
-                    () -> assertThat(result.getName()).isEqualTo(product.getName()),
-                    () -> assertThat(result.getPrice().compareTo(product.getPrice())).isEqualTo(0)
+                    () -> assertThat(result.getName()).isEqualTo(request.getName()),
+                    () -> assertThat(result.getPrice().compareTo(request.getPrice())).isEqualTo(0)
             );
         }
     }

@@ -8,7 +8,14 @@ public class Product implements Entity {
     private String name;
     private BigDecimal price;
 
-    public Product() {
+    public Product(final String name,
+                   final BigDecimal price) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        if (isNew()) {
+            validateOnCreate();
+        }
     }
 
     public Product(final Long id,
