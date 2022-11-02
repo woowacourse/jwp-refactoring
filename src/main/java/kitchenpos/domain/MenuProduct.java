@@ -22,7 +22,7 @@ public class MenuProduct {
 
     private Long quantity;
 
-    public MenuProduct() {
+    protected MenuProduct() {
     }
 
     public MenuProduct(Menu menu, Product product, Long quantity) {
@@ -32,8 +32,7 @@ public class MenuProduct {
     }
 
     public Price getProductsPrice() {
-        product.getPrice().multiply(quantity);
-        return product.getPrice();
+        return product.getPrice().getMultiplyValue(quantity);
     }
 
     public Long getSeq() {

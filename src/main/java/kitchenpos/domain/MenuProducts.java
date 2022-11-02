@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MenuProducts {
@@ -20,6 +21,6 @@ public class MenuProducts {
     }
 
     public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
+        return Collections.unmodifiableList(menuProducts);
     }
 }

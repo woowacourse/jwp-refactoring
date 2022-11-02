@@ -2,7 +2,9 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderHistory;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -11,6 +13,7 @@ import kitchenpos.exception.NotFoundOrderException;
 import kitchenpos.exception.NotFoundOrderTableException;
 import kitchenpos.exception.OrderMenusCountException;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderHistoryRepository;
 import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
@@ -27,13 +30,18 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderHistoryRepository orderHistoryRepository;
 
-    public OrderService(MenuRepository menuRepository, OrderRepository orderRepository,
-                        OrderLineItemRepository orderLineItemRepository, OrderTableRepository orderTableRepository) {
+    public OrderService(MenuRepository menuRepository,
+                        OrderRepository orderRepository,
+                        OrderLineItemRepository orderLineItemRepository,
+                        OrderTableRepository orderTableRepository,
+                        OrderHistoryRepository orderHistoryRepository) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
+        this.orderHistoryRepository = orderHistoryRepository;
     }
 
     @Transactional
@@ -41,7 +49,7 @@ public class OrderService {
         validateOrderLineItems(orderCreateRequest.getOrderLineItems());
 
         OrderTable orderTable = findOrderTable(orderCreateRequest.getOrderTableId());
-        Order savedOrder = saveOrder(orderTable.getId());
+        Order savedOrder = saveOrder(orderTable);
         saveOrderLineItems(orderCreateRequest.getOrderLineItems(), savedOrder);
 
         return savedOrder;
@@ -68,14 +76,21 @@ public class OrderService {
                 .orElseThrow(NotFoundOrderTableException::new);
     }
 
-    private Order saveOrder(Long orderTableId) {
-        return orderRepository.save(new Order(findOrderTable(orderTableId)));
+    private Order saveOrder(OrderTable orderTable) {
+        return orderRepository.save(new Order(orderTable));
     }
 
     private void saveOrderLineItems(List<OrderLineItemDto> orderLineItemDtos, Order order) {
         for (OrderLineItemDto dto : orderLineItemDtos) {
-            orderLineItemRepository.save(new OrderLineItem(order, dto.getMenuId(), dto.getQuantity()));
+            OrderHistory orderHistory = saveOrderHistory(dto.getMenuId());
+            orderLineItemRepository.save(new OrderLineItem(order, orderHistory.getId(), dto.getQuantity()));
         }
+    }
+
+    private OrderHistory saveOrderHistory(Long menuId) {
+        Menu menu = menuRepository.findById(menuId)
+                .orElseThrow(NotFoundMenuException::new);
+        return orderHistoryRepository.save(new OrderHistory(menu.getName(), menu.getPrice()));
     }
 
     public List<Order> list() {

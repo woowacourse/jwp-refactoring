@@ -27,8 +27,8 @@ public class Price {
         }
     }
 
-    public void multiply(long count) {
-        value = value.multiply(BigDecimal.valueOf(count));
+    public Price getMultiplyValue(long count) {
+        return new Price(value.multiply(BigDecimal.valueOf(count)));
     }
 
     public void add(Price price) {

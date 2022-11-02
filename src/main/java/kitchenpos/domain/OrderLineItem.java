@@ -17,16 +17,16 @@ public class OrderLineItem {
     @ManyToOne(fetch = FetchType.LAZY)
     private Order order;
 
-    private Long menuId;
+    private Long orderHistoryId;
 
     private Long quantity;
 
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(Order order, Long menuId, Long quantity) {
+    public OrderLineItem(Order order, Long orderHistoryId, Long quantity) {
         this.order = order;
-        this.menuId = menuId;
+        this.orderHistoryId = orderHistoryId;
         this.quantity = quantity;
     }
 
@@ -38,8 +38,8 @@ public class OrderLineItem {
         return order;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public Long getOrderHistoryId() {
+        return orderHistoryId;
     }
 
     public Long getQuantity() {

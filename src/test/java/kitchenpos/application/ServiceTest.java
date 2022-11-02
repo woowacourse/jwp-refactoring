@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderHistoryRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.ProductRepository;
@@ -51,4 +52,7 @@ public class ServiceTest {
 
     @Autowired
     protected TableGroupRepository tableGroupRepository;
+
+    @Autowired
+    protected OrderHistoryRepository orderHistoryRepository;
 }
