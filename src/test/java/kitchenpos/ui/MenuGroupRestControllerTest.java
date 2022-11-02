@@ -1,6 +1,5 @@
 package kitchenpos.ui;
 
-import static kitchenpos.fixture.domain.MenuGroupFixture.createMenuGroup;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -9,7 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import kitchenpos.application.MenuGroupService;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.ui.dto.request.MenuGroupCreateRequest;
+import kitchenpos.ui.dto.response.MenuGroupCreateResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -27,14 +27,14 @@ class MenuGroupRestControllerTest extends ControllerTest {
     @Test
     void create() throws Exception {
         // given
-        MenuGroup requestBody = createMenuGroup("추천메뉴");
-        given(menuGroupService.create(any())).willReturn(createMenuGroup(1L, "추천메뉴"));
+        MenuGroupCreateRequest request = new MenuGroupCreateRequest("추천메뉴");
+        given(menuGroupService.create(any())).willReturn(new MenuGroupCreateResponse(1L, "추천메뉴"));
 
         // when
         ResultActions perform = mockMvc.perform(post("/api/menu-groups")
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8")
-                        .content(objectMapper.writeValueAsString(requestBody)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andDo(print());
 
         // then

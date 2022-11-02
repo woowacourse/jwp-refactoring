@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.ui.dto.request.MenuGroupCreateRequest;
+import kitchenpos.ui.dto.response.MenuGroupCreateResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +32,10 @@ class MenuGroupServiceTest {
         MenuGroupCreateRequest request = new MenuGroupCreateRequest("추천메뉴");
 
         // when
-        MenuGroup savedMenuGroup = menuGroupService.create(request);
+        MenuGroupCreateResponse response = menuGroupService.create(request);
 
         // then
-        MenuGroup dbMenuGroup = menuGroupRepository.findById(savedMenuGroup.getId())
+        MenuGroup dbMenuGroup = menuGroupRepository.findById(response.getId())
                 .orElseThrow(NoSuchElementException::new);
         assertThat(dbMenuGroup.getName()).isEqualTo(request.getName());
     }
