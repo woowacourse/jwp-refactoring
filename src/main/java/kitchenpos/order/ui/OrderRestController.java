@@ -2,7 +2,6 @@ package kitchenpos.order.ui;
 
 import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import kitchenpos.order.application.OrderService;
-import kitchenpos.order.domain.Order;
 import kitchenpos.order.dto.request.ChangeOrderStatusRequest;
 import kitchenpos.order.dto.request.CreateOrderRequest;
 import kitchenpos.order.dto.response.OrderResponse;
@@ -28,18 +26,17 @@ public class OrderRestController {
 
     @PostMapping("/api/orders")
     public ResponseEntity<OrderResponse> create(@RequestBody final CreateOrderRequest request) {
-        final Order created = orderService.create(request);
+        final OrderResponse created = orderService.create(request);
         final URI uri = URI.create("/api/orders/" + created.getId());
+
         return ResponseEntity.created(uri)
-            .body(new OrderResponse(created))
+            .body(created)
             ;
     }
 
     @GetMapping("/api/orders")
     public ResponseEntity<List<OrderResponse>> list() {
-        List<OrderResponse> orders = orderService.list().stream()
-            .map(it -> new OrderResponse(it))
-            .collect(Collectors.toList());
+        List<OrderResponse> orders = orderService.list();
 
         return ResponseEntity.ok()
             .body(orders)
@@ -51,8 +48,9 @@ public class OrderRestController {
         @PathVariable final Long orderId,
         @RequestBody final ChangeOrderStatusRequest request
     ) {
-        Order changed = orderService.changeOrderStatus(orderId, request);
-        return ResponseEntity.ok(new OrderResponse(changed))
+        OrderResponse changed = orderService.changeOrderStatus(orderId, request);
+
+        return ResponseEntity.ok(changed)
             ;
     }
 }

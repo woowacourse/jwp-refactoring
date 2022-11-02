@@ -8,11 +8,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.order.event.VerifiedAbleToUngroupEvent;
-import kitchenpos.table.repository.OrderTableRepository;
-import kitchenpos.table.repository.TableGroupRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.dto.request.CreateTableGroupRequest;
+import kitchenpos.table.dto.response.TableGroupResponse;
+import kitchenpos.table.repository.OrderTableRepository;
+import kitchenpos.table.repository.TableGroupRepository;
 
 @Service
 @Transactional(readOnly = true)
@@ -29,10 +30,10 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final CreateTableGroupRequest request) {
-        return tableGroupRepository.save(
-            new TableGroup(getOrderTables(request))
-        );
+    public TableGroupResponse create(final CreateTableGroupRequest request) {
+        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(getOrderTables(request)));
+
+        return new TableGroupResponse(tableGroup);
     }
 
     @Transactional

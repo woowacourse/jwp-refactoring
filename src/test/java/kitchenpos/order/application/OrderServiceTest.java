@@ -22,6 +22,7 @@ import kitchenpos.order.dto.application.OrderLineItemDto;
 import kitchenpos.order.dto.request.ChangeOrderStatusRequest;
 import kitchenpos.order.dto.request.CreateOrderLineItemRequest;
 import kitchenpos.order.dto.request.CreateOrderRequest;
+import kitchenpos.order.dto.response.OrderResponse;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.product.domain.Product;
 import kitchenpos.table.repository.OrderTableRepository;
@@ -67,7 +68,7 @@ class OrderServiceTest {
             );
 
             // when
-            Order savedOrder = orderService.create(request);
+            OrderResponse savedOrder = orderService.create(request);
 
             // then
             assertThat(savedOrder.getId()).isNotNull();
@@ -118,7 +119,7 @@ class OrderServiceTest {
         @Test
         @DisplayName("전체 주문을 조회한다.")
         void list() {
-            List<Order> orders = orderService.list();
+            List<OrderResponse> orders = orderService.list();
             assertThat(orders).isNotNull();
         }
 
@@ -136,7 +137,7 @@ class OrderServiceTest {
             ChangeOrderStatusRequest request = new ChangeOrderStatusRequest("MEAL");
 
             // when
-            Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), request);
+            OrderResponse changedOrder = orderService.changeOrderStatus(savedOrder.getId(), request);
 
             // then
             assertThat(changedOrder.getOrderStatus()).isEqualTo("MEAL");

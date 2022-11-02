@@ -25,6 +25,7 @@ public class ProductRestController {
     public ResponseEntity<ProductResponse> create(@RequestBody final CreateProductRequest request) {
         final ProductResponse created = productService.create(request);
         final URI uri = URI.create("/api/products/" + created.getId());
+
         return ResponseEntity.created(uri)
             .body(created)
             ;
@@ -33,6 +34,7 @@ public class ProductRestController {
     @GetMapping("/api/products")
     public ResponseEntity<List<ProductResponse>> list() {
         List<ProductResponse> products = productService.list();
+
         return ResponseEntity.ok()
             .body(products)
             ;

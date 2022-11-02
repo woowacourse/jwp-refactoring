@@ -22,12 +22,12 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.dto.application.OrderLineItemDto;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.product.domain.Product;
-import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.product.repository.ProductRepository;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.dto.request.AddOrderTableToTableGroupRequest;
 import kitchenpos.table.dto.request.CreateTableGroupRequest;
+import kitchenpos.table.dto.response.TableGroupResponse;
+import kitchenpos.table.repository.OrderTableRepository;
 
 @SpringBootTest
 class TableGroupServiceTest {
@@ -68,7 +68,7 @@ class TableGroupServiceTest {
             );
 
             // when
-            TableGroup savedTableGroup = tableGroupService.create(request);
+            TableGroupResponse savedTableGroup = tableGroupService.create(request);
 
             // then
             assertThat(savedTableGroup.getId()).isNotNull();
@@ -138,7 +138,7 @@ class TableGroupServiceTest {
         return orderTableRepository.save(orderTable);
     }
 
-    private TableGroup createAndSaveTableGroup(OrderTable orderTable1, OrderTable orderTable2) {
+    private TableGroupResponse createAndSaveTableGroup(OrderTable orderTable1, OrderTable orderTable2) {
         CreateTableGroupRequest request = new CreateTableGroupRequest(
             new ArrayList<AddOrderTableToTableGroupRequest>() {{
                 add(new AddOrderTableToTableGroupRequest(orderTable1.getId()));

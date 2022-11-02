@@ -23,6 +23,7 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.dto.application.OrderLineItemDto;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.product.domain.Product;
+import kitchenpos.table.dto.response.OrderTableResponse;
 import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.product.repository.ProductRepository;
 import kitchenpos.table.domain.OrderTable;
@@ -62,7 +63,7 @@ class TableServiceTest {
             CreateOrderTableRequest request = new CreateOrderTableRequest(10, true);
 
             // when
-            OrderTable savedOrderTable = tableService.create(request);
+            OrderTableResponse savedOrderTable = tableService.create(request);
 
             // then
             assertThat(savedOrderTable.getId()).isNotNull();
@@ -77,7 +78,7 @@ class TableServiceTest {
         @Test
         @DisplayName("전체 테이블을 조회한다.")
         void list() {
-            List<OrderTable> tables = tableService.list();
+            List<OrderTableResponse> tables = tableService.list();
             assertThat(tables).isNotNull();
         }
 
@@ -95,10 +96,10 @@ class TableServiceTest {
             ChangeOrderTableEmptyRequest request = new ChangeOrderTableEmptyRequest(false);
 
             // when
-            OrderTable changedOrderTable = tableService.changeEmpty(savedOrderTable.getId(), request);
+            OrderTableResponse changedOrderTable = tableService.changeEmpty(savedOrderTable.getId(), request);
 
             // then
-            assertThat(changedOrderTable.isEmpty()).isFalse();
+            assertThat(changedOrderTable.getEmpty()).isFalse();
         }
 
         @Test
@@ -145,7 +146,7 @@ class TableServiceTest {
             ChangeOrderTableNumberOfGuestRequest request = new ChangeOrderTableNumberOfGuestRequest(20);
 
             // when
-            OrderTable changedOrderTable = tableService.changeNumberOfGuests(savedOrderTable.getId(), request);
+            OrderTableResponse changedOrderTable = tableService.changeNumberOfGuests(savedOrderTable.getId(), request);
 
             // then
             assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(20);
