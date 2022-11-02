@@ -10,6 +10,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderMenu;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.request.ChangeEmptyRequest;
@@ -108,7 +109,7 @@ class TableServiceTest extends ServiceTest {
             final MenuGroup menuGroup = saveMenuGroup("감자");
             final Menu menu = saveMenu("감자세트", BigDecimal.ONE, menuGroup, new MenuProduct(product.getId(), 1L));
             final OrderTable orderTable = saveOrderTable(10, false);
-            saveOrder(orderTable, orderStatus, new OrderLineItem(menu.getId(), 1L));
+            saveOrder(orderTable, orderStatus, new OrderLineItem(1L, OrderMenu.of(menu, menuGroup)));
 
             final ChangeEmptyRequest request = new ChangeEmptyRequest(true);
 

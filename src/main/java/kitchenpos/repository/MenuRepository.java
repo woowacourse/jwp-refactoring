@@ -11,6 +11,9 @@ public interface MenuRepository extends CrudRepository<Menu, Long> {
     @Override
     List<Menu> findAll();
 
+    @Override
+    List<Menu> findAllById(Iterable<Long> menuIds);
+
     @Query("SELECT COUNT(*) FROM menu WHERE id IN (:ids)")
     long countByIdIn(@Param("ids") List<Long> menuIds);
 }

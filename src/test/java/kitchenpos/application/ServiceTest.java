@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,6 +12,7 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuProductService;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderMenu;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
@@ -105,8 +107,26 @@ abstract class ServiceTest {
 
     protected Order saveOrder(final OrderTable orderTable, final String orderStatus,
                               final OrderLineItem... orderLineItems) {
-        final Order order = new Order(orderTable.getId(), orderStatus, LocalDateTime.now(), List.of(orderLineItems));
+        final Order order = new Order(
+                orderTable.getId(), orderStatus,
+                LocalDateTime.now(),
+                toNewOrderLineItems(orderLineItems)
+        );
         return orderRepository.save(order);
+    }
+
+    private List<OrderLineItem> toNewOrderLineItems(final OrderLineItem[] oldOrderLineItems) {
+        final List<OrderLineItem> newOrderLineItems = new ArrayList<>();
+        for (final OrderLineItem old : oldOrderLineItems) {
+            final Menu menu = menuRepository.findById(old.getMenuId())
+                    .orElseThrow();
+            final MenuGroup menuGroup = menuGroupRepository.findById(menu.getMenuGroupId())
+                    .orElseThrow();
+            final OrderMenu orderMenu = OrderMenu.of(menu, menuGroup);
+            final OrderLineItem orderLineItem = new OrderLineItem(old.getQuantity(), orderMenu);
+            newOrderLineItems.add(orderLineItem);
+        }
+        return newOrderLineItems;
     }
 
     protected TableGroup saveTableGroup(final OrderTable... orderTables) {

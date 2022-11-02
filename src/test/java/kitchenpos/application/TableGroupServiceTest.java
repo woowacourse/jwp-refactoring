@@ -11,6 +11,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderMenu;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.request.TableGroupCreateRequest;
@@ -164,8 +165,8 @@ class TableGroupServiceTest extends ServiceTest {
             final MenuGroup menuGroup = saveMenuGroup("감자");
             final Menu menu = saveMenu("감자세트", BigDecimal.ONE, menuGroup,
                     new MenuProduct(product.getId(), 1L));
-            saveOrder(orderTable1, "COOKING", new OrderLineItem(menu.getId(), 1L));
-            saveOrder(orderTable2, "COMPLETION", new OrderLineItem(menu.getId(), 2L));
+            saveOrder(orderTable1, "COOKING", new OrderLineItem(1L, OrderMenu.of(menu, menuGroup)));
+            saveOrder(orderTable2, "COMPLETION", new OrderLineItem(2L, OrderMenu.of(menu, menuGroup)));
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))

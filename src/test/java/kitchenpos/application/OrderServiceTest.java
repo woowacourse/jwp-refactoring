@@ -14,6 +14,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderMenu;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
@@ -152,7 +153,7 @@ class OrderServiceTest extends ServiceTest {
                     new MenuProduct(chicken2.getId(), 4L));
 
             final OrderTable orderTable1 = saveOrderTable(10, false);
-            saveOrder(orderTable1, "COOKING", new OrderLineItem(chickenMenu.getId(), 2L));
+            saveOrder(orderTable1, "COOKING", new OrderLineItem(2L, OrderMenu.of(chickenMenu, chickenMenuGroup)));
 
             final Product sushi1 = saveProduct("연어초밥");
             final Product sushi2 = saveProduct("광어초밥");
@@ -164,7 +165,7 @@ class OrderServiceTest extends ServiceTest {
                     new MenuProduct(sushi3.getId(), 1L));
 
             final OrderTable orderTable2 = saveOrderTable(2, false);
-            saveOrder(orderTable2, "MEAL", new OrderLineItem(sushiMenu.getId(), 3L));
+            saveOrder(orderTable2, "MEAL", new OrderLineItem(3L, OrderMenu.of(sushiMenu, sushiMenuGroup)));
 
             // when
             final List<OrderResponse> actual = orderService.list();
@@ -188,9 +189,9 @@ class OrderServiceTest extends ServiceTest {
         void changeOrderStatus_validOrderStatus_success(final String sourceOrderStatus,
                                                         final String targetOrderStatus) {
             // given
-            final Menu chickenMenu = getMenu();
+            final OrderMenu orderMenu = getOrderMenu();
             final OrderTable orderTable = saveOrderTable(10, false);
-            final Long orderId = saveOrder(orderTable, sourceOrderStatus, new OrderLineItem(chickenMenu.getId(), 2L)).getId();
+            final Long orderId = saveOrder(orderTable, sourceOrderStatus, new OrderLineItem( 2L, orderMenu)).getId();
 
             final ChangeOrderStatusRequest request = new ChangeOrderStatusRequest(targetOrderStatus);
 
@@ -216,9 +217,9 @@ class OrderServiceTest extends ServiceTest {
         @DisplayName("계산 완료인 주문은 주문 상태를 변경할 수 없다.")
         void changeOrderStatus_orderStatusIsCompletion_exception() {
             // given
-            final Menu chickenMenu = getMenu();
+            final OrderMenu orderMenu = getOrderMenu();
             final OrderTable orderTable = saveOrderTable(10, false);
-            final Long orderId = saveOrder(orderTable, COMPLETION.name(), new OrderLineItem(chickenMenu.getId(), 2L)).getId();
+            final Long orderId = saveOrder(orderTable, COMPLETION.name(), new OrderLineItem(2L, orderMenu)).getId();
 
             final ChangeOrderStatusRequest request = new ChangeOrderStatusRequest(MEAL.name());
 
@@ -227,13 +228,14 @@ class OrderServiceTest extends ServiceTest {
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
-        private Menu getMenu() {
+        private OrderMenu getOrderMenu() {
             final Product chicken1 = saveProduct("간장치킨");
             final Product chicken2 = saveProduct("앙념치킨");
             final MenuGroup chickenMenuGroup = saveMenuGroup("치킨");
-            return saveMenu("반반치킨", BigDecimal.valueOf(10_000), chickenMenuGroup,
+            final Menu menu = saveMenu("반반치킨", BigDecimal.valueOf(10_000), chickenMenuGroup,
                     new MenuProduct(chicken1.getId(), 2L),
                     new MenuProduct(chicken2.getId(), 4L));
+            return OrderMenu.of(menu, chickenMenuGroup);
         }
     }
 }
