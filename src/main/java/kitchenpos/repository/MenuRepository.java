@@ -29,6 +29,11 @@ public class MenuRepository {
         return menuDao.save(entity);
     }
 
+    public Menu getById(final Long id) {
+        return menuDao.findById(id)
+                .orElseThrow(IllegalArgumentException::new);
+    }
+
     public List<Menu> findAll() {
         return menuDao.findAll();
     }
