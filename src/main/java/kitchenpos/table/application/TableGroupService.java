@@ -1,11 +1,8 @@
 package kitchenpos.table.application;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.domain.TableGroup;
@@ -20,14 +17,14 @@ import org.springframework.util.CollectionUtils;
 @Service
 @Transactional(readOnly = true)
 public class TableGroupService {
-    private final OrderRepository orderRepository;
+    private final OrderStatusValidator orderStatusValidator;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(OrderRepository orderRepository,
-                             OrderTableRepository orderTableRepository,
-                             TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
+    public TableGroupService(final OrderStatusValidator orderStatusValidator,
+                             final OrderTableRepository orderTableRepository,
+                             final TableGroupRepository tableGroupRepository) {
+        this.orderStatusValidator = orderStatusValidator;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
@@ -59,8 +56,7 @@ public class TableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+        if (orderStatusValidator.existsByOrderTableIdInAndOrderStatusNotCompletion(orderTableIds)) {
             throw new IllegalArgumentException("식사가 완료되지 않았습니다.");
         }
 

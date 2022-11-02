@@ -1,10 +1,7 @@
 package kitchenpos.table.application;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.dto.request.ChangeTableEmptyRequest;
@@ -18,11 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class TableService {
 
-    private final OrderRepository orderRepository;
+    private final OrderStatusValidator orderStatusValidator;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(OrderRepository orderRepository, OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(OrderStatusValidator orderStatusValidator, OrderTableRepository orderTableRepository) {
+        this.orderStatusValidator = orderStatusValidator;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -45,8 +42,7 @@ public class TableService {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
 
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+        if (orderStatusValidator.existsByOrderTableIdAndOrderStatusNotCompletion(orderTableId)) {
             throw new IllegalArgumentException("아직 식사가 완료되지 않은 테이블입나다.");
         }
 
