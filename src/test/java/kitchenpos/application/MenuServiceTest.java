@@ -3,7 +3,9 @@ package kitchenpos.application;
 import static kitchenpos.Fixture.MENU;
 import static kitchenpos.Fixture.MENU_PRODUCT;
 import static kitchenpos.Fixture.PRODUCT;
+import static kitchenpos.RequestFixture.MENU_PRODUCT_REQUEST;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -11,12 +13,15 @@ import static org.mockito.BDDMockito.given;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.application.dto.request.MenuCreateRequest;
+import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -56,13 +61,41 @@ class MenuServiceTest {
                 .willReturn(MENU_PRODUCT);
 
         //when
-        Menu menu = new Menu("후라이드", BigDecimal.valueOf(19000), 1L, List.of(MENU_PRODUCT));
-        Menu savedMenu = menuService.create(menu);
+        MenuCreateRequest dto = new MenuCreateRequest("후라이드", BigDecimal.valueOf(19000), 1L,
+                List.of(MENU_PRODUCT));
+        MenuResponse savedMenu = menuService.create(dto);
 
         //then
         assertThat(savedMenu.getName()).isEqualTo(MENU.getName());
         assertThat(savedMenu.getPrice()).isEqualTo(MENU.getPrice());
         assertThat(savedMenu.getMenuGroupId()).isNotNull();
+    }
+
+    @Test
+        //TODO: 에러 핸들링 후, 수정하기
+    void create_요청_가격이_0이거나_음수이면_에러를_반환한다() {
+        assertThatThrownBy(() -> menuService.create(
+                new MenuCreateRequest(
+                        "name", BigDecimal.valueOf(-100),
+                        1L, List.of(MENU_PRODUCT_REQUEST)))
+        ).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void create_메뉴가격이_상품_각각의_가격보다_비싸면_에러를_반환한다() {
+        //given
+        given(menuGroupDao.existsById(anyLong()))
+                .willReturn(true);
+        given(productDao.findById(anyLong()))
+                .willReturn(Optional.of(new Product("product", BigDecimal.valueOf(10000))));
+
+        //when, then
+        BigDecimal price = BigDecimal.valueOf(30000);
+        MenuCreateRequest dto = new MenuCreateRequest("name", price, 1L,
+                List.of(MENU_PRODUCT_REQUEST));
+
+        assertThatThrownBy(() -> menuService.create(dto))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("메뉴를 조회한다.")
@@ -72,7 +105,7 @@ class MenuServiceTest {
         given(menuDao.findAll()).willReturn(List.of(MENU));
 
         //when
-        List<Menu> menus = menuService.list();
+        List<MenuResponse> menus = menuService.list();
 
         //then
         assertThat(menus).hasSize(1);

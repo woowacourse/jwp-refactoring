@@ -1,7 +1,9 @@
 package kitchenpos.dao;
 
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -19,6 +21,12 @@ import java.util.Optional;
 public class JdbcTemplateMenuGroupDao implements MenuGroupDao {
     private static final String TABLE_NAME = "menu_group";
     private static final String KEY_COLUMN_NAME = "id";
+
+    private static final RowMapper<MenuGroup> MENU_GROUP_MAPPER = (rs, rowNum) ->
+            new MenuGroup(
+                    rs.getLong("id"),
+                    rs.getString("name")
+            );
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
@@ -50,7 +58,7 @@ public class JdbcTemplateMenuGroupDao implements MenuGroupDao {
     @Override
     public List<MenuGroup> findAll() {
         final String sql = "SELECT id, name FROM menu_group";
-        return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
+        return jdbcTemplate.query(sql, MENU_GROUP_MAPPER);
     }
 
     @Override
@@ -65,13 +73,6 @@ public class JdbcTemplateMenuGroupDao implements MenuGroupDao {
         final String sql = "SELECT id, name FROM menu_group WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("id", id);
-        return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
-    }
-
-    private MenuGroup toEntity(final ResultSet resultSet) throws SQLException {
-        final MenuGroup entity = new MenuGroup();
-        entity.setId(resultSet.getLong("id"));
-        entity.setName(resultSet.getString("name"));
-        return entity;
+        return jdbcTemplate.queryForObject(sql, parameters, MENU_GROUP_MAPPER);
     }
 }

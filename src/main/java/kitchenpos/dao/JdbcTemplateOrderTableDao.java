@@ -1,7 +1,10 @@
 package kitchenpos.dao;
 
+import java.time.LocalDateTime;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -20,6 +23,14 @@ import java.util.Optional;
 public class JdbcTemplateOrderTableDao implements OrderTableDao {
     private static final String TABLE_NAME = "order_table";
     private static final String KEY_COLUMN_NAME = "id";
+
+    private static final RowMapper<OrderTable> ORDER_TABLE_MAPPER = (rs, rowNum) ->
+            new OrderTable(
+                    rs.getLong("id"),
+                    rs.getObject("table_group_id", Long.class),
+                    rs.getInt("number_of_guests"),
+                    rs.getBoolean("empty")
+            );
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
@@ -55,7 +66,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
     @Override
     public List<OrderTable> findAll() {
         final String sql = "SELECT id, table_group_id, number_of_guests, empty FROM order_table";
-        return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
+        return jdbcTemplate.query(sql, ORDER_TABLE_MAPPER);
     }
 
     @Override
@@ -63,7 +74,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
         final String sql = "SELECT id, table_group_id, number_of_guests, empty FROM order_table WHERE id IN (:ids)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("ids", ids);
-        return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
+        return jdbcTemplate.query(sql, parameters, ORDER_TABLE_MAPPER);
     }
 
     @Override
@@ -72,14 +83,14 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
                 " FROM order_table WHERE table_group_id = (:tableGroupId)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("tableGroupId", tableGroupId);
-        return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
+        return jdbcTemplate.query(sql, parameters, ORDER_TABLE_MAPPER);
     }
 
     private OrderTable select(final Long id) {
         final String sql = "SELECT id, table_group_id, number_of_guests, empty FROM order_table WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("id", id);
-        return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
+        return jdbcTemplate.queryForObject(sql, parameters, ORDER_TABLE_MAPPER);
     }
 
     private void update(final OrderTable entity) {
@@ -91,14 +102,5 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
                 .addValue("empty", entity.isEmpty())
                 .addValue("id", entity.getId());
         jdbcTemplate.update(sql, parameters);
-    }
-
-    private OrderTable toEntity(final ResultSet resultSet) throws SQLException {
-        final OrderTable entity = new OrderTable();
-        entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setTableGroupId(resultSet.getObject("table_group_id", Long.class));
-        entity.setNumberOfGuests(resultSet.getInt("number_of_guests"));
-        entity.setEmpty(resultSet.getBoolean("empty"));
-        return entity;
     }
 }

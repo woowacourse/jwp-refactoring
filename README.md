@@ -26,3 +26,8 @@
   - [x] 모든 Business Object에 대한 테스트 코드 작성 
   - [x] @SpringBootTest를 이용한 통합 테스트 코드 또는 @ExtendWith(MockitoExtension.class)를 이용한 단위 테스트 코드를 작성
 - [x] lombok 사용하지 않고 미션 진행하기 
+
+## 2단계 요구 사항 
+- [x] 단위 테스트하기 어려운 코드와 단위 테스트 가능한 코드를 분리해 단위 테스트 가능한 코드에 대해 단위 테스트 구현
+- [x] 비즈니스 로직 서비스에서 도메인으로 분리
+- [x] 모델에 만발된 setter 메서드 제거 

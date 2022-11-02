@@ -2,11 +2,14 @@ package kitchenpos.application;
 
 import static kitchenpos.Fixture.PRODUCT;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.application.dto.request.ProductCreateRequest;
+import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
@@ -33,11 +36,15 @@ class ProductServiceTest {
                 .willReturn(PRODUCT);
 
         //when
-        Product product = new Product("강정치킨", BigDecimal.valueOf(17000));
-        Product savedProduct = productService.create(product);
+        ProductCreateRequest dto = new ProductCreateRequest("강정치킨", BigDecimal.valueOf(17000));
+        ProductResponse savedProduct = productService.create(dto);
 
         //then
-        assertThat(savedProduct).isEqualTo(PRODUCT);
+        assertAll(
+                () -> assertThat(savedProduct.getId()).isEqualTo(PRODUCT.getId()),
+                () -> assertThat(savedProduct.getName()).isEqualTo(PRODUCT.getName()),
+                () -> assertThat(savedProduct.getPrice()).isEqualTo(PRODUCT.getPrice())
+        );
     }
 
     @DisplayName("제품 목록을 조회한다.")
@@ -48,7 +55,7 @@ class ProductServiceTest {
                 .willReturn(List.of(PRODUCT));
 
         //when
-        List<Product> products = productService.list();
+        List<ProductResponse> products = productService.list();
 
         //then
         assertThat(products).hasSize(1);

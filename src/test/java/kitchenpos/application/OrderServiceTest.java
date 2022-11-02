@@ -1,22 +1,25 @@
 package kitchenpos.application;
 
 import static kitchenpos.Fixture.ORDER;
+import static kitchenpos.Fixture.ORDER_LINE_ITEM;
+import static kitchenpos.Fixture.ORDER_TABLE;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.application.dto.request.OrderCreateRequest;
+import kitchenpos.application.dto.request.OrderLineItemCreateRequest;
+import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,21 +49,14 @@ class OrderServiceTest {
     @Test
     void create() {
         //given
-        Order order = new Order();
-        OrderLineItem orderLineItem = new OrderLineItem(1L, 1L);
-        OrderTable orderTable = new OrderTable(1L,  1, false);
-        order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
-
         given(menuDao.countByIdIn(anyList())).willReturn(1L);
-        given(orderTableDao.findById(anyLong())).willReturn(Optional.of(orderTable));
-        given(orderDao.save(order)).willReturn(ORDER);
-        given(orderLineItemDao.save(orderLineItem)).willReturn(orderLineItem);
+        given(orderTableDao.findById(anyLong())).willReturn(Optional.of(ORDER_TABLE));
+        given(orderDao.save(any(Order.class))).willReturn(ORDER);
+        given(orderLineItemDao.save(any(OrderLineItem.class))).willReturn(ORDER_LINE_ITEM);
 
         //when
-        Order savedOrder = orderService.create(order);
+        OrderCreateRequest dto = new OrderCreateRequest(1L, List.of(new OrderLineItemCreateRequest(1L, 1L)));
+        OrderResponse savedOrder = orderService.create(dto);
 
         //then
         assertThat(savedOrder.getOrderStatus()).isNotNull();
@@ -75,7 +71,7 @@ class OrderServiceTest {
         given(orderDao.findAll()).willReturn(List.of(ORDER));
 
         //then
-        List<Order> orders = orderService.list();
+        List<OrderResponse> orders = orderService.list();
 
         //given
         assertThat(orders).hasSize(1);

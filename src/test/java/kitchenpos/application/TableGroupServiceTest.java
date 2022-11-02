@@ -8,13 +8,15 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.application.dto.request.OrderTableIdRequest;
+import kitchenpos.application.dto.response.TableGroupResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.TableGroupCreateRequestDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,7 +43,7 @@ class TableGroupServiceTest {
     @Test
     void create() {
         //given
-        OrderTable orderTable1 = new OrderTable(1L, 0, true);
+        OrderTable orderTable1 = new OrderTable(1L, 2, true);
         OrderTable orderTable2 = new OrderTable(2L, 1, true);
         given(orderTableDao.findAllByIdIn(anyList()))
                 .willReturn(List.of(orderTable1, orderTable2));
@@ -49,28 +51,17 @@ class TableGroupServiceTest {
                 .willReturn(TABLE_GROUP);
 
         //when
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2));
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        OrderTableIdRequest orderTableDto1 = new OrderTableIdRequest(1L);
+        OrderTableIdRequest orderTableDto2 = new OrderTableIdRequest(2L);
+        TableGroupCreateRequestDto dto = new TableGroupCreateRequestDto(List.of(orderTableDto1, orderTableDto2));
+        TableGroupResponse savedTableGroup = tableGroupService.create(dto);
 
         //then
-        assertThat(savedTableGroup).isEqualTo(TABLE_GROUP);
-        assertThat(orderTable1.getTableGroupId()).isEqualTo(TABLE_GROUP.getId());
-        assertThat(orderTable2.getTableGroupId()).isEqualTo(TABLE_GROUP.getId());
-        assertThat(orderTable1.isEmpty()).isFalse();
-        assertThat(orderTable2.isEmpty()).isFalse();
+        assertThat(savedTableGroup.getOrderTables().get(0).getTableGroupId()).isEqualTo(TABLE_GROUP.getId());
+        assertThat(savedTableGroup.getOrderTables().get(1).getTableGroupId()).isEqualTo(TABLE_GROUP.getId());
+        assertThat(savedTableGroup.getOrderTables().get(0).isEmpty()).isFalse();
+        assertThat(savedTableGroup.getOrderTables().get(1).isEmpty()).isFalse();
     }
-
-    @Test
-    void create_오더테이블개수가_2개_이하면_예외반환() {
-        //given
-        OrderTable orderTable1 = new OrderTable(1L, 0, true);
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable1));
-
-        //when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
 
     @DisplayName("테이블 그룹을 취소한다.")
     @Test

@@ -2,10 +2,13 @@ package kitchenpos.application;
 
 import static kitchenpos.Fixture.MENU_GROUP;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import java.util.List;
+import kitchenpos.application.dto.request.MenuGroupCreateRequest;
+import kitchenpos.application.dto.response.MenuGroupResponse;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.Test;
@@ -30,11 +33,14 @@ class MenuGroupServiceTest {
                 .willReturn(MENU_GROUP);
 
         //when
-        MenuGroup menuGroup = new MenuGroup("추천메뉴");
-        MenuGroup savedManuGroup = menuGroupService.create(menuGroup);
+        MenuGroupCreateRequest dto = new MenuGroupCreateRequest("추천메뉴");
+        MenuGroupResponse savedManuGroup = menuGroupService.create(dto);
 
         //then
-        assertThat(savedManuGroup).isEqualTo(MENU_GROUP);
+        assertAll(
+                () -> assertThat(savedManuGroup.getId()).isEqualTo(MENU_GROUP.getId()),
+                () -> assertThat(savedManuGroup.getName()).isEqualTo(MENU_GROUP.getName())
+        );
     }
 
     @Test
@@ -44,7 +50,7 @@ class MenuGroupServiceTest {
                 .willReturn(List.of(MENU_GROUP));
 
         //when
-        List<MenuGroup> menuGroups = menuGroupService.list();
+        List<MenuGroupResponse> menuGroups = menuGroupService.list();
 
         //then
         assertThat(menuGroups).hasSize(1);
