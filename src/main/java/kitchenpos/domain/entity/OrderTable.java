@@ -74,4 +74,20 @@ public class OrderTable {
         }
         this.numberOfGuests = numberOfGuests;
     }
+
+    public boolean isReadyToGroup() {
+        return empty && Objects.isNull(tableGroup);
+    }
+
+    public void joinGroup(TableGroup tableGroup) {
+        if (Objects.nonNull(this.tableGroup)) {
+            throw new IllegalStateException("이미 특정 테이블 그룹에 속해있습니다.");
+        }
+        this.tableGroup = tableGroup;
+    }
+
+    public void exitFromGroup() {
+        this.tableGroup = null;
+        this.empty = false;
+    }
 }

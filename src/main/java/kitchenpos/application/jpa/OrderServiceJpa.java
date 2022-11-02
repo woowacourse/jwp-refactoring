@@ -3,6 +3,8 @@ package kitchenpos.application.jpa;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.collection.OrderLineItems;
+import kitchenpos.domain.collection.OrderTables;
+import kitchenpos.domain.collection.Orders;
 import kitchenpos.domain.entity.Order;
 import kitchenpos.domain.entity.OrderStatus;
 import kitchenpos.domain.entity.OrderTable;
@@ -83,5 +85,9 @@ public class OrderServiceJpa {
 
     public boolean isNotAllOrderFinish(OrderTable orderTable) {
         return orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTable.getId(), List.of(OrderStatus.COOKING.getValue(), OrderStatus.MEAL.getValue()));
+    }
+
+    public Orders findOrdersInOrderTables(OrderTables orderTables) {
+        return new Orders(orderRepository.findAllByIdIn(orderTables.getOrderTableIds()));
     }
 }

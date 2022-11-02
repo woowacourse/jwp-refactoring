@@ -81,4 +81,8 @@ public class Order {
         }
         this.orderStatus = orderStatus;
     }
+
+    public boolean isCompleted() {
+        return OrderStatus.COMPLETION.equals(orderStatus);
+    }
 }
