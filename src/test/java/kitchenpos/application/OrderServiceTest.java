@@ -46,8 +46,10 @@ class OrderServiceTest {
 
     @Test
     void createThrowExceptionWhenNotCollectOrderLineItems() {
+        Long orderTableId = orderTableDao.save(new OrderTable(10, false))
+                .getId();
         OrderLineItemRequest orderLineItem = new OrderLineItemRequest(0L,  10);
-        OrderRequest request = new OrderRequest(1L, List.of(orderLineItem));
+        OrderRequest request = new OrderRequest(orderTableId, List.of(orderLineItem));
 
         assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(IllegalArgumentException.class)

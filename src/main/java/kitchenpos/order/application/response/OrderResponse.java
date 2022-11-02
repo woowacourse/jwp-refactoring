@@ -1,5 +1,6 @@
 package kitchenpos.order.application.response;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,19 +45,22 @@ public class OrderResponse {
 
         private final Long seq;
         private final Long orderId;
-        private final Long menuId;
+        private String name;
+        private BigDecimal price;
         private final long quantity;
 
-        public OrderLineItemResponse(final Long seq, final Long orderId, final Long menuId, final long quantity) {
+        public OrderLineItemResponse(final Long seq, final Long orderId, final String name, final BigDecimal price,
+                                     final long quantity) {
             this.seq = seq;
             this.orderId = orderId;
-            this.menuId = menuId;
+            this.name = name;
+            this.price = price;
             this.quantity = quantity;
         }
 
         public static OrderLineItemResponse from(OrderLineItem orderLineItem) {
             return new OrderLineItemResponse(orderLineItem.getSeq(), orderLineItem.getOrderId(),
-                    orderLineItem.getMenuId(), orderLineItem.getQuantity());
+                    orderLineItem.getName(), orderLineItem.getPrice(), orderLineItem.getQuantity());
         }
     }
 }

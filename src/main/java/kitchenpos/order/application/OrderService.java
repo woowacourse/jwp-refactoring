@@ -2,8 +2,11 @@ package kitchenpos.order.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.dao.MenuDao;
 import kitchenpos.order.application.request.OrderChangeStatusRequest;
 import kitchenpos.order.application.request.OrderRequest;
+import kitchenpos.order.application.request.OrderRequest.OrderLineItemRequest;
 import kitchenpos.order.application.response.OrderResponse;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
@@ -17,15 +20,14 @@ import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
-    private final OrderLineItemValidator orderLineItemValidator;
+    private final MenuDao menuDao;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
     private final OrderTableDao orderTableDao;
 
-    public OrderService(final OrderLineItemValidator orderLineItemValidator, final OrderDao orderDao,
-                        final OrderLineItemDao orderLineItemDao,
+    public OrderService(final MenuDao menuDao, final OrderDao orderDao, final OrderLineItemDao orderLineItemDao,
                         final OrderTableDao orderTableDao) {
-        this.orderLineItemValidator = orderLineItemValidator;
+        this.menuDao = menuDao;
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
         this.orderTableDao = orderTableDao;
@@ -33,13 +35,13 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderRequest request) {
-        List<OrderLineItem> orderLineItems = request.createOrderLineItems();
+        OrderTable orderTable = getOrderTable(request);
+        Order order = orderDao.save(Order.from(orderTable));
+        List<OrderLineItem> orderLineItems = getOrderLineItems(request.getOrderLineItems(), order);
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException("주문 목록이 비어있습니다.");
         }
-        orderLineItemValidator.validateOrderLineItems(orderLineItems);
-        OrderTable orderTable = getOrderTable(request);
-        return createOrder(orderLineItems, orderTable);
+        return OrderResponse.of(order, orderLineItems);
     }
 
     private OrderTable getOrderTable(final OrderRequest request) {
@@ -47,16 +49,21 @@ public class OrderService {
                 .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
     }
 
-    private OrderResponse createOrder(final List<OrderLineItem> orderLineItems, final OrderTable orderTable) {
-        Order order = orderDao.save(Order.from(orderTable));
-        Long orderId = order.getId();
-        return OrderResponse.of(order, createOrderLineItems(orderLineItems, orderId));
+    private List<OrderLineItem> getOrderLineItems(final List<OrderLineItemRequest> orderLineItemRequests,
+                                                  final Order order) {
+        List<OrderLineItem> orderLineItems = createOrderLineItems(orderLineItemRequests, order);
+        orderLineItems.forEach(orderLineItemDao::save);
+        return orderLineItems;
     }
 
-    private List<OrderLineItem> createOrderLineItems(final List<OrderLineItem> orderLineItems,
-                                                            final Long orderId) {
-        return orderLineItems.stream()
-                .map(it -> new OrderLineItem(it.getSeq(), orderId, it.getMenuId(), it.getQuantity()))
+    private List<OrderLineItem> createOrderLineItems(final List<OrderLineItemRequest> orderLineItemRequests,
+                                                     final Order order) {
+        return orderLineItemRequests.stream()
+                .map((it) -> {
+                    Menu menu = menuDao.findById(it.getMenuId())
+                            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴가 포함되어 있습니다."));
+                    return new OrderLineItem(order.getId(), menu.getName(), menu.getPrice(), it.getQuantity());
+                })
                 .collect(Collectors.toList());
     }
 
