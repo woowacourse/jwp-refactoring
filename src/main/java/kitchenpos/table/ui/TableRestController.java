@@ -16,8 +16,6 @@ import kitchenpos.table.application.OrderTableService;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.dto.ChangeEmptyRequest;
 import kitchenpos.table.dto.ChangeGuestNumberRequest;
-import kitchenpos.table.dto.OrderTableEmptyResponse;
-import kitchenpos.table.dto.OrderTableNumberOfGuestResponse;
 import kitchenpos.table.dto.OrderTableRequest;
 import kitchenpos.table.dto.OrderTableResponse;
 
@@ -50,22 +48,22 @@ public class TableRestController {
     }
 
     @PutMapping("/api/tables/{orderTableId}/empty")
-    public ResponseEntity<OrderTableEmptyResponse> changeEmpty(
+    public ResponseEntity<OrderTableResponse> changeEmpty(
         @PathVariable final Long orderTableId,
         @RequestBody final ChangeEmptyRequest changeEmptyRequest
     ) {
         OrderTable orderTable = orderTableService.changeEmpty(orderTableId, changeEmptyRequest);
 
-        return ResponseEntity.ok().body(OrderTableEmptyResponse.from(orderTable));
+        return ResponseEntity.ok().body(OrderTableResponse.from(orderTable));
     }
 
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
-    public ResponseEntity<OrderTableNumberOfGuestResponse> changeNumberOfGuests(
+    public ResponseEntity<OrderTableResponse> changeNumberOfGuests(
         @PathVariable final Long orderTableId,
         @RequestBody final ChangeGuestNumberRequest changeGuestNumberRequest
     ) {
         OrderTable orderTable = orderTableService.changeNumberOfGuests(orderTableId, changeGuestNumberRequest);
 
-        return ResponseEntity.ok().body(OrderTableNumberOfGuestResponse.from(orderTable));
+        return ResponseEntity.ok().body(OrderTableResponse.from(orderTable));
     }
 }

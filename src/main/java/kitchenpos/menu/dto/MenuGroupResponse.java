@@ -4,14 +4,16 @@ import kitchenpos.menu.domain.MenuGroup;
 
 public class MenuGroupResponse {
 
+    private final Long id;
     private final String name;
 
-    private MenuGroupResponse(String name) {
+    public MenuGroupResponse(Long id, String name) {
+        this.id = id;
         this.name = name;
     }
 
     public static MenuGroupResponse from(MenuGroup menuGroup) {
-        return new MenuGroupResponse(menuGroup.getName());
+        return new MenuGroupResponse(menuGroup.getId(), menuGroup.getName());
     }
 
     public String getName() {

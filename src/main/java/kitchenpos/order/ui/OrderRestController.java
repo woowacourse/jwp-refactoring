@@ -17,7 +17,6 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.dto.OrderRequest;
 import kitchenpos.order.dto.OrderResponse;
 import kitchenpos.order.dto.OrderStatusRequest;
-import kitchenpos.order.dto.OrderStatusResponse;
 
 @RestController
 public class OrderRestController {
@@ -48,11 +47,11 @@ public class OrderRestController {
     }
 
     @PutMapping("/api/orders/{orderId}/order-status")
-    public ResponseEntity<OrderStatusResponse> changeOrderStatus(
+    public ResponseEntity<OrderResponse> changeOrderStatus(
         @PathVariable final Long orderId,
         @RequestBody final OrderStatusRequest orderStatusRequest
     ) {
         Order order = orderService.changeOrderStatus(orderId, orderStatusRequest);
-        return ResponseEntity.ok(OrderStatusResponse.from(order));
+        return ResponseEntity.ok(OrderResponse.from(order));
     }
 }
