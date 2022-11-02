@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.menu.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -6,9 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.application.dto.request.MenuCreateRequest;
-import kitchenpos.application.dto.request.MenuProductCreateRequest;
-import kitchenpos.application.dto.response.MenuResponse;
+import kitchenpos.application.ServiceTest;
+import kitchenpos.menu.ui.request.MenuCreateRequest;
+import kitchenpos.menu.ui.request.MenuProductCreateRequest;
+import kitchenpos.menu.response.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
