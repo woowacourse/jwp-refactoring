@@ -1,6 +1,6 @@
 package kitchenpos.table.infrastructure;
 
-import kitchenpos.order.infrastructure.OrderTableValidator;
+import kitchenpos.order.domain.OrderTableValidator;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import org.springframework.stereotype.Component;

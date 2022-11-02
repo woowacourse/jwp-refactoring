@@ -1,7 +1,6 @@
 package kitchenpos.order.domain;
 
 import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.order.infrastructure.OrderTableValidator;
 import org.springframework.stereotype.Component;
 
 @Component
