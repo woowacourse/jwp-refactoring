@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -24,8 +25,8 @@ public class Menu {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "price")
-    private BigDecimal price;
+    @Embedded
+    private Price price;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private MenuGroup menuGroup;
@@ -37,7 +38,7 @@ public class Menu {
     }
 
     public Menu(final String name,
-                final BigDecimal price,
+                final Price price,
                 final MenuGroup menuGroup,
                 final List<MenuProduct> menuProducts) {
         validateMenuPrice(menuProducts, price);
@@ -48,14 +49,12 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    private void validateMenuPrice(final List<MenuProduct> menuProducts, final BigDecimal price) {
+    private void validateMenuPrice(final List<MenuProduct> menuProducts, final Price price) {
         final BigDecimal totalPrice = menuProducts.stream()
                 .map(MenuProduct::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        if (price.compareTo(totalPrice) > 0) {
-            throw new IllegalArgumentException();
-        }
+        price.validateLowerThan(totalPrice);
     }
 
     public Long getId() {
@@ -66,7 +65,7 @@ public class Menu {
         return name;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
     }
 

@@ -59,7 +59,7 @@ public class MenuProduct {
     }
 
     public BigDecimal getPrice() {
-        return product.getPrice().multiply(BigDecimal.valueOf(quantity));
+        return product.getPrice().getAmount().multiply(BigDecimal.valueOf(quantity));
     }
 
     @Override

@@ -40,7 +40,7 @@ public class MenuService {
         final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                 .orElseThrow(IllegalArgumentException::new);
         final List<MenuProduct> menuProducts = createMenuProducts(request);
-        final Menu menu = new Menu(request.getName(), price.getAmount(), menuGroup, menuProducts);
+        final Menu menu = new Menu(request.getName(), price, menuGroup, menuProducts);
         menuRepository.save(menu);
 
         return generateMenuResponse(menu);
@@ -68,7 +68,7 @@ public class MenuService {
         return new MenuResponse(
                 it.getId(),
                 it.getName(),
-                it.getPrice(),
+                it.getPrice().getAmount(),
                 new MenuGroupResponse(it.getMenuGroup().getId(), it.getMenuGroup().getName()),
                 generateMenuProductResponses(it)
         );
@@ -82,7 +82,7 @@ public class MenuService {
                         new ProductResponse(
                                 it.getProduct().getId(),
                                 it.getProduct().getName(),
-                                it.getProduct().getPrice()),
+                                it.getProduct().getPrice().getAmount()),
                         it.getQuantity()))
                 .collect(Collectors.toList());
     }

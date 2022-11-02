@@ -9,6 +9,7 @@ import java.util.Optional;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,9 +32,9 @@ class MenuProductRepositoryTest {
     @Autowired
     private MenuRepository menuRepository;
 
-    private final Product product = new Product("치킨", BigDecimal.valueOf(1_000L));
+    private final Product product = new Product("치킨", new Price(BigDecimal.valueOf(1_000L)));
     private final MenuGroup menuGroup = new MenuGroup("한마리치킨");
-    private final Menu menu = new Menu("후라이드", BigDecimal.valueOf(0L), menuGroup, new ArrayList<>());
+    private final Menu menu = new Menu("후라이드", new Price(BigDecimal.valueOf(0L)), menuGroup, new ArrayList<>());
 
     @BeforeEach
     void setUp() {

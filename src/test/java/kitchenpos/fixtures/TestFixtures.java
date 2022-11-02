@@ -10,6 +10,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.dto.MenuCreateRequest;
@@ -30,7 +31,7 @@ public class TestFixtures {
     }
 
     public static Product 상품_생성(final String name, final BigDecimal price) {
-        return new Product(name, price);
+        return new Product(name, new Price(price));
     }
 
     public static MenuGroup 메뉴_그룹_생성(final String name) {
@@ -43,7 +44,7 @@ public class TestFixtures {
 
     public static Menu 메뉴_생성(final String name, final BigDecimal price,
                              final Long menuGroupId, final List<MenuProduct> menuProducts) {
-        return new Menu(name, price, null, menuProducts);
+        return new Menu(name, new Price(price), null, menuProducts);
     }
 
     public static MenuCreateRequest 메뉴_생성_요청(final String name,
