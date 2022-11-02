@@ -10,7 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.application.dto.request.MenuGroupRequest;
+import kitchenpos.application.dto.response.MenuGroupResponse;
 import kitchenpos.fixture.MenuGroupFixture;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -24,9 +25,9 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹을 생성하면 ID가 할당된 MenuGroup객체가 반환된다")
     @Test
     void create() {
-        MenuGroup menuGroup = MenuGroupFixture.두마리메뉴.toMenuGroup();
+        MenuGroupRequest request = MenuGroupFixture.두마리메뉴.toRequest();
 
-        MenuGroup actual = menuGroupService.create(menuGroup);
+        MenuGroupResponse actual = menuGroupService.create(request);
         assertThat(actual).isNotNull();
     }
 
@@ -35,10 +36,10 @@ class MenuGroupServiceTest {
     void list() {
         int numOfMenuGroups = 6;
         for (int i = 0; i < numOfMenuGroups; i++) {
-            menuGroupService.create(MenuGroupFixture.두마리메뉴.toMenuGroup());
+            menuGroupService.create(MenuGroupFixture.두마리메뉴.toRequest());
         }
 
-        List<MenuGroup> actual = menuGroupService.list();
+        List<MenuGroupResponse> actual = menuGroupService.list();
         assertThat(actual).hasSize(numOfMenuGroups);
     }
 }

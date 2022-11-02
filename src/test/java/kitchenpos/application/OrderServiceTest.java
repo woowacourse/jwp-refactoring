@@ -12,17 +12,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
+import kitchenpos.application.dto.request.OrderLineItemRequest;
+import kitchenpos.application.dto.request.OrderRequest;
+import kitchenpos.application.dto.request.OrderStatusUpdateRequest;
+import kitchenpos.application.dto.response.OrderResponse;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuGroupRepository;
+import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.menu.ProductRepository;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItemRepository;
+import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.ProductFixture;
@@ -37,36 +43,41 @@ class OrderServiceTest {
     private OrderService orderService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuGroupRepository menuGroupRepository;
 
-    MenuGroup 두마리메뉴;
-    Menu 후라이드_양념치킨_두마리세트;
-    Product 후라이드;
-    Product 양념치킨;
-    OrderTable orderTable;
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private MenuRepository menuRepository;
+
+    private MenuGroup 두마리메뉴;
+    private Menu 후라이드_양념치킨_두마리세트;
+    private Product 후라이드;
+    private Product 양념치킨;
+    private OrderTable orderTable;
 
     @BeforeEach
     void setUp() {
-        두마리메뉴 = menuGroupDao.save(MenuGroupFixture.두마리메뉴.toMenuGroup());
+        두마리메뉴 = menuGroupRepository.save(MenuGroupFixture.두마리메뉴.toMenuGroup());
 
-        후라이드 = productDao.save(ProductFixture.후라이드.toProduct());
-        양념치킨 = productDao.save(ProductFixture.양념치킨.toProduct());
+        후라이드 = productRepository.save(ProductFixture.후라이드.toProduct());
+        양념치킨 = productRepository.save(ProductFixture.양념치킨.toProduct());
 
-        Menu menu = MenuFixture.후라이드_양념치킨_두마리세트.toMenu(두마리메뉴.getId(), 후라이드.getId(), 양념치킨.getId());
-        후라이드_양념치킨_두마리세트 = menuDao.save(menu);
+        Menu menu = MenuFixture.후라이드_양념치킨_두마리세트.toMenu(두마리메뉴, 후라이드, 양념치킨);
+        후라이드_양념치킨_두마리세트 = menuRepository.save(menu);
 
-        OrderTable newOrderTable = new OrderTable();
-        newOrderTable.setEmpty(false);
-        orderTable = orderTableDao.save(newOrderTable);
+        OrderTable newOrderTable = new OrderTable(3, false);
+        orderTable = orderTableRepository.save(newOrderTable);
     }
 
     @DisplayName("주문을 생성한다")
@@ -76,65 +87,75 @@ class OrderServiceTest {
         @DisplayName("주문을 생성하면 ID가 할당된 Order객체가 반환된다")
         @Test
         void create() {
-            List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(후라이드_양념치킨_두마리세트.getId(), 3));
-            Order order = new Order(orderTable.getId(), orderLineItems);
+            List<OrderLineItemRequest> orderLineItemsRequests = List.of(
+                    new OrderLineItemRequest(후라이드_양념치킨_두마리세트.getId(), 3L));
+            OrderRequest orderRequest = new OrderRequest(orderTable.getId(), orderLineItemsRequests);
 
-            Order actual = orderService.create(order);
+            OrderResponse actual = orderService.create(orderRequest);
             assertThat(actual).isNotNull();
         }
 
         @DisplayName("orderLineItems이 비어있을 경우 예외가 발생한다")
         @Test
         void throwExceptionBecauseOfEmptyOrderLineItems() {
-            Order order = new Order(orderTable.getId(), List.of());
+            OrderRequest orderRequest = new OrderRequest(orderTable.getId(), List.of());
 
-            assertThatThrownBy(() -> orderService.create(order))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> orderService.create(orderRequest))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("주문 항목이 비어있습니다.");
         }
 
         @DisplayName("orderLineItems에 존재하지 않는 메뉴가 있을 경우 예외가 발생한다")
         @Test
         void throwExceptionBecauseOfNotExistMenu() {
             Long notExistId = 0L;
-            List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(notExistId, 3));
-            Order order = new Order(orderTable.getId(), orderLineItems);
+            List<OrderLineItemRequest> orderLineItemRequests = List.of(new OrderLineItemRequest(notExistId, 3L));
+            OrderRequest orderRequest = new OrderRequest(orderTable.getId(), orderLineItemRequests);
 
-            assertThatThrownBy(() -> orderService.create(order))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> orderService.create(orderRequest))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("존재하지 않는 메뉴입니다.");
         }
 
         @DisplayName("존재하지 않는 테이블일 경우 예외가 발생한다")
         @Test
         void throwExceptionBecauseOfNotExistTable() {
             Long notExistId = 0L;
-            List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(후라이드_양념치킨_두마리세트.getId(), 3));
-            Order order = new Order(notExistId, orderLineItems);
+            List<OrderLineItemRequest> orderLineItemRequests = List.of(
+                    new OrderLineItemRequest(후라이드_양념치킨_두마리세트.getId(), 3L));
+            OrderRequest orderRequest = new OrderRequest(notExistId, orderLineItemRequests);
 
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(orderRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("비어있는 테이블일 경우 예외가 발생한다")
         @Test
         void throwExceptionBecauseOfEmptyTable() {
-            OrderTable newEmptyTable = new OrderTable();
-            newEmptyTable.setEmpty(true);
-            OrderTable emptyTable = orderTableDao.save(newEmptyTable);
+            OrderTable newEmptyTable = new OrderTable(0, true);
+            OrderTable emptyTable = orderTableRepository.save(newEmptyTable);
 
-            List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(후라이드_양념치킨_두마리세트.getId(), 3));
-            Order order = new Order(emptyTable.getId(), orderLineItems);
+            List<OrderLineItemRequest> orderLineItemRequests = List.of(
+                    new OrderLineItemRequest(후라이드_양념치킨_두마리세트.getId(), 3L));
+            OrderRequest order = new OrderRequest(emptyTable.getId(), orderLineItemRequests);
 
             assertThatThrownBy(() -> orderService.create(order))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("테이블이 비어있습니다.");
         }
     }
 
     @DisplayName("주문 목록을 조회한다")
     @Test
     void list() {
-        List<Order> actual = orderService.list();
+        int numberOfOrders = 5;
+        for (int i = 0; i < numberOfOrders; i++) {
+             createOrder();
+        }
 
-        assertThat(actual).hasSize(0);
+        List<OrderResponse> actual = orderService.list();
+
+        assertThat(actual).hasSize(numberOfOrders);
     }
 
     @DisplayName("주문 상태를 변경한다")
@@ -145,58 +166,32 @@ class OrderServiceTest {
         @Test
         void changeOrderStatus() {
             Order order = createOrder();
-            String expectedOrderStatus = OrderStatus.COMPLETION.name();
+            OrderStatus expectedOrderStatus = OrderStatus.COMPLETION;
 
-            Order orderToChangeCompleteStatus = createOrder();
-            orderToChangeCompleteStatus.setOrderStatus(expectedOrderStatus);
-            Order changedOrder = orderService.changeOrderStatus(order.getId(), orderToChangeCompleteStatus);
+            OrderStatusUpdateRequest orderStatusUpdateRequest = new OrderStatusUpdateRequest(
+                    expectedOrderStatus.name());
+            OrderResponse changedOrder = orderService.changeOrderStatus(order.getId(), orderStatusUpdateRequest);
 
-            assertThat(changedOrder.getOrderStatus()).isEqualTo(expectedOrderStatus);
+            assertThat(changedOrder.getOrderStatus()).isEqualTo(expectedOrderStatus.name());
         }
 
         @DisplayName("존재하지 않는 주문일 경우 예외가 발생한다")
         @Test
         void throwExceptionBecauseOfNotExistOrder() {
             Long notExistId = 0L;
-            Order orderToUpdate = createOrder();
+            OrderStatusUpdateRequest orderStatusUpdateRequest = new OrderStatusUpdateRequest(OrderStatus.MEAL.name());
 
-            assertThatThrownBy(() -> orderService.changeOrderStatus(notExistId, orderToUpdate))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @DisplayName("Complete상태의 주문은 변경할 경우 예외가 발생한다")
-        @Test
-        void throwExceptionBecauseOfCompletedOrder() {
-            Order order = createOrder();
-
-            Order orderToChangeCompleteStatus = createOrder();
-            orderToChangeCompleteStatus.setOrderStatus(OrderStatus.COMPLETION.name());
-            orderService.changeOrderStatus(order.getId(), orderToChangeCompleteStatus);
-
-            Order orderToChange = createOrder();
-            orderToChange.setOrderStatus(OrderStatus.MEAL.name());
-
-            assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), orderToChange))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        private Order createOrder() {
-            Long orderTableId = orderTable.getId();
-            changeTableToNotEmpty(orderTableId);
-
-            List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(후라이드_양념치킨_두마리세트.getId(), 3));
-            Order order = new Order(orderTableId, orderLineItems);
-
-            return orderService.create(order);
+            assertThatThrownBy(() -> orderService.changeOrderStatus(notExistId, orderStatusUpdateRequest))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("존재하지 않는 주문입니다.");
         }
     }
 
-    void changeTableToNotEmpty(Long tableId) {
-        OrderTable orderTable = orderTableDao.findById(tableId)
-                .orElseThrow();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(5);
+    private Order createOrder() {
+        Order order = orderRepository.save(new Order(orderTable, OrderStatus.COOKING));
+        OrderLineItem orderLineItem = orderLineItemRepository.save(new OrderLineItem(후라이드_양념치킨_두마리세트, 3L));
 
-        orderTableDao.save(orderTable);
+        order.addOrderLineItem(orderLineItem);
+        return order;
     }
 }

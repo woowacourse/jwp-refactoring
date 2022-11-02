@@ -5,8 +5,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.application.dto.request.MenuProductRequest;
+import kitchenpos.application.dto.request.MenuRequest;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.Product;
 
 @SuppressWarnings("NonAsciiCharacters")
 public enum MenuFixture {
@@ -21,13 +25,25 @@ public enum MenuFixture {
         this.price = price;
     }
 
-    public Menu toMenu(Long menuGroupId, Long... productIds) {
-        return new Menu(name, price, menuGroupId, createMenuProducts(productIds));
+    public MenuRequest toRequest(Long menuGroupId, Long... productIds) {
+        List<MenuProductRequest> menuProductRequests = Arrays.stream(productIds)
+                .map(productId -> new MenuProductRequest(productId, 1L))
+                .collect(Collectors.toList());
+
+        return new MenuRequest(name, price, menuGroupId, menuProductRequests);
     }
 
-    private List<MenuProduct> createMenuProducts(Long... productIds) {
-        return Arrays.stream(productIds)
-                .map(id -> new MenuProduct(id, 1))
+    public Menu toMenu(MenuGroup menuGroup, Product... products) {
+        Menu menu = new Menu(name, price, menuGroup);
+        addMenuProducts(menu, products);
+        return menu;
+    }
+
+    private void addMenuProducts(Menu menu, Product... products) {
+        List<MenuProduct> menuProducts = Arrays.stream(products)
+                .map(p -> new MenuProduct(menu, p, 1))
                 .collect(Collectors.toList());
+
+        menu.addMenuProducts(menuProducts);
     }
 }
