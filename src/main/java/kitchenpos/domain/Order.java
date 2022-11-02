@@ -33,30 +33,18 @@ public class Order {
 
     private LocalDateTime orderedTime;
 
-    @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
-    @JoinColumn(name="order_id")
-    private List<OrderLineItem> orderLineItems;
-
     public Order() {}
 
-    public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
-        validateOrderLineItemNotEmpty(orderLineItems);
+    public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
         validateOrderTableNotEmpty(orderTable);
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
         orderTable.enrollOrder(this);
     }
 
     private void validateOrderTableNotEmpty(OrderTable orderTable) {
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateOrderLineItemNotEmpty(List<OrderLineItem> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException();
         }
     }

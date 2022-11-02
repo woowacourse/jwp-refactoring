@@ -22,30 +22,14 @@ public class OrderTest {
         orderLineItemList = new ArrayList<>();
         MenuGroup menuGroup = new MenuGroup("찌개류");
         Menu menu = new Menu("김치찌개세트", BigDecimal.valueOf(1000L), menuGroup);
-        orderLineItemList.add(new OrderLineItem(menu, 1));
-    }
-
-    @DisplayName("주문 상품이 없으면 예외가 발생한다.")
-    @Test
-    void orderLineItemIsEmpty() {
-        OrderTable orderTable = new OrderTable(1, false);
-        assertThatThrownBy(() -> new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), Collections.emptyList()))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("주문 테이블이 비어있다면 예외가 발생한다.")
-    @Test
-    void orderTableIsEmpty() {
-        OrderTable orderTable = new OrderTable(1, true);
-        assertThatThrownBy(() -> new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItemList))
-                .isInstanceOf(IllegalArgumentException.class);
+        orderLineItemList.add(new OrderLineItem(null, menu, 1));
     }
 
     @DisplayName("정상적으로 생성되었다면 주문테이블에 주문이 등록된다.")
     @Test
     void createOrder() {
         OrderTable orderTable = new OrderTable(1, false);
-        Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItemList);
+        Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
 
         assertThat(orderTable.getOrder()).isSameAs(order);
     }
