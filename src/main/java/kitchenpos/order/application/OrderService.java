@@ -9,10 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.event.CheckExistMenusEvent;
 import kitchenpos.event.CheckOrderableTableEvent;
-import kitchenpos.order.application.dto.request.OrderLineItemRequest;
-import kitchenpos.order.application.dto.request.OrderRequest;
-import kitchenpos.order.application.dto.request.OrderStatusUpdateRequest;
-import kitchenpos.order.application.dto.response.OrderResponse;
+import kitchenpos.order.application.request.OrderLineItemRequest;
+import kitchenpos.order.application.request.OrderRequest;
+import kitchenpos.order.application.request.OrderStatusUpdateRequest;
+import kitchenpos.order.application.response.OrderResponse;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItemRepository;
@@ -80,8 +80,8 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    public OrderResponse changeOrderStatus(Long orderId, OrderStatusUpdateRequest request) {
-        Order order = findOrder(orderId);
+    public OrderResponse changeOrderStatus(OrderStatusUpdateRequest request) {
+        Order order = findOrder(request.getOrderId());
 
         OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
         order.changeStatus(orderStatus);

@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import kitchenpos.order.application.OrderService;
-import kitchenpos.order.application.dto.request.OrderRequest;
-import kitchenpos.order.application.dto.response.OrderResponse;
-import kitchenpos.order.application.dto.request.OrderStatusUpdateRequest;
+import kitchenpos.order.application.response.OrderResponse;
+import kitchenpos.order.ui.request.OrderApiRequest;
+import kitchenpos.order.ui.request.OrderStatusUpdateApiRequest;
 
 @RestController
 public class OrderRestController {
@@ -26,8 +26,8 @@ public class OrderRestController {
     }
 
     @PostMapping("/api/orders")
-    public ResponseEntity<OrderResponse> create(@RequestBody OrderRequest request) {
-        OrderResponse created = orderService.create(request);
+    public ResponseEntity<OrderResponse> create(@RequestBody OrderApiRequest request) {
+        OrderResponse created = orderService.create(request.toServiceRequest());
         URI uri = URI.create("/api/orders/" + created.getId());
         return ResponseEntity.created(uri)
                 .body(created);
@@ -41,7 +41,7 @@ public class OrderRestController {
 
     @PutMapping("/api/orders/{orderId}/order-status")
     public ResponseEntity<OrderResponse> changeOrderStatus(@PathVariable Long orderId,
-                                                           @RequestBody OrderStatusUpdateRequest order) {
-        return ResponseEntity.ok(orderService.changeOrderStatus(orderId, order));
+                                                           @RequestBody OrderStatusUpdateApiRequest request) {
+        return ResponseEntity.ok(orderService.changeOrderStatus(request.toServiceRequest(orderId)));
     }
 }

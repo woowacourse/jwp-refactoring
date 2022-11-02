@@ -21,10 +21,10 @@ import kitchenpos.menu.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menu.domain.Product;
 import kitchenpos.menu.domain.ProductRepository;
-import kitchenpos.order.application.dto.request.OrderLineItemRequest;
-import kitchenpos.order.application.dto.request.OrderRequest;
-import kitchenpos.order.application.dto.request.OrderStatusUpdateRequest;
-import kitchenpos.order.application.dto.response.OrderResponse;
+import kitchenpos.order.application.request.OrderLineItemRequest;
+import kitchenpos.order.application.request.OrderRequest;
+import kitchenpos.order.application.request.OrderStatusUpdateRequest;
+import kitchenpos.order.application.response.OrderResponse;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItemRepository;
@@ -168,9 +168,9 @@ class OrderServiceTest {
             Order order = createOrder();
             OrderStatus expectedOrderStatus = OrderStatus.COMPLETION;
 
-            OrderStatusUpdateRequest orderStatusUpdateRequest = new OrderStatusUpdateRequest(
+            OrderStatusUpdateRequest orderStatusUpdateRequest = new OrderStatusUpdateRequest(order.getId(),
                     expectedOrderStatus.name());
-            OrderResponse changedOrder = orderService.changeOrderStatus(order.getId(), orderStatusUpdateRequest);
+            OrderResponse changedOrder = orderService.changeOrderStatus(orderStatusUpdateRequest);
 
             assertThat(changedOrder.getOrderStatus()).isEqualTo(expectedOrderStatus.name());
         }
@@ -179,9 +179,10 @@ class OrderServiceTest {
         @Test
         void throwExceptionBecauseOfNotExistOrder() {
             Long notExistId = 0L;
-            OrderStatusUpdateRequest orderStatusUpdateRequest = new OrderStatusUpdateRequest(OrderStatus.MEAL.name());
+            OrderStatusUpdateRequest orderStatusUpdateRequest = new OrderStatusUpdateRequest(notExistId,
+                    OrderStatus.MEAL.name());
 
-            assertThatThrownBy(() -> orderService.changeOrderStatus(notExistId, orderStatusUpdateRequest))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(orderStatusUpdateRequest))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("존재하지 않는 주문입니다.");
         }
