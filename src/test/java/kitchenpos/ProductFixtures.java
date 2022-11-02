@@ -3,7 +3,7 @@ package kitchenpos;
 import java.math.BigDecimal;
 import kitchenpos.application.dto.request.ProductCreateRequest;
 import kitchenpos.application.dto.response.ProductResponse;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
 
 public class ProductFixtures {
 

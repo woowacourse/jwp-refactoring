@@ -3,7 +3,7 @@ package kitchenpos.repository;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.repository.entity.OrderTableEntityRepository;
 import org.springframework.data.repository.Repository;
 

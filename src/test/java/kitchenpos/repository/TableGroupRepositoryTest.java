@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.TableGroupFixtures;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.tablegroup.TableGroup;
 import kitchenpos.support.RepositoryTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

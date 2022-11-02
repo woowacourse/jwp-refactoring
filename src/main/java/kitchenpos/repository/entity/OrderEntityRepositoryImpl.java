@@ -1,6 +1,6 @@
 package kitchenpos.repository.entity;
 
-import kitchenpos.domain.Order;
+import kitchenpos.domain.order.Order;
 import kitchenpos.repository.OrderRepository;
 import org.springframework.context.annotation.Lazy;
 

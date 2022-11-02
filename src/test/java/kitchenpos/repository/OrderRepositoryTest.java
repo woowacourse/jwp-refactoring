@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.OrderFixtures;
-import kitchenpos.domain.Order;
+import kitchenpos.domain.order.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.support.RepositoryTest;
 import org.junit.jupiter.api.Test;

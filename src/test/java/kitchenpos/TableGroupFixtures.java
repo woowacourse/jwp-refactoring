@@ -5,7 +5,7 @@ import static kitchenpos.OrderTableFixtures.createOrderTableResponse;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.application.dto.response.TableGroupResponse;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.tablegroup.TableGroup;
 
 public class TableGroupFixtures {
 

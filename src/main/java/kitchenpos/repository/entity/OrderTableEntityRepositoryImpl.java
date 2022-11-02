@@ -2,7 +2,7 @@ package kitchenpos.repository.entity;
 
 import java.util.Collection;
 import java.util.List;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.context.annotation.Lazy;
 

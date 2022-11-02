@@ -6,9 +6,9 @@ import kitchenpos.application.dto.request.MenuCreateRequest;
 import kitchenpos.application.dto.request.MenuProductCreateRequest;
 import kitchenpos.application.dto.response.MenuProductResponse;
 import kitchenpos.application.dto.response.MenuResponse;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.product.Product;
 
 public class MenuFixtures {
 

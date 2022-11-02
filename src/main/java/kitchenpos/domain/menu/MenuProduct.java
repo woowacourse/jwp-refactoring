@@ -1,10 +1,13 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import kitchenpos.domain.Price;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.Quantity;
 
 @Entity
 public class MenuProduct {

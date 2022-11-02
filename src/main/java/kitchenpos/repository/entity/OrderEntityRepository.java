@@ -1,6 +1,6 @@
 package kitchenpos.repository.entity;
 
-import kitchenpos.domain.Order;
+import kitchenpos.domain.order.Order;
 
 public interface OrderEntityRepository {
     Order getById(Long id);

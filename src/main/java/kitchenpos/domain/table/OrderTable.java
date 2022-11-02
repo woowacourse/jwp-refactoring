@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.table;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +9,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import kitchenpos.domain.NumberOfGuests;
+import kitchenpos.domain.order.Order;
 
 @Entity
 public class OrderTable {

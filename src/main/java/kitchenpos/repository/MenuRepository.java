@@ -3,7 +3,7 @@ package kitchenpos.repository;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.Menu;
+import kitchenpos.domain.menu.Menu;
 import kitchenpos.repository.entity.MenuEntityRepository;
 import org.springframework.data.repository.Repository;
 

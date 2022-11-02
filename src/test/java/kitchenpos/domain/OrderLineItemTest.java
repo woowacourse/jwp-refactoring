@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import kitchenpos.domain.order.OrderLineItem;
 import org.junit.jupiter.api.Test;
 
 class OrderLineItemTest {

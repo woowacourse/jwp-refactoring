@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.OrderTableCreateRequest;
 import kitchenpos.application.dto.response.OrderTableResponse;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

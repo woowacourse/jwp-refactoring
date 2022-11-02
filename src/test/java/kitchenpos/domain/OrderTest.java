@@ -7,6 +7,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.OrderTableFixtures;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
 import org.junit.jupiter.api.Test;
 
 class OrderTest {

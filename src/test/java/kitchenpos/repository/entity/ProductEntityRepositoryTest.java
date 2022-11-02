@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import kitchenpos.ProductFixtures;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
 import kitchenpos.repository.ProductRepository;
 import kitchenpos.support.RepositoryTest;
 import org.junit.jupiter.api.Test;
