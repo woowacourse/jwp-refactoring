@@ -15,13 +15,13 @@ class ProductServiceTest extends ServiceTest {
                 new ProductCreateRequest("뿌링 치킨", BigDecimal.valueOf(10_000L));
         Product savedProduct = productService.create(productCreateRequest);
 
-        assertThat(productDao.findById(savedProduct.getId())).isPresent();
+        assertThat(productRepository.findById(savedProduct.getId())).isPresent();
     }
 
     @Test
     void 상품목록을_불러온다() {
         int beforeSize = productService.list().size();
-        productDao.save(new Product("뿌링 치킨", BigDecimal.valueOf(10_000L)));
+        productRepository.save(new Product("뿌링 치킨", BigDecimal.valueOf(10_000L)));
 
         assertThat(productService.list().size()).isEqualTo(beforeSize + 1);
     }

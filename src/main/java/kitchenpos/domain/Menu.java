@@ -1,33 +1,36 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
-import java.util.List;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
+@Entity
 public class Menu {
-    private final Long id;
-    private final String name;
-    private final Price price;
-    private final Long menuGroupId;
-    private final List<MenuProduct> menuProducts;
 
-    private Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        this.id = id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+
+    @Embedded
+    private Price price;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private MenuGroup menuGroup;
+
+    public Menu() {
+    }
+
+    public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
         this.name = name;
         this.price = new Price(price);
-        this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
-    }
-
-    public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
-        this(id, name, price, menuGroupId, List.of());
-    }
-
-    public Menu(String name, BigDecimal price, Long menuGroupId) {
-        this(null, name, price, menuGroupId, List.of());
-    }
-
-    public Menu(Menu menu, List<MenuProduct> menuProducts) {
-        this(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menuProducts);
+        this.menuGroup = menuGroup;
     }
 
     public Long getId() {
@@ -38,15 +41,11 @@ public class Menu {
         return name;
     }
 
-    public BigDecimal getPrice() {
-        return price.getValue();
+    public Price getPrice() {
+        return price;
     }
 
-    public Long getMenuGroupId() {
-        return menuGroupId;
-    }
-
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
     }
 }

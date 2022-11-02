@@ -26,8 +26,8 @@ public class DomainFixture {
         return new OrderTable(tableGroupId, 0, empty);
     }
 
-    public static Menu createMenu(Long menuGroupId) {
-        return new Menu("뿌링 치킨", BigDecimal.valueOf(15_000), menuGroupId);
+    public static Menu createMenu(MenuGroup menuGroup) {
+        return new Menu("뿌링 치킨", BigDecimal.valueOf(15_000), menuGroup);
     }
 
     public static TableGroup createTableGroup() {

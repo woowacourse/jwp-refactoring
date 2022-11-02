@@ -34,9 +34,9 @@ class OrderServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        MenuGroup menuGroup = menuGroupDao.save(createMenuGroup());
+        MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup());
         orderTable = orderTableDao.save(createOrderTable());
-        menu = menuDao.save(createMenu(menuGroup.getId()));
+        menu = menuRepository.save(createMenu(menuGroup));
     }
 
     @Test
