@@ -2,7 +2,7 @@ package kitchenpos.ui.jpa;
 
 import java.net.URI;
 import java.util.List;
-import kitchenpos.application.OrderServiceJpa;
+import kitchenpos.application.OrderService;
 import kitchenpos.ui.jpa.dto.order.ChangeOrderStatusRequest;
 import kitchenpos.ui.jpa.dto.order.ChangeOrderStatusResponse;
 import kitchenpos.ui.jpa.dto.order.OrderCreateRequest;
@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class OrderRestControllerJpa {
 
-    private final OrderServiceJpa orderService;
+    private final OrderService orderService;
 
-    public OrderRestControllerJpa(final OrderServiceJpa orderService) {
+    public OrderRestControllerJpa(final OrderService orderService) {
         this.orderService = orderService;
     }
 

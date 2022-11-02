@@ -5,10 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class ServiceTestJpa {
+public class ServiceTest {
 
     @Autowired
-    private DatabaseCleanerJpa databaseCleaner;
+    private DatabaseCleaner databaseCleaner;
 
     @BeforeEach
     void cleanUp() {

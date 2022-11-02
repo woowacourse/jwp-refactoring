@@ -8,10 +8,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-class ProductServiceJpaTest extends ServiceTestJpa {
+class ProductServiceTest extends ServiceTest {
 
     @Autowired
-    private ProductServiceJpa productService;
+    private ProductService productService;
 
     @DisplayName("product를 생성한다.")
     @Test

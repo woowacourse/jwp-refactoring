@@ -18,16 +18,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class OrderServiceJpa {
+public class OrderService {
 
     private OrderRepository orderRepository;
     private MenuRepository menuRepository;
     private TableServiceAssistant tableServiceAssistant;
-    private OrderLineItemServiceJpa orderLineItemService;
+    private OrderLineItemService orderLineItemService;
 
-    public OrderServiceJpa(OrderRepository orderRepository, MenuRepository menuRepository,
-                           TableServiceAssistant tableServiceAssistant,
-                           OrderLineItemServiceJpa orderLineItemService) {
+    public OrderService(OrderRepository orderRepository, MenuRepository menuRepository,
+                        TableServiceAssistant tableServiceAssistant,
+                        OrderLineItemService orderLineItemService) {
         this.orderRepository = orderRepository;
         this.menuRepository = menuRepository;
         this.tableServiceAssistant = tableServiceAssistant;

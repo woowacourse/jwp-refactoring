@@ -27,10 +27,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-class OrderServiceJpaTest extends ServiceTestJpa {
+class OrderServiceTest extends ServiceTest {
 
     @Autowired
-    private OrderServiceJpa orderService;
+    private OrderService orderService;
 
     @Autowired
     private OrderRepository orderRepository;

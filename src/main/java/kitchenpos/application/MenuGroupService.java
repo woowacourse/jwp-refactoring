@@ -10,11 +10,11 @@ import kitchenpos.ui.jpa.dto.menugroup.MenuGroupListResponse;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MenuGroupServiceJpa {
+public class MenuGroupService {
 
     private final MenuGroupRepository menuGroupRepository;
 
-    public MenuGroupServiceJpa(MenuGroupRepository menuGroupRepository) {
+    public MenuGroupService(MenuGroupRepository menuGroupRepository) {
         this.menuGroupRepository = menuGroupRepository;
     }
 

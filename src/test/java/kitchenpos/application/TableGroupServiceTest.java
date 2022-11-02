@@ -16,10 +16,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-class TableGroupServiceJpaTest extends ServiceTestJpa {
+class TableGroupServiceTest extends ServiceTest {
 
     @Autowired
-    private TableGroupServiceJpa tableGroupService;
+    private TableGroupService tableGroupService;
 
     @Autowired
     private OrderTableRepository orderTableRepository;

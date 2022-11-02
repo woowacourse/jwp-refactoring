@@ -2,7 +2,7 @@ package kitchenpos.ui.jpa;
 
 import java.net.URI;
 import java.util.List;
-import kitchenpos.application.TableServiceJpa;
+import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.jpa.dto.ordertable.ChangeEmptyRequest;
 import kitchenpos.ui.jpa.dto.ordertable.ChangeEmptyResponse;
@@ -22,9 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TableRestControllerJpa {
 
-    private final TableServiceJpa tableService;
+    private final TableService tableService;
 
-    public TableRestControllerJpa(final TableServiceJpa tableService) {
+    public TableRestControllerJpa(final TableService tableService) {
         this.tableService = tableService;
     }
 

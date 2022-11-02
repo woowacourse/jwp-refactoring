@@ -12,17 +12,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class TableGroupServiceJpa {
+public class TableGroupService {
 
     private TableGroupRepository tableGroupRepository;
     private OrderTableRepository orderTableRepository;
     private TableServiceAssistant tableServiceAssistant;
-    private OrderServiceJpa orderService;
+    private OrderService orderService;
 
-    public TableGroupServiceJpa(TableGroupRepository tableGroupRepository,
-                                OrderTableRepository orderTableRepository,
-                                TableServiceAssistant tableServiceAssistant,
-                                OrderServiceJpa orderService) {
+    public TableGroupService(TableGroupRepository tableGroupRepository,
+                             OrderTableRepository orderTableRepository,
+                             TableServiceAssistant tableServiceAssistant,
+                             OrderService orderService) {
         this.tableGroupRepository = tableGroupRepository;
         this.orderTableRepository = orderTableRepository;
         this.tableServiceAssistant = tableServiceAssistant;

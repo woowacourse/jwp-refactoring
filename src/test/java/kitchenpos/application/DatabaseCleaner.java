@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-public class DatabaseCleanerJpa implements InitializingBean {
+public class DatabaseCleaner implements InitializingBean {
 
     @PersistenceContext
     private EntityManager entityManager;

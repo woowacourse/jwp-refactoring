@@ -15,10 +15,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-class MenuServiceJpaTest extends ServiceTestJpa {
+class MenuServiceTest extends ServiceTest {
 
     @Autowired
-    private MenuServiceJpa menuService;
+    private MenuService menuService;
 
     @Autowired
     private MenuGroupRepository menuGroupRepository;

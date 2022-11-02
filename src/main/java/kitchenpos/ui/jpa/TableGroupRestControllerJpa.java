@@ -1,7 +1,7 @@
 package kitchenpos.ui.jpa;
 
 import java.net.URI;
-import kitchenpos.application.TableGroupServiceJpa;
+import kitchenpos.application.TableGroupService;
 import kitchenpos.ui.jpa.dto.tablegroup.TableGroupCreateRequest;
 import kitchenpos.ui.jpa.dto.tablegroup.TableGroupCreateResponse;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TableGroupRestControllerJpa {
 
-    private final TableGroupServiceJpa tableGroupService;
+    private final TableGroupService tableGroupService;
 
-    public TableGroupRestControllerJpa(final TableGroupServiceJpa tableGroupService) {
+    public TableGroupRestControllerJpa(final TableGroupService tableGroupService) {
         this.tableGroupService = tableGroupService;
     }
 

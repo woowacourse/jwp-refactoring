@@ -5,11 +5,11 @@ import kitchenpos.repository.OrderLineItemRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-public class OrderLineItemServiceJpa {
+public class OrderLineItemService {
 
     private OrderLineItemRepository orderLineItemRepository;
 
-    public OrderLineItemServiceJpa(OrderLineItemRepository orderLineItemRepository) {
+    public OrderLineItemService(OrderLineItemRepository orderLineItemRepository) {
         this.orderLineItemRepository = orderLineItemRepository;
     }
 

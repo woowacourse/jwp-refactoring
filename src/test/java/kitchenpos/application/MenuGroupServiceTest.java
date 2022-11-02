@@ -8,10 +8,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-class MenuGroupServiceJpaTest extends ServiceTestJpa {
+class MenuGroupServiceTest extends ServiceTest {
 
     @Autowired
-    private MenuGroupServiceJpa menuGroupService;
+    private MenuGroupService menuGroupService;
 
     @DisplayName("menuGroup을 생성한다.")
     @Test
