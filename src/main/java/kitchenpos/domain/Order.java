@@ -76,7 +76,7 @@ public class Order {
     }
 
     public void validExistOrderStatus() {
-        if (orderStatus.compareTo(COOKING) == 0 && orderStatus.compareTo(COOKING) == 0) {
+        if (orderStatus.equals(COOKING) || orderStatus.equals(OrderStatus.MEAL)) {
             throw new CustomIllegalArgumentException(INVALID_TABLE_UNGROUP_EXCEPTION);
         }
     }

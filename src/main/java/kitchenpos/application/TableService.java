@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_ORDER_EXCEPTION;
 import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_TABLE_EXCEPTION;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import kitchenpos.application.exception.CustomIllegalArgumentException;
 import kitchenpos.dao.JpaOrderRepository;
@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class TableService {
+
     private final JpaOrderRepository orderRepository;
     private final JpaOrderTableRepository orderTableRepository;
 
@@ -45,22 +46,18 @@ public class TableService {
         savedOrderTable.validTableGroupCondition();
         validExistOrderTables(orderTableId);
         savedOrderTable.clearTable();
-        orderTableRepository.save(savedOrderTable);
 
         return OrderTableResponse.from(savedOrderTable);
     }
 
     private void validExistOrderTables(final Long orderTableId) {
-        final Order order = orderRepository.findById(orderTableId)
-                .orElseThrow(() -> new CustomIllegalArgumentException(NOT_FOUND_ORDER_EXCEPTION));
-
-        order.validExistOrderStatus();
+        final Optional<Order> order = orderRepository.findByOrderTableId(orderTableId);
+        order.ifPresent(Order::validExistOrderStatus);
     }
 
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {
         final OrderTable savedOrderTable = getOrderTable(orderTableId);
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
-        orderTableRepository.save(savedOrderTable);
         return OrderTableResponse.from(savedOrderTable);
     }
 

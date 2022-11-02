@@ -22,11 +22,13 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
+
     @Column
     private int numberOfGuests;
+
     @Column
     private boolean empty;
 
@@ -75,6 +77,9 @@ public class OrderTable {
     }
 
     public Long getTableGroupId() {
+        if (Objects.isNull(tableGroup)) {
+            return null;
+        }
         return tableGroup.getId();
     }
 

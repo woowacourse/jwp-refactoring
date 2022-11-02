@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_MENU_EXCEPTION;
-import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_TABLE_EXCEPTION;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -52,17 +51,5 @@ class OrderServiceTest extends ServiceTest {
         Assertions.assertThatThrownBy(() -> orderService.create(주문))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage(NOT_FOUND_MENU_EXCEPTION.getMessage());
-    }
-
-    @Test
-    void 없는_테이블에_주문_할_경우_예외를_반환한다() {
-        final OrderRequest 주문 = 주문_요청_생성(OrderStatus.COOKING);
-
-        메뉴_리스트_세팅(1L);
-        존재하지않는_테이블_세팅();
-
-        Assertions.assertThatThrownBy(() -> orderService.create(주문))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage(NOT_FOUND_TABLE_EXCEPTION.getMessage());
     }
 }

@@ -67,11 +67,16 @@ public class ServiceTest {
     }
 
     protected void 존재하지않는_테이블_세팅() {
-        Mockito.when(orderTableRepository.findById(anyLong())).thenReturn(Optional.empty());
+        Mockito.when(orderTableRepository.existsById(anyLong())).thenReturn(false);
+    }
+
+    protected void 주문에_테이블이_없을때_세팅() {
+        Mockito.when(orderRepository.findByOrderTableId(anyLong())).thenReturn(Optional.empty());
     }
 
     protected OrderTable 테이블_생성(Long id) {
-        final TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now(), Arrays.asList(테이블_생성(1L), 테이블_생성(2L)));
+        final TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now(),
+                Arrays.asList(new OrderTable(), new OrderTable()));
         return new OrderTable(id, tableGroup, 1, false);
     }
 
