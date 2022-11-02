@@ -47,8 +47,4 @@ public class Order {
     public LocalDateTime getOrderedTime() {
         return orderedTime;
     }
-
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
-    }
 }

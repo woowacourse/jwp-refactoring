@@ -12,11 +12,11 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import kitchenpos.application.dto.MenuProductRequest;
+import kitchenpos.application.dto.MenuRequest;
 import kitchenpos.application.dto.OrderLineItemRequest;
 import kitchenpos.application.dto.OrderRequest;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.ui.dto.OrderResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,8 +29,8 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     @DisplayName("주문 목록을 조회한다.")
     @Test
     void findProducts() {
-        Long tableId1 = createTable(new OrderTable(null, 7, false));
-        Long tableId2 = createTable(new OrderTable(null, 2, false));
+        Long tableId1 = createTable(new OrderTableRequest(7, false));
+        Long tableId2 = createTable(new OrderTableRequest(2, false));
 
         Long menuGroupId = MenuGroupAcceptanceTest.createMenuGroup("라라 메뉴");
 
@@ -38,14 +38,14 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         Long productId2 = ProductAcceptanceTest.createProduct("돼지국밥", 7_000);
         Long productId3 = ProductAcceptanceTest.createProduct("피자", 12_000);
 
-        MenuProduct menuProduct1 = new MenuProduct(productId1, 1, BigDecimal.valueOf(9_000));
-        MenuProduct menuProduct2 = new MenuProduct(productId2, 1, BigDecimal.valueOf(7_000));
-        MenuProduct menuProduct3 = new MenuProduct(productId3, 1, BigDecimal.valueOf(12_000));
+        MenuProductRequest menuProduct1 = new MenuProductRequest(productId1, 1);
+        MenuProductRequest menuProduct2 = new MenuProductRequest(productId2, 1);
+        MenuProductRequest menuProduct3 = new MenuProductRequest(productId3, 1);
 
         Long menuId1 = createMenu(
-                Menu.create("해장 세트", BigDecimal.valueOf(15_000), menuGroupId, List.of(menuProduct1, menuProduct2)));
+                new MenuRequest("해장 세트", BigDecimal.valueOf(15_000), menuGroupId, List.of(menuProduct1, menuProduct2)));
         Long menuId2 = createMenu(
-                Menu.create("아재 세트", BigDecimal.valueOf(13_000), menuGroupId, List.of(menuProduct3, menuProduct2)));
+                new MenuRequest("아재 세트", BigDecimal.valueOf(13_000), menuGroupId, List.of(menuProduct3, menuProduct2)));
 
         Long orderId1 = createOrder(tableId1, List.of(menuId1));
         Long orderId2 = createOrder(tableId2, List.of(menuId1, menuId2));
@@ -90,18 +90,18 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     @ParameterizedTest
     @ValueSource(strings = {"MEAL", "COMPLETION"})
     void changeOrderStatus(String orderStatus) {
-        Long tableId = createTable(new OrderTable(null, 7, false));
+        Long tableId = createTable(new OrderTableRequest(7, false));
 
         Long menuGroupId = MenuGroupAcceptanceTest.createMenuGroup("라라 메뉴");
 
         Long productId1 = ProductAcceptanceTest.createProduct("후라이드", 9000);
         Long productId2 = ProductAcceptanceTest.createProduct("돼지국밥", 7000);
 
-        MenuProduct menuProduct1 = new MenuProduct(productId1, 1, BigDecimal.valueOf(9000));
-        MenuProduct menuProduct2 = new MenuProduct(productId2, 1, BigDecimal.valueOf(7000));
+        MenuProductRequest menuProduct1 = new MenuProductRequest(productId1, 1);
+        MenuProductRequest menuProduct2 = new MenuProductRequest(productId2, 1);
 
         Long menuId = createMenu(
-                Menu.create("해장 세트", BigDecimal.valueOf(15_000), menuGroupId, List.of(menuProduct1, menuProduct2)));
+                new MenuRequest("해장 세트", BigDecimal.valueOf(15_000), menuGroupId, List.of(menuProduct1, menuProduct2)));
 
         Long orderId = createOrder(tableId, List.of(menuId));
 

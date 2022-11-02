@@ -6,6 +6,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 
 public interface OrderDao {
+
     Long save(Order entity);
 
     Optional<Order> findById(Long id);

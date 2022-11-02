@@ -16,7 +16,7 @@ import org.springframework.http.HttpStatus;
 
 public class ProductAcceptanceTest extends AcceptanceTest {
 
-    public static long createProduct(String name, int price) {
+    public static Long createProduct(String name, int price) {
         Product product = givenProduct(name, price);
         return RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)

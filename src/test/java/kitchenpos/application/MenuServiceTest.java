@@ -23,18 +23,18 @@ public class MenuServiceTest extends ApplicationTest {
     @Test
     void list() {
         Product product = 상품_생성(new Product("상품1", BigDecimal.valueOf(17_000)));
-        MenuGroup menuGroup = 메뉴그룹_생성(new MenuGroup("메뉴그룹1"));
+        Long menuGroupId = 메뉴그룹_생성(new MenuGroup("메뉴그룹1"));
         MenuProduct menuProduct = new MenuProduct(product.getId(), 1, BigDecimal.valueOf(17_000));
 
-        Menu menu1 = 메뉴_생성(Menu.create("해장 세트", BigDecimal.valueOf(15_000), menuGroup.getId(), List.of(menuProduct)));
-        Menu menu2 = 메뉴_생성(Menu.create("아침 세트", BigDecimal.valueOf(9_000), menuGroup.getId(), List.of(menuProduct)));
+        Long menuId1 = 메뉴_생성(Menu.create("해장 세트", BigDecimal.valueOf(15_000), menuGroupId, List.of(menuProduct)));
+        Long menuId2 = 메뉴_생성(Menu.create("아침 세트", BigDecimal.valueOf(9_000), menuGroupId, List.of(menuProduct)));
 
         List<MenuResponse> menus = menuService.list();
 
         assertThat(menus).extracting(MenuResponse::getId, MenuResponse::getName, p -> p.getPrice().intValueExact())
                 .containsExactlyInAnyOrder(
-                        tuple(menu1.getId(), "해장 세트", 15_000),
-                        tuple(menu2.getId(), "아침 세트", 9_000)
+                        tuple(menuId1, "해장 세트", 15_000),
+                        tuple(menuId2, "아침 세트", 9_000)
                 );
     }
 }

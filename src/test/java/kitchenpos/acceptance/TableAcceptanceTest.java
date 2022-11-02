@@ -8,7 +8,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import io.restassured.RestAssured;
 import java.util.List;
 import java.util.Map;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.ui.dto.OrderTableResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,7 +28,7 @@ public class TableAcceptanceTest extends AcceptanceTest {
         RestAssured.port = port;
     }
 
-    public static Long createTable(OrderTable table) {
+    public static Long createTable(OrderTableRequest table) {
         String location = RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .body(table)
@@ -44,9 +44,9 @@ public class TableAcceptanceTest extends AcceptanceTest {
     @DisplayName("테이블 목록을 조회한다.")
     @Test
     void findTables() {
-        long tableId1 = createTable(new OrderTable(null, 0, true));
-        long tableId2 = createTable(new OrderTable(null, 2, false));
-        long tableId3 = createTable(new OrderTable(null, 3, false));
+        long tableId1 = createTable(new OrderTableRequest(0, true));
+        long tableId2 = createTable(new OrderTableRequest(2, false));
+        long tableId3 = createTable(new OrderTableRequest(3, false));
 
         List<OrderTableResponse> tables = getTables();
 
@@ -72,7 +72,7 @@ public class TableAcceptanceTest extends AcceptanceTest {
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
     void changeEmpty(boolean empty) {
-        Long tableId = createTable(new OrderTable(null, 2, true));
+        Long tableId = createTable(new OrderTableRequest(2, true));
 
         updateTableEmpty(tableId, empty);
 
@@ -99,7 +99,7 @@ public class TableAcceptanceTest extends AcceptanceTest {
     @ParameterizedTest
     @ValueSource(ints = {4, 2})
     void changNumberOfGuests(int numberOfGuests) {
-        Long tableId = createTable(new OrderTable(null, 7, false));
+        Long tableId = createTable(new OrderTableRequest(7, false));
 
         updateTableNumberOfGuests(tableId, numberOfGuests);
 

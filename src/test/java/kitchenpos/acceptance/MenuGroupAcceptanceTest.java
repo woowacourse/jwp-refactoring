@@ -16,14 +16,16 @@ import org.springframework.http.HttpStatus;
 public class MenuGroupAcceptanceTest extends AcceptanceTest {
 
     public static Long createMenuGroup(String name) {
-        return RestAssured.given().log().all()
+        String location = RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .body(Map.of("name", name))
                 .when().log().all()
                 .post("/api/menu-groups")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
-                .extract().body().jsonPath().getLong("id");
+                .extract().header("Location");
+
+        return Long.parseLong(location.split("/api/menu-groups/")[1]);
     }
 
     @Test

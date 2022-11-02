@@ -20,13 +20,9 @@ public class MenuGroupService {
     }
 
     @Transactional
-    public MenuGroupResponse create(MenuGroupRequest menuGroupRequest) {
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(menuGroupRequest.getName()));
-        return mapToMenuGroupResponse(menuGroup);
-    }
-
-    private MenuGroupResponse mapToMenuGroupResponse(MenuGroup menuGroup) {
-        return new MenuGroupResponse(menuGroup.getId(), menuGroup.getName());
+    public Long create(MenuGroupRequest menuGroupRequest) {
+        MenuGroup menuGroup = new MenuGroup(menuGroupRequest.getName());
+        return menuGroupDao.save(menuGroup);
     }
 
     public List<MenuGroupResponse> list() {
@@ -35,5 +31,9 @@ public class MenuGroupService {
         return menuGroups.stream()
                 .map(this::mapToMenuGroupResponse)
                 .collect(Collectors.toList());
+    }
+
+    private MenuGroupResponse mapToMenuGroupResponse(MenuGroup menuGroup) {
+        return new MenuGroupResponse(menuGroup.getId(), menuGroup.getName());
     }
 }

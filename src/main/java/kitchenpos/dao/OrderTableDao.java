@@ -5,6 +5,7 @@ import java.util.Optional;
 import kitchenpos.domain.OrderTable;
 
 public interface OrderTableDao {
+
     Long save(OrderTable entity);
 
     Optional<OrderTable> findById(Long id);

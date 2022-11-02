@@ -31,10 +31,10 @@ public class JdbcTemplateMenuDao implements MenuDao {
     }
 
     @Override
-    public Menu save(Menu entity) {
+    public Long save(Menu entity) {
         SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
         Number key = jdbcInsert.executeAndReturnKey(parameters);
-        return select(key.longValue());
+        return key.longValue();
     }
 
     @Override

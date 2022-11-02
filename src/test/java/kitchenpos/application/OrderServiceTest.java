@@ -56,11 +56,11 @@ class OrderServiceTest extends ApplicationTest {
     @DisplayName("주문 생성시 주문이 존재하지 않으면 예외가 발생한다.")
     @Test
     void createOrderWithNotFoundOrderTable() {
-        MenuGroup menuGroup = 메뉴그룹_생성(new MenuGroup("메뉴그룹"));
+        Long menuGroupId = 메뉴그룹_생성(new MenuGroup("메뉴그룹"));
         Product product = 상품_생성(new Product("상품1", BigDecimal.valueOf(19_000)));
         MenuProduct menuProduct = new MenuProduct(product.getId(), 1, BigDecimal.valueOf(19_000));
-        Menu menu = 메뉴_생성(Menu.create("메뉴12", BigDecimal.valueOf(17_000), menuGroup.getId(), List.of(menuProduct)));
-        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 4);
+        Long menuId = 메뉴_생성(Menu.create("메뉴12", BigDecimal.valueOf(17_000), menuGroupId, List.of(menuProduct)));
+        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menuId, 4);
 
         assertThatThrownBy(() -> orderService.create(new OrderRequest(1000L, List.of(orderLineItemRequest))))
                 .isInstanceOf(InvalidTableException.class)
@@ -70,11 +70,11 @@ class OrderServiceTest extends ApplicationTest {
     @DisplayName("주문 생성시 테이블이 빈 테이블이면 예외가 발생한다.")
     @Test
     void createOrderWithEmptyTable() {
-        MenuGroup menuGroup = 메뉴그룹_생성(new MenuGroup("메뉴그룹"));
+        Long menuGroupId = 메뉴그룹_생성(new MenuGroup("메뉴그룹"));
         Product product = 상품_생성(new Product("상품1", BigDecimal.valueOf(19_000)));
         MenuProduct menuProduct = new MenuProduct(product.getId(), 1, BigDecimal.valueOf(19_000));
-        Menu menu = 메뉴_생성(Menu.create("메뉴11e1", BigDecimal.valueOf(17_000), menuGroup.getId(), List.of(menuProduct)));
-        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 4);
+        Long menuId = 메뉴_생성(Menu.create("메뉴11e1", BigDecimal.valueOf(17_000), menuGroupId, List.of(menuProduct)));
+        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menuId, 4);
 
         Long tableId = 주문테이블_생성(new OrderTable(null, 5, true));
 
@@ -87,11 +87,11 @@ class OrderServiceTest extends ApplicationTest {
     @DisplayName("주문 생성시 주문이 완료 상태면 예외가 발생한다.")
     @Test
     void createOrderWithInvalidTableStatus() {
-        MenuGroup menuGroup = 메뉴그룹_생성(new MenuGroup("메뉴그룹"));
+        Long menuGroupId = 메뉴그룹_생성(new MenuGroup("메뉴그룹"));
         Product product = 상품_생성(new Product("상품1", BigDecimal.valueOf(19_000)));
         MenuProduct menuProduct = new MenuProduct(product.getId(), 1, BigDecimal.valueOf(19_000));
-        Menu menu = 메뉴_생성(Menu.create("메뉴111", BigDecimal.valueOf(17_000), menuGroup.getId(), List.of(menuProduct)));
-        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 4);
+        Long menuId = 메뉴_생성(Menu.create("메뉴111", BigDecimal.valueOf(17_000), menuGroupId, List.of(menuProduct)));
+        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menuId, 4);
 
         Long tableId = 주문테이블_생성(new OrderTable(null, 5, true));
 
@@ -104,13 +104,13 @@ class OrderServiceTest extends ApplicationTest {
     @DisplayName("주문을 조회한다.")
     @Test
     void list() {
-        MenuGroup menuGroup = 메뉴그룹_생성(new MenuGroup("메뉴그룹"));
+        Long menuGroupId = 메뉴그룹_생성(new MenuGroup("메뉴그룹"));
         Product product = 상품_생성(new Product("상품1", BigDecimal.valueOf(19_000)));
         MenuProduct menuProduct = new MenuProduct(product.getId(), 1, BigDecimal.valueOf(19_000));
-        Menu menu = 메뉴_생성(Menu.create("메뉴111", BigDecimal.valueOf(17_000), menuGroup.getId(), List.of(menuProduct)));
+        Long menuId = 메뉴_생성(Menu.create("메뉴111", BigDecimal.valueOf(17_000), menuGroupId, List.of(menuProduct)));
         Long tableId = 주문테이블_생성(new OrderTable(null, 5, false));
 
-        orderService.create(new OrderRequest(tableId, List.of(new OrderLineItemRequest(menu.getId(), 2))));
+        orderService.create(new OrderRequest(tableId, List.of(new OrderLineItemRequest(menuId, 2))));
 
         List<OrderResponse> orders = orderService.list();
 
@@ -121,13 +121,13 @@ class OrderServiceTest extends ApplicationTest {
     @ParameterizedTest
     @ValueSource(strings = {"MEAL", "COMPLETION"})
     void changeOrderStatus(String status) {
-        MenuGroup menuGroup = 메뉴그룹_생성(new MenuGroup("메뉴그룹"));
+        Long menuGroupId = 메뉴그룹_생성(new MenuGroup("메뉴그룹"));
         Product product = 상품_생성(new Product("상품1", BigDecimal.valueOf(19_000)));
         MenuProduct menuProduct = new MenuProduct(product.getId(), 1, BigDecimal.valueOf(19_000));
-        Menu menu = 메뉴_생성(Menu.create("메뉴111", BigDecimal.valueOf(17_000), menuGroup.getId(), List.of(menuProduct)));
+        Long menuId = 메뉴_생성(Menu.create("메뉴111", BigDecimal.valueOf(17_000), menuGroupId, List.of(menuProduct)));
         Long tableId = 주문테이블_생성(new OrderTable(null, 5, false));
         Long orderId = orderService.create(
-                new OrderRequest(tableId, List.of(new OrderLineItemRequest(menu.getId(), 2))));
+                new OrderRequest(tableId, List.of(new OrderLineItemRequest(menuId, 2))));
 
         orderService.changeOrderStatus(orderId, new OrderStatusRequest(status));
         Order order = orderDao.findById(orderId).orElseThrow();

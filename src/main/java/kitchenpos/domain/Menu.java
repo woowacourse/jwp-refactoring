@@ -28,7 +28,7 @@ public class Menu {
         }
     }
 
-    public Menu(long id, String name, BigDecimal price, Long menuGroupId) {
+    public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
         this(id, name, price, menuGroupId, List.of());
     }
 

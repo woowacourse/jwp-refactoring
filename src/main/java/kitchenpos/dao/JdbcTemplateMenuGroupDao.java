@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class JdbcTemplateMenuGroupDao implements MenuGroupDao {
+
     private static final String TABLE_NAME = "menu_group";
     private static final String KEY_COLUMN_NAME = "id";
 
@@ -31,10 +32,10 @@ public class JdbcTemplateMenuGroupDao implements MenuGroupDao {
     }
 
     @Override
-    public MenuGroup save(final MenuGroup entity) {
+    public Long save(final MenuGroup entity) {
         final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
         final Number key = jdbcInsert.executeAndReturnKey(parameters);
-        return select(key.longValue());
+        return key.longValue();
     }
 
     @Override

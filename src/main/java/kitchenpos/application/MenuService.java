@@ -36,17 +36,20 @@ public class MenuService {
     }
 
     @Transactional
-    public MenuResponse create(MenuRequest menuRequest) {
+    public Long create(MenuRequest menuRequest) {
         validateMenuGroup(menuRequest.getMenuGroupId());
 
         List<MenuProduct> menuProducts = mapToMenuProducts(menuRequest.getMenuProducts());
 
         Menu menu = Menu.create(menuRequest.getName(), menuRequest.getPrice(), menuRequest.getMenuGroupId(),
                 menuProducts);
-        Menu savedMenu = menuDao.save(menu);
+        return menuDao.save(menu);
+    }
 
-        List<MenuProduct> savedMenuProducts = saveMenuProducts(savedMenu.getId(), menuProducts);
-        return mapToMenuResponse(savedMenu, savedMenuProducts);
+    private void validateMenuGroup(Long menuGroupId) {
+        if (!menuGroupDao.existsById(menuGroupId)) {
+            throw new InvalidMenuGroupException("메뉴 그룹이 존재하지 않습니다.");
+        }
     }
 
     private List<MenuProduct> saveMenuProducts(Long menuId, List<MenuProduct> menuProducts) {
@@ -55,12 +58,6 @@ public class MenuService {
                         menuProduct.getPrice()))
                 .map(menuProductDao::save)
                 .collect(Collectors.toList());
-    }
-
-    private void validateMenuGroup(Long menuGroupId) {
-        if (!menuGroupDao.existsById(menuGroupId)) {
-            throw new InvalidMenuGroupException("메뉴 그룹이 존재하지 않습니다.");
-        }
     }
 
     private List<MenuProduct> mapToMenuProducts(List<MenuProductRequest> menuProductRequests) {

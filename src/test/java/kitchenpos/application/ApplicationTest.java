@@ -49,11 +49,11 @@ public class ApplicationTest {
     @Autowired
     protected ProductDao productDao;
 
-    protected Menu 메뉴_생성(Menu menu) {
+    protected Long 메뉴_생성(Menu menu) {
         return menuDao.save(menu);
     }
 
-    protected MenuGroup 메뉴그룹_생성(MenuGroup menuGroup) {
+    protected Long 메뉴그룹_생성(MenuGroup menuGroup) {
         return menuGroupDao.save(menuGroup);
     }
 
