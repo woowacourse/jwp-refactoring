@@ -28,7 +28,7 @@ public class MenuService {
     public MenuResponse create(final CreateMenuRequest request) {
         menuValidator.validateCreateMenu(request);
 
-        List<MenuProductDto> menuProducts = request.getMenuProducts().stream()
+        final List<MenuProductDto> menuProducts = request.getMenuProducts().stream()
             .map(it -> new MenuProductDto(it.getProductId(), it.getQuantity()))
             .collect(Collectors.toList());
 

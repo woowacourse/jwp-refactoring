@@ -14,7 +14,7 @@ public class OrderTableValidator {
         add(OrderStatus.MEAL.name());
     }};
 
-    private OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
 
     public OrderTableValidator(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;

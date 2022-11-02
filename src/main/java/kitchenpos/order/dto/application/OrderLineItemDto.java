@@ -2,8 +2,8 @@ package kitchenpos.order.dto.application;
 
 public class OrderLineItemDto {
 
-    private Long menuId;
-    private long quantity;
+    private final Long menuId;
+    private final long quantity;
 
     public OrderLineItemDto(Long menuId, long quantity) {
         this.menuId = menuId;

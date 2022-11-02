@@ -29,11 +29,11 @@ public class OrderService {
     public OrderResponse create(final CreateOrderRequest request) {
         orderValidator.validateCreateOrder(request);
 
-        List<OrderLineItemDto> orderLineItems = request.getOrderLineItems().stream()
+        final List<OrderLineItemDto> orderLineItems = request.getOrderLineItems().stream()
             .map(it -> new OrderLineItemDto(it.getMenuId(), it.getQuantity()))
             .collect(Collectors.toList());
 
-        Order order = orderRepository.save(new Order(request.getOrderTableId(), orderLineItems));
+        final Order order = orderRepository.save(new Order(request.getOrderTableId(), orderLineItems));
 
         return new OrderResponse(order);
     }

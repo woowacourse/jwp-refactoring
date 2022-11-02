@@ -36,7 +36,7 @@ public class OrderRestController {
 
     @GetMapping("/api/orders")
     public ResponseEntity<List<OrderResponse>> list() {
-        List<OrderResponse> orders = orderService.list();
+        final List<OrderResponse> orders = orderService.list();
 
         return ResponseEntity.ok()
             .body(orders)
@@ -48,7 +48,7 @@ public class OrderRestController {
         @PathVariable final Long orderId,
         @RequestBody final ChangeOrderStatusRequest request
     ) {
-        OrderResponse changed = orderService.changeOrderStatus(orderId, request);
+        final OrderResponse changed = orderService.changeOrderStatus(orderId, request);
 
         return ResponseEntity.ok(changed)
             ;

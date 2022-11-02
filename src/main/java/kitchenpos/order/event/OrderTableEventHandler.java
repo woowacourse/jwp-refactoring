@@ -29,7 +29,7 @@ public class OrderTableEventHandler {
     }
 
     @EventListener
-    private void ungroup(UngroupEvent event) {
+    private void ungroup(final UngroupEvent event) {
         final List<OrderTable> orderTables = orderTableRepository.findByTableGroupId(event.getTableGroupId());
         final List<Long> orderTableIds = orderTables.stream()
             .map(it -> it.getId())

@@ -26,12 +26,12 @@ public class OrderValidator {
         validateMenusById(request.getOrderLineItems());
     }
 
-    private void validateOrderTableById(Long orderTableId) {
+    private void validateOrderTableById(final Long orderTableId) {
         orderTableRepository.findById(orderTableId)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블 입니다."));
     }
 
-    private void validateMenusById(List<CreateOrderLineItemRequest> orderLineItems) {
+    private void validateMenusById(final List<CreateOrderLineItemRequest> orderLineItems) {
         final List<Long> menuIds = orderLineItems.stream()
             .map(CreateOrderLineItemRequest::getMenuId)
             .collect(Collectors.toList());

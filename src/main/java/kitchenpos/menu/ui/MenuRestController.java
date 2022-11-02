@@ -33,7 +33,7 @@ public class MenuRestController {
 
     @GetMapping("/api/menus")
     public ResponseEntity<List<MenuResponse>> list() {
-        List<MenuResponse> menus = menuService.list();
+        final List<MenuResponse> menus = menuService.list();
 
         return ResponseEntity.ok()
             .body(menus)

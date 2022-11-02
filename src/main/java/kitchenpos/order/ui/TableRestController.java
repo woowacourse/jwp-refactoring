@@ -36,7 +36,7 @@ public class TableRestController {
 
     @GetMapping("/api/tables")
     public ResponseEntity<List<OrderTableResponse>> list() {
-        List<OrderTableResponse> orderTables = tableService.list();
+        final List<OrderTableResponse> orderTables = tableService.list();
 
         return ResponseEntity.ok()
             .body(orderTables)
@@ -48,7 +48,7 @@ public class TableRestController {
         @PathVariable final Long orderTableId,
         @RequestBody final ChangeOrderTableEmptyRequest request
     ) {
-        OrderTableResponse changed = tableService.changeEmpty(orderTableId, request);
+        final OrderTableResponse changed = tableService.changeEmpty(orderTableId, request);
 
         return ResponseEntity.ok()
             .body(changed)
@@ -60,7 +60,7 @@ public class TableRestController {
         @PathVariable final Long orderTableId,
         @RequestBody final ChangeOrderTableNumberOfGuestRequest request
     ) {
-        OrderTableResponse changed = tableService.changeNumberOfGuests(orderTableId, request);
+        final OrderTableResponse changed = tableService.changeNumberOfGuests(orderTableId, request);
 
         return ResponseEntity.ok()
             .body(changed)

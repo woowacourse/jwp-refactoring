@@ -15,8 +15,8 @@ import kitchenpos.product.repository.ProductRepository;
 
 @Component
 public class MenuValidator {
-    private MenuGroupRepository menuGroupRepository;
-    private ProductRepository productRepository;
+    private final MenuGroupRepository menuGroupRepository;
+    private final ProductRepository productRepository;
 
     public MenuValidator(MenuGroupRepository menuGroupRepository, ProductRepository productRepository) {
         this.menuGroupRepository = menuGroupRepository;
@@ -51,10 +51,10 @@ public class MenuValidator {
     }
 
     private void validateProperPrice(final List<Product> products, final CreateMenuRequest request) {
-        Map<Long, BigDecimal> productsPriceMap = products.stream()
+        final Map<Long, BigDecimal> productsPriceMap = products.stream()
             .collect(Collectors.toMap(it -> it.getId(), it -> it.getPrice()));
 
-        BigDecimal totalPrice = request.getMenuProducts().stream()
+        final BigDecimal totalPrice = request.getMenuProducts().stream()
             .map(it -> productsPriceMap.get(it.getProductId()).multiply(BigDecimal.valueOf(it.getQuantity())))
             .reduce(BigDecimal.ZERO, BigDecimal::add);
 

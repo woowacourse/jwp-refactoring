@@ -33,7 +33,7 @@ public class ProductRestController {
 
     @GetMapping("/api/products")
     public ResponseEntity<List<ProductResponse>> list() {
-        List<ProductResponse> products = productService.list();
+        final List<ProductResponse> products = productService.list();
 
         return ResponseEntity.ok()
             .body(products)
