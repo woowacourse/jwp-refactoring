@@ -13,7 +13,7 @@ public class Order {
 
     private final Long id;
     private final Long orderTableId;
-    private OrderStatus orderStatus;
+    private final OrderStatus orderStatus;
     private final LocalDateTime orderedTime;
 
 
@@ -32,9 +32,9 @@ public class Order {
         return new Order(orderTableId, OrderStatus.COOKING, LocalDateTime.now());
     }
 
-    public void changeOrderStatus(OrderStatus orderStatus) {
+    public Order changeOrderStatus(OrderStatus orderStatus) {
         validateNotCompletion();
-        this.orderStatus = orderStatus;
+        return new Order(id, orderTableId, orderStatus, orderedTime);
     }
 
     private void validateNotCompletion() {
