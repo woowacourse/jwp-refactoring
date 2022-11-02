@@ -17,8 +17,8 @@ class OrderTest {
     @Test
     void order를_생성한다() {
         List<OrderLineItem> orderLineItems = List.of(
-                generateOrderLineItem(1L, 1L, 1L, 1L),
-                generateOrderLineItem(1L, 1L, 2L, 3L)
+                generateOrderLineItem(1L, 1L, 1L),
+                generateOrderLineItem(1L, 2L, 3L)
         );
 
         Order actual = new Order(1L, orderLineItems);

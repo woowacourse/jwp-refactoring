@@ -12,9 +12,9 @@ public class OrderLineItemResponse {
     private OrderLineItemResponse() {
     }
 
-    public OrderLineItemResponse(final OrderLineItem orderLineItem) {
+    public OrderLineItemResponse(final Long orderId, final OrderLineItem orderLineItem) {
         this.seq = orderLineItem.getSeq();
-        this.orderId = orderLineItem.getOrderId();
+        this.orderId = orderId;
         this.menuId = orderLineItem.getMenuId();
         this.quantity = orderLineItem.getQuantity();
     }

@@ -7,11 +7,10 @@ import kitchenpos.domain.OrderLineItem;
 public class OrderLineItemFixtures {
 
     public static final OrderLineItem generateOrderLineItem(final Long menuId, final long quantity) {
-        return generateOrderLineItem(null, null, menuId, quantity);
+        return generateOrderLineItem(null, menuId, quantity);
     }
 
     public static final OrderLineItem generateOrderLineItem(final Long seq,
-                                                            final Long orderId,
                                                             final Long menuId,
                                                             final long quantity) {
         try {
@@ -23,10 +22,6 @@ public class OrderLineItemFixtures {
             Field seqField = clazz.getDeclaredField("seq");
             seqField.setAccessible(true);
             seqField.set(orderLineItem, seq);
-
-            Field orderIdField = clazz.getDeclaredField("orderId");
-            orderIdField.setAccessible(true);
-            orderIdField.set(orderLineItem, orderId);
 
             Field menuIdField = clazz.getDeclaredField("menuId");
             menuIdField.setAccessible(true);

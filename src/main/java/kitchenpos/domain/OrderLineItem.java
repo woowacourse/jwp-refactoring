@@ -13,9 +13,6 @@ public class OrderLineItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @Column(name = "order_id", insertable = false, updatable = false)
-    private Long orderId;
-
     @Column(name = "menu_id")
     private Long menuId;
 
@@ -26,21 +23,12 @@ public class OrderLineItem {
     }
 
     public OrderLineItem(final Long menuId, final long quantity) {
-        this(null, menuId, quantity);
-    }
-
-    public OrderLineItem(final Long orderId, final Long menuId, final long quantity) {
-        this.orderId = orderId;
         this.menuId = menuId;
         this.quantity = quantity;
     }
 
     public Long getSeq() {
         return seq;
-    }
-
-    public Long getOrderId() {
-        return orderId;
     }
 
     public Long getMenuId() {
