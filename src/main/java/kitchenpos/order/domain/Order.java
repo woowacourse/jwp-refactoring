@@ -50,7 +50,13 @@ public class Order {
         this.orderedTime = LocalDateTime.now();
 
         for (OrderLineItemDto dto : orderLineItems) {
-            final OrderLineItem orderLineItem = new OrderLineItem(this, dto.getMenuId(), dto.getQuantity());
+            final OrderLineItem orderLineItem = new OrderLineItem(
+                this,
+                dto.getMenuName(),
+                dto.getMenuPrice(),
+                dto.getQuantity()
+            );
+
             this.orderLineItems.add(orderLineItem);
         }
     }

@@ -1,5 +1,6 @@
 package kitchenpos.order.domain;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -23,8 +24,11 @@ public class OrderLineItem {
     @JoinColumn(name = "order_id")
     private Order order;
 
-    @Column(name = "menu_id")
-    private Long menuId;
+    @Column(name = "menu_name")
+    private String menuName;
+
+    @Column(name = "menu_price")
+    private BigDecimal menuPrice;
 
     @Column
     private long quantity;
@@ -32,9 +36,10 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(Order order, Long menuId, long quantity) {
+    public OrderLineItem(Order order, String menuName, BigDecimal menuPrice, long quantity) {
         this.order = order;
-        this.menuId = menuId;
+        this.menuName = menuName;
+        this.menuPrice = menuPrice;
         this.quantity = quantity;
     }
 
@@ -46,8 +51,12 @@ public class OrderLineItem {
         return order;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public String getMenuName() {
+        return menuName;
+    }
+
+    public BigDecimal getMenuPrice() {
+        return menuPrice;
     }
 
     public long getQuantity() {

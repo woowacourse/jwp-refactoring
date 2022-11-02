@@ -19,18 +19,17 @@ import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.dto.application.MenuProductDto;
 import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.menu.repository.MenuRepository;
-import kitchenpos.order.application.TableService;
 import kitchenpos.order.domain.Order;
-import kitchenpos.order.dto.application.OrderLineItemDto;
-import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.product.domain.Product;
-import kitchenpos.order.dto.response.OrderTableResponse;
-import kitchenpos.order.repository.OrderTableRepository;
-import kitchenpos.product.repository.ProductRepository;
 import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.dto.application.OrderLineItemDto;
 import kitchenpos.order.dto.request.ChangeOrderTableEmptyRequest;
 import kitchenpos.order.dto.request.ChangeOrderTableNumberOfGuestRequest;
 import kitchenpos.order.dto.request.CreateOrderTableRequest;
+import kitchenpos.order.dto.response.OrderTableResponse;
+import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.order.repository.OrderTableRepository;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.repository.ProductRepository;
 
 @SpringBootTest
 class TableServiceTest {
@@ -188,7 +187,7 @@ class TableServiceTest {
         return new Order(
             orderTableId,
             new ArrayList<OrderLineItemDto>() {{
-                add(new OrderLineItemDto(menu.getId(), 1L));
+                add(new OrderLineItemDto(menu.getName(), menu.getPrice(), 1L));
             }}
         );
     }

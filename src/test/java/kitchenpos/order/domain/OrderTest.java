@@ -3,6 +3,7 @@ package kitchenpos.order.domain;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import kitchenpos.order.dto.application.OrderLineItemDto;
 class OrderTest {
 
     private final List<OrderLineItemDto> orderLineItems = new ArrayList<OrderLineItemDto>() {{
-        add(new OrderLineItemDto(1L, 1L));
+        add(new OrderLineItemDto("menu", BigDecimal.valueOf(1000L), 1L));
     }};
 
     @Nested

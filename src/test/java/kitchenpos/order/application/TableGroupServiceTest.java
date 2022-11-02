@@ -173,7 +173,7 @@ class TableGroupServiceTest {
         return new Order(
             orderTableId,
             new ArrayList<OrderLineItemDto>() {{
-                add(new OrderLineItemDto(menu.getId(), 1L));
+                add(new OrderLineItemDto(menu.getName(), menu.getPrice(), 1L));
             }}
         );
     }
