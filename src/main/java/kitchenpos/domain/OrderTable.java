@@ -44,6 +44,10 @@ public class OrderTable {
         this(null, null, status, new ArrayList<>());
     }
 
+    public OrderTable(final TableStatus status, final List<Order> orders) {
+        this(null, null, status, orders);
+    }
+
     public OrderTable(final Long id, final TableGroup tableGroup, final TableStatus status, final List<Order> orders) {
         this.id = id;
         this.tableGroup = tableGroup;
@@ -52,10 +56,15 @@ public class OrderTable {
     }
 
     public void changeEmpty(final boolean empty) {
+        validateUngrouped();
+        validateAllOrderCompleted();
+        status.changeEmpty(empty);
+    }
+
+    private void validateUngrouped() {
         if (isGrouped()) {
             throw new DomainLogicException(CustomError.TABLE_ALREADY_GROUPED_ERROR);
         }
-        status.changeEmpty(empty);
     }
 
     public void changeGuestNumber(final int number) {
@@ -74,7 +83,7 @@ public class OrderTable {
 
     private void validateOrderCompleted(final Order order) {
         if (!order.isCompleted()) {
-            throw new DomainLogicException(CustomError.TABLE_GROUP_UNGROUP_NOT_COMPLETED_ORDER);
+            throw new DomainLogicException(CustomError.UNCOMPLETED_ORDER_IN_TABLE_ERROR);
         }
     }
 

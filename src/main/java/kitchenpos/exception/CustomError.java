@@ -21,10 +21,10 @@ public enum CustomError {
     TABLE_GUEST_NUMBER_NEGATIVE_ERROR("테이블의 방문 손님 수는 0명 이상이어야 합니다."),
     TABLE_STATUS_INVALID_ERROR("테이블의 방문 손님이 1명 이상이면 테이블을 비어있는 상태이면 안된다."),
     TABLE_EMPTY_BUT_CHANGE_GUEST_NUMBER_ERROR("빈테이블에는 방문 손님 수를 변경할 수 없다."),
+    UNCOMPLETED_ORDER_IN_TABLE_ERROR("계산이 완료되지 않은 주문이 있습니다."),
     TABLE_GROUP_MIN_TABLES_ERROR("테이블 그룹에는 2개 이상의 테이블이 속해 있어야 합니다."),
     TABLE_GROUP_TABLE_NOT_EMPTY_ERROR("빈 테이블만 단체 지정할 수 있습니다."),
     TABLE_ALREADY_GROUPED_ERROR("이미 그룹에 속해있는 테이블입니다."),
-    TABLE_GROUP_UNGROUP_NOT_COMPLETED_ORDER("주문 계산이 완료된 테이블만 그룹을 풀 수 있습니다."),
 
     TABLE_NOT_FOUND_ERROR("존재하지 않는 테이블입니다."),
     TABLE_GROUP_NOT_FOUND_ERROR("존재하지 않는 단체 지정입니다."),
