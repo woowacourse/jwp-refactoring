@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.MenuRequest;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.MenuGroupRepository;
@@ -36,13 +37,15 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
+        final MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
+                .orElseThrow(IllegalArgumentException::new);
         final List<Product> products = mapToProducts(menuRequest);
-        final Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuRequest.getMenuGroupId(),
+        final Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup,
                 menuRequest.getMenuProducts(), products);
         final Menu savedMenu = menuRepository.save(menu);
 
         final List<MenuProduct> savedMenuProducts = createMenuProducts(menuRequest, savedMenu);
-        return new Menu(savedMenu.getId(), savedMenu.getName(), savedMenu.getPrice(), savedMenu.getMenuGroupId(),
+        return new Menu(savedMenu.getId(), savedMenu.getName(), savedMenu.getPrice(), savedMenu.getMenuGroup(),
                 savedMenuProducts, products);
     }
 

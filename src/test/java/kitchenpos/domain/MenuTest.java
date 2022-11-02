@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import static kitchenpos.DomainFixtures.면_메뉴_그룹;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
@@ -14,7 +15,7 @@ class MenuTest {
     void 메뉴_가격이_0보다_작으면_예외가_발생한다() {
 
         assertThatThrownBy(
-                ( )-> new Menu("라면", new BigDecimal(1200), 1L, new ArrayList<>(), new ArrayList<>())
+                ( )-> new Menu("라면", new BigDecimal(1200), 면_메뉴_그룹(), new ArrayList<>(), new ArrayList<>())
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -33,8 +34,7 @@ class MenuTest {
 
         assertThatThrownBy(
                 ( )-> {
-                    new Menu("라면", new BigDecimal(1200), 1L,
-                            메뉴_상품들, 상품들);
+                    new Menu("라면", new BigDecimal(1200), 면_메뉴_그룹(), 메뉴_상품들, 상품들);
                 }
         ).isInstanceOf(IllegalArgumentException.class);
     }
