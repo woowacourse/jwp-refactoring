@@ -1,5 +1,6 @@
-package kitchenpos.dao;
+package kitchenpos.dao.jdbc;
 
+import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderStatus;
 
