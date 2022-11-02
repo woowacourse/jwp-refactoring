@@ -1,9 +1,9 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 
-public class Product {
+public class Product implements Entity {
+
     private Long id;
     private String name;
     private BigDecimal price;
@@ -11,9 +11,27 @@ public class Product {
     public Product() {
     }
 
-    public Product(final String name, final BigDecimal price) {
+    public Product(final Long id,
+                   final String name,
+                   final BigDecimal price) {
+        this.id = id;
         this.name = name;
         this.price = price;
+        if (isNew()) {
+            validateOnCreate();
+        }
+    }
+
+    @Override
+    public boolean isNew() {
+        return id == null;
+    }
+
+    @Override
+    public void validateOnCreate() {
+        if (price == null || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
@@ -28,35 +46,7 @@ public class Product {
         return name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
     public BigDecimal getPrice() {
         return price;
-    }
-
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Product product = (Product) o;
-        if (id == null || product.id == null) {
-            return Objects.equals(name, product.name) && price.compareTo(product.price) == 0;
-        }
-        return Objects.equals(id, product.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, price);
     }
 }

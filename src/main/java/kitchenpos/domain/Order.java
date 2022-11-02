@@ -2,21 +2,87 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
-public class Order {
+public class Order implements Entity {
+
     private Long id;
+    private OrderTable orderTable;
     private Long orderTableId;
-    private String orderStatus;
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
 
     public Order() {
     }
 
-    public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+    public Order(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
+        this(null, orderTable, orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+    }
+
+    public Order(final Long id,
+                 final Long orderTableId,
+                 final OrderStatus orderStatus,
+                 final LocalDateTime orderedTime) {
+        this(id, null, orderTableId, orderStatus, orderedTime, null);
+    }
+
+    public Order(final Long id,
+                 final Long orderTableId,
+                 final OrderStatus orderStatus,
+                 final LocalDateTime orderedTime,
+                 final List<OrderLineItem> orderLineItems) {
+        this(id, null, orderTableId, orderStatus, orderedTime, orderLineItems);
+    }
+
+    public Order(final Long id,
+                 final OrderTable orderTable,
+                 final Long orderTableId,
+                 final OrderStatus orderStatus,
+                 final LocalDateTime orderedTime,
+                 final List<OrderLineItem> orderLineItems) {
+        this.id = id;
+        this.orderTable = orderTable;
         this.orderTableId = orderTableId;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
+        if (isNew()) {
+            validateOnCreate();
+        }
+    }
+
+    public void changeStatus(final OrderStatus orderStatus) {
+        validateNotCompleted();
+        this.orderStatus = orderStatus;
+    }
+
+    private void validateNotCompleted() {
+        if (orderStatus == OrderStatus.COMPLETION) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    @Override
+    public boolean isNew() {
+        return id == null;
+    }
+
+    @Override
+    public void validateOnCreate() {
+        validateOrderLineItemsNotEmpty();
+        validateOrderTableNotEmpty();
+    }
+
+    private void validateOrderTableNotEmpty() {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateOrderLineItemsNotEmpty() {
+        if (orderLineItems.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
@@ -31,54 +97,15 @@ public class Order {
         return orderTableId;
     }
 
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
-    }
-
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
-    }
-
-    public void setOrderStatus(final String orderStatus) {
-        this.orderStatus = orderStatus;
     }
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
     }
 
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Order order = (Order) o;
-        if (id == null || order.id == null) {
-            return Objects.equals(orderTableId, order.orderTableId)
-                    && Objects.equals(orderStatus, order.orderStatus)
-                    && Objects.equals(orderedTime, order.orderedTime)
-                    && Objects.equals(orderLineItems, order.orderLineItems);
-        }
-        return Objects.equals(id, order.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 }

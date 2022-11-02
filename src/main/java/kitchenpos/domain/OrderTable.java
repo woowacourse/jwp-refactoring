@@ -1,18 +1,94 @@
 package kitchenpos.domain;
 
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 
-public class OrderTable {
+public class OrderTable implements Entity {
+
     private Long id;
     private Long tableGroupId;
-    private int numberOfGuests;
+    private Guests numberOfGuests;
     private boolean empty;
+    private List<Order> orders;
 
-    public OrderTable() {
+    public OrderTable(final int numberOfGuests,
+                      final boolean empty) {
+        this(null, null, numberOfGuests, empty, new ArrayList<>());
     }
 
-    public OrderTable(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
+    public OrderTable(final Long id,
+                      final Long tableGroupId,
+                      final int numberOfGuests,
+                      final boolean empty) {
+        this(id, tableGroupId, numberOfGuests, empty, new ArrayList<>());
+    }
+
+    public OrderTable(final Long id,
+                      final Long tableGroupId,
+                      final int numberOfGuests,
+                      final boolean empty,
+                      final List<Order> orders) {
+        this.id = id;
+        this.tableGroupId = tableGroupId;
+        this.numberOfGuests = new Guests(numberOfGuests);
+        this.empty = empty;
+        this.orders = orders;
+    }
+
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        validateNotEmpty();
+        this.numberOfGuests = new Guests(numberOfGuests);
+    }
+
+    private void validateNotEmpty() {
+        if (empty) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void changeEmptyTo(final boolean status) {
+        validateNotGrouped();
+        validateAllOrderCompleted();
+        this.empty = status;
+    }
+
+    private void validateNotGrouped() {
+        if (tableGroupId != null) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateAllOrderCompleted() {
+        if (!isAllOrderCompleted()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private boolean isAllOrderCompleted() {
+        return orders.stream()
+                .noneMatch(order -> order.getOrderStatus() != OrderStatus.COMPLETION);
+    }
+
+    public boolean canBeUngrouped() {
+        return isAllOrderCompleted();
+    }
+
+    public void ungroup() {
+        this.tableGroupId = null;
+        this.empty = false;
+    }
+
+    public boolean canBeGrouped() {
+        return empty && tableGroupId == null;
+    }
+
+    @Override
+    public boolean isNew() {
+        return id == null;
+    }
+
+    @Override
+    public void validateOnCreate() {
     }
 
     public Long getId() {
@@ -27,40 +103,31 @@ public class OrderTable {
         return tableGroupId;
     }
 
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-    }
-
     public int getNumberOfGuests() {
-        return numberOfGuests;
-    }
-
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
+        return numberOfGuests.value;
     }
 
     public boolean isEmpty() {
         return empty;
     }
 
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
+    public List<Order> getOrders() {
+        return orders;
     }
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        OrderTable that = (OrderTable) o;
-        return Objects.equals(id, that.getId());
-    }
+    private static class Guests {
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, tableGroupId, numberOfGuests, empty);
+        private final int value;
+
+        private Guests(final int value) {
+            validateAtLeastZero(value);
+            this.value = value;
+        }
+
+        private void validateAtLeastZero(final int value) {
+            if (value < 0) {
+                throw new IllegalArgumentException();
+            }
+        }
     }
 }

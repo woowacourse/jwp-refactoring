@@ -1,19 +1,34 @@
 package kitchenpos.domain;
 
-import java.util.Objects;
+import java.math.BigDecimal;
 
-public class MenuProduct {
+public class MenuProduct implements Entity {
+
     private Long seq;
     private Long menuId;
     private Long productId;
+    private Product product;
     private long quantity;
 
-    public MenuProduct() {
+    public MenuProduct(final Long menuId,
+                       final Product product,
+                       final long quantity) {
+        this(null, menuId, product.getId(), quantity);
+        this.product = product;
     }
 
-    public MenuProduct(final Long productId, final long quantity) {
+    public MenuProduct(final Long seq,
+                       final Long menuId,
+                       final Long productId,
+                       final long quantity) {
+        this.seq = seq;
+        this.menuId = menuId;
         this.productId = productId;
         this.quantity = quantity;
+    }
+
+    public BigDecimal amount() {
+        return BigDecimal.valueOf(quantity).multiply(product.getPrice());
     }
 
     public Long getSeq() {
@@ -27,46 +42,25 @@ public class MenuProduct {
     public Long getMenuId() {
         return menuId;
     }
-
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
+    
+    public Product getProduct() {
+        return product;
     }
 
     public Long getProductId() {
         return productId;
     }
 
-    public void setProductId(final Long productId) {
-        this.productId = productId;
-    }
-
     public long getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
+    @Override
+    public boolean isNew() {
+        return seq == null;
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        MenuProduct that = (MenuProduct) o;
-        if (seq == null || that.seq == null) {
-            return Objects.equals(menuId, that.menuId)
-                    && Objects.equals(productId, that.productId)
-                    && Objects.equals(quantity, that.quantity);
-        }
-        return Objects.equals(seq, that.seq);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(seq, menuId, productId, quantity);
+    public void validateOnCreate() {
     }
 }
