@@ -12,28 +12,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.order.application.OrderService;
-import kitchenpos.order.application.dto.request.OrderLineItemRequest;
-import kitchenpos.order.application.dto.request.OrderRequest;
-import kitchenpos.order.application.dto.request.OrderStatusUpdateRequest;
-import kitchenpos.order.application.dto.response.OrderResponse;
+import kitchenpos.fixture.MenuFixture;
+import kitchenpos.fixture.MenuGroupFixture;
+import kitchenpos.fixture.ProductFixture;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menu.domain.Product;
 import kitchenpos.menu.domain.ProductRepository;
+import kitchenpos.order.application.dto.request.OrderLineItemRequest;
+import kitchenpos.order.application.dto.request.OrderRequest;
+import kitchenpos.order.application.dto.request.OrderStatusUpdateRequest;
+import kitchenpos.order.application.dto.response.OrderResponse;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItemRepository;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.support.SpringBootNestedTest;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
-import kitchenpos.fixture.MenuFixture;
-import kitchenpos.fixture.MenuGroupFixture;
-import kitchenpos.fixture.ProductFixture;
-import kitchenpos.support.SpringBootNestedTest;
 
 @SuppressWarnings("NonAsciiCharacters")
 @Transactional
@@ -115,7 +114,7 @@ class OrderServiceTest {
 
             assertThatThrownBy(() -> orderService.create(orderRequest))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("존재하지 않는 메뉴입니다.");
+                    .hasMessageContaining("존재하지 않는 메뉴가 있습니다.");
         }
 
         @DisplayName("존재하지 않는 테이블일 경우 예외가 발생한다")
@@ -151,7 +150,7 @@ class OrderServiceTest {
     void list() {
         int numberOfOrders = 5;
         for (int i = 0; i < numberOfOrders; i++) {
-             createOrder();
+            createOrder();
         }
 
         List<OrderResponse> actual = orderService.list();
@@ -190,7 +189,7 @@ class OrderServiceTest {
 
     private Order createOrder() {
         Order order = orderRepository.save(new Order(orderTable, OrderStatus.COOKING));
-        OrderLineItem orderLineItem = orderLineItemRepository.save(new OrderLineItem(후라이드_양념치킨_두마리세트, 3L));
+        OrderLineItem orderLineItem = orderLineItemRepository.save(new OrderLineItem(후라이드_양념치킨_두마리세트.getId(), 3L));
 
         order.addOrderLineItem(orderLineItem);
         return order;

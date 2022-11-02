@@ -3,15 +3,15 @@ package kitchenpos.order.application;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kitchenpos.event.ValidateExistMenusEvent;
 import kitchenpos.order.application.dto.request.OrderLineItemRequest;
 import kitchenpos.order.application.dto.request.OrderRequest;
 import kitchenpos.order.application.dto.request.OrderStatusUpdateRequest;
 import kitchenpos.order.application.dto.response.OrderResponse;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItemRepository;
@@ -24,17 +24,18 @@ import kitchenpos.table.domain.OrderTableRepository;
 @Transactional
 public class OrderService {
 
-    private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
-    public OrderService(MenuRepository menuRepository, OrderRepository orderRepository,
-                        OrderLineItemRepository orderLineItemRepository, OrderTableRepository orderTableRepository) {
-        this.menuRepository = menuRepository;
+    public OrderService(OrderRepository orderRepository, OrderLineItemRepository orderLineItemRepository,
+                        OrderTableRepository orderTableRepository,
+                        ApplicationEventPublisher applicationEventPublisher) {
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     public OrderResponse create(OrderRequest request) {
@@ -53,16 +54,19 @@ public class OrderService {
     }
 
     private List<OrderLineItem> getOrderLineItems(List<OrderLineItemRequest> orderLineItemRequests) {
+        validateExistMenus(orderLineItemRequests);
+
         return orderLineItemRequests.stream()
-                .map(o -> {
-                    Menu menu = findMenu(o.getMenuId());
-                    return new OrderLineItem(menu, o.getQuantity());
-                }).collect(Collectors.toList());
+                .map(o -> new OrderLineItem(o.getMenuId(), o.getQuantity()))
+                .collect(Collectors.toList());
     }
 
-    private Menu findMenu(Long menuId) {
-        return menuRepository.findById(menuId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴입니다."));
+    private void validateExistMenus(List<OrderLineItemRequest> orderLineItemRequests) {
+        List<Long> menuIds = orderLineItemRequests.stream()
+                .map(OrderLineItemRequest::getMenuId)
+                .collect(Collectors.toList());
+
+        applicationEventPublisher.publishEvent(new ValidateExistMenusEvent(menuIds));
     }
 
     private void validateOrderItemSize(List<OrderLineItem> orderLineItems) {
