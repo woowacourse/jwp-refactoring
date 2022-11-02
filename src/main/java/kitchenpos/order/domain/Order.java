@@ -49,7 +49,7 @@ public class Order {
         this.orderLineItems.setOrder(this);
     }
 
-    private Order(Long orderTableId, OrderStatus orderStatus, OrderLineItems orderLineItems) {
+    Order(Long orderTableId, OrderStatus orderStatus, OrderLineItems orderLineItems) {
         this(null, orderTableId, orderStatus, LocalDateTime.now(), orderLineItems);
     }
 

@@ -20,6 +20,7 @@ import kitchenpos.order.application.response.OrderResponse;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItems;
+import kitchenpos.order.domain.OrderMenuCreator;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderValidator;
@@ -62,6 +63,9 @@ class OrderServiceTest {
 
     @Autowired
     private MenuValidator menuValidator;
+
+    @Autowired
+    private OrderMenuCreator orderMenuCreator;
 
     @Nested
     @DisplayName("주문을 생성할 때")
@@ -140,7 +144,8 @@ class OrderServiceTest {
         Menu menu = createMenu("강정치킨", 18000);
 
         OrderTable orderTable = orderTableRepository.save(new OrderTable(2, false));
-        OrderLineItems orderLineItems = new OrderLineItems(List.of(new OrderLineItem(menu.getId(), 2)));
+        OrderLineItems orderLineItems = new OrderLineItems(
+                List.of(OrderLineItem.create(menu.getId(), 2, orderMenuCreator)));
 
         orderRepository.save(Order.startCooking(orderTable.getId(), orderLineItems, orderValidator));
 
@@ -160,7 +165,8 @@ class OrderServiceTest {
 
             OrderTable orderTable = orderTableRepository.save(new OrderTable(2, false));
 
-            OrderLineItems orderLineItems = new OrderLineItems(List.of(new OrderLineItem(menu.getId(), 2)));
+            OrderLineItems orderLineItems = new OrderLineItems(
+                    List.of(OrderLineItem.create(menu.getId(), 2, orderMenuCreator)));
             Order order = orderRepository.save(Order.startCooking(orderTable.getId(), orderLineItems, orderValidator));
 
             OrderResponse orderResponse = orderService.changeOrderStatus(order.getId(), "MEAL");
@@ -186,7 +192,8 @@ class OrderServiceTest {
             void changeOrderStatusCompletion() {
                 Menu menu = createMenu("강정치킨", 18000);
                 OrderTable orderTable = orderTableRepository.save(new OrderTable(2, false));
-                OrderLineItems orderLineItems = new OrderLineItems(List.of(new OrderLineItem(menu.getId(), 2)));
+                OrderLineItems orderLineItems = new OrderLineItems(
+                        List.of(OrderLineItem.create(menu.getId(), 2, orderMenuCreator)));
                 Order order = orderRepository.save(
                         Order.startCooking(orderTable.getId(), orderLineItems, orderValidator));
 

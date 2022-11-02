@@ -1,14 +1,9 @@
 package kitchenpos.order.application.request;
 
-import kitchenpos.order.domain.OrderLineItem;
-
 public class OrderLineItemCommand {
 
-    private Long menuId;
-    private long quantity;
-
-    private OrderLineItemCommand() {
-    }
+    private final Long menuId;
+    private final long quantity;
 
     public OrderLineItemCommand(Long menuId, long quantity) {
         this.menuId = menuId;
@@ -21,9 +16,5 @@ public class OrderLineItemCommand {
 
     public long getQuantity() {
         return quantity;
-    }
-
-    public OrderLineItem toEntity() {
-        return new OrderLineItem(menuId, quantity);
     }
 }
