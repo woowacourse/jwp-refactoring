@@ -57,7 +57,9 @@ public class OrderTable {
     }
 
     public void setEmpty(boolean empty) {
-        validateTableGroup();
+        if (empty) {
+            validateTableGroup();
+        }
         this.empty = empty;
     }
 
