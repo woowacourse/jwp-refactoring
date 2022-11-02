@@ -26,10 +26,6 @@ public class MenuProductFixtures {
             seqField.setAccessible(true);
             seqField.set(menuProduct, seq);
 
-            Field menIdField = clazz.getDeclaredField("menuId");
-            menIdField.setAccessible(true);
-            menIdField.set(menuProduct, menuId);
-
             Field productIdField = clazz.getDeclaredField("productId");
             productIdField.setAccessible(true);
             productIdField.set(menuProduct, productId);

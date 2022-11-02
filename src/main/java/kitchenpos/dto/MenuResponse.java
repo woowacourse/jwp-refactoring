@@ -21,7 +21,7 @@ public class MenuResponse {
         this.menuGroupId = menu.getMenuGroupId();
         this.menuProducts = menu.getMenuProducts()
                 .stream()
-                .map(MenuProductResponse::new)
+                .map(it -> new MenuProductResponse(menu.getId(), it))
                 .collect(toList());
     }
 
