@@ -4,10 +4,10 @@ package kitchenpos.application;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.request.TableChangeEmptyRequest;
-import kitchenpos.dto.request.TableChangeGuestNumberRequest;
-import kitchenpos.dto.request.TableCreateRequest;
-import kitchenpos.dto.response.TableResponse;
+import kitchenpos.dto.request.OrderTableChangeEmptyRequest;
+import kitchenpos.dto.request.OrderTableChangeGuestNumberRequest;
+import kitchenpos.dto.request.OrderTableCreateRequest;
+import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.exception.CustomError;
 import kitchenpos.exception.NotFoundException;
 import kitchenpos.repository.OrderTableRepository;
@@ -16,38 +16,38 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-public class TableService {
+public class OrderTableService {
 
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderTableRepository orderTableRepository) {
+    public OrderTableService(final OrderTableRepository orderTableRepository) {
         this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
-    public TableResponse create(final TableCreateRequest request) {
-        return TableResponse.from(orderTableRepository.save(request.toTable()));
+    public OrderTableResponse create(final OrderTableCreateRequest request) {
+        return OrderTableResponse.from(orderTableRepository.save(request.toTable()));
     }
 
-    public List<TableResponse> list() {
+    public List<OrderTableResponse> list() {
         return orderTableRepository.findAll()
                 .stream()
-                .map(TableResponse::from)
+                .map(OrderTableResponse::from)
                 .collect(Collectors.toUnmodifiableList());
     }
 
     @Transactional
-    public TableResponse changeEmpty(final Long tableId, final TableChangeEmptyRequest request) {
+    public OrderTableResponse changeEmpty(final Long tableId, final OrderTableChangeEmptyRequest request) {
         final OrderTable orderTable = findOrderTableById(tableId);
         orderTable.changeEmpty(request.getEmpty());
-        return TableResponse.from(orderTable);
+        return OrderTableResponse.from(orderTable);
     }
 
     @Transactional
-    public TableResponse changeNumberOfGuests(final Long tableId, final TableChangeGuestNumberRequest request) {
+    public OrderTableResponse changeNumberOfGuests(final Long tableId, final OrderTableChangeGuestNumberRequest request) {
         final OrderTable orderTable = findOrderTableById(tableId);
         orderTable.changeGuestNumber(request.getNumberOfGuests());
-        return TableResponse.from(orderTable);
+        return OrderTableResponse.from(orderTable);
     }
 
     private OrderTable findOrderTableById(final Long tableId) {

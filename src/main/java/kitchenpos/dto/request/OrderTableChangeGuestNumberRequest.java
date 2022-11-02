@@ -2,15 +2,15 @@ package kitchenpos.dto.request;
 
 import javax.validation.constraints.NotNull;
 
-public class TableChangeGuestNumberRequest {
+public class OrderTableChangeGuestNumberRequest {
 
     @NotNull
     private Integer numberOfGuests;
 
-    protected TableChangeGuestNumberRequest() {
+    protected OrderTableChangeGuestNumberRequest() {
     }
 
-    public TableChangeGuestNumberRequest(final int numberOfGuests) {
+    public OrderTableChangeGuestNumberRequest(final int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
     }
 
