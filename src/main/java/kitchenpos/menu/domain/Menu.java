@@ -17,9 +17,9 @@ public class Menu {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
     private Price price;
-
     private Long menuGroupId;
 
     @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)

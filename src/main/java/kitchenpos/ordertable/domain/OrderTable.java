@@ -23,7 +23,6 @@ public class OrderTable {
     private GuestNumber guestNumber;
 
     private boolean empty;
-
     private Long tableGroupId;
 
     protected OrderTable() {
