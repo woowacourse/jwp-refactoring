@@ -6,8 +6,9 @@ import kitchenpos.menu.dao.MenuGroupDao;
 import kitchenpos.menu.dao.MenuRepository;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.dto.MenuCreateRequest;
 import kitchenpos.menu.dto.MenuProductDto;
+import kitchenpos.menu.dto.request.MenuCreateRequest;
+import kitchenpos.menu.dto.response.MenuResponse;
 import kitchenpos.product.dao.ProductDao;
 import kitchenpos.product.domain.Product;
 import org.springframework.stereotype.Service;
@@ -31,12 +32,12 @@ public class MenuService {
         this.productDao = productDao;
     }
 
-    public Menu create(final MenuCreateRequest request) {
+    public MenuResponse create(final MenuCreateRequest request) {
         if (!menuGroupDao.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
 
-        return menuRepository.save(
+        final Menu savedMenu = menuRepository.save(
                 new Menu(
                         request.getName(),
                         request.getPrice(),
@@ -44,6 +45,7 @@ public class MenuService {
                         mapToMenuProducts(request.getMenuProducts())
                 )
         );
+        return MenuResponse.from(savedMenu);
     }
 
     private List<MenuProduct> mapToMenuProducts(final List<MenuProductDto> requests) {
@@ -61,7 +63,9 @@ public class MenuService {
     }
 
     @Transactional(readOnly = true)
-    public List<Menu> list() {
-        return menuRepository.findAll();
+    public List<MenuResponse> list() {
+        return menuRepository.findAll().stream()
+                .map(MenuResponse::from)
+                .collect(Collectors.toList());
     }
 }

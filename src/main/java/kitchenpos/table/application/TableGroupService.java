@@ -10,8 +10,8 @@ import kitchenpos.table.dao.OrderTableDao;
 import kitchenpos.table.dao.TableGroupRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
-import kitchenpos.table.dto.OrderTableDto;
-import kitchenpos.table.dto.TableGroupCreatRequest;
+import kitchenpos.table.dto.request.OrderTableDto;
+import kitchenpos.table.dto.request.TableGroupCreatRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

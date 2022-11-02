@@ -1,5 +1,7 @@
 package kitchenpos.order.dto;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.order.domain.OrderLineItem;
 
 public class OrderLineItemDto {
@@ -13,6 +15,19 @@ public class OrderLineItemDto {
     public OrderLineItemDto(final Long menuId, final long quantity) {
         this.menuId = menuId;
         this.quantity = quantity;
+    }
+
+    public static List<OrderLineItemDto> from(final List<OrderLineItem> orderLineItems) {
+        return orderLineItems.stream()
+                .map(OrderLineItemDto::from)
+                .collect(Collectors.toList());
+    }
+
+    private static OrderLineItemDto from(final OrderLineItem orderLineItem) {
+        return new OrderLineItemDto(
+                orderLineItem.getMenuId(),
+                orderLineItem.getQuantity()
+        );
     }
 
     public Long getMenuId() {

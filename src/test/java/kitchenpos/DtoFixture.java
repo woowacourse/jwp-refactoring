@@ -3,17 +3,17 @@ package kitchenpos;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.menu.dto.MenuCreateRequest;
-import kitchenpos.menu.dto.MenuGroupCreateRequest;
 import kitchenpos.menu.dto.MenuProductDto;
-import kitchenpos.order.dto.OrderCreateRequest;
+import kitchenpos.menu.dto.request.MenuCreateRequest;
+import kitchenpos.menu.dto.request.MenuGroupCreateRequest;
 import kitchenpos.order.dto.OrderLineItemDto;
-import kitchenpos.product.dto.ProductCreateRequest;
-import kitchenpos.table.dto.OrderTableDto;
-import kitchenpos.table.dto.TableChangeEmptyRequest;
-import kitchenpos.table.dto.TableChangeNumberOfGuestsRequest;
-import kitchenpos.table.dto.TableCreateRequest;
-import kitchenpos.table.dto.TableGroupCreatRequest;
+import kitchenpos.order.dto.request.OrderCreateRequest;
+import kitchenpos.product.dto.request.ProductCreateRequest;
+import kitchenpos.table.dto.request.OrderTableDto;
+import kitchenpos.table.dto.request.TableChangeEmptyRequest;
+import kitchenpos.table.dto.request.TableChangeNumberOfGuestsRequest;
+import kitchenpos.table.dto.request.TableCreateRequest;
+import kitchenpos.table.dto.request.TableGroupCreatRequest;
 
 public class DtoFixture {
 

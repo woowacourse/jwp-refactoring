@@ -7,9 +7,10 @@ import kitchenpos.menu.dao.MenuDao;
 import kitchenpos.order.dao.OrderRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.order.dto.OrderCreateRequest;
 import kitchenpos.order.dto.OrderLineItemDto;
-import kitchenpos.order.dto.OrderStatusChangeRequest;
+import kitchenpos.order.dto.request.OrderCreateRequest;
+import kitchenpos.order.dto.request.OrderStatusChangeRequest;
+import kitchenpos.order.dto.response.OrderResponse;
 import kitchenpos.product.domain.OrderStatus;
 import kitchenpos.table.dao.OrderTableDao;
 import kitchenpos.table.domain.OrderTable;
@@ -34,20 +35,21 @@ public class OrderService {
         this.orderTableDao = orderTableDao;
     }
 
-    public Order create(final OrderCreateRequest request) {
+    public OrderResponse create(final OrderCreateRequest request) {
         final List<OrderLineItemDto> orderLineItems = request.getOrderLineItems();
         validateOrderLineItems(orderLineItems);
 
         final Long orderTableId = request.getOrderTableId();
         validateOrderTable(orderTableId);
 
-        return orderRepository.save(
+        final Order savedOrder = orderRepository.save(
                 new Order(
                         orderTableId,
                         OrderStatus.COOKING,
                         LocalDateTime.now(),
                         mapToOrderLineItems(orderLineItems))
         );
+        return OrderResponse.from(savedOrder);
     }
 
     private void validateOrderLineItems(final List<OrderLineItemDto> orderLineItemDtos) {
@@ -76,15 +78,17 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public List<Order> list() {
-        return orderRepository.findAll();
+    public List<OrderResponse> list() {
+        return orderRepository.findAll().stream()
+                .map(OrderResponse::from)
+                .collect(Collectors.toList());
     }
 
-    public Order changeOrderStatus(final Long orderId, final OrderStatusChangeRequest request) {
+    public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusChangeRequest request) {
         final Order savedOrder = orderRepository.findById(orderId);
 
         savedOrder.changeOrderStatus(request.getOrderStatus());
 
-        return orderRepository.update(savedOrder);
+        return OrderResponse.from(orderRepository.update(savedOrder));
     }
 }

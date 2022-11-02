@@ -7,8 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.ServiceTest;
-import kitchenpos.product.domain.Product;
-import kitchenpos.product.dto.ProductCreateRequest;
+import kitchenpos.product.dto.request.ProductCreateRequest;
+import kitchenpos.product.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +19,7 @@ class ProductServiceTest extends ServiceTest {
     void create() {
         final ProductCreateRequest request = getProductCreateRequest("마이쮸", BigDecimal.valueOf(800));
 
-        final Product savedProduct = 상품_등록(request);
+        final ProductResponse savedProduct = 상품_등록(request);
 
         assertAll(
                 () -> assertThat(savedProduct.getId()).isNotNull(),
@@ -33,7 +33,7 @@ class ProductServiceTest extends ServiceTest {
     void list() {
         상품_등록(getProductCreateRequest("마이쮸", BigDecimal.valueOf(800)));
 
-        final List<Product> products = productService.list();
+        final List<ProductResponse> products = productService.list();
 
         assertThat(products).hasSize(1);
     }

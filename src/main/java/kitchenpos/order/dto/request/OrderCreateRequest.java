@@ -1,6 +1,7 @@
-package kitchenpos.order.dto;
+package kitchenpos.order.dto.request;
 
 import java.util.List;
+import kitchenpos.order.dto.OrderLineItemDto;
 
 public class OrderCreateRequest {
 

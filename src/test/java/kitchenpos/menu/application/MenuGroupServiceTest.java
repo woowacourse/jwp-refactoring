@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.ServiceTest;
-import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.menu.dto.MenuGroupCreateRequest;
+import kitchenpos.menu.dto.request.MenuGroupCreateRequest;
+import kitchenpos.menu.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +18,7 @@ class MenuGroupServiceTest extends ServiceTest {
     void create() {
         final MenuGroupCreateRequest request = getMenuGroupCreateRequest();
 
-        final MenuGroup savedMenuGroup = 메뉴_그룹_등록(request);
+        final MenuGroupResponse savedMenuGroup = 메뉴_그룹_등록(request);
 
         assertAll(
                 () -> assertThat(savedMenuGroup.getId()).isNotNull(),
@@ -31,7 +31,7 @@ class MenuGroupServiceTest extends ServiceTest {
     void list() {
         메뉴_그룹_등록(getMenuGroupCreateRequest());
 
-        final List<MenuGroup> menuGroups = menuGroupService.list();
+        final List<MenuGroupResponse> menuGroups = menuGroupService.list();
 
         assertThat(menuGroups).hasSize(1);
     }

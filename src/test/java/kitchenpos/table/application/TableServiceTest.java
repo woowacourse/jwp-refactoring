@@ -14,16 +14,16 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.ServiceTest;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.dto.OrderStatusChangeRequest;
+import kitchenpos.menu.dto.response.MenuGroupResponse;
+import kitchenpos.menu.dto.response.MenuResponse;
+import kitchenpos.order.dto.request.OrderStatusChangeRequest;
+import kitchenpos.order.dto.response.OrderResponse;
 import kitchenpos.product.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.dto.TableChangeEmptyRequest;
-import kitchenpos.table.dto.TableChangeNumberOfGuestsRequest;
-import kitchenpos.table.dto.TableCreateRequest;
-import kitchenpos.table.dto.TableGroupCreatRequest;
+import kitchenpos.table.dto.request.TableChangeEmptyRequest;
+import kitchenpos.table.dto.request.TableChangeNumberOfGuestsRequest;
+import kitchenpos.table.dto.request.TableCreateRequest;
+import kitchenpos.table.dto.request.TableGroupCreatRequest;
+import kitchenpos.table.dto.response.TableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +34,7 @@ class TableServiceTest extends ServiceTest {
     void create() {
         final TableCreateRequest request = getEmptyTableCreateRequest();
 
-        final OrderTable savedTable = 테이블_등록(request);
+        final TableResponse savedTable = 테이블_등록(request);
 
         assertAll(
                 () -> assertThat(savedTable.getId()).isNotNull(),
@@ -47,7 +47,7 @@ class TableServiceTest extends ServiceTest {
     void list() {
         테이블_등록(getEmptyTableCreateRequest());
 
-        final List<OrderTable> orderTables = tableService.list();
+        final List<TableResponse> orderTables = tableService.list();
 
         assertThat(orderTables).hasSize(1);
     }
@@ -55,17 +55,17 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("빈 테이블로 변경한다.")
     @Test
     void changeEmpty() {
-        final OrderTable savedTable = 테이블_등록(getNotEmptyTableCreateRequest(0));
-        final MenuGroup menuGroup = 메뉴_그룹_등록(getMenuGroupCreateRequest());
-        final Menu menu = 메뉴_등록(getMenuCreateRequest(menuGroup.getId(), createMenuProductDtos()));
-        final Order savedOrder = 주문_등록(getOrderCreateRequest(savedTable.getId(), menu.getId()));
+        final TableResponse savedTable = 테이블_등록(getNotEmptyTableCreateRequest(0));
+        final MenuGroupResponse menuGroup = 메뉴_그룹_등록(getMenuGroupCreateRequest());
+        final MenuResponse menu = 메뉴_등록(getMenuCreateRequest(menuGroup.getId(), createMenuProductDtos()));
+        final OrderResponse savedOrder = 주문_등록(getOrderCreateRequest(savedTable.getId(), menu.getId()));
         final OrderStatusChangeRequest statusChangeRequest = new OrderStatusChangeRequest(
                 OrderStatus.COMPLETION);
         orderService.changeOrderStatus(savedOrder.getId(), statusChangeRequest);
 
         final TableChangeEmptyRequest request = getTableChangeEmptyRequest(true);
 
-        final OrderTable changedTable = tableService.changeEmpty(savedTable.getId(), request);
+        final TableResponse changedTable = tableService.changeEmpty(savedTable.getId(), request);
 
         assertAll(
                 () -> assertThat(changedTable.getId()).isEqualTo(savedTable.getId()),
@@ -85,8 +85,8 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("빈 테이블로 변경한다. - 단체 지정에 포함된 테이블이면 예외를 반환한다.")
     @Test
     void changeEmpty_exception_alreadyInTableGroup() {
-        final OrderTable orderTable = 테이블_등록(getEmptyTableCreateRequest());
-        final OrderTable anotherTable = 테이블_등록(getEmptyTableCreateRequest());
+        final TableResponse orderTable = 테이블_등록(getEmptyTableCreateRequest());
+        final TableResponse anotherTable = 테이블_등록(getEmptyTableCreateRequest());
 
         final TableGroupCreatRequest groupCreatRequest = getTableCreateRequest(
                 List.of(orderTable.getId(), anotherTable.getId()));
@@ -101,9 +101,9 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("빈 테이블로 변경한다. - 주문 상태가 COOKING이거나 MEAL이면 예외를 반환한다.")
     @Test
     void changeEmpty_exception_orderStatusIsCookingOrMeal() {
-        final OrderTable savedTable = 테이블_등록(getNotEmptyTableCreateRequest(0));
-        final MenuGroup menuGroup = 메뉴_그룹_등록(getMenuGroupCreateRequest());
-        final Menu menu = 메뉴_등록(getMenuCreateRequest(menuGroup.getId(), createMenuProductDtos()));
+        final TableResponse savedTable = 테이블_등록(getNotEmptyTableCreateRequest(0));
+        final MenuGroupResponse menuGroup = 메뉴_그룹_등록(getMenuGroupCreateRequest());
+        final MenuResponse menu = 메뉴_등록(getMenuCreateRequest(menuGroup.getId(), createMenuProductDtos()));
         주문_등록(getOrderCreateRequest(savedTable.getId(), menu.getId()));
 
         final TableChangeEmptyRequest request = getTableChangeEmptyRequest(true);
@@ -115,10 +115,10 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("방문한 손님 수를 변경한다.")
     @Test
     void changeNumberOfGuests() {
-        final OrderTable savedTable = 테이블_등록(getNotEmptyTableCreateRequest(0));
+        final TableResponse savedTable = 테이블_등록(getNotEmptyTableCreateRequest(0));
         final TableChangeNumberOfGuestsRequest request = getTableChangeNumberOfGuestsRequest(5);
 
-        final OrderTable changedTable = tableService.changeNumberOfGuests(savedTable.getId(), request);
+        final TableResponse changedTable = tableService.changeNumberOfGuests(savedTable.getId(), request);
 
         assertAll(
                 () -> assertThat(changedTable.getId()).isEqualTo(savedTable.getId()),
@@ -130,7 +130,7 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("방문한 손님 수를 변경한다. - 손님의 수가 0보다 작으면 예외를 반환한다.")
     @Test
     void changeNumberOfGuests_exception_numberOfGuestsIsLessThanZero() {
-        final OrderTable savedTable = 테이블_등록(getNotEmptyTableCreateRequest(0));
+        final TableResponse savedTable = 테이블_등록(getNotEmptyTableCreateRequest(0));
         final TableChangeNumberOfGuestsRequest request = getTableChangeNumberOfGuestsRequest(-1);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedTable.getId(), request))
@@ -149,7 +149,7 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("방문한 손님 수를 변경한다. - 빈 테이블이면 예외를 반환한다.")
     @Test
     void changeNumberOfGuests_exception_tableIsEmpty() {
-        final OrderTable savedTable = 테이블_등록(getEmptyTableCreateRequest());
+        final TableResponse savedTable = 테이블_등록(getEmptyTableCreateRequest());
         final TableChangeNumberOfGuestsRequest request = getTableChangeNumberOfGuestsRequest(5);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedTable.getId(), request))
