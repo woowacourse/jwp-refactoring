@@ -2,8 +2,8 @@ package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import kitchenpos.common.exception.InvalidTableException;
 import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.exception.InvalidTableException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

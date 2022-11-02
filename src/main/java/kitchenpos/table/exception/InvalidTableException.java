@@ -1,4 +1,6 @@
-package kitchenpos.common.exception;
+package kitchenpos.table.exception;
+
+import kitchenpos.common.exception.BadRequestException;
 
 public class InvalidTableException extends BadRequestException {
 

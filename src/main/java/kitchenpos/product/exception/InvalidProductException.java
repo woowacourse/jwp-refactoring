@@ -1,4 +1,6 @@
-package kitchenpos.common.exception;
+package kitchenpos.product.exception;
+
+import kitchenpos.common.exception.BadRequestException;
 
 public class InvalidProductException extends BadRequestException {
 

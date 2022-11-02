@@ -2,7 +2,7 @@ package kitchenpos.order.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.common.exception.InvalidOrderException;
+import kitchenpos.order.exception.InvalidOrderException;
 
 public class Order {
 

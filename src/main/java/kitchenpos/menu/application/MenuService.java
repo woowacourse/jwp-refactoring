@@ -2,8 +2,6 @@ package kitchenpos.menu.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.common.exception.InvalidMenuGroupException;
-import kitchenpos.common.exception.InvalidProductException;
 import kitchenpos.menu.application.dto.request.MenuProductRequest;
 import kitchenpos.menu.application.dto.request.MenuRequest;
 import kitchenpos.menu.application.dto.response.MenuProductResponse;
@@ -13,8 +11,10 @@ import kitchenpos.menu.dao.MenuGroupDao;
 import kitchenpos.menu.dao.MenuProductDao;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.exception.InvalidMenuGroupException;
 import kitchenpos.product.dao.ProductDao;
 import kitchenpos.product.domain.Product;
+import kitchenpos.product.exception.InvalidProductException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

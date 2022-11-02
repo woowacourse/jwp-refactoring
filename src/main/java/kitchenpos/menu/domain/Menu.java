@@ -3,7 +3,7 @@ package kitchenpos.menu.domain;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
-import kitchenpos.common.exception.InvalidMenuException;
+import kitchenpos.menu.exception.InvalidMenuException;
 
 public class Menu {
 

@@ -1,4 +1,6 @@
-package kitchenpos.common.exception;
+package kitchenpos.order.exception;
+
+import kitchenpos.common.exception.BadRequestException;
 
 public class InvalidOrderException extends BadRequestException {
 

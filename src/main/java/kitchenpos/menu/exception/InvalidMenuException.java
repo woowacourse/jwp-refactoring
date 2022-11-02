@@ -1,4 +1,6 @@
-package kitchenpos.common.exception;
+package kitchenpos.menu.exception;
+
+import kitchenpos.common.exception.BadRequestException;
 
 public class InvalidMenuException extends BadRequestException {
 

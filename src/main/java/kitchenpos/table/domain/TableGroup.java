@@ -3,7 +3,7 @@ package kitchenpos.table.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import kitchenpos.common.exception.InvalidTableException;
+import kitchenpos.table.exception.InvalidTableException;
 import org.springframework.util.CollectionUtils;
 
 public class TableGroup {

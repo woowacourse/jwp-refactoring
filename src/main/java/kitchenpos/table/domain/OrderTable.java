@@ -1,6 +1,6 @@
 package kitchenpos.table.domain;
 
-import kitchenpos.common.exception.InvalidTableException;
+import kitchenpos.table.exception.InvalidTableException;
 
 public class OrderTable {
 

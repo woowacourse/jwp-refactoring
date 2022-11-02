@@ -2,7 +2,7 @@ package kitchenpos.product.domain;
 
 import java.math.BigDecimal;
 import java.util.Objects;
-import kitchenpos.common.exception.InvalidProductException;
+import kitchenpos.product.exception.InvalidProductException;
 
 public class Product {
 

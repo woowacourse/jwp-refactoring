@@ -1,7 +1,7 @@
 package kitchenpos.order.domain;
 
 import java.util.Arrays;
-import kitchenpos.common.exception.InvalidOrderException;
+import kitchenpos.order.exception.InvalidOrderException;
 
 public enum OrderStatus {
 

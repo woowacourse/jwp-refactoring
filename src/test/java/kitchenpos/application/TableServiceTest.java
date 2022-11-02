@@ -5,14 +5,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.common.exception.InvalidOrderException;
-import kitchenpos.common.exception.InvalidTableException;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.exception.InvalidOrderException;
 import kitchenpos.table.application.TableService;
 import kitchenpos.table.application.dto.request.TableEmptyRequest;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.exception.InvalidTableException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

@@ -5,9 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.common.exception.InvalidOrderException;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.exception.InvalidOrderException;
 import kitchenpos.table.application.TableGroupService;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;

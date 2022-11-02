@@ -3,15 +3,15 @@ package kitchenpos.table.application;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import kitchenpos.common.exception.InvalidOrderException;
-import kitchenpos.common.exception.InvalidTableException;
 import kitchenpos.order.dao.OrderDao;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.exception.InvalidOrderException;
 import kitchenpos.table.application.dto.request.OrderTableRequest;
 import kitchenpos.table.application.dto.request.TableEmptyRequest;
 import kitchenpos.table.application.dto.request.TableNumberOfGuestsRequest;
 import kitchenpos.table.dao.OrderTableDao;
 import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.exception.InvalidTableException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
