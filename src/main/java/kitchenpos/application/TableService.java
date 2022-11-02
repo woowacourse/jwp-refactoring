@@ -1,19 +1,17 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.order.OrderRepository;
-import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.ordertable.OrderTable;
-import kitchenpos.domain.ordertable.OrderTableRepository;
-import kitchenpos.domain.tablegroup.TableGroup;
-import kitchenpos.domain.tablegroup.TableGroupRepository;
 import kitchenpos.application.dto.request.OrderTableIdRequest;
 import kitchenpos.application.dto.request.OrderTableRequest;
 import kitchenpos.application.dto.request.TableGroupRequest;
 import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.application.dto.response.TableGroupResponse;
+import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.ordertable.OrderTableRepository;
+import kitchenpos.domain.ordertable.validator.OrderTableValidator;
+import kitchenpos.domain.tablegroup.TableGroup;
+import kitchenpos.domain.tablegroup.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,14 +20,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class TableService {
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
-    private final OrderRepository orderRepository;
+    private final OrderTableValidator orderTableValidator;
 
     public TableService(final OrderTableRepository orderTableRepository,
                         final TableGroupRepository tableGroupRepository,
-                        final OrderRepository orderRepository) {
+                        final OrderTableValidator orderTableValidator) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
-        this.orderRepository = orderRepository;
+        this.orderTableValidator = orderTableValidator;
     }
 
     @Transactional
@@ -49,12 +47,7 @@ public class TableService {
         OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                List.of(orderTableId), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException("테이블의 주문이 완료되지 않아 빈 테이블로 변경할 수 없습니다.");
-        }
-
-        savedOrderTable.changeEmpty(request.isEmpty());
+        savedOrderTable.changeEmpty(request.isEmpty(), orderTableValidator);
         return new OrderTableResponse(savedOrderTable);
     }
 
@@ -83,15 +76,6 @@ public class TableService {
         TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        List<Long> orderTableIds = tableGroup.getOrderTables().stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException("테이블의 주문이 완료되지 않아 단체 지정을 취소할 수 없습니다.");
-        }
-
-        tableGroup.ungroup();
+        tableGroup.ungroup(orderTableValidator);
     }
 }

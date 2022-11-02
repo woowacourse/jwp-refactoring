@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.ordertable.validator.OrderTableValidator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -49,7 +50,8 @@ public class TableGroup {
         }
     }
 
-    public void ungroup() {
+    public void ungroup(final OrderTableValidator orderTableValidator) {
+        orderTableValidator.validateAbleToUngroup(this);
         for (OrderTable orderTable : orderTables) {
             orderTable.ungroup();
         }

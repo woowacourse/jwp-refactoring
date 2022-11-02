@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import kitchenpos.domain.ordertable.validator.OrderTableValidator;
 
 @Entity
 public class OrderTable {
@@ -51,15 +52,9 @@ public class OrderTable {
         }
     }
 
-    public void changeEmpty(final boolean empty) {
-        validateChangePossible(empty);
+    public void changeEmpty(final boolean empty, final OrderTableValidator orderTableValidator) {
+        orderTableValidator.validateAbleToChangeEmpty(empty, this);
         this.empty = empty;
-    }
-
-    private void validateChangePossible(final boolean empty) {
-        if (empty && isGrouped()) {
-            throw new IllegalArgumentException("그룹화된 테이블은 빈 상태로 변경할 수 없습니다.");
-        }
     }
 
     public void group(final Long tableGroupId) {

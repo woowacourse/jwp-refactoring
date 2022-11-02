@@ -1,9 +1,12 @@
 package kitchenpos.domain.tablegroup;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.util.List;
+import kitchenpos.common.FakeOrderTableValidator;
 import kitchenpos.domain.ordertable.OrderTable;
 import org.junit.jupiter.api.Test;
 
@@ -40,5 +43,21 @@ class TableGroupTest {
 
         assertThatThrownBy(() -> new TableGroup(List.of(alreadyGroupedOrderTable1, alreadyGroupedOrderTable2)))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 그룹_지정을_해제할_수_있다() {
+        OrderTable orderTable1 = new OrderTable(null, 2, true);
+        OrderTable orderTable2 = new OrderTable(null, 2, true);
+        TableGroup tableGroup = new TableGroup(List.of(orderTable1, orderTable2));
+
+        tableGroup.ungroup(new FakeOrderTableValidator());
+
+        assertAll(() -> {
+            assertThat(orderTable1.isGrouped()).isFalse();
+            assertThat(orderTable1.isEmpty()).isFalse();
+            assertThat(orderTable1.isGrouped()).isFalse();
+            assertThat(orderTable2.isEmpty()).isFalse();
+        });
     }
 }
