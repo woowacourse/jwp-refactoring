@@ -2,7 +2,6 @@ package kitchenpos.domain.entity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -12,7 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.Transient;
 
 @Entity
 public class Menu {
@@ -28,7 +26,7 @@ public class Menu {
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
 
-    @Transient
+    @OneToMany(mappedBy = "menu")
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     @Embedded
