@@ -58,6 +58,11 @@ public class ServiceTest {
                 .thenReturn(Optional.ofNullable(주문_생성(OrderStatus.COMPLETION)));
     }
 
+    protected void 진행중_주문_조회() {
+        Mockito.when(orderRepository.findById(anyLong()))
+                .thenReturn(Optional.ofNullable(주문_생성(OrderStatus.COOKING)));
+    }
+
     protected void 메뉴_리스트_세팅(Long count) {
         List<Menu> menus = new ArrayList<>();
         for (int i = 0; i < count; i++) {
@@ -101,8 +106,15 @@ public class ServiceTest {
         Mockito.when(orderTableRepository.findById(anyLong())).thenReturn(Optional.of(테이블_생성(1L)));
     }
 
+    protected void 존재하는_요리중_테이블_세팅() {
+        final Order order = new Order(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(),
+                Arrays.asList(new OrderLineItem(1L, 1L, 5)));
+        Mockito.when(orderRepository.findByOrderTableId(anyLong())).thenReturn(Optional.of(order));
+    }
+
     protected Order 주문_생성(OrderStatus status) {
-        final Order 주문 = new Order(1L, 1L, status.name(), LocalDateTime.now(), null);
+        final Order 주문 = new Order(1L, 1L, status.name(), LocalDateTime.now(),
+                Arrays.asList(new OrderLineItem(1L, 1L, 5)));
         final OrderLineItem 주문_수량 = new OrderLineItem(1L, 1L, 1);
 
         주문.setOrderLineItems(Arrays.asList(주문_수량));
@@ -111,7 +123,7 @@ public class ServiceTest {
     }
 
     protected OrderRequest 주문_요청_생성(OrderStatus status) {
-        final OrderLineItemRequest 주문_수량 = new OrderLineItemRequest(1L, 1L, 1L, 1);
+        final OrderLineItemRequest 주문_수량 = new OrderLineItemRequest(1L, 1L, 1);
         final OrderRequest 주문 = new OrderRequest(1L, status.name(), LocalDateTime.now(), Arrays.asList(주문_수량));
         return 주문;
     }

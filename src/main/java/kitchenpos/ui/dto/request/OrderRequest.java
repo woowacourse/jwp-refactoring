@@ -12,6 +12,9 @@ public class OrderRequest {
     public OrderRequest() {
     }
 
+    public OrderRequest(final Long orderTableId, final List<OrderLineItemRequest> orderLineItems) {
+        this(orderTableId, null, null, orderLineItems);
+    }
     public OrderRequest(final List<OrderLineItemRequest> orderLineItems) {
         this(null, null, null, orderLineItems);
     }

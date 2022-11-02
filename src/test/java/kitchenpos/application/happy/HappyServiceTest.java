@@ -1,9 +1,10 @@
-package kitchenpos.happy;
+package kitchenpos.application.happy;
 
 import java.sql.SQLException;
 import kitchenpos.DatabaseCleaner;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.application.MenuService;
+import kitchenpos.application.OrderService;
 import kitchenpos.application.ProductService;
 import kitchenpos.application.TableService;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,19 +14,22 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 public class HappyServiceTest {
     @Autowired
-    private DatabaseCleaner databaseCleaner;
+    protected DatabaseCleaner databaseCleaner;
 
     @Autowired
-    private MenuGroupService menuGroupService;
+    protected OrderService orderService;
 
     @Autowired
-    private MenuService menuService;
+    protected MenuGroupService menuGroupService;
 
     @Autowired
-    private ProductService productService;
+    protected MenuService menuService;
 
     @Autowired
-    private TableService tableService;
+    protected ProductService productService;
+
+    @Autowired
+    protected TableService tableService;
 
     @BeforeEach
     void cleanTables() throws SQLException {

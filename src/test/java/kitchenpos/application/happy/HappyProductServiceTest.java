@@ -1,4 +1,4 @@
-package kitchenpos.happy;
+package kitchenpos.application.happy;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
-class ProductServiceTest extends HappyServiceTest {
+class HappyProductServiceTest extends HappyServiceTest {
 
     @Autowired
     private ProductService productService;

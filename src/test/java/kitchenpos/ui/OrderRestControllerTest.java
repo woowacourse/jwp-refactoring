@@ -21,19 +21,15 @@ class OrderRestControllerTest extends RestControllerTest {
 
     @Test
     void 주문_생성에_성공한다() throws Exception {
-        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1L, 1L, 1L);
+        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1L, 1L);
         OrderRequest orderRequest = new OrderRequest(Arrays.asList(orderLineItemRequest));
         OrderLineItem expectedItem = new OrderLineItem(1L, 1L, 1);
-        Order expected = new Order(1L, 1L, COOKING.name(), LocalDateTime.now(),
-                Arrays.asList(expectedItem));
+        Order expected = new Order(1L, 1L, COOKING.name(), LocalDateTime.now(), Arrays.asList(expectedItem));
 
         when(orderService.create(any())).thenReturn(expected);
 
-        mockMvc.perform(post("/api/orders")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(objectMapper.writeValueAsString(orderRequest)))
-                .andExpect(status().isCreated())
-                .andExpect(header().exists("Location"))
-                .andDo(print());
+        mockMvc.perform(post("/api/orders").contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(orderRequest))).andExpect(status().isCreated())
+                .andExpect(header().exists("Location")).andDo(print());
     }
 }

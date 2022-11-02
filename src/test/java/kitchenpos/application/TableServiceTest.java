@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static kitchenpos.application.exception.ExceptionType.INVALID_PROCEEDING_TABLE_GROUP_EXCEPTION;
-import static kitchenpos.application.exception.ExceptionType.INVALID_TABLE_UNGROUP_EXCEPTION;
 import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_TABLE_EXCEPTION;
 
 import org.assertj.core.api.Assertions;
@@ -56,11 +55,13 @@ class TableServiceTest extends ServiceTest {
 
     @Test
     void 조리중일때_테이블을_초기화하면_예외를_반환한다() {
-        테이블_그룹이_없는_테이블_세팅(1L);
+        존재하는_테이블_세팅();
+        진행중_주문_조회();
+        존재하는_요리중_테이블_세팅();
 
         Assertions.assertThatThrownBy(() -> tableService.changeEmpty(1L))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage(INVALID_TABLE_UNGROUP_EXCEPTION.getMessage());
+                .hasMessage(INVALID_PROCEEDING_TABLE_GROUP_EXCEPTION.getMessage());
     }
 
     @Test
