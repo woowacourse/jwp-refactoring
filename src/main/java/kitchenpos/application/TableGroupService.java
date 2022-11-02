@@ -38,7 +38,7 @@ public class TableGroupService {
         validateOrderTables(orderTables);
         final TableGroup tableGroup = TableGroupRequest.from(orderTables);
         tableGroupDao.save(tableGroup);
-        setOrderTablesEmpty(orderTables);
+        tableGroup.setOrderTablesEmpty();
         return TableGroupResponse.from(tableGroup);
     }
 
@@ -50,12 +50,6 @@ public class TableGroupService {
             if (orderTable.hasTableGroup()) {
                 throw new OrderTableAlreadyHasTableGroupException();
             }
-        }
-    }
-
-    private void setOrderTablesEmpty(final List<OrderTable> orderTables) {
-        for (final OrderTable savedOrderTable : orderTables) {
-            savedOrderTable.updateEmptyStatus(false);
         }
     }
 

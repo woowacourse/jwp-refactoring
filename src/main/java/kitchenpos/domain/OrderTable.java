@@ -1,12 +1,11 @@
 package kitchenpos.domain;
 
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -17,9 +16,8 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
+    @Column(name = "table_group_id")
+    private Long tableGroupId;
 
     @Embedded
     private NumberOfGuests numberOfGuests;
@@ -29,8 +27,8 @@ public class OrderTable {
     protected OrderTable() {
     }
 
-    public OrderTable(final TableGroup tableGroup, final NumberOfGuests numberOfGuests, final boolean empty) {
-        this.tableGroup = tableGroup;
+    public OrderTable(final Long tableGroupId, final NumberOfGuests numberOfGuests, final boolean empty) {
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -40,7 +38,7 @@ public class OrderTable {
     }
 
     public boolean hasTableGroup() {
-        return tableGroup != null && tableGroup.getId() != null;
+        return this.tableGroupId != null;
     }
 
     public void ungroup() {
@@ -49,7 +47,7 @@ public class OrderTable {
     }
 
     private void removeTableGroup() {
-        this.tableGroup = null;
+        this.tableGroupId = null;
     }
 
     public void updateEmptyStatus(final boolean empty) {
@@ -64,12 +62,8 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
-    }
-
-    public void updateTableGroup(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {

@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import kitchenpos.exceptions.NotEnoughSizeOfOrderTableException;
@@ -26,7 +27,8 @@ public class TableGroup {
     @Column(name = "created_date")
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "table_group_id")
     private List<OrderTable> orderTables;
 
     protected TableGroup() {
@@ -34,7 +36,6 @@ public class TableGroup {
 
     public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         validateOrderTables(orderTables);
-        injectTableGroup(orderTables);
         this.createdDate = createdDate;
         this.orderTables = orderTables;
     }
@@ -45,9 +46,9 @@ public class TableGroup {
         }
     }
 
-    private void injectTableGroup(final List<OrderTable> orderTables) {
-        for (OrderTable orderTable : orderTables) {
-            orderTable.updateTableGroup(this);
+    public void setOrderTablesEmpty() {
+        for (OrderTable orderTable : this.orderTables) {
+            orderTable.updateEmptyStatus(false);
         }
     }
 
