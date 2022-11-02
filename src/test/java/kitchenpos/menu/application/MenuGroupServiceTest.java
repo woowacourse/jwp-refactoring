@@ -8,6 +8,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import kitchenpos.common.ServiceTest;
+import kitchenpos.menu.application.response.MenuGroupResponse;
+import kitchenpos.menu.application.response.MenuResponse;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.application.request.MenuGroupRequest;
 
@@ -20,7 +22,7 @@ public class MenuGroupServiceTest extends ServiceTest {
         MenuGroupRequest request = createRequest("세마리세트");
 
         // when
-        MenuGroup savedMenuGroup = menuGroupService.create(request);
+        MenuGroupResponse savedMenuGroup = menuGroupService.create(request);
 
         // then
         assertThat(savedMenuGroup.getId()).isNotNull();
@@ -31,16 +33,21 @@ public class MenuGroupServiceTest extends ServiceTest {
     @DisplayName("전체 메뉴를 조회한다.")
     void list() {
         // given
-        MenuGroup savedMenuGroup = menuGroupService.create(createRequest("세마리세트"));
+        MenuGroupResponse savedMenuGroup = menuGroupService.create(createRequest("세마리세트"));
 
         // when
-        List<MenuGroup> result = menuGroupService.list();
+        List<MenuGroupResponse> result = menuGroupService.list();
 
         // then
-        assertThat(result).contains(savedMenuGroup);
+        assertMenuGroupResponse(result.get(0), savedMenuGroup);
     }
 
     private MenuGroupRequest createRequest(final String name) {
         return new MenuGroupRequest(null, name);
+    }
+
+    private void assertMenuGroupResponse(final MenuGroupResponse actual, final MenuGroupResponse expected) {
+        assertThat(actual.getId()).isEqualTo(expected.getId());
+        assertThat(actual.getName()).isEqualTo(expected.getName());
     }
 }
