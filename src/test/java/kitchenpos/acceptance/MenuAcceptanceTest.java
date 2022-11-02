@@ -15,7 +15,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
-
 public class MenuAcceptanceTest extends AcceptanceTest {
 
     public static Long createMenu(MenuRequest menu) {

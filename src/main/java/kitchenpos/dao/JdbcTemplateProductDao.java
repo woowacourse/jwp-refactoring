@@ -32,10 +32,10 @@ public class JdbcTemplateProductDao implements ProductDao {
     }
 
     @Override
-    public Product save(final Product entity) {
+    public Long save(final Product entity) {
         final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
         final Number key = jdbcInsert.executeAndReturnKey(parameters);
-        return select(key.longValue());
+        return key.longValue();
     }
 
     @Override

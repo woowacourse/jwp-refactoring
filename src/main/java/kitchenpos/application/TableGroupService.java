@@ -14,8 +14,6 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.ui.dto.OrderTableResponse;
-import kitchenpos.ui.dto.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,23 +31,22 @@ public class TableGroupService {
         this.tableGroupDao = tableGroupDao;
     }
 
-    public TableGroupResponse create(TableGroupRequest tableGroupRequest) {
+    public Long create(TableGroupRequest tableGroupRequest) {
         List<Long> orderTableIds = getOrderTableIds(tableGroupRequest);
         List<OrderTable> orderTables = orderTableDao.findAllByIdIn(orderTableIds);
         validateTables(orderTableIds, orderTables);
 
-        TableGroup tableGroup = tableGroupDao.save(TableGroup.create(LocalDateTime.now(), orderTables));
+        TableGroup tableGroup = TableGroup.create(LocalDateTime.now(), orderTables);
+        Long tableGroupId = tableGroupDao.save(tableGroup);
         updateOrderTableEmpty(orderTables);
 
-        return new TableGroupResponse(tableGroup.getId(), tableGroup.getCreatedDate(),
-                mapToOrderTableResponses(orderTables));
+        return tableGroupId;
     }
 
     private void updateOrderTableEmpty(List<OrderTable> orderTables) {
-        orderTables.stream()
-                .map(orderTable -> new OrderTable(orderTable.getId(), orderTable.getTableGroupId(),
-                        orderTable.getNumberOfGuests(), false))
-                .forEach(orderTableDao::save);
+        for (OrderTable orderTable : orderTables) {
+            orderTableDao.updateEmpty(orderTable.getId(), false);
+        }
     }
 
     private List<Long> getOrderTableIds(TableGroupRequest tableGroupRequest) {
@@ -63,13 +60,6 @@ public class TableGroupService {
         if (orderTableIds.size() != orderTables.size()) {
             throw new InvalidTableException("테이블이 존재하지 않습니다.");
         }
-    }
-
-    private List<OrderTableResponse> mapToOrderTableResponses(List<OrderTable> orderTables) {
-        return orderTables.stream()
-                .map(orderTable -> new OrderTableResponse(orderTable.getId(), orderTable.getTableGroupId(),
-                        orderTable.getNumberOfGuests(), orderTable.isEmpty()))
-                .collect(Collectors.toList());
     }
 
     public void ungroup(Long tableGroupId) {

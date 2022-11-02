@@ -24,10 +24,11 @@ public class OrderRestController {
     }
 
     @PostMapping("/api/orders")
-    public ResponseEntity<OrderResponse> create(@RequestBody OrderRequest orderRequest) {
+    public ResponseEntity<Void> create(@RequestBody OrderRequest orderRequest) {
         Long orderId = orderService.create(orderRequest);
         URI uri = URI.create("/api/orders/" + orderId);
-        return ResponseEntity.created(uri).build();
+        return ResponseEntity.created(uri)
+                .build();
     }
 
     @GetMapping("/api/orders")

@@ -10,9 +10,7 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
@@ -57,23 +55,15 @@ public class ApplicationTest {
         return menuGroupDao.save(menuGroup);
     }
 
-    protected MenuProduct 메뉴상품_생성(MenuProduct menuProduct) {
-        return menuProductDao.save(menuProduct);
-    }
-
     protected Long 주문테이블_생성(OrderTable orderTable) {
         return orderTableDao.save(orderTable);
     }
 
-    protected TableGroup 단체지정_생성(TableGroup tableGroup) {
+    protected Long 단체지정_생성(TableGroup tableGroup) {
         return tableGroupDao.save(tableGroup);
     }
 
-    protected OrderLineItem 주문아이템_생성(OrderLineItem orderLineItem) {
-        return orderLineItemDao.save(orderLineItem);
-    }
-
-    protected Product 상품_생성(Product product) {
+    protected Long 상품_생성(Product product) {
         return productDao.save(product);
     }
 

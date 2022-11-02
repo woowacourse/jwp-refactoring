@@ -43,11 +43,13 @@ public class OrderService {
     @Transactional
     public Long create(OrderRequest orderRequest) {
         validateOrderRequest(orderRequest);
-
         OrderTable orderTable = getOrderTable(orderRequest.getOrderTableId());
         validateOrderTable(orderTable);
 
-        return orderDao.save(new Order(orderRequest.getOrderTableId(), OrderStatus.COOKING, LocalDateTime.now()));
+        Long orderId = orderDao.save(
+                new Order(orderRequest.getOrderTableId(), OrderStatus.COOKING, LocalDateTime.now()));
+        saveOrderLineItems(orderId, orderRequest.getOrderLineItems());
+        return orderId;
     }
 
     private void validateOrderRequest(OrderRequest orderRequest) {
@@ -83,15 +85,10 @@ public class OrderService {
         }
     }
 
-    private List<OrderLineItem> getOrderLineItems(Order order, List<OrderLineItemRequest> orderLineItems) {
-        return orderLineItems
-                .stream()
-                .map(orderLineItemRequest -> {
-                    OrderLineItem orderLineItem = new OrderLineItem(order.getId(), orderLineItemRequest.getMenuId(),
-                            orderLineItemRequest.getQuantity());
-                    return orderLineItemDao.save(orderLineItem);
-                })
-                .collect(Collectors.toList());
+    private void saveOrderLineItems(Long orderId, List<OrderLineItemRequest> orderLineItems) {
+        for (OrderLineItemRequest orderLineItem : orderLineItems) {
+            orderLineItemDao.save(new OrderLineItem(orderId, orderLineItem.getMenuId(), orderLineItem.getQuantity()));
+        }
     }
 
     private OrderResponse mapToOrderResponse(Order order, List<OrderLineItem> orderLineItems) {

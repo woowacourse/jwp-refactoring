@@ -57,8 +57,8 @@ class OrderServiceTest extends ApplicationTest {
     @Test
     void createOrderWithNotFoundOrderTable() {
         Long menuGroupId = 메뉴그룹_생성(new MenuGroup("메뉴그룹"));
-        Product product = 상품_생성(new Product("상품1", BigDecimal.valueOf(19_000)));
-        MenuProduct menuProduct = new MenuProduct(product.getId(), 1, BigDecimal.valueOf(19_000));
+        Long productId = 상품_생성(new Product("상품1", BigDecimal.valueOf(19_000)));
+        MenuProduct menuProduct = new MenuProduct(productId, 1, BigDecimal.valueOf(19_000));
         Long menuId = 메뉴_생성(Menu.create("메뉴12", BigDecimal.valueOf(17_000), menuGroupId, List.of(menuProduct)));
         OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menuId, 4);
 
@@ -71,8 +71,8 @@ class OrderServiceTest extends ApplicationTest {
     @Test
     void createOrderWithEmptyTable() {
         Long menuGroupId = 메뉴그룹_생성(new MenuGroup("메뉴그룹"));
-        Product product = 상품_생성(new Product("상품1", BigDecimal.valueOf(19_000)));
-        MenuProduct menuProduct = new MenuProduct(product.getId(), 1, BigDecimal.valueOf(19_000));
+        Long productId = 상품_생성(new Product("상품1", BigDecimal.valueOf(19_000)));
+        MenuProduct menuProduct = new MenuProduct(productId, 1, BigDecimal.valueOf(19_000));
         Long menuId = 메뉴_생성(Menu.create("메뉴11e1", BigDecimal.valueOf(17_000), menuGroupId, List.of(menuProduct)));
         OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menuId, 4);
 
@@ -88,8 +88,8 @@ class OrderServiceTest extends ApplicationTest {
     @Test
     void createOrderWithInvalidTableStatus() {
         Long menuGroupId = 메뉴그룹_생성(new MenuGroup("메뉴그룹"));
-        Product product = 상품_생성(new Product("상품1", BigDecimal.valueOf(19_000)));
-        MenuProduct menuProduct = new MenuProduct(product.getId(), 1, BigDecimal.valueOf(19_000));
+        Long productId = 상품_생성(new Product("상품1", BigDecimal.valueOf(19_000)));
+        MenuProduct menuProduct = new MenuProduct(productId, 1, BigDecimal.valueOf(19_000));
         Long menuId = 메뉴_생성(Menu.create("메뉴111", BigDecimal.valueOf(17_000), menuGroupId, List.of(menuProduct)));
         OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menuId, 4);
 
@@ -105,8 +105,8 @@ class OrderServiceTest extends ApplicationTest {
     @Test
     void list() {
         Long menuGroupId = 메뉴그룹_생성(new MenuGroup("메뉴그룹"));
-        Product product = 상품_생성(new Product("상품1", BigDecimal.valueOf(19_000)));
-        MenuProduct menuProduct = new MenuProduct(product.getId(), 1, BigDecimal.valueOf(19_000));
+        Long productId = 상품_생성(new Product("상품1", BigDecimal.valueOf(19_000)));
+        MenuProduct menuProduct = new MenuProduct(productId, 1, BigDecimal.valueOf(19_000));
         Long menuId = 메뉴_생성(Menu.create("메뉴111", BigDecimal.valueOf(17_000), menuGroupId, List.of(menuProduct)));
         Long tableId = 주문테이블_생성(new OrderTable(null, 5, false));
 
@@ -122,8 +122,8 @@ class OrderServiceTest extends ApplicationTest {
     @ValueSource(strings = {"MEAL", "COMPLETION"})
     void changeOrderStatus(String status) {
         Long menuGroupId = 메뉴그룹_생성(new MenuGroup("메뉴그룹"));
-        Product product = 상품_생성(new Product("상품1", BigDecimal.valueOf(19_000)));
-        MenuProduct menuProduct = new MenuProduct(product.getId(), 1, BigDecimal.valueOf(19_000));
+        Long productId = 상품_생성(new Product("상품1", BigDecimal.valueOf(19_000)));
+        MenuProduct menuProduct = new MenuProduct(productId, 1, BigDecimal.valueOf(19_000));
         Long menuId = 메뉴_생성(Menu.create("메뉴111", BigDecimal.valueOf(17_000), menuGroupId, List.of(menuProduct)));
         Long tableId = 주문테이블_생성(new OrderTable(null, 5, false));
         Long orderId = orderService.create(

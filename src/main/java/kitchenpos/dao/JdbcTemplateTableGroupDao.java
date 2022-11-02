@@ -32,10 +32,10 @@ public class JdbcTemplateTableGroupDao implements TableGroupDao {
     }
 
     @Override
-    public TableGroup save(TableGroup entity) {
+    public Long save(TableGroup entity) {
         SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
         Number key = jdbcInsert.executeAndReturnKey(parameters);
-        return select(key.longValue());
+        return key.longValue();
     }
 
     @Override

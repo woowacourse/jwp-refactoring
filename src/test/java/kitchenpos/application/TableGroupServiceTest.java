@@ -24,11 +24,11 @@ class TableGroupServiceTest extends ApplicationTest {
     @DisplayName("테이블의 그룹을 해제한다.")
     @Test
     void ungroup() {
-        TableGroup tableGroup = 단체지정_생성(new TableGroup(LocalDateTime.now()));
-        Long tableId1 = 주문테이블_생성(new OrderTable(tableGroup.getId(), 5, true));
-        Long tableId2 = 주문테이블_생성(new OrderTable(tableGroup.getId(), 5, true));
+        Long tableGroupId = 단체지정_생성(new TableGroup(LocalDateTime.now()));
+        Long tableId1 = 주문테이블_생성(new OrderTable(tableGroupId, 5, true));
+        Long tableId2 = 주문테이블_생성(new OrderTable(tableGroupId, 5, true));
 
-        tableGroupService.ungroup(tableGroup.getId());
+        tableGroupService.ungroup(tableGroupId);
 
         List<OrderTable> tables = orderTableDao.findAllByIdIn(List.of(tableId1, tableId2));
 
@@ -40,13 +40,13 @@ class TableGroupServiceTest extends ApplicationTest {
     @ParameterizedTest
     @ValueSource(strings = {"COOKING", "MEAL"})
     void ungroupNotCompletion(String status) {
-        TableGroup tableGroup = 단체지정_생성(new TableGroup(LocalDateTime.now()));
-        Long tableId1 = 주문테이블_생성(new OrderTable(tableGroup.getId(), 5, true));
-        Long tableId2 = 주문테이블_생성(new OrderTable(tableGroup.getId(), 5, true));
+        Long tableGroupId = 단체지정_생성(new TableGroup(LocalDateTime.now()));
+        Long tableId1 = 주문테이블_생성(new OrderTable(tableGroupId, 5, true));
+        Long tableId2 = 주문테이블_생성(new OrderTable(tableGroupId, 5, true));
 
         주문_생성(new Order(tableId1, OrderStatus.find(status), LocalDateTime.now()));
 
-        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
+        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
                 .isInstanceOf(InvalidOrderException.class)
                 .hasMessage("주문이 완료 상태가 아닙니다.");
     }

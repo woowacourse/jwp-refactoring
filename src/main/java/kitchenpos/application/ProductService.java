@@ -20,7 +20,7 @@ public class ProductService {
     }
 
     @Transactional
-    public Product create(ProductRequest productRequest) {
+    public Long create(ProductRequest productRequest) {
         return productDao.save(productRequest.toEntity());
     }
 

@@ -6,7 +6,7 @@ import kitchenpos.domain.MenuProduct;
 
 public interface MenuProductDao {
 
-    MenuProduct save(MenuProduct entity);
+    Long save(MenuProduct entity);
 
     Optional<MenuProduct> findById(Long id);
 

@@ -8,7 +8,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import io.restassured.RestAssured;
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Product;
+import kitchenpos.application.dto.ProductRequest;
 import kitchenpos.ui.dto.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,19 +17,17 @@ import org.springframework.http.HttpStatus;
 public class ProductAcceptanceTest extends AcceptanceTest {
 
     public static Long createProduct(String name, int price) {
-        Product product = givenProduct(name, price);
-        return RestAssured.given().log().all()
+        ProductRequest product = new ProductRequest(name, BigDecimal.valueOf(price));
+        String location = RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .body(product)
                 .when().log().all()
                 .post("/api/products")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
-                .extract().jsonPath().getLong("id");
-    }
+                .extract().header("Location");
 
-    public static Product givenProduct(String name, int price) {
-        return new Product(name, BigDecimal.valueOf(price));
+        return Long.parseLong(location.split("/api/products/")[1]);
     }
 
     @DisplayName("상품 목록을 조회한다.")

@@ -38,12 +38,12 @@ public class MenuService {
     @Transactional
     public Long create(MenuRequest menuRequest) {
         validateMenuGroup(menuRequest.getMenuGroupId());
-
         List<MenuProduct> menuProducts = mapToMenuProducts(menuRequest.getMenuProducts());
-
         Menu menu = Menu.create(menuRequest.getName(), menuRequest.getPrice(), menuRequest.getMenuGroupId(),
                 menuProducts);
-        return menuDao.save(menu);
+        Long menuId = menuDao.save(menu);
+        saveMenuProducts(menuId, menuProducts);
+        return menuId;
     }
 
     private void validateMenuGroup(Long menuGroupId) {
@@ -52,12 +52,11 @@ public class MenuService {
         }
     }
 
-    private List<MenuProduct> saveMenuProducts(Long menuId, List<MenuProduct> menuProducts) {
-        return menuProducts.stream()
-                .map(menuProduct -> new MenuProduct(menuId, menuProduct.getProductId(), menuProduct.getQuantity(),
-                        menuProduct.getPrice()))
-                .map(menuProductDao::save)
-                .collect(Collectors.toList());
+    private void saveMenuProducts(Long menuId, List<MenuProduct> menuProducts) {
+        for (MenuProduct menuProduct : menuProducts) {
+            menuProductDao.save(new MenuProduct(menuId, menuProduct.getProductId(), menuProduct.getQuantity(),
+                    menuProduct.getPrice()));
+        }
     }
 
     private List<MenuProduct> mapToMenuProducts(List<MenuProductRequest> menuProductRequests) {
