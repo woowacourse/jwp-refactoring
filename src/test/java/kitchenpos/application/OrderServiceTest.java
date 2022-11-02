@@ -14,6 +14,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.application.order.OrderService;
+import kitchenpos.domain.Name;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
@@ -34,7 +36,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.jdbc.Sql;
 
 @DataJpaTest
@@ -60,7 +61,7 @@ class OrderServiceTest {
         this.menuRepository = menuRepository;
         this.orderTableRepository = orderTableRepository;
         this.orderRepository = orderRepository;
-        this.orderService = new OrderService(orderTableRepository, orderRepository);
+        this.orderService = new OrderService(orderTableRepository, orderRepository, menuRepository);
     }
 
     private Menu menu;
@@ -114,7 +115,9 @@ class OrderServiceTest {
 
         // when & then
         assertThatThrownBy(() -> orderService.create(request))
-                .isInstanceOf(DataIntegrityViolationException.class);
+                .isInstanceOf(NotFoundException.class)
+                .extracting("errorCode")
+                .isEqualTo(CustomError.MENU_NOT_FOUND_ERROR);
     }
 
     @Test
@@ -148,9 +151,9 @@ class OrderServiceTest {
     void 주문_목록을_조회한다() {
         // given
         orderRepository.save(new Order(null, table.getId(), OrderStatus.COOKING, LocalDateTime.now(),
-                List.of(new OrderLineItem(menu.getId(), 한개))));
+                List.of(new OrderLineItem(menu.getId(), 한개, new Name(menu.getName()), new Price(menu.getPrice())))));
         orderRepository.save(new Order(null, table.getId(), OrderStatus.COOKING, LocalDateTime.now(),
-                List.of(new OrderLineItem(menu.getId(), 한개))));
+                List.of(new OrderLineItem(menu.getId(), 한개, new Name(menu.getName()), new Price(menu.getPrice())))));
 
         // when
         final var foundOrders = orderService.list();
@@ -162,8 +165,10 @@ class OrderServiceTest {
     @Test
     void 주문_상태를_식사로_변경한다() {
         // given
-        final var orderId = orderRepository.save(new Order(null, table.getId(), OrderStatus.COOKING, LocalDateTime.now(),
-                List.of(new OrderLineItem(menu.getId(), 한개)))).getId();
+        final var orderId = orderRepository.save(
+                new Order(null, table.getId(), OrderStatus.COOKING, LocalDateTime.now(),
+                        List.of(new OrderLineItem(menu.getId(), 한개, new Name(menu.getName()),
+                                new Price(menu.getPrice()))))).getId();
         final var request = new OrderChangeStatusRequest(OrderStatus.MEAL.name());
 
         // when
@@ -179,8 +184,10 @@ class OrderServiceTest {
     @Test
     void 주문_상태를_계산완료로_변경한다() {
         // given
-        final var orderId = orderRepository.save(new Order(null, table.getId(), OrderStatus.COOKING, LocalDateTime.now(),
-                List.of(new OrderLineItem(menu.getId(), 한개)))).getId();
+        final var orderId = orderRepository.save(
+                new Order(null, table.getId(), OrderStatus.COOKING, LocalDateTime.now(),
+                        List.of(new OrderLineItem(menu.getId(), 한개, new Name(menu.getName()),
+                                new Price(menu.getPrice()))))).getId();
         final var request = new OrderChangeStatusRequest(OrderStatus.COMPLETION.name());
 
         // when
@@ -208,8 +215,10 @@ class OrderServiceTest {
     @Test
     void 주문_상태가_이미_계산완료인_경우_예외를_던진다() {
         // given
-        final var orderId = orderRepository.save(new Order(null, table.getId(), OrderStatus.COMPLETION, LocalDateTime.now(),
-                List.of(new OrderLineItem(menu.getId(), 한개)))).getId();
+        final var orderId = orderRepository.save(
+                new Order(null, table.getId(), OrderStatus.COMPLETION, LocalDateTime.now(),
+                        List.of(new OrderLineItem(menu.getId(), 한개, new Name(menu.getName()),
+                                new Price(menu.getPrice()))))).getId();
         final var request = new OrderChangeStatusRequest(OrderStatus.MEAL.name());
 
         // when & then

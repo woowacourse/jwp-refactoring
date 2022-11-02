@@ -8,6 +8,7 @@ public enum CustomError {
 
     PRODUCT_NOT_FOUND_ERROR("존재하지 않는 상품입니다."),
 
+    MENU_NOT_FOUND_ERROR("존재하지 않는 메뉴입니다."),
     MENU_PRICE_ERROR("메뉴의 가격은 메뉴 상품들의 가격의 합보다 같거나 작아야 합니다."),
 
     MENU_GROUP_NOT_FOUND_ERROR("존재하지 않는 메뉴 그룹입니다."),
