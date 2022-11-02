@@ -1,4 +1,4 @@
-package kitchenpos.ui;
+package kitchenpos.table.ui;
 
 import java.net.URI;
 import java.util.List;
@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import kitchenpos.application.TableService;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.request.table.ChangeOrderTableEmptyRequest;
-import kitchenpos.dto.request.table.ChangeOrderTableNumberOfGuestRequest;
-import kitchenpos.dto.request.table.CreateOrderTableRequest;
-import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.table.application.TableService;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.dto.request.ChangeOrderTableEmptyRequest;
+import kitchenpos.table.dto.request.ChangeOrderTableNumberOfGuestRequest;
+import kitchenpos.table.dto.request.CreateOrderTableRequest;
+import kitchenpos.table.dto.response.OrderTableResponse;
 
 @RestController
 public class TableRestController {

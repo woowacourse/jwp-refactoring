@@ -1,34 +1,28 @@
-package kitchenpos.application;
+package kitchenpos.table.application;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.request.table.ChangeOrderTableEmptyRequest;
-import kitchenpos.dto.request.table.ChangeOrderTableNumberOfGuestRequest;
-import kitchenpos.dto.request.table.CreateOrderTableRequest;
-import kitchenpos.repository.OrderRepository;
+import kitchenpos.event.VerifiedAbleToChangeEmptyEvent;
 import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.dto.request.ChangeOrderTableEmptyRequest;
+import kitchenpos.table.dto.request.ChangeOrderTableNumberOfGuestRequest;
+import kitchenpos.table.dto.request.CreateOrderTableRequest;
 
 @Service
 @Transactional(readOnly = true)
 public class TableService {
 
-    private static final List<String> ORDER_STATUS_FOR_CANT_CHANGE_EMPTY = new ArrayList<String>() {{
-        add(OrderStatus.COOKING.name());
-        add(OrderStatus.MEAL.name());
-    }};
-
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final ApplicationEventPublisher publisher;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(OrderTableRepository orderTableRepository, ApplicationEventPublisher publisher) {
         this.orderTableRepository = orderTableRepository;
+        this.publisher = publisher;
     }
 
     @Transactional
@@ -45,7 +39,7 @@ public class TableService {
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final ChangeOrderTableEmptyRequest request) {
         final OrderTable orderTable = findOrderTableById(orderTableId);
-        validateAbleToChangeEmpty(orderTable);
+        publisher.publishEvent(new VerifiedAbleToChangeEmptyEvent(orderTable));
 
         orderTable.changeEmpty(request.isEmpty());
         return orderTable;
@@ -65,12 +59,6 @@ public class TableService {
     private OrderTable findOrderTableById(final Long orderTableId) {
         return orderTableRepository.findById(orderTableId)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않은 테이블입니다."));
-    }
-
-    private void validateAbleToChangeEmpty(OrderTable orderTable) {
-        if (orderRepository.existsByOrderTableAndOrderStatusIn(orderTable, ORDER_STATUS_FOR_CANT_CHANGE_EMPTY)) {
-            throw new IllegalArgumentException("변경할 수 있는 상태가 아닙니다.");
-        }
     }
 
 }

@@ -13,11 +13,11 @@ import kitchenpos.product.domain.Product;
 import kitchenpos.repository.ProductRepository;
 
 @Component
-public class MenuEventHandler {
+public class MenuProductEventHandler {
 
     private final ProductRepository productRepository;
 
-    public MenuEventHandler(ProductRepository productRepository) {
+    public MenuProductEventHandler(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 

@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.repository.Repository;
 
-import kitchenpos.domain.OrderTable;
+import kitchenpos.table.domain.OrderTable;
 
 public interface OrderTableRepository extends Repository<OrderTable, Long> {
 

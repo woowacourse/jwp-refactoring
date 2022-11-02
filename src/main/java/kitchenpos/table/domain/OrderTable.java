@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.table.domain;
 
 import java.util.Objects;
 
@@ -7,8 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 import org.hibernate.Hibernate;
 
@@ -19,9 +17,8 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
+    @Column(name = "table_group_id")
+    private Long tableGroupId;
 
     @Column(nullable = false)
     private int numberOfGuests;
@@ -37,19 +34,19 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public void group(TableGroup tableGroup) {
+    public void group(Long tableGroupId) {
         validateGroup();
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
         empty = false;
     }
 
     public void ungroup() {
-        tableGroup = null;
+        tableGroupId = null;
         empty = false;
     }
 
     public void changeEmpty(boolean empty) {
-        validateEmptyChangeable();
+        validateChangeEmpty();
         this.empty = empty;
     }
 
@@ -62,8 +59,8 @@ public class OrderTable {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {
@@ -74,8 +71,8 @@ public class OrderTable {
         return empty;
     }
 
-    private void validateEmptyChangeable() {
-        if (tableGroup != null) {
+    private void validateChangeEmpty() {
+        if (tableGroupId != null) {
             throw new IllegalArgumentException("테이블 그룹에 묶여있어 상태를 변경할 수 없습니다.");
         }
     }
@@ -91,7 +88,7 @@ public class OrderTable {
     }
 
     private void validateGroup() {
-        if (tableGroup != null) {
+        if (tableGroupId != null) {
             throw new IllegalArgumentException("이미 다른 그룹에 존재하는 테이블입니다.");
         }
 

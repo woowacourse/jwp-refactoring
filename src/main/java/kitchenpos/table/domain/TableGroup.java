@@ -1,15 +1,17 @@
-package kitchenpos.domain;
+package kitchenpos.table.domain;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 import org.hibernate.Hibernate;
@@ -25,21 +27,17 @@ public class TableGroup {
     @Column
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "tableGroup")
-    private List<OrderTable> orderTables = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "table_group_id")
+    private List<OrderTable> values = new ArrayList<>();
 
     protected TableGroup() {
     }
 
     public TableGroup(List<OrderTable> orderTables) {
         validateOrderTables(orderTables);
-
+        values.addAll(orderTables);
         createdDate = LocalDateTime.now();
-
-        for (OrderTable orderTable : orderTables) {
-            orderTable.group(this);
-            this.orderTables.add(orderTable);
-        }
     }
 
     public Long getId() {
@@ -48,10 +46,6 @@ public class TableGroup {
 
     public LocalDateTime getCreatedDate() {
         return createdDate;
-    }
-
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
     }
 
     private void validateOrderTables(List<OrderTable> orderTables) {
