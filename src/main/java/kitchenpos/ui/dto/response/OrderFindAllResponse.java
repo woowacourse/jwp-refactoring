@@ -27,7 +27,7 @@ public class OrderFindAllResponse {
     }
 
     public static OrderFindAllResponse of(final Order order, final List<OrderLineItem> orderLineItems) {
-        return new OrderFindAllResponse(order.getId(), order.getOrderTableId(), order.getOrderStatus(),
+        return new OrderFindAllResponse(order.getId(), order.getOrderTableId(), order.getOrderStatus().name(),
                 order.getOrderedTime(), OrderLineItemFindAllResponse.from(orderLineItems));
     }
 

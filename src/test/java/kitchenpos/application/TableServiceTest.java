@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.repository.MenuRepository;
@@ -118,7 +119,7 @@ class TableServiceTest {
         // given
         Menu menu = menuRepository.save(createMenu());
         OrderTable orderTable = orderTableRepository.save(createOrderTable(4, true));
-        orderRepository.save(createOrder(orderTable.getId(), status, LocalDateTime.now()));
+        orderRepository.save(createOrder(orderTable.getId(), OrderStatus.valueOf(status), LocalDateTime.now()));
 
         // when, then
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), createOrderTable(true)))

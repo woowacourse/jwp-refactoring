@@ -52,7 +52,7 @@ public class OrderService {
         final Long orderTableId = request.getOrderTableId();
         validateOrderTable(orderTableId);
 
-        final Order order = orderRepository.save(new Order(orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now()));
+        final Order order = orderRepository.save(new Order(orderTableId, OrderStatus.COOKING, LocalDateTime.now()));
         List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (final OrderLineItemDto orderLineItemDto : orderItemDtos) {
             final OrderLineItem orderLineItem = orderLineItemRepository.save(
@@ -96,7 +96,7 @@ public class OrderService {
                 .orElseThrow(() -> new NotFoundException(NOT_FOUND_ORDER_ERROR_MESSAGE));
 
         List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(orderId);
-        savedOrder.changeOrderStatus(request.getOrderStatus());
+        savedOrder.changeOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
 
         return savedOrder;
     }

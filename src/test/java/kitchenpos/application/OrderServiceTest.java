@@ -126,7 +126,7 @@ class OrderServiceTest {
         Menu menu = menuRepository.save(createMenu());
         OrderTable orderTable = orderTableRepository.save(createOrderTable());
         Order order = orderRepository.save(
-                createOrder(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now()));
+                createOrder(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now()));
 
         // when
         List<OrderFindAllResponse> responses = orderService.list();
@@ -148,8 +148,8 @@ class OrderServiceTest {
         OrderCreateResponse response = orderService.create(request);
 
         // when
-        String changedOrderStatus = OrderStatus.MEAL.name();
-        orderService.changeOrderStatus(response.getId(), new OrderStatusChangeRequest(changedOrderStatus));
+        OrderStatus changedOrderStatus = OrderStatus.MEAL;
+        orderService.changeOrderStatus(response.getId(), new OrderStatusChangeRequest(changedOrderStatus.name()));
 
         // then
         Order dbOrder = orderRepository.findById(response.getId())
@@ -163,12 +163,12 @@ class OrderServiceTest {
         // given
         Menu menu = menuRepository.save(createMenu());
         OrderTable orderTable = orderTableRepository.save(createOrderTable());
-        Order order = createOrder(orderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now());
+        Order order = createOrder(orderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now());
         Order savedOrder = orderRepository.save(order);
 
         // when, then
         assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(),
-                        new OrderStatusChangeRequest(OrderStatus.COOKING.name())))
+                new OrderStatusChangeRequest(OrderStatus.COOKING.name())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

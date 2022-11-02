@@ -1,9 +1,10 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,8 +21,8 @@ public class Order {
     @Column(nullable = false)
     private Long orderTableId;
 
-    @Column(nullable = false)
-    private String orderStatus;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
 
     @Column(nullable = false)
     private LocalDateTime orderedTime;
@@ -29,7 +30,7 @@ public class Order {
     public Order() {
     }
 
-    public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
+    public Order(final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime) {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
@@ -53,7 +54,7 @@ public class Order {
         return orderTableId;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
@@ -61,17 +62,17 @@ public class Order {
         return orderedTime;
     }
 
-    public void changeOrderStatus(final String orderStatus) {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
+    public void changeOrderStatus(final OrderStatus orderStatus) {
+        if (this.orderStatus.isCompleted()) {
             throw new IllegalArgumentException(CHANGE_STATUS_ERROR_MESSAGE);
         }
-        this.orderStatus = OrderStatus.valueOf(orderStatus).name();
+        this.orderStatus = orderStatus;
     }
 
     public static class Builder {
         private Long id;
         private Long orderTableId;
-        private String orderStatus;
+        private OrderStatus orderStatus;
         private LocalDateTime orderedTime;
 
         public Builder id(final Long id) {
@@ -84,7 +85,7 @@ public class Order {
             return this;
         }
 
-        public Builder orderStatus(final String orderStatus) {
+        public Builder orderStatus(final OrderStatus orderStatus) {
             this.orderStatus = orderStatus;
             return this;
         }

@@ -38,7 +38,7 @@ class OrderRestControllerTest extends ControllerTest {
         OrderCreateRequest request = new OrderCreateRequest(1L, Arrays.asList(new OrderLineItemDto(1L, 2)));
         given(orderService.create(any())).willReturn(OrderCreateResponse.of(Order.builder()
                 .id(1L)
-                .orderStatus(OrderStatus.COOKING.name())
+                .orderStatus(OrderStatus.COOKING)
                 .orderTableId(1L)
                 .orderedTime(LocalDateTime.now())
                 .build(), new ArrayList<>()));
@@ -61,7 +61,7 @@ class OrderRestControllerTest extends ControllerTest {
         OrderCreateRequest request = new OrderCreateRequest(1L, new ArrayList<>());
         given(orderService.create(any())).willReturn(OrderCreateResponse.of(Order.builder()
                 .id(1L)
-                .orderStatus(OrderStatus.COOKING.name())
+                .orderStatus(OrderStatus.COOKING)
                 .orderTableId(1L)
                 .orderedTime(LocalDateTime.now())
                 .build(), new ArrayList<>()));
