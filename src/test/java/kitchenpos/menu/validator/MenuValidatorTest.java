@@ -1,5 +1,6 @@
 package kitchenpos.menu.validator;
 
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -68,5 +69,18 @@ class MenuValidatorTest {
 
         assertThatThrownBy(() -> menuValidator.validateCreation(price, menuGroupId, List.of(menuProduct)))
                 .isInstanceOf(ProductNotFoundException.class);
+    }
+
+    @DisplayName("존재하는 Product로 존재하는 MenuProduct에 Product 수량에 따른 가격 합보다 작은 가격으로 Menu를 생성할 수 있다.")
+    @Test
+    void validate_Pass() {
+        Long menuGroupId = 1L;
+        when(menuGroupRepository.existsById(any()))
+                .thenReturn(true);
+        when(productRepository.findById(1L))
+                .thenReturn(Optional.of(product1));
+
+        assertThatCode(() -> menuValidator.validateCreation(price, menuGroupId, List.of(menuProduct)))
+                .doesNotThrowAnyException();
     }
 }
