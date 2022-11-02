@@ -152,7 +152,7 @@ class OrderServiceTest extends ServiceTestEnvironment {
         final MenuGroup menuGroup1 = MenuGroupFixture.createDefaultWithoutId();
         final MenuGroup savedMenuGroup1 = serviceDependencies.save(menuGroup1);
 
-        final Menu menu = MenuFixture.createWithPrice(savedMenuGroup1.getId(), 2000L, savedProduct1, savedProduct2);
+        final Menu menu = MenuFixture.createWithPrice(savedMenuGroup1.getId(), 2000L, savedProduct1.getId(), savedProduct2.getId());
         return serviceDependencies.save(menu);
     }
 }

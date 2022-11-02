@@ -5,10 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.support.application.ServiceTestEnvironment;
 import kitchenpos.dto.request.ProductCreateRequest;
 import kitchenpos.product.domain.Price;
 import kitchenpos.product.domain.Product;
+import kitchenpos.support.application.ServiceTestEnvironment;
 import kitchenpos.support.fixture.ProductFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

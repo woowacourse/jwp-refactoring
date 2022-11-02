@@ -9,11 +9,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import kitchenpos.exception.InvalidMenuPriceException;
-import kitchenpos.exception.MenuProductAmountException;
-import kitchenpos.exception.MenuProductRemoveFailException;
 import kitchenpos.product.domain.Price;
 
 @Entity
@@ -27,16 +25,15 @@ public class Menu {
     @Embedded
     private Price price;
     private Long menuGroupId;
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "menu_id", nullable = false)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected Menu() {
     }
 
     private Menu(final Long id, final String name, final Price price, final Long menuGroupId,
-                final List<MenuProduct> menuProducts) {
-        validatePrice(menuProducts, price);
-        menuProducts.forEach(menuProduct -> menuProduct.setMenu(this));
+                 final List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -46,36 +43,6 @@ public class Menu {
 
     public Menu(final String name, final Price price, final Long menuGroupId, final List<MenuProduct> menuProducts) {
         this(null, name, price, menuGroupId, menuProducts);
-    }
-
-    private static void validatePrice(final List<MenuProduct> menuProducts, final Price menuPrice) {
-        if (menuPriceIsExpansiveThanMenuProducts(menuProducts, menuPrice)) {
-            throw new InvalidMenuPriceException();
-        }
-    }
-
-    private static boolean menuPriceIsExpansiveThanMenuProducts(final List<MenuProduct> menuProducts,
-                                                                final Price menuPrice) {
-        final Price allAmount  = sumAllAmount(menuProducts);
-        return menuPrice.isExpansiveThan(allAmount) ;
-    }
-
-    private static Price sumAllAmount(final List<MenuProduct> menuProducts) {
-        return menuProducts.stream()
-                .map(MenuProduct::calculateAmount)
-                .reduce(Price::add)
-                .orElseThrow(MenuProductAmountException::new);
-    }
-
-    public void addMenuProduct(final MenuProduct menuProduct) {
-        menuProducts.add(menuProduct);
-    }
-
-    public void removeMenuProduct(final MenuProduct menuProduct) {
-        final boolean removeSuccess = menuProducts.remove(menuProduct);
-        if (!removeSuccess) {
-            throw new MenuProductRemoveFailException();
-        }
     }
 
     public Long getId() {

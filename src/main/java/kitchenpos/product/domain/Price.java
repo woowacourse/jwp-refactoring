@@ -63,7 +63,7 @@ public class Price {
             return false;
         }
         final Price price = (Price) o;
-        return Objects.equals(value, price.value);
+        return price.value.compareTo(value) == 0;
     }
 
     @Override

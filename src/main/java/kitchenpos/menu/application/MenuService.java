@@ -4,16 +4,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuProductCreateRequest;
+import kitchenpos.exception.MenuGroupNotFoundException;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.product.domain.Price;
-import kitchenpos.product.domain.Product;
-import kitchenpos.product.domain.ProductRepository;
-import kitchenpos.exception.MenuGroupNotFoundException;
-import kitchenpos.exception.ProductNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,23 +18,24 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenuService {
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
-    private final ProductRepository productRepository;
+    private final MenuValidator menuValidator;
 
     public MenuService(
             final MenuRepository menuRepository,
             final MenuGroupRepository menuGroupRepository,
-            final ProductRepository productRepository) {
+            final MenuValidator menuValidator) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
-        this.productRepository = productRepository;
+        this.menuValidator = menuValidator;
     }
 
     @Transactional
     public Menu create(final MenuCreateRequest menuCreateRequest) {
-        final MenuGroup menuGroup = getMenuGroup(menuCreateRequest);
         final List<MenuProduct> menuProducts = mapAllToMenuProducts(menuCreateRequest);
+        final MenuGroup menuGroup = getMenuGroup(menuCreateRequest);
         final Price price = new Price(menuCreateRequest.getPrice());
         final Menu menu = new Menu(menuCreateRequest.getName(), price, menuGroup.getId(), menuProducts);
+        menuValidator.validate(menu);
         return menuRepository.save(menu);
     }
 
@@ -53,15 +51,8 @@ public class MenuService {
     }
 
     private MenuProduct mapToMenuProduct(final MenuProductCreateRequest request) {
-        final Product product = getProduct(request);
-        return new MenuProduct( product, request.getQuantity());
+        return new MenuProduct(request.getProductId(), request.getQuantity());
     }
-
-    private Product getProduct(final MenuProductCreateRequest request) {
-        return productRepository.findById(request.getProductId())
-                .orElseThrow(ProductNotFoundException::new);
-    }
-
 
     public List<Menu> list() {
         return menuRepository.findAll();

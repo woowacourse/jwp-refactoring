@@ -43,7 +43,7 @@ class MenuServiceTest extends ServiceTestEnvironment {
                  new MenuProductCreateRequest(2L, 1L));
         MenuCreateRequest menuCreateRequest = new MenuCreateRequest("name", BigDecimal.valueOf(2000L), savedMenuGroup.getId(),
                 menuProducts);
-        final Menu menu = MenuFixture.createWithPrice(savedMenuGroup.getId(), 2000L, savedProduct1, savedProduct2);
+        final Menu menu = MenuFixture.createWithPrice(savedMenuGroup.getId(), 2000L, savedProduct1.getId(), savedProduct2.getId());
 
         // when
         final Menu actual = menuService.create(menuCreateRequest);
@@ -108,7 +108,7 @@ class MenuServiceTest extends ServiceTestEnvironment {
         final MenuGroup menuGroup = MenuGroupFixture.createDefaultWithoutId();
         final MenuGroup savedMenuGroup = serviceDependencies.save(menuGroup);
 
-        final Menu menu = MenuFixture.createWithPrice(savedMenuGroup.getId(), 2000L, savedProduct1, savedProduct2);
+        final Menu menu = MenuFixture.createWithPrice(savedMenuGroup.getId(), 2000L, savedProduct1.getId(), savedProduct2.getId());
          serviceDependencies.save(menu);
 
         // when
