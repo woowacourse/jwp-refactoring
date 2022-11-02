@@ -55,7 +55,6 @@ public class TableGroup {
         return orderTables;
     }
 
-
     public static class Builder {
         private Long id;
         private LocalDateTime createdDate;

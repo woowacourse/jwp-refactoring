@@ -1,6 +1,5 @@
 package kitchenpos.ui;
 
-import static kitchenpos.fixture.domain.TableGroupFixture.createTableGroup;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -8,12 +7,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.ui.dto.request.TableCreateDto;
 import kitchenpos.ui.dto.request.TableGroupCreateRequest;
+import kitchenpos.ui.dto.response.TableGroupCreateResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -33,7 +34,8 @@ class TableGroupRestControllerTest extends ControllerTest {
         // given
         TableGroupCreateRequest request = new TableGroupCreateRequest(
                 Arrays.asList(new TableCreateDto(1L), new TableCreateDto(2L)));
-        given(tableGroupService.create(any())).willReturn(createTableGroup(1L));
+        given(tableGroupService.create(any())).willReturn(
+                new TableGroupCreateResponse(1L, LocalDateTime.now(), new ArrayList<>()));
 
         // when
         ResultActions perform = mockMvc.perform(post("/api/table-groups")
@@ -52,7 +54,8 @@ class TableGroupRestControllerTest extends ControllerTest {
         // given
         TableGroupCreateRequest request = new TableGroupCreateRequest(
                 Collections.singletonList(new TableCreateDto(1L)));
-        given(tableGroupService.create(any())).willReturn(createTableGroup(1L));
+        given(tableGroupService.create(any())).willReturn(
+                new TableGroupCreateResponse(1L, LocalDateTime.now(), new ArrayList<>()));
 
         // when
         ResultActions perform = mockMvc.perform(post("/api/table-groups")
@@ -70,7 +73,8 @@ class TableGroupRestControllerTest extends ControllerTest {
     void create_fail_if_emptyOrderTable() throws Exception {
         // given
         TableGroupCreateRequest request = new TableGroupCreateRequest(new ArrayList<>());
-        given(tableGroupService.create(any())).willReturn(createTableGroup(1L));
+        given(tableGroupService.create(any())).willReturn(
+                new TableGroupCreateResponse(1L, LocalDateTime.now(), new ArrayList<>()));
 
         // when
         ResultActions perform = mockMvc.perform(post("/api/table-groups")

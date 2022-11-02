@@ -12,6 +12,7 @@ import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.ui.dto.request.TableCreateDto;
 import kitchenpos.ui.dto.request.TableGroupCreateRequest;
+import kitchenpos.ui.dto.response.TableGroupCreateResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +33,7 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroupCreateRequest request) {
+    public TableGroupCreateResponse create(final TableGroupCreateRequest request) {
         final List<OrderTable> savedOrderTables = findOrderTable(request.getOrderTables());
 
         validateCanGroup(savedOrderTables);
@@ -44,7 +45,7 @@ public class TableGroupService {
             savedOrderTable.group(tableGroupId);
         }
 
-        return savedTableGroup;
+        return TableGroupCreateResponse.from(savedTableGroup);
     }
 
     private void validateCanGroup(final List<OrderTable> savedOrderTables) {

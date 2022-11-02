@@ -16,6 +16,7 @@ import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.ui.dto.request.TableCreateDto;
 import kitchenpos.ui.dto.request.TableGroupCreateRequest;
+import kitchenpos.ui.dto.response.TableGroupCreateResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,12 +47,12 @@ class TableGroupServiceTest {
                 Arrays.asList(new TableCreateDto(orderTable1.getId()), new TableCreateDto(orderTable2.getId())));
 
         // when
-        TableGroup savedTableGroup = tableGroupService.create(request);
+        TableGroupCreateResponse response = tableGroupService.create(request);
 
         // then
-        TableGroup dbTableGroup = tableGroupRepository.findById(savedTableGroup.getId())
+        TableGroup dbTableGroup = tableGroupRepository.findById(response.getId())
                 .orElseThrow(NoSuchElementException::new);
-        assertThat(dbTableGroup.getId()).isEqualTo(savedTableGroup.getId());
+        assertThat(dbTableGroup.getId()).isEqualTo(response.getId());
     }
 
     @DisplayName("단체 지정을 생성할 때 개별 주문테이블이 존재하지 않으면 예외를 반환한다.")
