@@ -2,9 +2,9 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuProductRequest;
@@ -17,25 +17,26 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MenuService {
-    private final MenuDao menuDao;
-    private final MenuGroupDao menuGroupDao;
-    private final ProductDao productDao;
+    private final MenuRepository menuRepository;
+    private final MenuGroupRepository menuGroupRepository;
+    private final ProductRepository productRepository;
 
     public MenuService(
-            final MenuDao menuDao,
-            final MenuGroupDao menuGroupDao,
-            final ProductDao productDao
+
+            final MenuRepository menuRepository,
+            final MenuGroupRepository menuGroupRepository,
+            final ProductRepository productRepository
     ) {
-        this.menuDao = menuDao;
-        this.menuGroupDao = menuGroupDao;
-        this.productDao = productDao;
+        this.menuRepository = menuRepository;
+        this.menuGroupRepository = menuGroupRepository;
+        this.productRepository = productRepository;
     }
 
     @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
         final Menu menu = convertToMenu(menuRequest);
         validateMenuGroupExist(menuRequest.getMenuGroupId());
-        final Menu savedMenu = menuDao.save(menu);
+        final Menu savedMenu = menuRepository.save(menu);
         return MenuResponse.from(savedMenu);
     }
 
@@ -49,18 +50,18 @@ public class MenuService {
         final List<Long> productIds = menuProductRequests.stream()
                 .map(MenuProductRequest::getProductId)
                 .collect(Collectors.toList());
-        return productDao.findByIds(productIds);
+        return productRepository.findByIds(productIds);
     }
 
     private void validateMenuGroupExist(final Long menuGroupId) {
-        if (!menuGroupDao.existsById(menuGroupId)) {
+        if (!menuGroupRepository.existsById(menuGroupId)) {
             throw new MenuGroupNotExistException();
         }
     }
 
     @Transactional(readOnly = true)
     public MenusResponse list() {
-        final List<Menu> menus = menuDao.findAll();
+        final List<Menu> menus = menuRepository.findAll();
 
         return MenusResponse.from(menus);
     }

@@ -8,16 +8,14 @@ import static kitchenpos.support.ProductFixture.PRODUCT_PRICE_10000;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderMenuDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.dao.jpa.OrderMenuProductRepository;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.OrderMenuProductRepository;
+import kitchenpos.dao.OrderMenuRepository;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.ProductRepository;
+import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
@@ -38,36 +36,32 @@ import org.springframework.test.context.jdbc.Sql;
 public class ServiceFixture {
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
     @Autowired
-    private MenuProductDao menuProductDao;
+    private ProductRepository productRepository;
     @Autowired
-    private ProductDao productDao;
+    private TableGroupRepository tableGroupRepository;
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private OrderTableRepository orderTableRepository;
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderRepository orderRepository;
     @Autowired
-    private OrderDao orderDao;
-    @Autowired
-    private OrderLineItemDao orderLineItemDao;
-    @Autowired
-    private OrderMenuDao orderMenuDao;
+    private OrderMenuRepository orderMenuRepository;
     @Autowired
     private OrderMenuProductRepository orderMenuProductRepository;
 
     protected Product 제품을_저장한다(final Product product) {
-        return productDao.save(product);
+        return productRepository.save(product);
     }
 
     protected MenuGroup 메뉴그룹을_저장한다(final MenuGroup menuGroup) {
-        return menuGroupDao.save(menuGroup);
+        return menuGroupRepository.save(menuGroup);
     }
 
     protected Menu 메뉴를_저장한다(final Menu menu) {
-        return menuDao.save(menu);
+        return menuRepository.save(menu);
     }
 
     protected Menu 상품과_함께_메뉴를_저장한다(final MenuGroup menuGroup) {
@@ -76,15 +70,15 @@ public class ServiceFixture {
     }
 
     protected TableGroup 테이블그룹을_저장한다(final TableGroup tableGroup) {
-        return tableGroupDao.save(tableGroup);
+        return tableGroupRepository.save(tableGroup);
     }
 
     protected OrderTable 주문테이블을_저장한다(final OrderTable orderTable) {
-        return orderTableDao.save(orderTable);
+        return orderTableRepository.save(orderTable);
     }
 
     protected Order 주문을_저장한다(final Order order) {
-        return orderDao.save(order);
+        return orderRepository.save(order);
     }
 
     protected Order 주문항목과_함께_주문을_저장한다(final Long orderTableId, final OrderStatus orderStatus) {
@@ -103,10 +97,6 @@ public class ServiceFixture {
     }
 
     protected OrderMenu 주문메뉴를_저장한다(final OrderMenu orderMenu) {
-        return orderMenuDao.save(orderMenu);
-    }
-
-    protected OrderMenuProduct 주문상품을_저장한다(final OrderMenuProduct orderMenuProduct) {
-        return orderMenuProductRepository.save(orderMenuProduct);
+        return orderMenuRepository.save(orderMenu);
     }
 }

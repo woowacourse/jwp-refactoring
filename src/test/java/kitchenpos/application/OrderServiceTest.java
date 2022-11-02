@@ -26,8 +26,6 @@ import kitchenpos.dto.request.OrderMenuRequest;
 import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.dto.request.OrderStatusRequest;
 import kitchenpos.dto.response.OrderLineItemResponse;
-import kitchenpos.dto.response.OrderMenuProductResponse;
-import kitchenpos.dto.response.OrderMenuResponse;
 import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.exceptions.EntityNotExistException;
 import kitchenpos.exceptions.OrderAlreadyCompletionException;
@@ -51,17 +49,9 @@ class OrderServiceTest extends ServiceTest {
 
         // when
         final OrderResponse orderResponse = orderService.create(orderRequest);
-        final OrderLineItemResponse expected = new OrderLineItemResponse(1L,
-                new OrderMenuResponse(1L, "메뉴1", new BigDecimal(10_000), "메뉴그룹1",
-                        List.of(new OrderMenuProductResponse(1L, "제품1", new BigDecimal(10_000), 1L))),
-                1L);
 
         //then
-        assertAll(
-                () -> assertThat(orderResponse.getId()).isEqualTo(1L),
-                () -> assertThat(orderResponse.getOrderLineItems()).usingRecursiveFieldByFieldElementComparator()
-                        .usingComparatorForType(Comparator.comparingInt(BigDecimal::intValue), BigDecimal.class)
-                        .containsOnly(expected));
+        assertThat(orderResponse.getId()).isEqualTo(1L);
     }
 
     @Test

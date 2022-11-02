@@ -2,11 +2,10 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderMenuDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.OrderMenuRepository;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -26,22 +25,19 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class OrderService {
 
-    private final MenuGroupDao menuGroupDao;
-    private final MenuDao menuDao;
-    private final OrderMenuDao orderMenuDao;
-    private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
+    private final MenuRepository menuRepository;
+    private final OrderMenuRepository orderMenuRepository;
+    private final OrderRepository orderRepository;
+    private final OrderTableRepository orderTableRepository;
 
-    public OrderService(
-            final MenuGroupDao menuGroupDao, final MenuDao menuDao, final OrderMenuDao orderMenuDao,
-            final OrderDao orderDao,
-            final OrderTableDao orderTableDao
+    public OrderService(final MenuRepository menuRepository, final OrderMenuRepository orderMenuRepository,
+                        final OrderRepository orderRepository,
+                        final OrderTableRepository orderTableRepository
     ) {
-        this.menuGroupDao = menuGroupDao;
-        this.menuDao = menuDao;
-        this.orderMenuDao = orderMenuDao;
-        this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
+        this.menuRepository = menuRepository;
+        this.orderMenuRepository = orderMenuRepository;
+        this.orderRepository = orderRepository;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
@@ -51,10 +47,10 @@ public class OrderService {
         validateOrderTableExistAndNotEmpty(orderRequest);
 
         for (OrderLineItem orderLineItem : order.getOrderLineItems()) {
-            orderMenuDao.save(orderLineItem.getOrderMenu());
+            orderMenuRepository.save(orderLineItem.getOrderMenu());
         }
 
-        orderDao.save(order);
+        orderRepository.save(order);
         return OrderResponse.from(order);
     }
 
@@ -63,7 +59,7 @@ public class OrderService {
                 .stream()
                 .map(OrderMenuRequest::getMenuId)
                 .collect(Collectors.toList());
-        final List<Menu> menus = menuDao.findByIdIn(menuIds);
+        final List<Menu> menus = menuRepository.findByIdIn(menuIds);
 
         return orderRequest.toEntity(menus);
     }
@@ -75,7 +71,7 @@ public class OrderService {
     }
 
     private void validateOrderTableExistAndNotEmpty(final OrderRequest orderRequest) {
-        final OrderTable orderTable = orderTableDao.findById(orderRequest.getOrderTableId())
+        final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
                 .orElseThrow(EntityNotExistException::new);
         if (orderTable.isEmpty()) {
             throw new OrderTableEmptyException();
@@ -84,7 +80,7 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public List<OrderResponse> list() {
-        final List<Order> orders = orderDao.findAll();
+        final List<Order> orders = orderRepository.findAll();
 
         return orders.stream()
                 .map(OrderResponse::from)
@@ -93,7 +89,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusRequest orderStatusRequest) {
-        final Order savedOrder = orderDao.findById(orderId)
+        final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(EntityNotExistException::new);
         validateOrderCompletion(savedOrder);
         savedOrder.updateOrderStatus(OrderStatus.valueOf(orderStatusRequest.getOrderStatus()));

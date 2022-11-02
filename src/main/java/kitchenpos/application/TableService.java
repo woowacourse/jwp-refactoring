@@ -6,8 +6,8 @@ import static kitchenpos.domain.OrderStatus.MEAL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.NumberOfGuests;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderTableEmptyRequest;
@@ -23,25 +23,25 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
-    private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
+    private final OrderRepository orderRepository;
+    private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
-        this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
+    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
+        this.orderRepository = orderRepository;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
     public OrderTableResponse create(final OrderTableRequest orderTableRequest) {
         final OrderTable orderTable = orderTableRequest.toEntity();
-        orderTableDao.save(orderTable);
+        orderTableRepository.save(orderTable);
 
         return OrderTableResponse.from(orderTable);
     }
 
     @Transactional(readOnly = true)
     public List<OrderTableResponse> list() {
-        final List<OrderTable> orderTables = orderTableDao.findAll();
+        final List<OrderTable> orderTables = orderTableRepository.findAll();
         return orderTables.stream()
                 .map(OrderTableResponse::from)
                 .collect(Collectors.toList());
@@ -50,7 +50,7 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId,
                                           final OrderTableEmptyRequest orderTableEmptyRequest) {
-        final OrderTable orderTable = orderTableDao.findById(orderTableId)
+        final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(EntityNotExistException::new);
         validateEmptyOrderTable(orderTable);
         validateOrderStatusCompletion(orderTableId);
@@ -66,7 +66,7 @@ public class TableService {
     }
 
     private void validateOrderStatusCompletion(final Long orderTableId) {
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, Arrays.asList(COOKING, MEAL))) {
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, Arrays.asList(COOKING, MEAL))) {
             throw new OrderNotCompletionException();
         }
     }
@@ -83,7 +83,7 @@ public class TableService {
     }
 
     private OrderTable validateEmptyOrderTable(final Long orderTableId) {
-        final OrderTable orderTable = orderTableDao.findById(orderTableId)
+        final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(EntityNotExistException::new);
         if (orderTable.isEmpty()) {
             throw new OrderTableEmptyException();
