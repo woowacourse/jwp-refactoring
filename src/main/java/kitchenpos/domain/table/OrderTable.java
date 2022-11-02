@@ -52,6 +52,7 @@ public class OrderTable {
 
     public void ungroup() {
         this.tableGroupId = null;
+        changeEmpty(false);
     }
 
     public Long getId() {

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class TableGroup {
 
@@ -17,13 +18,15 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
 
-    public TableGroup(final Long id, final LocalDateTime createdDate) {
-        this.id = id;
-        this.createdDate = createdDate;
+    public static TableGroup of(final List<OrderTable> orderTables) {
+        orderTables.forEach(TableGroup::validateTableGrouping);
+        return new TableGroup(null, LocalDateTime.now(), new ArrayList<>(orderTables));
     }
 
-    public static TableGroup of(final List<OrderTable> orderTables) {
-        return new TableGroup(null, LocalDateTime.now(), new ArrayList<>(orderTables));
+    private static void validateTableGrouping(final OrderTable orderTable) {
+        if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroupId())) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {

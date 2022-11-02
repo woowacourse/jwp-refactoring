@@ -1,5 +1,7 @@
 package kitchenpos.infrastructure.repository;
 
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.domain.table.TableGroup;
 import kitchenpos.domain.table.TableGroupRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -24,20 +26,31 @@ public class JdbcTemplateTableGroupRepository implements TableGroupRepository {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
+    private final OrderTableRepository orderTableRepository;
 
-    public JdbcTemplateTableGroupRepository(final DataSource dataSource) {
+    public JdbcTemplateTableGroupRepository(final DataSource dataSource,
+                                            final OrderTableRepository orderTableRepository) {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName(TABLE_NAME)
                 .usingGeneratedKeyColumns(KEY_COLUMN_NAME)
         ;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Override
     public TableGroup save(final TableGroup entity) {
         final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
         final Number key = jdbcInsert.executeAndReturnKey(parameters);
+        updateOrderTableGrouping(entity.getOrderTables(), key.longValue());
         return select(key.longValue());
+    }
+
+    private void updateOrderTableGrouping(final List<OrderTable> orderTables, final Long tableGroupId) {
+        for (final OrderTable savedOrderTable : orderTables) {
+            savedOrderTable.joinTableGroup(tableGroupId);
+            orderTableRepository.save(savedOrderTable);
+        }
     }
 
     @Override
@@ -63,9 +76,12 @@ public class JdbcTemplateTableGroupRepository implements TableGroupRepository {
     }
 
     private TableGroup toEntity(final ResultSet resultSet) throws SQLException {
+        final long tableGroupId = resultSet.getLong(KEY_COLUMN_NAME);
+        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
         return new TableGroup(
-                resultSet.getLong(KEY_COLUMN_NAME),
-                resultSet.getObject("created_date", LocalDateTime.class)
+                tableGroupId,
+                resultSet.getObject("created_date", LocalDateTime.class),
+                orderTables
         );
     }
 }
