@@ -1,4 +1,4 @@
-package kitchenpos.menu.application.dto.response;
+package kitchenpos.menu.application.response;
 
 import kitchenpos.menu.domain.MenuProduct;
 

@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import kitchenpos.menu.application.MenuService;
-import kitchenpos.menu.application.dto.request.MenuRequest;
-import kitchenpos.menu.application.dto.response.MenuResponse;
+import kitchenpos.menu.application.response.MenuResponse;
+import kitchenpos.menu.ui.request.MenuApiRequest;
 
 @RestController
 public class MenuRestController {
@@ -23,8 +23,8 @@ public class MenuRestController {
     }
 
     @PostMapping("/api/menus")
-    public ResponseEntity<MenuResponse> create(@RequestBody MenuRequest request) {
-        MenuResponse created = menuService.create(request);
+    public ResponseEntity<MenuResponse> create(@RequestBody MenuApiRequest request) {
+        MenuResponse created = menuService.create(request.toServiceRequest());
         URI uri = URI.create("/api/menus/" + created.getId());
         return ResponseEntity.created(uri)
                 .body(created);

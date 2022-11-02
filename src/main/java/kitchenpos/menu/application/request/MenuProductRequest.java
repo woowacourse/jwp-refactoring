@@ -1,4 +1,4 @@
-package kitchenpos.menu.application.dto.request;
+package kitchenpos.menu.application.request;
 
 public class MenuProductRequest {
 

@@ -10,10 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.menu.application.dto.request.MenuGroupRequest;
-import kitchenpos.menu.application.dto.response.MenuGroupResponse;
+import kitchenpos.menu.application.request.MenuGroupRequest;
+import kitchenpos.menu.application.response.MenuGroupResponse;
 import kitchenpos.fixture.MenuGroupFixture;
-import kitchenpos.menu.application.MenuGroupService;
 
 @SuppressWarnings("NonAsciiCharacters")
 @Transactional
