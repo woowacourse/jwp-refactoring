@@ -1,10 +1,8 @@
 package kitchenpos.order.application;
 
-import kitchenpos.support.application.ServiceTest;
 import kitchenpos.order.application.dto.request.table.ChangeEmptyRequest;
 import kitchenpos.order.application.dto.request.table.ChangeNumberOfGuestsRequest;
 import kitchenpos.order.application.dto.request.table.OrderTableRequest;
-import kitchenpos.order.application.dto.response.OrderTableResponse;
 import kitchenpos.order.domain.GuestCount;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderTable;
@@ -12,6 +10,7 @@ import kitchenpos.order.domain.TableGroup;
 import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.domain.repository.OrderTableRepository;
 import kitchenpos.order.domain.repository.TableGroupRepository;
+import kitchenpos.support.application.ServiceTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

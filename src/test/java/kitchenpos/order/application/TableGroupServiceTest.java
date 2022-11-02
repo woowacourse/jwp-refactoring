@@ -1,6 +1,5 @@
 package kitchenpos.order.application;
 
-import kitchenpos.support.application.ServiceTest;
 import kitchenpos.order.application.dto.request.tablegroup.OrderTableIdRequest;
 import kitchenpos.order.application.dto.request.tablegroup.TableGroupRequest;
 import kitchenpos.order.domain.Order;
@@ -9,6 +8,7 @@ import kitchenpos.order.domain.TableGroup;
 import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.domain.repository.OrderTableRepository;
 import kitchenpos.order.domain.repository.TableGroupRepository;
+import kitchenpos.support.application.ServiceTest;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

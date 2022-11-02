@@ -1,8 +1,5 @@
 package kitchenpos.order.domain;
 
-import kitchenpos.order.domain.GuestCount;
-import kitchenpos.order.domain.OrderTable;
-import kitchenpos.order.domain.OrderTables;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

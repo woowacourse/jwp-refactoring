@@ -1,20 +1,18 @@
 package kitchenpos.menu.application;
 
-import kitchenpos.support.application.ServiceTest;
 import kitchenpos.menu.application.dto.request.menu.MenuProductRequest;
-import kitchenpos.menu.application.dto.response.MenuResponse;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.Product;
 import kitchenpos.menu.domain.repository.MenuGroupRepository;
 import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.menu.domain.repository.ProductRepository;
+import kitchenpos.support.application.ServiceTest;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static kitchenpos.support.Fixture.*;
 import static org.assertj.core.api.Assertions.assertThat;

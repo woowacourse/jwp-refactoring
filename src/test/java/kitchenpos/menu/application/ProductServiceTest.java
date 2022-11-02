@@ -1,9 +1,9 @@
 package kitchenpos.menu.application;
 
-import kitchenpos.support.application.ServiceTest;
 import kitchenpos.menu.domain.Price;
 import kitchenpos.menu.domain.Product;
 import kitchenpos.menu.domain.repository.ProductRepository;
+import kitchenpos.support.application.ServiceTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
