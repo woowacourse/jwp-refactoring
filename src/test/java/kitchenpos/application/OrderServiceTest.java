@@ -15,6 +15,8 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderLineItemRequest;
+import kitchenpos.dto.response.OrderLineItemResponse;
+import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.exception.NotFoundOrderException;
 import kitchenpos.exception.NotFoundOrderTableException;
 import kitchenpos.exception.OrderCompletionException;
@@ -53,7 +55,9 @@ class OrderServiceTest extends ServiceTest {
                 Collections.singletonList(orderLineItemRequest));
 
         // when
-        final Order saved = orderService.create(orderCreateRequest);
+        final OrderResponse saved = orderService.create(orderCreateRequest);
+        final OrderLineItemResponse actual = OrderLineItemResponse.from(
+                new OrderLineItem(null, null, savedMenu.getId(), 2));
 
         // then
         assertAll(
@@ -61,8 +65,9 @@ class OrderServiceTest extends ServiceTest {
                 () -> assertThat(saved.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
                 () -> assertThat(saved.getOrderedTime()).isBeforeOrEqualTo(LocalDateTime.now()),
                 () -> assertThat(saved.getOrderTableId()).isEqualTo(notEmptyOrderTable.getId()),
-                () -> assertThat(saved.getOrderLineItems()).extracting("order")
-                        .containsOnly(saved)
+                () -> assertThat(saved.getOrderLineItems()).usingRecursiveFieldByFieldElementComparator()
+                        .usingElementComparatorOnFields("menuId", "quantity")
+                        .contains(actual)
         );
     }
 
@@ -150,7 +155,7 @@ class OrderServiceTest extends ServiceTest {
         final Order savedOrder = orderRepository.save(order);
 
         // when
-        final List<Order> orders = orderService.list();
+        final List<OrderResponse> orders = orderService.list();
 
         // then
         assertAll(
@@ -181,7 +186,7 @@ class OrderServiceTest extends ServiceTest {
         final Order saved = orderRepository.save(order);
 
         // when
-        final Order changedOrder = orderService.changeOrderStatus(saved.getId(), OrderStatus.MEAL.name());
+        final OrderResponse changedOrder = orderService.changeOrderStatus(saved.getId(), OrderStatus.MEAL.name());
 
         // when, then
         assertAll(

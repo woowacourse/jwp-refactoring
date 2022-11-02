@@ -2,9 +2,7 @@ package kitchenpos.ui;
 
 import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.application.ProductService;
-import kitchenpos.domain.Product;
 import kitchenpos.dto.request.ProductCreateRequest;
 import kitchenpos.dto.response.ProductResponse;
 import org.springframework.http.ResponseEntity;
@@ -23,18 +21,14 @@ public class ProductRestController {
 
     @PostMapping("/api/products")
     public ResponseEntity<ProductResponse> create(@RequestBody final ProductCreateRequest productCreateRequest) {
-        final Product created = productService.create(productCreateRequest);
-        final ProductResponse productResponse = ProductResponse.from(created);
+        final ProductResponse created = productService.create(productCreateRequest);
         final URI uri = URI.create("/api/products/" + created.getId());
-        return ResponseEntity.created(uri).body(productResponse);
+        return ResponseEntity.created(uri).body(created);
     }
 
     @GetMapping("/api/products")
     public ResponseEntity<List<ProductResponse>> list() {
-        final List<ProductResponse> productResponses = productService.list()
-                .stream()
-                .map(ProductResponse::from)
-                .collect(Collectors.toList());
+        final List<ProductResponse> productResponses = productService.list();
         return ResponseEntity.ok().body(productResponses);
     }
 }

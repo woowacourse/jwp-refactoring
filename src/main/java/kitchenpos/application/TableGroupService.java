@@ -12,6 +12,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.TableGroupCreateRequest;
+import kitchenpos.dto.response.TableGroupResponse;
 import kitchenpos.exception.OrderNotCompletionException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +31,7 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroupCreateRequest tableGroupCreateRequest) {
+    public TableGroupResponse create(final TableGroupCreateRequest tableGroupCreateRequest) {
         final TableGroup tableGroup = tableGroupCreateRequest.toTableGroup();
         final List<OrderTable> savedOrderTables = findOrderTables(tableGroup);
         tableGroup.validateExistOrderTable(savedOrderTables.size());
@@ -41,7 +42,7 @@ public class TableGroupService {
         final List<OrderTable> groupedOrderTables = groupOrderTable(savedOrderTables, savedTableGroup);
 
         savedTableGroup.updateOrderTables(groupedOrderTables);
-        return savedTableGroup;
+        return TableGroupResponse.from(savedTableGroup);
     }
 
     private List<OrderTable> findOrderTables(final TableGroup tableGroup) {

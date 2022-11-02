@@ -12,6 +12,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.OrderTableCreateRequest;
+import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.exception.AlreadyGroupedException;
 import kitchenpos.exception.NotFoundOrderException;
 import kitchenpos.exception.NotFoundOrderTableException;
@@ -42,13 +43,12 @@ class TableServiceTest extends ServiceTest {
         final OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(0, true);
 
         // when
-        final OrderTable saved = tableService.create(orderTableCreateRequest);
+        final OrderTableResponse saved = tableService.create(orderTableCreateRequest);
 
         // then
         assertAll(
                 () -> assertThat(saved.getId()).isNotNull(),
-                () -> assertThat(saved.isEmpty()).isTrue(),
-                () -> assertThat(saved.getTableGroup()).isNull()
+                () -> assertThat(saved.isEmpty()).isTrue()
         );
     }
 
@@ -57,10 +57,10 @@ class TableServiceTest extends ServiceTest {
     void list() {
         // given
         final OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(2, false);
-        final OrderTable saved = tableService.create(orderTableCreateRequest);
+        final OrderTableResponse saved = tableService.create(orderTableCreateRequest);
 
         // when
-        final List<OrderTable> orderTables = tableService.list();
+        final List<OrderTableResponse> orderTables = tableService.list();
         // then
         assertAll(
                 () -> assertThat(orderTables).hasSizeGreaterThanOrEqualTo(1),
@@ -88,12 +88,11 @@ class TableServiceTest extends ServiceTest {
         orderRepository.save(order);
 
         // when
-        final OrderTable changedOrderTable = tableService.changeEmpty(savedOrderTable.getId(), false);
+        final OrderTableResponse changedOrderTable = tableService.changeEmpty(savedOrderTable.getId(), false);
 
         // then
         assertAll(
                 () -> assertThat(changedOrderTable.getId()).isEqualTo(savedOrderTable.getId()),
-                () -> assertThat(changedOrderTable.getTableGroup()).isEqualTo(savedOrderTable.getTableGroup()),
                 () -> assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(savedOrderTable.getNumberOfGuests()),
                 () -> assertThat(changedOrderTable.isEmpty()).isFalse()
         );
@@ -154,12 +153,11 @@ class TableServiceTest extends ServiceTest {
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         // when
-        final OrderTable changedOrderTable = tableService.changeNumberOfGuests(savedOrderTable.getId(), 3);
+        final OrderTableResponse changedOrderTable = tableService.changeNumberOfGuests(savedOrderTable.getId(), 3);
 
         // then
         assertAll(
                 () -> assertThat(changedOrderTable.getId()).isEqualTo(savedOrderTable.getId()),
-                () -> assertThat(changedOrderTable.getTableGroup()).isEqualTo(savedOrderTable.getTableGroup()),
                 () -> assertThat(changedOrderTable.isEmpty()).isFalse(),
                 () -> assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(3)
         );

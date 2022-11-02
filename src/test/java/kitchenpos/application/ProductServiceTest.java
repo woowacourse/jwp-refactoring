@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.ProductCreateRequest;
+import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.exception.IllegalPriceException;
 import kitchenpos.support.fixtures.ProductFixtures;
 import org.junit.jupiter.api.DisplayName;
@@ -28,13 +29,12 @@ class ProductServiceTest extends ServiceTest {
                 product.getPrice());
 
         // when
-        final Product saved = productService.create(productCreateRequest);
+        final ProductResponse saved = productService.create(productCreateRequest);
 
         // then
         assertAll(
                 () -> assertThat(saved.getId()).isNotNull(),
-                () -> assertThat(saved.getName()).isEqualTo("치킨"),
-                () -> assertThat(saved.getPrice()).isEqualByComparingTo(new BigDecimal(10_000))
+                () -> assertThat(saved.getName()).isEqualTo("치킨")
         );
     }
 
@@ -71,7 +71,7 @@ class ProductServiceTest extends ServiceTest {
         final Product saved = productRepository.save(product);
 
         // when
-        final List<Product> products = productService.list();
+        final List<ProductResponse> products = productService.list();
 
         // then
         assertAll(

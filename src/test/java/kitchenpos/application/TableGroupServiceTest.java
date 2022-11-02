@@ -16,6 +16,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.request.TableGroupCreateRequest;
+import kitchenpos.dto.response.TableGroupResponse;
 import kitchenpos.exception.CanNotGroupException;
 import kitchenpos.exception.NotEnoughForGroupingException;
 import kitchenpos.exception.OrderNotCompletionException;
@@ -53,17 +54,15 @@ class TableGroupServiceTest extends ServiceTest {
                 Arrays.asList(orderTableRequest1, orderTableRequest2));
 
         // when
-        final TableGroup saved = tableGroupService.create(tableGroupCreateRequest);
+        final TableGroupResponse saved = tableGroupService.create(tableGroupCreateRequest);
 
         // then
         assertAll(
                 () -> assertThat(saved.getId()).isNotNull(),
-                () -> assertThat(saved.getCreatedDate()).isBeforeOrEqualTo(LocalDateTime.now()),
+                () -> assertThat(saved.getCreationDate()).isBeforeOrEqualTo(LocalDateTime.now()),
                 () -> assertThat(saved.getOrderTables()).extracting("id")
                         .hasSize(2)
                         .contains(savedOrderTable1.getId(), savedOrderTable2.getId()),
-                () -> assertThat(saved.getOrderTables()).extracting("tableGroup")
-                        .containsExactly(saved, saved),
                 () -> assertThat(saved.getOrderTables()).extracting("empty")
                         .containsExactly(false, false)
         );

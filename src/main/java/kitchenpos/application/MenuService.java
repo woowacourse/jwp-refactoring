@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.ProductRepository;
@@ -9,6 +10,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuCreateRequest;
+import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.exception.NotFoundMenuGroupException;
 import kitchenpos.exception.NotFoundProductException;
 import org.springframework.stereotype.Service;
@@ -31,14 +33,15 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuCreateRequest menuCreateRequest) {
+    public MenuResponse create(final MenuCreateRequest menuCreateRequest) {
         final Menu menu = menuCreateRequest.toMenu();
         if (!menuGroupRepository.existsById(menu.getMenuGroupId())) {
             throw new NotFoundMenuGroupException();
         }
         validateMenuPrice(menu);
         updateMenuProducts(menu.getMenuProducts(), menu);
-        return menuRepository.save(menu);
+        final Menu saved = menuRepository.save(menu);
+        return MenuResponse.from(saved);
     }
 
     private void validateMenuPrice(final Menu menu) {
@@ -59,7 +62,10 @@ public class MenuService {
     }
 
     @Transactional(readOnly = true)
-    public List<Menu> list() {
-        return menuRepository.findAll();
+    public List<MenuResponse> list() {
+        final List<Menu> menus = menuRepository.findAll();
+        return menus.stream()
+                .map(MenuResponse::from)
+                .collect(Collectors.toList());
     }
 }

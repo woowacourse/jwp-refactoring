@@ -2,11 +2,13 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderTableCreateRequest;
+import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.exception.NotFoundOrderException;
 import kitchenpos.exception.NotFoundOrderTableException;
 import kitchenpos.exception.OrderNotCompletionException;
@@ -24,24 +26,28 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTableCreateRequest orderTableCreateRequest) {
+    public OrderTableResponse create(final OrderTableCreateRequest orderTableCreateRequest) {
         final OrderTable orderTable = orderTableCreateRequest.toOrderTable();
-        return orderTableRepository.save(orderTable);
+        final OrderTable saved = orderTableRepository.save(orderTable);
+        return OrderTableResponse.from(saved);
     }
 
     @Transactional(readOnly = true)
-    public List<OrderTable> list() {
-        return orderTableRepository.findAll();
+    public List<OrderTableResponse> list() {
+        final List<OrderTable> orderTables = orderTableRepository.findAll();
+        return orderTables.stream()
+                .map(OrderTableResponse::from)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final boolean changeOrderEmpty) {
+    public OrderTableResponse changeEmpty(final Long orderTableId, final boolean changeOrderEmpty) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(NotFoundOrderException::new);
 
         validateOrderCompletion(orderTableId);
         savedOrderTable.updateEmpty(changeOrderEmpty);
-        return savedOrderTable;
+        return OrderTableResponse.from(savedOrderTable);
     }
 
     private void validateOrderCompletion(final Long orderTableId) {
@@ -52,11 +58,11 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final int changeNumberOfGuests) {
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final int changeNumberOfGuests) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(NotFoundOrderTableException::new);
 
         savedOrderTable.updateNumberOfGuests(changeNumberOfGuests);
-        return savedOrderTable;
+        return OrderTableResponse.from(savedOrderTable);
     }
 }

@@ -11,6 +11,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderCreateRequest;
+import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.exception.NotFoundOrderException;
 import kitchenpos.exception.NotFoundOrderTableException;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final OrderCreateRequest orderCreateRequest) {
+    public OrderResponse create(final OrderCreateRequest orderCreateRequest) {
         final Order order = orderCreateRequest.toOrder();
         validateOrderLineItemMatchMenu(order);
 
@@ -44,7 +45,8 @@ public class OrderService {
         final Order newOrder = new Order(null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
                 order.getOrderLineItems());
 
-        return orderRepository.save(newOrder);
+        final Order saved = orderRepository.save(newOrder);
+        return OrderResponse.from(saved);
     }
 
     private void validateOrderLineItemMatchMenu(final Order order) {
@@ -56,16 +58,19 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public List<Order> list() {
-        return orderRepository.findAll();
+    public List<OrderResponse> list() {
+        final List<Order> orders = orderRepository.findAll();
+        return orders.stream()
+                .map(OrderResponse::from)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final String orderStatus) {
+    public OrderResponse changeOrderStatus(final Long orderId, final String orderStatus) {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(NotFoundOrderException::new);
 
         savedOrder.updateOrderStatus(OrderStatus.valueOf(orderStatus).name());
-        return savedOrder;
+        return OrderResponse.from(savedOrder);
     }
 }

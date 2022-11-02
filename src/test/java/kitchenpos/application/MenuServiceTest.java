@@ -14,13 +14,14 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuProductRequest;
+import kitchenpos.dto.response.MenuProductResponse;
+import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.exception.IllegalPriceException;
 import kitchenpos.exception.MenuTotalPriceException;
 import kitchenpos.exception.NotFoundMenuGroupException;
 import kitchenpos.exception.NotFoundProductException;
 import kitchenpos.support.fixtures.MenuFixtures;
 import kitchenpos.support.fixtures.MenuGroupFixtures;
-import kitchenpos.support.fixtures.MenuProductFixtures;
 import kitchenpos.support.fixtures.ProductFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,10 +48,10 @@ class MenuServiceTest extends ServiceTest {
                 menu.getMenuGroupId(), Collections.singletonList(menuProductRequest));
 
         // when
-        final Menu saved = menuService.create(menuCreateRequest);
+        final MenuResponse saved = menuService.create(menuCreateRequest);
 
         // then
-        final MenuProduct actual = MenuProductFixtures.create(saved, savedProduct.getId(), 3);
+        final MenuProductResponse actual = MenuProductResponse.from(new MenuProduct(null, menu, product.getId(), 3));
 
         assertAll(
                 () -> assertThat(saved.getId()).isNotNull(),
@@ -58,7 +59,7 @@ class MenuServiceTest extends ServiceTest {
                 () -> assertThat(saved.getPrice()).isEqualByComparingTo(new BigDecimal("30000")),
                 () -> assertThat(saved.getMenuGroupId()).isEqualTo(1L),
                 () -> assertThat(saved.getMenuProducts()).usingElementComparatorOnFields(
-                                "menu", "productId", "quantity")
+                                "productId", "quantity")
                         .hasSize(1)
                         .containsExactly(actual)
         );
@@ -151,7 +152,7 @@ class MenuServiceTest extends ServiceTest {
         final Menu saved = menuRepository.save(menu);
 
         // when
-        final List<Menu> menus = menuService.list();
+        final List<MenuResponse> menus = menuService.list();
 
         // then
         assertAll(
