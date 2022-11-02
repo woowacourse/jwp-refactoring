@@ -21,7 +21,7 @@ public class MenuProduct {
     @ManyToOne
     private Menu menu;
 
-    @OneToOne
+    @ManyToOne
     private Product product;
 
     private long quantity;
