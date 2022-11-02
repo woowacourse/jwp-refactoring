@@ -117,7 +117,11 @@ public class ServiceTest {
     }
 
     private OrderLineItem saveAndGetOrderLineItem(final Long menuId, final Long orderId) {
-        return orderLineItemDao.save(new OrderLineItem(null, orderId, menuId, 1));
+        final Menu menu = menuDao.findById(menuId)
+            .orElseThrow();
+
+        return orderLineItemDao.save(new OrderLineItem(null, orderId, menuId, 1,
+            menu.getName(), menu.getPrice()));
     }
 
     protected Order saveAndGetOrder() {

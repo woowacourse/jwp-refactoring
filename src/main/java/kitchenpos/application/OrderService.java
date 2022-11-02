@@ -6,6 +6,7 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderLineItems;
@@ -70,10 +71,16 @@ public class OrderService {
     }
 
     private List<OrderLineItem> saveOrderLineItems(
-        final List<OrderLineItem> orderLineItems, final Long orderId) {
+        final List<OrderLineItem> orderLineItems, final Long orderId
+    ) {
         return orderLineItems.stream()
-            .map(it -> new OrderLineItem(null, orderId, it.getMenuId(), it.getQuantity()))
-            .map(orderLineItemDao::save)
+            .map(it -> {
+                final Menu menu = menuDao.findById(it.getMenuId())
+                    .orElseThrow(IllegalArgumentException::new);
+                final OrderLineItem orderLineItem = new OrderLineItem(null, orderId,
+                    it.getMenuId(), it.getQuantity(), menu.getName(), menu.getPrice());
+                return orderLineItemDao.save(orderLineItem);
+            })
             .collect(Collectors.toList());
     }
 
