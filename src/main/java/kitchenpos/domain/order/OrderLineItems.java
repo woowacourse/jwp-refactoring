@@ -8,7 +8,7 @@ import javax.persistence.OneToMany;
 @Embeddable
 public class OrderLineItems {
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderLineItem> value;
 
     protected OrderLineItems() {

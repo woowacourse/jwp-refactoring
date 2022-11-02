@@ -1,6 +1,5 @@
 package kitchenpos.domain.menu;
 
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -46,10 +45,6 @@ public class Menu {
     public Menu(final String name, final MenuPrice menuPrice, final Long menuGroupId,
                 final List<MenuProduct> menuProducts) {
         this(null, name, menuPrice, menuGroupId, menuProducts);
-    }
-
-    public Menu(final String name, final MenuPrice menuPrice, final Long menuGroupId) {
-        this(null, name, menuPrice, menuGroupId, new ArrayList<>());
     }
 
     public Long getId() {

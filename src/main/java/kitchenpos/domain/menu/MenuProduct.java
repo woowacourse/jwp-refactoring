@@ -43,7 +43,6 @@ public class MenuProduct {
         this(null, null, product, quantity);
     }
 
-
     public void changeMenu(final Menu menu) {
         this.menu = menu;
     }

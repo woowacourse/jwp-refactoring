@@ -51,7 +51,7 @@ public class Order {
     }
 
     public Order(final Long orderTableId, final OrderStatus orderStatus, final List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, orderStatus, LocalDateTime.now(), orderLineItems);
+        this(null, orderTableId, orderStatus, null, orderLineItems);
     }
 
     public void changeStatus(final OrderStatus orderStatus) {

@@ -17,10 +17,6 @@ public class MenuProducts {
     }
 
     public MenuProducts(final List<MenuProduct> menuProducts, final Menu menu) {
-        if (menuProducts == null) {
-            this.value = new ArrayList<>();
-            return;
-        }
         this.value = menuProducts;
         for (MenuProduct menuProduct : menuProducts) {
             menuProduct.changeMenu(menu);
