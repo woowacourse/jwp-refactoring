@@ -1,13 +1,12 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 public class Order {
-    private Long id;
-    private Long orderTableId;
-    private OrderStatus orderStatus;
-    private LocalDateTime orderedTime;
+    private final Long id;
+    private final Long orderTableId;
+    private final OrderStatus orderStatus;
+    private final LocalDateTime orderedTime;
 
     public Order(Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
         this(null, orderTableId, orderStatus, orderedTime);
