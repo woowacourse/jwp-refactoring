@@ -15,7 +15,6 @@ import kitchenpos.dao.JpaOrderTableRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.dto.request.OrderRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,22 +34,22 @@ public class OrderService {
     }
 
     public Order create(final OrderRequest request) {
-        final Order order = request.toOrder();
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
+        final List<OrderLineItem> orderLineItems = request.toOrderLineItem();
         validMenu(orderLineItems);
-        final Order saveConditionOrder = convertSaveConditionOrder(request.getOrderTableId(), order);
-        return orderRepository.save(saveConditionOrder);
+        validOrderTable(request.getOrderTableId());
+
+        return orderRepository.save(convertSaveConditionOrder(request.getOrderTableId(), orderLineItems));
     }
 
-    private Order convertSaveConditionOrder(final Long orderTableId, final Order order) {
-        final OrderTable orderTable = getOrderTable(orderTableId);
-        return new Order(orderTable.getId(), COOKING.name(), LocalDateTime.now(),
-                order.getOrderLineItems());
+    private Order convertSaveConditionOrder(final Long orderTableId, List<OrderLineItem> orderLineItems) {
+        return new Order(orderTableId, COOKING.name(), LocalDateTime.now(),
+                orderLineItems);
     }
 
-    private OrderTable getOrderTable(final Long orderTableId) {
-        return orderTableRepository.findById(orderTableId)
-                .orElseThrow(() -> new CustomIllegalArgumentException(NOT_FOUND_TABLE_EXCEPTION));
+    private void validOrderTable(final Long orderTableId) {
+        if (!orderTableRepository.existsById(orderTableId)) {
+            new CustomIllegalArgumentException(NOT_FOUND_TABLE_EXCEPTION);
+        }
     }
 
     private void validMenu(final List<OrderLineItem> orderLineItems) {

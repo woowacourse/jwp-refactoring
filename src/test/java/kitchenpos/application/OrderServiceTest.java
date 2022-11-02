@@ -36,7 +36,8 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문메뉴가_null_이면_예외를_반환한다() {
-        final OrderRequest 주문 = new OrderRequest(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>());
+        final OrderRequest 주문 = new OrderRequest(1L, OrderStatus.COOKING.name(), LocalDateTime.now(),
+                new ArrayList<>());
 
         Assertions.assertThatThrownBy(() -> orderService.create(주문))
                 .isInstanceOf(IllegalArgumentException.class);

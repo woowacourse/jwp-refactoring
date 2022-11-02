@@ -22,7 +22,7 @@ class OrderRestControllerTest extends RestControllerTest {
     @Test
     void 주문_생성에_성공한다() throws Exception {
         OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1L, 1L, 1L);
-        OrderRequest orderRequest = new OrderRequest(1L, Arrays.asList(orderLineItemRequest));
+        OrderRequest orderRequest = new OrderRequest(Arrays.asList(orderLineItemRequest));
         OrderLineItem expectedItem = new OrderLineItem(1L, 1L, 1);
         Order expected = new Order(1L, 1L, COOKING.name(), LocalDateTime.now(),
                 Arrays.asList(expectedItem));

@@ -107,7 +107,7 @@ public class ServiceTest {
 
     protected OrderRequest 주문_요청_생성(OrderStatus status) {
         final OrderLineItemRequest 주문_수량 = new OrderLineItemRequest(1L, 1L, 1L, 1);
-        final OrderRequest 주문 = new OrderRequest(1L, 1L, status.name(), LocalDateTime.now(), Arrays.asList(주문_수량));
+        final OrderRequest 주문 = new OrderRequest(1L, status.name(), LocalDateTime.now(), Arrays.asList(주문_수량));
         return 주문;
     }
 
