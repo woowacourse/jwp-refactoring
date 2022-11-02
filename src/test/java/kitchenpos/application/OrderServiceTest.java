@@ -13,11 +13,11 @@ import org.junit.jupiter.api.Test;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.request.order.ChangeOrderStatusRequest;
-import kitchenpos.dto.request.order.CreateOrderLineItemRequest;
-import kitchenpos.dto.request.order.CreateOrderRequest;
+import kitchenpos.order.domain.Order;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.order.dto.request.ChangeOrderStatusRequest;
+import kitchenpos.order.dto.request.CreateOrderLineItemRequest;
+import kitchenpos.order.dto.request.CreateOrderRequest;
 
 class OrderServiceTest extends ServiceTest {
 

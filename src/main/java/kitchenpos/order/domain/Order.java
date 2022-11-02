@@ -1,9 +1,8 @@
-package kitchenpos.domain;
+package kitchenpos.order.domain;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
@@ -12,13 +11,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.Hibernate;
 import org.springframework.util.CollectionUtils;
+
+import kitchenpos.order.dto.application.OrderLineItemDto;
 
 @Entity
 @Table(name = "orders")
@@ -28,9 +27,8 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "order_table_id")
-    private OrderTable orderTable;
+    @Column(name = "order_table_id")
+    private Long orderTableId;
 
     @Column
     private String orderStatus;
@@ -44,15 +42,15 @@ public class Order {
     protected Order() {
     }
 
-    public Order(OrderTable orderTable, Map<Menu, Long> orderLineItems) {
-        validate(orderTable, orderLineItems);
+    public Order(Long orderTableId, List<OrderLineItemDto> orderLineItems) {
+        validate(orderTableId, orderLineItems);
 
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = OrderStatus.COOKING.name();
         this.orderedTime = LocalDateTime.now();
 
-        for (Menu menu : orderLineItems.keySet()) {
-            final OrderLineItem orderLineItem = new OrderLineItem(this, menu, orderLineItems.get(menu));
+        for (OrderLineItemDto dto : orderLineItems) {
+            final OrderLineItem orderLineItem = new OrderLineItem(this, dto.getMenuId(), dto.getQuantity());
             this.orderLineItems.add(orderLineItem);
         }
     }
@@ -69,8 +67,8 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public String getOrderStatus() {
@@ -85,18 +83,18 @@ public class Order {
         return orderLineItems;
     }
 
-    private void validate(OrderTable orderTable, Map<Menu, Long> orderLineItems) {
-        validateEmptyOrderTable(orderTable);
+    private void validate(Long orderTableId, List<OrderLineItemDto> orderLineItems) {
+        validateEmptyOrderTable(orderTableId);
         validateOrderLineItems(orderLineItems);
     }
 
-    private void validateEmptyOrderTable(OrderTable orderTable) {
-        if (orderTable == null) {
+    private void validateEmptyOrderTable(Long orderTableId) {
+        if (orderTableId == null) {
             throw new IllegalArgumentException("주문 테이블은 비어있을 수 없습니다.");
         }
     }
 
-    private void validateOrderLineItems(Map<Menu, Long> orderLineItems) {
+    private void validateOrderLineItems(List<OrderLineItemDto> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException("주문 항목은 비어있을 수 없습니다.");
         }

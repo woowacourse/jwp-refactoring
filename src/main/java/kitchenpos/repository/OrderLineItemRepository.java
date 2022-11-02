@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.repository.Repository;
 
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderLineItem;
 
 public interface OrderLineItemRepository extends Repository<OrderLineItem, Long> {
 

@@ -71,6 +71,16 @@ public class OrderTable {
         return empty;
     }
 
+    private void validateGroup() {
+        if (tableGroupId != null) {
+            throw new IllegalArgumentException("이미 다른 그룹에 존재하는 테이블입니다.");
+        }
+
+        if (!empty) {
+            throw new IllegalArgumentException("비어있지 않은 테이블입니다.");
+        }
+    }
+
     private void validateChangeEmpty() {
         if (tableGroupId != null) {
             throw new IllegalArgumentException("테이블 그룹에 묶여있어 상태를 변경할 수 없습니다.");
@@ -84,16 +94,6 @@ public class OrderTable {
 
         if (empty) {
             throw new IllegalArgumentException("비어있는 테이블입니다.");
-        }
-    }
-
-    private void validateGroup() {
-        if (tableGroupId != null) {
-            throw new IllegalArgumentException("이미 다른 그룹에 존재하는 테이블입니다.");
-        }
-
-        if (!empty) {
-            throw new IllegalArgumentException("비어있지 않은 테이블입니다.");
         }
     }
 

@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.order.domain;
 
 import java.util.Objects;
 
@@ -9,7 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 
 import org.hibernate.Hibernate;
 
@@ -24,8 +23,8 @@ public class OrderLineItem {
     @JoinColumn(name = "order_id")
     private Order order;
 
-    @OneToOne
-    private Menu menu;
+    @Column(name = "menu_id")
+    private Long menuId;
 
     @Column
     private long quantity;
@@ -33,9 +32,9 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(Order order, Menu menu, long quantity) {
+    public OrderLineItem(Order order, Long menuId, long quantity) {
         this.order = order;
-        this.menu = menu;
+        this.menuId = menuId;
         this.quantity = quantity;
     }
 
@@ -47,8 +46,8 @@ public class OrderLineItem {
         return order;
     }
 
-    public Menu getMenu() {
-        return menu;
+    public Long getMenuId() {
+        return menuId;
     }
 
     public long getQuantity() {

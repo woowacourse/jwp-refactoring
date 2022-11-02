@@ -13,6 +13,8 @@ public interface OrderTableRepository extends Repository<OrderTable, Long> {
 
     Optional<OrderTable> findById(Long id);
 
+    List<OrderTable> findAllByIdIn(List<Long> id);
+
     List<OrderTable> findAll();
 
     List<OrderTable> findByTableGroupId(Long tableGroupId);
