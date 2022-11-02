@@ -51,8 +51,8 @@ public class TableGroup {
     private void validateOrderTables(final List<OrderTable> orderTables) {
         validateOrderTablesSize(orderTables);
         for (final OrderTable orderTable : orderTables) {
-            validateEmptyTable(orderTable);
             validateNotGrouped(orderTable);
+            validateEmptyTable(orderTable);
         }
     }
 

@@ -73,6 +73,7 @@ public class OrderTable {
 
     public void designateTableGroup(final TableGroup tableGroup) {
         this.tableGroup = tableGroup;
+        this.empty = false;
     }
 
     public void ungroup() {
