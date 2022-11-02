@@ -2,11 +2,11 @@ package kitchenpos.event;
 
 import java.util.List;
 
-public class ValidateExistMenusEvent {
+public class CheckExistMenusEvent {
 
     private final List<Long> menuIds;
 
-    public ValidateExistMenusEvent(List<Long> menuIds) {
+    public CheckExistMenusEvent(List<Long> menuIds) {
         this.menuIds = menuIds;
     }
 

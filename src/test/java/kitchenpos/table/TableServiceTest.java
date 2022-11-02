@@ -78,7 +78,7 @@ class TableServiceTest {
             OrderTable newOrderTable = new OrderTable(3, false);
             OrderTable orderTable = orderTableRepository.save(newOrderTable);
 
-            orderRepository.save(new Order(orderTable, OrderStatus.COMPLETION));
+            orderRepository.save(new Order(orderTable.getId(), OrderStatus.COMPLETION));
 
             OrderTableResponse actual = tableService.changeEmpty(orderTable.getId(), changeOrderTableEmptyRequest);
             assertThat(actual.isEmpty()).isTrue();
@@ -116,7 +116,7 @@ class TableServiceTest {
             OrderTable newOrderTable = new OrderTable(3, false);
             OrderTable orderTable = orderTableRepository.save(newOrderTable);
 
-            orderRepository.save(new Order(orderTable, OrderStatus.valueOf(status)));
+            orderRepository.save(new Order(orderTable.getId(), OrderStatus.valueOf(status)));
 
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), changeOrderTableEmptyRequest))
                     .isInstanceOf(IllegalArgumentException.class)

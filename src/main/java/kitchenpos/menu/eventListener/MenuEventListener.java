@@ -3,7 +3,7 @@ package kitchenpos.menu.eventListener;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import kitchenpos.event.ValidateExistMenusEvent;
+import kitchenpos.event.CheckExistMenusEvent;
 import kitchenpos.menu.domain.MenuRepository;
 
 @Component
@@ -16,7 +16,7 @@ public class MenuEventListener {
     }
 
     @EventListener
-    public void validateExistMenus(ValidateExistMenusEvent event) {
+    public void validateExistMenus(CheckExistMenusEvent event) {
         long numberOfOrderedMenus = event.getMenuIds().size();
         long numberOfExistMenus = menuRepository.countByIdIn(event.getMenuIds());
 

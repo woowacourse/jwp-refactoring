@@ -188,7 +188,7 @@ class OrderServiceTest {
     }
 
     private Order createOrder() {
-        Order order = orderRepository.save(new Order(orderTable, OrderStatus.COOKING));
+        Order order = orderRepository.save(new Order(orderTable.getId(), OrderStatus.COOKING));
         OrderLineItem orderLineItem = orderLineItemRepository.save(new OrderLineItem(후라이드_양념치킨_두마리세트.getId(), 3L));
 
         order.addOrderLineItem(orderLineItem);
