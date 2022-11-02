@@ -11,6 +11,7 @@ import kitchenpos.acceptance.common.httpcommunication.MenuHttpCommunication;
 import kitchenpos.acceptance.common.httpcommunication.OrderHttpCommunication;
 import kitchenpos.acceptance.common.httpcommunication.OrderTableHttpCommunication;
 import kitchenpos.acceptance.common.httpcommunication.ProductHttpCommunication;
+import kitchenpos.common.annotation.SpringTestWithData;
 import kitchenpos.common.fixture.RequestBody;
 import kitchenpos.ui.dto.response.MenuGroupResponse;
 import kitchenpos.ui.dto.response.MenuResponse;
@@ -18,6 +19,7 @@ import kitchenpos.ui.dto.response.OrderResponse;
 import kitchenpos.ui.dto.response.OrderTableResponse;
 import kitchenpos.ui.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
@@ -45,32 +47,66 @@ public class OrderTableAcceptanceTest extends AcceptanceTest {
         assertThat(orderTables.size()).isEqualTo(1);
     }
 
-    @DisplayName("OrderTable 에 게스트 존재여부를 변경한다.")
-    @Test
-    void changeEmpty() {
-        final OrderTableResponse orderTable = OrderTableHttpCommunication.create(RequestBody.NON_EMPTY_TABLE)
-                .getResponseBodyAsObject(OrderTableResponse.class);
+    @DisplayName("OrderTable 에 게스트 존재여부를 변경할 때 ")
+    @SpringTestWithData
+    @Nested
+    class EmptyAlternationTest {
+        @DisplayName("변경 가능하면 OrderTable 에 게스트 존재여부를 변경한다.")
+        @Test
+        void changeEmptySuccess() {
+            final OrderTableResponse orderTable = OrderTableHttpCommunication.create(RequestBody.NON_EMPTY_TABLE)
+                    .getResponseBodyAsObject(OrderTableResponse.class);
 
-        final ProductResponse product = ProductHttpCommunication.create(RequestBody.PRODUCT)
-                .getResponseBodyAsObject(ProductResponse.class);
+            final ProductResponse product = ProductHttpCommunication.create(RequestBody.PRODUCT)
+                    .getResponseBodyAsObject(ProductResponse.class);
 
-        final MenuGroupResponse menuGroup = MenuGroupHttpCommunication.create(RequestBody.MENU_GROUP)
-                .getResponseBodyAsObject(MenuGroupResponse.class);
+            final MenuGroupResponse menuGroup = MenuGroupHttpCommunication.create(RequestBody.MENU_GROUP)
+                    .getResponseBodyAsObject(MenuGroupResponse.class);
 
-        final MenuResponse menu = MenuHttpCommunication.create(
-                        RequestBody.getMenuProductFixture(product.getId(), menuGroup.getId()))
-                .getResponseBodyAsObject(MenuResponse.class);
+            final MenuResponse menu = MenuHttpCommunication.create(
+                            RequestBody.getMenuProductFixture(product.getId(), menuGroup.getId()))
+                    .getResponseBodyAsObject(MenuResponse.class);
 
-        final OrderResponse order = OrderHttpCommunication.create(
-                        RequestBody.getOrder(menu.getId(), orderTable.getId()))
-                .getResponseBodyAsObject(OrderResponse.class);
+            final OrderResponse order = OrderHttpCommunication.create(
+                            RequestBody.getOrder(menu.getId(), orderTable.getId()))
+                    .getResponseBodyAsObject(OrderResponse.class);
 
-        OrderHttpCommunication.changeOrderStatus(order.getId(), Map.of("orderStatus", "COMPLETION"));
-        final OrderTableResponse result = OrderTableHttpCommunication.changeEmpty(orderTable.getId(),
-                        RequestBody.NON_EMPTY_TABLE)
-                .getResponseBodyAsObject(OrderTableResponse.class);
+            OrderHttpCommunication.changeOrderStatus(order.getId(), Map.of("orderStatus", "COMPLETION"));
+            final OrderTableResponse result = OrderTableHttpCommunication.changeEmpty(orderTable.getId(),
+                            RequestBody.NON_EMPTY_TABLE)
+                    .getResponseBodyAsObject(OrderTableResponse.class);
 
-        assertThat(result.isEmpty()).isFalse();
+            assertThat(result.isEmpty()).isFalse();
+        }
+
+        @DisplayName("변경 가능 조건을 만족하지 못하면 에러를 반환한다.")
+        @Test
+        void changeEmptyFail() {
+             final OrderTableResponse orderTable = OrderTableHttpCommunication.create(RequestBody.NON_EMPTY_TABLE)
+                    .getResponseBodyAsObject(OrderTableResponse.class);
+
+            final ProductResponse product = ProductHttpCommunication.create(RequestBody.PRODUCT)
+                    .getResponseBodyAsObject(ProductResponse.class);
+
+            final MenuGroupResponse menuGroup = MenuGroupHttpCommunication.create(RequestBody.MENU_GROUP)
+                    .getResponseBodyAsObject(MenuGroupResponse.class);
+
+            final MenuResponse menu = MenuHttpCommunication.create(
+                            RequestBody.getMenuProductFixture(product.getId(), menuGroup.getId()))
+                    .getResponseBodyAsObject(MenuResponse.class);
+
+            final OrderResponse order = OrderHttpCommunication.create(
+                            RequestBody.getOrder(menu.getId(), orderTable.getId()))
+                    .getResponseBodyAsObject(OrderResponse.class);
+
+            OrderHttpCommunication.changeOrderStatus(order.getId(), Map.of("orderStatus", "COMPLETION"));
+
+            final ExtractableResponse<Response> response = OrderTableHttpCommunication.changeEmpty(0L,
+                            RequestBody.NON_EMPTY_TABLE)
+                    .getResponse();
+
+            assertThat(response.statusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        }
     }
 
     @DisplayName("OrderTable 에 있는 게스트 명수를 변경한다.")

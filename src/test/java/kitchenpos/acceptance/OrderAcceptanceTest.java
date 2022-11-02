@@ -15,6 +15,7 @@ import kitchenpos.acceptance.common.httpcommunication.OrderTableHttpCommunicatio
 import kitchenpos.acceptance.common.httpcommunication.ProductHttpCommunication;
 import kitchenpos.common.annotation.SpringTestWithData;
 import kitchenpos.common.fixture.RequestBody;
+import kitchenpos.common.support.DataClearExtension;
 import kitchenpos.ui.dto.response.MenuGroupResponse;
 import kitchenpos.ui.dto.response.MenuResponse;
 import kitchenpos.ui.dto.response.OrderResponse;
@@ -23,17 +24,17 @@ import kitchenpos.ui.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.http.HttpStatus;
 
 @DisplayName("OrderAcceptance 는 ")
 public class OrderAcceptanceTest extends AcceptanceTest {
 
     @DisplayName("주문을 생성할 때 ")
-    @SpringTestWithData
     @Nested
-    class OrderCreationTest {
+    class OrderCreationTest extends AcceptanceTest {
 
-        @DisplayName("주문을 생성한다.")
+        @DisplayName("생성 가능하면 주문을 생성한다.")
         @Test
         void createOrderSuccess() {
             final ExtractableResponse<Response> response = order().getResponse();
@@ -57,6 +58,23 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
             assertThat(response.statusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
+
+        private HttpCommunication order() {
+            final ProductResponse product = ProductHttpCommunication.create(RequestBody.PRODUCT)
+                    .getResponseBodyAsObject(ProductResponse.class);
+            final MenuGroupResponse menuGroup = MenuGroupHttpCommunication.create(RequestBody.MENU_GROUP)
+                    .getResponseBodyAsObject(MenuGroupResponse.class);
+            final MenuResponse menu = MenuHttpCommunication.create(
+                            RequestBody.getMenuProductFixture(product.getId(), menuGroup.getId()))
+                    .getResponseBodyAsObject(MenuResponse.class);
+            final OrderTableResponse orderTable = OrderTableHttpCommunication.create(RequestBody.ORDER_TABLE_1)
+                    .getResponseBodyAsObject(OrderTableResponse.class);
+            final OrderTableResponse nonEmptyOrderTable = OrderTableHttpCommunication.changeEmpty(orderTable.getId(),
+                            RequestBody.NON_EMPTY_TABLE)
+                    .getResponseBodyAsObject(OrderTableResponse.class);
+
+            return OrderHttpCommunication.create(RequestBody.getOrder(menu.getId(), nonEmptyOrderTable.getId()));
+        }
     }
 
     @DisplayName("주문 항목을 가져온다.")
@@ -70,8 +88,8 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     }
 
     @DisplayName("주문 상태를 변경할 때 ")
-    @SpringTestWithData
-    class OrderStatusAlternationTest {
+    @Nested
+    class OrderStatusAlternationTest extends AcceptanceTest {
 
         @DisplayName("주문 상태를 변경한다")
         @Test
@@ -88,19 +106,35 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         @Test
         void changeOrderStatusFail() {
             final OrderResponse order = order().getResponseBodyAsObject(OrderResponse.class);
-            final OrderResponse result = OrderHttpCommunication.changeOrderStatus(order.getId(),
-                            Map.of("orderStatus", "COMPLETION"))
+            OrderHttpCommunication.changeOrderStatus(order.getId(), Map.of("orderStatus", "COMPLETION"))
                     .getResponseBodyAsObject(OrderResponse.class);
 
             final ExtractableResponse<Response> response = OrderHttpCommunication.changeOrderStatus(order.getId(),
                             Map.of("orderStatus", "MEAL"))
                     .getResponse();
 
-            assertThat(response.statusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+            assertThat(response.statusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        }
+
+        private HttpCommunication order() {
+            final ProductResponse product = ProductHttpCommunication.create(RequestBody.PRODUCT)
+                    .getResponseBodyAsObject(ProductResponse.class);
+            final MenuGroupResponse menuGroup = MenuGroupHttpCommunication.create(RequestBody.MENU_GROUP)
+                    .getResponseBodyAsObject(MenuGroupResponse.class);
+            final MenuResponse menu = MenuHttpCommunication.create(
+                            RequestBody.getMenuProductFixture(product.getId(), menuGroup.getId()))
+                    .getResponseBodyAsObject(MenuResponse.class);
+            final OrderTableResponse orderTable = OrderTableHttpCommunication.create(RequestBody.ORDER_TABLE_1)
+                    .getResponseBodyAsObject(OrderTableResponse.class);
+            final OrderTableResponse nonEmptyOrderTable = OrderTableHttpCommunication.changeEmpty(orderTable.getId(),
+                            RequestBody.NON_EMPTY_TABLE)
+                    .getResponseBodyAsObject(OrderTableResponse.class);
+
+            return OrderHttpCommunication.create(RequestBody.getOrder(menu.getId(), nonEmptyOrderTable.getId()));
         }
     }
 
-    private HttpCommunication order() {
+    private void order() {
         final ProductResponse product = ProductHttpCommunication.create(RequestBody.PRODUCT)
                 .getResponseBodyAsObject(ProductResponse.class);
         final MenuGroupResponse menuGroup = MenuGroupHttpCommunication.create(RequestBody.MENU_GROUP)
@@ -114,6 +148,6 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                         RequestBody.NON_EMPTY_TABLE)
                 .getResponseBodyAsObject(OrderTableResponse.class);
 
-        return OrderHttpCommunication.create(RequestBody.getOrder(menu.getId(), nonEmptyOrderTable.getId()));
+        OrderHttpCommunication.create(RequestBody.getOrder(menu.getId(), nonEmptyOrderTable.getId()));
     }
 }
