@@ -1,4 +1,4 @@
-package kitchenpos.table.application.dto.request;
+package kitchenpos.table.application.request;
 
 public class OrderTableRequest {
 

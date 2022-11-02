@@ -1,4 +1,4 @@
-package kitchenpos.table.application.dto.response;
+package kitchenpos.table.application.response;
 
 import java.time.LocalDateTime;
 import java.util.List;

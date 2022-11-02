@@ -17,9 +17,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.table.application.TableGroupService;
-import kitchenpos.table.application.dto.request.OrderTableIdRequest;
-import kitchenpos.table.application.dto.request.TableGroupRequest;
-import kitchenpos.table.application.dto.response.TableGroupResponse;
+import kitchenpos.table.application.request.OrderTableIdRequest;
+import kitchenpos.table.application.request.TableGroupRequest;
+import kitchenpos.table.application.response.TableGroupResponse;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;

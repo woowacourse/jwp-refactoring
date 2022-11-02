@@ -7,12 +7,12 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.table.application.dto.request.ChangeNumOfTableGuestsRequest;
-import kitchenpos.table.application.dto.request.ChangeOrderTableEmptyRequest;
-import kitchenpos.table.application.dto.request.OrderTableRequest;
-import kitchenpos.table.application.dto.response.OrderTableResponse;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.table.application.request.ChangeNumOfTableGuestsRequest;
+import kitchenpos.table.application.request.ChangeOrderTableEmptyRequest;
+import kitchenpos.table.application.request.OrderTableRequest;
+import kitchenpos.table.application.response.OrderTableResponse;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 
@@ -43,9 +43,9 @@ public class TableService {
                 .collect(Collectors.toList());
     }
 
-    public OrderTableResponse changeEmpty(Long orderTableId, ChangeOrderTableEmptyRequest request) {
-        OrderTable orderTable = findOrderTable(orderTableId);
-        validateTableCanChangeEmpty(orderTableId);
+    public OrderTableResponse changeEmpty(ChangeOrderTableEmptyRequest request) {
+        OrderTable orderTable = findOrderTable(request.getOrderTableId());
+        validateTableCanChangeEmpty(request.getOrderTableId());
 
         orderTable.changeEmptyStatus(request.isEmpty());
 
@@ -59,8 +59,8 @@ public class TableService {
         }
     }
 
-    public OrderTableResponse changeNumberOfGuests(Long orderTableId, ChangeNumOfTableGuestsRequest request) {
-        OrderTable orderTable = findOrderTable(orderTableId);
+    public OrderTableResponse changeNumberOfGuests(ChangeNumOfTableGuestsRequest request) {
+        OrderTable orderTable = findOrderTable(request.getOrderTableId());
 
         orderTable.changeNumberOfGuests(request.getNumberOfGuests());
 

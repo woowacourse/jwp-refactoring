@@ -14,19 +14,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.table.application.TableService;
-import kitchenpos.table.application.dto.request.ChangeNumOfTableGuestsRequest;
-import kitchenpos.table.application.dto.request.ChangeOrderTableEmptyRequest;
-import kitchenpos.table.application.dto.request.OrderTableRequest;
-import kitchenpos.table.application.dto.response.OrderTableResponse;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.support.SpringBootNestedTest;
+import kitchenpos.table.application.TableService;
+import kitchenpos.table.application.request.ChangeNumOfTableGuestsRequest;
+import kitchenpos.table.application.request.ChangeOrderTableEmptyRequest;
+import kitchenpos.table.application.request.OrderTableRequest;
+import kitchenpos.table.application.response.OrderTableResponse;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.domain.TableGroupRepository;
-import kitchenpos.support.SpringBootNestedTest;
 
 @Transactional
 @SpringBootTest
@@ -70,17 +70,17 @@ class TableServiceTest {
     @SpringBootNestedTest
     class ChangeEmptyTest {
 
-        ChangeOrderTableEmptyRequest changeOrderTableEmptyRequest = new ChangeOrderTableEmptyRequest(true);
-
         @DisplayName("테이블을 비어있는 테이블로 설정한다")
         @Test
         void changeEmpty() {
             OrderTable newOrderTable = new OrderTable(3, false);
             OrderTable orderTable = orderTableRepository.save(newOrderTable);
-
             orderRepository.save(new Order(orderTable.getId(), OrderStatus.COMPLETION));
 
-            OrderTableResponse actual = tableService.changeEmpty(orderTable.getId(), changeOrderTableEmptyRequest);
+            ChangeOrderTableEmptyRequest changeOrderTableEmptyRequest = new ChangeOrderTableEmptyRequest(
+                    orderTable.getId(), true);
+
+            OrderTableResponse actual = tableService.changeEmpty(changeOrderTableEmptyRequest);
             assertThat(actual.isEmpty()).isTrue();
         }
 
@@ -88,8 +88,10 @@ class TableServiceTest {
         @Test
         void throwExceptionBecauseOfNotExistOrderTable() {
             Long notExistId = 0L;
+            ChangeOrderTableEmptyRequest changeOrderTableEmptyRequest = new ChangeOrderTableEmptyRequest(
+                    notExistId, true);
 
-            assertThatThrownBy(() -> tableService.changeEmpty(notExistId, changeOrderTableEmptyRequest))
+            assertThatThrownBy(() -> tableService.changeEmpty(changeOrderTableEmptyRequest))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("존재하지 않는 테이블입니다.");
         }
@@ -104,7 +106,10 @@ class TableServiceTest {
             newOrderTable.joinTableGroup(tableGroup);
             OrderTable orderTable = orderTableRepository.save(newOrderTable);
 
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), changeOrderTableEmptyRequest))
+            ChangeOrderTableEmptyRequest changeOrderTableEmptyRequest = new ChangeOrderTableEmptyRequest(
+                    orderTable.getId(), true);
+
+            assertThatThrownBy(() -> tableService.changeEmpty(changeOrderTableEmptyRequest))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("이미 테이블 그룹이 형성된 테이블입니다.");
         }
@@ -118,7 +123,10 @@ class TableServiceTest {
 
             orderRepository.save(new Order(orderTable.getId(), OrderStatus.valueOf(status)));
 
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), changeOrderTableEmptyRequest))
+            ChangeOrderTableEmptyRequest changeOrderTableEmptyRequest = new ChangeOrderTableEmptyRequest(
+                    orderTable.getId(), true);
+
+            assertThatThrownBy(() -> tableService.changeEmpty(changeOrderTableEmptyRequest))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("비울 수 없는 테이블이 존재합니다.");
         }
@@ -141,9 +149,10 @@ class TableServiceTest {
         @Test
         void changeNumberOfGuests() {
             int numberOfGuests = 10;
-            ChangeNumOfTableGuestsRequest changeGuestsRequest = new ChangeNumOfTableGuestsRequest(numberOfGuests);
+            ChangeNumOfTableGuestsRequest changeGuestsRequest = new ChangeNumOfTableGuestsRequest(orderTable.getId(),
+                    numberOfGuests);
 
-            OrderTableResponse actual = tableService.changeNumberOfGuests(orderTable.getId(), changeGuestsRequest);
+            OrderTableResponse actual = tableService.changeNumberOfGuests(changeGuestsRequest);
             assertThat(actual.getNumberOfGuests()).isEqualTo(numberOfGuests);
         }
 
@@ -155,9 +164,10 @@ class TableServiceTest {
             OrderTable newOrderTable = new OrderTable(3, false);
             OrderTable orderTable = orderTableRepository.save(newOrderTable);
 
-            ChangeNumOfTableGuestsRequest changeGuestsRequest = new ChangeNumOfTableGuestsRequest(numberOfGuests);
+            ChangeNumOfTableGuestsRequest changeGuestsRequest = new ChangeNumOfTableGuestsRequest(orderTable.getId(),
+                    numberOfGuests);
 
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), changeGuestsRequest))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(changeGuestsRequest))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("테이블에는 0명 이상의 손님이 앉을 수 있습니다.");
         }
@@ -167,9 +177,9 @@ class TableServiceTest {
         void throwExceptionBecauseOfNotExistGroupTable() {
             Long notExistId = 0L;
 
-            ChangeNumOfTableGuestsRequest changeGuestsRequest = new ChangeNumOfTableGuestsRequest(10);
+            ChangeNumOfTableGuestsRequest changeGuestsRequest = new ChangeNumOfTableGuestsRequest(notExistId, 10);
 
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(notExistId, changeGuestsRequest))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(changeGuestsRequest))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("존재하지 않는 테이블입니다.");
         }
@@ -180,9 +190,9 @@ class TableServiceTest {
             OrderTable newEmptyTable = new OrderTable(10, true);
             OrderTable emptyTable = orderTableRepository.save(newEmptyTable);
 
-            ChangeNumOfTableGuestsRequest changeGuestsRequest = new ChangeNumOfTableGuestsRequest(10);
+            ChangeNumOfTableGuestsRequest changeGuestsRequest = new ChangeNumOfTableGuestsRequest(emptyTable.getId(), 10);
 
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(emptyTable.getId(), changeGuestsRequest))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(changeGuestsRequest))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("주문 테이블이 비어있습니다.");
         }
