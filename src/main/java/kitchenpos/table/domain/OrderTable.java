@@ -4,12 +4,9 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Table(name = "order_table")
@@ -20,9 +17,8 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
+    @Column(name = "table_group_id")
+    private Long tableGroupId;
 
     @Column(name = "number_of_guests")
     private int numberOfGuests;
@@ -43,7 +39,7 @@ public class OrderTable {
     }
 
     private void validateNotBelongToTableGroup() {
-        if (Objects.nonNull(tableGroup)) {
+        if (Objects.nonNull(tableGroupId)) {
             throw new IllegalArgumentException("이미 테이블 그룹이 형성된 테이블입니다.");
         }
     }
@@ -68,25 +64,25 @@ public class OrderTable {
     }
 
     public boolean isAlreadyGrouped() {
-        return Objects.nonNull(tableGroup);
+        return Objects.nonNull(tableGroupId);
     }
 
-    public void joinTableGroup(TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
+    public void joinTableGroup(Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
         this.empty = false;
     }
 
     public void leaveTableGroup() {
-        this.tableGroup = null;
-        this.empty = true;
+        this.tableGroupId = null;
+        this.empty = false;
     }
 
     public Long getId() {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {

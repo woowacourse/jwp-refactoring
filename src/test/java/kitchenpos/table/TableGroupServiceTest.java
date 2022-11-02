@@ -139,8 +139,8 @@ class TableGroupServiceTest {
 
             tableGroupService.ungroup(tableGroup.getId());
             assertAll(
-                    () -> assertThat(table1.getTableGroup()).isNull(),
-                    () -> assertThat(table2.getTableGroup()).isNull()
+                    () -> assertThat(table1.getTableGroupId()).isNull(),
+                    () -> assertThat(table2.getTableGroupId()).isNull()
             );
         }
 

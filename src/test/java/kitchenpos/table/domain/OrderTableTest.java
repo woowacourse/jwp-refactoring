@@ -25,7 +25,7 @@ class OrderTableTest {
     void validateNotBelongToTableGroup() {
         boolean status = true;
         OrderTable orderTable = new OrderTable(10, false);
-        orderTable.joinTableGroup(new TableGroup());
+        orderTable.joinTableGroup(1L);
 
         assertThatThrownBy(() -> orderTable.changeEmptyStatus(status))
                 .isInstanceOf(IllegalArgumentException.class)

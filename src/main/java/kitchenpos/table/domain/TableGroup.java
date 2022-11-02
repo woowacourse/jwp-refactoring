@@ -4,11 +4,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -23,7 +25,8 @@ public class TableGroup {
     @Column(name = "created_date")
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "tableGroup")
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "table_group_id")
     private final List<OrderTable> orderTables = new ArrayList<>();
 
     public TableGroup() {
@@ -33,7 +36,7 @@ public class TableGroup {
         validateOrderTableSize(orderTables);
         validateOrderTableIsNotEmpty(orderTables);
         for (OrderTable orderTable : orderTables) {
-            orderTable.joinTableGroup(this);
+            orderTable.joinTableGroup(id);
             this.orderTables.add(orderTable);
         }
     }

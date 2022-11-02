@@ -22,8 +22,8 @@ class TableGroupTest {
 
         List<OrderTable> actual = tableGroup.getOrderTables();
         assertAll(
-                () -> assertThat(orderTable1.getTableGroup()).isEqualTo(tableGroup),
-                () -> assertThat(orderTable2.getTableGroup()).isEqualTo(tableGroup),
+                () -> assertThat(orderTable1.getTableGroupId()).isEqualTo(tableGroup.getId()),
+                () -> assertThat(orderTable2.getTableGroupId()).isEqualTo(tableGroup.getId()),
                 () -> assertThat(actual).hasSize(2)
         );
     }
@@ -56,7 +56,7 @@ class TableGroupTest {
     @Test
     void validateInNotGroupedTable() {
         OrderTable alreadyGroupedTable = new OrderTable(3, false);
-        alreadyGroupedTable.joinTableGroup(new TableGroup());
+        alreadyGroupedTable.joinTableGroup(1L);
 
         TableGroup tableGroup = new TableGroup();
         List<OrderTable> orderTables = List.of(alreadyGroupedTable, new OrderTable(4, false));
@@ -79,8 +79,8 @@ class TableGroupTest {
 
         List<OrderTable> actual = tableGroup.getOrderTables();
         assertAll(
-                () -> assertThat(orderTable1.getTableGroup()).isNull(),
-                () -> assertThat(orderTable2.getTableGroup()).isNull(),
+                () -> assertThat(orderTable1.getTableGroupId()).isNull(),
+                () -> assertThat(orderTable2.getTableGroupId()).isNull(),
                 () -> assertThat(actual).hasSize(0)
         );
     }

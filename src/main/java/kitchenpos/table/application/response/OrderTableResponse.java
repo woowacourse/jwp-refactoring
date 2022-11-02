@@ -1,9 +1,6 @@
 package kitchenpos.table.application.response;
 
-import java.util.Objects;
-
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.TableGroup;
 
 public class OrderTableResponse {
 
@@ -14,16 +11,9 @@ public class OrderTableResponse {
 
     public OrderTableResponse(OrderTable orderTable) {
         this.id = orderTable.getId();
-        this.tableGroupId = getTableGroupId(orderTable.getTableGroup());
+        this.tableGroupId = orderTable.getTableGroupId();
         this.numberOfGuests = orderTable.getNumberOfGuests();
         this.empty = orderTable.isEmpty();
-    }
-
-    public Long getTableGroupId(TableGroup tableGroup) {
-        if (Objects.isNull(tableGroup)) {
-            return 0L;
-        }
-        return tableGroup.getId();
     }
 
     public Long getId() {

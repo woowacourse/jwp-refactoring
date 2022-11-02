@@ -103,7 +103,7 @@ class TableServiceTest {
             TableGroup tableGroup = tableGroupRepository.save(newTableGroup);
 
             OrderTable newOrderTable = new OrderTable(3, true);
-            newOrderTable.joinTableGroup(tableGroup);
+            newOrderTable.joinTableGroup(tableGroup.getId());
             OrderTable orderTable = orderTableRepository.save(newOrderTable);
 
             ChangeOrderTableEmptyRequest changeOrderTableEmptyRequest = new ChangeOrderTableEmptyRequest(
