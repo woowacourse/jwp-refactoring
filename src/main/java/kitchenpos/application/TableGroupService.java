@@ -67,7 +67,6 @@ public class TableGroupService {
         final List<Long> orderTableIds = getOrderTablesIds(orderTables);
 
         validateIsPossibleOrderStatus(orderTableIds);
-
         splitOrderTables(orderTables);
     }
 

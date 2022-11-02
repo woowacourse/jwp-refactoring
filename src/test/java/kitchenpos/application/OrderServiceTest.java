@@ -12,6 +12,7 @@ import static org.mockito.BDDMockito.given;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.application.dto.request.OrderCreateRequest;
+import kitchenpos.application.dto.request.OrderLineItemCreateRequest;
 import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
@@ -54,7 +55,7 @@ class OrderServiceTest {
         given(orderLineItemDao.save(any(OrderLineItem.class))).willReturn(ORDER_LINE_ITEM);
 
         //when
-        OrderCreateRequest dto = new OrderCreateRequest(1L, List.of(new OrderLineItem(1L, 1L)));
+        OrderCreateRequest dto = new OrderCreateRequest(1L, List.of(new OrderLineItemCreateRequest(1L, 1L)));
         OrderResponse savedOrder = orderService.create(dto);
 
         //then

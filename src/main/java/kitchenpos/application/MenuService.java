@@ -38,7 +38,7 @@ public class MenuService {
     @Transactional
     public MenuResponse create(final MenuCreateRequest dto) {
         final List<MenuProduct> menuProducts = dto.getMenuProducts();
-        validateIsExistGroup(dto);
+        validateIsExistGroup(dto.getMenuGroupId());
         validateLessThanTotalPrice(menuProducts, dto.getPrice());
 
         final Menu menu = new Menu(dto.getName(), dto.getPrice(), dto.getMenuGroupId(), dto.getMenuProducts());
@@ -80,8 +80,8 @@ public class MenuService {
         return sum;
     }
 
-    private void validateIsExistGroup(MenuCreateRequest dto) {
-        if (!menuGroupDao.existsById(dto.getMenuGroupId())) {
+    private void validateIsExistGroup(Long menuGroupId) {
+        if (!menuGroupDao.existsById(menuGroupId)) {
             throw new IllegalArgumentException();
         }
     }

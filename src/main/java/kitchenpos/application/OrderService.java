@@ -40,10 +40,10 @@ public class OrderService {
     public OrderResponse create(final OrderCreateRequest dto) {
         final Long orderTableId = findOrderTableId(dto.getOrderTableId());
         final List<OrderLineItem> orderLineItems = getOrderLineItems(dto);
-
         final Order order = new Order(orderTableId, LocalDateTime.now(), orderLineItems);
         final Order savedOrder = orderDao.save(order);
-        final List<OrderLineItem> savedOrderLineItems = saveOrderLineItems(orderLineItems, order.getId());
+
+        final List<OrderLineItem> savedOrderLineItems = saveOrderLineItems(orderLineItems, savedOrder.getId());
 
         return new OrderResponse(
                 savedOrder.getId(),
@@ -57,14 +57,16 @@ public class OrderService {
     private List<OrderLineItem> saveOrderLineItems(List<OrderLineItem> orderLineItems, Long orderId) {
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.setOrderId(orderId);
+            orderLineItem.associateOrderId(orderId);
             savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
         }
         return savedOrderLineItems;
     }
 
     private List<OrderLineItem> getOrderLineItems(OrderCreateRequest dto) {
-        final List<OrderLineItem> orderLineItems = dto.getOrderLineItems();
+        final List<OrderLineItem> orderLineItems = dto.getOrderLineItems().stream()
+                .map(orderLineItemDto -> new OrderLineItem(orderLineItemDto.getMenuId(), orderLineItemDto.getMenuId()))
+                .collect(Collectors.toList());
         final List<Long> menuIds = orderLineItems.stream()
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
