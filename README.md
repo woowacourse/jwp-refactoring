@@ -133,44 +133,51 @@ getter, setter 를 줄여본다. 현재 객체의 변경 포인트가 분산되�
 - [x] build.gradle에 JPA dependency 추가하기
 - [x] application.yml에 JPA 설정 추가하기
 - [x] JPA Entity 생성
-  - [ ] 영속성 전이 사용해서 연관관계 맺도록 변경
-  - [ ] Jpa Repository 사용하도록 변경 
+    - [ ] 영속성 전이 사용해서 연관관계 맺도록 변경
+    - [ ] Jpa Repository 사용하도록 변경
 - [ ] 기존 DB 와 변경된 내역에 대한 마이그레이션 필요, flyway 고려해보기
 - [ ] 기존 Repository JPA CRUD 로 마이그레이션
 
-
 ### controller 변경에 따른 검증 테스트 코드 보강
+
 - [x] MenuGroupRestController
 - [x] MenuRestController
 - [x] OrderRestController
 - [x] ProductRestController
 - [x] TableGroupRestController
-- [x] TableRestController
-= 총 15개 API 에 대한 테스트 필요
+- [x] TableRestController = 총 15개 API 에 대한 테스트 필요
 
 ### 인수테스트 테스트 코드 보강
+
 - [ ] MenuGroupRestController
-  - `post: create /api/menu-groups`
-  - `get: list /api/menu-groups`
+    - `post: create /api/menu-groups`
+    - `get: list /api/menu-groups`
 - [ ] MenuRestController
-  - `post: create /api/menus`
-  - `get: get /api/menus`
+    - `post: create /api/menus`
+    - `get: get /api/menus`
 - [ ] OrderRestController
-  - `post: create /api/orders`
-  - `get: list /api/orders`
-  - `put: changeOrderStatus /api/orders/{orderId}/order-status`
+    - `post: create /api/orders`
+    - `get: list /api/orders`
+    - `put: changeOrderStatus /api/orders/{orderId}/order-status`
 - [ ] ProductRestController
-  - `post: create /api/products`
-  - `get: list /api/products`
+    - `post: create /api/products`
+    - `get: list /api/products`
 - [ ] TableGroupRestController
-  - `post: create /api/table-groups`
-  - `delete: ungroup /api/table-groups/{tableGroupId}`
+    - `post: create /api/table-groups`
+    - `delete: ungroup /api/table-groups/{tableGroupId}`
 - [ ] TableRestController
-  - `post: create /api/tables` 
-  - `get: list /api/tables`
-  - `put: changeEmpty /api/tables/{orderTableId}/empty`
-  - `put: changeNumberOfGuests /api/tables/{orderTableId}/number-of-guests`
-    = 총 15개 API 에 대한 테스트 필요
+    - `post: create /api/tables`
+    - `get: list /api/tables`
+    - `put: changeEmpty /api/tables/{orderTableId}/empty`
+    - `put: changeNumberOfGuests /api/tables/{orderTableId}/number-of-guests`
+      = 총 15개 API 에 대한 테스트 필요
 
+## JPA 답게 리팩터링 해보기
+- 현재 JDBC Template 기준으로 작성되어 있는 코드를 JPA 의 영속성 전이 등에 맞게 리팩터링 하기
 
-  
+## 계층별 테스트에 대한 고민 해보기
+- 단위 테스트
+    - 기능 테스트
+- 통합 테스트
+- Controller Test
+- 인수 테스트 
