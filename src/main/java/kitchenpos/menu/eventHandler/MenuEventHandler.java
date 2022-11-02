@@ -1,4 +1,4 @@
-package kitchenpos.menu.eventListener;
+package kitchenpos.menu.eventHandler;
 
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -7,11 +7,11 @@ import kitchenpos.event.CheckExistMenusEvent;
 import kitchenpos.menu.domain.MenuRepository;
 
 @Component
-public class MenuEventListener {
+public class MenuEventHandler {
 
     private final MenuRepository menuRepository;
 
-    public MenuEventListener(MenuRepository menuRepository) {
+    public MenuEventHandler(MenuRepository menuRepository) {
         this.menuRepository = menuRepository;
     }
 

@@ -1,4 +1,4 @@
-package kitchenpos.table.eventListener;
+package kitchenpos.table.eventHandler;
 
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -8,11 +8,11 @@ import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 
 @Component
-public class TableEventListener {
+public class TableEventHandler {
 
     private final OrderTableRepository orderTableRepository;
 
-    public TableEventListener(OrderTableRepository orderTableRepository) {
+    public TableEventHandler(OrderTableRepository orderTableRepository) {
         this.orderTableRepository = orderTableRepository;
     }
 

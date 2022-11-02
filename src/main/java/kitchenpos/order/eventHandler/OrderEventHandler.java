@@ -1,4 +1,4 @@
-package kitchenpos.order.eventListener;
+package kitchenpos.order.eventHandler;
 
 import java.util.Arrays;
 
@@ -10,11 +10,11 @@ import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 
 @Component
-public class OrderEventListener {
+public class OrderEventHandler {
 
     private final OrderRepository orderRepository;
 
-    public OrderEventListener(OrderRepository orderRepository) {
+    public OrderEventHandler(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
 
