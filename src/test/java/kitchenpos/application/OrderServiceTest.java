@@ -28,6 +28,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.OrderChangeOrderStatusRequest;
+import kitchenpos.dto.OrderLineItemSaveRequest;
 import kitchenpos.dto.OrderResponse;
 import kitchenpos.dto.OrderSaveRequest;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -73,10 +74,10 @@ class OrderServiceTest {
         Menu menu = menuDao.save(generateMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId(), menuProducts));
 
         OrderTable orderTable = orderTableDao.save(generateOrderTable(0, false));
-        OrderLineItem orderLineItem = generateOrderLineItem(menu.getId(), 1);
+        OrderLineItemSaveRequest orderLineItemSaveRequest = new OrderLineItemSaveRequest(menu.getId(), 1);
 
         OrderResponse actual = orderService.create(
-                generateOrderSaveRequest(orderTable.getId(), List.of(orderLineItem)));
+                generateOrderSaveRequest(orderTable.getId(), List.of(orderLineItemSaveRequest)));
 
         assertAll(() -> {
             assertThat(actual.getOrderTableId()).isEqualTo(orderTable.getId());
@@ -94,19 +95,13 @@ class OrderServiceTest {
     }
 
     @Test
-    void orderLineItems의_사이즈가_실제_menu에_포함된_개수가_일치하지_않는_경우_예외를_던진다() {
-        MenuGroup 한마리메뉴 = menuGroupDao.save(generateMenuGroup("한마리메뉴"));
-        Product 후라이드 = productDao.save(generateProduct("후라이드"));
-
-        List<MenuProduct> menuProducts = List.of(generateMenuProduct(후라이드.getId(), 1));
-        Menu menu = menuDao.save(generateMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId(), menuProducts));
-
+    void orderLineItems에_속하는_menuId가_존재하지_않는_경우_예외를_던진다() {
         OrderTable orderTable = orderTableDao.save(generateOrderTable(0, false));
-        OrderLineItem orderLineItem = generateOrderLineItem(menu.getId(), 1);
+        OrderLineItemSaveRequest orderLineItemSaveRequest = new OrderLineItemSaveRequest(0L, 1);
 
         assertThatThrownBy(
-                () -> orderService.create(
-                        generateOrderSaveRequest(orderTable.getId(), List.of(orderLineItem, orderLineItem))))
+                () -> orderService.create(generateOrderSaveRequest(orderTable.getId(),
+                        List.of(orderLineItemSaveRequest, orderLineItemSaveRequest))))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -119,10 +114,11 @@ class OrderServiceTest {
         Menu menu = menuDao.save(generateMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId(), menuProducts));
 
         OrderTable orderTable = orderTableDao.save(generateOrderTable(0, true));
-        OrderLineItem orderLineItem = generateOrderLineItem(menu.getId(), 1);
+        OrderLineItemSaveRequest orderLineItemSaveRequest = new OrderLineItemSaveRequest(menu.getId(), 1);
 
         assertThatThrownBy(
-                () -> orderService.create(generateOrderSaveRequest(orderTable.getId(), List.of(orderLineItem))))
+                () -> orderService.create(
+                        generateOrderSaveRequest(orderTable.getId(), List.of(orderLineItemSaveRequest))))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

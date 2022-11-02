@@ -54,6 +54,7 @@ public class Order {
     }
 
     public void changeOrderStatus(final String orderStatus) {
+        OrderStatus.valueOf(orderStatus);
         if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
             throw new IllegalArgumentException();
         }

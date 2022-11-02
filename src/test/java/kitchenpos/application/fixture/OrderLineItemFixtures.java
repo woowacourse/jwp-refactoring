@@ -2,16 +2,20 @@ package kitchenpos.application.fixture;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import kitchenpos.domain.OrderLineItem;
 
 public class OrderLineItemFixtures {
 
-    public static final OrderLineItem generateOrderLineItem(final Long menuId, final long quantity) {
-        return generateOrderLineItem(null, menuId, quantity);
+    public static final OrderLineItem generateOrderLineItem(final String name,
+                                                            final BigDecimal price,
+                                                            final long quantity) {
+        return generateOrderLineItem(null, name, price, quantity);
     }
 
     public static final OrderLineItem generateOrderLineItem(final Long seq,
-                                                            final Long menuId,
+                                                            final String name,
+                                                            final BigDecimal price,
                                                             final long quantity) {
         try {
             Constructor<OrderLineItem> constructor = OrderLineItem.class.getDeclaredConstructor();
@@ -23,9 +27,13 @@ public class OrderLineItemFixtures {
             seqField.setAccessible(true);
             seqField.set(orderLineItem, seq);
 
-            Field menuIdField = clazz.getDeclaredField("menuId");
-            menuIdField.setAccessible(true);
-            menuIdField.set(orderLineItem, menuId);
+            Field nameField = clazz.getDeclaredField("name");
+            nameField.setAccessible(true);
+            nameField.set(orderLineItem, name);
+
+            Field priceField = clazz.getDeclaredField("price");
+            priceField.setAccessible(true);
+            priceField.set(orderLineItem, price);
 
             Field quantityField = clazz.getDeclaredField("quantity");
             quantityField.setAccessible(true);
