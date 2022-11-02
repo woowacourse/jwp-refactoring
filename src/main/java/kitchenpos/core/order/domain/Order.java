@@ -3,6 +3,7 @@ package kitchenpos.core.order.domain;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
+import kitchenpos.core.order.application.OrderValidator;
 
 public class Order {
     private Long id;
@@ -30,7 +31,9 @@ public class Order {
                            final Long orderTableId,
                            final OrderStatus orderStatus,
                            final LocalDateTime orderedTime,
-                           final List<OrderLineItem> orderLineItems) {
+                           final List<OrderLineItem> orderLineItems,
+                           final OrderValidator orderValidator) {
+        orderValidator.validate(new Order(id, orderTableId, orderStatus, orderedTime, orderLineItems));
         if (orderLineItems == null) {
             throw new IllegalArgumentException("주문 상품 목록이 없으면 주문을 생성할 수 없습니다.");
         }
@@ -40,8 +43,10 @@ public class Order {
         return new Order(id, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
-    public static Order of(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
-        return of(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+    public static Order of(final Long orderTableId,
+                           final List<OrderLineItem> orderLineItems,
+                           final OrderValidator orderValidator) {
+        return of(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems, orderValidator);
     }
 
     public static Order createForEntity(final Long id,

@@ -27,7 +27,7 @@ public class OrderFixture {
 
     public static Order getOrderRequest(final Long orderTableId,
                                         final List<OrderLineItem> orderLineItems) {
-        return Order.of(orderTableId, orderLineItems);
+        return Order.of(orderTableId, orderLineItems, order -> {});
     }
 
     public static Order getOrder(final OrderStatus OrderStatus) {
@@ -43,7 +43,7 @@ public class OrderFixture {
                                  final OrderStatus orderStatus,
                                  final LocalDateTime orderedTime,
                                  final List<OrderLineItem> orderLineItems) {
-        return Order.of(id, orderTableId, orderStatus, orderedTime, orderLineItems);
+        return Order.of(id, orderTableId, orderStatus, orderedTime, orderLineItems, order -> {});
     }
 
     public static OrderLineItem getOrderLineItem(final Long orderId) {

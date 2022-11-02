@@ -14,7 +14,7 @@ class OrderTest {
     @Test
     @DisplayName("주문 테이블이 null 이고 주문을 생성할 경우 예외가 발생한다.")
     void createWithNullOrderTables() {
-        assertThatThrownBy(() -> Order.of(1L, null))
+        assertThatThrownBy(() -> Order.of(1L, null, order -> {}))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문 상품 목록이 없으면 주문을 생성할 수 없습니다.");
     }
@@ -22,7 +22,7 @@ class OrderTest {
     @Test
     @DisplayName("주문 테이블이 비어있고 주문을 생성할 경우 예외가 발생한다.")
     void createWithEmptyOrderTables() {
-        assertThatThrownBy(() -> Order.of(1L, Arrays.asList()))
+        assertThatThrownBy(() -> Order.of(1L, Arrays.asList(), order -> {}))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문 상품 목록이 없으면 주문을 생성할 수 없습니다.");
     }
@@ -52,6 +52,6 @@ class OrderTest {
     }
 
     private Order getOrder() {
-        return Order.of(1L, Arrays.asList(new OrderLineItem(1L, 2)));
+        return Order.of(1L, Arrays.asList(new OrderLineItem(1L, 2)), order -> {});
     }
 }

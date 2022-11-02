@@ -21,36 +21,24 @@ public class OrderService {
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
     private final OrderTableDao orderTableDao;
+    private final OrderValidator orderValidator;
 
-    public OrderService(
-            final MenuDao menuDao,
-            final OrderDao orderDao,
-            final OrderLineItemDao orderLineItemDao,
-            final OrderTableDao orderTableDao
-    ) {
+    public OrderService(final MenuDao menuDao, final OrderDao orderDao, final OrderLineItemDao orderLineItemDao,
+                        final OrderTableDao orderTableDao, final OrderValidator orderValidator) {
         this.menuDao = menuDao;
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
         this.orderTableDao = orderTableDao;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
     public Order create(final Order orderRequest) {
         final List<OrderLineItem> orderLineItemsRequest = orderRequest.getOrderLineItems();
-        validateOrderTableEmpty(orderRequest.getOrderTableId());
         validateExistMenus(orderLineItemsRequest);
-
-        final Order savedOrder = orderDao.save(Order.of(orderRequest.getOrderTableId(), orderLineItemsRequest));
+        final Order savedOrder = orderDao.save(Order.of(orderRequest.getOrderTableId(), orderLineItemsRequest, orderValidator));
         savedOrder.changeOrderLineItems(getSavedOrderLineItems(orderLineItemsRequest, savedOrder));
         return savedOrder;
-    }
-
-    private void validateOrderTableEmpty(final Long orderTableId) {
-        final OrderTable orderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(NoSuchElementException::new);
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("주문 테이블이 비워져있으면 주문을 생성할 수 없습니다.");
-        }
     }
 
     private void validateExistMenus(final List<OrderLineItem> orderLineItems) {

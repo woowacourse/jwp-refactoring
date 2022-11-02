@@ -72,7 +72,7 @@ class OrderServiceTest extends ServiceTest {
 
     private static Stream<Arguments> invalidParams() {
         return Stream.of(
-                Arguments.of(Order.of(1L, Arrays.asList(getOrderLineItemRequest(), getOrderLineItemRequest())),
+                Arguments.of(Order.of(1L, Arrays.asList(getOrderLineItemRequest(), getOrderLineItemRequest()), order -> {}),
                         "주문 상품 목록에 등록되지 않은 메뉴가 존재할 경우")
         );
     }
