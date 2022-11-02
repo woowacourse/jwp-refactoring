@@ -24,7 +24,7 @@ public class MenuResponse {
     public MenuResponse(Menu menu) {
         this.id = menu.getId();
         this.name = menu.getName();
-        this.price = menu.getPrice();
+        this.price = menu.getPrice().getValue();
         this.menuGroupId = menu.getMenuGroupId();
         this.menuProductResponses = menu.getProducts()
                 .stream()

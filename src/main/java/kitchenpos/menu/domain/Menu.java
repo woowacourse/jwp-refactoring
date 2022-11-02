@@ -1,8 +1,8 @@
 package kitchenpos.menu.domain;
 
-import java.math.BigDecimal;
 import java.util.List;
 import javax.persistence.CascadeType;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,6 +18,8 @@ public class Menu {
     private Long id;
 
     private String name;
+
+    @Embedded
     private Price price;
     private Long menuGroupId;
 
@@ -45,8 +47,8 @@ public class Menu {
         return name;
     }
 
-    public BigDecimal getPrice() {
-        return price.getValue();
+    public Price getPrice() {
+        return price;
     }
 
     public Long getMenuGroupId() {

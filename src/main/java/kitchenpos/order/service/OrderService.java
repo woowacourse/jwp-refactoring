@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import kitchenpos.common.domain.Quantity;
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
@@ -47,7 +48,7 @@ public class OrderService {
     @Transactional
     public OrderResponse create(OrderCreateRequest orderCreateRequest) {
         List<OrderLineItemCreateRequest> orderLineItemResponses = orderCreateRequest.getOrderLineItems();
-        validateMenu(orderLineItemResponses);
+        validateMenuMinSize(orderLineItemResponses);
         validateOrderTable(orderCreateRequest.getOrderTableId());
         Order order = Order.newOrder(orderCreateRequest.getOrderTableId());
         Order savedOrder = orderRepository.save(order);
@@ -56,23 +57,18 @@ public class OrderService {
     }
 
     private void createOrderLineItem(List<OrderLineItemCreateRequest> orderLineItemCreateRequests, Order savedOrder) {
-        for (OrderLineItemCreateRequest orderLineItemResponse : orderLineItemCreateRequests) {
-            OrderLineItem orderLineItem = new OrderLineItem(savedOrder,
-                    orderLineItemResponse.getMenuId(), new Quantity(orderLineItemResponse.getQuantity()));
+        for (OrderLineItemCreateRequest orderLineItemCreateRequest : orderLineItemCreateRequests) {
+            Menu menu = menuRepository.findById(orderLineItemCreateRequest.getMenuId())
+                    .orElseThrow(MenuNotFoundException::new);
+            OrderLineItem orderLineItem = new OrderLineItem(savedOrder, menu.getName(),
+                    menu.getPrice(), new Quantity(orderLineItemCreateRequest.getQuantity()));
             orderLineItemRepository.save(orderLineItem);
         }
     }
 
-    private void validateMenu(List<OrderLineItemCreateRequest> orderLineItems) {
+    private void validateMenuMinSize(List<OrderLineItemCreateRequest> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new MenuNotEnoughException();
-        }
-
-        boolean menuNotFound = orderLineItems.stream()
-                .map(OrderLineItemCreateRequest::getMenuId)
-                .anyMatch(menuId -> !menuRepository.existsById(menuId));
-        if (menuNotFound) {
-            throw new MenuNotFoundException();
         }
     }
 

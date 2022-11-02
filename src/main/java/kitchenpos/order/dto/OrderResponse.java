@@ -20,7 +20,7 @@ public class OrderResponse {
         this.orderedTime = order.getOrderedTime();
         this.orderLineItems = order.getOrderLineItems()
                 .stream()
-                .map(OrderLineItemResponse::new)
+                .map(OrderLineItemResponse::from)
                 .collect(Collectors.toUnmodifiableList());
     }
 
