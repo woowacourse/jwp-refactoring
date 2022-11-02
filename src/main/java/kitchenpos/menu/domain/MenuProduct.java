@@ -55,36 +55,24 @@ public class MenuProduct {
         return price.multiply(BigDecimal.valueOf(this.quantity));
     }
 
-    public Long getSeq() {
-        return seq;
+    public void mapMenu(Menu menu) {
+        this.menu = menu;
     }
 
-    public void setSeq(Long seq) {
-        this.seq = seq;
+    public Long getSeq() {
+        return seq;
     }
 
     public Menu getMenu() {
         return menu;
     }
 
-    public void mapMenu(Menu menu) {
-        this.menu = menu;
-    }
-
     public Product getProduct() {
         return product;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
     public long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(long quantity) {
-        this.quantity = quantity;
     }
 
     @Override

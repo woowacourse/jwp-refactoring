@@ -71,7 +71,7 @@ public class TableService {
         final OrderTable savedOrderTable = tableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("변경 요청한 주문테이블이 존재하지 않습니다."));
 
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
+        savedOrderTable.mapNumberOfGuests(numberOfGuests);
 
         return tableRepository.save(savedOrderTable);
     }
@@ -87,7 +87,7 @@ public class TableService {
 
         orderTable.validateChangeNumberOfGuests();
 
-        orderTable.setNumberOfGuests(request.getNumberOfGuests());
+        orderTable.mapNumberOfGuests(request.getNumberOfGuests());
 
         return orderTable;
     }
