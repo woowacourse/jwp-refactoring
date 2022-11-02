@@ -7,11 +7,11 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.request.OrderTableIdRequest;
-import kitchenpos.dto.request.TableGroupCreateRequest;
-import kitchenpos.dto.response.TableGroupResponse;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.ordertable.dto.request.OrderTableIdRequest;
+import kitchenpos.tablegroup.dto.request.TableGroupCreateRequest;
+import kitchenpos.tablegroup.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

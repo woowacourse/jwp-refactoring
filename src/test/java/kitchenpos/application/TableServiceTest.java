@@ -6,12 +6,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.request.OrderTableCreateRequest;
-import kitchenpos.dto.request.OrderTableUpdateEmptyRequest;
-import kitchenpos.dto.request.OrderTableUpdateNumberOfGuestsRequest;
-import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.ordertable.dto.request.OrderTableCreateRequest;
+import kitchenpos.ordertable.dto.request.OrderTableUpdateEmptyRequest;
+import kitchenpos.ordertable.dto.request.OrderTableUpdateNumberOfGuestsRequest;
+import kitchenpos.ordertable.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
