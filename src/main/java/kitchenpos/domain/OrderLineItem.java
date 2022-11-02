@@ -21,17 +21,17 @@ public class OrderLineItem {
     @ManyToOne
     private Order order;
 
-    private String productName;
-    private BigDecimal productPrice;
+    private String menuName;
+    private BigDecimal menuPrice;
     private long quantity;
 
     public OrderLineItem() {}
 
-    public OrderLineItem(final Order order, final String productName, final BigDecimal productPrice,
+    public OrderLineItem(final Order order, final String menuName, final BigDecimal menuPrice,
                          final long quantity) {
         this.order = order;
-        this.productName = productName;
-        this.productPrice = productPrice;
+        this.menuName = menuName;
+        this.menuPrice = menuPrice;
         this.quantity = quantity;
     }
 }
