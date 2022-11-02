@@ -10,24 +10,24 @@ import javax.persistence.Embeddable;
 @Access(value = AccessType.FIELD)
 public class OrderMenuItem {
     @Column(name = "menu_name", nullable = false)
-    private String menuName;
+    private String name;
 
     @Column(name = "menu_price", nullable = false)
-    private BigDecimal menuPrice;
+    private BigDecimal price;
 
     protected OrderMenuItem() {
     }
 
-    public OrderMenuItem(final String menuName, final BigDecimal menuPrice) {
-        this.menuName = menuName;
-        this.menuPrice = menuPrice;
+    public OrderMenuItem(final String name, final BigDecimal price) {
+        this.name = name;
+        this.price = price;
     }
 
-    public String getMenuName() {
-        return menuName;
+    public String getName() {
+        return name;
     }
 
-    public BigDecimal getMenuPrice() {
-        return menuPrice;
+    public BigDecimal getPrice() {
+        return price;
     }
 }

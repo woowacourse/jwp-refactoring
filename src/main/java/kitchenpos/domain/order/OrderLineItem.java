@@ -26,11 +26,11 @@ public class OrderLineItem {
     }
 
     public String getMenuName() {
-        return orderMenuItem.getMenuName();
+        return orderMenuItem.getName();
     }
 
     public BigDecimal getMenuPrice() {
-        return orderMenuItem.getMenuPrice();
+        return orderMenuItem.getPrice();
     }
 
     public long getQuantity() {
