@@ -14,6 +14,4 @@ public interface OrderTableRepository extends Repository<OrderTable, Long> {
     List<OrderTable> findAll();
 
     List<OrderTable> findAllByIdIn(List<Long> ids);
-
-    List<OrderTable> findAllByTableGroupId(Long tableGroupId);
 }

@@ -12,6 +12,4 @@ public interface MenuGroupRepository extends Repository<MenuGroup, Long> {
     Optional<MenuGroup> findById(Long id);
 
     List<MenuGroup> findAll();
-
-    boolean existsById(Long id);
 }
