@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -19,7 +20,8 @@ public class OrderTable {
     @ManyToOne
     private TableGroup tableGroup;
 
-    @OneToOne(mappedBy="orderTable")
+    @OneToOne
+    @JoinColumn(name = "order_id")
     private Order order;
 
     private int numberOfGuests;
@@ -70,6 +72,9 @@ public class OrderTable {
     }
 
     public boolean isCookingOrMeal() {
+        if (getOrder() == null) {
+            return false;
+        }
         return getOrder().isCooking() || getOrder().isMeal();
     }
 

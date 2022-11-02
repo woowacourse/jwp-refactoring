@@ -19,9 +19,6 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    private OrderTable orderTable;
-
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
@@ -29,18 +26,9 @@ public class Order {
 
     public Order() {}
 
-    public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
-        validateOrderTableNotEmpty(orderTable);
-        this.orderTable = orderTable;
+    public Order(OrderStatus orderStatus, LocalDateTime orderedTime) {
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        orderTable.enrollOrder(this);
-    }
-
-    private void validateOrderTableNotEmpty(OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
     }
 
     public Long getId() {

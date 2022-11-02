@@ -51,18 +51,26 @@ public class OrderService {
         final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
-        final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
+        final Order order = new Order(OrderStatus.COOKING, LocalDateTime.now());
         final Order savedOrder = orderRepository.save(order);
 
         final List<OrderLineItem> orderLineItems = toOrderLineItems(order, orderRequest.getOrderLineItems());
         validateOrderLineItemsIsNotDuplicatedAndExist(orderRequest.getOrderLineItems(), orderLineItems);
         validateOrderLineItemsIsNotEmpty(orderLineItems);
+        validateOrderTableNotEmpty(orderTable);
 
+        orderTable.enrollOrder(order);
         return savedOrder;
     }
 
     private void validateOrderLineItemsIsNotEmpty(List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateOrderTableNotEmpty(OrderTable orderTable) {
+        if (!orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
     }
