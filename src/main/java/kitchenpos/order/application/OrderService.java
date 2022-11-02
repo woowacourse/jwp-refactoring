@@ -37,7 +37,8 @@ public class OrderService {
     public OrderResponse create(final OrderRequest request) {
         OrderTable orderTable = getOrderTable(request);
         Order order = orderDao.save(Order.from(orderTable));
-        List<OrderLineItem> orderLineItems = getOrderLineItems(request.getOrderLineItems(), order);
+        List<OrderLineItem> orderLineItems = createOrderLineItems(request.getOrderLineItems(), order);
+        orderLineItems.forEach(orderLineItemDao::save);
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException("주문 목록이 비어있습니다.");
         }
@@ -47,13 +48,6 @@ public class OrderService {
     private OrderTable getOrderTable(final OrderRequest request) {
         return orderTableDao.findById(request.getOrderTableId())
                 .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
-    }
-
-    private List<OrderLineItem> getOrderLineItems(final List<OrderLineItemRequest> orderLineItemRequests,
-                                                  final Order order) {
-        List<OrderLineItem> orderLineItems = createOrderLineItems(orderLineItemRequests, order);
-        orderLineItems.forEach(orderLineItemDao::save);
-        return orderLineItems;
     }
 
     private List<OrderLineItem> createOrderLineItems(final List<OrderLineItemRequest> orderLineItemRequests,
