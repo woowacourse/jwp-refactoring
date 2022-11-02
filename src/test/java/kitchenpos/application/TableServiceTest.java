@@ -189,7 +189,7 @@ class TableServiceTest {
 
         assertThatThrownBy(() -> sut.changeNumberOfGuests(NON_EXIST_ID, request))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("존재하지 않는 주문 테이블입니다");
+                .hasMessageContaining("주문 테이블이 존재하지 않습니다");
     }
 
     @Test

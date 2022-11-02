@@ -31,9 +31,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderRequest request) {
-        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "주문 테이블이 존재하지 않습니다. orderTableId = " + request.getOrderTableId()));
+        final OrderTable orderTable = orderTableRepository.getById(request.getOrderTableId());
         return OrderResponse.from(
                 orderRepository.save(
                         new Order(orderTable, mapToOrderLineItems(request.getOrderLineItems())))
@@ -48,8 +46,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusRequest request) {
-        var order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다. orderId = " + orderId));
+        var order = orderRepository.getById(orderId);
         order.changeStatus(OrderStatus.valueOf(request.getOrderStatus()));
         return OrderResponse.from(order);
     }

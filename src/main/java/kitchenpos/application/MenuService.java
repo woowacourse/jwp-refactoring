@@ -47,8 +47,7 @@ public class MenuService {
         List<MenuProduct> result = new ArrayList<>();
         for (MenuProductRequest menuProductRequest : request.getMenuProducts()) {
             Long productId = menuProductRequest.getProductId();
-            Product product = productRepository.findById(productId)
-                    .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다. productId = " + productId));
+            Product product = productRepository.getById(productId);
             result.add(new MenuProduct(product, menuProductRequest.getQuantity()));
         }
         return result;

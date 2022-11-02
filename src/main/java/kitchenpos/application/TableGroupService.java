@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupRepository;
@@ -9,12 +8,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableGroupService {
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository, final TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
+    public TableGroupService(final OrderTableRepository orderTableRepository, final TableGroupRepository tableGroupRepository) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
@@ -35,8 +32,7 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        var tableGroup = tableGroupRepository.findById(tableGroupId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블 그룹입니다. tableGroupId = " + tableGroupId));
+        var tableGroup = tableGroupRepository.getById(tableGroupId);
         tableGroup.ungroup();
     }
 }
