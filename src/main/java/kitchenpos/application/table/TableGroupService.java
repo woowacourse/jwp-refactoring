@@ -30,9 +30,9 @@ public class TableGroupService {
     @Transactional
     public TableGroupResponse create(final TableGroupCreateRequest request) {
         final List<OrderTable> orderTables = mapToOrderTables(request.getOrderTableIds());
-        return TableGroupResponse.from(
-                tableGroupRepository.save(new TableGroup(orderTables, LocalDateTime.now()))
-        );
+        final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(orderTables, LocalDateTime.now()));
+        reflectChangeToOrderTables(orderTables, tableGroup);
+        return TableGroupResponse.from(tableGroup);
     }
 
     private List<OrderTable> mapToOrderTables(final List<Long> orderTableIds) {
@@ -44,6 +44,12 @@ public class TableGroupService {
     private OrderTable findOrderTableById(final Long id) {
         return orderTableRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(CustomError.TABLE_NOT_FOUND_ERROR));
+    }
+
+    private void reflectChangeToOrderTables(final List<OrderTable> orderTables, final TableGroup tableGroup) {
+        for (OrderTable orderTable : orderTables) {
+            orderTable.changeTableGroupId(tableGroup.getId());
+        }
     }
 
     @Transactional

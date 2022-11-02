@@ -41,8 +41,7 @@ class TableGroupRepositoryTest {
         // then
         assertAll(
                 () -> assertThat(saved.getId()).isNotNull(),
-                () -> assertThat(saved.getTables()).hasSize(2),
-                () -> assertThat(tableA.getTableGroup()).isEqualTo(saved)
+                () -> assertThat(saved.getTables()).hasSize(2)
         );
     }
 

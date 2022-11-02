@@ -107,7 +107,8 @@ class OrderTableServiceTest {
     void 비어있는지_여부_변경시_단체_지정이_되어있는_테이블인_경우_예외를_던진다() {
         // given
         final var table = 빈_테이블_생성();
-        tableGroupRepository.save(new TableGroup(List.of(table, 빈_테이블_생성()), LocalDateTime.now()));
+        final var tableGroup = tableGroupRepository.save(new TableGroup(List.of(table, 빈_테이블_생성()), LocalDateTime.now()));
+        table.changeTableGroupId(tableGroup.getId());
 
         final var changeRequest = new OrderTableChangeEmptyRequest(false);
 

@@ -100,9 +100,11 @@ class TableGroupServiceTest {
     @Test
     void 단체_지정하는_테이블이_이미_단체_지정되어_있는_경우_예외를_던진다() {
         // given
-        tableGroupRepository.save(
+        final var tableGroup = tableGroupRepository.save(
                 new TableGroup(List.of(tableA, tableB), LocalDateTime.now())
         );
+        tableA.changeTableGroupId(tableGroup.getId());
+        tableB.changeTableGroupId(tableGroup.getId());
 
         final var request = new TableGroupCreateRequest(List.of(
                 new TableGroupCreateWithTableRequest(tableA.getId()),
