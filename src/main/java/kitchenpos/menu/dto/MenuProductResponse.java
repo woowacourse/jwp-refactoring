@@ -18,7 +18,7 @@ public class MenuProductResponse {
 
     public MenuProductResponse(MenuProduct menuProduct) {
         this.seq = menuProduct.getSeq();
-        this.productId = menuProduct.getProduct().getId();
+        this.productId = menuProduct.getProductId();
         this.quantity = menuProduct.getQuantity();
     }
 

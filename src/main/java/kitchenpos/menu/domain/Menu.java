@@ -9,7 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import kitchenpos.common.domain.Price;
-import kitchenpos.menu.exception.InvalidMenuPriceException;
 
 @Entity
 public class Menu {
@@ -29,24 +28,12 @@ public class Menu {
     }
 
     public Menu(String name, Price price, Long menuGroupId, List<MenuProduct> products) {
-        validatePrice(price, products);
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.products = products;
         for (MenuProduct menuProduct : products) {
             menuProduct.setMenu(this);
-        }
-    }
-
-    private void validatePrice(Price price, List<MenuProduct> menuProducts) {
-        BigDecimal sum = BigDecimal.ZERO;
-        for (MenuProduct menuProduct : menuProducts) {
-            sum = sum.add(menuProduct.getProduct().getPrice()
-                    .multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
-        if (price.isHigher(sum)) {
-            throw new InvalidMenuPriceException();
         }
     }
 

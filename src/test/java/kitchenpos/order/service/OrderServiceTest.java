@@ -42,8 +42,8 @@ class OrderServiceTest extends ServiceTest {
     void setUp() {
         Product product = productRepository.save(new Product("상품1", new Price(new BigDecimal(2500))));
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
-        MenuProduct menuProduct1 = new MenuProduct(product, new Quantity(2L));
-        MenuProduct menuProduct2 = new MenuProduct(product, new Quantity(3L));
+        MenuProduct menuProduct1 = new MenuProduct(product.getId(), new Quantity(2L));
+        MenuProduct menuProduct2 = new MenuProduct(product.getId(), new Quantity(3L));
         Menu menu1 = menuRepository.save(
                 new Menu("메뉴1", new Price(new BigDecimal(5000)), menuGroup.getId(), List.of(menuProduct1)));
         Menu menu2 = menuRepository.save(
