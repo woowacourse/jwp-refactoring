@@ -18,6 +18,7 @@ import kitchenpos.ui.dto.request.OrderLineItemDto;
 import kitchenpos.ui.dto.request.OrderStatusChangeRequest;
 import kitchenpos.ui.dto.response.OrderCreateResponse;
 import kitchenpos.ui.dto.response.OrderFindAllResponse;
+import kitchenpos.ui.dto.response.OrderStatusChangeResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -91,13 +92,13 @@ public class OrderService {
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final OrderStatusChangeRequest request) {
+    public OrderStatusChangeResponse changeOrderStatus(final Long orderId, final OrderStatusChangeRequest request) {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(() -> new NotFoundException(NOT_FOUND_ORDER_ERROR_MESSAGE));
 
-        List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(orderId);
+        final List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(orderId);
         savedOrder.changeOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
 
-        return savedOrder;
+        return OrderStatusChangeResponse.of(savedOrder, orderLineItems);
     }
 }
