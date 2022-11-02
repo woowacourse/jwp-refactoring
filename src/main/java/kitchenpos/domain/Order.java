@@ -11,6 +11,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import kitchenpos.exceptions.OrderLineItemsEmptyException;
@@ -34,7 +35,8 @@ public class Order {
     @Column(name = "ordered_time")
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "order_id")
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     protected Order() {
@@ -42,22 +44,15 @@ public class Order {
 
     public Order(Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
                  List<OrderLineItem> orderLineItems) {
-        injectOrder(orderLineItems);
-        validateOrderLineItemsNotEmpty();
+        validateOrderLineItemsNotEmpty(orderLineItems);
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
     }
 
-    private void injectOrder(final List<OrderLineItem> orderLineItems) {
-        for (OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.updateOrder(this);
-        }
-    }
-
-    private void validateOrderLineItemsNotEmpty() {
-        if (CollectionUtils.isEmpty(this.orderLineItems)) {
+    private void validateOrderLineItemsNotEmpty(final List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new OrderLineItemsEmptyException();
         }
     }
