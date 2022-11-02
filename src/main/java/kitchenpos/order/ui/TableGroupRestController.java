@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import kitchenpos.order.domain.TableGroup;
 import kitchenpos.menu.application.request.TableGroupRequest;
 import kitchenpos.order.application.TableGroupService;
+import kitchenpos.order.application.response.TableGroupResponse;
 
 @RestController
 @RequestMapping("/api/table-groups")
@@ -25,8 +25,8 @@ public class TableGroupRestController {
     }
 
     @PostMapping
-    public ResponseEntity<TableGroup> create(@RequestBody final TableGroupRequest request) {
-        final TableGroup created = tableGroupService.create(request);
+    public ResponseEntity<TableGroupResponse> create(@RequestBody final TableGroupRequest request) {
+        final TableGroupResponse created = tableGroupService.create(request);
         final URI uri = URI.create("/api/table-groups/" + created.getId());
         return ResponseEntity.created(uri)
             .body(created);

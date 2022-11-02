@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import kitchenpos.common.ServiceTest;
+import kitchenpos.order.application.response.TableGroupResponse;
 import kitchenpos.order.domain.TableGroup;
 import kitchenpos.menu.application.request.TableGroupRequest;
 import kitchenpos.order.domain.OrderTable;
@@ -22,11 +23,10 @@ public class TableGroupServiceTest extends ServiceTest {
         TableGroupRequest request = createTableGroupRequest();
 
         // when
-        TableGroup savedTableGroup = tableGroupService.create(request);
+        TableGroupResponse savedTableGroup = tableGroupService.create(request);
 
         // then
         assertThat(savedTableGroup.getId()).isNotNull();
-        assertThat(savedTableGroup.getOrderTables()).isNotNull();
     }
 
     @Test
@@ -35,7 +35,7 @@ public class TableGroupServiceTest extends ServiceTest {
         // given
         TableGroupRequest request = createTableGroupRequest();
 
-        TableGroup savedTableGroup = tableGroupService.create(request);
+        TableGroupResponse savedTableGroup = tableGroupService.create(request);
 
         // when
         Long tableGroupId = savedTableGroup.getId();

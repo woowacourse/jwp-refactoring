@@ -25,8 +25,11 @@ public class TableGroupTest {
     @Test
     @DisplayName("주문 테이블이 빈 경우 예외를 던진다.")
     void create_empty_table() {
+        // given
+        TableGroupValidator validator = new TableGroupValidator();
+
         // when, then
-        assertThatThrownBy(() -> new TableGroup(List.of()))
+        assertThatThrownBy(() -> validator.validateOrderTables(List.of()))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -35,9 +38,10 @@ public class TableGroupTest {
     void create_table_under_size2() {
         // given
         OrderTable orderTable = new OrderTable(1, true);
+        TableGroupValidator validator = new TableGroupValidator();
 
         // when, then
-        assertThatThrownBy(() -> new TableGroup(List.of(orderTable)))
+        assertThatThrownBy(() -> validator.validateOrderTables(List.of(orderTable)))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -50,7 +54,7 @@ public class TableGroupTest {
         TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now(), List.of(orderTable1, orderTable2));
 
         // when
-        tableGroup.ungroupOrderTables();
+        tableGroup.ungroupOrderTables(List.of(orderTable1, orderTable2));
 
         // then
         assertThat(orderTable1.getTableGroupId()).isNull();

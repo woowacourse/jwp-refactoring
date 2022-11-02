@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kitchenpos.order.application.response.TableGroupResponse;
 import kitchenpos.order.domain.TableGroup;
 import kitchenpos.menu.application.request.TableGroupRequest;
 import kitchenpos.order.dao.OrderDao;
@@ -15,6 +16,7 @@ import kitchenpos.order.dao.TableGroupDao;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.application.request.OrderTableRequest;
+import kitchenpos.order.domain.TableGroupValidator;
 
 @Service
 @Transactional(readOnly = true)
@@ -32,20 +34,25 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroupRequest request) {
+    public TableGroupResponse create(final TableGroupRequest request) {
         List<Long> orderTableIds = getOrderTableIds(request);
         List<OrderTable> orderTables = orderTableDao.findAllByIdIn(orderTableIds);
+        TableGroupValidator validator = new TableGroupValidator();
+        validator.validateOrderTables(orderTables);
 
-        return tableGroupDao.save(new TableGroup(orderTables));
+        TableGroup tableGroup = tableGroupDao.save(new TableGroup());
+        tableGroup.groupOrderTables(orderTables);
+        return TableGroupResponse.from(tableGroup);
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        TableGroup tableGroup = tableGroupDao.getById(tableGroupId);
-        List<Long> orderTableIds = getOrderTableIds(tableGroup);
+        List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
+        List<Long> orderTableIds = getOrderTableIds(orderTables);
         validateOrdersNotCompletion(orderTableIds);
 
-        tableGroup.ungroupOrderTables();
+        TableGroup tableGroup = tableGroupDao.getById(tableGroupId);
+        tableGroup.ungroupOrderTables(orderTables);
     }
 
     private List<Long> getOrderTableIds(final TableGroupRequest request) {
@@ -54,16 +61,16 @@ public class TableGroupService {
             .collect(Collectors.toUnmodifiableList());
     }
 
-    private List<Long> getOrderTableIds(final TableGroup tableGroup) {
-        return tableGroup.getOrderTables().stream()
-            .map(OrderTable::getId)
-            .collect(Collectors.toUnmodifiableList());
-    }
-
-    private void validateOrdersNotCompletion(final List<Long> orderTableIds) {
+    public void validateOrdersNotCompletion(final List<Long> orderTableIds) {
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds,
             Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
+    }
+
+    private List<Long> getOrderTableIds(final List<OrderTable> orderTables) {
+        return orderTables.stream()
+            .map(OrderTable::getId)
+            .collect(Collectors.toUnmodifiableList());
     }
 }
