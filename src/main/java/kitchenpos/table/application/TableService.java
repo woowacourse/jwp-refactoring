@@ -1,15 +1,12 @@
 package kitchenpos.table.application;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.table.application.dto.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.table.application.dto.OrderTableChangeStatusRequest;
 import kitchenpos.table.application.dto.OrderTableCreateRequest;
 import kitchenpos.table.application.dto.OrderTableResponse;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,13 +14,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderTableValidator orderTableValidator;
 
-    public TableService(final OrderRepository orderRepository,
-                        final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(final OrderTableRepository orderTableRepository,
+                        final OrderTableValidator orderTableValidator) {
         this.orderTableRepository = orderTableRepository;
+        this.orderTableValidator = orderTableValidator;
     }
 
     @Transactional
@@ -43,8 +40,7 @@ public class TableService {
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeStatusRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-        validateCompletionStatus(orderTableId);
-        savedOrderTable.changeEmpty(request.isEmpty());
+        savedOrderTable.changeEmpty(request.isEmpty(), orderTableValidator);
         return OrderTableResponse.from(orderTableRepository.save(savedOrderTable));
     }
 
@@ -55,12 +51,5 @@ public class TableService {
                 .orElseThrow(IllegalArgumentException::new);
         orderTable.changeNumberOfGuests(request.getNumberOfGuests());
         return OrderTableResponse.from(orderTableRepository.save(orderTable));
-    }
-
-    private void validateCompletionStatus(final Long orderTableId) {
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
     }
 }

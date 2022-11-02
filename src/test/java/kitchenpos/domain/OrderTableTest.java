@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import kitchenpos.table.application.OrderTableValidator;
 import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ class OrderTableTest {
     private Long tableGroupId = 1L;
     private int numberOfGuests = 3;
     private boolean empty = false;
+    private OrderTableValidator orderTableValidator = new FakeOrderTableValidator();
 
     @Test
     void order_table을_생성할_수_있다() {
@@ -52,14 +54,14 @@ class OrderTableTest {
     @CsvSource(value = {"true, false", "false, true"})
     void empty_상태를_바꿀_수_있다(boolean before, boolean after) {
         OrderTable orderTable = new OrderTable(id, null, numberOfGuests, before);
-        orderTable.changeEmpty(after);
+        orderTable.changeEmpty(after, orderTableValidator);
         assertThat(orderTable.isEmpty()).isEqualTo(after);
     }
 
     @Test
     void empty_상태를_바꿀_때_table_group_id가_null이_아니면_예외를_반환한다() {
         OrderTable orderTable = new OrderTable(id, tableGroupId, numberOfGuests, false);
-        assertThatThrownBy(() -> orderTable.changeEmpty(true))
+        assertThatThrownBy(() -> orderTable.changeEmpty(true, orderTableValidator))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

@@ -1,10 +1,9 @@
 package kitchenpos.application;
 
-import static kitchenpos.order.domain.OrderStatus.COOKING;
-import static kitchenpos.order.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
@@ -12,15 +11,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.table.application.OrderTableValidator;
+import kitchenpos.table.application.TableGroupService;
 import kitchenpos.table.application.dto.OrderTableIdDto;
 import kitchenpos.table.application.dto.TableGroupCreateRequest;
 import kitchenpos.table.application.dto.TableGroupResponse;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
-import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.table.repository.TableGroupRepository;
-import kitchenpos.table.application.TableGroupService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -33,13 +32,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class TableGroupServiceTest {
 
     @Mock
-    private OrderRepository orderRepository;
-
-    @Mock
     private OrderTableRepository orderTableRepository;
-
     @Mock
     private TableGroupRepository tableGroupRepository;
+    @Mock
+    private OrderTableValidator orderTableValidator;
 
     @InjectMocks
     private TableGroupService tableGroupService;
@@ -142,9 +139,7 @@ class TableGroupServiceTest {
         void order가_COOKING_또는_MEAL_상태이면_예외를_반환한다() {
             // given
             when(orderTableRepository.findAllByTableGroupId(1L)).thenReturn(Arrays.asList(orderTable1, orderTable2));
-            when(orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                    Arrays.asList(11L, 12L),
-                    Arrays.asList(COOKING, MEAL))).thenReturn(true);
+            doThrow(IllegalArgumentException.class).when(orderTableValidator).validateAllCompletionStatus(any());
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.ungroup(1L))
@@ -155,8 +150,6 @@ class TableGroupServiceTest {
         void table_group을_취소할_수_있다() {
             // given
             when(orderTableRepository.findAllByTableGroupId(1L)).thenReturn(Arrays.asList(orderTable1, orderTable2));
-
-            when(orderRepository.existsByOrderTableIdInAndOrderStatusIn(any(), any())).thenReturn(false);
 
             // when
             tableGroupService.ungroup(1L);

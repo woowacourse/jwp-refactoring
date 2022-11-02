@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import kitchenpos.table.application.OrderTableValidator;
 
 @Entity
 public class OrderTable {
@@ -59,10 +60,11 @@ public class OrderTable {
         this.empty = false;
     }
 
-    public void changeEmpty(final boolean empty) {
+    public void changeEmpty(final boolean empty, final OrderTableValidator orderTableValidator) {
         if (Objects.nonNull(this.tableGroupId)) {
             throw new IllegalArgumentException();
         }
+        orderTableValidator.validateCompletionStatus(this.id);
         this.empty = empty;
     }
 

@@ -3,6 +3,7 @@ package kitchenpos.table.domain;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import kitchenpos.table.application.OrderTableValidator;
 import org.springframework.util.CollectionUtils;
 
 public class OrderTables {
@@ -39,7 +40,8 @@ public class OrderTables {
         }
     }
 
-    public void upgroup() {
+    public void upgroup(final OrderTableValidator orderTableValidator) {
+        orderTableValidator.validateAllCompletionStatus(this.getOrderIds());
         for (final OrderTable orderTable : this.values) {
             orderTable.clear();
         }
