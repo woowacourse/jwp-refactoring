@@ -19,8 +19,8 @@ public class OrderTableRepository {
         return orderTableDao.findAllByIdIn(orderTableIds);
     }
 
-    public void update(OrderTable orderTable) {
-        orderTableDao.save(orderTable);
+    public OrderTable update(OrderTable orderTable) {
+        return save(orderTable);
     }
 
     public OrderTable findById(Long id) {

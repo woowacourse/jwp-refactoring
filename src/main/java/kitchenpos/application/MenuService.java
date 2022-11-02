@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Product;
-import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.ProductRepository;
 import kitchenpos.dto.request.MenuCreateRequest;
@@ -18,14 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenuService {
 
     private final MenuRepository menuRepository;
-    private final MenuGroupRepository menuGroupRepository;
     private final ProductRepository productRepository;
 
-    public MenuService(MenuRepository menuRepository,
-                       MenuGroupRepository menuGroupRepository,
-                       ProductRepository productRepository) {
+    public MenuService(MenuRepository menuRepository, ProductRepository productRepository) {
         this.menuRepository = menuRepository;
-        this.menuGroupRepository = menuGroupRepository;
         this.productRepository = productRepository;
     }
 

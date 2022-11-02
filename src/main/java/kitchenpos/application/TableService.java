@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
 import java.util.stream.Collectors;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableValidator;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.dto.request.TableCreateRequest;
@@ -19,12 +19,12 @@ import java.util.List;
 @Service
 public class TableService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final TableValidator tableValidator;
 
-    public TableService(OrderRepository orderRepository, OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(OrderTableRepository orderTableRepository, TableValidator tableValidator) {
         this.orderTableRepository = orderTableRepository;
+        this.tableValidator = tableValidator;
     }
 
     @Transactional
@@ -47,26 +47,17 @@ public class TableService {
     @Transactional
     public TableResponse changeEmpty(Long orderTableId, TableEmptyUpdateRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId);
-
-        savedOrderTable.validateNotInTableGroup();
-        validateIsCompletedOrder(orderTableId);
-        OrderTable updatedOrderTable = orderTableRepository.save(request.toUpdateEntity(savedOrderTable));
+        tableValidator.ableToChangeEmpty(savedOrderTable);
+        OrderTable updatedOrderTable = orderTableRepository.update(request.toUpdateEntity(savedOrderTable));
 
         return TableResponse.from(updatedOrderTable);
-    }
-
-    private void validateIsCompletedOrder(Long orderTableId) {
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
     }
 
     @Transactional
     public TableResponse changeNumberOfGuests(Long orderTableId, TableGuestUpdateRequest request) {
         OrderTable savedOrderTable = orderTableRepository.findById(orderTableId);
-        savedOrderTable.validateNotEmpty();
-        OrderTable updatedOrderTable = orderTableRepository.save(request.toUpdateEntity(savedOrderTable));
+        tableValidator.ableToChangeNumberOfGuests(savedOrderTable);
+        OrderTable updatedOrderTable = orderTableRepository.update(request.toUpdateEntity(savedOrderTable));
 
         return TableResponse.from(updatedOrderTable);
     }
