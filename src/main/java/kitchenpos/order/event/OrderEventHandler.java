@@ -17,11 +17,6 @@ public class OrderEventHandler {
         add(OrderStatus.MEAL.name());
     }};
 
-    private static final List<String> ORDER_STATUS_FOR_CANT_CHANGE_EMPTY = new ArrayList<String>() {{
-        add(OrderStatus.COOKING.name());
-        add(OrderStatus.MEAL.name());
-    }};
-
     private final OrderRepository orderRepository;
 
     public OrderEventHandler(OrderRepository orderRepository) {
@@ -38,12 +33,4 @@ public class OrderEventHandler {
         }
     }
 
-    @EventListener
-    private void verifiedAbleToChangeEmpty(VerifiedAbleToChangeEmptyEvent event) {
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-            event.getOrderTableId(),
-            ORDER_STATUS_FOR_CANT_CHANGE_EMPTY)) {
-            throw new IllegalArgumentException("변경할 수 있는 상태가 아닙니다.");
-        }
-    }
 }

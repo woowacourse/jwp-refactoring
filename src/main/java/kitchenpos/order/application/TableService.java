@@ -3,12 +3,11 @@ package kitchenpos.order.application;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.order.event.VerifiedAbleToChangeEmptyEvent;
 import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.domain.OrderTableValidator;
 import kitchenpos.order.dto.request.ChangeOrderTableEmptyRequest;
 import kitchenpos.order.dto.request.ChangeOrderTableNumberOfGuestRequest;
 import kitchenpos.order.dto.request.CreateOrderTableRequest;
@@ -20,11 +19,11 @@ import kitchenpos.order.repository.OrderTableRepository;
 public class TableService {
 
     private final OrderTableRepository orderTableRepository;
-    private final ApplicationEventPublisher publisher;
+    private final OrderTableValidator orderTableValidator;
 
-    public TableService(OrderTableRepository orderTableRepository, ApplicationEventPublisher publisher) {
+    public TableService(OrderTableRepository orderTableRepository, OrderTableValidator orderTableValidator) {
         this.orderTableRepository = orderTableRepository;
-        this.publisher = publisher;
+        this.orderTableValidator = orderTableValidator;
     }
 
     @Transactional
@@ -44,7 +43,7 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final ChangeOrderTableEmptyRequest request) {
         final OrderTable orderTable = findOrderTableById(orderTableId);
-        publisher.publishEvent(new VerifiedAbleToChangeEmptyEvent(orderTable.getId()));
+        orderTableValidator.validateChangeEmpty(orderTable.getId());
 
         orderTable.changeEmpty(request.isEmpty());
 
