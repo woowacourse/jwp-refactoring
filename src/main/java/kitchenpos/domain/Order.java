@@ -17,6 +17,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import kitchenpos.exception.CompletedOrderStatusChangeException;
 import kitchenpos.exception.NotContainsOrderLineItemException;
+import kitchenpos.exception.OrderLineItemRemoveFailException;
 import kitchenpos.exception.OrderTableEmptyException;
 import org.springframework.util.CollectionUtils;
 
@@ -61,6 +62,13 @@ public class Order {
 
     public void addOrderLineItem(final OrderLineItem orderLineItem) {
         orderLineItems.add(orderLineItem);
+    }
+
+    public void removeOrderLineItem(final OrderLineItem orderLineItem) {
+        final boolean removeSuccess = orderLineItems.remove(orderLineItem);
+        if (!removeSuccess) {
+            throw new OrderLineItemRemoveFailException();
+        }
     }
 
     public boolean isNotComplete() {

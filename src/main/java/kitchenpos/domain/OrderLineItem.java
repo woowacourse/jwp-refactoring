@@ -51,6 +51,9 @@ public class OrderLineItem {
     }
 
     public void setOrder(final Order order) {
+        if (this.order != null) {
+            this.order.removeOrderLineItem(this);
+        }
         this.order = order;
         order.addOrderLineItem(this);
     }

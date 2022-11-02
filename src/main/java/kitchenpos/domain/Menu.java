@@ -13,6 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import kitchenpos.exception.InvalidMenuPriceException;
 import kitchenpos.exception.MenuProductAmountException;
+import kitchenpos.exception.MenuProductRemoveFailException;
 
 @Entity
 @Table(name = "menu")
@@ -67,6 +68,13 @@ public class Menu {
 
     public void addMenuProduct(final MenuProduct menuProduct) {
         menuProducts.add(menuProduct);
+    }
+
+    public void removeMenuProduct(final MenuProduct menuProduct) {
+        final boolean removeSuccess = menuProducts.remove(menuProduct);
+        if (!removeSuccess) {
+            throw new MenuProductRemoveFailException();
+        }
     }
 
     public Long getId() {
