@@ -4,10 +4,8 @@ import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import lombok.Getter;
 
 @Embeddable
-@Getter
 public class ProductPrice {
 
     @Column(name = "price", nullable = false, precision = 19, scale = 2)
@@ -29,6 +27,10 @@ public class ProductPrice {
 
     public BigDecimal multiply(final long quantity) {
         return value.multiply(BigDecimal.valueOf(quantity));
+    }
+
+    public BigDecimal getValue() {
+        return value;
     }
 
     @Override

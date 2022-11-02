@@ -10,10 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import kitchenpos.domain.product.Product;
-import lombok.Getter;
 
 @Entity
-@Getter
 public class MenuProduct {
 
     @Id
@@ -52,5 +50,21 @@ public class MenuProduct {
 
     public BigDecimal calculatePrice() {
         return product.multiplyQuantity(quantity);
+    }
+
+    public Long getSeq() {
+        return seq;
+    }
+
+    public Menu getMenu() {
+        return menu;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public long getQuantity() {
+        return quantity;
     }
 }

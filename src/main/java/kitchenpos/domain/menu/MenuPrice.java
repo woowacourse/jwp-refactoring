@@ -4,10 +4,8 @@ import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import lombok.Getter;
 
 @Embeddable
-@Getter
 public class MenuPrice {
 
     @Column(name = "price", nullable = false, precision = 19, scale = 2)
@@ -29,6 +27,10 @@ public class MenuPrice {
 
     public boolean isExpensive(final BigDecimal price) {
         return value.compareTo(price) > 0;
+    }
+
+    public BigDecimal getValue() {
+        return value;
     }
 
     @Override

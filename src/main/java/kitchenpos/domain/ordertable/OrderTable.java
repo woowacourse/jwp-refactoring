@@ -6,10 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import lombok.Getter;
 
 @Entity
-@Getter
 public class OrderTable {
 
     @Id
@@ -68,5 +66,21 @@ public class OrderTable {
     public void deleteTableGroup() {
         this.tableGroupId = null;
         this.empty = false;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getTableGroupId() {
+        return tableGroupId;
+    }
+
+    public int getNumberOfGuests() {
+        return numberOfGuests;
+    }
+
+    public boolean isEmpty() {
+        return empty;
     }
 }

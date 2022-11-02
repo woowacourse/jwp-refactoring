@@ -7,10 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import lombok.Getter;
 
 @Entity
-@Getter
 public class Product {
 
     @Id
@@ -38,5 +36,17 @@ public class Product {
 
     public BigDecimal multiplyQuantity(final long quantity) {
         return productPrice.multiply(quantity);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public ProductPrice getProductPrice() {
+        return productPrice;
     }
 }

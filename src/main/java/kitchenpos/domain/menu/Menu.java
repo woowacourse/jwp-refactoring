@@ -8,10 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import lombok.Getter;
 
 @Entity
-@Getter
 public class Menu {
 
     @Id
@@ -52,5 +50,25 @@ public class Menu {
 
     public Menu(final String name, final MenuPrice menuPrice, final Long menuGroupId) {
         this(null, name, menuPrice, menuGroupId, new ArrayList<>());
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public MenuPrice getMenuPrice() {
+        return menuPrice;
+    }
+
+    public Long getMenuGroupId() {
+        return menuGroupId;
+    }
+
+    public MenuProducts getMenuProducts() {
+        return menuProducts;
     }
 }

@@ -1,8 +1,5 @@
 package kitchenpos.application.request;
 
-import lombok.Getter;
-
-@Getter
 public class OrderTableGroupCreateRequest {
 
     private Long id;
@@ -12,5 +9,9 @@ public class OrderTableGroupCreateRequest {
 
     public OrderTableGroupCreateRequest(final Long id) {
         this.id = id;
+    }
+
+    public Long getId() {
+        return id;
     }
 }

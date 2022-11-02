@@ -12,12 +12,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
-@Getter
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "orders")
 public class Order {
@@ -61,5 +59,25 @@ public class Order {
             throw new IllegalStateException("이미 완료된 Order의 상태는 변경할 수 없습니다.");
         }
         this.orderStatus = orderStatus;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getOrderTableId() {
+        return orderTableId;
+    }
+
+    public OrderStatus getOrderStatus() {
+        return orderStatus;
+    }
+
+    public LocalDateTime getOrderedTime() {
+        return orderedTime;
+    }
+
+    public OrderLineItems getOrderLineItems() {
+        return orderLineItems;
     }
 }

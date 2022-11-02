@@ -1,9 +1,7 @@
 package kitchenpos.application.request;
 
 import java.util.List;
-import lombok.Getter;
 
-@Getter
 public class TableGroupCreateRequest {
 
     private List<OrderTableGroupCreateRequest> orderTables;
@@ -13,5 +11,9 @@ public class TableGroupCreateRequest {
 
     public TableGroupCreateRequest(final List<OrderTableGroupCreateRequest> orderTables) {
         this.orderTables = orderTables;
+    }
+
+    public List<OrderTableGroupCreateRequest> getOrderTables() {
+        return orderTables;
     }
 }

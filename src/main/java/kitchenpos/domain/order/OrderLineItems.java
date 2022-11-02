@@ -4,10 +4,8 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
-import lombok.Getter;
 
 @Embeddable
-@Getter
 public class OrderLineItems {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
@@ -35,5 +33,9 @@ public class OrderLineItems {
         if (menuSize != value.size()) {
             throw new IllegalArgumentException("중복된 menu가 존재합니다.");
         }
+    }
+
+    public List<OrderLineItem> getValue() {
+        return value;
     }
 }
