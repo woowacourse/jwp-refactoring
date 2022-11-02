@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.common.ServiceTest;
-import kitchenpos.product.domain.Product;
 import kitchenpos.product.application.request.ProductCreateRequest;
+import kitchenpos.product.application.response.ProductResponse;
 
 public class ProductServiceTest extends ServiceTest {
 
@@ -25,7 +25,7 @@ public class ProductServiceTest extends ServiceTest {
         ProductCreateRequest request = new ProductCreateRequest("후라이드", BigDecimal.valueOf(16000));
 
         // when
-        Product savedProduct = productService.create(request);
+        ProductResponse savedProduct = productService.create(request);
 
         // then
         assertThat(savedProduct.getId()).isNotNull();
@@ -38,16 +38,22 @@ public class ProductServiceTest extends ServiceTest {
     void list() {
         // given
         ProductCreateRequest request = new ProductCreateRequest("후라이드", BigDecimal.valueOf(16000));
-        Product savedProduct = productService.create(request);
+        ProductResponse savedProduct = productService.create(request);
 
         // when
-        List<Product> result = productService.list();
+        List<ProductResponse> result = productService.list();
 
         // then
-        assertThat(result).contains(savedProduct);
+        assertProductResponse(result.get(0), savedProduct);
     }
 
     private void assertPriceEqualTo(final BigDecimal actual, final BigDecimal expected) {
         assertThat(actual.compareTo(expected)).isEqualTo(0);
+    }
+
+    private void assertProductResponse(final ProductResponse actual, final ProductResponse expected) {
+        assertThat(actual.getId()).isEqualTo(expected.getId());
+        assertThat(actual.getName()).isEqualTo(expected.getName());
+        assertPriceEqualTo(actual.getPrice(), expected.getPrice());
     }
 }
