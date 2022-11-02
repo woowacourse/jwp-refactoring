@@ -1,10 +1,7 @@
 package kitchenpos.table.application;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.dao.OrderDao;
 import kitchenpos.table.application.request.TableGroupRequest;
 import kitchenpos.table.application.response.TableGroupResponse;
 import kitchenpos.table.domain.OrderTable;
@@ -18,13 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class TableGroupService {
-    private final OrderDao orderDao;
+
+    private final TableUngroupValidator tableUngroupValidator;
     private final OrderTableDao orderTableDao;
     private final TableGroupDao tableGroupDao;
 
-    public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao,
+    public TableGroupService(final TableUngroupValidator tableUngroupValidator, final OrderTableDao orderTableDao,
                              final TableGroupDao tableGroupDao) {
-        this.orderDao = orderDao;
+        this.tableUngroupValidator = tableUngroupValidator;
         this.orderTableDao = orderTableDao;
         this.tableGroupDao = tableGroupDao;
     }
@@ -63,12 +61,7 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
         final List<Long> orderTableIds = getOrderTableIds(orderTables);
-
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException("조리 중이거나 식사 중인 테이블이 존재합니다.");
-        }
-
+        tableUngroupValidator.validateUngroup(orderTableIds);
         savedUnGroupOrderTables(orderTables);
     }
 
