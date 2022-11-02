@@ -1,5 +1,6 @@
 package kitchenpos.table.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.order.domain.Order;
@@ -22,17 +23,21 @@ public class OrderTables {
         }
     }
 
-    public void joinWithTableGroup(TableGroup tableGroup) {
+    public OrderTables joinWithTableGroup(TableGroup tableGroup) {
+        List<OrderTable> orderTables = new ArrayList<>();
         for (OrderTable orderTable : this.orderTables) {
-            orderTable.occupyTableGroup(tableGroup.getId());
+            orderTables.add(orderTable.occupyTableGroup(tableGroup.getId()));
         }
+        return new OrderTables(orderTables);
     }
 
-    public void ungroup(List<Order> orders) {
+    public OrderTables ungroup(List<Order> orders) {
         validateUngroup(orders);
+        List<OrderTable> orderTables = new ArrayList<>();
         for (OrderTable orderTable : this.orderTables) {
-            orderTable.unOccupyTableGroup();
+            orderTables.add(orderTable.unOccupyTableGroup());
         }
+        return new OrderTables(orderTables);
     }
 
     private void validateUngroup(List<Order> orders) {

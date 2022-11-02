@@ -31,17 +31,17 @@ public class TableGroupService {
         List<Long> orderTableIds = request.toEntities();
         OrderTables orderTables = findOrderTables(orderTableIds);
         TableGroup tableGroup = tableGroupDao.save(TableGroup.from());
-        orderTables.joinWithTableGroup(tableGroup);
-        saveOrderTables(orderTables);
+        OrderTables updatedOrderTables = orderTables.joinWithTableGroup(tableGroup);
+        saveOrderTables(updatedOrderTables);
 
-        return TableGroupResponse.toResponse(tableGroup, orderTables);
+        return TableGroupResponse.toResponse(tableGroup, updatedOrderTables);
     }
 
     @Transactional
     public void ungroup(Long tableGroupId) {
         OrderTables orderTables = findOrderTables(tableGroupId);
-        orderTables.ungroup(orderDao.findAll());
-       saveOrderTables(orderTables);
+        OrderTables updatedOrderTables = orderTables.ungroup(orderDao.findAll());
+        saveOrderTables(updatedOrderTables);
     }
 
     private void saveOrderTables(OrderTables orderTables) {

@@ -16,7 +16,6 @@ public class Order {
     private final OrderStatus orderStatus;
     private final LocalDateTime orderedTime;
 
-
     public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
         this.id = id;
         this.orderTableId = orderTableId;

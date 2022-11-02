@@ -41,10 +41,10 @@ public class TableService {
     public OrderTableResponse changeEmpty(Long orderTableId, Boolean empty) {
         OrderTable orderTable = findOrderTable(orderTableId);
         validateChangeEmpty(orderTable);
-        orderTable.changeEmpty(empty);
+        OrderTable updatedOrderTable = orderTable.changeEmpty(empty);
 
-        orderTableDao.save(orderTable);
-        return OrderTableResponse.toResponse(orderTable);
+        orderTableDao.save(updatedOrderTable);
+        return OrderTableResponse.toResponse(updatedOrderTable);
     }
 
     private void validateChangeEmpty(OrderTable orderTable) {
@@ -60,10 +60,10 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeNumberOfGuests(Long orderTableId, int numberOfGuests) {
         OrderTable orderTable = findOrderTable(orderTableId);
-        orderTable.changeNumberOfGuests(numberOfGuests);
+        OrderTable updatedOrderTable = orderTable.changeNumberOfGuests(numberOfGuests);
 
-        orderTableDao.save(orderTable);
-        return OrderTableResponse.toResponse(orderTable);
+        orderTableDao.save(updatedOrderTable);
+        return OrderTableResponse.toResponse(updatedOrderTable);
     }
 
     private OrderTable findOrderTable(Long oderTableId) {
