@@ -12,7 +12,7 @@ class OrderTest {
 
     @Test
     void 완료_상태면_상태를_바꿀때_예외를_반환한다() {
-        Order order = new Order(createOrderTable());
+        Order order = new Order(createOrderTable().getId());
         order.changeOrderStatus(COMPLETION);
 
         assertThatThrownBy(() -> order.changeOrderStatus(COOKING))

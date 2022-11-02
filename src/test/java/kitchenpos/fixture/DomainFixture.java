@@ -36,6 +36,6 @@ public class DomainFixture {
     }
 
     public static Order createOrder(OrderTable orderTable) {
-        return new Order(orderTable);
+        return new Order(orderTable.getId());
     }
 }

@@ -12,6 +12,7 @@ import kitchenpos.exception.NotFoundMenuException;
 import kitchenpos.exception.NotFoundOrderException;
 import kitchenpos.exception.NotFoundOrderTableException;
 import kitchenpos.exception.OrderMenusCountException;
+import kitchenpos.exception.OrderTableEmptyException;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderHistoryRepository;
 import kitchenpos.repository.OrderLineItemRepository;
@@ -48,7 +49,7 @@ public class OrderService {
     public Order create(OrderCreateRequest orderCreateRequest) {
         validateOrderLineItems(orderCreateRequest.getOrderLineItems());
 
-        OrderTable orderTable = findOrderTable(orderCreateRequest.getOrderTableId());
+        OrderTable orderTable = getOrderTable(orderCreateRequest.getOrderTableId());
         Order savedOrder = saveOrder(orderTable);
         saveOrderLineItems(orderCreateRequest.getOrderLineItems(), savedOrder);
 
@@ -71,13 +72,17 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    private OrderTable findOrderTable(Long orderTableId) {
-        return orderTableRepository.findById(orderTableId)
+    private OrderTable getOrderTable(Long orderTableId) {
+        OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(NotFoundOrderTableException::new);
+        if (orderTable.isEmpty()) {
+            throw new OrderTableEmptyException();
+        }
+        return orderTable;
     }
 
     private Order saveOrder(OrderTable orderTable) {
-        return orderRepository.save(new Order(orderTable));
+        return orderRepository.save(new Order(orderTable.getId()));
     }
 
     private void saveOrderLineItems(List<OrderLineItemDto> orderLineItemDtos, Order order) {

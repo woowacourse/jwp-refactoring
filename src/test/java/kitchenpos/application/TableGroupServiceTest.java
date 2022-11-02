@@ -110,7 +110,7 @@ class TableGroupServiceTest extends ServiceTest {
         saved1 = orderTableRepository.save(createOrderTable(savedTableGroup, false));
         saved2 = orderTableRepository.save(createOrderTable(savedTableGroup, true));
 
-        orderRepository.save(new Order(saved1));
+        orderRepository.save(new Order(saved1.getId()));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
                 .isInstanceOf(OrderTableUnableUngroupingStatusException.class);

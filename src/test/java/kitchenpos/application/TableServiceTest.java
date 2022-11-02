@@ -56,7 +56,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 주문테이블을_비울수_없는_상태면_예외를_반환한다() {
         OrderTable savedOrderTable = orderTableRepository.save(createOrderTable());
-        orderRepository.save(new Order(savedOrderTable));
+        orderRepository.save(new Order(savedOrderTable.getId()));
 
         OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(true);
 
