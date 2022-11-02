@@ -1,5 +1,6 @@
 package kitchenpos.order.domain;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -21,6 +22,8 @@ public class OrderLineItem {
     private Order order;
 
     private Long menuId;
+
+    @Embedded
     private Quantity quantity;
 
     protected OrderLineItem() {
