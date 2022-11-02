@@ -7,11 +7,11 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.order.event.VerifiedAbleToUngroupEvent;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.domain.TableGroup;
 import kitchenpos.order.dto.request.CreateTableGroupRequest;
 import kitchenpos.order.dto.response.TableGroupResponse;
+import kitchenpos.order.event.UngroupEvent;
 import kitchenpos.order.repository.OrderTableRepository;
 import kitchenpos.order.repository.TableGroupRepository;
 
@@ -38,12 +38,8 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableRepository.findByTableGroupId(tableGroupId);
-        validateUngroup(orderTables);
-
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.ungroup();
-        }
+        validateOrderTableById(tableGroupId);
+        publisher.publishEvent(new UngroupEvent(tableGroupId));
     }
 
     private List<OrderTable> getOrderTables(final CreateTableGroupRequest request) {
@@ -60,12 +56,9 @@ public class TableGroupService {
         return orderTables;
     }
 
-    private void validateUngroup(final List<OrderTable> orderTables) {
-        final List<Long> orderTableIds = orderTables.stream()
-            .map(it -> it.getId())
-            .collect(Collectors.toList());
-
-        publisher.publishEvent(new VerifiedAbleToUngroupEvent(orderTableIds));
+    private void validateOrderTableById(Long orderTableId) {
+        orderTableRepository.findById(orderTableId)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않은 테이블입니다."));
     }
 
 }

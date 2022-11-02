@@ -1,4 +1,4 @@
-package kitchenpos.table.application;
+package kitchenpos.order.application;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -18,17 +18,16 @@ import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.dto.application.MenuProductDto;
 import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.menu.repository.MenuRepository;
-import kitchenpos.order.application.TableGroupService;
 import kitchenpos.order.domain.Order;
-import kitchenpos.order.dto.application.OrderLineItemDto;
-import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.product.domain.Product;
-import kitchenpos.product.repository.ProductRepository;
 import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.dto.application.OrderLineItemDto;
 import kitchenpos.order.dto.request.AddOrderTableToTableGroupRequest;
 import kitchenpos.order.dto.request.CreateTableGroupRequest;
 import kitchenpos.order.dto.response.TableGroupResponse;
+import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.order.repository.OrderTableRepository;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.repository.ProductRepository;
 
 @SpringBootTest
 class TableGroupServiceTest {
@@ -111,6 +110,14 @@ class TableGroupServiceTest {
 
             // then
             assertThat(orderTableRepository.findByTableGroupId(savedGroupId)).isEmpty();
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 테이블 그룹 id인 경우 예외가 발생한다.")
+        void invalidOrderTableId() {
+            assertThatThrownBy(() -> tableGroupService.ungroup(0L))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("존재하지 않은 테이블입니다.");
         }
 
         @ParameterizedTest
