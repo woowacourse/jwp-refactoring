@@ -12,7 +12,7 @@ public interface OrderDao {
 
     List<Order> findAll();
 
-    boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<String> orderStatuses);
-
     boolean existsByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds, List<String> orderStatuses);
+
+    List<Order> findByOrderTableId(Long orderTableId);
 }

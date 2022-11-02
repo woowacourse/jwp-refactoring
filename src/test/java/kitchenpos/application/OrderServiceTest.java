@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,53 +12,70 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.fakedao.MenuFakeDao;
-import kitchenpos.fakedao.MenuGroupFakeDao;
-import kitchenpos.fakedao.OrderFakeDao;
-import kitchenpos.fakedao.OrderLineItemFakeDao;
-import kitchenpos.fakedao.OrderTableFakeDao;
+import kitchenpos.domain.Price;
+import kitchenpos.domain.Product;
+import kitchenpos.support.IntegrationTest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-public class OrderServiceTest {
+public class OrderServiceTest extends IntegrationTest {
 
-    private MenuDao menuDao = new MenuFakeDao();
-    private MenuGroupDao menuGroupDao = new MenuGroupFakeDao();
-    private OrderDao orderDao = new OrderFakeDao();
-    private OrderLineItemDao orderLineItemDao = new OrderLineItemFakeDao();
-    private OrderTableDao orderTableDao = new OrderTableFakeDao();
+    @Autowired
+    private MenuDao menuDao;
 
-    private OrderService orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
+    @Autowired
+    private MenuGroupDao menuGroupDao;
+
+    @Autowired
+    private OrderDao orderDao;
+
+    @Autowired
+    private OrderLineItemDao orderLineItemDao;
+
+    @Autowired
+    private OrderTableDao orderTableDao;
+
+    @Autowired
+    private ProductDao productDao;
+
+    @Autowired
+    private OrderService orderService;
 
     @DisplayName("주문을 생성할 때")
     @Nested
-    class Create {
+    class Create extends IntegrationTest {
 
         @DisplayName("성공")
         @Test
         void success() {
             // given
-            OrderTable orderTable = orderTableDao.save(new OrderTable(null, 2, false));
+            OrderTable orderTable = orderTableDao.save(new OrderTable(2, false));
             MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
-            Menu menu = menuDao.save(new Menu("메뉴1", BigDecimal.valueOf(1000), menuGroup.getId(), new ArrayList<>()));
-            ArrayList<OrderLineItem> orderLineItems = new ArrayList<>();
-            orderLineItems.add(orderLineItemDao.save(new OrderLineItem(menu.getId(), 3)));
+            Product product = productDao.save(new Product("상품", 1000L));
+            MenuProduct menuProduct = new MenuProduct(null, product, 1);
+            Menu menu = menuDao.save(new Menu("메뉴1", new Price(1000L), menuGroup,
+                    List.of(menuProduct)));
+            List<OrderLineItem> orderLineItems = new ArrayList<>();
+            orderLineItems.add(new OrderLineItem(menu, 3));
+
             // when
-            Order order = orderService.create(new Order(
-                    orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems)
-            );
+            Order order = orderService.create(orderTable.getId(), orderLineItems);
 
             // then
             assertAll(
                     () -> assertThat(orderDao.findById(order.getId())).isPresent(),
-                    () -> assertThat(orderTableDao.findById(order.getOrderTableId())).isPresent(),
+                    () -> assertThat(orderTableDao.findById(order.getOrderTable().getId())).isPresent(),
                     () -> assertThat(menuDao.findById(menu.getId())).isPresent()
             );
         }
@@ -68,26 +84,11 @@ public class OrderServiceTest {
         @Test
         void notFoundOrderLineItem_exception() {
             // given
-            OrderTable orderTable = orderTableDao.save(new OrderTable(null, 2, false));
+            OrderTable orderTable = orderTableDao.save(new OrderTable(2, false));
 
             // then
-            assertThatThrownBy(() -> orderService.create(new Order(
-                    orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>()
-            ))).isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @DisplayName("메뉴를 찾지 못하면 예외를 발생시킨다.")
-        @Test
-        void notFoundMenu_exception() {
-            // given
-            OrderTable orderTable = orderTableDao.save(new OrderTable(null, 2, false));
-            ArrayList<OrderLineItem> orderLineItems = new ArrayList<>();
-            orderLineItems.add(orderLineItemDao.save(new OrderLineItem(0L, 3)));
-
-            // then
-            assertThatThrownBy(() -> orderService.create(new Order(
-                    orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems
-            ))).isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> orderService.create(orderTable.getId(), new ArrayList<>()))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("주문 테이블이 없으면 예외를 발생시킨다.")
@@ -95,12 +96,11 @@ public class OrderServiceTest {
         void notFoundOrderTable_exception() {
             // given
             ArrayList<OrderLineItem> orderLineItems = new ArrayList<>();
-            orderLineItems.add(orderLineItemDao.save(new OrderLineItem(0L, 3)));
+            orderLineItems.add(orderLineItemDao.save(new OrderLineItem(null, 3)));
 
             // then
-            assertThatThrownBy(() -> orderService.create(new Order(
-                    0L, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems
-            ))).isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> orderService.create(0L, orderLineItems))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
@@ -108,41 +108,51 @@ public class OrderServiceTest {
     @Test
     void list() {
         // given
-        OrderTable orderTable = orderTableDao.save(new OrderTable(null, 2, false));
+        OrderTable orderTable = orderTableDao.save(new OrderTable(2, false));
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
-        Menu menu = menuDao.save(new Menu("메뉴1", BigDecimal.valueOf(1000), menuGroup.getId(), new ArrayList<>()));
+        Product product = productDao.save(new Product("상품", 1000L));
+        Menu menu = menuDao.save(
+                new Menu("메뉴1", new Price(1000L), menuGroup, List.of(new MenuProduct(null, product, 3))));
         ArrayList<OrderLineItem> orderLineItems = new ArrayList<>();
-        orderLineItems.add(orderLineItemDao.save(new OrderLineItem(menu.getId(), 3)));
-        orderDao.save(new Order(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), orderLineItems));
-        orderDao.save(new Order(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), orderLineItems));
+        orderLineItems.add(new OrderLineItem(menu, 3));
+        orderDao.save(new Order(orderTable, OrderStatus.MEAL.name(), LocalDateTime.now(), orderLineItems));
 
         // when
         List<Order> actual = orderService.list();
 
         // then
-        assertThat(actual).hasSize(2);
+        assertThat(actual).hasSize(1);
     }
 
     @DisplayName("주문 상태를 변경한다.")
     @Nested
-    class ChangeOrderStatus {
+    class ChangeOrderStatus extends IntegrationTest {
+
+        private OrderTable orderTable;
+        private Menu menu;
+        private List<OrderLineItem> orderLineItems;
+
+        @BeforeEach
+        void setUp() {
+            orderTable = orderTableDao.save(new OrderTable(2, false));
+            MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
+            Product product = productDao.save(new Product("상품", 1000L));
+            MenuProduct menuProduct = new MenuProduct(null, product, 1);
+            menu = menuDao.save(new Menu("메뉴1", new Price(1000L), menuGroup,
+                    List.of(menuProduct)));
+            orderLineItems = new ArrayList<>();
+            orderLineItems.add(new OrderLineItem(menu, 3));
+        }
 
         @DisplayName("성공")
         @Test
         void success() {
             // given
-            OrderTable orderTable = orderTableDao.save(new OrderTable(null, 2, false));
-            MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
-            Menu menu = menuDao.save(new Menu("메뉴1", BigDecimal.valueOf(1000), menuGroup.getId(), new ArrayList<>()));
-            ArrayList<OrderLineItem> orderLineItems = new ArrayList<>();
-            orderLineItems.add(orderLineItemDao.save(new OrderLineItem(menu.getId(), 3)));
             Order order = orderDao.save(
-                    new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems));
+                    new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems));
 
             // when
-            Order changedOrder = orderService.changeOrderStatus(order.getId(),
-                    new Order(orderTable.getId(), OrderStatus.MEAL.name(),
-                            LocalDateTime.now(), orderLineItems));
+            Order changedOrder = orderService.changeOrderStatus(order.getId(), OrderStatus.MEAL.name());
 
             // then
             assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
@@ -151,17 +161,8 @@ public class OrderServiceTest {
         @DisplayName("주문을 찾지 못하면 예외를 발생시킨다.")
         @Test
         void notFoundOrder_exception() {
-            // given
-            OrderTable orderTable = orderTableDao.save(new OrderTable(null, 2, false));
-            MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
-            Menu menu = menuDao.save(new Menu("메뉴1", BigDecimal.valueOf(1000), menuGroup.getId(), new ArrayList<>()));
-            ArrayList<OrderLineItem> orderLineItems = new ArrayList<>();
-            orderLineItems.add(orderLineItemDao.save(new OrderLineItem(menu.getId(), 3)));
-
             // when
-            assertThatThrownBy(() -> orderService.changeOrderStatus(0L,
-                    new Order(orderTable.getId(), OrderStatus.MEAL.name(),
-                            LocalDateTime.now(), orderLineItems)))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(0L, OrderStatus.MEAL.name()))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -169,18 +170,10 @@ public class OrderServiceTest {
         @Test
         void orderStatusIsCompletion_exception() {
             // given
-            OrderTable orderTable = orderTableDao.save(new OrderTable(null, 2, false));
-            MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
-            Menu menu = menuDao.save(new Menu("메뉴1", BigDecimal.valueOf(1000), menuGroup.getId(), new ArrayList<>()));
-            ArrayList<OrderLineItem> orderLineItems = new ArrayList<>();
-            orderLineItems.add(orderLineItemDao.save(new OrderLineItem(menu.getId(), 3)));
-            Order order = orderDao.save(
-                    new Order(orderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now(), orderLineItems));
+            orderDao.save(new Order(orderTable, OrderStatus.COMPLETION.name(), LocalDateTime.now(), orderLineItems));
 
             // when
-            assertThatThrownBy(() -> orderService.changeOrderStatus(0L,
-                    new Order(orderTable.getId(), OrderStatus.MEAL.name(),
-                            LocalDateTime.now(), orderLineItems)))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(0L, OrderStatus.MEAL.name()))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

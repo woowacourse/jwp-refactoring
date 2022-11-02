@@ -6,14 +6,18 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.fakedao.MenuGroupFakeDao;
+import kitchenpos.support.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-class MenuGroupServiceTest {
+class MenuGroupServiceTest extends IntegrationTest {
 
-    private MenuGroupDao menuGroupDao = new MenuGroupFakeDao();
-    private MenuGroupService menuGroupService = new MenuGroupService(menuGroupDao);
+    @Autowired
+    private MenuGroupDao menuGroupDao;
+
+    @Autowired
+    private MenuGroupService menuGroupService;
 
 
     @DisplayName("메뉴 그룹을 생성한다.")

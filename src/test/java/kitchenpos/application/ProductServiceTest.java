@@ -3,31 +3,32 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
-import kitchenpos.fakedao.ProductFakeDao;
+import kitchenpos.support.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-public class ProductServiceTest {
+public class ProductServiceTest extends IntegrationTest {
 
-    private ProductDao productDao = new ProductFakeDao();
+    @Autowired
+    private ProductDao productDao;
 
-    private ProductService productService = new ProductService(productDao);
+    @Autowired
+    private ProductService productService;
 
     @DisplayName("상품을 생성할 때")
     @Nested
-    class Create {
+    class Create extends IntegrationTest {
 
         @DisplayName("성공")
         @Test
         void success() {
             // when
-            Product product = new Product("상품1", new BigDecimal(1000));
-            Product actual = productService.create(product);
+            Product actual = productService.create("상품1", 1000L);
 
             // then
             assertThat(actual.getName()).isEqualTo("상품1");
@@ -37,8 +38,7 @@ public class ProductServiceTest {
         @Test
         void priceLessThanZero_exception() {
             // then
-            Product product = new Product("상품1", BigDecimal.valueOf(-1));
-            assertThatThrownBy(() -> productService.create(product))
+            assertThatThrownBy(() -> productService.create("상품", -1L))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -46,8 +46,7 @@ public class ProductServiceTest {
         @Test
         void priceIs_exception() {
             // then
-            Product product = new Product("상품1", null);
-            assertThatThrownBy(() -> productService.create(product))
+            assertThatThrownBy(() -> productService.create("상품1", null))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -56,9 +55,9 @@ public class ProductServiceTest {
     @Test
     void list() {
         // given
-        productDao.save(new Product("상품1", BigDecimal.valueOf(1000)));
-        productDao.save(new Product("상품2", BigDecimal.valueOf(1000)));
-        productDao.save(new Product("상품3", BigDecimal.valueOf(1000)));
+        productDao.save(new Product("상품1", 1000L));
+        productDao.save(new Product("상품2", 1000L));
+        productDao.save(new Product("상품3", 1000L));
 
         // when
         List<Product> actual = productService.list();

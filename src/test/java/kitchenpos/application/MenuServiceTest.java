@@ -7,82 +7,72 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
-import kitchenpos.fakedao.MenuFakeDao;
-import kitchenpos.fakedao.MenuGroupFakeDao;
-import kitchenpos.fakedao.MenuProductFakeDao;
-import kitchenpos.fakedao.ProductFakeDao;
+import kitchenpos.support.IntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-public class MenuServiceTest {
+public class MenuServiceTest extends IntegrationTest {
 
-    private MenuDao menuDao = new MenuFakeDao();
-    private MenuGroupDao menuGroupDao = new MenuGroupFakeDao();
-    private MenuProductDao menuProductDao = new MenuProductFakeDao();
-    private ProductDao productDao = new ProductFakeDao();
+    @Autowired
+    private MenuDao menuDao;
 
-    private MenuService menuService = new MenuService(menuDao, menuGroupDao, menuProductDao, productDao);
+    @Autowired
+    private MenuGroupDao menuGroupDao;
+
+    @Autowired
+    private ProductDao productDao;
+
+    @Autowired
+    private MenuService menuService;
 
     @DisplayName("메뉴를 생성할 때")
     @Nested
-    class Create {
+    class Create extends IntegrationTest {
 
-        private Menu menu;
+        private MenuGroup menuGroup;
+        private List<MenuProduct> menuProducts;
 
         @BeforeEach
         void setUp() {
-            MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
-            Product product = productDao.save(new Product("상품1", BigDecimal.valueOf(1000)));
-            MenuProduct menuProduct = new MenuProduct(product.getId(), 2);
-            ArrayList<MenuProduct> menuProducts = new ArrayList<>();
-            menuProducts.add(menuProduct);
-            menu = new Menu("메뉴1", BigDecimal.valueOf(1000), menuGroup.getId(), menuProducts);
+            menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
+            productDao.save(new Product("상품1", 1000L));
+            productDao.save(new Product("상품2", 2000L));
+            menuProducts = productDao.findAll().stream()
+                    .map(product -> new MenuProduct(null, product, 2))
+                    .collect(Collectors.toList());
         }
 
         @DisplayName("성공")
         @Test
         void success() {
             // when
-            Menu actual = menuService.create(menu);
+            Menu actual = menuService.create("후라이드", 2000L, menuGroup, menuProducts);
 
             // then
             assertAll(
                     () -> assertThat(menuDao.findById(actual.getId())).isPresent(),
-                    () -> assertThat(actual.getPrice()).isEqualTo(BigDecimal.valueOf(1000)),
-                    () -> assertThat(actual.getMenuProducts()).hasSize(1),
-                    () -> assertThat(actual.getMenuProducts().get(0).getMenuId()).isEqualTo(actual.getId())
+                    () -> assertThat(actual.getPrice().getPrice()).isEqualTo(BigDecimal.valueOf(2000L)),
+                    () -> assertThat(actual.getMenuProducts()).hasSize(2)
             );
         }
 
         @DisplayName("가격이 0보다 작으면 예외를 발생시킨다.")
         @Test
         void priceLessThanZero_exception() {
-            // given
-            menu.setPrice(BigDecimal.valueOf(-1));
-
             // then
-            assertThatThrownBy(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @DisplayName("가격이 null이면 예외를 발생시킨다.")
-        @Test
-        void priceIsNull_exception() {
-            // given
-            menu.setPrice(null);
-
-            // then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create("후라이드", -1L, menuGroup, menuProducts))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -90,24 +80,20 @@ public class MenuServiceTest {
         @Test
         void notFoundProduct_exception() {
             // given
-            MenuProduct menuProduct = new MenuProduct(0L, 2);
+            MenuProduct menuProduct = new MenuProduct(null, new Product("상품", 1000L), 2);
             ArrayList<MenuProduct> menuProducts = new ArrayList<>();
             menuProducts.add(menuProduct);
-            menu.setMenuProducts(menuProducts);
 
             // then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create("후라이드", -1L, menuGroup, menuProducts))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("상품들의 (가격 * 개수) 합보다 메뉴의 가격이 크면 예외를 발생시킨다.")
         @Test
         void priceMoreThanSumOfProducts_exception() {
-            // given
-            menu.setPrice(BigDecimal.valueOf(2100));
-
             // then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create("후라이드", 6100L, menuGroup, menuProducts))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -117,11 +103,9 @@ public class MenuServiceTest {
     void list() {
         // given
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
-        Product product = productDao.save(new Product("상품1", BigDecimal.valueOf(1000)));
-        MenuProduct menuProduct = new MenuProduct(product.getId(), 2);
-        ArrayList<MenuProduct> menuProducts = new ArrayList<>();
-        menuProducts.add(menuProduct);
-        Menu menu = new Menu("메뉴1", BigDecimal.valueOf(1000), menuGroup.getId(), menuProducts);
+        Product product = productDao.save(new Product("상품1", 1000L));
+        MenuProduct menuProduct = new MenuProduct(null, product, 2);
+        Menu menu = new Menu("메뉴1", new Price(1000L), menuGroup, List.of(menuProduct));
         menuDao.save(menu);
 
         // when
