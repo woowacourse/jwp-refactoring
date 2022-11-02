@@ -34,11 +34,8 @@ public class MenuService {
     @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
         final Menu menu = convertToMenu(menuRequest);
-
         validateMenuGroupExist(menuRequest.getMenuGroupId());
-
         final Menu savedMenu = menuDao.save(menu);
-
         return MenuResponse.from(savedMenu);
     }
 

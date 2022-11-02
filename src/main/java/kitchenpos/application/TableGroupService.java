@@ -34,12 +34,17 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
-        final List<OrderTable> orderTables = orderTableDao.findAllByIdIn(tableGroupRequest.getOrderTableIds());
-        validateOrderTables(orderTables);
+        final List<OrderTable> orderTables = findAvailableOrderTables(tableGroupRequest);
         final TableGroup tableGroup = TableGroupRequest.from(orderTables);
         tableGroupDao.save(tableGroup);
         tableGroup.setOrderTablesEmpty();
         return TableGroupResponse.from(tableGroup);
+    }
+
+    private List<OrderTable> findAvailableOrderTables(final TableGroupRequest tableGroupRequest) {
+        final List<OrderTable> orderTables = orderTableDao.findAllByIdIn(tableGroupRequest.getOrderTableIds());
+        validateOrderTables(orderTables);
+        return orderTables;
     }
 
     private void validateOrderTables(final List<OrderTable> orderTables) {
