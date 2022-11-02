@@ -8,6 +8,7 @@ import kitchenpos.order.application.dto.request.tablegroup.TableGroupRequest;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.domain.repository.MenuHistoryRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -15,6 +16,12 @@ import java.util.stream.Collectors;
 
 @Component
 public class OrderRequestAssembler {
+
+    private final MenuHistoryRepository menuHistoryRepository;
+
+    public OrderRequestAssembler(final MenuHistoryRepository menuHistoryRepository) {
+        this.menuHistoryRepository = menuHistoryRepository;
+    }
 
     public Order asOrder(final OrderRequest request) {
         return new Order(
@@ -31,9 +38,14 @@ public class OrderRequestAssembler {
 
     private OrderLineItem asOrderLineItem(final OrderLineItemRequest request) {
         return new OrderLineItem(
-                request.getMenuId(),
+                asMenuHistoryId(request.getMenuId()),
                 request.getQuantity()
         );
+    }
+
+    private Long asMenuHistoryId(final Long menuId) {
+        return menuHistoryRepository.findIdByMenuIdOrderByIdDesc(menuId)
+                .orElseThrow(() -> new IllegalArgumentException("메뉴 이력을 찾을 수 없습니다."));
     }
 
     public List<Long> asOrderTableIds(final TableGroupRequest request) {

@@ -4,11 +4,13 @@ import kitchenpos.menu.application.dto.request.MenuRequestAssembler;
 import kitchenpos.menu.application.dto.request.menu.MenuRequest;
 import kitchenpos.menu.application.dto.response.MenuResponse;
 import kitchenpos.menu.application.dto.response.MenuResponseAssembler;
+import kitchenpos.menu.application.event.MenuCreatedEvent;
 import kitchenpos.menu.domain.Price;
 import kitchenpos.menu.domain.Product;
 import kitchenpos.menu.domain.repository.MenuGroupRepository;
 import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.menu.domain.repository.ProductRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,18 +26,21 @@ public class MenuService {
     private final ProductRepository productRepository;
     private final MenuRequestAssembler requestAssembler;
     private final MenuResponseAssembler responseAssembler;
+    private final ApplicationEventPublisher eventPublisher;
 
     public MenuService(final MenuRepository menuRepository,
                        final MenuGroupRepository menuGroupRepository,
                        final ProductRepository productRepository,
                        final MenuRequestAssembler requestAssembler,
-                       final MenuResponseAssembler responseAssembler
+                       final MenuResponseAssembler responseAssembler,
+                       final ApplicationEventPublisher eventPublisher
     ) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
         this.productRepository = productRepository;
         this.requestAssembler = requestAssembler;
         this.responseAssembler = responseAssembler;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
@@ -44,6 +49,9 @@ public class MenuService {
 
         final var menu = requestAssembler.asMenu(request);
         final var savedMenu = menuRepository.save(menu);
+
+        eventPublisher.publishEvent(new MenuCreatedEvent(savedMenu));
+
         return responseAssembler.asMenuResponse(savedMenu);
     }
 

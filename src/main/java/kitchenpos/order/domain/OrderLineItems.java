@@ -45,7 +45,7 @@ public class OrderLineItems {
 
     private static long countMenuDistinct(final List<OrderLineItem> orderLineItems) {
         return orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
+                .map(OrderLineItem::getMenuHistoryId)
                 .distinct()
                 .count();
     }

@@ -37,7 +37,7 @@ public class OrderResponseAssembler {
     private OrderLineItemResponse asOrderLineItemResponse(final OrderLineItem orderLineItem) {
         return new OrderLineItemResponse(
                 orderLineItem.getSeq(),
-                orderLineItem.getMenuId(),
+                orderLineItem.getMenuHistoryId(),
                 orderLineItem.getQuantity()
         );
     }

@@ -1,5 +1,7 @@
 package kitchenpos.order.application;
 
+import kitchenpos.order.domain.MenuHistory;
+import kitchenpos.order.domain.repository.MenuHistoryRepository;
 import kitchenpos.support.application.ServiceTest;
 import kitchenpos.order.application.dto.request.order.ChangeOrderStatusRequest;
 import kitchenpos.order.application.dto.request.order.OrderLineItemRequest;
@@ -31,6 +33,7 @@ class OrderServiceTest {
 
     private final OrderService orderService;
     private final MenuRepository menuRepository;
+    private final MenuHistoryRepository menuHistoryRepository;
     private final OrderTableRepository orderTableRepository;
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
@@ -38,12 +41,14 @@ class OrderServiceTest {
     @Autowired
     public OrderServiceTest(final OrderService orderService,
                             final MenuRepository menuRepository,
+                            final MenuHistoryRepository menuHistoryRepository,
                             final OrderTableRepository orderTableRepository,
                             final OrderRepository orderRepository,
                             final ProductRepository productRepository
     ) {
         this.orderService = orderService;
         this.menuRepository = menuRepository;
+        this.menuHistoryRepository = menuHistoryRepository;
         this.orderTableRepository = orderTableRepository;
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
@@ -56,6 +61,7 @@ class OrderServiceTest {
 
         private Product product;
         private Menu menu;
+        private MenuHistory menuHistory;
         private OrderTable orderTable;
 
         @BeforeEach
@@ -63,6 +69,7 @@ class OrderServiceTest {
             this.product = productRepository.save(makeProduct("비빔밥", 5000L));
             this.menu = menuRepository.save(makeMenu("자장면", 5000, 1L,
                     List.of(new MenuProduct(product.getId(), 10))));
+            this.menuHistory = menuHistoryRepository.save(MenuHistory.copy(menu));
             this.orderTable = orderTableRepository.save(makeNonEmptyOrderTable(10));
         }
 

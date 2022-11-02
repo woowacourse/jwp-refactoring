@@ -3,12 +3,12 @@ package kitchenpos.order.application.dto.response;
 public class OrderLineItemResponse {
 
     private final Long seq;
-    private final Long menuId;
+    private final Long menuHistoryId;
     private final long quantity;
 
-    public OrderLineItemResponse(final Long seq, final Long menuId, final long quantity) {
+    public OrderLineItemResponse(final Long seq, final Long menuHistoryId, final long quantity) {
         this.seq = seq;
-        this.menuId = menuId;
+        this.menuHistoryId = menuHistoryId;
         this.quantity = quantity;
     }
 
@@ -17,7 +17,7 @@ public class OrderLineItemResponse {
     }
 
     public Long getMenuId() {
-        return menuId;
+        return menuHistoryId;
     }
 
     public long getQuantity() {
