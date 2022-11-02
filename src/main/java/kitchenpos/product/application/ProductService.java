@@ -10,6 +10,7 @@ import kitchenpos.product.dto.request.ProductCreateRequest;
 import kitchenpos.product.repository.ProductRepository;
 
 @Service
+@Transactional(readOnly = true)
 public class ProductService {
 
     private final ProductRepository productRepository;
