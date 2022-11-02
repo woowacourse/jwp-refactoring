@@ -2,7 +2,6 @@ package kitchenpos.order.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.menu.domain.dao.MenuDao;
 import kitchenpos.order.application.request.OrderChangeStatusRequest;
 import kitchenpos.order.application.request.OrderRequest;
 import kitchenpos.order.application.response.OrderResponse;
@@ -18,18 +17,15 @@ import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
-    private final MenuDao menuDao;
+    private final OrderLineItemValidator orderLineItemValidator;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
     private final OrderTableDao orderTableDao;
 
-    public OrderService(
-            final MenuDao menuDao,
-            final OrderDao orderDao,
-            final OrderLineItemDao orderLineItemDao,
-            final OrderTableDao orderTableDao
-    ) {
-        this.menuDao = menuDao;
+    public OrderService(final OrderLineItemValidator orderLineItemValidator, final OrderDao orderDao,
+                        final OrderLineItemDao orderLineItemDao,
+                        final OrderTableDao orderTableDao) {
+        this.orderLineItemValidator = orderLineItemValidator;
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
         this.orderTableDao = orderTableDao;
@@ -41,22 +37,9 @@ public class OrderService {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException("주문 목록이 비어있습니다.");
         }
-        validateOrderLineItems(orderLineItems);
+        orderLineItemValidator.validateOrderLineItems(orderLineItems);
         OrderTable orderTable = getOrderTable(request);
         return createOrder(orderLineItems, orderTable);
-    }
-
-    private void validateOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        List<Long> menuIds = getMenuIds(orderLineItems);
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException("존재하지 않는 메뉴가 포함되어 있습니다.");
-        }
-    }
-
-    private List<Long> getMenuIds(final List<OrderLineItem> orderLineItems) {
-        return orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
-                .collect(Collectors.toList());
     }
 
     private OrderTable getOrderTable(final OrderRequest request) {
