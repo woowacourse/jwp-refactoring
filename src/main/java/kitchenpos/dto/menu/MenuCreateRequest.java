@@ -13,7 +13,7 @@ public class MenuCreateRequest {
     private Long menuGroupId;
     private List<MenuProductRequest> menuProducts;
 
-    public MenuCreateRequest() {
+    private MenuCreateRequest() {
     }
 
     public MenuCreateRequest(String name, BigDecimal price, long menuGroupId, List<MenuProductRequest> menuProducts) {

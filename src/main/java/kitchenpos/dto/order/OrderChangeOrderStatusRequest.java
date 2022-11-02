@@ -6,7 +6,7 @@ public class OrderChangeOrderStatusRequest {
 
     private String orderStatus;
 
-    public OrderChangeOrderStatusRequest() {
+    private OrderChangeOrderStatusRequest() {
     }
 
     public OrderChangeOrderStatusRequest(String orderStatus) {

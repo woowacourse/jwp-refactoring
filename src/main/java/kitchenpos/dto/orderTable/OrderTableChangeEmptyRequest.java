@@ -4,7 +4,7 @@ public class OrderTableChangeEmptyRequest {
 
     private boolean empty;
 
-    public OrderTableChangeEmptyRequest() {
+    private OrderTableChangeEmptyRequest() {
     }
 
     public OrderTableChangeEmptyRequest(boolean empty) {
