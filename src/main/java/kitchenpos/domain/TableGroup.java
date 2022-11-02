@@ -3,12 +3,14 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import org.springframework.util.CollectionUtils;
 
@@ -21,39 +23,27 @@ public class TableGroup {
 
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "tableGroup", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
-    private List<OrderTable> orderTables = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "table_group_id", nullable = false, updatable = false)
+    private List<OrderTableRef> orderTableRefs = new ArrayList<>();
 
     protected TableGroup() {
     }
 
-    public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
-        this(null, createdDate, orderTables);
+    public TableGroup(LocalDateTime createdDate, List<Long> orderTableIds) {
+        this(null, createdDate, orderTableIds.stream().map(OrderTableRef::new).collect(Collectors.toList()));
     }
 
-    public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
-        groupOrderTables(orderTables);
+    public TableGroup(Long id, LocalDateTime createdDate, List<OrderTableRef> orderTableRefs) {
+        validateOrderTableIdsSize(orderTableRefs);
         this.id = id;
         this.createdDate = createdDate;
-        this.orderTables = orderTables;
+        this.orderTableRefs = orderTableRefs;
     }
 
-    private void groupOrderTables(List<OrderTable> orderTables) {
-        validateOrderTablesSize(orderTables);
-        for (OrderTable orderTable : orderTables) {
-            orderTable.group(this);
-        }
-    }
-
-    private void validateOrderTablesSize(List<OrderTable> orderTables) {
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+    private void validateOrderTableIdsSize(List<OrderTableRef> orderTableRefs) {
+        if (CollectionUtils.isEmpty(orderTableRefs) || orderTableRefs.size() < 2) {
             throw new IllegalArgumentException();
-        }
-    }
-
-    public void ungroupOrderTables() {
-        for (OrderTable orderTable : orderTables) {
-            orderTable.ungroup();
         }
     }
 
@@ -65,7 +55,7 @@ public class TableGroup {
         return createdDate;
     }
 
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
+    public List<OrderTableRef> getOrderTableRefs() {
+        return orderTableRefs;
     }
 }

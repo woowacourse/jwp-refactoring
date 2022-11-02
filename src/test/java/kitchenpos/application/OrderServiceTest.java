@@ -11,19 +11,18 @@ import java.util.List;
 import kitchenpos.MenuFixtures;
 import kitchenpos.OrderTableFixtures;
 import kitchenpos.TableGroupFixtures;
-import kitchenpos.application.dto.request.OrderLineItemRequest;
 import kitchenpos.application.dto.request.OrderRequest;
 import kitchenpos.application.dto.request.OrderStatusChangeRequest;
 import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.domain.Menu;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -60,8 +59,20 @@ class OrderServiceTest {
     @BeforeEach
     void setUp() {
         this.tableGroup = tableGroupRepository.save(TableGroupFixtures.createTableGroup());
-        this.emptyOrderTable = orderTableRepository.save(OrderTableFixtures.createOrderTable(tableGroup, 0, true));
-        this.filledOrderTable = orderTableRepository.save(OrderTableFixtures.createOrderTable(tableGroup, 2, false));
+        this.emptyOrderTable = orderTableRepository.save(
+                OrderTableFixtures.createOrderTable(
+                        tableGroup.getId(),
+                        0,
+                        true
+                )
+        );
+        this.filledOrderTable = orderTableRepository.save(
+                OrderTableFixtures.createOrderTable(
+                        tableGroup.getId(),
+                        2,
+                        false
+                )
+        );
     }
 
     @Test

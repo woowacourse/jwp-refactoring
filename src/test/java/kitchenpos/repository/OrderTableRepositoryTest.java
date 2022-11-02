@@ -4,7 +4,6 @@ import static kitchenpos.OrderTableFixtures.createOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.OrderTable;
@@ -33,9 +32,12 @@ class OrderTableRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        List<OrderTable> orderTables = Arrays.asList(createOrderTable(), createOrderTable());
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
-        this.tableGroup = tableGroupRepository.save(tableGroup);
+        OrderTable orderTableA = orderTableRepository.save(createOrderTable());
+        OrderTable orderTableB = orderTableRepository.save(createOrderTable());
+        List<Long> orderTableIds = List.of(orderTableA.getId(), orderTableB.getId());
+        this.tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), orderTableIds));
+        orderTableA.group(tableGroup.getId());
+        orderTableB.group(tableGroup.getId());
     }
 
     @Test
@@ -73,8 +75,8 @@ class OrderTableRepositoryTest {
     @Test
     void findAllByIdIn() {
         // given
-        OrderTable orderTableA = orderTableRepository.save(new OrderTable(tableGroup, 4, false));
-        OrderTable orderTableB = orderTableRepository.save(new OrderTable(tableGroup, 2, false));
+        OrderTable orderTableA = orderTableRepository.save(new OrderTable(tableGroup.getId(), 4, false));
+        OrderTable orderTableB = orderTableRepository.save(new OrderTable(tableGroup.getId(), 2, false));
 
         // when
         List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(

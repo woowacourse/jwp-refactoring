@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
+import kitchenpos.OrderTableFixtures;
 import kitchenpos.application.dto.request.TableGroupCreateRequest;
 import kitchenpos.application.dto.request.TableGroupIdRequest;
 import kitchenpos.application.dto.response.TableGroupResponse;
@@ -108,7 +109,11 @@ class TableGroupServiceTest {
     @Test
     void ungroup() {
         // given
-        TableGroup savedTableGroup = tableGroupRepository.save(createTableGroup());
+        OrderTable orderTableA = orderTableRepository.save(OrderTableFixtures.createOrderTable());
+        OrderTable orderTableB = orderTableRepository.save(OrderTableFixtures.createOrderTable());
+        TableGroup savedTableGroup = tableGroupRepository.save(
+                createTableGroup(orderTableA.getId(), orderTableB.getId())
+        );
 
         // when & then
         assertThatCode(() -> tableGroupService.ungroup(savedTableGroup.getId()))
@@ -118,11 +123,15 @@ class TableGroupServiceTest {
     @Test
     void ungroupWithCookingStatus(@Autowired EntityManager entityManager) {
         // given
-        TableGroup savedTableGroup = tableGroupRepository.save(createTableGroup());
-        int any = 0;
-        OrderTable orderTable = savedTableGroup.getOrderTables().get(any);
+        OrderTable orderTableA = orderTableRepository.save(OrderTableFixtures.createOrderTable());
+        OrderTable orderTableB = orderTableRepository.save(OrderTableFixtures.createOrderTable());
+        TableGroup savedTableGroup = tableGroupRepository.save(
+                createTableGroup(orderTableA.getId(), orderTableB.getId())
+        );
+        orderTableA.group(savedTableGroup.getId());
+        orderTableB.group(savedTableGroup.getId());
 
-        Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), null);
+        Order order = new Order(orderTableA, OrderStatus.COOKING, LocalDateTime.now(), null);
         orderRepository.save(order);
         entityManager.flush();
         entityManager.clear();

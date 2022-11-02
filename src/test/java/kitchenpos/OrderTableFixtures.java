@@ -2,7 +2,6 @@ package kitchenpos;
 
 import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 
 public class OrderTableFixtures {
 
@@ -17,20 +16,20 @@ public class OrderTableFixtures {
         return createOrderTable(ID, null, NUMBER_OF_GUESTS, EMPTY);
     }
 
-    public static OrderTable createOrderTable(Long id) {
+    public static OrderTable createOrderTableWithTableGroupId(Long tableGroupId) {
+        return createOrderTable(ID, tableGroupId, NUMBER_OF_GUESTS, EMPTY);
+    }
+
+    public static OrderTable createOrderTableWithId(Long id) {
         return new OrderTable(id, null, NUMBER_OF_GUESTS, EMPTY);
     }
 
-    public static OrderTable createOrderTable(TableGroup tableGroup) {
-        return createOrderTable(ID, tableGroup, NUMBER_OF_GUESTS, EMPTY);
+    public static OrderTable createOrderTable(Long tableGroupId, int numberOfGuests, boolean empty) {
+        return createOrderTable(ID, tableGroupId, numberOfGuests, empty);
     }
 
-    public static OrderTable createOrderTable(TableGroup tableGroup, int numberOfGuests, boolean empty) {
-        return createOrderTable(ID, tableGroup, numberOfGuests, empty);
-    }
-
-    public static OrderTable createOrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
-        return new OrderTable(id, tableGroup, numberOfGuests, empty);
+    public static OrderTable createOrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
+        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
     }
 
     public static OrderTableResponse createOrderTableResponse() {

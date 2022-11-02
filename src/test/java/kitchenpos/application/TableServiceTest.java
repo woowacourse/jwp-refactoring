@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import kitchenpos.OrderFixtures;
+import kitchenpos.OrderTableFixtures;
 import kitchenpos.TableGroupFixtures;
 import kitchenpos.application.dto.request.OrderTableCreateRequest;
 import kitchenpos.application.dto.response.OrderTableResponse;
@@ -74,7 +75,9 @@ class TableServiceTest {
     void changeEmptyWithTableGroupId() {
         // given
         TableGroup tableGroup = tableGroupRepository.save(TableGroupFixtures.createTableGroup());
-        OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup, 3, false));
+        OrderTable orderTable = orderTableRepository.save(
+                OrderTableFixtures.createOrderTable(tableGroup.getId(), 3, false)
+        );
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), true))

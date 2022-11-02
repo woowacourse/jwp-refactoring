@@ -26,7 +26,7 @@ class OrderTableTest {
     void changeEmptyWithTableGroupId() {
         // given
         boolean empty = true;
-        OrderTable orderTable = new OrderTable(TableGroupFixtures.createTableGroup(), 2, false);
+        OrderTable orderTable = new OrderTable(1L, 2, false);
         // when & then
         assertThatThrownBy(() -> orderTable.changeEmpty(empty))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -86,10 +86,10 @@ class OrderTableTest {
         OrderTable orderTable = new OrderTable(0, empty);
 
         // when
-        orderTable.group(tableGroup);
+        orderTable.group(tableGroup.getId());
 
         // then
-        assertThat(orderTable.getTableGroup()).isSameAs(tableGroup);
+        assertThat(orderTable.getTableGroupId()).isSameAs(tableGroup.getId());
         assertThat(orderTable.isEmpty()).isNotEqualTo(empty);
     }
 
@@ -100,26 +100,27 @@ class OrderTableTest {
         TableGroup tableGroup = TableGroupFixtures.createTableGroup();
 
         // when & then
-        assertThatThrownBy(() -> orderTable.group(tableGroup))
+        assertThatThrownBy(() -> orderTable.group(tableGroup.getId()))
                 .isInstanceOf(IllegalStateException.class);
     }
 
     @Test
-    void beGroupedWithTableGroup() {
+    void beGroupedWithTableGroupId() {
         // given
-        TableGroup tableGroup = TableGroupFixtures.createTableGroup();
-        OrderTable orderTable = new OrderTable(tableGroup, 0, true);
+        Long tableGroupId = 1L;
+        OrderTable orderTable = new OrderTable(tableGroupId, 0, true);
 
         // when & then
-        assertThatThrownBy(() -> orderTable.group(tableGroup))
+        Long otherTableGroupId = 2L;
+        assertThatThrownBy(() -> orderTable.group(otherTableGroupId))
                 .isInstanceOf(IllegalStateException.class);
     }
 
     @Test
     void beUngrouped() {
         // given
-        TableGroup tableGroup = TableGroupFixtures.createTableGroup();
-        OrderTable orderTable = new OrderTable(tableGroup, 2, false);
+//        TableGroup tableGroup = TableGroupFixtures.createTableGroup();
+        OrderTable orderTable = new OrderTable(null, 2, false);
         Order order = OrderFixtures.createOrder(OrderStatus.COMPLETION);
         orderTable.addOrder(order);
 
@@ -127,13 +128,13 @@ class OrderTableTest {
         orderTable.ungroup();
 
         // then
-        assertThat(orderTable.getTableGroup()).isNull();
+        assertThat(orderTable.getTableGroupId()).isNull();
     }
 
     @Test
     void beUngroupedWithNotCompleted() {
         // given
-        OrderTable orderTable = new OrderTable(TableGroupFixtures.createTableGroup(), 2, false);
+        OrderTable orderTable = new OrderTable(null, 2, false);
         OrderStatus orderStatus = OrderStatus.COOKING;
         Order order = OrderFixtures.createOrder(orderStatus);
         orderTable.addOrder(order);

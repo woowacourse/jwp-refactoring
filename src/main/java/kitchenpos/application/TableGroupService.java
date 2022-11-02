@@ -28,9 +28,15 @@ public class TableGroupService {
     }
 
     public TableGroupResponse create(TableGroupCreateRequest request) {
-        List<OrderTable> savedOrderTables = findOrderTables(request);
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), savedOrderTables);
-        return TableGroupResponse.from(tableGroupRepository.save(tableGroup));
+        List<OrderTable> orderTables = findOrderTables(request);
+        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(
+                LocalDateTime.now(),
+                orderTables.stream()
+                        .map(OrderTable::getId)
+                        .collect(Collectors.toList())
+        ));
+        orderTables.forEach(orderTable -> orderTable.group(tableGroup.getId()));
+        return TableGroupResponse.from(tableGroup);
     }
 
     private List<OrderTable> findOrderTables(TableGroupCreateRequest request) {
@@ -42,6 +48,7 @@ public class TableGroupService {
 
     public void ungroup(Long tableGroupId) {
         TableGroup tableGroup = tableGroupRepository.getById(tableGroupId);
-        tableGroup.ungroupOrderTables();
+        List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
+        orderTables.forEach(OrderTable::ungroup);
     }
 }
