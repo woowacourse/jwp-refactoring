@@ -10,15 +10,6 @@ import kitchenpos.domain.OrderTable;
 public class OrderFixture {
 
     public static Order create(final OrderTable orderTable, final OrderStatus orderStatus, final OrderLineItem... orderLineItems) {
-        final Order order = new Order();
-        order.setOrderedTime(LocalDateTime.now());
-        if (orderTable != null) {
-            order.setOrderTableId(orderTable.getId());
-        }
-        if (orderStatus != null) {
-            order.setOrderStatus(orderStatus.name());
-        }
-        order.setOrderLineItems(Arrays.asList(orderLineItems));
-        return order;
+        return new Order(null, orderTable, orderStatus, LocalDateTime.now(), Arrays.asList(orderLineItems));
     }
 }

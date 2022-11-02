@@ -1,74 +1,51 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderStatus;
+import java.util.List;
+import kitchenpos.application.dto.request.OrderTableCreateRequest;
+import kitchenpos.application.dto.request.OrderTableGuestNumberRequest;
+import kitchenpos.application.dto.request.OrderTableSetEmptyRequest;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTableRepository;
+import kitchenpos.exception.OrderTableNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-
 @Service
 public class TableService {
-    private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
+    private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
-        this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
+    public TableService(final OrderTableRepository orderTableRepository) {
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
-
-        return orderTableDao.save(orderTable);
+    public OrderTable create(final OrderTableCreateRequest orderTableCreateRequest) {
+        final OrderTable orderTable = new OrderTable(orderTableCreateRequest.getNumberOfGuests(), orderTableCreateRequest.isEmpty());
+        return orderTableRepository.save(orderTable);
     }
 
     public List<OrderTable> list() {
-        return orderTableDao.findAll();
+        return orderTableRepository.findAll();
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
-        }
-
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
-
-        savedOrderTable.setEmpty(orderTable.isEmpty());
-
-        return orderTableDao.save(savedOrderTable);
+    public OrderTable changeEmpty(final Long orderTableId, final OrderTableSetEmptyRequest orderTableSetEmptyRequest) {
+        final OrderTable savedOrderTable = findOrderTable(orderTableId);
+        savedOrderTable.setEmpty(orderTableSetEmptyRequest.isEmpty());
+        return savedOrderTable;
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
-
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
+    public OrderTable changeNumberOfGuests(final Long orderTableId,
+                                           final OrderTableGuestNumberRequest orderTableGuestNumberRequest) {
+        final OrderTable savedOrderTable = findOrderTable(orderTableId);
+        final int numberOfGuests = orderTableGuestNumberRequest.getNumberOfGuests();
         savedOrderTable.setNumberOfGuests(numberOfGuests);
+        return savedOrderTable;
+    }
 
-        return orderTableDao.save(savedOrderTable);
+    private OrderTable findOrderTable(final Long orderTableId) {
+        return orderTableRepository.findById(orderTableId)
+                .orElseThrow(OrderTableNotFoundException::new);
     }
 }

@@ -4,10 +4,16 @@ import kitchenpos.domain.MenuGroup;
 
 public class MenuGroupFixture {
 
+    public static MenuGroup createWithId(final Long id) {
+        return new MenuGroup(id, "name");
+    }
+
     public static MenuGroup createDefaultWithoutId() {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("name");
-        return menuGroup;
+        return createWithId(null);
+    }
+
+    public static MenuGroup createDefaultWithNotSavedId() {
+        return new MenuGroup(-1L, "name");
     }
 
     public static MenuGroup requestCreate(final int port) {

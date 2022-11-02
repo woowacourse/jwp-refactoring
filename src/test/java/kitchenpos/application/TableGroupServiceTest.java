@@ -4,12 +4,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.Arrays;
+import kitchenpos.application.dto.request.OrderTableIdRequest;
+import kitchenpos.application.dto.request.TableGroupsCreateRequest;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.exception.CompletedOrderTableException;
+import kitchenpos.exception.InvalidOrderTableToGroupException;
+import kitchenpos.exception.NotEnoughOrderTablesSizeException;
+import kitchenpos.fixture.MenuFixture;
+import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.OrderFixture;
+import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.fixture.OrderTableFixture;
+import kitchenpos.fixture.ProductFixture;
 import kitchenpos.fixture.TableGroupFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,10 +47,14 @@ class TableGroupServiceTest extends ServiceTestEnvironment {
         final OrderTable savedTable2 = serviceDependencies.save(orderTable2);
         final OrderTable savedTable3 = serviceDependencies.save(orderTable3);
 
-        final TableGroup tableGroup = TableGroupFixture.create(savedTable1, savedTable2, savedTable3);
+        TableGroupsCreateRequest tableGroupsCreateRequest = new TableGroupsCreateRequest(Arrays.asList(
+                new OrderTableIdRequest(savedTable1.getId()),
+                new OrderTableIdRequest(savedTable2.getId()),
+                new OrderTableIdRequest(savedTable3.getId())
+        ));
 
         // when
-        final TableGroup actual = tableGroupService.create(tableGroup);
+        final TableGroup actual = tableGroupService.create(tableGroupsCreateRequest);
 
         // then
         assertThat(actual.getOrderTables())
@@ -51,11 +69,13 @@ class TableGroupServiceTest extends ServiceTestEnvironment {
         final OrderTable orderTable1 = OrderTableFixture.create(true, 1);
         final OrderTable savedTable1 = serviceDependencies.save(orderTable1);
 
-        final TableGroup tableGroup = TableGroupFixture.create(savedTable1);
+        TableGroupsCreateRequest tableGroupsCreateRequest = new TableGroupsCreateRequest(Arrays.asList(
+                new OrderTableIdRequest(savedTable1.getId())
+        ));
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupsCreateRequest))
+                .isExactlyInstanceOf(NotEnoughOrderTablesSizeException.class);
     }
 
     @Test
@@ -64,15 +84,18 @@ class TableGroupServiceTest extends ServiceTestEnvironment {
         // given
         final OrderTable orderTable1 = OrderTableFixture.create(true, 1);
         final OrderTable orderTable2 = OrderTableFixture.create(true, 1);
-        final OrderTable orderTable3 = OrderTableFixture.create(true, 1);
         final OrderTable savedTable1 = serviceDependencies.save(orderTable1);
         final OrderTable savedTable2 = serviceDependencies.save(orderTable2);
 
-        final TableGroup tableGroup = TableGroupFixture.create(savedTable1, savedTable2, orderTable3);
+        TableGroupsCreateRequest tableGroupsCreateRequest = new TableGroupsCreateRequest(Arrays.asList(
+                new OrderTableIdRequest(savedTable1.getId()),
+                new OrderTableIdRequest(savedTable2.getId()),
+                new OrderTableIdRequest(-1L)
+        ));
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupsCreateRequest))
+                .isExactlyInstanceOf(InvalidOrderTableToGroupException.class);
     }
 
     @Test
@@ -86,11 +109,35 @@ class TableGroupServiceTest extends ServiceTestEnvironment {
         final OrderTable savedTable2 = serviceDependencies.save(orderTable2);
         final OrderTable savedTable3 = serviceDependencies.save(orderTable3);
 
-        final TableGroup tableGroup = TableGroupFixture.create(savedTable1, savedTable2, savedTable3);
+        TableGroupsCreateRequest tableGroupsCreateRequest = new TableGroupsCreateRequest(Arrays.asList(
+                new OrderTableIdRequest(savedTable1.getId()),
+                new OrderTableIdRequest(savedTable2.getId()),
+                new OrderTableIdRequest(savedTable3.getId())
+        ));
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupsCreateRequest))
+                .isExactlyInstanceOf(InvalidOrderTableToGroupException.class);
+    }
+
+    @Test
+    @DisplayName("중복된 테이블을 테이블 그룹에 등록할 수 없다.")
+    void create_ExceptionDuplicatedOrderTable() {
+        // given
+        final OrderTable orderTable1 = OrderTableFixture.create(true, 1);
+        final OrderTable orderTable2 = OrderTableFixture.create(true, 1);
+        final OrderTable savedTable1 = serviceDependencies.save(orderTable1);
+        final OrderTable savedTable2 = serviceDependencies.save(orderTable2);
+
+        TableGroupsCreateRequest tableGroupsCreateRequest = new TableGroupsCreateRequest(Arrays.asList(
+                new OrderTableIdRequest(savedTable1.getId()),
+                new OrderTableIdRequest(savedTable2.getId()),
+                new OrderTableIdRequest(savedTable2.getId())
+        ));
+
+        // when, then
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupsCreateRequest))
+                .isExactlyInstanceOf(InvalidOrderTableToGroupException.class);
     }
 
     @Test
@@ -109,11 +156,15 @@ class TableGroupServiceTest extends ServiceTestEnvironment {
         savedTable1.setTableGroupId(savedTableGroup1.getId());
         serviceDependencies.save(savedTable1);
 
-        final TableGroup tableGroup2 = TableGroupFixture.create(savedTable1, savedTable2, savedTable3);
+        TableGroupsCreateRequest tableGroupsCreateRequest = new TableGroupsCreateRequest(Arrays.asList(
+                new OrderTableIdRequest(savedTable1.getId()),
+                new OrderTableIdRequest(savedTable2.getId()),
+                new OrderTableIdRequest(savedTable3.getId())
+        ));
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup2))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupsCreateRequest))
+                .isExactlyInstanceOf(InvalidOrderTableToGroupException.class);
     }
 
     @Test
@@ -150,13 +201,29 @@ class TableGroupServiceTest extends ServiceTestEnvironment {
         final TableGroup tableGroup = TableGroupFixture.create(savedTable1, savedTable2, savedTable3);
         final TableGroup savedTableGroup = serviceDependencies.save(tableGroup);
 
-        final Order order = OrderFixture.create(savedTable1, orderStatus);
+        final Menu savedMenu = saveValidMenu();
+        final OrderLineItem orderLineItem = OrderLineItemFixture.create(savedMenu.getId(), null);
+        final Order order = OrderFixture.create(savedTable1, orderStatus, orderLineItem);
         serviceDependencies.save(order);
+
         savedTable1.setTableGroupId(savedTableGroup.getId());
         serviceDependencies.save(savedTable1);
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(CompletedOrderTableException.class);
+    }
+
+    private Menu saveValidMenu() {
+        final Product product1 = ProductFixture.createWithPrice(1000L);
+        final Product product2 = ProductFixture.createWithPrice(1000L);
+        final Product savedProduct1 = serviceDependencies.save(product1);
+        final Product savedProduct2 = serviceDependencies.save(product2);
+
+        final MenuGroup menuGroup1 = MenuGroupFixture.createDefaultWithoutId();
+        final MenuGroup savedMenuGroup1 = serviceDependencies.save(menuGroup1);
+
+        final Menu menu = MenuFixture.createWithPrice(savedMenuGroup1.getId(), 2000L, savedProduct1, savedProduct2);
+        return serviceDependencies.save(menu);
     }
 }
