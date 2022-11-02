@@ -1,13 +1,10 @@
 package kitchenpos.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
-import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderStatus;
 
 public class OrderCreateRequest {
 
@@ -27,9 +24,9 @@ public class OrderCreateRequest {
         this.orderLineItems = orderLineItems;
     }
 
-    public Order toOrder(final Long orderTableId, final LocalDateTime orderedTime) {
-        return new Order(orderTableId, OrderStatus.COOKING, orderedTime, toOrderLineItems());
-    }
+//    public Order toOrder(final Long orderTableId, final LocalDateTime orderedTime) {
+//        return new Order(orderTableId, OrderStatus.COOKING, orderedTime, toOrderLineItems());
+//    }
 
     private List<OrderLineItem> toOrderLineItems() {
         return this.orderLineItems
