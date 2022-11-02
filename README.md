@@ -23,12 +23,12 @@
 - [x] 메뉴의 이름과 가격이 변경되면 주문 항목도 함께 변경된다. 메뉴 정보가 변경되더라도 주문 항목이 변경되지 않게 구현한다.
 - [ ] 클래스 간의 방향도 중요하고 패키지 간의 방향도 중요하다. 클래스 사이, 패키지 사이의 의존 관계는 단방향이 되도록 해야 한다.
     - 클래스
-        - [ ] menu
-        - [ ] menuGroup
-        - [ ] order
-        - [ ] orderTable
-        - [ ] tableGroup
-        - [ ] product
+        - [x] menu
+        - [x] menuGroup
+        - [x] order
+        - [x] orderTable
+        - [x] tableGroup
+        - [x] product
     - 패키지
         - [ ] menu
         - [ ] menuGroup

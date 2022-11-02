@@ -9,6 +9,7 @@ import kitchenpos.menu.dao.MenuProductDao;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.dto.request.MenuCreateRequest;
+import kitchenpos.menu.dto.response.MenuProductResponse;
 import kitchenpos.menu.dto.response.MenuResponse;
 import kitchenpos.menugroup.dao.MenuGroupDao;
 import kitchenpos.product.dao.ProductDao;
@@ -72,13 +73,6 @@ public class MenuService {
 
     private void validateExistMenuGroupId(final Long menuGroupId) {
         if (!menuGroupDao.existsById(menuGroupId)) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    // FIXME 코드 중복
-    private void validatePrice(final BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
     }
