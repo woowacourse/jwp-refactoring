@@ -133,6 +133,9 @@ public abstract class E2eTest {
         return () -> assertThat(actualDateTime).isCloseTo(now(), within(coefficient, unit));
     }
 
+    /**
+     * Response에서 List를 Raw타입이 아닌 제네릭을 재귀적으로 고려하여 추출합니다
+     */
     protected List<WrapProductResponse> extractListExactly(ExtractableResponse<Response> 응답) {
         return 응답.body().as(new TypeRef<>() {
         });
