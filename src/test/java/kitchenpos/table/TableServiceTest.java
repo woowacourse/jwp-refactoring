@@ -75,7 +75,7 @@ class TableServiceTest {
         void changeEmpty() {
             OrderTable newOrderTable = new OrderTable(3, false);
             OrderTable orderTable = orderTableRepository.save(newOrderTable);
-            orderRepository.save(new Order(orderTable.getId(), OrderStatus.COMPLETION));
+            orderRepository.save(new Order(orderTable.getId(), OrderStatus.COMPLETION, List.of()));
 
             ChangeOrderTableEmptyRequest changeOrderTableEmptyRequest = new ChangeOrderTableEmptyRequest(
                     orderTable.getId(), true);
@@ -121,7 +121,7 @@ class TableServiceTest {
             OrderTable newOrderTable = new OrderTable(3, false);
             OrderTable orderTable = orderTableRepository.save(newOrderTable);
 
-            orderRepository.save(new Order(orderTable.getId(), OrderStatus.valueOf(status)));
+            orderRepository.save(new Order(orderTable.getId(), OrderStatus.valueOf(status), List.of()));
 
             ChangeOrderTableEmptyRequest changeOrderTableEmptyRequest = new ChangeOrderTableEmptyRequest(
                     orderTable.getId(), true);

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +28,6 @@ import kitchenpos.order.application.request.OrderStatusUpdateRequest;
 import kitchenpos.order.application.response.OrderResponse;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.order.domain.OrderLineItemRepository;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.support.SpringBootNestedTest;
@@ -44,9 +44,6 @@ class OrderServiceTest {
 
     @Autowired
     private OrderRepository orderRepository;
-
-    @Autowired
-    private OrderLineItemRepository orderLineItemRepository;
 
     @Autowired
     private OrderTableRepository orderTableRepository;
@@ -84,15 +81,18 @@ class OrderServiceTest {
     @SpringBootNestedTest
     class CreateTest {
 
-        @DisplayName("주문을 생성하면 ID가 할당된 Order객체가 반환된다")
+        @DisplayName("주문을 하면 Order와 연관된 OrderLineItem을 저장한다")
         @Test
         void create() {
             List<OrderLineItemRequest> orderLineItemsRequests = List.of(
                     new OrderLineItemRequest(후라이드_양념치킨_두마리세트.getId(), 3L));
             OrderRequest orderRequest = new OrderRequest(orderTable.getId(), orderLineItemsRequests);
 
-            OrderResponse actual = orderService.create(orderRequest);
-            assertThat(actual).isNotNull();
+            OrderResponse orderResponse = orderService.create(orderRequest);
+
+            Optional<Order> actual = orderRepository.findById(orderResponse.getId());
+            assertThat(actual).isPresent();
+            assertThat(actual.get().getOrderLineItems()).hasSize(1);
         }
 
         @DisplayName("orderLineItems이 비어있을 경우 예외가 발생한다")
@@ -189,10 +189,8 @@ class OrderServiceTest {
     }
 
     private Order createOrder() {
-        Order order = orderRepository.save(new Order(orderTable.getId(), OrderStatus.COOKING));
-        OrderLineItem orderLineItem = orderLineItemRepository.save(new OrderLineItem(후라이드_양념치킨_두마리세트.getId(), 3L));
+        OrderLineItem orderLineItem = new OrderLineItem(후라이드_양념치킨_두마리세트.getId(), 3L);
 
-        order.addOrderLineItem(orderLineItem);
-        return order;
+        return orderRepository.save(new Order(orderTable.getId(), OrderStatus.COOKING, List.of(orderLineItem)));
     }
 }

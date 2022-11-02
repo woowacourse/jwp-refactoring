@@ -15,7 +15,6 @@ import kitchenpos.order.application.request.OrderStatusUpdateRequest;
 import kitchenpos.order.application.response.OrderResponse;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.order.domain.OrderLineItemRepository;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 
@@ -24,13 +23,10 @@ import kitchenpos.order.domain.OrderStatus;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    public OrderService(OrderRepository orderRepository, OrderLineItemRepository orderLineItemRepository,
-                        ApplicationEventPublisher applicationEventPublisher) {
+    public OrderService(OrderRepository orderRepository, ApplicationEventPublisher applicationEventPublisher) {
         this.orderRepository = orderRepository;
-        this.orderLineItemRepository = orderLineItemRepository;
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
@@ -39,12 +35,7 @@ public class OrderService {
         validateOrderItemSize(orderLineItems);
 
         applicationEventPublisher.publishEvent(new CheckOrderableTableEvent(request.getOrderTableId()));
-        Order order = orderRepository.save(new Order(request.getOrderTableId(), OrderStatus.COOKING));
-
-        for (OrderLineItem orderLineItem : orderLineItems) {
-            order.addOrderLineItem(orderLineItem);
-            orderLineItemRepository.save(orderLineItem);
-        }
+        Order order = orderRepository.save(new Order(request.getOrderTableId(), OrderStatus.COOKING, orderLineItems));
 
         return new OrderResponse(order);
     }
