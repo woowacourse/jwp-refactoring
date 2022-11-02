@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class TableService {
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
@@ -24,7 +25,6 @@ public class TableService {
         this.orderTableDao = orderTableDao;
     }
 
-    @Transactional
     public OrderTableResponse create(final OrderTableCreateRequest request) {
         final OrderTable orderTable = orderTableDao.save(
                 new OrderTable(null, null, request.getNumberOfGuests(), request.isEmpty())
@@ -33,6 +33,7 @@ public class TableService {
         return OrderTableResponse.from(orderTable);
     }
 
+    @Transactional(readOnly = true)
     public List<OrderTableResponse> list() {
         final List<OrderTable> orderTables = orderTableDao.findAll();
 
@@ -41,7 +42,6 @@ public class TableService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
         final OrderTable orderTable = findOrderTable(orderTableId);
         validateTableGroupId(orderTable);
@@ -73,7 +73,6 @@ public class TableService {
         }
     }
 
-    @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
                                                    final OrderTableChangeNumberOfGuestsRequest request) {
         validateNumberOfGuests(request.getNumberOfGuests());

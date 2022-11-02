@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class TableGroupService {
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
@@ -27,7 +28,6 @@ public class TableGroupService {
         this.tableGroupDao = tableGroupDao;
     }
 
-    @Transactional
     public TableGroupResponse create(final TableGroupCreateRequest request) {
         final List<OrderTable> orderTables = findOrderTables(request);
         final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(orderTables));
@@ -52,7 +52,6 @@ public class TableGroupService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
 

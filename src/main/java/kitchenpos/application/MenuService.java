@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class MenuService {
     private final MenuDao menuDao;
     private final MenuGroupDao menuGroupDao;
@@ -33,7 +34,6 @@ public class MenuService {
         this.productDao = productDao;
     }
 
-    @Transactional
     public MenuResponse create(final MenuCreateRequest request) {
 
         validateMenuGroup(request.getMenuGroupId());
@@ -82,6 +82,7 @@ public class MenuService {
                 new MenuProduct(menuId, menuProduct.getProductId(), menuProduct.getQuantity()));
     }
 
+    @Transactional(readOnly = true)
     public List<MenuResponse> list() {
         final List<Menu> menus = menuDao.findAll();
 
