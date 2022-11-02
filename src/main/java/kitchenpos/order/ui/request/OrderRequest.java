@@ -1,7 +1,8 @@
 package kitchenpos.order.ui.request;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import kitchenpos.order.domain.OrderLineItem;
 
@@ -10,7 +11,7 @@ public class OrderRequest {
     private Long id;
     private Long orderTableId;
     private String orderStatus;
-    private List<OrderLineItemRequest> orderLineItems;
+    private List<OrderLineItemRequest> orderLineItemRequests;
 
     private OrderRequest() {
     }
@@ -20,7 +21,7 @@ public class OrderRequest {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
-        this.orderLineItems = orderLineItems;
+        this.orderLineItemRequests = orderLineItems;
     }
 
     public Long getId() {
@@ -35,9 +36,16 @@ public class OrderRequest {
         return orderStatus;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems.stream()
-            .map(OrderLineItemRequest::toEntity)
-            .collect(Collectors.toUnmodifiableList());
+    // public List<OrderLineItem> getOrderLineItems() {
+    //     List<OrderLineItem> list = new ArrayList<>();
+    //     for (OrderLineItemRequest orderLineItem : orderLineItemRequests) {
+    //         OrderLineItem toEntity = orderLineItem.toEntity();
+    //         list.add(toEntity);
+    //     }
+    //     return Collections.unmodifiableList(list);
+    // }
+
+    public List<OrderLineItemRequest> getOrderLineItemRequests() {
+        return orderLineItemRequests;
     }
 }

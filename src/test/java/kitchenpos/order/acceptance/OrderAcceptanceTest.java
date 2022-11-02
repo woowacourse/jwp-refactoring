@@ -68,7 +68,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         OrderTableRequest orderTable = new OrderTableRequest(NO_ID, NO_ID, 1, false);
         long tableId = _테이블생성_Id반환(orderTable);
 
-        OrderLineItemRequest orderLineItem = new OrderLineItemRequest(1L, NO_ID, menuId, 1);
+        OrderLineItemRequest orderLineItem = new OrderLineItemRequest(NO_ID, NO_ID, menuId, 1);
         return new OrderRequest(null, tableId, OrderStatus.COOKING.name(), List.of(orderLineItem));
     }
 

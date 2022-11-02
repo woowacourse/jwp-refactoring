@@ -22,8 +22,8 @@ public class OrderLineItem {
     @Column(name = "order_id")
     private Long orderId;
 
-    @Column(name = "menu_id")
-    private Long menuId;
+    @Column(name = "menu_order_id")
+    private Long menuOrderId;
 
     @Column(name = "quantity")
     private long quantity;
@@ -31,11 +31,15 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(final Long seq, final Long orderId, final Long menuId, final long quantity) {
+    public OrderLineItem(final Long seq, final Long orderId, final Long orderMenuId, final long quantity) {
         this.seq = seq;
         this.orderId = orderId;
-        this.menuId = menuId;
+        this.menuOrderId = orderMenuId;
         this.quantity = quantity;
+    }
+
+    public OrderLineItem(final Long orderMenuId, final long quantity) {
+        this(null, null, orderMenuId, quantity);
     }
 
     public Long getSeq() {
@@ -50,8 +54,8 @@ public class OrderLineItem {
         this.orderId = orderId;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public Long getMenuOrderId() {
+        return menuOrderId;
     }
 
     public long getQuantity() {
