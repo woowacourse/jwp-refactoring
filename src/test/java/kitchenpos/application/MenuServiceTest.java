@@ -44,7 +44,7 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void 메뉴를_생성할때_존재하지_않는_productId면_예외를_발생한다() {
         MenuCreateRequest menuCreateRequest
-                = new MenuCreateRequest("", BigDecimal.valueOf(-1), menuGroup.getId(),
+                = new MenuCreateRequest("", BigDecimal.valueOf(1000), menuGroup.getId(),
                 List.of(new MenuProductDto(0L, 1L)));
 
         assertThatThrownBy(() -> menuService.create(menuCreateRequest))
