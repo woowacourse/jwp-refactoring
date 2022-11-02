@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
@@ -32,5 +33,9 @@ public class DomainFixture {
 
     public static TableGroup createTableGroup() {
         return new TableGroup(LocalDateTime.now());
+    }
+
+    public static Order createOrder(OrderTable orderTable) {
+        return new Order(orderTable);
     }
 }
