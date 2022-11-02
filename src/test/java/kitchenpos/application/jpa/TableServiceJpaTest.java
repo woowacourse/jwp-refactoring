@@ -111,9 +111,9 @@ class TableServiceJpaTest extends ServiceTestJpa {
     @Test
     void changeNumberOfGuests_Exception_Invalid_Number() {
         OrderTableCreateResponse orderTableCreateResponse = tableServiceJpa.create(
-                new OrderTableCreateRequest(-1, false));
+                new OrderTableCreateRequest(10, false));
 
-        ChangeNumberOfGuestsRequest changeNumberOfGuestsRequest = new ChangeNumberOfGuestsRequest(7);
+        ChangeNumberOfGuestsRequest changeNumberOfGuestsRequest = new ChangeNumberOfGuestsRequest(-1);
         assertThatThrownBy(() -> tableServiceJpa.changeNumberOfGuests(orderTableCreateResponse.getId(), changeNumberOfGuestsRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
