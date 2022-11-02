@@ -1,36 +1,49 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import kitchenpos.exception.NotConvertableStatusException;
+import kitchenpos.exception.OrderTableEmptyException;
 
+@Entity
+@Table(name = "orders")
 public class Order {
-    private final Long id;
-    private final Long orderTableId;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private OrderTable orderTable;
+
+    @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
-    private final LocalDateTime orderedTime;
-    private final List<OrderLineItem> orderLineItems;
 
-    private Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
-                  List<OrderLineItem> orderLineItems) {
-        this.id = id;
-        this.orderTableId = orderTableId;
-        this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
+    private LocalDateTime orderedTime;
+
+    protected Order() {
     }
 
-    public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
-        this(id, orderTableId, orderStatus, orderedTime, List.of());
+    public Order(OrderTable orderTable) {
+        this.orderTable = orderTable;
+        validateOrderTable();
+        this.orderStatus = OrderStatus.COOKING;
+        this.orderedTime = LocalDateTime.now();
     }
 
-    public Order(Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
-        this(null, orderTableId, orderStatus, orderedTime, List.of());
-    }
-
-    public Order(Order order, List<OrderLineItem> orderLineItems) {
-        this(order.id, order.orderTableId, order.orderStatus, order.orderedTime, orderLineItems);
+    private void validateOrderTable() {
+        if (this.orderTable.isEmpty()) {
+            throw new OrderTableEmptyException();
+        }
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {
@@ -44,19 +57,15 @@ public class Order {
         return id;
     }
 
-    public Long getOrderTableId() {
-        return orderTableId;
+    public OrderTable getOrderTable() {
+        return orderTable;
     }
 
-    public String getOrderStatus() {
-        return orderStatus.name();
+    public OrderStatus getOrderStatus() {
+        return orderStatus;
     }
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
-    }
-
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
     }
 }
