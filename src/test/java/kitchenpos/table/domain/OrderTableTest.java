@@ -1,4 +1,4 @@
-package kitchenpos.product.domain;
+package kitchenpos.table.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
