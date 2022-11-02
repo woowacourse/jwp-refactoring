@@ -122,6 +122,10 @@ public class OrderTable {
         return numberOfGuests;
     }
 
+    public boolean getEmpty() {
+        return empty;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o)

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kitchenpos.order.application.response.OrderTableResponse;
 import kitchenpos.order.dao.OrderTableDao;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.application.request.OrderTableRequest;
@@ -20,27 +21,29 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTableRequest request) {
-        return orderTableDao.save(request.toEntity());
+    public OrderTableResponse create(final OrderTableRequest request) {
+
+        OrderTable orderTable = orderTableDao.save(request.toEntity());
+        return OrderTableResponse.from(orderTable);
     }
 
-    public List<OrderTable> list() {
-        return orderTableDao.findAll();
+    public List<OrderTableResponse> list() {
+        return OrderTableResponse.fromAll(orderTableDao.findAll());
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTableRequest request) {
+    public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableRequest request) {
         final OrderTable orderTable = orderTableDao.getById(orderTableId);
         orderTable.changeEmpty(request.getEmpty());
 
-        return orderTable;
+        return OrderTableResponse.from(orderTable);
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTableRequest request) {
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableRequest request) {
         final OrderTable orderTable = orderTableDao.getById(orderTableId);
         orderTable.changeNumberOfGuests(request.getNumberOfGuests());
 
-        return orderTable;
+        return OrderTableResponse.from(orderTable);
     }
 }

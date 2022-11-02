@@ -8,8 +8,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import kitchenpos.common.ServiceTest;
-import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.application.request.OrderTableRequest;
+import kitchenpos.order.application.response.OrderTableResponse;
 
 public class TableServiceTest extends ServiceTest {
 
@@ -20,7 +20,7 @@ public class TableServiceTest extends ServiceTest {
         OrderTableRequest request = new OrderTableRequest(NO_ID, NO_ID, 1, false);
 
         // when
-        OrderTable savedOrderTable = tableService.create(request);
+        OrderTableResponse savedOrderTable = tableService.create(request);
 
         // then
         assertThat(savedOrderTable).usingRecursiveComparison()
@@ -33,12 +33,19 @@ public class TableServiceTest extends ServiceTest {
     void list() {
         // given
         OrderTableRequest request = new OrderTableRequest(NO_ID, NO_ID, 1, false);
-        OrderTable savedOrderTable = tableService.create(request);
+        OrderTableResponse savedOrderTable = tableService.create(request);
 
         // when
-        List<OrderTable> result = tableService.list();
+        List<OrderTableResponse> result = tableService.list();
 
         // then
-        assertThat(result).contains(savedOrderTable);
+        assertOrderTableResponse(result.get(0), savedOrderTable);
+    }
+
+    private void assertOrderTableResponse(final OrderTableResponse actual, final OrderTableResponse expected) {
+        assertThat(actual.getId()).isEqualTo(expected.getId());
+        assertThat(actual.getTableGroupId()).isEqualTo(expected.getTableGroupId());
+        assertThat(actual.getNumberOfGuests()).isEqualTo(expected.getNumberOfGuests());
+        assertThat(actual.getEmpty()).isEqualTo(expected.getEmpty());
     }
 }
