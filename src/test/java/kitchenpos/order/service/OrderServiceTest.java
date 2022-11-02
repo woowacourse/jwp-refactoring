@@ -14,6 +14,7 @@ import kitchenpos.common.domain.Quantity;
 import kitchenpos.common.service.ServiceTest;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.validator.MenuValidator;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.dto.OrderCreateRequest;
@@ -35,6 +36,9 @@ class OrderServiceTest extends ServiceTest {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private MenuValidator menuValidator;
+
     private OrderLineItemCreateRequest orderLineItemResponse1;
     private OrderLineItemCreateRequest orderLineItemResponse2;
 
@@ -45,9 +49,9 @@ class OrderServiceTest extends ServiceTest {
         MenuProduct menuProduct1 = new MenuProduct(product.getId(), new Quantity(2L));
         MenuProduct menuProduct2 = new MenuProduct(product.getId(), new Quantity(3L));
         Menu menu1 = menuRepository.save(
-                new Menu("메뉴1", new Price(new BigDecimal(5000)), menuGroup.getId(), List.of(menuProduct1)));
+                Menu.of("메뉴1", new BigDecimal(5000), menuGroup.getId(), List.of(menuProduct1), menuValidator));
         Menu menu2 = menuRepository.save(
-                new Menu("메뉴2", new Price(new BigDecimal(4500)), menuGroup.getId(), List.of(menuProduct2)));
+                Menu.of("메뉴2", new BigDecimal(4500), menuGroup.getId(), List.of(menuProduct2), menuValidator));
 
         orderLineItemResponse1 = new OrderLineItemCreateRequest(menu1.getId(), 2L);
         orderLineItemResponse2 = new OrderLineItemCreateRequest(menu2.getId(), 1L);
