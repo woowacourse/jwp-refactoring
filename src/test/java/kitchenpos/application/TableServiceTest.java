@@ -9,6 +9,7 @@ import kitchenpos.OrderTableFixtures;
 import kitchenpos.TableGroupFixtures;
 import kitchenpos.application.dto.request.OrderTableCreateRequest;
 import kitchenpos.application.dto.response.OrderTableResponse;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -87,10 +88,13 @@ class TableServiceTest {
     @Test
     void changeEmptyWithCookingStatus() {
         // given
-        Order order = OrderFixtures.createOrder();
-        orderRepository.save(order);
+        long orderId = 1L;
+        OrderTable orderTable = OrderTableFixtures.createOrderTable();
+        orderTable.addOrder(orderId, OrderStatus.COOKING);
+        orderTableRepository.save(orderTable);
+
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(order.getOrderTable().getId(), false))
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), false))
                 .isInstanceOf(IllegalStateException.class);
     }
 

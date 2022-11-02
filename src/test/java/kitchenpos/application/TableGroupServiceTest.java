@@ -1,20 +1,22 @@
 package kitchenpos.application;
 
+import static kitchenpos.OrderFixtures.*;
+import static kitchenpos.OrderTableFixtures.*;
 import static kitchenpos.TableGroupFixtures.createTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
+import kitchenpos.OrderFixtures;
 import kitchenpos.OrderTableFixtures;
 import kitchenpos.application.dto.request.TableGroupCreateRequest;
 import kitchenpos.application.dto.request.TableGroupIdRequest;
 import kitchenpos.application.dto.response.TableGroupResponse;
-import kitchenpos.domain.order.Order;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.order.Order;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.tablegroup.TableGroup;
 import kitchenpos.repository.OrderRepository;
@@ -109,8 +111,8 @@ class TableGroupServiceTest {
     @Test
     void ungroup() {
         // given
-        OrderTable orderTableA = orderTableRepository.save(OrderTableFixtures.createOrderTable());
-        OrderTable orderTableB = orderTableRepository.save(OrderTableFixtures.createOrderTable());
+        OrderTable orderTableA = orderTableRepository.save(createOrderTable());
+        OrderTable orderTableB = orderTableRepository.save(createOrderTable());
         TableGroup savedTableGroup = tableGroupRepository.save(
                 createTableGroup(orderTableA.getId(), orderTableB.getId())
         );
@@ -123,21 +125,31 @@ class TableGroupServiceTest {
     @Test
     void ungroupWithCookingStatus(@Autowired EntityManager entityManager) {
         // given
-        OrderTable orderTableA = orderTableRepository.save(OrderTableFixtures.createOrderTable());
-        OrderTable orderTableB = orderTableRepository.save(OrderTableFixtures.createOrderTable());
-        TableGroup savedTableGroup = tableGroupRepository.save(
+        OrderTable orderTableA = createOrderTable();
+        orderTableRepository.save(orderTableA);
+        orderTableA.addOrder(
+                orderRepository.save(createOrder(orderTableA.getId(), OrderStatus.MEAL)).getId(),
+                OrderStatus.MEAL
+        );
+
+        OrderTable orderTableB = createOrderTable();
+        orderTableRepository.save(orderTableB);
+        orderTableB.addOrder(
+                orderRepository.save(createOrder(orderTableA.getId(), OrderStatus.COMPLETION)).getId(),
+                OrderStatus.COMPLETION
+        );
+
+        TableGroup tableGroup = tableGroupRepository.save(
                 createTableGroup(orderTableA.getId(), orderTableB.getId())
         );
-        orderTableA.group(savedTableGroup.getId());
-        orderTableB.group(savedTableGroup.getId());
+        orderTableA.group(tableGroup.getId());
+        orderTableB.group(tableGroup.getId());
 
-        Order order = new Order(orderTableA, OrderStatus.COOKING, LocalDateTime.now(), null);
-        orderRepository.save(order);
         entityManager.flush();
         entityManager.clear();
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
+        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                 .isInstanceOf(IllegalStateException.class);
     }
 }

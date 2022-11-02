@@ -74,11 +74,10 @@ class OrderTableTest {
     void addOrder() {
         // given
         OrderTable orderTable = new OrderTable(2, false);
-        Order order = OrderFixtures.createOrder();
         // when
-        orderTable.addOrder(order);
+        orderTable.addOrder(1L, OrderStatus.COOKING);
         // then
-        assertThat(orderTable.getOrders()).hasSize(1);
+        assertThat(orderTable.getRecords()).hasSize(1);
     }
 
     @Test
@@ -122,10 +121,8 @@ class OrderTableTest {
     @Test
     void beUngrouped() {
         // given
-//        TableGroup tableGroup = TableGroupFixtures.createTableGroup();
         OrderTable orderTable = new OrderTable(null, 2, false);
-        Order order = OrderFixtures.createOrder(OrderStatus.COMPLETION);
-        orderTable.addOrder(order);
+        orderTable.addOrder(1L, OrderStatus.COMPLETION);
 
         // when
         orderTable.ungroup();
@@ -139,8 +136,7 @@ class OrderTableTest {
         // given
         OrderTable orderTable = new OrderTable(null, 2, false);
         OrderStatus orderStatus = OrderStatus.COOKING;
-        Order order = OrderFixtures.createOrder(orderStatus);
-        orderTable.addOrder(order);
+        orderTable.addOrder(1L, orderStatus);
 
         // when & then
         assertThatThrownBy(orderTable::ungroup)

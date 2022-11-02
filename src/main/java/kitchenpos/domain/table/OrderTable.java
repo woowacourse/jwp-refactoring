@@ -2,15 +2,17 @@ package kitchenpos.domain.table;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import kitchenpos.domain.NumberOfGuests;
-import kitchenpos.domain.order.Order;
+import kitchenpos.domain.OrderStatus;
 
 @Entity
 public class OrderTable {
@@ -21,8 +23,9 @@ public class OrderTable {
 
     private Long tableGroupId;
 
-    @OneToMany(mappedBy = "orderTable", fetch = FetchType.LAZY)
-    private List<Order> orders = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "order_table_id", nullable = false, updatable = false)
+    private List<OrderRecord> records = new ArrayList<>();
 
     @Embedded
     private NumberOfGuests numberOfGuests;
@@ -47,13 +50,13 @@ public class OrderTable {
     private OrderTable(
             Long id,
             Long tableGroupId,
-            List<Order> orders,
+            List<OrderRecord> records,
             NumberOfGuests numberOfGuests,
             boolean empty
     ) {
         this.id = id;
         this.tableGroupId = tableGroupId;
-        this.orders = orders;
+        this.records = records;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -65,7 +68,7 @@ public class OrderTable {
     }
 
     private void validateOrderCompleted() {
-        if (getOrders().stream().anyMatch(order -> !order.isCompleted())) {
+        if (records.stream().anyMatch(record -> !record.isCompleted())) {
             throw new IllegalStateException("완료되지 않은 주문이 있습니다.");
         }
     }
@@ -87,8 +90,8 @@ public class OrderTable {
         }
     }
 
-    public void addOrder(Order order) {
-        this.orders.add(order);
+    public void addOrder(Long orderId, OrderStatus orderStatus) {
+        this.records.add(new OrderRecord(orderId, orderStatus));
     }
 
     public void group(Long tableGroupId) {
@@ -105,8 +108,8 @@ public class OrderTable {
 
     public void ungroup() {
         validateOrderCompleted();
-        this.tableGroupId = null;
         this.empty = false;
+        this.tableGroupId = null;
     }
 
     public Long getId() {
@@ -117,8 +120,8 @@ public class OrderTable {
         return tableGroupId;
     }
 
-    public List<Order> getOrders() {
-        return orders;
+    public List<OrderRecord> getRecords() {
+        return records;
     }
 
     public NumberOfGuests getNumberOfGuests() {

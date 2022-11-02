@@ -62,7 +62,7 @@ class OrderRepositoryTest {
         // given
         Order order = OrderFixtures.createOrder();
         orderRepository.save(order);
-        long orderTableId = order.getOrderTable().getId();
+        long orderTableId = order.getOrderTableId();
         OrderStatus orderStatus = OrderStatus.COOKING;
 
         // when

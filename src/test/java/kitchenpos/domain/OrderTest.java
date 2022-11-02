@@ -16,16 +16,11 @@ class OrderTest {
     @Test
     void constructOrder() {
         // given
-        OrderStatus orderStatus = OrderStatus.COOKING;
-        LocalDateTime orderedTime = LocalDateTime.now();
         List<OrderLineItem> orderLineItems = List.of();
+        boolean isTableEmpty = false;
         // when
-        Order order = new Order(
-                OrderTableFixtures.createOrderTable(1L, null, 2, false),
-                orderStatus,
-                orderedTime,
-                orderLineItems
-        );
+        Order order = Order.of(1L, orderLineItems, isTableEmpty);
+
         // then
         assertThat(order).isNotNull();
     }
@@ -33,17 +28,12 @@ class OrderTest {
     @Test
     void constructOrderWithEmptyOrderTable() {
         // given
-        OrderStatus orderStatus = OrderStatus.COOKING;
-        LocalDateTime orderedTime = LocalDateTime.now();
         List<OrderLineItem> orderLineItems = List.of();
+        boolean isTableEmpty = true;
 
         // when & then
-        assertThatThrownBy(() -> new Order(
-                OrderTableFixtures.createOrderTable(1L, null, 0, true),
-                orderStatus,
-                orderedTime,
-                orderLineItems
-        )).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> Order.of(1L, orderLineItems, isTableEmpty))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -54,7 +44,7 @@ class OrderTest {
         // when
         order.changeOrderStatus(orderStatus);
         // then
-        assertThat(order.getOrderStatus()).isEqualTo(orderStatus.name());
+        assertThat(order.getOrderStatus()).isEqualTo(orderStatus);
     }
 
     @Test

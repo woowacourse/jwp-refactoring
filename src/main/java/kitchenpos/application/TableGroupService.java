@@ -49,6 +49,7 @@ public class TableGroupService {
     public void ungroup(Long tableGroupId) {
         TableGroup tableGroup = tableGroupRepository.getById(tableGroupId);
         List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
+        tableGroup.ungroup();
         orderTables.forEach(OrderTable::ungroup);
     }
 }

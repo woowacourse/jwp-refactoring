@@ -47,6 +47,10 @@ public class TableGroup {
         }
     }
 
+    public void ungroup() {
+        this.orderTableRefs.clear();
+    }
+
     public Long getId() {
         return id;
     }
