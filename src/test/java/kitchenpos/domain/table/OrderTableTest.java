@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
+import kitchenpos.domain.common.OrderStatus;
+import kitchenpos.exception.badrequest.CookingOrMealOrderTableCannotChangeEmptyException;
 import kitchenpos.exception.badrequest.EmptyTableCannotChangeNumberOfGuestsException;
 import kitchenpos.exception.badrequest.GroupedTableCannotChangeEmptyException;
 import org.junit.jupiter.api.Test;
@@ -19,6 +21,24 @@ class OrderTableTest {
 
         assertThatThrownBy(() -> orderTable1.changeEmpty(true))
                 .isInstanceOf(GroupedTableCannotChangeEmptyException.class);
+    }
+
+    @Test
+    void 빈_테이블_여부를_변경할_때_주문_목록_중_조리_중인_주문이_있을_경우_예외를_반환한다() {
+        OrderTable orderTable = new OrderTable(1, false);
+        new OrderStatusRecord(1L, orderTable, OrderStatus.COOKING);
+
+        assertThatThrownBy(() -> orderTable.changeEmpty(true))
+                .isInstanceOf(CookingOrMealOrderTableCannotChangeEmptyException.class);
+    }
+
+    @Test
+    void 빈_테이블_여부를_변경할_때_주문_목록_중_식사_중인_주문이_있을_경우_예외를_반환한다() {
+        OrderTable orderTable = new OrderTable(1, false);
+        new OrderStatusRecord(1L, orderTable, OrderStatus.MEAL);
+
+        assertThatThrownBy(() -> orderTable.changeEmpty(true))
+                .isInstanceOf(CookingOrMealOrderTableCannotChangeEmptyException.class);
     }
 
     @Test

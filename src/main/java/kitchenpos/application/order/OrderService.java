@@ -8,6 +8,8 @@ import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.table.OrderStatusRecord;
+import kitchenpos.domain.table.OrderStatusRecordRepository;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.dto.order.mapper.OrderDtoMapper;
@@ -35,27 +37,32 @@ public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderStatusRecordRepository orderStatusRecordRepository;
 
     public OrderService(final OrderMapper orderMapper, final OrderLineItemMapper orderLineItemMapper,
-                        final OrderDtoMapper orderDtoMapper,
-                        final MenuRepository menuRepository, final OrderRepository orderRepository,
-                        final OrderTableRepository orderTableRepository) {
+                        final OrderDtoMapper orderDtoMapper, final MenuRepository menuRepository,
+                        final OrderRepository orderRepository, final OrderTableRepository orderTableRepository,
+                        final OrderStatusRecordRepository orderStatusRecordRepository) {
         this.orderMapper = orderMapper;
         this.orderLineItemMapper = orderLineItemMapper;
         this.orderDtoMapper = orderDtoMapper;
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
+        this.orderStatusRecordRepository = orderStatusRecordRepository;
     }
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest orderCreateRequest) {
         List<Menu> menus = findMenus(orderCreateRequest.getOrderLineItems());
+        OrderTable orderTable = orderTableRepository.findById(orderCreateRequest.getOrderTableId())
+                .orElseThrow(OrderTableNotExistsException::new);
+        validateOrderTableNotEmpty(orderTable);
         List<OrderLineItem> orderLineItems = orderLineItemMapper
                 .toOrderLineItems(orderCreateRequest.getOrderLineItems(), menus);
-        Order order = orderMapper.toOrder(orderCreateRequest, orderLineItems);
-        validateOrderTableNotEmpty(order.getOrderTableId());
-        return orderDtoMapper.toOrderResponse(orderRepository.save(order));
+        Order order = orderRepository.save(orderMapper.toOrder(orderCreateRequest, orderLineItems));
+        orderStatusRecordRepository.save(new OrderStatusRecord(order.getId(), orderTable, order.getOrderStatus()));
+        return orderDtoMapper.toOrderResponse(order);
     }
 
     private List<Menu> findMenus(final List<OrderLineItemCreateRequest> orderLineItemCreateRequests) {
@@ -83,9 +90,7 @@ public class OrderService {
         }
     }
 
-    private void validateOrderTableNotEmpty(final Long orderTableId) {
-        OrderTable orderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(OrderTableNotExistsException::new);
+    private void validateOrderTableNotEmpty(final OrderTable orderTable) {
         if (orderTable.isEmpty()) {
             throw new OrderTableEmptyException();
         }
@@ -102,6 +107,9 @@ public class OrderService {
         Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(OrderNotExistsException::new);
         savedOrder.changeOrderStatus(orderStatusChangeRequest.getOrderStatus());
+        OrderStatusRecord orderStatusRecord = orderStatusRecordRepository.findById(orderId)
+                .orElseThrow(OrderNotExistsException::new);
+        orderStatusRecord.changeOrderStatus(orderStatusChangeRequest.getOrderStatus());
         return orderDtoMapper.toOrderResponse(savedOrder);
     }
 }

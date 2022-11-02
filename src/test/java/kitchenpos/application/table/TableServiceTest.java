@@ -1,20 +1,15 @@
 package kitchenpos.application.table;
 
-import static kitchenpos.domain.common.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.ServiceTest;
-import kitchenpos.domain.common.Price;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderRepository;
-import kitchenpos.domain.order.OrderedMenu;
+import kitchenpos.domain.table.OrderStatusRecordRepository;
+import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.dto.table.request.OrderTableCreateRequest;
 import kitchenpos.dto.table.response.OrderTableResponse;
-import kitchenpos.exception.badrequest.CookingOrMealOrderTableCannotChangeEmptyException;
 import kitchenpos.exception.badrequest.OrderNotExistsException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +19,10 @@ class TableServiceTest {
 
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private OrderStatusRecordRepository orderStatusRecordRepository;
+    @Autowired
+    private OrderTableRepository orderTableRepository;
     @Autowired
     private TableService tableService;
 
@@ -64,28 +63,6 @@ class TableServiceTest {
     void 변경_대상_테이블이_존재하지_않으면_예외를_반환한다() {
         assertThatThrownBy(() -> tableService.changeEmpty(0L, true))
                 .isInstanceOf(OrderNotExistsException.class);
-    }
-
-    @Test
-    void 변경_대상_테이블의_주문_목록_중_조리_중인_주문이_있을_경우_예외를_반환한다() {
-        Long orderTableId = tableService.create(new OrderTableCreateRequest(1, false))
-                .getId();
-        OrderLineItem orderLineItem = new OrderLineItem(1, new OrderedMenu("메뉴 이름", new Price(BigDecimal.ZERO)));
-        orderRepository.save(new Order(orderTableId, MEAL, List.of(orderLineItem)));
-
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, true))
-                .isInstanceOf(CookingOrMealOrderTableCannotChangeEmptyException.class);
-    }
-
-    @Test
-    void 변경_대상_테이블의_주문_목록_중_식사_중인_주문이_있을_경우_예외를_반환한다() {
-        Long orderTableId = tableService.create(new OrderTableCreateRequest(1, false))
-                .getId();
-        OrderLineItem orderLineItem = new OrderLineItem(1, new OrderedMenu("메뉴 이름", new Price(BigDecimal.ZERO)));
-        orderRepository.save(new Order(orderTableId, List.of(orderLineItem)));
-
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, true))
-                .isInstanceOf(CookingOrMealOrderTableCannotChangeEmptyException.class);
     }
 
     @Test

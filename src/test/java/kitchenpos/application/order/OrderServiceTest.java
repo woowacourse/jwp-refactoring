@@ -1,5 +1,6 @@
 package kitchenpos.application.order;
 
+import static kitchenpos.domain.common.OrderStatus.COMPLETION;
 import static kitchenpos.domain.common.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -8,12 +9,15 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import kitchenpos.ServiceTest;
 import kitchenpos.domain.common.OrderStatus;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuGroupRepository;
 import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.table.OrderStatusRecord;
+import kitchenpos.domain.table.OrderStatusRecordRepository;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.dto.order.request.OrderCreateRequest;
@@ -38,6 +42,8 @@ class OrderServiceTest {
     @Autowired
     private OrderTableRepository orderTableRepository;
     @Autowired
+    private OrderStatusRecordRepository orderStatusRecordRepository;
+    @Autowired
     private OrderService orderService;
 
     @Test
@@ -57,6 +63,24 @@ class OrderServiceTest {
                 () -> assertThat(orderResponse.getId()).isNotNull(),
                 () -> assertThat(orderResponse.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name())
         );
+    }
+
+    @Test
+    void 주문이_생성되면_주문_상태_기록도_생성된다() {
+        Long menuGroupId = menuGroupRepository.save(new MenuGroup("메뉴 그룹"))
+                .getId();
+        Long menuId = menuRepository.save(new Menu("메뉴", BigDecimal.ZERO, menuGroupId, new ArrayList<>()))
+                .getId();
+        Long orderTableId = orderTableRepository.save(new OrderTable(1, false))
+                .getId();
+        OrderLineItemCreateRequest orderLineItemRequest = new OrderLineItemCreateRequest(menuId, 1);
+        OrderCreateRequest orderRequest = new OrderCreateRequest(orderTableId, List.of(orderLineItemRequest));
+        Long orderId = orderService.create(orderRequest)
+                .getId();
+
+        Optional<OrderStatusRecord> actual = orderStatusRecordRepository.findById(orderId);
+
+        assertThat(actual).isPresent();
     }
 
     @Test
@@ -147,6 +171,26 @@ class OrderServiceTest {
         OrderResponse changed = orderService.changeOrderStatus(orderId, new OrderStatusChangeRequest(MEAL.name()));
 
         assertThat(changed.getOrderStatus()).isEqualTo(MEAL.name());
+    }
+
+    @Test
+    void 주문_상태를_변경하면_주문_상태_기록도_변경된다() {
+        Long menuGroupId = menuGroupRepository.save(new MenuGroup("메뉴 그룹"))
+                .getId();
+        Long menuId = menuRepository.save(new Menu("메뉴", BigDecimal.ZERO, menuGroupId, new ArrayList<>()))
+                .getId();
+        Long orderTableId = orderTableRepository.save(new OrderTable(1, false))
+                .getId();
+        OrderLineItemCreateRequest orderLineItemRequest = new OrderLineItemCreateRequest(menuId, 1);
+        OrderCreateRequest orderRequest = new OrderCreateRequest(orderTableId, List.of(orderLineItemRequest));
+        Long orderId = orderService.create(orderRequest)
+                .getId();
+        orderService.changeOrderStatus(orderId, new OrderStatusChangeRequest(COMPLETION.name()));
+
+        OrderStatusRecord actual = orderStatusRecordRepository.findById(orderId)
+                .orElseThrow();
+
+        assertThat(actual.isNotCompleted()).isFalse();
     }
 
     @Test

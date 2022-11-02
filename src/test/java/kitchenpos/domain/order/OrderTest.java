@@ -1,4 +1,4 @@
-package kitchenpos.domain.common;
+package kitchenpos.domain.order;
 
 import static kitchenpos.domain.common.OrderStatus.COMPLETION;
 import static kitchenpos.domain.common.OrderStatus.MEAL;
@@ -6,9 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderedMenu;
+import kitchenpos.domain.common.Price;
 import kitchenpos.exception.badrequest.CompletedOrderCannotChangeException;
 import kitchenpos.exception.badrequest.OrderLineItemNotExistsException;
 import org.junit.jupiter.api.Test;

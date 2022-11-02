@@ -9,10 +9,10 @@ CREATE TABLE orders
 
 CREATE TABLE order_line_item
 (
-    seq      BIGINT(20) NOT NULL AUTO_INCREMENT,
-    order_id BIGINT(20) NOT NULL,
-    quantity BIGINT(20) NOT NULL,
-    menu_name VARCHAR(255) NOT NULL,
+    seq        BIGINT(20) NOT NULL AUTO_INCREMENT,
+    order_id   BIGINT(20) NOT NULL,
+    quantity   BIGINT(20) NOT NULL,
+    menu_name  VARCHAR(255)   NOT NULL,
     menu_price DECIMAL(19, 2) NOT NULL,
     PRIMARY KEY (seq)
 );
@@ -67,6 +67,14 @@ CREATE TABLE product
     PRIMARY KEY (id)
 );
 
+CREATE TABLE order_status_record
+(
+    order_id       BIGINT(20) NOT NULL,
+    order_table_id BIGINT(20) NOT NULL,
+    order_status   VARCHAR(255) NOT NULL,
+    PRIMARY KEY (order_id)
+);
+
 ALTER TABLE orders
     ADD CONSTRAINT fk_orders_order_table
         FOREIGN KEY (order_table_id) REFERENCES order_table (id);
@@ -90,3 +98,7 @@ ALTER TABLE menu_product
 ALTER TABLE order_table
     ADD CONSTRAINT fk_order_table_table_group
         FOREIGN KEY (table_group_id) REFERENCES table_group (id);
+
+ALTER TABLE order_status_record
+    ADD CONSTRAINT fk_order_status_record_order_table
+        FOREIGN KEY (order_table_id) REFERENCES order_table (id);

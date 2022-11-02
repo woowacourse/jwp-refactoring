@@ -8,7 +8,6 @@ import kitchenpos.dto.table.mapper.OrderTableMapper;
 import kitchenpos.dto.table.request.OrderTableCreateRequest;
 import kitchenpos.dto.table.response.OrderTableResponse;
 import kitchenpos.exception.badrequest.OrderNotExistsException;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,15 +18,12 @@ public class TableService {
     private final OrderTableMapper orderTableMapper;
     private final OrderTableDtoMapper orderTableDtoMapper;
     private final OrderTableRepository orderTableRepository;
-    private final ApplicationEventPublisher applicationEventPublisher;
 
     public TableService(final OrderTableMapper orderTableMapper, final OrderTableDtoMapper orderTableDtoMapper,
-                        final OrderTableRepository orderTableRepository,
-                        final ApplicationEventPublisher applicationEventPublisher) {
+                        final OrderTableRepository orderTableRepository) {
         this.orderTableMapper = orderTableMapper;
         this.orderTableDtoMapper = orderTableDtoMapper;
         this.orderTableRepository = orderTableRepository;
-        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Transactional
@@ -45,7 +41,6 @@ public class TableService {
     public OrderTableResponse changeEmpty(final Long orderTableId, final boolean empty) {
         OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(OrderNotExistsException::new);
-        applicationEventPublisher.publishEvent(new ChangeEmptyEvent(orderTableId));
         savedOrderTable.changeEmpty(empty);
         return orderTableDtoMapper.toOrderTableResponse(savedOrderTable);
     }

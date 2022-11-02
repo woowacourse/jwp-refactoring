@@ -1,6 +1,9 @@
 package kitchenpos.domain.table;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -10,10 +13,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import kitchenpos.domain.common.NumberOfGuests;
+import kitchenpos.exception.badrequest.CookingOrMealOrderTableCannotChangeEmptyException;
 import kitchenpos.exception.badrequest.EmptyTableCannotChangeNumberOfGuestsException;
 import kitchenpos.exception.badrequest.GroupedTableCannotChangeEmptyException;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Table(name = "order_table")
@@ -29,6 +35,9 @@ public class OrderTable {
     private NumberOfGuests numberOfGuests;
     @Column(name = "empty", nullable = false)
     private boolean empty;
+    @BatchSize(size = 100)
+    @OneToMany(mappedBy = "orderTable", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    private List<OrderStatusRecord> orderStatusRecords = new ArrayList<>();
 
     protected OrderTable() {
     }
@@ -47,7 +56,16 @@ public class OrderTable {
 
     public void changeEmpty(final boolean empty) {
         validateNotGrouped();
+        validateCookingOrMealOrderNotExists();
         this.empty = empty;
+    }
+
+    private void validateCookingOrMealOrderNotExists() {
+        orderStatusRecords.forEach(orderStatusRecord -> {
+            if (orderStatusRecord.isNotCompleted()) {
+                throw new CookingOrMealOrderTableCannotChangeEmptyException();
+            }
+        });
     }
 
     private void validateNotGrouped() {
@@ -81,6 +99,10 @@ public class OrderTable {
         this.empty = false;
     }
 
+    public void add(final OrderStatusRecord orderStatusRecord) {
+        orderStatusRecords.add(orderStatusRecord);
+    }
+
     public Long getId() {
         return id;
     }
@@ -95,6 +117,10 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
+    }
+
+    public List<OrderStatusRecord> getOrderStatusRecords() {
+        return orderStatusRecords;
     }
 
     @Override

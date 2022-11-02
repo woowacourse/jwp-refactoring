@@ -4,11 +4,9 @@ import static kitchenpos.domain.common.OrderStatus.COOKING;
 import static kitchenpos.domain.common.OrderStatus.MEAL;
 
 import java.util.List;
-import kitchenpos.application.table.ChangeEmptyEvent;
 import kitchenpos.application.table.UngroupEvent;
 import kitchenpos.domain.common.OrderStatus;
 import kitchenpos.domain.order.OrderRepository;
-import kitchenpos.exception.badrequest.CookingOrMealOrderTableCannotChangeEmptyException;
 import kitchenpos.exception.badrequest.CookingOrMealOrderTableCannotUngroupedException;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -24,13 +22,6 @@ public class OrderEventListener {
 
     public OrderEventListener(final OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
-    }
-
-    @EventListener(ChangeEmptyEvent.class)
-    public void validateCookingOrMealOrderNotExists(final ChangeEmptyEvent event) {
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(event.getOrderTableId(), NOT_COMPLETED_STATUS)) {
-            throw new CookingOrMealOrderTableCannotChangeEmptyException();
-        }
     }
 
     @EventListener(UngroupEvent.class)
