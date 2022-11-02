@@ -12,5 +12,5 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     " FROM orders WHERE order_table_id = (:orderTableId) AND order_status IN (:orderStatuses)", nativeQuery = true)
     boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<String> orderStatuses);
 
-    List<Order> findAllByIdIn(List<Long> orderTableIds);
+    List<Order> findAllByOrderTableIdIn(List<Long> orderTableIds);
 }

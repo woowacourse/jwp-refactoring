@@ -88,6 +88,6 @@ public class OrderService {
     }
 
     public Orders findOrdersInOrderTables(OrderTables orderTables) {
-        return new Orders(orderRepository.findAllByIdIn(orderTables.getOrderTableIds()));
+        return new Orders(orderRepository.findAllByOrderTableIdIn(orderTables.getOrderTableIds()));
     }
 }

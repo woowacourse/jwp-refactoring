@@ -33,7 +33,6 @@ public class TableGroupService {
     public TableGroupCreateResponse create(TableGroupCreateRequest tableGroupCreateRequest) {
         OrderTables orderTables = new OrderTables(tableGroupCreateRequest.getOrderTables());
         List<Long> orderTableIds = orderTables.getOrderTableIds();
-
         OrderTables savedOrderTables = new OrderTables(orderTableRepository.findAllById(orderTableIds));
 
         if (!savedOrderTables.isReadyToGroup(orderTables)) {
