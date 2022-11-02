@@ -32,28 +32,22 @@ public class Menu {
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
 
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "menu_id")
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected Menu() {
     }
 
     public Menu(String name, Price price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
-        injectMenu(menuProducts);
-        validatePriceLessThanMenuProductsPrice(price);
+        validatePriceLessThanMenuProductsPrice(price, menuProducts);
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
     }
 
-    private void injectMenu(final List<MenuProduct> menuProducts) {
-        for (MenuProduct menuProduct : menuProducts) {
-            menuProduct.updateMenu(this);
-        }
-    }
-
-    private void validatePriceLessThanMenuProductsPrice(final Price price) {
+    private void validatePriceLessThanMenuProductsPrice(final Price price, final List<MenuProduct> menuProducts) {
         final Price menuProductsPrice = menuProducts.stream()
                 .map(MenuProduct::calculateProductTotalPrice)
                 .reduce(new Price(BigDecimal.ZERO), Price::add);

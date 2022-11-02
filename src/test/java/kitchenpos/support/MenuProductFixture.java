@@ -1,6 +1,5 @@
 package kitchenpos.support;
 
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 
@@ -16,9 +15,5 @@ public enum MenuProductFixture {
 
     public MenuProduct 생성(final Product product) {
         return new MenuProduct(null, product, this.quantity);
-    }
-
-    public MenuProduct 생성(final Menu menu, final Product product) {
-        return new MenuProduct(menu, product, this.quantity);
     }
 }
