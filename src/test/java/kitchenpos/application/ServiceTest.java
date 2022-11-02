@@ -126,8 +126,8 @@ public class ServiceTest {
     }
 
     protected void 없는_상품으로_세팅한다() {
-        Mockito.when(productRepository.findById(any()))
-                .thenReturn(Optional.empty());
+        Mockito.when(productRepository.existsById(any()))
+                .thenReturn(false);
     }
 
     protected Menu get세트A() {

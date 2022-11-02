@@ -26,16 +26,17 @@ public class MenuProduct {
     public MenuProduct() {
     }
 
+    public MenuProduct(final Long productId, final long quantity) {
+        this(null, null, productId, quantity, null);
+    }
+
+
     public MenuProduct(final Long menuId, final Long productId, final long quantity) {
         this(null, menuId, productId, quantity, null);
     }
 
     public MenuProduct(final Long productId, final long quantity, final BigDecimal price) {
         this(null, null, productId, quantity, price);
-    }
-
-    public MenuProduct(final Long menuId, final Long productId, final long quantity, final BigDecimal price) {
-        this(null, menuId, productId, quantity, price);
     }
 
     public MenuProduct(final Long seq, final Long menuId, final Long productId, final long quantity,

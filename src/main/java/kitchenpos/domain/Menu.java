@@ -46,7 +46,6 @@ public class Menu {
 
     public Menu(Long id, String name, BigDecimal price, Long menuGroupId,
                 List<MenuProduct> menuProducts) {
-
         validOverMenuProductsSum(price, menuProducts);
         this.id = id;
         this.name = name;

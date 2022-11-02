@@ -3,6 +3,7 @@ package kitchenpos.application.exception;
 public enum ExceptionType {
 
     NOT_FOUND_MENU_EXCEPTION("없는 메뉴가 포함된 주문입니다."),
+    NOT_FOUND_PRODUCT_EXCEPTION("없는 상품이 포함된 명령입니다."),
     NOT_FOUND_MENU_GROUP_EXCEPTION("없는 메뉴 그룹입니다.."),
     NOT_FOUND_TABLE_EXCEPTION("없는 테이블에 대한 요청입니다."),
     NOT_FOUND_ORDER_EXCEPTION("없는 주문에 대한 요청입니다."),

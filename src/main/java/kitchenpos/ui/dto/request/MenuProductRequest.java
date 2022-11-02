@@ -1,6 +1,6 @@
 package kitchenpos.ui.dto.request;
 
-import java.math.BigDecimal;
+import kitchenpos.domain.MenuProduct;
 
 public class MenuProductRequest {
     private Long productId;
@@ -14,11 +14,16 @@ public class MenuProductRequest {
         this.quantity = quantity;
     }
 
+
     public Long getProductId() {
         return productId;
     }
 
     public long getQuantity() {
         return quantity;
+    }
+
+    public MenuProduct toMenuProduct() {
+        return new MenuProduct(productId, quantity);
     }
 }
