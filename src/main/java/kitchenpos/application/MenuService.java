@@ -22,7 +22,6 @@ public class MenuService {
     private final ProductRepository productRepository;
 
     public MenuService(
-
             final MenuRepository menuRepository,
             final MenuGroupRepository menuGroupRepository,
             final ProductRepository productRepository

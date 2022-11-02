@@ -12,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import kitchenpos.exceptions.NotEnoughSizeOfOrderTableException;
+import kitchenpos.exceptions.OrderTableAlreadyHasTableGroupException;
+import kitchenpos.exceptions.OrderTableNotEmptyException;
 import org.springframework.util.CollectionUtils;
 
 @Entity
@@ -43,6 +45,17 @@ public class TableGroup {
     private void validateOrderTables(final List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < MINIMUM_ORDER_TABLES_SIZE) {
             throw new NotEnoughSizeOfOrderTableException(MINIMUM_ORDER_TABLES_SIZE);
+        }
+    }
+
+    public void validateUngroupedOrderTables() {
+        for (final OrderTable orderTable : orderTables) {
+            if (!orderTable.isEmpty()) {
+                throw new OrderTableNotEmptyException();
+            }
+            if (orderTable.hasTableGroup()) {
+                throw new OrderTableAlreadyHasTableGroupException();
+            }
         }
     }
 

@@ -14,8 +14,6 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.TableGroupResponse;
 import kitchenpos.exceptions.OrderNotCompletionException;
-import kitchenpos.exceptions.OrderTableAlreadyHasTableGroupException;
-import kitchenpos.exceptions.OrderTableNotEmptyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,28 +32,16 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
-        final List<OrderTable> orderTables = findAvailableOrderTables(tableGroupRequest);
+        final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(tableGroupRequest.getOrderTableIds());
         final TableGroup tableGroup = TableGroupRequest.from(orderTables);
-        tableGroupRepository.save(tableGroup);
-        tableGroup.setOrderTablesEmpty();
+        tableGroup.validateUngroupedOrderTables();
+        groupOrderTables(tableGroup);
         return TableGroupResponse.from(tableGroup);
     }
 
-    private List<OrderTable> findAvailableOrderTables(final TableGroupRequest tableGroupRequest) {
-        final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(tableGroupRequest.getOrderTableIds());
-        validateOrderTables(orderTables);
-        return orderTables;
-    }
-
-    private void validateOrderTables(final List<OrderTable> orderTables) {
-        for (final OrderTable orderTable : orderTables) {
-            if (!orderTable.isEmpty()) {
-                throw new OrderTableNotEmptyException();
-            }
-            if (orderTable.hasTableGroup()) {
-                throw new OrderTableAlreadyHasTableGroupException();
-            }
-        }
+    private void groupOrderTables(final TableGroup tableGroup) {
+        tableGroupRepository.save(tableGroup);
+        tableGroup.setOrderTablesEmpty();
     }
 
     @Transactional
