@@ -16,16 +16,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.support.SpringBootNestedTest;
 import kitchenpos.table.application.TableGroupService;
 import kitchenpos.table.application.request.OrderTableIdRequest;
 import kitchenpos.table.application.request.TableGroupRequest;
 import kitchenpos.table.application.response.TableGroupResponse;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
-import kitchenpos.support.SpringBootNestedTest;
 
 @Transactional
 @SpringBootTest
@@ -155,7 +155,7 @@ class TableGroupServiceTest {
 
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("그룹 해제를 할 수 없는 테이블이 존재합니다.");
+                    .hasMessageContaining("조리중이나 식사중인 주문이 존재합니다.");
         }
     }
 }

@@ -1,14 +1,13 @@
 package kitchenpos.table.application;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.event.CheckTableCanChangeEvent;
 import kitchenpos.table.application.request.ChangeNumOfTableGuestsRequest;
 import kitchenpos.table.application.request.ChangeOrderTableEmptyRequest;
 import kitchenpos.table.application.request.OrderTableRequest;
@@ -20,12 +19,13 @@ import kitchenpos.table.domain.OrderTableRepository;
 @Transactional
 public class TableService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
-    public TableService(OrderRepository orderRepository, OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(OrderTableRepository orderTableRepository,
+                        ApplicationEventPublisher applicationEventPublisher) {
         this.orderTableRepository = orderTableRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     public OrderTableResponse create(OrderTableRequest request) {
@@ -45,18 +45,11 @@ public class TableService {
 
     public OrderTableResponse changeEmpty(ChangeOrderTableEmptyRequest request) {
         OrderTable orderTable = findOrderTable(request.getOrderTableId());
-        validateTableCanChangeEmpty(request.getOrderTableId());
+        applicationEventPublisher.publishEvent(new CheckTableCanChangeEvent(List.of(request.getOrderTableId())));
 
         orderTable.changeEmptyStatus(request.isEmpty());
 
         return new OrderTableResponse(orderTable);
-    }
-
-    private void validateTableCanChangeEmpty(Long orderTableId) {
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException("비울 수 없는 테이블이 존재합니다.");
-        }
     }
 
     public OrderTableResponse changeNumberOfGuests(ChangeNumOfTableGuestsRequest request) {

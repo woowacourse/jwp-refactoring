@@ -128,7 +128,7 @@ class TableServiceTest {
 
             assertThatThrownBy(() -> tableService.changeEmpty(changeOrderTableEmptyRequest))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("비울 수 없는 테이블이 존재합니다.");
+                    .hasMessageContaining("조리중이나 식사중인 주문이 존재합니다.");
         }
     }
 
@@ -190,7 +190,8 @@ class TableServiceTest {
             OrderTable newEmptyTable = new OrderTable(10, true);
             OrderTable emptyTable = orderTableRepository.save(newEmptyTable);
 
-            ChangeNumOfTableGuestsRequest changeGuestsRequest = new ChangeNumOfTableGuestsRequest(emptyTable.getId(), 10);
+            ChangeNumOfTableGuestsRequest changeGuestsRequest = new ChangeNumOfTableGuestsRequest(emptyTable.getId(),
+                    10);
 
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(changeGuestsRequest))
                     .isInstanceOf(IllegalArgumentException.class)

@@ -1,16 +1,15 @@
 package kitchenpos.table.application;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kitchenpos.event.CheckTableCanChangeEvent;
 import kitchenpos.table.application.request.TableGroupRequest;
 import kitchenpos.table.application.response.TableGroupResponse;
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.domain.TableGroup;
@@ -20,15 +19,15 @@ import kitchenpos.table.domain.TableGroupRepository;
 @Transactional
 public class TableGroupService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
-    public TableGroupService(OrderRepository orderRepository, OrderTableRepository orderTableRepository,
-                             TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
+    public TableGroupService(OrderTableRepository orderTableRepository, TableGroupRepository tableGroupRepository,
+                             ApplicationEventPublisher applicationEventPublisher) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     public TableGroupResponse create(TableGroupRequest request) {
@@ -56,19 +55,12 @@ public class TableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        validateIsPossibleToUngroup(orderTableIds);
+        applicationEventPublisher.publishEvent(new CheckTableCanChangeEvent(orderTableIds));
         tableGroup.ungroup();
     }
 
     private TableGroup findTableGroup(Long tableGroupId) {
         return tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
-    }
-
-    private void validateIsPossibleToUngroup(List<Long> orderTableIds) {
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException("그룹 해제를 할 수 없는 테이블이 존재합니다.");
-        }
     }
 }
