@@ -5,9 +5,9 @@ import kitchenpos.common.exception.InvalidTableException;
 public class OrderTable {
 
     private final Long id;
-    private final Long tableGroupId;
-    private final int numberOfGuests;
-    private final boolean empty;
+    private Long tableGroupId;
+    private int numberOfGuests;
+    private boolean empty;
 
     public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
         validateNumberOfGuests(numberOfGuests);
@@ -27,16 +27,20 @@ public class OrderTable {
         this(null, tableGroupId, numberOfGuests, empty);
     }
 
-    public OrderTable updateNumberOfGuests(int numberOfGuests) {
+    public void updateNumberOfGuests(int numberOfGuests) {
         validateNumberOfGuests(numberOfGuests);
         validateEmpty();
-        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
+        this.numberOfGuests = numberOfGuests;
     }
 
     private void validateEmpty() {
         if (empty) {
             throw new InvalidTableException("빈 테이블입니다.");
         }
+    }
+
+    public void updateEmpty(final boolean empty) {
+        this.empty = empty;
     }
 
     public Long getId() {

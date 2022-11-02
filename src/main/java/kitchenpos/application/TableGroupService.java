@@ -93,9 +93,8 @@ public class TableGroupService {
     }
 
     private void ungroupOrderTables(List<OrderTable> orderTables) {
-        orderTables.stream()
-                .map(orderTable -> new OrderTable(orderTable.getId(), null, orderTable.getNumberOfGuests(),
-                        orderTable.isEmpty()))
-                .forEach(orderTableDao::save);
+        for (OrderTable orderTable : orderTables) {
+            orderTableDao.updateTableGroupIdAndEmpty(orderTable.getId(), null, false);
+        }
     }
 }

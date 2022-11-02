@@ -29,14 +29,16 @@ public class TableAcceptanceTest extends AcceptanceTest {
     }
 
     public static Long createTable(OrderTable table) {
-        return RestAssured.given().log().all()
+        String location = RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .body(table)
                 .when().log().all()
                 .post("/api/tables")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
-                .extract().jsonPath().getLong("id");
+                .extract().header("Location");
+
+        return Long.parseLong(location.split("/api/tables/")[1]);
     }
 
     @DisplayName("테이블 목록을 조회한다.")

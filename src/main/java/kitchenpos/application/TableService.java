@@ -12,7 +12,6 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.ui.dto.OrderTableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,12 +28,9 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTableResponse create(OrderTableRequest orderTableRequest) {
-        OrderTable orderTable = orderTableDao.save(
-                new OrderTable(null, orderTableRequest.getNumberOfGuests(), orderTableRequest.isEmpty()));
-
-        return new OrderTableResponse(orderTable.getId(), orderTable.getTableGroupId(), orderTable.getNumberOfGuests(),
-                orderTable.isEmpty());
+    public Long create(OrderTableRequest orderTableRequest) {
+        OrderTable order = new OrderTable(null, orderTableRequest.getNumberOfGuests(), orderTableRequest.isEmpty());
+        return orderTableDao.save(order);
     }
 
     public List<OrderTable> list() {
@@ -47,9 +43,8 @@ public class TableService {
         validateTableGroup(orderTable);
         validateOrderStatus(orderTable.getId());
 
-        orderTableDao.save(
-                new OrderTable(orderTable.getId(), orderTable.getTableGroupId(), orderTable.getNumberOfGuests(),
-                        tableEmptyRequest.getEmpty()));
+        orderTable.updateEmpty(tableEmptyRequest.getEmpty());
+        orderTableDao.updateEmpty(orderTable.getId(), orderTable.isEmpty());
     }
 
     private OrderTable getOrderTable(Long orderTableId) {
@@ -73,6 +68,7 @@ public class TableService {
     @Transactional
     public void changeNumberOfGuests(Long orderTableId, TableNumberOfGuestsRequest tableNumberOfGuestsRequest) {
         OrderTable orderTable = getOrderTable(orderTableId);
-        orderTableDao.save(orderTable.updateNumberOfGuests(tableNumberOfGuestsRequest.getNumberOfGuests()));
+        orderTable.updateNumberOfGuests(tableNumberOfGuestsRequest.getNumberOfGuests());
+        orderTableDao.updateNumberOfGuests(orderTable.getId(), orderTable.getNumberOfGuests());
     }
 }

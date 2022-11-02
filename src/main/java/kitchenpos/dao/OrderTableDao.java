@@ -1,12 +1,11 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.OrderTable;
-
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.domain.OrderTable;
 
 public interface OrderTableDao {
-    OrderTable save(OrderTable entity);
+    Long save(OrderTable entity);
 
     Optional<OrderTable> findById(Long id);
 
@@ -15,4 +14,10 @@ public interface OrderTableDao {
     List<OrderTable> findAllByIdIn(List<Long> ids);
 
     List<OrderTable> findAllByTableGroupId(Long tableGroupId);
+
+    void updateTableGroupIdAndEmpty(Long id, Long tableGroupId, boolean empty);
+
+    void updateNumberOfGuests(Long id, int numberOfGuests);
+
+    void updateEmpty(Long id, boolean empty);
 }

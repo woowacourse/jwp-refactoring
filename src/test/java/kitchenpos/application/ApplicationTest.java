@@ -61,7 +61,7 @@ public class ApplicationTest {
         return menuProductDao.save(menuProduct);
     }
 
-    protected OrderTable 주문테이블_생성(OrderTable orderTable) {
+    protected Long 주문테이블_생성(OrderTable orderTable) {
         return orderTableDao.save(orderTable);
     }
 

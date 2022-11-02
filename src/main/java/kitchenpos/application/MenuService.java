@@ -63,8 +63,8 @@ public class MenuService {
         }
     }
 
-    private List<MenuProduct> mapToMenuProducts(List<MenuProductRequest> m) {
-        return m.stream()
+    private List<MenuProduct> mapToMenuProducts(List<MenuProductRequest> menuProductRequests) {
+        return menuProductRequests.stream()
                 .map(menuProductRequest -> {
                     Product product = getProduct(menuProductRequest.getProductId());
                     return new MenuProduct(menuProductRequest.getProductId(),

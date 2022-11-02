@@ -34,9 +34,9 @@ class OrderServiceTest extends ApplicationTest {
     @DisplayName("주문 생성시 주문 항목이 비어있으면 예외가 발생한다.")
     @Test
     void createOrderWithEmptyOrderLineItem() {
-        OrderTable orderTable = 주문테이블_생성(new OrderTable(null, 5, false));
+        Long tableId = 주문테이블_생성(new OrderTable(null, 5, false));
 
-        assertThatThrownBy(() -> orderService.create(new OrderRequest(orderTable.getId(), List.of())))
+        assertThatThrownBy(() -> orderService.create(new OrderRequest(tableId, List.of())))
                 .isInstanceOf(InvalidOrderException.class)
                 .hasMessage("주문 항목이 비어있습니다.");
     }
@@ -44,11 +44,11 @@ class OrderServiceTest extends ApplicationTest {
     @DisplayName("주문 생성시 주문 항목의 메뉴가 존재하지 않으면 예외가 발생한다.")
     @Test
     void createOrderWithNotFoundMenu() {
-        OrderTable orderTable = 주문테이블_생성(new OrderTable(null, 5, false));
+        Long tableId = 주문테이블_생성(new OrderTable(null, 5, false));
         OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 4);
 
         assertThatThrownBy(
-                () -> orderService.create(new OrderRequest(orderTable.getId(), List.of(orderLineItemRequest))))
+                () -> orderService.create(new OrderRequest(tableId, List.of(orderLineItemRequest))))
                 .isInstanceOf(InvalidMenuException.class)
                 .hasMessage("메뉴가 존재하지 않습니다.");
     }
@@ -76,10 +76,10 @@ class OrderServiceTest extends ApplicationTest {
         Menu menu = 메뉴_생성(Menu.create("메뉴11e1", BigDecimal.valueOf(17_000), menuGroup.getId(), List.of(menuProduct)));
         OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 4);
 
-        OrderTable orderTable = 주문테이블_생성(new OrderTable(null, 5, true));
+        Long tableId = 주문테이블_생성(new OrderTable(null, 5, true));
 
         assertThatThrownBy(
-                () -> orderService.create(new OrderRequest(orderTable.getId(), List.of(orderLineItemRequest))))
+                () -> orderService.create(new OrderRequest(tableId, List.of(orderLineItemRequest))))
                 .isInstanceOf(InvalidTableException.class)
                 .hasMessage("빈 테이블입니다.");
     }
@@ -93,10 +93,10 @@ class OrderServiceTest extends ApplicationTest {
         Menu menu = 메뉴_생성(Menu.create("메뉴111", BigDecimal.valueOf(17_000), menuGroup.getId(), List.of(menuProduct)));
         OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 4);
 
-        OrderTable orderTable = 주문테이블_생성(new OrderTable(null, 5, true));
+        Long tableId = 주문테이블_생성(new OrderTable(null, 5, true));
 
         assertThatThrownBy(
-                () -> orderService.create(new OrderRequest(orderTable.getId(), List.of(orderLineItemRequest))))
+                () -> orderService.create(new OrderRequest(tableId, List.of(orderLineItemRequest))))
                 .isInstanceOf(InvalidTableException.class)
                 .hasMessage("빈 테이블입니다.");
     }
@@ -108,9 +108,9 @@ class OrderServiceTest extends ApplicationTest {
         Product product = 상품_생성(new Product("상품1", BigDecimal.valueOf(19_000)));
         MenuProduct menuProduct = new MenuProduct(product.getId(), 1, BigDecimal.valueOf(19_000));
         Menu menu = 메뉴_생성(Menu.create("메뉴111", BigDecimal.valueOf(17_000), menuGroup.getId(), List.of(menuProduct)));
-        OrderTable orderTable = 주문테이블_생성(new OrderTable(null, 5, false));
+        Long tableId = 주문테이블_생성(new OrderTable(null, 5, false));
 
-        orderService.create(new OrderRequest(orderTable.getId(), List.of(new OrderLineItemRequest(menu.getId(), 2))));
+        orderService.create(new OrderRequest(tableId, List.of(new OrderLineItemRequest(menu.getId(), 2))));
 
         List<OrderResponse> orders = orderService.list();
 
@@ -125,9 +125,9 @@ class OrderServiceTest extends ApplicationTest {
         Product product = 상품_생성(new Product("상품1", BigDecimal.valueOf(19_000)));
         MenuProduct menuProduct = new MenuProduct(product.getId(), 1, BigDecimal.valueOf(19_000));
         Menu menu = 메뉴_생성(Menu.create("메뉴111", BigDecimal.valueOf(17_000), menuGroup.getId(), List.of(menuProduct)));
-        OrderTable orderTable = 주문테이블_생성(new OrderTable(null, 5, false));
+        Long tableId = 주문테이블_생성(new OrderTable(null, 5, false));
         Long orderId = orderService.create(
-                new OrderRequest(orderTable.getId(), List.of(new OrderLineItemRequest(menu.getId(), 2))));
+                new OrderRequest(tableId, List.of(new OrderLineItemRequest(menu.getId(), 2))));
 
         orderService.changeOrderStatus(orderId, new OrderStatusRequest(status));
         Order order = orderDao.findById(orderId).orElseThrow();
@@ -138,8 +138,8 @@ class OrderServiceTest extends ApplicationTest {
     @DisplayName("주문 상태 변경시 이미 주문 상태가 완료이면 예외가 발생한다.")
     @Test
     void changeOrderStatusWithCompletionOrder() {
-        OrderTable orderTable = 주문테이블_생성(new OrderTable(null, 5, false));
-        Long orderId = 주문_생성(new Order(orderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now()));
+        Long tableId = 주문테이블_생성(new OrderTable(null, 5, false));
+        Long orderId = 주문_생성(new Order(tableId, OrderStatus.COMPLETION, LocalDateTime.now()));
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, new OrderStatusRequest("COOKING")))
                 .isInstanceOf(InvalidOrderException.class)

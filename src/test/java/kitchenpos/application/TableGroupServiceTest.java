@@ -25,12 +25,12 @@ class TableGroupServiceTest extends ApplicationTest {
     @Test
     void ungroup() {
         TableGroup tableGroup = 단체지정_생성(new TableGroup(LocalDateTime.now()));
-        OrderTable table1 = 주문테이블_생성(new OrderTable(tableGroup.getId(), 5, true));
-        OrderTable table2 = 주문테이블_생성(new OrderTable(tableGroup.getId(), 5, true));
+        Long tableId1 = 주문테이블_생성(new OrderTable(tableGroup.getId(), 5, true));
+        Long tableId2 = 주문테이블_생성(new OrderTable(tableGroup.getId(), 5, true));
 
         tableGroupService.ungroup(tableGroup.getId());
 
-        List<OrderTable> tables = orderTableDao.findAllByIdIn(List.of(table1.getId(), table2.getId()));
+        List<OrderTable> tables = orderTableDao.findAllByIdIn(List.of(tableId1, tableId2));
 
         assertThat(tables).extracting("tableGroupId")
                 .containsOnlyNulls();
@@ -41,10 +41,10 @@ class TableGroupServiceTest extends ApplicationTest {
     @ValueSource(strings = {"COOKING", "MEAL"})
     void ungroupNotCompletion(String status) {
         TableGroup tableGroup = 단체지정_생성(new TableGroup(LocalDateTime.now()));
-        OrderTable table1 = 주문테이블_생성(new OrderTable(tableGroup.getId(), 5, true));
-        OrderTable table2 = 주문테이블_생성(new OrderTable(tableGroup.getId(), 5, true));
+        Long tableId1 = 주문테이블_생성(new OrderTable(tableGroup.getId(), 5, true));
+        Long tableId2 = 주문테이블_생성(new OrderTable(tableGroup.getId(), 5, true));
 
-        주문_생성(new Order(table1.getId(), OrderStatus.find(status), LocalDateTime.now()));
+        주문_생성(new Order(tableId1, OrderStatus.find(status), LocalDateTime.now()));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                 .isInstanceOf(InvalidOrderException.class)

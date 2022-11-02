@@ -38,14 +38,14 @@ class TableServiceTest extends ApplicationTest {
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
     void changeEmpty(boolean empty) {
-        OrderTable table = 주문테이블_생성(new OrderTable(null, 5, true));
+        Long tableId = 주문테이블_생성(new OrderTable(null, 5, true));
         TableEmptyRequest tableEmptyRequest = new TableEmptyRequest(empty);
 
-        tableService.changeEmpty(table.getId(), tableEmptyRequest);
+        tableService.changeEmpty(tableId, tableEmptyRequest);
 
         List<OrderTable> tables = tableService.list();
         OrderTable foundTable = tables.stream()
-                .filter(t -> table.getId().equals(t.getId()))
+                .filter(t -> tableId.equals(t.getId()))
                 .findFirst()
                 .orElseThrow();
 
@@ -66,10 +66,10 @@ class TableServiceTest extends ApplicationTest {
     @Test
     void changeEmptyWithTableGroup() {
         TableGroup tableGroup = 단체지정_생성(new TableGroup(LocalDateTime.now()));
-        OrderTable table = 주문테이블_생성(new OrderTable(tableGroup.getId(), 5, true));
+        Long tableId = 주문테이블_생성(new OrderTable(tableGroup.getId(), 5, true));
         TableEmptyRequest tableEmptyRequest = new TableEmptyRequest(true);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(table.getId(), tableEmptyRequest))
+        assertThatThrownBy(() -> tableService.changeEmpty(tableId, tableEmptyRequest))
                 .isInstanceOf(InvalidTableException.class)
                 .hasMessage("단체 지정 정보가 존재합니다.");
     }
@@ -78,11 +78,11 @@ class TableServiceTest extends ApplicationTest {
     @ParameterizedTest
     @ValueSource(strings = {"COOKING", "MEAL"})
     void changeEmptyWithInvalidOrderStatus(String status) {
-        OrderTable table = 주문테이블_생성(new OrderTable(null, 5, true));
-        주문_생성(new Order(table.getId(), OrderStatus.find(status), LocalDateTime.now()));
+        Long tableId = 주문테이블_생성(new OrderTable(null, 5, true));
+        주문_생성(new Order(tableId, OrderStatus.find(status), LocalDateTime.now()));
         TableEmptyRequest tableEmptyRequest = new TableEmptyRequest(true);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(table.getId(), tableEmptyRequest))
+        assertThatThrownBy(() -> tableService.changeEmpty(tableId, tableEmptyRequest))
                 .isInstanceOf(InvalidOrderException.class)
                 .hasMessage("주문이 완료 상태가 아닙니다.");
     }
