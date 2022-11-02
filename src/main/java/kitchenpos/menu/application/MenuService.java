@@ -49,7 +49,7 @@ public class MenuService {
 
     private void validatePossibleToCreate(final MenuRequest request) {
         validateMenuGroupExist(request.getMenuGroupId());
-        validateMenuPriceIsNotLowerThanTotalPrice(request);
+        validateMenuPriceIsNotLowerThanTotalAmount(request);
     }
 
     private void validateMenuGroupExist(Long menuGroupId) {
@@ -58,27 +58,27 @@ public class MenuService {
         }
     }
 
-    private void validateMenuPriceIsNotLowerThanTotalPrice(final MenuRequest request) {
+    private void validateMenuPriceIsNotLowerThanTotalAmount(final MenuRequest request) {
         final var menuPrice = request.getPrice();
-        final var totalPrice = calculateTotalPrice(request);
+        final var totalAmount = calculateTotalAmount(request);
 
-        if (menuPrice.compareTo(totalPrice) > 0) {
+        if (menuPrice.compareTo(totalAmount) > 0) {
             throw new IllegalArgumentException("메뉴 가격은 상품 금액 합산보다 클 수 없습니다.");
         }
     }
 
-    private Price calculateTotalPrice(final MenuRequest request) {
+    private Price calculateTotalAmount(final MenuRequest request) {
         final var menuProducts = requestAssembler.asMenuProducts(request.getMenuProducts());
 
-        BigDecimal sum = BigDecimal.ZERO;
+        BigDecimal totalAmount = BigDecimal.ZERO;
         for (final var menuProduct : menuProducts) {
             final var productPrice = asProduct(menuProduct.getProductId()).getPrice();
             final var quantity = menuProduct.getQuantity();
 
-            final var result = productPrice.multiply(quantity.getValue());
-            sum = sum.add(result.getValue());
+            final var amount = productPrice.multiply(quantity.getValue());
+            totalAmount = totalAmount.add(amount.getValue());
         }
-        return new Price(sum);
+        return new Price(totalAmount);
     }
 
     private Product asProduct(final Long productId) {
