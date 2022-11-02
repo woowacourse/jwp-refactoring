@@ -90,11 +90,11 @@ public class OrderTable {
         return tableGroup;
     }
 
-    public void setTableGroup(TableGroup tableGroup) {
+    void setTableGroup(TableGroup tableGroup) {
         this.tableGroup = tableGroup;
     }
 
-    public void setOrder(Order order) {
+    void setOrder(Order order) {
         this.order = order;
     }
 

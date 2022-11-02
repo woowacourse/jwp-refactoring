@@ -1,7 +1,6 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -63,24 +62,6 @@ public class MenuProduct {
     public long getQuantity() {
         return quantity;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        MenuProduct that = (MenuProduct) o;
-        return Objects.equals(seq, that.seq);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(seq);
-    }
-
 
     public Long getMenuId() {
         return menu.getId();
