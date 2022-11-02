@@ -1,25 +1,53 @@
-package kitchenpos.application;
+package kitchenpos.order.application;
 
 import static org.assertj.core.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.dto.application.MenuProductDto;
 import kitchenpos.order.domain.Order;
-import kitchenpos.table.domain.OrderTable;
+import kitchenpos.order.dto.application.OrderLineItemDto;
 import kitchenpos.order.dto.request.ChangeOrderStatusRequest;
 import kitchenpos.order.dto.request.CreateOrderLineItemRequest;
 import kitchenpos.order.dto.request.CreateOrderRequest;
+import kitchenpos.product.domain.Product;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.ProductRepository;
+import kitchenpos.table.domain.OrderTable;
 
-class OrderServiceTest extends ServiceTest {
+@SpringBootTest
+class OrderServiceTest {
+
+    @Autowired
+    private OrderService orderService;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private MenuRepository menuRepository;
+
+    @Autowired
+    private OrderTableRepository orderTableRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     @Nested
     @DisplayName("create()")
@@ -129,13 +157,13 @@ class OrderServiceTest extends ServiceTest {
     }
 
     private Order createAndSaveOrder() {
-        Menu savedMenu = createAndSaveMenu();
-        OrderTable savedOrderTable = createAndSaveOrderTable();
+        Menu menu = createAndSaveMenu();
+        OrderTable orderTable = createAndSaveOrderTable();
 
         Order order = new Order(
-            savedOrderTable,
-            new HashMap<Menu, Long>() {{
-                put(savedMenu, 1L);
+            orderTable.getId(),
+            new ArrayList<OrderLineItemDto>() {{
+                add(new OrderLineItemDto(menu.getId(), 1L));
             }}
         );
 
@@ -143,10 +171,17 @@ class OrderServiceTest extends ServiceTest {
     }
 
     private Menu createAndSaveMenu() {
-        MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
-        Menu menu = new Menu("menu", new BigDecimal(0), savedMenuGroup, new HashMap<>());
+        Product product = productRepository.save(new Product("product", new BigDecimal(5000)));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
 
-        return menuRepository.save(menu);
+        return menuRepository.save(new Menu(
+            "menu",
+            new BigDecimal(2000),
+            menuGroup.getId(),
+            new ArrayList<MenuProductDto>() {{
+                add(new MenuProductDto(product.getId(), 1L));
+            }}
+        ));
     }
 
     private OrderTable createAndSaveOrderTable() {

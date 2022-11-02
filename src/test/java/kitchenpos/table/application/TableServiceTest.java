@@ -1,9 +1,9 @@
-package kitchenpos.application;
+package kitchenpos.table.application;
 
 import static org.assertj.core.api.Assertions.*;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -11,17 +11,45 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.dto.request.table.ChangeOrderTableEmptyRequest;
-import kitchenpos.dto.request.table.ChangeOrderTableNumberOfGuestRequest;
-import kitchenpos.dto.request.table.CreateOrderTableRequest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.dto.application.MenuProductDto;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.dto.application.OrderLineItemDto;
+import kitchenpos.product.domain.Product;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.ProductRepository;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.dto.request.ChangeOrderTableEmptyRequest;
+import kitchenpos.table.dto.request.ChangeOrderTableNumberOfGuestRequest;
+import kitchenpos.table.dto.request.CreateOrderTableRequest;
 
-class TableServiceTest extends ServiceTest {
+@SpringBootTest
+class TableServiceTest {
+
+    @Autowired
+    private TableService tableService;
+
+    @Autowired
+    private OrderTableRepository orderTableRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private MenuRepository menuRepository;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
 
     @Nested
     @DisplayName("create()")
@@ -91,7 +119,7 @@ class TableServiceTest extends ServiceTest {
         void invalidStatus(String status) {
             // given
             OrderTable savedOrderTable = createAndSaveOrderTable(true);
-            Order order = createOrder(savedOrderTable);
+            Order order = createOrder(savedOrderTable.getId());
             order.changeStatus(status);
             orderRepository.save(order);
 
@@ -142,23 +170,23 @@ class TableServiceTest extends ServiceTest {
         return orderTableRepository.save(orderTable);
     }
 
-    private Order createOrder(OrderTable orderTable) {
+    private Order createOrder(Long orderTableId) {
         Product product = productRepository.save(new Product("product", new BigDecimal(5000)));
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
 
         Menu menu = menuRepository.save(new Menu(
             "menu",
             new BigDecimal(2000),
-            menuGroup,
-            new HashMap<Product, Long>() {{
-                put(product, 1L);
+            menuGroup.getId(),
+            new ArrayList<MenuProductDto>() {{
+                add(new MenuProductDto(product.getId(), 1L));
             }}
         ));
 
         return new Order(
-            orderTable,
-            new HashMap<Menu, Long>() {{
-                put(menu, 1L);
+            orderTableId,
+            new ArrayList<OrderLineItemDto>() {{
+                add(new OrderLineItemDto(menu.getId(), 1L));
             }}
         );
     }

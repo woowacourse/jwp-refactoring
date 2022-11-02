@@ -1,16 +1,15 @@
 package kitchenpos.event;
 
-import kitchenpos.table.domain.OrderTable;
-
 public class VerifiedAbleToChangeEmptyEvent {
 
-    private OrderTable orderTable;
+    private Long orderTableId;
 
-    public VerifiedAbleToChangeEmptyEvent(OrderTable orderTable) {
-        this.orderTable = orderTable;
+    public VerifiedAbleToChangeEmptyEvent(Long orderTableId) {
+        this.orderTableId = orderTableId;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
+
 }

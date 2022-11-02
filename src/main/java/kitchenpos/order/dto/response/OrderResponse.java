@@ -5,19 +5,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import kitchenpos.order.domain.Order;
-import kitchenpos.table.dto.response.OrderTableResponse;
 
 public class OrderResponse {
 
     private Long id;
-    private OrderTableResponse orderTable;
+    private Long orderTableId;
     private String orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItemResponse> orderLineItems;
 
     public OrderResponse(Order order) {
         id = order.getId();
-        orderTable = new OrderTableResponse(order.getOrderTable());
+        orderTableId = order.getOrderTableId();
         orderStatus = order.getOrderStatus();
         orderedTime = order.getOrderedTime();
         orderLineItems = order.getOrderLineItems().stream()
@@ -29,8 +28,8 @@ public class OrderResponse {
         return id;
     }
 
-    public OrderTableResponse getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public String getOrderStatus() {

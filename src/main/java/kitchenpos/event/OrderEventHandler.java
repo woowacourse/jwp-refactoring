@@ -30,8 +30,8 @@ public class OrderEventHandler {
 
     @EventListener
     private void verifiedAbleToUngroup(VerifiedAbleToUngroupEvent event) {
-        if (orderRepository.existsByOrderTableInAndOrderStatusIn(
-            event.getOrderTables(),
+        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
+            event.getOrderTableIds(),
             ORDER_STATUS_FOR_CANT_UNGROUP)
         ) {
             throw new IllegalArgumentException("주문이 시작되어 그룹을 해제할 수 없습니다.");
@@ -40,7 +40,8 @@ public class OrderEventHandler {
 
     @EventListener
     private void verifiedAbleToChangeEmpty(VerifiedAbleToChangeEmptyEvent event) {
-        if (orderRepository.existsByOrderTableAndOrderStatusIn(event.getOrderTable(),
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
+            event.getOrderTableId(),
             ORDER_STATUS_FOR_CANT_CHANGE_EMPTY)) {
             throw new IllegalArgumentException("변경할 수 있는 상태가 아닙니다.");
         }

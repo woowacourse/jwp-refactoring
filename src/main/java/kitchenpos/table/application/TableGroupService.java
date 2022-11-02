@@ -38,7 +38,7 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableRepository.findByTableGroupId(tableGroupId);
-        publisher.publishEvent(new VerifiedAbleToUngroupEvent(orderTables));
+        validateUngroup(orderTables);
 
         for (final OrderTable orderTable : orderTables) {
             orderTable.ungroup();
@@ -53,10 +53,18 @@ public class TableGroupService {
         final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
         if (orderTableIds.size() != orderTables.size()) {
-            new IllegalArgumentException("존재하지 않은 테이블입니다.");
+            throw new IllegalArgumentException("존재하지 않은 테이블입니다.");
         }
 
         return orderTables;
+    }
+
+    private void validateUngroup(final List<OrderTable> orderTables) {
+        final List<Long> orderTableIds = orderTables.stream()
+            .map(it -> it.getId())
+            .collect(Collectors.toList());
+
+        publisher.publishEvent(new VerifiedAbleToUngroupEvent(orderTableIds));
     }
 
 }

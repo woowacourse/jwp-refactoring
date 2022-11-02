@@ -39,7 +39,7 @@ public class TableService {
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final ChangeOrderTableEmptyRequest request) {
         final OrderTable orderTable = findOrderTableById(orderTableId);
-        publisher.publishEvent(new VerifiedAbleToChangeEmptyEvent(orderTable));
+        publisher.publishEvent(new VerifiedAbleToChangeEmptyEvent(orderTable.getId()));
 
         orderTable.changeEmpty(request.isEmpty());
         return orderTable;

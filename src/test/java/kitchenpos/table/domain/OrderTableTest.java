@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.table.domain;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,14 +20,38 @@ class OrderTableTest {
             OrderTable orderTable = new OrderTable(10, true);
 
             // when
-            TableGroup tableGroup = new TableGroup();
-            orderTable.group(tableGroup);
+            orderTable.group(1L);
 
             // then
             assertAll(
-                () -> assertThat(orderTable.getTableGroup()).isEqualTo(tableGroup),
+                () -> assertThat(orderTable.getTableGroupId()).isEqualTo(1L),
                 () -> assertThat(orderTable.isEmpty()).isFalse()
             );
+        }
+
+        @Test
+        @DisplayName("table group이 null이 아닌 경우 예외가 발생한다.")
+        void alreadyGroup() {
+            // given
+            OrderTable orderTable = new OrderTable(10, true);
+            orderTable.group(1L);
+
+            // when, then
+            assertThatThrownBy(() -> orderTable.group(2L))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("이미 다른 그룹에 존재하는 테이블입니다.");
+        }
+
+        @Test
+        @DisplayName("비어있지 않은 경우 예외가 발생한다.")
+        void notEmpty() {
+            // given
+            OrderTable orderTable = new OrderTable(10, false);
+
+            // when, then
+            assertThatThrownBy(() -> orderTable.group(2L))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("비어있지 않은 테이블입니다.");
         }
 
     }
@@ -41,15 +65,14 @@ class OrderTableTest {
         void ungroup() {
             // given
             OrderTable orderTable = new OrderTable(10, true);
-            TableGroup tableGroup = new TableGroup();
-            orderTable.group(tableGroup);
+            orderTable.group(1L);
 
             // when
             orderTable.ungroup();
 
             // then
             assertAll(
-                () -> assertThat(orderTable.getTableGroup()).isNull(),
+                () -> assertThat(orderTable.getTableGroupId()).isNull(),
                 () -> assertThat(orderTable.isEmpty()).isFalse()
             );
         }
@@ -74,12 +97,11 @@ class OrderTableTest {
         }
 
         @Test
-        @DisplayName("table group이 null이 아닌 채 empty 상태를 변경하는 경우 예외가 발생한다.")
+        @DisplayName("table group이 null이 아닌 경우 예외가 발생한다.")
         void notNullTableGroupId() {
             // given
             OrderTable orderTable = new OrderTable(10, true);
-            TableGroup tableGroup = new TableGroup();
-            orderTable.group(tableGroup);
+            orderTable.group(1L);
 
             // when, then
             assertThatThrownBy(() -> orderTable.changeEmpty(false))

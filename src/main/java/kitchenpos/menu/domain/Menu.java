@@ -91,12 +91,6 @@ public class Menu {
         }
     }
 
-    private void validateProperPrice(BigDecimal price, BigDecimal totalPrice) {
-        if (price.compareTo(totalPrice) > 0) {
-            throw new IllegalArgumentException("각 상품 가격의 합보다 큰 가격을 적용할 수 없습니다.");
-        }
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o)
