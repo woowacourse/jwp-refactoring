@@ -93,7 +93,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
     }
 
     private OrderTable toEntity(final ResultSet resultSet) throws SQLException {
-        return OrderTable.of(
+        return new OrderTable(
                 resultSet.getLong(KEY_COLUMN_NAME),
                 resultSet.getObject("table_group_id", Long.class),
                 resultSet.getInt("number_of_guests"),

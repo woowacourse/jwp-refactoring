@@ -37,9 +37,9 @@ class TableGroupServiceTest {
 
     @Test
     void create() {
-        Long savedId1 = orderTableDao.save(OrderTable.of(null, 10, true))
+        Long savedId1 = orderTableDao.save(new OrderTable(null, 10, true))
                 .getId();
-        Long savedId2 = orderTableDao.save(OrderTable.of(null, 10, true))
+        Long savedId2 = orderTableDao.save(new OrderTable(null, 10, true))
                 .getId();
         TableGroupRequest request = new TableGroupRequest(List.of(savedId1, savedId2));
 
@@ -61,8 +61,8 @@ class TableGroupServiceTest {
     void createThrowExceptionAlreadyReservationOrderTable() {
         Long tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()))
                 .getId();
-        OrderTable orderTable1 = orderTableDao.save(OrderTable.of(tableGroupId, 10, true));
-        OrderTable orderTable2 = orderTableDao.save(OrderTable.of(tableGroupId, 10, true));
+        OrderTable orderTable1 = orderTableDao.save(new OrderTable(tableGroupId, 10, true));
+        OrderTable orderTable2 = orderTableDao.save(new OrderTable(tableGroupId, 10, true));
 
         TableGroupRequest request = new TableGroupRequest(List.of(orderTable1.getId(), orderTable2.getId()));
 
@@ -75,8 +75,8 @@ class TableGroupServiceTest {
     void createThrowExceptionNotEmptyTable() {
         Long tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()))
                 .getId();
-        OrderTable orderTable1 = orderTableDao.save(OrderTable.of(tableGroupId, 10, false));
-        OrderTable orderTable2 = orderTableDao.save(OrderTable.of(tableGroupId, 10, true));
+        OrderTable orderTable1 = orderTableDao.save(new OrderTable(tableGroupId, 10, false));
+        OrderTable orderTable2 = orderTableDao.save(new OrderTable(tableGroupId, 10, true));
 
         TableGroupRequest request = new TableGroupRequest(List.of(orderTable1.getId(), orderTable2.getId()));
 
@@ -87,8 +87,8 @@ class TableGroupServiceTest {
 
     @Test
     void ungroup() {
-        OrderTable orderTable1 = orderTableDao.save(OrderTable.of(null, 10, true));
-        OrderTable orderTable2 = orderTableDao.save(OrderTable.of(null, 10, true));
+        OrderTable orderTable1 = orderTableDao.save(new OrderTable(null, 10, true));
+        OrderTable orderTable2 = orderTableDao.save(new OrderTable(null, 10, true));
         Long tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)))
                 .getId();
 
@@ -103,7 +103,7 @@ class TableGroupServiceTest {
     void ungroupThrowExceptionWhenStillCookingOrderTable() {
         Long tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()))
                 .getId();
-        OrderTable orderTable = orderTableDao.save(OrderTable.of(tableGroupId, 10, true));
+        OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroupId, 10, true));
         orderDao.save(new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>()));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
@@ -115,7 +115,7 @@ class TableGroupServiceTest {
     void ungroupThrowExceptionWhenStillMeal() {
         Long tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(), new ArrayList<>()))
                 .getId();
-        OrderTable orderTable = orderTableDao.save(OrderTable.of(tableGroupId, 10, true));
+        OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroupId, 10, true));
         orderDao.save(new Order(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), new ArrayList<>()));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))

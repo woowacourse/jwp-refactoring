@@ -86,7 +86,7 @@ class TableServiceTest {
     void changeNumberOfGuests() {
         int numberOfGuests = 2;
         OrderTableGuestModifyRequest request = new OrderTableGuestModifyRequest(numberOfGuests);
-        orderTableDao.save(OrderTable.of(1L, null, 0, false));
+        orderTableDao.save(new OrderTable(1L, null, 0, false));
 
         OrderTableResponse response = tableService.changeNumberOfGuests(1L, request);
 
@@ -95,7 +95,7 @@ class TableServiceTest {
 
     @Test
     void changeNumberOfGuestsThrowExceptionWhenNumberOfGuestIsNative() {
-        OrderTable savedOrderTable = orderTableDao.save(OrderTable.of(1L, null, 0, false));
+        OrderTable savedOrderTable = orderTableDao.save(new OrderTable(1L, null, 0, false));
         OrderTableGuestModifyRequest request = new OrderTableGuestModifyRequest(-1);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), request))

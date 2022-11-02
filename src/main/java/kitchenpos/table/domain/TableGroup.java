@@ -33,8 +33,4 @@ public class TableGroup {
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }
-
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
-    }
 }

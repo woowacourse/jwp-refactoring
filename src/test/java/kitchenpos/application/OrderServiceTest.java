@@ -34,7 +34,7 @@ class OrderServiceTest {
 
     @Test
     void create() {
-        OrderTable orderTable = OrderTable.of(1L, null, 1, false);
+        OrderTable orderTable = new OrderTable(1L, null, 1, false);
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
         OrderLineItemRequest orderLineItem = new OrderLineItemRequest(1L,  10);
         OrderRequest request = new OrderRequest(savedOrderTable.getId(), List.of(orderLineItem));
