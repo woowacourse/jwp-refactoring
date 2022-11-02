@@ -88,7 +88,7 @@ public class OrderService {
     private void saveOrderLineItems(List<OrderLineItemDto> orderLineItemDtos, Order order) {
         for (OrderLineItemDto dto : orderLineItemDtos) {
             OrderHistory orderHistory = saveOrderHistory(dto.getMenuId());
-            orderLineItemRepository.save(new OrderLineItem(order, orderHistory.getId(), dto.getQuantity()));
+            orderLineItemRepository.save(new OrderLineItem(order.getId(), orderHistory.getId(), dto.getQuantity()));
         }
     }
 
