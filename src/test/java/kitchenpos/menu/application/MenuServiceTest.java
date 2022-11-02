@@ -16,9 +16,9 @@ import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.dto.request.CreateMenuProductRequest;
 import kitchenpos.menu.dto.request.CreateMenuRequest;
 import kitchenpos.menu.dto.response.MenuResponse;
+import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.product.domain.Product;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.ProductRepository;
+import kitchenpos.product.repository.ProductRepository;
 
 @SpringBootTest
 class MenuServiceTest {

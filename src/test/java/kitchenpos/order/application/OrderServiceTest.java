@@ -15,17 +15,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.dto.application.MenuProductDto;
+import kitchenpos.menu.repository.MenuGroupRepository;
+import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.dto.application.OrderLineItemDto;
 import kitchenpos.order.dto.request.ChangeOrderStatusRequest;
 import kitchenpos.order.dto.request.CreateOrderLineItemRequest;
 import kitchenpos.order.dto.request.CreateOrderRequest;
+import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.product.domain.Product;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.ProductRepository;
+import kitchenpos.table.repository.OrderTableRepository;
+import kitchenpos.product.repository.ProductRepository;
 import kitchenpos.table.domain.OrderTable;
 
 @SpringBootTest

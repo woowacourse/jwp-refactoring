@@ -7,13 +7,13 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.event.VerifiedMenuProductsEvent;
+import kitchenpos.product.event.VerifiedMenuProductsEvent;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.dto.application.MenuProductDto;
 import kitchenpos.menu.dto.request.CreateMenuRequest;
 import kitchenpos.menu.dto.response.MenuResponse;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuRepository;
+import kitchenpos.menu.repository.MenuGroupRepository;
+import kitchenpos.menu.repository.MenuRepository;
 
 @Service
 @Transactional(readOnly = true)

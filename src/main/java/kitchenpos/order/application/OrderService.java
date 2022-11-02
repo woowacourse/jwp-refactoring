@@ -7,14 +7,14 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.event.VerifiedMenusEvent;
-import kitchenpos.event.VerifiedOrderTableEvent;
+import kitchenpos.menu.event.VerifiedMenusEvent;
+import kitchenpos.order.event.VerifiedOrderTableEvent;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.dto.application.OrderLineItemDto;
 import kitchenpos.order.dto.request.ChangeOrderStatusRequest;
 import kitchenpos.order.dto.request.CreateOrderLineItemRequest;
 import kitchenpos.order.dto.request.CreateOrderRequest;
-import kitchenpos.repository.OrderRepository;
+import kitchenpos.order.repository.OrderRepository;
 
 @Service
 @Transactional(readOnly = true)

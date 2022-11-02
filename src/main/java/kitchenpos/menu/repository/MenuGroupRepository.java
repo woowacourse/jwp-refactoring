@@ -1,4 +1,4 @@
-package kitchenpos.repository;
+package kitchenpos.menu.repository;
 
 import java.util.List;
 import java.util.Optional;

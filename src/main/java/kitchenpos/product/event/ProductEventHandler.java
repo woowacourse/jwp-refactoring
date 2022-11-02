@@ -1,4 +1,4 @@
-package kitchenpos.event;
+package kitchenpos.product.event;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -10,14 +10,14 @@ import org.springframework.stereotype.Component;
 
 import kitchenpos.menu.dto.request.CreateMenuProductRequest;
 import kitchenpos.product.domain.Product;
-import kitchenpos.repository.ProductRepository;
+import kitchenpos.product.repository.ProductRepository;
 
 @Component
-public class MenuProductEventHandler {
+public class ProductEventHandler {
 
     private final ProductRepository productRepository;
 
-    public MenuProductEventHandler(ProductRepository productRepository) {
+    public ProductEventHandler(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 

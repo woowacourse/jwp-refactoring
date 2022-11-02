@@ -1,4 +1,4 @@
-package kitchenpos.event;
+package kitchenpos.order.event;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.repository.OrderRepository;
+import kitchenpos.order.repository.OrderRepository;
 
 @Component
 public class OrderEventHandler {

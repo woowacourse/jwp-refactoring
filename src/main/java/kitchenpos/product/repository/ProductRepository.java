@@ -1,4 +1,4 @@
-package kitchenpos.repository;
+package kitchenpos.product.repository;
 
 import java.math.BigDecimal;
 import java.util.List;

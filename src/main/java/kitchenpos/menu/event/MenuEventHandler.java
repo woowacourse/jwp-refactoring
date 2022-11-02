@@ -1,4 +1,4 @@
-package kitchenpos.event;
+package kitchenpos.menu.event;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.repository.MenuRepository;
+import kitchenpos.menu.repository.MenuRepository;
 
 @Component
 public class MenuEventHandler {

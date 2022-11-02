@@ -6,8 +6,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.event.VerifiedAbleToChangeEmptyEvent;
-import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.order.event.VerifiedAbleToChangeEmptyEvent;
+import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.dto.request.ChangeOrderTableEmptyRequest;
 import kitchenpos.table.dto.request.ChangeOrderTableNumberOfGuestRequest;

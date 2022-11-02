@@ -1,4 +1,4 @@
-package kitchenpos.event;
+package kitchenpos.order.event;
 
 public class VerifiedOrderTableEvent {
 
