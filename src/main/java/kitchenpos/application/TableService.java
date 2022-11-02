@@ -42,7 +42,7 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
         final OrderTable savedOrderTable = orderTableDao.getById(orderTableId);
-        savedOrderTable.changeEmpty(tableValidator.validate(savedOrderTable), request.isEmpty());
+        savedOrderTable.changeEmpty(tableValidator.validate(savedOrderTable.getId()), request.isEmpty());
         return new OrderTableResponse(savedOrderTable);
     }
 
