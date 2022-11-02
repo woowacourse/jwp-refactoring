@@ -25,10 +25,10 @@ public class OrderTest {
     @DisplayName("OrderLineItem 이 empty 인 경우 예외를 반환한다.")
     void validateOrderLineItems() {
         // given
-        OrderTable orderTable = new OrderTable(1, false);
+        OrderValidator validator = new OrderValidator();
 
         // when, then
-        assertThatThrownBy(() -> new Order(orderTable, List.of()))
+        assertThatThrownBy(() -> validator.validateOrderLineItems(List.of()))
             .isInstanceOf(IllegalArgumentException.class);
     }
 

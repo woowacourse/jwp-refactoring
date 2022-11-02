@@ -10,10 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import org.springframework.util.CollectionUtils;
 
 /**
  * 매장에서 발생하는 주문
@@ -35,9 +32,6 @@ public class Order {
     @Column(name = "ordered_time")
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "orderId")
-    private List<OrderLineItem> orderLineItems = new ArrayList<>();
-
     protected Order() {
     }
 
@@ -47,26 +41,15 @@ public class Order {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = List.copyOf(orderLineItems);
-        validateOrderLineItems();
     }
 
     public Order(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
         this(null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
         orderTable.addOrder(this);
-        setIdToOrderLineItems();
     }
 
-    private void validateOrderLineItems() {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    public void setIdToOrderLineItems() {
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.setOrderId(id);
-        }
+    public Order(final OrderTable orderTable) {
+        this(null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>());
     }
 
     public void changeStatus(final String orderStatus) {
@@ -94,10 +77,6 @@ public class Order {
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
-    }
-
-    public List<OrderLineItem> getOrderLineItems() {
-        return List.copyOf(orderLineItems);
     }
 
     @Override

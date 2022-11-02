@@ -3,6 +3,7 @@ package kitchenpos.order.application;
 import static org.assertj.core.api.Assertions.*;
 
 import java.math.BigDecimal;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -14,11 +15,12 @@ import kitchenpos.common.ServiceTest;
 import kitchenpos.menu.application.request.MenuGroupRequest;
 import kitchenpos.menu.application.request.MenuProductRequest;
 import kitchenpos.menu.application.request.MenuRequest;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.application.request.OrderLineItemRequest;
 import kitchenpos.order.application.request.OrderRequest;
 import kitchenpos.order.application.request.OrderTableRequest;
+import kitchenpos.order.application.response.OrderResponse;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.product.application.request.ProductCreateRequest;
 
 public class OrderServiceTest extends ServiceTest {
@@ -30,26 +32,25 @@ public class OrderServiceTest extends ServiceTest {
         OrderRequest request = createOrderRequest();
 
         // when
-        Order savedOrder = orderService.create(request);
+        OrderResponse savedOrder = orderService.create(request);
 
         // then
         assertThat(savedOrder.getId()).isNotNull();
         assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
-        assertThat(savedOrder.getOrderLineItems()).isNotNull();
     }
 
     @Test
     @DisplayName("전체 주문을 조회한다.")
     void list() {
         // given
-        Order savedOrder = orderService.create(createOrderRequest());
+        OrderResponse savedOrder = orderService.create(createOrderRequest());
 
         // when
-        List<Order> result = orderService.list();
+        List<OrderResponse> result = orderService.list();
 
         // then
-        assertThat(result).contains(savedOrder);
         assertThat(result).hasSize(1);
+        assertOrderResponse(result.get(0), savedOrder);
     }
 
     @ParameterizedTest
@@ -57,7 +58,7 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 상태를 변경한다.")
     void changeOrderStatus_meal(String orderStatus) {
         // given
-        Order order = orderService.create(createOrderRequest());
+        OrderResponse order = orderService.create(createOrderRequest());
         OrderRequest changeRequest = new OrderRequest(NO_ID, NO_ID, orderStatus, null);
 
         // when
@@ -82,7 +83,15 @@ public class OrderServiceTest extends ServiceTest {
         OrderTableRequest orderTable = new OrderTableRequest(NO_ID, NO_ID, 1, false);
         long tableId = tableService.create(orderTable).getId();
 
-        OrderLineItemRequest orderLineItem = new OrderLineItemRequest(1L, NO_ID, menuId, 1);
+        OrderLineItemRequest orderLineItem = new OrderLineItemRequest(NO_ID, NO_ID, menuId, 1);
         return new OrderRequest(NO_ID, tableId, OrderStatus.COOKING.name(), List.of(orderLineItem));
+    }
+
+    private void assertOrderResponse(final OrderResponse actual, final OrderResponse expected) {
+        assertThat(actual.getId()).isEqualTo(expected.getId());
+        assertThat(actual.getOrderTableId()).isEqualTo(expected.getOrderTableId());
+        assertThat(actual.getOrderedTime().format(DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss")))
+            .isEqualTo(expected.getOrderedTime().format(DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss")));
+        assertThat(actual.getOrderStatus()).isEqualTo(expected.getOrderStatus());
     }
 }

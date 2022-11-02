@@ -38,6 +38,10 @@ public class OrderLineItem {
         this.quantity = quantity;
     }
 
+    public OrderLineItem(final Long orderId, final Long menuOrderId, final long quantity) {
+        this(null, orderId, menuOrderId, quantity);
+    }
+
     public OrderLineItem(final Long orderMenuId, final long quantity) {
         this(null, null, orderMenuId, quantity);
     }
