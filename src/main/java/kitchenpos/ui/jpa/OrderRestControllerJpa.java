@@ -25,21 +25,21 @@ public class OrderRestControllerJpa {
         this.orderService = orderService;
     }
 
-    @PostMapping("/new/api/orders")
+    @PostMapping("/api/orders")
     public ResponseEntity<OrderCreateResponse> create(@RequestBody final OrderCreateRequest orderCreateRequest) {
         OrderCreateResponse orderCreateResponse = orderService.create(orderCreateRequest);
         final URI uri = URI.create("/api/orders/" + orderCreateResponse.getId());
         return ResponseEntity.created(uri).body(orderCreateResponse);
     }
 
-    @GetMapping("/new/api/orders")
+    @GetMapping("/api/orders")
     public ResponseEntity<List<OrderListResponse>> list() {
         return ResponseEntity.ok()
                 .body(orderService.list())
                 ;
     }
 
-    @PutMapping("/new/api/orders/{orderId}/order-status")
+    @PutMapping("/api/orders/{orderId}/order-status")
     public ResponseEntity<ChangeOrderStatusResponse> changeOrderStatus(@PathVariable final Long orderId,
                                                                        @RequestBody final ChangeOrderStatusRequest changeOrderStatusRequest) {
         return ResponseEntity.ok(orderService.changeOrderStatus(orderId, changeOrderStatusRequest.getOrderStatus()));

@@ -21,14 +21,14 @@ public class MenuRestControllerJpa {
         this.menuService = menuService;
     }
 
-    @PostMapping("/new/api/menus")
+    @PostMapping("/api/menus")
     public ResponseEntity<MenuCreateResponse> create(@RequestBody final MenuCreateRequest menuCreateRequest) {
         MenuCreateResponse menuCreateResponse = menuService.create(menuCreateRequest);
         final URI uri = URI.create("/api/menus/" + menuCreateResponse.getId());
         return ResponseEntity.created(uri).body(menuCreateResponse);
     }
 
-    @GetMapping("/new/api/menus")
+    @GetMapping("/api/menus")
     public ResponseEntity<List<MenuListResponse>> list() {
         return ResponseEntity.ok().body(menuService.list());
     }

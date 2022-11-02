@@ -21,14 +21,14 @@ public class ProductRestControllerJpa {
         this.productService = productService;
     }
 
-    @PostMapping("/new/api/products")
+    @PostMapping("/api/products")
     public ResponseEntity<ProductCreateResponse> create(@RequestBody final ProductCreateRequest productCreateRequest) {
         ProductCreateResponse productCreateResponse = productService.create(productCreateRequest);
         final URI uri = URI.create("/api/products/" + productCreateResponse.getId());
         return ResponseEntity.created(uri).body(productCreateResponse);
     }
 
-    @GetMapping("/new/api/products")
+    @GetMapping("/api/products")
     public ResponseEntity<List<ProductListResponse>> list() {
         return ResponseEntity.ok().body(productService.list());
     }
