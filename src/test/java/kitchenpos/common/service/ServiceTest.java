@@ -1,6 +1,5 @@
 package kitchenpos.common.service;
 
-import kitchenpos.menu.repository.MenuProductRepository;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.menugroup.repository.MenuGroupRepository;
 import kitchenpos.order.repository.OrderRepository;
@@ -36,9 +35,6 @@ public class ServiceTest {
 
     @Autowired
     protected MenuRepository menuRepository;
-
-    @Autowired
-    protected MenuProductRepository menuProductRepository;
 
     @Autowired
     protected OrderValidator orderValidator;

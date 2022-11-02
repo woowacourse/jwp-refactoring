@@ -60,6 +60,7 @@ public class OrderService {
         return orderLineItems;
     }
 
+    @Transactional(readOnly = true)
     public List<OrderResponse> list() {
         return orderRepository.findAll()
                 .stream()

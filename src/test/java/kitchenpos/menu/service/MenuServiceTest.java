@@ -11,7 +11,6 @@ import java.util.stream.Stream;
 import kitchenpos.common.domain.Price;
 import kitchenpos.common.exception.LowerThanZeroPriceException;
 import kitchenpos.common.service.ServiceTest;
-import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.dto.MenuCreateRequest;
 import kitchenpos.menu.dto.MenuProductCreateRequest;
 import kitchenpos.menu.dto.MenuResponse;
@@ -47,11 +46,10 @@ class MenuServiceTest extends ServiceTest {
         List<String> menuNames = menus.stream()
                 .map(MenuResponse::getName)
                 .collect(Collectors.toUnmodifiableList());
-        List<MenuProduct> menuProducts = menuProductRepository.findAll();
         assertAll(
                 () -> assertThat(menus).hasSize(1),
                 () -> assertThat(menuNames).contains("메뉴1"),
-                () -> assertThat(menuProducts).hasSize(1)
+                () -> assertThat(menus.get(0).getMenuProducts()).hasSize(1)
         );
     }
 
