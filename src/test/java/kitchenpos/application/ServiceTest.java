@@ -1,11 +1,11 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.ProductRepository;
+import kitchenpos.repository.TableGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
@@ -41,14 +41,14 @@ public class ServiceTest {
     protected MenuRepository menuRepository;
 
     @Autowired
-    protected OrderDao orderDao;
+    protected OrderRepository orderRepository;
 
     @Autowired
-    protected OrderTableDao orderTableDao;
+    protected OrderTableRepository orderTableRepository;
 
     @Autowired
     protected ProductRepository productRepository;
 
     @Autowired
-    protected TableGroupDao tableGroupDao;
+    protected TableGroupRepository tableGroupRepository;
 }

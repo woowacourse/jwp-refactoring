@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static kitchenpos.domain.OrderStatus.COMPLETION;
-import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
 import static kitchenpos.fixture.DomainFixture.createMenu;
 import static kitchenpos.fixture.DomainFixture.createMenuGroup;
@@ -9,7 +8,6 @@ import static kitchenpos.fixture.DomainFixture.createOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -35,18 +33,18 @@ class OrderServiceTest extends ServiceTest {
     @BeforeEach
     void setUp() {
         MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup());
-        orderTable = orderTableDao.save(createOrderTable());
+        orderTable = orderTableRepository.save(createOrderTable());
         menu = menuRepository.save(createMenu(menuGroup));
     }
 
     @Test
     void 주문을_생성한다() {
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
-                List.of(new OrderLineItemDto(menu.getId(), 1)));
+                List.of(new OrderLineItemDto(menu.getId(), 1L)));
 
         Order savedOrder = orderService.create(orderCreateRequest);
 
-        assertThat(orderDao.findById(savedOrder.getId())).isPresent();
+        assertThat(orderRepository.findById(savedOrder.getId())).isPresent();
     }
 
     @Test
@@ -61,7 +59,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void 주문을_생성할때_메뉴의수가_다르면_예외를_발생한다() {
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
-                List.of(new OrderLineItemDto(0L, 1)));
+                List.of(new OrderLineItemDto(0L, 1L)));
 
         assertThatThrownBy(() -> orderService.create(orderCreateRequest))
                 .isInstanceOf(NotFoundMenuException.class);
@@ -70,7 +68,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void 주문을_생성할때_orderTableId가_존재하지않으면_예외를_발생한다() {
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(0L,
-                List.of(new OrderLineItemDto(menu.getId(), 1)));
+                List.of(new OrderLineItemDto(menu.getId(), 1L)));
 
         assertThatThrownBy(() -> orderService.create(orderCreateRequest))
                 .isInstanceOf(NotFoundOrderTableException.class);
@@ -78,9 +76,9 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문을_생성할때_orderTable이_비어있으면_예외를_발생한다() {
-        OrderTable emptyOrderTable = orderTableDao.save(createOrderTable(null, true));
+        OrderTable emptyOrderTable = orderTableRepository.save(createOrderTable(null, true));
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(emptyOrderTable.getId(),
-                List.of(new OrderLineItemDto(menu.getId(), 1)));
+                List.of(new OrderLineItemDto(menu.getId(), 1L)));
 
         assertThatThrownBy(() -> orderService.create(orderCreateRequest))
                 .isInstanceOf(OrderTableEmptyException.class);
@@ -89,19 +87,19 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void 주문_목록을_반환한다() {
         int beforeSize = orderService.list().size();
-        orderDao.save(new Order(orderTable.getId(), COOKING, LocalDateTime.now()));
+        orderRepository.save(new Order(orderTable));
 
         assertThat(orderService.list().size()).isEqualTo(beforeSize + 1);
     }
 
     @Test
     void 주문_상태를_변경한다() {
-        Order savedOrder = orderDao.save(new Order(orderTable.getId(), COOKING, LocalDateTime.now()));
+        Order savedOrder = orderRepository.save(new Order(orderTable));
 
         ChangeOrderStatusRequest changeOrderStatusRequest = new ChangeOrderStatusRequest(MEAL.name());
         orderService.changeOrderStatus(savedOrder.getId(), changeOrderStatusRequest);
 
-        assertThat(orderDao.findById(savedOrder.getId()).get().getOrderStatus()).isEqualTo(MEAL.name());
+        assertThat(orderRepository.findById(savedOrder.getId()).get().getOrderStatus()).isEqualTo(MEAL);
     }
 
     @Test
@@ -114,7 +112,8 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문_상태를_변경할때_완료상태면_예외를_반환한다() {
-        Order savedOrder = orderDao.save(new Order(orderTable.getId(), COMPLETION, LocalDateTime.now()));
+        Order savedOrder = orderRepository.save(new Order(orderTable));
+        savedOrder.changeOrderStatus(COMPLETION);
         ChangeOrderStatusRequest changeOrderStatusRequest = new ChangeOrderStatusRequest(MEAL.name());
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), changeOrderStatusRequest))

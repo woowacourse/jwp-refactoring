@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.exception.NotFoundOrderTableException;
@@ -28,8 +27,8 @@ class TableGroupServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        saved1 = orderTableDao.save(createOrderTable(null, true));
-        saved2 = orderTableDao.save(createOrderTable(null, true));
+        saved1 = orderTableRepository.save(createOrderTable(null, true));
+        saved2 = orderTableRepository.save(createOrderTable(null, true));
     }
 
     @Test
@@ -41,12 +40,12 @@ class TableGroupServiceTest extends ServiceTest {
 
         TableGroup savedTableGroup = tableGroupService.create(tableGroupCreateRequest);
 
-        assertThat(tableGroupDao.findById(savedTableGroup.getId())).isPresent();
+        assertThat(tableGroupRepository.findById(savedTableGroup.getId())).isPresent();
     }
 
     @Test
     void 테이블그룹을_생성할때_비어있지_않으면_예외를_발생한다() {
-        OrderTable saved3 = orderTableDao.save(createOrderTable(null, false));
+        OrderTable saved3 = orderTableRepository.save(createOrderTable(null, false));
         TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(List.of(
                 new OrderTableIdDto(saved1.getId()),
                 new OrderTableIdDto(saved3.getId())
@@ -58,8 +57,8 @@ class TableGroupServiceTest extends ServiceTest {
 
     @Test
     void 테이블그룹을_생성할때_이미_그룹화됐으면_예외를_발생한다() {
-        TableGroup tableGroup = tableGroupDao.save(createTableGroup());
-        OrderTable saved3 = orderTableDao.save(createOrderTable(tableGroup.getId(), false));
+        TableGroup tableGroup = tableGroupRepository.save(createTableGroup());
+        OrderTable saved3 = orderTableRepository.save(createOrderTable(tableGroup, false));
         TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(List.of(
                 new OrderTableIdDto(saved1.getId()),
                 new OrderTableIdDto(saved3.getId())
@@ -93,25 +92,25 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void 그룹을_해제한다() {
         TableGroup tableGroup = new TableGroup(LocalDateTime.now());
-        TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-        saved1 = orderTableDao.save(createOrderTable(savedTableGroup.getId(), true));
-        saved2 = orderTableDao.save(createOrderTable(savedTableGroup.getId(), true));
+        saved1 = orderTableRepository.save(createOrderTable(savedTableGroup, true));
+        saved2 = orderTableRepository.save(createOrderTable(savedTableGroup, true));
 
         tableGroupService.ungroup(savedTableGroup.getId());
 
-        assertThat(orderTableDao.findById(saved1.getId()).get().getTableGroupId()).isNull();
+        assertThat(orderTableRepository.findById(saved1.getId()).get().getTableGroup()).isNull();
     }
 
     @Test
     void 그룹을_해제할수_없는_상태면_예외를_발생한다() {
         TableGroup tableGroup = new TableGroup(LocalDateTime.now());
-        TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-        saved1 = orderTableDao.save(createOrderTable(savedTableGroup.getId(), true));
-        saved2 = orderTableDao.save(createOrderTable(savedTableGroup.getId(), true));
+        saved1 = orderTableRepository.save(createOrderTable(savedTableGroup, false));
+        saved2 = orderTableRepository.save(createOrderTable(savedTableGroup, true));
 
-        orderDao.save(new Order(saved1.getId(), OrderStatus.COOKING, LocalDateTime.now()));
+        orderRepository.save(new Order(saved1));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
                 .isInstanceOf(OrderTableUnableUngroupingStatusException.class);
