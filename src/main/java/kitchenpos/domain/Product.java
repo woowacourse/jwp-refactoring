@@ -17,10 +17,6 @@ public class Product {
         this.price = price;
     }
 
-    public BigDecimal multiplyPrice(long count) {
-        return price.multiply(count);
-    }
-
     public Long getId() {
         return id;
     }
