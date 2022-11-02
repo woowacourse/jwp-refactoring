@@ -20,9 +20,9 @@ import kitchenpos.product.dto.response.ProductResponse;
 import kitchenpos.table.application.TableGroupService;
 import kitchenpos.table.application.TableService;
 import kitchenpos.table.dao.OrderTableDao;
-import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.dto.request.TableCreateRequest;
 import kitchenpos.table.dto.request.TableGroupCreatRequest;
+import kitchenpos.table.dto.response.TableGroupResponse;
 import kitchenpos.table.dto.response.TableResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -69,7 +69,7 @@ public abstract class ServiceTest {
         return tableService.create(request);
     }
 
-    protected TableGroup 단체_지정(final TableGroupCreatRequest request) {
+    protected TableGroupResponse 단체_지정(final TableGroupCreatRequest request) {
         return tableGroupService.create(request);
     }
 

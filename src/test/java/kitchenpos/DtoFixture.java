@@ -9,7 +9,7 @@ import kitchenpos.menu.dto.request.MenuGroupCreateRequest;
 import kitchenpos.order.dto.OrderLineItemDto;
 import kitchenpos.order.dto.request.OrderCreateRequest;
 import kitchenpos.product.dto.request.ProductCreateRequest;
-import kitchenpos.table.dto.request.OrderTableDto;
+import kitchenpos.table.dto.OrderTableDto;
 import kitchenpos.table.dto.request.TableChangeEmptyRequest;
 import kitchenpos.table.dto.request.TableChangeNumberOfGuestsRequest;
 import kitchenpos.table.dto.request.TableCreateRequest;

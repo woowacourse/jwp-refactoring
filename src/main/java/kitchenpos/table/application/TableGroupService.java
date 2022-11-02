@@ -8,8 +8,9 @@ import kitchenpos.table.dao.OrderTableDao;
 import kitchenpos.table.dao.TableGroupRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
-import kitchenpos.table.dto.request.OrderTableDto;
+import kitchenpos.table.dto.OrderTableDto;
 import kitchenpos.table.dto.request.TableGroupCreatRequest;
+import kitchenpos.table.dto.response.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,9 +30,11 @@ public class TableGroupService {
         this.tableGroupRepository = tableGroupRepository;
     }
 
-    public TableGroup create(final TableGroupCreatRequest request) {
+    public TableGroupResponse create(final TableGroupCreatRequest request) {
         final List<OrderTable> savedOrderTables = mapToOrderTables(request.getOrderTables());
-        return tableGroupRepository.save(new TableGroup(LocalDateTime.now(), savedOrderTables));
+        final TableGroup savedTableGroup = tableGroupRepository.save(
+                new TableGroup(LocalDateTime.now(), savedOrderTables));
+        return TableGroupResponse.from(savedTableGroup);
     }
 
     private List<OrderTable> mapToOrderTables(final List<OrderTableDto> requests) {

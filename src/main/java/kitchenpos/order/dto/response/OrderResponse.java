@@ -13,9 +13,9 @@ public class OrderResponse {
     private final LocalDateTime orderedTime;
     private final List<OrderLineItemDto> orderLineItems;
 
-    public OrderResponse(final Long id, final Long orderTableId, final String orderStatus,
-                         final LocalDateTime orderedTime,
-                         final List<OrderLineItemDto> orderLineItems) {
+    private OrderResponse(final Long id, final Long orderTableId, final String orderStatus,
+                          final LocalDateTime orderedTime,
+                          final List<OrderLineItemDto> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;

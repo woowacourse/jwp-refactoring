@@ -16,8 +16,8 @@ import kitchenpos.ServiceTest;
 import kitchenpos.menu.dto.response.MenuGroupResponse;
 import kitchenpos.menu.dto.response.MenuResponse;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.dto.request.TableGroupCreatRequest;
+import kitchenpos.table.dto.response.TableGroupResponse;
 import kitchenpos.table.dto.response.TableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ class TableGroupServiceTest extends ServiceTest {
         final TableResponse table1 = 테이블_등록(getEmptyTableCreateRequest());
         final TableResponse table2 = 테이블_등록(getEmptyTableCreateRequest());
         final TableGroupCreatRequest request = getTableCreateRequest(List.of(table1.getId(), table2.getId()));
-        final TableGroup savedTableGroup = 단체_지정(request);
+        final TableGroupResponse savedTableGroup = 단체_지정(request);
 
         final OrderTable savedTable1 = orderTableDao.findById(table1.getId()).get();
         final OrderTable savedTable2 = orderTableDao.findById(table2.getId()).get();
@@ -88,7 +88,7 @@ class TableGroupServiceTest extends ServiceTest {
         final TableResponse table1 = 테이블_등록(getEmptyTableCreateRequest());
         final TableResponse table2 = 테이블_등록(getEmptyTableCreateRequest());
         final TableGroupCreatRequest request = getTableCreateRequest(List.of(table1.getId(), table2.getId()));
-        final TableGroup savedTableGroup = 단체_지정(request);
+        final TableGroupResponse savedTableGroup = 단체_지정(request);
 
         tableGroupService.ungroup(savedTableGroup.getId());
 
@@ -110,7 +110,7 @@ class TableGroupServiceTest extends ServiceTest {
         final MenuResponse menu = 메뉴_등록(getMenuCreateRequest(menuGroup.getId(), createMenuProductDtos()));
 
         final TableGroupCreatRequest request = getTableCreateRequest(List.of(table1.getId(), table2.getId()));
-        final TableGroup savedTableGroup = 단체_지정(request);
+        final TableGroupResponse savedTableGroup = 단체_지정(request);
 
         주문_등록(getOrderCreateRequest(table1.getId(), menu.getId()));
 
