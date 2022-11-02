@@ -65,7 +65,7 @@ public class OrderTable {
     }
 
     public OrderTable updateNumberOfGuests(final int newNumberOfGuests) {
-        if (empty) {
+        if (newNumberOfGuests < 0 || empty) {
             throw new IllegalArgumentException();
         }
         return new OrderTable(id, tableGroupId, newNumberOfGuests, false);

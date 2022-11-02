@@ -53,7 +53,6 @@ public class TableService {
 
     @Transactional
     public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        orderTable.validateNumberOfGuests();
         final OrderTable savedOrderTable = findOrderTableById(orderTableId);
         return orderTableDao.save(savedOrderTable.updateNumberOfGuests(orderTable.getNumberOfGuests()));
     }
