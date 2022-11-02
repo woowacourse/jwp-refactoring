@@ -9,6 +9,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.ui.dto.request.MenuGroupCreateRequest;
 import kitchenpos.ui.dto.response.MenuGroupCreateResponse;
+import kitchenpos.ui.dto.response.MenuGroupFindAllResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,11 +48,11 @@ class MenuGroupServiceTest {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("추천메뉴"));
 
         // when
-        List<MenuGroup> menuGroups = menuGroupService.list();
+        List<MenuGroupFindAllResponse> responses = menuGroupService.list();
 
         // then
-        List<String> menuGroupNames = menuGroups.stream()
-                .map(MenuGroup::getName)
+        List<String> menuGroupNames = responses.stream()
+                .map(MenuGroupFindAllResponse::getName)
                 .collect(Collectors.toList());
         assertThat(menuGroupNames).contains(menuGroup.getName());
     }
