@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
-import kitchenpos.menu.domain.TableGroup;
+import kitchenpos.order.domain.TableGroup;
 import kitchenpos.order.dao.repository.JpaTableGroupRepository;
 
 @Primary

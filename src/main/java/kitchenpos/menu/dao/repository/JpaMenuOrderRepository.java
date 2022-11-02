@@ -1,8 +1,8 @@
-package kitchenpos.order.dao.repository;
+package kitchenpos.menu.dao.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import kitchenpos.order.domain.MenuOrder;
+import kitchenpos.menu.domain.MenuOrder;
 
 public interface JpaMenuOrderRepository extends JpaRepository<MenuOrder, Long> {
 }

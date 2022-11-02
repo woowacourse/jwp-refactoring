@@ -12,8 +12,8 @@ import kitchenpos.menu.dao.MenuProductDao;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.ui.request.MenuRequest;
-import kitchenpos.order.dao.MenuOrderDao;
-import kitchenpos.order.domain.MenuOrder;
+import kitchenpos.menu.dao.MenuOrderDao;
+import kitchenpos.menu.domain.MenuOrder;
 import kitchenpos.product.dao.ProductDao;
 import kitchenpos.product.domain.Product;
 
@@ -24,19 +24,19 @@ public class MenuService {
     private final MenuDao menuDao;
     private final MenuGroupDao menuGroupDao;
     private final MenuProductDao menuProductDao;
-    private final MenuOrderDao orderMenuDao;
+    private final MenuOrderDao menuOrderDao;
     private final ProductDao productDao;
 
     public MenuService(
         final MenuDao menuDao,
         final MenuGroupDao menuGroupDao,
         final MenuProductDao menuProductDao,
-        final MenuOrderDao orderMenuDao, final ProductDao productDao
+        final MenuOrderDao menuOrderDao, final ProductDao productDao
     ) {
         this.menuDao = menuDao;
         this.menuGroupDao = menuGroupDao;
         this.menuProductDao = menuProductDao;
-        this.orderMenuDao = orderMenuDao;
+        this.menuOrderDao = menuOrderDao;
         this.productDao = productDao;
     }
 
@@ -48,7 +48,7 @@ public class MenuService {
 
         Menu savedMenu = menuDao.save(menu);
         MenuOrder orderMenu = new MenuOrder(menu.getName(), menu.getPrice());
-        orderMenuDao.save(orderMenu);
+        menuOrderDao.save(orderMenu);
 
         savedMenu.addMenuProducts(menuProducts);
         menu.validatePriceUnderProductsSum(getProducts(menuProducts));

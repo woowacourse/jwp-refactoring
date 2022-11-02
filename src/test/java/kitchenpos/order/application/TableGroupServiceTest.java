@@ -8,7 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import kitchenpos.common.ServiceTest;
-import kitchenpos.menu.domain.TableGroup;
+import kitchenpos.order.domain.TableGroup;
 import kitchenpos.menu.ui.request.TableGroupRequest;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.ui.request.OrderTableRequest;

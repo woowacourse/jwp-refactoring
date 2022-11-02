@@ -1,9 +1,9 @@
-package kitchenpos.order.dao;
+package kitchenpos.menu.dao;
 
 import org.springframework.stereotype.Repository;
 
-import kitchenpos.order.dao.repository.JpaMenuOrderRepository;
-import kitchenpos.order.domain.MenuOrder;
+import kitchenpos.menu.dao.repository.JpaMenuOrderRepository;
+import kitchenpos.menu.domain.MenuOrder;
 
 @Repository
 public class JpaMenuOrderDao implements MenuOrderDao {

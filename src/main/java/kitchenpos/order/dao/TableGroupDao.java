@@ -3,7 +3,7 @@ package kitchenpos.order.dao;
 import java.util.List;
 import java.util.Optional;
 
-import kitchenpos.menu.domain.TableGroup;
+import kitchenpos.order.domain.TableGroup;
 
 public interface TableGroupDao {
 

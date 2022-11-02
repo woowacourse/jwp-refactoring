@@ -1,6 +1,6 @@
-package kitchenpos.order.dao;
+package kitchenpos.menu.dao;
 
-import kitchenpos.order.domain.MenuOrder;
+import kitchenpos.menu.domain.MenuOrder;
 
 public interface MenuOrderDao {
 
