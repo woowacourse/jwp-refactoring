@@ -10,11 +10,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import kitchenpos.common.ServiceTest;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.ui.request.MenuGroupRequest;
-import kitchenpos.menu.ui.request.MenuProductRequest;
-import kitchenpos.menu.ui.request.MenuRequest;
-import kitchenpos.product.ui.request.ProductCreateRequest;
+import kitchenpos.menu.application.request.MenuGroupRequest;
+import kitchenpos.menu.application.request.MenuProductRequest;
+import kitchenpos.menu.application.request.MenuRequest;
+import kitchenpos.menu.application.response.MenuResponse;
+import kitchenpos.product.application.request.ProductCreateRequest;
 
 public class MenuServiceTest extends ServiceTest {
 
@@ -25,23 +25,23 @@ public class MenuServiceTest extends ServiceTest {
         MenuRequest request = createMenuRequest();
 
         // when
-        Menu savedMenu = menuService.create(request);
+        MenuResponse savedMenu = menuService.create(request);
 
         // then
-        assertMenu(request, savedMenu);
+        assertMenuWithRequest(request, savedMenu);
     }
 
     @Test
     @DisplayName("전체 메뉴를 조회한다.")
     void list() {
         // given
-        Menu savedMenu = menuService.create(createMenuRequest());
+        MenuResponse savedMenu = menuService.create(createMenuRequest());
 
         // when
-        List<Menu> result = menuService.list();
+        List<MenuResponse> result = menuService.list();
 
         // then
-        assertThat(result).contains(savedMenu);
+        assertMenuResponse(savedMenu, result.get(0));
     }
 
     private MenuRequest createMenuRequest() {
@@ -59,9 +59,16 @@ public class MenuServiceTest extends ServiceTest {
             List.of(new MenuProductRequest(NO_ID, NO_ID, productId, 3)));
     }
 
-    private void assertMenu(final MenuRequest request, final Menu savedMenu) {
-        assertThat(savedMenu.getName()).isEqualTo(request.getName());
-        assertThat(savedMenu.getPrice()).isCloseTo(request.getPrice(), Percentage.withPercentage(0.0001));
-        assertThat(savedMenu.getMenuProducts()).isNotNull();
+    private void assertMenuWithRequest(final MenuRequest request, final MenuResponse response) {
+        assertThat(response.getName()).isEqualTo(request.getName());
+        assertThat(response.getPrice().compareTo(request.getPrice())).isEqualTo(0);
+        assertThat(response.getMenuProducts()).isNotNull();
+    }
+
+    private void assertMenuResponse(final MenuResponse actual, final MenuResponse expected) {
+        assertThat(actual.getId()).isEqualTo(expected.getId());
+        assertThat(actual.getName()).isEqualTo(expected.getName());
+        assertThat(actual.getMenuGroupId()).isEqualTo(expected.getMenuGroupId());
+        assertThat(actual.getPrice().compareTo(expected.getPrice())).isEqualTo(0);
     }
 }

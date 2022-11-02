@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import kitchenpos.product.application.ProductService;
 import kitchenpos.product.domain.Product;
-import kitchenpos.product.ui.request.ProductCreateRequest;
+import kitchenpos.product.application.request.ProductCreateRequest;
 
 @RestController
 @RequestMapping("/api/products")

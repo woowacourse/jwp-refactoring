@@ -12,7 +12,7 @@ import kitchenpos.order.dao.OrderTableDao;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderTable;
-import kitchenpos.order.ui.request.OrderRequest;
+import kitchenpos.order.application.request.OrderRequest;
 
 @Service
 @Transactional(readOnly = true)

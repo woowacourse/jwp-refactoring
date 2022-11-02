@@ -1,4 +1,4 @@
-package kitchenpos.order.ui.request;
+package kitchenpos.order.application.request;
 
 import kitchenpos.order.domain.OrderLineItem;
 

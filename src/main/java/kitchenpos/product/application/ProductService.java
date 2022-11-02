@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.product.dao.ProductDao;
 import kitchenpos.product.domain.Product;
-import kitchenpos.product.ui.request.ProductCreateRequest;
+import kitchenpos.product.application.request.ProductCreateRequest;
 
 @Service
 @Transactional(readOnly = true)

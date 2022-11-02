@@ -1,10 +1,6 @@
-package kitchenpos.order.ui.request;
+package kitchenpos.order.application.request;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-
-import kitchenpos.order.domain.OrderLineItem;
 
 public class OrderRequest {
 

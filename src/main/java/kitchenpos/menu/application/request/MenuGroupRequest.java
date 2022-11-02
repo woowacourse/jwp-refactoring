@@ -1,4 +1,4 @@
-package kitchenpos.menu.ui.request;
+package kitchenpos.menu.application.request;
 
 import kitchenpos.menu.domain.MenuGroup;
 

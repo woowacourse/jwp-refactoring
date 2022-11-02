@@ -8,13 +8,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.order.domain.TableGroup;
-import kitchenpos.menu.ui.request.TableGroupRequest;
+import kitchenpos.menu.application.request.TableGroupRequest;
 import kitchenpos.order.dao.OrderDao;
 import kitchenpos.order.dao.OrderTableDao;
 import kitchenpos.order.dao.TableGroupDao;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderTable;
-import kitchenpos.order.ui.request.OrderTableRequest;
+import kitchenpos.order.application.request.OrderTableRequest;
 
 @Service
 @Transactional(readOnly = true)

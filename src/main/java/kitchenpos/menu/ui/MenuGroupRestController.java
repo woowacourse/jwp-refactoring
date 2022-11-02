@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import kitchenpos.menu.application.MenuGroupService;
 import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.menu.ui.request.MenuGroupRequest;
+import kitchenpos.menu.application.request.MenuGroupRequest;
 
 @RestController
 @RequestMapping("/api/menu-groups")

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import kitchenpos.common.ServiceTest;
 import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.menu.ui.request.MenuGroupRequest;
+import kitchenpos.menu.application.request.MenuGroupRequest;
 
 public class MenuGroupServiceTest extends ServiceTest {
 

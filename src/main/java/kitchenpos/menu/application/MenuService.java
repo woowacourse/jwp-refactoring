@@ -6,12 +6,13 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kitchenpos.menu.application.response.MenuResponse;
 import kitchenpos.menu.dao.MenuDao;
 import kitchenpos.menu.dao.MenuGroupDao;
 import kitchenpos.menu.dao.MenuProductDao;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.ui.request.MenuRequest;
+import kitchenpos.menu.application.request.MenuRequest;
 import kitchenpos.menu.dao.MenuOrderDao;
 import kitchenpos.menu.domain.MenuOrder;
 import kitchenpos.product.dao.ProductDao;
@@ -41,7 +42,7 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuRequest request) {
+    public MenuResponse create(final MenuRequest request) {
         validateMenuGroupExists(request.getMenuGroupId());
         List<MenuProduct> menuProducts = request.getMenuProducts();
         Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId());
@@ -57,7 +58,7 @@ public class MenuService {
             menuProductDao.save(menuProduct);
         }
 
-        return savedMenu;
+        return MenuResponse.from(savedMenu);
     }
 
     private void validateMenuGroupExists(final Long menuGroupId) {
@@ -72,7 +73,7 @@ public class MenuService {
             .collect(Collectors.toUnmodifiableList());
     }
 
-    public List<Menu> list() {
-        return menuDao.findAll();
+    public List<MenuResponse> list() {
+        return MenuResponse.fromAll(menuDao.findAll());
     }
 }

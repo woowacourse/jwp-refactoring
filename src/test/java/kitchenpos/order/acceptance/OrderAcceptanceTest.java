@@ -8,14 +8,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 import kitchenpos.common.AcceptanceTest;
-import kitchenpos.menu.ui.request.MenuGroupRequest;
-import kitchenpos.menu.ui.request.MenuProductRequest;
-import kitchenpos.menu.ui.request.MenuRequest;
+import kitchenpos.menu.application.request.MenuGroupRequest;
+import kitchenpos.menu.application.request.MenuProductRequest;
+import kitchenpos.menu.application.request.MenuRequest;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.ui.request.OrderLineItemRequest;
-import kitchenpos.order.ui.request.OrderRequest;
-import kitchenpos.order.ui.request.OrderTableRequest;
-import kitchenpos.product.ui.request.ProductCreateRequest;
+import kitchenpos.order.application.request.OrderLineItemRequest;
+import kitchenpos.order.application.request.OrderRequest;
+import kitchenpos.order.application.request.OrderTableRequest;
+import kitchenpos.product.application.request.ProductCreateRequest;
 
 public class OrderAcceptanceTest extends AcceptanceTest {
 

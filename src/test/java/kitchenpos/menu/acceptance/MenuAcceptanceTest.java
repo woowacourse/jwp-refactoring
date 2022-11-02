@@ -10,8 +10,8 @@ import org.springframework.http.HttpStatus;
 import kitchenpos.common.AcceptanceTest;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.ui.request.MenuGroupRequest;
-import kitchenpos.product.ui.request.ProductCreateRequest;
+import kitchenpos.menu.application.request.MenuGroupRequest;
+import kitchenpos.product.application.request.ProductCreateRequest;
 
 public class MenuAcceptanceTest extends AcceptanceTest {
 

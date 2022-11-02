@@ -9,9 +9,9 @@ import org.junit.jupiter.api.Test;
 
 import kitchenpos.common.ServiceTest;
 import kitchenpos.order.domain.TableGroup;
-import kitchenpos.menu.ui.request.TableGroupRequest;
+import kitchenpos.menu.application.request.TableGroupRequest;
 import kitchenpos.order.domain.OrderTable;
-import kitchenpos.order.ui.request.OrderTableRequest;
+import kitchenpos.order.application.request.OrderTableRequest;
 
 public class TableGroupServiceTest extends ServiceTest {
 

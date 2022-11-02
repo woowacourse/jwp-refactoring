@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.order.dao.OrderTableDao;
 import kitchenpos.order.domain.OrderTable;
-import kitchenpos.order.ui.request.OrderTableRequest;
+import kitchenpos.order.application.request.OrderTableRequest;
 
 @Service
 @Transactional(readOnly = true)

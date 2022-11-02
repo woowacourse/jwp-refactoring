@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 import kitchenpos.common.AcceptanceTest;
-import kitchenpos.menu.ui.request.MenuGroupRequest;
+import kitchenpos.menu.application.request.MenuGroupRequest;
 
 public class MenuGroupAcceptanceTest extends AcceptanceTest {
 

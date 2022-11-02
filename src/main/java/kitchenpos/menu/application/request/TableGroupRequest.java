@@ -1,8 +1,8 @@
-package kitchenpos.menu.ui.request;
+package kitchenpos.menu.application.request;
 
 import java.util.List;
 
-import kitchenpos.order.ui.request.OrderTableRequest;
+import kitchenpos.order.application.request.OrderTableRequest;
 
 public class TableGroupRequest {
 

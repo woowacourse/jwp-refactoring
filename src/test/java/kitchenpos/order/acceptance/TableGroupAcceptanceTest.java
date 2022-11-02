@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 import kitchenpos.common.AcceptanceTest;
-import kitchenpos.menu.ui.request.TableGroupRequest;
-import kitchenpos.order.ui.request.OrderTableRequest;
+import kitchenpos.menu.application.request.TableGroupRequest;
+import kitchenpos.order.application.request.OrderTableRequest;
 
 public class TableGroupAcceptanceTest extends AcceptanceTest {
 

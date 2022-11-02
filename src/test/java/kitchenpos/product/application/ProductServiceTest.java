@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.common.ServiceTest;
 import kitchenpos.product.domain.Product;
-import kitchenpos.product.ui.request.ProductCreateRequest;
+import kitchenpos.product.application.request.ProductCreateRequest;
 
 public class ProductServiceTest extends ServiceTest {
 

@@ -9,11 +9,11 @@ import org.springframework.test.context.jdbc.Sql;
 
 import io.restassured.RestAssured;
 import io.restassured.response.ValidatableResponse;
-import kitchenpos.menu.ui.request.MenuGroupRequest;
-import kitchenpos.menu.ui.request.MenuRequest;
-import kitchenpos.order.ui.request.OrderRequest;
-import kitchenpos.order.ui.request.OrderTableRequest;
-import kitchenpos.product.ui.request.ProductCreateRequest;
+import kitchenpos.menu.application.request.MenuGroupRequest;
+import kitchenpos.menu.application.request.MenuRequest;
+import kitchenpos.order.application.request.OrderRequest;
+import kitchenpos.order.application.request.OrderTableRequest;
+import kitchenpos.product.application.request.ProductCreateRequest;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql("classpath:truncate.sql")
