@@ -1,6 +1,7 @@
 package kitchenpos.order.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import kitchenpos.common.domain.Quantity;
 import kitchenpos.menu.repository.MenuRepository;
@@ -14,15 +15,21 @@ import kitchenpos.order.dto.OrderStatusChangeRequest;
 import kitchenpos.order.exception.InvalidTableOrderException;
 import kitchenpos.order.exception.MenuNotEnoughException;
 import kitchenpos.order.exception.MenuNotFoundException;
+import kitchenpos.order.exception.TableEmptyDisabledException;
 import kitchenpos.order.repository.OrderLineItemRepository;
 import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.ordertable.dto.OrderTableValidateEvent;
 import kitchenpos.ordertable.repository.TableRepository;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
+
+    private static final String SETTING_EMPTY_DISABLED_BY_ORDER_NOT_COMPLETE_EXCEPTION =
+            "조리중이거나 식사중인 테이블의 empty를 변경할 수 없습니다.";
 
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
@@ -89,5 +96,15 @@ public class OrderService {
         OrderStatus orderStatus = OrderStatus.from(orderCreateRequest.getOrderStatus());
         savedOrder.changeOrderStatus(orderStatus);
         return savedOrder;
+    }
+
+    @EventListener
+    public void validateOrderStatusIfExists(OrderTableValidateEvent orderTableValidateEvent) {
+        Long orderTableId = orderTableValidateEvent.getOrderTableId();
+        Optional<Order> order = orderRepository.findByOrderTableId(orderTableId);
+        if (order.isPresent() &&
+                order.get().isNotCompletionOrderStatus()) {
+            throw new TableEmptyDisabledException(SETTING_EMPTY_DISABLED_BY_ORDER_NOT_COMPLETE_EXCEPTION);
+        }
     }
 }
