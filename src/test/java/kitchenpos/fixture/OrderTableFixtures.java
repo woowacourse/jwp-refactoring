@@ -34,11 +34,7 @@ public enum OrderTableFixtures {
     }
 
     public static OrderTable 테이블_생성(final Long id, final int numberOfGuests, final boolean empty) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(id);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        return orderTable;
+        return new OrderTable(id, numberOfGuests, empty);
     }
 
     public static List<OrderTable> 테이블_목록_조회() {
