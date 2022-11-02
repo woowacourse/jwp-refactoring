@@ -19,6 +19,7 @@ import javax.persistence.Table;
 import kitchenpos.domain.common.OrderStatus;
 import kitchenpos.exception.badrequest.CompletedOrderCannotChangeException;
 import kitchenpos.exception.badrequest.OrderLineItemNotExistsException;
+import kitchenpos.exception.badrequest.OrderTableEmptyException;
 import org.hibernate.annotations.BatchSize;
 import org.springframework.util.CollectionUtils;
 
@@ -43,21 +44,24 @@ public class Order {
     protected Order() {
     }
 
-    public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
-    }
-
-    public Order(final Long orderTableId, final OrderStatus orderStatus, final List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, orderStatus, LocalDateTime.now(), orderLineItems);
+    public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems, final boolean orderTableEmpty) {
+        this(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems, orderTableEmpty);
     }
 
     public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime,
-                 final List<OrderLineItem> orderLineItems) {
+                 final List<OrderLineItem> orderLineItems, final boolean orderTableEmpty) {
+        validateTableNotEmpty(orderTableEmpty);
         mapOrderLineItems(orderLineItems);
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
+    }
+
+    private void validateTableNotEmpty(final boolean orderTableEmpty) {
+        if (orderTableEmpty) {
+            throw new OrderTableEmptyException();
+        }
     }
 
     private void mapOrderLineItems(final List<OrderLineItem> orderLineItems) {

@@ -10,7 +10,8 @@ import org.springframework.stereotype.Component;
 public class OrderMapperImpl implements OrderMapper {
 
     @Override
-    public Order toOrder(final OrderCreateRequest orderCreateRequest, final List<OrderLineItem> orderLineItems) {
-        return new Order(orderCreateRequest.getOrderTableId(), orderLineItems);
+    public Order toOrder(final OrderCreateRequest orderCreateRequest, final List<OrderLineItem> orderLineItems,
+                         final boolean orderTableEmpty) {
+        return new Order(orderCreateRequest.getOrderTableId(), orderLineItems, orderTableEmpty);
     }
 }

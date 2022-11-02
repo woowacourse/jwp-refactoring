@@ -27,7 +27,6 @@ import kitchenpos.dto.order.response.OrderResponse;
 import kitchenpos.exception.badrequest.DuplicateOrderLineItemException;
 import kitchenpos.exception.badrequest.MenuNotExistsException;
 import kitchenpos.exception.badrequest.OrderNotExistsException;
-import kitchenpos.exception.badrequest.OrderTableEmptyException;
 import kitchenpos.exception.badrequest.OrderTableNotExistsException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,20 +118,6 @@ class OrderServiceTest {
                 List.of(orderLineItemRequest));
 
         assertThatThrownBy(() -> orderService.create(orderRequest)).isInstanceOf(OrderTableNotExistsException.class);
-    }
-
-    @Test
-    void 생성하려는_주문이_속한_주문_테이블이_빈_주문_테이블이면_예외를_반환한다() {
-        Long menuGroupId = menuGroupRepository.save(new MenuGroup("메뉴 그룹"))
-                .getId();
-        Long menuId = menuRepository.save(new Menu("메뉴", BigDecimal.ZERO, menuGroupId, new ArrayList<>()))
-                .getId();
-        Long orderTableId = orderTableRepository.save(new OrderTable(1, true))
-                .getId();
-        OrderLineItemCreateRequest orderLineItemRequest = new OrderLineItemCreateRequest(menuId, 1);
-        OrderCreateRequest orderRequest = new OrderCreateRequest(orderTableId, List.of(orderLineItemRequest));
-
-        assertThatThrownBy(() -> orderService.create(orderRequest)).isInstanceOf(OrderTableEmptyException.class);
     }
 
     @Test

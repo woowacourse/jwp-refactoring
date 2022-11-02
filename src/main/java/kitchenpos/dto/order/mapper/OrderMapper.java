@@ -7,5 +7,5 @@ import kitchenpos.dto.order.request.OrderCreateRequest;
 
 public interface OrderMapper {
 
-    Order toOrder(OrderCreateRequest orderCreateRequest, List<OrderLineItem> orderLineItems);
+    Order toOrder(OrderCreateRequest orderCreateRequest, List<OrderLineItem> orderLineItems, boolean orderTableEmpty);
 }

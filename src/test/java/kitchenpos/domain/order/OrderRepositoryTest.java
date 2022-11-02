@@ -1,7 +1,6 @@
 package kitchenpos.domain.order;
 
 import static kitchenpos.domain.common.OrderStatus.COOKING;
-import static kitchenpos.domain.common.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -29,7 +28,7 @@ class OrderRepositoryTest {
         Long orderTableId = orderTableRepository.save(new OrderTable(1, false))
                 .getId();
         OrderLineItem orderLineItem = new OrderLineItem(1, new OrderedMenu("메뉴 이름", new Price(BigDecimal.ZERO)));
-        Order order = new Order(orderTableId, List.of(orderLineItem));
+        Order order = new Order(orderTableId, List.of(orderLineItem), false);
 
         Order savedOrder = orderRepository.save(order);
 
@@ -47,7 +46,7 @@ class OrderRepositoryTest {
                 .getId();
         OrderLineItem orderLineItem = new OrderLineItem(1, new OrderedMenu("메뉴 이름", new Price(BigDecimal.ZERO)));
         Order order = orderRepository
-                .save(new Order(orderTableId, List.of(orderLineItem)));
+                .save(new Order(orderTableId, List.of(orderLineItem), false));
 
         Order actual = orderRepository.findById(order.getId())
                 .orElseGet(Assertions::fail);
@@ -69,8 +68,8 @@ class OrderRepositoryTest {
                 .getId();
         OrderLineItem orderLineItem1 = new OrderLineItem(1, new OrderedMenu("메뉴 이름", new Price(BigDecimal.ZERO)));
         OrderLineItem orderLineItem2 = new OrderLineItem(1, new OrderedMenu("메뉴 이름", new Price(BigDecimal.ZERO)));
-        Order order1 = orderRepository.save(new Order(orderTableId, List.of(orderLineItem1)));
-        Order order2 = orderRepository.save(new Order(orderTableId, MEAL, List.of(orderLineItem2)));
+        Order order1 = orderRepository.save(new Order(orderTableId, List.of(orderLineItem1), false));
+        Order order2 = orderRepository.save(new Order(orderTableId, List.of(orderLineItem2), false));
 
         List<Order> actual = orderRepository.findAll();
 
@@ -84,7 +83,7 @@ class OrderRepositoryTest {
         Long orderTableId = orderTableRepository.save(new OrderTable(1, false))
                 .getId();
         OrderLineItem orderLineItem = new OrderLineItem(1, new OrderedMenu("메뉴 이름", new Price(BigDecimal.ZERO)));
-        orderRepository.save(new Order(orderTableId, List.of(orderLineItem)));
+        orderRepository.save(new Order(orderTableId, List.of(orderLineItem), false));
 
         boolean actual = orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, List.of(COOKING));
 
@@ -106,7 +105,7 @@ class OrderRepositoryTest {
         Long orderTableId = orderTableRepository.save(new OrderTable(1, false))
                 .getId();
         OrderLineItem orderLineItem = new OrderLineItem(1, new OrderedMenu("메뉴 이름", new Price(BigDecimal.ZERO)));
-        orderRepository.save(new Order(orderTableId, List.of(orderLineItem)));
+        orderRepository.save(new Order(orderTableId, List.of(orderLineItem), false));
 
         boolean actual = orderRepository.existsByOrderTableIdInAndOrderStatusIn(List.of(orderTableId),
                 List.of(COOKING));

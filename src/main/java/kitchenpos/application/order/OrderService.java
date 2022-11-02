@@ -22,7 +22,6 @@ import kitchenpos.dto.order.response.OrderResponse;
 import kitchenpos.exception.badrequest.DuplicateOrderLineItemException;
 import kitchenpos.exception.badrequest.MenuNotExistsException;
 import kitchenpos.exception.badrequest.OrderNotExistsException;
-import kitchenpos.exception.badrequest.OrderTableEmptyException;
 import kitchenpos.exception.badrequest.OrderTableNotExistsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,10 +56,10 @@ public class OrderService {
         List<Menu> menus = findMenus(orderCreateRequest.getOrderLineItems());
         OrderTable orderTable = orderTableRepository.findById(orderCreateRequest.getOrderTableId())
                 .orElseThrow(OrderTableNotExistsException::new);
-        validateOrderTableNotEmpty(orderTable);
         List<OrderLineItem> orderLineItems = orderLineItemMapper
                 .toOrderLineItems(orderCreateRequest.getOrderLineItems(), menus);
-        Order order = orderRepository.save(orderMapper.toOrder(orderCreateRequest, orderLineItems));
+        Order order = orderRepository.save(
+                orderMapper.toOrder(orderCreateRequest, orderLineItems, orderTable.isEmpty()));
         orderStatusRecordRepository.save(new OrderStatusRecord(order.getId(), orderTable, order.getOrderStatus()));
         return orderDtoMapper.toOrderResponse(order);
     }
@@ -87,12 +86,6 @@ public class OrderService {
     private void validateMenuExists(final List<Long> menuIds) {
         if (menuIds.size() != menuRepository.countByIdIn(menuIds)) {
             throw new MenuNotExistsException();
-        }
-    }
-
-    private void validateOrderTableNotEmpty(final OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new OrderTableEmptyException();
         }
     }
 
