@@ -1,4 +1,4 @@
-package kitchenpos.domain.order;
+package kitchenpos.domain.ordertable;
 
 import java.util.List;
 import javax.persistence.Entity;
@@ -10,6 +10,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.tablegroup.TableGroup;
 
 @Table(name = "order_table")
 @Entity

@@ -2,8 +2,8 @@ package kitchenpos.application.mapper;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.order.OrderTable;
-import kitchenpos.domain.order.TableGroup;
+import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.tablegroup.TableGroup;
 import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.request.TableGroupRequest.TableId;
 import kitchenpos.repository.OrderTableRepository;

@@ -8,6 +8,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import kitchenpos.domain.Price;
+import kitchenpos.domain.product.Product;
 
 @Table(name = "menu_product")
 @Entity
