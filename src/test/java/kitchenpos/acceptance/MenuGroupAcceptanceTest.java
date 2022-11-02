@@ -8,7 +8,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import io.restassured.RestAssured;
 import java.util.List;
 import java.util.Map;
-import kitchenpos.ui.dto.MenuGroupResponse;
+import kitchenpos.menu.application.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;

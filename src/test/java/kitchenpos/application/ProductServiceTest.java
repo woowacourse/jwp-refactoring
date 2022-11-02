@@ -5,8 +5,9 @@ import static org.assertj.core.api.Assertions.tuple;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.application.dto.ProductRequest;
-import kitchenpos.ui.dto.ProductResponse;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.application.dto.request.ProductRequest;
+import kitchenpos.product.application.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

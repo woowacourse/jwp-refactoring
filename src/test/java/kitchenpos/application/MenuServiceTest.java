@@ -5,11 +5,12 @@ import static org.assertj.core.api.Assertions.tuple;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
-import kitchenpos.ui.dto.MenuResponse;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.application.dto.response.MenuResponse;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

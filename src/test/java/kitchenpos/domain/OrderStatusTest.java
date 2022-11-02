@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import kitchenpos.common.exception.InvalidOrderException;
+import kitchenpos.order.domain.OrderStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
