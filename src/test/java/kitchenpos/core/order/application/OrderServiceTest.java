@@ -3,6 +3,7 @@ package kitchenpos.core.order.application;
 import static kitchenpos.core.order.domain.OrderStatus.COMPLETION;
 import static kitchenpos.core.order.domain.OrderStatus.COOKING;
 import static kitchenpos.core.order.domain.OrderStatus.MEAL;
+import static kitchenpos.fixture.MenuFixture.getMenu;
 import static kitchenpos.fixture.OrderFixture.getOrder;
 import static kitchenpos.fixture.OrderFixture.getOrderLineItem;
 import static kitchenpos.fixture.OrderFixture.getOrderLineItemRequest;
@@ -47,6 +48,7 @@ class OrderServiceTest extends ServiceTest {
         given(orderTableDao.findById(any())).willReturn(Optional.of(orderTable));
         given(orderLineItemDao.save(any())).willReturn(orderLineItem);
         given(menuDao.countByIdIn(any())).willReturn(1L);
+        given(menuDao.findById(any())).willReturn(Optional.of(getMenu(1L)));
         given(orderDao.findById(any())).willReturn(Optional.of(order));
         given(orderDao.save(any())).willReturn(order);
     }
@@ -78,8 +80,6 @@ class OrderServiceTest extends ServiceTest {
         return Stream.of(
                 Arguments.of(getOrderRequest(1L, COOKING.name(), Arrays.asList(getOrderLineItemRequest(), getOrderLineItemRequest())),
                         "주문 상품 목록에 등록되지 않은 메뉴가 존재할 경우")
-//                Arguments.of(Order.of(1L, Arrays.asList(getOrderLineItemRequest(), getOrderLineItemRequest()), order -> {}),
-//                        "주문 상품 목록에 등록되지 않은 메뉴가 존재할 경우")
         );
     }
 

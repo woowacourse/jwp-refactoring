@@ -2,6 +2,7 @@ package kitchenpos.fixture;
 
 import static kitchenpos.core.order.domain.OrderStatus.COOKING;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -34,7 +35,6 @@ public class OrderFixture {
                                         final String orderStatus,
                                         final List<OrderLineItemRequest> orderLineItemsRequest) {
         return new OrderRequest(orderTableId, orderStatus, orderLineItemsRequest);
-//        return Order.of(orderTableId, orderLineItems, order -> {});
     }
 
     public static Order getOrder(final OrderStatus OrderStatus) {
@@ -62,30 +62,30 @@ public class OrderFixture {
                                  final OrderStatus orderStatus,
                                  final LocalDateTime orderedTime,
                                  final List<OrderLineItemRequest> orderLineItemsRequest) {
-        final List<OrderLineItem> orderLineItems = mapToOrderLineItems(
-                orderLineItemsRequest);
+        final List<OrderLineItem> orderLineItems = mapToOrderLineItems(id, orderLineItemsRequest);
         return Order.of(id, orderTableId, orderStatus, orderedTime, orderLineItems, order -> {});
     }
 
-    private static List<OrderLineItem> mapToOrderLineItems(final List<OrderLineItemRequest> orderLineItemsRequest) {
+    private static List<OrderLineItem> mapToOrderLineItems(final Long orderId, final List<OrderLineItemRequest> orderLineItemsRequest) {
         return orderLineItemsRequest.stream()
-                .map(it -> new OrderLineItem(it.getMenuId(), it.getQuantity()))
+                .map(it -> new OrderLineItem(orderId, it.getQuantity(), "추천메뉴", BigDecimal.valueOf(10000)))
                 .collect(Collectors.toList());
     }
 
     public static OrderLineItem getOrderLineItem() {
-        return getOrderLineItem(1L, 1L, 1L, 1);
+        return getOrderLineItem(1L, 1L, 1, "추천메뉴", BigDecimal.valueOf(10000));
     }
 
     public static OrderLineItem getOrderLineItem(final Long orderId) {
-        return getOrderLineItem(1L, orderId, 1L, 1);
+        return getOrderLineItem(1L, orderId, 1, "추천메뉴", BigDecimal.valueOf(10000));
     }
 
     public static OrderLineItem getOrderLineItem(final Long seq,
                                                  final Long orderId,
-                                                 final Long menuId,
-                                                 final long quantity) {
-        return new OrderLineItem(seq, orderId, menuId, quantity);
+                                                 final long quantity,
+                                                 final String name,
+                                                 final BigDecimal price) {
+        return new OrderLineItem(seq, orderId, quantity, name, price);
     }
 
     public static OrderLineItemRequest getOrderLineItemRequest() {

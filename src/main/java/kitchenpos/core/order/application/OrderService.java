@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+import kitchenpos.core.menu.domain.Menu;
 import kitchenpos.core.menu.domain.MenuDao;
 import kitchenpos.core.order.application.dto.OrderLineItemRequest;
 import kitchenpos.core.order.application.dto.OrderRequest;
@@ -43,14 +44,18 @@ public class OrderService {
         final List<OrderLineItemRequest> orderLineItemsRequest = orderRequest.getOrderLineItemRequests();
         validateExistMenus(orderLineItemsRequest);
 
-        final Order savedOrder = orderDao.save(Order.of(orderRequest.getOrderTableId(), mapToOrderLineItems(orderLineItemsRequest), orderValidator));
-        savedOrder.changeOrderLineItems(getSavedOrderLineItems(orderLineItemsRequest, savedOrder));
+        final List<OrderLineItem> orderLineItems = mapToOrderLineItems(orderLineItemsRequest);
+        final Order savedOrder = orderDao.save(Order.of(orderRequest.getOrderTableId(), orderLineItems, orderValidator));
+        savedOrder.changeOrderLineItems(getSavedOrderLineItems(orderLineItems, savedOrder));
         return savedOrder;
     }
 
     private List<OrderLineItem> mapToOrderLineItems(final List<OrderLineItemRequest> orderLineItemsRequest) {
         return orderLineItemsRequest.stream()
-                .map(it -> new OrderLineItem(it.getMenuId(), it.getQuantity()))
+                .map(it -> {
+                    final Menu menu = getMenu(it.getMenuId());
+                    return new OrderLineItem(null, it.getQuantity(), menu.getName(), menu.getPrice());
+                })
                 .collect(Collectors.toList());
     }
 
@@ -71,16 +76,22 @@ public class OrderService {
         }
     }
 
-    private List<OrderLineItem> getSavedOrderLineItems(final List<OrderLineItemRequest> orderLineItemsRequest, final Order savedOrder) {
+    private List<OrderLineItem> getSavedOrderLineItems(final List<OrderLineItem> orderLineItems, final Order savedOrder) {
         final List<OrderLineItem> savedOrderLineItems = new LinkedList<>();
-        for (final OrderLineItemRequest orderLineItemRequest : orderLineItemsRequest) {
+        for (final OrderLineItem orderLineItem : orderLineItems) {
             savedOrderLineItems.add(orderLineItemDao.save(new OrderLineItem(
                     savedOrder.getId(),
-                    orderLineItemRequest.getMenuId(),
-                    orderLineItemRequest.getQuantity()
+                    orderLineItem.getQuantity(),
+                    orderLineItem.getName(),
+                    orderLineItem.getPrice()
             )));
         }
         return savedOrderLineItems;
+    }
+
+    private Menu getMenu(final Long menuId) {
+        return menuDao.findById(menuId)
+                .orElseThrow(NoSuchElementException::new);
     }
 
     public List<Order> list() {

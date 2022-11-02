@@ -5,6 +5,7 @@ import static kitchenpos.core.order.domain.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,6 @@ class OrderTest {
     }
 
     private Order getOrder() {
-        return Order.of(1L, Arrays.asList(new OrderLineItem(1L, 2)), order -> {});
+        return Order.of(1L, Arrays.asList(new OrderLineItem(1L, 2, "추천메뉴", BigDecimal.valueOf(10000))), order -> {});
     }
 }
