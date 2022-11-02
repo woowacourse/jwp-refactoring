@@ -17,6 +17,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import kitchenpos.domain.common.NumberOfGuests;
 import kitchenpos.exception.badrequest.CookingOrMealOrderTableCannotChangeEmptyException;
+import kitchenpos.exception.badrequest.CookingOrMealOrderTableCannotUngroupedException;
 import kitchenpos.exception.badrequest.EmptyTableCannotChangeNumberOfGuestsException;
 import kitchenpos.exception.badrequest.GroupedTableCannotChangeEmptyException;
 import org.hibernate.annotations.BatchSize;
@@ -56,11 +57,11 @@ public class OrderTable {
 
     public void changeEmpty(final boolean empty) {
         validateNotGrouped();
-        validateCookingOrMealOrderNotExists();
+        validateCookingOrMealOrderNotExistsWhenChangeEmpty();
         this.empty = empty;
     }
 
-    private void validateCookingOrMealOrderNotExists() {
+    private void validateCookingOrMealOrderNotExistsWhenChangeEmpty() {
         orderStatusRecords.forEach(orderStatusRecord -> {
             if (orderStatusRecord.isNotCompleted()) {
                 throw new CookingOrMealOrderTableCannotChangeEmptyException();
@@ -95,8 +96,17 @@ public class OrderTable {
     }
 
     public void ungroup() {
+        validateCookingOrMealOrderNotExistsWhenUngroup();
         this.tableGroup = null;
         this.empty = false;
+    }
+
+    private void validateCookingOrMealOrderNotExistsWhenUngroup() {
+        orderStatusRecords.forEach(orderStatusRecord -> {
+            if (orderStatusRecord.isNotCompleted()) {
+                throw new CookingOrMealOrderTableCannotUngroupedException();
+            }
+        });
     }
 
     public void add(final OrderStatusRecord orderStatusRecord) {
