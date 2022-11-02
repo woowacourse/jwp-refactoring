@@ -34,7 +34,7 @@ class OrderRepositoryTest {
     }
 
     @Test
-    void existsByOrderTableIdInAndOrderStatusIn() {
+    void 주문테이블_아이디_목록과_주문상태_목록에_해당하는_요소가_있는지_확인한다() {
         assertAll(
                 () -> assertThat(orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                         List.of(orderTable1.getId(), orderTable2.getId()), List.of(COOKING))).isTrue(),
@@ -46,7 +46,7 @@ class OrderRepositoryTest {
     }
 
     @Test
-    void existsByOrderTableIdAndOrderStatusIn() {
+    void 주문테이블_아이디와_주문상태_목록에_해당하는_요소가_있는지_확인한다() {
         assertAll(
                 () -> assertThat(orderRepository.existsByOrderTableIdAndOrderStatusIn(
                         orderTable1.getId(), List.of(COOKING))).isFalse(),

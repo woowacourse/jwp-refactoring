@@ -32,14 +32,14 @@ class OrderTableRepositoryTest {
     }
 
     @Test
-    void findAllByIdIn() {
+    void 주문테이블_아이디에_해당하는_모든_요소를_찾는다() {
         assertThat(orderTableRepository.findAllByIdIn(
                 List.of(orderTable1.getId(), orderTable2.getId())
         )).hasSize(2);
     }
 
     @Test
-    void findAllByTableGroupId() {
+    void 테이블그룹_아이디에_해당하는_모든_요소를_찾는다() {
         assertThat(orderTableRepository.findAllByTableGroupId(tableGroup.getId())).hasSize(2);
     }
 }

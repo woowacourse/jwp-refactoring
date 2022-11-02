@@ -28,7 +28,7 @@ class MenuRepositoryTest {
     }
 
     @Test
-    void countByIdIn() {
+    void 아이디_목록에_해당하는_요소의_수를_구한다() {
         Menu menu1 = menuRepository.save(createMenu(menuGroup));
         menuRepository.save(createMenu(menuGroup));
 
