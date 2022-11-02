@@ -39,7 +39,7 @@ class OrderTableTest {
 
     @Test
     void matchSizeThrowExceptionWhenNotCollectGuestNumber() {
-        int input = 0;
+        int input = -1;
         OrderTable orderTable = new OrderTable(null, 10, false);
 
         assertThatThrownBy(() -> orderTable.changeNumberOfGuest(input))
