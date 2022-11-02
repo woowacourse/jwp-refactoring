@@ -16,10 +16,8 @@ public class MenuTest {
     void menuWithNullPrice() {
         MenuGroup menuGroup = new MenuGroup("찌개류");
 
-        assertThatThrownBy(() -> new Menu("김치찌개세트", null, menuGroup, List.of(
-                new MenuProduct(new Product("김치찌개", BigDecimal.valueOf(1000L)), 1),
-                new MenuProduct(new Product("서비스 공기밥", BigDecimal.valueOf(0L)), 1)
-        ))).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> new Menu("김치찌개세트", null, menuGroup))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("가격이 음수인 경우 예외가 발생한다.")
@@ -27,21 +25,8 @@ public class MenuTest {
     void menuWithNegativePrice() {
         MenuGroup menuGroup = new MenuGroup("찌개류");
 
-        assertThatThrownBy(() -> new Menu("김치찌개세트", BigDecimal.valueOf(-1), menuGroup, List.of(
-                new MenuProduct(new Product("김치찌개", BigDecimal.valueOf(1000L)), 1),
-                new MenuProduct(new Product("서비스 공기밥", BigDecimal.valueOf(0L)), 1)
-        ))).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("상품의 합계보다 가격이 크다면 예외가 발생한다.")
-    @Test
-    void menuWithPriceMoreThanProductPriceSum() {
-        MenuGroup menuGroup = new MenuGroup("찌개류");
-
-        assertThatThrownBy(() -> new Menu("김치찌개세트", BigDecimal.valueOf(2500), menuGroup, List.of(
-                new MenuProduct(new Product("김치찌개", BigDecimal.valueOf(1000L)), 1),
-                new MenuProduct(new Product("서비스 공기밥", BigDecimal.valueOf(0L)), 1)
-        ))).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> new Menu("김치찌개세트", BigDecimal.valueOf(-1), menuGroup))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("정상적으로 생성되는 경우를 테스트한다.")
@@ -49,9 +34,6 @@ public class MenuTest {
     void menuCreate() {
         MenuGroup menuGroup = new MenuGroup("찌개류");
 
-        assertDoesNotThrow(() -> new Menu("김치찌개세트", BigDecimal.valueOf(1000), menuGroup, List.of(
-                new MenuProduct(new Product("김치찌개", BigDecimal.valueOf(1000L)), 1),
-                new MenuProduct(new Product("서비스 공기밥", BigDecimal.valueOf(0L)), 1)
-        )));
+        assertDoesNotThrow(() -> new Menu("김치찌개세트", BigDecimal.valueOf(1000), menuGroup));
     }
 }

@@ -30,31 +30,12 @@ public class Menu {
     @OneToOne
     private MenuGroup menuGroup;
 
-    @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
-    @JoinColumn(name="menu_id")
-    private List<MenuProduct> menuProducts;
-
     public Menu() {}
 
-    public Menu(String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+    public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
         this.name = name;
         this.price = new Price(price);
         this.menuGroup = menuGroup;
-        this.menuProducts = menuProducts;
-
-        validatePriceIsLessThanProductPriceSum(price, menuProducts);
-    }
-
-    private void validatePriceIsLessThanProductPriceSum(BigDecimal price, List<MenuProduct> menuProducts) {
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
-            BigDecimal menuProductPrice = menuProduct.calculatePrice();
-            sum = sum.add(menuProductPrice);
-        }
-
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
     }
 
     public Long getId() {
@@ -63,5 +44,9 @@ public class Menu {
 
     public String getName() {
         return name;
+    }
+
+    public boolean isMoreThanPrice(BigDecimal anotherPrice) {
+        return price.isMoreThanPrice(anotherPrice);
     }
 }

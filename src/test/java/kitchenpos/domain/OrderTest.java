@@ -21,10 +21,7 @@ public class OrderTest {
     void setUp() {
         orderLineItemList = new ArrayList<>();
         MenuGroup menuGroup = new MenuGroup("찌개류");
-        Menu menu = new Menu("김치찌개세트", BigDecimal.valueOf(1000L), menuGroup, List.of(
-                new MenuProduct(new Product("김치찌개", BigDecimal.valueOf(1000L)), 1),
-                new MenuProduct(new Product("서비스 공기밥", BigDecimal.valueOf(0L)), 1)
-        ));
+        Menu menu = new Menu("김치찌개세트", BigDecimal.valueOf(1000L), menuGroup);
         orderLineItemList.add(new OrderLineItem(menu, 1));
     }
 

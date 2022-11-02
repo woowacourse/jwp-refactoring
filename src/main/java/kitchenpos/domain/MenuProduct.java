@@ -18,6 +18,9 @@ public class MenuProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
+    @ManyToOne
+    private Menu menu;
+
     @OneToOne
     private Product product;
 
@@ -25,7 +28,8 @@ public class MenuProduct {
 
     public MenuProduct() {}
 
-    public MenuProduct(Product product, long quantity) {
+    public MenuProduct(Menu menu, Product product, long quantity) {
+        this.menu = menu;
         this.product = product;
         this.quantity = quantity;
     }
