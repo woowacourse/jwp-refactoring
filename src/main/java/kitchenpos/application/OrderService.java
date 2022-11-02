@@ -8,10 +8,12 @@ import java.util.stream.Collectors;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderedMenu;
 import kitchenpos.ui.dto.OrderCreateRequest;
 import kitchenpos.ui.dto.OrderLineItemRequest;
 import kitchenpos.ui.dto.OrderLineItemResponse;
@@ -27,10 +29,9 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public OrderService(
-            final MenuRepository menuRepository,
-            final OrderRepository orderRepository,
-            final OrderTableRepository orderTableRepository) {
+    public OrderService(final MenuRepository menuRepository,
+                        final OrderRepository orderRepository,
+                        final OrderTableRepository orderTableRepository) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
@@ -43,12 +44,19 @@ public class OrderService {
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
         final List<OrderLineItem> orderLineItems = orderLineItemRequests.stream()
-                .map(it -> new OrderLineItem(it.getMenuId(), it.getQuantity()))
+                .map(this::createOrderLineItem)
                 .collect(Collectors.toList());
         final Order order = Order.of(orderTable, COOKING, LocalDateTime.now(), orderLineItems);
         orderRepository.save(order);
 
         return generateOrderResponse(order);
+    }
+
+    private OrderLineItem createOrderLineItem(final OrderLineItemRequest orderLineItemRequest) {
+        final Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
+                .orElseThrow(IllegalArgumentException::new);
+        final OrderedMenu orderedMenu = new OrderedMenu(menu.getName(), menu.getPrice());
+        return new OrderLineItem(orderedMenu, orderLineItemRequest.getQuantity());
     }
 
     public List<OrderResponse> list() {
@@ -92,8 +100,8 @@ public class OrderService {
                         .stream()
                         .map(it -> new OrderLineItemResponse(
                                 it.getSeq(),
-                                it.getOrder().getId(),
-                                it.getMenuId(),
+                                it.getOrderedMenu().getName(),
+                                it.getOrderedMenu().getPrice().getAmount(),
                                 it.getQuantity()
                         ))
                         .collect(Collectors.toList())
