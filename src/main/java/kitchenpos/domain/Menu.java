@@ -30,7 +30,7 @@ public class Menu {
     private MenuGroup menuGroup;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "menu")
     private List<MenuProduct> menuProducts;
 
     public Menu() {

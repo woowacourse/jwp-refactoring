@@ -6,6 +6,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderValidator;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderLineItemRepository;
 import kitchenpos.domain.repository.OrderRepository;
@@ -19,14 +20,14 @@ import java.util.stream.Collectors;
 @Service
 public class OrderService {
 
-    private final MenuRepository menuRepository;
+    private final OrderValidator orderValidator;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public OrderService(MenuRepository menuRepository, OrderRepository orderRepository,
+    public OrderService(OrderValidator orderValidator, OrderRepository orderRepository,
                         OrderLineItemRepository orderLineItemRepository, OrderTableRepository orderTableRepository) {
-        this.menuRepository = menuRepository;
+        this.orderValidator = orderValidator;
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
@@ -60,7 +61,7 @@ public class OrderService {
                 .map(it -> new OrderLineItem(null, it.getName(), it.getPrice(), it.getQuantity()))
                 .collect(Collectors.toList()));
 
-        orderLineItems.validateMenuSize(menuRepository.countByIdIn(mapToMenuIds(orderRequest)));
+        orderValidator.validateMenuExists(orderLineItems.getOrderLineItems(), mapToMenuIds(orderRequest));
         return orderLineItems;
     }
 

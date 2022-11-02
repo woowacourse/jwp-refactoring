@@ -14,12 +14,6 @@ public class OrderLineItems {
         this.orderLineItems = orderLineItems;
     }
 
-    public void validateMenuSize(Long menuSize) {
-        if (orderLineItems.size() != menuSize) {
-            throw new IllegalArgumentException();
-        }
-    }
-
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
     }
