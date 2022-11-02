@@ -33,9 +33,7 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(Order order, String menuName, Price menuPrice, Quantity quantity) {
-        this.order = order;
-        order.addOrderLineItem(this);
+    public OrderLineItem(String menuName, Price menuPrice, Quantity quantity) {
         this.menuName = menuName;
         this.menuPrice = menuPrice;
         this.quantity = quantity;
@@ -59,5 +57,9 @@ public class OrderLineItem {
 
     public long getQuantity() {
         return quantity.getValue();
+    }
+
+    public void belong(Order order) {
+        this.order = order;
     }
 }

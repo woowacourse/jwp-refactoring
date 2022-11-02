@@ -5,6 +5,7 @@ import static kitchenpos.order.domain.OrderStatus.COMPLETION;
 import static kitchenpos.order.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -24,6 +25,7 @@ import kitchenpos.order.dto.OrderStatusChangeRequest;
 import kitchenpos.order.exception.AlreadyCompletionOrderStatusException;
 import kitchenpos.order.exception.InvalidTableOrderException;
 import kitchenpos.order.exception.MenuNotEnoughException;
+import kitchenpos.order.repository.OrderLineItemRepository;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,6 +37,9 @@ class OrderServiceTest extends ServiceTest {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Autowired
     private MenuValidator menuValidator;
@@ -65,8 +70,10 @@ class OrderServiceTest extends ServiceTest {
                 List.of(orderLineItemResponse1, orderLineItemResponse2));
 
         orderService.create(orderCreateRequest);
-
-        assertThat(orderRepository.findAll()).hasSize(1);
+        assertAll(
+                () -> assertThat(orderRepository.findAll()).hasSize(1),
+                () -> assertThat(orderLineItemRepository.findAll()).hasSize(2)
+        );
     }
 
     @DisplayName("Menu 없이 Order를 등록하려고 하면 예외를 발생시킨다.")

@@ -17,7 +17,6 @@ import kitchenpos.order.exception.InvalidTableOrderException;
 import kitchenpos.order.exception.MenuNotEnoughException;
 import kitchenpos.order.exception.MenuNotFoundException;
 import kitchenpos.order.exception.TableEmptyDisabledException;
-import kitchenpos.order.repository.OrderLineItemRepository;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.ordertable.dto.OrderTableValidateEvent;
 import kitchenpos.ordertable.repository.TableRepository;
@@ -34,35 +33,33 @@ public class OrderService {
 
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
     private final TableRepository tableRepository;
 
     public OrderService(MenuRepository menuRepository, OrderRepository orderRepository,
-                        OrderLineItemRepository orderLineItemRepository, TableRepository tableRepository) {
+                        TableRepository tableRepository) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderLineItemRepository = orderLineItemRepository;
         this.tableRepository = tableRepository;
     }
 
     @Transactional
     public OrderResponse create(OrderCreateRequest orderCreateRequest) {
-        List<OrderLineItemCreateRequest> orderLineItemResponses = orderCreateRequest.getOrderLineItems();
-        validateMenuMinSize(orderLineItemResponses);
+        List<OrderLineItemCreateRequest> orderLineItemCreateRequests = orderCreateRequest.getOrderLineItems();
+        validateMenuMinSize(orderLineItemCreateRequests);
         validateOrderTable(orderCreateRequest.getOrderTableId());
         Order order = Order.newOrder(orderCreateRequest.getOrderTableId());
+        addOrderLineItem(order, orderLineItemCreateRequests);
         Order savedOrder = orderRepository.save(order);
-        createOrderLineItem(orderLineItemResponses, savedOrder);
         return new OrderResponse(savedOrder);
     }
 
-    private void createOrderLineItem(List<OrderLineItemCreateRequest> orderLineItemCreateRequests, Order savedOrder) {
+    private void addOrderLineItem(Order order, List<OrderLineItemCreateRequest> orderLineItemCreateRequests) {
         for (OrderLineItemCreateRequest orderLineItemCreateRequest : orderLineItemCreateRequests) {
             Menu menu = menuRepository.findById(orderLineItemCreateRequest.getMenuId())
                     .orElseThrow(MenuNotFoundException::new);
-            OrderLineItem orderLineItem = new OrderLineItem(savedOrder, menu.getName(),
+            OrderLineItem orderLineItem = new OrderLineItem(menu.getName(),
                     menu.getPrice(), new Quantity(orderLineItemCreateRequest.getQuantity()));
-            orderLineItemRepository.save(orderLineItem);
+            order.addOrderLineItem(orderLineItem);
         }
     }
 
