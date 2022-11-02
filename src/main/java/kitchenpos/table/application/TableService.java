@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class TableService {
 
     private final OrderDao orderDao;
@@ -23,16 +24,15 @@ public class TableService {
         this.orderTableDao = orderTableDao;
     }
 
-    @Transactional
     public OrderTable create(final TableCreateRequest request) {
         return orderTableDao.save(request.toEntity());
     }
 
+    @Transactional(readOnly = true)
     public List<OrderTable> list() {
         return orderTableDao.findAll();
     }
 
-    @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final TableChangeEmptyRequest request) {
         validateOrderStatus(orderTableId);
         final OrderTable savedOrderTable = getOrderTable(orderTableId);
@@ -54,7 +54,6 @@ public class TableService {
         }
     }
 
-    @Transactional
     public OrderTable changeNumberOfGuests(final Long orderTableId, final TableChangeNumberOfGuestsRequest request) {
         final OrderTable savedOrderTable = getOrderTable(orderTableId);
         savedOrderTable.changeNumberOfGuests(request.getNumberOfGuests());

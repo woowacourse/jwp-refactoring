@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class MenuService {
 
     private final MenuRepository menuRepository;
@@ -30,7 +31,6 @@ public class MenuService {
         this.productDao = productDao;
     }
 
-    @Transactional
     public Menu create(final MenuCreateRequest request) {
         if (!menuGroupDao.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException();
@@ -60,6 +60,7 @@ public class MenuService {
                 .orElseThrow(IllegalArgumentException::new);
     }
 
+    @Transactional(readOnly = true)
     public List<Menu> list() {
         return menuRepository.findAll();
     }

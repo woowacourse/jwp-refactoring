@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class OrderService {
 
     private final MenuDao menuDao;
@@ -33,7 +34,6 @@ public class OrderService {
         this.orderTableDao = orderTableDao;
     }
 
-    @Transactional
     public Order create(final OrderCreateRequest request) {
         final List<OrderLineItemDto> orderLineItems = request.getOrderLineItems();
         validateOrderLineItems(orderLineItems);
@@ -75,11 +75,11 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<Order> list() {
         return orderRepository.findAll();
     }
 
-    @Transactional
     public Order changeOrderStatus(final Long orderId, final OrderStatusChangeRequest request) {
         final Order savedOrder = orderRepository.findById(orderId);
 
