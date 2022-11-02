@@ -22,7 +22,8 @@ public class OrderRepository {
         final Order order = savedOrder.toEntity();
 
         final List<OrderLineItem> savedOrderLineItems = entity.getOrderLineItems().stream()
-                .map(orderLineItem -> new OrderLineItem(order.getId(), orderLineItem))
+                .map(orderLineItem ->
+                        new OrderLineItem(order.getId(), orderLineItem))
                 .map(orderLineItemDao::save)
                 .collect(Collectors.toList());
 

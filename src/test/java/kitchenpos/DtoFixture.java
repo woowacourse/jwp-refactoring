@@ -29,7 +29,7 @@ public class DtoFixture {
     }
 
     private static List<OrderLineItemDto> getOrderLineItems(final Long menuId, final long quantity) {
-        return List.of(new OrderLineItemDto(menuId, quantity));
+        return List.of(new OrderLineItemDto(menuId, BigDecimal.valueOf(800), "마이쮸", quantity));
     }
 
     public static TableCreateRequest getEmptyTableCreateRequest() {

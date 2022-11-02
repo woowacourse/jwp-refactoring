@@ -3,6 +3,7 @@ package kitchenpos.order.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.product.domain.OrderStatus;
@@ -12,7 +13,14 @@ import org.junit.jupiter.api.Test;
 class OrderTest {
 
     private List<OrderLineItem> getOrderLineItems(final Long menuId, final long quantity) {
-        return List.of(new OrderLineItem(null, null, menuId, quantity));
+        return List.of(new OrderLineItem(
+                null,
+                null,
+                menuId,
+                "마이쮸",
+                BigDecimal.valueOf(800),
+                quantity)
+        );
     }
 
     @DisplayName("orderLineItems가 null이면 예외를 반환한다.")

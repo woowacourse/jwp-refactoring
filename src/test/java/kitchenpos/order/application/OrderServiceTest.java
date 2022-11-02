@@ -9,6 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.ServiceTest;
 import kitchenpos.menu.dto.response.MenuGroupResponse;
@@ -52,7 +53,7 @@ class OrderServiceTest extends ServiceTest {
         final TableResponse orderTable = 테이블_등록(getNotEmptyTableCreateRequest(5));
         final OrderCreateRequest request = new OrderCreateRequest(
                 orderTable.getId(),
-                List.of(new OrderLineItemDto(null, 1)));
+                List.of(new OrderLineItemDto(null, BigDecimal.valueOf(800), "마이쮸", 1)));
 
         assertThatThrownBy(() -> 주문_등록(request))
                 .isInstanceOf(IllegalArgumentException.class);
