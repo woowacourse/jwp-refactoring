@@ -3,14 +3,12 @@ package kitchenpos.product.dao;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import kitchenpos.product.dao.repository.JpaProductRepository;
 import kitchenpos.product.domain.Product;
 
-@Primary
-@Repository
+@Component
 public class JpaProductDao implements ProductDao {
 
     private final JpaProductRepository productRepository;

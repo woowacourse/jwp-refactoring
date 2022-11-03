@@ -3,14 +3,12 @@ package kitchenpos.order.dao;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import kitchenpos.order.dao.repository.JpaOrderTableRepository;
 import kitchenpos.order.domain.OrderTable;
 
-@Primary
-@Repository
+@Component
 public class JpaOrderTableDao implements OrderTableDao {
 
     private final JpaOrderTableRepository orderTableRepository;

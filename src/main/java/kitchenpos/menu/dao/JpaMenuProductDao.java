@@ -3,14 +3,12 @@ package kitchenpos.menu.dao;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import kitchenpos.menu.dao.repository.JpaMenuProductRepository;
 import kitchenpos.menu.domain.MenuProduct;
 
-@Primary
-@Repository
+@Component
 public class JpaMenuProductDao implements MenuProductDao {
 
     private final JpaMenuProductRepository menuProductRepository;

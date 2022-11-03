@@ -3,14 +3,12 @@ package kitchenpos.order.dao;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
-import kitchenpos.order.domain.TableGroup;
 import kitchenpos.order.dao.repository.JpaTableGroupRepository;
+import kitchenpos.order.domain.TableGroup;
 
-@Primary
-@Repository
+@Component
 public class JpaTableGroupDao implements TableGroupDao {
 
     private final JpaTableGroupRepository tableGroupRepository;
