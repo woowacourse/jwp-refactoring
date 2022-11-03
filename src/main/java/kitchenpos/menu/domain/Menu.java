@@ -13,8 +13,7 @@ public class Menu {
     public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId) {
         this.id = id;
         this.name = name;
-        this.price = new
-            Price(price);
+        this.price = new Price(price);
         this.menuGroupId = menuGroupId;
     }
 
