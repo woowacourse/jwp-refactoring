@@ -15,7 +15,6 @@ import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 @Transactional
@@ -54,9 +53,6 @@ public class OrderService {
     }
 
     private void validateOrderLineItem(List<OrderLineItemRequest> itemRequests) {
-        if (CollectionUtils.isEmpty(itemRequests)) {
-            throw new IllegalArgumentException();
-        }
         List<Long> menuIds = toMenuIds(itemRequests);
         if (!menuRepository.existsAllByIdIn(menuIds)) {
             throw new IllegalArgumentException("존재하지 않는 메뉴가 있습니다 : " + menuIds);
