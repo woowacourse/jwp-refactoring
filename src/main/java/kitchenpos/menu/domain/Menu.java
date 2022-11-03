@@ -16,7 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import kitchenpos.exception.CustomIllegalArgumentException;
-import kitchenpos.domain.Price;
+import kitchenpos.order.domain.Price;
 
 @Entity
 public class Menu {

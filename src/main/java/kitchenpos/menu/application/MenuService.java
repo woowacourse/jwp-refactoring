@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.exception.CustomIllegalArgumentException;
-import kitchenpos.dao.JpaMenuGroupRepository;
+import kitchenpos.menuGroup.domain.JpaMenuGroupRepository;
 import kitchenpos.menu.domain.JpaMenuRepository;
 import kitchenpos.product.domain.JpaProductRepository;
 import kitchenpos.menu.domain.Menu;

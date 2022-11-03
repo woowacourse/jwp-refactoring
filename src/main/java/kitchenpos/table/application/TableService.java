@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import kitchenpos.exception.CustomIllegalArgumentException;
 import kitchenpos.order.domain.JpaOrderRepository;
 import kitchenpos.table.domain.JpaOrderTableRepository;
-import kitchenpos.domain.Order;
+import kitchenpos.order.domain.Order;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.application.response.OrderTableResponse;
 import kitchenpos.table.ui.request.OrderTableRequest;

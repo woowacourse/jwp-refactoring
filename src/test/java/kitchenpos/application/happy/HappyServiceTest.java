@@ -2,7 +2,7 @@ package kitchenpos.application.happy;
 
 import java.sql.SQLException;
 import kitchenpos.DatabaseCleaner;
-import kitchenpos.application.MenuGroupService;
+import kitchenpos.menuGroup.applicaiton.MenuGroupService;
 import kitchenpos.menu.application.MenuService;
 import kitchenpos.order.application.OrderService;
 import kitchenpos.product.application.ProductService;

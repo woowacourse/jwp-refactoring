@@ -10,7 +10,7 @@ import kitchenpos.exception.CustomIllegalArgumentException;
 import kitchenpos.order.domain.JpaOrderRepository;
 import kitchenpos.table.domain.JpaOrderTableRepository;
 import kitchenpos.table.domain.JpaTableGroupRepository;
-import kitchenpos.domain.Order;
+import kitchenpos.order.domain.Order;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.application.response.TableGroupResponse;

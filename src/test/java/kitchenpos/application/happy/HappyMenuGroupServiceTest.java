@@ -1,6 +1,6 @@
 package kitchenpos.application.happy;
 
-import kitchenpos.ui.dto.request.MenuGroupRequest;
+import kitchenpos.menuGroup.ui.request.MenuGroupRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

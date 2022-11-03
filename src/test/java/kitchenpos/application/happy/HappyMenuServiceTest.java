@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.ui.dto.request.MenuGroupRequest;
+import kitchenpos.menuGroup.ui.request.MenuGroupRequest;
 import kitchenpos.menu.ui.request.MenuProductRequest;
 import kitchenpos.menu.ui.request.MenuRequest;
 import kitchenpos.product.ui.request.ProductRequest;

@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.exception.CustomIllegalArgumentException;
 import kitchenpos.menu.domain.JpaMenuRepository;
-import kitchenpos.order.domain.JpaOrderRepository;
-import kitchenpos.table.domain.JpaOrderTableRepository;
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.order.domain.JpaOrderRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.ui.request.OrderRequest;
+import kitchenpos.table.domain.JpaOrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,7 +48,7 @@ public class OrderService {
 
     private void validOrderTable(final Long orderTableId) {
         if (!orderTableRepository.existsById(orderTableId)) {
-            new CustomIllegalArgumentException(NOT_FOUND_TABLE_EXCEPTION);
+            throw new CustomIllegalArgumentException(NOT_FOUND_TABLE_EXCEPTION);
         }
     }
 
