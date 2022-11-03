@@ -33,7 +33,7 @@ public class OrderResponse {
                 order.getOrderedTime(),
                 order.getOrderLineItems()
                         .stream()
-                        .map(OrderLineItemResponse::of)
+                        .map(it -> OrderLineItemResponse.of(it, order.getId()))
                         .collect(Collectors.toList())
         );
     }

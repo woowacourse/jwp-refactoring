@@ -30,7 +30,8 @@ public class Order {
     private String orderStatus;
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "order_id")
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     public Order() {
@@ -39,7 +40,6 @@ public class Order {
     public Order(OrderTable orderTable, String orderStatus, LocalDateTime orderedTime,
                  List<OrderLineItem> orderLineItems) {
         validateOrderLineItems(orderLineItems);
-        updateOrder(orderLineItems);
 
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
@@ -59,10 +59,6 @@ public class Order {
                 .count() != orderLineItems.size()) {
             throw new IllegalArgumentException();
         }
-    }
-
-    private void updateOrder(List<OrderLineItem> orderLineItems) {
-        orderLineItems.forEach(orderLineItem -> orderLineItem.updateOrder(this));
     }
 
     public boolean isCompletion() {

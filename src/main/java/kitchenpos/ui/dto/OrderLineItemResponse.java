@@ -19,10 +19,10 @@ public class OrderLineItemResponse {
         this.quantity = quantity;
     }
 
-    public static OrderLineItemResponse of(OrderLineItem orderLineItem) {
+    public static OrderLineItemResponse of(OrderLineItem orderLineItem, Long orderId) {
         return new OrderLineItemResponse(
                 orderLineItem.getSeq(),
-                orderLineItem.getOrder().getId(),
+                orderId,
                 orderLineItem.getMenu().getId(),
                 orderLineItem.getQuantity()
         );

@@ -16,10 +16,6 @@ public class OrderLineItem {
     private Long seq;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "orders_id")
-    private Order order;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_id")
     private Menu menu;
 
@@ -37,19 +33,11 @@ public class OrderLineItem {
         return seq;
     }
 
-    public Order getOrder() {
-        return order;
-    }
-
     public Menu getMenu() {
         return menu;
     }
 
     public long getQuantity() {
         return quantity;
-    }
-
-    public void updateOrder(Order order) {
-        this.order = order;
     }
 }
