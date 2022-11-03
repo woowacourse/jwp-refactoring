@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.exception.GroupTableNotEnoughException;
 import kitchenpos.ordertable.exception.GroupedTableNotEmptyException;
+import kitchenpos.ordertable.validator.OrderChecker;
 import kitchenpos.tablegroup.exception.TableAlreadyGroupedException;
 import kitchenpos.tablegroup.validator.TableGroupValidator;
 import org.springframework.util.CollectionUtils;
@@ -68,7 +69,7 @@ public class OrderTables {
         values.forEach(OrderTable::ungroup);
     }
 
-    public void setEmpty() {
-        values.forEach(orderTable -> orderTable.setEmpty(true));
+    public void setEmpty(OrderChecker orderChecker) {
+        values.forEach(orderTable -> orderTable.setEmpty(true, orderChecker));
     }
 }

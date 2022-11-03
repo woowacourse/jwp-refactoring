@@ -4,6 +4,7 @@ import java.util.List;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.exception.OrderTableNotFoundException;
 import kitchenpos.ordertable.repository.TableRepository;
+import kitchenpos.ordertable.validator.OrderChecker;
 import kitchenpos.tablegroup.domain.OrderTables;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.dto.TableGroupCreateRequest;
@@ -19,12 +20,15 @@ public class TableGroupService {
     private final TableRepository tableRepository;
     private final TableGroupRepository tableGroupRepository;
     private final TableGroupValidator tableGroupValidator;
+    private final OrderChecker orderChecker;
 
     public TableGroupService(TableRepository tableRepository, TableGroupRepository tableGroupRepository,
-                             TableGroupValidator tableGroupValidator) {
+                             TableGroupValidator tableGroupValidator,
+                             OrderChecker orderChecker) {
         this.tableRepository = tableRepository;
         this.tableGroupRepository = tableGroupRepository;
         this.tableGroupValidator = tableGroupValidator;
+        this.orderChecker = orderChecker;
     }
 
     @Transactional
@@ -51,6 +55,6 @@ public class TableGroupService {
         List<OrderTable> orderTablesInTableGroup = tableRepository.findAllByTableGroupId(tableGroupId);
         OrderTables orderTables = OrderTables.forUnGrouping(orderTablesInTableGroup);
         orderTables.ungroup(tableGroupValidator);
-        orderTables.setEmpty();
+        orderTables.setEmpty(orderChecker);
     }
 }

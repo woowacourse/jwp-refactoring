@@ -1,4 +1,4 @@
-package kitchenpos.order.exception;
+package kitchenpos.ordertable.exception;
 
 public class GuestNumberChangeDisabledException extends IllegalArgumentException {
 

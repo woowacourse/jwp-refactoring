@@ -8,23 +8,21 @@ import kitchenpos.ordertable.dto.OrderTableCreateRequest;
 import kitchenpos.ordertable.dto.OrderTableEmptyChangeRequest;
 import kitchenpos.ordertable.dto.OrderTableGuestNumberChangeRequest;
 import kitchenpos.ordertable.dto.OrderTableResponse;
-import kitchenpos.ordertable.dto.OrderTableValidateEvent;
 import kitchenpos.ordertable.exception.OrderTableNotFoundException;
 import kitchenpos.ordertable.repository.TableRepository;
-import org.springframework.context.ApplicationEventPublisher;
+import kitchenpos.ordertable.validator.OrderChecker;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
 
-    private final ApplicationEventPublisher applicationEventPublisher;
     private final TableRepository tableRepository;
+    private final OrderChecker orderChecker;
 
-    public TableService(ApplicationEventPublisher applicationEventPublisher,
-                        TableRepository tableRepository) {
-        this.applicationEventPublisher = applicationEventPublisher;
+    public TableService(TableRepository tableRepository, OrderChecker orderChecker) {
         this.tableRepository = tableRepository;
+        this.orderChecker = orderChecker;
     }
 
     @Transactional
@@ -47,8 +45,7 @@ public class TableService {
                                           OrderTableEmptyChangeRequest orderTableEmptyChangeRequest) {
         OrderTable savedOrderTable = tableRepository.findById(orderTableId)
                 .orElseThrow(OrderTableNotFoundException::new);
-        applicationEventPublisher.publishEvent(new OrderTableValidateEvent(orderTableId));
-        savedOrderTable.setEmpty(orderTableEmptyChangeRequest.isEmpty());
+        savedOrderTable.setEmpty(orderTableEmptyChangeRequest.isEmpty(), orderChecker);
         return new OrderTableResponse(tableRepository.save(savedOrderTable));
     }
 
