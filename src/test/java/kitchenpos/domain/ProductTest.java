@@ -11,7 +11,7 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@IgnoreDisplayNameUnderscores
 class ProductTest {
 
     @Nested
