@@ -48,7 +48,7 @@ public class OrderTableService {
         boolean anyMatchStatusIsComplete = orders.stream()
                 .noneMatch(Order::isCompletion);
         boolean existsOrderTableGroup = orderTableGroupDao.existsById(
-                orderTable.getOrderTableGroup().getId());
+                orderTable.getOrderTableGroupId());
 
         return !anyMatchStatusIsComplete && existsOrderTableGroup;
     }

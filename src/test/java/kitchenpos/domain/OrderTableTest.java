@@ -4,8 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -61,13 +59,10 @@ public class OrderTableTest {
     void isTableGrouping() {
         // given
         OrderTable orderTable = new OrderTable(3, false);
-        orderTable.group(new OrderTableGroup(LocalDateTime.now(), List.of(
-                new OrderTable(1, false),
-                new OrderTable(1, false)
-        )));
+        orderTable.group(1L);
 
         // when
-        boolean actual = orderTable.isTableGrouping();
+        boolean actual = orderTable.isTableGrouped();
 
         // then
         assertThat(actual).isTrue();
@@ -84,7 +79,7 @@ public class OrderTableTest {
 
         // then
         assertAll(
-                () -> assertThat(orderTable.getOrderTableGroup()).isNull(),
+                () -> assertThat(orderTable.getOrderTableGroupId()).isNull(),
                 () -> assertThat(orderTable.isEmpty()).isFalse()
         );
     }

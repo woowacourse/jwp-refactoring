@@ -96,14 +96,13 @@ public class OrderTableGroupServiceTest extends IntegrationTest {
             // given
             ArrayList<OrderTable> orderTables = new ArrayList<>();
 
-            OrderTableGroup orderTableGroup = orderTableGroupDao.save(new OrderTableGroup(LocalDateTime.now(), List.of(
+            OrderTableGroup orderTableGroup = orderTableGroupDao.save(OrderTableGroup.group(List.of(
                     new OrderTable(3, false), new OrderTable(2, false)
             )));
-            OrderTable groupedOrderTable = orderTableGroup.getOrderTables().get(0);
 
             OrderTable orderTable = orderTableDao.save(new OrderTable(1, false));
             orderTables.add(orderTable);
-            orderTables.add(groupedOrderTable);
+            orderTables.addAll(orderTableDao.findAllByOrderTableGroupId(orderTableGroup.getId()));
 
             // then
             assertThatThrownBy(() -> orderTableGroupService.create(orderTables))
@@ -119,7 +118,7 @@ public class OrderTableGroupServiceTest extends IntegrationTest {
         @Test
         void success() {
             // given
-            OrderTableGroup orderTableGroup = orderTableGroupDao.save(new OrderTableGroup(LocalDateTime.now(),
+            OrderTableGroup orderTableGroup = orderTableGroupDao.save(OrderTableGroup.group(
                     List.of(
                             new OrderTable(1, false),
                             new OrderTable(1, false),
@@ -141,7 +140,7 @@ public class OrderTableGroupServiceTest extends IntegrationTest {
         @Test
         void orderTablesStatusIsMealOrCooking_exception() {
             // given
-            OrderTableGroup orderTableGroup = orderTableGroupDao.save(new OrderTableGroup(LocalDateTime.now(),
+            OrderTableGroup orderTableGroup = orderTableGroupDao.save(OrderTableGroup.group(
                     List.of(
                             new OrderTable(1, false),
                             new OrderTable(1, false),

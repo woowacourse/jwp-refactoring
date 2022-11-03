@@ -82,7 +82,7 @@ public class OrderTableServiceTest extends IntegrationTest {
         @Test
         void success() {
             // given
-            OrderTableGroup orderTableGroup = orderTableGroupDao.save(new OrderTableGroup(LocalDateTime.now(), List.of(
+            OrderTableGroup orderTableGroup = orderTableGroupDao.save(OrderTableGroup.group(List.of(
                     new OrderTable(2, false),
                     new OrderTable(2, false)
             )));
@@ -116,7 +116,7 @@ public class OrderTableServiceTest extends IntegrationTest {
         void existTableGroup_exception() {
             // given
             OrderTableGroup orderTableGroup = orderTableGroupDao.save(
-                    new OrderTableGroup(LocalDateTime.now(), List.of(
+                    OrderTableGroup.group(List.of(
                             new OrderTable(2, false),
                             new OrderTable(3, false)
                     ))
@@ -132,7 +132,7 @@ public class OrderTableServiceTest extends IntegrationTest {
         @Test
         void existsOrderStatusIsCookingOrMeal_exception() {
             // given
-            OrderTableGroup orderTableGroup = orderTableGroupDao.save(new OrderTableGroup(LocalDateTime.now(),
+            OrderTableGroup orderTableGroup = orderTableGroupDao.save(OrderTableGroup.group(
                     List.of(
                             new OrderTable(2, false),
                             new OrderTable(3, false)

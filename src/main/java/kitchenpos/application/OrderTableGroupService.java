@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,13 +25,13 @@ public class OrderTableGroupService {
 
     @Transactional
     public OrderTableGroup create(List<OrderTable> orderTables) {
-        validateGroupingOrderTable(orderTables);
-        return orderTableGroupDao.save(new OrderTableGroup(LocalDateTime.now(), orderTables));
+        OrderTableGroup orderTableGroup = OrderTableGroup.group(orderTables);
+        return orderTableGroupDao.save(orderTableGroup);
     }
 
     private void validateGroupingOrderTable(List<OrderTable> orderTables) {
         if (orderTables.stream()
-                .anyMatch(OrderTable::isTableGrouping)) {
+                .anyMatch(OrderTable::isTableGrouped)) {
             throw new IllegalArgumentException();
         }
     }

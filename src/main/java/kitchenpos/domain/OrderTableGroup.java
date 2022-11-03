@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 @Entity
@@ -18,19 +19,24 @@ public class OrderTableGroup {
     private Long id;
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "orderTableGroup", cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "order_table_group_id")
     private List<OrderTable> orderTables = new ArrayList<>();
 
     public OrderTableGroup() {
     }
 
-    public OrderTableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
-        if (orderTables.size() < 2) {
-            throw new IllegalArgumentException();
-        }
+    private OrderTableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
         this.createdDate = createdDate;
         this.orderTables.addAll(orderTables);
-        orderTables.forEach(table -> table.group(this));
+    }
+
+    public static OrderTableGroup group(List<OrderTable> orderTables) {
+        if (orderTables.size() < 2 || orderTables.stream()
+                .anyMatch(OrderTable::isTableGrouped)) {
+            throw new IllegalArgumentException();
+        }
+        return new OrderTableGroup(LocalDateTime.now(), orderTables);
     }
 
     public void ungroup() {
