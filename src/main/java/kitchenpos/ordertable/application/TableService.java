@@ -1,13 +1,11 @@
 package kitchenpos.ordertable.application;
 
-import java.util.Arrays;
 import java.util.List;
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.ordertable.application.request.OrderTableCreateRequest;
 import kitchenpos.ordertable.application.request.OrderTableUpdateRequest;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
+import kitchenpos.ordertable.domain.TableDomainService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,12 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class TableService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final TableDomainService tableDomainService;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(final OrderTableRepository orderTableRepository, final TableDomainService tableDomainService) {
         this.orderTableRepository = orderTableRepository;
+        this.tableDomainService = tableDomainService;
     }
 
     @Transactional
@@ -34,16 +32,7 @@ public class TableService {
 
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final OrderTableUpdateRequest request) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 OrderTable 입니다."));
-
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException("해당 OrderTable의 Order중 아직 완료되지 않은 것이 존재합니다.");
-        }
-
-        savedOrderTable.changeEmpty(request.isEmpty());
-        return savedOrderTable;
+        return tableDomainService.changeEmpty(orderTableId, request.isEmpty());
     }
 
     @Transactional
