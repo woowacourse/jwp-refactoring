@@ -12,8 +12,4 @@ public class ProductFixture {
     public static Product 양념_치킨() {
         return new Product("양념치킨", BigDecimal.valueOf(19000));
     }
-
-    public static Product 포테이토_피자() {
-        return new Product("포테이토피자", BigDecimal.valueOf(15000));
-    }
 }
