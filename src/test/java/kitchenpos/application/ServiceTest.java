@@ -127,12 +127,13 @@ public abstract class ServiceTest {
 
     protected Order 주문을_저장한다(OrderTable orderTable) {
         Menu menu = 메뉴를_저장한다("메뉴");
-        OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 3L);
+        OrderLineItem orderLineItem = new OrderLineItem(null, menu.getName(), menu.getPrice(), 3L);
         Order order = new Order(orderTable.getId(), LocalDateTime.now(), List.of(orderLineItem));
 
         Order savedOrder = orderDao.save(order);
         orderLineItemDao.save(
-                new OrderLineItem(savedOrder.getId(), orderLineItem.getMenuId(), orderLineItem.getQuantity()));
+                new OrderLineItem(savedOrder.getId(), orderLineItem.getMenuName(), orderLineItem.getMenuPrice(),
+                        orderLineItem.getQuantity()));
 
         return savedOrder;
     }

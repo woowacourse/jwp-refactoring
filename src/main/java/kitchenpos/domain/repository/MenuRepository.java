@@ -53,7 +53,7 @@ public class MenuRepository {
                 )).collect(Collectors.toList());
     }
 
-    public Long countByIdIn(List<Long> ids) {
-        return menuDao.countByIdIn(ids);
+    public List<Menu> findByIdIn(List<Long> ids) {
+        return menuDao.findByIdIn(ids);
     }
 }

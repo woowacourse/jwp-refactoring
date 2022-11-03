@@ -1,11 +1,10 @@
 package kitchenpos.dto.request;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 
 public class OrderCreateRequest {
 
@@ -34,13 +33,22 @@ public class OrderCreateRequest {
                 .collect(Collectors.toList());
     }
 
-    public Order toEntity(Long actualMenusSize) {
-        return Order.newCookingInstanceOf(orderTableId, toOrderLineItemEntity(), actualMenusSize);
+    public Order toEntity(List<Menu> menus) {
+        return Order.newCookingInstanceOf(orderTableId, toOrderLineItemEntity(menus));
     }
 
-    private List<OrderLineItem> toOrderLineItemEntity() {
+    private List<OrderLineItem> toOrderLineItemEntity(List<Menu> menus) {
         return orderLineItems.stream()
-                .map(request -> new OrderLineItem(null, request.getMenuId(), request.getQuantity()))
+                .map(orderLineItem -> toOrderLineItem(menus, orderLineItem))
                 .collect(Collectors.toList());
+    }
+
+    private OrderLineItem toOrderLineItem(List<Menu> menus, OrderLineItemCreateRequest orderLineItem) {
+        Menu findMenu = menus.stream()
+                .filter(menu -> menu.getId().equals(orderLineItem.getMenuId()))
+                .findAny()
+                .orElseThrow(IllegalArgumentException::new);
+
+        return new OrderLineItem(null, findMenu.getName(), findMenu.getPrice(), orderLineItem.getQuantity());
     }
 }

@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -9,7 +10,6 @@ import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.dto.request.OrderCreateRequest;
-import kitchenpos.dto.request.OrderLineItemCreateRequest;
 import kitchenpos.dto.request.OrderStatusUpdateRequest;
 import kitchenpos.dto.response.OrderResponse;
 import org.springframework.stereotype.Service;
@@ -32,16 +32,17 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(OrderCreateRequest request) {
-        Order order = request.toEntity(menuRepository.countByIdIn(request.toMenuIds()));
+        List<Menu> menus = menuRepository.findByIdIn(request.toMenuIds());
+        Order order = request.toEntity(menus);
 
-        validateTableExistence(orderTableRepository.findById(order.getOrderTableId()));
+        validateIsEmptyTable(orderTableRepository.findById(order.getOrderTableId()));
 
         Order savedOrder = orderRepository.save(order);
 
         return OrderResponse.from(savedOrder);
     }
 
-    private void validateTableExistence(OrderTable orderTable) {
+    private void validateIsEmptyTable(OrderTable orderTable) {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }

@@ -35,7 +35,7 @@ public class OrderRepository {
     private List<OrderLineItem> saveOrderLineItems(Order order, Long orderId) {
         return order.getOrderLineItems().stream()
                 .map(orderLineItem -> new OrderLineItem(
-                        orderId, orderLineItem.getMenuId(), orderLineItem.getQuantity()))
+                        orderId, orderLineItem.getMenuName(), orderLineItem.getMenuPrice(), orderLineItem.getQuantity()))
                 .map(orderLineItemDao::save)
                 .collect(Collectors.toList());
     }

@@ -31,22 +31,14 @@ public class Order {
         this(null, orderTableId, OrderStatus.COOKING.name(), orderedTime, orderLineItems);
     }
 
-    public static Order newCookingInstanceOf(Long orderTableId, List<OrderLineItem> orderLineItems,
-                                             Long actualMenusSize) {
+    public static Order newCookingInstanceOf(Long orderTableId, List<OrderLineItem> orderLineItems) {
         validateNotEmpty(orderLineItems);
-        validateMenuExistence(orderLineItems, actualMenusSize);
 
         return new Order(null, orderTableId, OrderStatus.COOKING.name(), null, orderLineItems);
     }
 
     private static void validateNotEmpty(List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private static void validateMenuExistence(List<OrderLineItem> orderLineItems, Long actualMenusSize) {
-        if (orderLineItems.size() != actualMenusSize) {
             throw new IllegalArgumentException();
         }
     }
