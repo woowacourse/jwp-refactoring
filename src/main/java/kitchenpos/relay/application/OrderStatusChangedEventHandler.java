@@ -1,4 +1,4 @@
-package kitchenpos.table.application;
+package kitchenpos.relay.application;
 
 import kitchenpos.order.domain.OrderStatusChangedEvent;
 import kitchenpos.table.domain.OrderTable;
