@@ -30,7 +30,7 @@ public class Price {
 
     private void validatePriceIsNotNullAndIsHigherMinimum(final BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException(String.format("상품의 가격은 null 이 아니며 0원 이상이어야 합니다. [%s]", price));
+            throw new IllegalArgumentException(String.format("가격은 null 이 아니며 0원 이상이어야 합니다. [%s]", price));
         }
     }
 
