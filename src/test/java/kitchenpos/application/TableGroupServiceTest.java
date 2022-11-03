@@ -14,6 +14,8 @@ import java.util.List;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.dto.TableGroupInnerOrderTableRequest;
+import kitchenpos.ui.dto.TableGroupRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -27,10 +29,12 @@ class TableGroupServiceTest extends FakeSpringContext {
         final var singleTable = orderTableDao.save(emptyTable(1));
         final var doubleTable = orderTableDao.save(emptyTable(2));
 
-        final var tableGroup = tableGroup(singleTable, doubleTable);
+        final var singTableRequest = new TableGroupInnerOrderTableRequest(singleTable.getId());
+        final var doubleTableRequest = new TableGroupInnerOrderTableRequest(doubleTable.getId());
+        final var request = new TableGroupRequest(List.of(singTableRequest, doubleTableRequest));
 
-        final var result = tableGroupService.create(tableGroup);
-        assertThat(result.getOrderTables().size()).isEqualTo(tableGroup.getOrderTables().size());
+        final var result = tableGroupService.create(request);
+        assertThat(result.getOrderTables().size()).isEqualTo(request.getOrderTableRequests().size());
     }
 
     @DisplayName("테이블 그룹 해제")

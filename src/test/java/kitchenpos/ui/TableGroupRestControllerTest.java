@@ -4,9 +4,12 @@ import static kitchenpos.fixture.TableGroupFactory.tableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.List;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.fixture.OrderTableFactory;
+import kitchenpos.ui.dto.TableGroupInnerOrderTableRequest;
+import kitchenpos.ui.dto.TableGroupRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +34,11 @@ class TableGroupRestControllerTest {
         final var singleTable = orderTableDao.save(OrderTableFactory.emptyTable(1));
         final var coupleTable = orderTableDao.save(OrderTableFactory.emptyTable(2));
 
-        final var response = tableGroupRestController.create(tableGroup(singleTable, coupleTable));
+        final var singTableRequest = new TableGroupInnerOrderTableRequest(singleTable.getId());
+        final var coupleTableRequest = new TableGroupInnerOrderTableRequest(coupleTable.getId());
+        final var request = new TableGroupRequest(List.of(singTableRequest, coupleTableRequest));
+
+        final var response = tableGroupRestController.create(request);
 
         assertAll(
                 () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED),
