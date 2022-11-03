@@ -8,7 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import kitchenpos.domain.vo.Price;
+import kitchenpos.domain.vo.MenuPrice;
 
 @Entity
 public class Menu {
@@ -19,7 +19,7 @@ public class Menu {
     @Column(name = "name", nullable = false)
     private String name;
     @Embedded
-    private Price price;
+    private MenuPrice price;
     @Column(name = "menu_group_id", nullable = false)
     private Long menuGroupId;
     @Embedded
@@ -28,7 +28,7 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(final Long id, final String name, final Price price, final Long menuGroupId,
+    public Menu(final Long id, final String name, final MenuPrice price, final Long menuGroupId,
                 final List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
@@ -37,7 +37,7 @@ public class Menu {
         this.menuProducts = new MenuProducts(this, menuProducts);
     }
 
-    public Menu(final String name, final Price price, final Long menuGroupId,
+    public Menu(final String name, final MenuPrice price, final Long menuGroupId,
                 final List<MenuProduct> menuProducts) {
         this(null, name, price, menuGroupId, menuProducts);
     }
@@ -50,7 +50,7 @@ public class Menu {
         return name;
     }
 
-    public Price getPrice() {
+    public MenuPrice getPrice() {
         return price;
     }
 

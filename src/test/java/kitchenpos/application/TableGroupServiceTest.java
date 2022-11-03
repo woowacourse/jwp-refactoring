@@ -18,7 +18,8 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
-import kitchenpos.domain.vo.Price;
+import kitchenpos.domain.vo.MenuPrice;
+import kitchenpos.domain.vo.ProductPrice;
 import kitchenpos.exception.badrequest.TableGroupIdInvalidException;
 import kitchenpos.exception.notfound.TableGroupNotFoundException;
 import kitchenpos.repository.MenuGroupRepository;
@@ -57,10 +58,10 @@ class TableGroupServiceTest extends ServiceTest {
     void setUpTables() {
         this.tableA = tableService.create(삼인용_테이블);
         this.tableB = tableService.create(오인용_테이블);
-        this.product = productRepository.save(new Product("후라이드 치킨", Price.from("15000.00")));
+        this.product = productRepository.save(new Product("후라이드 치킨", ProductPrice.from("15000.00")));
         this.menuGroup = menuGroupRepository.save(new MenuGroup("한 마리 메뉴"));
         this.menu = menuRepository.save(
-                new Menu("후라이드 한 마리", Price.from(new BigDecimal("15000.00")), menuGroup.getId(),
+                new Menu("후라이드 한 마리", MenuPrice.from(new BigDecimal("15000.00")), menuGroup.getId(),
                         List.of(new MenuProduct(product, 1L))));
     }
 

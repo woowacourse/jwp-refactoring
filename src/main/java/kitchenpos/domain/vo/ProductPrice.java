@@ -7,14 +7,14 @@ import javax.persistence.Embeddable;
 import kitchenpos.exception.badrequest.PriceInvalidException;
 
 @Embeddable
-public class Price {
+public class ProductPrice {
     @Column(name = "price", nullable = false)
     private BigDecimal price;
 
-    protected Price() {
+    protected ProductPrice() {
     }
 
-    private Price(final BigDecimal price) {
+    private ProductPrice(final BigDecimal price) {
         if (Objects.isNull(price) || isLessThanZero(price)) {
             throw new PriceInvalidException();
         }
@@ -22,12 +22,12 @@ public class Price {
         this.price = price;
     }
 
-    public static Price from(final BigDecimal price) {
-        return new Price(price);
+    public static ProductPrice from(final BigDecimal price) {
+        return new ProductPrice(price);
     }
 
-    public static Price from(final String price) {
-        return Price.from(new BigDecimal(price));
+    public static ProductPrice from(final String price) {
+        return ProductPrice.from(new BigDecimal(price));
     }
 
     public boolean isLessThanZero() {
@@ -42,7 +42,7 @@ public class Price {
         return price;
     }
 
-    public Price multiply(final long quantity) {
-        return new Price(this.price.multiply(BigDecimal.valueOf(quantity)));
+    public ProductPrice multiply(final long quantity) {
+        return new ProductPrice(this.price.multiply(BigDecimal.valueOf(quantity)));
     }
 }

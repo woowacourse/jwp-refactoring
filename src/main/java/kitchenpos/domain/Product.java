@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import kitchenpos.domain.vo.Price;
+import kitchenpos.domain.vo.ProductPrice;
 import kitchenpos.exception.badrequest.PriceInvalidException;
 import kitchenpos.exception.badrequest.ProductNameInvalidException;
 import org.springframework.util.StringUtils;
@@ -21,12 +21,12 @@ public class Product {
     @Column(name = "name", nullable = false)
     private String name;
     @Embedded
-    private Price price;
+    private ProductPrice price;
 
     protected Product() {
     }
 
-    public Product(final Long id, final String name, final Price price) {
+    public Product(final Long id, final String name, final ProductPrice price) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -35,7 +35,7 @@ public class Product {
         validatePrice();
     }
 
-    public Product(final String name, final Price price) {
+    public Product(final String name, final ProductPrice price) {
         this(null, name, price);
     }
 
@@ -59,7 +59,7 @@ public class Product {
         return name;
     }
 
-    public Price getPrice() {
+    public ProductPrice getPrice() {
         return price;
     }
 }

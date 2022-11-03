@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import kitchenpos.domain.vo.Price;
+import kitchenpos.domain.vo.ProductPrice;
 import kitchenpos.exception.badrequest.PriceInvalidException;
 import kitchenpos.exception.badrequest.ProductNameInvalidException;
 import org.junit.jupiter.api.DisplayName;
@@ -25,12 +25,12 @@ class ProductTest {
             final var price = new BigDecimal("20000.00");
 
             // when
-            final var actual = new Product(name, Price.from(price));
+            final var actual = new Product(name, ProductPrice.from(price));
 
             // then
             assertThat(actual)
                     .usingRecursiveComparison()
-                    .isEqualTo(new Product(null, name, Price.from(price)));
+                    .isEqualTo(new Product(null, name, ProductPrice.from(price)));
         }
 
         @DisplayName("name이 null이거나 비어있을 경우 예외가 발생한다")
@@ -42,7 +42,7 @@ class ProductTest {
             final var price = new BigDecimal("20000.00");
 
             // when & then
-            assertThatThrownBy(() -> new Product(name, Price.from(price)))
+            assertThatThrownBy(() -> new Product(name, ProductPrice.from(price)))
                     .isInstanceOf(ProductNameInvalidException.class);
         }
 
@@ -54,7 +54,7 @@ class ProductTest {
             final BigDecimal price = null;
 
             // when & then
-            assertThatThrownBy(() -> new Product(name, Price.from(price)))
+            assertThatThrownBy(() -> new Product(name, ProductPrice.from(price)))
                     .isInstanceOf(PriceInvalidException.class);
         }
 
@@ -66,7 +66,7 @@ class ProductTest {
             final var price = new BigDecimal("-1.00");
 
             // when & then
-            assertThatThrownBy(() -> new Product(name, Price.from(price)))
+            assertThatThrownBy(() -> new Product(name, ProductPrice.from(price)))
                     .isInstanceOf(PriceInvalidException.class);
         }
     }
