@@ -44,7 +44,7 @@ public class OrderService {
             throw new IllegalArgumentException("테이블이 비었습니다");
         }
 
-        Order order = orderDao.save(new Order(orderTable.getId(), OrderStatus.COOKING, request.getOrderLineItems()));
+        Order order = orderDao.save(Order.of(orderTable.getId(), OrderStatus.COOKING, request.getOrderLineItems()));
         return new OrderResponse(order);
     }
 

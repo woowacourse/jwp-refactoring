@@ -45,7 +45,7 @@ public class Fixture {
     }
 
     public static Order 주문(Long tableId, Long menuId) {
-        return new Order(tableId, OrderStatus.COOKING, List.of(주문정보(menuId)));
+        return Order.of(tableId, OrderStatus.COOKING, List.of(주문정보(menuId)));
     }
 
     public static TableGroup 테이블집합(OrderTable... orderTables) {

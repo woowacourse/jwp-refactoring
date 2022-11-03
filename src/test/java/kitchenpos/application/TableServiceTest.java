@@ -57,7 +57,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 테이블을_비울때_조리중인_주문이_있는_경우_예외를_발생시킨다() {
         OrderTable savedTable = 테이블_생성(false);
-        Order request = new Order(savedTable.getId(), null, List.of(주문정보(메뉴_생성().getId())));
+        Order request = Order.of(savedTable.getId(), null, List.of(주문정보(메뉴_생성().getId())));
         orderService.create(request);
 
         assertThatThrownBy(() -> tableService.changeEmpty(savedTable.getId(), new OrderTable(0, true)))

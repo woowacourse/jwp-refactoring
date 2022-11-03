@@ -15,11 +15,8 @@ public class OrderRequest {
         this.orderLineItems = orderLineItems;
     }
 
-    private OrderRequest() {
-    }
-
     public Order toOrder() {
-        return new Order(orderTableId, null, toOrderLineItemRequest(orderLineItems));
+        return Order.of(orderTableId, null, toOrderLineItemRequest(orderLineItems));
     }
 
     private List<OrderLineItem> toOrderLineItemRequest(List<OrderLineItemRequest> orderLineItems) {

@@ -12,25 +12,25 @@ public class Order {
     private OrderStatus orderStatus;
     private List<OrderLineItem> orderLineItems;
 
+    public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
+        this(id, orderTableId, orderStatus, orderedTime, null);
+    }
+
     private Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
                   List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
-        this.orderedTime = LocalDateTime.now();
+        this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
     }
 
-    public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
-        this(id, orderTableId, orderStatus, orderedTime, null);
-    }
-
-    public Order(Long orderTableId, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, orderStatus, null, orderLineItems);
+    public static Order of(Long orderTableId, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
         validateEmptyOrderLineItems(orderLineItems);
+        return new Order(null, orderTableId, orderStatus, LocalDateTime.now(), orderLineItems);
     }
 
-    private void validateEmptyOrderLineItems(List<OrderLineItem> orderLineItems) {
+    private static void validateEmptyOrderLineItems(List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException("주문 정보가 없습니다.");
         }

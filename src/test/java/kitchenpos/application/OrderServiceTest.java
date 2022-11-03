@@ -20,7 +20,7 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문을_생성한다() {
-        Order request = new Order(테이블_생성(false).getId(), null, List.of(주문정보(메뉴_생성().getId())));
+        Order request = Order.of(테이블_생성(false).getId(), null, List.of(주문정보(메뉴_생성().getId())));
 
         OrderResponse actual = orderService.create(request);
         assertThat(actual.getId()).isExactlyInstanceOf(Long.class);
@@ -28,7 +28,7 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문을_생성할때_주문정보와_저장된_메뉴와_다를_경우_예외를_발생시킨다() {
-        Order request = new Order(테이블_생성(false).getId(), null, List.of(주문정보(-1L)));
+        Order request = Order.of(테이블_생성(false).getId(), null, List.of(주문정보(-1L)));
 
         assertThatThrownBy(() -> orderService.create(request))
                 .isExactlyInstanceOf(IllegalArgumentException.class)
@@ -37,7 +37,7 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문을_생성할때_테이블이_존재하지_않는_경우_예외를_발생시킨다() {
-        Order request = new Order(-1L, null, List.of(주문정보(메뉴_생성().getId())));
+        Order request = Order.of(-1L, null, List.of(주문정보(메뉴_생성().getId())));
 
         assertThatThrownBy(() -> orderService.create(request))
                 .isExactlyInstanceOf(IllegalArgumentException.class)
@@ -46,7 +46,7 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 테이블이_빈_경우_예외를_발생시킨다() {
-        Order request = new Order(테이블_생성(true).getId(), null, List.of(주문정보(메뉴_생성().getId())));
+        Order request = Order.of(테이블_생성(true).getId(), null, List.of(주문정보(메뉴_생성().getId())));
 
         assertThatThrownBy(() -> orderService.create(request))
                 .isExactlyInstanceOf(IllegalArgumentException.class)
