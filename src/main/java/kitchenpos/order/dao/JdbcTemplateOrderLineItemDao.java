@@ -3,6 +3,7 @@ package kitchenpos.order.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import javax.sql.DataSource;
 import kitchenpos.order.domain.OrderLineItem;
@@ -33,9 +34,12 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
 
     @Override
     public OrderLineItem save(final OrderLineItem entity) {
-        final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
-        final Number key = jdbcInsert.executeAndReturnKey(parameters);
-        return select(key.longValue());
+        if (Objects.isNull(entity.getSeq())) {
+            final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
+            final Number key = jdbcInsert.executeAndReturnKey(parameters);
+            return select(key.longValue());
+        }
+        return entity;
     }
 
     @Override

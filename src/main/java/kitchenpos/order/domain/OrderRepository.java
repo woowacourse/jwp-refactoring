@@ -2,7 +2,6 @@ package kitchenpos.order.domain;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.order.dao.OrderDao;
 import kitchenpos.order.dao.OrderLineItemDao;
 import org.springframework.stereotype.Repository;
@@ -30,7 +29,7 @@ public class OrderRepository {
 
         for (final OrderLineItem orderLineItem : orderLineItems) {
             final OrderLineItem orderLineItemWithOrderId = new OrderLineItem(
-                    null,
+                    orderLineItem.getSeq(),
                     orderId,
                     orderLineItem.getMenuId(),
                     orderLineItem.getMenuName(),
@@ -52,32 +51,23 @@ public class OrderRepository {
     }
 
     public List<Order> findAll() {
-        final List<Order> orders = new ArrayList<>();
         final List<Order> orderEntities = orderDao.findAll();
 
+        return toOrders(orderEntities);
+    }
+
+    public List<Order> findByOrderTableId(final Long orderTableId) {
+        final List<Order> orderEntities = orderDao.findByOrderTableId(orderTableId);
+
+        return toOrders(orderEntities);
+    }
+
+    private List<Order> toOrders(final List<Order> orderEntities) {
+        final List<Order> orders = new ArrayList<>();
         for (final Order orderEntity : orderEntities) {
             final List<OrderLineItem> orderLineItemEntities = orderLineItemDao.findAllByOrderId(orderEntity.getId());
             orders.add(OrderFactory.create(orderEntity, orderLineItemEntities));
         }
-
         return orders;
-    }
-
-    public boolean existsByOrderTableIdAndOrderStatusIn(final Long orderTableId,
-                                                        final List<OrderStatus> orderStatuses) {
-        final List<String> orderStatusNames = orderStatuses.stream()
-                .map(Enum::name)
-                .collect(Collectors.toList());
-
-        return orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, orderStatusNames);
-    }
-
-    public boolean existsByOrderTableIdInAndOrderStatusIn(final List<Long> orderTableIds,
-                                                          final List<OrderStatus> orderStatuses) {
-        final List<String> orderStatusNames = orderStatuses.stream()
-                .map(Enum::name)
-                .collect(Collectors.toList());
-
-        return orderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, orderStatusNames);
     }
 }

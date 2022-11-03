@@ -31,7 +31,7 @@ public class MenuRepository {
 
         for (final MenuProduct menuProduct : menuProducts) {
             final MenuProduct menuProductWithMenuId = new MenuProduct(
-                    null,
+                    menuProduct.getSeq(),
                     menuId,
                     menuProduct.getProductId(),
                     menuProduct.getPrice(),

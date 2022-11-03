@@ -2,9 +2,9 @@ package kitchenpos.table.ui;
 
 import java.net.URI;
 import java.util.List;
-import kitchenpos.table.application.TableService;
 import kitchenpos.order.dto.request.EmptyRequest;
 import kitchenpos.order.dto.request.NumberOfGuestsRequest;
+import kitchenpos.table.application.TableService;
 import kitchenpos.table.dto.request.OrderTableRequest;
 import kitchenpos.table.dto.response.OrderTableResponse;
 import org.springframework.http.ResponseEntity;
