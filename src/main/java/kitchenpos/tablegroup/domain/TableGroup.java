@@ -1,4 +1,4 @@
-package kitchenpos.table.domain;
+package kitchenpos.tablegroup.domain;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -13,6 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import kitchenpos.exception.NotEnoughForGroupingException;
 import kitchenpos.exception.OrderTableSizeException;
+import kitchenpos.table.domain.OrderTable;
 import org.springframework.util.CollectionUtils;
 
 @Table(name = "table_group")

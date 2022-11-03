@@ -10,7 +10,7 @@ import kitchenpos.exception.TableEmptyException;
 import kitchenpos.support.fixtures.OrderTableFixtures;
 import kitchenpos.support.fixtures.TableGroupFixtures;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

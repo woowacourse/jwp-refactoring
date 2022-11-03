@@ -1,4 +1,4 @@
-package kitchenpos.table;
+package kitchenpos.tablegroup;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -8,7 +8,7 @@ import kitchenpos.exception.OrderTableSizeException;
 import kitchenpos.support.fixtures.OrderTableFixtures;
 import kitchenpos.support.fixtures.TableGroupFixtures;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

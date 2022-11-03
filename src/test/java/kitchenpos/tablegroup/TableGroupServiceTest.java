@@ -1,4 +1,4 @@
-package kitchenpos.table;
+package kitchenpos.tablegroup;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -24,10 +24,10 @@ import kitchenpos.support.fixtures.OrderLineItemFixtures;
 import kitchenpos.support.fixtures.OrderTableFixtures;
 import kitchenpos.support.fixtures.TableGroupFixtures;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.dto.OrderTableRequest;
-import kitchenpos.table.dto.TableGroupCreateRequest;
-import kitchenpos.table.dto.TableGroupResponse;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.dto.TableGroupCreateRequest;
+import kitchenpos.tablegroup.dto.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
