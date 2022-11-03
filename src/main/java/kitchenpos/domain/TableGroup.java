@@ -18,7 +18,6 @@ public class TableGroup {
     }
 
     public TableGroup(final Long id, final LocalDateTime createdDate, final OrderTables orderTables) {
-        orderTables.validateGroupSize();
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;

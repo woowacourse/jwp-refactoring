@@ -6,29 +6,29 @@ import org.springframework.util.CollectionUtils;
 
 public class OrderTables {
 
-    private List<OrderTable> orderTables;
+    private final List<OrderTable> value;
 
-    public OrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
+    public OrderTables(final List<OrderTable> value) {
+        validate(value);
+        this.value = value;
+    }
+
+    private void validate(final List<OrderTable> orderTables) {
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public void group() {
-        validateGroupSize();
-        for (final OrderTable orderTable : orderTables) {
+        for (final OrderTable orderTable : value) {
             validateOrderTableIsAbleToGroup(orderTable);
             orderTable.setEmpty(false);
         }
     }
 
     public void ungroup() {
-        for (final OrderTable orderTable : orderTables) {
+        for (final OrderTable orderTable : value) {
             orderTable.ungroup();
-        }
-    }
-
-    public void validateGroupSize() {
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
         }
     }
 
@@ -39,10 +39,10 @@ public class OrderTables {
     }
 
     public List<OrderTable> getOrderTables() {
-        return orderTables;
+        return value;
     }
 
     public int size() {
-        return orderTables.size();
+        return value.size();
     }
 }

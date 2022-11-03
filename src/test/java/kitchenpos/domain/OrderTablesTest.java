@@ -11,6 +11,23 @@ import org.junit.jupiter.api.Test;
 class OrderTablesTest {
 
     @Nested
+    @DisplayName("생성자는")
+    class Constructor {
+
+        @Test
+        @DisplayName("그룹화할 orderTable이 2개 미만인 경우 예외를 던진다.")
+        void orderTableSize_SmallerThanTwo_ExceptionThrown() {
+            // given
+            final OrderTable orderTable = new OrderTable(2, false);
+            List<OrderTable> orderTables = List.of(orderTable);
+
+            // when & then
+            assertThatThrownBy(() -> new OrderTables(orderTables))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+    }
+
+    @Nested
     @DisplayName("group 메서드는")
     class Group {
 

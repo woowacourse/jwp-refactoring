@@ -51,18 +51,6 @@ class TableGroupServiceTest extends ServiceTest {
         }
 
         @Test
-        @DisplayName("그룹화할 orderTable이 2개 미만인 경우 예외를 던진다.")
-        void orderTableSize_SmallerThanTwo_ExceptionThrown() {
-            // given
-            OrderTable orderTable1 = saveOrderTable(2, true);
-            TableGroupRequest request = createTableGroupRequest(orderTable1);
-
-            // when & then
-            assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
         @DisplayName("그룹화할 orderTable이 존재하지 않는 경우 예외를 던진다.")
         void orderTable_NotExist_ExceptionThrown() {
             // given
