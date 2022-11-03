@@ -7,4 +7,6 @@ public interface OrderMenuDao {
     OrderMenu getById(final Long id);
 
     OrderMenu save(OrderMenu orderMenu);
+
+    OrderMenu getByMenuId(Long menuId);
 }

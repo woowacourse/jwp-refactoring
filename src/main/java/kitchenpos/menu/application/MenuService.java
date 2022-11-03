@@ -7,9 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.menu.application.request.MenuRequest;
 import kitchenpos.menu.application.response.MenuResponse;
+import kitchenpos.menu.application.validator.MenuValidator;
 import kitchenpos.menu.dao.MenuDao;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.application.validator.MenuValidator;
 
 @Service
 @Transactional(readOnly = true)
@@ -17,10 +17,13 @@ public class MenuService {
 
     private final MenuDao menuDao;
     private final MenuValidator menuValidator;
+    private final MenuCreateEventPublisher menuCreateEventPublisher;
 
-    public MenuService(final MenuDao menuDao, final MenuValidator menuValidator) {
+    public MenuService(final MenuDao menuDao, final MenuValidator menuValidator,
+        final MenuCreateEventPublisher menuCreateEventPublisher) {
         this.menuDao = menuDao;
         this.menuValidator = menuValidator;
+        this.menuCreateEventPublisher = menuCreateEventPublisher;
     }
 
     @Transactional
@@ -28,7 +31,9 @@ public class MenuService {
         Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(),
             request.getMenuProducts());
         menuValidator.validate(menu);
-        return MenuResponse.from(menuDao.save(menu));
+        Menu savedMenu = menuDao.save(menu);
+        menuCreateEventPublisher.publish(savedMenu);
+        return MenuResponse.from(savedMenu);
     }
 
     public List<MenuResponse> list() {

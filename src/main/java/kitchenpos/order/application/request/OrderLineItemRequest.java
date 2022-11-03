@@ -1,7 +1,5 @@
 package kitchenpos.order.application.request;
 
-import kitchenpos.order.domain.OrderLineItem;
-
 public class OrderLineItemRequest {
 
     private Long seq;
@@ -17,10 +15,6 @@ public class OrderLineItemRequest {
         this.orderId = orderId;
         this.menuId = menuId;
         this.quantity = quantity;
-    }
-
-    public OrderLineItem toEntity() {
-        return new OrderLineItem(seq, orderId, menuId, quantity);
     }
 
     public Long getSeq() {

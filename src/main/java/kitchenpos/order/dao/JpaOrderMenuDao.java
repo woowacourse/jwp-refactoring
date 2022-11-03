@@ -24,4 +24,10 @@ public class JpaOrderMenuDao implements OrderMenuDao {
     public OrderMenu save(final OrderMenu orderMenu) {
         return menuOrderRepository.save(orderMenu);
     }
+
+    @Override
+    public OrderMenu getByMenuId(final Long menuId) {
+        return menuOrderRepository.findByMenuId(menuId)
+            .orElseThrow(() -> new IllegalArgumentException("matched menu not found"));
+    }
 }

@@ -38,10 +38,4 @@ public class OrderRequest {
     public List<OrderLineItemRequest> getOrderLineItemRequests() {
         return orderLineItemRequests;
     }
-
-    public List<OrderLineItem> toOrderLineItems() {
-        return orderLineItemRequests.stream()
-            .map(OrderLineItemRequest::toEntity)
-            .collect(Collectors.toUnmodifiableList());
-    }
 }

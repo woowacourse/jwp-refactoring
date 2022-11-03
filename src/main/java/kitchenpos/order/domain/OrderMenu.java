@@ -17,6 +17,9 @@ public class OrderMenu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "menu_id")
+    private Long menuId;
+
     @Column(name = "name")
     private String name;
 
@@ -26,14 +29,15 @@ public class OrderMenu {
     protected OrderMenu() {
     }
 
-    public OrderMenu(final Long id, final String name, final BigDecimal price) {
+    public OrderMenu(final Long id, final Long menuId, final String name, final BigDecimal price) {
         this.id = id;
+        this.menuId = menuId;
         this.name = name;
         this.price = price;
     }
 
-    public OrderMenu(final String name, final BigDecimal price) {
-        this(null, name, price);
+    public OrderMenu(final Long menuId, final String name, final BigDecimal price) {
+        this(null, menuId, name, price);
     }
 
     public Long getId() {
