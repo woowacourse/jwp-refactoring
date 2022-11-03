@@ -69,7 +69,7 @@ class OrderServiceTest {
             OrderResponse actual = orderService.create(OrderDtoFixture.주문_생성_요청(order, orderLineItems));
 
             assertThat(actual).usingRecursiveComparison()
-                .ignoringFields("id", "orderedTime", "orderLineItems.id", "orderLineItems.orderId")
+                .ignoringFields("id", "orderedTime", "orderLineItems.id", "orderLineItems.orderId", "orderLineItems.menuName")
                 .isEqualTo(OrderDtoFixture.주문_생성_응답(order, orderLineItems));
         }
     }

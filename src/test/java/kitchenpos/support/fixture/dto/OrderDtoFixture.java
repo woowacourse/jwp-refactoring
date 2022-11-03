@@ -22,7 +22,6 @@ public class OrderDtoFixture {
         List<OrderLineItemResponse> orderLineItemResponses = orderLineItems.stream()
             .map(OrderLineItemResponse::toResponse)
             .collect(Collectors.toList());
-        return new OrderResponse(order.getId(), order.getOrderTableId(), order.getOrderStatus().name(),
-            order.getOrderedTime(), orderLineItemResponses);
+        return OrderResponse.toResponse(order, orderLineItems);
     }
 }

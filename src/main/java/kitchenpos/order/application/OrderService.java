@@ -2,11 +2,14 @@ package kitchenpos.order.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.el.MethodNotFoundException;
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.dao.MenuDao;
 import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.application.dto.OrderSaveRequest;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderMenu;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.dao.OrderDao;
 import kitchenpos.order.domain.dao.OrderLineItemDao;
@@ -38,7 +41,8 @@ public class OrderService {
         Long orderTableId = request.getOrderTableId();
         validateOrderTable(orderTableId);
         Order order = orderDao.save(Order.from(orderTableId));
-        List<OrderLineItem> orderLineItems = request.toOrderLineItemsEntities(order.getId()).stream()
+        List<OrderLineItem> orderLineItems = request.getOrderLineItems().stream()
+            .map(it -> it.toEntity(order.getId(), toOrderMenu(it.getMenuId())))
             .map(orderLineItemDao::save)
             .collect(Collectors.toList());
         validateOrderLineItems(orderLineItems);
@@ -51,16 +55,14 @@ public class OrderService {
     }
 
     private void validateOrderLineItems(List<OrderLineItem> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems) || isSavedMenus(orderLineItems)) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new InvalidOrderLineItemCreateException();
         }
     }
 
-    private boolean isSavedMenus(List<OrderLineItem> orderLineItems) {
-        List<Long> menuIds = orderLineItems.stream()
-            .map(OrderLineItem::getMenuId)
-            .collect(Collectors.toList());
-        return orderLineItems.size() != menuDao.countByIdIn(menuIds);
+    private OrderMenu toOrderMenu(Long menuId) {
+        Menu menu = findMenu(menuId);
+        return OrderMenu.of(menu);
     }
 
     public List<OrderResponse> list() {
@@ -88,5 +90,10 @@ public class OrderService {
     private OrderTable findOrderTable(Long orderTableId) {
         return orderTableDao.findById(orderTableId)
             .orElseThrow(OrderTableNotFoundException::new);
+    }
+
+    private Menu findMenu(Long menuId) {
+        return menuDao.findById(menuId)
+            .orElseThrow(MethodNotFoundException::new);
     }
 }

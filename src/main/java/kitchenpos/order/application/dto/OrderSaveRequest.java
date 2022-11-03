@@ -1,8 +1,6 @@
 package kitchenpos.order.application.dto;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import kitchenpos.order.domain.OrderLineItem;
 
 public class OrderSaveRequest {
 
@@ -14,13 +12,11 @@ public class OrderSaveRequest {
         this.orderLineItems = orderLineItems;
     }
 
-    public List<OrderLineItem> toOrderLineItemsEntities(Long orderId) {
-        return orderLineItems.stream()
-            .map(it -> it.toEntity(orderId))
-            .collect(Collectors.toList());
-    }
-
     public Long getOrderTableId() {
         return orderTableId;
+    }
+
+    public List<OrderLineItemSaveRequest> getOrderLineItems() {
+        return orderLineItems;
     }
 }
