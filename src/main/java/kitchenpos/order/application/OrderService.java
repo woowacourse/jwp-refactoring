@@ -11,7 +11,7 @@ import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.domain.OrderedMenu;
-import kitchenpos.order.domain.common.Price;
+import kitchenpos.order.domain.Price;
 import kitchenpos.order.exception.NotFoundException;
 import kitchenpos.order.repository.OrderLineItemRepository;
 import kitchenpos.order.repository.OrderRepository;

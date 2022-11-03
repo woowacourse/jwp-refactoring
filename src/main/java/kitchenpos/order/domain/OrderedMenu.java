@@ -5,7 +5,6 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
-import kitchenpos.order.domain.common.Price;
 
 @Embeddable
 public class OrderedMenu {

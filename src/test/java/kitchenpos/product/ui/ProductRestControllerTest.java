@@ -1,4 +1,4 @@
-package kitchenpos.menu.ui;
+package kitchenpos.product.ui;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -9,9 +9,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
-import kitchenpos.menu.application.ProductService;
-import kitchenpos.menu.ui.dto.request.ProductCreateRequest;
-import kitchenpos.menu.ui.dto.response.ProductCreateResponse;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.ui.dto.request.ProductCreateRequest;
+import kitchenpos.product.ui.dto.response.ProductCreateResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
