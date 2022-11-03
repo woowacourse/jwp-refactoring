@@ -1,0 +1,54 @@
+package kitchenpos.table.domain;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import kitchenpos.table.domain.OrderTable;
+import org.springframework.util.CollectionUtils;
+
+public class TableGroup {
+    private Long id;
+    private LocalDateTime createdDate;
+    private List<OrderTable> orderTables;
+
+
+    public TableGroup() {}
+
+    public TableGroup(LocalDateTime now) {
+        this.createdDate = now;
+    }
+
+    public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
+        validateOrderTablesEmpty(orderTables);
+        this.createdDate = createdDate;
+        this.orderTables = orderTables;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(final LocalDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public List<OrderTable> getOrderTables() {
+        return orderTables;
+    }
+
+    public void setOrderTables(final List<OrderTable> orderTables) {
+        this.orderTables = orderTables;
+    }
+
+    public void validateOrderTablesEmpty(List<OrderTable> orderTables){
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2)
+            throw new IllegalArgumentException();
+    }
+}
