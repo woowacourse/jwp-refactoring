@@ -3,7 +3,7 @@ package kitchenpos.domain.fixture;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import kitchenpos.domain.order.Orders;
+import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
 
@@ -19,7 +19,7 @@ public class OrderFixture {
     private OrderFixture() {
     }
 
-    public static Orders 주문_1번의_주문_항목들은(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+    public static Order 주문_1번의_주문_항목들은(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
         return 주문()
             .주문_테이블_아이디(orderTableId)
             .주문한_시간(LocalDateTime.now())
@@ -28,7 +28,7 @@ public class OrderFixture {
             .build();
     }
 
-    public static Orders 요리중인_주문(final Long orderTableId) {
+    public static Order 요리중인_주문(final Long orderTableId) {
         return 주문()
             .주문_테이블_아이디(orderTableId)
             .주문한_시간(LocalDateTime.now())
@@ -36,7 +36,7 @@ public class OrderFixture {
             .build();
     }
 
-    public static Orders 완료된_주문(final Long orderTableId) {
+    public static Order 완료된_주문(final Long orderTableId) {
         return 주문()
             .주문_테이블_아이디(orderTableId)
             .주문한_시간(LocalDateTime.now())
@@ -68,10 +68,10 @@ public class OrderFixture {
         return this;
     }
 
-    private Orders build() {
+    private Order build() {
         if (orderLineItems == null) {
-            return new Orders(id, orderTableId, orderStatus, orderedTime);
+            return new Order(id, orderTableId, orderStatus, orderedTime);
         }
-        return new Orders(id, orderTableId, orderStatus, orderedTime, orderLineItems);
+        return new Order(id, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 }

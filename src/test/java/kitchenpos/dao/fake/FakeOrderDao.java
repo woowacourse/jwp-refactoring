@@ -6,21 +6,21 @@ import java.util.Map;
 import java.util.Optional;
 
 import kitchenpos.dao.OrderDao;
-import kitchenpos.domain.order.Orders;
+import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderStatus;
 
 public class FakeOrderDao implements OrderDao {
 
     private long id = 0L;
-    private final Map<Long, Orders> orders = new HashMap<>();
+    private final Map<Long, Order> orders = new HashMap<>();
 
     @Override
-    public Orders save(final Orders entity) {
+    public Order save(final Order entity) {
         if (findById(entity.getId()).isPresent()) {
             orders.put(entity.getId(), entity);
             return entity;
         }
-        final Orders savedOrder = new Orders(
+        final Order savedOrder = new Order(
             ++id, entity.getOrderTableId(), OrderStatus.valueOf(entity.getOrderStatus()), entity.getOrderedTime()
         );
         orders.put(savedOrder.getId(), savedOrder);
@@ -28,12 +28,12 @@ public class FakeOrderDao implements OrderDao {
     }
 
     @Override
-    public Optional<Orders> findById(final Long id) {
+    public Optional<Order> findById(final Long id) {
         return Optional.ofNullable(orders.get(id));
     }
 
     @Override
-    public List<Orders> findAll() {
+    public List<Order> findAll() {
         return List.copyOf(orders.values());
     }
 
@@ -53,15 +53,15 @@ public class FakeOrderDao implements OrderDao {
             );
     }
 
-    private boolean isEqualsOrderTableId(final Orders order, final Long orderTableId) {
+    private boolean isEqualsOrderTableId(final Order order, final Long orderTableId) {
         return order.getOrderTableId().equals(orderTableId);
     }
 
-    private boolean isContainsOrderTableIds(final Orders order, final List<Long> orderTableIds) {
+    private boolean isContainsOrderTableIds(final Order order, final List<Long> orderTableIds) {
         return orderTableIds.contains(order.getOrderTableId());
     }
 
-    private boolean isContainsOrderStatuses(final Orders order, final List<String> orderStatuses) {
+    private boolean isContainsOrderStatuses(final Order order, final List<String> orderStatuses) {
         return orderStatuses.contains(order.getOrderStatus());
     }
 }

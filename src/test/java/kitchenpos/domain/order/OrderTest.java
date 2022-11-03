@@ -15,7 +15,7 @@ class OrderTest {
     @Test
     void changeStatusOrderIsCompletion() {
         final OrderLineItem orderLineItem = new OrderLineItem(1L, 1);
-        final Orders order = new Orders( 1L, OrderStatus.COMPLETION, LocalDateTime.now(), List.of(orderLineItem));
+        final Order order = new Order( 1L, OrderStatus.COMPLETION, LocalDateTime.now(), List.of(orderLineItem));
 
         assertThatThrownBy(() -> order.changeStatus(OrderStatus.MEAL))
             .isInstanceOf(IllegalArgumentException.class)

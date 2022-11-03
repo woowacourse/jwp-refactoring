@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import kitchenpos.domain.order.Orders;
+import kitchenpos.domain.order.Order;
 
 public class OrderResponse {
 
@@ -14,7 +14,7 @@ public class OrderResponse {
     private final LocalDateTime orderedTime;
     private final List<OrderLineItemResponse> orderLineItems;
 
-    public OrderResponse(final Orders order) {
+    public OrderResponse(final Order order) {
         this(
             order.getId(),
             order.getOrderTableId(),

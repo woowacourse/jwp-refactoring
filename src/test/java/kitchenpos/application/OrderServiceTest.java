@@ -34,7 +34,7 @@ import kitchenpos.dao.fake.FakeProductDao;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.order.Orders;
+import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
@@ -135,7 +135,7 @@ class OrderServiceTest {
         final int numberOfOrder = 5;
         for (int i = 0; i < numberOfOrder; i++) {
             final OrderLineItem orderLineItem = new OrderLineItem(1L, 1);
-            final Orders order = 주문_1번의_주문_항목들은(저장된_주문_테이블.getId(), List.of(orderLineItem));
+            final Order order = 주문_1번의_주문_항목들은(저장된_주문_테이블.getId(), List.of(orderLineItem));
             orderRepository.save(order);
         }
 
@@ -148,8 +148,8 @@ class OrderServiceTest {
     @Test
     void changeOrderStatus() {
         final OrderLineItem orderLineItem = new OrderLineItem(1L, 1);
-        final Orders order = 주문_1번의_주문_항목들은(저장된_주문_테이블.getId(), List.of(orderLineItem));
-        final Orders savedOrder = orderRepository.save(order);
+        final Order order = 주문_1번의_주문_항목들은(저장된_주문_테이블.getId(), List.of(orderLineItem));
+        final Order savedOrder = orderRepository.save(order);
         final OrderChangeRequest newOrder = new OrderChangeRequest(OrderStatus.COMPLETION.name());
 
         final OrderResponse response = orderService.changeOrderStatus(savedOrder.getId(), newOrder);

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.domain.order.Orders;
+import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
 
@@ -23,9 +23,9 @@ public class OrderRepository {
         this.orderLineItemDao = orderLineItemDao;
     }
 
-    public Orders save(final Orders order) {
-        final Orders savedOrder = orderDao.save(order);
-        return new Orders(
+    public Order save(final Order order) {
+        final Order savedOrder = orderDao.save(order);
+        return new Order(
             savedOrder.getId(),
             savedOrder.getOrderTableId(),
             OrderStatus.valueOf(savedOrder.getOrderStatus()),
@@ -34,17 +34,17 @@ public class OrderRepository {
         );
     }
 
-    public Orders update(final Orders order) {
-        final Orders savedOrder = orderDao.save(order);
+    public Order update(final Order order) {
+        final Order savedOrder = orderDao.save(order);
         return createOrder(savedOrder);
     }
 
-    public Optional<Orders> findById(final Long id) {
+    public Optional<Order> findById(final Long id) {
         return orderDao.findById(id);
     }
 
-    public List<Orders> findAll() {
-        final List<Orders> orders = orderDao.findAll();
+    public List<Order> findAll() {
+        final List<Order> orders = orderDao.findAll();
         return orders.stream()
             .map(this::createOrder)
             .collect(Collectors.toUnmodifiableList());
@@ -66,8 +66,8 @@ public class OrderRepository {
             .collect(Collectors.toUnmodifiableList());
     }
 
-    private Orders createOrder(final Orders order) {
-        return new Orders(
+    private Order createOrder(final Order order) {
+        return new Order(
             order.getId(),
             order.getOrderTableId(),
             OrderStatus.valueOf(order.getOrderStatus()),
