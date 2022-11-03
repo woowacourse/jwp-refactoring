@@ -19,14 +19,14 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public OrderTable(final int numberOfGuests, final boolean empty) {
+        this(null, null, numberOfGuests, empty);
+    }
+
     private void validateNumberOfGuest(final int numberOfGuests) {
         if (numberOfGuests < MIN_GUESTS) {
             throw new IllegalArgumentException();
         }
-    }
-
-    public OrderTable(final int numberOfGuests, final boolean empty) {
-        this(null, null, numberOfGuests, empty);
     }
 
     public boolean isPartOfTableGroup() {

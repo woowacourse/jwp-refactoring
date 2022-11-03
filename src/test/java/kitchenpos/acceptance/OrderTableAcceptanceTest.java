@@ -47,6 +47,41 @@ public class OrderTableAcceptanceTest extends AcceptanceTest {
         assertThat(orderTables.size()).isEqualTo(1);
     }
 
+    @DisplayName("OrderTable 에 있는 게스트 명수를 변경한다.")
+    @Test
+    void changeNumberOfGuests() {
+        final OrderTableResponse orderTable = OrderTableHttpCommunication.create(RequestBody.NON_EMPTY_TABLE)
+                .getResponseBodyAsObject(OrderTableResponse.class);
+
+        final ProductResponse product = ProductHttpCommunication.create(RequestBody.PRODUCT)
+                .getResponseBodyAsObject(ProductResponse.class);
+
+        final MenuGroupResponse menuGroup = MenuGroupHttpCommunication.create(RequestBody.MENU_GROUP)
+                .getResponseBodyAsObject(MenuGroupResponse.class);
+
+        final MenuResponse menu = MenuHttpCommunication.create(
+                        RequestBody.getMenuProductFixture(product.getId(), menuGroup.getId()))
+                .getResponseBodyAsObject(MenuResponse.class);
+
+        final OrderResponse order = OrderHttpCommunication.create(
+                        RequestBody.getOrder(menu.getId(), orderTable.getId()))
+                .getResponseBodyAsObject(OrderResponse.class);
+
+        OrderHttpCommunication.changeOrderStatus(order.getId(), Map.of("orderStatus", "COMPLETION"));
+        final OrderTableResponse nonEmptyOrderTable = OrderTableHttpCommunication.changeEmpty(orderTable.getId(),
+                        RequestBody.NON_EMPTY_TABLE)
+                .getResponseBodyAsObject(OrderTableResponse.class);
+
+        final Map<String, Object> requestBody = Map.of(
+                "numberOfGuests", 3,
+                "empty", nonEmptyOrderTable.isEmpty());
+        final OrderTableResponse result = OrderTableHttpCommunication.changeNumberOfGuests(orderTable.getId(),
+                        requestBody)
+                .getResponseBodyAsObject(OrderTableResponse.class);
+
+        assertThat(result.getNumberOfGuests()).isEqualTo(3);
+    }
+
     @DisplayName("OrderTable 에 게스트 존재여부를 변경할 때 ")
     @SpringTestWithData
     @Nested
@@ -82,7 +117,7 @@ public class OrderTableAcceptanceTest extends AcceptanceTest {
         @DisplayName("변경 가능 조건을 만족하지 못하면 에러를 반환한다.")
         @Test
         void changeEmptyFail() {
-             final OrderTableResponse orderTable = OrderTableHttpCommunication.create(RequestBody.NON_EMPTY_TABLE)
+            final OrderTableResponse orderTable = OrderTableHttpCommunication.create(RequestBody.NON_EMPTY_TABLE)
                     .getResponseBodyAsObject(OrderTableResponse.class);
 
             final ProductResponse product = ProductHttpCommunication.create(RequestBody.PRODUCT)
@@ -107,40 +142,5 @@ public class OrderTableAcceptanceTest extends AcceptanceTest {
 
             assertThat(response.statusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
-    }
-
-    @DisplayName("OrderTable 에 있는 게스트 명수를 변경한다.")
-    @Test
-    void changeNumberOfGuests() {
-        final OrderTableResponse orderTable = OrderTableHttpCommunication.create(RequestBody.NON_EMPTY_TABLE)
-                .getResponseBodyAsObject(OrderTableResponse.class);
-
-        final ProductResponse product = ProductHttpCommunication.create(RequestBody.PRODUCT)
-                .getResponseBodyAsObject(ProductResponse.class);
-
-        final MenuGroupResponse menuGroup = MenuGroupHttpCommunication.create(RequestBody.MENU_GROUP)
-                .getResponseBodyAsObject(MenuGroupResponse.class);
-
-        final MenuResponse menu = MenuHttpCommunication.create(
-                        RequestBody.getMenuProductFixture(product.getId(), menuGroup.getId()))
-                .getResponseBodyAsObject(MenuResponse.class);
-
-        final OrderResponse order = OrderHttpCommunication.create(
-                        RequestBody.getOrder(menu.getId(), orderTable.getId()))
-                .getResponseBodyAsObject(OrderResponse.class);
-
-        OrderHttpCommunication.changeOrderStatus(order.getId(), Map.of("orderStatus", "COMPLETION"));
-        final OrderTableResponse nonEmptyOrderTable = OrderTableHttpCommunication.changeEmpty(orderTable.getId(),
-                        RequestBody.NON_EMPTY_TABLE)
-                .getResponseBodyAsObject(OrderTableResponse.class);
-
-        final Map<String, Object> requestBody = Map.of(
-                "numberOfGuests", 3,
-                "empty", nonEmptyOrderTable.isEmpty());
-        final OrderTableResponse result = OrderTableHttpCommunication.changeNumberOfGuests(orderTable.getId(),
-                        requestBody)
-                .getResponseBodyAsObject(OrderTableResponse.class);
-
-        assertThat(result.getNumberOfGuests()).isEqualTo(3);
     }
 }

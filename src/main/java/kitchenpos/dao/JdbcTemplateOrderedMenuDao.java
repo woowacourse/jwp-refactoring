@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import javax.sql.DataSource;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.OrderedMenu;
 import kitchenpos.domain.product.Price;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;

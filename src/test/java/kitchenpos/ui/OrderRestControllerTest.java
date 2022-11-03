@@ -66,7 +66,8 @@ class OrderRestControllerTest extends ControllerTest {
                                 .description("order id of order line item"),
                         fieldWithPath("orderLineItems.[].quantity").type(NUMBER)
                                 .description("quantity of order lien item"),
-                        fieldWithPath("orderLineItems.[].orderedMenuId").type(NUMBER).description("menu id of order line item")
+                        fieldWithPath("orderLineItems.[].orderedMenuId").type(NUMBER)
+                                .description("menu id of order line item")
                 )
         ));
     }
@@ -126,7 +127,8 @@ class OrderRestControllerTest extends ControllerTest {
                                 .description("order id of order line item"),
                         fieldWithPath("orderLineItems.[].quantity").type(NUMBER)
                                 .description("quantity of order lien item"),
-                        fieldWithPath("orderLineItems.[].orderedMenuId").type(NUMBER).description("menu id of order line item")
+                        fieldWithPath("orderLineItems.[].orderedMenuId").type(NUMBER)
+                                .description("menu id of order line item")
                 )
         ));
     }

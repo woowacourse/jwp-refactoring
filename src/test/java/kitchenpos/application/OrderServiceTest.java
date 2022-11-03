@@ -21,7 +21,6 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.product.Product;
 import kitchenpos.ui.dto.request.OrderCreationRequest;
 import kitchenpos.ui.dto.request.OrderLineItemReeust;
-import net.bytebuddy.pool.TypePool.Resolution.Illegal;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -45,6 +44,27 @@ class OrderServiceTest {
 
     @Autowired
     private OrderTableDao orderTableDao;
+
+    @DisplayName("주문 목록을 가져온다.")
+    @Test
+    void getOrders() {
+        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("menuGroup"));
+        final Product product = productDao.save(new Product("productName", BigDecimal.valueOf(1000L)));
+        final Menu menu = menuDao.save(new Menu("menuName", BigDecimal.valueOf(1500L),
+                menuGroup.getId(),
+                List.of(new MenuProduct(product, 2))));
+        final OrderTable orderTable = orderTableDao.save(new OrderTable(0, false));
+        final OrderCreationRequest orderCreationRequest = new OrderCreationRequest(orderTable.getId(),
+                List.of(new OrderLineItemReeust(menu.getId(), 2)));
+        final OrderDto orderDto = orderService.create(OrderCreationDto.from(orderCreationRequest));
+
+        final List<OrderDto> orders = orderService.getOrders();
+
+        assertAll(
+                () -> assertThat(orders.size()).isEqualTo(1),
+                () -> assertThat(orders.get(0).getId()).isEqualTo(orderDto.getId())
+        );
+    }
 
     @DisplayName("주문을 생성할 떄 ")
     @SpringTestWithData
@@ -86,28 +106,6 @@ class OrderServiceTest {
             assertThatThrownBy(() -> orderService.create(OrderCreationDto.from(orderCreationRequest)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
-    }
-
-
-    @DisplayName("주문 목록을 가져온다.")
-    @Test
-    void getOrders() {
-        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("menuGroup"));
-        final Product product = productDao.save(new Product("productName", BigDecimal.valueOf(1000L)));
-        final Menu menu = menuDao.save(new Menu("menuName", BigDecimal.valueOf(1500L),
-                menuGroup.getId(),
-                List.of(new MenuProduct(product, 2))));
-        final OrderTable orderTable = orderTableDao.save(new OrderTable(0, false));
-        final OrderCreationRequest orderCreationRequest = new OrderCreationRequest(orderTable.getId(),
-                List.of(new OrderLineItemReeust(menu.getId(), 2)));
-        final OrderDto orderDto = orderService.create(OrderCreationDto.from(orderCreationRequest));
-
-        final List<OrderDto> orders = orderService.getOrders();
-
-        assertAll(
-                () -> assertThat(orders.size()).isEqualTo(1),
-                () -> assertThat(orders.get(0).getId()).isEqualTo(orderDto.getId())
-        );
     }
 
     @DisplayName("주문 상태를 변결할 때 ")

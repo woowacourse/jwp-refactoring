@@ -5,7 +5,7 @@ import kitchenpos.domain.OrderedMenu;
 
 public interface OrderedMenuDao {
 
-   OrderedMenu save(OrderedMenu orderedMenu);
+    OrderedMenu save(OrderedMenu orderedMenu);
 
-   long countByIdIn(List<Long> ids);
+    long countByIdIn(List<Long> ids);
 }

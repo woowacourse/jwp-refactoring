@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderCreationDto;
 import kitchenpos.application.dto.OrderDto;
-import kitchenpos.application.dto.OrderLineItemCreationDto;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -68,7 +67,8 @@ public class OrderService {
                 .map(orderLineItemDto -> {
                     final Menu menu = menuDao.findById(orderLineItemDto.getMenuId())
                             .orElseThrow(IllegalArgumentException::new);
-                    final OrderedMenu orderedMenu = orderedMenuDao.save(new OrderedMenu(menu.getName(), new Price(menu.getPrice())));
+                    final OrderedMenu orderedMenu = orderedMenuDao.save(
+                            new OrderedMenu(menu.getName(), new Price(menu.getPrice())));
                     return new OrderLineItem(orderedMenu.getId(), orderLineItemDto.getQuantity());
                 })
                 .collect(Collectors.toList());

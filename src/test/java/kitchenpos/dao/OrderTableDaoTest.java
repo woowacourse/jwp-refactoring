@@ -85,8 +85,10 @@ class OrderTableDaoTest {
         final OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
         final TableGroup savedTableGroup = tableGroupDao.save(
                 new TableGroup(List.of(savedOrderTable1, savedOrderTable2), LocalDateTime.now()));
-        final OrderTable orderTableWithTableGroup1 = new OrderTable(savedOrderTable1.getId(), savedTableGroup.getId(), 0, true);
-        final OrderTable orderTableWithTableGroup2 = new OrderTable(savedOrderTable2.getId(), savedTableGroup.getId(), 0, true);
+        final OrderTable orderTableWithTableGroup1 = new OrderTable(savedOrderTable1.getId(), savedTableGroup.getId(),
+                0, true);
+        final OrderTable orderTableWithTableGroup2 = new OrderTable(savedOrderTable2.getId(), savedTableGroup.getId(),
+                0, true);
         orderTableDao.save(orderTableWithTableGroup1);
         orderTableDao.save(orderTableWithTableGroup2);
 
