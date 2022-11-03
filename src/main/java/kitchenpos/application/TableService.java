@@ -4,6 +4,8 @@ import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
 
 import java.util.List;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderTableCreateRequest;
 import kitchenpos.dto.request.OrderTableUpdateEmptyRequest;
@@ -11,8 +13,6 @@ import kitchenpos.dto.request.OrderTableUpdateGuestRequest;
 import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.dto.response.OrderTablesResponse;
 import kitchenpos.exception.OrderTableNotFoundException;
-import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
