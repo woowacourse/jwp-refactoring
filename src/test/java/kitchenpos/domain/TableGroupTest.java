@@ -1,6 +1,6 @@
 package kitchenpos.domain;
 
-import static kitchenpos.application.exception.ExceptionType.INVALID_TABLE_GROUP_EXCEPTION;
+import static kitchenpos.exception.ExceptionType.INVALID_TABLE_GROUP_EXCEPTION;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

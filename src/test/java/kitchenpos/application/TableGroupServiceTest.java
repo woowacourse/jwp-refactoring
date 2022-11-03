@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_TABLE_EXCEPTION;
+import static kitchenpos.exception.ExceptionType.NOT_FOUND_TABLE_EXCEPTION;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.util.Arrays;

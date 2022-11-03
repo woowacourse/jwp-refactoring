@@ -1,11 +1,11 @@
 package kitchenpos.table.application;
 
-import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_TABLE_EXCEPTION;
+import static kitchenpos.exception.ExceptionType.NOT_FOUND_TABLE_EXCEPTION;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import kitchenpos.application.exception.CustomIllegalArgumentException;
+import kitchenpos.exception.CustomIllegalArgumentException;
 import kitchenpos.dao.JpaOrderRepository;
 import kitchenpos.table.domain.JpaOrderTableRepository;
 import kitchenpos.domain.Order;

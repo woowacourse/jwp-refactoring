@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_MENU_EXCEPTION;
+import static kitchenpos.exception.ExceptionType.NOT_FOUND_MENU_EXCEPTION;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

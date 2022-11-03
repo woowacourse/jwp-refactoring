@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.exception.ExceptionType.INVALID_PROCEEDING_TABLE_GROUP_EXCEPTION;
-import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_TABLE_EXCEPTION;
+import static kitchenpos.exception.ExceptionType.INVALID_PROCEEDING_TABLE_GROUP_EXCEPTION;
+import static kitchenpos.exception.ExceptionType.NOT_FOUND_TABLE_EXCEPTION;
 
 import kitchenpos.table.application.TableService;
 import org.assertj.core.api.Assertions;

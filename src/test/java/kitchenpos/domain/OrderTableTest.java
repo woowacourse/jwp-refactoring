@@ -1,6 +1,6 @@
 package kitchenpos.domain;
 
-import static kitchenpos.application.exception.ExceptionType.INVALID_CHANGE_NUMBER_OF_GUEST;
+import static kitchenpos.exception.ExceptionType.INVALID_CHANGE_NUMBER_OF_GUEST;
 
 import kitchenpos.table.domain.OrderTable;
 import org.assertj.core.api.Assertions;

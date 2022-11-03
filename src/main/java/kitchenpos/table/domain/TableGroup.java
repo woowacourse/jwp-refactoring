@@ -1,6 +1,6 @@
 package kitchenpos.table.domain;
 
-import static kitchenpos.application.exception.ExceptionType.INVALID_TABLE_GROUP_EXCEPTION;
+import static kitchenpos.exception.ExceptionType.INVALID_TABLE_GROUP_EXCEPTION;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,7 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import kitchenpos.application.exception.CustomIllegalArgumentException;
+import kitchenpos.exception.CustomIllegalArgumentException;
 import org.springframework.util.CollectionUtils;
 
 @Table(name = "table_group")

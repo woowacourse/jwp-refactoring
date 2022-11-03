@@ -1,12 +1,12 @@
 package kitchenpos.domain;
 
-import static kitchenpos.application.exception.ExceptionType.INVALID_PRICE_EXCEPTION;
+import static kitchenpos.exception.ExceptionType.INVALID_PRICE_EXCEPTION;
 
 import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import kitchenpos.application.exception.CustomIllegalArgumentException;
+import kitchenpos.exception.CustomIllegalArgumentException;
 
 @Embeddable
 public class Price {

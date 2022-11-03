@@ -1,7 +1,7 @@
 package kitchenpos.table.domain;
 
-import static kitchenpos.application.exception.ExceptionType.INVALID_CHANGE_NUMBER_OF_GUEST;
-import static kitchenpos.application.exception.ExceptionType.INVALID_PROCEEDING_TABLE_GROUP_EXCEPTION;
+import static kitchenpos.exception.ExceptionType.INVALID_CHANGE_NUMBER_OF_GUEST;
+import static kitchenpos.exception.ExceptionType.INVALID_PROCEEDING_TABLE_GROUP_EXCEPTION;
 
 import java.util.Objects;
 import javax.persistence.Column;
@@ -13,8 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import kitchenpos.application.exception.CustomIllegalArgumentException;
-import kitchenpos.table.domain.TableGroup;
+import kitchenpos.exception.CustomIllegalArgumentException;
 
 @Entity
 @Table(name = "order_table")

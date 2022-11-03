@@ -1,14 +1,14 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_MENU_EXCEPTION;
-import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_ORDER_EXCEPTION;
-import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_TABLE_EXCEPTION;
+import static kitchenpos.exception.ExceptionType.NOT_FOUND_MENU_EXCEPTION;
+import static kitchenpos.exception.ExceptionType.NOT_FOUND_ORDER_EXCEPTION;
+import static kitchenpos.exception.ExceptionType.NOT_FOUND_TABLE_EXCEPTION;
 import static kitchenpos.domain.OrderStatus.COOKING;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.exception.CustomIllegalArgumentException;
+import kitchenpos.exception.CustomIllegalArgumentException;
 import kitchenpos.menu.domain.JpaMenuRepository;
 import kitchenpos.dao.JpaOrderRepository;
 import kitchenpos.table.domain.JpaOrderTableRepository;

@@ -1,8 +1,8 @@
 package kitchenpos.domain;
 
-import static kitchenpos.application.exception.ExceptionType.INVALID_CHANGE_ORDER_STATUS_EXCEPTION;
-import static kitchenpos.application.exception.ExceptionType.INVALID_TABLE_UNGROUP_EXCEPTION;
-import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_ORDER_LINE_ITEM_EXCEPTION;
+import static kitchenpos.exception.ExceptionType.INVALID_CHANGE_ORDER_STATUS_EXCEPTION;
+import static kitchenpos.exception.ExceptionType.INVALID_TABLE_UNGROUP_EXCEPTION;
+import static kitchenpos.exception.ExceptionType.NOT_FOUND_ORDER_LINE_ITEM_EXCEPTION;
 import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.valueOf;
@@ -23,7 +23,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import kitchenpos.application.exception.CustomIllegalArgumentException;
+import kitchenpos.exception.CustomIllegalArgumentException;
 import org.springframework.util.CollectionUtils;
 
 @Entity

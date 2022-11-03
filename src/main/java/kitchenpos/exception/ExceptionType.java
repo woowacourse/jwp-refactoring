@@ -1,4 +1,4 @@
-package kitchenpos.application.exception;
+package kitchenpos.exception;
 
 public enum ExceptionType {
 
