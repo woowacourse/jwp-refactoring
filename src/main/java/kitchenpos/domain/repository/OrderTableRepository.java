@@ -16,4 +16,8 @@ public interface OrderTableRepository extends Repository<OrderTable, Long> {
     List<OrderTable> findAllByIdIn(List<Long> ids);
 
     List<OrderTable> findAllByTableGroupId(Long tableGroupId);
+
+    default OrderTable get(Long id) {
+        return findById(id).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
+    }
 }

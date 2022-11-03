@@ -14,7 +14,6 @@ import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.repository.OrderLineItemRepository;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.domain.table.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -46,7 +45,7 @@ public class OrderService {
     @Transactional
     public OrderDto create(final CreateOrderDto createOrderDto) {
         validateMenus(createOrderDto);
-        final Order order = orderRepository.save(Order.of(findOrderTable(createOrderDto.getOrderTableId())));
+        final Order order = orderRepository.save(Order.of(orderTableRepository.get(createOrderDto.getOrderTableId())));
         final List<OrderLineItem> orderLineItems = saveOrderLineItems(createOrderDto, order);
         return OrderDto.of(order, orderLineItems);
     }
@@ -61,26 +60,15 @@ public class OrderService {
         }
     }
 
-    private OrderTable findOrderTable(Long orderTableId) {
-        return orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-    }
-
     private List<OrderLineItem> saveOrderLineItems(CreateOrderDto createOrderDto, Order order) {
         List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (CreateOrderLineItemDto orderLineDto : createOrderDto.getOrderLineItems()) {
-            MenuHistory menuHistory = findCurrentMenuHistory(orderLineDto.getMenuId());
+            Menu menu = menuRepository.get(orderLineDto.getMenuId());
+            MenuHistory menuHistory = menuHistoryRepository.findMostRecentByMenu(menu);
             OrderLineItem orderLineItem = new OrderLineItem(order.getId(), menuHistory, orderLineDto.getQuantity());
             orderLineItems.add(orderLineItemRepository.save(orderLineItem));
         }
         return orderLineItems;
-    }
-
-    private MenuHistory findCurrentMenuHistory(Long menuId) {
-        Menu menu = menuRepository.findById(menuId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴입니다."));
-        return menuHistoryRepository.findFirstByMenuOrderByCreatedTimeDesc(menu)
-                .orElseThrow(() -> new IllegalArgumentException("메뉴 정보가 존재하지 않습니다."));
     }
 
     public List<OrderDto> list() {
@@ -93,15 +81,10 @@ public class OrderService {
     @Transactional
     public OrderDto changeOrderStatus(final UpdateOrderStatusDto updateOrderStatusDto) {
         final Long orderId = updateOrderStatusDto.getOrderId();
-        Order order = findOrder(orderId);
+        Order order = orderRepository.get(orderId);
         order.changeOrderStatus(updateOrderStatusDto.getOrderStatus());
         order = orderRepository.save(order);
         List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(orderId);
         return OrderDto.of(order, orderLineItems);
-    }
-
-    private Order findOrder(Long orderId) {
-        return orderRepository.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
     }
 }

@@ -41,7 +41,7 @@ public class TableService {
     @Transactional
     public TableDto changeEmpty(EmptyTableDto emptyTableDto) {
         Long orderTableId = emptyTableDto.getOrderTableId();
-        final OrderTable savedOrderTable = getOrderTable(orderTableId);
+        final OrderTable savedOrderTable = orderTableRepository.get(orderTableId);
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, OrderStatus.getOngoingStatuses())) {
             throw new IllegalArgumentException("식사 중인 테이블은 비울 수 없습니다.");
         }
@@ -53,13 +53,8 @@ public class TableService {
     public TableDto changeNumberOfGuests(UpdateGuestNumberDto updateGuestNumberDto) {
         final Long orderTableId = updateGuestNumberDto.getOrderTableId();
         final int numberOfGuests = updateGuestNumberDto.getNumberOfGuests();
-        final OrderTable savedOrderTable = getOrderTable(orderTableId);
+        final OrderTable savedOrderTable = orderTableRepository.get(orderTableId);
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
         return TableDto.of(orderTableRepository.save(savedOrderTable));
-    }
-
-    private OrderTable getOrderTable(Long orderTableId) {
-        return orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
     }
 }

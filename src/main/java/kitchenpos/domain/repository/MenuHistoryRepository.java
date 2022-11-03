@@ -9,7 +9,10 @@ public interface MenuHistoryRepository extends Repository<MenuHistory, Long> {
 
     MenuHistory save(MenuHistory entity);
 
-    Optional<MenuHistory> findById(Long id);
-
     Optional<MenuHistory> findFirstByMenuOrderByCreatedTimeDesc(Menu menu);
+
+    default MenuHistory findMostRecentByMenu(Menu menu) {
+        return findFirstByMenuOrderByCreatedTimeDesc(menu).orElseThrow(
+                () -> new IllegalArgumentException("메뉴 정보가 존재하지 않습니다."));
+    }
 }

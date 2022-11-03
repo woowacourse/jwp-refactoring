@@ -3,7 +3,6 @@ package kitchenpos.domain.repository;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.menu.Product;
-import kitchenpos.domain.table.OrderTable;
 import org.springframework.data.repository.Repository;
 
 public interface ProductRepository extends Repository<Product, Long> {
@@ -13,4 +12,8 @@ public interface ProductRepository extends Repository<Product, Long> {
     Optional<Product> findById(Long id);
 
     List<Product> findAll();
+
+    default Product get(Long id) {
+        return findById(id).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
+    }
 }

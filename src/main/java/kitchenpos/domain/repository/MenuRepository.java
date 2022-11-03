@@ -14,4 +14,8 @@ public interface MenuRepository extends Repository<Menu, Long> {
     List<Menu> findAll();
 
     long countByIdIn(List<Long> ids);
+
+    default Menu get(Long id) {
+        return findById(id).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴입니다."));
+    }
 }

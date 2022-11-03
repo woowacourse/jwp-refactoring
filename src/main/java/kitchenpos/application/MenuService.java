@@ -13,7 +13,6 @@ import kitchenpos.domain.repository.MenuHistoryRepository;
 import kitchenpos.domain.repository.MenuProductRepository;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.menu.ProductQuantity;
 import kitchenpos.domain.repository.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -56,12 +55,8 @@ public class MenuService {
 
     private ProductQuantities getMenuProductQuantities(List<CreateMenuProductDto> menuProductDtos) {
         return new ProductQuantities(menuProductDtos.stream()
-                .map(it -> new ProductQuantity(getProductById(it.getProductId()), it.getQuantity()))
+                .map(it -> new ProductQuantity(productRepository.get(it.getProductId()), it.getQuantity()))
                 .collect(Collectors.toList()));
-    }
-
-    private Product getProductById(Long productId) {
-        return productRepository.findById(productId).orElseThrow(IllegalArgumentException::new);
     }
 
     private List<MenuProduct> saveMenuProducts(ProductQuantities productQuantities, Menu menu) {

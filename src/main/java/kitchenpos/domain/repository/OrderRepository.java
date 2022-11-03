@@ -17,4 +17,8 @@ public interface OrderRepository extends Repository<Order, Long> {
     boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<OrderStatus> orderStatuses);
 
     boolean existsByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds, List<OrderStatus> orderStatuses);
+
+    default Order get(Long id) {
+        return findById(id).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문입니다."));
+    }
 }
