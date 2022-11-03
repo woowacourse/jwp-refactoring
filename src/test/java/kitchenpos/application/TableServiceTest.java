@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import kitchenpos.table.application.dto.OrderTableResponse;
+import kitchenpos.table.ui.dto.OrderTableResponse;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.ui.dto.OrderTableCreateRequest;

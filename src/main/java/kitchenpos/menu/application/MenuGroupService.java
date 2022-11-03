@@ -2,7 +2,7 @@ package kitchenpos.menu.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.menu.application.dto.MenuGroupResponse;
+import kitchenpos.menu.ui.dto.MenuGroupResponse;
 import kitchenpos.menu.dao.MenuGroupDao;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.ui.dto.MenuGroupRequest;

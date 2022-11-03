@@ -3,12 +3,12 @@ package kitchenpos.table.application;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.table.application.dto.TableGroupResponse;
+import kitchenpos.table.ui.dto.TableGroupResponse;
 import kitchenpos.table.dao.OrderTableDao;
 import kitchenpos.table.dao.TableGroupRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
-import kitchenpos.table.ui.dto.OrderTableDto;
+import kitchenpos.table.ui.dto.OrderTableRequestDto;
 import kitchenpos.table.ui.dto.OrderTableRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,7 +45,7 @@ public class TableGroupService {
     }
 
     private void validateRequestOrderTablesSize(final OrderTableRequest request) {
-        List<OrderTableDto> orderTables = request.getOrderTables();
+        List<OrderTableRequestDto> orderTables = request.getOrderTables();
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException();
         }
@@ -54,7 +54,7 @@ public class TableGroupService {
     private List<OrderTable> findOrderTables(final OrderTableRequest tableGroupRequest) {
         final List<Long> orderTableIds = tableGroupRequest.getOrderTables()
                 .stream()
-                .map(OrderTableDto::getId)
+                .map(OrderTableRequestDto::getId)
                 .collect(Collectors.toList());
 
         return orderTableDao.findAllByIdIn(orderTableIds);

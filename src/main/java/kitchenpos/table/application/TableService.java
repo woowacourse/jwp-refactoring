@@ -3,7 +3,7 @@ package kitchenpos.table.application;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.table.application.dto.OrderTableResponse;
+import kitchenpos.table.ui.dto.OrderTableResponse;
 import kitchenpos.order.dao.OrderDao;
 import kitchenpos.table.dao.OrderTableDao;
 import kitchenpos.order.domain.OrderStatus;

@@ -6,14 +6,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.dao.MenuDao;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.order.application.dto.OrderResponse;
+import kitchenpos.order.ui.dto.OrderResponse;
 import kitchenpos.order.dao.OrderDao;
 import kitchenpos.order.dao.OrderLineItemDao;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.ui.dto.OrderCreateRequest;
-import kitchenpos.order.ui.dto.OrderLineItemDto;
+import kitchenpos.order.ui.dto.OrderLineItemRequestDto;
 import kitchenpos.order.ui.dto.OrderUpdateRequest;
 import kitchenpos.table.dao.OrderTableDao;
 import kitchenpos.table.domain.OrderTable;
@@ -57,13 +57,13 @@ public class OrderService {
         return OrderResponse.of(order);
     }
 
-    private void validateOrderLineItems(final List<OrderLineItemDto> orderLineItemDtos) {
+    private void validateOrderLineItems(final List<OrderLineItemRequestDto> orderLineItemDtos) {
         if (CollectionUtils.isEmpty(orderLineItemDtos)) {
             throw new IllegalArgumentException();
         }
 
         final List<Long> menuIds = orderLineItemDtos.stream()
-                .map(OrderLineItemDto::getMenuId)
+                .map(OrderLineItemRequestDto::getMenuId)
                 .collect(Collectors.toList());
 
         if (orderLineItemDtos.size() != menuDao.countByIdIn(menuIds)) {
@@ -88,7 +88,7 @@ public class OrderService {
     }
 
     private List<OrderLineItem> toOrderLineItems(OrderCreateRequest orderCreateRequest) {
-        List<OrderLineItemDto> orderLineItems = orderCreateRequest.getOrderLineItems();
+        List<OrderLineItemRequestDto> orderLineItems = orderCreateRequest.getOrderLineItems();
         return orderLineItems.stream()
                 .map(it -> {
                     Menu menu = menuDao.findById(it.getMenuId())
@@ -101,7 +101,7 @@ public class OrderService {
     private List<OrderLineItem> saveOrderLineItems(final Long orderId, final OrderCreateRequest orderCreateRequest) {
         final List<OrderLineItem> result = new ArrayList<>();
 
-        for (final OrderLineItemDto orderLineItem : orderCreateRequest.getOrderLineItems()) {
+        for (final OrderLineItemRequestDto orderLineItem : orderCreateRequest.getOrderLineItems()) {
             Menu menu = menuDao.findById(orderLineItem.getMenuId())
                     .orElseThrow(IllegalArgumentException::new);
             OrderLineItem updateOrderLineItem = new OrderLineItem(

@@ -11,13 +11,13 @@ public class MenuRequest {
     private String name;
     private Long price;
     private Long menuGroupId;
-    private List<MenuProductDto> menuProducts;
+    private List<MenuProductRequestDto> menuProducts;
 
     private MenuRequest() {
     }
 
     public MenuRequest(final String name, final Long price, final Long menuGroupId,
-                       final List<MenuProductDto> menuProducts) {
+                       final List<MenuProductRequestDto> menuProducts) {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
@@ -30,7 +30,7 @@ public class MenuRequest {
 
     private List<MenuProduct> toMenuProducts() {
         return menuProducts.stream()
-                .map(MenuProductDto::toEntity)
+                .map(MenuProductRequestDto::toEntity)
                 .collect(Collectors.toList());
     }
 
@@ -46,7 +46,7 @@ public class MenuRequest {
         return name;
     }
 
-    public List<MenuProductDto> getMenuProducts() {
+    public List<MenuProductRequestDto> getMenuProducts() {
         return menuProducts;
     }
 }

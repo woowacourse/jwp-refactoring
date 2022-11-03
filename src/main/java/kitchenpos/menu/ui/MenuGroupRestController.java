@@ -3,7 +3,7 @@ package kitchenpos.menu.ui;
 import java.net.URI;
 import java.util.List;
 import kitchenpos.menu.application.MenuGroupService;
-import kitchenpos.menu.application.dto.MenuGroupResponse;
+import kitchenpos.menu.ui.dto.MenuGroupResponse;
 import kitchenpos.menu.ui.dto.MenuGroupRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

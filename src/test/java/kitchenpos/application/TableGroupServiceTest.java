@@ -10,9 +10,9 @@ import java.util.stream.Collectors;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.support.ServiceTestBase;
-import kitchenpos.table.application.dto.TableGroupResponse;
+import kitchenpos.table.ui.dto.TableGroupResponse;
 import kitchenpos.table.domain.TableGroup;
-import kitchenpos.table.ui.dto.OrderTableDto;
+import kitchenpos.table.ui.dto.OrderTableRequestDto;
 import kitchenpos.table.ui.dto.OrderTableRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -37,8 +37,8 @@ class TableGroupServiceTest extends ServiceTestBase {
     }
 
     private OrderTableRequest toRequest(final OrderTable... orderTables) {
-        List<OrderTableDto> orderTableDtos = Arrays.stream(orderTables)
-                .map(it -> new OrderTableDto(it.getId()))
+        List<OrderTableRequestDto> orderTableDtos = Arrays.stream(orderTables)
+                .map(it -> new OrderTableRequestDto(it.getId()))
                 .collect(Collectors.toList());
 
         return new OrderTableRequest(orderTableDtos);

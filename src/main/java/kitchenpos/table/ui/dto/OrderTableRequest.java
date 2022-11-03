@@ -4,16 +4,16 @@ import java.util.List;
 
 public class OrderTableRequest {
 
-    private List<OrderTableDto> orderTables;
+    private List<OrderTableRequestDto> orderTables;
 
     private OrderTableRequest() {
     }
 
-    public OrderTableRequest(final List<OrderTableDto> orderTables) {
+    public OrderTableRequest(final List<OrderTableRequestDto> orderTables) {
         this.orderTables = orderTables;
     }
 
-    public List<OrderTableDto> getOrderTables() {
+    public List<OrderTableRequestDto> getOrderTables() {
         return orderTables;
     }
 }

@@ -3,7 +3,7 @@ package kitchenpos.table.ui;
 import java.net.URI;
 import java.util.List;
 import kitchenpos.table.application.TableService;
-import kitchenpos.table.application.dto.OrderTableResponse;
+import kitchenpos.table.ui.dto.OrderTableResponse;
 import kitchenpos.table.ui.dto.OrderTableCreateRequest;
 import kitchenpos.table.ui.dto.TableChangeEmptyRequest;
 import kitchenpos.table.ui.dto.TableChangeNumberOfGuestsRequest;

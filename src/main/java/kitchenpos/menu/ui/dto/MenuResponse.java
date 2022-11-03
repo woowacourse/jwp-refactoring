@@ -1,4 +1,4 @@
-package kitchenpos.menu.application.dto;
+package kitchenpos.menu.ui.dto;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,13 +11,13 @@ public class MenuResponse {
     private String name;
     private Long price;
     private Long menuGroupId;
-    private List<MenuProductDto> menuProducts;
+    private List<MenuProductResponseDto> menuProducts;
 
     private MenuResponse() {
     }
 
     public MenuResponse(final Long id, final String name, final Long price, final Long menuGroupId,
-                        final List<MenuProductDto> menuProducts) {
+                        final List<MenuProductResponseDto> menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -30,9 +30,9 @@ public class MenuResponse {
                 toDtos(menu.getMenuProducts()));
     }
 
-    private static List<MenuProductDto> toDtos(final List<MenuProduct> menuProducts) {
+    private static List<MenuProductResponseDto> toDtos(final List<MenuProduct> menuProducts) {
         return menuProducts.stream()
-                .map(MenuProductDto::of)
+                .map(MenuProductResponseDto::of)
                 .collect(Collectors.toList());
     }
 
@@ -52,7 +52,7 @@ public class MenuResponse {
         return menuGroupId;
     }
 
-    public List<MenuProductDto> getMenuProducts() {
+    public List<MenuProductResponseDto> getMenuProducts() {
         return menuProducts;
     }
 }

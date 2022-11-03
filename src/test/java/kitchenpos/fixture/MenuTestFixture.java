@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.ui.dto.MenuProductDto;
+import kitchenpos.menu.ui.dto.MenuProductRequestDto;
 import kitchenpos.menu.ui.dto.MenuRequest;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -40,9 +40,9 @@ public enum MenuTestFixture {
         return new MenuRequest(name, price, menuGroupId, toMenuProductDto(menuProducts));
     }
 
-    private List<MenuProductDto> toMenuProductDto(final List<MenuProduct> menuProducts) {
+    private List<MenuProductRequestDto> toMenuProductDto(final List<MenuProduct> menuProducts) {
         return menuProducts.stream()
-                .map(it -> new MenuProductDto(it.getSeq(), it.getMenuId(), it.getProductId(), it.getQuantity()))
+                .map(it -> new MenuProductRequestDto(it.getSeq(), it.getMenuId(), it.getProductId(), it.getQuantity()))
                 .collect(Collectors.toList());
     }
 }

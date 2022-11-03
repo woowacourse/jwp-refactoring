@@ -1,26 +1,26 @@
-package kitchenpos.table.application.dto;
+package kitchenpos.table.ui.dto;
 
 import kitchenpos.table.domain.OrderTable;
 
-public class OrderTableDto {
+public class OrderTableResponseDto {
 
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
 
-    private OrderTableDto() {
+    private OrderTableResponseDto() {
     }
 
-    public OrderTableDto(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+    public OrderTableResponseDto(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
-    public static OrderTableDto of(final OrderTable orderTable) {
-        return new OrderTableDto(
+    public static OrderTableResponseDto of(final OrderTable orderTable) {
+        return new OrderTableResponseDto(
                 orderTable.getId(),
                 orderTable.getTableGroupId(),
                 orderTable.getNumberOfGuests(),

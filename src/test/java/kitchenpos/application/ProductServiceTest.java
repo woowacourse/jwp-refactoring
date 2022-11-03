@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import kitchenpos.product.application.dto.ProductResponse;
+import kitchenpos.product.ui.dto.ProductResponse;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.ui.dto.ProductRequest;
 import kitchenpos.support.ServiceTestBase;

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.fixture.MenuGroupFixture;
-import kitchenpos.menu.application.dto.MenuResponse;
+import kitchenpos.menu.ui.dto.MenuResponse;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;

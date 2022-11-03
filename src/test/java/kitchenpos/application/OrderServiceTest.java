@@ -15,12 +15,12 @@ import java.util.stream.Collectors;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.order.application.dto.OrderResponse;
+import kitchenpos.order.ui.dto.OrderResponse;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.ui.dto.OrderCreateRequest;
-import kitchenpos.order.ui.dto.OrderLineItemDto;
+import kitchenpos.order.ui.dto.OrderLineItemRequestDto;
 import kitchenpos.order.ui.dto.OrderUpdateRequest;
 import kitchenpos.support.ServiceTestBase;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,8 +56,8 @@ class OrderServiceTest extends ServiceTestBase {
     @Test
     void 주문_정상_생성() {
         // given
-        OrderLineItemDto orderLineItem = new OrderLineItemDto(menu.getId(), 1);
-        List<OrderLineItemDto> orderLineItems = Collections.singletonList(orderLineItem);
+        OrderLineItemRequestDto orderLineItem = new OrderLineItemRequestDto(menu.getId(), 1);
+        List<OrderLineItemRequestDto> orderLineItems = Collections.singletonList(orderLineItem);
         OrderCreateRequest request = new OrderCreateRequest(orderTableId, orderLineItems);
 
         // when
@@ -168,10 +168,10 @@ class OrderServiceTest extends ServiceTestBase {
         return new OrderCreateRequest(order.getOrderTableId(), toDtos(order));
     }
 
-    private List<OrderLineItemDto> toDtos(final Order order) {
+    private List<OrderLineItemRequestDto> toDtos(final Order order) {
         return order.getOrderLineItems()
                 .stream()
-                .map(it -> new OrderLineItemDto(1L, it.getQuantity()))
+                .map(it -> new OrderLineItemRequestDto(1L, it.getQuantity()))
                 .collect(Collectors.toList());
     }
 }

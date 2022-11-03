@@ -3,15 +3,15 @@ package kitchenpos.order.ui.dto;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.domain.OrderLineItem;
 
-public class OrderLineItemDto {
+public class OrderLineItemRequestDto {
 
     private Long menuId;
     private long quantity;
 
-    private OrderLineItemDto() {
+    private OrderLineItemRequestDto() {
     }
 
-    public OrderLineItemDto(final Long menuId, final long quantity) {
+    public OrderLineItemRequestDto(final Long menuId, final long quantity) {
         this.menuId = menuId;
         this.quantity = quantity;
     }
