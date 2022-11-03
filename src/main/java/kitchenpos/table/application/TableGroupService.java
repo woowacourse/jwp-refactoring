@@ -1,14 +1,14 @@
 package kitchenpos.table.application;
 
 import kitchenpos.order.dao.OrderDao;
-import kitchenpos.table.dao.OrderTableDao;
-import kitchenpos.table.dao.TableGroupDao;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.table.application.dto.request.TableGroupCreateRequest;
+import kitchenpos.table.application.dto.response.TableGroupResponse;
+import kitchenpos.table.dao.OrderTableDao;
+import kitchenpos.table.dao.TableGroupRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTables;
 import kitchenpos.table.domain.TableGroup;
-import kitchenpos.table.application.dto.request.TableGroupCreateRequest;
-import kitchenpos.table.application.dto.response.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,26 +22,19 @@ public class TableGroupService {
 
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
-    private final TableGroupDao tableGroupDao;
+    private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao,
-                             final TableGroupDao tableGroupDao) {
+    public TableGroupService(OrderDao orderDao, OrderTableDao orderTableDao, TableGroupRepository tableGroupRepository) {
         this.orderDao = orderDao;
         this.orderTableDao = orderTableDao;
-        this.tableGroupDao = tableGroupDao;
+        this.tableGroupRepository = tableGroupRepository;
     }
 
     @Transactional
     public TableGroupResponse create(final TableGroupCreateRequest request) {
         final OrderTables orderTables = new OrderTables(request.getOrderTables());
+        final TableGroup savedTableGroup = tableGroupRepository.save(request.toEntity());
         final OrderTables savedOrderTables = OrderTables.from(orderTableDao.findAllByIdIn(orderTables.getIds()), orderTables);
-        final TableGroup savedTableGroup = tableGroupDao.save(request.toEntity());
-        final Long tableGroupId = savedTableGroup.getId();
-        for (final OrderTable savedOrderTable : savedOrderTables.getOrderTables()) {
-            savedOrderTable.setTableGroupId(tableGroupId);
-            savedOrderTable.setEmpty(false);
-            orderTableDao.save(savedOrderTable);
-        }
 
         return new TableGroupResponse(savedTableGroup.getId(), savedTableGroup.getCreatedDate(),
                 savedOrderTables.getOrderTables());
@@ -52,9 +45,7 @@ public class TableGroupService {
         final List<OrderTable> orderTables = getOrderTables(tableGroupId);
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(null);
-            orderTable.setEmpty(false);
-            orderTableDao.save(orderTable);
+            orderTableDao.save(new OrderTable(orderTable.getId(), orderTable.getNumberOfGuests(), false));
         }
     }
 
