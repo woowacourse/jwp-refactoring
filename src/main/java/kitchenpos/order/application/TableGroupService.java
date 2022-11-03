@@ -5,10 +5,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.menu.application.request.TableGroupRequest;
 import kitchenpos.order.application.response.TableGroupResponse;
-import kitchenpos.order.dao.TableGroupDao;
-import kitchenpos.order.domain.TableGroup;
 import kitchenpos.order.application.validator.TableGroupValidator;
 import kitchenpos.order.application.validator.TableUngroupValidator;
+import kitchenpos.order.dao.TableGroupDao;
+import kitchenpos.order.domain.TableGroup;
 
 @Service
 @Transactional(readOnly = true)
@@ -33,6 +33,7 @@ public class TableGroupService {
 
         TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
         savedTableGroup.groupOrderTables();
+
         return TableGroupResponse.from(savedTableGroup);
     }
 

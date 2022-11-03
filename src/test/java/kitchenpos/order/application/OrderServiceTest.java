@@ -40,6 +40,31 @@ public class OrderServiceTest extends ServiceTest {
     }
 
     @Test
+    @DisplayName("OrderLineItem 이 empty 인 경우 예외를 던진다.")
+    void validateOrderLineItems() {
+        // given
+        OrderRequest request = createOrderRequest(List.of());
+
+        // when, then
+        assertThatThrownBy(() -> orderService.create(request))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("OrderTable 이 존재하지 않는 경우 예외를 던진다.")
+    void validateOrderTableNotEmpty() {
+        // given
+        OrderLineItemRequest orderLineItemRequest = createOrderLineItemRequest();
+        OrderRequest request = new OrderRequest(NO_ID, 9999L, OrderStatus.COOKING.name(),
+            List.of(orderLineItemRequest));
+
+        // when, then
+        assertThatThrownBy(() -> orderService.create(request))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("order table not found");
+    }
+
+    @Test
     @DisplayName("전체 주문을 조회한다.")
     void list() {
         // given
@@ -70,6 +95,17 @@ public class OrderServiceTest extends ServiceTest {
     }
 
     private OrderRequest createOrderRequest() {
+        return createOrderRequest(List.of(createOrderLineItemRequest()));
+    }
+
+    private OrderRequest createOrderRequest(final List<OrderLineItemRequest> orderLineItemRequests) {
+        OrderTableRequest orderTable = new OrderTableRequest(NO_ID, NO_ID, 1, false);
+        long tableId = tableService.create(orderTable).getId();
+
+        return new OrderRequest(NO_ID, tableId, OrderStatus.COOKING.name(), orderLineItemRequests);
+    }
+
+    private OrderLineItemRequest createOrderLineItemRequest() {
         MenuGroupRequest menuGroup = new MenuGroupRequest(NO_ID, "세마리메뉴");
         long menuGroupId = menuGroupService.create(menuGroup).getId();
 
@@ -80,11 +116,7 @@ public class OrderServiceTest extends ServiceTest {
             List.of(new MenuProductRequest(NO_ID, NO_ID, productId, 3)));
         long menuId = menuService.create(menu).getId();
 
-        OrderTableRequest orderTable = new OrderTableRequest(NO_ID, NO_ID, 1, false);
-        long tableId = tableService.create(orderTable).getId();
-
-        OrderLineItemRequest orderLineItem = new OrderLineItemRequest(NO_ID, NO_ID, menuId, 1);
-        return new OrderRequest(NO_ID, tableId, OrderStatus.COOKING.name(), List.of(orderLineItem));
+        return new OrderLineItemRequest(NO_ID, NO_ID, menuId, 1);
     }
 
     private void assertOrderResponse(final OrderResponse actual, final OrderResponse expected) {

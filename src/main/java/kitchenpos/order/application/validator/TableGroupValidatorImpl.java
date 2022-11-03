@@ -13,17 +13,13 @@ public class TableGroupValidatorImpl implements TableGroupValidator {
 
     @Override
     public void validate(final TableGroup tableGroup) {
-        validateOrderTables(tableGroup.getOrderTables());
-    }
-
-    public void validateOrderTables(final List<OrderTable> orderTables) {
-        validateOrderTablesSize(orderTables);
-        validateOrderTablesCanGroup(orderTables);
+        validateOrderTablesSize(tableGroup.getOrderTables());
+        validateOrderTablesCanGroup(tableGroup.getOrderTables());
     }
 
     private void validateOrderTablesSize(final List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("order tables is empty or under size");
         }
     }
 

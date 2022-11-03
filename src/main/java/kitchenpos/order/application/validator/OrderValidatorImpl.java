@@ -10,7 +10,6 @@ import kitchenpos.menu.dao.MenuDao;
 import kitchenpos.order.dao.OrderTableDao;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.order.domain.OrderTable;
 
 @Component
 public class OrderValidatorImpl implements OrderValidator {
@@ -41,10 +40,9 @@ public class OrderValidatorImpl implements OrderValidator {
     }
 
     private void validateOrderTableNotEmpty(final Order order) {
-        final OrderTable orderTable = orderTableDao.getById(order.getOrderTableId());
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+        orderTableDao.getById(order.getOrderTableId());
+        orderTableDao.findById(order.getOrderTableId())
+            .orElseThrow(() -> new IllegalArgumentException("order table not found"));
     }
 
     public void validateOrderLineItems(final List<OrderLineItem> orderLineItems) {

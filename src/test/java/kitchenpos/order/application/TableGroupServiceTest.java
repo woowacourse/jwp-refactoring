@@ -8,11 +8,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import kitchenpos.common.ServiceTest;
-import kitchenpos.order.application.response.TableGroupResponse;
-import kitchenpos.order.domain.TableGroup;
 import kitchenpos.menu.application.request.TableGroupRequest;
-import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.application.request.OrderTableRequest;
+import kitchenpos.order.application.response.TableGroupResponse;
+import kitchenpos.order.domain.OrderTable;
 
 public class TableGroupServiceTest extends ServiceTest {
 
@@ -27,6 +26,33 @@ public class TableGroupServiceTest extends ServiceTest {
 
         // then
         assertThat(savedTableGroup.getId()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("주문 테이블이 빈 경우 예외를 던진다.")
+    void create_empty_table() {
+        // given
+        TableGroupRequest request = createTableGroupRequest(List.of());
+
+        // when, then
+        assertThatThrownBy(() -> tableGroupService.create(request))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("order tables is empty or under size");
+    }
+
+    @Test
+    @DisplayName("주문 테이블크기가 2 미만인 경우 예외를 던진다.")
+    void create_table_under_size2() {
+        // given
+        OrderTable orderTable = new OrderTable(1, true);
+        Long orderTableId = orderTableDao.save(orderTable).getId();
+        OrderTableRequest orderTableRequest = new OrderTableRequest(orderTableId, NO_ID, 1, true);
+        TableGroupRequest request = createTableGroupRequest(List.of(orderTableRequest));
+
+        // when, then
+        assertThatThrownBy(() -> tableGroupService.create(request))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("order tables is empty or under size");
     }
 
     @Test
