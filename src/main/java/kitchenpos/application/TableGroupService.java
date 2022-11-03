@@ -7,6 +7,7 @@ import kitchenpos.application.dto.request.TableGroupCreateRequest;
 import kitchenpos.application.dto.request.TableGroupIdRequest;
 import kitchenpos.application.dto.response.TableGroupResponse;
 import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.tablegroup.OrderTableRef;
 import kitchenpos.domain.tablegroup.TableGroup;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -48,7 +49,11 @@ public class TableGroupService {
 
     public void ungroup(Long tableGroupId) {
         TableGroup tableGroup = tableGroupRepository.getById(tableGroupId);
-        List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
+        List<OrderTable> orderTables = orderTableRepository.getAllByIdIn(
+                tableGroup.getOrderTableRefs().stream()
+                        .map(OrderTableRef::getOrderTableId)
+                        .collect(Collectors.toList())
+        );
         tableGroup.ungroup();
         orderTables.forEach(OrderTable::ungroup);
     }
