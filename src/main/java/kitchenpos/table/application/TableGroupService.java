@@ -5,11 +5,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.order.dao.OrderDao;
-import kitchenpos.order.dao.OrderTableDao;
+import kitchenpos.table.dao.OrderTableDao;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.OrderTable;
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.application.dto.TableGroupResponse;
-import kitchenpos.table.dao.TableGroupDao;
+import kitchenpos.table.dao.TableGroupRepository;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.ui.dto.OrderTableDto;
 import kitchenpos.table.ui.dto.OrderTableRequest;
@@ -23,13 +23,13 @@ public class TableGroupService {
 
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
-    private final TableGroupDao tableGroupDao;
+    private final TableGroupRepository tableGroupRepository;
 
     public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao,
-                             final TableGroupDao tableGroupDao) {
+                             final TableGroupRepository tableGroupRepository) {
         this.orderDao = orderDao;
         this.orderTableDao = orderTableDao;
-        this.tableGroupDao = tableGroupDao;
+        this.tableGroupRepository = tableGroupRepository;
     }
 
     @Transactional
@@ -41,11 +41,9 @@ public class TableGroupService {
         validateHaveNotEmptyOrderTable(orderTables);
 
         TableGroup tableGroup = new TableGroup(LocalDateTime.now());
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
-        savedTableGroup.addOrderTables(orderTables);
+        tableGroup.addOrderTables(orderTables);
 
-        updateOrderTables(savedTableGroup);
-
+        TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
         return TableGroupResponse.of(savedTableGroup);
     }
 
@@ -77,16 +75,6 @@ public class TableGroupService {
 
         if (isNotEmptyOrderTable) {
             throw new IllegalArgumentException();
-        }
-    }
-
-    private void updateOrderTables(final TableGroup tableGroup) {
-        final Long tableGroupId = tableGroup.getId();
-
-        for (OrderTable orderTable : tableGroup.getOrderTables()) {
-            OrderTable savedOrderTable = new OrderTable(orderTable.getId(), tableGroupId,
-                    orderTable.getNumberOfGuests(), false);
-            orderTableDao.save(savedOrderTable);
         }
     }
 
