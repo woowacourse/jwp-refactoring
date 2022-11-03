@@ -14,10 +14,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import kitchenpos.application.TableGroupService;
-import kitchenpos.application.dto.TableGroupCreationDto;
+import kitchenpos.order.application.TableGroupService;
+import kitchenpos.order.application.dto.TableGroupCreationDto;
 import kitchenpos.common.ControllerTest;
 import kitchenpos.common.fixture.RequestBody;
+import kitchenpos.order.ui.TableGroupRestController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

@@ -13,11 +13,11 @@ import kitchenpos.acceptance.common.httpcommunication.OrderTableHttpCommunicatio
 import kitchenpos.acceptance.common.httpcommunication.ProductHttpCommunication;
 import kitchenpos.common.annotation.SpringTestWithData;
 import kitchenpos.common.fixture.RequestBody;
-import kitchenpos.ui.dto.response.MenuGroupResponse;
-import kitchenpos.ui.dto.response.MenuResponse;
-import kitchenpos.ui.dto.response.OrderResponse;
-import kitchenpos.ui.dto.response.OrderTableResponse;
-import kitchenpos.ui.dto.response.ProductResponse;
+import kitchenpos.menu.ui.dto.response.MenuGroupResponse;
+import kitchenpos.menu.ui.dto.response.MenuResponse;
+import kitchenpos.order.ui.dto.response.OrderResponse;
+import kitchenpos.order.ui.dto.response.OrderTableResponse;
+import kitchenpos.product.ui.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

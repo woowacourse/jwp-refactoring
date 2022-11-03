@@ -18,10 +18,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 import java.util.Map;
-import kitchenpos.application.OrderService;
-import kitchenpos.application.dto.OrderCreationDto;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.application.dto.OrderCreationDto;
 import kitchenpos.common.ControllerTest;
 import kitchenpos.common.fixture.RequestBody;
+import kitchenpos.order.ui.OrderRestController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

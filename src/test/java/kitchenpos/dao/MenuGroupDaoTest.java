@@ -5,7 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.common.annotation.SpringTestWithData;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.dao.MenuGroupDao;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

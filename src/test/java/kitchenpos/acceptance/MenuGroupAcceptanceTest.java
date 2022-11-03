@@ -7,7 +7,7 @@ import io.restassured.response.Response;
 import java.util.List;
 import kitchenpos.acceptance.common.httpcommunication.MenuGroupHttpCommunication;
 import kitchenpos.common.fixture.RequestBody;
-import kitchenpos.ui.dto.response.MenuGroupResponse;
+import kitchenpos.menu.ui.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
