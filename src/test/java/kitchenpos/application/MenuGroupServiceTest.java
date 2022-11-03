@@ -6,10 +6,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.MenuGroupResponse;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.menu.application.dto.MenuGroupResponse;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.ui.dto.MenuGroupRequest;
 import kitchenpos.support.ServiceTestBase;
-import kitchenpos.ui.dto.MenuGroupRequest;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")

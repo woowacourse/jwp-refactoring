@@ -1,13 +1,12 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.ui.dto.MenuGroupRequest;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.ui.dto.MenuGroupRequest;
 
 @SuppressWarnings("NonAsciiCharacters")
 public enum MenuGroupFixture {
     분식("분식"),
-    양식("양식")
-    ;
+    양식("양식");
 
     private final String name;
 

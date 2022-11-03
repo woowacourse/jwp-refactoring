@@ -3,10 +3,10 @@ package kitchenpos.fixture;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.ui.dto.MenuProductDto;
-import kitchenpos.ui.dto.MenuRequest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.ui.dto.MenuProductDto;
+import kitchenpos.menu.ui.dto.MenuRequest;
 
 @SuppressWarnings("NonAsciiCharacters")
 public enum MenuTestFixture {
