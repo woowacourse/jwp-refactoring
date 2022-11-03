@@ -5,16 +5,17 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.domain.TableGroupRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class TableGroupRepository implements TableGroupDao {
+public class TableGroupJdbcRepository implements TableGroupRepository {
 
     private final JdbcTemplateTableGroupDao tableGroupDao;
     private final JdbcTemplateOrderTableDao orderTableDao;
 
-    public TableGroupRepository(final JdbcTemplateTableGroupDao tableGroupDao,
-                                final JdbcTemplateOrderTableDao orderTableDao) {
+    public TableGroupJdbcRepository(final JdbcTemplateTableGroupDao tableGroupDao,
+                                    final JdbcTemplateOrderTableDao orderTableDao) {
         this.tableGroupDao = tableGroupDao;
         this.orderTableDao = orderTableDao;
     }
