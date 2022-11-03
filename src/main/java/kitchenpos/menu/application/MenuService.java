@@ -2,14 +2,12 @@ package kitchenpos.menu.application;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.menu.dao.MenuDao;
 import kitchenpos.menu.dao.MenuProductDao;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.dto.request.MenuCreateRequest;
-import kitchenpos.menu.dto.response.MenuProductResponse;
 import kitchenpos.menu.dto.response.MenuResponse;
 import kitchenpos.menugroup.dao.MenuGroupDao;
 import kitchenpos.product.dao.ProductDao;
