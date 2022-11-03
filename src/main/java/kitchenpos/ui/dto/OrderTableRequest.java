@@ -1,22 +1,16 @@
 package kitchenpos.ui.dto;
 
-import kitchenpos.domain.table.OrderTable;
-
 public class OrderTableRequest {
 
     private int numberOfGuests;
     private boolean empty;
 
-    protected OrderTableRequest() {
+    private OrderTableRequest() {
     }
 
     public OrderTableRequest(final int numberOfGuests, final boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
-    }
-
-    public OrderTable toEntity() {
-        return new OrderTable(numberOfGuests, empty);
     }
 
     public int getNumberOfGuests() {

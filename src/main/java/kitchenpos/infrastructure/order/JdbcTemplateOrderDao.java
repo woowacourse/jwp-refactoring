@@ -110,7 +110,8 @@ public class JdbcTemplateOrderDao implements OrderDao {
                 resultSet.getLong(KEY_COLUMN_NAME),
                 resultSet.getLong("order_table_id"),
                 OrderStatus.valueOf(resultSet.getString("order_status")),
-                resultSet.getObject("ordered_time", LocalDateTime.class)
+                resultSet.getObject("ordered_time", LocalDateTime.class),
+                null
         );
     }
 }

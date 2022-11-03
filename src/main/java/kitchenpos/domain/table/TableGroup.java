@@ -11,6 +11,9 @@ public class TableGroup implements Entity {
     private LocalDateTime createdDate;
     private List<OrderTable> orderTables;
 
+    private TableGroup() {
+    }
+
     public TableGroup(final Long id,
                       final LocalDateTime createdDate) {
         this(id, createdDate, new ArrayList<>());
@@ -30,7 +33,8 @@ public class TableGroup implements Entity {
         }
     }
 
-    public void ungroup() {
+    public void ungroup(final TableGroupValidator tableGroupValidator) {
+        tableGroupValidator.validateOnUngroup(this);
         orderTables.forEach(OrderTable::ungroup);
     }
 

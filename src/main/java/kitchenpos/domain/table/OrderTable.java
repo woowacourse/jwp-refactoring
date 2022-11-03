@@ -9,9 +9,7 @@ public class OrderTable implements Entity {
     private Guests numberOfGuests;
     private boolean empty;
 
-    public OrderTable(final int numberOfGuests,
-                      final boolean empty) {
-        this(null, null, numberOfGuests, empty);
+    private OrderTable() {
     }
 
     public OrderTable(final Long id,
@@ -22,6 +20,11 @@ public class OrderTable implements Entity {
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = new Guests(numberOfGuests);
         this.empty = empty;
+    }
+
+    public static OrderTable create(final int numberOfGuests,
+                                    final boolean empty) {
+        return new OrderTable(null, null, numberOfGuests, empty);
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
@@ -35,9 +38,9 @@ public class OrderTable implements Entity {
         }
     }
 
-    public void changeEmptyTo(final boolean status) {
+    public void changeEmptyTo(final OrderTableValidator orderTableValidator, final boolean status) {
         validateNotGrouped();
-//        validateAllOrderCompleted();
+        orderTableValidator.validateOnChangeEmpty(this);
         this.empty = status;
     }
 

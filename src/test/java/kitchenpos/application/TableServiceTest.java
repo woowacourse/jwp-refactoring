@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.ui.dto.OrderTableRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -22,13 +23,14 @@ class TableServiceTest extends FakeSpringContext {
     @DisplayName("주문 테이블 등록")
     @Test
     void create() {
-        final var table = emptyTable(2);
+        final var request = new OrderTableRequest(2, true);
 
-        final var result = tableService.create(table);
+        final var result = tableService.create(request);
 
-        assertThat(table).usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(result);
+        assertAll(
+                () -> assertThat(result.getNumberOfGuests()).isEqualTo(2),
+                () -> assertThat(request.isEmpty()).isTrue()
+        );
     }
 
     @DisplayName("등록된 주문 테이블의 빈 테이블 여부 상태 변경")

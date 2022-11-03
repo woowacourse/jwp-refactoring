@@ -18,10 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class OrderService {
 
-    private final OrderValidator orderValidator;
     private final MenuDao menuDao;
     private final OrderTableRepository orderTables;
     private final OrderRepository orders;
+
+    private final OrderValidator orderValidator;
 
     public OrderService(final OrderValidator orderValidator,
                         final MenuDao menuDao,
@@ -44,9 +45,7 @@ public class OrderService {
         }
 
         final OrderTable orderTable = orderTables.get(request.getOrderTableId());
-        final var order = new Order(orderTable.getId(), mapToOrderLineItems(orderLineItemRequests));
-
-        orderValidator.validateOnCreate(order, orderTable);
+        final var order = Order.create(orderTable.getId(), mapToOrderLineItems(orderLineItemRequests), orderValidator);
 
         return orders.add(order);
     }

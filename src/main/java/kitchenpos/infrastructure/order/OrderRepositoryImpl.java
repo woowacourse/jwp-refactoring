@@ -90,7 +90,8 @@ public class OrderRepositoryImpl implements OrderRepository {
                             order.getOrderTableId(),
                             order.getOrderStatus(),
                             order.getOrderedTime(),
-                            orderLineItems);
+                            orderLineItems
+                    );
                 }).collect(Collectors.toList());
     }
 

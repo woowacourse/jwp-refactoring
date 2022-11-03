@@ -34,10 +34,6 @@ import kitchenpos.infrastructure.table.TableGroupRepositoryImpl;
 
 public abstract class FakeSpringContext {
 
-    protected final OrderValidator orderValidator = new OrderValidator();
-    protected final TableGroupValidator tableGroupValidator = new TableGroupValidator();
-    protected final OrderTableValidator orderTableValidator = new OrderTableValidator();
-
     protected final MenuDao menuDao = new MenuFakeDao();
     protected final MenuGroupDao menuGroupDao = new MenuGroupFakeDao();
     protected final MenuProductDao menuProductDao = new MenuProductFakeDao();
@@ -53,4 +49,8 @@ public abstract class FakeSpringContext {
     protected final OrderTableRepository orderTables = new OrderTableRepositoryImpl(orderTableDao);
     protected final OrderRepository orders = new OrderRepositoryImpl(orderDao, orderLineItemDao);
     protected final TableGroupRepository tableGroups = new TableGroupRepositoryImpl(tableGroupDao, orderTableDao, orderDao);
+
+    protected final TableGroupValidator tableGroupValidator = new TableGroupValidator(orderTables, orders);
+    protected final OrderTableValidator orderTableValidator = new OrderTableValidator(orders);
+    protected final OrderValidator orderValidator = new OrderValidator(orderTables);
 }

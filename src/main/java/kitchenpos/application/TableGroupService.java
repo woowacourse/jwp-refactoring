@@ -62,19 +62,8 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final var tableGroup = tableGroups.get(tableGroupId);
-        final var orderTableIds = collectOrderTableIds(tableGroup);
-        final var allOrdersInGroup = orders.getOrderTableIdsIn(orderTableIds);
-
-        tableGroupValidator.validateOnUngroup(allOrdersInGroup);
-        tableGroup.ungroup();
+        tableGroup.ungroup(tableGroupValidator);
 
         orderTables.addAll(tableGroup.getOrderTables());
-    }
-
-    private List<Long> collectOrderTableIds(final TableGroup tableGroup) {
-        return tableGroup.getOrderTables()
-                .stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
     }
 }

@@ -12,19 +12,7 @@ public class Order implements Entity {
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
 
-    public Order() {
-    }
-
-    public Order(final Long orderTableId,
-                 final List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
-    }
-
-    public Order(final Long id,
-                 final Long orderTableId,
-                 final OrderStatus orderStatus,
-                 final LocalDateTime orderedTime) {
-        this(id, orderTableId, orderStatus, orderedTime, null);
+    private Order() {
     }
 
     public Order(final Long id,
@@ -37,9 +25,20 @@ public class Order implements Entity {
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
-        if (isNew()) {
-            validateOnCreate();
-        }
+    }
+
+    public static Order create(final Long orderTableId,
+                               final List<OrderLineItem> orderLineItems,
+                               final OrderValidator orderValidator) {
+        final var order = new Order(
+                null,
+                orderTableId,
+                OrderStatus.COOKING,
+                LocalDateTime.now(),
+                orderLineItems
+        );
+        orderValidator.validateOnCreate(order);
+        return order;
     }
 
     public void changeStatus(final OrderStatus orderStatus) {

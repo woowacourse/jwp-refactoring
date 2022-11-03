@@ -5,6 +5,7 @@ import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.domain.table.OrderTableValidator;
+import kitchenpos.ui.dto.OrderTableRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,8 +25,8 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable request) {
-        final var orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
+    public OrderTable create(final OrderTableRequest request) {
+        final var orderTable = OrderTable.create(request.getNumberOfGuests(), request.isEmpty());
         return orderTables.add(orderTable);
     }
 
@@ -36,10 +37,9 @@ public class TableService {
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final boolean status) {
         final OrderTable orderTable = orderTables.get(orderTableId);
-        final var orders = this.orders.getByOrderTableId(orderTableId);
+        final var ordersInTable = orders.getByOrderTableId(orderTableId);
 
-        orderTableValidator.validateOnChangeEmpty(orderTable, orders);
-        orderTable.changeEmptyTo(status);
+        orderTable.changeEmptyTo(orderTableValidator, status);
 
         return orderTables.add(orderTable);
     }

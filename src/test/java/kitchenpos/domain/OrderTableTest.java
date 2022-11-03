@@ -2,11 +2,12 @@ package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import kitchenpos.application.FakeSpringContext;
 import kitchenpos.domain.table.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class OrderTableTest {
+class OrderTableTest extends FakeSpringContext {
 
     @DisplayName("손님의 수는 음수가 될 수 없다")
     @Test
@@ -24,7 +25,7 @@ class OrderTableTest {
         final var table = new OrderTable(null, 1L, 2, true);
 
         assertThatThrownBy(
-                () -> table.changeEmptyTo(true)
+                () -> table.changeEmptyTo(orderTableValidator, true)
         ).isInstanceOf(IllegalArgumentException.class);
     }
 }
