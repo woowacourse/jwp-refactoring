@@ -53,15 +53,14 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest orderCreateRequest) {
-        List<Menu> menus = findMenus(orderCreateRequest.getOrderLineItems());
-        OrderTable orderTable = orderTableRepository.findById(orderCreateRequest.getOrderTableId())
-                .orElseThrow(OrderTableNotExistsException::new);
-        List<OrderLineItem> orderLineItems = orderLineItemMapper
-                .toOrderLineItems(orderCreateRequest.getOrderLineItems(), menus);
-        Order order = orderRepository.save(
-                orderMapper.toOrder(orderCreateRequest, orderLineItems, orderTable.isEmpty()));
-        orderStatusRecordRepository.save(new OrderStatusRecord(order.getId(), orderTable, order.getOrderStatus()));
+        List<OrderLineItem> orderLineItems = createOrderLineItems(orderCreateRequest);
+        Order order = createAndSaveOrder(orderCreateRequest, orderLineItems);
         return orderDtoMapper.toOrderResponse(order);
+    }
+
+    private List<OrderLineItem> createOrderLineItems(final OrderCreateRequest orderCreateRequest) {
+        List<Menu> menus = findMenus(orderCreateRequest.getOrderLineItems());
+        return orderLineItemMapper.toOrderLineItems(orderCreateRequest.getOrderLineItems(), menus);
     }
 
     private List<Menu> findMenus(final List<OrderLineItemCreateRequest> orderLineItemCreateRequests) {
@@ -89,6 +88,20 @@ public class OrderService {
         }
     }
 
+    private Order createAndSaveOrder(final OrderCreateRequest orderCreateRequest,
+                                     final List<OrderLineItem> orderLineItems) {
+        OrderTable orderTable = orderTableRepository.findById(orderCreateRequest.getOrderTableId())
+                .orElseThrow(OrderTableNotExistsException::new);
+        Order order = orderRepository.save(
+                orderMapper.toOrder(orderCreateRequest, orderLineItems, orderTable.isEmpty()));
+        saveOrderStatusRecord(orderTable, order);
+        return order;
+    }
+
+    private void saveOrderStatusRecord(final OrderTable orderTable, final Order order) {
+        orderStatusRecordRepository.save(new OrderStatusRecord(order.getId(), orderTable, order.getOrderStatus()));
+    }
+
     public List<OrderResponse> list() {
         final List<Order> orders = orderRepository.findAll();
         return orderDtoMapper.toOrderResponses(orders);
@@ -100,9 +113,13 @@ public class OrderService {
         Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(OrderNotExistsException::new);
         savedOrder.changeOrderStatus(orderStatusChangeRequest.getOrderStatus());
+        changeOrderStatusRecord(orderId, orderStatusChangeRequest);
+        return orderDtoMapper.toOrderResponse(savedOrder);
+    }
+
+    private void changeOrderStatusRecord(final Long orderId, final OrderStatusChangeRequest orderStatusChangeRequest) {
         OrderStatusRecord orderStatusRecord = orderStatusRecordRepository.findById(orderId)
                 .orElseThrow(OrderNotExistsException::new);
         orderStatusRecord.changeOrderStatus(orderStatusChangeRequest.getOrderStatus());
-        return orderDtoMapper.toOrderResponse(savedOrder);
     }
 }
