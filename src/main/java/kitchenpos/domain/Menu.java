@@ -27,7 +27,6 @@ public class Menu {
     }
 
     private void validatePrice(final Price price, final List<MenuProduct> menuProducts) {
-        price.validate();
         final BigDecimal sum = menuProducts.stream()
                 .map(MenuProduct::calculateAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);

@@ -7,7 +7,8 @@ public class Price {
 
     private final BigDecimal value;
 
-    public Price(final BigDecimal value) {
+    private Price(final BigDecimal value) {
+        validate(value);
         this.value = value;
     }
 
@@ -15,21 +16,21 @@ public class Price {
         return new Price(value);
     }
 
-    public void validate() {
+    private void validate(BigDecimal value) {
         if (Objects.isNull(value) || value.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
     }
 
-    public boolean isBiggerThan(final BigDecimal sum) {
-        return value.compareTo(sum) > 0;
+    public boolean isBiggerThan(final BigDecimal number) {
+        return value.compareTo(number) > 0;
+    }
+
+    public BigDecimal multiply(final long number) {
+        return value.multiply(BigDecimal.valueOf(number));
     }
 
     public BigDecimal getValue() {
         return value;
-    }
-
-    public BigDecimal multiply(final long quantity) {
-        return value.multiply(BigDecimal.valueOf(quantity));
     }
 }

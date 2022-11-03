@@ -13,7 +13,6 @@ public class Product {
     }
 
     public Product(final Long id, final String name, final Price price) {
-        price.validate();
         this.id = id;
         this.name = name;
         this.price = price;
