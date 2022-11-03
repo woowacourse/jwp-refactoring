@@ -66,4 +66,8 @@ public class Menu {
     public Long getMenuGroupId() {
         return menuGroupId;
     }
+
+    public void changeName(String name) {
+        this.name = name;
+    }
 }
