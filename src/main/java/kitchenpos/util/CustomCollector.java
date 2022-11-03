@@ -22,7 +22,6 @@ public class CustomCollector<T, R, K> implements Collector<T, Map<T, R>, Map<T, 
         this.otherKeyMapper = otherKeyMapper;
     }
 
-
     public static <T, R, K> CustomCollector<T, R, K> associate(
             Collection<R> other,
             Function<T, K> currentKeyMapper,

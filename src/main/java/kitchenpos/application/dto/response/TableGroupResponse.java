@@ -22,12 +22,12 @@ public class TableGroupResponse {
         this.orderTables = orderTables;
     }
 
-    public static TableGroupResponse from(TableGroup tableGroup) {
+    public static TableGroupResponse from(TableGroup tableGroup, List<OrderTable> orderTables) {
         return new TableGroupResponse(
                 tableGroup.getId(),
                 tableGroup.getCreatedDate(),
-                tableGroup.getOrderTableRefs().stream()
-                        .map(it -> OrderTableResponse.from(new OrderTable(0, false))) // todo : fix this
+                orderTables.stream()
+                        .map(OrderTableResponse::from)
                         .collect(Collectors.toList())
         );
     }

@@ -13,7 +13,6 @@ public class TableGroupEntityRepositoryImpl implements TableGroupEntityRepositor
         this.tableGroupRepository = tableGroupRepository;
     }
 
-
     @Override
     public TableGroup getById(Long id) {
         return tableGroupRepository.findById(id)

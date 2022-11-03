@@ -37,7 +37,7 @@ public class TableGroupService {
                         .collect(Collectors.toList())
         ));
         orderTables.forEach(orderTable -> orderTable.group(tableGroup.getId()));
-        return TableGroupResponse.from(tableGroup);
+        return TableGroupResponse.from(tableGroup, orderTables);
     }
 
     private List<OrderTable> findOrderTables(TableGroupCreateRequest request) {
