@@ -2,15 +2,12 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 @Entity
@@ -21,8 +18,7 @@ public class OrderTableGroup {
     private Long id;
     private LocalDateTime createdDate;
 
-    @OneToMany(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "order_table_group_id")
+    @OneToMany(mappedBy = "orderTableGroup", cascade = CascadeType.PERSIST)
     private List<OrderTable> orderTables = new ArrayList<>();
 
     public OrderTableGroup() {

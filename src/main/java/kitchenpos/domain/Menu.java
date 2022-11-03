@@ -56,9 +56,7 @@ public class Menu {
     }
 
     private void updateMenu(List<MenuProduct> menuProducts) {
-        for (MenuProduct menuProduct : menuProducts) {
-            menuProduct.updateMenu(this);
-        }
+        menuProducts.forEach(menuProduct -> menuProduct.updateMenu(this));
     }
 
     public Long getId() {

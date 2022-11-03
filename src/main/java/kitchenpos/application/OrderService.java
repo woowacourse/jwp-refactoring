@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class OrderService {
 
     private final OrderDao orderDao;
@@ -44,9 +45,9 @@ public class OrderService {
 
     @Transactional
     public Order changeOrderStatus(Long orderId, String orderStatus) {
-        final Order savedOrder = orderDao.findById(orderId)
+        Order order = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
-        savedOrder.updateOrderStatus(OrderStatus.valueOf(orderStatus));
-        return orderDao.save(savedOrder);
+        order.updateOrderStatus(OrderStatus.valueOf(orderStatus));
+        return order;
     }
 }

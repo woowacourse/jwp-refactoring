@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.OrderTableGroupDao;
@@ -47,9 +46,6 @@ public class OrderTableServiceTest extends IntegrationTest {
 
     @Autowired
     private ProductDao productDao;
-
-    @Autowired
-    private MenuProductDao menuProductDao;
 
     @Autowired
     private OrderTableService orderTableService;
@@ -99,7 +95,9 @@ public class OrderTableServiceTest extends IntegrationTest {
             orderDao.save(new Order(orderTable, OrderStatus.COMPLETION.name(), LocalDateTime.now(),
                     List.of(new OrderLineItem(menu, 2))));
             // when
+            System.out.println("===");
             OrderTable actual = orderTableService.changeEmpty(orderTable.getId());
+            System.out.println("===");
 
             // then
             assertThat(actual.isEmpty()).isTrue();

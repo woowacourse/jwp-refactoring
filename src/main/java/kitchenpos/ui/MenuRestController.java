@@ -2,7 +2,6 @@ package kitchenpos.ui;
 
 import java.net.URI;
 import java.util.List;
-import kitchenpos.domain.Menu;
 import kitchenpos.ui.apiservice.MenuApiService;
 import kitchenpos.ui.dto.MenuRequest;
 import kitchenpos.ui.dto.MenuResponse;

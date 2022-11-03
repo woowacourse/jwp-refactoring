@@ -1,10 +1,12 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,22 +23,32 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_table_id")
     private OrderTable orderTable;
 
     private String orderStatus;
     private LocalDateTime orderedTime;
 
-    @OneToMany(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "orders_id")
-    private List<OrderLineItem> orderLineItems;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
+    private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     public Order() {
     }
 
     public Order(OrderTable orderTable, String orderStatus, LocalDateTime orderedTime,
                  List<OrderLineItem> orderLineItems) {
+        validateOrderLineItems(orderLineItems);
+        updateOrder(orderLineItems);
+
+        this.orderTable = orderTable;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+        this.orderLineItems
+                .addAll(orderLineItems);
+    }
+
+    private void validateOrderLineItems(List<OrderLineItem> orderLineItems) {
         if (orderLineItems.isEmpty()) {
             throw new IllegalArgumentException();
         }
@@ -47,11 +59,10 @@ public class Order {
                 .count() != orderLineItems.size()) {
             throw new IllegalArgumentException();
         }
+    }
 
-        this.orderTable = orderTable;
-        this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
+    private void updateOrder(List<OrderLineItem> orderLineItems) {
+        orderLineItems.forEach(orderLineItem -> orderLineItem.updateOrder(this));
     }
 
     public boolean isCompletion() {
