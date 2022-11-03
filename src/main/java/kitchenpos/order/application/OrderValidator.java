@@ -4,25 +4,18 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderLineItemRepository;
-import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
 import org.springframework.stereotype.Component;
 
 @Component
 public class OrderValidator {
     private final MenuRepository menuRepository;
-    private final OrderRepository orderRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public OrderValidator(MenuRepository menuRepository, OrderRepository orderRepository, OrderLineItemRepository orderLineItemRepository,
-                          OrderTableRepository orderTableRepository) {
+    public OrderValidator(MenuRepository menuRepository, OrderTableRepository orderTableRepository) {
         this.menuRepository = menuRepository;
-        this.orderRepository = orderRepository;
-        this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
