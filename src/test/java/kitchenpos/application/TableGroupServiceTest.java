@@ -1,7 +1,9 @@
 package kitchenpos.application;
 
-import static kitchenpos.table.domain.OrderStatus.COMPLETION;
-import static kitchenpos.table.domain.OrderStatus.COOKING;
+import static kitchenpos.order.domain.OrderStatus.COMPLETION;
+import static kitchenpos.order.domain.OrderStatus.COOKING;
+import static kitchenpos.table.domain.TableStatus.EAT_IN;
+import static kitchenpos.table.domain.TableStatus.EMPTY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -158,8 +160,8 @@ class TableGroupServiceTest extends ServiceTest {
         @DisplayName("모든 주문 테이블에 주문이 있다면 주문 상태는 계산 완료여야 한다.")
         void ungroup_orderStatusIsNotCompletion_exception() {
             // given
-            final OrderTable orderTable1 = saveOrderTable(1, true, COOKING);
-            final OrderTable orderTable2 = saveOrderTable(2, false, COMPLETION);
+            final OrderTable orderTable1 = saveOrderTable(1, true, EAT_IN);
+            final OrderTable orderTable2 = saveOrderTable(2, false, EMPTY);
 
             final Long tableGroupId = saveTableGroup(orderTable1, orderTable2).getId();
 

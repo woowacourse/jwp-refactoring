@@ -3,6 +3,7 @@ package kitchenpos.table.application;
 import kitchenpos.order.domain.OrderStatusChangedEvent;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.TableStatus;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ public class OrderStatusChangedEventHandler {
     public void handle(final OrderStatusChangedEvent event) {
         final OrderTable orderTable = orderTableRepository.findById(event.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
-        orderTableRepository.save(orderTable.changeOrderStatus(event.getOrderStatus()));
+        final TableStatus tableStatus = TableStatus.from(event.getOrderStatus());
+        orderTableRepository.save(orderTable.changeTableStatus(tableStatus));
     }
 }

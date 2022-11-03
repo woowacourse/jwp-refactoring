@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
-import static kitchenpos.table.domain.OrderStatus.COMPLETION;
-import static kitchenpos.table.domain.OrderStatus.COOKING;
-import static kitchenpos.table.domain.OrderStatus.MEAL;
-import static kitchenpos.table.domain.OrderStatus.NO_ORDER;
+import static kitchenpos.order.domain.OrderStatus.COMPLETION;
+import static kitchenpos.order.domain.OrderStatus.COOKING;
+import static kitchenpos.order.domain.OrderStatus.MEAL;
+import static kitchenpos.table.domain.TableStatus.EMPTY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
@@ -13,17 +13,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderMenu;
-import kitchenpos.table.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.product.domain.Product;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.ui.dto.ChangeOrderStatusRequest;
 import kitchenpos.order.ui.dto.OrderCreateRequest;
 import kitchenpos.order.ui.dto.OrderLineItemRequest;
 import kitchenpos.order.ui.dto.OrderResponse;
+import kitchenpos.product.domain.Product;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -185,11 +186,12 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("changeOrderStatus 메서드는")
     class ChangeOrderStatus {
 
-        @ParameterizedTest(name = "{0} -> {1}")
+        @ParameterizedTest(name = "주문 상태 : {0} -> {1}, 테이블 상태 : EMPTY -> {2}")
         @DisplayName("주문 상태를 변경하고 주문 테이블 상태도 변경된다.")
-        @CsvSource(value = {"COOKING,COMPLETION", "MEAL,COMPLETION", "MEAL,COOKING"})
+        @CsvSource(value = {"COOKING,COMPLETION,EMPTY", "MEAL,COMPLETION,EMPTY", "MEAL,COOKING,EAT_IN"})
         void changeOrderStatus_validOrderStatus_success(final OrderStatus sourceOrderStatus,
-                                                        final OrderStatus targetOrderStatus) {
+                                                        final OrderStatus targetOrderStatus,
+                                                        final TableStatus expectedTableStatus) {
             // given
             final OrderMenu orderMenu = getOrderMenu();
             final OrderTable orderTable = saveOrderTable(10, false);
@@ -203,10 +205,10 @@ class OrderServiceTest extends ServiceTest {
             // then
             assertThat(actual.getOrderStatus()).isEqualTo(targetOrderStatus.name());
 
-            final OrderStatus changedOrderTableStatus = getOrderTable(orderTable.getId())
-                    .getOrderStatus();
-            assertThat(orderTable.getOrderStatus()).isEqualTo(NO_ORDER);
-            assertThat(changedOrderTableStatus).isEqualTo(targetOrderStatus);
+            final TableStatus changedOrderTableStatus = getOrderTable(orderTable.getId())
+                    .getTableStatus();
+            assertThat(orderTable.getTableStatus()).isEqualTo(EMPTY);
+            assertThat(changedOrderTableStatus).isEqualTo(expectedTableStatus);
         }
 
         @Test

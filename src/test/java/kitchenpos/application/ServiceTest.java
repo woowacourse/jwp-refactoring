@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.table.domain.OrderStatus.*;
+import static kitchenpos.table.domain.TableStatus.EMPTY;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -8,29 +8,30 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProductService;
+import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menugroup.application.MenuGroupService;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
+import kitchenpos.order.application.OrderService;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderMenu;
-import kitchenpos.table.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.product.domain.Product;
-import kitchenpos.table.domain.TableGroup;
-import kitchenpos.menu.application.MenuService;
-import kitchenpos.menugroup.application.MenuGroupService;
-import kitchenpos.order.application.OrderService;
-import kitchenpos.product.application.ProductService;
-import kitchenpos.menugroup.domain.MenuGroupRepository;
-import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
-import kitchenpos.table.domain.TableGroupRepository;
 import kitchenpos.table.application.TableGroupService;
 import kitchenpos.table.application.TableService;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.domain.TableGroupRepository;
+import kitchenpos.table.domain.TableStatus;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,8 +115,8 @@ abstract class ServiceTest {
         return orderTableRepository.save(orderTable);
     }
 
-    protected OrderTable saveOrderTable(final int numberOfGuests, final boolean empty, final OrderStatus orderStatus) {
-        final OrderTable orderTable = new OrderTable(null, null, numberOfGuests, empty, orderStatus);
+    protected OrderTable saveOrderTable(final int numberOfGuests, final boolean empty, final TableStatus tableStatus) {
+        final OrderTable orderTable = new OrderTable(null, null, numberOfGuests, empty, tableStatus);
         return orderTableRepository.save(orderTable);
     }
 
@@ -147,14 +148,14 @@ abstract class ServiceTest {
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         for (final OrderTable orderTable : orderTables) {
-            OrderStatus orderStatus = orderTable.getOrderStatus();
-            if (orderStatus == null) {
-                orderStatus = NO_ORDER;
+            TableStatus tableStatus = orderTable.getTableStatus();
+            if (tableStatus == null) {
+                tableStatus = EMPTY;
             }
             final OrderTable saved = new OrderTable(orderTable.getId(), savedTableGroup.getId(),
                     orderTable.getNumberOfGuests(),
                     orderTable.isEmpty(),
-                    orderStatus);
+                    tableStatus);
             orderTableRepository.save(saved);
         }
 

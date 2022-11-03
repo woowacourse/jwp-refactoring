@@ -1,12 +1,11 @@
 package kitchenpos.order.domain;
 
-import static kitchenpos.table.domain.OrderStatus.COOKING;
+import static kitchenpos.order.domain.OrderStatus.COOKING;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import kitchenpos.core.event.Events;
-import kitchenpos.table.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceCreator;

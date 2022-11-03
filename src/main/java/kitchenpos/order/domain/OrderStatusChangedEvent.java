@@ -1,7 +1,6 @@
 package kitchenpos.order.domain;
 
 import kitchenpos.core.event.Event;
-import kitchenpos.table.domain.OrderStatus;
 
 public class OrderStatusChangedEvent extends Event {
 

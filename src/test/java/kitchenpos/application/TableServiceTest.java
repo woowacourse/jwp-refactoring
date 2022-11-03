@@ -1,18 +1,11 @@
 package kitchenpos.application;
 
+import static kitchenpos.table.domain.TableStatus.EAT_IN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
 
-import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.order.domain.OrderMenu;
-import kitchenpos.product.domain.Product;
-import kitchenpos.table.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.ui.dto.ChangeEmptyRequest;
 import kitchenpos.table.ui.dto.ChangeNumberOfGuestsRequest;
@@ -23,7 +16,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.EnumSource;
 
 @DisplayName("TableService의")
 class TableServiceTest extends ServiceTest {
@@ -83,6 +75,7 @@ class TableServiceTest extends ServiceTest {
             // given
             final Long orderTableId = saveOrderTable(10, false).getId();
             final ChangeEmptyRequest request = new ChangeEmptyRequest(true);
+
             // when
             final OrderTableResponse actual = tableService.changeEmpty(orderTableId, request);
 
@@ -101,16 +94,11 @@ class TableServiceTest extends ServiceTest {
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
-        @ParameterizedTest(name = "주문 상태: {0}")
-        @DisplayName("주문 테이블에 주문이 있다면 주문 상태가 계산 완료인 경우에만 주문 등록 가능 여부를 변경할 수 있다.")
-        @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
-        void changeEmpty_orderStatusIsCompletion_exception(final OrderStatus orderStatus) {
+        @Test
+        @DisplayName("주문 테이블 상태가 매장 식사인 경우에 주문 등록 가능 여부를 변경할 수 없다.")
+        void changeEmpty_tableStatusIsEatIn_exception() {
             // given
-            final Product product = saveProduct("감자튀김");
-            final MenuGroup menuGroup = saveMenuGroup("감자");
-            final Menu menu = saveMenu("감자세트", BigDecimal.ONE, menuGroup, new MenuProduct(product.getId(), 1L));
-            final OrderTable orderTable = saveOrderTable(10, false);
-            saveOrder(orderTable, orderStatus, new OrderLineItem(1L, OrderMenu.from(menu)));
+            final OrderTable orderTable = saveOrderTable(10, false, EAT_IN);
 
             final ChangeEmptyRequest request = new ChangeEmptyRequest(true);
 

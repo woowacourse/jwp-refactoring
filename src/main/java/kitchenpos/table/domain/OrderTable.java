@@ -1,6 +1,6 @@
 package kitchenpos.table.domain;
 
-import static kitchenpos.table.domain.OrderStatus.NO_ORDER;
+import static kitchenpos.table.domain.TableStatus.EMPTY;
 
 import java.util.Objects;
 import org.springframework.data.annotation.Id;
@@ -12,22 +12,23 @@ public class OrderTable {
     private final Long tableGroupId;
     private final int numberOfGuests;
     private final boolean empty;
-    private final OrderStatus orderStatus;
+    private final TableStatus tableStatus;
 
-    public static OrderTable of(final int numberOfGuests, final boolean empty) {
-        return new OrderTable(null, null, numberOfGuests, empty, NO_ORDER);
-    }
-
-    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty, final OrderStatus orderStatus) {
+    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty,
+                      final TableStatus tableStatus) {
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
-        this.orderStatus = orderStatus;
+        this.tableStatus = tableStatus;
+    }
+
+    public static OrderTable of(final int numberOfGuests, final boolean empty) {
+        return new OrderTable(null, null, numberOfGuests, empty, EMPTY);
     }
 
     public OrderTable group(final Long tableGroupId) {
-        return new OrderTable(id, tableGroupId, numberOfGuests, false, orderStatus);
+        return new OrderTable(id, tableGroupId, numberOfGuests, false, tableStatus);
     }
 
     public OrderTable changeNumberOfGuests(final int numberOfGuests) {
@@ -37,17 +38,17 @@ public class OrderTable {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();
         }
-        return new OrderTable(id, tableGroupId, numberOfGuests, empty, orderStatus);
+        return new OrderTable(id, tableGroupId, numberOfGuests, empty, tableStatus);
     }
 
     public OrderTable changeEmpty(final boolean empty) {
         if (Objects.nonNull(tableGroupId)) {
             throw new IllegalArgumentException();
         }
-        if (orderStatus.existCustomer()) {
+        if (tableStatus.isEatIn()) {
             throw new IllegalArgumentException();
         }
-        return new OrderTable(id, tableGroupId, numberOfGuests, empty, orderStatus);
+        return new OrderTable(id, tableGroupId, numberOfGuests, empty, tableStatus);
     }
 
     public void verifyCanGroup() { // 비어있고, 단체지정 되어있지 않아야함
@@ -58,14 +59,14 @@ public class OrderTable {
     }
 
     public OrderTable ungroup() {
-        if (orderStatus.existCustomer()) {
+        if (tableStatus.isEatIn()) {
             throw new IllegalArgumentException();
         }
-        return new OrderTable(id, null, numberOfGuests, false, orderStatus);
+        return new OrderTable(id, null, numberOfGuests, false, tableStatus);
     }
 
-    public OrderTable changeOrderStatus(final OrderStatus orderStatus) {
-        return new OrderTable(id, tableGroupId, numberOfGuests, empty, orderStatus);
+    public OrderTable changeTableStatus(final TableStatus tableStatus) {
+        return new OrderTable(id, tableGroupId, numberOfGuests, empty, tableStatus);
     }
 
     public Long getId() {
@@ -84,8 +85,8 @@ public class OrderTable {
         return empty;
     }
 
-    public OrderStatus getOrderStatus() {
-        return orderStatus;
+    public TableStatus getTableStatus() {
+        return tableStatus;
     }
 
     @Override
