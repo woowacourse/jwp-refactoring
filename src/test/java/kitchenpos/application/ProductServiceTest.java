@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductResponse;
 import kitchenpos.dto.ProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,7 +28,7 @@ class ProductServiceTest extends ServiceTestBase {
         productDao.save(양념_치킨());
 
         // when
-        List<Product> products = productService.list();
+        List<ProductResponse> products = productService.list();
 
         // then
         assertThat(products).hasSize(2);
@@ -40,7 +41,7 @@ class ProductServiceTest extends ServiceTestBase {
         ProductRequest chicken = createProductRequest("후라이드치킨", 18000);
 
         // when
-        Product savedChicken = productService.create(chicken);
+        ProductResponse savedChicken = productService.create(chicken);
 
         // then
         List<Product> products = productDao.findAll();
