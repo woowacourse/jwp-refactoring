@@ -2,11 +2,11 @@ package kitchenpos.application.happy;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
-import kitchenpos.application.MenuService;
-import kitchenpos.domain.Menu;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.ui.dto.request.MenuGroupRequest;
-import kitchenpos.ui.dto.request.MenuProductRequest;
-import kitchenpos.ui.dto.request.MenuRequest;
+import kitchenpos.menu.ui.request.MenuProductRequest;
+import kitchenpos.menu.ui.request.MenuRequest;
 import kitchenpos.product.ui.request.ProductRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

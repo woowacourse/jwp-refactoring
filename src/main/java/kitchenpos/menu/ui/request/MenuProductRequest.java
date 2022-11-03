@@ -1,6 +1,6 @@
-package kitchenpos.ui.dto.request;
+package kitchenpos.menu.ui.request;
 
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProduct;
 
 public class MenuProductRequest {
     private Long productId;

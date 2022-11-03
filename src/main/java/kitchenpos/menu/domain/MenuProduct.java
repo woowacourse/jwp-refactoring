@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.menu.domain;
 
 import java.math.BigDecimal;
 import javax.persistence.Column;

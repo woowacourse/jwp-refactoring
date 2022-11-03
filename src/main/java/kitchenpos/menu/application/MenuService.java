@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.menu.application;
 
 import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_MENU_GROUP_EXCEPTION;
 import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_PRODUCT_EXCEPTION;
@@ -8,13 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.application.exception.CustomIllegalArgumentException;
 import kitchenpos.dao.JpaMenuGroupRepository;
-import kitchenpos.dao.JpaMenuRepository;
+import kitchenpos.menu.domain.JpaMenuRepository;
 import kitchenpos.product.domain.JpaProductRepository;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.product.domain.Product;
-import kitchenpos.ui.dto.request.MenuProductRequest;
-import kitchenpos.ui.dto.request.MenuRequest;
+import kitchenpos.menu.ui.request.MenuProductRequest;
+import kitchenpos.menu.ui.request.MenuRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

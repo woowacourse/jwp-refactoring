@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.menu.domain;
 
 import static kitchenpos.application.exception.ExceptionType.INVALID_MENU_PRODUCT_EXCEPTION;
 
@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import kitchenpos.application.exception.CustomIllegalArgumentException;
+import kitchenpos.domain.Price;
 
 @Entity
 public class Menu {
