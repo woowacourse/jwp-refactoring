@@ -1,4 +1,6 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
+
+import kitchenpos.domain.Entity;
 
 public class OrderLineItem implements Entity {
 

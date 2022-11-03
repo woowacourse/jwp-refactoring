@@ -16,12 +16,12 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.ProductFakeDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.dao.TableGroupFakeDao;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.ProductRepository;
-import kitchenpos.repository.TableGroupRepository;
+import kitchenpos.domain.menu.MenuGroupRepository;
+import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.menu.ProductRepository;
+import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.table.OrderTableRepository;
+import kitchenpos.domain.table.TableGroupRepository;
 
 public abstract class FakeSpringContext {
 

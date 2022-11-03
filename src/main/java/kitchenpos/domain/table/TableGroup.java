@@ -1,8 +1,9 @@
-package kitchenpos.domain;
+package kitchenpos.domain.table;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.domain.Entity;
 
 public class TableGroup implements Entity {
 

@@ -1,8 +1,7 @@
-package kitchenpos.repository;
+package kitchenpos.domain.menu;
 
 import java.util.List;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
 import org.springframework.stereotype.Repository;
 
 @Repository

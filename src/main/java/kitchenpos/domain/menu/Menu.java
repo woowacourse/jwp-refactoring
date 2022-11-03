@@ -1,8 +1,9 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.domain.Entity;
 
 public class Menu implements Entity {
 

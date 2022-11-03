@@ -4,7 +4,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.TableService;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.ui.dto.OrderTableRequest;
 import kitchenpos.ui.dto.OrderTableResponse;
 import org.springframework.http.ResponseEntity;

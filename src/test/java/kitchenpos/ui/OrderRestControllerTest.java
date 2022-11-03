@@ -13,7 +13,7 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.fixture.MenuFactory;
 import kitchenpos.fixture.ProductFactory;
 import org.junit.jupiter.api.DisplayName;

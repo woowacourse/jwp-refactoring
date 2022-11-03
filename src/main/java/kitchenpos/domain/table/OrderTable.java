@@ -1,7 +1,10 @@
-package kitchenpos.domain;
+package kitchenpos.domain.table;
 
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.domain.Entity;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderStatus;
 
 public class OrderTable implements Entity {
 

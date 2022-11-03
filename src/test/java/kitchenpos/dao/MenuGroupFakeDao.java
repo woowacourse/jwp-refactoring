@@ -1,6 +1,6 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menu.MenuGroup;
 
 public class MenuGroupFakeDao extends BaseFakeDao<MenuGroup> implements MenuGroupDao {
 

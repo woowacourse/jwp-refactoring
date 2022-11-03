@@ -1,4 +1,6 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
+
+import kitchenpos.domain.Entity;
 
 public class MenuGroup implements Entity {
 
