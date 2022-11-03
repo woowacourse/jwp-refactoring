@@ -5,10 +5,10 @@ Content-Type: application/json
 {
   "orderTables": [
     {
-      "id": 1
+      "id": 9
     },
     {
-      "id": 2
+      "id": 10
     }
   ]
 }

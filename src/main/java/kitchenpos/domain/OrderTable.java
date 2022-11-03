@@ -11,7 +11,7 @@ public class OrderTable {
     private boolean empty;
     private List<Order> orders;
 
-    public OrderTable() {
+    private OrderTable() {
     }
 
     public OrderTable(final int numberOfGuests, final boolean empty) {

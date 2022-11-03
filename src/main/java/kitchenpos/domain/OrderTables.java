@@ -6,7 +6,10 @@ import org.springframework.util.CollectionUtils;
 
 public class OrderTables {
 
-    private final List<OrderTable> value;
+    private List<OrderTable> value;
+
+    private OrderTables() {
+    }
 
     public OrderTables(final List<OrderTable> value) {
         validate(value);
@@ -40,9 +43,5 @@ public class OrderTables {
 
     public List<OrderTable> getOrderTables() {
         return value;
-    }
-
-    public int size() {
-        return value.size();
     }
 }

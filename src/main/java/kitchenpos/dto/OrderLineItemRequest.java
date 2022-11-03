@@ -6,8 +6,11 @@ import kitchenpos.vo.Price;
 
 public class OrderLineItemRequest {
 
-    private final Long menuId;
-    private final long quantity;
+    private Long menuId;
+    private long quantity;
+
+    public OrderLineItemRequest() {
+    }
 
     public OrderLineItemRequest(final Long menuId, final long quantity) {
         this.menuId = menuId;

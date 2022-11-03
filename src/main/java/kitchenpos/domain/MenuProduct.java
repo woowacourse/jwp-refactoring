@@ -10,6 +10,9 @@ public class MenuProduct {
     private long quantity;
     private Price price;
 
+    private MenuProduct() {
+    }
+
     public MenuProduct(final Long productId, final long quantity, final Price price) {
         this(null, null, productId, quantity, price);
     }
@@ -49,5 +52,9 @@ public class MenuProduct {
 
     public long getQuantity() {
         return quantity;
+    }
+
+    public void setPrice(final Price price) {
+        this.price = price;
     }
 }

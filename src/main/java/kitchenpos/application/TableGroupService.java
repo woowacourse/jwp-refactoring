@@ -29,9 +29,8 @@ public class TableGroupService {
         return tableGroupDao.save(tableGroup);
     }
 
-    private OrderTables findOrderTables(final OrderTables orderTables) {
-        final List<Long> orderTableIds = orderTables.getOrderTables()
-                .stream()
+    private OrderTables findOrderTables(final List<OrderTable> orderTables) {
+        final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
@@ -39,7 +38,7 @@ public class TableGroupService {
         return new OrderTables(savedOrderTables);
     }
 
-    private void validateOrderTables(final OrderTables orderTables, final List<OrderTable> savedOrderTables) {
+    private void validateOrderTables(final List<OrderTable> orderTables, final List<OrderTable> savedOrderTables) {
         if (orderTables.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }

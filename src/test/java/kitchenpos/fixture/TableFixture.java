@@ -13,6 +13,6 @@ public class TableFixture {
     }
 
     public static TableGroupRequest createTableGroupRequest(final OrderTable... orderTables) {
-        return new TableGroupRequest(new OrderTables(List.of(orderTables)));
+        return new TableGroupRequest(List.of(orderTables));
     }
 }

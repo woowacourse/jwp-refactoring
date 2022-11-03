@@ -6,7 +6,9 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuRequest;
+import kitchenpos.vo.Price;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,8 +40,9 @@ public class MenuService {
 
     private void validateMenuProductsExistence(final List<MenuProduct> menuProducts) {
         for (final MenuProduct menuProduct : menuProducts) {
-            productDao.findById(menuProduct.getProductId())
+            final Product product = productDao.findById(menuProduct.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
+            menuProduct.setPrice(Price.valueOf(product.getPrice()));
         }
     }
 

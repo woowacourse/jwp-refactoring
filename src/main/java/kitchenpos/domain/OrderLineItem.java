@@ -10,7 +10,7 @@ public class OrderLineItem {
     private Price menuPrice;
     private long quantity;
 
-    public OrderLineItem() {
+    private OrderLineItem() {
     }
 
     public OrderLineItem(final Long seq, final Long orderId, final String menuName, final Price menuPrice,
