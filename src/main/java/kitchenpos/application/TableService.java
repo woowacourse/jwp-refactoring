@@ -1,5 +1,10 @@
 package kitchenpos.application;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.OrderTableRequest;
+import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
@@ -7,10 +12,7 @@ import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-
+@Transactional(readOnly = true)
 @Service
 public class TableService {
     private final OrderDao orderDao;
@@ -22,53 +24,68 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
-
-        return orderTableDao.save(orderTable);
+    public OrderTableResponse create(final OrderTableRequest.Create request) {
+        return new OrderTableResponse(
+                orderTableDao.save(new OrderTable(request.getNumberOfGuests(), request.isEmpty())));
     }
 
-    public List<OrderTable> list() {
-        return orderTableDao.findAll();
+    public List<OrderTableResponse> list() {
+        return orderTableDao.findAll().stream()
+                .map(OrderTableResponse::new)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
+    public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableRequest.Empty request) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
-        }
+        validateTableGroupId(savedOrderTable);
+        validateOrderStatus(orderTableId);
+        savedOrderTable.changeEmpty(request.isEmpty());
 
+        return new OrderTableResponse(orderTableDao.save(savedOrderTable));
+    }
+
+    private void validateTableGroupId(OrderTable savedOrderTable) {
+        if (savedOrderTable.isEmptyTableGroupId()) {
+            throw new IllegalArgumentException("[ERROR] TableGroupId가 null입니다.");
+        }
+    }
+
+    private void validateOrderStatus(Long orderTableId) {
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[ERROR] 주문 상태가 COOKING과 MEAL일때는 빈 주문 테이블로 변경할 수 없습니다.");
         }
-
-        savedOrderTable.setEmpty(orderTable.isEmpty());
-
-        return orderTableDao.save(savedOrderTable);
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
+                                                   final OrderTableRequest.NumberOfGuest request) {
+        final int numberOfGuests = request.getNumberOfGuests();
 
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
+        validateNumberOfGuests(numberOfGuests);
 
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
+        validateOrderTableIsEmpty(savedOrderTable);
+
+        savedOrderTable.addNumberOfGuests(numberOfGuests);
+
+        return new OrderTableResponse(orderTableDao.save(savedOrderTable));
+    }
+
+    private void validateOrderTableIsEmpty(OrderTable savedOrderTable) {
         if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[ERROR] 주문 테이블이 비어있습니다.");
         }
+    }
 
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
-
-        return orderTableDao.save(savedOrderTable);
+    private void validateNumberOfGuests(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("[ERROR] 요청 손님의 수가 음수입니다.");
+        }
     }
 }

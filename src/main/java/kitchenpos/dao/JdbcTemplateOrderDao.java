@@ -1,6 +1,13 @@
 package kitchenpos.dao;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import javax.sql.DataSource;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -8,14 +15,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-
-import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Repository
 public class JdbcTemplateOrderDao implements OrderDao {
@@ -35,7 +34,7 @@ public class JdbcTemplateOrderDao implements OrderDao {
 
     @Override
     public Order save(final Order entity) {
-        if (Objects.isNull(entity.getId())) {
+        if (entity.getId() == null) {
             final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
             final Number key = jdbcInsert.executeAndReturnKey(parameters);
             return select(key.longValue());
@@ -70,7 +69,8 @@ public class JdbcTemplateOrderDao implements OrderDao {
     }
 
     @Override
-    public boolean existsByOrderTableIdInAndOrderStatusIn(final List<Long> orderTableIds, final List<String> orderStatuses) {
+    public boolean existsByOrderTableIdInAndOrderStatusIn(final List<Long> orderTableIds,
+                                                          final List<String> orderStatuses) {
         final String sql = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END" +
                 " FROM orders WHERE order_table_id IN (:orderTableIds) AND order_status IN (:orderStatuses)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
@@ -89,17 +89,16 @@ public class JdbcTemplateOrderDao implements OrderDao {
     private void update(final Order entity) {
         final String sql = "UPDATE orders SET order_status = (:orderStatus) WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("orderStatus", entity.getOrderStatus())
+                .addValue("orderStatus", entity.getOrderStatus().name())
                 .addValue("id", entity.getId());
         jdbcTemplate.update(sql, parameters);
     }
 
     private Order toEntity(final ResultSet resultSet) throws SQLException {
-        final Order entity = new Order();
-        entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setOrderTableId(resultSet.getLong("order_table_id"));
-        entity.setOrderStatus(resultSet.getString("order_status"));
-        entity.setOrderedTime(resultSet.getObject("ordered_time", LocalDateTime.class));
-        return entity;
+        long id = resultSet.getLong(KEY_COLUMN_NAME);
+        long orderTableId = resultSet.getLong("order_table_id");
+        OrderStatus orderStatus = OrderStatus.valueOf(resultSet.getString("order_status"));
+        LocalDateTime orderedTime = resultSet.getObject("ordered_time", LocalDateTime.class);
+        return new Order(id, orderTableId, orderStatus, orderedTime);
     }
 }

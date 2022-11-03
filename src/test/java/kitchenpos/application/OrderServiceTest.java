@@ -7,9 +7,14 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.application.dto.OrderLineItemRequest;
+import kitchenpos.application.dto.OrderRequest;
+import kitchenpos.application.dto.OrderRequest.Status;
+import kitchenpos.application.dto.OrderResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -22,8 +27,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 @ServiceTest
 class OrderServiceTest {
@@ -35,6 +38,9 @@ class OrderServiceTest {
     private OrderTableDao orderTableDao;
 
     @Autowired
+    private OrderLineItemDao orderLineItemDao;
+
+    @Autowired
     private MenuDao menuDao;
 
     @Autowired
@@ -43,21 +49,14 @@ class OrderServiceTest {
     @Autowired
     private OrderDao orderDao;
 
-    private Order savedOrder;
-    private Order orderRequest;
+    private Order order;
 
     @BeforeEach
     void setUp() {
         Menu menu = createMenu();
-        orderRequest = createOrderRequest(menu.getId(), OrderStatus.MEAL);
-        savedOrder = orderDao.save(orderRequest);
-    }
-
-    private Order createOrderRequest(Long menuId, OrderStatus orderStatus) {
-        OrderTable orderTable = orderTableDao.save(new OrderTable(null, 1, false));
-
-        return new Order(orderTable.getId(), orderStatus.name(), LocalDateTime.now(),
-                List.of(new OrderLineItem(null, menuId, 1)));
+        OrderRequest.Create request = createOrderRequest(menu.getId());
+        order = orderDao.save(Order.create(request.getOrderTableId()));
+        orderLineItemDao.save(new OrderLineItem(order.getId(), menu.getId(), 3L));
     }
 
     private Menu createMenu() {
@@ -65,36 +64,34 @@ class OrderServiceTest {
         return menuDao.save(new Menu("신메뉴", BigDecimal.ONE, menuGroup.getId(), List.of()));
     }
 
+    private OrderRequest.Create createOrderRequest(Long menuId) {
+        OrderTable orderTable = orderTableDao.save(new OrderTable(null, 1, false));
+
+        return new OrderRequest.Create(orderTable.getId(), List.of(new OrderLineItemRequest.Create(menuId, 1)));
+    }
+
     @DisplayName("주문을 생성한다.")
     @Test
     void create() {
-        //when
-        Order order = orderService.create(orderRequest);
+        OrderResponse actual = orderService.create(createOrderRequest(createMenu().getId()));
 
-        //then
-        assertThat(order.getId()).isNotNull();
+        assertThat(actual.getId()).isNotNull();
     }
 
     @DisplayName("주문 항목이 없으면 예외가 발생한다.")
     @Test
     void createFailureWhenNotExistsOrderLineItems() {
-        //given
         OrderTable orderTable = orderTableDao.save(new OrderTable(null, 1, false));
-        final List<OrderLineItem> emptyOrderLineItem = Collections.emptyList();
-        //when
-        //then
-        assertThatThrownBy(() -> orderService.create(
-                new Order(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), emptyOrderLineItem)));
+        final List<OrderLineItemRequest.Create> emptyOrderLineItem = Collections.emptyList();
+
+        assertThatThrownBy(() -> orderService.create(new OrderRequest.Create(orderTable.getId(), emptyOrderLineItem)));
     }
 
     @DisplayName("주문 항목의 메뉴가 디비안에 없으면 예외가 발생한다")
     @Test
     void createFailureWhenNotExistsMenu() {
-        //given
-        Order order = createOrderRequest(null, OrderStatus.COOKING);
+        OrderRequest.Create order = createOrderRequest(null);
 
-        //when
-        //then
         assertThatThrownBy(() -> orderService.create(order))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
@@ -102,49 +99,40 @@ class OrderServiceTest {
     @DisplayName("주문 테이블이 비어있으면 예외가 발생한다")
     @Test
     void createFailureWhenNotOrderTableIsEmpty() {
-        //given
         Menu menu = createMenu();
         final Long emptyOrderTableId = null;
 
-        Order order = new Order(emptyOrderTableId, OrderStatus.MEAL.name(), LocalDateTime.now(),
-                List.of(new OrderLineItem(null, menu.getId(), 1)));
+        OrderRequest.Create request = new OrderRequest.Create(emptyOrderTableId,
+                List.of(new OrderLineItemRequest.Create(menu.getId(), 1)));
 
-        //when
-        //then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(request))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문의 목록들을 반환한다.")
     @Test
     void list() {
-        //when
-        //then
         assertThat(orderService.list()).hasSize(1);
     }
 
     @DisplayName("주문의 상태를 바꾼다.")
     @Test
     void changeOrderStatus() {
-        //given
-        Order order = new Order(1L, OrderStatus.COOKING.name(), LocalDateTime.now());
+        OrderRequest.Status request = new OrderRequest.Status(OrderStatus.COOKING);
 
-        //when
-        orderService.changeOrderStatus(savedOrder.getId(), order);
-        Order findOrder = orderDao.findById(savedOrder.getId()).get();
+        orderService.changeOrderStatus(order.getId(), request);
+        Order findOrder = orderDao.findById(order.getId()).get();
 
-        //then
-        assertThat(findOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+        assertThat(findOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
     }
 
     @DisplayName("기존의 주문 상태가 COMPLETION일 때, 주문 상태를 바꾸려고 하면 예외가 발생한다")
     @Test
     void changeOrderStatusFailureWhenOrderStatusIsCOMPLETION() {
-        //given
-        Menu menu = createMenu();
-        Order order = createOrderRequest(menu.getId(), OrderStatus.COMPLETION);
-        //when
-        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), new Order()))
+        OrderTable orderTable = orderTableDao.save(new OrderTable(null, 1, false));
+        Order order = orderDao.save(new Order(orderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now()));
+
+        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), new Status(OrderStatus.COOKING)))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 }

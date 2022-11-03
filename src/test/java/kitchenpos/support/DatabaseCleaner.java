@@ -18,9 +18,6 @@ public class DatabaseCleaner {
 
     private static final String REFERENTIAL_INTEGRITY = "SET REFERENTIAL_INTEGRITY ";
     private static final String TRUNCATE_QUERY = "TRUNCATE TABLE %s";
-    private static final String ID_RESET_QUERY = "ALTER TABLE %s ALTER COLUMN id RESTART WITH 1";
-    private static final String SEQ_RESET_QUERY = "ALTER TABLE %s ALTER COLUMN seq RESTART WITH 1";
-    private static final List<String> SEQ_TABLE_NAMES = List.of("order_line_item", "menu_product");
 
     @Autowired
     private DataSource dataSource;
@@ -47,19 +44,10 @@ public class DatabaseCleaner {
             connection.prepareStatement(REFERENTIAL_INTEGRITY + "FALSE").execute();
             for (String tableName : tableNames) {
                 connection.prepareStatement(String.format(TRUNCATE_QUERY, tableName)).execute();
-                resetPrimaryKey(connection, tableName);
             }
             connection.prepareStatement(REFERENTIAL_INTEGRITY + "TRUE").execute();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new IllegalArgumentException("[ERROR] TRUNCATE 동작하는데 실패했습니다.");
         }
-    }
-
-    private void resetPrimaryKey(Connection connection, String tableName) throws SQLException {
-        if (SEQ_TABLE_NAMES.contains(tableName.toLowerCase())) {
-            connection.prepareStatement(String.format(SEQ_RESET_QUERY, tableName)).execute();
-            return;
-        }
-        connection.prepareStatement(String.format(ID_RESET_QUERY, tableName)).execute();
     }
 }

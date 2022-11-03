@@ -1,5 +1,12 @@
 package kitchenpos.application;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.MenuProductRequest;
+import kitchenpos.application.dto.MenuProductRequest.Create;
+import kitchenpos.application.dto.MenuRequest;
+import kitchenpos.application.dto.MenuResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -10,11 +17,7 @@ import kitchenpos.domain.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
+@Transactional(readOnly = true)
 @Service
 public class MenuService {
     private final MenuDao menuDao;
@@ -35,50 +38,47 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final Menu menu) {
-        final BigDecimal price = menu.getPrice();
+    public MenuResponse create(final MenuRequest request) {
+        validateMenuGroupExists(request);
+        Menu menu = request.toMenu();
 
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
-            throw new IllegalArgumentException();
-        }
-
-        final List<MenuProduct> menuProducts = menu.getMenuProducts();
-
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = productDao.findById(menuProduct.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
-
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
+        List<Create> menuProducts = request.getMenuProducts();
+        validatePrice(menuProducts, menu);
 
         final Menu savedMenu = menuDao.save(menu);
 
         final Long menuId = savedMenu.getId();
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(menuId);
-            savedMenuProducts.add(menuProductDao.save(menuProduct));
-        }
-        savedMenu.setMenuProducts(savedMenuProducts);
+        List<MenuProduct> savedMenuProducts = menuProducts.stream()
+                .map(it -> menuProductDao.save(new MenuProduct(menuId, it.getProductId(), it.getQuantity())))
+                .collect(Collectors.toList());
+        savedMenu.addMenuProducts(savedMenuProducts);
 
-        return savedMenu;
+        return new MenuResponse(savedMenu);
     }
 
-    public List<Menu> list() {
-        final List<Menu> menus = menuDao.findAll();
-
-        for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
+    private void validateMenuGroupExists(MenuRequest request) {
+        if (!menuGroupDao.existsById(request.getMenuGroupId())) {
+            throw new IllegalArgumentException("[ERROR] 올바른 메뉴 그룹이 존재하지 않습니다.");
         }
+    }
 
-        return menus;
+    private void validatePrice(List<MenuProductRequest.Create> requests, Menu menu) {
+        BigDecimal sum = requests.stream()
+                .map(it -> {
+                    final Product product = productDao.findById(it.getProductId())
+                            .orElseThrow(IllegalArgumentException::new);
+                    return product.multiplyPrice(it.getQuantity());
+                }).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        if (menu.isBiggerPrice(sum)) {
+            throw new IllegalArgumentException("[ERROR] 메뉴의 가격이 상품들의 전체 가격보다 크면 안됩니다.");
+        }
+    }
+
+    public List<MenuResponse> list() {
+        return menuDao.findAll().stream()
+                .peek(menu -> menu.addMenuProducts(menuProductDao.findAllByMenuId(menu.getId())))
+                .map(MenuResponse::new)
+                .collect(Collectors.toList());
     }
 }
