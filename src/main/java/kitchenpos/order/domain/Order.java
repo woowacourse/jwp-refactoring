@@ -1,8 +1,11 @@
 package kitchenpos.order.domain;
 
+import static kitchenpos.table.domain.OrderStatus.COOKING;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import kitchenpos.core.event.Events;
 import kitchenpos.table.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import org.springframework.data.annotation.Id;
@@ -22,9 +25,9 @@ public class Order {
     @MappedCollection(idColumn = "ORDER_ID")
     private final List<OrderLineItem> orderLineItems;
 
-    public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+    public Order(final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, OrderStatus.from(orderStatus), orderedTime, orderLineItems);
+        this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
     @PersistenceCreator
@@ -42,7 +45,8 @@ public class Order {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        return new Order(orderTable.getId(), OrderStatus.COOKING.name(), orderedTime, orderLineItems);
+        Events.raise(new OrderStatusChangedEvent(orderTable.getId(), COOKING));
+        return new Order(orderTable.getId(), COOKING, orderedTime, orderLineItems);
     }
 
     public boolean isLegacy() {
@@ -52,11 +56,16 @@ public class Order {
                 .anyMatch(Objects::isNull);
     }
 
-    public Order changeOrderStatus(final String orderStatus) {
+    public Order changeOrderStatus(final OrderStatus orderStatus) {
         if (this.orderStatus.isCompleted()) {
             throw new IllegalArgumentException();
         }
-        return new Order(id, orderTableId, OrderStatus.from(orderStatus), orderedTime, orderLineItems);
+        Events.raise(new OrderStatusChangedEvent(orderTableId, orderStatus));
+        return new Order(id, orderTableId, orderStatus, orderedTime, orderLineItems);
+    }
+
+    public Order replaceOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        return new Order(id, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
     public Long getId() {
@@ -77,15 +86,5 @@ public class Order {
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public Order replaceOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        return new Order(
-                id,
-                orderTableId,
-                orderStatus,
-                orderedTime,
-                orderLineItems
-        );
     }
 }
