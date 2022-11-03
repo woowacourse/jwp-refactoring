@@ -6,9 +6,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.application.dto.OrderTableRequest;
+import kitchenpos.ordertable.application.dto.OrderTableRequest;
 import kitchenpos.application.support.IntegrationTest;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.application.TableService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -31,7 +32,7 @@ public class TableServiceTest {
 
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getTableGroup()).isNull(),
+                () -> assertThat(actual.getTableGroupId()).isNull(),
                 () -> assertThat(actual.getNumberOfGuests()).isEqualTo(5),
                 () -> assertThat(actual.isEmpty()).isEqualTo(empty)
         );
