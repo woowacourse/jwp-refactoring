@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.ui.dto.MenuGroupRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +18,7 @@ class MenuGroupServiceTest extends FakeSpringContext {
     @DisplayName("메뉴 그룹 등록")
     @Test
     void create() {
-        final var korean = menuGroup("한식");
+        final var korean = new MenuGroupRequest("한식");
 
         final var result = menuGroupService.create(korean);
 
