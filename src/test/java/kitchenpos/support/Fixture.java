@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
+import kitchenpos.product.domain.Product;
 
 public class Fixture {
 

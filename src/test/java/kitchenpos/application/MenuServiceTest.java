@@ -13,11 +13,11 @@ import kitchenpos.application.dto.MenuCreateRequest;
 import kitchenpos.application.dto.MenuProductCreateRequest;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -34,7 +34,7 @@ public class MenuServiceTest extends ServiceTest {
     @MockBean
     private MenuGroupDao menuGroupDao;
     @MockBean
-    private ProductDao productDao;
+    private ProductRepository productRepository;
     @MockBean
     private MenuProductDao menuProductDao;
 
@@ -58,7 +58,7 @@ public class MenuServiceTest extends ServiceTest {
         void setUp() {
             productA = new Product(PRODUCT_A_ID, "상품A", BigDecimal.valueOf(PRODUCT_PRICE));
             productB = new Product(PRODUCT_B_ID, "상품B", BigDecimal.valueOf(PRODUCT_PRICE));
-            productDao.saveAll(Arrays.asList(productA, productB));
+            productRepository.saveAll(Arrays.asList(productA, productB));
 
             menuProductA = new MenuProductCreateRequest(PRODUCT_A_ID, 2);
             menuProductB = new MenuProductCreateRequest(PRODUCT_B_ID, 2);
@@ -71,7 +71,7 @@ public class MenuServiceTest extends ServiceTest {
 
             given(menuGroupDao.existsById(any()))
                     .willReturn(true);
-            given(productDao.findAllById(any()))
+            given(productRepository.findAllById(any()))
                     .willReturn(Arrays.asList(productA, productB));
         }
 
@@ -133,7 +133,7 @@ public class MenuServiceTest extends ServiceTest {
             productB = new Product(PRODUCT_B_ID, "상품B", BigDecimal.valueOf(100));
             menuProductB = new MenuProductCreateRequest(PRODUCT_B_ID, 1);
 
-            given(productDao.findAllById(any()))
+            given(productRepository.findAllById(any()))
                     .willReturn(List.of(productA, productB));
 
             createRequest = new MenuCreateRequest("메뉴 이름", BigDecimal.valueOf(201), MENU_GROUP_ID,

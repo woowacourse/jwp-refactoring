@@ -6,20 +6,20 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.product.domain.Product;
 import org.springframework.stereotype.Component;
 
 @Component
 public class MenuValidator {
 
     private final MenuGroupDao menuGroupDao;
-    private final ProductDao productDao;
+    private final ProductRepository productRepository;
 
-    public MenuValidator(MenuGroupDao menuGroupDao, ProductDao productDao) {
+    public MenuValidator(MenuGroupDao menuGroupDao, ProductRepository productRepository) {
         this.menuGroupDao = menuGroupDao;
-        this.productDao = productDao;
+        this.productRepository = productRepository;
     }
 
     public void validate(Long menuGroupId, List<MenuProduct> menuProducts, BigDecimal price) {
@@ -48,7 +48,7 @@ public class MenuValidator {
         List<Long> productIds = menuProducts.stream()
                 .map(MenuProduct::getProductId)
                 .collect(Collectors.toList());
-        return productDao.findAllById(productIds);
+        return productRepository.findAllById(productIds);
     }
 
     private void checkPriceIsNull(List<MenuProduct> menuProducts, List<Product> products, BigDecimal price) {
