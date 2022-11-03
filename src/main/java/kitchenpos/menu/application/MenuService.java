@@ -43,10 +43,10 @@ public class MenuService {
     }
 
     private List<MenuProduct> toMenuProducts(final List<MenuProductDto> menuProducts) {
-            return menuProducts.stream()
-                    .map(MenuProductDto::toMenuProduct)
-                    .collect(Collectors.toList());
-        }
+        return menuProducts.stream()
+                .map(MenuProductDto::toMenuProduct)
+                .collect(Collectors.toList());
+    }
 
     @Transactional(readOnly = true)
     public List<MenuResponse> list() {
