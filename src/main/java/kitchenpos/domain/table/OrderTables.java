@@ -3,15 +3,23 @@ package kitchenpos.domain.table;
 import java.util.Collections;
 import java.util.List;
 
+import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+
 import org.springframework.util.CollectionUtils;
 
-import kitchenpos.domain.table.OrderTable;
-
+@Embeddable
 public class OrderTables {
 
     private static final int MINIMUM_NUMBER_OF_TABLE = 2;
 
-    private final List<OrderTable> value;
+    @OneToMany
+    @JoinColumn(name = "table_group_id")
+    private List<OrderTable> value;
+
+    protected OrderTables() {
+    }
 
     public OrderTables(final List<OrderTable> value) {
         validateOrderTableSizeIsValid(value);

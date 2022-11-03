@@ -12,7 +12,8 @@ public class OrderTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
+    @Column(name = "table_group_id")
     private Long tableGroupId;
     
     @Column(nullable = false)
