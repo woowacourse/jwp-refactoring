@@ -3,7 +3,10 @@ package kitchenpos.order.domain;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.exception.NotFoundOrderException;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.dto.OrderCreateRequest;
+import kitchenpos.order.dto.OrderLineItemRequest;
 import kitchenpos.order.dto.OrderResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,19 +14,28 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class OrderService {
     private final OrderRepository orderRepository;
+    private final MenuRepository menuRepository;
     private final OrderValidator orderValidator;
 
 
-    public OrderService(final OrderRepository orderRepository, final OrderValidator orderValidator) {
+    public OrderService(final OrderRepository orderRepository, final MenuRepository menuRepository,
+                        final OrderValidator orderValidator) {
         this.orderRepository = orderRepository;
+        this.menuRepository = menuRepository;
         this.orderValidator = orderValidator;
     }
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest orderCreateRequest) {
-        final Order order = orderCreateRequest.toOrder();
+        final List<Long> menuIds = orderCreateRequest.getOrderLineItems()
+                .stream()
+                .map(OrderLineItemRequest::getMenuId)
+                .collect(Collectors.toList());
+        final List<Menu> menus = menuRepository.findAllById(menuIds);
 
-        order.place(orderValidator);
+        final Order order = orderCreateRequest.toOrder(menus);
+
+        order.place(orderValidator, menuIds);
 
         final Order saved = orderRepository.save(order);
         return OrderResponse.from(saved);

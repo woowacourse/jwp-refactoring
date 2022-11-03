@@ -7,16 +7,17 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.exception.NotFoundMenuException;
 import kitchenpos.exception.NotFoundOrderException;
 import kitchenpos.exception.NotFoundOrderTableException;
 import kitchenpos.exception.OrderCompletionException;
 import kitchenpos.exception.OrderLineItemEmptyException;
-import kitchenpos.exception.OrderLineItemSizeException;
 import kitchenpos.exception.TableEmptyException;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderMenu;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.dto.OrderCreateRequest;
 import kitchenpos.order.dto.OrderLineItemRequest;
@@ -57,8 +58,9 @@ class OrderServiceTest extends ServiceTest {
 
         // when
         final OrderResponse saved = orderService.create(orderCreateRequest);
+        final OrderMenu orderMenu = new OrderMenu(null, savedMenu.getName(), savedMenu.getPrice());
         final OrderLineItemResponse actual = OrderLineItemResponse.from(
-                new OrderLineItem(null, null, savedMenu.getId(), 2));
+                new OrderLineItem(null, null, orderMenu, 2));
 
         // then
         assertAll(
@@ -67,8 +69,44 @@ class OrderServiceTest extends ServiceTest {
                 () -> assertThat(saved.getOrderedTime()).isBeforeOrEqualTo(LocalDateTime.now()),
                 () -> assertThat(saved.getOrderTableId()).isEqualTo(notEmptyOrderTable.getId()),
                 () -> assertThat(saved.getOrderLineItems()).usingRecursiveFieldByFieldElementComparator()
-                        .usingElementComparatorOnFields("menuId", "quantity")
+                        .usingElementComparatorOnFields("quantity")
                         .contains(actual)
+        );
+    }
+
+    @Test
+    @DisplayName("주문을 생성하면 해당 메뉴의 현재 상태를 이용해서 주문 내역이 저장된다.")
+    void createOrderAndOrderMenu() {
+        // given
+        final MenuGroup menuGroup = MenuGroupFixtures.TWO_CHICKEN_GROUP.create();
+        final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
+
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.createWithMenuGroup(savedMenuGroup);
+        final Menu savedMenu = menuRepository.save(menu);
+
+        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(savedMenu.getId(), 2);
+        final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
+        final OrderTable notEmptyOrderTable = orderTableRepository.save(orderTable);
+
+        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(notEmptyOrderTable.getId(),
+                Collections.singletonList(orderLineItemRequest));
+
+        // when
+        final OrderResponse saved = orderService.create(orderCreateRequest);
+
+        // then
+        final OrderMenu savedOrderMenu = orderMenuRepository.findById(saved.getOrderLineItems().get(0).getOrderMenuId())
+                .get();
+
+        assertAll(
+                () -> assertThat(saved.getId()).isNotNull(),
+                () -> assertThat(saved.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
+                () -> assertThat(saved.getOrderedTime()).isBeforeOrEqualTo(LocalDateTime.now()),
+                () -> assertThat(saved.getOrderTableId()).isEqualTo(notEmptyOrderTable.getId()),
+                () -> assertThat(saved.getOrderLineItems()).hasSize(1),
+                () -> assertThat(saved.getOrderLineItems().get(0).getQuantity()).isEqualTo(2),
+                () -> assertThat(savedOrderMenu.getName()).isEqualTo(menu.getName()),
+                () -> assertThat(savedOrderMenu.getPrice()).isEqualByComparingTo(menu.getPrice())
         );
     }
 
@@ -93,7 +131,7 @@ class OrderServiceTest extends ServiceTest {
 
         // when, then
         assertThatThrownBy(() -> orderService.create(orderCreateRequest))
-                .isExactlyInstanceOf(OrderLineItemSizeException.class);
+                .isExactlyInstanceOf(NotFoundMenuException.class);
     }
 
     @Test
@@ -150,7 +188,7 @@ class OrderServiceTest extends ServiceTest {
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable notEmptyOrderTable = orderTableRepository.save(orderTable);
 
-        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu.getId(), 2);
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu, 2);
         final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableIdAndOrderLineItems(
                 notEmptyOrderTable.getId(), orderLineItem);
         final Order savedOrder = orderRepository.save(order);
@@ -181,7 +219,7 @@ class OrderServiceTest extends ServiceTest {
         final OrderTable orderTable = OrderTableFixtures.createEmptyTable(null);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu.getId(), 2);
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu, 2);
         final Order order = OrderFixtures.COOKING_ORDER.createWithOrderTableIdAndOrderLineItems(savedOrderTable.getId(),
                 orderLineItem);
         final Order saved = orderRepository.save(order);
@@ -218,7 +256,7 @@ class OrderServiceTest extends ServiceTest {
         final OrderTable orderTable = OrderTableFixtures.createEmptyTable(null);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu.getId(), 2);
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu, 2);
         final Order order = OrderFixtures.COMPLETION_ORDER.createWithOrderTableIdAndOrderLineItems(
                 savedOrderTable.getId(), orderLineItem);
         final Order completionOrder = orderRepository.save(order);

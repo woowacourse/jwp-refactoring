@@ -64,8 +64,8 @@ public class Order {
         }
     }
 
-    public void place(final OrderValidator orderValidator) {
-        orderValidator.validate(this);
+    public void place(final OrderValidator orderValidator, final List<Long> menuIds) {
+        orderValidator.validate(this, menuIds);
         ordered();
     }
 

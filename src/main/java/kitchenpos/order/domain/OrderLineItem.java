@@ -1,5 +1,6 @@
 package kitchenpos.order.domain;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -18,12 +19,13 @@ public class OrderLineItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @JoinColumn(name = "order_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-    @Column(nullable = false)
-    private Long menuId;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "order_menu_id", nullable = false)
+    private OrderMenu orderMenu;
 
     @Column(nullable = false)
     private long quantity;
@@ -31,10 +33,10 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(final Long seq, final Order order, final Long menuId, final long quantity) {
+    public OrderLineItem(final Long seq, final Order order, final OrderMenu orderMenu, final long quantity) {
         this.seq = seq;
         this.order = order;
-        this.menuId = menuId;
+        this.orderMenu = orderMenu;
         this.quantity = quantity;
     }
 
@@ -50,8 +52,8 @@ public class OrderLineItem {
         return order;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public OrderMenu getOrderMenu() {
+        return orderMenu;
     }
 
     public long getQuantity() {

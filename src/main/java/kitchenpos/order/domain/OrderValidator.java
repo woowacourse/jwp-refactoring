@@ -1,7 +1,6 @@
 package kitchenpos.order.domain;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.exception.NotFoundOrderTableException;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.table.domain.OrderTable;
@@ -19,17 +18,12 @@ public class OrderValidator {
         this.menuRepository = menuRepository;
     }
 
-    public void validate(final Order order) {
-        validateOrderLineItemMatchMenu(order);
+    public void validate(final Order order, final List<Long> menuIds) {
+        validateOrderLineItemMatchMenu(order, menuIds);
         validateOrderTableIsOrderable(order);
     }
 
-    private void validateOrderLineItemMatchMenu(final Order order) {
-        final List<Long> menuIds = order.getOrderLineItems()
-                .stream()
-                .map(OrderLineItem::getMenuId)
-                .collect(Collectors.toList());
-
+    private void validateOrderLineItemMatchMenu(final Order order, final List<Long> menuIds) {
         order.validateOrderLineItemSize(menuRepository.countByIdIn(menuIds));
     }
 

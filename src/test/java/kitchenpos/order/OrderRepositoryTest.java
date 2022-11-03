@@ -8,10 +8,13 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.support.fixtures.MenuFixtures;
 import kitchenpos.support.fixtures.OrderLineItemFixtures;
 import kitchenpos.support.fixtures.OrderTableFixtures;
 import kitchenpos.table.domain.OrderTable;
@@ -31,14 +34,20 @@ class OrderRepositoryTest {
     @Autowired
     private OrderTableRepository orderTableRepository;
 
+    @Autowired
+    private MenuRepository menuRepository;
+
     @Test
     @DisplayName("주문을 저장한다")
     void save() {
         // given
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
+        final Menu savedMenu = menuRepository.save(menu);
+
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu, 2);
         final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(),
                 Collections.singletonList(orderLineItem));
 
@@ -58,7 +67,10 @@ class OrderRepositoryTest {
     @DisplayName("존재하지 않는 주문 테이블로 주문을 저장하려고 하면 예외가 발생한다")
     void saveExceptionNotExistOrderTable() {
         // given
-        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
+        final Menu savedMenu = menuRepository.save(menu);
+
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu, 2);
         final Order order = new Order(null, -1L, OrderStatus.MEAL.name(), LocalDateTime.now(),
                 Collections.singletonList(orderLineItem));
 
@@ -71,10 +83,13 @@ class OrderRepositoryTest {
     @DisplayName("id로 주문을 조회한다")
     void findById() {
         // given
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
+        final Menu savedMenu = menuRepository.save(menu);
+
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu, 2);
         final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(),
                 Collections.singletonList(orderLineItem));
         final Order saved = orderRepository.save(order);
@@ -102,10 +117,13 @@ class OrderRepositoryTest {
     @DisplayName("모든 주문을 조회한다")
     void findAll() {
         // given
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
+        final Menu savedMenu = menuRepository.save(menu);
+
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu, 2);
         final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(),
                 Collections.singletonList(orderLineItem));
         final Order saved = orderRepository.save(order);
@@ -125,10 +143,13 @@ class OrderRepositoryTest {
     @DisplayName("주문 테이블 id와 주문 상태가 모두 일치하는 주문이 존재하는지 확인한다")
     void existsByOrderTableIdAndOrderStatusIn() {
         // given
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
+        final Menu savedMenu = menuRepository.save(menu);
+
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu, 2);
         final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(),
                 Collections.singletonList(orderLineItem));
         orderRepository.save(order);
@@ -156,10 +177,13 @@ class OrderRepositoryTest {
     @DisplayName("주어진 주문 테이블 id들 중에서 주문 상태가 일치하는 주문이 존재하는지 확인한다")
     void existsByOrderTableIdInAndOrderStatusIn() {
         // given
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
+        final Menu savedMenu = menuRepository.save(menu);
+
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu, 2);
         final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(),
                 Collections.singletonList(orderLineItem));
         orderRepository.save(order);

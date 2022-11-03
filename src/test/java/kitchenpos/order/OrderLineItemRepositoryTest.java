@@ -52,7 +52,7 @@ class OrderLineItemRepositoryTest {
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuRepository.save(menu);
 
-        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu.getId(), 2);
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu, 2);
         final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableIdAndOrderLineItems(savedOrderTable.getId(),
                 orderLineItem);
         final Order savedOrder = orderRepository.save(order);
@@ -64,7 +64,7 @@ class OrderLineItemRepositoryTest {
         assertAll(
                 () -> assertThat(saved.getSeq()).isNotNull(),
                 () -> assertThat(saved.getOrder()).isEqualTo(savedOrder),
-                () -> assertThat(saved.getMenuId()).isEqualTo(savedMenu.getId()),
+                () -> assertThat(saved.getOrderMenu().getId()).isNotNull(),
                 () -> assertThat(saved.getQuantity()).isEqualTo(2)
         );
     }
@@ -78,8 +78,7 @@ class OrderLineItemRepositoryTest {
 
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuRepository.save(menu);
-
-        final OrderLineItem orderLineItem = new OrderLineItem(null, null, savedMenu.getId(), 2);
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu, 2);
 
         // when, then
         assertThatThrownBy(() -> orderLineItemRepository.save(orderLineItem))
@@ -90,15 +89,16 @@ class OrderLineItemRepositoryTest {
     @DisplayName("존재하지 않은 메뉴로 주문 항목을 저장하면 예외가 발생한다")
     void saveExceptionNotExistMenu() {
         // given
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
+
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 2);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, 1L, 2);
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, menu, 2);
         final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableIdAndOrderLineItems(savedOrderTable.getId(),
                 orderLineItem);
         final Order savedOrder = orderRepository.save(order);
-
-        final OrderLineItem invalidOrderLineItem = new OrderLineItem(null, savedOrder, -1L, 2);
+        final OrderLineItem invalidOrderLineItem = OrderLineItemFixtures.toOrderLineItem(savedOrder, null, 2);
 
         // when, then
         assertThatThrownBy(() -> orderLineItemRepository.save(invalidOrderLineItem))
@@ -115,7 +115,7 @@ class OrderLineItemRepositoryTest {
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuRepository.save(menu);
 
-        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu.getId(), 2);
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu, 2);
         final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableIdAndOrderLineItems(savedOrderTable.getId(),
                 orderLineItem);
         orderRepository.save(order);
@@ -149,7 +149,7 @@ class OrderLineItemRepositoryTest {
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuRepository.save(menu);
 
-        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu.getId(), 2);
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu, 2);
         final Order order = OrderFixtures.MEAL_ORDER.createWithOrderTableIdAndOrderLineItems(savedOrderTable.getId(),
                 orderLineItem);
         orderRepository.save(order);
@@ -175,7 +175,7 @@ class OrderLineItemRepositoryTest {
         final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.create();
         final Menu savedMenu = menuRepository.save(menu);
 
-        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu.getId(), 2);
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu, 2);
         final Order order = new Order(null, savedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(),
                 Collections.singletonList(orderLineItem));
         final Order savedOrder = orderRepository.save(order);

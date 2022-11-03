@@ -8,6 +8,7 @@ import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderService;
 import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.product.domain.ProductService;
+import kitchenpos.support.repository.OrderMenuRepository;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.domain.TableGroupRepository;
 import kitchenpos.table.domain.TableGroupService;
@@ -54,4 +55,7 @@ public class ServiceTest {
 
     @Autowired
     protected TableGroupRepository tableGroupRepository;
+
+    @Autowired
+    protected OrderMenuRepository orderMenuRepository;
 }

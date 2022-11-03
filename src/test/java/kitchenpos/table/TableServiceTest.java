@@ -83,7 +83,7 @@ class TableServiceTest extends ServiceTest {
         final OrderTable orderTable = OrderTableFixtures.createEmptyTable(null);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu.getId(), 2);
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu, 2);
         final Order order = OrderFixtures.COMPLETION_ORDER.createWithOrderTableIdAndOrderLineItems(
                 savedOrderTable.getId(), orderLineItem);
         orderRepository.save(order);
@@ -136,7 +136,7 @@ class TableServiceTest extends ServiceTest {
         final OrderTable orderTable = OrderTableFixtures.createEmptyTable(null);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu.getId(), 2);
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu, 2);
         final Order order = orderFixtures.createWithOrderTableIdAndOrderLineItems(
                 savedOrderTable.getId(), orderLineItem);
         orderRepository.save(order);

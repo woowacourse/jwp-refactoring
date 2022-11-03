@@ -177,7 +177,7 @@ class TableGroupServiceTest extends ServiceTest {
         final OrderTable orderTable2 = OrderTableFixtures.createWithGuests(alreadyGroupedTable, 2);
         final OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
 
-        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu.getId(), 2);
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu, 2);
         final Order order = OrderFixtures.COMPLETION_ORDER.createWithOrderTableIdAndOrderLineItems(
                 savedOrderTable1.getId(), orderLineItem);
         orderRepository.save(order);
@@ -218,7 +218,7 @@ class TableGroupServiceTest extends ServiceTest {
         final OrderTable orderTable2 = OrderTableFixtures.createWithGuests(alreadyGroupedTable, 2);
         orderTableRepository.save(orderTable2);
 
-        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu.getId(), 2);
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu, 2);
         final Order order = orderFixtures.createWithOrderTableIdAndOrderLineItems(savedOrderTable1.getId(),
                 orderLineItem);
         orderRepository.save(order);
