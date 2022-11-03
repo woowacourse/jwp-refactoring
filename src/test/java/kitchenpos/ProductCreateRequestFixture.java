@@ -1,7 +1,7 @@
 package kitchenpos;
 
 import java.math.BigDecimal;
-import kitchenpos.application.request.ProductCreateRequest;
+import kitchenpos.product.application.ProductCreateRequest;
 
 public class ProductCreateRequestFixture {
 
