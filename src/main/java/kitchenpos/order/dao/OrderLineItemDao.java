@@ -5,7 +5,7 @@ import java.util.Optional;
 import kitchenpos.order.domain.OrderLineItem;
 
 public interface OrderLineItemDao {
-    OrderLineItem save(OrderLineItem entity);
+    OrderLineItem save(OrderLineItem entity, Long orderId);
 
     Optional<OrderLineItem> findById(Long id);
 

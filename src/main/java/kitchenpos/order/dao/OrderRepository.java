@@ -23,9 +23,8 @@ public class OrderRepository implements OrderDao {
         Order order = orderDao.save(entity);
         List<OrderLineItem> orderLineItems = entity.getOrderLineItems()
                 .stream()
-                .map(orderLineItem -> new OrderLineItem(order.getId(), orderLineItem.getMenuId(),
-                        orderLineItem.getQuantity()))
-                .map(orderLineItemDao::save)
+                .map(orderLineItem -> new OrderLineItem(orderLineItem.getMenuId(), orderLineItem.getQuantity()))
+                .map(orderLineItem -> orderLineItemDao.save(orderLineItem, order.getId()))
                 .collect(Collectors.toList());
 
         return new Order(
