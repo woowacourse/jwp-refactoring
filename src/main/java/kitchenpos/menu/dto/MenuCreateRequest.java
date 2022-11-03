@@ -1,9 +1,9 @@
-package kitchenpos.application.dto;
+package kitchenpos.menu.dto;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProduct;
 
 public class MenuCreateRequest {
     private String name;

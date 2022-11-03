@@ -3,11 +3,11 @@ package kitchenpos.study;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
+import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.product.domain.ProductRepository;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.MenuProducts;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProducts;
 import kitchenpos.product.domain.Product;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ public class MenuCascadeTest {
     ProductRepository productRepository;
 
     @Autowired
-    MenuDao menuDao;
+    MenuRepository menuRepository;
 
     @Test
     void cascade() {
@@ -39,7 +39,7 @@ public class MenuCascadeTest {
         //when
         Menu menu = new Menu(null, "name", BigDecimal.valueOf(1000L), 1L, menuProducts);
 //        menu.setMenuProducts(menuProducts);
-        Menu result = menuDao.save(menu);
+        Menu result = menuRepository.save(menu);
 
         //then
         MenuProducts actual = result.getMenuProducts();

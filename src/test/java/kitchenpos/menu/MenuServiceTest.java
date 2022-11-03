@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.menu;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -9,14 +9,16 @@ import static org.mockito.BDDMockito.given;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.application.dto.MenuCreateRequest;
-import kitchenpos.application.dto.MenuProductCreateRequest;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
+import kitchenpos.application.ServiceTest;
+import kitchenpos.menu.dto.MenuCreateRequest;
+import kitchenpos.menu.dto.MenuProductCreateRequest;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.domain.MenuGroupRepository;
+import kitchenpos.menu.domain.MenuProductRepository;
 import kitchenpos.product.domain.ProductRepository;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,11 +34,11 @@ public class MenuServiceTest extends ServiceTest {
     private MenuService menuService;
 
     @MockBean
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
     @MockBean
     private ProductRepository productRepository;
     @MockBean
-    private MenuProductDao menuProductDao;
+    private MenuProductRepository menuProductRepository;
 
     @Nested
     @DisplayName("create 메서드는")
@@ -64,12 +66,12 @@ public class MenuServiceTest extends ServiceTest {
             menuProductB = new MenuProductCreateRequest(PRODUCT_B_ID, 2);
 
             menuGroup = new MenuGroup(MENU_GROUP_ID, "메뉴 그룹 이름");
-            menuGroupDao.save(menuGroup);
+            menuGroupRepository.save(menuGroup);
 
             createRequest = new MenuCreateRequest("메뉴 이름", BigDecimal.valueOf(MENU_PRICE), MENU_GROUP_ID,
                     Arrays.asList(menuProductA, menuProductB));
 
-            given(menuGroupDao.existsById(any()))
+            given(menuGroupRepository.existsById(any()))
                     .willReturn(true);
             given(productRepository.findAllById(any()))
                     .willReturn(Arrays.asList(productA, productB));
@@ -116,7 +118,7 @@ public class MenuServiceTest extends ServiceTest {
         @DisplayName("메뉴가 포함될 메뉴그룹이 존재하지 않으면, 예외를 던진다.")
         void fail_noExistMenuGroup() {
             //given
-            given(menuGroupDao.existsById(createRequest.getMenuGroupId()))
+            given(menuGroupRepository.existsById(createRequest.getMenuGroupId()))
                     .willReturn(false);
 
             //when & then

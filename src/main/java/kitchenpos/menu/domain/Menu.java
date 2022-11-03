@@ -1,15 +1,14 @@
-package kitchenpos.domain;
+package kitchenpos.menu.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import kitchenpos.application.MenuValidator;
+import kitchenpos.menu.application.MenuValidator;
 
 @Entity
 public class Menu {

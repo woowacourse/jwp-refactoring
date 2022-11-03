@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderCreateRequest;
 import kitchenpos.application.dto.OrderLineItemCreateRequest;
 import kitchenpos.application.dto.OrderUpdateRequest;
-import kitchenpos.dao.MenuDao;
+import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -34,7 +34,7 @@ class OrderServiceTest extends ServiceTest {
     private OrderService orderService;
 
     @MockBean
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
     @MockBean
     private OrderTableDao orderTableDao;
 
@@ -60,7 +60,7 @@ class OrderServiceTest extends ServiceTest {
 
             request = new OrderCreateRequest(ORDER_TABLE_ID, Arrays.asList(orderLineItemA, orderLineItemB));
 
-            given(menuDao.countByIdIn(any()))
+            given(menuRepository.countByIdIn(any()))
                     .willReturn((long) request.getOrderLineItems().size());
             given(orderTableDao.findById(request.getOrderTableId()))
                     .willReturn(Optional.of(orderTable));
@@ -100,7 +100,7 @@ class OrderServiceTest extends ServiceTest {
                     .map(OrderLineItem::getMenuId)
                     .collect(Collectors.toSet());
 
-            given(menuDao.countByIdIn(any()))
+            given(menuRepository.countByIdIn(any()))
                     .willReturn((long) distinctMenus.size());
 
             //when & then
@@ -146,7 +146,7 @@ class OrderServiceTest extends ServiceTest {
             createRequest = new OrderCreateRequest(ORDER_TABLE_ID, Arrays.asList(orderLineItemA, orderLineItemB));
             given(orderTableDao.findById(any()))
                     .willReturn(Optional.of(orderTable));
-            given(menuDao.countByIdIn(any()))
+            given(menuRepository.countByIdIn(any()))
                     .willReturn(2L);
 
             savedOrder = orderService.create(createRequest);

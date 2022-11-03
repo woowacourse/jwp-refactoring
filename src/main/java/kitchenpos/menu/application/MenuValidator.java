@@ -1,30 +1,30 @@
-package kitchenpos.application;
+package kitchenpos.menu.application;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.menu.domain.MenuGroupRepository;
+import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.product.domain.ProductRepository;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.product.domain.Product;
 import org.springframework.stereotype.Component;
 
 @Component
 public class MenuValidator {
 
-    private final MenuGroupDao menuGroupDao;
+    private final MenuGroupRepository menuGroupRepository;
     private final ProductRepository productRepository;
 
-    public MenuValidator(MenuGroupDao menuGroupDao, ProductRepository productRepository) {
-        this.menuGroupDao = menuGroupDao;
+    public MenuValidator(MenuGroupRepository menuGroupRepository, ProductRepository productRepository) {
+        this.menuGroupRepository = menuGroupRepository;
         this.productRepository = productRepository;
     }
 
     public void validate(Long menuGroupId, List<MenuProduct> menuProducts, BigDecimal price) {
         checkPriceIsNull(price);
-        if (!menuGroupDao.existsById(menuGroupId)) {
+        if (!menuGroupRepository.existsById(menuGroupId)) {
             throw new IllegalArgumentException();
         }
         List<Product> products = getProducts(menuProducts);
