@@ -21,6 +21,12 @@ CREATE TABLE menu_product (
     PRIMARY KEY (seq)
 );
 
+CREATE TABLE menu_group (
+    id BIGINT(20) NOT NULL AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id)
+);
+
 CREATE TABLE orders (
     id BIGINT(20) NOT NULL AUTO_INCREMENT,
     order_table_id BIGINT(20) NOT NULL,

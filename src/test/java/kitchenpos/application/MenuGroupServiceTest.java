@@ -5,28 +5,27 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.application.dto.request.MenuGroupRequest;
 import kitchenpos.application.dto.response.MenuGroupResponse;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.fake.FakeMenuGroupDao;
 
 @SuppressWarnings("NonAsciiCharacters")
+@SpringBootTest
+@Transactional
 @DisplayName("MenuGroup 서비스 테스트")
 class MenuGroupServiceTest {
 
+    @Autowired
     private MenuGroupService menuGroupService;
 
+    @Autowired
     private MenuGroupDao menuGroupDao;
-
-    @BeforeEach
-    void setUp() {
-        menuGroupDao = new FakeMenuGroupDao();
-        menuGroupService = new MenuGroupService(menuGroupDao);
-    }
 
     @DisplayName("메뉴 그룹을 등록한다")
     @Test
