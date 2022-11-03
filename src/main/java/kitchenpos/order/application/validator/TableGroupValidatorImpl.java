@@ -1,9 +1,12 @@
-package kitchenpos.order.domain;
+package kitchenpos.order.application.validator;
 
 import java.util.List;
 
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.domain.TableGroup;
 
 @Component
 public class TableGroupValidatorImpl implements TableGroupValidator {

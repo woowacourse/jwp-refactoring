@@ -1,10 +1,12 @@
-package kitchenpos.order.domain;
+package kitchenpos.order.application.validator;
 
 import java.util.Arrays;
 
 import org.springframework.stereotype.Component;
 
 import kitchenpos.order.dao.OrderDao;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderTable;
 
 @Component
 public class TableChangeEmptyValidatorImpl implements TableChangeEmptyValidator {

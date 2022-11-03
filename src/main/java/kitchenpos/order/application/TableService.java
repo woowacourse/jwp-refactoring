@@ -9,14 +9,13 @@ import kitchenpos.order.application.request.OrderTableRequest;
 import kitchenpos.order.application.response.OrderTableResponse;
 import kitchenpos.order.dao.OrderTableDao;
 import kitchenpos.order.domain.OrderTable;
-import kitchenpos.order.domain.TableChangeEmptyValidator;
+import kitchenpos.order.application.validator.TableChangeEmptyValidator;
 
 @Service
 @Transactional(readOnly = true)
 public class TableService {
 
     private final OrderTableDao orderTableDao;
-
     private final TableChangeEmptyValidator tableChangeEmptyValidator;
 
     public TableService(final OrderTableDao orderTableDao,

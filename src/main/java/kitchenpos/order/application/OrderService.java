@@ -9,15 +9,13 @@ import kitchenpos.order.application.request.OrderRequest;
 import kitchenpos.order.application.response.OrderResponse;
 import kitchenpos.order.dao.OrderDao;
 import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.order.domain.OrderValidator;
+import kitchenpos.order.application.validator.OrderValidator;
 
 @Service
 @Transactional(readOnly = true)
 public class OrderService {
 
     private final OrderDao orderDao;
-
     private final OrderValidator orderValidator;
 
     public OrderService(final OrderDao orderDao, final OrderValidator orderValidator) {
@@ -27,12 +25,10 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderRequest request) {
-        List<OrderLineItem> orderLineItems = request.toOrderLineItems();
-        Order order = new Order(request.getOrderTableId(), orderLineItems);
+        Order order = new Order(request.getOrderTableId(), request.toOrderLineItems());
         orderValidator.validate(order);
-        Order savedOrder = orderDao.save(order);
 
-        return OrderResponse.from(savedOrder);
+        return OrderResponse.from(orderDao.save(order));
     }
 
     public List<OrderResponse> list() {

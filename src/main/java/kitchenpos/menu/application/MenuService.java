@@ -9,14 +9,13 @@ import kitchenpos.menu.application.request.MenuRequest;
 import kitchenpos.menu.application.response.MenuResponse;
 import kitchenpos.menu.dao.MenuDao;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuValidator;
+import kitchenpos.menu.application.validator.MenuValidator;
 
 @Service
 @Transactional(readOnly = true)
 public class MenuService {
 
     private final MenuDao menuDao;
-
     private final MenuValidator menuValidator;
 
     public MenuService(final MenuDao menuDao, final MenuValidator menuValidator) {

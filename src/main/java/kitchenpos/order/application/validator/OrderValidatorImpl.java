@@ -1,4 +1,4 @@
-package kitchenpos.order.domain;
+package kitchenpos.order.application.validator;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -8,6 +8,9 @@ import org.springframework.util.CollectionUtils;
 
 import kitchenpos.menu.dao.MenuDao;
 import kitchenpos.order.dao.OrderTableDao;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderTable;
 
 @Component
 public class OrderValidatorImpl implements OrderValidator {

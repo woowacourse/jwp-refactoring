@@ -1,7 +1,5 @@
 package kitchenpos.menu.application.response;
 
-import java.io.Serializable;
-
 import kitchenpos.menu.domain.MenuProduct;
 
 public class MenuProductResponse {

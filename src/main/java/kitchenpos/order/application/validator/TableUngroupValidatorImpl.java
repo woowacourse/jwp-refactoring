@@ -1,4 +1,4 @@
-package kitchenpos.order.domain;
+package kitchenpos.order.application.validator;
 
 import java.util.Arrays;
 import java.util.List;
@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 
 import kitchenpos.order.dao.OrderDao;
 import kitchenpos.order.dao.OrderTableDao;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.domain.TableGroup;
 
 @Component
 public class TableUngroupValidatorImpl implements TableUngroupValidator {

@@ -1,4 +1,4 @@
-package kitchenpos.menu.domain;
+package kitchenpos.menu.application.validator;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 import kitchenpos.menu.dao.MenuGroupDao;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.product.dao.ProductDao;
 import kitchenpos.product.domain.Product;
 

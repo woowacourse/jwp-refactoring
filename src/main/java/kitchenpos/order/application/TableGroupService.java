@@ -7,15 +7,14 @@ import kitchenpos.menu.application.request.TableGroupRequest;
 import kitchenpos.order.application.response.TableGroupResponse;
 import kitchenpos.order.dao.TableGroupDao;
 import kitchenpos.order.domain.TableGroup;
-import kitchenpos.order.domain.TableGroupValidator;
-import kitchenpos.order.domain.TableUngroupValidator;
+import kitchenpos.order.application.validator.TableGroupValidator;
+import kitchenpos.order.application.validator.TableUngroupValidator;
 
 @Service
 @Transactional(readOnly = true)
 public class TableGroupService {
 
     private final TableGroupDao tableGroupDao;
-
     private final TableGroupValidator tableGroupValidator;
     private final TableUngroupValidator tableUngroupValidator;
 

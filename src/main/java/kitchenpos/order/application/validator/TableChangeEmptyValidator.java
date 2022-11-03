@@ -1,4 +1,6 @@
-package kitchenpos.order.domain;
+package kitchenpos.order.application.validator;
+
+import kitchenpos.order.domain.OrderTable;
 
 public interface TableChangeEmptyValidator {
 
