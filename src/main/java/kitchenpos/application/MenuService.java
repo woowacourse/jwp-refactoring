@@ -5,9 +5,11 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.CreateMenuDto;
 import kitchenpos.application.dto.request.CreateMenuProductDto;
 import kitchenpos.application.dto.response.MenuDto;
+import kitchenpos.domain.menu.MenuHistory;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.ProductQuantities;
 import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.MenuHistoryRepository;
 import kitchenpos.domain.repository.MenuProductRepository;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.menu.Menu;
@@ -23,15 +25,18 @@ import java.util.List;
 public class MenuService {
 
     private final MenuRepository menuRepository;
+    private final MenuHistoryRepository menuHistoryRepository;
     private final MenuGroupRepository menuGroupRepository;
     private final MenuProductRepository menuProductRepository;
     private final ProductRepository productRepository;
 
     public MenuService(MenuRepository menuRepository,
+                       MenuHistoryRepository menuHistoryRepository,
                        MenuGroupRepository menuGroupRepository,
                        MenuProductRepository menuProductRepository,
                        ProductRepository productRepository) {
         this.menuRepository = menuRepository;
+        this.menuHistoryRepository = menuHistoryRepository;
         this.menuGroupRepository = menuGroupRepository;
         this.menuProductRepository = menuProductRepository;
         this.productRepository = productRepository;
@@ -40,10 +45,11 @@ public class MenuService {
     @Transactional
     public MenuDto create(final CreateMenuDto createMenuDto) {
         if (!menuGroupRepository.existsById(createMenuDto.getMenuGroupId())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("존재하지 않는 메뉴 그룹입니다.");
         }
         final ProductQuantities productQuantities = getMenuProductQuantities(createMenuDto.getMenuProducts());
         final Menu savedMenu = menuRepository.save(createMenuDto.toEntity(productQuantities));
+        menuHistoryRepository.save(MenuHistory.of(savedMenu));
         final List<MenuProduct> savedMenuProducts = saveMenuProducts(productQuantities, savedMenu);
         return MenuDto.of(savedMenu, savedMenuProducts);
     }
