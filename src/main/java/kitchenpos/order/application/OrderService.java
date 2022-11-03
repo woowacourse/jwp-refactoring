@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.dao.MenuDao;
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.exception.InvalidMenuException;
 import kitchenpos.order.application.dto.request.OrderLineItemRequest;
 import kitchenpos.order.application.dto.request.OrderRequest;
@@ -87,8 +88,15 @@ public class OrderService {
 
     private void saveOrderLineItems(Long orderId, List<OrderLineItemRequest> orderLineItems) {
         for (OrderLineItemRequest orderLineItem : orderLineItems) {
-            orderLineItemDao.save(new OrderLineItem(orderId, orderLineItem.getMenuId(), orderLineItem.getQuantity()));
+            Menu menu = getMenu(orderLineItem.getMenuId());
+            orderLineItemDao.save(
+                    new OrderLineItem(orderId, menu.getName(), menu.getPrice(), orderLineItem.getQuantity()));
         }
+    }
+
+    private Menu getMenu(Long menuId) {
+        return menuDao.findById(menuId)
+                .orElseThrow(() -> new InvalidMenuException("메뉴가 존재하지 않습니다."));
     }
 
     private OrderResponse mapToOrderResponse(Order order, List<OrderLineItem> orderLineItems) {
@@ -99,8 +107,8 @@ public class OrderService {
 
     private List<OrderLineItemResponse> mapToOrderLineItemResponses(List<OrderLineItem> orderLineItems) {
         return orderLineItems.stream()
-                .map(orderLineItem -> new OrderLineItemResponse(orderLineItem.getSeq(),
-                        orderLineItem.getOrderId(), orderLineItem.getMenuId(), orderLineItem.getQuantity()))
+                .map(orderLineItem -> new OrderLineItemResponse(orderLineItem.getSeq(), orderLineItem.getOrderId(),
+                        orderLineItem.getName(), orderLineItem.getPrice(), orderLineItem.getQuantity()))
                 .collect(Collectors.toList());
     }
 

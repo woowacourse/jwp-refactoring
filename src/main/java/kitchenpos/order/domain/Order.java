@@ -1,7 +1,6 @@
 package kitchenpos.order.domain;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import kitchenpos.order.exception.InvalidOrderException;
 
 public class Order {
@@ -10,23 +9,16 @@ public class Order {
     private Long orderTableId;
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
 
-    public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
-                 List<OrderLineItem> orderLineItems) {
+    public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
-    }
-
-    public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
-        this(id, orderTableId, orderStatus, orderedTime, List.of());
     }
 
     public Order(Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
-        this(null, orderTableId, orderStatus, orderedTime, List.of());
+        this(null, orderTableId, orderStatus, orderedTime);
     }
 
     public void changeStatus(OrderStatus orderStatus) {

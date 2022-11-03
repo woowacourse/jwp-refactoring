@@ -70,7 +70,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
     }
 
     @Override
-    public void updateTableGroupIdAndEmpty(final Long id, final Long tableGroupId, final boolean empty) {
+    public void updateTableGroupIdAndEmpty(Long id, Long tableGroupId, boolean empty) {
         String sql = "UPDATE order_table SET table_group_id = (:tableGroupId)," +
                 " empty = (:empty) WHERE id = (:id)";
         SqlParameterSource parameters = new MapSqlParameterSource()
@@ -81,7 +81,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
     }
 
     @Override
-    public void updateNumberOfGuests(final Long id, final int numberOfGuests) {
+    public void updateNumberOfGuests(Long id, int numberOfGuests) {
         String sql = "UPDATE order_table SET number_of_guests = (:numberOfGuests) WHERE id = (:id)";
         SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("numberOfGuests", numberOfGuests)
