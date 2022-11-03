@@ -44,6 +44,9 @@ public class OrderTable {
         if (Objects.nonNull(tableGroupId)) {
             throw new IllegalArgumentException();
         }
+        if (orderStatus.existCustomer()) {
+            throw new IllegalArgumentException();
+        }
         return new OrderTable(id, tableGroupId, numberOfGuests, empty, orderStatus);
     }
 
