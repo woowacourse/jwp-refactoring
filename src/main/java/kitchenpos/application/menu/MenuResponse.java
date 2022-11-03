@@ -23,7 +23,7 @@ public class MenuResponse {
         List<MenuProductResponse> menuProducts = menu.getMenuProducts().stream()
                 .map(MenuProductResponse::from)
                 .collect(Collectors.toList());
-        return new MenuResponse(menu.getId(), menu.getPrice(), menu.getMenuGroupId(), menuProducts);
+        return new MenuResponse(menu.getId(), menu.getPrice().getValue(), menu.getMenuGroupId(), menuProducts);
     }
 
     public Long getId() {

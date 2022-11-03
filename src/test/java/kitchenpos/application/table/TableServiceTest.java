@@ -131,7 +131,7 @@ class TableServiceTest {
                 .withMenuProducts(List.of(new MenuProduct(product.getId(), 1L, product.getPrice())))
                 .build());
         var order = orderRepository.save(
-                new Order(orderTable.getId(), List.of(new OrderLineItem(menu.getId(), 1L)), orderValidator));
+                new Order(orderTable.getId(), List.of(new OrderLineItem(menu.getId(), 1L, menu.getName(), menu.getPrice())), orderValidator));
 
         order.changeStatus(orderStatus);
         entityManager.flush();
@@ -157,7 +157,7 @@ class TableServiceTest {
                 .withMenuProducts(List.of(new MenuProduct(product.getId(), 1L, product.getPrice())))
                 .build());
         var order = orderRepository.save(
-                new Order(orderTable.getId(), List.of(new OrderLineItem(menu.getId(), 1L)), orderValidator));
+                new Order(orderTable.getId(), List.of(new OrderLineItem(menu.getId(), 1L, menu.getName(), menu.getPrice())), orderValidator));
 
         order.changeStatus(OrderStatus.COMPLETION);
         entityManager.flush();

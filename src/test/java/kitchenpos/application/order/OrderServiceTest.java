@@ -181,7 +181,7 @@ class OrderServiceTest {
         var menu = menuRepository.save(aMenu(menuGroupId)
                 .withMenuProducts(List.of(new MenuProduct(product.getId(), 1L, product.getPrice())))
                 .build());
-        var savedOrder = orderRepository.save(new Order(orderTable.getId(), List.of(new OrderLineItem(menu.getId(), 1L)), orderValidator));
+        var savedOrder = orderRepository.save(new Order(orderTable.getId(), List.of(new OrderLineItem(menu.getId(), 1L, menu.getName(), menu.getPrice())), orderValidator));
 
         var response = sut.list();
 
@@ -211,7 +211,7 @@ class OrderServiceTest {
         var menu = menuRepository.save(aMenu(menuGroupId)
                 .withMenuProducts(List.of(new MenuProduct(product.getId(), 1L, product.getPrice())))
                 .build());
-        var order = orderRepository.save(new Order(orderTable.getId(), List.of(new OrderLineItem(menu.getId(), 1L)), orderValidator));
+        var order = orderRepository.save(new Order(orderTable.getId(), List.of(new OrderLineItem(menu.getId(), 1L, menu.getName(), menu.getPrice())), orderValidator));
         order.changeStatus(OrderStatus.COMPLETION);
         entityManager.flush();
 
@@ -233,7 +233,7 @@ class OrderServiceTest {
         var menu = menuRepository.save(aMenu(menuGroupId)
                 .withMenuProducts(List.of(new MenuProduct(product.getId(), 1L, product.getPrice())))
                 .build());
-        var order = orderRepository.save(new Order(orderTable.getId(), List.of(new OrderLineItem(menu.getId(), 1L)), orderValidator));
+        var order = orderRepository.save(new Order(orderTable.getId(), List.of(new OrderLineItem(menu.getId(), 1L, menu.getName(), menu.getPrice())), orderValidator));
 
         var request = new OrderStatusRequest("MEAL");
 

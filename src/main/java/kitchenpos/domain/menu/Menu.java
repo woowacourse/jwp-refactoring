@@ -1,6 +1,5 @@
 package kitchenpos.domain.menu;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -73,8 +72,8 @@ public class Menu {
         return name;
     }
 
-    public BigDecimal getPrice() {
-        return price.getValue();
+    public Price getPrice() {
+        return price;
     }
 
     public Long getMenuGroupId() {

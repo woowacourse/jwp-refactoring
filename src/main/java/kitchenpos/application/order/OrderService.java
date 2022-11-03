@@ -52,10 +52,8 @@ public class OrderService {
     }
 
     private OrderLineItem mapToOrderLineItem(OrderLineItemRequest request) {
-        var menuId = request.getMenuId();
-        if (!menuRepository.existsById(menuId)) {
-            throw new IllegalArgumentException("주문 항목의 메뉴가 존재하지 않습니다. menuId = " + menuId);
-        }
-        return new OrderLineItem(menuId, request.getQuantity());
+        var menu = menuRepository.findById(request.getMenuId())
+                .orElseThrow(() -> new IllegalArgumentException("주문 항목의 메뉴가 존재하지 않습니다. menuId = " + request.getMenuId()));
+        return new OrderLineItem(menu.getId(), request.getQuantity(), menu.getName(), menu.getPrice());
     }
 }

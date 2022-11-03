@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import kitchenpos.domain.generic.Price;
 
 @Entity
 @Table(name = "order_line_item")
@@ -21,11 +22,13 @@ public class OrderLineItem {
     private Order order;
     private Long menuId;
     private long quantity;
+    private String name;
+    private Price price;
 
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(Long menuId, long quantity) {
+    public OrderLineItem(Long menuId, long quantity, String name, Price price) {
         this.menuId = menuId;
         this.quantity = quantity;
     }

@@ -178,9 +178,9 @@ class TableGroupServiceTest {
                 .withMenuProducts(List.of(new MenuProduct(product.getId(), 1L, product.getPrice())))
                 .build());
         var order1 = orderRepository.save(
-                new Order(orderTable1.getId(), List.of(new OrderLineItem(menu.getId(), 1L)), orderValidator));
+                new Order(orderTable1.getId(), List.of(new OrderLineItem(menu.getId(), 1L, menu.getName(), menu.getPrice())), orderValidator));
         var order2 = orderRepository.save(
-                new Order(orderTable2.getId(), List.of(new OrderLineItem(menu.getId(), 1L)), orderValidator));
+                new Order(orderTable2.getId(), List.of(new OrderLineItem(menu.getId(), 1L, menu.getName(), menu.getPrice())), orderValidator));
         order1.changeStatus(orderStatus);
         order2.changeStatus(OrderStatus.COMPLETION);
         entityManager.flush();
@@ -203,8 +203,8 @@ class TableGroupServiceTest {
         var menu = menuRepository.save(aMenu(menuGroupId)
                 .withMenuProducts(List.of(new MenuProduct(product.getId(), 1L, product.getPrice())))
                 .build());
-        var order1 = orderRepository.save(new Order(orderTable1.getId(), List.of(new OrderLineItem(menu.getId(), 1L)), orderValidator));
-        var order2 = orderRepository.save(new Order(orderTable2.getId(), List.of(new OrderLineItem(menu.getId(), 1L)), orderValidator));
+        var order1 = orderRepository.save(new Order(orderTable1.getId(), List.of(new OrderLineItem(menu.getId(), 1L, menu.getName(), menu.getPrice())), orderValidator));
+        var order2 = orderRepository.save(new Order(orderTable2.getId(), List.of(new OrderLineItem(menu.getId(), 1L, menu.getName(), menu.getPrice())), orderValidator));
         order1.changeStatus(OrderStatus.COMPLETION);
         order2.changeStatus(OrderStatus.COMPLETION);
         orderTable1.changeEmpty(true, orderCompletionValidator);
