@@ -6,8 +6,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
-import kitchenpos.domain.Price;
-import kitchenpos.domain.product.Product;
 
 @Entity
 public class MenuProduct {
@@ -23,10 +21,10 @@ public class MenuProduct {
     private Price price;
 
     public MenuProduct(final Long seq,
-                        final Menu menu,
-                        final Long productId,
-                        final long quantity,
-                        final Price price) {
+                       final Menu menu,
+                       final Long productId,
+                       final long quantity,
+                       final Price price) {
         this.seq = seq;
         this.menu = menu;
         this.productId = productId;

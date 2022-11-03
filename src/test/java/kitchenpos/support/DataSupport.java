@@ -5,22 +5,22 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuGroupRepository;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.menu.ProductRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.ordertable.OrderTableRepository;
 import kitchenpos.domain.ordertable.OrderTables;
 import kitchenpos.domain.ordertable.TableGroup;
 import kitchenpos.domain.ordertable.TableGroupRepository;
-import kitchenpos.domain.product.Product;
-import kitchenpos.domain.product.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -90,7 +90,8 @@ public class DataSupport {
         return orderRepository.save(order);
     }
 
-    public Order saveOrder(final Long orderTableId, final OrderStatus orderStatus, final OrderLineItem... orderLineItems) {
+    public Order saveOrder(final Long orderTableId, final OrderStatus orderStatus,
+                           final OrderLineItem... orderLineItems) {
         final Order order = new Order(null, orderTableId, orderStatus, LocalDateTime.now());
         final List<OrderLineItem> mappedOrderLineItems = Arrays.stream(orderLineItems)
                 .map(orderLineItem -> mapOrderToOrderLineItem(order, orderLineItem))

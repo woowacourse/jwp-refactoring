@@ -5,11 +5,12 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.product.Product;
+import kitchenpos.domain.menu.Product;
 import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.support.DataSupport;
@@ -42,7 +43,7 @@ class MenuServiceTest {
     void saveData() {
         savedMenuGroup = dataSupport.saveMenuGroup("추천 메뉴");
         this.savedProduct = dataSupport.saveProduct("치킨마요", PRICE);
-        this.menuProducts = Arrays.asList(MenuProduct.ofUnsaved(null, savedProduct, 1L));
+        this.menuProducts = Collections.singletonList(MenuProduct.ofUnsaved(null, savedProduct, 1L));
     }
 
     @DisplayName("새로운 메뉴를 등록할 수 있다.")
@@ -50,7 +51,8 @@ class MenuServiceTest {
     @ParameterizedTest(name = "상품 {0}개를 한 메뉴로 등록한다.")
     void create(final int quantity) {
         // given
-        final List<MenuProduct> menuProducts = Arrays.asList(MenuProduct.ofUnsaved(null, savedProduct, quantity));
+        final List<MenuProduct> menuProducts = Collections.singletonList(
+                MenuProduct.ofUnsaved(null, savedProduct, quantity));
 
         // when
         final MenuRequest request = RequestBuilder.ofMenu(savedMenuGroup, menuProducts, PRICE * quantity);
@@ -65,7 +67,8 @@ class MenuServiceTest {
     void create_throwsException_ifProductNotFound() {
         // given
         final Product unsavedProduct = new Product(0L, "없는 메뉴", new BigDecimal(0));
-        final List<MenuProduct> menuProducts = Arrays.asList(MenuProduct.ofUnsaved(null, unsavedProduct, 1L));
+        final List<MenuProduct> menuProducts = Collections.singletonList(
+                MenuProduct.ofUnsaved(null, unsavedProduct, 1L));
 
         // when, then
         final MenuRequest request = RequestBuilder.ofMenu(savedMenuGroup, menuProducts, PRICE);

@@ -10,11 +10,11 @@ import java.util.List;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.ordertable.OrderTable;
-import kitchenpos.domain.product.Product;
 import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.dto.request.OrderStatusRequest;
 import kitchenpos.dto.response.OrderResponse;
@@ -158,7 +158,8 @@ class OrderServiceTest {
     @Test
     void changeOrderStatus_throwsException_whenOrderIsComplete() {
         // given
-        final Order completeOrder = dataSupport.saveOrder(savedUnEmptyTable.getId(), OrderStatus.COMPLETION, orderLineItem);
+        final Order completeOrder = dataSupport.saveOrder(savedUnEmptyTable.getId(), OrderStatus.COMPLETION,
+                orderLineItem);
 
         // when, then
         final OrderStatusRequest request = RequestBuilder.ofOrderStatus(OrderStatus.MEAL);
