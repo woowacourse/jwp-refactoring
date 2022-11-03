@@ -24,9 +24,9 @@ import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.dto.response.MenusResponse;
 import kitchenpos.exception.MenuGroupNotFoundException;
 import kitchenpos.exception.ProductNotFoundException;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.ProductRepository;
+import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.ProductDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,9 +37,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class MenuServiceTest extends ServiceTest {
 
     private final MenuService menuService;
-    private final MenuRepository menuRepository;
-    private final ProductRepository productRepository;
-    private final MenuGroupRepository menuGroupRepository;
+    private final MenuDao menuDao;
+    private final ProductDao productDao;
+    private final MenuGroupDao menuGroupDao;
 
     private Product 야채곱창;
     private MenuGroup 루나세트;
@@ -47,13 +47,13 @@ public class MenuServiceTest extends ServiceTest {
 
     @Autowired
     public MenuServiceTest(final MenuService menuService,
-                           final MenuRepository menuRepository,
-                           final ProductRepository productRepository,
-                           final MenuGroupRepository menuGroupRepository) {
+                           final MenuDao menuDao,
+                           final ProductDao productDao,
+                           final MenuGroupDao menuGroupDao) {
         this.menuService = menuService;
-        this.menuRepository = menuRepository;
-        this.productRepository = productRepository;
-        this.menuGroupRepository = menuGroupRepository;
+        this.menuDao = menuDao;
+        this.productDao = productDao;
+        this.menuGroupDao = menuGroupDao;
     }
 
     @BeforeEach
@@ -62,12 +62,12 @@ public class MenuServiceTest extends ServiceTest {
                 .name(야채곱창_이름)
                 .price(야채곱창_가격)
                 .build();
-        야채곱창 = productRepository.save(야채곱창);
+        야채곱창 = productDao.save(야채곱창);
 
         루나세트 = new MenuGroupBuilder()
                 .name(루나세트_이름)
                 .build();
-        루나세트 = menuGroupRepository.save(루나세트);
+        루나세트 = menuGroupDao.save(루나세트);
 
         루나_야채곱창 = new MenuProductBuilder()
                 .product(야채곱창)
@@ -170,7 +170,7 @@ public class MenuServiceTest extends ServiceTest {
                 .menuGroupId(루나세트.getId())
                 .menuProducts(List.of(루나_야채곱창))
                 .build();
-        menuRepository.save(야채곱창_메뉴);
+        menuDao.save(야채곱창_메뉴);
 
         // when
         MenusResponse 메뉴들 = menuService.list();

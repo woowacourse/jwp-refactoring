@@ -11,9 +11,9 @@ import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.dto.response.MenusResponse;
 import kitchenpos.exception.MenuGroupNotFoundException;
 import kitchenpos.exception.ProductNotFoundException;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.ProductRepository;
+import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.ProductDao;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,16 +21,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class MenuService {
 
-    private final MenuRepository menuRepository;
-    private final ProductRepository productRepository;
-    private final MenuGroupRepository menuGroupRepository;
+    private final MenuDao menuDao;
+    private final ProductDao productDao;
+    private final MenuGroupDao menuGroupDao;
 
-    public MenuService(final MenuRepository menuRepository,
-                       final ProductRepository productRepository,
-                       final MenuGroupRepository menuGroupRepository) {
-        this.menuRepository = menuRepository;
-        this.productRepository = productRepository;
-        this.menuGroupRepository = menuGroupRepository;
+    public MenuService(final MenuDao menuDao,
+                       final ProductDao productDao,
+                       final MenuGroupDao menuGroupDao) {
+        this.menuDao = menuDao;
+        this.productDao = productDao;
+        this.menuGroupDao = menuGroupDao;
     }
 
     @Transactional
@@ -38,7 +38,7 @@ public class MenuService {
         List<MenuProduct> menuProducts = menuProducts(request.getMenuProducts());
         Menu menu = request.toEntity(menuProducts);
         validateInMenuGroup(menu);
-        menuRepository.save(menu);
+        menuDao.save(menu);
         return MenuResponse.from(menu);
     }
 
@@ -49,20 +49,20 @@ public class MenuService {
     }
 
     private MenuProduct toMenuProduct(final MenuProductCreateRequest request) {
-        Product product = productRepository.findById(request.getProductId())
+        Product product = productDao.findById(request.getProductId())
                 .orElseThrow(ProductNotFoundException::new);
         return new MenuProduct(product, request.getQuantity());
     }
 
     private void validateInMenuGroup(final Menu menu) {
         Long menuGroupId = menu.getMenuGroupId();
-        if (!menuGroupRepository.existsById(menuGroupId)) {
+        if (!menuGroupDao.existsById(menuGroupId)) {
             throw new MenuGroupNotFoundException("등록되지 않은 메뉴그룹 입니다.");
         }
     }
 
     public MenusResponse list() {
-        final List<Menu> menus = menuRepository.findAll();
+        final List<Menu> menus = menuDao.findAll();
         return MenusResponse.from(menus);
     }
 }

@@ -9,7 +9,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.request.MenuGroupCreateRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
 import kitchenpos.dto.response.MenuGroupsResponse;
-import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.dao.MenuGroupDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,15 +18,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 class MenuGroupServiceTest extends ServiceTest {
 
     private final MenuGroupService menuGroupService;
-    private final MenuGroupRepository menuGroupRepository;
+    private final MenuGroupDao menuGroupDao;
 
     private MenuGroup 루나세트;
 
     @Autowired
     MenuGroupServiceTest(final MenuGroupService menuGroupService,
-                         final MenuGroupRepository menuGroupRepository) {
+                         final MenuGroupDao menuGroupDao) {
         this.menuGroupService = menuGroupService;
-        this.menuGroupRepository = menuGroupRepository;
+        this.menuGroupDao = menuGroupDao;
     }
 
     @BeforeEach
@@ -56,7 +56,7 @@ class MenuGroupServiceTest extends ServiceTest {
     @Test
     void 메뉴_그룹을_조회한다() {
         // given
-        menuGroupRepository.save(루나세트);
+        menuGroupDao.save(루나세트);
 
         // when
         MenuGroupsResponse 메뉴그룹들 = menuGroupService.list();

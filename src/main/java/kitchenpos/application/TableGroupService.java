@@ -10,9 +10,9 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.TableGroupCreateRequest;
 import kitchenpos.dto.response.TableGroupResponse;
 import kitchenpos.exception.TableGroupNotFoundException;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.TableGroupRepository;
+import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.TableGroupDao;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,16 +20,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class TableGroupService {
 
-    private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
-    private final TableGroupRepository tableGroupRepository;
+    private final OrderDao orderDao;
+    private final OrderTableDao orderTableDao;
+    private final TableGroupDao tableGroupDao;
 
-    public TableGroupService(final OrderRepository orderRepository,
-                             final OrderTableRepository orderTableRepository,
-                             final TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
-        this.orderTableRepository = orderTableRepository;
-        this.tableGroupRepository = tableGroupRepository;
+    public TableGroupService(final OrderDao orderDao,
+                             final OrderTableDao orderTableDao,
+                             final TableGroupDao tableGroupDao) {
+        this.orderDao = orderDao;
+        this.orderTableDao = orderTableDao;
+        this.tableGroupDao = tableGroupDao;
     }
 
     @Transactional
@@ -37,27 +37,27 @@ public class TableGroupService {
         TableGroup tableGroup = new TableGroup();
         List<OrderTable> orderTables = getOrderTables(request);
         tableGroup.grouping(orderTables);
-        tableGroupRepository.save(tableGroup);
+        tableGroupDao.save(tableGroup);
         return TableGroupResponse.from(tableGroup);
     }
 
     private List<OrderTable> getOrderTables(final TableGroupCreateRequest request) {
         return request.getOrderTables()
                 .stream()
-                .map(orderTableRepository::getById)
+                .map(orderTableDao::getById)
                 .collect(Collectors.toList());
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
+        TableGroup tableGroup = tableGroupDao.findById(tableGroupId)
                 .orElseThrow(TableGroupNotFoundException::new);
         validatePossibleUngrouping(tableGroup);
         tableGroup.ungrouping();
     }
 
     private void validatePossibleUngrouping(final TableGroup tableGroup) {
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
+        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 tableGroup.getOrderTables(), List.of(COOKING, MEAL))) {
             throw new IllegalArgumentException("조리중이거나 식사 중인 테이블이 있습니다.");
         }
