@@ -1,15 +1,12 @@
 package kitchenpos.table.application;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.dao.OrderDao;
-import kitchenpos.table.dao.OrderTableDao;
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.application.dto.TableGroupResponse;
+import kitchenpos.table.dao.OrderTableDao;
 import kitchenpos.table.dao.TableGroupRepository;
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.ui.dto.OrderTableDto;
 import kitchenpos.table.ui.dto.OrderTableRequest;
@@ -21,15 +18,15 @@ import org.springframework.util.CollectionUtils;
 @Service
 public class TableGroupService {
 
-    private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
     private final TableGroupRepository tableGroupRepository;
+    private final OrderValidator orderValidator;
 
-    public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao,
-                             final TableGroupRepository tableGroupRepository) {
-        this.orderDao = orderDao;
+    public TableGroupService(final OrderTableDao orderTableDao, final TableGroupRepository tableGroupRepository,
+                             final OrderValidator orderValidator) {
         this.orderTableDao = orderTableDao;
         this.tableGroupRepository = tableGroupRepository;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
@@ -91,13 +88,7 @@ public class TableGroupService {
 
     private void validateCannotUngroupCondition(final List<OrderTable> orderTables) {
         final List<Long> orderTableIds = extractOrderTableIds(orderTables);
-
-        List<String> conditions = Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name());
-        boolean haveConditions = orderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, conditions);
-
-        if (haveConditions) {
-            throw new IllegalArgumentException();
-        }
+        orderValidator.validateNotCookingAndMeal(orderTableIds);
     }
 
     private List<Long> extractOrderTableIds(final List<OrderTable> orderTables) {
