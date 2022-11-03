@@ -1,12 +1,14 @@
-package kitchenpos.application;
+package kitchenpos.product;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
-import kitchenpos.application.dto.ProductCreateRequest;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.ProductPrice;
+import kitchenpos.application.ServiceTest;
+import kitchenpos.product.dto.ProductCreateRequest;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductPrice;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

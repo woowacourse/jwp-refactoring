@@ -1,11 +1,10 @@
-package kitchenpos.dao;
+package kitchenpos.product.domain;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ProductDao extends JpaRepository<Product, Long> {
+public interface ProductRepository extends JpaRepository<Product, Long> {
     default Product getById(Long id) {
         return findById(id)
                 .orElseThrow(IllegalArgumentException::new);

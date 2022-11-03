@@ -1,6 +1,7 @@
-package kitchenpos.domain;
+package kitchenpos.product;
 
 import java.math.BigDecimal;
+import kitchenpos.product.domain.Product;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
