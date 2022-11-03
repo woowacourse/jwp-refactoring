@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Price;
+import kitchenpos.vo.Price;
 import kitchenpos.dto.MenuRequest;
 
 public class MenuFixture {

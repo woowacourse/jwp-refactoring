@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.vo;
 
 import java.math.BigDecimal;
 import java.util.Objects;

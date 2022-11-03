@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import kitchenpos.vo.Price;
 
 public class MenuProduct {
     private Long seq;
