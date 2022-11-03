@@ -36,8 +36,15 @@ public class Order {
         }
     }
 
-    public boolean isNotChangeStatus() {
-        return Objects.equals(OrderStatus.COMPLETION, this.orderStatus);
+    public void changeOrderStatus(OrderStatus orderStatus) {
+        if (isNotChangeStatus()) {
+            throw new IllegalArgumentException("주문이 완료된 상태이므로 상태를 변화시킬 수 없습니다.");
+        }
+        this.orderStatus = orderStatus;
+    }
+
+    private boolean isNotChangeStatus() {
+        return Objects.equals(OrderStatus.COMPLETION, orderStatus);
     }
 
     public Long getId() {
@@ -50,10 +57,6 @@ public class Order {
 
     public OrderStatus getOrderStatus() {
         return orderStatus;
-    }
-
-    public void changeOrderStatus(OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
     }
 
     public LocalDateTime getOrderedTime() {

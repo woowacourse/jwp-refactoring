@@ -74,13 +74,9 @@ public class OrderService {
         final Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("상태를 변화시키기 위한 주문이 없습니다."));
 
-        if (savedOrder.isNotChangeStatus()) {
-            throw new IllegalArgumentException("주문이 완료된 상태이므로 상태를 변화시킬 수 없습니다.");
-        }
-
         savedOrder.changeOrderStatus(orderStatus);
-
         savedOrder.changeOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
+
         return new OrderResponse(orderDao.save(savedOrder));
     }
 }
