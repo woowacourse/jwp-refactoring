@@ -4,13 +4,13 @@ import kitchenpos.application.dto.request.OrderLineItemRequest;
 import kitchenpos.application.dto.request.OrderRequest;
 import kitchenpos.application.dto.request.OrderChangeRequest;
 import kitchenpos.application.dto.response.OrderResponse;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
+import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,22 +24,22 @@ import java.util.stream.Collectors;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final MenuDao menuDao;
-    private final OrderTableDao orderTableDao;
+    private final OrderTableRepository orderTableRepository;
+    private final MenuRepository menuRepository;
 
     public OrderService(
             final OrderRepository orderRepository,
-            final MenuDao menuDao,
-            final OrderTableDao orderTableDao
+            final OrderTableRepository orderTableRepository,
+            final MenuRepository menuRepository
     ) {
         this.orderRepository = orderRepository;
-        this.menuDao = menuDao;
-        this.orderTableDao = orderTableDao;
+        this.orderTableRepository = orderTableRepository;
+        this.menuRepository = menuRepository;
     }
 
     @Transactional
     public OrderResponse create(final OrderRequest request) {
-        final OrderTable orderTable = orderTableDao.findById(request.getOrderTableId())
+        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
             .orElseThrow(() -> new IllegalArgumentException(String.format("존재하지 않는 테이블입니다. [%s]", request.getOrderTableId())));
         validateOrderTableIsNotEmpty(orderTable);
 
@@ -90,7 +90,7 @@ public class OrderService {
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
 
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
+        if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException("존재하지 않는 메뉴가 포함되어 있습니다.");
         }
     }

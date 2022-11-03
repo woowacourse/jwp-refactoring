@@ -20,15 +20,13 @@ import org.springframework.transaction.annotation.Transactional;
 import kitchenpos.application.dto.request.MenuProductRequest;
 import kitchenpos.application.dto.request.MenuRequest;
 import kitchenpos.application.dto.response.MenuResponse;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.fake.FakeMenuGroupDao;
-import kitchenpos.dao.fake.FakeProductDao;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 
 @SuppressWarnings("NonAsciiCharacters")
 @SpringBootTest
@@ -40,23 +38,25 @@ class MenuServiceTest {
     private static final BigDecimal PRICE = BigDecimal.valueOf(15_000);
     private static final int MENU_PRODUCT_QUANTITY = 1;
 
+    @Autowired
     private MenuService menuService;
 
     @Autowired
     private MenuRepository menuRepository;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     private MenuGroup 저장된_치킨_세트;
     private Product 저장된_후라이드_치킨;
 
     @BeforeEach
     void setUp() {
-        final MenuGroupDao menuGroupDao = new FakeMenuGroupDao();
-        final ProductDao productDao = new FakeProductDao();
-
-        menuService = new MenuService(menuRepository, menuGroupDao, productDao);
-
-        저장된_후라이드_치킨 = productDao.save(후라이드_치킨());
-        저장된_치킨_세트 = menuGroupDao.save(치킨_세트());
+        저장된_후라이드_치킨 = productRepository.save(후라이드_치킨());
+        저장된_치킨_세트 = menuGroupRepository.save(치킨_세트());
     }
 
     @DisplayName("메뉴를 등록한다")

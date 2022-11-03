@@ -3,12 +3,12 @@ package kitchenpos.application;
 import kitchenpos.application.dto.request.MenuProductRequest;
 import kitchenpos.application.dto.request.MenuRequest;
 import kitchenpos.application.dto.response.MenuResponse;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,22 +21,22 @@ import java.util.stream.Collectors;
 public class MenuService {
 
     private final MenuRepository menuRepository;
-    private final MenuGroupDao menuGroupDao;
-    private final ProductDao productDao;
+    private final MenuGroupRepository menuGroupRepository;
+    private final ProductRepository productRepository;
 
     public MenuService(
             final MenuRepository menuRepository,
-            final MenuGroupDao menuGroupDao,
-            final ProductDao productDao
+            final MenuGroupRepository menuGroupRepository,
+            final ProductRepository productRepository
     ) {
         this.menuRepository = menuRepository;
-        this.menuGroupDao = menuGroupDao;
-        this.productDao = productDao;
+        this.menuGroupRepository = menuGroupRepository;
+        this.productRepository = productRepository;
     }
 
     @Transactional
     public MenuResponse create(final MenuRequest request) {
-        if (!menuGroupDao.existsById(request.getMenuGroupId())) {
+        if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException(String.format("존재하지 않는 메뉴 그룹입니다. [%s]", request.getMenuGroupId()));
         }
         final Menu savedMenu = menuRepository.save(toMenu(request));
@@ -69,7 +69,7 @@ public class MenuService {
     }
 
     private Product findProductById(final MenuProductRequest request) {
-        return productDao.findById(request.getProductId())
+        return productRepository.findById(request.getProductId())
             .orElseThrow(() ->
                 new IllegalArgumentException(String.format("존재하지 않는 상품입니다. [%s]", request.getProductId()))
             );

@@ -18,15 +18,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.application.dto.request.OrderTableRequest;
 import kitchenpos.application.dto.response.OrderTableResponse;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.dao.fake.FakeOrderDao;
-import kitchenpos.dao.fake.FakeTableGroupDao;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
 import kitchenpos.domain.fixture.OrderTableFixture;
+import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 
 @SuppressWarnings("NonAsciiCharacters")
 @SpringBootTest
@@ -34,22 +32,23 @@ import kitchenpos.repository.OrderTableRepository;
 @DisplayName("Table 서비스 테스트")
 class TableServiceTest {
 
+    @Autowired
     private TableService tableService;
 
-    private OrderDao orderDao;
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Autowired
     private OrderTableRepository orderTableRepository;
+
+    @Autowired
+    private TableGroupRepository tableGroupRepository;
 
     private TableGroup 저장된_테이블_그룹;
 
     @BeforeEach
     void setUp() {
-        final TableGroupDao tableGroupDao = new FakeTableGroupDao();
-        orderDao = new FakeOrderDao();
-        tableService = new TableService(orderDao, orderTableRepository);
-
-        저장된_테이블_그룹 = tableGroupDao.save(새로운_테이블_그룹());
+        저장된_테이블_그룹 = tableGroupRepository.save(새로운_테이블_그룹());
     }
 
     @DisplayName("테이블을 등록한다")
@@ -82,7 +81,7 @@ class TableServiceTest {
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final Order order = 완료된_주문(savedOrderTable.getId());
-        orderDao.save(order);
+        orderRepository.save(order);
 
         final OrderTableRequest newOrderTable = new OrderTableRequest(savedOrderTable.getNumberOfGuests(), true);
         final OrderTableResponse changedOrderTable = tableService.changeEmpty(savedOrderTable.getId(), newOrderTable);
@@ -118,7 +117,7 @@ class TableServiceTest {
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final Order order = 요리중인_주문(savedOrderTable.getId());
-        orderDao.save(order);
+        orderRepository.save(order);
 
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), new OrderTableRequest(0, true)))
             .isInstanceOf(IllegalArgumentException.class)

@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.application.dto.request.MenuGroupRequest;
 import kitchenpos.application.dto.response.MenuGroupResponse;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.repository.MenuGroupRepository;
 
 @SuppressWarnings("NonAsciiCharacters")
 @SpringBootTest
@@ -25,7 +25,7 @@ class MenuGroupServiceTest {
     private MenuGroupService menuGroupService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @DisplayName("메뉴 그룹을 등록한다")
     @Test
@@ -42,7 +42,7 @@ class MenuGroupServiceTest {
     void list() {
         final int numberOfMenuGroup = 5;
         for (int i = 0; i < numberOfMenuGroup; i++) {
-            menuGroupDao.save(치킨_세트());
+            menuGroupRepository.save(치킨_세트());
         }
 
         final List<MenuGroupResponse> responses = menuGroupService.list();

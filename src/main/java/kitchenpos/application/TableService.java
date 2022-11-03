@@ -2,9 +2,9 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.request.OrderTableRequest;
 import kitchenpos.application.dto.response.OrderTableResponse;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
+import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 
 import org.springframework.stereotype.Service;
@@ -19,11 +19,11 @@ import java.util.stream.Collectors;
 @Service
 public class TableService {
 
-    private final OrderDao orderDao;
+    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderDao orderDao, final OrderTableRepository orderTableRepository) {
-        this.orderDao = orderDao;
+    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
+        this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -87,8 +87,8 @@ public class TableService {
     }
 
     private void validateOrderStatusIsCompletion(final Long orderTableId) {
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-            orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
+            orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException("테이블의 주문이 완료되지 않았습니다.");
         }
     }
