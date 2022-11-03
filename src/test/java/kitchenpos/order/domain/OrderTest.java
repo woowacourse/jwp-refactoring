@@ -10,9 +10,12 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Stream;
 import kitchenpos.exception.CompletedOrderStatusChangeException;
 import kitchenpos.exception.NotContainsOrderLineItemException;
+import kitchenpos.menu.domain.UpdatableMenuInfo;
+import kitchenpos.product.domain.Price;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,11 +29,10 @@ class OrderTest {
     @DisplayName("주문을 생성한다.")
     void of() {
         // given
-        final OrderLineItem orderLineItem1 = new OrderLineItem(1L, 1);
-        final OrderLineItem orderLineItem2 = new OrderLineItem(2L, 1);
+        final List<OrderLineItem> orderLineItems = getOrderLineItems();
 
         // when
-        final Order order = Order.of(1L, Arrays.asList(orderLineItem1, orderLineItem2));
+        final Order order = Order.of(1L, orderLineItems);
 
         // then
         assertAll(
@@ -38,6 +40,14 @@ class OrderTest {
                 () -> assertThat(order.getOrderedTime()).isNotNull(),
                 () -> assertThat(order.getOrderStatus()).isEqualTo(COOKING)
         );
+    }
+
+    private static List<OrderLineItem> getOrderLineItems() {
+        final OrderLineItem orderLineItem1 = new OrderLineItem(
+                new UpdatableMenuInfo(new Price(1000L), "orderLine1"), 1);
+        final OrderLineItem orderLineItem2 = new OrderLineItem(
+                new UpdatableMenuInfo(new Price(2000L), "orderLine2"), 1);
+        return Arrays.asList(orderLineItem1, orderLineItem2);
     }
 
     @Test
@@ -53,9 +63,7 @@ class OrderTest {
     @DisplayName("주문이 완료 상태인지 확인한다.")
     void isNotComplete(final OrderStatus status, final boolean expect) {
         // given
-        final OrderLineItem orderLineItem1 = new OrderLineItem(1L, 1);
-        final OrderLineItem orderLineItem2 = new OrderLineItem(2L, 1);
-        final Order order = Order.of(1L, Arrays.asList(orderLineItem1, orderLineItem2));
+        final Order order = Order.of(1L, getOrderLineItems());
         order.setOrderStatus(status);
 
         // when
@@ -78,9 +86,7 @@ class OrderTest {
     @DisplayName("특정 주문의 상태가 변경할 수 있다.")
     void changeOrderStatus(final OrderStatus orderStatus) {
         // given
-        final OrderLineItem orderLineItem1 = new OrderLineItem(1L, 1);
-        final OrderLineItem orderLineItem2 = new OrderLineItem(2L, 1);
-        final Order order = Order.of(1L, Arrays.asList(orderLineItem1, orderLineItem2));
+        final Order order = Order.of(1L, getOrderLineItems());
 
         // when
         order.setOrderStatus(orderStatus);
@@ -94,9 +100,7 @@ class OrderTest {
     @DisplayName("특정 주문의 상태가 완료 상태면 변경할 수 없다.")
     void changeOrderStatus_exceptionChangeToCompletion(final OrderStatus orderStatus) {
         // given
-        final OrderLineItem orderLineItem1 = new OrderLineItem(1L, 1);
-        final OrderLineItem orderLineItem2 = new OrderLineItem(2L, 1);
-        final Order order = Order.of(1L, Arrays.asList(orderLineItem1, orderLineItem2));
+        final Order order = Order.of(1L, getOrderLineItems());
         order.setOrderStatus(COMPLETION);
 
         // when, then

@@ -19,6 +19,7 @@ import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.product.domain.Price;
 import kitchenpos.product.domain.Product;
 import kitchenpos.support.application.ServiceTestEnvironment;
 import kitchenpos.support.fixture.MenuFixture;
@@ -63,6 +64,34 @@ class OrderServiceTest extends ServiceTestEnvironment {
                 () -> assertThat(actual.getOrderTableId()).isEqualTo(savedTable.getId()),
                 () -> assertThat(actual.getOrderLineItems()).hasSize(1)
         );
+    }
+
+    @Test
+    @DisplayName("주문에 등록된 메뉴 정보가 메뉴를 수정해도 변경되지 않는다.")
+    void create_menuUpdatedNotChangeOrderLineItem() {
+        // given
+        final OrderTable orderTable = OrderTableFixture.create(false, 2);
+        final OrderTable savedTable = serviceDependencies.save(orderTable);
+
+        final Menu savedMenu1 = saveValidMenu();
+
+        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(savedTable.getId(),
+                Collections.singletonList(new OrderLineItemCreateRequest(savedMenu1.getId(), 1L)));
+        final Order order = orderService.create(orderCreateRequest);
+
+        savedMenu1.setName("changedName");
+        savedMenu1.setPrice(new Price(3000000L));
+        serviceDependencies.save(savedMenu1);
+
+        // when
+        final List<OrderLineItem> actual = order.getOrderLineItems();
+
+        // then
+        assertAll(
+                () -> assertThat(actual).extracting("name").containsOnly("name"),
+                () -> assertThat(actual).extracting("price").containsOnly(new Price(2000L))
+        );
+
     }
 
     @Test
@@ -134,7 +163,7 @@ class OrderServiceTest extends ServiceTestEnvironment {
         final OrderTable orderTable = OrderTableFixture.create(false, 2);
         final OrderTable savedTable = serviceDependencies.save(orderTable);
         final Menu savedMenu = saveValidMenu();
-        final OrderLineItem orderLineItem = OrderLineItemFixture.create(savedMenu.getId());
+        final OrderLineItem orderLineItem = OrderLineItemFixture.create(savedMenu.getName(), savedMenu.getPrice());
         final Order order = OrderFixture.create(savedTable.getId(), OrderStatus.COMPLETION, orderLineItem);
         final Order savedOrder = serviceDependencies.save(order);
 

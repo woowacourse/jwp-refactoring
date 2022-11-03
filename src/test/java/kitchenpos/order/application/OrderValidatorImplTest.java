@@ -45,8 +45,8 @@ class OrderValidatorImplTest {
     }
 
     private static Order createNotCompletedOrder() {
-        final OrderLineItem orderLineItem1 = OrderLineItemFixture.create(1L);
-        final OrderLineItem orderLineItem2 = OrderLineItemFixture.create(2L);
+        final OrderLineItem orderLineItem1 = OrderLineItemFixture.create("orderLine1", 1000L);
+        final OrderLineItem orderLineItem2 = OrderLineItemFixture.create("orderLine2", 2000L);
         final OrderTable orderTable = OrderTableFixture.create(false, 10);
         return OrderFixture.create(orderTable.getId(), OrderStatus.COOKING, orderLineItem1, orderLineItem2);
     }

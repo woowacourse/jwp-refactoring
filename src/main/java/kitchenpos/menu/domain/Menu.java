@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.persistence.CascadeType;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,9 +20,7 @@ public class Menu {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    @Embedded
-    private Price price;
+    private UpdatableMenuInfo updatableMenuInfo;
     private Long menuGroupId;
     @OneToMany(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "menu_id", nullable = false)
@@ -32,17 +29,16 @@ public class Menu {
     protected Menu() {
     }
 
-    private Menu(final Long id, final String name, final Price price, final Long menuGroupId,
+    private Menu(final Long id, final UpdatableMenuInfo updatableMenuInfo, final Long menuGroupId,
                  final List<MenuProduct> menuProducts) {
         this.id = id;
-        this.name = name;
-        this.price = price;
+        this.updatableMenuInfo = updatableMenuInfo;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
     }
 
     public Menu(final String name, final Price price, final Long menuGroupId, final List<MenuProduct> menuProducts) {
-        this(null, name, price, menuGroupId, menuProducts);
+        this(null, new UpdatableMenuInfo(price, name), menuGroupId, menuProducts);
     }
 
     public Long getId() {
@@ -50,11 +46,15 @@ public class Menu {
     }
 
     public String getName() {
-        return name;
+        return updatableMenuInfo.getName();
     }
 
     public Price getPrice() {
-        return price;
+        return updatableMenuInfo.getPrice();
+    }
+
+    public UpdatableMenuInfo getUpdatableMenuInfo() {
+        return updatableMenuInfo;
     }
 
     public Long getMenuGroupId() {
@@ -63,5 +63,13 @@ public class Menu {
 
     public List<MenuProduct> getMenuProducts() {
         return Collections.unmodifiableList(menuProducts);
+    }
+
+    public void setName(final String name) {
+        updatableMenuInfo = new UpdatableMenuInfo(updatableMenuInfo.getPrice(), name);
+    }
+
+    public void setPrice(final Price price) {
+        updatableMenuInfo = new UpdatableMenuInfo(price, updatableMenuInfo.getName());
     }
 }

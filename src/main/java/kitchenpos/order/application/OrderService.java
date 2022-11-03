@@ -5,8 +5,10 @@ import java.util.stream.Collectors;
 import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderLineItemCreateRequest;
 import kitchenpos.dto.request.OrderStatusRequest;
+import kitchenpos.exception.MenuNotFoundException;
 import kitchenpos.exception.OrderLineItemMenuException;
 import kitchenpos.exception.OrderNotFoundException;
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
@@ -33,34 +35,38 @@ public class OrderService {
     @Transactional
     public Order create(final OrderCreateRequest orderCreateRequest) {
         final List<OrderLineItem> orderLineItems = mapToOrderLineItems(orderCreateRequest);
-        validateOrderLineItemsMenuIdExists(orderLineItems);
         validateTable(orderCreateRequest.getOrderTableId());
         final Order order = Order.of(orderCreateRequest.getOrderTableId(), orderLineItems);
         return orderRepository.save(order);
     }
 
-    private static List<OrderLineItem> mapToOrderLineItems(final OrderCreateRequest orderCreateRequest) {
-        return orderCreateRequest.getOrderLineItems()
+    private List<OrderLineItem> mapToOrderLineItems(final OrderCreateRequest orderCreateRequest) {
+        final List<OrderLineItemCreateRequest> orderLineItemCreateRequests = orderCreateRequest.getOrderLineItems();
+        validateDuplicated(orderLineItemCreateRequests);
+        return orderLineItemCreateRequests
                 .stream()
-                .map(OrderService::mapToOrderLineItem)
+                .map(this::mapToOrderLineItem)
                 .collect(Collectors.toList());
     }
 
-    private static OrderLineItem mapToOrderLineItem(final OrderLineItemCreateRequest orderLineItemCreateRequest) {
-        return new OrderLineItem(orderLineItemCreateRequest.getMenuId(), orderLineItemCreateRequest.getQuantity());
-    }
-
-    private void validateOrderLineItemsMenuIdExists(final List<OrderLineItem> orderLineItems) {
-        final List<Long> menuIds = mapToMenuIds(orderLineItems);
-        if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
+    private void validateDuplicated(final List<OrderLineItemCreateRequest> orderLineItemCreateRequests) {
+        final long distinctCount = countDistinct(orderLineItemCreateRequests);
+        if (distinctCount != orderLineItemCreateRequests.size()) {
             throw new OrderLineItemMenuException();
         }
     }
 
-    private static List<Long> mapToMenuIds(final List<OrderLineItem> orderLineItems) {
-        return orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
-                .collect(Collectors.toList());
+    private long countDistinct(final List<OrderLineItemCreateRequest> orderLineItemCreateRequests) {
+        return orderLineItemCreateRequests.stream()
+                .mapToLong(OrderLineItemCreateRequest::getMenuId)
+                .distinct()
+                .count();
+    }
+
+    private OrderLineItem mapToOrderLineItem(final OrderLineItemCreateRequest orderLineItemCreateRequest) {
+        final Menu menu = menuRepository.findById(orderLineItemCreateRequest.getMenuId())
+                .orElseThrow(MenuNotFoundException::new);
+        return new OrderLineItem(menu.getUpdatableMenuInfo(), orderLineItemCreateRequest.getQuantity());
     }
 
     private void validateTable(final Long orderTableId) {
