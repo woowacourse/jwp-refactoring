@@ -4,8 +4,9 @@ import static kitchenpos.exception.ExceptionType.NOT_FOUND_MENU_EXCEPTION;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.ui.dto.request.OrderRequest;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.ui.request.OrderRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

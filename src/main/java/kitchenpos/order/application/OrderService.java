@@ -1,21 +1,21 @@
-package kitchenpos.application;
+package kitchenpos.order.application;
 
 import static kitchenpos.exception.ExceptionType.NOT_FOUND_MENU_EXCEPTION;
 import static kitchenpos.exception.ExceptionType.NOT_FOUND_ORDER_EXCEPTION;
 import static kitchenpos.exception.ExceptionType.NOT_FOUND_TABLE_EXCEPTION;
-import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.order.domain.OrderStatus.COOKING;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.exception.CustomIllegalArgumentException;
 import kitchenpos.menu.domain.JpaMenuRepository;
-import kitchenpos.dao.JpaOrderRepository;
+import kitchenpos.order.domain.JpaOrderRepository;
 import kitchenpos.table.domain.JpaOrderTableRepository;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.ui.dto.request.OrderRequest;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.ui.request.OrderRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

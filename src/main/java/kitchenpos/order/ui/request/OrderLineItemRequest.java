@@ -1,6 +1,6 @@
-package kitchenpos.ui.dto.request;
+package kitchenpos.order.ui.request;
 
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderLineItem;
 
 public class OrderLineItemRequest {
     private Long orderId;

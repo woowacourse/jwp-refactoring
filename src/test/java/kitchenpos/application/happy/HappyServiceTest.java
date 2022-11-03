@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import kitchenpos.DatabaseCleaner;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.menu.application.MenuService;
-import kitchenpos.application.OrderService;
+import kitchenpos.order.application.OrderService;
 import kitchenpos.product.application.ProductService;
 import kitchenpos.table.application.TableService;
 import org.junit.jupiter.api.BeforeEach;

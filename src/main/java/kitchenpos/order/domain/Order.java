@@ -1,11 +1,11 @@
-package kitchenpos.domain;
+package kitchenpos.order.domain;
 
 import static kitchenpos.exception.ExceptionType.INVALID_CHANGE_ORDER_STATUS_EXCEPTION;
 import static kitchenpos.exception.ExceptionType.INVALID_TABLE_UNGROUP_EXCEPTION;
 import static kitchenpos.exception.ExceptionType.NOT_FOUND_ORDER_LINE_ITEM_EXCEPTION;
-import static kitchenpos.domain.OrderStatus.COMPLETION;
-import static kitchenpos.domain.OrderStatus.COOKING;
-import static kitchenpos.domain.OrderStatus.valueOf;
+import static kitchenpos.order.domain.OrderStatus.COMPLETION;
+import static kitchenpos.order.domain.OrderStatus.COOKING;
+import static kitchenpos.order.domain.OrderStatus.valueOf;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.order.domain;
 
 
 import java.util.Optional;

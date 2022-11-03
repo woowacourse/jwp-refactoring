@@ -7,7 +7,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import kitchenpos.domain.Price;
+import kitchenpos.order.domain.Price;
 
 @Entity
 public class Product {

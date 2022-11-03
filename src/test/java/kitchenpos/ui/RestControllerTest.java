@@ -1,10 +1,12 @@
 package kitchenpos.ui;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kitchenpos.application.MenuGroupService;
+import kitchenpos.menuGroup.applicaiton.MenuGroupService;
 import kitchenpos.menu.application.MenuService;
-import kitchenpos.application.OrderService;
+import kitchenpos.menuGroup.ui.MenuGroupRestController;
+import kitchenpos.order.application.OrderService;
 import kitchenpos.menu.ui.MenuRestController;
+import kitchenpos.order.ui.OrderRestController;
 import kitchenpos.product.application.ProductService;
 import kitchenpos.table.application.TableGroupService;
 import kitchenpos.table.application.TableService;

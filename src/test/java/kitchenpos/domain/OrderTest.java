@@ -4,6 +4,9 @@ import static kitchenpos.exception.ExceptionType.INVALID_CHANGE_ORDER_STATUS_EXC
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
