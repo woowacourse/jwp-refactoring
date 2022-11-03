@@ -3,10 +3,10 @@ package kitchenpos.dao;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.dao.infrastructure.JdbcTemplateOrderDao;
+import kitchenpos.dao.infrastructure.JdbcTemplateOrderLineItemDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.infrastructure.JdbcTemplateOrderDao;
-import kitchenpos.infrastructure.JdbcTemplateOrderLineItemDao;
 import org.springframework.stereotype.Repository;
 
 @Repository

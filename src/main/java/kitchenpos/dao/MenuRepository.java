@@ -3,10 +3,10 @@ package kitchenpos.dao;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.dao.infrastructure.JdbcTemplateMenuDao;
+import kitchenpos.dao.infrastructure.JdbcTemplateMenuProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.infrastructure.JdbcTemplateMenuDao;
-import kitchenpos.infrastructure.JdbcTemplateMenuProductDao;
 import org.springframework.stereotype.Repository;
 
 @Repository

@@ -1,12 +1,12 @@
-package kitchenpos.infrastructure;
+package kitchenpos.dao.infrastructure;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.domain.MenuGroup;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -16,14 +16,14 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
-    private static final String TABLE_NAME = "order_line_item";
-    private static final String KEY_COLUMN_NAME = "seq";
+public class JdbcTemplateMenuGroupDao implements MenuGroupDao {
+    private static final String TABLE_NAME = "menu_group";
+    private static final String KEY_COLUMN_NAME = "id";
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    public JdbcTemplateOrderLineItemDao(DataSource dataSource) {
+    public JdbcTemplateMenuGroupDao(DataSource dataSource) {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName(TABLE_NAME)
@@ -32,14 +32,14 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
     }
 
     @Override
-    public OrderLineItem save(OrderLineItem entity) {
+    public MenuGroup save(MenuGroup entity) {
         SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
         Number key = jdbcInsert.executeAndReturnKey(parameters);
         return select(key.longValue());
     }
 
     @Override
-    public Optional<OrderLineItem> findById(Long id) {
+    public Optional<MenuGroup> findById(Long id) {
         try {
             return Optional.of(select(id));
         } catch (EmptyResultDataAccessException e) {
@@ -48,32 +48,27 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
     }
 
     @Override
-    public List<OrderLineItem> findAll() {
-        String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item";
+    public List<MenuGroup> findAll() {
+        String sql = "SELECT id, name FROM menu_group";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     @Override
-    public List<OrderLineItem> findAllByOrderId(Long orderId) {
-        String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item WHERE order_id = (:orderId)";
+    public boolean existsById(Long id) {
+        String sql = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END FROM menu_group WHERE id = (:id)";
         SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("orderId", orderId);
-        return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
+                .addValue("id", id);
+        return jdbcTemplate.queryForObject(sql, parameters, Boolean.class);
     }
 
-    private OrderLineItem select(Long id) {
-        String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item WHERE seq = (:seq)";
+    private MenuGroup select(Long id) {
+        String sql = "SELECT id, name FROM menu_group WHERE id = (:id)";
         SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("seq", id);
+                .addValue("id", id);
         return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    private OrderLineItem toEntity(ResultSet resultSet) throws SQLException {
-        return new OrderLineItem(
-                resultSet.getLong(KEY_COLUMN_NAME),
-                resultSet.getLong("order_id"),
-                resultSet.getLong("menu_id"),
-                resultSet.getLong("quantity")
-        );
+    private MenuGroup toEntity(ResultSet resultSet) throws SQLException {
+        return new MenuGroup(resultSet.getLong("id"), resultSet.getString("name"));
     }
 }

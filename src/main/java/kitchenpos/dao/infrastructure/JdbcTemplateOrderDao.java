@@ -1,4 +1,4 @@
-package kitchenpos.infrastructure;
+package kitchenpos.dao.infrastructure;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

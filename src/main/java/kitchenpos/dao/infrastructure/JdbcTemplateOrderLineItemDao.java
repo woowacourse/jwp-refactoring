@@ -1,11 +1,12 @@
-package kitchenpos.infrastructure;
+package kitchenpos.dao.infrastructure;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
-import kitchenpos.domain.Menu;
+import kitchenpos.dao.OrderLineItemDao;
+import kitchenpos.domain.OrderLineItem;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -15,14 +16,14 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class JdbcTemplateMenuDao {
-    private static final String TABLE_NAME = "menu";
-    private static final String KEY_COLUMN_NAME = "id";
+public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
+    private static final String TABLE_NAME = "order_line_item";
+    private static final String KEY_COLUMN_NAME = "seq";
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    public JdbcTemplateMenuDao(DataSource dataSource) {
+    public JdbcTemplateOrderLineItemDao(DataSource dataSource) {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName(TABLE_NAME)
@@ -30,13 +31,15 @@ public class JdbcTemplateMenuDao {
         ;
     }
 
-    public Menu save(Menu entity) {
+    @Override
+    public OrderLineItem save(OrderLineItem entity) {
         SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
         Number key = jdbcInsert.executeAndReturnKey(parameters);
         return select(key.longValue());
     }
 
-    public Optional<Menu> findById(Long id) {
+    @Override
+    public Optional<OrderLineItem> findById(Long id) {
         try {
             return Optional.of(select(id));
         } catch (EmptyResultDataAccessException e) {
@@ -44,31 +47,33 @@ public class JdbcTemplateMenuDao {
         }
     }
 
-    public List<Menu> findAll() {
-        String sql = "SELECT id, name, price, menu_group_id FROM menu ";
+    @Override
+    public List<OrderLineItem> findAll() {
+        String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    public long countByIdIn(List<Long> ids) {
-        String sql = "SELECT COUNT(*) FROM menu WHERE id IN (:ids)";
+    @Override
+    public List<OrderLineItem> findAllByOrderId(Long orderId) {
+        String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item WHERE order_id = (:orderId)";
         SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("ids", ids);
-        return jdbcTemplate.queryForObject(sql, parameters, Long.class);
+                .addValue("orderId", orderId);
+        return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    private Menu select(Long id) {
-        String sql = "SELECT id, name, price, menu_group_id FROM menu WHERE id = (:id)";
+    private OrderLineItem select(Long id) {
+        String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item WHERE seq = (:seq)";
         SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("id", id);
+                .addValue("seq", id);
         return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    private Menu toEntity(ResultSet resultSet) throws SQLException {
-        return new Menu(
-                resultSet.getLong("id"),
-                resultSet.getString("name"),
-                resultSet.getBigDecimal("price"),
-                resultSet.getLong("menu_group_id")
+    private OrderLineItem toEntity(ResultSet resultSet) throws SQLException {
+        return new OrderLineItem(
+                resultSet.getLong(KEY_COLUMN_NAME),
+                resultSet.getLong("order_id"),
+                resultSet.getLong("menu_id"),
+                resultSet.getLong("quantity")
         );
     }
 }
