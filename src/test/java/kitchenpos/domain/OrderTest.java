@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -24,8 +25,9 @@ public class OrderTest {
     void getOrderMenuIds() {
         // given
         final Order order = new Order(1L,
-                OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(1L, 3),
-                new OrderLineItem(2L, 5)));
+                OrderStatus.COOKING, LocalDateTime.now(),
+                List.of(new OrderLineItem(1L, "사이다", BigDecimal.valueOf(3_000L), 3),
+                        new OrderLineItem(2L, "콜라", BigDecimal.valueOf(3_000L), 5)));
 
         // when
         final List<Long> menuIds = order.getMenuIds();
@@ -39,8 +41,9 @@ public class OrderTest {
     void getItemSize() {
         // given
         final Order order = new Order(1L,
-                OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(1L, 3),
-                new OrderLineItem(2L, 5)));
+                OrderStatus.COOKING, LocalDateTime.now(),
+                List.of(new OrderLineItem(1L, "사이다", BigDecimal.valueOf(3_000L), 3),
+                        new OrderLineItem(2L, "콜라", BigDecimal.valueOf(3_000L), 5)));
 
         // when
         final int itemSize = order.getItemSize();
@@ -54,8 +57,8 @@ public class OrderTest {
     void changeOrderStatus() {
         // given
         final Order order = new Order(1L, 1L, OrderStatus.MEAL, LocalDateTime.now(),
-                List.of(new OrderLineItem(1L, 3),
-                        new OrderLineItem(2L, 5)));
+                List.of(new OrderLineItem(1L, "사이다", BigDecimal.valueOf(3_000L), 3),
+                        new OrderLineItem(2L, "콜라", BigDecimal.valueOf(3_000L), 5)));
 
         // when
         order.changeOrderStatus(OrderStatus.MEAL);
@@ -69,8 +72,8 @@ public class OrderTest {
     void changeOrderStatus_alreadyCompletion_throwException() {
         // given
         final Order order = new Order(1L, 1L, OrderStatus.COMPLETION, LocalDateTime.now(),
-                List.of(new OrderLineItem(1L, 3),
-                        new OrderLineItem(2L, 5)));
+                List.of(new OrderLineItem(1L, "사이다", BigDecimal.valueOf(3_000L), 3),
+                        new OrderLineItem(2L, "콜라", BigDecimal.valueOf(3_000L), 5)));
 
         // when & then
         assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.MEAL))

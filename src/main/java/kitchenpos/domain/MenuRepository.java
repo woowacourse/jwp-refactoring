@@ -42,7 +42,7 @@ public class MenuRepository {
         return savedMenuProducts;
     }
 
-    public Menu getById(final Long id) {
+    public Menu getById(final Long id) throws IllegalArgumentException {
         final Menu menuEntity = menuDao.findById(id)
                 .orElseThrow(IllegalArgumentException::new);
         final List<MenuProduct> menuProductEntities = menuProductDao.findAllByMenuId(id);

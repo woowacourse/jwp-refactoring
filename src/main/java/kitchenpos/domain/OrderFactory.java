@@ -25,6 +25,8 @@ public class OrderFactory {
                         it.getSeq(),
                         orderId,
                         it.getMenuId(),
+                        it.getMenuName(),
+                        it.getMenuPrice(),
                         it.getQuantity()))
                 .collect(Collectors.toList());
     }

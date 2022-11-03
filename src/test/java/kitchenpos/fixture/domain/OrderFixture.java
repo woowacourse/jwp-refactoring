@@ -21,7 +21,7 @@ public class OrderFixture {
     private static List<OrderLineItem> createOrderLineItems(final Menu[] menus) {
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (final Menu menu : menus) {
-            orderLineItems.add(new OrderLineItem(menu.getId(), QUANTITY));
+            orderLineItems.add(new OrderLineItem(menu.getId(), menu.getName(), menu.getPrice(), QUANTITY));
         }
         return orderLineItems;
     }

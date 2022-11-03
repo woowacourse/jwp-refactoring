@@ -33,7 +33,10 @@ public class OrderRepository {
                     null,
                     orderId,
                     orderLineItem.getMenuId(),
+                    orderLineItem.getMenuName(),
+                    orderLineItem.getMenuPrice(),
                     orderLineItem.getQuantity());
+
             savedOrderLineItems.add(orderLineItemDao.save(orderLineItemWithOrderId));
         }
 

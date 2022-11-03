@@ -1,8 +1,10 @@
 package kitchenpos.application;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -41,11 +43,13 @@ public class OrderService {
         return OrderResponse.of(orderRepository.save(order));
     }
 
-    private static Order proceedOrder(final OrderRequest request) {
-        final List<OrderLineItem> items = request.getOrderLineItems()
-                .stream()
-                .map(OrderLineItemRequest::toEntity)
-                .collect(Collectors.toList());
+    private Order proceedOrder(final OrderRequest request) {
+        final List<OrderLineItem> items = new ArrayList<>();
+
+        for (final OrderLineItemRequest itemRequest : request.getOrderLineItems()) {
+            final Menu menu = menuRepository.getById(itemRequest.getMenuId());
+            items.add(new OrderLineItem(menu.getId(), menu.getName(), menu.getPrice(), itemRequest.getQuantity()));
+        }
 
         return Order.proceed(request.getOrderTableId(), items);
     }
