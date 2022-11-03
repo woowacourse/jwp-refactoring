@@ -1,7 +1,7 @@
 package kitchenpos.domain.menu;
 
-import java.math.BigDecimal;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import kitchenpos.domain.product.Product;
+import kitchenpos.domain.generic.Price;
 
 @Entity
 @Table(name = "menu_product")
@@ -23,29 +23,32 @@ public class MenuProduct {
     @JoinColumn(name = "menu_id", nullable = false)
     private Menu menu;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+    @Column(length = 20, nullable = false)
+    private Long productId;
 
     @Column(length = 20, nullable = false)
     private long quantity;
 
+    @Embedded
+    private Price price;
+
     protected MenuProduct() {
     }
 
-    public MenuProduct(Long seq, Menu menu, Product product, long quantity) {
+    public MenuProduct(Long seq, Menu menu, Long productId, long quantity, Price price) {
         this.seq = seq;
         this.menu = menu;
-        this.product = product;
+        this.productId = productId;
         this.quantity = quantity;
+        this.price = price;
     }
 
-    public MenuProduct(Product product, long quantity) {
-        this(null, null, product, quantity);
+    public MenuProduct(Long productId, long quantity, Price price) {
+        this(null, null, productId, quantity, price);
     }
 
-    public BigDecimal calculateAmount() {
-        return product.getPrice().multiply(BigDecimal.valueOf(quantity));
+    public Price calculateAmount() {
+        return price.multiply(quantity);
     }
 
     public Long getSeq() {
@@ -53,11 +56,14 @@ public class MenuProduct {
     }
 
     void setMenu(Menu menu) {
+        if (this.menu != null) {
+            this.menu.getMenuProducts().remove(this);
+        }
         this.menu = menu;
     }
 
-    public Product getProduct() {
-        return product;
+    public Long getProductId() {
+        return productId;
     }
 
     public long getQuantity() {
@@ -68,7 +74,14 @@ public class MenuProduct {
         return menu.getId();
     }
 
-    public Long getProductId() {
-        return product.getId();
+    @Override
+    public String toString() {
+        return "MenuProduct{" +
+                "seq=" + seq +
+                ", menuId=" + menu.getId() +
+                ", productId=" + productId +
+                ", quantity=" + quantity +
+                ", price=" + price +
+                '}';
     }
 }

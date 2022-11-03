@@ -1,13 +1,12 @@
 package kitchenpos.application;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.domain.generic.Price;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroupRepository;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuRepository;
-import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,11 +30,7 @@ public class MenuService {
         if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다. menuGroupId = " + request.getMenuGroupId());
         }
-        return MenuResponse.from(
-                menuRepository.save(
-                        new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(),
-                                mapToMenuProducts(request)))
-        );
+        return MenuResponse.from(menuRepository.save(mapToMenu(request)));
     }
 
     public List<MenuResponse> list() {
@@ -44,13 +39,23 @@ public class MenuService {
                 .collect(Collectors.toList());
     }
 
+    private Menu mapToMenu(final MenuRequest menuRequest) {
+        return new Menu(
+                menuRequest.getName(),
+                new Price(menuRequest.getPrice()),
+                menuRequest.getMenuGroupId(),
+                mapToMenuProducts(menuRequest)
+        );
+    }
+
     private List<MenuProduct> mapToMenuProducts(MenuRequest request) {
-        List<MenuProduct> result = new ArrayList<>();
-        for (MenuProductRequest menuProductRequest : request.getMenuProducts()) {
-            Long productId = menuProductRequest.getProductId();
-            Product product = productRepository.getById(productId);
-            result.add(new MenuProduct(product, menuProductRequest.getQuantity()));
-        }
-        return result;
+        return request.getMenuProducts().stream()
+                .map(this::mapToMenuProduct)
+                .collect(Collectors.toList());
+    }
+
+    private MenuProduct mapToMenuProduct(MenuProductRequest request) {
+        var product = productRepository.getById(request.getProductId());
+        return new MenuProduct(null, null, product.getId(), request.getQuantity(), product.getPrice());
     }
 }

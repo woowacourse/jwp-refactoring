@@ -23,10 +23,8 @@ import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.domain.table.TableGroup;
 import kitchenpos.domain.table.TableGroupRepository;
-import kitchenpos.utils.DataCleanerExtension;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +33,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
-@ExtendWith(DataCleanerExtension.class)
 class TableServiceTest {
 
     @Autowired
@@ -123,7 +120,7 @@ class TableServiceTest {
         var menuGroupId = menuGroupRepository.save(new MenuGroup("후라이드 치킨")).getId();
         var product = productRepository.save(aProduct().build());
         var menu = menuRepository.save(aMenu(menuGroupId)
-                .withMenuProducts(List.of(new MenuProduct(product, 1L)))
+                .withMenuProducts(List.of(new MenuProduct(product.getId(), 1L, product.getPrice())))
                 .build());
         var order = orderRepository.save(new Order(orderTable, List.of(new OrderLineItem(menu.getId(), 1L))));
 
@@ -148,7 +145,7 @@ class TableServiceTest {
         var menuGroupId = menuGroupRepository.save(new MenuGroup("후라이드 치킨")).getId();
         var product = productRepository.save(aProduct().build());
         var menu = menuRepository.save(aMenu(menuGroupId)
-                .withMenuProducts(List.of(new MenuProduct(product, 1L)))
+                .withMenuProducts(List.of(new MenuProduct(product.getId(), 1L, product.getPrice())))
                 .build());
         var order = orderRepository.save(new Order(orderTable, List.of(new OrderLineItem(menu.getId(), 1L))));
 

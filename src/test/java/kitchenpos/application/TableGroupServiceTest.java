@@ -167,7 +167,7 @@ class TableGroupServiceTest {
         var menuGroupId = menuGroupRepository.save(new MenuGroup("후라이드 치킨")).getId();
         var product = productRepository.save(aProduct().build());
         var menu = menuRepository.save(aMenu(menuGroupId)
-                .withMenuProducts(List.of(new MenuProduct(product, 1L)))
+                .withMenuProducts(List.of(new MenuProduct(product.getId(), 1L, product.getPrice())))
                 .build());
         var order1 = orderRepository.save(new Order(orderTable1, List.of(new OrderLineItem(menu.getId(), 1L))));
         var order2 = orderRepository.save(new Order(orderTable2, List.of(new OrderLineItem(menu.getId(), 1L))));
@@ -191,7 +191,7 @@ class TableGroupServiceTest {
         var menuGroupId = menuGroupRepository.save(new MenuGroup("후라이드 치킨")).getId();
         var product = productRepository.save(aProduct().build());
         var menu = menuRepository.save(aMenu(menuGroupId)
-                .withMenuProducts(List.of(new MenuProduct(product, 1L)))
+                .withMenuProducts(List.of(new MenuProduct(product.getId(), 1L, product.getPrice())))
                 .build());
         var order1 = orderRepository.save(new Order(orderTable1, List.of(new OrderLineItem(menu.getId(), 1L))));
         var order2 = orderRepository.save(new Order(orderTable2, List.of(new OrderLineItem(menu.getId(), 1L))));

@@ -37,7 +37,7 @@ class MenuRepositoryTest {
         Product product = productRepository.save(aProduct().build());
 
         Menu menu = aMenu(savedMenuGroup().getId())
-                .withMenuProducts(List.of(new MenuProduct(product, 1L)))
+                .withMenuProducts(List.of(new MenuProduct(product.getId(), 1L, product.getPrice())))
                 .build();
 
         // when

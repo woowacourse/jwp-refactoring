@@ -14,15 +14,14 @@ import kitchenpos.domain.menu.MenuGroupRepository;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.product.ProductRepository;
-import kitchenpos.utils.DataCleanerExtension;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
-@ExtendWith(DataCleanerExtension.class)
+@Transactional
 class MenuServiceTest {
 
     @Autowired
@@ -156,7 +155,7 @@ class MenuServiceTest {
     void listMenus() {
         var product = productRepository.save(aProduct().build());
         menuRepository.save(aMenu(savedMenuGroup().getId())
-                .withMenuProducts(List.of(new MenuProduct(product, 1L)))
+                .withMenuProducts(List.of(new MenuProduct(product.getId(), 1L, product.getPrice())))
                 .build());
 
         var menus = sut.list();

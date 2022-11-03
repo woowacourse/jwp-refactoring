@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.domain.generic.Price;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ public class ProductService {
     @Transactional
     public ProductResponse create(final ProductRequest request) {
         return ProductResponse.from(
-                productRepository.save(new Product(request.getName(), request.getPrice()))
+                productRepository.save(new Product(request.getName(), new Price(request.getPrice())))
         );
     }
 

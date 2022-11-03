@@ -37,30 +37,28 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    public Menu(Long id, String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        validatePrice(menuProducts, price);
+        setMenuProducts(menuProducts);
         this.id = id;
         this.name = name;
-        this.price = new Price(price);
+        this.price = price;
         this.menuGroupId = menuGroupId;
-        validatePrice(menuProducts, price);
-        addMenuProducts(menuProducts);
     }
 
-    public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    public Menu(String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
         this(null, name, price, menuGroupId, menuProducts);
     }
 
-    private void validatePrice(List<MenuProduct> menuProducts, BigDecimal price) {
-        BigDecimal totalPrice = menuProducts.stream()
-                .map(MenuProduct::calculateAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        if (price.compareTo(totalPrice) > 0) {
+    private void validatePrice(List<MenuProduct> menuProducts, Price price) {
+        var totalPrice = Price.sum(menuProducts, MenuProduct::calculateAmount);
+        if (price.isGreaterThan(totalPrice)) {
             throw new IllegalArgumentException(
-                    String.format("메뉴의 가격은 상품 전체 가격의 합보다 클 수 없습니다. price = %f, total price = %f", price, totalPrice));
+                    String.format("메뉴의 가격은 상품 전체 가격의 합보다 클 수 없습니다. price = %s, total price = %s", price, totalPrice));
         }
     }
 
-    private void addMenuProducts(final List<MenuProduct> menuProducts) {
+    private void setMenuProducts(final List<MenuProduct> menuProducts) {
         for (MenuProduct menuProduct : menuProducts) {
             menuProduct.setMenu(this);
         }

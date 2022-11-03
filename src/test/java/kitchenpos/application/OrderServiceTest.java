@@ -75,7 +75,7 @@ class OrderServiceTest {
 
         var product = productRepository.save(aProduct().build());
         var menu = menuRepository.save(aMenu(menuGroupId)
-                .withMenuProducts(List.of(new MenuProduct(product, 1L)))
+                .withMenuProducts(List.of(new MenuProduct(product.getId(), 1L, product.getPrice())))
                 .build());
 
         var orderLineItemRequest1 = new OrderLineItemRequest(menu.getId(), 1L);
@@ -111,7 +111,7 @@ class OrderServiceTest {
 
         var product = productRepository.save(aProduct().build());
         var menu = menuRepository.save(aMenu(menuGroupId)
-                .withMenuProducts(List.of(new MenuProduct(product, 1L)))
+                .withMenuProducts(List.of(new MenuProduct(product.getId(), 1L, product.getPrice())))
                 .build());
 
         var orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1L);
@@ -131,7 +131,7 @@ class OrderServiceTest {
         var menuGroupId = menuGroupRepository.save(new MenuGroup("후라이드 치킨")).getId();
         var product = productRepository.save(aProduct().build());
         var menu = menuRepository.save(aMenu(menuGroupId)
-                .withMenuProducts(List.of(new MenuProduct(product, 1L)))
+                .withMenuProducts(List.of(new MenuProduct(product.getId(), 1L, product.getPrice())))
                 .build());
 
         var orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1L);
@@ -151,7 +151,7 @@ class OrderServiceTest {
         var menuGroupId = menuGroupRepository.save(new MenuGroup("후라이드 치킨")).getId();
         var product = productRepository.save(aProduct().build());
         var menu = menuRepository.save(aMenu(menuGroupId)
-                .withMenuProducts(List.of(new MenuProduct(product, 1L)))
+                .withMenuProducts(List.of(new MenuProduct(product.getId(), 1L, product.getPrice())))
                 .build());
 
         var orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1L);
@@ -175,7 +175,7 @@ class OrderServiceTest {
         var menuGroupId = menuGroupRepository.save(new MenuGroup("후라이드 치킨")).getId();
         var product = productRepository.save(aProduct().build());
         var menu = menuRepository.save(aMenu(menuGroupId)
-                .withMenuProducts(List.of(new MenuProduct(product, 1L)))
+                .withMenuProducts(List.of(new MenuProduct(product.getId(), 1L, product.getPrice())))
                 .build());
         var savedOrder = orderRepository.save(new Order(orderTable, List.of(new OrderLineItem(menu.getId(), 1L))));
 
@@ -205,7 +205,7 @@ class OrderServiceTest {
         var menuGroupId = menuGroupRepository.save(new MenuGroup("후라이드 치킨")).getId();
         var product = productRepository.save(aProduct().build());
         var menu = menuRepository.save(aMenu(menuGroupId)
-                .withMenuProducts(List.of(new MenuProduct(product, 1L)))
+                .withMenuProducts(List.of(new MenuProduct(product.getId(), 1L, product.getPrice())))
                 .build());
         var order = orderRepository.save(new Order(orderTable, List.of(new OrderLineItem(menu.getId(), 1L))));
         order.changeStatus(OrderStatus.COMPLETION);
@@ -227,7 +227,7 @@ class OrderServiceTest {
         var menuGroupId = menuGroupRepository.save(new MenuGroup("후라이드 치킨")).getId();
         var product = productRepository.save(aProduct().build());
         var menu = menuRepository.save(aMenu(menuGroupId)
-                .withMenuProducts(List.of(new MenuProduct(product, 1L)))
+                .withMenuProducts(List.of(new MenuProduct(product.getId(), 1L, product.getPrice())))
                 .build());
         var order = orderRepository.save(new Order(orderTable, List.of(new OrderLineItem(menu.getId(), 1L))));
 
