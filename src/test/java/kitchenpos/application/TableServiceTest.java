@@ -1,18 +1,18 @@
 package kitchenpos.application;
 
-import static kitchenpos.domain.order.OrderStatus.COOKING;
 import static kitchenpos.fixture.Fixture.사인테이블_생성요청;
 import static kitchenpos.fixture.Fixture.삼인테이블_생성요청;
+import static kitchenpos.order.domain.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.application.request.OrderTableCreateRequest;
-import kitchenpos.application.request.OrderTableUpdateRequest;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.ordertable.application.request.OrderTableCreateRequest;
+import kitchenpos.ordertable.application.request.OrderTableUpdateRequest;
+import kitchenpos.ordertable.domain.OrderTable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 

@@ -1,20 +1,20 @@
 package kitchenpos.application;
 
-import static kitchenpos.domain.order.OrderStatus.COMPLETION;
-import static kitchenpos.domain.order.OrderStatus.COOKING;
+import static kitchenpos.order.domain.OrderStatus.COMPLETION;
+import static kitchenpos.order.domain.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.application.request.OrderTableCreateRequest;
-import kitchenpos.application.request.OrderTableGroupCreateRequest;
-import kitchenpos.application.request.TableGroupCreateRequest;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.ordertable.OrderTable;
-import kitchenpos.domain.tablegroup.TableGroup;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.ordertable.application.request.OrderTableCreateRequest;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.tablegroup.application.request.OrderTableGroupCreateRequest;
+import kitchenpos.tablegroup.application.request.TableGroupCreateRequest;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

@@ -1,19 +1,19 @@
 package kitchenpos.fixture;
 
-import static kitchenpos.domain.order.OrderStatus.COOKING;
+import static kitchenpos.order.domain.OrderStatus.COOKING;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.application.request.MenuGroupCreateRequest;
-import kitchenpos.application.request.OrderTableCreateRequest;
-import kitchenpos.application.request.ProductCreateRequest;
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.product.Product;
-import kitchenpos.domain.product.ProductPrice;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menugroup.application.request.MenuGroupCreateRequest;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.ordertable.application.request.OrderTableCreateRequest;
+import kitchenpos.product.application.request.ProductCreateRequest;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductPrice;
 
 public class Fixture {
 
