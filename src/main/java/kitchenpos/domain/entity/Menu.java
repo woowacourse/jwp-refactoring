@@ -43,6 +43,13 @@ public class Menu {
         this.price = price;
     }
 
+    public Menu(Long id, String name, MenuGroup menuGroup, Price price) {
+        this.id = id;
+        this.name = name;
+        this.menuGroup = menuGroup;
+        this.price = price;
+    }
+
     private void validatePrice(List<MenuProduct> menuProducts, Price menuPrice) {
         Price sumPrice = new Price(0);
         for (MenuProduct menuProduct : menuProducts) {
