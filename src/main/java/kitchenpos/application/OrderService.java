@@ -51,6 +51,14 @@ public class OrderService {
         return OrderResponse.from(order);
     }
 
+    private void verifyRequest(final OrderCreateRequest request) {
+        request.verify();
+        final List<Long> menuIds = request.getMenuIds();
+        if (menuIds.size() != menuRepository.countByIdIn(menuIds)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     private List<OrderLineItem> toOrderLineItems(final OrderCreateRequest request) {
         final List<Menu> menus = menuRepository.findAllById(request.getMenuIds());
         final List<Long> menuGroupIds = menus.stream()
@@ -72,14 +80,6 @@ public class OrderService {
             orderLineItems.add(orderLineItem);
         }
         return orderLineItems;
-    }
-
-    private void verifyRequest(final OrderCreateRequest request) {
-        request.verify();
-        final List<Long> menuIds = request.getMenuIds();
-        if (menuIds.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
-        }
     }
 
     public List<OrderResponse> list() {
