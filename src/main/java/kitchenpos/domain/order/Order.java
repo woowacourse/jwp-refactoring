@@ -1,5 +1,7 @@
 package kitchenpos.domain.order;
 
+import static kitchenpos.domain.order.OrderStatus.COOKING;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
@@ -9,6 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import kitchenpos.core.event.Events;
+import kitchenpos.domain.order.event.OrderStatusChangedEvent;
 
 @Table(name = "orders")
 @Entity
@@ -45,6 +49,7 @@ public class Order {
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
+        Events.publishEvent(new OrderStatusChangedEvent(orderTableId, COOKING));
     }
 
     private void validateOrderLineItems(final OrderLineItems orderLineItems) {
@@ -57,6 +62,7 @@ public class Order {
         if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
             throw new IllegalArgumentException("이미 주문의 상태가 완료입니다.");
         }
+        Events.publishEvent(new OrderStatusChangedEvent(this.orderTableId, orderStatus));
         this.orderStatus = orderStatus.name();
     }
 

@@ -3,6 +3,8 @@ package kitchenpos.domain.table;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,6 +21,8 @@ public class OrderTable {
     private int numberOfGuests;
     @Column(name = "empty", nullable = false)
     private boolean empty;
+    @Enumerated(EnumType.STRING)
+    private TableStatus tableStatus;
 
     protected OrderTable() {
     }
@@ -34,9 +38,28 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public OrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty, final TableStatus tableStatus) {
+        this(null, tableGroupId, numberOfGuests, empty, tableStatus);
+    }
+
+    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty, final TableStatus tableStatus) {
+        this.id = id;
+        this.tableGroupId = tableGroupId;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+        this.tableStatus = tableStatus;
+    }
+
+    public void changeTableStatus(final TableStatus tableStatus) {
+        this.tableStatus = tableStatus;
+    }
+
     public void changeEmpty(final boolean empty) {
         if (Objects.nonNull(this.getTableGroupId())) {
             throw new IllegalArgumentException("테이블 그룹이 있어 주문 테이블 상태를 변경할 수 없습니다.");
+        }
+        if (Objects.equals(tableStatus, TableStatus.USING)) {
+            throw new IllegalArgumentException("테이블이 사용 상태라서 변경할 수 없습니다.");
         }
         this.empty = empty;
     }
@@ -64,6 +87,9 @@ public class OrderTable {
     }
 
     public void unBindGroup() {
+        if (Objects.equals(tableStatus, TableStatus.USING)) {
+            throw new IllegalArgumentException("테이블이 사용 상태라서 변경할 수 없습니다.");
+        }
         this.tableGroupId = null;
         this.empty = false;
     }

@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.TableGroupCreateRequest;
 import kitchenpos.application.dto.TableGroupResponse;
-import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTables;
 import kitchenpos.domain.table.TableGroup;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 
 @Transactional
@@ -52,15 +50,7 @@ public class TableGroupService {
 
     public void ungroup(final Long tableGroupId) {
         final OrderTables orderTables = new OrderTables(orderTableRepository.findAllByTableGroupId(tableGroupId));
-        validateTableOrderStatus(orderTables);;
 
         orderTables.unBindGroups();
-    }
-
-    private void validateTableOrderStatus(final OrderTables orderTables) {
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-            orderTables.getOrderTableIds(), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException("테이블 그룹을 분리할 수 없습니다.");
-        }
     }
 }
