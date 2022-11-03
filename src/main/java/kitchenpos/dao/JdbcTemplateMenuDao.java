@@ -3,6 +3,7 @@ package kitchenpos.dao;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
@@ -65,11 +66,14 @@ public class JdbcTemplateMenuDao implements MenuDao {
     }
 
     @Override
-    public long countByIdIn(final List<Long> ids) {
-        final String sql = "SELECT COUNT(*) FROM menu WHERE id IN (:ids)";
+    public List<Menu> findAllByIdIn(final List<Long> ids) {
+        if (ids.isEmpty()) {
+            return Collections.emptyList();
+        }
+        final String sql = "SELECT id, name, price, menu_group_id FROM menu WHERE id IN (:ids)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("ids", ids);
-        return jdbcTemplate.queryForObject(sql, parameters, Long.class);
+        return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toMenu(resultSet));
     }
 
     private Menu select(final Long id) {

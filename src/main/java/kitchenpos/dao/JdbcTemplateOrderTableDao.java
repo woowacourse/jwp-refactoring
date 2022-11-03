@@ -1,8 +1,10 @@
 package kitchenpos.dao;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -12,6 +14,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTables;
+import kitchenpos.vo.Price;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -64,6 +67,9 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
 
     @Override
     public List<OrderTable> findAllByIdIn(final List<Long> ids) {
+        if (ids.isEmpty()) {
+            return Collections.emptyList();
+        }
         final String sql = "SELECT id, table_group_id, number_of_guests, empty FROM order_table WHERE id IN (:ids)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("ids", ids);
@@ -111,16 +117,15 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
     }
 
     private List<OrderLineItem> findAllOrderItemByOrderId(final Long orderId) {
-        final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item WHERE order_id = (:orderId)";
+        final String sql = "SELECT seq, order_id, menu_name, menu_price, quantity FROM order_line_item WHERE order_id = (:orderId)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("orderId", orderId);
         return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> {
-            final OrderLineItem entity = new OrderLineItem();
-            entity.setSeq(resultSet.getLong("seq"));
-            entity.setOrderId(resultSet.getLong("order_id"));
-            entity.setMenuId(resultSet.getLong("menu_id"));
-            entity.setQuantity(resultSet.getLong("quantity"));
-            return entity;
+            final Long seq = resultSet.getLong("seq");
+            final String menuName = resultSet.getString("menu_name");
+            final BigDecimal menuPrice = resultSet.getBigDecimal("menu_price");
+            final long quantity = resultSet.getLong("quantity");
+            return new OrderLineItem(seq, orderId, menuName, Price.valueOf(menuPrice), quantity);
         });
     }
 

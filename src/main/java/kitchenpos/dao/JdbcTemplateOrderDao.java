@@ -1,5 +1,6 @@
 package kitchenpos.dao;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import javax.sql.DataSource;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.vo.Price;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -55,12 +57,13 @@ public class JdbcTemplateOrderDao implements OrderDao {
     }
 
     private void saveOrderLineItem(final Long orderId, final OrderLineItem orderLineItem) {
-        Map<String, Object> params = new HashMap<>();
+        final Map<String, Object> params = new HashMap<>();
         params.put("order_id", orderId);
-        params.put("menu_id", orderLineItem.getMenuId());
+        params.put("menu_name", orderLineItem.getMenuName());
+        params.put("menu_price", orderLineItem.getMenuPrice());
         params.put("quantity", orderLineItem.getQuantity());
         jdbcTemplate.update(
-                "insert into order_line_item (order_id, menu_id, quantity) values (:order_id, :menu_id, :quantity)",
+                "insert into order_line_item (order_id, menu_name, menu_price, quantity) values (:order_id, :menu_name, :menu_price, :quantity)",
                 params);
     }
 
@@ -115,25 +118,25 @@ public class JdbcTemplateOrderDao implements OrderDao {
         jdbcTemplate.update(sql, parameters);
     }
 
-    private List<OrderLineItem> findAllByOrderId(final Long orderId) {
-        final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item WHERE order_id = (:orderId)";
-        final SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("orderId", orderId);
-        return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> {
-            final OrderLineItem entity = new OrderLineItem();
-            entity.setSeq(resultSet.getLong("seq"));
-            entity.setOrderId(resultSet.getLong("order_id"));
-            entity.setMenuId(resultSet.getLong("menu_id"));
-            entity.setQuantity(resultSet.getLong("quantity"));
-            return entity;
-        });
-    }
-
     private Order toEntity(final ResultSet resultSet) throws SQLException {
         final Long id = resultSet.getLong(KEY_COLUMN_NAME);
         final Long orderTableId = resultSet.getLong("order_table_id");
         final String orderStatus = resultSet.getString("order_status");
         final LocalDateTime orderedTime = resultSet.getObject("ordered_time", LocalDateTime.class);
-        return new Order(id, orderTableId, OrderStatus.valueOf(orderStatus), orderedTime, findAllByOrderId(id));
+        return new Order(id, orderTableId, OrderStatus.valueOf(orderStatus), orderedTime,
+                findAllOrderLineItemsByOrderId(id));
+    }
+
+    private List<OrderLineItem> findAllOrderLineItemsByOrderId(final Long orderId) {
+        final String sql = "SELECT seq, order_id, menu_name, menu_price, quantity FROM order_line_item WHERE order_id = (:orderId)";
+        final SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("orderId", orderId);
+        return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> {
+            final Long seq = resultSet.getLong("seq");
+            final String menuName = resultSet.getString("menu_name");
+            final BigDecimal menuPrice = resultSet.getBigDecimal("menu_price");
+            final long quantity = resultSet.getLong("quantity");
+            return new OrderLineItem(seq, orderId, menuName, Price.valueOf(menuPrice), quantity);
+        });
     }
 }

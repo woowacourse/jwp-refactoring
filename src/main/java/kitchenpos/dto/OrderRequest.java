@@ -8,14 +8,14 @@ import kitchenpos.domain.OrderStatus;
 public class OrderRequest {
 
     private Long orderTableId;
-    private List<OrderLineItem> orderLineItems;
+    private List<OrderLineItemRequest> orderLineItems;
 
-    public OrderRequest(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+    public OrderRequest(final Long orderTableId, final List<OrderLineItemRequest> orderLineItems) {
         this.orderTableId = orderTableId;
         this.orderLineItems = orderLineItems;
     }
 
-    public Order toEntity() {
+    public Order toEntity(final List<OrderLineItem> orderLineItems) {
         return new Order(orderTableId, OrderStatus.COOKING, orderLineItems);
     }
 
@@ -23,7 +23,7 @@ public class OrderRequest {
         return orderTableId;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
+    public List<OrderLineItemRequest> getOrderLineItems() {
         return orderLineItems;
     }
 }

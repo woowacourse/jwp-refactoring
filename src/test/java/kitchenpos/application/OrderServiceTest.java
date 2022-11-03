@@ -11,9 +11,9 @@ import java.util.Optional;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderRequest;
 import kitchenpos.dto.OrderStatusRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -75,9 +75,9 @@ class OrderServiceTest extends ServiceTest {
             // given
             MenuGroup menuGroup = saveMenuGroup("반마리치킨");
             Product product = saveProduct("크림치킨", BigDecimal.valueOf(15000.00));
-            Menu menu1 = saveMenu("크림치킨", menuGroup, product);
-            Menu menu2 = saveMenu("크림어니언치킨", menuGroup, product);
-            OrderTable orderTable = saveOrderTable(2, false);
+            saveMenu("크림치킨", menuGroup, product);
+            saveMenu("크림어니언치킨", menuGroup, product);
+            saveOrderTable(2, false);
             OrderStatusRequest request = updatedOrderStatusRequest("MEAL");
 
             // when & then
@@ -117,14 +117,10 @@ class OrderServiceTest extends ServiceTest {
             Menu menu1 = saveMenu("크림치킨", menuGroup, product);
             Menu menu2 = saveMenu("크림어니언치킨", menuGroup, product);
             OrderTable orderTable = saveOrderTable(2, false);
-            OrderLineItem orderLineItem1 = new OrderLineItem();
-
-            orderLineItem1.setMenuId(menu1.getId());
-            orderLineItem1.setQuantity(1);
-            OrderLineItem orderLineItem2 = new OrderLineItem();
-            orderLineItem2.setMenuId(menu2.getId());
-            orderLineItem2.setQuantity(2);
-            OrderRequest request = new OrderRequest(orderTable.getId(), List.of(orderLineItem1, orderLineItem2));
+            OrderLineItemRequest orderLineItemRequest1 = new OrderLineItemRequest(menu1.getId(), 1);
+            OrderLineItemRequest orderLineItemRequest2 = new OrderLineItemRequest(menu2.getId(), 2);
+            OrderRequest request = new OrderRequest(orderTable.getId(),
+                    List.of(orderLineItemRequest1, orderLineItemRequest2));
 
             // when
             Order savedOrder = orderService.create(request);
@@ -153,14 +149,11 @@ class OrderServiceTest extends ServiceTest {
             MenuGroup menuGroup = menuGroupService.create(saveMenuGroup("반마리치킨"));
             Product product = saveProduct("크림치킨", BigDecimal.valueOf(15000.00));
             Menu menu = saveMenu("크림치킨", menuGroup, product);
-            OrderLineItem orderLineItem1 = new OrderLineItem();
-            orderLineItem1.setMenuId(menu.getId());
-            orderLineItem1.setQuantity(1);
-            OrderLineItem orderLineItem2 = new OrderLineItem();
-            orderLineItem2.setMenuId(menu.getId());
-            orderLineItem2.setQuantity(2);
+            OrderLineItemRequest orderLineItemRequest1 = new OrderLineItemRequest(menu.getId(), 1);
+            OrderLineItemRequest orderLineItemRequest2 = new OrderLineItemRequest(menu.getId(), 2);
             OrderTable orderTable = saveOrderTable(2, false);
-            OrderRequest request = new OrderRequest(orderTable.getId(), List.of(orderLineItem1, orderLineItem2));
+            OrderRequest request = new OrderRequest(orderTable.getId(),
+                    List.of(orderLineItemRequest1, orderLineItemRequest2));
 
             // when & then
             assertThatThrownBy(() -> orderService.create(request))
@@ -175,13 +168,9 @@ class OrderServiceTest extends ServiceTest {
             Product product = saveProduct("크림치킨", BigDecimal.valueOf(15000.00));
             Menu menu1 = saveMenu("크림치킨", menuGroup, product);
             Menu menu2 = saveMenu("크림어니언치킨", menuGroup, product);
-            OrderLineItem orderLineItem1 = new OrderLineItem();
-            orderLineItem1.setMenuId(menu1.getId());
-            orderLineItem1.setQuantity(1);
-            OrderLineItem orderLineItem2 = new OrderLineItem();
-            orderLineItem2.setMenuId(menu2.getId());
-            orderLineItem2.setQuantity(2);
-            OrderRequest request = new OrderRequest(1L, List.of(orderLineItem1, orderLineItem2));
+            OrderLineItemRequest orderLineItemRequest1 = new OrderLineItemRequest(menu1.getId(), 1);
+            OrderLineItemRequest orderLineItemRequest2 = new OrderLineItemRequest(menu2.getId(), 2);
+            OrderRequest request = new OrderRequest(1L, List.of(orderLineItemRequest1, orderLineItemRequest2));
 
             // when & then
             assertThatThrownBy(() -> orderService.create(request))
@@ -196,14 +185,11 @@ class OrderServiceTest extends ServiceTest {
             Product product = saveProduct("크림치킨", BigDecimal.valueOf(15000.00));
             Menu menu1 = saveMenu("크림치킨", menuGroup, product);
             Menu menu2 = saveMenu("크림어니언치킨", menuGroup, product);
-            OrderLineItem orderLineItem1 = new OrderLineItem();
-            orderLineItem1.setMenuId(menu1.getId());
-            orderLineItem1.setQuantity(1);
-            OrderLineItem orderLineItem2 = new OrderLineItem();
-            orderLineItem2.setMenuId(menu2.getId());
-            orderLineItem2.setQuantity(2);
+            OrderLineItemRequest orderLineItemRequest1 = new OrderLineItemRequest(menu1.getId(), 1);
+            OrderLineItemRequest orderLineItemRequest2 = new OrderLineItemRequest(menu2.getId(), 2);
             OrderTable orderTable = saveOrderTable(2, true);
-            OrderRequest request = new OrderRequest(orderTable.getId(), List.of(orderLineItem1, orderLineItem2));
+            OrderRequest request = new OrderRequest(orderTable.getId(),
+                    List.of(orderLineItemRequest1, orderLineItemRequest2));
 
             // when & then
             assertThatThrownBy(() -> orderService.create(request))

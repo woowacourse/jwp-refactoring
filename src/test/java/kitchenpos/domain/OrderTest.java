@@ -2,9 +2,11 @@ package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.vo.Price;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -31,7 +33,7 @@ class OrderTest {
         @Test
         @DisplayName("order의 상태가 COMPLETION인 경우 예외를 던진다.")
         void orderStatus_IsCompleted_ExceptionThrown() {
-            OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1);
+            final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, "치킨", Price.valueOf(BigDecimal.TEN), 1);
             final Order order = new Order(1L, 1L, OrderStatus.COMPLETION, LocalDateTime.now(),
                     List.of(orderLineItem));
             assertThatThrownBy(() -> order.updateOrderStatus(OrderStatus.COMPLETION.name()))

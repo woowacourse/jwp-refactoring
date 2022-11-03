@@ -5,9 +5,11 @@ import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderRequest;
 import kitchenpos.dto.OrderStatusRequest;
 import org.springframework.stereotype.Service;
@@ -36,19 +38,29 @@ public class OrderService {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        final Order order = request.toEntity();
-        validateOrderMenu(order);
+        final List<OrderLineItem> orderLineItems = findOrderLineItems(request.getOrderLineItems());
+        final Order order = request.toEntity(orderLineItems);
         return orderDao.save(order);
     }
 
-    private void validateOrderMenu(final Order order) {
-        final List<Long> menuIds = order.getOrderLineItems()
-                .stream()
-                .map(OrderLineItem::getMenuId)
+    private List<OrderLineItem> findOrderLineItems(final List<OrderLineItemRequest> orderLineItemsRequest) {
+        final List<Long> menuIds = orderLineItemsRequest.stream()
+                .map(OrderLineItemRequest::getMenuId)
                 .collect(Collectors.toList());
-        if (menuIds.size() != menuDao.countByIdIn(menuIds)) {
+        final List<Menu> savedMenus = menuDao.findAllByIdIn(menuIds);
+        if (menuIds.size() != savedMenus.size()) {
             throw new IllegalArgumentException();
         }
+        return orderLineItemsRequest.stream()
+                .map(it -> it.toEntity(matchMenu(it.getMenuId(), savedMenus)))
+                .collect(Collectors.toList());
+    }
+
+    private Menu matchMenu(final Long menuId, final List<Menu> savedMenus) {
+        return savedMenus.stream()
+                .filter(it -> it.getId().equals(menuId))
+                .findAny()
+                .orElseThrow(IllegalArgumentException::new);
     }
 
     public List<Order> list() {
