@@ -14,8 +14,6 @@ import java.util.Collections;
 import java.util.stream.Stream;
 import kitchenpos.exception.CompletedOrderStatusChangeException;
 import kitchenpos.exception.NotContainsOrderLineItemException;
-import kitchenpos.exception.OrderTableEmptyException;
-import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -29,42 +27,25 @@ class OrderTest {
     @DisplayName("주문을 생성한다.")
     void of() {
         // given
-        final OrderTable orderTable = new OrderTable(1, false);
         final OrderLineItem orderLineItem1 = new OrderLineItem(1L, 1);
         final OrderLineItem orderLineItem2 = new OrderLineItem(2L, 1);
 
         // when
-        final Order order = Order.of(orderTable, Arrays.asList(orderLineItem1, orderLineItem2));
+        final Order order = Order.of(1L, Arrays.asList(orderLineItem1, orderLineItem2));
 
         // then
         assertAll(
-                () -> assertThat(order.getOrderTable()).isEqualTo(orderTable),
+                () -> assertThat(order.getOrderTableId()).isEqualTo(1L),
                 () -> assertThat(order.getOrderedTime()).isNotNull(),
                 () -> assertThat(order.getOrderStatus()).isEqualTo(COOKING)
         );
     }
 
     @Test
-    @DisplayName("주문하려는 테이블이 비어있으면 안된다.")
-    void of_emptyTable() {
-        // given
-        final OrderTable orderTable = new OrderTable(1, true);
-        final OrderLineItem orderLineItem1 = new OrderLineItem(1L, 1);
-        final OrderLineItem orderLineItem2 = new OrderLineItem(2L, 1);
-
-        // when
-        assertThatThrownBy(() -> Order.of(orderTable, Arrays.asList(orderLineItem1, orderLineItem2)))
-                .isExactlyInstanceOf(OrderTableEmptyException.class);
-    }
-
-    @Test
     @DisplayName("주문하려는 주문 항목이 0개면 예외를 발생한다.")
     void of_emptyOrderLineItem() {
-        // given
-        final OrderTable orderTable = new OrderTable(1, true);
-
-        // when
-        assertThatThrownBy(() -> Order.of(orderTable, Collections.emptyList()))
+        // given, when, then
+        assertThatThrownBy(() -> Order.of(1L, Collections.emptyList()))
                 .isExactlyInstanceOf(NotContainsOrderLineItemException.class);
     }
 
@@ -72,13 +53,12 @@ class OrderTest {
     @DisplayName("주문 목록을 추가한다.")
     void addOrderLineItem() {
         // given
-        final OrderTable orderTable = new OrderTable(1, false);
         final OrderLineItem orderLineItem1 = new OrderLineItem(1L, 1);
         final OrderLineItem orderLineItem2 = new OrderLineItem(2L, 1);
         final OrderLineItem orderLineItem3 = new OrderLineItem(3L, 1);
         final ArrayList<OrderLineItem> orderLineItems =
                 new ArrayList<>(Arrays.asList(orderLineItem1, orderLineItem2));
-        final Order order = Order.of(orderTable, orderLineItems);
+        final Order order = Order.of(1L, orderLineItems);
 
         // when
         order.addOrderLineItem(orderLineItem3);
@@ -93,10 +73,9 @@ class OrderTest {
     @DisplayName("주문이 완료 상태인지 확인한다.")
     void isNotComplete(final OrderStatus status, final boolean expect) {
         // given
-        final OrderTable orderTable = new OrderTable(1, false);
         final OrderLineItem orderLineItem1 = new OrderLineItem(1L, 1);
         final OrderLineItem orderLineItem2 = new OrderLineItem(2L, 1);
-        final Order order = Order.of(orderTable, Arrays.asList(orderLineItem1, orderLineItem2));
+        final Order order = Order.of(1L, Arrays.asList(orderLineItem1, orderLineItem2));
         order.setOrderStatus(status);
 
         // when
@@ -120,9 +99,8 @@ class OrderTest {
     void changeOrderStatus(final OrderStatus orderStatus) {
         // given
         final OrderLineItem orderLineItem1 = new OrderLineItem(1L, 1);
-        final OrderTable orderTable = new OrderTable(1, false);
         final OrderLineItem orderLineItem2 = new OrderLineItem(2L, 1);
-        final Order order = Order.of(orderTable, Arrays.asList(orderLineItem1, orderLineItem2));
+        final Order order = Order.of(1L, Arrays.asList(orderLineItem1, orderLineItem2));
 
         // when
         order.setOrderStatus(orderStatus);
@@ -137,9 +115,8 @@ class OrderTest {
     void changeOrderStatus_exceptionChangeToCompletion(final OrderStatus orderStatus) {
         // given
         final OrderLineItem orderLineItem1 = new OrderLineItem(1L, 1);
-        final OrderTable orderTable = new OrderTable(1, false);
         final OrderLineItem orderLineItem2 = new OrderLineItem(2L, 1);
-        final Order order = Order.of(orderTable, Arrays.asList(orderLineItem1, orderLineItem2));
+        final Order order = Order.of(1L, Arrays.asList(orderLineItem1, orderLineItem2));
         order.setOrderStatus(COMPLETION);
 
         // when, then

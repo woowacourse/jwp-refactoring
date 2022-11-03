@@ -48,7 +48,7 @@ class OrderValidatorImplTest {
         final OrderLineItem orderLineItem1 = OrderLineItemFixture.create(1L);
         final OrderLineItem orderLineItem2 = OrderLineItemFixture.create(2L);
         final OrderTable orderTable = OrderTableFixture.create(false, 10);
-        return OrderFixture.create(orderTable, OrderStatus.COOKING, orderLineItem1, orderLineItem2);
+        return OrderFixture.create(orderTable.getId(), OrderStatus.COOKING, orderLineItem1, orderLineItem2);
     }
 
     @Test

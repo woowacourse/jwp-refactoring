@@ -5,16 +5,14 @@ import java.util.stream.Collectors;
 import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderLineItemCreateRequest;
 import kitchenpos.dto.request.OrderStatusRequest;
+import kitchenpos.exception.OrderLineItemMenuException;
+import kitchenpos.exception.OrderNotFoundException;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.OrderTableRepository;
-import kitchenpos.exception.OrderLineItemMenuException;
-import kitchenpos.exception.OrderNotFoundException;
-import kitchenpos.exception.OrderTableNotFoundException;
+import kitchenpos.table.application.TableValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,29 +20,23 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
+    private final TableValidator tableValidator;
 
     public OrderService(
             final MenuRepository menuRepository,
-            final OrderRepository orderRepository,
-            final OrderTableRepository orderTableRepository) {
+            final OrderRepository orderRepository, final TableValidator tableValidator) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderTableRepository = orderTableRepository;
+        this.tableValidator = tableValidator;
     }
 
     @Transactional
     public Order create(final OrderCreateRequest orderCreateRequest) {
         final List<OrderLineItem> orderLineItems = mapToOrderLineItems(orderCreateRequest);
         validateOrderLineItemsMenuIdExists(orderLineItems);
-        final OrderTable orderTable = getOrderTable(orderCreateRequest);
-        final Order order = Order.of(orderTable, orderLineItems);
+        validateTable(orderCreateRequest.getOrderTableId());
+        final Order order = Order.of(orderCreateRequest.getOrderTableId(), orderLineItems);
         return orderRepository.save(order);
-    }
-
-    private OrderTable getOrderTable(final OrderCreateRequest orderCreateRequest) {
-        return orderTableRepository.findById(orderCreateRequest.getOrderTableId())
-                .orElseThrow(OrderTableNotFoundException::new);
     }
 
     private static List<OrderLineItem> mapToOrderLineItems(final OrderCreateRequest orderCreateRequest) {
@@ -69,6 +61,11 @@ public class OrderService {
         return orderLineItems.stream()
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
+    }
+
+    private void validateTable(final Long orderTableId) {
+        tableValidator.validateTableNotExists(orderTableId);
+        tableValidator.validateTableEmpty(orderTableId);
     }
 
     public List<Order> list() {

@@ -11,15 +11,11 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import kitchenpos.exception.CompletedOrderStatusChangeException;
 import kitchenpos.exception.NotContainsOrderLineItemException;
 import kitchenpos.exception.OrderLineItemRemoveFailException;
-import kitchenpos.exception.OrderTableEmptyException;
-import kitchenpos.table.domain.OrderTable;
 import org.springframework.util.CollectionUtils;
 
 @Entity
@@ -28,9 +24,7 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToOne
-    @JoinColumn(name = "order_table_id")
-    private OrderTable orderTable;
+    private Long orderTableId;
     @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
@@ -40,24 +34,21 @@ public class Order {
     protected Order() {
     }
 
-    public Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus, final LocalDateTime orderedTime,
+    public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new NotContainsOrderLineItemException();
         }
-        if (orderTable.isEmpty()) {
-            throw new OrderTableEmptyException();
-        }
         orderLineItems.forEach(orderLineItem -> orderLineItem.setOrder(this));
         this.id = id;
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
     }
 
-    public static Order of(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
-        return new Order(null, orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+    public static Order of(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+        return new Order(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
     }
 
     public void addOrderLineItem(final OrderLineItem orderLineItem) {
@@ -79,8 +70,8 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public OrderStatus getOrderStatus() {

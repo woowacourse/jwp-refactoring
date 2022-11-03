@@ -205,7 +205,7 @@ class TableGroupServiceTest extends ServiceTestEnvironment {
 
         final Menu savedMenu = saveValidMenu();
         final OrderLineItem orderLineItem = OrderLineItemFixture.create(savedMenu.getId(), null);
-        final Order order = OrderFixture.create(savedTable1, orderStatus, orderLineItem);
+        final Order order = OrderFixture.create(savedTable1.getId(), orderStatus, orderLineItem);
         serviceDependencies.save(order);
 
         savedTableGroup.addOrderTable(savedTable1);

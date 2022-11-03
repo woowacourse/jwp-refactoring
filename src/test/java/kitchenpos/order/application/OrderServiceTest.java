@@ -7,26 +7,27 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.support.application.ServiceTestEnvironment;
 import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderLineItemCreateRequest;
 import kitchenpos.dto.request.OrderStatusRequest;
+import kitchenpos.exception.OrderLineItemMenuException;
+import kitchenpos.exception.OrderNotFoundException;
+import kitchenpos.exception.OrderTableEmptyException;
+import kitchenpos.exception.OrderTableNotFoundException;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
 import kitchenpos.product.domain.Product;
-import kitchenpos.exception.OrderLineItemMenuException;
-import kitchenpos.exception.OrderNotFoundException;
-import kitchenpos.exception.OrderTableNotFoundException;
+import kitchenpos.support.application.ServiceTestEnvironment;
 import kitchenpos.support.fixture.MenuFixture;
 import kitchenpos.support.fixture.MenuGroupFixture;
 import kitchenpos.support.fixture.OrderFixture;
 import kitchenpos.support.fixture.OrderLineItemFixture;
 import kitchenpos.support.fixture.OrderTableFixture;
 import kitchenpos.support.fixture.ProductFixture;
+import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,8 +60,7 @@ class OrderServiceTest extends ServiceTestEnvironment {
                 () -> assertThat(actual.getId()).isPositive(),
                 () -> assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING),
                 () -> assertThat(actual.getOrderedTime()).isNotNull(),
-                () -> assertThat(actual.getOrderTable()).usingRecursiveComparison()
-                        .ignoringFields("order").isEqualTo(savedTable),
+                () -> assertThat(actual.getOrderTableId()).isEqualTo(savedTable.getId()),
                 () -> assertThat(actual.getOrderLineItems()).hasSize(1)
         );
     }
@@ -77,6 +77,22 @@ class OrderServiceTest extends ServiceTestEnvironment {
         // when, then
         assertThatThrownBy(() -> orderService.create(request))
                 .isExactlyInstanceOf(OrderTableNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("주문하려는 주문 테이블이 비어있으면 예외가 발생한다.")
+    void create_exceptionOrderTableEmpty() {
+        // given
+        final OrderTable orderTable = OrderTableFixture.create(true, 2);
+        final OrderTable savedTable = serviceDependencies.save(orderTable);
+        final Menu savedMenu = saveValidMenu();
+
+        OrderCreateRequest request = new OrderCreateRequest(savedTable.getId(),
+                Collections.singletonList(new OrderLineItemCreateRequest(savedMenu.getId(), 1L)));
+
+        // when, then
+        assertThatThrownBy(() -> orderService.create(request))
+                .isExactlyInstanceOf(OrderTableEmptyException.class);
     }
 
     @Test
@@ -119,7 +135,7 @@ class OrderServiceTest extends ServiceTestEnvironment {
         final OrderTable savedTable = serviceDependencies.save(orderTable);
         final Menu savedMenu = saveValidMenu();
         final OrderLineItem orderLineItem = OrderLineItemFixture.create(savedMenu.getId());
-        final Order order = OrderFixture.create(savedTable, OrderStatus.COMPLETION, orderLineItem);
+        final Order order = OrderFixture.create(savedTable.getId(), OrderStatus.COMPLETION, orderLineItem);
         final Order savedOrder = serviceDependencies.save(order);
 
         // when

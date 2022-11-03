@@ -9,9 +9,9 @@ public interface OrderRepository extends JpaRepository<Order, Long>{
     @Query("select o from Order o join fetch o.orderLineItems ol")
     List<Order> findAll();
 
-    @Query("select o from Order o where o.orderTable.id = ?1")
+    @Query("select o from Order o where o.orderTableId = ?1")
     Optional<Order> findByOrderTableId(Long orderTableId);
 
-    @Query("select o from Order o where o.orderTable.id in ?1")
+    @Query("select o from Order o where o.orderTableId in ?1")
     List<Order> findAllByOrderTableId(List<Long> orderTableIds);
 }
