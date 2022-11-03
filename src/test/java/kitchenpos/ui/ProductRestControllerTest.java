@@ -13,7 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import kitchenpos.application.ProductService;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.Product;
 import kitchenpos.dto.request.ProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

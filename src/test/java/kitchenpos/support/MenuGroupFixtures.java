@@ -2,7 +2,7 @@ package kitchenpos.support;
 
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menu.MenuGroup;
 
 public enum MenuGroupFixtures {
 

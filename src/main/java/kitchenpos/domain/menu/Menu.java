@@ -1,15 +1,41 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
+@Entity
+@Table(name = "menu")
 public class Menu {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column
     private String name;
+
+    @Embedded
     private Price price;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
-    private List<MenuProduct> menuProducts;
+
+    @OneToMany
+    @JoinColumn(name = "menu_id")
+    private List<MenuProduct> menuProducts = new ArrayList<>();
 
     public Menu(final Long id, final String name, final BigDecimal price, final MenuGroup menuGroup,
                 final List<MenuProduct> menuProducts) {
@@ -28,6 +54,9 @@ public class Menu {
         this(null, name, price, menuGroup, new ArrayList<>());
     }
 
+    public Menu() {
+    }
+
     public void addProduct(final MenuProduct menuProduct) {
         this.menuProducts.add(menuProduct);
     }
@@ -39,7 +68,7 @@ public class Menu {
             sum = sum.add(price);
         }
 
-        if (price.getValue().compareTo(sum) > 0) {
+        if (price.getPrice().compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }
     }
@@ -53,7 +82,7 @@ public class Menu {
     }
 
     public BigDecimal getPrice() {
-        return price.getValue();
+        return price.getPrice();
     }
 
     public Long getMenuGroupId() {

@@ -3,7 +3,7 @@ package kitchenpos.ui;
 import java.net.URI;
 import java.util.List;
 import kitchenpos.application.ProductService;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.Product;
 import kitchenpos.dto.request.ProductRequest;
 import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.dto.response.ProductsResponse;

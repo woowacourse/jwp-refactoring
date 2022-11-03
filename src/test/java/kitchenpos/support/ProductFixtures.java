@@ -3,7 +3,7 @@ package kitchenpos.support;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.Product;
 
 public enum ProductFixtures {
 

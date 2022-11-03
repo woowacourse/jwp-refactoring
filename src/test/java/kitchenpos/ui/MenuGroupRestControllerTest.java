@@ -12,7 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import kitchenpos.application.MenuGroupService;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.dto.request.MenuGroupRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
