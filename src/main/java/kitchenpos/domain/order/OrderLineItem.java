@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import kitchenpos.domain.menu.MenuHistory;
 
 @Entity
 public class OrderLineItem {
@@ -17,7 +18,7 @@ public class OrderLineItem {
     private Long orderId;
 
     @Column
-    private Long menuId;
+    private Long menuHistoryId;
 
     @Column
     private Integer quantity;
@@ -25,15 +26,15 @@ public class OrderLineItem {
     public OrderLineItem() {
     }
 
-    public OrderLineItem(Long seq, Long orderId, Long menuId, Integer quantity) {
+    public OrderLineItem(Long seq, Long orderId, Long menuHistoryId, Integer quantity) {
         this.seq = seq;
         this.orderId = orderId;
-        this.menuId = menuId;
+        this.menuHistoryId = menuHistoryId;
         this.quantity = quantity;
     }
 
-    public OrderLineItem(Long orderId, Long menuId, Integer quantity) {
-        this(null, orderId, menuId, quantity);
+    public OrderLineItem(Long orderId, MenuHistory menuHistory, Integer quantity) {
+        this(null, orderId, menuHistory.getId(), quantity);
     }
 
     public Long getSeq() {
@@ -44,8 +45,8 @@ public class OrderLineItem {
         return orderId;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public Long getMenuHistoryId() {
+        return menuHistoryId;
     }
 
     public Integer getQuantity() {

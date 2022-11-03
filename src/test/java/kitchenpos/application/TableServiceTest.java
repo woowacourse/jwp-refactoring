@@ -4,7 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.application.dto.request.CreateMenuDto;
+import kitchenpos.application.dto.request.CreateMenuProductDto;
 import kitchenpos.application.dto.request.CreateOrderDto;
 import kitchenpos.application.dto.request.CreateOrderLineItemDto;
 import kitchenpos.application.dto.request.CreateTableDto;
@@ -22,6 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @Transactional
 class TableServiceTest {
+
+    @Autowired
+    private MenuService menuService;
 
     @Autowired
     private TableService tableService;
@@ -89,8 +95,9 @@ class TableServiceTest {
 
         @Test
         void 주문이_들어간_테이블의_빈_테이블_여부를_수정하려는_경우_예외를_발생시킨다() {
+            Long savedMenuId = saveMenu();
             Long orderTableId = saveOrderTable();
-            List<CreateOrderLineItemDto> orderLineItems = List.of(new CreateOrderLineItemDto(1L, 1));
+            List<CreateOrderLineItemDto> orderLineItems = List.of(new CreateOrderLineItemDto(savedMenuId, 1));
             orderService.create(new CreateOrderDto(orderTableId, orderLineItems));
 
             assertThatThrownBy(() -> tableService.changeEmpty(new EmptyTableDto(orderTableId, true)))
@@ -118,6 +125,12 @@ class TableServiceTest {
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(new UpdateGuestNumberDto(999999L, 10)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
+    }
+
+    private Long saveMenu() {
+        CreateMenuDto createMenuDto = new CreateMenuDto("후라이드+후라이드", BigDecimal.valueOf(19000), 1L,
+                List.of(new CreateMenuProductDto(1L, 2)));
+        return menuService.create(createMenuDto).getId();
     }
 
     private Long saveOrderTable() {

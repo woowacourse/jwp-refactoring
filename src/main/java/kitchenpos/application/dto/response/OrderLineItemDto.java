@@ -6,13 +6,13 @@ public class OrderLineItemDto {
 
     private final Long seq;
     private final Long orderId;
-    private final Long menuId;
+    private final Long menuHistoryId;
     private final Integer quantity;
 
-    public OrderLineItemDto(Long seq, Long orderId, Long menuId, Integer quantity) {
+    public OrderLineItemDto(Long seq, Long orderId, Long menuHistoryId, Integer quantity) {
         this.seq = seq;
         this.orderId = orderId;
-        this.menuId = menuId;
+        this.menuHistoryId = menuHistoryId;
         this.quantity = quantity;
     }
 
@@ -20,7 +20,7 @@ public class OrderLineItemDto {
         return new OrderLineItemDto(
                 orderLineItem.getSeq(),
                 orderLineItem.getOrderId(),
-                orderLineItem.getMenuId(),
+                orderLineItem.getMenuHistoryId(),
                 orderLineItem.getQuantity());
     }
 
@@ -32,8 +32,8 @@ public class OrderLineItemDto {
         return orderId;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public Long getMenuHistoryId() {
+        return menuHistoryId;
     }
 
     public Integer getQuantity() {

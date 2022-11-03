@@ -5,6 +5,9 @@ import kitchenpos.application.dto.request.CreateOrderDto;
 import kitchenpos.application.dto.request.CreateOrderLineItemDto;
 import kitchenpos.application.dto.response.OrderDto;
 import kitchenpos.application.dto.request.UpdateOrderStatusDto;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuHistory;
+import kitchenpos.domain.repository.MenuHistoryRepository;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
@@ -23,15 +26,18 @@ import java.util.stream.Collectors;
 public class OrderService {
 
     private final MenuRepository menuRepository;
+    private final MenuHistoryRepository menuHistoryRepository;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(MenuRepository menuRepository,
+                        MenuHistoryRepository menuHistoryRepository,
                         OrderRepository orderRepository,
                         OrderLineItemRepository orderLineItemRepository,
                         OrderTableRepository orderTableRepository) {
         this.menuRepository = menuRepository;
+        this.menuHistoryRepository = menuHistoryRepository;
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
@@ -62,10 +68,19 @@ public class OrderService {
 
     private List<OrderLineItem> saveOrderLineItems(CreateOrderDto createOrderDto, Order order) {
         List<OrderLineItem> orderLineItems = new ArrayList<>();
-        for (OrderLineItem orderLineItem : createOrderDto.toOrderLineItem(order.getId())) {
+        for (CreateOrderLineItemDto orderLineDto : createOrderDto.getOrderLineItems()) {
+            MenuHistory menuHistory = findCurrentMenuHistory(orderLineDto.getMenuId());
+            OrderLineItem orderLineItem = new OrderLineItem(order.getId(), menuHistory, orderLineDto.getQuantity());
             orderLineItems.add(orderLineItemRepository.save(orderLineItem));
         }
         return orderLineItems;
+    }
+
+    private MenuHistory findCurrentMenuHistory(Long menuId) {
+        Menu menu = menuRepository.findById(menuId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴입니다."));
+        return menuHistoryRepository.findFirstByMenuOrderByCreatedTimeDesc(menu)
+                .orElseThrow(() -> new IllegalArgumentException("메뉴 정보가 존재하지 않습니다."));
     }
 
     public List<OrderDto> list() {
