@@ -35,6 +35,7 @@ public class MenuRepository implements MenuDao {
         for (MenuProduct menuProduct : menuProducts.getMenuProducts()) {
             menuProduct.placeSeq(menuProductRepository.save(menuProduct).getSeq());
         }
+        menuProducts.changeAllMenuId(save.getId());
         save.placeMenuProducts(menuProducts);
     }
 

@@ -111,7 +111,7 @@ class TableGroupServiceTest extends ServiceTest {
         orderService.create(주문요청_테이블1());
 
         assertThatThrownBy(() -> tableGroupService.ungroup(테이블그룹Id))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("단체 지정 속 모든 테이블들의 주문이 있다면 COMPLETION 상태여야 한다.");
+                .isInstanceOf(InvalidDataAccessApiUsageException.class)
+                .hasMessageContaining("단체 지정 속 모든 테이블들의 주문이 있다면 COMPLETION 상태여야 한다.");
     }
 }

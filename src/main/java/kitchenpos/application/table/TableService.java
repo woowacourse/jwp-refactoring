@@ -1,11 +1,9 @@
-package kitchenpos.application;
+package kitchenpos.application.table;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.dto.OrderTableCreateRequest;
@@ -37,19 +35,19 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId,
                                           final OrderTableChangeEmptyRequest orderTableChangeEmptyRequest) {
-        validateOrdersCompleted(orderTableId);
+        orderDao.validateOrdersCompleted(orderTableId);
 
-        final OrderTable orderTable = orderTableDao.findById(orderTableId)
-                .changeEmpty(orderTableChangeEmptyRequest.isEmpty());
+        final OrderTable orderTable = orderTableDao.findById(orderTableId);
+        orderTable.changeEmpty(orderTableChangeEmptyRequest.isEmpty());
         return toOrderTableResponse(orderTableDao.save(orderTable));
     }
 
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
                                                    final TableGuestChangeRequest changeRequest) {
-        final OrderTable orderTable = orderTableDao.findById(orderTableId)
-                .validateTableIsFull()
-                .placeNumberOfGuests(changeRequest.getNumberOfGuests());
+        final OrderTable orderTable = orderTableDao.findById(orderTableId);
+        orderTable.validateTableIsFull();
+        orderTable.placeNumberOfGuests(changeRequest.getNumberOfGuests());
         return toOrderTableResponse(orderTableDao.save(orderTable));
     }
 
@@ -62,12 +60,5 @@ public class TableService {
         return savedOrderTables.stream()
                 .map(this::toOrderTableResponse)
                 .collect(Collectors.toList());
-    }
-
-    private void validateOrdersCompleted(Long orderTableId) {
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException("테이블의 주문이 있다면 COMPLETION 상태여야 한다.");
-        }
     }
 }

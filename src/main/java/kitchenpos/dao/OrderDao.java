@@ -10,7 +10,7 @@ public interface OrderDao {
 
     List<Order> findAll();
 
-    boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<String> orderStatuses);
+    void validateComplete(List<Long> orderTableIds);
 
-    boolean existsByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds, List<String> orderStatuses);
+    void validateOrdersCompleted(Long orderTableId);
 }

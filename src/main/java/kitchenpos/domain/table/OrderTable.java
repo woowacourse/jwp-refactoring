@@ -26,23 +26,21 @@ public class OrderTable {
         }
     }
 
-    public OrderTable validateTableIsFull() {
+    public void validateTableIsFull() {
         if (isEmpty()) {
             throw new IllegalArgumentException("테이블은 차있어야 한다.");
         }
-        return this;
     }
 
     public void placeTableGroupId(final Long tableGroupId) {
         this.tableGroupId = tableGroupId;
     }
 
-    public OrderTable placeNumberOfGuests(final int numberOfGuests) {
+    public void placeNumberOfGuests(final int numberOfGuests) {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException("테이블 고객 수는 0 이상이어야 한다.");
         }
         this.numberOfGuests = numberOfGuests;
-        return this;
     }
 
     private void validateNoGroup() {

@@ -11,7 +11,7 @@ public class Tables {
         this.value = value;
     }
 
-    public void validate() {
+    public void validateNoGroupAndEmpty() {
         validateNoGroupedTable(value);
         validateTableIsEmpty(value);
     }

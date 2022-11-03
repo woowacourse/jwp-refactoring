@@ -1,12 +1,14 @@
 package kitchenpos.dao.repository;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.jdbctemplate.JdbcTemplateOrderDao;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderLineItems;
+import kitchenpos.domain.order.OrderStatus;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Repository;
 
@@ -68,12 +70,18 @@ public class OrderRepository implements OrderDao {
     }
 
     @Override
-    public boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<String> orderStatuses) {
-        return orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, orderStatuses);
+    public void validateComplete(List<Long> orderTableIds) {
+        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
+                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+            throw new IllegalArgumentException("단체 지정 속 모든 테이블들의 주문이 있다면 COMPLETION 상태여야 한다.");
+        }
     }
 
     @Override
-    public boolean existsByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds, List<String> orderStatuses) {
-        return orderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, orderStatuses);
+    public void validateOrdersCompleted(Long orderTableId) {
+        if (orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId,
+                Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+            throw new IllegalArgumentException("테이블의 주문이 있다면 COMPLETION 상태여야 한다.");
+        }
     }
 }

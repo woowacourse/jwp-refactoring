@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.application.menu;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,25 +20,20 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenuService {
     private final MenuDao menuDao;
     private final MenuGroupDao menuGroupDao;
-    private final ProductDao productRepository;
+    private final ProductDao productDao;
 
     public MenuService(final MenuDao menuDao,
                        final MenuGroupDao menuGroupDao,
-                       final ProductDao productRepository) {
+                       final ProductDao productDao) {
         this.menuDao = menuDao;
         this.menuGroupDao = menuGroupDao;
-        this.productRepository = productRepository;
+        this.productDao = productDao;
     }
 
     @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
         menuGroupDao.findById(menuRequest.getMenuGroupId());
-
         final Menu menu = menuDao.save(toMenu(menuRequest));
-        final MenuProducts menuProducts = menu.getMenuProducts()
-                .changeAllMenuId(menu.getId());
-
-        menu.placeMenuProducts(menuProducts);
         return MenuResponse.from(menu, MenuProductResponse.from(menu));
     }
 
@@ -64,7 +59,7 @@ public class MenuService {
     private MenuProduct toMenuProduct(MenuProductRequest request) {
         final Long productId = request.getProductId();
         final long quantity = request.getQuantity();
-        final Price price = productRepository.findById(productId).getPrice();
+        final Price price = productDao.findById(productId).getPrice();
         return new MenuProduct(productId, quantity, price);
     }
 }

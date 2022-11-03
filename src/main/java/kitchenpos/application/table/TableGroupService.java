@@ -1,14 +1,11 @@
-package kitchenpos.application;
+package kitchenpos.application.table;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
 import kitchenpos.domain.table.Tables;
@@ -33,12 +30,12 @@ public class TableGroupService {
     @Transactional
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
         final Tables tables = new Tables(toOrderTables(tableGroupRequest));
-        tables.validate();
+        tables.validateNoGroupAndEmpty();
 
-        final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), tables));
+        TableGroup entity = new TableGroup(LocalDateTime.now(), tables);
+        TableGroup tableGroup = tableGroupDao.save(entity);
         tableGroup.fillTables();
-
-        updateAllTables(tableGroup);
+        tableGroup.placeOrderTables(new Tables(orderTableDao.saveAll(tableGroup.getOrderTableValues())));
         return TableGroupResponse.from(tableGroup);
     }
 
@@ -48,27 +45,12 @@ public class TableGroupService {
                 .collect(Collectors.toList());
     }
 
-    private void updateAllTables(TableGroup tableGroup) {
-        List<OrderTable> orderTables = new ArrayList<>();
-        for (final OrderTable table : tableGroup.getOrderTableValues()) {
-            orderTables.add(orderTableDao.save(table));
-        }
-        tableGroup.placeOrderTables(new Tables(orderTables));
-    }
-
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = tableGroupDao.findById(tableGroupId);
         Tables tables = tableGroup.getOrderTables();
-        validateComplete(tables.getOrderTableIds());
+        orderDao.validateComplete(tables.getOrderTableIds());
         tables.ungroup();
         tableGroupDao.save(tableGroup);
-    }
-
-    private void validateComplete(List<Long> orderTableIds) {
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException("단체 지정 속 모든 테이블들의 주문이 있다면 COMPLETION 상태여야 한다.");
-        }
     }
 }

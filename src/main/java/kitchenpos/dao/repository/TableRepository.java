@@ -1,5 +1,6 @@
 package kitchenpos.dao.repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.jdbctemplate.JdbcTemplateOrderTableDao;
@@ -20,6 +21,14 @@ public class TableRepository implements OrderTableDao {
     @Override
     public OrderTable save(OrderTable entity) {
         return tableDao.save(entity);
+    }
+
+    public List<OrderTable> saveAll(List<OrderTable> tables) {
+        List<OrderTable> orderTables = new ArrayList<>();
+        for (final OrderTable table : tables) {
+            orderTables.add(tableDao.save(table));
+        }
+        return orderTables;
     }
 
     @Override

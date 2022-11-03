@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.application.order;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,12 +27,10 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderRequest orderRequest) {
-        final OrderTable table = orderTableDao.findById(orderRequest.getOrderTableId())
-                .validateTableIsFull();
+        final OrderTable table = orderTableDao.findById(orderRequest.getOrderTableId());
+        table.validateTableIsFull();
 
-        final Order order = new Order(table.getId(),
-                OrderStatus.COOKING.name(),
-                LocalDateTime.now(),
+        final Order order = new Order(table.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
                 orderRequest.toOrderLineItems());
 
         return OrderResponse.from(orderDao.save(order));
@@ -47,8 +45,8 @@ public class OrderService {
 
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final ChangeOrderStatusRequest statusRequest) {
-        final Order order = orderDao.findById(orderId)
-                .placeOrderStatus(statusRequest.getOrderStatus().name());
+        final Order order = orderDao.findById(orderId);
+        order.placeOrderStatus(statusRequest.getOrderStatus().name());
         Order save = orderDao.save(order);
         return OrderResponse.from(save);
     }
