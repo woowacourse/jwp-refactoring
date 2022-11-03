@@ -2,7 +2,10 @@ package kitchenpos.dto;
 
 public class OrderTableGuestRequest {
 
-    private final int numberOfGuests;
+    private int numberOfGuests;
+
+    public OrderTableGuestRequest() {
+    }
 
     public OrderTableGuestRequest(final int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
