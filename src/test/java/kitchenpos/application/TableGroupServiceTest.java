@@ -17,7 +17,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.orderTable.OrderTableResponse;
-import kitchenpos.dto.tablegroup.OrderTableRequest;
+import kitchenpos.dto.orderTable.OrderTableRequest;
 import kitchenpos.dto.tablegroup.TableGroupCreateRequest;
 import kitchenpos.dto.tablegroup.TableGroupResponse;
 import org.assertj.core.data.TemporalUnitWithinOffset;
