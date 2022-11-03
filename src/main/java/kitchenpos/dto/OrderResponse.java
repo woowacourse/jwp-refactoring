@@ -5,7 +5,6 @@ import static java.util.stream.Collectors.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 
 public class OrderResponse {
 
@@ -39,10 +38,6 @@ public class OrderResponse {
 
     public String getOrderStatus() {
         return orderStatus;
-    }
-
-    public LocalDateTime getOrderedTime() {
-        return orderedTime;
     }
 
     public List<OrderLineItemResponse> getOrderLineItems() {

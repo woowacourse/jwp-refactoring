@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.common.UnitTest;
@@ -17,8 +18,8 @@ class OrderTest {
     @Test
     void order를_생성한다() {
         List<OrderLineItem> orderLineItems = List.of(
-                generateOrderLineItem(1L, 1L, 1L, 1L),
-                generateOrderLineItem(1L, 1L, 2L, 3L)
+                generateOrderLineItem("후라이드", BigDecimal.valueOf(16000), 1L),
+                generateOrderLineItem("양념치킨", BigDecimal.valueOf(17000), 3L)
         );
 
         Order actual = new Order(1L, orderLineItems);

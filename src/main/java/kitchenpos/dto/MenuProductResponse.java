@@ -9,9 +9,9 @@ public class MenuProductResponse {
     private Long productId;
     private long quantity;
 
-    public MenuProductResponse(final MenuProduct menuProduct) {
+    public MenuProductResponse(final Long menuId, final MenuProduct menuProduct) {
         this.seq = menuProduct.getSeq();
-        this.menuId = menuProduct.getMenuId();
+        this.menuId = menuId;
         this.productId = menuProduct.getProductId();
         this.quantity = menuProduct.getQuantity();
     }

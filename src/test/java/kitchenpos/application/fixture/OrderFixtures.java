@@ -1,7 +1,5 @@
 package kitchenpos.application.fixture;
 
-import static java.util.stream.Collectors.toList;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
@@ -69,11 +67,8 @@ public class OrderFixtures {
     }
 
     public static final OrderSaveRequest generateOrderSaveRequest(final Long orderTableId,
-                                                                  final List<OrderLineItem> orderLineItems) {
-        List<OrderLineItemSaveRequest> orderLimeItemsRequest = orderLineItems.stream()
-                .map(it -> new OrderLineItemSaveRequest(it.getMenuId(), it.getQuantity()))
-                .collect(toList());
-        return new OrderSaveRequest(orderTableId, orderLimeItemsRequest);
+                                                                  final List<OrderLineItemSaveRequest> requests) {
+        return new OrderSaveRequest(orderTableId, requests);
     }
 
     public static final OrderChangeOrderStatusRequest generateOrderChangeOrderStatusRequest(

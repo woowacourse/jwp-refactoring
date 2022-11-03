@@ -17,11 +17,11 @@ public class MenuResponse {
     public MenuResponse(final Menu menu) {
         this.id = menu.getId();
         this.name = menu.getName();
-        this.price = menu.getPrice();
+        this.price = menu.getPrice().getValue();
         this.menuGroupId = menu.getMenuGroupId();
         this.menuProducts = menu.getMenuProducts()
                 .stream()
-                .map(MenuProductResponse::new)
+                .map(it -> new MenuProductResponse(menu.getId(), it))
                 .collect(toList());
     }
 

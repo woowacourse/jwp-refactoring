@@ -6,13 +6,14 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OrderDao {
-    Order save(Order entity);
 
-    Optional<Order> findById(Long id);
+    Order save(final Order entity);
+
+    Optional<Order> findById(final Long id);
 
     List<Order> findAll();
 
-    boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<String> orderStatuses);
+    boolean existsByOrderTableIdAndOrderStatusIn(final Long orderTableId, final List<String> orderStatuses);
 
-    boolean existsByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds, List<String> orderStatuses);
+    boolean existsByOrderTableIdInAndOrderStatusIn(final List<Long> orderTableIds, final List<String> orderStatuses);
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -23,8 +24,8 @@ public class Menu {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "price")
-    private BigDecimal price;
+    @Embedded
+    private Price price;
 
     @Column(name = "menu_group_id")
     private Long menuGroupId;
@@ -41,17 +42,10 @@ public class Menu {
                 final Long menuGroupId,
                 final List<MenuProduct> menuProducts) {
         this.name = name;
-        this.price = price;
+        this.price = new Price(price);
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
-        validatePrice();
         validateMenuTotalPrice();
-    }
-
-    private void validatePrice() {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
     }
 
     private void validateMenuTotalPrice() {
@@ -59,9 +53,7 @@ public class Menu {
                 .map(MenuProduct::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        if (price.compareTo(menuTotalPrice) > 0) {
-            throw new IllegalArgumentException();
-        }
+        price.validateGreaterThan(menuTotalPrice);
     }
 
     public Long getId() {
@@ -72,7 +64,7 @@ public class Menu {
         return name;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
     }
 
