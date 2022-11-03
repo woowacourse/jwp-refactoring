@@ -6,22 +6,21 @@ import static kitchenpos.order.domain.OrderStatus.MEAL;
 import java.util.List;
 import kitchenpos.order.domain.dao.OrderDao;
 import kitchenpos.order.exception.InvalidChangedEmptyRequest;
-import kitchenpos.table.event.ChangedEmptyEvent;
-import org.springframework.context.event.EventListener;
+import kitchenpos.table.application.OrderStatusValidator;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrderEventListener {
+public class OrderStatusValidatorImp implements OrderStatusValidator {
 
     private final OrderDao orderDao;
 
-    public OrderEventListener(OrderDao orderDao) {
+    public OrderStatusValidatorImp(OrderDao orderDao) {
         this.orderDao = orderDao;
     }
 
-    @EventListener
-    public void validateChangeEmpty(ChangedEmptyEvent changedEmptyEvent) {
-        if (shouldNotChangeEmpty(changedEmptyEvent.getOrderTableId())) {
+    @Override
+    public void validateChangeEmpty(Long orderTableId) {
+        if (shouldNotChangeEmpty(orderTableId)) {
             throw new InvalidChangedEmptyRequest();
         }
     }

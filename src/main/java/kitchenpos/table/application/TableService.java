@@ -6,8 +6,6 @@ import kitchenpos.table.application.dto.OrderTableResponse;
 import kitchenpos.table.application.dto.OrderTableSaveRequest;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.dao.OrderTableDao;
-import kitchenpos.table.event.ChangedEmptyEvent;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,11 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class TableService {
 
-    private final ApplicationEventPublisher publisher;
+    private final OrderStatusValidator orderStatusValidator;
     private final OrderTableDao orderTableDao;
 
-    public TableService(ApplicationEventPublisher publisher, OrderTableDao orderTableDao) {
-        this.publisher = publisher;
+    public TableService(OrderStatusValidator orderStatusValidator, OrderTableDao orderTableDao) {
+        this.orderStatusValidator = orderStatusValidator;
         this.orderTableDao = orderTableDao;
     }
 
@@ -37,14 +35,10 @@ public class TableService {
 
     public OrderTableResponse changeEmpty(Long orderTableId, Boolean empty) {
         OrderTable orderTable = findOrderTable(orderTableId);
-        validateChangeEmpty(orderTableId);
+        orderStatusValidator.validateChangeEmpty(orderTableId);
         OrderTable updatedOrderTable = orderTable.changeEmpty(empty);
         orderTableDao.save(updatedOrderTable);
         return OrderTableResponse.toResponse(updatedOrderTable);
-    }
-
-    private void validateChangeEmpty(Long orderTableId) {
-        publisher.publishEvent(new ChangedEmptyEvent(orderTableId));
     }
 
     public OrderTableResponse changeNumberOfGuests(Long orderTableId, int numberOfGuests) {
