@@ -3,15 +3,10 @@ package kitchenpos.domain.order;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderStatus;
 
 @DisplayName("Order 도메인 테스트")
 class OrderTest {
@@ -20,7 +15,7 @@ class OrderTest {
     @Test
     void changeStatusOrderIsCompletion() {
         final OrderLineItem orderLineItem = new OrderLineItem(1L, 1);
-        final Order order = new Order( 1L, OrderStatus.COMPLETION, LocalDateTime.now(), List.of(orderLineItem));
+        final Orders order = new Orders( 1L, OrderStatus.COMPLETION, LocalDateTime.now(), List.of(orderLineItem));
 
         assertThatThrownBy(() -> order.changeStatus(OrderStatus.MEAL))
             .isInstanceOf(IllegalArgumentException.class)

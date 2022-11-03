@@ -40,11 +40,10 @@ class OrderRestControllerTest extends RestControllerTest {
         final OrderRequest request = new OrderRequest(orderTableId, List.of(orderLineItemRequest1, orderLineItemRequest2));
         final String body = objectMapper.writeValueAsString(request);
 
-        final long orderId = 1L;
-        final OrderLineItemResponse orderLineItemResponse1 = new OrderLineItemResponse(1L, orderId, 1L, 1);
-        final OrderLineItemResponse orderLineItemResponse2 = new OrderLineItemResponse(2L, orderId, 2L, 1);
+        final OrderLineItemResponse orderLineItemResponse1 = new OrderLineItemResponse(1L, 1L, 1);
+        final OrderLineItemResponse orderLineItemResponse2 = new OrderLineItemResponse(2L, 2L, 1);
         final OrderResponse response = new OrderResponse(
-            orderId,
+            1L,
             orderTableId,
             OrderStatus.COOKING.name(),
             LocalDateTime.now(),

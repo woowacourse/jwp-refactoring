@@ -6,11 +6,11 @@ import kitchenpos.application.dto.request.OrderChangeRequest;
 import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.Orders;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
-import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.JpaOrderRepository;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,12 +23,12 @@ import java.util.stream.Collectors;
 @Service
 public class OrderService {
 
-    private final OrderRepository orderRepository;
+    private final JpaOrderRepository orderRepository;
     private final MenuDao menuDao;
     private final OrderTableDao orderTableDao;
 
     public OrderService(
-            final OrderRepository orderRepository,
+            final JpaOrderRepository orderRepository,
             final MenuDao menuDao,
             final OrderTableDao orderTableDao
     ) {
@@ -43,15 +43,15 @@ public class OrderService {
             .orElseThrow(() -> new IllegalArgumentException(String.format("존재하지 않는 테이블입니다. [%s]", request.getOrderTableId())));
         validateOrderTableIsNotEmpty(orderTable);
 
-        final Order order = toOrder(request);
+        final Orders order = toOrder(request);
         validateOrderLineItemIsExist(order);
 
-        final Order savedOrder = orderRepository.save(order);
+        final Orders savedOrder = orderRepository.save(order);
         return new OrderResponse(savedOrder);
     }
 
     public List<OrderResponse> list() {
-        final List<Order> orders = orderRepository.findAll();
+        final List<Orders> orders = orderRepository.findAll();
         return orders.stream()
             .map(OrderResponse::new)
             .collect(Collectors.toUnmodifiableList());
@@ -59,7 +59,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderChangeRequest request) {
-        final Order changedOrder = changeStatus(orderId, OrderStatus.valueOf(request.getOrderStatus()));
+        final Orders changedOrder = changeStatus(orderId, OrderStatus.valueOf(request.getOrderStatus()));
         return new OrderResponse(changedOrder);
     }
 
@@ -69,8 +69,8 @@ public class OrderService {
         }
     }
 
-    public Order toOrder(final OrderRequest request) {
-        return new Order(
+    public Orders toOrder(final OrderRequest request) {
+        return new Orders(
             request.getOrderTableId(),
             OrderStatus.COOKING,
             LocalDateTime.now(),
@@ -84,7 +84,7 @@ public class OrderService {
             .collect(Collectors.toUnmodifiableList());
     }
 
-    private void validateOrderLineItemIsExist(final Order order) {
+    private void validateOrderLineItemIsExist(final Orders order) {
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
         final List<Long> menuIds = orderLineItems.stream()
                 .map(OrderLineItem::getMenuId)
@@ -95,11 +95,12 @@ public class OrderService {
         }
     }
 
-    private Order changeStatus(final Long orderId, final OrderStatus orderStatus) {
-        final Order savedOrder = orderRepository.findById(orderId)
+    private Orders changeStatus(final Long orderId, final OrderStatus orderStatus) {
+        final Orders savedOrder = orderRepository.findById(orderId)
             .orElseThrow(() -> new IllegalArgumentException(String.format("존재하지 않는 주문입니다. [%s]", orderId)));
 
         savedOrder.changeStatus(orderStatus);
-        return orderRepository.update(savedOrder);
+        return orderRepository.findById(savedOrder.getId())
+            .orElseThrow(() -> new IllegalArgumentException(String.format("존재하지 않는 주문입니다. [%s]", savedOrder.getId())));
     }
 }

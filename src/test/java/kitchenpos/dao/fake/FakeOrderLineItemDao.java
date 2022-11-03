@@ -17,7 +17,7 @@ public class FakeOrderLineItemDao implements OrderLineItemDao {
     @Override
     public OrderLineItem save(final OrderLineItem entity) {
         final OrderLineItem savedOrderLineItem = new OrderLineItem(
-            ++id, entity.getOrderId(), entity.getMenuId(), entity.getQuantity()
+            ++id, entity.getMenuId(), entity.getQuantity()
         );
         orderLineItems.put(savedOrderLineItem.getSeq(), savedOrderLineItem);
         return savedOrderLineItem;
@@ -35,12 +35,6 @@ public class FakeOrderLineItemDao implements OrderLineItemDao {
 
     @Override
     public List<OrderLineItem> findAllByOrderId(final Long orderId) {
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (OrderLineItem orderLineItem : orderLineItems.values()) {
-            if (orderLineItem.getOrderId().equals(orderId)) {
-                savedOrderLineItems.add(orderLineItem);
-            }
-        }
-        return savedOrderLineItems;
+        return null;
     }
 }

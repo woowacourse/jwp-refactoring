@@ -15,6 +15,9 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.application.dto.request.OrderLineItemRequest;
 import kitchenpos.application.dto.request.OrderRequest;
@@ -22,34 +25,34 @@ import kitchenpos.application.dto.request.OrderChangeRequest;
 import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.fake.FakeMenuDao;
 import kitchenpos.dao.fake.FakeMenuGroupDao;
-import kitchenpos.dao.fake.FakeOrderDao;
-import kitchenpos.dao.fake.FakeOrderLineItemDao;
 import kitchenpos.dao.fake.FakeOrderTableDao;
 import kitchenpos.dao.fake.FakeProductDao;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.Orders;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.fixture.OrderTableFixture;
-import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.JpaOrderRepository;
 
 @SuppressWarnings("NonAsciiCharacters")
+@SpringBootTest
+@Transactional
 @DisplayName("Order 서비스 테스트")
 class OrderServiceTest {
 
     private OrderService orderService;
-    private OrderRepository orderRepository;
 
-    private OrderDao orderDao;
+    @Autowired
+    private JpaOrderRepository orderRepository;
+
     private OrderTableDao orderTableDao;
 
     private Menu 저장된_후라이드_치킨_세트_메뉴;
@@ -60,10 +63,8 @@ class OrderServiceTest {
         final MenuGroupDao menuGroupDao = new FakeMenuGroupDao();
         final ProductDao productDao = new FakeProductDao();
         final MenuDao menuDao = new FakeMenuDao();
-        orderDao = new FakeOrderDao();
         orderTableDao = new FakeOrderTableDao();
 
-        orderRepository = new OrderRepository(orderDao, new FakeOrderLineItemDao());
         orderService = new OrderService(orderRepository, menuDao, orderTableDao);
 
         final Product savedProduct = productDao.save(후라이드_치킨());
@@ -134,7 +135,7 @@ class OrderServiceTest {
         final int numberOfOrder = 5;
         for (int i = 0; i < numberOfOrder; i++) {
             final OrderLineItem orderLineItem = new OrderLineItem(1L, 1);
-            final Order order = 주문_1번의_주문_항목들은(저장된_주문_테이블.getId(), List.of(orderLineItem));
+            final Orders order = 주문_1번의_주문_항목들은(저장된_주문_테이블.getId(), List.of(orderLineItem));
             orderRepository.save(order);
         }
 
@@ -147,8 +148,8 @@ class OrderServiceTest {
     @Test
     void changeOrderStatus() {
         final OrderLineItem orderLineItem = new OrderLineItem(1L, 1);
-        final Order order = 주문_1번의_주문_항목들은(저장된_주문_테이블.getId(), List.of(orderLineItem));
-        final Order savedOrder = orderRepository.save(order);
+        final Orders order = 주문_1번의_주문_항목들은(저장된_주문_테이블.getId(), List.of(orderLineItem));
+        final Orders savedOrder = orderRepository.save(order);
         final OrderChangeRequest newOrder = new OrderChangeRequest(OrderStatus.COMPLETION.name());
 
         final OrderResponse response = orderService.changeOrderStatus(savedOrder.getId(), newOrder);

@@ -3,11 +3,22 @@ package kitchenpos.domain.order;
 import java.util.Collections;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+
 import org.springframework.util.CollectionUtils;
 
+@Embeddable
 public class OrderLineItems {
 
-    private final List<OrderLineItem> value;
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @JoinColumn(name = "order_id", nullable = false)
+    private List<OrderLineItem> value;
+
+    protected OrderLineItems() {
+    }
 
     public OrderLineItems(final List<OrderLineItem> value) {
         validateOrderLineItemIsNotEmpty(value);

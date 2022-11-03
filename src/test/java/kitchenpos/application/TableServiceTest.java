@@ -21,7 +21,7 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.dao.fake.FakeOrderDao;
 import kitchenpos.dao.fake.FakeOrderTableDao;
 import kitchenpos.dao.fake.FakeTableGroupDao;
-import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.Orders;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
 import kitchenpos.domain.fixture.OrderTableFixture;
@@ -76,7 +76,7 @@ class TableServiceTest {
         final OrderTable orderTable = OrderTableFixture.새로운_테이블();
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
-        final Order order = 완료된_주문(savedOrderTable.getId());
+        final Orders order = 완료된_주문(savedOrderTable.getId());
         orderDao.save(order);
 
         final OrderTableRequest newOrderTable = new OrderTableRequest(savedOrderTable.getNumberOfGuests(), true);
@@ -112,7 +112,7 @@ class TableServiceTest {
         final OrderTable orderTable = OrderTableFixture.새로운_테이블();
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
-        final Order order = 요리중인_주문(savedOrderTable.getId());
+        final Orders order = 요리중인_주문(savedOrderTable.getId());
         orderDao.save(order);
 
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), new OrderTableRequest(0, true)))

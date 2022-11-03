@@ -6,7 +6,6 @@ import kitchenpos.domain.order.OrderLineItem;
 public class OrderLineItemFixture {
 
     private Long seq;
-    private Long orderId;
     private Long menuId;
     private long quantity;
 
@@ -29,6 +28,6 @@ public class OrderLineItemFixture {
     }
 
     private OrderLineItem build() {
-        return new OrderLineItem(seq, orderId, menuId, quantity);
+        return new OrderLineItem(seq, menuId, quantity);
     }
 }
