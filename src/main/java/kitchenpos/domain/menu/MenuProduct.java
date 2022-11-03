@@ -58,6 +58,6 @@ public class MenuProduct {
     }
 
     public BigDecimal getPrice() {
-        return price.getPrice();
+        return price.getValue();
     }
 }
