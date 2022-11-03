@@ -1,14 +1,11 @@
-package kitchenpos.domain;
+package kitchenpos.ordertable.domain;
 
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 @Entity
 public class OrderTable {
@@ -17,15 +14,13 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
-
     @Column(nullable = false)
     private int numberOfGuests;
 
     @Column(nullable = false)
     private boolean empty;
+
+    private Long tableGroupId;
 
     protected OrderTable() {
     }
@@ -52,20 +47,20 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public void groupTable(final TableGroup tableGroup) {
+    public void groupTable(final Long tableGroupId) {
         verifyIsOrderTable();
         verifyIsAlreadyGroupedTable("이미 단체로 지정된 테이블은 새로 단체를 지정할 수 없습니다.");
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
         this.empty = false;
     }
 
     public void ungroupTable() {
-        this.tableGroup = null;
+        this.tableGroupId = null;
         this.empty = false;
     }
 
     private void verifyIsAlreadyGroupedTable(final String message) {
-        if (Objects.nonNull(this.tableGroup)) {
+        if (Objects.nonNull(this.tableGroupId)) {
             throw new IllegalArgumentException(message);
         }
     }
@@ -93,11 +88,7 @@ public class OrderTable {
     }
 
     public Long getTableGroupId() {
-        return tableGroup.getId();
-    }
-
-    public TableGroup getTableGroup() {
-        return tableGroup;
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {
