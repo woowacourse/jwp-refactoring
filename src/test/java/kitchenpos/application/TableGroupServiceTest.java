@@ -4,10 +4,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import kitchenpos.application.fixture.MenuGroupFixture;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableGroupCreateRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +29,7 @@ class TableGroupServiceTest extends ServiceTestBase {
 
     @Autowired
     private TableGroupService tableGroupService;
-    
+
 
     @DisplayName("단체 주문에 대해 포함된 주문 중 완료가 아닌 주문이 존재하면 예외를 발생한다.")
     @ParameterizedTest
@@ -30,12 +38,19 @@ class TableGroupServiceTest extends ServiceTestBase {
         // given
         OrderTable orderTable1 = 주문_테이블_생성();
         TableGroup tableGroup = 단체_지정_생성(orderTable1);
-        TableGroup savedTableGroup = jdbcTemplateTableGroupDao.save(tableGroup);
+        TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
         orderTable1.setTableGroupId(savedTableGroup.getId());
         OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
+        MenuGroup menuGroup = menuGroupDao.save(MenuGroupFixture.치킨());
+        Product product = productDao.save(createProduct("치킨", BigDecimal.valueOf(18000L)));
+        MenuProduct menuProduct =
+                createMenuProduct(product.getId(), 1, BigDecimal.valueOf(18000L));
+        Menu menu = menuRepository.save(createMenu("치킨", BigDecimal.valueOf(18000L), menuGroup.getId(),
+                Collections.singletonList(menuProduct)));
+        OrderLineItem orderLineItem = createOrderLineItem(menu.getId(), 1);
 
-        Order order1 = 주문_생성(savedOrderTable1);
-        order1.setOrderStatus(orderStatus.name());
+        Order order1 = createOrder(savedOrderTable1.getId(), Collections.singletonList(orderLineItem));
+        order1.changeOrderStatus(orderStatus.name());
         order1.setOrderedTime(LocalDateTime.now());
         Order savedOrder = jdbcTemplateOrderDao.save(order1);
 
@@ -55,10 +70,16 @@ class TableGroupServiceTest extends ServiceTestBase {
         TableGroup savedTableGroup = jdbcTemplateTableGroupDao.save(tableGroup);
         orderTable1.setTableGroupId(savedTableGroup.getId());
         OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
+        MenuGroup menuGroup = menuGroupDao.save(MenuGroupFixture.치킨());
+        Product product = productDao.save(createProduct("치킨", BigDecimal.valueOf(18000L)));
+        MenuProduct menuProduct =
+                createMenuProduct(product.getId(), 1, BigDecimal.valueOf(18000L));
+        Menu menu = menuRepository.save(createMenu("치킨", BigDecimal.valueOf(18000L), menuGroup.getId(),
+                Collections.singletonList(menuProduct)));
+        OrderLineItem orderLineItem = createOrderLineItem(menu.getId(), 1);
 
-        Order order1 = 주문_생성(savedOrderTable1);
-        order1.setOrderStatus(OrderStatus.COMPLETION.name());
-        order1.setOrderedTime(LocalDateTime.now());
+        Order order1 = new Order(savedOrderTable1.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now(),
+                Collections.singletonList(orderLineItem));
         Order savedOrder = jdbcTemplateOrderDao.save(order1);
 
         // when

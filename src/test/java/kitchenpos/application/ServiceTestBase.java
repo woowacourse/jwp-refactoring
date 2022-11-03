@@ -22,6 +22,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupRepository;
 import kitchenpos.dto.MenuProductRequest;
@@ -76,9 +77,11 @@ public abstract class ServiceTestBase {
     protected TableGroupRepository tableGroupRepository;
 
     protected ProductRequest createProductRequest(String name, int price) {
-        ProductRequest product = new ProductRequest(name, BigDecimal.valueOf(price));
+        return new ProductRequest(name, BigDecimal.valueOf(price));
+    }
 
-        return product;
+    protected Product createProduct(final String name, final BigDecimal price) {
+        return new Product(name, price);
     }
 
     protected MenuRequest createMenuRequest(final String name, final BigDecimal price,
@@ -125,10 +128,8 @@ public abstract class ServiceTestBase {
     }
 
     protected Order 주문_생성(final OrderTable orderTable) {
-        Order order = new Order();
-        order.setOrderTableId(orderTable.getId());
 
-        return order;
+        return Order.create(orderTable.getId(), Collections.emptyList(), 1);
     }
 
     protected TableGroup 단체_지정_생성(final OrderTable... orderTables) {

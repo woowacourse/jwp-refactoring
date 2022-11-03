@@ -5,23 +5,14 @@ import kitchenpos.domain.MenuGroup;
 public class MenuGroupFixture {
 
     public static MenuGroup 치킨() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("치킨");
-
-        return menuGroup;
+        return new MenuGroup("치킨");
     }
 
     public static MenuGroup 여러마리_메뉴_그룹() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("치킨");
-
-        return menuGroup;
+        return new MenuGroup("여러마리 메뉴");
     }
 
     public static MenuGroup 피자() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("피자");
-
-        return menuGroup;
+        return new MenuGroup("피자");
     }
 }
