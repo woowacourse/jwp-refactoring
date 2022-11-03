@@ -32,7 +32,7 @@ public class Menu {
     private MenuGroup menuGroup;
 
     @OneToMany(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "menu_id", nullable = false)
+    @JoinColumn(name = "menu_id", nullable = false, updatable = false)
     private List<MenuProduct> menuProducts;
 
     protected Menu() {
