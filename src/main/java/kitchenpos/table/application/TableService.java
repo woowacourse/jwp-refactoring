@@ -1,23 +1,23 @@
 package kitchenpos.table.application;
 
 import java.util.List;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.table.domain.OrderTableRepository;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.application.dto.OrderTableCreateRequest;
-import kitchenpos.application.dto.OrderTableUpdateRequest;
+import kitchenpos.table.dto.OrderTableCreateRequest;
+import kitchenpos.table.dto.OrderTableUpdateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
 public class TableService {
-    private final OrderDao orderDao;
+    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderDao orderDao, final OrderTableRepository orderTableRepository) {
-        this.orderDao = orderDao;
+    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
+        this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -43,7 +43,7 @@ public class TableService {
     }
 
     private void checkOrderIsInProgress(Long orderTableId) {
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, OrderStatus.collectInProgress())) {
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, OrderStatus.collectInProgress())) {
             throw new IllegalArgumentException();
         }
     }

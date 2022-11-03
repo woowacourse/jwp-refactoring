@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
-import kitchenpos.application.ServiceTest;
+import kitchenpos.support.ServiceTest;
 import kitchenpos.product.dto.ProductCreateRequest;
 import kitchenpos.product.application.ProductService;
 import kitchenpos.product.domain.Product;

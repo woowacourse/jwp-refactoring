@@ -1,8 +1,8 @@
 package kitchenpos.support;
 
 import java.math.BigDecimal;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.product.domain.Product;
 

@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.table;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -6,12 +6,13 @@ import static org.mockito.BDDMockito.given;
 
 import java.util.Arrays;
 import java.util.Optional;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.support.ServiceTest;
+import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.table.domain.OrderTableRepository;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.application.TableService;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.application.dto.OrderTableUpdateRequest;
+import kitchenpos.table.dto.OrderTableUpdateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -28,7 +29,7 @@ class TableServiceTest extends ServiceTest {
     @MockBean
     private OrderTableRepository orderTableRepository;
     @MockBean
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Nested
     @DisplayName("changeEmpty 메서드는")
@@ -47,7 +48,7 @@ class TableServiceTest extends ServiceTest {
 
             given(orderTableRepository.findById(ORDER_TABLE_ID))
                     .willReturn(Optional.of(savedOrderTable));
-            given(orderDao.existsByOrderTableIdAndOrderStatusIn(ORDER_TABLE_ID,
+            given(orderRepository.existsByOrderTableIdAndOrderStatusIn(ORDER_TABLE_ID,
                     Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
                     .willReturn(false);
             given(orderTableRepository.save(savedOrderTable))
@@ -94,7 +95,7 @@ class TableServiceTest extends ServiceTest {
         @DisplayName("주문 테이블이 조리중이나 식사중이면, 예외를 던진다.")
         void fail_tableStatusIsCookingOrMeal() {
             //given
-            given(orderDao.existsByOrderTableIdAndOrderStatusIn(ORDER_TABLE_ID,
+            given(orderRepository.existsByOrderTableIdAndOrderStatusIn(ORDER_TABLE_ID,
                     Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
                     .willReturn(true);
 

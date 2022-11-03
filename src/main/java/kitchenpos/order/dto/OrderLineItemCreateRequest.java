@@ -1,4 +1,4 @@
-package kitchenpos.application.dto;
+package kitchenpos.order.dto;
 
 public class OrderLineItemCreateRequest {
     private Long menuId;

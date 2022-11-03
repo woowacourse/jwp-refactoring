@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.table;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -9,14 +9,15 @@ import static org.mockito.BDDMockito.given;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.support.ServiceTest;
+import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.domain.TableGroupRepository;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.application.TableGroupService;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
-import kitchenpos.application.dto.TableGroupCreateRequest;
+import kitchenpos.table.dto.TableGroupCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -35,7 +36,7 @@ class TableGroupServiceTest extends ServiceTest {
     @MockBean
     private TableGroupRepository tableGroupRepository;
     @MockBean
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Nested
     @DisplayName("create 메서드는")
@@ -147,7 +148,7 @@ class TableGroupServiceTest extends ServiceTest {
             given(orderTableRepository.findAllByTableGroupId(TABLE_GROUP_ID))
                     .willReturn(Arrays.asList(orderTableA, orderTableB));
 
-            given(orderDao.existsByOrderTableIdInAndOrderStatusIn(
+            given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                     Arrays.asList(ORDER_TABLE_A_ID, ORDER_TABLE_B_ID),
                     Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
                     .willReturn(false);
@@ -172,7 +173,7 @@ class TableGroupServiceTest extends ServiceTest {
         @DisplayName("그룹의 주문 테이블들 중 조리중이거나 식사중인 테이블이 존재하면, 예외를 던진다.")
         void fail_tableIsCookingOrMeal() {
             //given
-            given(orderDao.existsByOrderTableIdInAndOrderStatusIn(
+            given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                     Arrays.asList(ORDER_TABLE_A_ID, ORDER_TABLE_B_ID),
                     Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
                     .willReturn(true);

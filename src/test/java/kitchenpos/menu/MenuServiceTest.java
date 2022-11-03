@@ -9,7 +9,7 @@ import static org.mockito.BDDMockito.given;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.application.ServiceTest;
+import kitchenpos.support.ServiceTest;
 import kitchenpos.menu.dto.MenuCreateRequest;
 import kitchenpos.menu.dto.MenuProductCreateRequest;
 import kitchenpos.menu.application.MenuService;

@@ -3,7 +3,7 @@ package kitchenpos.table.ui;
 import java.net.URI;
 import kitchenpos.table.application.TableGroupService;
 import kitchenpos.table.domain.TableGroup;
-import kitchenpos.application.dto.TableGroupCreateRequest;
+import kitchenpos.table.dto.TableGroupCreateRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
