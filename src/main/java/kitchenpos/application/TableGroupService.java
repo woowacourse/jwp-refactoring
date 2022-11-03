@@ -1,89 +1,120 @@
 package kitchenpos.application;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.TableGroupResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.dto.OrderTableDto;
+import kitchenpos.ui.dto.OrderTableRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
+@Transactional(readOnly = true)
 @Service
 public class TableGroupService {
+
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
     private final TableGroupDao tableGroupDao;
 
-    public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao, final TableGroupDao tableGroupDao) {
+    public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao,
+                             final TableGroupDao tableGroupDao) {
         this.orderDao = orderDao;
         this.orderTableDao = orderTableDao;
         this.tableGroupDao = tableGroupDao;
     }
 
     @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
+    public TableGroupResponse create(final OrderTableRequest request) {
+        validateRequestOrderTablesSize(request);
 
+        final List<OrderTable> orderTables = findOrderTables(request);
+        validateOrderTablesSize(request, orderTables);
+        validateHaveNotEmptyOrderTable(orderTables);
+
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
+        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        savedTableGroup.addOrderTables(orderTables);
+
+        updateOrderTables(savedTableGroup);
+
+        return TableGroupResponse.of(savedTableGroup);
+    }
+
+    private void validateRequestOrderTablesSize(final OrderTableRequest request) {
+        List<OrderTableDto> orderTables = request.getOrderTables();
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException();
         }
+    }
 
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
+    private List<OrderTable> findOrderTables(final OrderTableRequest tableGroupRequest) {
+        final List<Long> orderTableIds = tableGroupRequest.getOrderTables()
+                .stream()
+                .map(OrderTableDto::getId)
                 .collect(Collectors.toList());
 
-        final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
+        return orderTableDao.findAllByIdIn(orderTableIds);
+    }
 
-        if (orderTables.size() != savedOrderTables.size()) {
+    private void validateOrderTablesSize(final OrderTableRequest request, final List<OrderTable> savedOrderTables) {
+        if (request.getOrderTables().size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
+    }
 
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new IllegalArgumentException();
-            }
+    private void validateHaveNotEmptyOrderTable(final List<OrderTable> orderTables) {
+        boolean isNotEmptyOrderTable = orderTables.stream()
+                .anyMatch(OrderTable::isNotEmpty);
+
+        if (isNotEmptyOrderTable) {
+            throw new IllegalArgumentException();
         }
+    }
 
-        tableGroup.setCreatedDate(LocalDateTime.now());
+    private void updateOrderTables(final TableGroup tableGroup) {
+        final Long tableGroupId = tableGroup.getId();
 
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
-
-        final Long tableGroupId = savedTableGroup.getId();
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroupId(tableGroupId);
-            savedOrderTable.setEmpty(false);
+        for (OrderTable orderTable : tableGroup.getOrderTables()) {
+            OrderTable savedOrderTable = new OrderTable(orderTable.getId(), tableGroupId,
+                    orderTable.getNumberOfGuests(), false);
             orderTableDao.save(savedOrderTable);
         }
-        savedTableGroup.setOrderTables(savedOrderTables);
-
-        return savedTableGroup;
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
-
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
+        validateCannotUngroupCondition(orderTables);
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(null);
-            orderTable.setEmpty(false);
-            orderTableDao.save(orderTable);
+            OrderTable updatedOrderTable = new OrderTable(orderTable.getId(), orderTable.getNumberOfGuests(), false);
+            orderTableDao.save(updatedOrderTable);
         }
+    }
+
+    private void validateCannotUngroupCondition(final List<OrderTable> orderTables) {
+        final List<Long> orderTableIds = extractOrderTableIds(orderTables);
+
+        List<String> conditions = Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name());
+        boolean haveConditions = orderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, conditions);
+
+        if (haveConditions) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private List<Long> extractOrderTableIds(final List<OrderTable> orderTables) {
+        return orderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
     }
 }

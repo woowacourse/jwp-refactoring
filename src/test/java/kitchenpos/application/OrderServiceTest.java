@@ -10,12 +10,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.OrderResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.fixture.MenuGroupFixture;
+import kitchenpos.support.ServiceTestBase;
+import kitchenpos.ui.dto.OrderCreateRequest;
+import kitchenpos.ui.dto.OrderLineItemDto;
+import kitchenpos.ui.dto.OrderUpdateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -40,7 +46,7 @@ class OrderServiceTest extends ServiceTestBase {
         menuId = savedMenu.getId();
 
         for (MenuProduct menuProduct : menu.getMenuProducts()) {
-            menuProduct.setMenuId(menuId);
+            menuProduct.changeMenuId(menuId);
             menuProductDao.save(menuProduct);
         }
 
@@ -50,13 +56,11 @@ class OrderServiceTest extends ServiceTestBase {
     @Test
     void 주문_정상_생성() {
         // given
-        Order order = new Order();
         List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목());
-        order.setOrderLineItems(orderLineItems);
-        order.setOrderTableId(orderTableId);
+        Order order = 주문(orderTableId, orderLineItems);
 
         // when
-        Order savedOrder = orderService.create(order);
+        OrderResponse savedOrder = orderService.create(toRequest(order));
 
         // then
         Optional<Order> actual = orderDao.findById(savedOrder.getId());
@@ -66,66 +70,54 @@ class OrderServiceTest extends ServiceTestBase {
     @Test
     void 주문_항목_0개인_경우_실패() {
         // given
-        Order order = new Order();
-        order.setOrderLineItems(new ArrayList<>());
-        order.setOrderTableId(orderTableId);
+        OrderCreateRequest request = new OrderCreateRequest(orderTableId, new ArrayList<>());
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void menu_id가_null인_주문_항목을_주문하는_경우_실패() {
         // given
-        Order order = new Order();
         List<OrderLineItem> orderLineItems = Collections.singletonList(menuId가_null인_주문_항목());
-        order.setOrderLineItems(orderLineItems);
-        order.setOrderTableId(orderTableId);
+        Order order = 주문(orderTableId, orderLineItems);
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(toRequest(order)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 주문_목록_조회() {
         // given
-        Order order = new Order();
         List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목());
-        order.setOrderLineItems(orderLineItems);
-        order.setOrderTableId(orderTableId);
-        Order savedOrder = orderService.create(order);
+        Order order = 주문(orderTableId, orderLineItems);
+        Order savedOrder = orderDao.save(order);
 
         // when
-        List<Order> orders = orderService.list();
+        List<OrderResponse> orders = orderService.list();
 
         // then
         assertThat(orders)
                 .usingRecursiveComparison()
                 .ignoringFields("orderLineItems")
-                .isEqualTo(Collections.singletonList(savedOrder));
-
-        assertThat(orders.get(0).getOrderLineItems())
-                .usingRecursiveComparison()
-                .ignoringFields("seq")
-                .isEqualTo(orderLineItems);
+                .isEqualTo(Collections.singletonList(OrderResponse.of(savedOrder)));
     }
 
     @Test
     void 주문_상태_정상_변경() {
         // given
-        Order order = new Order();
         List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목());
-        order.setOrderLineItems(orderLineItems);
-        order.setOrderTableId(orderTableId);
-        Order savedOrder = orderService.create(order);
+        Order order = 주문(orderTableId, orderLineItems);
+        Order savedOrder = orderDao.save(order);
 
-        String changedStatus = OrderStatus.COOKING.name();
-        savedOrder.setOrderStatus(changedStatus);
+        OrderStatus changedStatus = OrderStatus.MEAL;
+        savedOrder.changeOrderStatus(changedStatus);
+        OrderUpdateRequest orderUpdateRequest = new OrderUpdateRequest(changedStatus.name());
 
         // when
-        orderService.changeOrderStatus(savedOrder.getId(), savedOrder);
+        orderService.changeOrderStatus(savedOrder.getId(), orderUpdateRequest);
 
         // then
         Optional<Order> actual = orderDao.findById(savedOrder.getId());
@@ -136,31 +128,29 @@ class OrderServiceTest extends ServiceTestBase {
     @Test
     void 존재하지_않는_주문_상태_변경_시_실패() {
         // given
-        Order order = new Order();
         List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목());
-        order.setOrderLineItems(orderLineItems);
-        order.setOrderTableId(orderTableId);
-        orderService.create(order);
+        Order order = 주문(orderTableId, orderLineItems);
+        orderDao.save(order);
+        OrderUpdateRequest orderUpdateRequest = new OrderUpdateRequest(OrderStatus.COOKING.name());
 
         // when & then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(100L, order))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(100L, orderUpdateRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void COMPLETION_주문_상태_변경_시_실패() {
         // given
-        Order order = new Order();
         List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목());
-        order.setOrderLineItems(orderLineItems);
-        order.setOrderTableId(orderTableId);
+        Order order = 주문(orderTableId, orderLineItems);
 
-        Order savedOrder = orderService.create(order);
-        savedOrder.setOrderStatus(OrderStatus.COMPLETION.name());
+        Order savedOrder = orderDao.save(order);
+        savedOrder.changeOrderStatus(OrderStatus.COMPLETION);
         orderDao.save(savedOrder);
 
         // when & then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), savedOrder))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(),
+                new OrderUpdateRequest(OrderStatus.COMPLETION.name())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -170,5 +160,16 @@ class OrderServiceTest extends ServiceTestBase {
 
     private OrderLineItem 주문_항목() {
         return 주문_항목(menuId);
+    }
+
+    private OrderCreateRequest toRequest(final Order order) {
+        return new OrderCreateRequest(order.getOrderTableId(), toDtos(order));
+    }
+
+    private List<OrderLineItemDto> toDtos(final Order order) {
+        return order.getOrderLineItems()
+                .stream()
+                .map(it -> new OrderLineItemDto(it.getMenuId(), it.getQuantity()))
+                .collect(Collectors.toList());
     }
 }

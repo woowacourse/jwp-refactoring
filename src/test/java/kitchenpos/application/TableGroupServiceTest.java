@@ -4,12 +4,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.TableGroupResponse;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.support.ServiceTestBase;
+import kitchenpos.ui.dto.OrderTableDto;
+import kitchenpos.ui.dto.OrderTableRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -20,64 +24,66 @@ class TableGroupServiceTest extends ServiceTestBase {
     @Test
     void 테이블_그룹_정상_생성() {
         // given
-        TableGroup tableGroup = new TableGroup();
         OrderTable orderTable1 = 빈_주문_테이블_생성();
         OrderTable orderTable2 = 빈_주문_테이블_생성();
-        tableGroup.setOrderTables(Arrays.asList(orderTable1, orderTable2));
+        OrderTableRequest request = toRequest(orderTable1, orderTable2);
 
         // when
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        TableGroupResponse savedTableGroup = tableGroupService.create(request);
 
         // then
         Optional<TableGroup> actual = tableGroupDao.findById(savedTableGroup.getId());
         assertThat(actual).isNotEmpty();
     }
 
+    private OrderTableRequest toRequest(final OrderTable... orderTables) {
+        List<OrderTableDto> orderTableDtos = Arrays.stream(orderTables)
+                .map(it -> new OrderTableDto(it.getId()))
+                .collect(Collectors.toList());
+
+        return new OrderTableRequest(orderTableDtos);
+    }
+
     @Test
     void 주문_테이블_1개로_테이블_그룹_생성_시_실패() {
         // given
-        TableGroup tableGroup = new TableGroup();
         OrderTable orderTable = 빈_주문_테이블_생성();
-        tableGroup.setOrderTables(Collections.singletonList(orderTable));
+        OrderTableRequest request = toRequest(orderTable);
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 비어있지_않은_주문_테이블로_테이블_그룹_생성_시_실패() {
         // given
-        TableGroup tableGroup = new TableGroup();
         OrderTable orderTable1 = 주문_테이블_생성();
         OrderTable orderTable2 = 주문_테이블_생성();
-        tableGroup.setOrderTables(Arrays.asList(orderTable1, orderTable2));
+        OrderTableRequest request = toRequest(orderTable1, orderTable2);
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 저장되지_않은_주문_테이블로_테이블_그룹_생성_시_실패() {
         // given
-        TableGroup tableGroup = new TableGroup();
         OrderTable orderTable1 = new OrderTable();
         OrderTable orderTable2 = new OrderTable();
-        tableGroup.setOrderTables(Arrays.asList(orderTable1, orderTable2));
+        OrderTableRequest request = toRequest(orderTable1, orderTable2);
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 단체_지정_정상_해제() {
         // given
-        TableGroup tableGroup = new TableGroup();
-        List<OrderTable> orderTables = Arrays.asList(빈_주문_테이블_생성(), 빈_주문_테이블_생성());
-        tableGroup.setOrderTables(orderTables);
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        OrderTableRequest request = toRequest(빈_주문_테이블_생성(), 빈_주문_테이블_생성());
+        TableGroupResponse savedTableGroup = tableGroupService.create(request);
         Long tableGroupId = savedTableGroup.getId();
 
         // when

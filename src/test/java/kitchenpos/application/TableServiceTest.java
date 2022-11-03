@@ -6,9 +6,15 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.support.ServiceTestBase;
+import kitchenpos.ui.dto.OrderTableCreateRequest;
+import kitchenpos.ui.dto.TableChangeEmptyRequest;
+import kitchenpos.ui.dto.TableChangeNumberOfGuestsRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -19,12 +25,10 @@ class TableServiceTest extends ServiceTestBase {
     @Test
     void 주문_테이블_생성_성공() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(3);
+        OrderTableCreateRequest request = new OrderTableCreateRequest(3, false);
 
         // when
-        OrderTable savedOrderTable = tableService.create(orderTable);
+        OrderTableResponse savedOrderTable = tableService.create(request);
 
         // then
         Optional<OrderTable> actual = orderTableDao.findById(savedOrderTable.getId());
@@ -38,12 +42,12 @@ class TableServiceTest extends ServiceTestBase {
         List<OrderTable> expected = Collections.singletonList(orderTable);
 
         // when
-        List<OrderTable> orderTables = tableService.list();
+        List<OrderTableResponse> orderTables = tableService.list();
 
         // then
         assertThat(orderTables)
                 .usingRecursiveComparison()
-                .isEqualTo(expected);
+                .isEqualTo(toDtos(expected));
     }
 
     @Test
@@ -51,12 +55,11 @@ class TableServiceTest extends ServiceTestBase {
         // given
         OrderTable orderTable = 주문_테이블_생성();
         boolean changedEmpty = !orderTable.isEmpty();
-        orderTable.setEmpty(changedEmpty);
 
         Long orderTableId = orderTable.getId();
 
         // when
-        tableService.changeEmpty(orderTableId, orderTable);
+        tableService.changeEmpty(orderTableId, new TableChangeEmptyRequest(changedEmpty));
 
         // then
         Optional<OrderTable> actual = orderTableDao.findById(orderTableId);
@@ -72,10 +75,10 @@ class TableServiceTest extends ServiceTestBase {
         주문_생성(분식_메뉴_생성(), orderTable, orderStatus);
 
         boolean changedEmpty = !orderTable.isEmpty();
-        orderTable.setEmpty(changedEmpty);
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), orderTable))
+        assertThatThrownBy(
+                () -> tableService.changeEmpty(orderTable.getId(), new TableChangeEmptyRequest(changedEmpty)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -85,10 +88,10 @@ class TableServiceTest extends ServiceTestBase {
         TableGroup tableGroup = 단체_지정_생성();
         OrderTable orderTable = 주문_테이블_생성(tableGroup.getId());
         boolean changedEmpty = !orderTable.isEmpty();
-        orderTable.setEmpty(changedEmpty);
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), orderTable))
+        assertThatThrownBy(
+                () -> tableService.changeEmpty(orderTable.getId(), new TableChangeEmptyRequest(changedEmpty)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -97,12 +100,11 @@ class TableServiceTest extends ServiceTestBase {
         // given
         OrderTable orderTable = 주문_테이블_생성();
         int changedNumberOfGuests = orderTable.getNumberOfGuests() + 1;
-        orderTable.setNumberOfGuests(changedNumberOfGuests);
 
         Long orderTableId = orderTable.getId();
 
         // when
-        tableService.changeNumberOfGuests(orderTableId, orderTable);
+        tableService.changeNumberOfGuests(orderTableId, new TableChangeNumberOfGuestsRequest(changedNumberOfGuests));
 
         // then
         Optional<OrderTable> actual = orderTableDao.findById(orderTableId);
@@ -114,10 +116,10 @@ class TableServiceTest extends ServiceTestBase {
     void 방문한_손님_수_0_미만으로_변경_불가능() {
         // given
         OrderTable orderTable = 주문_테이블_생성();
-        orderTable.setNumberOfGuests(-1);
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), orderTable))
+        assertThatThrownBy(
+                () -> tableService.changeNumberOfGuests(orderTable.getId(), new TableChangeNumberOfGuestsRequest(-1)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -125,11 +127,11 @@ class TableServiceTest extends ServiceTestBase {
     void 존재하지_않는_주문_테이블의_손님_수는_변경_불가능() {
         // given
         OrderTable orderTable = 주문_테이블_생성();
-        orderTable.setNumberOfGuests(5);
         Long invalidOrderTableId = orderTable.getId() + 1;
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(invalidOrderTableId, orderTable))
+        assertThatThrownBy(
+                () -> tableService.changeNumberOfGuests(invalidOrderTableId, new TableChangeNumberOfGuestsRequest(5)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -137,10 +139,16 @@ class TableServiceTest extends ServiceTestBase {
     void 비어있는_주문_테이블의_손님_수는_변경_불가능() {
         // given
         OrderTable orderTable = 빈_주문_테이블_생성();
-        orderTable.setNumberOfGuests(1);
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), orderTable))
+        assertThatThrownBy(
+                () -> tableService.changeNumberOfGuests(orderTable.getId(), new TableChangeNumberOfGuestsRequest(1)))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private List<OrderTableResponse> toDtos(final List<OrderTable> orderTables) {
+        return orderTables.stream()
+                .map(OrderTableResponse::of)
+                .collect(Collectors.toList());
     }
 }

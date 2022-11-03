@@ -5,11 +5,14 @@ import static kitchenpos.fixture.ProductFixture.카레맛_떡볶이;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.ProductResponse;
 import kitchenpos.domain.Product;
+import kitchenpos.support.ServiceTestBase;
+import kitchenpos.ui.dto.ProductRequest;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -18,24 +21,23 @@ class ProductServiceTest extends ServiceTestBase {
     @Test
     void 상품_생성() {
         // given
-        Product product = 카레맛_떡볶이.toEntity();
+        ProductRequest request = 카레맛_떡볶이.toRequest();
 
         // when
-        Product savedProduct = productService.create(product);
+        ProductResponse response = productService.create(request);
 
         // then
-        Optional<Product> actual = productDao.findById(savedProduct.getId());
+        Optional<Product> actual = productDao.findById(response.getId());
         assertThat(actual).isNotEmpty();
     }
 
     @Test
     void 가격이_0원_미만인_상품_생성_불가능() {
         // given
-        Product product = 카레맛_떡볶이.toEntity();
-        product.setPrice(BigDecimal.valueOf(-1));
+        ProductRequest request = 카레맛_떡볶이.toRequest(-1);
 
         // when & then
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -44,13 +46,20 @@ class ProductServiceTest extends ServiceTestBase {
         // given
         Product curryTteokbokki = productDao.save(카레맛_떡볶이.toEntity());
         Product fireTteokbokki = productDao.save(불맛_떡볶이.toEntity());
+        List<Product> products = Arrays.asList(curryTteokbokki, fireTteokbokki);
 
         // when
-        List<Product> products = productService.list();
+        List<ProductResponse> response = productService.list();
 
         // then
-        assertThat(products)
+        assertThat(response)
                 .usingRecursiveComparison()
-                .isEqualTo(Arrays.asList(curryTteokbokki, fireTteokbokki));
+                .isEqualTo(toDtos(products));
+    }
+
+    private List<ProductResponse> toDtos(final List<Product> products) {
+        return products.stream()
+                .map(ProductResponse::of)
+                .collect(Collectors.toList());
     }
 }

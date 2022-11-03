@@ -53,6 +53,14 @@ public class JdbcTemplateProductDao implements ProductDao {
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
+    @Override
+    public List<Product> findByIdIn(final List<Long> productIds) {
+        final String sql = "SELECT id, name, price FROM product WHERE id in (:ids)";
+        final SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("ids", productIds);
+        return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
+    }
+
     private Product select(final Long id) {
         final String sql = "SELECT id, name, price FROM product WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
@@ -61,10 +69,10 @@ public class JdbcTemplateProductDao implements ProductDao {
     }
 
     private Product toEntity(final ResultSet resultSet) throws SQLException {
-        final Product entity = new Product();
-        entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setName(resultSet.getString("name"));
-        entity.setPrice(resultSet.getBigDecimal("price"));
-        return entity;
+        return new Product(
+                resultSet.getLong(KEY_COLUMN_NAME),
+                resultSet.getString("name"),
+                resultSet.getBigDecimal("price")
+        );
     }
 }

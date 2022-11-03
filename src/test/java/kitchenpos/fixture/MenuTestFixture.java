@@ -2,8 +2,11 @@ package kitchenpos.fixture;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.ui.dto.MenuProductDto;
+import kitchenpos.ui.dto.MenuRequest;
 
 @SuppressWarnings("NonAsciiCharacters")
 public enum MenuTestFixture {
@@ -20,11 +23,26 @@ public enum MenuTestFixture {
     }
 
     public Menu toEntity(final long menuGroupId, final List<MenuProduct> menuProducts) {
-        Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(menuProducts);
+        return toEntity(price, menuGroupId, menuProducts);
+    }
+
+    public Menu toEntity(final BigDecimal price, final long menuGroupId, final List<MenuProduct> menuProducts) {
+        Menu menu = new Menu(null, name, price, menuGroupId);
+        menu.addMenuProducts(menuProducts);
         return menu;
+    }
+
+    public MenuRequest toRequest(final long menuGroupId, final List<MenuProduct> menuProducts) {
+        return new MenuRequest(name, price.longValue(), menuGroupId, toMenuProductDto(menuProducts));
+    }
+
+    public MenuRequest toRequest(final long price, final long menuGroupId, final List<MenuProduct> menuProducts) {
+        return new MenuRequest(name, price, menuGroupId, toMenuProductDto(menuProducts));
+    }
+
+    private List<MenuProductDto> toMenuProductDto(final List<MenuProduct> menuProducts) {
+        return menuProducts.stream()
+                .map(it -> new MenuProductDto(it.getSeq(), it.getMenuId(), it.getProductId(), it.getQuantity()))
+                .collect(Collectors.toList());
     }
 }

@@ -1,5 +1,11 @@
 package kitchenpos.application;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.MenuResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -7,16 +13,14 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.MenuRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
+@Transactional(readOnly = true)
 @Service
 public class MenuService {
+
     private final MenuDao menuDao;
     private final MenuGroupDao menuGroupDao;
     private final MenuProductDao menuProductDao;
@@ -35,50 +39,63 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final Menu menu) {
-        final BigDecimal price = menu.getPrice();
+    public MenuResponse create(final MenuRequest request) {
+        validateInvalidPrice(request.getPrice());
+        validateExistsMenuGroupId(request.getMenuGroupId());
 
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
-            throw new IllegalArgumentException();
-        }
-
+        Menu menu = request.toEntity();
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
 
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = productDao.findById(menuProduct.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
-
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
+        Map<Long, Product> products = findProducts(menuProducts);
+        BigDecimal totalSum = menu.calculateTotalSum(products);
+        validateMenuPriceBiggerThanSum(menu, totalSum);
 
         final Menu savedMenu = menuDao.save(menu);
+        savedMenu.changeMenuIdInMenuProducts();
 
-        final Long menuId = savedMenu.getId();
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(menuId);
-            savedMenuProducts.add(menuProductDao.save(menuProduct));
-        }
-        savedMenu.setMenuProducts(savedMenuProducts);
-
-        return savedMenu;
+        return MenuResponse.of(savedMenu);
     }
 
-    public List<Menu> list() {
+    private void validateInvalidPrice(final Long price) {
+        if (Objects.isNull(price) || price < 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateExistsMenuGroupId(final Long menuGroupId) {
+        if (!menuGroupDao.existsById(menuGroupId)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateMenuPriceBiggerThanSum(final Menu menu, final BigDecimal totalSum) {
+        if (menu.isBiggerPrice(totalSum)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private Map<Long, Product> findProducts(final List<MenuProduct> menuProducts) {
+        final List<Long> productIds = toProductIds(menuProducts);
+        return productDao.findByIdIn(productIds)
+                .stream()
+                .collect(Collectors.toMap(Product::getId, it -> it));
+    }
+
+    private List<Long> toProductIds(final List<MenuProduct> menuProducts) {
+        return menuProducts.stream()
+                .map(MenuProduct::getProductId)
+                .collect(Collectors.toList());
+    }
+
+    public List<MenuResponse> list() {
         final List<Menu> menus = menuDao.findAll();
 
         for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
+            menu.addMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
         }
 
-        return menus;
+        return menus.stream()
+                .map(MenuResponse::of)
+                .collect(Collectors.toList());
     }
 }
