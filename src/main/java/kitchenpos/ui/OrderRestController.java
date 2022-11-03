@@ -18,14 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderRestController {
     private final OrderService orderService;
 
-    public OrderRestController(final OrderService orderService) {
+    public OrderRestController(OrderService orderService) {
         this.orderService = orderService;
     }
 
     @PostMapping("/api/orders")
-    public ResponseEntity<OrderResponse> create(@RequestBody final OrderRequest request) {
+    public ResponseEntity<OrderResponse> create(@RequestBody OrderRequest request) {
         OrderResponse response = orderService.create(request);
-        final URI uri = URI.create("/api/orders/" + response.getId());
+        URI uri = URI.create("/api/orders/" + response.getId());
         return ResponseEntity.created(uri).body(response);
     }
 
@@ -36,8 +36,8 @@ public class OrderRestController {
 
     @PutMapping("/api/orders/{orderId}/order-status")
     public ResponseEntity<OrderResponse> changeOrderStatus(
-            @PathVariable final Long orderId,
-            @RequestBody final OrderStatusChangeRequest changeRequest
+            @PathVariable Long orderId,
+            @RequestBody OrderStatusChangeRequest changeRequest
     ) {
         return ResponseEntity.ok(orderService.changeOrderStatus(orderId, changeRequest));
     }

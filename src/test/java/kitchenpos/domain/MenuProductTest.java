@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
+import kitchenpos.domain.menu.MenuProduct;
 import org.junit.jupiter.api.Test;
 
 class MenuProductTest {
@@ -10,21 +11,21 @@ class MenuProductTest {
     @Test
     void createMenuProduct() {
         // given
-        Product product = new Product("상품", BigDecimal.valueOf(1000L));
-        long quantity = 2L;
+        Quantity quantity = new Quantity(2L);
+        Price price = new Price(BigDecimal.valueOf(1000L));
         // when
-        MenuProduct menuProduct = new MenuProduct(product, quantity);
+        MenuProduct menuProduct = new MenuProduct(1L, price, quantity);
         // then
         assertThat(menuProduct).isNotNull();
     }
 
     @Test
-    void calculatePrice() {
+    void calculateTotalPrice() {
         // given
-        MenuProduct menuProduct = new MenuProduct(new Product("상품", BigDecimal.valueOf(1000L)), 2L);
+        MenuProduct menuProduct = new MenuProduct(1L, new Price(BigDecimal.valueOf(2000L)), new Quantity(2L));
         // when
-        BigDecimal actual = menuProduct.calculatePrice();
+        Price actual = menuProduct.calculateTotalPrice();
         // then
-        assertThat(actual).isEqualTo(BigDecimal.valueOf(2000L));
+        assertThat(actual).isEqualTo(new Price(BigDecimal.valueOf(4000L)));
     }
 }

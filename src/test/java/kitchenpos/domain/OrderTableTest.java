@@ -3,8 +3,9 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import kitchenpos.OrderFixtures;
 import kitchenpos.TableGroupFixtures;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.tablegroup.TableGroup;
 import org.junit.jupiter.api.Test;
 
 class OrderTableTest {
@@ -26,7 +27,7 @@ class OrderTableTest {
     void changeEmptyWithTableGroupId() {
         // given
         boolean empty = true;
-        OrderTable orderTable = new OrderTable(TableGroupFixtures.createTableGroup(), 2, false);
+        OrderTable orderTable = new OrderTable(1L, 2, false);
         // when & then
         assertThatThrownBy(() -> orderTable.changeEmpty(empty))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -68,14 +69,13 @@ class OrderTableTest {
     }
 
     @Test
-    void addOrder() {
+    void addRecord() {
         // given
         OrderTable orderTable = new OrderTable(2, false);
-        Order order = OrderFixtures.createOrder();
         // when
-        orderTable.addOrder(order);
+        orderTable.addRecord(1L, OrderStatus.COOKING);
         // then
-        assertThat(orderTable.getOrders()).hasSize(1);
+        assertThat(orderTable.getRecords()).hasSize(1);
     }
 
     @Test
@@ -86,10 +86,10 @@ class OrderTableTest {
         OrderTable orderTable = new OrderTable(0, empty);
 
         // when
-        orderTable.group(tableGroup);
+        orderTable.group(tableGroup.getId());
 
         // then
-        assertThat(orderTable.getTableGroup()).isSameAs(tableGroup);
+        assertThat(orderTable.getTableGroupId()).isSameAs(tableGroup.getId());
         assertThat(orderTable.isEmpty()).isNotEqualTo(empty);
     }
 
@@ -100,43 +100,41 @@ class OrderTableTest {
         TableGroup tableGroup = TableGroupFixtures.createTableGroup();
 
         // when & then
-        assertThatThrownBy(() -> orderTable.group(tableGroup))
+        assertThatThrownBy(() -> orderTable.group(tableGroup.getId()))
                 .isInstanceOf(IllegalStateException.class);
     }
 
     @Test
-    void beGroupedWithTableGroup() {
+    void beGroupedWithTableGroupId() {
         // given
-        TableGroup tableGroup = TableGroupFixtures.createTableGroup();
-        OrderTable orderTable = new OrderTable(tableGroup, 0, true);
+        Long tableGroupId = 1L;
+        OrderTable orderTable = new OrderTable(tableGroupId, 0, true);
 
         // when & then
-        assertThatThrownBy(() -> orderTable.group(tableGroup))
+        Long otherTableGroupId = 2L;
+        assertThatThrownBy(() -> orderTable.group(otherTableGroupId))
                 .isInstanceOf(IllegalStateException.class);
     }
 
     @Test
     void beUngrouped() {
         // given
-        TableGroup tableGroup = TableGroupFixtures.createTableGroup();
-        OrderTable orderTable = new OrderTable(tableGroup, 2, false);
-        Order order = OrderFixtures.createOrder(OrderStatus.COMPLETION);
-        orderTable.addOrder(order);
+        OrderTable orderTable = new OrderTable(null, 2, false);
+        orderTable.addRecord(1L, OrderStatus.COMPLETION);
 
         // when
         orderTable.ungroup();
 
         // then
-        assertThat(orderTable.getTableGroup()).isNull();
+        assertThat(orderTable.getTableGroupId()).isNull();
     }
 
     @Test
     void beUngroupedWithNotCompleted() {
         // given
-        OrderTable orderTable = new OrderTable(TableGroupFixtures.createTableGroup(), 2, false);
+        OrderTable orderTable = new OrderTable(null, 2, false);
         OrderStatus orderStatus = OrderStatus.COOKING;
-        Order order = OrderFixtures.createOrder(orderStatus);
-        orderTable.addOrder(order);
+        orderTable.addRecord(1L, orderStatus);
 
         // when & then
         assertThatThrownBy(orderTable::ungroup)

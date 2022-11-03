@@ -4,16 +4,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import kitchenpos.OrderFixtures;
+import kitchenpos.OrderTableFixtures;
 import kitchenpos.TableGroupFixtures;
 import kitchenpos.application.dto.request.OrderTableCreateRequest;
 import kitchenpos.application.dto.response.OrderTableResponse;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.tablegroup.TableGroup;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ServiceTest
 class TableServiceTest {
 
-    private TableService tableService;
-    private OrderRepository orderRepository;
-    private OrderTableRepository orderTableRepository;
-    private TableGroupRepository tableGroupRepository;
+    private final TableService tableService;
+    private final OrderRepository orderRepository;
+    private final OrderTableRepository orderTableRepository;
+    private final TableGroupRepository tableGroupRepository;
 
     @Autowired
     public TableServiceTest(
@@ -74,7 +74,9 @@ class TableServiceTest {
     void changeEmptyWithTableGroupId() {
         // given
         TableGroup tableGroup = tableGroupRepository.save(TableGroupFixtures.createTableGroup());
-        OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup, 3, false));
+        OrderTable orderTable = orderTableRepository.save(
+                OrderTableFixtures.createOrderTable(tableGroup.getId(), 3, false)
+        );
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), true))
@@ -84,10 +86,13 @@ class TableServiceTest {
     @Test
     void changeEmptyWithCookingStatus() {
         // given
-        Order order = OrderFixtures.createOrder();
-        orderRepository.save(order);
+        long orderId = 1L;
+        OrderTable orderTable = OrderTableFixtures.createOrderTable();
+        orderTable.addRecord(orderId, OrderStatus.COOKING);
+        orderTableRepository.save(orderTable);
+
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(order.getOrderTable().getId(), false))
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), false))
                 .isInstanceOf(IllegalStateException.class);
     }
 
@@ -126,6 +131,6 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuestsWithInvalidOrderTableId() {
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(999L, 2))
-                .isInstanceOf(IllegalArgumentException.class);
+                .hasCauseInstanceOf(IllegalArgumentException.class);
     }
 }

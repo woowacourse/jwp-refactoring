@@ -20,8 +20,12 @@ import org.springframework.test.web.servlet.ResultActions;
 
 class MenuRestControllerTest extends ControllerTest {
 
-    @Autowired
     private MenuService menuService;
+
+    @Autowired
+    public MenuRestControllerTest(MenuService menuService) {
+        this.menuService = menuService;
+    }
 
     @Test
     void create() throws Exception {

@@ -1,21 +1,20 @@
 package kitchenpos.repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.OrderTable;
-import org.springframework.data.jpa.repository.Query;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.repository.entity.OrderTableEntityRepository;
 import org.springframework.data.repository.Repository;
-import org.springframework.data.repository.query.Param;
 
-public interface OrderTableRepository extends Repository<OrderTable, Long> {
+public interface OrderTableRepository extends Repository<OrderTable, Long>, OrderTableEntityRepository {
     OrderTable save(OrderTable entity);
 
     Optional<OrderTable> findById(Long id);
 
     List<OrderTable> findAll();
 
-    List<OrderTable> findAllByIdIn(List<Long> ids);
+    List<OrderTable> findAllByIdIn(Collection<Long> ids);
 
-    @Query("SELECT ot FROM OrderTable ot WHERE ot.tableGroup.id = :tableGroupId")
-    List<OrderTable> findAllByTableGroupId(@Param("tableGroupId") Long tableGroupId);
+    List<OrderTable> findAllByTableGroupId(Long tableGroupId);
 }

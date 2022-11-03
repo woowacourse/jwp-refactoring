@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.OrderFixtures;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.order.Order;
 import kitchenpos.support.RepositoryTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @RepositoryTest
 class OrderRepositoryTest {
 
-    private OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
 
     @Autowired
     public OrderRepositoryTest(OrderRepository orderRepository) {
@@ -62,7 +62,7 @@ class OrderRepositoryTest {
         // given
         Order order = OrderFixtures.createOrder();
         orderRepository.save(order);
-        long orderTableId = order.getOrderTable().getId();
+        long orderTableId = order.getOrderTableId();
         OrderStatus orderStatus = OrderStatus.COOKING;
 
         // when

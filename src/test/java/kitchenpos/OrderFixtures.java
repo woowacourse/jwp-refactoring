@@ -7,10 +7,10 @@ import kitchenpos.application.dto.request.OrderRequest;
 import kitchenpos.application.dto.request.OrderStatusChangeRequest;
 import kitchenpos.application.dto.response.OrderLineItemResponse;
 import kitchenpos.application.dto.response.OrderResponse;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.table.OrderTable;
 
 public class OrderFixtures {
 
@@ -22,15 +22,15 @@ public class OrderFixtures {
     }
 
     public static Order createOrder(OrderTable orderTable) {
-        return createOrder(orderTable, OrderStatus.COOKING);
+        return createOrder(1L, OrderStatus.COOKING);
     }
 
     public static Order createOrder(OrderStatus orderStatus) {
-        return createOrder(OrderTableFixtures.createOrderTable(1L, null, 2, false), orderStatus);
+        return createOrder(1L, orderStatus);
     }
 
-    public static Order createOrder(OrderTable orderTable, OrderStatus orderStatus) {
-        return new Order(orderTable, orderStatus, LocalDateTime.now(), List.of(new OrderLineItem(1L, 2)));
+    public static Order createOrder(Long orderTableId, OrderStatus orderStatus) {
+        return new Order(orderTableId, orderStatus, LocalDateTime.now(), List.of(new OrderLineItem(1L, 2)));
     }
 
     public static OrderResponse createOrderResponse() {

@@ -22,8 +22,12 @@ import org.springframework.test.web.servlet.ResultActions;
 
 class OrderRestControllerTest extends ControllerTest {
 
+    private final OrderService orderService;
+
     @Autowired
-    private OrderService orderService;
+    public OrderRestControllerTest(OrderService orderService) {
+        this.orderService = orderService;
+    }
 
     @Test
     void create() throws Exception {

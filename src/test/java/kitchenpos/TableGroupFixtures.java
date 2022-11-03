@@ -1,13 +1,11 @@
 package kitchenpos;
 
-import static kitchenpos.OrderTableFixtures.createOrderTable;
 import static kitchenpos.OrderTableFixtures.createOrderTableResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.application.dto.response.TableGroupResponse;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.tablegroup.TableGroup;
 
 public class TableGroupFixtures {
 
@@ -15,11 +13,15 @@ public class TableGroupFixtures {
     }
 
     public static TableGroup createTableGroup() {
-        return new TableGroup(null, LocalDateTime.now(), List.of(createOrderTable(), createOrderTable()));
+        return new TableGroup(LocalDateTime.now(), List.of(1L, 2L));
     }
 
-    public static TableGroup createTableGroup(Long id, LocalDateTime createdDateTime, List<OrderTable> orderTables) {
-        return new TableGroup(id, createdDateTime, orderTables);
+    public static TableGroup createTableGroup(Long... orderTableIds) {
+        return createTableGroup(LocalDateTime.now(), List.of(orderTableIds));
+    }
+
+    public static TableGroup createTableGroup(LocalDateTime createdDateTime, List<Long> orderTableIds) {
+        return new TableGroup(createdDateTime, orderTableIds);
     }
 
     public static TableGroupResponse createTableGroupResponse() {

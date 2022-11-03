@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import kitchenpos.domain.menugroup.MenuGroup;
 import org.junit.jupiter.api.Test;
 
 class MenuGroupTest {

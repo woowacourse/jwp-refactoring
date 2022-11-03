@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProductRestController {
     private final ProductService productService;
 
-    public ProductRestController(final ProductService productService) {
+    public ProductRestController(ProductService productService) {
         this.productService = productService;
     }
 
     @PostMapping("/api/products")
-    public ResponseEntity<ProductResponse> create(@RequestBody final ProductCreateRequest product) {
-        final ProductResponse response = productService.create(product);
-        final URI uri = URI.create("/api/products/" + response.getId());
+    public ResponseEntity<ProductResponse> create(@RequestBody ProductCreateRequest product) {
+        ProductResponse response = productService.create(product);
+        URI uri = URI.create("/api/products/" + response.getId());
         return ResponseEntity.created(uri).body(response);
     }
 

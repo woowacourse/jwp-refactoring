@@ -42,7 +42,7 @@ class PriceTest {
         // given
         Price price = new Price(BigDecimal.valueOf(1000));
         // when
-        boolean actual = price.isMoreExpensiveThan(BigDecimal.valueOf(800));
+        boolean actual = price.isMoreExpensiveThan(new Price(BigDecimal.valueOf(800)));
         // then
         assertThat(actual).isTrue();
     }
@@ -52,8 +52,8 @@ class PriceTest {
         // given
         Price price = new Price(BigDecimal.valueOf(1000));
         // when
-        BigDecimal actual = price.multiply(new Quantity(2));
+        Price actual = price.multiply(new Quantity(2));
         // then
-        assertThat(actual).isEqualTo(BigDecimal.valueOf(1000 * 2));
+        assertThat(actual).isEqualTo(new Price(BigDecimal.valueOf(1000 * 2)));
     }
 }

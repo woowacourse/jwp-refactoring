@@ -1,21 +1,21 @@
 package kitchenpos.application;
 
+import static kitchenpos.OrderFixtures.createOrder;
+import static kitchenpos.OrderTableFixtures.createOrderTable;
 import static kitchenpos.TableGroupFixtures.createTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import kitchenpos.application.dto.request.TableGroupCreateRequest;
 import kitchenpos.application.dto.request.TableGroupIdRequest;
 import kitchenpos.application.dto.response.TableGroupResponse;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.tablegroup.TableGroup;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -26,10 +26,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ServiceTest
 class TableGroupServiceTest {
 
-    private TableGroupService tableGroupService;
-    private TableGroupRepository tableGroupRepository;
-    private OrderTableRepository orderTableRepository;
-    private OrderRepository orderRepository;
+    private final TableGroupService tableGroupService;
+    private final TableGroupRepository tableGroupRepository;
+    private final OrderTableRepository orderTableRepository;
+    private final OrderRepository orderRepository;
 
     @Autowired
     public TableGroupServiceTest(
@@ -87,7 +87,7 @@ class TableGroupServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .hasCauseInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -108,7 +108,11 @@ class TableGroupServiceTest {
     @Test
     void ungroup() {
         // given
-        TableGroup savedTableGroup = tableGroupRepository.save(createTableGroup());
+        OrderTable orderTableA = orderTableRepository.save(createOrderTable());
+        OrderTable orderTableB = orderTableRepository.save(createOrderTable());
+        TableGroup savedTableGroup = tableGroupRepository.save(
+                createTableGroup(orderTableA.getId(), orderTableB.getId())
+        );
 
         // when & then
         assertThatCode(() -> tableGroupService.ungroup(savedTableGroup.getId()))
@@ -118,17 +122,31 @@ class TableGroupServiceTest {
     @Test
     void ungroupWithCookingStatus(@Autowired EntityManager entityManager) {
         // given
-        TableGroup savedTableGroup = tableGroupRepository.save(createTableGroup());
-        int any = 0;
-        OrderTable orderTable = savedTableGroup.getOrderTables().get(any);
+        OrderTable orderTableA = createOrderTable();
+        orderTableRepository.save(orderTableA);
+        orderTableA.addRecord(
+                orderRepository.save(createOrder(orderTableA.getId(), OrderStatus.MEAL)).getId(),
+                OrderStatus.MEAL
+        );
 
-        Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), null);
-        orderRepository.save(order);
+        OrderTable orderTableB = createOrderTable();
+        orderTableRepository.save(orderTableB);
+        orderTableB.addRecord(
+                orderRepository.save(createOrder(orderTableA.getId(), OrderStatus.COMPLETION)).getId(),
+                OrderStatus.COMPLETION
+        );
+
+        TableGroup tableGroup = tableGroupRepository.save(
+                createTableGroup(orderTableA.getId(), orderTableB.getId())
+        );
+        orderTableA.group(tableGroup.getId());
+        orderTableB.group(tableGroup.getId());
+
         entityManager.flush();
         entityManager.clear();
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
+        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                 .isInstanceOf(IllegalStateException.class);
     }
 }

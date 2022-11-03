@@ -1,7 +1,8 @@
-package kitchenpos.domain;
+package kitchenpos.domain.table;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -9,8 +10,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import kitchenpos.domain.NumberOfGuests;
+import kitchenpos.domain.OrderStatus;
 
 @Entity
 public class OrderTable {
@@ -19,12 +21,11 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
+    private Long tableGroupId;
 
-    @OneToMany(mappedBy = "orderTable", fetch = FetchType.LAZY)
-    private List<Order> orders = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "order_table_id", nullable = false, updatable = false)
+    private List<OrderRecord> records = new ArrayList<>();
 
     @Embedded
     private NumberOfGuests numberOfGuests;
@@ -38,28 +39,24 @@ public class OrderTable {
         this(null, null, new ArrayList<>(), new NumberOfGuests(numberOfGuests), empty);
     }
 
-    public OrderTable(TableGroup tableGroup, int numberOfGuests, boolean empty) {
-        this(null, tableGroup, new ArrayList<>(), new NumberOfGuests(numberOfGuests), empty);
+    public OrderTable(Long tableGroupId, int numberOfGuests, boolean empty) {
+        this(null, tableGroupId, new ArrayList<>(), new NumberOfGuests(numberOfGuests), empty);
     }
 
-    public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
-        this(id, tableGroup, new ArrayList<>(), new NumberOfGuests(numberOfGuests), empty);
-    }
-
-    public OrderTable(TableGroup tableGroup, List<Order> orders, int numberOfGuests, boolean empty) {
-        this(null, tableGroup, orders, new NumberOfGuests(numberOfGuests), empty);
+    public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
+        this(id, tableGroupId, new ArrayList<>(), new NumberOfGuests(numberOfGuests), empty);
     }
 
     private OrderTable(
             Long id,
-            TableGroup tableGroup,
-            List<Order> orders,
+            Long tableGroupId,
+            List<OrderRecord> records,
             NumberOfGuests numberOfGuests,
             boolean empty
     ) {
         this.id = id;
-        this.tableGroup = tableGroup;
-        this.orders = orders;
+        this.tableGroupId = tableGroupId;
+        this.records = records;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -71,14 +68,14 @@ public class OrderTable {
     }
 
     private void validateOrderCompleted() {
-        if (getOrders().stream().anyMatch(order -> !order.isCompleted())) {
+        if (records.stream().anyMatch(record -> !record.isCompleted())) {
             throw new IllegalStateException("완료되지 않은 주문이 있습니다.");
         }
     }
 
     private void validateTableGroupNull() {
-        if (this.tableGroup != null) {
-            throw new IllegalArgumentException("주문 테이블의 테이블 그룹이 없어야 합니다. : " + tableGroup);
+        if (this.tableGroupId != null) {
+            throw new IllegalArgumentException("주문 테이블의 테이블 그룹이 없어야 합니다. : " + tableGroupId);
         }
     }
 
@@ -93,38 +90,38 @@ public class OrderTable {
         }
     }
 
-    public void addOrder(Order order) {
-        this.orders.add(order);
+    public void addRecord(Long orderId, OrderStatus orderStatus) {
+        this.records.add(new OrderRecord(orderId, orderStatus));
     }
 
-    public void group(TableGroup tableGroup) {
+    public void group(Long tableGroupId) {
         validateEmpty();
         this.empty = false;
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
     }
 
     private void validateEmpty() {
-        if (!this.empty || this.tableGroup != null) {
+        if (!this.empty || this.tableGroupId != null) {
             throw new IllegalStateException();
         }
     }
 
     public void ungroup() {
         validateOrderCompleted();
-        this.tableGroup = null;
         this.empty = false;
+        this.tableGroupId = null;
     }
 
     public Long getId() {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
-    public List<Order> getOrders() {
-        return orders;
+    public List<OrderRecord> getRecords() {
+        return records;
     }
 
     public NumberOfGuests getNumberOfGuests() {

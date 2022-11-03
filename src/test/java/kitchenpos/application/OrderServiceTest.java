@@ -8,18 +8,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import kitchenpos.MenuFixtures;
 import kitchenpos.OrderTableFixtures;
 import kitchenpos.TableGroupFixtures;
 import kitchenpos.application.dto.request.OrderRequest;
 import kitchenpos.application.dto.request.OrderStatusChangeRequest;
 import kitchenpos.application.dto.response.OrderResponse;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.tablegroup.TableGroup;
+import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,22 +31,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ServiceTest
 class OrderServiceTest {
 
-    private OrderService orderService;
-    private TableGroupRepository tableGroupRepository;
-    private OrderTableRepository orderTableRepository;
-    private OrderRepository orderRepository;
+    private final OrderService orderService;
+    private final TableGroupRepository tableGroupRepository;
+    private final OrderTableRepository orderTableRepository;
+    private final OrderRepository orderRepository;
+    private final MenuRepository menuRepository;
 
     @Autowired
     public OrderServiceTest(
             OrderService orderService,
             TableGroupRepository tableGroupRepository,
             OrderTableRepository orderTableRepository,
-            OrderRepository orderRepository
+            OrderRepository orderRepository,
+            MenuRepository menuRepository
     ) {
         this.orderService = orderService;
         this.tableGroupRepository = tableGroupRepository;
         this.orderTableRepository = orderTableRepository;
         this.orderRepository = orderRepository;
+        this.menuRepository = menuRepository;
     }
 
     private TableGroup tableGroup;
@@ -53,14 +59,30 @@ class OrderServiceTest {
     @BeforeEach
     void setUp() {
         this.tableGroup = tableGroupRepository.save(TableGroupFixtures.createTableGroup());
-        this.emptyOrderTable = orderTableRepository.save(OrderTableFixtures.createOrderTable(tableGroup, 0, true));
-        this.filledOrderTable = orderTableRepository.save(OrderTableFixtures.createOrderTable(tableGroup, 2, false));
+        this.emptyOrderTable = orderTableRepository.save(
+                OrderTableFixtures.createOrderTable(
+                        tableGroup.getId(),
+                        0,
+                        true
+                )
+        );
+        this.filledOrderTable = orderTableRepository.save(
+                OrderTableFixtures.createOrderTable(
+                        tableGroup.getId(),
+                        2,
+                        false
+                )
+        );
     }
 
     @Test
     void create() {
         // given
-        OrderRequest request = createOrderRequest(filledOrderTable.getId());
+        Menu menu = menuRepository.save(MenuFixtures.createMenu());
+        OrderRequest request = createOrderRequest(
+                filledOrderTable.getId(),
+                List.of(createOrderLineItemRequest(menu.getId()))
+        );
 
         // when
         OrderResponse response = orderService.create(request);
@@ -76,7 +98,7 @@ class OrderServiceTest {
 
         // when & then
         assertThatThrownBy(() -> orderService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .hasCauseInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -101,7 +123,7 @@ class OrderServiceTest {
 
         // when & then
         assertThatThrownBy(() -> orderService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .hasCauseInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -147,7 +169,7 @@ class OrderServiceTest {
         assertThatThrownBy(() -> orderService.changeOrderStatus(
                 invalidOrderId,
                 createOrderChangeRequest()
-        )).isInstanceOf(IllegalArgumentException.class);
+        )).hasCauseInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

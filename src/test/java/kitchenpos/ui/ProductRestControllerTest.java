@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 class ProductRestControllerTest extends ControllerTest {
 
-    private ProductService productService;
+    private final ProductService productService;
 
     @Autowired
     public ProductRestControllerTest(ProductService productService) {

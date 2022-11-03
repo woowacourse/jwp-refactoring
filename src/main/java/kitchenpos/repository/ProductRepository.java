@@ -2,10 +2,11 @@ package kitchenpos.repository;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
+import kitchenpos.repository.entity.ProductEntityRepository;
 import org.springframework.data.repository.Repository;
 
-public interface ProductRepository extends Repository<Product, Long> {
+public interface ProductRepository extends Repository<Product, Long>, ProductEntityRepository {
     Product save(Product entity);
 
     Optional<Product> findById(Long id);

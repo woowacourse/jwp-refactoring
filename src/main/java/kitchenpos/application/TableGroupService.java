@@ -6,8 +6,9 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.TableGroupCreateRequest;
 import kitchenpos.application.dto.request.TableGroupIdRequest;
 import kitchenpos.application.dto.response.TableGroupResponse;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.tablegroup.OrderTableRef;
+import kitchenpos.domain.tablegroup.TableGroup;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
@@ -20,32 +21,40 @@ public class TableGroupService {
     private final TableGroupRepository tableGroupRepository;
 
     public TableGroupService(
-            final OrderTableRepository orderTableRepository,
-            final TableGroupRepository tableGroupRepository
+            OrderTableRepository orderTableRepository,
+            TableGroupRepository tableGroupRepository
     ) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
 
-    public TableGroupResponse create(final TableGroupCreateRequest request) {
-        final List<OrderTable> savedOrderTables = findOrderTables(request);
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), savedOrderTables);
-        return TableGroupResponse.from(tableGroupRepository.save(tableGroup));
+    public TableGroupResponse create(TableGroupCreateRequest request) {
+        List<OrderTable> orderTables = findOrderTables(request);
+        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(
+                LocalDateTime.now(),
+                orderTables.stream()
+                        .map(OrderTable::getId)
+                        .collect(Collectors.toList())
+        ));
+        orderTables.forEach(orderTable -> orderTable.group(tableGroup.getId()));
+        return TableGroupResponse.from(tableGroup, orderTables);
     }
 
     private List<OrderTable> findOrderTables(TableGroupCreateRequest request) {
         List<Long> orderTableIds = request.getOrderTableIds().stream()
                 .map(TableGroupIdRequest::getId)
                 .collect(Collectors.toList());
-        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-        if (orderTableIds.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
-        return savedOrderTables;
+        return orderTableRepository.getAllByIdIn(orderTableIds);
     }
 
-    public void ungroup(final Long tableGroupId) {
-        TableGroup tableGroup = tableGroupRepository.findById(tableGroupId).orElseThrow(IllegalArgumentException::new);
-        tableGroup.ungroupOrderTables();
+    public void ungroup(Long tableGroupId) {
+        TableGroup tableGroup = tableGroupRepository.getById(tableGroupId);
+        List<OrderTable> orderTables = orderTableRepository.getAllByIdIn(
+                tableGroup.getOrderTableRefs().stream()
+                        .map(OrderTableRef::getOrderTableId)
+                        .collect(Collectors.toList())
+        );
+        tableGroup.ungroup();
+        orderTables.forEach(OrderTable::ungroup);
     }
 }
