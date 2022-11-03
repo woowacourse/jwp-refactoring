@@ -55,7 +55,11 @@ public class Menu {
         return name;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
+        return price;
+    }
+
+    public BigDecimal getPriceValue() {
         return price.getValue();
     }
 
