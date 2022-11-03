@@ -7,10 +7,11 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.application.dto.TableGroupResponse;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

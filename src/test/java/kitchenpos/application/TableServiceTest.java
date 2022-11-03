@@ -7,9 +7,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import kitchenpos.application.dto.OrderTableResponse;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

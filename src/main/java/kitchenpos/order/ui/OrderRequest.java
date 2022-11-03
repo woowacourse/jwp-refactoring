@@ -1,14 +1,14 @@
-package kitchenpos.ui.dto;
+package kitchenpos.order.ui;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
 
 public class OrderRequest {
 
-    private Long orderTableId;
-    private List<OrderLineItemRequest> orderLineItems;
+    private final Long orderTableId;
+    private final List<OrderLineItemRequest> orderLineItems;
 
     public OrderRequest(Long orderTableId, List<OrderLineItemRequest> orderLineItems) {
         this.orderTableId = orderTableId;

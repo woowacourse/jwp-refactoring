@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderTableResponse;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.order.domain.OrderDao;
+import kitchenpos.order.domain.OrderStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

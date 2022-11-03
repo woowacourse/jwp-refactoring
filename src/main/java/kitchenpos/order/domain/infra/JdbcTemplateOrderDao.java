@@ -1,4 +1,4 @@
-package kitchenpos.dao.infrastructure;
+package kitchenpos.order.domain.infra;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -7,9 +7,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import javax.sql.DataSource;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -23,12 +22,10 @@ public class JdbcTemplateOrderDao {
     private static final String TABLE_NAME = "orders";
     private static final String KEY_COLUMN_NAME = "id";
 
-    private final OrderLineItemDao orderLineItemDao;
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    public JdbcTemplateOrderDao(OrderLineItemDao orderLineItemDao, DataSource dataSource) {
-        this.orderLineItemDao = orderLineItemDao;
+    public JdbcTemplateOrderDao(DataSource dataSource) {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName(TABLE_NAME)
