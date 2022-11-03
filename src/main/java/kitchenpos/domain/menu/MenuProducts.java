@@ -1,8 +1,9 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.domain.Price;
 
 public class MenuProducts {
 
@@ -15,12 +16,6 @@ public class MenuProducts {
     public MenuProducts(Price price, List<MenuProduct> menuProducts) {
         this.menuProducts = menuProducts;
         validateAmount(price);
-    }
-
-    public MenuProducts(Long menuId, Price price, List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
-        validateAmount(price);
-        changeAllMenuId(menuId);
     }
 
     public MenuProducts(Long menuId, List<MenuProduct> menuProducts) {
@@ -38,10 +33,11 @@ public class MenuProducts {
         }
     }
 
-    public void changeAllMenuId(Long menuId) {
+    public MenuProducts changeAllMenuId(Long menuId) {
         for (final MenuProduct menuProduct : menuProducts) {
             menuProduct.placeMenuId(menuId);
         }
+        return this;
     }
 
     public BigDecimal sum() {

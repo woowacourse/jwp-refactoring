@@ -3,7 +3,7 @@ package kitchenpos.dao.repository;
 import java.util.List;
 import kitchenpos.dao.jdbctemplate.JdbcTemplateMenuGroupDao;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menu.MenuGroup;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Repository;
 

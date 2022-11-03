@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.jdbctemplate.JdbcTemplateMenuProductDao;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.Price;
 import org.springframework.stereotype.Repository;
 

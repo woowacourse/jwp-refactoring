@@ -26,6 +26,6 @@ public class Price {
     }
 
     public boolean isExpensive(BigDecimal sum) {
-        return price.longValue() > sum.longValue();
+        return price.doubleValue() > sum.doubleValue();
     }
 }

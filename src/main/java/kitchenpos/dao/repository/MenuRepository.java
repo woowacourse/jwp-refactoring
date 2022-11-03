@@ -3,9 +3,9 @@ package kitchenpos.dao.repository;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.jdbctemplate.JdbcTemplateMenuDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.MenuProducts;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuProducts;
 import org.springframework.stereotype.Repository;
 
 @Repository

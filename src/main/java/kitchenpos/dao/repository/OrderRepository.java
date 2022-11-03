@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.jdbctemplate.JdbcTemplateOrderDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderLineItems;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItems;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Repository;
 

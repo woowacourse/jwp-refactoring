@@ -5,10 +5,10 @@ import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Price;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuProducts;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuProductResponse;
 import kitchenpos.dto.MenuRequest;
@@ -35,10 +35,9 @@ public class MenuService {
         menuGroupDao.findById(menuRequest.getMenuGroupId());
         final Menu menu = menuDao.save(toMenu(menuRequest));
 
-        final MenuProducts menuProducts = new MenuProducts(
-                menu.getId(),
-                new Price(menuRequest.getPrice()),
-                menu.getMenuProducts());
+        final Price price = new Price(menuRequest.getPrice());
+        final MenuProducts menuProducts = new MenuProducts(price, menu.getMenuProducts())
+                .changeAllMenuId(menu.getId());
         menu.placeMenuProducts(menuProducts);
 
         return toMenuResponse(menu, toMenuProductResponses(menu));
@@ -64,9 +63,9 @@ public class MenuService {
     }
 
     private MenuProduct toMenuProduct(MenuProductRequest request) {
-        Long productId = request.getProductId();
-        long quantity = request.getQuantity();
-        Price price = productRepository.findById(productId).getPrice();
+        final Long productId = request.getProductId();
+        final long quantity = request.getQuantity();
+        final Price price = productRepository.findById(productId).getPrice();
         return new MenuProduct(productId, quantity, price);
     }
 

@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.dao.jdbctemplate.JdbcTemplateTableGroupDao;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.Tables;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.TableGroup;
+import kitchenpos.domain.table.Tables;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Repository;
 
