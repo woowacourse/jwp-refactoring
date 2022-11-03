@@ -2,10 +2,10 @@ package kitchenpos.ui;
 
 import java.net.URI;
 import java.util.List;
-import kitchenpos.application.ChangeEmptyRequest;
-import kitchenpos.application.ChangeNumberOfGuestsRequest;
-import kitchenpos.application.OrderTableResponse;
-import kitchenpos.application.TableService;
+import kitchenpos.application.table.ChangeEmptyRequest;
+import kitchenpos.application.table.ChangeNumberOfGuestsRequest;
+import kitchenpos.application.table.OrderTableResponse;
+import kitchenpos.application.table.TableService;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.ui.reqeust.CreateTableRequest;
 import org.springframework.http.ResponseEntity;
