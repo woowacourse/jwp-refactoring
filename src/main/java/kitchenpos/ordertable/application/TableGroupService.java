@@ -1,13 +1,10 @@
 package kitchenpos.ordertable.application;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dto.request.IdRequest;
 import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.TableGroupResponse;
-import kitchenpos.order.OrderStatus;
-import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.ordertable.OrderTable;
 import kitchenpos.ordertable.OrderTables;
 import kitchenpos.ordertable.TableGroup;
@@ -21,14 +18,14 @@ public class TableGroupService {
 
     private final TableGroupRepository tableGroupRepository;
     private final OrderTableRepository orderTableRepository;
-    private final OrderRepository orderRepository;
+    private final OrderTableValidator orderTableValidator;
 
     public TableGroupService(final TableGroupRepository tableGroupRepository,
                              final OrderTableRepository orderTableRepository,
-                             final OrderRepository orderRepository) {
+                             final OrderTableValidator orderTableValidator) {
         this.tableGroupRepository = tableGroupRepository;
         this.orderTableRepository = orderTableRepository;
-        this.orderRepository = orderRepository;
+        this.orderTableValidator = orderTableValidator;
     }
 
     @Transactional
@@ -52,10 +49,7 @@ public class TableGroupService {
         final OrderTables groupedTables = new OrderTables(orderTables);
 
         final List<Long> orderTableIds = groupedTables.getIds();
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
+        orderTableValidator.checkOrderCompleted(orderTableIds);
 
         groupedTables.ungroup();
     }
