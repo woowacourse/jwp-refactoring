@@ -4,12 +4,12 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.common.DomainService;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
-import org.springframework.stereotype.Component;
 
-@Component
+@DomainService
 public class MenuValidator {
 
     private final MenuGroupRepository menuGroupRepository;
