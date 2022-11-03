@@ -50,7 +50,11 @@ public class TableGroup {
         return createdDate;
     }
 
-    public List<OrderTable> getOrderTables() {
+    public Tables getOrderTables() {
+        return orderTables;
+    }
+
+    public List<OrderTable> getOrderTableValues() {
         return orderTables.getValue();
     }
 }

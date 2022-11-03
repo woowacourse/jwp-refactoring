@@ -27,11 +27,14 @@ public class TableGroupRepository implements TableGroupDao {
     public TableGroup save(TableGroup entity) {
         TableGroup save = tableGroupDao.save(entity);
 
-        List<OrderTable> orderTables = entity.getOrderTables().stream()
+        List<OrderTable> orderTables = entity.getOrderTableValues().stream()
                 .map(orderTable -> tableRepository.findById(orderTable.getId()))
                 .collect(Collectors.toList());
         save.placeOrderTables(new Tables(orderTables));
         save.placeTableGroupId();
+        for (final OrderTable orderTable : orderTables) {
+            tableRepository.save(orderTable);
+        }
         return save;
     }
 

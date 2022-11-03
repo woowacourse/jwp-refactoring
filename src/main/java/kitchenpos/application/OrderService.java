@@ -6,12 +6,9 @@ import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderLineItems;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.dto.ChangeOrderStatusRequest;
-import kitchenpos.dto.OrderLineItemResponse;
 import kitchenpos.dto.OrderRequest;
 import kitchenpos.dto.OrderResponse;
 import org.springframework.stereotype.Service;
@@ -33,18 +30,18 @@ public class OrderService {
         final OrderTable table = orderTableDao.findById(orderRequest.getOrderTableId())
                 .validateTableIsFull();
 
-        Order order = new Order(table.getId(),
+        final Order order = new Order(table.getId(),
                 OrderStatus.COOKING.name(),
                 LocalDateTime.now(),
-                toOrderLineItems(orderRequest));
+                orderRequest.toOrderLineItems());
 
-        return toOrderResponse(orderDao.save(order));
+        return OrderResponse.from(orderDao.save(order));
     }
 
     public List<OrderResponse> list() {
         final List<Order> orders = orderDao.findAll();
         return orders.stream()
-                .map(this::toOrderResponse)
+                .map(OrderResponse::from)
                 .collect(Collectors.toList());
     }
 
@@ -53,25 +50,6 @@ public class OrderService {
         final Order order = orderDao.findById(orderId)
                 .placeOrderStatus(statusRequest.getOrderStatus().name());
         Order save = orderDao.save(order);
-        return toOrderResponse(save);
-    }
-
-    private OrderResponse toOrderResponse(Order order) {
-        return new OrderResponse(order.getId(), order.getOrderTableId(), order.getOrderStatus(),
-                order.getOrderedTime(), toOrderLineItemResponses(order));
-    }
-
-    private OrderLineItems toOrderLineItems(OrderRequest orderRequest) {
-        List<OrderLineItem> items = orderRequest.getOrderLineItems().stream()
-                .map(itemRequest -> new OrderLineItem(itemRequest.getMenuId(), itemRequest.getQuantity()))
-                .collect(Collectors.toList());
-        return new OrderLineItems(items);
-    }
-
-    private List<OrderLineItemResponse> toOrderLineItemResponses(Order savedOrder) {
-        return savedOrder.getOrderLineItems().stream()
-                .map(orderLineItem -> new OrderLineItemResponse(orderLineItem.getSeq(), orderLineItem.getOrderId(),
-                        orderLineItem.getMenuId(), orderLineItem.getQuantity())).collect(
-                        Collectors.toList());
+        return OrderResponse.from(save);
     }
 }

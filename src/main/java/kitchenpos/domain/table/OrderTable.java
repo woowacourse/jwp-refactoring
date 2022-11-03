@@ -45,16 +45,16 @@ public class OrderTable {
         return this;
     }
 
-    public OrderTable changeEmpty(final boolean empty) {
-        validateNoGroup();
-        this.empty = empty;
-        return this;
-    }
-
     private void validateNoGroup() {
         if (Objects.nonNull(tableGroupId)) {
             throw new IllegalArgumentException("테이블은 단체지정이 없어야 한다.");
         }
+    }
+
+    public OrderTable changeEmpty(boolean empty) {
+        validateNoGroup();
+        this.empty = empty;
+        return this;
     }
 
     public void changeToFull() {

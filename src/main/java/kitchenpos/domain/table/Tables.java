@@ -2,6 +2,7 @@ package kitchenpos.domain.table;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Tables {
     private final List<OrderTable> value;
@@ -10,7 +11,7 @@ public class Tables {
         this.value = value;
     }
 
-    public void validate(){
+    public void validate() {
         validateNoGroupedTable(value);
         validateTableIsEmpty(value);
     }
@@ -37,6 +38,12 @@ public class Tables {
                 .anyMatch(orderTable -> Objects.nonNull(orderTable.getTableGroupId()));
     }
 
+    public List<Long> getOrderTableIds() {
+        return value.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
+    }
+
     public List<OrderTable> getValue() {
         return value;
     }
@@ -54,6 +61,12 @@ public class Tables {
     public void placeTableGroupId(Long id) {
         for (final OrderTable table : value) {
             table.placeTableGroupId(id);
+        }
+    }
+
+    public void ungroup() {
+        for (final OrderTable table : value) {
+            table.placeTableGroupId(null);
         }
     }
 }

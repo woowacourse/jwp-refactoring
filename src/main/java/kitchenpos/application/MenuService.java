@@ -33,20 +33,20 @@ public class MenuService {
     @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
         menuGroupDao.findById(menuRequest.getMenuGroupId());
-        final Menu menu = menuDao.save(toMenu(menuRequest));
 
+        final Menu menu = menuDao.save(toMenu(menuRequest));
         final Price price = new Price(menuRequest.getPrice());
         final MenuProducts menuProducts = new MenuProducts(price, menu.getMenuProducts())
                 .changeAllMenuId(menu.getId());
-        menu.placeMenuProducts(menuProducts);
 
-        return toMenuResponse(menu, toMenuProductResponses(menu));
+        menu.placeMenuProducts(menuProducts);
+        return MenuResponse.from(menu, MenuProductResponse.from(menu));
     }
 
     public List<MenuResponse> list() {
         final List<Menu> menus = menuDao.findAll();
         return menus.stream()
-                .map(menu -> toMenuResponse(menu, toMenuProductResponses(menu)))
+                .map(menu -> MenuResponse.from(menu, MenuProductResponse.from(menu)))
                 .collect(Collectors.toList());
     }
 
@@ -67,16 +67,5 @@ public class MenuService {
         final long quantity = request.getQuantity();
         final Price price = productRepository.findById(productId).getPrice();
         return new MenuProduct(productId, quantity, price);
-    }
-
-    private List<MenuProductResponse> toMenuProductResponses(Menu menu) {
-        return menu.getMenuProducts().stream()
-                .map(mp -> new MenuProductResponse(mp.getSeq(), menu.getId(), mp.getProductId(), mp.getQuantity()))
-                .collect(Collectors.toList());
-    }
-
-    private MenuResponse toMenuResponse(Menu menu, List<MenuProductResponse> menuProductResponses) {
-        return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(),
-                menu.getMenuGroupId(), menuProductResponses);
     }
 }

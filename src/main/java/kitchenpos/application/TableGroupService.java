@@ -12,7 +12,6 @@ import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
 import kitchenpos.domain.table.Tables;
-import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.dto.TableGroupRequest;
 import kitchenpos.dto.TableGroupResponse;
 import org.springframework.stereotype.Service;
@@ -33,70 +32,43 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
-        final Tables tables = new Tables(getOrderTables(tableGroupRequest));
+        final Tables tables = new Tables(toOrderTables(tableGroupRequest));
         tables.validate();
 
         final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), tables));
         tableGroup.fillTables();
 
         updateAllTables(tableGroup);
-        return toTableGroupResponse(tableGroup);
+        return TableGroupResponse.from(tableGroup);
     }
 
-    private List<OrderTable> getOrderTables(TableGroupRequest tableGroupRequest) {
+    private List<OrderTable> toOrderTables(TableGroupRequest tableGroupRequest) {
         return tableGroupRequest.getOrderTables().stream()
                 .map(orderTableRequest -> orderTableDao.findById(orderTableRequest.getId()))
                 .collect(Collectors.toList());
     }
 
-    private List<Long> getOrderTableIds(List<OrderTable> orderTables) {
-        return orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-    }
-
     private void updateAllTables(TableGroup tableGroup) {
         List<OrderTable> orderTables = new ArrayList<>();
-        for (final OrderTable table : tableGroup.getOrderTables()) {
+        for (final OrderTable table : tableGroup.getOrderTableValues()) {
             orderTables.add(orderTableDao.save(table));
         }
         tableGroup.placeOrderTables(new Tables(orderTables));
     }
 
-    private TableGroupResponse toTableGroupResponse(TableGroup savedTableGroup) {
-        return new TableGroupResponse(savedTableGroup.getId(), savedTableGroup.getCreatedDate(),
-                getOrderTableResponses(savedTableGroup.getOrderTables()));
-    }
-
-    private List<OrderTableResponse> getOrderTableResponses(List<OrderTable> savedOrderTables) {
-        return savedOrderTables.stream()
-                .map(this::toOrderTableResponse)
-                .collect(Collectors.toList());
-    }
-
-    private OrderTableResponse toOrderTableResponse(OrderTable orderTable) {
-        return new OrderTableResponse(orderTable.getId(), orderTable.getTableGroupId(),
-                orderTable.getNumberOfGuests(), orderTable.isEmpty());
-    }
-
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
-        validateComplete(getOrderTableIds(orderTables));
-        deleteTableGroupId(orderTables);
+        final TableGroup tableGroup = tableGroupDao.findById(tableGroupId);
+        Tables tables = tableGroup.getOrderTables();
+        validateComplete(tables.getOrderTableIds());
+        tables.ungroup();
+        tableGroupDao.save(tableGroup);
     }
 
     private void validateComplete(List<Long> orderTableIds) {
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException("단체 지정 속 모든 테이블들의 주문이 있다면 COMPLETION 상태여야 한다.");
-        }
-    }
-
-    private void deleteTableGroupId(List<OrderTable> orderTables) {
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.placeTableGroupId(null);
-            orderTableDao.save(orderTable);
         }
     }
 }

@@ -19,22 +19,14 @@ public class MenuGroupService {
 
     @Transactional
     public MenuGroupResponse create(final MenuGroupRequest menuGroupRequest) {
-        MenuGroup menuGroup = menuGroupDao.save(toMenuGroup(menuGroupRequest));
-        return toResponse(menuGroup);
+        MenuGroup menuGroup = menuGroupDao.save(menuGroupRequest.toMenuGroup());
+        return MenuGroupResponse.from(menuGroup);
     }
 
     public List<MenuGroupResponse> list() {
         List<MenuGroup> menuGroups = menuGroupDao.findAll();
         return menuGroups.stream()
-                .map(this::toResponse)
+                .map(MenuGroupResponse::from)
                 .collect(Collectors.toList());
-    }
-
-    private MenuGroup toMenuGroup(MenuGroupRequest menuGroupRequest) {
-        return new MenuGroup(menuGroupRequest.getName());
-    }
-
-    private MenuGroupResponse toResponse(MenuGroup menuGroup) {
-        return new MenuGroupResponse(menuGroup.getId(), menuGroup.getName());
     }
 }

@@ -3,8 +3,6 @@ package kitchenpos.application;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Price;
-import kitchenpos.domain.product.Product;
 import kitchenpos.dto.ProductRequest;
 import kitchenpos.dto.ProductResponse;
 import org.springframework.stereotype.Service;
@@ -19,21 +17,13 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponse create(final ProductRequest product) {
-        return toResponse(productDao.save(toProduct(product)));
+    public ProductResponse create(final ProductRequest productRequest) {
+        return ProductResponse.from(productDao.save(productRequest.toProduct()));
     }
 
     public List<ProductResponse> list() {
         return productDao.findAll().stream()
-                .map(this::toResponse)
+                .map(ProductResponse::from)
                 .collect(Collectors.toList());
-    }
-
-    private ProductResponse toResponse(Product product) {
-        return new ProductResponse(product.getId(), product.getName(), product.getPriceValue());
-    }
-
-    private Product toProduct(ProductRequest product) {
-        return new Product(product.getName(), new Price(product.getPrice()));
     }
 }
