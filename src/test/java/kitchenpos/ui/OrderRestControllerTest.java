@@ -2,6 +2,7 @@ package kitchenpos.ui;
 
 import static kitchenpos.fixture.MenuGroupFactory.menuGroup;
 import static kitchenpos.fixture.OrderFactory.order;
+import static kitchenpos.fixture.OrderRequestFactory.orderRequestFrom;
 import static kitchenpos.fixture.OrderTableFactory.notEmptyTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -51,7 +52,10 @@ class OrderRestControllerTest {
         menuProductDao.save(new MenuProduct(null, cokeMenu.getId(), coke.getId(), 1));
         final var table = orderTableDao.save(notEmptyTable(2));
 
-        final var response = orderRestController.create(order(table, cokeMenu));
+        final var order = order(table, cokeMenu);
+        final var request = orderRequestFrom(order);
+
+        final var response = orderRestController.create(request);
 
         assertAll(
                 () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED),
