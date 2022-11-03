@@ -59,7 +59,7 @@ public class Menu {
     private BigDecimal getProductPriceSum() {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
-            sum = sum.add(menuProduct.getAmount());
+            sum = sum.add(menuProduct.calculateAmount());
         }
         return sum;
     }

@@ -9,6 +9,7 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuRequest;
+import kitchenpos.dto.MenuResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,11 +30,13 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuRequest menuRequest) {
+    public MenuResponse create(final MenuRequest menuRequest) {
         validateMenuGroupExisted(menuRequest);
 
-        return menuRepository.save(new Menu(menuRequest.getName(), menuRequest.getPrice(),
+        Menu menu = menuRepository.save(new Menu(menuRequest.getName(), menuRequest.getPrice(),
                 menuRequest.getMenuGroupId(), mapToMenuProduct(menuRequest)));
+
+        return MenuResponse.from(menu);
     }
 
     private void validateMenuGroupExisted(final MenuRequest menuRequest) {
@@ -52,7 +55,10 @@ public class MenuService {
                 }).collect(Collectors.toList());
     }
 
-    public List<Menu> list() {
-        return menuRepository.findAll();
+    public List<MenuResponse> list() {
+        return menuRepository.findAll()
+                .stream()
+                .map(MenuResponse::from)
+                .collect(Collectors.toList());
     }
 }

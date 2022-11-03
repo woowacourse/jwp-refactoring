@@ -25,6 +25,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupRepository;
+import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.OrderCreateRequest;
@@ -97,6 +98,10 @@ public abstract class ServiceTestBase {
 
     protected MenuProduct createMenuProduct(final Long productId, final long quantity, final BigDecimal price) {
         return new MenuProduct(productId, quantity, price);
+    }
+
+    protected MenuGroupRequest createMenuGroupRequest(final String name) {
+        return new MenuGroupRequest(name);
     }
 
     protected OrderTable 주문_테이블_생성() {

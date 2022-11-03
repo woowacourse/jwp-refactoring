@@ -20,6 +20,7 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
+import kitchenpos.dto.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -56,14 +57,8 @@ class MenuServiceTest extends ServiceTestBase {
         menuRepository.save(twoChickens);
         menuRepository.save(oneChicken);
 
-//        Product productPizza = productDao.save(포테이토_피자());
-//        MenuGroup pizzaMenuGroup = menuGroupDao.save(피자());
-//
-//        Menu menuPizza = jdbcTemplateMenuDao.save(포테이토_피자(pizzaMenuGroup));
-//        MenuProduct menuProductPizza = 메뉴_상품_생성(menuPizza, productPizza, 1);
-
         // when
-        List<Menu> menus = menuService.list();
+        List<MenuResponse> menus = menuService.list();
 
         //then
         assertAll(
@@ -201,7 +196,7 @@ class MenuServiceTest extends ServiceTestBase {
                 menuProducts);
 
         // when
-        Menu menu = menuService.create(menuRequest);
+        MenuResponse menu = menuService.create(menuRequest);
 
         List<Menu> menus = jdbcTemplateMenuDao.findAll();
         Optional<Menu> foundMenu = jdbcTemplateMenuDao.findById(menu.getId());
@@ -226,7 +221,7 @@ class MenuServiceTest extends ServiceTestBase {
                 menuProducts);
 
         // when
-        Menu menu = menuService.create(menuRequest);
+        MenuResponse menu = menuService.create(menuRequest);
 
         Optional<Menu> foundMenu = jdbcTemplateMenuDao.findById(menu.getId());
         List<MenuProduct> foundMenuProducts = menuProductDao.findAllByMenuId(menu.getId());

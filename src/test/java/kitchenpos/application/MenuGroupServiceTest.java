@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.MenuGroupRequest;
+import kitchenpos.dto.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +27,7 @@ class MenuGroupServiceTest extends ServiceTestBase {
         menuGroupDao.save(피자());
 
         // when
-        List<MenuGroup> menuGroups = menuGroupService.list();
+        List<MenuGroupResponse> menuGroups = menuGroupService.list();
 
         // then
         assertThat(menuGroups).hasSize(2);
@@ -35,10 +37,10 @@ class MenuGroupServiceTest extends ServiceTestBase {
     @Test
     void createMenuGroup() {
         // given
-        MenuGroup menuGroup = 치킨();
+        MenuGroupRequest menuGroup = createMenuGroupRequest("치킨");
 
         // when
-        MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+        MenuGroupResponse savedMenuGroup = menuGroupService.create(menuGroup);
 
         //then
         List<MenuGroup> savedMenuGroups = menuGroupDao.findAll();
