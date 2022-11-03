@@ -7,10 +7,10 @@ import static org.assertj.core.api.Assertions.tuple;
 
 import java.util.List;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.ui.dto.ChangeEmptyRequest;
-import kitchenpos.table.ui.dto.ChangeNumberOfGuestsRequest;
-import kitchenpos.table.ui.dto.OrderTableCreateRequest;
-import kitchenpos.table.ui.dto.OrderTableResponse;
+import kitchenpos.table.application.dto.ChangeEmptyRequest;
+import kitchenpos.table.application.dto.ChangeNumberOfGuestsRequest;
+import kitchenpos.table.application.dto.OrderTableCreateRequest;
+import kitchenpos.table.application.dto.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

@@ -9,8 +9,8 @@ import kitchenpos.product.domain.Product;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.product.domain.ProductRepository;
-import kitchenpos.menu.ui.dto.MenuCreateRequest;
-import kitchenpos.menu.ui.dto.MenuResponse;
+import kitchenpos.menu.application.dto.MenuCreateRequest;
+import kitchenpos.menu.application.dto.MenuResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

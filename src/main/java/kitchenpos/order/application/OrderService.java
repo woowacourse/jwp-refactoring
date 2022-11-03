@@ -11,9 +11,9 @@ import kitchenpos.order.domain.OrderMenu;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.table.domain.OrderTableRepository;
-import kitchenpos.order.ui.dto.ChangeOrderStatusRequest;
-import kitchenpos.order.ui.dto.OrderCreateRequest;
-import kitchenpos.order.ui.dto.OrderResponse;
+import kitchenpos.order.application.dto.ChangeOrderStatusRequest;
+import kitchenpos.order.application.dto.OrderCreateRequest;
+import kitchenpos.order.application.dto.OrderResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

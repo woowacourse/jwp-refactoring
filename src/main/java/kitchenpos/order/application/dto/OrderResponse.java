@@ -1,4 +1,4 @@
-package kitchenpos.order.ui.dto;
+package kitchenpos.order.application.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
