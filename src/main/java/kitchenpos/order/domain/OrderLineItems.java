@@ -3,7 +3,6 @@ package kitchenpos.order.domain;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class OrderLineItems {
 
@@ -11,15 +10,7 @@ public class OrderLineItems {
 
     public OrderLineItems(final List<OrderLineItem> orderLineItems) {
         validateSize(orderLineItems);
-
         this.orderLineItems = orderLineItems;
-    }
-
-    public List<Long> getMenuIds() {
-        return orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
-                .distinct()
-                .collect(Collectors.toList());
     }
 
     private void validateSize(final List<OrderLineItem> orderLineItems) {

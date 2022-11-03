@@ -1,12 +1,8 @@
 package kitchenpos.order.application.dto.request;
 
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class OrderCreateRequest {
 
@@ -30,18 +26,11 @@ public class OrderCreateRequest {
         return orderTableId;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems.stream()
-                .map(OrderLineItemCreateRequest::toEntity)
-                .collect(Collectors.toList());
+    public String getOrderStatus() {
+        return orderStatus;
     }
 
-    public Order toEntity() {
-        return new Order(
-                null,
-                orderTableId,
-                orderStatus,
-                LocalDateTime.now(),
-                getOrderLineItems());
+    public List<OrderLineItemCreateRequest> getOrderLineItems() {
+        return orderLineItems;
     }
 }

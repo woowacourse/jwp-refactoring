@@ -1,21 +1,21 @@
 package kitchenpos.application;
 
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.menu.application.dto.request.MenuCreateRequest;
-import kitchenpos.order.application.dto.request.OrderCreateRequest;
-import kitchenpos.order.application.dto.request.OrderLineItemCreateRequest;
-import kitchenpos.table.application.dto.request.OrderTableCreateRequest;
-import kitchenpos.table.application.dto.request.OrderTableUpdateNumberOfGuestsRequest;
-import kitchenpos.menu.application.dto.response.MenuGroupResponse;
-import kitchenpos.menu.application.dto.response.MenuResponse;
-import kitchenpos.order.application.dto.response.OrderResponse;
-import kitchenpos.table.application.dto.response.OrderTableResponse;
-import kitchenpos.product.application.dto.response.ProductResponse;
 import kitchenpos.menu.application.MenuGroupService;
 import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.application.dto.request.MenuCreateRequest;
+import kitchenpos.menu.application.dto.response.MenuGroupResponse;
+import kitchenpos.menu.application.dto.response.MenuResponse;
 import kitchenpos.order.application.OrderService;
+import kitchenpos.order.application.dto.request.OrderCreateRequest;
+import kitchenpos.order.application.dto.request.OrderLineItemCreateRequest;
+import kitchenpos.order.application.dto.response.OrderResponse;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.product.application.ProductService;
+import kitchenpos.product.application.dto.response.ProductResponse;
 import kitchenpos.table.application.TableService;
+import kitchenpos.table.application.dto.request.OrderTableCreateRequest;
+import kitchenpos.table.application.dto.request.OrderTableUpdateNumberOfGuestsRequest;
+import kitchenpos.table.application.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -109,7 +109,7 @@ class TableServiceTest {
         // 계산완료
         OrderCreateRequest changedOrder = createOrder(테이블_1번.getId(), OrderStatus.COMPLETION.name(),
                 List.of(orderLineItem));
-        orderService.changeOrderStatus(order.getId(), changedOrder.toEntity());
+        orderService.changeOrderStatus(order.getId(), changedOrder);
 
         // empty 변경
         OrderTableResponse actual = tableService.changeEmpty(테이블_1번.getId(), createOrderTableUpdateEmptyRequest(false));
