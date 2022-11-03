@@ -122,7 +122,7 @@ class TableGroupServiceTest {
 
             @BeforeEach
             void setUp() {
-                tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(),
+                tableGroupId = tableGroupRepository.save(new TableGroup(LocalDateTime.now(),
                         Arrays.asList(
                                 new OrderTable(1L, null, 0, true),
                                 new OrderTable(2L, null, 0, true)
@@ -147,7 +147,7 @@ class TableGroupServiceTest {
 
             @BeforeEach
             void setUp() {
-                tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(),
+                tableGroupId = tableGroupRepository.save(new TableGroup(LocalDateTime.now(),
                                 Arrays.asList(
                                         new OrderTable(1L, null, 0, true),
                                         new OrderTable(2L, null, 0, true)
