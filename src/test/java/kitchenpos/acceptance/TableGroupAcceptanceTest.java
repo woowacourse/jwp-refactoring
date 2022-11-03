@@ -14,8 +14,6 @@ import kitchenpos.acceptance.common.httpcommunication.ProductHttpCommunication;
 import kitchenpos.acceptance.common.httpcommunication.TableGroupHttpCommunication;
 import kitchenpos.common.fixture.RequestBody;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
 import kitchenpos.ui.dto.response.MenuGroupResponse;
 import kitchenpos.ui.dto.response.MenuResponse;
 import kitchenpos.ui.dto.response.OrderResponse;
@@ -112,7 +110,8 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
                     .getResponseBodyAsObject(OrderResponse.class);
             OrderHttpCommunication.changeOrderStatus(order.getId(), Map.of("ORDER_STATUS", "MEAL"));
 
-            final ExtractableResponse<Response> response = TableGroupHttpCommunication.ungroup(tableGroupResponse.getId())
+            final ExtractableResponse<Response> response = TableGroupHttpCommunication.ungroup(
+                            tableGroupResponse.getId())
                     .getResponse();
 
             assertThat(response.statusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
