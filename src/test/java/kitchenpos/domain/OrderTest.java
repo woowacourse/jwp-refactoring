@@ -22,10 +22,10 @@ public class OrderTest {
     @Test
     void distinctOrderLineItem_exception() {
         // given
-        Menu 메뉴1 = new Menu("메뉴1", new Price(1000L), new MenuGroup("메뉴 그룹"), List.of(
+        Menu 메뉴1 = new Menu("메뉴1", new Price(1000L), 1L, List.of(
                 new MenuProduct(new Product("상품", 1000L), 2)
         ));
-        Menu 메뉴2 = new Menu("메뉴2", new Price(1000L), new MenuGroup("메뉴 그룹"), List.of(
+        Menu 메뉴2 = new Menu("메뉴2", new Price(1000L), 1L, List.of(
                 new MenuProduct(new Product("상품", 1000L), 2)
         ));
 

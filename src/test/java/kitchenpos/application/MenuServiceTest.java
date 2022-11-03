@@ -105,7 +105,7 @@ public class MenuServiceTest extends IntegrationTest {
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
         Product product = productDao.save(new Product("상품1", 1000L));
         MenuProduct menuProduct = new MenuProduct(product, 2);
-        Menu menu = new Menu("메뉴1", new Price(1000L), menuGroup, List.of(menuProduct));
+        Menu menu = new Menu("메뉴1", new Price(1000L), menuGroup.getId(), List.of(menuProduct));
         menuDao.save(menu);
 
         // when
