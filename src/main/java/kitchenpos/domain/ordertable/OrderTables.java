@@ -17,9 +17,9 @@ public class OrderTables {
         this.values = new ArrayList<>(values);
     }
 
-    public void joinGroup(final TableGroup tableGroup) {
+    public void joinGroup(final Long tableGroupId) {
         for (OrderTable orderTable : values) {
-            orderTable.joinGroup(tableGroup);
+            orderTable.joinGroup(tableGroupId);
         }
     }
 

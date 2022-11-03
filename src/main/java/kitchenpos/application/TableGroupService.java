@@ -41,7 +41,7 @@ public class TableGroupService {
 
         final TableGroup tableGroup = TableGroup.ofUnsaved();
         tableGroupRepository.save(tableGroup);
-        orderTables.joinGroup(tableGroup);
+        orderTables.joinGroup(tableGroup.getId());
 
         return TableGroupResponse.from(tableGroup, orderTables);
     }

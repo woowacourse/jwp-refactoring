@@ -79,7 +79,7 @@ public class DataSupport {
         final OrderTable orderTable1 = saveOrderTable(0, true);
         final OrderTable orderTable2 = saveOrderTable(0, true);
         final OrderTables orderTables = new OrderTables(Arrays.asList(orderTable1, orderTable2));
-        orderTables.joinGroup(tableGroup);
+        orderTables.joinGroup(tableGroup.getId());
 
         return orderTables.getValues();
     }
