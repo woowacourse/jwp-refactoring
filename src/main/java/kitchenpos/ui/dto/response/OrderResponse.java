@@ -1,9 +1,12 @@
 package kitchenpos.ui.dto.response;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderMenu;
 
 public class OrderResponse {
 
@@ -26,7 +29,7 @@ public class OrderResponse {
     public static OrderResponse from(final Order order) {
         final List<OrderLineItemResponse> orderLineItemResponses = order.getOrderLineItems()
                 .stream()
-                .map(it -> new OrderLineItemResponse(it.getSeq(), order.getId(), it.getMenuId(), it.getQuantity()))
+                .map(it -> OrderLineItemResponse.of(it, order.getId()))
                 .collect(Collectors.toList());
         return new OrderResponse(order.getId(), order.getOrderTableId(), order.getOrderStatus(), order.getOrderedTime(),
                 orderLineItemResponses);
@@ -58,12 +61,29 @@ public class OrderResponse {
         private final Long orderId;
         private final Long menuId;
         private final long quantity;
+        private final String menuName;
+        private final BigDecimal menuPrice;
 
-        public OrderLineItemResponse(final Long seq, final Long orderId, final Long menuId, final long quantity) {
+        public OrderLineItemResponse(final Long seq, final Long orderId, final Long menuId, final long quantity,
+                                     final String menuName, final BigDecimal menuPrice) {
             this.seq = seq;
             this.orderId = orderId;
             this.menuId = menuId;
             this.quantity = quantity;
+            this.menuName = menuName;
+            this.menuPrice = menuPrice;
+        }
+
+        public static OrderLineItemResponse of(final OrderLineItem orderLineItem, final Long orderId) {
+            final OrderMenu orderMenu = orderLineItem.getOrderMenu();
+            return new OrderLineItemResponse(
+                    orderLineItem.getSeq(),
+                    orderId,
+                    orderMenu.getMenuId(),
+                    orderLineItem.getQuantity(),
+                    orderMenu.getMenuName(),
+                    orderMenu.getMenuPrice()
+            );
         }
 
         public Long getSeq() {
@@ -80,6 +100,14 @@ public class OrderResponse {
 
         public long getQuantity() {
             return quantity;
+        }
+
+        public String getMenuName() {
+            return menuName;
+        }
+
+        public BigDecimal getMenuPrice() {
+            return menuPrice;
         }
     }
 }

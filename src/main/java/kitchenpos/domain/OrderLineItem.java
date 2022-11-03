@@ -26,6 +26,10 @@ public class OrderLineItem {
         this.orderMenu = orderMenu;
     }
 
+    public OrderLineItem addOrderMenu(final OrderMenu orderMenu) {
+        return new OrderLineItem(seq, orderMenu.getMenuId(), quantity, orderMenu);
+    }
+
     public Long getSeq() {
         return seq;
     }

@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.relational.core.mapping.MappedCollection;
@@ -42,6 +43,13 @@ public class Order {
         return new Order(orderTable.getId(), OrderStatus.COOKING.name(), orderedTime, orderLineItems);
     }
 
+    public boolean isLegacy() {
+        return orderLineItems.stream()
+                .map(OrderLineItem::getOrderMenu)
+                .map(OrderMenu::getMenuName)
+                .anyMatch(Objects::isNull);
+    }
+
     public Order changeOrderStatus(final String orderStatus) {
         if (this.orderStatus.isCompleted()) {
             throw new IllegalArgumentException();
@@ -67,5 +75,15 @@ public class Order {
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
+    }
+
+    public Order replaceOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        return new Order(
+                id,
+                orderTableId,
+                orderStatus,
+                orderedTime,
+                orderLineItems
+        );
     }
 }

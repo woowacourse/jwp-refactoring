@@ -72,11 +72,31 @@ public class OrderService {
         return orderLineItems;
     }
 
+    @Transactional
     public List<OrderResponse> list() {
         return orderRepository.findAll()
                 .stream()
+                .map(this::toValidOrder)
                 .map(OrderResponse::from)
                 .collect(Collectors.toList());
+    }
+
+    private Order toValidOrder(final Order order) {
+        if (order.isLegacy()) {
+            final List<OrderLineItem> orderLineItems = order.getOrderLineItems()
+                    .stream()
+                    .map(this::withOrderMenu)
+                    .collect(Collectors.toList());
+            final Order newOrder = order.replaceOrderLineItems(orderLineItems);
+            return orderRepository.save(newOrder);
+        }
+        return order;
+    }
+
+    private OrderLineItem withOrderMenu(final OrderLineItem orderLineItem) {
+        final Menu menu = menuRepository.findById(orderLineItem.getMenuId())
+                .orElseThrow(IllegalArgumentException::new);
+        return orderLineItem.addOrderMenu(OrderMenu.from(menu));
     }
 
     @Transactional
