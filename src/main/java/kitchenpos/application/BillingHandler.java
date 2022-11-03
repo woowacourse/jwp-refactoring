@@ -3,7 +3,7 @@ package kitchenpos.application;
 import kitchenpos.domain.order.event.OrderStatusChangedEvent;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableStatus;
-import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.domain.table.OrderTableRepository;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
