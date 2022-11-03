@@ -1,13 +1,16 @@
 package kitchenpos.application;
 
 import kitchenpos.menu.repository.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.application.TableGroupService;
+import kitchenpos.order.application.TableService;
+import kitchenpos.order.repository.dao.OrderDao;
+import kitchenpos.order.repository.dao.OrderLineItemDao;
+import kitchenpos.order.repository.dao.OrderTableDao;
 import kitchenpos.menu.application.MenuGroupService;
 import kitchenpos.menu.application.MenuService;
 import kitchenpos.product.repository.ProductDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.order.repository.dao.TableGroupDao;
 import kitchenpos.product.application.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
