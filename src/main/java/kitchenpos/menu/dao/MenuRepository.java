@@ -24,8 +24,8 @@ public class MenuRepository implements MenuDao {
         Menu menu = jdbcTemplateMenuDao.save(entity);
         List<MenuProduct> menuProducts = entity.getMenuProducts()
                 .stream()
-                .map(menuProduct -> new MenuProduct(menu.getId(), menuProduct.getProductId(), menuProduct.getQuantity()))
-                .map(jdbcTemplateMenuProductDao::save)
+                .map(menuProduct -> new MenuProduct(menuProduct.getProductId(), menuProduct.getQuantity()))
+                .map(menuProduct -> jdbcTemplateMenuProductDao.save(menuProduct, menu.getId()))
                 .collect(Collectors.toList());
 
         return new Menu(
