@@ -5,6 +5,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.TableValidator;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
@@ -18,13 +19,13 @@ import java.util.stream.Collectors;
 @Service
 public class TableGroupService {
 
-    private final OrderRepository orderRepository;
+    private final TableValidator tableValidator;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(OrderRepository orderRepository, final OrderTableRepository orderTableRepository,
+    public TableGroupService(TableValidator tableValidator, OrderTableRepository orderTableRepository,
                              TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
+        this.tableValidator = tableValidator;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
@@ -70,15 +71,13 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final OrderTables orderTables = new OrderTables(orderTableRepository.findAllByTableGroupId(tableGroupId));
+        final List<Long> orderTableIds = mapToIds(orderTables);
 
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                mapToIds(orderTables), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
+        tableValidator.validateUnGroupCondition(orderTableIds);
 
         for (final OrderTable orderTable : orderTables.getOrderTables()) {
-            orderTableRepository.save(new OrderTable(orderTable.getId(), null,
-                    orderTable.getNumberOfGuests(), orderTable.isEmpty()));
+            orderTableRepository.save(new OrderTable(orderTable.getId(),
+                    null, orderTable.getNumberOfGuests(), orderTable.isEmpty()));
         }
     }
 }
