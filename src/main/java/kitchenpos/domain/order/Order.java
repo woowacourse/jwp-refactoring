@@ -54,6 +54,12 @@ public class Order {
         this(null, orderTableId, orderStatus, null, orderLineItems);
     }
 
+    public static Order create(final Long orderTableId, final OrderStatus orderStatus,
+                               final List<OrderLineItem> orderLineItems, final OrderValidator orderValidator) {
+        orderValidator.validate(orderTableId, orderLineItems);
+        return new Order(orderTableId, orderStatus, orderLineItems);
+    }
+
     public void changeStatus(final OrderStatus orderStatus) {
         if (this.orderStatus.isCompleted()) {
             throw new IllegalStateException("이미 완료된 Order의 상태는 변경할 수 없습니다.");
