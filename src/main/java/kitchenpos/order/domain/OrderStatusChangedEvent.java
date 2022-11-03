@@ -8,7 +8,6 @@ public class OrderStatusChangedEvent extends Event {
     private final OrderStatus orderStatus;
 
     public OrderStatusChangedEvent(final Long orderTableId, final OrderStatus orderStatus) {
-        super();
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
     }
