@@ -6,25 +6,20 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.TableGroupRepository;
+import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.ProductRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
@@ -45,34 +40,19 @@ import org.springframework.test.context.jdbc.Sql;
 public abstract class ServiceTestBase {
 
     @Autowired
-    protected OrderDao jdbcTemplateOrderDao;
-
-    @Autowired
     protected OrderRepository orderRepository;
 
     @Autowired
-    protected ProductDao productDao;
+    protected ProductRepository productRepository;
 
     @Autowired
-    protected MenuProductDao menuProductDao;
-
-    @Autowired
-    protected MenuGroupDao menuGroupDao;
-
-    @Autowired
-    protected MenuDao jdbcTemplateMenuDao;
+    protected MenuGroupRepository menuGroupRepository;
 
     @Autowired
     protected MenuRepository menuRepository;
 
     @Autowired
-    protected OrderLineItemDao orderLineItemDao;
-
-    @Autowired
-    protected OrderTableDao orderTableDao;
-
-    @Autowired
-    protected TableGroupDao jdbcTemplateTableGroupDao;
+    protected OrderTableRepository orderTableRepository;
 
     @Autowired
     protected TableGroupRepository tableGroupRepository;
@@ -105,15 +85,11 @@ public abstract class ServiceTestBase {
     }
 
     protected OrderTable 주문_테이블_생성() {
-        OrderTable orderTable = new OrderTable(2, false);
-
-        return orderTable;
+        return new OrderTable(2, false);
     }
 
     protected OrderTable 빈_주문_테이블_생성() {
-        OrderTable orderTable = new OrderTable(0, true);
-
-        return orderTable;
+        return new OrderTable(0, true);
     }
 
     protected OrderTableCreateRequest createOrderTableCreateRequest(final int guest) {
@@ -126,11 +102,6 @@ public abstract class ServiceTestBase {
 
     protected OrderTableGuestRequest createOrderTableGuestRequest(final int guest) {
         return new OrderTableGuestRequest(guest);
-    }
-
-    protected Order 주문_생성(final OrderTable orderTable) {
-
-        return Order.create(orderTable.getId(), Collections.emptyList(), 1);
     }
 
     protected TableGroup 단체_지정_생성(final OrderTable... orderTables) {

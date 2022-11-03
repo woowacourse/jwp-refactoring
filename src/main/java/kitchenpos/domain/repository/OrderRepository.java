@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 import kitchenpos.dao.JdbcTemplateOrderDao;
 import kitchenpos.dao.JdbcTemplateOrderLineItemDao;
 import kitchenpos.dao.OrderDao;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -45,7 +47,6 @@ public class OrderRepository implements OrderDao {
                         order.getOrderedTime(),
                         orderLineItemDao.findAllByOrderId(order.getId())
                 ));
-
     }
 
     @Override

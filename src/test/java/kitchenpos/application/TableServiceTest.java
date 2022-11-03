@@ -38,9 +38,9 @@ class TableServiceTest extends ServiceTestBase {
     @DisplayName("메뉴 및 메뉴 그룹 생성")
     @BeforeEach
     void setUp() {
-        Product productChicken1 = productDao.save(후라이드_치킨());
-        Product productChicken2 = productDao.save(양념_치킨());
-        MenuGroup chickenMenuGroup = menuGroupDao.save(치킨());
+        Product productChicken1 = productRepository.save(후라이드_치킨());
+        Product productChicken2 = productRepository.save(양념_치킨());
+        MenuGroup chickenMenuGroup = menuGroupRepository.save(치킨());
 
         MenuProduct menuProductChicken1 = createMenuProduct(productChicken1.getId(), 1, productChicken1.getPrice());
         MenuProduct menuProductChicken2 = createMenuProduct(productChicken2.getId(), 1, productChicken2.getPrice());
@@ -61,9 +61,9 @@ class TableServiceTest extends ServiceTestBase {
         OrderTable orderTable2 = 빈_주문_테이블_생성();
         OrderTable orderTable3 = 빈_주문_테이블_생성();
 
-        orderTableDao.save(orderTable1);
-        orderTableDao.save(orderTable2);
-        orderTableDao.save(orderTable3);
+        orderTableRepository.save(orderTable1);
+        orderTableRepository.save(orderTable2);
+        orderTableRepository.save(orderTable3);
 
         // when
         List<OrderTableResponse> orderTables = tableService.list();
@@ -106,9 +106,9 @@ class TableServiceTest extends ServiceTestBase {
     void changeEmptyWithNotExistedTableGroup() {
         // given
         OrderTable orderTable1 = 빈_주문_테이블_생성();
-        TableGroup tableGroup = jdbcTemplateTableGroupDao.save(단체_지정_생성(orderTable1));
+        TableGroup tableGroup = tableGroupRepository.save(단체_지정_생성(orderTable1));
         orderTable1.setTableGroupId(tableGroup.getId());
-        OrderTable savedTable = orderTableDao.save(orderTable1);
+        OrderTable savedTable = orderTableRepository.save(orderTable1);
         OrderTableEmptyStatusRequest emptyStatusRequest = createOrderTableEmptyStatusRequest(false);
 
         // when & then
@@ -123,7 +123,7 @@ class TableServiceTest extends ServiceTestBase {
     void changeEmptyWithNotCompletedOrder() {
         // given
         OrderTable orderTable1 = 빈_주문_테이블_생성();
-        OrderTable savedTable = orderTableDao.save(orderTable1);
+        OrderTable savedTable = orderTableRepository.save(orderTable1);
 
         Order order1 = 주문_생성_및_저장(savedTable, friedAndSeasonedChicken, 1);
 
@@ -140,7 +140,7 @@ class TableServiceTest extends ServiceTestBase {
     @Test
     void updateEmpty() {
         // given
-        OrderTable savedTable = orderTableDao.save(빈_주문_테이블_생성());
+        OrderTable savedTable = orderTableRepository.save(빈_주문_테이블_생성());
         Order order1 = 주문_생성_및_저장(savedTable, friedAndSeasonedChicken, 1);
         order1.changeOrderStatus(OrderStatus.COMPLETION.name());
         orderRepository.save(order1);
@@ -159,7 +159,7 @@ class TableServiceTest extends ServiceTestBase {
     void changeMinusGuest() {
         // given
         OrderTable orderTable1 = 주문_테이블_생성();
-        OrderTable savedTable = orderTableDao.save(orderTable1);
+        OrderTable savedTable = orderTableRepository.save(orderTable1);
 
         OrderTableGuestRequest guestNumberRequest = createOrderTableGuestRequest(-1);
 
@@ -188,7 +188,7 @@ class TableServiceTest extends ServiceTestBase {
     void changeEmptyOrderTable() {
         // given
         OrderTable orderTable1 = 빈_주문_테이블_생성();
-        OrderTable savedTable = orderTableDao.save(orderTable1);
+        OrderTable savedTable = orderTableRepository.save(orderTable1);
 
         OrderTableGuestRequest guestNumberRequest = createOrderTableGuestRequest(2);
 
@@ -203,7 +203,7 @@ class TableServiceTest extends ServiceTestBase {
     @Test
     void changeNumberOfGuests() {
         // given
-        OrderTable orderTable = orderTableDao.save(주문_테이블_생성());
+        OrderTable orderTable = orderTableRepository.save(주문_테이블_생성());
         OrderTableGuestRequest guestNumberRequest = createOrderTableGuestRequest(4);
 
         // when

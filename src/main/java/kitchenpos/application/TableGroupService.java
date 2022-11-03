@@ -4,12 +4,12 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.TableGroupRepository;
+import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.dto.TableGroupCreateRequest;
 import kitchenpos.dto.TableGroupResponse;
 import org.springframework.stereotype.Service;
@@ -18,13 +18,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableGroupService {
     private final OrderRepository orderRepository;
-    private final OrderTableDao orderTableDao;
+    private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(final OrderRepository orderRepository, final OrderTableDao orderTableDao,
+    public TableGroupService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository,
                              final TableGroupRepository tableGroupRepository) {
         this.orderRepository = orderRepository;
-        this.orderTableDao = orderTableDao;
+        this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
 
@@ -32,7 +32,7 @@ public class TableGroupService {
     public TableGroupResponse create(final TableGroupCreateRequest tableGroupCreateRequest) {
         final List<Long> orderTableIds = tableGroupCreateRequest.mapToOrderTableIds();
 
-        final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
+        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
         TableGroup tableGroup = new TableGroup(LocalDateTime.now(), savedOrderTables);
         tableGroup.validateOrderTableSize(orderTableIds);
 
@@ -45,13 +45,13 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
+        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
 
         validateOrderStatus(orderTables);
 
         for (final OrderTable orderTable : orderTables) {
             orderTable.ungroup();
-            orderTableDao.save(orderTable);
+            orderTableRepository.save(orderTable);
         }
     }
 

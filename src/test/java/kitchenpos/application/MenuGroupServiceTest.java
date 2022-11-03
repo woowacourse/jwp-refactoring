@@ -23,8 +23,8 @@ class MenuGroupServiceTest extends ServiceTestBase {
     @Test
     void findAll() {
         // given
-        menuGroupDao.save(치킨());
-        menuGroupDao.save(피자());
+        menuGroupRepository.save(치킨());
+        menuGroupRepository.save(피자());
 
         // when
         List<MenuGroupResponse> menuGroups = menuGroupService.list();
@@ -43,7 +43,7 @@ class MenuGroupServiceTest extends ServiceTestBase {
         MenuGroupResponse savedMenuGroup = menuGroupService.create(menuGroup);
 
         //then
-        List<MenuGroup> savedMenuGroups = menuGroupDao.findAll();
+        List<MenuGroup> savedMenuGroups = menuGroupRepository.findAll();
         assertAll(() -> assertThat(savedMenuGroups).hasSize(1),
                 () -> assertThat(savedMenuGroup).extracting("name").isEqualTo(menuGroup.getName()));
     }

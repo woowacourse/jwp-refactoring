@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.repository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import kitchenpos.dao.JdbcTemplateMenuDao;
 import kitchenpos.dao.JdbcTemplateMenuProductDao;
 import kitchenpos.dao.MenuDao;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -37,7 +39,16 @@ public class MenuRepository implements MenuDao {
 
     @Override
     public Optional<Menu> findById(final Long id) {
-        return menuDao.findById(id);
+        Optional<Menu> menu = menuDao.findById(id);
+        if (menu.isPresent()) {
+            Menu foundMenu = menu.get();
+            List<MenuProduct> menuProducts = menuProductDao.findAllByMenuId(foundMenu.getId());
+            return Optional.of(new Menu(
+                    foundMenu.getId(), foundMenu.getName(), foundMenu.getPrice(), foundMenu.getMenuGroupId(),
+                    menuProducts
+            ));
+        }
+        return Optional.empty();
     }
 
     @Override

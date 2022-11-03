@@ -24,8 +24,8 @@ class ProductServiceTest extends ServiceTestBase {
     @Test
     void findAllProduct() {
         // given
-        productDao.save(후라이드_치킨());
-        productDao.save(양념_치킨());
+        productRepository.save(후라이드_치킨());
+        productRepository.save(양념_치킨());
 
         // when
         List<ProductResponse> products = productService.list();
@@ -44,7 +44,7 @@ class ProductServiceTest extends ServiceTestBase {
         ProductResponse savedChicken = productService.create(chicken);
 
         // then
-        List<Product> products = productDao.findAll();
+        List<Product> products = productRepository.findAll();
         assertAll(
                 () -> assertThat(products).hasSize(1),
                 () -> assertThat(savedChicken.getName()).isEqualTo(chicken.getName()),
