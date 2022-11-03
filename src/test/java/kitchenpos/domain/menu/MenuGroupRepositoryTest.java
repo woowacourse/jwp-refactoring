@@ -4,16 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
+import kitchenpos.domain.RepositoryTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class MenuGroupRepositoryTest {
-
-    @Autowired
-    private MenuGroupRepository menuGroupRepository;
+class MenuGroupRepositoryTest extends RepositoryTest {
 
     @Test
     @DisplayName("메뉴 그룹을 저장한다.")

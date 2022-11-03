@@ -20,15 +20,22 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class MenuTest {
 
-    @Test
-    @DisplayName("메뉴를 생성한다.")
-    void create() {
-        final Menu menu = Menu.create(
+    final MenuProduct testMenuProduct1 = new MenuProduct(1L, 1);
+    final MenuProduct testMenuProduct2 = new MenuProduct(2L, 1);
+
+    private Menu createTestMenu() {
+        return Menu.create(
                 "테스트 메뉴",
                 BigDecimal.valueOf(1000L),
                 testMenuGroup.getId(),
                 List.of(testMenuProduct1, testMenuProduct2)
         );
+    }
+
+    @Test
+    @DisplayName("메뉴를 생성한다.")
+    void create() {
+        final Menu menu = createTestMenu();
 
         assertAll(
                 () -> assertThat(menu.getName()).isEqualTo("테스트 메뉴"),
@@ -42,12 +49,7 @@ class MenuTest {
     @DisplayName("menu의 가격이 menuProduct의 가격 전체 합보다 낮은지 검사한다.")
     void validateOverPrice() {
         final CalculateProductPriceService calculateProductPriceService = mock(CalculateProductPriceService.class);
-        final Menu menu = Menu.create(
-                "테스트 메뉴",
-                BigDecimal.valueOf(1000L),
-                testMenuGroup.getId(),
-                List.of(testMenuProduct1, testMenuProduct2)
-        );
+        final Menu menu = createTestMenu();
         when(calculateProductPriceService.calculateMenuProductPriceSum(anyList()))
                 .thenReturn(BigDecimal.valueOf(1001L));
 
@@ -58,12 +60,7 @@ class MenuTest {
     @DisplayName("menu의 가격이 menuProduct의 가격 전체 합보다 높으면 예외가 발생한다.")
     void validateOverPriceSoExpensiveException() {
         final CalculateProductPriceService calculateProductPriceService = mock(CalculateProductPriceService.class);
-        final Menu menu = Menu.create(
-                "테스트 메뉴",
-                BigDecimal.valueOf(1000L),
-                testMenuGroup.getId(),
-                List.of(testMenuProduct1, testMenuProduct2)
-        );
+        final Menu menu = createTestMenu();
         when(calculateProductPriceService.calculateMenuProductPriceSum(anyList()))
                 .thenReturn(BigDecimal.valueOf(999L));
 
