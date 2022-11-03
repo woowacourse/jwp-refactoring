@@ -14,9 +14,6 @@ public class OrderLineItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @ManyToOne
-    private Order order;
-
     @ManyToOne(cascade = CascadeType.PERSIST)
     private OrderMenu orderMenu;
 
@@ -25,18 +22,13 @@ public class OrderLineItem {
     private OrderLineItem() {
     }
 
-    public OrderLineItem(Order order, OrderMenu orderMenu, long quantity) {
-        this.order = order;
+    public OrderLineItem(OrderMenu orderMenu, long quantity) {
         this.orderMenu = orderMenu;
         this.quantity = quantity;
     }
 
     public Long getSeq() {
         return seq;
-    }
-
-    public Order getOrder() {
-        return order;
     }
 
     public OrderMenu getOrderMenu() {

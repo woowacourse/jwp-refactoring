@@ -11,10 +11,10 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import kitchenpos.table.domain.OrderTable;
+import kitchenpos.order.application.OrderValidator;
 
 @Entity
 @Table(name = "orders")
@@ -24,8 +24,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private OrderTable orderTable;
+    private Long orderTableId;
 
     @Column(name = "order_status")
     @Enumerated(EnumType.STRING)
@@ -33,33 +32,33 @@ public class Order {
 
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @JoinColumn(name = "order_id", nullable = false)
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     protected Order() {
     }
 
-    public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime,
+    public Order(Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
                  List<OrderLineItem> orderLineItems) {
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
     }
 
-    public static Order newOrder(OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("주문테이블이 주문을 받을수 없는 상태입니다.");
-        }
-        return new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), new ArrayList<>());
+    public static Order newOrder(Long orderTableId, List<OrderLineItem> orderLineItems, OrderValidator orderValidator) {
+        final Order order = new Order(orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+        orderValidator.validate(order);
+        return order;
     }
 
     public Long getId() {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public String getOrderStatus() {
@@ -72,10 +71,6 @@ public class Order {
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public void changeOrderLineItems(List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
     }
 
     public void changeStatus(OrderStatus changedOrderStatus) {

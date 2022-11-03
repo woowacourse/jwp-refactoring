@@ -9,8 +9,6 @@ import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderMenu;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.repository.OrderDao;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.repository.OrderTableDao;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -19,16 +17,15 @@ import org.springframework.util.CollectionUtils;
 public class OrderService {
     private final MenuDao menuDao;
     private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
+    private final OrderValidator orderValidator;
 
     public OrderService(
             final MenuDao menuDao,
             final OrderDao orderDao,
-            final OrderTableDao orderTableDao
-    ) {
+            final OrderValidator orderValidator) {
         this.menuDao = menuDao;
         this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
@@ -38,20 +35,16 @@ public class OrderService {
             throw new IllegalArgumentException("주문메뉴가 존재하지 않습니다.");
         }
 
-        final OrderTable orderTable = orderTableDao.findById(orderRequest.getOrderTableId())
-                .orElseThrow(() -> new IllegalArgumentException("주문테이블이 존재하지 않습니다."));
+        final List<OrderLineItem> orderLineItems = convertToOrderLineItems(orderLineItemRequests);
+        final Order order = Order.newOrder(orderRequest.getOrderTableId(), orderLineItems, orderValidator);
 
-        final Order order = Order.newOrder(orderTable);
-
-        final List<OrderLineItem> orderLineItems = convertToOrderLineItems(orderLineItemRequests, order);
-        order.changeOrderLineItems(orderLineItems);
         orderDao.save(order);
         return OrderResponse.from(order);
     }
 
-    private List<OrderLineItem> convertToOrderLineItems(List<OrderLineItemRequest> orderLineItemRequests, Order order) {
+    private List<OrderLineItem> convertToOrderLineItems(List<OrderLineItemRequest> orderLineItemRequests) {
         return orderLineItemRequests.stream()
-                .map(orderLineItemRequest -> new OrderLineItem(order,
+                .map(orderLineItemRequest -> new OrderLineItem(
                         findMenu(orderLineItemRequest),
                         orderLineItemRequest.getQuantity()))
                 .collect(Collectors.toList());

@@ -114,7 +114,7 @@ class TableServiceTest extends IntegrationTest {
         @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
         void changeEmpty_Exception_OrderStatus(OrderStatus orderStatus) {
             orderDao.save(
-                    new Order(nonEmptyOrderTable, orderStatus, LocalDateTime.now(), Collections.emptyList()));
+                    new Order(nonEmptyOrderTable.getId(), orderStatus, LocalDateTime.now(), Collections.emptyList()));
             final OrderTableChangeStatusRequest orderTableChangeStatusRequest = new OrderTableChangeStatusRequest(true);
 
             assertThatThrownBy(() -> tableService.changeEmpty(nonEmptyOrderTable.getId(), orderTableChangeStatusRequest))

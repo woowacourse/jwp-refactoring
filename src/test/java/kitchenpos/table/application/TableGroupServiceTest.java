@@ -11,13 +11,9 @@ import java.util.List;
 import java.util.Optional;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.application.OrderTableOfGroupRequest;
-import kitchenpos.table.application.TableGroupRequest;
-import kitchenpos.table.application.TableGroupResponse;
-import kitchenpos.table.application.TableGroupService;
+import kitchenpos.support.IntegrationTest;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
-import kitchenpos.support.IntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -134,7 +130,7 @@ class TableGroupServiceTest extends IntegrationTest {
         @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
         void ungroup(OrderStatus orderStatus) {
             orderDao.save(
-                    new Order(orderTable1, orderStatus, LocalDateTime.now(), Collections.emptyList()));
+                    new Order(orderTable1.getId(), orderStatus, LocalDateTime.now(), Collections.emptyList()));
 
             assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
                     .isInstanceOf(IllegalArgumentException.class);

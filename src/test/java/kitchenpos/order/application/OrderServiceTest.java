@@ -26,14 +26,17 @@ class OrderServiceTest extends IntegrationTest {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private OrderValidator orderValidator;
+
     private OrderTable nonEmptyOrderTable;
     private OrderLineItem orderLineItem;
 
     @BeforeEach
     void setupFixture() {
         nonEmptyOrderTable = orderTableDao.save(createNonEmptyStatusTable());
-        final Order order = Order.newOrder(nonEmptyOrderTable);
-        orderLineItem = new OrderLineItem(order, new OrderMenu(menu.getId(), menu.getName(), menu.getPrice()), 1L);
+        orderLineItem = new OrderLineItem(new OrderMenu(menu.getId(), menu.getName(), menu.getPrice()), 1L);
+        final Order order = Order.newOrder(nonEmptyOrderTable.getId(), List.of(orderLineItem), orderValidator);
     }
 
     @DisplayName("주문 생성 기능")
@@ -104,11 +107,9 @@ class OrderServiceTest extends IntegrationTest {
         @DisplayName("저장된 주문상태가 계산완료이면 예외가 발생한다.")
         @Test
         void changeOrderStatus_Exception_CompletionStatus() {
-            final Order order = new Order(nonEmptyOrderTable, OrderStatus.COMPLETION, LocalDateTime.now(),
-                    Collections.emptyList());
-            final OrderLineItem orderLineItem = new OrderLineItem(order,
-                    new OrderMenu(menu.getId(), menu.getName(), menu.getPrice()), 1L);
-            order.changeOrderLineItems(List.of(orderLineItem));
+            final OrderLineItem orderLineItem = new OrderLineItem(new OrderMenu(menu.getId(), menu.getName(), menu.getPrice()), 1L);
+            final Order order = new Order(nonEmptyOrderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now(),
+                    List.of(orderLineItem));
             final Long savedOrderId = orderDao.save(order).getId();
             final ChangeOrderStatusRequest changeOrderStatusRequest = new ChangeOrderStatusRequest(
                     OrderStatus.MEAL.name());
