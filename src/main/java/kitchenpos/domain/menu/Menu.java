@@ -39,30 +39,19 @@ public class Menu {
     }
 
     public Menu(final String name, final Price price, final MenuGroup menuGroup,
-                final List<MenuProduct> menuProducts) {
-        this(null, name, price, menuGroup, menuProducts);
+                final List<MenuProduct> menuProducts, final MenuValidator menuValidator) {
+        this(null, name, price, menuGroup, menuProducts, menuValidator);
     }
 
     public Menu(final Long id, final String name, final Price price, final MenuGroup menuGroup,
-                final List<MenuProduct> menuProducts) {
-        validateMenuProductsPrice(price, menuProducts);
+                final List<MenuProduct> menuProducts, final MenuValidator menuValidator) {
+        menuValidator.validatePrice(menuProducts, price);
 
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
-    }
-
-    private void validateMenuProductsPrice(final Price price, final List<MenuProduct> menuProducts) {
-        Price sum = menuProducts.stream()
-                .map(MenuProduct::calculateAmount)
-                .reduce(Price::add)
-                .orElse(Price.ZERO);
-
-        if (price.isGreaterThan(sum)) {
-            throw new IllegalArgumentException();
-        }
     }
 
     public Long getId() {

@@ -9,5 +9,7 @@ public interface ProductRepository {
 
     Optional<Product> findById(Long id);
 
+    List<Product> findByIdIn(List<Long> ids);
+
     List<Product> findAll();
 }

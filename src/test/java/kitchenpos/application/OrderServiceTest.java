@@ -44,7 +44,7 @@ class OrderServiceTest extends ServiceTest {
         savedMenuGroup = saveMenuGroup("메뉴 그룹");
         savedProduct = saveProduct("상품", 5_000);
         savedMenu = saveMenu("메뉴", 10_000, savedMenuGroup, List.of(
-                new MenuProduct(savedProduct, 10)
+                new MenuProduct(savedProduct.getId(), 10)
         ));
         createdOrderLineItem = new OrderLineItem(savedMenu.getId(), 10);
 

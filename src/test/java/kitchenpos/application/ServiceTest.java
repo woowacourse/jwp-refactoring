@@ -9,6 +9,7 @@ import kitchenpos.domain.Price;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuValidator;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.product.Product;
 import kitchenpos.dto.request.MenuGroupRequest;
@@ -46,6 +47,9 @@ public class ServiceTest {
     protected TableGroupService tableGroupService;
 
     @Autowired
+    private MenuValidator menuValidator;
+
+    @Autowired
     private DatabaseCleaner databaseCleaner;
 
     @BeforeEach
@@ -67,7 +71,7 @@ public class ServiceTest {
                 menuGroup.getId(),
                 menuProducts.stream()
                         .map(menuProduct -> new MenuProductRequest(
-                                menuProduct.getProduct().getId(),
+                                menuProduct.getProductId(),
                                 menuProduct.getQuantity())
                         )
                         .collect(Collectors.toList())
@@ -75,7 +79,7 @@ public class ServiceTest {
 
         MenuResponse createdMenu = menuService.create(menu);
         return new Menu(createdMenu.getId(), createdMenu.getName(), new Price(createdMenu.getPrice()), menuGroup,
-                menuProducts);
+                menuProducts, menuValidator);
     }
 
     protected OrderTable saveOrderTable(final int numberOfGuests, final boolean empty) {

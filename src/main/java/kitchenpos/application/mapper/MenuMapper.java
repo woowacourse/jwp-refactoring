@@ -6,22 +6,21 @@ import kitchenpos.domain.Price;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.product.Product;
-import kitchenpos.dto.request.MenuProductRequest;
+import kitchenpos.domain.menu.MenuValidator;
 import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.ProductRepository;
 import org.springframework.stereotype.Component;
 
 @Component
 public class MenuMapper {
 
     private final MenuGroupRepository menuGroupRepository;
-    private final ProductRepository productRepository;
 
-    public MenuMapper(final MenuGroupRepository menuGroupRepository, final ProductRepository productRepository) {
+    private final MenuValidator menuValidator;
+
+    public MenuMapper(final MenuGroupRepository menuGroupRepository, final MenuValidator menuValidator) {
         this.menuGroupRepository = menuGroupRepository;
-        this.productRepository = productRepository;
+        this.menuValidator = menuValidator;
     }
 
     public Menu from(final MenuRequest menuRequest) {
@@ -29,7 +28,8 @@ public class MenuMapper {
                 menuRequest.getName(),
                 new Price(menuRequest.getPrice()),
                 getMenuGroup(menuRequest),
-                getMenuProducts(menuRequest)
+                getMenuProducts(menuRequest),
+                menuValidator
         );
     }
 
@@ -42,15 +42,10 @@ public class MenuMapper {
         return request.getMenuProducts()
                 .stream()
                 .map(menuProductRequest -> new MenuProduct(
-                        getProduct(menuProductRequest),
+                        menuProductRequest.getProductId(),
                         menuProductRequest.getQuantity()
                 ))
                 .collect(Collectors.toList());
         // TODO: 최적화 필요
-    }
-
-    private Product getProduct(final MenuProductRequest menuProductRequest) {
-        return productRepository.findById(menuProductRequest.getProductId())
-                .orElseThrow(IllegalArgumentException::new);
     }
 }

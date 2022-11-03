@@ -36,10 +36,10 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void Should_CreateMenu() {
             // given
-            MenuProduct menuProduct = new MenuProduct(savedProduct, 1L);
+            MenuProduct menuProduct = new MenuProduct(savedProduct.getId(), 1L);
 
             MenuProductRequest menuProductRequest = new MenuProductRequest(
-                    menuProduct.getProduct().getId(),
+                    menuProduct.getProductId(),
                     menuProduct.getQuantity()
             );
 
@@ -65,9 +65,9 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_MenuGroupDoesNotExist() {
             // given
-            MenuProduct menuProduct = new MenuProduct(savedProduct, 1L);
+            MenuProduct menuProduct = new MenuProduct(savedProduct.getId(), 1L);
 
-            MenuProductRequest menuProductRequest = new MenuProductRequest(menuProduct.getProduct().getId(),
+            MenuProductRequest menuProductRequest = new MenuProductRequest(menuProduct.getProductId(),
                     menuProduct.getQuantity());
 
             MenuRequest request = new MenuRequest(
@@ -88,7 +88,7 @@ class MenuServiceTest extends ServiceTest {
             // given
             Product notSavedProduct = new Product(savedProduct.getId() + 1, savedProduct.getName(),
                     savedProduct.getPrice().getPrice());
-            MenuProduct notSavedMenuProduct = new MenuProduct(notSavedProduct, 1L);
+            MenuProduct notSavedMenuProduct = new MenuProduct(notSavedProduct.getId(), 1L);
             MenuProductRequest menuProductRequest = new MenuProductRequest(notSavedProduct.getId(),
                     notSavedMenuProduct.getQuantity());
 
@@ -108,8 +108,8 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_MenuPriceIsBiggerThanSumOfProductOfProductPriceAndQuantity() {
             // given
-            MenuProduct menuProduct = new MenuProduct(savedProduct, 1L);
-            MenuProductRequest menuProductRequest = new MenuProductRequest(menuProduct.getProduct().getId(),
+            MenuProduct menuProduct = new MenuProduct(savedProduct.getId(), 1L);
+            MenuProductRequest menuProductRequest = new MenuProductRequest(menuProduct.getProductId(),
                     menuProduct.getQuantity());
 
             MenuRequest request = new MenuRequest(
@@ -136,11 +136,11 @@ class MenuServiceTest extends ServiceTest {
             MenuGroup menuGroup = saveMenuGroup("메뉴 그룹");
 
             Product product = saveProduct("상품", 1_000_000);
-            MenuProduct menuProduct = new MenuProduct(product, 1L);
+            MenuProduct menuProduct = new MenuProduct(product.getId(), 1L);
 
             int expected = 4;
             for (int i = 0; i < expected; i++) {
-                MenuProductRequest menuProductRequest = new MenuProductRequest(menuProduct.getProduct().getId(),
+                MenuProductRequest menuProductRequest = new MenuProductRequest(menuProduct.getProductId(),
                         menuProduct.getQuantity());
                 MenuRequest request = new MenuRequest(
                         "세트 " + i,
