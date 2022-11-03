@@ -12,7 +12,6 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.domain.MenuProductRepository;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menu.domain.Product;
 import kitchenpos.menu.domain.ProductRepository;
@@ -23,14 +22,12 @@ public class MenuService {
 
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
-    private final MenuProductRepository menuProductRequests;
     private final ProductRepository productRepository;
 
     public MenuService(MenuRepository menuRepository, MenuGroupRepository menuGroupRepository,
-                       MenuProductRepository menuProductRequests, ProductRepository productRepository) {
+                       ProductRepository productRepository) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
-        this.menuProductRequests = menuProductRequests;
         this.productRepository = productRepository;
     }
 
