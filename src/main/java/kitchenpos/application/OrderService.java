@@ -1,21 +1,16 @@
 package kitchenpos.application;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderCreateRequest;
-import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.dto.request.OrderUpdateRequest;
 import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.dto.response.OrdersResponse;
-import kitchenpos.exception.MenuNotFoundException;
 import kitchenpos.exception.OrderNotFoundException;
-import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.mapper.OrderMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,38 +18,25 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class OrderService {
 
-    private final MenuRepository menuRepository;
+    private final OrderMapper orderMapper;
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(
-            final MenuRepository menuRepository,
+            final OrderMapper orderMapper,
             final OrderRepository orderRepository,
             final OrderTableRepository orderTableRepository) {
-        this.menuRepository = menuRepository;
+        this.orderMapper = orderMapper;
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest request) {
-        List<OrderLineItem> orderLineItems = orderLineItems(request.getOrderLineItems());
-        Order order = request.toEntity(orderLineItems);
+        Order order = orderMapper.mappingToOrder(request);
         validateExistOrderTable(order);
         orderRepository.save(order);
         return OrderResponse.from(order);
-    }
-
-    private List<OrderLineItem> orderLineItems(final List<OrderLineItemRequest> requests) {
-        return requests.stream()
-                .map(this::toOrderLineItem)
-                .collect(Collectors.toList());
-    }
-
-    private OrderLineItem toOrderLineItem(final OrderLineItemRequest request) {
-        Menu menu = menuRepository.findById(request.getMenuId())
-                .orElseThrow(MenuNotFoundException::new);
-        return new OrderLineItem(menu, request.getQuantity());
     }
 
     private void validateExistOrderTable(final Order order) {
