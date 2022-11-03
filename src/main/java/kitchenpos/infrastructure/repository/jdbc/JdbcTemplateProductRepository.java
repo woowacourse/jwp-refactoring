@@ -18,6 +18,7 @@ import java.util.Optional;
 
 @Repository
 public class JdbcTemplateProductRepository implements ProductRepository {
+
     private static final String TABLE_NAME = "product";
     private static final String KEY_COLUMN_NAME = "id";
 
