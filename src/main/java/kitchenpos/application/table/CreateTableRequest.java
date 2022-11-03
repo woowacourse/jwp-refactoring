@@ -1,4 +1,4 @@
-package kitchenpos.ui.reqeust;
+package kitchenpos.application.table;
 
 public class CreateTableRequest {
 
