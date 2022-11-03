@@ -16,13 +16,15 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final MenuRepository menuRepository;
     private final OrderValidator orderValidator;
+    private final OrderMapper orderMapper;
 
 
     public OrderService(final OrderRepository orderRepository, final MenuRepository menuRepository,
-                        final OrderValidator orderValidator) {
+                        final OrderValidator orderValidator, final OrderMapper orderMapper) {
         this.orderRepository = orderRepository;
         this.menuRepository = menuRepository;
         this.orderValidator = orderValidator;
+        this.orderMapper = orderMapper;
     }
 
     @Transactional
@@ -33,7 +35,7 @@ public class OrderService {
                 .collect(Collectors.toList());
         final List<Menu> menus = menuRepository.findAllById(menuIds);
 
-        final Order order = orderCreateRequest.toOrder(menus);
+        final Order order = orderMapper.toOrder(orderCreateRequest, menus);
 
         order.place(orderValidator, menuIds);
 
