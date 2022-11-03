@@ -16,7 +16,7 @@ class PriceTest {
     void priceIsNull() {
         assertThatThrownBy(() -> new Price(null))
             .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("상품의 가격은 null 이 아니며 0원 이상이어야 합니다.");
+            .hasMessageContaining("가격은 null 이 아니며 0원 이상이어야 합니다.");
     }
 
     @DisplayName("가격은 0원 이상이어야 한다")
@@ -24,7 +24,7 @@ class PriceTest {
     void priceIsLowerZero() {
         assertThatThrownBy(() -> new Price(BigDecimal.valueOf(-1)))
             .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("상품의 가격은 null 이 아니며 0원 이상이어야 합니다.");
+            .hasMessageContaining("가격은 null 이 아니며 0원 이상이어야 합니다.");
     }
 
     @DisplayName("가격의 곱을 구한다")

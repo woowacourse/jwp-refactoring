@@ -28,6 +28,7 @@ import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderMenu;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.Product;
@@ -138,7 +139,8 @@ class OrderServiceTest {
     void list() {
         final int numberOfOrder = 5;
         for (int i = 0; i < numberOfOrder; i++) {
-            final OrderLineItem orderLineItem = new OrderLineItem(1L, 1);
+            final OrderMenu orderMenu = new OrderMenu("후라이드 치킨 세트", BigDecimal.valueOf(15_000));
+            final OrderLineItem orderLineItem = new OrderLineItem(orderMenu, 1);
             final Order order = 주문_1번의_주문_항목들은(저장된_주문_테이블.getId(), List.of(orderLineItem));
             orderRepository.save(order);
         }
@@ -151,7 +153,8 @@ class OrderServiceTest {
     @DisplayName("주문의 상태를 변경한다")
     @Test
     void changeOrderStatus() {
-        final OrderLineItem orderLineItem = new OrderLineItem(1L, 1);
+        final OrderMenu orderMenu = new OrderMenu("후라이드 치킨 세트", BigDecimal.valueOf(15_000));
+        final OrderLineItem orderLineItem = new OrderLineItem(orderMenu, 1);
         final Order order = 주문_1번의_주문_항목들은(저장된_주문_테이블.getId(), List.of(orderLineItem));
         final Order savedOrder = orderRepository.save(order);
         final OrderChangeRequest newOrder = new OrderChangeRequest(OrderStatus.COMPLETION.name());

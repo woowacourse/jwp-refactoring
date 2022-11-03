@@ -87,10 +87,8 @@ public class OrderService {
         return orderLineItems.stream()
             .map(request -> {
                 final Menu menu = findMenuById(request);
-                final OrderMenu savedOrderMenu = orderMenuRepository.save(
-                    new OrderMenu(menu.getName(), menu.getPrice())
-                );
-                return new OrderLineItem(savedOrderMenu.getId(), request.getQuantity());
+                final OrderMenu orderMenu = new OrderMenu(menu.getName(), menu.getPrice());
+                return new OrderLineItem(orderMenu, request.getQuantity());
             })
             .collect(Collectors.toUnmodifiableList());
     }

@@ -9,7 +9,7 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class Price {
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "price")
     private BigDecimal value;
 
     protected Price() {
