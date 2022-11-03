@@ -1,8 +1,10 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.table.OrderCompletionValidator;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.domain.table.TableGroup;
 import kitchenpos.domain.table.TableGroupRepository;
+import kitchenpos.domain.table.UngroupValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,10 +12,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class TableGroupService {
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final OrderCompletionValidator orderCompletionValidator;
+    private final UngroupValidator ungroupValidator;
 
-    public TableGroupService(final OrderTableRepository orderTableRepository, final TableGroupRepository tableGroupRepository) {
+    public TableGroupService(OrderTableRepository orderTableRepository, TableGroupRepository tableGroupRepository,
+                             OrderCompletionValidator orderCompletionValidator, UngroupValidator ungroupValidator) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.orderCompletionValidator = orderCompletionValidator;
+        this.ungroupValidator = ungroupValidator;
     }
 
     @Transactional
@@ -26,13 +33,13 @@ public class TableGroupService {
         }
 
         return TableGroupResponse.from(
-                tableGroupRepository.save(new TableGroup(orderTables))
+                tableGroupRepository.save(new TableGroup(orderTables, orderCompletionValidator))
         );
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
         var tableGroup = tableGroupRepository.getById(tableGroupId);
-        tableGroup.ungroup();
+        tableGroup.ungroup(ungroupValidator, orderCompletionValidator);
     }
 }

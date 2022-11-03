@@ -18,7 +18,9 @@ import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderValidator;
 import kitchenpos.domain.product.ProductRepository;
+import kitchenpos.domain.table.OrderCompletionValidator;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.domain.table.TableGroup;
@@ -52,6 +54,12 @@ class TableServiceTest {
 
     @Autowired
     ProductRepository productRepository;
+
+    @Autowired
+    OrderValidator orderValidator;
+
+    @Autowired
+    OrderCompletionValidator orderCompletionValidator;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -100,7 +108,7 @@ class TableServiceTest {
     void cannotChangeEmpty_ForOrderTableInTableGroup() {
         var orderTable1 = orderTableRepository.save(createEmptyTable());
         var orderTable2 = orderTableRepository.save(createEmptyTable());
-        var tableGroup = tableGroupRepository.save(new TableGroup(List.of(orderTable1, orderTable2)));
+        var tableGroup = tableGroupRepository.save(new TableGroup(List.of(orderTable1, orderTable2), orderCompletionValidator));
 
         var request = new ChangeEmptyRequest(true);
 
@@ -122,7 +130,8 @@ class TableServiceTest {
         var menu = menuRepository.save(aMenu(menuGroupId)
                 .withMenuProducts(List.of(new MenuProduct(product.getId(), 1L, product.getPrice())))
                 .build());
-        var order = orderRepository.save(new Order(orderTable, List.of(new OrderLineItem(menu.getId(), 1L))));
+        var order = orderRepository.save(
+                new Order(orderTable.getId(), List.of(new OrderLineItem(menu.getId(), 1L)), orderValidator));
 
         order.changeStatus(orderStatus);
         entityManager.flush();
@@ -147,7 +156,8 @@ class TableServiceTest {
         var menu = menuRepository.save(aMenu(menuGroupId)
                 .withMenuProducts(List.of(new MenuProduct(product.getId(), 1L, product.getPrice())))
                 .build());
-        var order = orderRepository.save(new Order(orderTable, List.of(new OrderLineItem(menu.getId(), 1L))));
+        var order = orderRepository.save(
+                new Order(orderTable.getId(), List.of(new OrderLineItem(menu.getId(), 1L)), orderValidator));
 
         order.changeStatus(OrderStatus.COMPLETION);
         entityManager.flush();

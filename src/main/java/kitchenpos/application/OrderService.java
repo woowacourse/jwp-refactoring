@@ -8,7 +8,7 @@ import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.order.OrderValidator;
 import kitchenpos.domain.table.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,23 +18,22 @@ public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderValidator orderValidator;
 
-    public OrderService(
-            final MenuRepository menuRepository,
-            final OrderRepository orderRepository,
-            final OrderTableRepository orderTableRepository
-    ) {
+    public OrderService(MenuRepository menuRepository, OrderRepository orderRepository,
+                        OrderTableRepository orderTableRepository, OrderValidator orderValidator) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
     public OrderResponse create(final OrderRequest request) {
-        final OrderTable orderTable = orderTableRepository.getById(request.getOrderTableId());
         return OrderResponse.from(
                 orderRepository.save(
-                        new Order(orderTable, mapToOrderLineItems(request.getOrderLineItems())))
+                        new Order(request.getOrderTableId(), mapToOrderLineItems(request.getOrderLineItems()),
+                                orderValidator))
         );
     }
 

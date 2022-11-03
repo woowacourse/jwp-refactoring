@@ -1,5 +1,6 @@
 package kitchenpos.domain.table;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -7,9 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import kitchenpos.domain.order.Order;
 
 @Entity
 @Table(name = "order_table")
@@ -19,12 +18,9 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
-
-    @OneToOne(mappedBy = "orderTable")
-    private Order order;
 
     @Column(name = "number_of_guests", nullable = false)
     private int numberOfGuests;
@@ -50,10 +46,6 @@ public class OrderTable {
         return this.tableGroup != null;
     }
 
-    public boolean isAbleToUngroup() {
-        return order.isComplete();
-    }
-
     public void changeNumberOfGuest(final int numberOfGuests) {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException("손님 수는 음수일 수 없습니다. numberOfGuests = " + numberOfGuests);
@@ -68,14 +60,12 @@ public class OrderTable {
         return empty;
     }
 
-    public void changeEmpty(final boolean empty) {
+    public void changeEmpty(final boolean empty, OrderCompletionValidator orderCompletionValidator) {
         if (isGrouped()) {
             throw new IllegalArgumentException(
                     String.format("단체 테이블에 속해있습니다. orderTableId = %d, tableGroupId = %d", id, tableGroup.getId()));
         }
-        if (order != null && !order.isComplete()) {
-            throw new IllegalArgumentException("요리 중 혹은 식사 중인 테이블입니다.");
-        }
+        orderCompletionValidator.validate(id);
         this.empty = empty;
     }
 
@@ -95,16 +85,11 @@ public class OrderTable {
         this.tableGroup = tableGroup;
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
-    }
-
     @Override
     public String toString() {
         return "OrderTable{" +
                 "id=" + id +
                 ", tableGroup=" + tableGroup +
-                ", order=" + order +
                 ", numberOfGuests=" + numberOfGuests +
                 ", empty=" + empty +
                 '}';

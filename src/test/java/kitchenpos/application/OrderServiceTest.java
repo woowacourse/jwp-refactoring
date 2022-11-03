@@ -18,6 +18,7 @@ import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderValidator;
 import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
@@ -48,6 +49,9 @@ class OrderServiceTest {
 
     @Autowired
     ProductRepository productRepository;
+
+    @Autowired
+    OrderValidator orderValidator;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -177,7 +181,7 @@ class OrderServiceTest {
         var menu = menuRepository.save(aMenu(menuGroupId)
                 .withMenuProducts(List.of(new MenuProduct(product.getId(), 1L, product.getPrice())))
                 .build());
-        var savedOrder = orderRepository.save(new Order(orderTable, List.of(new OrderLineItem(menu.getId(), 1L))));
+        var savedOrder = orderRepository.save(new Order(orderTable.getId(), List.of(new OrderLineItem(menu.getId(), 1L)), orderValidator));
 
         var response = sut.list();
 
@@ -207,7 +211,7 @@ class OrderServiceTest {
         var menu = menuRepository.save(aMenu(menuGroupId)
                 .withMenuProducts(List.of(new MenuProduct(product.getId(), 1L, product.getPrice())))
                 .build());
-        var order = orderRepository.save(new Order(orderTable, List.of(new OrderLineItem(menu.getId(), 1L))));
+        var order = orderRepository.save(new Order(orderTable.getId(), List.of(new OrderLineItem(menu.getId(), 1L)), orderValidator));
         order.changeStatus(OrderStatus.COMPLETION);
         entityManager.flush();
 
@@ -229,7 +233,7 @@ class OrderServiceTest {
         var menu = menuRepository.save(aMenu(menuGroupId)
                 .withMenuProducts(List.of(new MenuProduct(product.getId(), 1L, product.getPrice())))
                 .build());
-        var order = orderRepository.save(new Order(orderTable, List.of(new OrderLineItem(menu.getId(), 1L))));
+        var order = orderRepository.save(new Order(orderTable.getId(), List.of(new OrderLineItem(menu.getId(), 1L)), orderValidator));
 
         var request = new OrderStatusRequest("MEAL");
 

@@ -20,7 +20,9 @@ import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderValidator;
 import kitchenpos.domain.product.ProductRepository;
+import kitchenpos.domain.table.OrderCompletionValidator;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.domain.table.TableGroup;
@@ -57,6 +59,12 @@ class TableGroupServiceTest {
 
     @Autowired
     OrderRepository orderRepository;
+
+    @Autowired
+    OrderValidator orderValidator;
+
+    @Autowired
+    OrderCompletionValidator orderCompletionValidator;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -124,7 +132,7 @@ class TableGroupServiceTest {
         var orderTable1 = orderTableRepository.save(createEmptyTable());
         var orderTable2 = orderTableRepository.save(createEmptyTable());
         var orderTable3 = orderTableRepository.save(createEmptyTable());
-        var tableGroup = tableGroupRepository.save(new TableGroup(List.of(orderTable1, orderTable2)));
+        var tableGroup = tableGroupRepository.save(new TableGroup(List.of(orderTable1, orderTable2), orderCompletionValidator));
 
         var request = new TableGroupRequest(
                 List.of(new OrderTableRequest(orderTable1.getId()), new OrderTableRequest(orderTable3.getId()))
@@ -162,15 +170,17 @@ class TableGroupServiceTest {
         // given
         var orderTable1 = orderTableRepository.save(createEmptyTable());
         var orderTable2 = orderTableRepository.save(createEmptyTable());
-        var tableGroup = tableGroupRepository.save(new TableGroup(List.of(orderTable1, orderTable2)));
+        var tableGroup = tableGroupRepository.save(new TableGroup(List.of(orderTable1, orderTable2), orderCompletionValidator));
 
         var menuGroupId = menuGroupRepository.save(new MenuGroup("후라이드 치킨")).getId();
         var product = productRepository.save(aProduct().build());
         var menu = menuRepository.save(aMenu(menuGroupId)
                 .withMenuProducts(List.of(new MenuProduct(product.getId(), 1L, product.getPrice())))
                 .build());
-        var order1 = orderRepository.save(new Order(orderTable1, List.of(new OrderLineItem(menu.getId(), 1L))));
-        var order2 = orderRepository.save(new Order(orderTable2, List.of(new OrderLineItem(menu.getId(), 1L))));
+        var order1 = orderRepository.save(
+                new Order(orderTable1.getId(), List.of(new OrderLineItem(menu.getId(), 1L)), orderValidator));
+        var order2 = orderRepository.save(
+                new Order(orderTable2.getId(), List.of(new OrderLineItem(menu.getId(), 1L)), orderValidator));
         order1.changeStatus(orderStatus);
         order2.changeStatus(OrderStatus.COMPLETION);
         entityManager.flush();
@@ -193,13 +203,13 @@ class TableGroupServiceTest {
         var menu = menuRepository.save(aMenu(menuGroupId)
                 .withMenuProducts(List.of(new MenuProduct(product.getId(), 1L, product.getPrice())))
                 .build());
-        var order1 = orderRepository.save(new Order(orderTable1, List.of(new OrderLineItem(menu.getId(), 1L))));
-        var order2 = orderRepository.save(new Order(orderTable2, List.of(new OrderLineItem(menu.getId(), 1L))));
+        var order1 = orderRepository.save(new Order(orderTable1.getId(), List.of(new OrderLineItem(menu.getId(), 1L)), orderValidator));
+        var order2 = orderRepository.save(new Order(orderTable2.getId(), List.of(new OrderLineItem(menu.getId(), 1L)), orderValidator));
         order1.changeStatus(OrderStatus.COMPLETION);
         order2.changeStatus(OrderStatus.COMPLETION);
-        orderTable1.changeEmpty(true);
-        orderTable2.changeEmpty(true);
-        var tableGroup = tableGroupRepository.save(new TableGroup(List.of(orderTable1, orderTable2)));
+        orderTable1.changeEmpty(true, orderCompletionValidator);
+        orderTable2.changeEmpty(true, orderCompletionValidator);
+        var tableGroup = tableGroupRepository.save(new TableGroup(List.of(orderTable1, orderTable2), orderCompletionValidator));
 
         // when
         sut.ungroup(tableGroup.getId());

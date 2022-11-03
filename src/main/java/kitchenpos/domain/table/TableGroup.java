@@ -3,6 +3,7 @@ package kitchenpos.domain.table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
@@ -31,20 +32,21 @@ public class TableGroup {
     protected TableGroup() {
     }
 
-    public TableGroup(List<OrderTable> orderTables) {
+    public TableGroup(List<OrderTable> orderTables, OrderCompletionValidator orderCompletionValidator) {
         validateSize(orderTables);
         validateDuplicateOrderTable(orderTables);
         validateOrderTableStatus(orderTables);
-        addOrderTables(orderTables);
+        addOrderTables(orderTables, orderCompletionValidator);
     }
 
-    public void ungroup() {
+    public void ungroup(UngroupValidator ungroupValidator, OrderCompletionValidator orderCompletionValidator) {
+        var orderTableIds = orderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
+        ungroupValidator.validate(orderTableIds);
         for (OrderTable orderTable : orderTables) {
-            if (!orderTable.isAbleToUngroup()) {
-                throw new IllegalArgumentException("유효하지 않은 주문 상태입니다.");
-            }
             orderTable.setTableGroup(null);
-            orderTable.changeEmpty(false);
+            orderTable.changeEmpty(false, orderCompletionValidator);
         }
         orderTables.clear();
     }
@@ -67,15 +69,15 @@ public class TableGroup {
         }
     }
 
-    private void addOrderTables(List<OrderTable> orderTables) {
+    private void addOrderTables(List<OrderTable> orderTables, OrderCompletionValidator validator) {
         for (OrderTable orderTable : orderTables) {
-            setGroup(orderTable);
+            setGroup(orderTable, validator);
         }
         this.orderTables.addAll(orderTables);
     }
 
-    private void setGroup(OrderTable orderTable) {
-        orderTable.changeEmpty(false);
+    private void setGroup(OrderTable orderTable, OrderCompletionValidator validator) {
+        orderTable.changeEmpty(false, validator);
         orderTable.setTableGroup(this);
     }
 

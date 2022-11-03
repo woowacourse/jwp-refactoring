@@ -11,11 +11,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import kitchenpos.domain.table.OrderTable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.util.CollectionUtils;
@@ -29,9 +26,8 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "order_table_id", nullable = false)
-    private OrderTable orderTable;
+    @Column(name = "order_table_id", nullable = false, length = 20)
+    private Long orderTableId;
 
     @Column(name = "order_status", nullable = false)
     @Enumerated(value = EnumType.STRING)
@@ -47,20 +43,16 @@ public class Order {
     protected Order() {
     }
 
-    public Order(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
-        validateOrderTable(orderTable);
+    public Order(Long orderTableId, List<OrderLineItem> orderLineItems, OrderValidator orderValidator) {
+        orderValidator.validate(orderTableId);
         validateOrderLineItems(orderLineItems);
-        addOrderTable(orderTable);
+
+        this.orderTableId = orderTableId;
         addOrderLineItems(orderLineItems);
     }
 
     public boolean isComplete() {
         return orderStatus.isCompletion();
-    }
-
-    private void addOrderTable(OrderTable orderTable) {
-        this.orderTable = orderTable;
-        orderTable.setOrder(this);
     }
 
     private void addOrderLineItems(List<OrderLineItem> orderLineItems) {
@@ -84,12 +76,6 @@ public class Order {
         }
     }
 
-    private void validateOrderTable(OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("주문 테이블이 비어있습니다.");
-        }
-    }
-
     public void changeStatus(OrderStatus orderStatus) {
         if (this.orderStatus.isCompletion()) {
             throw new IllegalArgumentException("이미 완료된 주문입니다.");
@@ -97,8 +83,8 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public Long getId() {
@@ -121,7 +107,7 @@ public class Order {
     public String toString() {
         return "Order{" +
                 "id=" + id +
-                ", orderTableId=" + orderTable.getId() +
+                ", orderTableId=" + orderTableId +
                 ", orderStatus=" + orderStatus +
                 ", orderedTime=" + orderedTime +
                 ", orderLineItems=" + orderLineItems +
