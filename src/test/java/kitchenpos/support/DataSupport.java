@@ -5,22 +5,21 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuGroupRepository;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.ordertable.OrderTableRepository;
+import kitchenpos.domain.ordertable.TableGroup;
+import kitchenpos.domain.ordertable.TableGroupRepository;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,101 +29,87 @@ import org.springframework.transaction.annotation.Transactional;
 public class DataSupport {
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
     @Autowired
-    private MenuProductDao menuProductDao;
+    private TableGroupRepository tableGroupRepository;
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private OrderTableRepository orderTableRepository;
     @Autowired
-    private OrderTableDao orderTableDao;
-    @Autowired
-    private OrderDao orderDao;
-    @Autowired
-    private OrderLineItemDao orderLineItemDao;
+    private OrderRepository orderRepository;
 
-    public Product saveProduct(final String name, final BigDecimal price) {
-        final Product product = new Product();
-        product.setName(name);
-        product.setPrice(price);
-        return productDao.save(product);
+    public Product saveProduct(final String name, final int price) {
+        final Product product = Product.ofUnsaved(name, new BigDecimal(price));
+        return productRepository.save(product);
     }
 
     public MenuGroup saveMenuGroup(final String name) {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
-        return menuGroupDao.save(menuGroup);
+        final MenuGroup menuGroup = MenuGroup.ofUnsaved(name);
+        return menuGroupRepository.save(menuGroup);
     }
 
     public Menu saveMenu(final String name,
-                         final BigDecimal price,
+                         final int price,
                          final Long menuGroupId,
                          final MenuProduct... menuProducts) {
-        final Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroupId);
-        final Menu savedMenu = menuDao.save(menu);
-
-        final List<MenuProduct> savedMenuProducts = Arrays.stream(menuProducts)
-                .map(menuProduct -> {
-                    menuProduct.setMenuId(savedMenu.getId());
-                    return menuProductDao.save(menuProduct);
-                })
+        final Menu menu = Menu.ofUnsaved(name, new BigDecimal(price), menuGroupId);
+        final List<MenuProduct> mappedMenuProducts = Arrays.stream(menuProducts)
+                .map(menuProduct -> mapMenuToMenuProduct(menu, menuProduct))
                 .collect(Collectors.toList());
-        savedMenu.setMenuProducts(savedMenuProducts);
-        return savedMenu;
+        menu.changeMenuProducts(mappedMenuProducts);
+
+        return menuRepository.save(menu);
     }
 
     public TableGroup saveTableGroup() {
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        return tableGroupDao.save(tableGroup);
+        final OrderTable orderTable1 = saveOrderTable(0, true);
+        final OrderTable orderTable2 = saveOrderTable(0, true);
+        final TableGroup tableGroup = TableGroup.ofUnsaved(Arrays.asList(orderTable1, orderTable2));
+
+        return tableGroupRepository.save(tableGroup);
     }
 
     public OrderTable saveOrderTable(final int numberOfGuests, final boolean empty) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        return orderTableDao.save(orderTable);
+        final OrderTable orderTable = OrderTable.ofUnsaved(numberOfGuests, empty);
+        return orderTableRepository.save(orderTable);
     }
 
-    public OrderTable saveOrderTableWithGroup(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        return orderTableDao.save(orderTable);
+    public Order saveOrderWithoutItem(final Long orderTableId, final OrderStatus orderStatus) {
+        final Order order = new Order(null, orderTableId, orderStatus, LocalDateTime.now());
+
+        return orderRepository.save(order);
     }
 
-    public Order saveOrder(final Long orderTableId, final String orderStatus, final OrderLineItem... orderLineItems) {
-        final Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus(orderStatus);
-        order.setOrderedTime(LocalDateTime.now());
-        final Order savedOrder = orderDao.save(order);
-
-        final Long orderId = savedOrder.getId();
-        final List<OrderLineItem> savedOrderLineItems = Arrays.stream(orderLineItems)
-                .map(orderLineItem -> {
-                    orderLineItem.setOrderId(orderId);
-                    return orderLineItemDao.save(orderLineItem);
-                })
+    public Order saveOrder(final Long orderTableId, final OrderStatus orderStatus, final OrderLineItem... orderLineItems) {
+        final Order order = new Order(null, orderTableId, orderStatus, LocalDateTime.now());
+        final List<OrderLineItem> mappedOrderLineItems = Arrays.stream(orderLineItems)
+                .map(orderLineItem -> mapOrderToOrderLineItem(order, orderLineItem))
                 .collect(Collectors.toList());
-        savedOrder.setOrderLineItems(savedOrderLineItems);
-        return savedOrder;
+        order.changeOrderLineItems(mappedOrderLineItems);
+
+        orderRepository.save(order);
+        return order;
     }
 
     public OrderTable findOrderTable(final Long id) {
-        return orderTableDao.findById(id)
+        return orderTableRepository.findById(id)
                 .get();
     }
 
     public Order findOrder(final Long id) {
-        return orderDao.findById(id)
+        return orderRepository.findById(id)
                 .get();
+    }
+
+    private MenuProduct mapMenuToMenuProduct(final Menu menu, final MenuProduct menuProduct) {
+        return new MenuProduct(
+                null, menu, menuProduct.getProductId(), menuProduct.getQuantity(), menuProduct.getPrice());
+    }
+
+    private OrderLineItem mapOrderToOrderLineItem(final Order order, final OrderLineItem orderLineItem) {
+        return new OrderLineItem(null, order, orderLineItem.getMenuId(), orderLineItem.getQuantity());
     }
 }

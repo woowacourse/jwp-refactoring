@@ -1,12 +1,13 @@
 package kitchenpos.acceptance;
 
 import io.restassured.response.ValidatableResponse;
-import java.math.BigDecimal;
 import java.util.Arrays;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import java.util.List;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.product.Product;
+import kitchenpos.dto.request.MenuRequest;
+import kitchenpos.support.RequestBuilder;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,20 +20,15 @@ public class MenuAcceptanceTest extends AcceptanceTest {
     @Test
     void create() {
         // given
-        final Product savedProduct = dataSupport.saveProduct("참치마요", new BigDecimal(4000));
+        final int price = 4000;
+        final Product savedProduct = dataSupport.saveProduct("참치마요", price);
         final MenuGroup savedMenuGroup = dataSupport.saveMenuGroup("할인 상품");
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(savedProduct.getId());
-        menuProduct.setQuantity(1);
-
-        final Menu menu = new Menu();
-        menu.setName("참치마요");
-        menu.setPrice(new BigDecimal(3500));
-        menu.setMenuGroupId(savedMenuGroup.getId());
-        menu.setMenuProducts(Arrays.asList(menuProduct));
+        final List<MenuProduct> menuProducts = Arrays.asList(MenuProduct.ofUnsaved(null, savedProduct, 1L));
+        final int discountedPrice = price - 500;
 
         // when
-        final ValidatableResponse response = post("/api/menus", menu);
+        final MenuRequest request = RequestBuilder.ofMenu(savedMenuGroup, menuProducts, discountedPrice);
+        final ValidatableResponse response = post("/api/menus", request);
 
         // then
         response.statusCode(HttpStatus.CREATED.value())

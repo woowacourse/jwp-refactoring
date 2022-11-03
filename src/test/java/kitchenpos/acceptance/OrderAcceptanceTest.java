@@ -1,22 +1,23 @@
 package kitchenpos.acceptance;
 
 import io.restassured.response.ValidatableResponse;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.product.Product;
+import kitchenpos.dto.request.OrderRequest;
+import kitchenpos.dto.request.OrderStatusRequest;
+import kitchenpos.support.RequestBuilder;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
+@DisplayName("주문 관련 api")
 public class OrderAcceptanceTest extends AcceptanceTest {
 
     @DisplayName("주문을 등록한다.")
@@ -26,17 +27,9 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         final OrderTable savedTable = 손님이_있는_테이블_등록();
         final Menu savedMenu = 메뉴_등록();
 
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(savedMenu.getId());
-        orderLineItem.setQuantity(1);
-        final List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
-
-        final Order order = new Order();
-        order.setOrderTableId(savedTable.getId());
-        order.setOrderLineItems(orderLineItems);
-
         // when
-        final ValidatableResponse response = post("/api/orders", order);
+        final OrderRequest request = RequestBuilder.ofOrder(savedMenu, savedTable);
+        final ValidatableResponse response = post("/api/orders", request);
 
         // then
         response.statusCode(HttpStatus.CREATED.value())
@@ -60,16 +53,12 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         final OrderTable savedTable = 손님이_있는_테이블_등록();
         final Menu savedMenu = 메뉴_등록();
 
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(savedMenu.getId());
-        orderLineItem.setQuantity(1);
-
-        final Order savedOrder = dataSupport.saveOrder(savedTable.getId(), OrderStatus.COOKING.name(), orderLineItem);
-        final Order mealOrder = new Order();
-        mealOrder.setOrderStatus(OrderStatus.MEAL.name());
+        final OrderLineItem orderLineItem = OrderLineItem.ofUnsaved(null, savedMenu.getId(), 1);
+        final Order savedOrder = dataSupport.saveOrder(savedTable.getId(), OrderStatus.COOKING, orderLineItem);
 
         // when
-        final ValidatableResponse response = put("/api/orders/" + savedOrder.getId() + "/order-status", mealOrder);
+        final OrderStatusRequest request = RequestBuilder.ofOrderStatus(OrderStatus.MEAL);
+        final ValidatableResponse response = put("/api/orders/" + savedOrder.getId() + "/order-status", request);
 
         // then
         response.statusCode(HttpStatus.OK.value())
@@ -81,12 +70,11 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     }
 
     private Menu 메뉴_등록() {
-        final Product savedProduct = dataSupport.saveProduct("치킨마요", new BigDecimal(3500));
+        final int price = 3500;
+        final Product savedProduct = dataSupport.saveProduct("치킨마요", price);
         final MenuGroup savedMenuGroup = dataSupport.saveMenuGroup("추천 메뉴");
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(savedProduct.getId());
-        menuProduct.setQuantity(1);
-        final Menu savedMenu = dataSupport.saveMenu("치킨마요", new BigDecimal(3500), savedMenuGroup.getId(), menuProduct);
-        return savedMenu;
+
+        final MenuProduct menuProduct = MenuProduct.ofUnsaved(null, savedProduct, 1L);
+        return dataSupport.saveMenu("치킨마요", price, savedMenuGroup.getId(), menuProduct);
     }
 }

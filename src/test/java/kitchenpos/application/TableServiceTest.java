@@ -1,15 +1,17 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.ordertable.TableGroup;
+import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.support.DataSupport;
+import kitchenpos.support.RequestBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +30,12 @@ class TableServiceTest {
     @DisplayName("새로운 테이블을 등록할 수 있다.")
     @Test
     void create() {
-        // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(0);
-        orderTable.setEmpty(true);
+        // given, when
+        final OrderTableRequest request = RequestBuilder.ofEmptyTable();
+        final OrderTableResponse savedTable = tableService.create(request);
 
-        // when, then
-        assertThatCode(() -> tableService.create(orderTable))
-                .doesNotThrowAnyException();
+        // then
+        assertThat(savedTable.getId()).isNotNull();
     }
 
     @DisplayName("테이블의 전체 목록을 조회할 수 있다.")
@@ -44,15 +44,16 @@ class TableServiceTest {
         // given
         final OrderTable savedTable1 = dataSupport.saveOrderTable(0, true);
         final OrderTable savedTable2 = dataSupport.saveOrderTable(2, false);
+        final List<OrderTableResponse> expected = OrderTableResponse.from(Arrays.asList(savedTable1, savedTable2));
 
         // when
-        final List<OrderTable> orderTables = tableService.list();
+        final List<OrderTableResponse> responses = tableService.list();
 
         // then
-        assertThat(orderTables)
+        assertThat(responses)
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()
-                .isEqualTo(Arrays.asList(savedTable1, savedTable2));
+                .isEqualTo(expected);
     }
 
     @DisplayName("테이블이 비었는지 상태를 변경할 수 있다.")
@@ -61,11 +62,10 @@ class TableServiceTest {
         // given
         final OrderTable savedOrderTable = dataSupport.saveOrderTable(0, true);
         final Long orderTableId = savedOrderTable.getId();
-        final OrderTable notEmptyOrderTable = new OrderTable();
-        notEmptyOrderTable.setEmpty(false);
 
         // when
-        tableService.changeEmpty(orderTableId, notEmptyOrderTable);
+        final OrderTableRequest request = RequestBuilder.ofFullTable();
+        tableService.changeEmpty(orderTableId, request);
 
         // then
         final OrderTable changedTable = dataSupport.findOrderTable(orderTableId);
@@ -75,28 +75,23 @@ class TableServiceTest {
     @DisplayName("존재하지 않는 테이블의 상태를 변경하면 예외가 발생한다.")
     @Test
     void changeEmpty_throwsException_whenTableNotFound() {
-        // given
-        final OrderTable notEmptyOrderTable = new OrderTable();
-        notEmptyOrderTable.setEmpty(false);
-
-        // when, then
+        final OrderTableRequest request = RequestBuilder.ofFullTable();
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> tableService.changeEmpty(100L, notEmptyOrderTable));
+                .isThrownBy(() -> tableService.changeEmpty(0L, request));
     }
 
     @DisplayName("단체 지정된 테이블의 상태를 변경하면 예외가 발생한다.")
     @Test
     void changeEmpty_throwsException_whenHasGroup() {
         // given
-        final TableGroup savedTableGroup = dataSupport.saveTableGroup();
-        final OrderTable savedOrderTable = dataSupport.saveOrderTableWithGroup(savedTableGroup.getId(), 0, true);
-        final Long orderTableId = savedOrderTable.getId();
-        final OrderTable notEmptyOrderTable = new OrderTable();
-        notEmptyOrderTable.setEmpty(false);
+        final TableGroup tableGroup = dataSupport.saveTableGroup();
+        final OrderTable groupedTable = tableGroup.getOrderTables().get(0);
+        final Long orderTableId = groupedTable.getId();
 
         // when, then
+        final OrderTableRequest request = RequestBuilder.ofFullTable();
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> tableService.changeEmpty(orderTableId, notEmptyOrderTable));
+                .isThrownBy(() -> tableService.changeEmpty(orderTableId, request));
     }
 
     @DisplayName("조리중인 테이블의 상태를 변경하면 예외가 발생한다.")
@@ -105,14 +100,12 @@ class TableServiceTest {
         // given
         final OrderTable savedOrderTable = dataSupport.saveOrderTable(0, true);
         final Long orderTableId = savedOrderTable.getId();
-        final OrderTable notEmptyOrderTable = new OrderTable();
-        notEmptyOrderTable.setEmpty(false);
-
-        dataSupport.saveOrder(orderTableId, OrderStatus.COOKING.name());
+        dataSupport.saveOrderWithoutItem(orderTableId, OrderStatus.COOKING);
 
         // when, then
+        final OrderTableRequest request = RequestBuilder.ofFullTable();
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> tableService.changeEmpty(orderTableId, notEmptyOrderTable));
+                .isThrownBy(() -> tableService.changeEmpty(orderTableId, request));
     }
 
     @DisplayName("식사중인 테이블의 상태를 변경하면 예외가 발생한다.")
@@ -121,14 +114,12 @@ class TableServiceTest {
         // given
         final OrderTable savedOrderTable = dataSupport.saveOrderTable(0, true);
         final Long orderTableId = savedOrderTable.getId();
-        final OrderTable notEmptyOrderTable = new OrderTable();
-        notEmptyOrderTable.setEmpty(false);
-
-        dataSupport.saveOrder(orderTableId, OrderStatus.MEAL.name());
+        dataSupport.saveOrderWithoutItem(orderTableId, OrderStatus.MEAL);
 
         // when, then
+        final OrderTableRequest request = RequestBuilder.ofFullTable();
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> tableService.changeEmpty(orderTableId, notEmptyOrderTable));
+                .isThrownBy(() -> tableService.changeEmpty(orderTableId, request));
     }
 
     @DisplayName("테이블의 고객 수를 변경할 수 있다.")
@@ -136,51 +127,48 @@ class TableServiceTest {
     void changeNumberOfGuests() {
         final OrderTable savedOrderTable = dataSupport.saveOrderTable(0, false);
         final Long orderTableId = savedOrderTable.getId();
-        final OrderTable tableWith2Guests = new OrderTable();
-        tableWith2Guests.setNumberOfGuests(2);
+        final int numberOfGuests = 2;
 
         // when
-        tableService.changeNumberOfGuests(orderTableId, tableWith2Guests);
+        final OrderTableRequest request = RequestBuilder.ofTableWithGuests(numberOfGuests);
+        tableService.changeNumberOfGuests(orderTableId, request);
 
         // then
         final OrderTable changedTable = dataSupport.findOrderTable(orderTableId);
-        assertThat(changedTable.getNumberOfGuests()).isEqualTo(2);
+        assertThat(changedTable.getNumberOfGuests()).isEqualTo(numberOfGuests);
     }
 
     @DisplayName("존재하지 않는 테이블의 고객 수를 변경하면 예외가 발생한다.")
     @Test
     void changeNumberOfGuests_throwsException_ifTableNotFound() {
-        final OrderTable tableWith2Guests = new OrderTable();
-        tableWith2Guests.setNumberOfGuests(2);
-
-        // when, then
+        final OrderTableRequest request = RequestBuilder.ofTableWithGuests(2);
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> tableService.changeNumberOfGuests(100L, tableWith2Guests));
+                .isThrownBy(() -> tableService.changeNumberOfGuests(0L, request));
     }
 
     @DisplayName("테이블의 고객 수를 0보다 작게 변경하면 예외가 발생한다.")
     @Test
     void changeNumberOfGuests_throwsException_ifGuestsUnder0() {
+        // given
         final OrderTable savedOrderTable = dataSupport.saveOrderTable(0, false);
         final Long orderTableId = savedOrderTable.getId();
-        final OrderTable tableWithMinusGuests = new OrderTable();
-        tableWithMinusGuests.setNumberOfGuests(-1);
 
         // when, then
+        final OrderTableRequest request = RequestBuilder.ofTableWithGuests(-1);
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, tableWithMinusGuests));
+                .isThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, request));
     }
 
     @DisplayName("빈 테이블의 고객 수를 변경하면 예외가 발생한다.")
     @Test
     void changeNumberOfGuests_throwsException_ifEmpty() {
+        // given
         final OrderTable savedOrderTable = dataSupport.saveOrderTable(0, true);
         final Long orderTableId = savedOrderTable.getId();
-        final OrderTable tableWith2Guests = new OrderTable();
-        tableWith2Guests.setNumberOfGuests(2);
 
         // when, then
+        final OrderTableRequest request = RequestBuilder.ofTableWithGuests(2);
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, tableWith2Guests));
+                .isThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, request));
     }
 }

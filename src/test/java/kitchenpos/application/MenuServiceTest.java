@@ -1,20 +1,24 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.product.Product;
+import kitchenpos.dto.request.MenuRequest;
+import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.support.DataSupport;
+import kitchenpos.support.RequestBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,120 +27,102 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 class MenuServiceTest {
 
+    private static final int PRICE = 3500;
+
     @Autowired
     private MenuService menuService;
     @Autowired
     private DataSupport dataSupport;
 
     private MenuGroup savedMenuGroup;
+    private Product savedProduct;
     private List<MenuProduct> menuProducts;
 
     @BeforeEach
     void saveData() {
         savedMenuGroup = dataSupport.saveMenuGroup("추천 메뉴");
-
-        final Product savedProduct = dataSupport.saveProduct("치킨마요", new BigDecimal(3500));
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(savedProduct.getId());
-        menuProduct.setQuantity(1);
-        menuProducts = Arrays.asList(menuProduct);
+        this.savedProduct = dataSupport.saveProduct("치킨마요", PRICE);
+        this.menuProducts = Arrays.asList(MenuProduct.ofUnsaved(null, savedProduct, 1L));
     }
 
     @DisplayName("새로운 메뉴를 등록할 수 있다.")
-    @Test
-    void create() {
+    @ValueSource(ints = {1, 2, 3})
+    @ParameterizedTest(name = "상품 {0}개를 한 메뉴로 등록한다.")
+    void create(final int quantity) {
         // given
-        final Menu menu = new Menu();
-        menu.setName("치킨마요");
-        menu.setPrice(new BigDecimal(3500));
-        menu.setMenuGroupId(savedMenuGroup.getId());
-        menu.setMenuProducts(menuProducts);
+        final List<MenuProduct> menuProducts = Arrays.asList(MenuProduct.ofUnsaved(null, savedProduct, quantity));
 
-        // when, then
-        assertThatCode(() -> menuService.create(menu))
-                .doesNotThrowAnyException();
+        // when
+        final MenuRequest request = RequestBuilder.ofMenu(savedMenuGroup, menuProducts, PRICE * quantity);
+        final MenuResponse response = menuService.create(request);
+
+        // then
+        assertThat(response.getId()).isNotNull();
     }
 
     @DisplayName("메뉴를 등록할 때 상품이 존재하지 않으면 예외가 발생한다.")
     @Test
     void create_throwsException_ifProductNotFound() {
         // given
-        final MenuProduct fakeMenuProduct = new MenuProduct();
-        fakeMenuProduct.setProductId(100L);
-        fakeMenuProduct.setQuantity(1);
-
-        final Menu menu = new Menu();
-        menu.setName("치킨마요");
-        menu.setPrice(new BigDecimal(3500));
-        menu.setMenuGroupId(savedMenuGroup.getId());
-        menu.setMenuProducts(Arrays.asList(fakeMenuProduct));
+        final Product unsavedProduct = new Product(0L, "없는 메뉴", new BigDecimal(0));
+        final List<MenuProduct> menuProducts = Arrays.asList(MenuProduct.ofUnsaved(null, unsavedProduct, 1L));
 
         // when, then
+        final MenuRequest request = RequestBuilder.ofMenu(savedMenuGroup, menuProducts, PRICE);
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> menuService.create(menu));
+                .isThrownBy(() -> menuService.create(request));
     }
 
     @DisplayName("메뉴를 등록할 때 가격을 입력하지 않으면 예외가 발생한다.")
     @Test
     void create_throwsException_ifNoPrice() {
-        // given
-        final Menu menu = new Menu();
-        menu.setName("치킨마요");
-        menu.setMenuGroupId(savedMenuGroup.getId());
-        menu.setMenuProducts(menuProducts);
+        final MenuRequest request = RequestBuilder.ofMenu(savedMenuGroup, menuProducts, null);
 
-        // when, then
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> menuService.create(menu));
+                .isThrownBy(() -> menuService.create(request));
     }
 
-    @DisplayName("메뉴를 등록할 때 가격이 0보다 작으면 예외가 발생한다.")
-    @Test
-    void create_throwsException_ifPriceUnder0() {
-        // given
-        final Menu menu = new Menu();
-        menu.setName("치킨마요");
-        menu.setPrice(new BigDecimal(-1));
-        menu.setMenuGroupId(savedMenuGroup.getId());
-        menu.setMenuProducts(menuProducts);
-
-        // when, then
+    @ValueSource(ints = {-1, -500, -1000})
+    @ParameterizedTest(name = "메뉴를 등록할 때 가격이 0보다 작은 {0}이면 예외가 발생한다.")
+    void create_throwsException_ifPriceUnder0(final int price) {
+        final MenuRequest request = RequestBuilder.ofMenu(savedMenuGroup, menuProducts, price);
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> menuService.create(menu));
+                .isThrownBy(() -> menuService.create(request));
     }
 
-    @DisplayName("메뉴를 등록할 때 가격이 상품 가격의 총 합보다 크면 예외가 발생한다.")
-    @Test
-    void create_throwsException_ifPriceOverProduct() {
+    @ValueSource(ints = {1, 500, 1000})
+    @ParameterizedTest(name = "메뉴를 등록할 때 가격이 상품 가격의 총 합보다 크면 예외가 발생한다({0}만큼 초과).")
+    void create_throwsException_ifPriceOverProduct(final int addedAmount) {
         // given
-        final Menu menu = new Menu();
-        menu.setName("치킨마요");
-        menu.setPrice(new BigDecimal(3600));
-        menu.setMenuGroupId(savedMenuGroup.getId());
-        menu.setMenuProducts(menuProducts);
+        final int priceOverProduct = PRICE + addedAmount;
 
         // when, then
+        final MenuRequest request = RequestBuilder.ofMenu(savedMenuGroup, menuProducts, priceOverProduct);
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> menuService.create(menu));
+                .isThrownBy(() -> menuService.create(request));
     }
 
     @DisplayName("메뉴의 전체 목록을 조회할 수 있다.")
     @Test
     void list() {
         // given
-        final MenuProduct menuProduct = menuProducts.get(0);
+        final Product savedProduct = this.savedProduct;
+        final MenuProduct menuProduct = MenuProduct.ofUnsaved(null, savedProduct, 1L);
+        final int discountedPrice = PRICE - 500;
+
         final Menu savedMenu1 = dataSupport.saveMenu(
-                "치킨마요", new BigDecimal(3500), savedMenuGroup.getId(), menuProduct);
+                "치킨마요", PRICE, savedMenuGroup.getId(), menuProduct);
         final Menu savedMenu2 = dataSupport.saveMenu(
-                "더 비싼 치킨마요", new BigDecimal(4000), savedMenuGroup.getId(), menuProduct);
+                "할인된 치킨마요", discountedPrice, savedMenuGroup.getId(), menuProduct);
+        final List<MenuResponse> expected = MenuResponse.from(Arrays.asList(savedMenu1, savedMenu2));
 
         // when
-        final List<Menu> menus = menuService.list();
+        final List<MenuResponse> responses = menuService.list();
 
         // then
-        assertThat(menus)
+        assertThat(responses)
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()
-                .isEqualTo(Arrays.asList(savedMenu1, savedMenu2));
+                .isEqualTo(expected);
     }
 }

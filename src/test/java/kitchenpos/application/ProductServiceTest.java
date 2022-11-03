@@ -1,16 +1,19 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
+import kitchenpos.dto.request.ProductRequest;
+import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.support.DataSupport;
+import kitchenpos.support.RequestBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,55 +30,45 @@ class ProductServiceTest {
     @DisplayName("새로운 상품을 등록할 수 있다.")
     @Test
     void create() {
-        // given
-        final Product product = new Product();
-        product.setName("치킨마요");
-        product.setPrice(new BigDecimal(3500));
+        // given, when
+        final ProductRequest request = RequestBuilder.ofProduct();
+        final ProductResponse response = productService.create(request);
 
-        // when, then
-        assertThatCode(() -> productService.create(product))
-                .doesNotThrowAnyException();
+        // then
+        assertThat(response.getId()).isNotNull();
     }
 
     @DisplayName("상품을 등록할 때 상품 가격을 입력하지 않으면 예외가 발생한다.")
     @Test
     void create_throwsException_ifNoPrice() {
-        // given
-        final Product product = new Product();
-        product.setName("치킨마요");
-
-        // when, then
+        final ProductRequest request = RequestBuilder.ofProduct(null);
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> productService.create(product));
+                .isThrownBy(() -> productService.create(request));
     }
 
-    @DisplayName("상품을 등록할 때 상품 가격이 0보다 작으면 예외가 발생한다.")
-    @Test
-    void create_throwsException_ifPriceUnder0() {
-        // given
-        final Product product = new Product();
-        product.setName("치킨마요");
-        product.setPrice(new BigDecimal(-1));
-
-        // when, then
+    @ValueSource(ints = {-1, -500, -1000})
+    @ParameterizedTest(name = "상품을 등록할 때 상품 가격이 0보다 작은 {0}이면 예외가 발생한다.")
+    void create_throwsException_ifPriceUnder0(final int price) {
+        final ProductRequest request = RequestBuilder.ofProduct(price);
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> productService.create(product));
+                .isThrownBy(() -> productService.create(request));
     }
 
     @DisplayName("상품의 전체 목록을 조회할 수 있다.")
     @Test
     void list() {
         // given
-        final Product savedProduct1 = dataSupport.saveProduct("치킨마요", new BigDecimal(3500));
-        final Product savedProduct2 = dataSupport.saveProduct("참치마요", new BigDecimal(4000));
+        final Product savedProduct1 = dataSupport.saveProduct("치킨마요", 3500);
+        final Product savedProduct2 = dataSupport.saveProduct("참치마요", 4000);
+        final List<ProductResponse> expected = ProductResponse.from(Arrays.asList(savedProduct1, savedProduct2));
 
         // when
-        final List<Product> products = productService.list();
+        final List<ProductResponse> responses = productService.list();
 
         // then
-        assertThat(products)
+        assertThat(responses)
                 .usingRecursiveComparison()
                 .ignoringCollectionOrder()
-                .isEqualTo(Arrays.asList(savedProduct1, savedProduct2));
+                .isEqualTo(expected);
     }
 }
