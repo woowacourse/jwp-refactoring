@@ -28,7 +28,7 @@ import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.Product;
-import kitchenpos.repository.JpaMenuRepository;
+import kitchenpos.repository.MenuRepository;
 
 @SuppressWarnings("NonAsciiCharacters")
 @SpringBootTest
@@ -43,7 +43,7 @@ class MenuServiceTest {
     private MenuService menuService;
 
     @Autowired
-    private JpaMenuRepository menuRepository;
+    private MenuRepository menuRepository;
 
     private MenuGroup 저장된_치킨_세트;
     private Product 저장된_후라이드_치킨;
