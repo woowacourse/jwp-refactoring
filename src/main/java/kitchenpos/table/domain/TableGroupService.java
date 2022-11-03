@@ -2,12 +2,8 @@ package kitchenpos.table.domain;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.exception.OrderNotCompletionException;
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.dto.TableGroupCreateRequest;
 import kitchenpos.table.dto.TableGroupResponse;
 import org.springframework.stereotype.Service;
@@ -15,15 +11,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableGroupService {
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final OrderTableValidator orderTableValidator;
 
-    public TableGroupService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository,
-                             final TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
+    public TableGroupService(final OrderTableRepository orderTableRepository,
+                             final TableGroupRepository tableGroupRepository,
+                             final OrderTableValidator orderTableValidator) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.orderTableValidator = orderTableValidator;
     }
 
     @Transactional
@@ -73,10 +70,6 @@ public class TableGroupService {
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
-
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds,
-                Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new OrderNotCompletionException();
-        }
+        orderTableValidator.validate(orderTableIds);
     }
 }

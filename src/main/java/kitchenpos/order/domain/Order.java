@@ -64,6 +64,16 @@ public class Order {
         }
     }
 
+    public void place(final OrderValidator orderValidator) {
+        orderValidator.validate(this);
+        ordered();
+    }
+
+    private void ordered() {
+        this.orderStatus = OrderStatus.COOKING.name();
+        this.orderedTime = LocalDateTime.now();
+    }
+
     public void validateOrderLineItemSize(final long menuCount) {
         if (orderLineItems.size() != menuCount) {
             throw new OrderLineItemSizeException();

@@ -1,15 +1,11 @@
 package kitchenpos.order.domain;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.exception.NotFoundOrderException;
-import kitchenpos.exception.NotFoundOrderTableException;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.dto.OrderCreateRequest;
 import kitchenpos.order.dto.OrderResponse;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,16 +13,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
+    private final OrderValidator orderValidator;
+
 
     public OrderService(
             final MenuRepository menuRepository,
             final OrderRepository orderRepository,
-            final OrderTableRepository orderTableRepository
-    ) {
+            final OrderValidator orderValidator) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderTableRepository = orderTableRepository;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
@@ -34,14 +30,9 @@ public class OrderService {
         final Order order = orderCreateRequest.toOrder();
         validateOrderLineItemMatchMenu(order);
 
-        final OrderTable orderTable = orderTableRepository.findById(order.getOrderTableId())
-                .orElseThrow(NotFoundOrderTableException::new);
-        orderTable.validateOrderable();
+        order.place(orderValidator);
 
-        final Order newOrder = new Order(null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
-                order.getOrderLineItems());
-
-        final Order saved = orderRepository.save(newOrder);
+        final Order saved = orderRepository.save(order);
         return OrderResponse.from(saved);
     }
 

@@ -1,13 +1,9 @@
 package kitchenpos.table.domain;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.exception.NotFoundOrderException;
 import kitchenpos.exception.NotFoundOrderTableException;
-import kitchenpos.exception.OrderNotCompletionException;
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.dto.OrderTableCreateRequest;
 import kitchenpos.table.dto.OrderTableResponse;
 import org.springframework.stereotype.Service;
@@ -15,12 +11,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderTableValidator orderTableValidator;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(final OrderTableRepository orderTableRepository,
+                        final OrderTableValidator orderTableValidator) {
         this.orderTableRepository = orderTableRepository;
+        this.orderTableValidator = orderTableValidator;
     }
 
     @Transactional
@@ -43,16 +40,10 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(NotFoundOrderException::new);
 
-        validateOrderCompletion(orderTableId);
+        orderTableValidator.validate(orderTableId);
+
         savedOrderTable.updateEmpty(changeOrderEmpty);
         return OrderTableResponse.from(savedOrderTable);
-    }
-
-    private void validateOrderCompletion(final Long orderTableId) {
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId,
-                Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new OrderNotCompletionException();
-        }
     }
 
     @Transactional
