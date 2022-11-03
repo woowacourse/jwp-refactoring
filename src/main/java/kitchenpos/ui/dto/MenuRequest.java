@@ -24,7 +24,7 @@ public class MenuRequest {
     }
 
     public Menu toMenu() {
-        return new Menu(name, price, menuGroupId, toMenuProduct(menuProducts));
+        return Menu.of(name, price, menuGroupId, toMenuProduct(menuProducts));
     }
 
     private List<MenuProduct> toMenuProduct(List<MenuProductRequest> menuProducts) {

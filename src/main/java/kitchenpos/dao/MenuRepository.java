@@ -29,7 +29,7 @@ public class MenuRepository implements MenuDao {
             menuProducts.add(saveMenuProduct);
         }
 
-        menu.setMenuProducts(menuProducts);
+        menu.changeMenuProducts(menuProducts);
         return menu;
     }
 

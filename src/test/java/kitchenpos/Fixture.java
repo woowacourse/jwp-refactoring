@@ -29,7 +29,7 @@ public class Fixture {
     }
 
     public static Menu 메뉴(MenuGroup menuGroup, MenuProduct... menuProducts) {
-        return new Menu("햄버억", new BigDecimal(20_000), menuGroup.getId(), List.of(menuProducts));
+        return Menu.of("햄버억", new BigDecimal(20_000), menuGroup.getId(), List.of(menuProducts));
     }
 
     public static OrderTable 테이블(Long tableGroupId, boolean empty) {
