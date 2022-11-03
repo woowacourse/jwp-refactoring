@@ -14,7 +14,7 @@ public class MenuResponse {
     private List<MenuProductResponse> menuProducts;
 
     public MenuResponse(final Menu menu) {
-        this(menu.getId(), menu.getName(), menu.getPrice().getPrice(), menu.getMenuGroup().getId(),
+        this(menu.getId(), menu.getName(), menu.getPrice().getValue(), menu.getMenuGroup().getId(),
                 menu.getMenuProducts()
                         .stream()
                         .map(MenuProductResponse::new)

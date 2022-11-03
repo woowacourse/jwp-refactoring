@@ -87,7 +87,7 @@ class MenuServiceTest extends ServiceTest {
         void Should_ThrowIAE_When_ProductDoesNotExistInMenuProductList() {
             // given
             Product notSavedProduct = new Product(savedProduct.getId() + 1, savedProduct.getName(),
-                    savedProduct.getPrice().getPrice());
+                    savedProduct.getPrice().getValue());
             MenuProduct notSavedMenuProduct = new MenuProduct(notSavedProduct.getId(), 1L);
             MenuProductRequest menuProductRequest = new MenuProductRequest(notSavedProduct.getId(),
                     notSavedMenuProduct.getQuantity());

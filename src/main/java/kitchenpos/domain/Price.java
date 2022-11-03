@@ -10,15 +10,15 @@ public class Price {
 
     public static Price ZERO = new Price(BigDecimal.ZERO);
 
-    @Column
-    private BigDecimal price;
+    @Column(name = "price")
+    private BigDecimal value;
 
     protected Price() {
     }
 
-    public Price(final BigDecimal price) {
-        validatePositive(price);
-        this.price = price;
+    public Price(final BigDecimal value) {
+        validatePositive(value);
+        this.value = value;
     }
 
     private void validatePositive(final BigDecimal price) {
@@ -28,21 +28,21 @@ public class Price {
     }
 
     public Price add(final Price other) {
-        BigDecimal added = other.price.add(price);
+        BigDecimal added = other.value.add(value);
         return new Price(added);
     }
 
     public Price multiply(final long number) {
-        BigDecimal multiplied = price.multiply(BigDecimal.valueOf(number));
+        BigDecimal multiplied = value.multiply(BigDecimal.valueOf(number));
         return new Price(multiplied);
     }
 
     public boolean isGreaterThan(final Price other) {
-        return price.compareTo(other.price) > 0;
+        return value.compareTo(other.value) > 0;
     }
 
-    public BigDecimal getPrice() {
-        return price;
+    public BigDecimal getValue() {
+        return value;
     }
 
     @Override
@@ -54,11 +54,11 @@ public class Price {
             return false;
         }
         final Price price1 = (Price) o;
-        return Objects.equals(price, price1.price);
+        return Objects.equals(value, price1.value);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(price);
+        return Objects.hash(value);
     }
 }
