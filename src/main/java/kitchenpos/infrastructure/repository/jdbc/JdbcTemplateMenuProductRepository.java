@@ -1,4 +1,4 @@
-package kitchenpos.infrastructure.repository;
+package kitchenpos.infrastructure.repository.jdbc;
 
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuProductRepository;

@@ -1,4 +1,4 @@
-package kitchenpos.infrastructure.repository;
+package kitchenpos.infrastructure.repository.jdbc;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

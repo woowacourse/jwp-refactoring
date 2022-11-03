@@ -1,4 +1,4 @@
-package kitchenpos.infrastructure.repository;
+package kitchenpos.infrastructure.repository.jdbc;
 
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
