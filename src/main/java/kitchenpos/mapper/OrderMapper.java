@@ -6,6 +6,7 @@ import kitchenpos.dao.MenuRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderMenu;
 import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.exception.MenuNotFoundException;
@@ -34,6 +35,7 @@ public class OrderMapper {
     private OrderLineItem toOrderLineItem(final OrderLineItemRequest request) {
         Menu menu = menuRepository.findById(request.getMenuId())
                 .orElseThrow(MenuNotFoundException::new);
-        return new OrderLineItem(menu, request.getQuantity());
+        OrderMenu orderMenu = OrderMenu.from(menu);
+        return new OrderLineItem(orderMenu, request.getQuantity());
     }
 }

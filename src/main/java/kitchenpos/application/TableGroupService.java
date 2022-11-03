@@ -5,14 +5,14 @@ import static kitchenpos.domain.OrderStatus.MEAL;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.TableGroupCreateRequest;
 import kitchenpos.dto.response.TableGroupResponse;
 import kitchenpos.exception.TableGroupNotFoundException;
-import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.OrderTableRepository;
-import kitchenpos.dao.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
