@@ -1,5 +1,6 @@
 package kitchenpos.domain.menu;
 
+import java.math.BigDecimal;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -30,21 +31,24 @@ public class Menu {
     public Menu() {
     }
 
-    public Menu(final Long id, final String name, final MenuPrice menuPrice, final Long menuGroupId,
+    public Menu(final Long id, final String name, final BigDecimal menuPrice, final Long menuGroupId,
                 final List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
-        this.menuPrice = menuPrice;
+        this.menuPrice = new MenuPrice(menuPrice);
         this.menuGroupId = menuGroupId;
         this.menuProducts = new MenuProducts(menuProducts, this);
-        if (menuPrice.isExpensive(this.menuProducts.calculateEntirePrice())) {
-            throw new IllegalArgumentException("Menu 가격은 Product 가격의 합을 초과할 수 없습니다.");
-        }
     }
 
-    public Menu(final String name, final MenuPrice menuPrice, final Long menuGroupId,
+    public Menu(final String name, final BigDecimal menuPrice, final Long menuGroupId,
                 final List<MenuProduct> menuProducts) {
         this(null, name, menuPrice, menuGroupId, menuProducts);
+    }
+
+    public static Menu create(final String name, final BigDecimal menuPrice, final Long menuGroupId,
+                              final List<MenuProduct> menuProducts, final MenuValidator menuValidator) {
+        menuValidator.validate(menuGroupId, menuProducts, menuPrice);
+        return new Menu(null, name, menuPrice, menuGroupId, menuProducts);
     }
 
     public Long getId() {

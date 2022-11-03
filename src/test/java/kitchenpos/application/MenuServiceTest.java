@@ -5,6 +5,7 @@ import static kitchenpos.fixture.Fixture.한마리메뉴_생성요청;
 import static kitchenpos.fixture.Fixture.후라이드상품_생성요청;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.groups.Tuple.tuple;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
@@ -13,6 +14,7 @@ import java.util.List;
 import kitchenpos.application.request.MenuCreateRequest;
 import kitchenpos.application.request.MenuProductRequest;
 import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.product.Product;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,7 +73,7 @@ public class MenuServiceTest {
             private static final long NOT_EXIST_MENUGROUP_ID = -1L;
 
             private final MenuCreateRequest request = new MenuCreateRequest("메뉴", new BigDecimal(1000),
-                    NOT_EXIST_MENUGROUP_ID, null);
+                    NOT_EXIST_MENUGROUP_ID, new ArrayList<>());
 
             @Test
             void 예외가_발생한다() {
@@ -99,7 +101,7 @@ public class MenuServiceTest {
             void 예외가_발생한다() {
                 assertThatThrownBy(() -> menuService.create(request))
                         .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessage("존재하지 않는 Product 입니다.");
+                        .hasMessage("존재하지 않는 Product가 존재합니다.");
             }
         }
 
@@ -144,12 +146,15 @@ public class MenuServiceTest {
             @Test
             void Menu를_생성하고_반환한다() {
                 final Menu actual = menuService.create(request);
-
+                System.out.println(actual.getId());
                 assertAll(
                         () -> assertThat(actual.getId()).isNotNull(),
                         () -> assertThat(actual.getName()).isEqualTo("메뉴"),
                         () -> assertThat(actual.getMenuPrice().getValue()).isEqualByComparingTo(new BigDecimal(32000)),
-                        () -> assertThat(actual.getMenuGroupId()).isEqualTo(1L)
+                        () -> assertThat(actual.getMenuGroupId()).isEqualTo(1L),
+                        () -> assertThat(actual.getMenuProducts().getValue())
+                                .extracting(MenuProduct::getProductId, MenuProduct::getQuantity)
+                                .containsExactly(tuple(1L, 1L), tuple(2L, 1L))
                 );
             }
         }

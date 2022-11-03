@@ -1,6 +1,5 @@
 package kitchenpos.domain.menu;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -21,14 +20,6 @@ public class MenuProducts {
         for (MenuProduct menuProduct : menuProducts) {
             menuProduct.changeMenu(menu);
         }
-    }
-
-    public BigDecimal calculateEntirePrice() {
-        BigDecimal sum = BigDecimal.ZERO;
-        for (MenuProduct menuProduct : value) {
-            sum = sum.add(menuProduct.calculatePrice());
-        }
-        return sum;
     }
 
     public List<MenuProduct> getValue() {
