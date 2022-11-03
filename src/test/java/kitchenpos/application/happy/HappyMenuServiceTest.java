@@ -7,7 +7,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.ui.dto.request.MenuGroupRequest;
 import kitchenpos.ui.dto.request.MenuProductRequest;
 import kitchenpos.ui.dto.request.MenuRequest;
-import kitchenpos.ui.dto.request.ProductRequest;
+import kitchenpos.product.ui.request.ProductRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

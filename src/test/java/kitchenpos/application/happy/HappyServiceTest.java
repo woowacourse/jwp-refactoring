@@ -5,7 +5,7 @@ import kitchenpos.DatabaseCleaner;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.application.MenuService;
 import kitchenpos.application.OrderService;
-import kitchenpos.application.ProductService;
+import kitchenpos.product.application.ProductService;
 import kitchenpos.application.TableService;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;

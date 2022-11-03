@@ -1,10 +1,10 @@
-package kitchenpos.ui;
+package kitchenpos.product.ui;
 
 import java.net.URI;
 import java.util.List;
-import kitchenpos.application.ProductService;
-import kitchenpos.ui.dto.ProductResponse;
-import kitchenpos.ui.dto.request.ProductRequest;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.application.response.ProductResponse;
+import kitchenpos.product.ui.request.ProductRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

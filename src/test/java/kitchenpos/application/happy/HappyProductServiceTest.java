@@ -5,11 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.application.ProductService;
-import kitchenpos.dao.JpaProductRepository;
-import kitchenpos.domain.Product;
-import kitchenpos.ui.dto.ProductResponse;
-import kitchenpos.ui.dto.request.ProductRequest;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.domain.JpaProductRepository;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.application.response.ProductResponse;
+import kitchenpos.product.ui.request.ProductRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
