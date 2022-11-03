@@ -2,9 +2,6 @@ package kitchenpos.domain;
 
 import java.util.Objects;
 
-/**
- * 매장에서 주문이 발생하는 영역
- */
 public class OrderTable {
     private final Long id;
     private final Long tableGroupId;
