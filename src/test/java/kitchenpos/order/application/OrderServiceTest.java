@@ -1,7 +1,7 @@
 package kitchenpos.order.application;
 
 import static kitchenpos.order.fixture.OrderFixture.createOrder;
-import static kitchenpos.order.fixture.OrderTableFixture.createOrderTable;
+import static kitchenpos.table.fixture.OrderTableFixture.createOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -12,10 +12,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.OrderTable;
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.order.exception.NotFoundException;
 import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.order.repository.OrderTableRepository;
+import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.order.ui.dto.request.OrderCreateRequest;
 import kitchenpos.order.ui.dto.request.OrderLineItemDto;
 import kitchenpos.order.ui.dto.request.OrderStatusChangeRequest;
