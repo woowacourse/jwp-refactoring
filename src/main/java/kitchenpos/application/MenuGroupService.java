@@ -23,18 +23,18 @@ public class MenuGroupService {
         return toResponse(menuGroup);
     }
 
+    public List<MenuGroupResponse> list() {
+        List<MenuGroup> menuGroups = menuGroupDao.findAll();
+        return menuGroups.stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
+    }
+
     private MenuGroup toMenuGroup(MenuGroupRequest menuGroupRequest) {
         return new MenuGroup(menuGroupRequest.getName());
     }
 
     private MenuGroupResponse toResponse(MenuGroup menuGroup) {
         return new MenuGroupResponse(menuGroup.getId(), menuGroup.getName());
-    }
-
-    public List<MenuGroupResponse> list() {
-        List<MenuGroup> menuGroups = menuGroupDao.findAll();
-        return menuGroups.stream()
-                .map(this::toResponse)
-                .collect(Collectors.toList());
     }
 }

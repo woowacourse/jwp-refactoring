@@ -26,10 +26,10 @@ public class MenuProductRepository implements MenuProductDao {
         return getMenuProduct(save);
     }
 
-    private MenuProduct getMenuProduct(MenuProduct save) {
-        Long productId = save.getProductId();
+    private MenuProduct getMenuProduct(MenuProduct menuProduct) {
+        Long productId = menuProduct.getProductId();
         Price price = productDao.findById(productId).getPrice();
-        return new MenuProduct(save.getSeq(), save.getMenuId(), productId, save.getQuantity(), price);
+        return new MenuProduct(menuProduct.getSeq(), menuProduct.getMenuId(), productId, menuProduct.getQuantity(), price);
     }
 
     @Override

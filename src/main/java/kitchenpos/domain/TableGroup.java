@@ -6,13 +6,17 @@ import java.util.List;
 public class TableGroup {
     private final Long id;
     private final LocalDateTime createdDate;
-    private List<OrderTable> orderTables;
+    private Tables orderTables;
 
-    public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
-        validateTableSize(orderTables);
+    public TableGroup(Long id, LocalDateTime createdDate, Tables tables) {
+        validateTableSize(tables);
         this.id = id;
         this.createdDate = createdDate;
-        this.orderTables = orderTables;
+        this.orderTables = tables;
+    }
+
+    public TableGroup(LocalDateTime createdDate, Tables orderTables) {
+        this(null, createdDate, orderTables);
     }
 
     public TableGroup(Long id, LocalDateTime createdDate) {
@@ -20,25 +24,21 @@ public class TableGroup {
         this.createdDate = createdDate;
     }
 
-    private void validateTableSize(List<OrderTable> orderTables) {
+    private void validateTableSize(Tables orderTables) {
         if (orderTables.size() < 2) {
             throw new IllegalArgumentException("등록되는 테이블 수가 2 이상이어야 한다.");
         }
     }
 
     public void fillTables() {
-        for (final OrderTable table : orderTables) {
-            table.changeToFull();
-        }
+        orderTables.fillTables();
     }
 
     public void placeTableGroupId() {
-        for (final OrderTable table : orderTables) {
-            table.placeTableGroupId(id);
-        }
+        orderTables.placeTableGroupId(id);
     }
 
-    public void placeOrderTables(final List<OrderTable> orderTables) {
+    public void placeOrderTables(final Tables orderTables) {
         this.orderTables = orderTables;
     }
 
@@ -51,6 +51,6 @@ public class TableGroup {
     }
 
     public List<OrderTable> getOrderTables() {
-        return orderTables;
+        return orderTables.getValue();
     }
 }

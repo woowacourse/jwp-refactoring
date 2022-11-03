@@ -30,35 +30,15 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderRequest orderRequest) {
-        final OrderTable table = orderTableDao.findById(orderRequest.getOrderTableId());
-        table.validateTableIsFull();
+        final OrderTable table = orderTableDao.findById(orderRequest.getOrderTableId())
+                .validateTableIsFull();
 
-        Order order = new Order(null,
-                table.getId(),
+        Order order = new Order(table.getId(),
                 OrderStatus.COOKING.name(),
                 LocalDateTime.now(),
                 toOrderLineItems(orderRequest));
 
         return toOrderResponse(orderDao.save(order));
-    }
-
-    private OrderResponse toOrderResponse(Order order) {
-        return new OrderResponse(order.getId(), order.getOrderTableId(), order.getOrderStatus(),
-                order.getOrderedTime(), toOrderLineItemResponses(order));
-    }
-
-    private OrderLineItems toOrderLineItems(OrderRequest orderRequest) {
-        List<OrderLineItem> items = orderRequest.getOrderLineItems().stream()
-                .map(itemRequest -> new OrderLineItem(null, null, itemRequest.getMenuId(), itemRequest.getQuantity()))
-                .collect(Collectors.toList());
-        return new OrderLineItems(items);
-    }
-
-    private List<OrderLineItemResponse> toOrderLineItemResponses(Order savedOrder) {
-        return savedOrder.getOrderLineItems().stream()
-                .map(orderLineItem -> new OrderLineItemResponse(orderLineItem.getSeq(), orderLineItem.getOrderId(),
-                        orderLineItem.getMenuId(), orderLineItem.getQuantity())).collect(
-                        Collectors.toList());
     }
 
     public List<OrderResponse> list() {
@@ -70,9 +50,28 @@ public class OrderService {
 
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final ChangeOrderStatusRequest statusRequest) {
-        final Order order = orderDao.findById(orderId);
-        order.placeOrderStatus(statusRequest.getOrderStatus().name());
+        final Order order = orderDao.findById(orderId)
+                .placeOrderStatus(statusRequest.getOrderStatus().name());
         Order save = orderDao.save(order);
         return toOrderResponse(save);
+    }
+
+    private OrderResponse toOrderResponse(Order order) {
+        return new OrderResponse(order.getId(), order.getOrderTableId(), order.getOrderStatus(),
+                order.getOrderedTime(), toOrderLineItemResponses(order));
+    }
+
+    private OrderLineItems toOrderLineItems(OrderRequest orderRequest) {
+        List<OrderLineItem> items = orderRequest.getOrderLineItems().stream()
+                .map(itemRequest -> new OrderLineItem(itemRequest.getMenuId(), itemRequest.getQuantity()))
+                .collect(Collectors.toList());
+        return new OrderLineItems(items);
+    }
+
+    private List<OrderLineItemResponse> toOrderLineItemResponses(Order savedOrder) {
+        return savedOrder.getOrderLineItems().stream()
+                .map(orderLineItem -> new OrderLineItemResponse(orderLineItem.getSeq(), orderLineItem.getOrderId(),
+                        orderLineItem.getMenuId(), orderLineItem.getQuantity())).collect(
+                        Collectors.toList());
     }
 }

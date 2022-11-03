@@ -3,7 +3,7 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 
 public class MenuProduct {
-    private final Long seq;
+    private Long seq;
     private Long menuId;
     private final Long productId;
     private final long quantity;
@@ -43,5 +43,9 @@ public class MenuProduct {
 
     public BigDecimal getPrice() {
         return price.getPrice();
+    }
+
+    public void placeSeq(Long seq) {
+        this.seq = seq;
     }
 }

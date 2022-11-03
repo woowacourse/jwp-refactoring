@@ -2,7 +2,6 @@ package kitchenpos.dao.jdbctemplate;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
@@ -52,7 +51,7 @@ public class JdbcTemplateMenuDao {
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    public long countByIdIn(final List<Long> ids) {
+    public Long countByIdIn(final List<Long> ids) {
         final String sql = "SELECT COUNT(*) FROM menu WHERE id IN (:ids)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("ids", ids);
@@ -70,7 +69,6 @@ public class JdbcTemplateMenuDao {
         return new Menu(resultSet.getLong("id"),
                 resultSet.getString("name"),
                 resultSet.getBigDecimal("price"),
-                resultSet.getLong("menu_group_id"),
-                new ArrayList<>());
+                resultSet.getLong("menu_group_id"));
     }
 }

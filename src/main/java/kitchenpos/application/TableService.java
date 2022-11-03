@@ -26,18 +26,36 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse create(final OrderTableCreateRequest orderTable) {
-        OrderTable nullTable = new OrderTable(null, null,
-                orderTable.getNumberOfGuests(), orderTable.isEmpty());
+        OrderTable nullTable = new OrderTable(orderTable.getNumberOfGuests(), orderTable.isEmpty());
         return toOrderTableResponse(orderTableDao.save(nullTable));
+    }
+
+    public List<OrderTableResponse> list() {
+        return toOrderTableResponses(orderTableDao.findAll());
+    }
+
+    @Transactional
+    public OrderTableResponse changeEmpty(final Long orderTableId,
+                                          final OrderTableChangeEmptyRequest orderTableChangeEmptyRequest) {
+        validateOrdersCompleted(orderTableId);
+
+        final OrderTable orderTable = orderTableDao.findById(orderTableId)
+                .changeEmpty(orderTableChangeEmptyRequest.isEmpty());
+        return toOrderTableResponse(orderTableDao.save(orderTable));
+    }
+
+    @Transactional
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
+                                                   final TableGuestChangeRequest changeRequest) {
+        final OrderTable orderTable = orderTableDao.findById(orderTableId)
+                .validateTableIsFull()
+                .placeNumberOfGuests(changeRequest.getNumberOfGuests());
+        return toOrderTableResponse(orderTableDao.save(orderTable));
     }
 
     private OrderTableResponse toOrderTableResponse(OrderTable orderTable) {
         return new OrderTableResponse(orderTable.getId(), orderTable.getTableGroupId(),
                 orderTable.getNumberOfGuests(), orderTable.isEmpty());
-    }
-
-    public List<OrderTableResponse> list() {
-        return toOrderTableResponses(orderTableDao.findAll());
     }
 
     private List<OrderTableResponse> toOrderTableResponses(List<OrderTable> savedOrderTables) {
@@ -46,28 +64,10 @@ public class TableService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
-    public OrderTableResponse changeEmpty(final Long orderTableId,
-                                          final OrderTableChangeEmptyRequest orderTableChangeEmptyRequest) {
-        final OrderTable orderTable = orderTableDao.findById(orderTableId);
-        validateOrdersCompleted(orderTableId);
-        orderTable.changeEmpty(orderTableChangeEmptyRequest.isEmpty());
-        return toOrderTableResponse(orderTableDao.save(orderTable));
-    }
-
     private void validateOrdersCompleted(Long orderTableId) {
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException("테이블의 주문이 있다면 COMPLETION 상태여야 한다.");
         }
-    }
-
-    @Transactional
-    public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
-                                                   final TableGuestChangeRequest changeRequest) {
-        final OrderTable orderTable = orderTableDao.findById(orderTableId);
-        orderTable.validateTableIsFull();
-        orderTable.placeNumberOfGuests(changeRequest.getNumberOfGuests());
-        return toOrderTableResponse(orderTableDao.save(orderTable));
     }
 }

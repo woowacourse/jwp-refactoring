@@ -6,6 +6,7 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.dao.jdbctemplate.JdbcTemplateTableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.Tables;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Repository;
 
@@ -27,23 +28,19 @@ public class TableGroupRepository implements TableGroupDao {
         TableGroup save = tableGroupDao.save(entity);
 
         List<OrderTable> orderTables = entity.getOrderTables().stream()
-                .map(orderTable -> getTable(save.getId(), orderTable))
+                .map(orderTable -> tableRepository.findById(orderTable.getId()))
                 .collect(Collectors.toList());
-        save.placeOrderTables(orderTables);
+        save.placeOrderTables(new Tables(orderTables));
+        save.placeTableGroupId();
         return save;
-    }
-
-    private OrderTable getTable(Long id, OrderTable orderTable) {
-        OrderTable table = tableRepository.findById(orderTable.getId());
-        table.placeTableGroupId(id);
-        return table;
     }
 
     @Override
     public TableGroup findById(Long id) {
         TableGroup tableGroup = tableGroupDao.findById(id)
                 .orElseThrow(() -> new InvalidDataAccessApiUsageException("단체 지정은 존재해야 한다."));
-        tableGroup.placeOrderTables(tableRepository.findAllByTableGroupId(id));
+        Tables orderTables = new Tables(tableRepository.findAllByTableGroupId(id));
+        tableGroup.placeOrderTables(orderTables);
         return tableGroup;
     }
 

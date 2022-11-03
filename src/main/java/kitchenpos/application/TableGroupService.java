@@ -33,12 +33,11 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
-        final Tables orderTables = new Tables(getOrderTables(tableGroupRequest));
+        final Tables tables = new Tables(getOrderTables(tableGroupRequest));
+        tables.validate();
 
-        final TableGroup tableGroup = tableGroupDao.save(
-                new TableGroup(null, LocalDateTime.now(), orderTables.getOrderTables()));
+        final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), tables));
         tableGroup.fillTables();
-        tableGroup.placeTableGroupId();
 
         updateAllTables(tableGroup);
         return toTableGroupResponse(tableGroup);
@@ -61,7 +60,7 @@ public class TableGroupService {
         for (final OrderTable table : tableGroup.getOrderTables()) {
             orderTables.add(orderTableDao.save(table));
         }
-        tableGroup.placeOrderTables(orderTables);
+        tableGroup.placeOrderTables(new Tables(orderTables));
     }
 
     private TableGroupResponse toTableGroupResponse(TableGroup savedTableGroup) {

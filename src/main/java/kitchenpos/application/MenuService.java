@@ -33,48 +33,51 @@ public class MenuService {
     @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
         menuGroupDao.findById(menuRequest.getMenuGroupId());
-        final MenuProducts menuProducts = new MenuProducts(
-                new Price(menuRequest.getPrice()),
-                toMenuProducts(menuRequest.getMenuProducts()));
-
         final Menu menu = menuDao.save(toMenu(menuRequest));
-        menuProducts.changeAllMenuId(menu.getId());
 
-        return toMenuResponse(menu, toMenuProductResponses(menu.getId(), menu.getMenuProducts()));
+        final MenuProducts menuProducts = new MenuProducts(
+                menu.getId(),
+                new Price(menuRequest.getPrice()),
+                menu.getMenuProducts());
+        menu.placeMenuProducts(menuProducts);
+
+        return toMenuResponse(menu, toMenuProductResponses(menu));
+    }
+
+    public List<MenuResponse> list() {
+        final List<Menu> menus = menuDao.findAll();
+        return menus.stream()
+                .map(menu -> toMenuResponse(menu, toMenuProductResponses(menu)))
+                .collect(Collectors.toList());
     }
 
     private Menu toMenu(MenuRequest menuRequest) {
-        return new Menu(null, menuRequest.getName(), menuRequest.getPrice(),
+        return new Menu(menuRequest.getName(), menuRequest.getPrice(),
                 menuRequest.getMenuGroupId(),
-                toMenuProducts(menuRequest.getMenuProducts()));
+                new MenuProducts(toMenuProducts(menuRequest.getMenuProducts())));
     }
 
-    private List<MenuProduct> toMenuProducts(List<MenuProductRequest> savedMenuProducts) {
-        return savedMenuProducts.stream()
+    private List<MenuProduct> toMenuProducts(List<MenuProductRequest> menuProductRequests) {
+        return menuProductRequests.stream()
                 .map(this::toMenuProduct)
                 .collect(Collectors.toList());
     }
 
-    private MenuProduct toMenuProduct(MenuProductRequest mp) {
-        Long productId = mp.getProductId();
-        return new MenuProduct(productId, mp.getQuantity(), productRepository.findById(productId).getPrice());
+    private MenuProduct toMenuProduct(MenuProductRequest request) {
+        Long productId = request.getProductId();
+        long quantity = request.getQuantity();
+        Price price = productRepository.findById(productId).getPrice();
+        return new MenuProduct(productId, quantity, price);
     }
 
-    private List<MenuProductResponse> toMenuProductResponses(Long menuId, List<MenuProduct> savedMenuProducts) {
-        return savedMenuProducts.stream()
-                .map(mp -> new MenuProductResponse(mp.getSeq(), menuId, mp.getProductId(), mp.getQuantity()))
+    private List<MenuProductResponse> toMenuProductResponses(Menu menu) {
+        return menu.getMenuProducts().stream()
+                .map(mp -> new MenuProductResponse(mp.getSeq(), menu.getId(), mp.getProductId(), mp.getQuantity()))
                 .collect(Collectors.toList());
     }
 
     private MenuResponse toMenuResponse(Menu menu, List<MenuProductResponse> menuProductResponses) {
         return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(),
                 menu.getMenuGroupId(), menuProductResponses);
-    }
-
-    public List<MenuResponse> list() {
-        final List<Menu> menus = menuDao.findAll();
-        return menus.stream()
-                .map(menu -> toMenuResponse(menu, toMenuProductResponses(menu.getId(), menu.getMenuProducts())))
-                .collect(Collectors.toList());
     }
 }

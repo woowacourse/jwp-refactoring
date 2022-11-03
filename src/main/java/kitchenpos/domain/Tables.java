@@ -4,16 +4,15 @@ import java.util.List;
 import java.util.Objects;
 
 public class Tables {
-    private final List<OrderTable> orderTables;
+    private final List<OrderTable> value;
 
-    public Tables(List<OrderTable> orderTables) {
-        validate(orderTables);
-        this.orderTables = orderTables;
+    public Tables(List<OrderTable> value) {
+        this.value = value;
     }
 
-    private void validate(List<OrderTable> orderTables){
-        validateNoGroupedTable(orderTables);
-        validateTableIsEmpty(orderTables);
+    public void validate(){
+        validateNoGroupedTable(value);
+        validateTableIsEmpty(value);
     }
 
     private void validateTableIsEmpty(List<OrderTable> orderTables) {
@@ -38,7 +37,23 @@ public class Tables {
                 .anyMatch(orderTable -> Objects.nonNull(orderTable.getTableGroupId()));
     }
 
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
+    public List<OrderTable> getValue() {
+        return value;
+    }
+
+    public void fillTables() {
+        for (final OrderTable table : value) {
+            table.changeToFull();
+        }
+    }
+
+    public int size() {
+        return value.size();
+    }
+
+    public void placeTableGroupId(Long id) {
+        for (final OrderTable table : value) {
+            table.placeTableGroupId(id);
+        }
     }
 }

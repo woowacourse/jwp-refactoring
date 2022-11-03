@@ -19,13 +19,20 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public void placeOrderLineItems(final OrderLineItems orderLineItems) {
-        this.orderLineItems = orderLineItems;
+    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime,
+                 OrderLineItems orderLineItems) {
+        this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
-    public void placeOrderStatus(final String orderStatus) {
+    public Order placeOrderLineItems(final OrderLineItems orderLineItems) {
+        this.orderLineItems = orderLineItems;
+        return this;
+    }
+
+    public Order placeOrderStatus(final String orderStatus) {
         validateNoCompletion();
         this.orderStatus = orderStatus;
+        return this;
     }
 
     private void validateNoCompletion() {

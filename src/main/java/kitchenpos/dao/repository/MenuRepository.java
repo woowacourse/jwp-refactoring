@@ -1,11 +1,11 @@
 package kitchenpos.dao.repository;
 
-import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.dao.jdbctemplate.JdbcTemplateMenuDao;
 import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.jdbctemplate.JdbcTemplateMenuDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -31,10 +31,9 @@ public class MenuRepository implements MenuDao {
     }
 
     private void saveMenuProduct(Menu entity, Menu save) {
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        for (MenuProduct menuProduct : entity.getMenuProducts()) {
-            menuProduct.placeMenuId(save.getId());
-            menuProducts.add(menuProductRepository.save(menuProduct));
+        MenuProducts menuProducts = new MenuProducts(save.getId(), entity.getMenuProducts());
+        for (MenuProduct menuProduct : menuProducts.getMenuProducts()) {
+            menuProduct.placeSeq(menuProductRepository.save(menuProduct).getSeq());
         }
         save.placeMenuProducts(menuProducts);
     }
@@ -43,7 +42,7 @@ public class MenuRepository implements MenuDao {
     public Menu findById(Long id) {
         Menu menu = menuDao.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("메뉴는 DB에 등록되어야 한다"));
-        menu.placeMenuProducts(menuProductRepository.findAllByMenuId(menu.getId()));
+        menu.placeMenuProducts(new MenuProducts(menu.getId(), menuProductRepository.findAllByMenuId(menu.getId())));
         return menu;
     }
 
@@ -51,7 +50,7 @@ public class MenuRepository implements MenuDao {
     public List<Menu> findAll() {
         List<Menu> menus = menuDao.findAll();
         for (Menu menu : menus) {
-            menu.placeMenuProducts(menuProductRepository.findAllByMenuId(menu.getId()));
+            menu.placeMenuProducts(new MenuProducts(menu.getId(), menuProductRepository.findAllByMenuId(menu.getId())));
         }
         return menus;
     }

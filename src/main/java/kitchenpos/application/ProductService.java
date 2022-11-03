@@ -23,14 +23,14 @@ public class ProductService {
         return toResponse(productDao.save(toProduct(product)));
     }
 
-    private ProductResponse toResponse(Product product) {
-        return new ProductResponse(product.getId(), product.getName(), product.getPriceValue());
-    }
-
     public List<ProductResponse> list() {
         return productDao.findAll().stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
+    }
+
+    private ProductResponse toResponse(Product product) {
+        return new ProductResponse(product.getId(), product.getName(), product.getPriceValue());
     }
 
     private Product toProduct(ProductRequest product) {
