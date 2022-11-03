@@ -12,7 +12,7 @@ public class MenuProductTest {
     @Test
     void calculateAmount() {
         // given
-        MenuProduct menuProduct = new MenuProduct(null, new Product("상품1", 2000L), 2);
+        MenuProduct menuProduct = new MenuProduct(new Product("상품1", 2000L), 2);
 
         // when
         BigDecimal amount = menuProduct.getAmount();

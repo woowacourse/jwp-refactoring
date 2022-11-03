@@ -40,7 +40,6 @@ public class MenuApiService {
         List<MenuProduct> menuProducts = menuRequest.getMenuProducts()
                 .stream()
                 .map(it -> new MenuProduct(
-                        null,
                         productService.search(it.getProductId()),
                         it.getQuantity())
                 ).collect(Collectors.toList());

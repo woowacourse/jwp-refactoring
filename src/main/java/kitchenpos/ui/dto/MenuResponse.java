@@ -29,7 +29,7 @@ public class MenuResponse {
                 menu.getId(), menu.getName(), menu.getPrice().getPrice().intValue(), menu.getMenuGroup().getId(),
                 menu.getMenuProducts()
                         .stream()
-                        .map(MenuProductResponse::of)
+                        .map(it -> MenuProductResponse.of(it, menu.getId()))
                         .collect(Collectors.toList())
         );
     }

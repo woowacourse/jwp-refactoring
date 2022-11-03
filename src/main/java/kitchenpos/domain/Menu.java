@@ -30,7 +30,8 @@ public class Menu {
     @JoinColumn
     private MenuGroup menuGroup;
 
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "menu_id")
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     public Menu() {
@@ -38,7 +39,6 @@ public class Menu {
 
     public Menu(String name, Price price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
         validatePrice(price, menuProducts);
-        updateMenu(menuProducts);
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
@@ -53,10 +53,6 @@ public class Menu {
         if (productTotalPrice.compareTo(price.getPrice()) < 0) {
             throw new IllegalArgumentException();
         }
-    }
-
-    private void updateMenu(List<MenuProduct> menuProducts) {
-        menuProducts.forEach(menuProduct -> menuProduct.updateMenu(this));
     }
 
     public Long getId() {

@@ -91,7 +91,7 @@ public class OrderTableServiceTest extends IntegrationTest {
             MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
             Product product = productDao.save(new Product("상품", 1000L));
             Menu menu = menuDao.save(new Menu("메뉴", new Price(1000L), menuGroup,
-                    List.of(new MenuProduct(null, product, 2))));
+                    List.of(new MenuProduct(product, 2))));
             orderDao.save(new Order(orderTable, OrderStatus.COMPLETION.name(), LocalDateTime.now(),
                     List.of(new OrderLineItem(menu, 2))));
             // when
@@ -144,7 +144,7 @@ public class OrderTableServiceTest extends IntegrationTest {
             MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
             Product product = productDao.save(new Product("상품", 1000L));
             Menu menu = menuDao.save(new Menu("메뉴", new Price(1000L), menuGroup,
-                    List.of(new MenuProduct(null, product, 2))));
+                    List.of(new MenuProduct(product, 2))));
             orderDao.save(new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now(),
                     List.of(new OrderLineItem(menu, 2))));
 
