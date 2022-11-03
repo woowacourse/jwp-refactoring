@@ -62,8 +62,7 @@ public class OrderTable {
         }
 
         orders.stream()
-                .map(Order::getOrderStatus)
-                .filter(OrderStatus::isCompletion)
+                .filter(Order::isComplete)
                 .findAny()
                 .orElseThrow(IllegalArgumentException::new);
     }
@@ -117,7 +116,7 @@ public class OrderTable {
             return;
         }
         final boolean notCompletedOrder = orders.stream()
-                .anyMatch(it -> !OrderStatus.isCompletion(it.getOrderStatus()));
+                .anyMatch(it -> !it.isComplete());
         if (notCompletedOrder) {
             throw new IllegalArgumentException();
         }

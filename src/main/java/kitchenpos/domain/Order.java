@@ -34,6 +34,10 @@ public class Order {
         this.orderStatus = orderStatus.updateTo(orderStatusName);
     }
 
+    public boolean isComplete() {
+        return orderStatus.isCompletion();
+    }
+
     public Long getId() {
         return id;
     }
