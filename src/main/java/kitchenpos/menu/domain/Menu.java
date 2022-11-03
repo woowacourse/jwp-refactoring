@@ -25,7 +25,7 @@ public class Menu {
     @Embedded
     private Price price;
     private Long menuGroupId;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "menu_id", nullable = false)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 

@@ -51,7 +51,7 @@ public class MenuService {
     }
 
     private MenuProduct mapToMenuProduct(final MenuProductCreateRequest request) {
-        return new MenuProduct(request.getProductId(), request.getQuantity());
+        return new MenuProduct(request.getProductId(), request.getQuantity(), null);
     }
 
     public List<Menu> list() {

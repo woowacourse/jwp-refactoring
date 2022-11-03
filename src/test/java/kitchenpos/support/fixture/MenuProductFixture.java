@@ -9,6 +9,6 @@ public class MenuProductFixture {
     }
 
     public static MenuProduct createWithQuantity(final Long productId, final Long quantity) {
-        return new MenuProduct(null, productId, quantity);
+        return new MenuProduct( productId, quantity, null);
     }
 }

@@ -10,8 +10,8 @@ import kitchenpos.product.domain.Price;
 
 public class MenuFixture {
 
-    public static Menu createWithPrice(final Long menuGroupId, final Long price, final Long... products) {
-        return createWithIdAndPrice( menuGroupId, price, products);
+    public static Menu createWithPrice(final Long menuGroupId, final Long price, final Long... productIds) {
+        return createWithIdAndPrice( menuGroupId, price, productIds);
     }
 
     private static Menu createWithIdAndPrice(final Long menuGroupId, final Long price,
