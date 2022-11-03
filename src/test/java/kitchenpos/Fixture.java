@@ -17,7 +17,7 @@ import kitchenpos.domain.TableGroup;
 public class Fixture {
 
     public static Product 상품의_가격은(BigDecimal price) {
-        return new Product("맥도날드 페페로니 피자 버거", price);
+        return Product.of("맥도날드 페페로니 피자 버거", price);
     }
 
     public static MenuGroup 메뉴집합() {

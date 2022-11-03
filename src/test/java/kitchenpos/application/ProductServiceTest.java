@@ -18,7 +18,7 @@ class ProductServiceTest extends ServiceTest {
 
     @Test
     void 상품을_생성한다() {
-        Product productRequest = new Product("햄버거", new BigDecimal(10_000));
+        Product productRequest = Product.of("햄버거", new BigDecimal(10_000));
 
         ProductResponse actual = productService.create(productRequest);
 
@@ -27,14 +27,14 @@ class ProductServiceTest extends ServiceTest {
 
     @Test
     void 생성할때_가격이_존재하지_않는_경우_예외를_발생시킨다() {
-        assertThatThrownBy(() -> productService.create(new Product("햄버거", null)))
+        assertThatThrownBy(() -> productService.create(Product.of("햄버거", null)))
                 .isExactlyInstanceOf(IllegalArgumentException.class)
                 .hasMessage("price가 존재하지 않습니다.");
     }
 
     @Test
     void 생성할때_가격이_0보다_작은_경우_예외를_발생시킨다() {
-        assertThatThrownBy(() -> productService.create(new Product("햄버거", new BigDecimal(-1))))
+        assertThatThrownBy(() -> productService.create(Product.of("햄버거", new BigDecimal(-1))))
                 .isExactlyInstanceOf(IllegalArgumentException.class)
                 .hasMessage("price가 음수입니다.");
     }
