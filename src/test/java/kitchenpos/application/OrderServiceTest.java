@@ -40,7 +40,7 @@ import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.fixture.OrderTableFixture;
-import kitchenpos.repository.JpaOrderRepository;
+import kitchenpos.repository.OrderRepository;
 
 @SuppressWarnings("NonAsciiCharacters")
 @SpringBootTest
@@ -51,7 +51,7 @@ class OrderServiceTest {
     private OrderService orderService;
 
     @Autowired
-    private JpaOrderRepository orderRepository;
+    private OrderRepository orderRepository;
 
     private OrderTableDao orderTableDao;
 

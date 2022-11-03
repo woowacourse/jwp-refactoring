@@ -10,7 +10,7 @@ import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
-import kitchenpos.repository.JpaOrderRepository;
+import kitchenpos.repository.OrderRepository;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,12 +23,12 @@ import java.util.stream.Collectors;
 @Service
 public class OrderService {
 
-    private final JpaOrderRepository orderRepository;
+    private final OrderRepository orderRepository;
     private final MenuDao menuDao;
     private final OrderTableDao orderTableDao;
 
     public OrderService(
-            final JpaOrderRepository orderRepository,
+            final OrderRepository orderRepository,
             final MenuDao menuDao,
             final OrderTableDao orderTableDao
     ) {
