@@ -6,7 +6,9 @@ import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.dto.request.OrderStatusRequest;
 import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.menu.Menu;
 import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.order.MenuInfo;
 import kitchenpos.order.Order;
 import kitchenpos.order.OrderLineItem;
 import kitchenpos.order.OrderStatus;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
+
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
@@ -25,8 +28,7 @@ public class OrderService {
     public OrderService(
             final MenuRepository menuRepository,
             final OrderRepository orderRepository,
-            final OrderTableRepository orderTableRepository
-    ) {
+            final OrderTableRepository orderTableRepository) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
@@ -39,11 +41,7 @@ public class OrderService {
         final Order order = Order.ofUnsaved(orderTable);
 
         final List<OrderLineItemRequest> orderLineItemRequests = request.getOrderLineItems();
-        checkItemsHasEachMenu(orderLineItemRequests);
-
-        final List<OrderLineItem> orderLineItems = orderLineItemRequests.stream()
-                .map(orderLineItemRequest -> getOrderLineItemOf(order, orderLineItemRequest))
-                .collect(Collectors.toList());
+        final List<OrderLineItem> orderLineItems = getOrderLineItemsOf(order, orderLineItemRequests);
         order.changeOrderLineItems(orderLineItems);
 
         orderRepository.save(order);
@@ -66,8 +64,12 @@ public class OrderService {
         return OrderResponse.from(savedOrder);
     }
 
-    private OrderLineItem getOrderLineItemOf(final Order order, final OrderLineItemRequest orderLineItemRequest) {
-        return OrderLineItem.ofUnsaved(order, orderLineItemRequest.getMenuId(), orderLineItemRequest.getQuantity());
+    private List<OrderLineItem> getOrderLineItemsOf(final Order order,
+                                                    final List<OrderLineItemRequest> orderLineItemRequests) {
+        checkItemsHasEachMenu(orderLineItemRequests);
+        return orderLineItemRequests.stream()
+                .map(orderLineItemRequest -> getOrderLineItemOf(order, orderLineItemRequest))
+                .collect(Collectors.toList());
     }
 
     private void checkItemsHasEachMenu(final List<OrderLineItemRequest> orderLineItemRequests) {
@@ -77,5 +79,11 @@ public class OrderService {
         if (orderLineItemRequests.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
+    }
+
+    private OrderLineItem getOrderLineItemOf(final Order order, final OrderLineItemRequest orderLineItemRequest) {
+        final Menu menu = menuRepository.getOne(orderLineItemRequest.getMenuId());
+        final MenuInfo menuInfo = new MenuInfo(menu.getId(), menu.getName(), menu.getPrice());
+        return OrderLineItem.ofUnsaved(order, menuInfo, orderLineItemRequest.getQuantity());
     }
 }

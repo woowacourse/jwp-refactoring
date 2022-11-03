@@ -1,5 +1,6 @@
 package kitchenpos.order;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,18 +15,19 @@ public class OrderLineItem {
     private Long seq;
     @ManyToOne
     private Order order;
-    private Long menuId;
+    @Embedded
+    private MenuInfo menuInfo;
     private long quantity;
 
-    public OrderLineItem(final Long seq, final Order order, final Long menuId, final long quantity) {
+    public OrderLineItem(final Long seq, final Order order, final MenuInfo menuInfo, final long quantity) {
         this.seq = seq;
         this.order = order;
-        this.menuId = menuId;
+        this.menuInfo = menuInfo;
         this.quantity = quantity;
     }
 
-    public static OrderLineItem ofUnsaved(final Order order, final Long menuId, final long quantity) {
-        return new OrderLineItem(null, order, menuId, quantity);
+    public static OrderLineItem ofUnsaved(final Order order, final MenuInfo menuInfo, final long quantity) {
+        return new OrderLineItem(null, order, menuInfo, quantity);
     }
 
     public void order(final Order order) {
@@ -40,8 +42,12 @@ public class OrderLineItem {
         return order.getId();
     }
 
+    public MenuInfo getMenuInfo() {
+        return menuInfo;
+    }
+
     public Long getMenuId() {
-        return menuId;
+        return menuInfo.getId();
     }
 
     public long getQuantity() {

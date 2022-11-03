@@ -12,6 +12,7 @@ import kitchenpos.menu.Product;
 import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.menu.repository.ProductRepository;
+import kitchenpos.order.MenuInfo;
 import kitchenpos.order.Order;
 import kitchenpos.order.OrderLineItem;
 import kitchenpos.order.OrderStatus;
@@ -65,6 +66,14 @@ public class DataSupport {
         return menuRepository.save(menu);
     }
 
+    public MenuInfo saveMenuAndGetInfo(final String name,
+                         final int price,
+                         final Long menuGroupId,
+                         final MenuProduct... menuProducts) {
+        final Menu menu = saveMenu(name, price, menuGroupId, menuProducts);
+        return new MenuInfo(menu.getId(), menu.getName(), menu.getPrice());
+    }
+
     public OrderTable saveOrderTable(final int numberOfGuests, final boolean empty) {
         final OrderTable orderTable = OrderTable.ofUnsaved(numberOfGuests, empty);
         return orderTableRepository.save(orderTable);
@@ -90,7 +99,8 @@ public class DataSupport {
         return orderRepository.save(order);
     }
 
-    public Order saveOrder(final Long orderTableId, final OrderStatus orderStatus,
+    public Order saveOrder(final Long orderTableId,
+                           final OrderStatus orderStatus,
                            final OrderLineItem... orderLineItems) {
         final Order order = new Order(null, orderTableId, orderStatus, LocalDateTime.now());
         final List<OrderLineItem> mappedOrderLineItems = Arrays.stream(orderLineItems)
@@ -118,6 +128,6 @@ public class DataSupport {
     }
 
     private OrderLineItem mapOrderToOrderLineItem(final Order order, final OrderLineItem orderLineItem) {
-        return new OrderLineItem(null, order, orderLineItem.getMenuId(), orderLineItem.getQuantity());
+        return new OrderLineItem(null, order, orderLineItem.getMenuInfo(), orderLineItem.getQuantity());
     }
 }

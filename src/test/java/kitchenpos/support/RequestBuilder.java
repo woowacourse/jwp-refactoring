@@ -18,6 +18,7 @@ import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.menu.Menu;
 import kitchenpos.menu.MenuGroup;
 import kitchenpos.menu.MenuProduct;
+import kitchenpos.order.MenuInfo;
 import kitchenpos.order.OrderStatus;
 import kitchenpos.ordertable.OrderTable;
 
@@ -85,6 +86,10 @@ public class RequestBuilder {
 
     public static OrderRequest ofOrder(final Menu menu, final OrderTable orderTable) {
         return ofOrder(menu.getId(), orderTable.getId());
+    }
+
+    public static OrderRequest ofOrder(final MenuInfo menuInfo, final OrderTable orderTable) {
+        return ofOrder(menuInfo.getId(), orderTable.getId());
     }
 
     public static OrderRequest ofOrderWithoutMenu(final OrderTable orderTable) {
