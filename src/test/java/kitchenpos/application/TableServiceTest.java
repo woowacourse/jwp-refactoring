@@ -36,12 +36,10 @@ class TableServiceTest extends FakeSpringContext {
     void changeEmpty() {
         final var table = orderTableDao.save(notEmptyTable(2));
 
-        final var updatedTable = emptyTable(table.getId(), 2);
-
-        final var result = tableService.changeEmpty(table.getId(), updatedTable);
+        final var result = tableService.changeEmpty(table.getId(), true);
         assertAll(
                 () -> assertThat(result.getId()).isEqualTo(table.getId()),
-                () -> assertThat(result.isEmpty()).isEqualTo(updatedTable.isEmpty())
+                () -> assertThat(result.isEmpty()).isTrue()
         );
     }
 
@@ -57,10 +55,8 @@ class TableServiceTest extends FakeSpringContext {
 
         orderDao.save(order(table, OrderStatus.MEAL, pizzaMenu));
 
-        final var changed = emptyTable(2);
-
         assertThatThrownBy(
-                () -> tableService.changeEmpty(table.getId(), changed)
+                () -> tableService.changeEmpty(table.getId(), true)
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -68,13 +64,12 @@ class TableServiceTest extends FakeSpringContext {
     @Test
     void changeNumberOfGuests() {
         final var table = orderTableDao.save(notEmptyTable(2));
+        final var guests = 3;
 
-        final var updatedTable = notEmptyTable(3);
-
-        final var result = tableService.changeNumberOfGuests(table.getId(), updatedTable);
+        final var result = tableService.changeNumberOfGuests(table.getId(), guests);
         assertAll(
                 () -> assertThat(result.getId()).isEqualTo(table.getId()),
-                () -> assertThat(result.getNumberOfGuests()).isEqualTo(updatedTable.getNumberOfGuests())
+                () -> assertThat(result.getNumberOfGuests()).isEqualTo(guests)
         );
     }
 
@@ -83,10 +78,10 @@ class TableServiceTest extends FakeSpringContext {
     void changeNumberOfGuests_tableIsEmptyTrue_throwsException() {
         final var table = orderTableDao.save(emptyTable(2));
 
-        final var updatedTable = emptyTable(3);
+        final var guests = 3;
 
         assertThatThrownBy(
-                () -> tableService.changeNumberOfGuests(table.getId(), updatedTable)
+                () -> tableService.changeNumberOfGuests(table.getId(), guests)
         ).isInstanceOf(IllegalArgumentException.class);
     }
 

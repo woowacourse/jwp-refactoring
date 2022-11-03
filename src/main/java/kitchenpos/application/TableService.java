@@ -26,17 +26,17 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable request) {
+    public OrderTable changeEmpty(final Long orderTableId, final boolean status) {
         final OrderTable orderTable = orderTables.get(orderTableId);
-        orderTable.changeEmptyTo(request.isEmpty());
+        orderTable.changeEmptyTo(status);
 
         return orderTables.add(orderTable);
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable request) {
+    public OrderTable changeNumberOfGuests(final Long orderTableId, final int guests) {
         final OrderTable orderTable = orderTables.get(orderTableId);
-        orderTable.changeNumberOfGuests(request.getNumberOfGuests());
+        orderTable.changeNumberOfGuests(guests);
 
         return orderTables.add(orderTable);
     }
