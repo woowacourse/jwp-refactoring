@@ -5,9 +5,11 @@ import static org.assertj.core.api.Assertions.*;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.assertj.core.data.Percentage;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import kitchenpos.common.ServiceTest;
 import kitchenpos.menu.application.request.MenuGroupRequest;
@@ -22,13 +24,51 @@ public class MenuServiceTest extends ServiceTest {
     @DisplayName("메뉴를 등록한다.")
     void create() {
         // given
-        MenuRequest request = createMenuRequest();
+        ProductCreateRequest product = new ProductCreateRequest("후라이드", BigDecimal.valueOf(16000));
+        MenuRequest request = createMenuRequest(48000, 3, product);
 
         // when
         MenuResponse savedMenu = menuService.create(request);
 
         // then
         assertMenuWithRequest(request, savedMenu);
+    }
+
+    @Test
+    @DisplayName("가격이 음수이면 예외를 던진다.")
+    void create_price_negative() {
+        // given
+        MenuRequest request = createMenuRequest(-1);
+
+        // when, then
+        assertThatThrownBy(() -> menuService.create(request))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {48000, 47999})
+    @DisplayName("가격은 상품가격의 합보다 작거나 같아야 한다.")
+    void validatePriceUnderProductsSum(int priceValue) {
+        // given
+        ProductCreateRequest product = new ProductCreateRequest("후라이드", BigDecimal.valueOf(16000));
+        MenuRequest request = createMenuRequest(priceValue, 3, product);
+
+        // when, then
+        Assertions.assertDoesNotThrow(
+            () -> menuService.create(request));
+    }
+
+    @Test
+    @DisplayName("가격이 상품 가격의 합보다 크면 예외를 던진다.")
+    void validatePriceUnderProductsSum_exception() {
+        // given
+        ProductCreateRequest product = new ProductCreateRequest("후라이드", BigDecimal.valueOf(16000));
+        MenuRequest request = createMenuRequest(48001, 3, product);
+
+        // when, then
+        assertThatThrownBy(() -> menuService.create(request))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("price must be equal to or less than the sum of product prices");
     }
 
     @Test
@@ -45,18 +85,24 @@ public class MenuServiceTest extends ServiceTest {
     }
 
     private MenuRequest createMenuRequest() {
-        return createMenuRequest(48000);
+        ProductCreateRequest product = new ProductCreateRequest("후라이드", BigDecimal.valueOf(16000));
+        return createMenuRequest(48000, 3, product);
     }
 
-    private MenuRequest createMenuRequest(int priceValue) {
+    private MenuRequest createMenuRequest(final int priceValue) {
+        ProductCreateRequest product = new ProductCreateRequest("후라이드", BigDecimal.valueOf(16000));
+        return createMenuRequest(priceValue, 3, product);
+    }
+
+    private MenuRequest createMenuRequest(final int priceValue, final int quantity,
+        final ProductCreateRequest productCreateRequest) {
         MenuGroupRequest menuGroup = new MenuGroupRequest(NO_ID, "세마리메뉴");
         Long menuGroupId = menuGroupService.create(menuGroup).getId();
 
-        ProductCreateRequest product = new ProductCreateRequest("후라이드", BigDecimal.valueOf(16000));
-        Long productId = productService.create(product).getId();
+        Long productId = productService.create(productCreateRequest).getId();
 
         return new MenuRequest(NO_ID, "후라이드+후라이드+후라이드", new BigDecimal(priceValue), menuGroupId,
-            List.of(new MenuProductRequest(NO_ID, NO_ID, productId, 3)));
+            List.of(new MenuProductRequest(NO_ID, NO_ID, productId, quantity)));
     }
 
     private void assertMenuWithRequest(final MenuRequest request, final MenuResponse response) {
