@@ -5,7 +5,7 @@ import static kitchenpos.acceptance.fixture.MenuGroupStepDefinition.메뉴_그�
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.support.annotation.AcceptanceTest;
 import org.junit.jupiter.api.Test;
 

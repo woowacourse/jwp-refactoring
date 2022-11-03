@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import kitchenpos.application.dto.OrderResponse;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.support.annotation.AcceptanceTest;
 import org.junit.jupiter.api.Test;
 

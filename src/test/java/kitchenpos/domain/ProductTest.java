@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import static kitchenpos.support.fixture.ProductFixtures.*;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import kitchenpos.domain.product.Product;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 

@@ -5,7 +5,7 @@ import static kitchenpos.acceptance.fixture.ProductStepDefinition.상품을_생�
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
 import kitchenpos.support.annotation.AcceptanceTest;
 import org.junit.jupiter.api.Test;
 
