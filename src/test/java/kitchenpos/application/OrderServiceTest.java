@@ -6,6 +6,7 @@ import static kitchenpos.fixture.ProductFixture.짜장맛_떡볶이;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,7 +29,7 @@ import org.junit.jupiter.api.Test;
 @SuppressWarnings("NonAsciiCharacters")
 class OrderServiceTest extends ServiceTestBase {
 
-    private Long menuId;
+    private Menu menu;
     private Long orderTableId;
 
     @BeforeEach
@@ -41,12 +42,11 @@ class OrderServiceTest extends ServiceTestBase {
                 상품_생성(짜장맛_떡볶이)
         );
 
-        Menu menu = 떡볶이.toEntity(menuGroupId, menuProducts);
-        Menu savedMenu = menuDao.save(menu);
-        menuId = savedMenu.getId();
+        Menu newMenu = 떡볶이.toEntity(menuGroupId, menuProducts);
+        menu = menuDao.save(newMenu);
 
-        for (MenuProduct menuProduct : menu.getMenuProducts()) {
-            menuProduct.changeMenuId(menuId);
+        for (MenuProduct menuProduct : newMenu.getMenuProducts()) {
+            menuProduct.changeMenuId(menu.getId());
             menuProductDao.save(menuProduct);
         }
 
@@ -56,11 +56,12 @@ class OrderServiceTest extends ServiceTestBase {
     @Test
     void 주문_정상_생성() {
         // given
-        List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목());
-        Order order = 주문(orderTableId, orderLineItems);
+        OrderLineItemDto orderLineItem = new OrderLineItemDto(menu.getId(), 1);
+        List<OrderLineItemDto> orderLineItems = Collections.singletonList(orderLineItem);
+        OrderCreateRequest request = new OrderCreateRequest(orderTableId, orderLineItems);
 
         // when
-        OrderResponse savedOrder = orderService.create(toRequest(order));
+        OrderResponse savedOrder = orderService.create(request);
 
         // then
         Optional<Order> actual = orderDao.findById(savedOrder.getId());
@@ -155,11 +156,12 @@ class OrderServiceTest extends ServiceTestBase {
     }
 
     private OrderLineItem menuId가_null인_주문_항목() {
-        return 주문_항목(null);
+        Menu menu = new Menu("name", BigDecimal.valueOf(1000), null, new ArrayList<>());
+        return 주문_항목(menu);
     }
 
     private OrderLineItem 주문_항목() {
-        return 주문_항목(menuId);
+        return 주문_항목(menu);
     }
 
     private OrderCreateRequest toRequest(final Order order) {
@@ -169,7 +171,7 @@ class OrderServiceTest extends ServiceTestBase {
     private List<OrderLineItemDto> toDtos(final Order order) {
         return order.getOrderLineItems()
                 .stream()
-                .map(it -> new OrderLineItemDto(it.getMenuId(), it.getQuantity()))
+                .map(it -> new OrderLineItemDto(1L, it.getQuantity()))
                 .collect(Collectors.toList());
     }
 }

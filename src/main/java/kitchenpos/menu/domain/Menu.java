@@ -73,4 +73,15 @@ public class Menu {
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
     }
+
+    @Override
+    public String toString() {
+        return "Menu{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", menuGroupId=" + menuGroupId +
+                ", menuProducts=" + menuProducts +
+                '}';
+    }
 }

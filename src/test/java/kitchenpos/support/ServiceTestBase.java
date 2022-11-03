@@ -20,19 +20,19 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.order.application.OrderService;
-import kitchenpos.table.application.TableService;
 import kitchenpos.order.dao.OrderDao;
 import kitchenpos.order.dao.OrderLineItemDao;
-import kitchenpos.table.dao.OrderTableDao;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
 import kitchenpos.product.application.ProductService;
 import kitchenpos.product.dao.ProductDao;
 import kitchenpos.product.domain.Product;
 import kitchenpos.table.application.TableGroupService;
+import kitchenpos.table.application.TableService;
+import kitchenpos.table.dao.OrderTableDao;
 import kitchenpos.table.dao.TableGroupDao;
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -121,13 +121,13 @@ public class ServiceTestBase {
     }
 
     protected void 주문_생성(final Menu menu, final OrderTable orderTable, final OrderStatus orderStatus) {
-        List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목(menu.getId()));
+        List<OrderLineItem> orderLineItems = Collections.singletonList(주문_항목(menu));
         Order order = new Order(orderTable.getId(), orderStatus, LocalDateTime.now(), orderLineItems);
         orderDao.save(order);
     }
 
-    protected OrderLineItem 주문_항목(final Long menuId) {
-        return new OrderLineItem(null, null, menuId, 1);
+    protected OrderLineItem 주문_항목(final Menu menu) {
+        return new OrderLineItem(null, 1, menu.getName(), menu.getPrice());
     }
 
     protected Order 주문(final Long orderTableId, final List<OrderLineItem> orderLineItems) {

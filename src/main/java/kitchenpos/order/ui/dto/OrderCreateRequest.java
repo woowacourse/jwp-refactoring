@@ -17,12 +17,6 @@ public class OrderCreateRequest {
         this.orderLineItems = orderLineItems;
     }
 
-    public List<OrderLineItem> toOrderLineItems() {
-        return orderLineItems.stream()
-                .map(OrderLineItemDto::toEntity)
-                .collect(Collectors.toList());
-    }
-
     public Long getOrderTableId() {
         return orderTableId;
     }
