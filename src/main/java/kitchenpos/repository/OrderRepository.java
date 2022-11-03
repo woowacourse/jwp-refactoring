@@ -22,7 +22,7 @@ public interface OrderRepository extends Repository<Order, Long> {
 
     Optional<Order> findById(Long id);
 
-    @Query(value = "select o from Order o join fetch o.orderLineItems.orderLineItems")
+    @Query("select distinct o from Order o join fetch o.orderLineItems.orderLineItems")
     List<Order> findAll();
 
     boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<OrderStatus> orderStatuses);

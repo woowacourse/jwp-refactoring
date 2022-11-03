@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -86,5 +87,22 @@ public class Order {
 
     public OrderLineItems getOrderLineItems() {
         return orderLineItems;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Order)) {
+            return false;
+        }
+        Order order = (Order) o;
+        return Objects.equals(id, order.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }

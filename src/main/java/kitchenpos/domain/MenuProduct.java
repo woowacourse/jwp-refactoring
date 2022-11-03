@@ -46,7 +46,7 @@ public class MenuProduct {
         this(null, null, product, quantity);
     }
 
-    public void setMenu(final Menu menu) {
+    public void mapMenu(final Menu menu) {
         this.menu = menu;
     }
 

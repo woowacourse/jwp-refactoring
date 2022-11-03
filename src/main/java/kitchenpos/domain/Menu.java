@@ -1,17 +1,14 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 
 @Entity
 public class Menu {
@@ -25,8 +22,8 @@ public class Menu {
     private BigDecimal price;
     @Column(name = "menu_group_id", nullable = false)
     private Long menuGroupId;
-    @OneToMany(mappedBy = "menu", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MenuProduct> menuProducts = new ArrayList<>();
+    @Embedded
+    private MenuProducts menuProducts;
 
     protected Menu() {
     }
@@ -37,8 +34,7 @@ public class Menu {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProducts.addAll(menuProducts);
-        menuProducts.forEach(menuProduct -> menuProduct.setMenu(this));
+        this.menuProducts = new MenuProducts(this, menuProducts);
     }
 
     public Menu(final String name, final BigDecimal price, final Long menuGroupId,
@@ -62,7 +58,7 @@ public class Menu {
         return menuGroupId;
     }
 
-    public List<MenuProduct> getMenuProducts() {
+    public MenuProducts getMenuProducts() {
         return menuProducts;
     }
 
@@ -80,6 +76,6 @@ public class Menu {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(getId());
     }
 }
