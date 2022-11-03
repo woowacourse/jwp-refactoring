@@ -12,7 +12,7 @@ class MenuProductTest {
     @Test
     @DisplayName("calculateAmount 메서드는 메뉴 상품의 (수량 * 가격)의 값을 계산한다.")
     void calculateAmount() {
-        MenuProduct menuProduct = new MenuProduct(1L, 3, BigDecimal.valueOf(1000L));
+        MenuProduct menuProduct = new MenuProduct(1L, 3, Price.valueOf(BigDecimal.valueOf(1000L)));
         assertThat(menuProduct.calculateAmount()).isEqualTo(BigDecimal.valueOf(3000L));
     }
 }

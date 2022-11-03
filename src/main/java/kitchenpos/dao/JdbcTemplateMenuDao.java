@@ -91,14 +91,15 @@ public class JdbcTemplateMenuDao implements MenuDao {
         final String sql = "SELECT seq, menu_id, product_id, quantity FROM menu_product WHERE menu_id = (:menuId)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("menuId", menuId);
-        return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toMenuProduct(price, resultSet));
+        return jdbcTemplate.query(sql, parameters,
+                (resultSet, rowNumber) -> toMenuProduct(Price.valueOf(price), resultSet));
     }
 
-    private MenuProduct toMenuProduct(final BigDecimal price, final ResultSet resultSet) throws SQLException {
-        Long id = resultSet.getLong("seq");
-        Long menuId = resultSet.getLong("menu_id");
-        Long productId = resultSet.getLong("product_id");
-        Long quantity = resultSet.getLong("quantity");
+    private MenuProduct toMenuProduct(final Price price, final ResultSet resultSet) throws SQLException {
+        final Long id = resultSet.getLong("seq");
+        final Long menuId = resultSet.getLong("menu_id");
+        final Long productId = resultSet.getLong("product_id");
+        final Long quantity = resultSet.getLong("quantity");
         return new MenuProduct(id, menuId, productId, quantity, price);
     }
 }
