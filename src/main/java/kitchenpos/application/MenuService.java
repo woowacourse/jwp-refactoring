@@ -7,6 +7,7 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
+import kitchenpos.ui.dto.MenuRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +27,7 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final Menu request) {
+    public Menu create(final MenuRequest request) {
         final var menuGroup = menuGroups.get(request.getMenuGroupId());
         final var menuProducts = mapMenuProducts(request);
 
@@ -38,7 +39,7 @@ public class MenuService {
         );
     }
 
-    private List<MenuProduct> mapMenuProducts(final Menu request) {
+    private List<MenuProduct> mapMenuProducts(final MenuRequest request) {
         return request.getMenuProducts()
                 .stream()
                 .map(menuProductRequest -> {

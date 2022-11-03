@@ -11,9 +11,12 @@ import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.MenuRequest;
+import kitchenpos.ui.dto.MenuRequest.MenuInnerMenuProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -35,13 +38,29 @@ class MenuServiceTest extends FakeSpringContext {
         @Test
         void saveMenu() {
             final var menu = menu("피자와 콜라", italian, List.of(pizza, coke));
-            final var result = menuService.create(menu);
+            final var request = new MenuRequest(
+                    menu.getName(),
+                    menu.getPrice(),
+                    menu.getMenuGroupId(),
+                    mapToInnerRequests(menu)
+            );
+
+            final var result = menuService.create(request);
 
             assertAll(
                     () -> assertThat(result.getName()).isEqualTo(menu.getName()),
                     () -> assertThat(result.getMenuGroupId()).isEqualTo(menu.getMenuGroupId()),
                     () -> assertThat(result.getPrice().compareTo(menu.getPrice())).isEqualTo(0)
             );
+        }
+
+        private List<MenuInnerMenuProductRequest> mapToInnerRequests(final Menu menu) {
+            return menu.getMenuProducts()
+                    .stream()
+                    .map(menuProduct -> new MenuInnerMenuProductRequest(
+                            menuProduct.getProductId(),
+                            menuProduct.getQuantity()))
+                    .collect(Collectors.toList());
         }
 
         @DisplayName("메뉴 그룹이 존재하지 않는 값이라면")
@@ -54,9 +73,15 @@ class MenuServiceTest extends FakeSpringContext {
             @Test
             void throwsException() {
                 final var menu = new Menu(null, "피자와 콜라", BigDecimal.valueOf(0), notExistMenuGroupId);
+                final var request = new MenuRequest(
+                        menu.getName(),
+                        menu.getPrice(),
+                        menu.getMenuGroupId(),
+                        mapToInnerRequests(menu)
+                );
 
                 assertThatThrownBy(
-                        () -> menuService.create(menu)
+                        () -> menuService.create(request)
                 ).isInstanceOf(IllegalArgumentException.class);
             }
         }
