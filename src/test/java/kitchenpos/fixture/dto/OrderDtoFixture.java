@@ -3,13 +3,13 @@ package kitchenpos.fixture.dto;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.request.OrderLineItemRequest;
-import kitchenpos.dto.request.OrderRequest;
-import kitchenpos.dto.request.OrderStatusRequest;
-import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.order.dto.request.OrderLineItemRequest;
+import kitchenpos.order.dto.request.OrderRequest;
+import kitchenpos.order.dto.request.OrderStatusRequest;
+import kitchenpos.menu.dto.response.MenuResponse;
 
 public class OrderDtoFixture {
 

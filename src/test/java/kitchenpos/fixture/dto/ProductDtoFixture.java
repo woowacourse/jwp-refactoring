@@ -1,8 +1,8 @@
 package kitchenpos.fixture.dto;
 
 import java.math.BigDecimal;
-import kitchenpos.dto.request.ProductRequest;
-import kitchenpos.dto.response.ProductResponse;
+import kitchenpos.product.dto.request.ProductRequest;
+import kitchenpos.product.dto.response.ProductResponse;
 
 public class ProductDtoFixture {
 
