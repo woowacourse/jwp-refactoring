@@ -22,28 +22,28 @@ public class TableGroupTest {
         assertDoesNotThrow(() -> new TableGroup(List.of(orderTable1, orderTable2)));
     }
 
-    @Test
-    @DisplayName("주문 테이블이 빈 경우 예외를 던진다.")
-    void create_empty_table() {
-        // given
-        TableGroupValidator validator = new TableGroupValidator();
+    // @Test
+    // @DisplayName("주문 테이블이 빈 경우 예외를 던진다.")
+    // void create_empty_table() {
+    //     // given
+    //     TableGroupValidatorImpl validator = new TableGroupValidatorImpl(orderDao);
+    //
+    //     // when, then
+    //     assertThatThrownBy(() -> validator.validateOrderTables(List.of()))
+    //         .isInstanceOf(IllegalArgumentException.class);
+    // }
 
-        // when, then
-        assertThatThrownBy(() -> validator.validateOrderTables(List.of()))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    @DisplayName("주문 테이블크기가 2 미만인 경우 예외를 던진다.")
-    void create_table_under_size2() {
-        // given
-        OrderTable orderTable = new OrderTable(1, true);
-        TableGroupValidator validator = new TableGroupValidator();
-
-        // when, then
-        assertThatThrownBy(() -> validator.validateOrderTables(List.of(orderTable)))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
+    // @Test
+    // @DisplayName("주문 테이블크기가 2 미만인 경우 예외를 던진다.")
+    // void create_table_under_size2() {
+    //     // given
+    //     OrderTable orderTable = new OrderTable(1, true);
+    //     TableGroupValidatorImpl validator = new TableGroupValidatorImpl(orderDao);
+    //
+    //     // when, then
+    //     assertThatThrownBy(() -> validator.validateOrderTables(List.of(orderTable)))
+    //         .isInstanceOf(IllegalArgumentException.class);
+    // }
 
     @Test
     @DisplayName("테이블 그룹에서 주문 테이블 할당을 제거한다.")
@@ -54,7 +54,7 @@ public class TableGroupTest {
         TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now(), List.of(orderTable1, orderTable2));
 
         // when
-        tableGroup.ungroupOrderTables(List.of(orderTable1, orderTable2));
+        tableGroup.ungroupOrderTables();
 
         // then
         assertThat(orderTable1.getTableGroupId()).isNull();

@@ -1,8 +1,10 @@
 package kitchenpos.menu.application.request;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import kitchenpos.order.application.request.OrderTableRequest;
+import kitchenpos.order.domain.OrderTable;
 
 public class TableGroupRequest {
 
@@ -17,5 +19,11 @@ public class TableGroupRequest {
 
     public List<OrderTableRequest> getOrderTables() {
         return orderTables;
+    }
+
+    public List<OrderTable> toOrderTables() {
+        return orderTables.stream()
+            .map(OrderTableRequest::toEntity)
+            .collect(Collectors.toUnmodifiableList());
     }
 }

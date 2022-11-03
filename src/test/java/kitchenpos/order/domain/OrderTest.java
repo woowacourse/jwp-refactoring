@@ -3,8 +3,6 @@ package kitchenpos.order.domain;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -21,16 +19,21 @@ public class OrderTest {
         assertDoesNotThrow(this::createOrder);
     }
 
-    @Test
-    @DisplayName("OrderLineItem 이 empty 인 경우 예외를 반환한다.")
-    void validateOrderLineItems() {
-        // given
-        OrderValidator validator = new OrderValidator();
-
-        // when, then
-        assertThatThrownBy(() -> validator.validateOrderLineItems(List.of()))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
+    // @Test
+    // @DisplayName("OrderLineItem 이 empty 인 경우 예외를 반환한다.")
+    // void validateOrderLineItems() {
+    //     // given
+    //     OrderValidator validator = new OrderValidator() {
+    //         @Override
+    //         public void validate(final Order order) {
+    //
+    //         }
+    //     };
+    //
+    //     // when, then
+    //     assertThatThrownBy(() -> validator.validate(List.of()))
+    //         .isInstanceOf(IllegalArgumentException.class);
+    // }
 
     @ParameterizedTest
     @ValueSource(strings = {"MEAL", "COMPLETION"})
@@ -49,6 +52,6 @@ public class OrderTest {
     private Order createOrder() {
         OrderTable orderTable = new OrderTable(1, false);
         OrderLineItem orderLineItem = new OrderLineItem(noId, noId, noId, 1);
-        return new Order(orderTable);
+        return new Order();
     }
 }

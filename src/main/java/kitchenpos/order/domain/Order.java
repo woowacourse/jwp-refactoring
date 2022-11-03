@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -32,6 +33,9 @@ public class Order {
     @Column(name = "ordered_time")
     private LocalDateTime orderedTime;
 
+    @OneToMany(mappedBy = "orderId")
+    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+
     protected Order() {
     }
 
@@ -42,9 +46,12 @@ public class Order {
         this.orderedTime = orderedTime;
     }
 
-    public Order(final OrderTable orderTable) {
-        this(null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
-        orderTable.addOrder(this);
+    public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+        this.id = null;
+        this.orderTableId = orderTableId;
+        this.orderStatus = OrderStatus.COOKING.name();
+        this.orderedTime = LocalDateTime.now();
+        this.orderLineItems.addAll(orderLineItems);
     }
 
     public void changeStatus(final String orderStatus) {
@@ -72,6 +79,10 @@ public class Order {
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
+    }
+
+    public List<OrderLineItem> getOrderLineItems() {
+        return orderLineItems;
     }
 
     @Override

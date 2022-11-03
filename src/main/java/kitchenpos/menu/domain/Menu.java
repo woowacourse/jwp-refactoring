@@ -1,17 +1,18 @@
 package kitchenpos.menu.domain;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import kitchenpos.product.domain.Product;
 
 /**
  * MenuGroup에 속하는 실제 주문 가능 단위
@@ -33,31 +34,24 @@ public class Menu {
     @Column(name = "menu_group_id")
     private Long menuGroupId;
 
-    public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
-        this.menuGroupId = menuGroupId;
-        validatePrice(price);
-    }
+    @OneToMany(mappedBy = "menuId", cascade = CascadeType.PERSIST)
+    private List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected Menu() {
     }
 
-    public Menu(final String name, final BigDecimal price, final Long menuGroupId) {
-        this(null, name, price, menuGroupId);
+    public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
+        final List<MenuProduct> menuProducts) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.menuGroupId = menuGroupId;
+        this.menuProducts.addAll(menuProducts);
     }
 
-    public void addMenuProducts(final List<MenuProduct> menuProducts) {
-        for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(id);
-        }
-    }
-
-    private void validatePrice(final BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
+    public Menu(final String name, final BigDecimal price, final Long menuGroupId,
+        final List<MenuProduct> menuProducts) {
+        this(null, name, price, menuGroupId, menuProducts);
     }
 
     public Long getId() {
@@ -74,6 +68,10 @@ public class Menu {
 
     public Long getMenuGroupId() {
         return menuGroupId;
+    }
+
+    public List<MenuProduct> getMenuProducts() {
+        return List.copyOf(menuProducts);
     }
 
     @Override

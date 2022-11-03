@@ -1,6 +1,7 @@
 package kitchenpos.order.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -8,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -25,29 +27,30 @@ public class TableGroup {
     @Column(name = "created_date")
     private LocalDateTime createdDate;
 
+    @OneToMany(mappedBy = "tableGroupId")
+    private List<OrderTable> orderTables = new ArrayList<>();
+
     public TableGroup() {
         this.createdDate = LocalDateTime.now();
     }
 
-    public TableGroup(final Long id, final LocalDateTime createdDate) {
+    public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         this.id = id;
         this.createdDate = createdDate;
-    }
-
-    public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
-        this(id, createdDate);
+        this.orderTables.addAll(orderTables);
     }
 
     public TableGroup(final List<OrderTable> orderTables) {
-        this();
+        this(null, LocalDateTime.now(), orderTables);
     }
 
-    public void groupOrderTables(final List<OrderTable> orderTables) {
+    public void groupOrderTables() {
         for (final OrderTable orderTable : orderTables) {
             orderTable.group(id);
         }
     }
-    public void ungroupOrderTables(List<OrderTable> orderTables) {
+
+    public void ungroupOrderTables() {
         for (final OrderTable orderTable : orderTables) {
             orderTable.ungroup();
         }
@@ -59,5 +62,9 @@ public class TableGroup {
 
     public LocalDateTime getCreatedDate() {
         return createdDate;
+    }
+
+    public List<OrderTable> getOrderTables() {
+        return orderTables;
     }
 }

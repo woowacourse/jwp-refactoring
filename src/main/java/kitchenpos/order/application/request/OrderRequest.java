@@ -1,6 +1,9 @@
 package kitchenpos.order.application.request;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import kitchenpos.order.domain.OrderLineItem;
 
 public class OrderRequest {
 
@@ -34,5 +37,11 @@ public class OrderRequest {
 
     public List<OrderLineItemRequest> getOrderLineItemRequests() {
         return orderLineItemRequests;
+    }
+
+    public List<OrderLineItem> toOrderLineItems() {
+        return orderLineItemRequests.stream()
+            .map(OrderLineItemRequest::toEntity)
+            .collect(Collectors.toUnmodifiableList());
     }
 }

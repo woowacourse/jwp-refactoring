@@ -1,6 +1,6 @@
 package kitchenpos.order.domain;
 
-public interface TableGroupValidator {
+public interface TableUngroupValidator {
 
     void validate(final TableGroup tableGroup);
 }
