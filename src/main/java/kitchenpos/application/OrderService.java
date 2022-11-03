@@ -38,12 +38,6 @@ public class OrderService {
         this.orderTableDao = orderTableDao;
     }
 
-    private static void validateOrderStatus(Order savedOrder) {
-        if (savedOrder.isCompletion()) {
-            throw new IllegalArgumentException();
-        }
-    }
-
     public OrderResponse create(final OrderCreateRequest request) {
         final OrderTable orderTable = findOrderTable(request.getOrderTableId());
         final Order order = Order.from(orderTable);
@@ -121,6 +115,12 @@ public class OrderService {
                 updateOrder(savedOrder, request.getOrderStatus()),
                 orderLineItemDao.findAllByOrderId(orderId)
         );
+    }
+
+    private void validateOrderStatus(Order savedOrder) {
+        if (savedOrder.isCompletion()) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private Order updateOrder(Order savedOrder, OrderStatus orderStatus) {
