@@ -8,64 +8,61 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import javax.transaction.Transactional;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.dto.request.TableGroupCreateRequest;
+import kitchenpos.dto.response.TableGroupResponse;
+import kitchenpos.exception.CanNotGroupException;
+import kitchenpos.exception.NotEnoughForGroupingException;
+import kitchenpos.exception.OrderNotCompletionException;
+import kitchenpos.exception.OrderTableSizeException;
+import kitchenpos.support.fixtures.MenuFixtures;
+import kitchenpos.support.fixtures.MenuGroupFixtures;
+import kitchenpos.support.fixtures.OrderFixtures;
+import kitchenpos.support.fixtures.OrderLineItemFixtures;
+import kitchenpos.support.fixtures.OrderTableFixtures;
+import kitchenpos.support.fixtures.TableGroupFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
+@Sql("classpath:truncate.sql")
 @SpringBootTest
-@Transactional
-class TableGroupServiceTest {
-
-    @Autowired
-    private TableGroupService tableGroupService;
-
-    @Autowired
-    private OrderTableDao orderTableDao;
-
-    @Autowired
-    private OrderDao orderDao;
-
-    @Autowired
-    private TableGroupDao tableGroupDao;
+class TableGroupServiceTest extends ServiceTest {
 
     @Test
     @DisplayName("테이블 단체를 지정한다")
     void create() {
         // given
-        final OrderTable orderTable1 = new OrderTable();
-        orderTable1.setEmpty(true);
-        final OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
+        final OrderTable orderTable1 = OrderTableFixtures.createEmptyTable(null);
+        final OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
+        final OrderTableRequest orderTableRequest1 = new OrderTableRequest(savedOrderTable1.getId());
 
-        final OrderTable orderTable2 = new OrderTable();
-        orderTable2.setEmpty(true);
-        final OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
+        final OrderTable orderTable2 = OrderTableFixtures.createEmptyTable(null);
+        final OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
+        final OrderTableRequest orderTableRequest2 = new OrderTableRequest(savedOrderTable2.getId());
 
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList(savedOrderTable1, savedOrderTable2));
+        final TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(
+                Arrays.asList(orderTableRequest1, orderTableRequest2));
 
         // when
-        final TableGroup saved = tableGroupService.create(tableGroup);
+        final TableGroupResponse saved = tableGroupService.create(tableGroupCreateRequest);
 
         // then
         assertAll(
                 () -> assertThat(saved.getId()).isNotNull(),
-                () -> assertThat(saved.getCreatedDate()).isBeforeOrEqualTo(LocalDateTime.now()),
+                () -> assertThat(saved.getCreationDate()).isBeforeOrEqualTo(LocalDateTime.now()),
                 () -> assertThat(saved.getOrderTables()).extracting("id")
                         .hasSize(2)
                         .contains(savedOrderTable1.getId(), savedOrderTable2.getId()),
-                () -> assertThat(saved.getOrderTables()).extracting("tableGroupId")
-                        .containsExactly(saved.getId(), saved.getId()),
                 () -> assertThat(saved.getOrderTables()).extracting("empty")
                         .containsExactly(false, false)
         );
@@ -75,120 +72,125 @@ class TableGroupServiceTest {
     @DisplayName("주문 테이블이 비어있을 때 단체를 지정하려고 하면 예외가 발생한다")
     void createWithEmptyOrderTable() {
         // given
-        final TableGroup tableGroup = new TableGroup();
+        final TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(Collections.emptyList());
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
+                .isExactlyInstanceOf(NotEnoughForGroupingException.class);
     }
 
     @Test
     @DisplayName("주문 테이블이 1개 이하일 때 단체를 지정하려고 하면 예외가 발생한다")
     void createWithFewOrderTable() {
         // given
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Collections.singletonList(new OrderTable()));
+        final OrderTable orderTable = OrderTableFixtures.createEmptyTable(null);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(savedOrderTable.getId());
+
+        final TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(
+                Collections.singletonList(orderTableRequest));
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
+                .isExactlyInstanceOf(NotEnoughForGroupingException.class);
     }
 
     @Test
     @DisplayName("존재하지 않은 주문 테이블에 대해서 단체를 지정하려고 하면 예외가 발생한다")
     void createWithNotExistOrderTables() {
         // given
-        final TableGroup tableGroup = new TableGroup();
-        final List<OrderTable> orderTables = Arrays.asList(new OrderTable(), new OrderTable());
-        tableGroup.setOrderTables(orderTables);
+        final OrderTableRequest orderTableRequest1 = new OrderTableRequest(-1L);
+        final OrderTableRequest orderTableRequest2 = new OrderTableRequest(-2L);
+
+        final TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(
+                Arrays.asList(orderTableRequest1, orderTableRequest2));
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
+                .isExactlyInstanceOf(OrderTableSizeException.class);
     }
 
     @Test
     @DisplayName("주문을 등록할 수 없는 주문 테이블에 대해서 단체를 지정하려고 하면 예외가 발생한다")
     void createWithNotEmptyOrderTables() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        final OrderTable NotEmptyOrderTable = orderTableDao.save(orderTable);
-        final OrderTable emptyOrderTable = orderTableDao.save(new OrderTable());
+        final OrderTable orderTable1 = OrderTableFixtures.createWithGuests(null, 2);
+        final OrderTable NotEmptyOrderTable = orderTableRepository.save(orderTable1);
+        final OrderTableRequest NotEmptyOrderTableRequest = new OrderTableRequest(NotEmptyOrderTable.getId());
 
-        final TableGroup tableGroup = new TableGroup();
-        final List<OrderTable> orderTables = Arrays.asList(NotEmptyOrderTable, emptyOrderTable);
-        tableGroup.setOrderTables(orderTables);
+        final OrderTable orderTable2 = OrderTableFixtures.createEmptyTable(null);
+        final OrderTable emptyOrderTable = orderTableRepository.save(orderTable2);
+        final OrderTableRequest emptyOrderTableRequest = new OrderTableRequest(emptyOrderTable.getId());
+
+        final TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(
+                Arrays.asList(NotEmptyOrderTableRequest, emptyOrderTableRequest));
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
+                .isExactlyInstanceOf(CanNotGroupException.class);
     }
 
     @Test
     @DisplayName("이미 단체로 지정된 주문 테이블에 대해서 단체를 지정하려고 하면 예외가 발생한다")
     void createWithAlreadyGroupedOrderTables() {
         // given
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        final TableGroup alreadyGroupedTable = tableGroupDao.save(tableGroup);
+        final TableGroup tableGroup = TableGroupFixtures.create();
+        final TableGroup alreadyGroupedTable = tableGroupRepository.save(tableGroup);
 
-        final OrderTable orderTable1 = new OrderTable();
-        orderTable1.setEmpty(true);
-        orderTable1.setTableGroupId(alreadyGroupedTable.getId());
-        final OrderTable alreadyGroupedOrderTable1 = orderTableDao.save(orderTable1);
+        final OrderTable orderTable1 = OrderTableFixtures.createWithGuests(alreadyGroupedTable, 2);
+        final OrderTable alreadyGroupedOrderTable1 = orderTableRepository.save(orderTable1);
+        final OrderTableRequest alreadyGroupedOrderTableRequest = new OrderTableRequest(
+                alreadyGroupedOrderTable1.getId());
 
-        final OrderTable orderTable2 = new OrderTable();
-        orderTable2.setEmpty(true);
-        orderTable2.setTableGroupId(alreadyGroupedTable.getId());
-        orderTableDao.save(orderTable2);
+        final OrderTable orderTable2 = OrderTableFixtures.createWithGuests(alreadyGroupedTable, 2);
+        orderTableRepository.save(orderTable2);
 
-        final OrderTable orderTable3 = new OrderTable();
-        orderTable3.setEmpty(true);
-        final OrderTable orderTable = orderTableDao.save(orderTable3);
+        final OrderTable orderTable3 = OrderTableFixtures.createWithGuests(null, 2);
+        final OrderTable orderTable = orderTableRepository.save(orderTable3);
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(orderTable.getId());
 
-        final TableGroup newTableGroup = new TableGroup();
-        newTableGroup.setOrderTables(Arrays.asList(orderTable, alreadyGroupedOrderTable1));
+        final TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(
+                Arrays.asList(orderTableRequest, alreadyGroupedOrderTableRequest));
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(newTableGroup))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
+                .isExactlyInstanceOf(CanNotGroupException.class);
     }
 
     @Test
     @DisplayName("테이블 단체를 해제한다")
     void ungroup() {
         // given
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        final TableGroup alreadyGroupedTable = tableGroupDao.save(tableGroup);
+        final MenuGroup menuGroup = MenuGroupFixtures.TWO_CHICKEN_GROUP.create();
+        final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
 
-        final OrderTable orderTable1 = new OrderTable();
-        orderTable1.setEmpty(true);
-        orderTable1.setTableGroupId(alreadyGroupedTable.getId());
-        final OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.createWithMenuGroup(savedMenuGroup);
+        final Menu savedMenu = menuRepository.save(menu);
 
-        final OrderTable orderTable2 = new OrderTable();
-        orderTable2.setEmpty(true);
-        orderTable2.setTableGroupId(alreadyGroupedTable.getId());
-        final OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
+        final TableGroup tableGroup = TableGroupFixtures.create();
+        final TableGroup alreadyGroupedTable = tableGroupRepository.save(tableGroup);
 
-        final Order order = new Order();
-        order.setOrderStatus(OrderStatus.COMPLETION.name());
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderTableId(savedOrderTable1.getId());
-        orderDao.save(order);
+        final OrderTable orderTable1 = OrderTableFixtures.createWithGuests(alreadyGroupedTable, 2);
+        final OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
+
+        final OrderTable orderTable2 = OrderTableFixtures.createWithGuests(alreadyGroupedTable, 2);
+        final OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
+
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu.getId(), 2);
+        final Order order = OrderFixtures.COMPLETION_ORDER.createWithOrderTableIdAndOrderLineItems(
+                savedOrderTable1.getId(), orderLineItem);
+        orderRepository.save(order);
 
         // when
         tableGroupService.ungroup(alreadyGroupedTable.getId());
 
         // then
-        final List<OrderTable> ungroupedOrderTable = orderTableDao.findAllByIdIn(
+        final List<OrderTable> ungroupedOrderTable = orderTableRepository.findAllByIdIn(
                 Arrays.asList(savedOrderTable1.getId(), savedOrderTable2.getId()));
 
         assertAll(
                 () -> assertThat(ungroupedOrderTable).isNotEmpty(),
-                () -> assertThat(ungroupedOrderTable).extracting("tableGroupId")
+                () -> assertThat(ungroupedOrderTable).extracting("tableGroup")
                         .containsExactly(null, null),
                 () -> assertThat(ungroupedOrderTable).extracting("empty")
                         .containsExactly(false, false)
@@ -196,32 +198,32 @@ class TableGroupServiceTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"COOKING", "MEAL"})
+    @ValueSource(strings = {"COOKING_ORDER", "MEAL_ORDER"})
     @DisplayName("주문의 상태가 COOKING, MEAL인 경우 테이블 단체를 해제하면 예외가 발생한다")
-    void ungroupExceptionNotCompletionOrder(final String status) {
+    void ungroupExceptionNotCompletionOrder(final OrderFixtures orderFixtures) {
         // given
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        final TableGroup alreadyGroupedTable = tableGroupDao.save(tableGroup);
+        final MenuGroup menuGroup = MenuGroupFixtures.TWO_CHICKEN_GROUP.create();
+        final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
 
-        final OrderTable orderTable1 = new OrderTable();
-        orderTable1.setEmpty(true);
-        orderTable1.setTableGroupId(alreadyGroupedTable.getId());
-        final OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
+        final Menu menu = MenuFixtures.TWO_CHICKEN_COMBO.createWithMenuGroup(savedMenuGroup);
+        final Menu savedMenu = menuRepository.save(menu);
 
-        final OrderTable orderTable2 = new OrderTable();
-        orderTable2.setEmpty(true);
-        orderTable2.setTableGroupId(alreadyGroupedTable.getId());
-        orderTableDao.save(orderTable2);
+        final TableGroup tableGroup = TableGroupFixtures.create();
+        final TableGroup alreadyGroupedTable = tableGroupRepository.save(tableGroup);
 
-        final Order order = new Order();
-        order.setOrderStatus(status);
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderTableId(savedOrderTable1.getId());
-        orderDao.save(order);
+        final OrderTable orderTable1 = OrderTableFixtures.createWithGuests(alreadyGroupedTable, 2);
+        final OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
+
+        final OrderTable orderTable2 = OrderTableFixtures.createWithGuests(alreadyGroupedTable, 2);
+        orderTableRepository.save(orderTable2);
+
+        final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu.getId(), 2);
+        final Order order = orderFixtures.createWithOrderTableIdAndOrderLineItems(savedOrderTable1.getId(),
+                orderLineItem);
+        orderRepository.save(order);
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(alreadyGroupedTable.getId()))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(OrderNotCompletionException.class);
     }
 }
