@@ -6,6 +6,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import kitchenpos.exception.GuestSizeException;
 import kitchenpos.exception.TableGroupNotNullException;
@@ -19,6 +20,7 @@ public class OrderTable {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
 
     private Integer numberOfGuests;
