@@ -6,7 +6,7 @@ import kitchenpos.application.dto.MenuGroupRequest;
 import kitchenpos.application.dto.MenuRequest;
 import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.application.dto.ProductRequest;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menugroup.MenuGroup;
 
 public class DomainFixtures {
 

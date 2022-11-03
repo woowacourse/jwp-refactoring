@@ -2,12 +2,12 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.OrderLineItemRequest;
 import kitchenpos.application.dto.OrderRequest;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderLineItems;
-import kitchenpos.domain.OrderValidator;
-import kitchenpos.domain.repository.OrderLineItemRepository;
-import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItems;
+import kitchenpos.domain.order.OrderValidator;
+import kitchenpos.domain.order.repository.OrderLineItemRepository;
+import kitchenpos.domain.order.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -1,10 +1,5 @@
 package kitchenpos.application.dto;
 
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Product;
-
 public class MenuProductRequest {
 
     private Long menuId;

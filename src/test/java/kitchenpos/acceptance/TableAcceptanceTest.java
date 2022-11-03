@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.application.dto.OrderTableRequest;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.ordertable.OrderTable;
 import org.junit.jupiter.api.Test;
 
 public class TableAcceptanceTest extends AcceptanceTest {

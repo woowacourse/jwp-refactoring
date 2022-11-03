@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.application.dto.TableGroupRequest;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.tablegroup.TableGroup;
 import org.junit.jupiter.api.Test;
 
 public class TableGroupAcceptanceTest extends AcceptanceTest {

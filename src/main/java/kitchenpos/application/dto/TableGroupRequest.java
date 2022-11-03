@@ -2,8 +2,6 @@ package kitchenpos.application.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import javax.persistence.OneToMany;
-import kitchenpos.domain.OrderTable;
 
 public class TableGroupRequest {
 
