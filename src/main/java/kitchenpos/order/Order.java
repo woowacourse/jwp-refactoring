@@ -58,6 +58,10 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
+    public boolean isComplete() {
+        return this.orderStatus == OrderStatus.COMPLETION;
+    }
+
     private void checkItemsNotEmpty(final List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException();

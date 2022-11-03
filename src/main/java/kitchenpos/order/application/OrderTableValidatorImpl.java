@@ -1,8 +1,8 @@
 package kitchenpos.order.application;
 
-import java.util.Arrays;
 import java.util.List;
-import kitchenpos.order.OrderStatus;
+import java.util.Optional;
+import kitchenpos.order.Order;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.ordertable.application.OrderTableValidator;
 import org.springframework.stereotype.Component;
@@ -17,17 +17,19 @@ public class OrderTableValidatorImpl implements OrderTableValidator {
     }
 
     @Override
-    public void checkOrderCompleted(final Long orderTableId) {
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+    public void checkOrderComplete(final Long orderTableId) {
+        final Optional<Order> order = orderRepository.findByOrderTableId(orderTableId);
+        if (order.isPresent() && !order.get().isComplete()) {
             throw new IllegalArgumentException();
         }
     }
 
     @Override
-    public void checkOrderCompleted(final List<Long> orderTableIds) {
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+    public void checkOrderComplete(final List<Long> orderTableIds) {
+        final List<Order> orders = orderRepository.findByOrderTableIdIn(orderTableIds);
+        final boolean isAllComplete = orders.stream()
+                .allMatch(Order::isComplete);
+        if (!isAllComplete) {
             throw new IllegalArgumentException();
         }
     }

@@ -49,7 +49,7 @@ public class TableGroupService {
         final OrderTables groupedTables = new OrderTables(orderTables);
 
         final List<Long> orderTableIds = groupedTables.getIds();
-        orderTableValidator.checkOrderCompleted(orderTableIds);
+        orderTableValidator.checkOrderComplete(orderTableIds);
 
         groupedTables.ungroup();
     }

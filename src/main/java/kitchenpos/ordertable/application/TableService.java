@@ -36,7 +36,7 @@ public class TableService {
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-        orderTableValidator.checkOrderCompleted(orderTableId);
+        orderTableValidator.checkOrderComplete(orderTableId);
 
         changeTableStatus(request.isEmpty(), savedOrderTable);
         return OrderTableResponse.from(savedOrderTable);

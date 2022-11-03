@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface OrderTableValidator {
 
-    void checkOrderCompleted(final Long orderTableId);
+    void checkOrderComplete(final Long orderTableId);
 
-    void checkOrderCompleted(final List<Long> orderTableIds);
+    void checkOrderComplete(final List<Long> orderTableIds);
 }

@@ -3,7 +3,6 @@ package kitchenpos.order.repository;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.order.Order;
-import kitchenpos.order.OrderStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -18,7 +17,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             + " left join fetch o.orderLineItems")
     List<Order> findAll();
 
-    boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<OrderStatus> orderStatuses);
+    Optional<Order> findByOrderTableId(Long orderTableId);
 
-    boolean existsByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds, List<OrderStatus> orderStatuses);
+    List<Order> findByOrderTableIdIn(List<Long> orderTableIds);
 }
