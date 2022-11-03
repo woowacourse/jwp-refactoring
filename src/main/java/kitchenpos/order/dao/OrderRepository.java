@@ -55,4 +55,15 @@ class OrderRepository implements OrderDao {
         savedOrder.setOrderLineItems(orderLineItems);
         return savedOrder;
     }
+
+    @Override
+    public boolean existsByOrderTableIdAndOrderStatusIn(final Long orderTableId, final List<String> orderStatuses) {
+        return jdbcTemplateOrderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, orderStatuses);
+    }
+
+    @Override
+    public boolean existsByOrderTableIdInAndOrderStatusIn(final List<Long> orderTableIds,
+                                                          final List<String> orderStatuses) {
+        return jdbcTemplateOrderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, orderStatuses);
+    }
 }

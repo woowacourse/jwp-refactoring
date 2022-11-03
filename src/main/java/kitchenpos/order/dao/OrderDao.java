@@ -13,4 +13,8 @@ public interface OrderDao {
     List<Order> findAll();
 
     Order update(Order savedOrder);
+
+    boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<String> orderStatuses);
+
+    boolean existsByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds, List<String> orderStatuses);
 }

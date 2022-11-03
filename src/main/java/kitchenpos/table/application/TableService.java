@@ -1,9 +1,5 @@
 package kitchenpos.table.application;
 
-import static kitchenpos.table.domain.OrderStatus.COOKING;
-import static kitchenpos.table.domain.OrderStatus.MEAL;
-
-import java.util.Arrays;
 import java.util.List;
 import kitchenpos.table.dao.OrderTableDao;
 import kitchenpos.table.domain.OrderTable;
@@ -15,9 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class TableService {
 
     private final OrderTableDao orderTableDao;
+    private final OrderValidator orderValidator;
 
-    public TableService(final OrderTableDao orderTableDao) {
+    public TableService(final OrderTableDao orderTableDao, final OrderValidator orderValidator) {
         this.orderTableDao = orderTableDao;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
@@ -31,16 +29,9 @@ public class TableService {
 
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
-        validateOrderTableIdAndOrderStatusIn(orderTableId);
+        orderValidator.ValidateOrderTableId(orderTableId);
         final OrderTable savedOrderTable = findOrderTableById(orderTableId);
         return orderTableDao.save(savedOrderTable.updateEmpty(orderTable.isEmpty()));
-    }
-
-    private void validateOrderTableIdAndOrderStatusIn(final Long orderTableId) {
-        if (orderTableDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(COOKING.name(), MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
     }
 
     private OrderTable findOrderTableById(final Long orderTableId) {

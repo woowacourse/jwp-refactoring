@@ -3,7 +3,6 @@ package kitchenpos.order.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.table.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 
 public class Order {
