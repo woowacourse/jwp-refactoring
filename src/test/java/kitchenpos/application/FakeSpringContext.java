@@ -10,6 +10,7 @@ import kitchenpos.domain.menu.ProductRepository;
 import kitchenpos.domain.order.OrderDao;
 import kitchenpos.domain.order.OrderLineItemDao;
 import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.order.OrderValidator;
 import kitchenpos.domain.table.OrderTableDao;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.domain.table.TableGroupDao;
@@ -30,6 +31,8 @@ import kitchenpos.infrastructure.table.OrderTableRepositoryImpl;
 import kitchenpos.infrastructure.table.TableGroupRepositoryImpl;
 
 public abstract class FakeSpringContext {
+
+    protected final OrderValidator orderValidator = new OrderValidator();
 
     protected final MenuDao menuDao = new MenuFakeDao();
     protected final MenuGroupDao menuGroupDao = new MenuGroupFakeDao();

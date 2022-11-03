@@ -18,7 +18,7 @@ public class OrderFactory {
             orderLineItems.add(orderLineItem);
         }
 
-        return new Order(null, table, table.getId(), OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+        return new Order(null, table.getId(), OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
     }
 
     public static Order order(final OrderTable table, final OrderStatus status, final Menu... menus) {
@@ -28,6 +28,6 @@ public class OrderFactory {
             orderLineItems.add(orderLineItem);
         }
 
-        return new Order(null, table, table.getId(), status, LocalDateTime.now(), orderLineItems);
+        return new Order(null, table.getId(), status, LocalDateTime.now(), orderLineItems);
     }
 }

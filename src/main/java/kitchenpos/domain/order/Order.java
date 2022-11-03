@@ -3,12 +3,10 @@ package kitchenpos.domain.order;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.Entity;
-import kitchenpos.domain.table.OrderTable;
 
 public class Order implements Entity {
 
     private Long id;
-    private OrderTable orderTable;
     private Long orderTableId;
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
@@ -17,33 +15,24 @@ public class Order implements Entity {
     public Order() {
     }
 
-    public Order(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
-        this(null, orderTable, orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+    public Order(final Long orderTableId,
+                 final List<OrderLineItem> orderLineItems) {
+        this(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
     }
 
     public Order(final Long id,
                  final Long orderTableId,
                  final OrderStatus orderStatus,
                  final LocalDateTime orderedTime) {
-        this(id, null, orderTableId, orderStatus, orderedTime, null);
+        this(id, orderTableId, orderStatus, orderedTime, null);
     }
 
     public Order(final Long id,
-                 final Long orderTableId,
-                 final OrderStatus orderStatus,
-                 final LocalDateTime orderedTime,
-                 final List<OrderLineItem> orderLineItems) {
-        this(id, null, orderTableId, orderStatus, orderedTime, orderLineItems);
-    }
-
-    public Order(final Long id,
-                 final OrderTable orderTable,
                  final Long orderTableId,
                  final OrderStatus orderStatus,
                  final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
         this.id = id;
-        this.orderTable = orderTable;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
@@ -71,20 +60,6 @@ public class Order implements Entity {
 
     @Override
     public void validateOnCreate() {
-        validateOrderLineItemsNotEmpty();
-        validateOrderTableNotEmpty();
-    }
-
-    private void validateOrderTableNotEmpty() {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateOrderLineItemsNotEmpty() {
-        if (orderLineItems.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
     }
 
     public Long getId() {

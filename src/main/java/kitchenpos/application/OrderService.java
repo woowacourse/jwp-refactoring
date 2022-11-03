@@ -6,6 +6,7 @@ import kitchenpos.domain.menu.MenuDao;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.order.OrderValidator;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.ui.dto.OrderChangeStatusRequest;
@@ -17,13 +18,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class OrderService {
 
+    private final OrderValidator orderValidator;
     private final MenuDao menuDao;
     private final OrderTableRepository orderTables;
     private final OrderRepository orders;
 
-    public OrderService(final MenuDao menuDao,
+    public OrderService(final OrderValidator orderValidator,
+                        final MenuDao menuDao,
                         final OrderTableRepository orderTables,
                         final OrderRepository orders) {
+        this.orderValidator = orderValidator;
         this.menuDao = menuDao;
         this.orderTables = orderTables;
         this.orders = orders;
@@ -40,7 +44,9 @@ public class OrderService {
         }
 
         final OrderTable orderTable = orderTables.get(request.getOrderTableId());
-        final var order = new Order(orderTable, mapToOrderLineItems(orderLineItemRequests));
+        final var order = new Order(orderTable.getId(), mapToOrderLineItems(orderLineItemRequests));
+
+        orderValidator.validateOnCreate(order, orderTable);
 
         return orders.add(order);
     }

@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 class OrderServiceTest extends FakeSpringContext {
 
     private final OrderService orderService = new OrderService(
-            menuDao, orderTables, orders);
+            orderValidator, menuDao, orderTables, orders);
 
     @DisplayName("주문 등록")
     @Test
