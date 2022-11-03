@@ -34,7 +34,11 @@ public class OrderService {
     @Transactional
     public OrderResponse create(final OrderCreateRequest request) {
         final Order order = request.toOrder();
-        checkExistMenuIn(order);
+        final long menuCount = menuRepository.countByIdIn(order.getMenuIds());
+        if (!order.hasValidSize(menuCount)) {
+            throw new IllegalArgumentException();
+        }
+
         final OrderTable orderTable = getOrderTableById(order.getOrderTableId());
 
         if (orderTable.isEmpty()) {
@@ -44,15 +48,8 @@ public class OrderService {
         return OrderResponse.from(savedOrder);
     }
 
-    private void checkExistMenuIn(final Order order) {
-        final long menuCount = menuRepository.countByIdIn(order.getMenuIds());
-        if (!order.hasValidSize(menuCount)) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private OrderTable getOrderTableById(final Long orderId) {
-        return orderTableRepository.findById(orderId)
+    private OrderTable getOrderTableById(final Long orderTableId) {
+        return orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
     }
 

@@ -64,7 +64,7 @@ public class TableGroupService {
         updateOrderTable(orderTables);
     }
 
-    private void updateOrderTable(List<OrderTable> orderTables) {
+    private void updateOrderTable(final List<OrderTable> orderTables) {
         for (final OrderTable orderTable : orderTables) {
             orderTableRepository.save(orderTable.ungroup());
         }
