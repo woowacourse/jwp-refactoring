@@ -2,13 +2,10 @@ package kitchenpos.domain.repository;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.table.TableGroup;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.repository.Repository;
 
-@Repository
-public interface TableGroupRepository extends JpaRepository<TableGroup, Long> {
+public interface TableGroupRepository extends Repository<TableGroup, Long> {
 
     TableGroup save(TableGroup entity);
 

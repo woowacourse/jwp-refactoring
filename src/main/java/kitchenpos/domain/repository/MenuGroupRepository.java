@@ -3,11 +3,9 @@ package kitchenpos.domain.repository;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.menu.MenuGroup;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.repository.Repository;
 
-@Repository
-public interface MenuGroupRepository extends JpaRepository<MenuGroup, Long> {
+public interface MenuGroupRepository extends Repository<MenuGroup, Long> {
 
     MenuGroup save(MenuGroup entity);
 
