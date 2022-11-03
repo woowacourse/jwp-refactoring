@@ -4,11 +4,14 @@ import kitchenpos.application.dto.request.OrderLineItemRequest;
 import kitchenpos.application.dto.request.OrderRequest;
 import kitchenpos.application.dto.request.OrderChangeRequest;
 import kitchenpos.application.dto.response.OrderResponse;
+import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderMenu;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderMenuRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 
@@ -17,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
@@ -26,15 +30,18 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final MenuRepository menuRepository;
+    private final OrderMenuRepository orderMenuRepository;
 
     public OrderService(
             final OrderRepository orderRepository,
             final OrderTableRepository orderTableRepository,
-            final MenuRepository menuRepository
+            final MenuRepository menuRepository,
+            final OrderMenuRepository orderMenuRepository
     ) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
         this.menuRepository = menuRepository;
+        this.orderMenuRepository = orderMenuRepository;
     }
 
     @Transactional
@@ -44,7 +51,6 @@ public class OrderService {
         validateOrderTableIsNotEmpty(orderTable);
 
         final Order order = toOrder(request);
-        validateOrderLineItemIsExist(order);
 
         final Order savedOrder = orderRepository.save(order);
         return new OrderResponse(savedOrder);
@@ -80,19 +86,19 @@ public class OrderService {
 
     public List<OrderLineItem> toOrderLineItems(final List<OrderLineItemRequest> orderLineItems) {
         return orderLineItems.stream()
-            .map(request -> new OrderLineItem(request.getMenuId(), request.getQuantity()))
+            .map(request -> {
+                final Menu menu = findMenuById(request);
+                final OrderMenu savedOrderMenu = orderMenuRepository.save(
+                    new OrderMenu(menu.getName(), menu.getPrice())
+                );
+                return new OrderLineItem(savedOrderMenu.getId(), request.getQuantity());
+            })
             .collect(Collectors.toUnmodifiableList());
     }
 
-    private void validateOrderLineItemIsExist(final Order order) {
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
-                .collect(Collectors.toList());
-
-        if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException("존재하지 않는 메뉴가 포함되어 있습니다.");
-        }
+    private Menu findMenuById(final OrderLineItemRequest request) {
+        return menuRepository.findById(request.getMenuId())
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴가 포함되어 있습니다."));
     }
 
     private Order changeStatus(final Long orderId, final OrderStatus orderStatus) {

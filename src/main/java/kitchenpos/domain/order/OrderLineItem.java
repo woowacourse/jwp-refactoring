@@ -14,7 +14,7 @@ public class OrderLineItem {
     private Long seq;
     
     @Column(nullable = false)
-    private Long menuId;
+    private Long orderMenuId;
     
     @Column(nullable = false)
     private long quantity;
@@ -26,16 +26,16 @@ public class OrderLineItem {
      * DB 에 저장되지 않은 객체
      * DB 에 저장하기 위한 객체
      */
-    public OrderLineItem(final Long menuId, final long quantity) {
-        this(null, menuId, quantity);
+    public OrderLineItem(final Long orderMenuId, final long quantity) {
+        this(null, orderMenuId, quantity);
     }
 
     /**
      * DB 에 저장된 객체
      */
-    public OrderLineItem(final Long seq, final Long menuId, final long quantity) {
+    public OrderLineItem(final Long seq, final Long orderMenuId, final long quantity) {
         this.seq = seq;
-        this.menuId = menuId;
+        this.orderMenuId = orderMenuId;
         this.quantity = quantity;
     }
 
@@ -43,8 +43,8 @@ public class OrderLineItem {
         return seq;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public Long getOrderMenuId() {
+        return orderMenuId;
     }
 
     public long getQuantity() {

@@ -34,6 +34,7 @@ import kitchenpos.domain.Product;
 import kitchenpos.domain.fixture.OrderTableFixture;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderMenuRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.ProductRepository;
@@ -55,6 +56,9 @@ class OrderServiceTest {
 
     @Autowired
     private MenuRepository menuRepository;
+
+    @Autowired
+    private OrderMenuRepository orderMenuRepository;
 
     @Autowired
     private MenuGroupRepository menuGroupRepository;
