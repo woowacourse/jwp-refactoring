@@ -14,7 +14,7 @@ public class Product {
     @Embedded.Nullable
     private final Price price;
 
-    protected Product(final Long id, final String name, final Price price) {
+    public Product(final Long id, final String name, final Price price) {
         this.id = id;
         this.name = name;
         this.price = price;

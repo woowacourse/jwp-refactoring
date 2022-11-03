@@ -1,14 +1,11 @@
 package kitchenpos.table.application;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.table.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.TableGroup;
-import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.domain.TableGroupRepository;
 import kitchenpos.table.ui.dto.TableGroupCreateRequest;
 import kitchenpos.table.ui.dto.TableGroupResponse;
@@ -19,14 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class TableGroupService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(final OrderRepository orderRepository,
-                             final OrderTableRepository orderTableRepository,
+    public TableGroupService(final OrderTableRepository orderTableRepository,
                              final TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
@@ -48,23 +42,10 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
-        if (containNotCompletedOrder(orderTables)) {
-            throw new IllegalArgumentException();
-        }
-
-        final List<OrderTable> ungroupedOrderTables = orderTables.stream()
+        final List<OrderTable> ungroupedOrderTables = orderTableRepository.findAllByTableGroupId(tableGroupId)
+                .stream()
                 .map(OrderTable::ungroup)
                 .collect(Collectors.toList());
         orderTableRepository.saveAll(ungroupedOrderTables);
-    }
-
-    private boolean containNotCompletedOrder(final List<OrderTable> orderTables) {
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-
-        return orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()));
     }
 }
