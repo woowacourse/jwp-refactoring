@@ -18,6 +18,6 @@ public class OrderEventListener {
     @EventListener
     public void saveMenuHistory(final MenuCreatedEvent event) {
         final var createdMenu = event.getMenu();
-        menuHistoryRepository.save(MenuHistory.copy(createdMenu));
+        menuHistoryRepository.save(MenuHistory.copyOf(createdMenu));
     }
 }

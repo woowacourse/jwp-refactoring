@@ -68,7 +68,7 @@ class OrderServiceTest {
             this.product = productRepository.save(makeProduct("비빔밥", 5000L));
             this.menu = menuRepository.save(makeMenu("자장면", 5000, 1L,
                     List.of(new MenuProduct(product.getId(), 10))));
-            this.menuHistory = menuHistoryRepository.save(MenuHistory.copy(menu));
+            this.menuHistory = menuHistoryRepository.save(MenuHistory.copyOf(menu));
             this.orderTable = orderTableRepository.save(makeNonEmptyOrderTable(10));
         }
 

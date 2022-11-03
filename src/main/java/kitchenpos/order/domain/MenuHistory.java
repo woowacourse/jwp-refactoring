@@ -31,7 +31,7 @@ public class MenuHistory {
         this.price = price;
     }
 
-    public static MenuHistory copy(final Menu menu) {
+    public static MenuHistory copyOf(final Menu menu) {
         return new MenuHistory(menu.getId(), menu.getName(), menu.getPrice());
     }
 
