@@ -1,76 +1,12 @@
 package kitchenpos.domain.order;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class OrderRepository {
+public interface OrderRepository {
 
-    private final OrderDao orderDao;
-    private final OrderLineItemDao orderLineItemDao;
+    Order add(Order order);
 
-    public OrderRepository(final OrderDao orderDao,
-                           final OrderLineItemDao orderLineItemDao) {
-        this.orderDao = orderDao;
-        this.orderLineItemDao = orderLineItemDao;
-    }
+    Order get(Long id);
 
-    public Order add(final Order order) {
-        final Order savedOrder = orderDao.save(order);
-
-        final var savedOrderLineItems = saveAllOrderLineItems(order.getOrderLineItems(), savedOrder.getId());
-
-        return new Order(
-                savedOrder.getId(),
-                savedOrder.getOrderTableId(),
-                savedOrder.getOrderStatus(),
-                savedOrder.getOrderedTime(),
-                savedOrderLineItems
-        );
-    }
-
-    private List<OrderLineItem> saveAllOrderLineItems(final List<OrderLineItem> orderLineItems, final Long orderId) {
-        return orderLineItems.stream()
-                .map(orderLineItem -> {
-                    final var entity = new OrderLineItem(
-                            orderId,
-                            orderLineItem.getMenuId(),
-                            orderLineItem.getQuantity()
-                    );
-                    return orderLineItemDao.save(entity);
-                })
-                .collect(Collectors.toList());
-    }
-
-    public Order get(final Long id) {
-        final var orderLineItems = orderLineItemDao.findAllByOrderId(id);
-        final var order = orderDao.findById(id)
-                .orElseThrow(IllegalArgumentException::new);
-
-        return new Order(
-                id,
-                order.getOrderTableId(),
-                order.getOrderStatus(),
-                order.getOrderedTime(),
-                orderLineItems
-        );
-    }
-
-    public List<Order> getAll() {
-        final List<Order> orders = orderDao.findAll();
-
-        return orders.stream()
-                .map(order -> {
-                    final var orderLineItems = orderLineItemDao.findAllByOrderId(order.getId());
-                    return new Order(
-                            order.getId(),
-                            order.getOrderTableId(),
-                            order.getOrderStatus(),
-                            order.getOrderedTime(),
-                            orderLineItems);
-                }).collect(Collectors.toList());
-    }
+    List<Order> getAll();
 }

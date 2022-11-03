@@ -1,28 +1,12 @@
 package kitchenpos.domain.menu;
 
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class MenuGroupRepository {
+public interface MenuGroupRepository {
 
-    private final MenuGroupDao menuGroupDao;
+    MenuGroup get(Long id);
 
-    public MenuGroupRepository(final MenuGroupDao menuGroupDao) {
-        this.menuGroupDao = menuGroupDao;
-    }
+    MenuGroup add(MenuGroup menuGroup);
 
-    public MenuGroup get(final Long id) {
-        return menuGroupDao.findById(id)
-                .orElseThrow(IllegalArgumentException::new);
-    }
-
-    public MenuGroup add(final MenuGroup menuGroup) {
-        return menuGroupDao.save(menuGroup);
-    }
-
-    public List<MenuGroup> getAll() {
-        return menuGroupDao.findAll();
-    }
+    List<MenuGroup> getAll();
 }

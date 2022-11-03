@@ -1,8 +1,9 @@
-package kitchenpos.dao;
+package kitchenpos.infrastructure;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderDao;
 
 public class OrderFakeDao extends BaseFakeDao<Order> implements OrderDao {
 

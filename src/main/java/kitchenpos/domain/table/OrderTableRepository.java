@@ -1,49 +1,14 @@
 package kitchenpos.domain.table;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class OrderTableRepository {
+public interface OrderTableRepository {
 
-    private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
+    OrderTable get(Long id);
 
-    public OrderTableRepository(final OrderDao orderDao,
-                                final OrderTableDao orderTableDao) {
-        this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
-    }
+    OrderTable add(OrderTable orderTable);
 
-    public OrderTable get(final Long id) {
-        final var orderTable = orderTableDao.findById(id)
-                .orElseThrow(IllegalArgumentException::new);
+    List<OrderTable> addAll(List<OrderTable> orderTables);
 
-        final var orders = orderDao.findByOrderTableId(orderTable.getId());
-
-        return new OrderTable(
-                orderTable.getId(),
-                orderTable.getTableGroupId(),
-                orderTable.getNumberOfGuests(),
-                orderTable.isEmpty(),
-                orders
-        );
-    }
-
-    public OrderTable add(final OrderTable orderTable) {
-        return orderTableDao.save(orderTable);
-    }
-
-    public List<OrderTable> addAll(final List<OrderTable> orderTables) {
-        return orderTables.stream()
-                .map(this::add)
-                .collect(Collectors.toList());
-    }
-
-    public List<OrderTable> getAll() {
-        return orderTableDao.findAll();
-    }
+    List<OrderTable> getAll();
 }

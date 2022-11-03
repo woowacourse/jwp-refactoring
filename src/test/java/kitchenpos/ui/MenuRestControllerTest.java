@@ -6,12 +6,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuGroupDao;
 import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuProductDao;
 import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.menu.ProductDao;
 import kitchenpos.ui.dto.MenuRequest;
 import kitchenpos.ui.dto.MenuRequest.MenuInnerMenuProductRequest;
 import org.junit.jupiter.api.DisplayName;

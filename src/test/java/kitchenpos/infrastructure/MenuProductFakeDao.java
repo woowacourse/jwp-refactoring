@@ -1,8 +1,9 @@
-package kitchenpos.dao;
+package kitchenpos.infrastructure;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuProductDao;
 
 public class MenuProductFakeDao extends BaseFakeDao<MenuProduct> implements MenuProductDao {
 

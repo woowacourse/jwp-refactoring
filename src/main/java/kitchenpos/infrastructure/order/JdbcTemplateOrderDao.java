@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.infrastructure.order;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.Optional;
 import javax.sql.DataSource;
 import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderDao;
 import kitchenpos.domain.order.OrderStatus;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
