@@ -44,7 +44,7 @@ public class OrderRequestAssembler {
     }
 
     private Long asMenuHistoryId(final Long menuId) {
-        return menuHistoryRepository.findIdByMenuIdOrderByIdDesc(menuId)
+        return menuHistoryRepository.findTopIdByMenuIdOrderByIdDesc(menuId)
                 .orElseThrow(() -> new IllegalArgumentException("메뉴 이력을 찾을 수 없습니다."));
     }
 
