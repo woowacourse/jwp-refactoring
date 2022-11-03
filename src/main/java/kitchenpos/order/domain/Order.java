@@ -16,6 +16,8 @@ import javax.persistence.Table;
 
 import org.hibernate.Hibernate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import kitchenpos.order.dto.application.OrderLineItemDto;
 
 @Entity
@@ -36,6 +38,7 @@ public class Order {
     private LocalDateTime orderedTime;
 
     @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "order")
+    @JsonIgnore
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     protected Order() {

@@ -15,6 +15,8 @@ import javax.persistence.OneToMany;
 
 import org.hibernate.Hibernate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import kitchenpos.menu.dto.application.MenuProductDto;
 
 @Entity
@@ -34,6 +36,7 @@ public class Menu {
     private Long menuGroupId;
 
     @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "menu")
+    @JsonIgnore
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected Menu() {
