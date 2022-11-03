@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.vo.Price;
 import kitchenpos.exception.notfound.MenuGroupNotFoundException;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.ProductRepository;
@@ -41,8 +42,8 @@ class MenuServiceTest extends ServiceTest {
     @BeforeEach
     void setUpForMenu() {
         menuGroup = menuGroupRepository.save(new MenuGroup("순살 두 마리"));
-        productA = productRepository.save(new Product("순살 까르보치킨", new BigDecimal("20000.00")));
-        productB = productRepository.save(new Product("순살 짜장치킨", new BigDecimal("19000.00")));
+        productA = productRepository.save(new Product("순살 까르보치킨", Price.from("20000.00")));
+        productB = productRepository.save(new Product("순살 짜장치킨", Price.from("19000.00")));
         name = "순살 까르보 한 마리 + 순살 짜장 한 마리";
         price = new BigDecimal("35000.00");
         menuGroupId = menuGroup.getId();

@@ -1,14 +1,15 @@
 package kitchenpos.domain;
 
-import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import kitchenpos.domain.vo.Price;
+import kitchenpos.exception.badrequest.PriceInvalidException;
 import kitchenpos.exception.badrequest.ProductNameInvalidException;
-import kitchenpos.exception.badrequest.ProductPriceInvalidException;
 import org.springframework.util.StringUtils;
 
 @Entity
@@ -19,13 +20,13 @@ public class Product {
     private Long id;
     @Column(name = "name", nullable = false)
     private String name;
-    @Column(name = "price", nullable = false)
-    private BigDecimal price;
+    @Embedded
+    private Price price;
 
     protected Product() {
     }
 
-    public Product(final Long id, final String name, final BigDecimal price) {
+    public Product(final Long id, final String name, final Price price) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -34,7 +35,7 @@ public class Product {
         validatePrice();
     }
 
-    public Product(final String name, final BigDecimal price) {
+    public Product(final String name, final Price price) {
         this(null, name, price);
     }
 
@@ -45,13 +46,9 @@ public class Product {
     }
 
     private void validatePrice() {
-        if (Objects.isNull(this.price) || isLessThanZero(this.price)) {
-            throw new ProductPriceInvalidException(this.price);
+        if (Objects.isNull(price) || price.isLessThanZero()) {
+            throw new PriceInvalidException(price.getValue());
         }
-    }
-
-    private boolean isLessThanZero(final BigDecimal price) {
-        return price.compareTo(BigDecimal.ZERO) < 0;
     }
 
     public Long getId() {
@@ -62,7 +59,7 @@ public class Product {
         return name;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
     }
 }

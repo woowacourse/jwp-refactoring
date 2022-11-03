@@ -3,6 +3,7 @@ package kitchenpos.application.concrete;
 import java.util.List;
 import kitchenpos.application.ProductService;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.vo.Price;
 import kitchenpos.repository.ProductRepository;
 import kitchenpos.ui.dto.request.ProductCreateRequest;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ public class JpaProductService implements ProductService {
     @Transactional
     @Override
     public Product create(final ProductCreateRequest request) {
-        final var newProduct = new Product(request.getName(), request.getPrice());
+        final var newProduct = new Product(request.getName(), Price.from(request.getPrice()));
 
         return productRepository.save(newProduct);
     }

@@ -100,8 +100,11 @@ public class MenuMapper {
 
     private BigDecimal totalPriceOfMenuProducts(final List<MenuProduct> menuProducts) {
         return menuProducts.stream()
-                .map(menuProduct -> menuProduct.getProduct().getPrice()
-                        .multiply(BigDecimal.valueOf(menuProduct.getQuantity())))
+                .map(menuProduct -> menuProduct.getProduct()
+                        .getPrice()
+                        .multiply(menuProduct.getQuantity())
+                        .getValue()
+                )
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

@@ -4,8 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
+import kitchenpos.domain.vo.Price;
+import kitchenpos.exception.badrequest.PriceInvalidException;
 import kitchenpos.exception.badrequest.ProductNameInvalidException;
-import kitchenpos.exception.badrequest.ProductPriceInvalidException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -24,12 +25,12 @@ class ProductTest {
             final var price = new BigDecimal("20000.00");
 
             // when
-            final var actual = new Product(name, price);
+            final var actual = new Product(name, Price.from(price));
 
             // then
             assertThat(actual)
                     .usingRecursiveComparison()
-                    .isEqualTo(new Product(null, name, price));
+                    .isEqualTo(new Product(null, name, Price.from(price)));
         }
 
         @DisplayName("name이 null이거나 비어있을 경우 예외가 발생한다")
@@ -41,7 +42,7 @@ class ProductTest {
             final var price = new BigDecimal("20000.00");
 
             // when & then
-            assertThatThrownBy(() -> new Product(name, price))
+            assertThatThrownBy(() -> new Product(name, Price.from(price)))
                     .isInstanceOf(ProductNameInvalidException.class);
         }
 
@@ -53,8 +54,8 @@ class ProductTest {
             final BigDecimal price = null;
 
             // when & then
-            assertThatThrownBy(() -> new Product(name, price))
-                    .isInstanceOf(ProductPriceInvalidException.class);
+            assertThatThrownBy(() -> new Product(name, Price.from(price)))
+                    .isInstanceOf(PriceInvalidException.class);
         }
 
         @DisplayName("price가 0 보다 작을 경우 예외가 발생한다")
@@ -65,8 +66,8 @@ class ProductTest {
             final var price = new BigDecimal("-1.00");
 
             // when & then
-            assertThatThrownBy(() -> new Product(name, price))
-                    .isInstanceOf(ProductPriceInvalidException.class);
+            assertThatThrownBy(() -> new Product(name, Price.from(price)))
+                    .isInstanceOf(PriceInvalidException.class);
         }
     }
 }

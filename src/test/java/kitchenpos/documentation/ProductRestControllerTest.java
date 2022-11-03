@@ -10,6 +10,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.vo.Price;
 import kitchenpos.ui.dto.request.ProductCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,7 @@ class ProductRestControllerTest extends DocumentationTest {
         final var name = "까르보치킨";
         final var price = new BigDecimal("18000.00");
         given(productService.create(any()))
-                .willReturn(new Product(1L, name, price));
+                .willReturn(new Product(1L, name, Price.from(price)));
 
         docsGiven
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -52,8 +53,8 @@ class ProductRestControllerTest extends DocumentationTest {
     void list() {
         given(productService.list())
                 .willReturn(List.of(
-                        new Product(1L, "까르보치킨", new BigDecimal("20000.00")),
-                        new Product(2L, "짜장치킨", new BigDecimal("18000.00")))
+                        new Product(1L, "까르보치킨", Price.from("20000.00")),
+                        new Product(2L, "짜장치킨", Price.from("18000.00")))
                 );
 
         docsGiven
