@@ -11,19 +11,6 @@ import org.junit.jupiter.api.Test;
 class OrderTableTest {
 
     @Test
-    @DisplayName("주문 테이블의 주문 상태가 완료됐는지 확인한다.")
-    void isNotCompleted() {
-        // given
-        final OrderTable orderTable = new OrderTable(10, false);
-
-        // when
-        final boolean actual = orderTable.isNotCompleted();
-
-        // then
-        assertThat(actual).isFalse();
-    }
-
-    @Test
     @DisplayName("주문 테이블의 테이블 그룹을 해제한다.")
     void releaseGroup() {
         // given

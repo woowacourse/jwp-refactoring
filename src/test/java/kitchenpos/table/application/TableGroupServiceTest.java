@@ -6,20 +6,18 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Arrays;
 import java.util.Collections;
-import kitchenpos.support.application.ServiceTestEnvironment;
 import kitchenpos.dto.request.OrderTableIdRequest;
 import kitchenpos.dto.request.TableGroupsCreateRequest;
+import kitchenpos.exception.InvalidOrderTableToGroupException;
+import kitchenpos.exception.NotCompletedOrderTableException;
+import kitchenpos.exception.NotEnoughOrderTablesSizeException;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
 import kitchenpos.product.domain.Product;
-import kitchenpos.table.domain.TableGroup;
-import kitchenpos.exception.NotCompletedOrderTableException;
-import kitchenpos.exception.InvalidOrderTableToGroupException;
-import kitchenpos.exception.NotEnoughOrderTablesSizeException;
+import kitchenpos.support.application.ServiceTestEnvironment;
 import kitchenpos.support.fixture.MenuFixture;
 import kitchenpos.support.fixture.MenuGroupFixture;
 import kitchenpos.support.fixture.OrderFixture;
@@ -27,6 +25,8 @@ import kitchenpos.support.fixture.OrderLineItemFixture;
 import kitchenpos.support.fixture.OrderTableFixture;
 import kitchenpos.support.fixture.ProductFixture;
 import kitchenpos.support.fixture.TableGroupFixture;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -155,7 +155,7 @@ class TableGroupServiceTest extends ServiceTestEnvironment {
 
         final TableGroup tableGroup1 = TableGroupFixture.create(savedTable1, savedTable2, savedTable3);
         final TableGroup savedTableGroup1 = serviceDependencies.save(tableGroup1);
-        savedTable1.setTableGroupId(savedTableGroup1.getId());
+        savedTableGroup1.addOrderTable(savedTable1);
         serviceDependencies.save(savedTable1);
 
         TableGroupsCreateRequest tableGroupsCreateRequest = new TableGroupsCreateRequest(Arrays.asList(
@@ -191,7 +191,7 @@ class TableGroupServiceTest extends ServiceTestEnvironment {
     @ParameterizedTest
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     @DisplayName("해제하려는 그룹에 속한 주문 테이블이 조리나 식사 상태면 안된다.")
-    void ungroup_exeptionOrderTableCookingOrMeal(final OrderStatus orderStatus) {
+    void ungroup_exceptionOrderTableCookingOrMeal(final OrderStatus orderStatus) {
         // given
         final OrderTable orderTable1 = OrderTableFixture.create(true, 1);
         final OrderTable orderTable2 = OrderTableFixture.create(true, 1);
@@ -208,8 +208,7 @@ class TableGroupServiceTest extends ServiceTestEnvironment {
         final Order order = OrderFixture.create(savedTable1, orderStatus, orderLineItem);
         serviceDependencies.save(order);
 
-        savedTable1.setTableGroupId(savedTableGroup.getId());
-        serviceDependencies.save(savedTable1);
+        savedTableGroup.addOrderTable(savedTable1);
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))

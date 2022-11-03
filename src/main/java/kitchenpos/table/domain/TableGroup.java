@@ -1,6 +1,7 @@
 package kitchenpos.table.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
@@ -11,7 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import kitchenpos.exception.NotCompletedOrderTableException;
 import kitchenpos.exception.InvalidOrderTableToGroupException;
 import kitchenpos.exception.NotEnoughOrderTablesSizeException;
 import org.springframework.util.CollectionUtils;
@@ -25,7 +25,7 @@ public class TableGroup {
     private LocalDateTime createdDate;
     @OneToMany(cascade = CascadeType.MERGE)
     @JoinColumn(name = "table_group_id")
-    private List<OrderTable> orderTables;
+    private List<OrderTable> orderTables = new ArrayList<>();
 
     protected TableGroup() {
     }
@@ -57,13 +57,13 @@ public class TableGroup {
     }
 
     public void ungroup() {
-        orderTables.forEach(this::validateOrderTableNotCompleted);
         orderTables.forEach(OrderTable::releaseGroup);
     }
 
-    private void validateOrderTableNotCompleted(final OrderTable orderTable) {
-        if (orderTable.isNotCompleted()) {
-            throw new NotCompletedOrderTableException(); }
+    public void addOrderTable(final OrderTable orderTable) {
+        final List<OrderTable> orderTables = new ArrayList<>(this.orderTables);
+        orderTables.add(orderTable);
+        this.orderTables = orderTables;
     }
 
     public Long getId() {

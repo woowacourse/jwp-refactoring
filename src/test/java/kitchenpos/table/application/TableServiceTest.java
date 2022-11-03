@@ -106,8 +106,7 @@ class TableServiceTest extends ServiceTestEnvironment {
 
         final TableGroup tableGroup = TableGroupFixture.create(savedTable1, savedTable2);
         final TableGroup savedTableGroup = serviceDependencies.save(tableGroup);
-        savedTable1.setTableGroupId(savedTableGroup.getId());
-        serviceDependencies.save(savedTable1);
+        savedTableGroup.addOrderTable(savedTable1);
 
         // when, then
         assertThatThrownBy(() -> tableService.changeEmpty(savedTable1.getId(), new OrderTableSetEmptyRequest(true)))

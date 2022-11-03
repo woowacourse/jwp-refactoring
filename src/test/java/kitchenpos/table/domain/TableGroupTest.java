@@ -7,9 +7,6 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.exception.InvalidOrderTableToGroupException;
-import kitchenpos.exception.NotCompletedOrderTableException;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderLineItem;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -56,22 +53,4 @@ class TableGroupTest {
         assertThat(orderTables).extracting("tableGroupId")
                 .containsExactly(null, null);
     }
-
-    @Test
-    @DisplayName("테이블이 완료되지 않은 테이블 그룹을 해제할 경우 예외가 발생한다.")
-    void ungroup_notCompletedOrderTable() {
-        // given
-        final OrderTable orderTable1 = new OrderTable(1, true);
-        final OrderTable orderTable2 = new OrderTable(1, true);
-        final List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
-        final OrderLineItem orderLineItem1 = new OrderLineItem(1L, 1);
-        final OrderLineItem orderLineItem2 = new OrderLineItem(2L, 1);
-        Order.of(orderTable1, Arrays.asList(orderLineItem1, orderLineItem2));
-
-        // when, then
-        assertThatThrownBy(tableGroup::ungroup)
-                .isExactlyInstanceOf(NotCompletedOrderTableException.class);
-    }
-
 }

@@ -6,12 +6,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import kitchenpos.order.domain.Order;
 import kitchenpos.exception.EmptyOrderTableException;
 import kitchenpos.exception.InvalidNumberOfGuestsException;
-import kitchenpos.exception.InvalidOrderStatusException;
 import kitchenpos.exception.TableGroupNullException;
 
 @Entity
@@ -20,31 +17,23 @@ public class OrderTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "table_group_id")
+    @Column(name = "table_group_id", insertable = false, updatable = false)
     private Long tableGroupId;
     private int numberOfGuests;
-    @OneToOne(mappedBy = "orderTable")
-    private Order order;
     private boolean empty;
 
     protected OrderTable() {
     }
 
-    private OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final Order order,
-                      final boolean empty) {
+    private OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
-        this.order = order;
         this.empty = empty;
     }
 
     public OrderTable(final int numberOfGuests, final boolean empty) {
-        this(null, null, numberOfGuests, null, empty);
-    }
-
-    public boolean isNotCompleted() {
-        return order != null && order.isNotComplete();
+        this(null, null, numberOfGuests, empty);
     }
 
     public void releaseGroup() {
@@ -57,10 +46,6 @@ public class OrderTable {
 
     public Long getTableGroupId() {
         return tableGroupId;
-    }
-
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
     }
 
     public int getNumberOfGuests() {
@@ -81,16 +66,9 @@ public class OrderTable {
         return empty;
     }
 
-    public void setOrder(final Order order) {
-        this.order = order;
-    }
-
     public void setEmpty(final boolean empty) {
         if (Objects.nonNull(this.getTableGroupId())) {
             throw new TableGroupNullException();
-        }
-        if (order != null && order.isNotComplete()) {
-           throw new InvalidOrderStatusException();
         }
         this.empty = empty;
     }
