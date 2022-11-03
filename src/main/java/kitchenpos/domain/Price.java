@@ -50,7 +50,7 @@ public class Price {
 
         Price price1 = (Price) o;
 
-        return Objects.equals(value, price1.value);
+        return value.compareTo(price1.value) == 0;
     }
 
     @Override
