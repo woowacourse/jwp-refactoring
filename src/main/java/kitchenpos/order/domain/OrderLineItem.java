@@ -15,10 +15,6 @@ public class OrderLineItem {
         this(null, null, menuId, menuName, menuPrice, quantity);
     }
 
-    public OrderLineItem(final Long seq, final Long orderId, final Long menuId, final long quantity) {
-        this(seq, orderId, menuId, null, null, quantity);
-    }
-
     public OrderLineItem(final Long seq, final Long orderId, final Long menuId, final String menuName,
                          final BigDecimal menuPrice, final long quantity) {
         this.seq = seq;
