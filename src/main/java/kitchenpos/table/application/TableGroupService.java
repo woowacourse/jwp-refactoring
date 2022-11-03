@@ -1,7 +1,6 @@
 package kitchenpos.table.application;
 
 import java.util.List;
-import kitchenpos.order.domain.dao.OrderDao;
 import kitchenpos.table.application.dto.TableGroupResponse;
 import kitchenpos.table.application.dto.TableGroupSaveRequest;
 import kitchenpos.table.domain.OrderTable;
@@ -17,12 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class TableGroupService {
 
-    private final OrderDao orderDao;
+    private final UngroupValidator ungroupValidator;
     private final OrderTableDao orderTableDao;
     private final TableGroupDao tableGroupDao;
 
-    public TableGroupService(OrderDao orderDao, OrderTableDao orderTableDao, TableGroupDao tableGroupDao) {
-        this.orderDao = orderDao;
+    public TableGroupService(UngroupValidator ungroupValidator, OrderTableDao orderTableDao, TableGroupDao tableGroupDao) {
+        this.ungroupValidator = ungroupValidator;
         this.orderTableDao = orderTableDao;
         this.tableGroupDao = tableGroupDao;
     }
@@ -39,7 +38,8 @@ public class TableGroupService {
 
     public void ungroup(Long tableGroupId) {
         OrderTables orderTables = findOrderTables(tableGroupId);
-        OrderTables updatedOrderTables = orderTables.ungroup(orderDao.findAll());
+        ungroupValidator.validateUngroup(orderTables.getOrderTableIds());
+        OrderTables updatedOrderTables = orderTables.ungroup();
         saveOrderTables(updatedOrderTables);
     }
 

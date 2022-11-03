@@ -3,7 +3,6 @@ package kitchenpos.table.domain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.domain.Order;
 import kitchenpos.table.exception.InvalidGroupOrderTablesSizeException;
 
 public class OrderTables {
@@ -31,8 +30,7 @@ public class OrderTables {
         return new OrderTables(orderTables);
     }
 
-    public OrderTables ungroup(List<Order> orders) {
-        validateUngroup(orders);
+    public OrderTables ungroup() {
         List<OrderTable> orderTables = new ArrayList<>();
         for (OrderTable orderTable : this.orderTables) {
             orderTables.add(orderTable.unOccupyTableGroup());
@@ -40,16 +38,13 @@ public class OrderTables {
         return new OrderTables(orderTables);
     }
 
-    private void validateUngroup(List<Order> orders) {
-        List<Long> orderTableIds = orderTables.stream()
-            .map(OrderTable::getId)
-            .collect(Collectors.toList());
-        for (Order order : orders) {
-            order.validateUngroup(orderTableIds);
-        }
-    }
-
     public List<OrderTable> getOrderTables() {
         return orderTables;
+    }
+
+    public List<Long> getOrderTableIds() {
+        return orderTables.stream()
+            .map(OrderTable::getId)
+            .collect(Collectors.toList());
     }
 }
