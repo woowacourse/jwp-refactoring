@@ -1,9 +1,9 @@
 package kitchenpos.acceptance;
 
 import io.restassured.response.ValidatableResponse;
-import kitchenpos.domain.ordertable.OrderTable;
-import kitchenpos.domain.ordertable.TableGroup;
 import kitchenpos.dto.request.TableGroupRequest;
+import kitchenpos.ordertable.OrderTable;
+import kitchenpos.ordertable.TableGroup;
 import kitchenpos.support.RequestBuilder;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;

@@ -3,7 +3,7 @@ package kitchenpos.dto.response;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.menu.Menu;
+import kitchenpos.menu.Menu;
 
 public class MenuResponse {
 
@@ -14,7 +14,7 @@ public class MenuResponse {
     private final List<MenuProductResponse> menuProducts;
 
     private MenuResponse(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
-                        final List<MenuProductResponse> menuProducts) {
+                         final List<MenuProductResponse> menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;

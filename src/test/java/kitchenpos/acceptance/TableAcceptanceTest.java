@@ -1,8 +1,8 @@
 package kitchenpos.acceptance;
 
 import io.restassured.response.ValidatableResponse;
-import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.ordertable.OrderTable;
 import kitchenpos.support.RequestBuilder;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;

@@ -2,13 +2,9 @@ package kitchenpos.support;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.dto.request.IdRequest;
 import kitchenpos.dto.request.MenuGroupRequest;
 import kitchenpos.dto.request.MenuProductRequest;
@@ -19,6 +15,11 @@ import kitchenpos.dto.request.OrderStatusRequest;
 import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.request.ProductRequest;
 import kitchenpos.dto.request.TableGroupRequest;
+import kitchenpos.menu.Menu;
+import kitchenpos.menu.MenuGroup;
+import kitchenpos.menu.MenuProduct;
+import kitchenpos.order.OrderStatus;
+import kitchenpos.ordertable.OrderTable;
 
 public class RequestBuilder {
 
@@ -92,6 +93,6 @@ public class RequestBuilder {
 
     private static OrderRequest ofOrder(final Long menuId, final Long tableId) {
         final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menuId, 1);
-        return new OrderRequest(tableId, Arrays.asList(orderLineItemRequest));
+        return new OrderRequest(tableId, Collections.singletonList(orderLineItemRequest));
     }
 }
