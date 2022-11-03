@@ -57,6 +57,14 @@ public class JdbcTemplateProductDao implements ProductDao {
         return jdbcTemplate.query(sql, PRODUCT_ROW_MAPPER);
     }
 
+    @Override
+    public long countProductInIds(final List<Long> ids) {
+        final String sql = "SELECT COUNT(*) FROM product WHERE id IN (:ids)";
+        final SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("ids", ids);
+        return jdbcTemplate.queryForObject(sql, parameters, Long.class);
+    }
+
     private Product select(final Long id) {
         final String sql = "SELECT id, name, price FROM product WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()

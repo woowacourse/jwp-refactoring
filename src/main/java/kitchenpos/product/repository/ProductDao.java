@@ -10,4 +10,6 @@ public interface ProductDao {
     Optional<Product> findById(Long id);
 
     List<Product> findAll();
+
+    long countProductInIds(List<Long> productIds);
 }

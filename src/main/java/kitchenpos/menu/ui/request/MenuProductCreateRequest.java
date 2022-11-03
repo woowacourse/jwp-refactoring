@@ -1,5 +1,7 @@
 package kitchenpos.menu.ui.request;
 
+import kitchenpos.menu.domain.MenuProduct;
+
 public class MenuProductCreateRequest {
 
     private Long productId;
@@ -19,5 +21,9 @@ public class MenuProductCreateRequest {
 
     public long getQuantity() {
         return quantity;
+    }
+
+    public MenuProduct toEntity() {
+        return MenuProduct.of(productId, quantity);
     }
 }

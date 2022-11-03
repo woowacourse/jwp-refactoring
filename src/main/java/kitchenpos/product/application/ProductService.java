@@ -30,4 +30,8 @@ public class ProductService {
                 .map(ProductResponse::from)
                 .collect(Collectors.toList());
     }
+
+    public long countProductInIds(final List<Long> productIds) {
+        return productDao.countProductInIds(productIds);
+    }
 }

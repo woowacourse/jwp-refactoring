@@ -31,6 +31,10 @@ public class MenuProduct {
         return new MenuProduct(seq, menu_id, product_id, quantity);
     }
 
+    public static MenuProduct of(final Long productId, final long quantity) {
+        return new MenuProduct(productId, quantity, BigDecimal.ZERO);
+    }
+
     public Long getSeq() {
         return seq;
     }

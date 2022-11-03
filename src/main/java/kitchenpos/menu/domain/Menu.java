@@ -4,16 +4,18 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
-public class Menu {
+public class Menu extends AbstractAggregateRoot<Menu> {
 
     private final Long id;
-    private final String name;
-    private final BigDecimal price;
+    private String name;
+    private BigDecimal price;
     private final Long menuGroupId;
     private final List<MenuProduct> menuProducts;
 
-    public Menu(final String name, final BigDecimal price, final Long menuGroupId, final List<MenuProduct> menuProducts) {
+    public Menu(final String name, final BigDecimal price, final Long menuGroupId, final List
+            <MenuProduct> menuProducts) {
         this(null, name, price, menuGroupId, menuProducts);
     }
 
@@ -49,6 +51,15 @@ public class Menu {
 
     public static Menu toEntity(final long id, final String name, final BigDecimal price, final Long menuGroupId) {
         return new Menu(id, name, price, menuGroupId, new ArrayList<>());
+    }
+
+    public void updateDetails(final String name, final BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
+        validateProductPrice(price, menuProducts);
+        this.name = name;
+        this.price = price;
     }
 
     public Long getId() {

@@ -1,16 +1,14 @@
 package kitchenpos.menu.application;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.menu.ui.request.MenuCreateRequest;
-import kitchenpos.menu.ui.request.MenuProductCreateRequest;
+import kitchenpos.menu.domain.MenuUpdateEvent;
+import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.menu.response.MenuResponse;
-import kitchenpos.menu.repository.dao.MenuDao;
-import kitchenpos.menu.repository.dao.MenuGroupDao;
-import kitchenpos.product.repository.ProductDao;
+import kitchenpos.menu.application.validator.MenuValidator;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.product.domain.Product;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,50 +16,35 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class MenuService {
 
-    private final MenuDao menuDao;
-    private final MenuGroupDao menuGroupDao;
-    private final ProductDao productDao;
+    private final MenuRepository menuRepository;
+    private final MenuValidator menuValidator;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
-    public MenuService(
-            final MenuDao menuDao,
-            final MenuGroupDao menuGroupDao,
-            final ProductDao productDao
-    ) {
-        this.menuDao = menuDao;
-        this.menuGroupDao = menuGroupDao;
-        this.productDao = productDao;
+    public MenuService(final MenuRepository menuRepository, final MenuValidator menuValidator,
+                       final ApplicationEventPublisher applicationEventPublisher) {
+        this.menuRepository = menuRepository;
+        this.menuValidator = menuValidator;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Transactional
-    public MenuResponse create(final MenuCreateRequest request) {
-        if (!menuGroupDao.existsById(request.getMenuGroupId())) {
-            throw new IllegalArgumentException("메뉴 그룹이 존재 하지 않습니다.");
-        }
-        final Menu menu = new Menu(
-                request.getName(),
-                request.getPrice(),
-                request.getMenuGroupId(),
-                mapToMenuProducts(request.getMenuProducts())
-        );
-        return MenuResponse.from(menuDao.save(menu));
+    public MenuResponse create(final Menu menu) {
+        menuValidator.validateCreation(menu);
+        return MenuResponse.from(menuRepository.save(menu));
     }
 
-    private List<MenuProduct> mapToMenuProducts(final List<MenuProductCreateRequest> requests) {
-        return requests.stream()
-                .map(it -> {
-                    final Product product = getProductById(it.getProductId());
-                    return new MenuProduct(product.getId(), it.getQuantity(), product.getPrice());
-                })
-                .collect(Collectors.toList());
-    }
-
-    private Product getProductById(final Long productId) {
-        return productDao.findById(productId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품이 존재합니다."));
+    @Transactional
+    public MenuResponse updateMenuDetails(final Long menuId, final String name, final BigDecimal price) {
+        final Menu menu = menuRepository.findById(menuId)
+                .orElseThrow(IllegalArgumentException::new);
+        applicationEventPublisher.publishEvent(new MenuUpdateEvent(
+                new Menu(menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menu.getMenuProducts()), menuId));
+        menu.updateDetails(name, price);
+        return MenuResponse.from(menu);
     }
 
     public List<MenuResponse> list() {
-        final List<Menu> menus = menuDao.findAll();
+        final List<Menu> menus = menuRepository.findAll();
         return menus.stream()
                 .map(MenuResponse::from)
                 .collect(Collectors.toList());
