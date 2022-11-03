@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.dao.menu.MenuGroupRepository;
 import kitchenpos.dao.menu.MenuProductRepository;
@@ -34,21 +35,18 @@ public class MenuService {
     @Transactional
     public Menu create(final MenuRequest menuRequest) {
         final MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다."));
 
-        final Menu menu = menuRepository.save(new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup));
-
-        final List<MenuProductRequest> menuProductsRequest = menuRequest.getMenuProducts();
-        for (MenuProductRequest menuProductRequest : menuProductsRequest) {
+        final List<MenuProduct> menuProducts = new ArrayList<>();
+        for (MenuProductRequest menuProductRequest : menuRequest.getMenuProducts()) {
             final Product product = productRepository.findById(menuProductRequest.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
-            final MenuProduct menuProduct = menuProductRepository.save(
-                    new MenuProduct(product, menuProductRequest.getQuantity()));
-            menu.addProduct(menuProduct);
+                    .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
+            final MenuProduct menuProduct = new MenuProduct(product, menuProductRequest.getQuantity());
+            menuProducts.add(menuProduct);
         }
-        menu.checkPrice();
 
-        return menu;
+        final Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup, menuProducts);
+        return menuRepository.save(menu);
     }
 
     public List<Menu> list() {

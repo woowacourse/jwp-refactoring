@@ -26,14 +26,9 @@ public class MenuProduct {
     @Column
     private long quantity;
 
-    public MenuProduct(final Long seq, final Product product, final long quantity) {
-        this.seq = seq;
+    public MenuProduct(final Product product, final long quantity) {
         this.product = product;
         this.quantity = quantity;
-    }
-
-    public MenuProduct(final Product product, final long quantity) {
-        this(null, product, quantity);
     }
 
     public MenuProduct() {

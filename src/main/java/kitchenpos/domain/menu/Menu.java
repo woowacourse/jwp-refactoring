@@ -3,6 +3,7 @@ package kitchenpos.domain.menu;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -33,43 +34,31 @@ public class Menu {
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
 
-    @OneToMany
-    @JoinColumn(name = "menu_id")
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "menu_id", nullable = false)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
-    public Menu(final Long id, final String name, final BigDecimal price, final MenuGroup menuGroup,
+    public Menu(final String name, final BigDecimal price, final MenuGroup menuGroup,
                 final List<MenuProduct> menuProducts) {
-        this.id = id;
-        this.name = name;
         this.price = new Price(price);
+        this.name = name;
         this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
-    }
-
-    public Menu(final Long id, final String name, final BigDecimal price, final MenuGroup menuGroup) {
-        this(id, name, price, menuGroup, new ArrayList<>());
-    }
-
-    public Menu(final String name, final BigDecimal price, final MenuGroup menuGroup) {
-        this(null, name, price, menuGroup, new ArrayList<>());
+        validatePrice(price, menuProducts);
     }
 
     public Menu() {
     }
 
-    public void addProduct(final MenuProduct menuProduct) {
-        this.menuProducts.add(menuProduct);
-    }
-
-    public void checkPrice() {
+    public void validatePrice(final BigDecimal price, final List<MenuProduct> menuProducts) {
         BigDecimal sum = BigDecimal.ZERO;
         for (MenuProduct menuProduct : menuProducts) {
-            final BigDecimal price = menuProduct.calculateTotalPrice();
-            sum = sum.add(price);
+            final BigDecimal menuProductPrice = menuProduct.calculateTotalPrice();
+            sum = sum.add(menuProductPrice);
         }
 
-        if (price.getPrice().compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
+        if (price.compareTo(sum) > 0) {
+            throw new IllegalArgumentException("메뉴의 가격과 메뉴 상품의 총 가격은 동일해야합니다.");
         }
     }
 
@@ -95,9 +84,5 @@ public class Menu {
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
-    }
-
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
     }
 }
