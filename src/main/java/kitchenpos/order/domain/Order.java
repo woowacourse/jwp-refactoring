@@ -1,6 +1,7 @@
 package kitchenpos.order.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Order {
@@ -24,8 +25,18 @@ public class Order {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
+    public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
+        this(null, orderTableId, orderStatus, orderedTime, new OrderLineItems(new ArrayList<>()));
+    }
+
     public void addOrderLineItem(final OrderLineItem... orderLineItems) {
         this.orderLineItems.addOrderLineItem(orderLineItems);
+    }
+
+    public void addOrderLineItem(final List<OrderLineItem> orderLineItems) {
+        for (OrderLineItem orderLineItem : orderLineItems) {
+            this.orderLineItems.addOrderLineItem(orderLineItem);
+        }
     }
 
     public boolean isCompletionOrder() {
