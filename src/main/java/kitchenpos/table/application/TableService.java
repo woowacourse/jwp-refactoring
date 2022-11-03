@@ -1,11 +1,8 @@
 package kitchenpos.table.application;
 
-import java.util.Arrays;
 import java.util.List;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.order.exception.NotFoundException;
-import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.table.exception.NotFoundException;
 import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.table.ui.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.table.ui.dto.request.OrderTableChangeNumberOfGuestsRequest;
@@ -22,12 +19,13 @@ public class TableService {
 
     private static final String NOT_FOUND_ORDER_TABLE_ERROR_MESSAGE = "존재하지 않는 주문테이블입니다.";
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderStatusValidator orderStatusValidator;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(final OrderTableRepository orderTableRepository,
+                        final OrderStatusValidator orderStatusValidator) {
         this.orderTableRepository = orderTableRepository;
+        this.orderStatusValidator = orderStatusValidator;
     }
 
     @Transactional
@@ -54,8 +52,7 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new NotFoundException(NOT_FOUND_ORDER_TABLE_ERROR_MESSAGE));
 
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+        if (orderStatusValidator.existsByOrderTableIdAndOrderStatusNotCompletion(orderTableId)) {
             throw new IllegalArgumentException();
         }
 

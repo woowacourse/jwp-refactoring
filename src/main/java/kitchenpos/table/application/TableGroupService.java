@@ -1,13 +1,10 @@
 package kitchenpos.table.application;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
-import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.table.repository.TableGroupRepository;
 import kitchenpos.table.ui.dto.request.TableCreateDto;
@@ -21,15 +18,16 @@ public class TableGroupService {
 
     private static final String UNGROUP_ERROR_MESSAGE = "조리 또는 식사중인 주문은 단체지정을 해제할 수 없습니다.";
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final OrderStatusValidator orderStatusValidator;
 
-    public TableGroupService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository,
-                             final TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
+    public TableGroupService(final OrderTableRepository orderTableRepository,
+                             final TableGroupRepository tableGroupRepository,
+                             final OrderStatusValidator orderStatusValidator) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.orderStatusValidator = orderStatusValidator;
     }
 
     @Transactional
@@ -87,8 +85,7 @@ public class TableGroupService {
     }
 
     private void validateCanUngroup(final List<Long> orderTableIds) {
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+        if (orderStatusValidator.existsByOrderTableIdInAndOrderStatusNotCompletion(orderTableIds)) {
             throw new IllegalArgumentException(UNGROUP_ERROR_MESSAGE);
         }
     }
