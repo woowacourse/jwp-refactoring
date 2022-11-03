@@ -60,7 +60,7 @@ class TableGroupServiceTest extends ServiceTest {
         this.product = productRepository.save(new Product("후라이드 치킨", Price.from("15000.00")));
         this.menuGroup = menuGroupRepository.save(new MenuGroup("한 마리 메뉴"));
         this.menu = menuRepository.save(
-                new Menu("후라이드 한 마리", new BigDecimal("15000.00"), menuGroup.getId(),
+                new Menu("후라이드 한 마리", Price.from(new BigDecimal("15000.00")), menuGroup.getId(),
                         List.of(new MenuProduct(product, 1L))));
     }
 

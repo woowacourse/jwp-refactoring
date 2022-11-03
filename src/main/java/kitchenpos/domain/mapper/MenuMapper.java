@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.vo.Price;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
@@ -86,7 +87,7 @@ public class MenuMapper {
                 .collect(Collectors.toList());
     }
 
-    private BigDecimal validatePrice(final List<MenuProduct> menuProducts, final BigDecimal price) {
+    private Price validatePrice(final List<MenuProduct> menuProducts, final BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
@@ -95,7 +96,7 @@ public class MenuMapper {
             throw new IllegalArgumentException();
         }
 
-        return price;
+        return Price.from(price);
     }
 
     private BigDecimal totalPriceOfMenuProducts(final List<MenuProduct> menuProducts) {
