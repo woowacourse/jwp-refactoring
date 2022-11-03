@@ -61,7 +61,8 @@ class OrderTableTest {
     @Test
     void empty_상태를_바꿀_때_table_group_id가_null이_아니면_예외를_반환한다() {
         OrderTable orderTable = createOrderTable(tableGroupId, false);
-        assertThatThrownBy(() -> orderTable.changeEmpty(true, (orderTableId) -> orderTableValidator.validateCompletionStatus(orderTableId)))
+        assertThatThrownBy(() -> orderTable.changeEmpty(true,
+                (orderTableId) -> orderTableValidator.validateCompletionStatus(orderTableId)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

@@ -53,6 +53,7 @@ class TableGroupServiceTest {
         private final OrderTable orderTable2 = createOrderTable(orderId2, tableGroupId, numberOfGuests, empty);
 
         private final List<OrderTable> orderTables = Arrays.asList(orderTable, orderTable2);
+
         @Test
         void order_table이_비어있으면_예외를_반환한다() {
             ArrayList<OrderTable> emptyOrderTable = new ArrayList<>();
@@ -122,6 +123,7 @@ class TableGroupServiceTest {
         }
 
     }
+
     @Nested
     class ungroup은 {
 
@@ -132,6 +134,7 @@ class TableGroupServiceTest {
         private final boolean empty = true;
         private final OrderTable orderTable1 = new OrderTable(orderId, tableGroupId, numberOfGuests, empty);
         private final OrderTable orderTable2 = new OrderTable(orderId2, tableGroupId, numberOfGuests, empty);
+
         @Test
         void order가_COOKING_또는_MEAL_상태이면_예외를_반환한다() {
             // given
@@ -159,6 +162,7 @@ class TableGroupServiceTest {
         }
 
     }
+
     private OrderTable createOrderTable(final Long orderId,
                                         final Long tableGroupId,
                                         final int numberOfGuests,

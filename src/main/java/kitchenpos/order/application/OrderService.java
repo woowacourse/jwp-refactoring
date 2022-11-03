@@ -75,14 +75,14 @@ public class OrderService {
     }
 
     private OrderLineItem getOrderLineItemFrom(OrderLineItemDto orderLineItemDto) {
-            Menu menu = getMenu(orderLineItemDto);
-            return new OrderLineItem(
-                    orderLineItemDto.getMenuId(),
-                    orderLineItemDto.getMenuId(),
-                    menu.getName(),
-                    menu.getPrice(),
-                    orderLineItemDto.getQuantity()
-            );
+        Menu menu = getMenu(orderLineItemDto);
+        return new OrderLineItem(
+                orderLineItemDto.getMenuId(),
+                orderLineItemDto.getMenuId(),
+                menu.getName(),
+                menu.getPrice(),
+                orderLineItemDto.getQuantity()
+        );
     }
 
     private Menu getMenu(final OrderLineItemDto orderLineItemDto) {
