@@ -22,9 +22,15 @@ public class TableUngroupValidatorImpl implements TableUngroupValidator {
 
     @Override
     public void validate(final TableGroup tableGroup) {
+        validateOrderTablesExist(tableGroup);
+        validateOrdersNotCompletion(getOrderTableIds(tableGroup));
+    }
+
+    private void validateOrderTablesExist(final TableGroup tableGroup) {
         List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroup.getId());
-        List<Long> orderTableIds = getOrderTableIds(orderTables);
-        validateOrdersNotCompletion(orderTableIds);
+        if (orderTables.size() != tableGroup.getOrderTables().size()) {
+            throw new IllegalArgumentException("order tables not completely exist");
+        }
     }
 
     public void validateOrdersNotCompletion(final List<Long> orderTableIds) {
@@ -34,8 +40,8 @@ public class TableUngroupValidatorImpl implements TableUngroupValidator {
         }
     }
 
-    private List<Long> getOrderTableIds(final List<OrderTable> orderTables) {
-        return orderTables.stream()
+    private List<Long> getOrderTableIds(final TableGroup tableGroup) {
+        return tableGroup.getOrderTables().stream()
             .map(OrderTable::getId)
             .collect(Collectors.toUnmodifiableList());
     }

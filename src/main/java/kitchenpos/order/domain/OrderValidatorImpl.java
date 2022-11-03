@@ -22,9 +22,9 @@ public class OrderValidatorImpl implements OrderValidator {
 
     @Override
     public void validate(final Order order) {
-        final OrderTable orderTable = orderTableDao.getById(order.getOrderTableId());
-        validateOrderTableNotEmpty(orderTable);
+        validateOrderTableNotEmpty(order);
         validateMenusExist(order);
+        validateOrderLineItems(order.getOrderLineItems());
     }
 
     private void validateMenusExist(final Order order) {
@@ -37,7 +37,8 @@ public class OrderValidatorImpl implements OrderValidator {
         }
     }
 
-    private void validateOrderTableNotEmpty(final OrderTable orderTable) {
+    private void validateOrderTableNotEmpty(final Order order) {
+        final OrderTable orderTable = orderTableDao.getById(order.getOrderTableId());
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
