@@ -2,12 +2,12 @@ package kitchenpos.order.domain;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.common.DomainService;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
-import org.springframework.stereotype.Component;
 
-@Component
+@DomainService
 public class OrderValidator {
 
     private final MenuRepository menuRepository;
