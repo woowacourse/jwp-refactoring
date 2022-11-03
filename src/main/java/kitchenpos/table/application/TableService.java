@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class TableService {
 
     private final ApplicationEventPublisher publisher;
@@ -22,19 +23,18 @@ public class TableService {
         this.orderTableDao = orderTableDao;
     }
 
-    @Transactional
     public OrderTableResponse create(OrderTableSaveRequest request) {
         OrderTable orderTable = orderTableDao.save(request.toEntity());
         return OrderTableResponse.toResponse(orderTable);
     }
 
+    @Transactional(readOnly = true)
     public List<OrderTableResponse> list() {
         return orderTableDao.findAll().stream()
             .map(OrderTableResponse::toResponse)
             .collect(Collectors.toUnmodifiableList());
     }
 
-    @Transactional
     public OrderTableResponse changeEmpty(Long orderTableId, Boolean empty) {
         OrderTable orderTable = findOrderTable(orderTableId);
         validateChangeEmpty(orderTableId);
@@ -47,7 +47,6 @@ public class TableService {
         publisher.publishEvent(new ChangedEmptyEvent(orderTableId));
     }
 
-    @Transactional
     public OrderTableResponse changeNumberOfGuests(Long orderTableId, int numberOfGuests) {
         OrderTable orderTable = findOrderTable(orderTableId);
         OrderTable updatedOrderTable = orderTable.changeNumberOfGuests(numberOfGuests);

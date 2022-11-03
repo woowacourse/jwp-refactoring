@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 @Service
+@Transactional
 public class OrderService {
 
     private final MenuDao menuDao;
@@ -36,7 +37,6 @@ public class OrderService {
         this.orderTableDao = orderTableDao;
     }
 
-    @Transactional
     public OrderResponse create(OrderSaveRequest request) {
         Long orderTableId = request.getOrderTableId();
         validateOrderTable(orderTableId);
@@ -65,13 +65,13 @@ public class OrderService {
         return OrderMenu.of(menu);
     }
 
+    @Transactional(readOnly = true)
     public List<OrderResponse> list() {
         return orderDao.findAll().stream()
             .map(this::toOrderResponse)
             .collect(Collectors.toUnmodifiableList());
     }
 
-    @Transactional
     public OrderResponse changeOrderStatus(Long orderId, String orderStatus) {
         Order order = findOrder(orderId);
         Order updatedOrder = orderDao.save(order.changeOrderStatus(OrderStatus.valueOf(orderStatus)));
