@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static kitchenpos.order.domain.OrderStatus.COMPLETION;
 import static kitchenpos.order.domain.OrderStatus.COOKING;
 import static kitchenpos.order.domain.OrderStatus.MEAL;
+import static kitchenpos.table.domain.TableStatus.EAT_IN;
 import static kitchenpos.table.domain.TableStatus.EMPTY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -55,6 +56,19 @@ class OrderServiceTest extends ServiceTest {
             softly.assertThat(actual.getOrderLineItems()).extracting("orderId", "menuId", "quantity")
                     .containsExactly(tuple(actual.getId(), orderLineItemRequests.get(0).getMenuId(), 2L));
             softly.assertAll();
+        }
+
+        @Test
+        @DisplayName("주문하려는 테이블이 매장 식사 상태라면 주문할 수 없다.")
+        void create_eatInTable_exception() {
+            // given
+            final List<OrderLineItemRequest> orderLineItemRequests = getOrderLineItemsRequest();
+            final Long orderTableId = saveOrderTable(10, false, EAT_IN).getId();
+            final OrderCreateRequest request = new OrderCreateRequest(orderTableId, orderLineItemRequests);
+
+            // when & then
+            assertThatThrownBy(() -> orderService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test

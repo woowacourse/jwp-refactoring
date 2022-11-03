@@ -44,6 +44,9 @@ public class Order {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
+        if (orderTable.isEatIn()) {
+            throw new IllegalArgumentException();
+        }
         Events.raise(new OrderStatusChangedEvent(orderTable.getId(), COOKING));
         return new Order(orderTable.getId(), COOKING, orderedTime, orderLineItems);
     }

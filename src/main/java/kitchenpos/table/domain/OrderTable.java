@@ -51,7 +51,7 @@ public class OrderTable {
         return new OrderTable(id, tableGroupId, numberOfGuests, empty, tableStatus);
     }
 
-    public void verifyCanGroup() { // 비어있고, 단체지정 되어있지 않아야함
+    public void verifyCanGroup() {
         final boolean canGroup = empty && tableGroupId == null;
         if (!canGroup) {
             throw new IllegalArgumentException();
@@ -67,6 +67,10 @@ public class OrderTable {
 
     public OrderTable changeTableStatus(final TableStatus tableStatus) {
         return new OrderTable(id, tableGroupId, numberOfGuests, empty, tableStatus);
+    }
+
+    public boolean isEatIn() {
+        return tableStatus.isEatIn();
     }
 
     public Long getId() {
