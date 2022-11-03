@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.OrderStatus;
@@ -35,7 +36,7 @@ public class OrderControllerTest extends ControllerTest {
         );
         given(orderService.create(any()))
                 .willReturn(new OrderResponse(1L, 1L, OrderStatus.COOKING, LocalDateTime.now(),
-                        List.of(new OrderLineItemResponse(1L, 1L, 1L, 1L))));
+                        List.of(new OrderLineItemResponse(1L, 1L, 1L, "콜라", BigDecimal.valueOf(1_000L), 1L))));
 
         // when
         final ResultActions perform = mockMvc.perform(
@@ -57,9 +58,11 @@ public class OrderControllerTest extends ControllerTest {
                 .willReturn(
                         List.of(
                                 new OrderResponse(1L, 1L, OrderStatus.COOKING, LocalDateTime.now(),
-                                        List.of(new OrderLineItemResponse(1L, 1L, 1L, 1L))),
+                                        List.of(new OrderLineItemResponse(1L, 1L, 1L, "콜라", BigDecimal.valueOf(1_000L),
+                                                1L))),
                                 new OrderResponse(1L, 2L, OrderStatus.COOKING, LocalDateTime.now(),
-                                        List.of(new OrderLineItemResponse(2L, 2L, 3L, 3L)))));
+                                        List.of(new OrderLineItemResponse(2L, 2L, 3L, "사이다", BigDecimal.valueOf(2_000L),
+                                                3L)))));
 
         // when
         final ResultActions perform = mockMvc.perform(get("/api/orders"))
@@ -80,7 +83,7 @@ public class OrderControllerTest extends ControllerTest {
 
         given(orderService.changeOrderStatus(any(), any()))
                 .willReturn(new OrderResponse(1L, 1L, OrderStatus.COOKING, LocalDateTime.now(),
-                        List.of(new OrderLineItemResponse(1L, 1L, 1L, 1L))));
+                        List.of(new OrderLineItemResponse(1L, 1L, 1L, "콜라", BigDecimal.valueOf(1_000L), 1L))));
 
         // when
         final ResultActions perform = mockMvc.perform(put("/api/orders/{orderId}/order-status", 1)

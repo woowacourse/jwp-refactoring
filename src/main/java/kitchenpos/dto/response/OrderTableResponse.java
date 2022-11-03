@@ -1,7 +1,6 @@
 package kitchenpos.dto.response;
 
 import kitchenpos.domain.OrderTable;
-import org.aspectj.weaver.ast.Or;
 
 public class OrderTableResponse {
 
@@ -24,6 +23,7 @@ public class OrderTableResponse {
         return new OrderTableResponse(table.getId(), table.getTableGroupId(), table.getNumberOfGuests(),
                 table.isEmpty());
     }
+
     public Long getId() {
         return id;
     }

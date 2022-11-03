@@ -14,8 +14,8 @@ public class MenuGroupResponse {
         this.id = id;
         this.name = name;
     }
-    
-    public static MenuGroupResponse of(final MenuGroup menuGroup){
+
+    public static MenuGroupResponse of(final MenuGroup menuGroup) {
         return new MenuGroupResponse(menuGroup.getId(), menuGroup.getName());
     }
 
