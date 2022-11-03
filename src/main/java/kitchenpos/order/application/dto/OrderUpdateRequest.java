@@ -1,4 +1,4 @@
-package kitchenpos.order.dto;
+package kitchenpos.order.application.dto;
 
 public class OrderUpdateRequest {
     private String orderStatus;

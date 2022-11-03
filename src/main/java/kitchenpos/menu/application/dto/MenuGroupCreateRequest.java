@@ -1,4 +1,4 @@
-package kitchenpos.menu.dto;
+package kitchenpos.menu.application.dto;
 
 public class MenuGroupCreateRequest {
     private Long id;

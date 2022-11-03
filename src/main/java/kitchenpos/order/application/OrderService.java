@@ -1,8 +1,8 @@
 package kitchenpos.order.application;
 
 import java.util.List;
-import kitchenpos.order.dto.OrderCreateRequest;
-import kitchenpos.order.dto.OrderUpdateRequest;
+import kitchenpos.order.application.dto.OrderCreateRequest;
+import kitchenpos.order.application.dto.OrderUpdateRequest;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderLineItemRepository;
 import kitchenpos.order.domain.Order;

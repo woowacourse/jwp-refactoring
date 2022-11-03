@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import kitchenpos.support.ServiceTest;
-import kitchenpos.product.dto.ProductCreateRequest;
+import kitchenpos.product.application.dto.ProductCreateRequest;
 import kitchenpos.product.application.ProductService;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductPrice;
