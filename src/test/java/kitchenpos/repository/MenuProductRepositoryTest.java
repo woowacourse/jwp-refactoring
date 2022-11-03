@@ -25,7 +25,7 @@ class MenuProductRepositoryTest {
     @Test
     void 저장한다() {
         // given
-        MenuProduct menuProduct = new MenuProduct(1L, 1L, 1L);
+        MenuProduct menuProduct = createMenuProduct(1L, 1L, 1L);
 
         // when
         MenuProduct savedMenuProduct = menuProductRepository.save(menuProduct);
@@ -52,7 +52,7 @@ class MenuProductRepositoryTest {
                 () -> assertThat(menuProduct.get())
                         .usingRecursiveComparison()
                         .ignoringFields("seq")
-                        .isEqualTo(new MenuProduct(null, 1L, 1L))
+                        .isEqualTo(createMenuProduct(0, 1L, 1L))
         );
     }
 
@@ -79,13 +79,17 @@ class MenuProductRepositoryTest {
                 .ignoringFields("seq")
                 .isEqualTo(
                         Arrays.asList(
-                                new MenuProduct(null, 1L, 1L),
-                                new MenuProduct(null, 2L, 1L),
-                                new MenuProduct(null, 3L, 1L),
-                                new MenuProduct(null, 4L, 1L),
-                                new MenuProduct(null, 5L, 1L),
-                                new MenuProduct(null, 6L, 1L)
+                                createMenuProduct(0, 1L, 1L),
+                                createMenuProduct(0, 2L, 1L),
+                                createMenuProduct(0, 3L, 1L),
+                                createMenuProduct(0, 4L, 1L),
+                                createMenuProduct(0, 5L, 1L),
+                                createMenuProduct(0, 6L, 1L)
                         )
                 );
+    }
+
+    private MenuProduct createMenuProduct(final long seq, final long productId, final long quantity) {
+        return new MenuProduct(seq, productId, quantity);
     }
 }

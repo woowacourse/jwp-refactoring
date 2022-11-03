@@ -85,7 +85,7 @@ class TableServiceTest {
         void table_group_id_값이_null이_아니면_예외를_반환한다() {
             // given
             Long notNullTableGroupId = 11L;
-            OrderTable orderTable = new OrderTable(1L, notNullTableGroupId, 3, false);
+            OrderTable orderTable = createOrderTable(1L, notNullTableGroupId, 3, false);
             when(orderTableRepository.findById(any(Long.class))).thenReturn(Optional.of(orderTable));
 
             // when & then
@@ -148,7 +148,7 @@ class TableServiceTest {
         void order_table이_비어있으면_예외를_반환한다() {
             // given
             Long orderTableId = 1L;
-            OrderTable orderTable = new OrderTable(orderTableId, 11L, 5, true);
+            OrderTable orderTable = createOrderTable(orderTableId, 11L, 5, true);
             when(orderTableRepository.findById(orderTableId)).thenReturn(Optional.of(orderTable));
 
             // when & then
@@ -161,7 +161,7 @@ class TableServiceTest {
         void 손님의_수를_변경할_수_있다() {
             // given
             Long orderTableId = 1L;
-            OrderTable orderTable = new OrderTable(orderTableId, 11L, 5, false);
+            OrderTable orderTable = createOrderTable(orderTableId, 11L, 5, false);
             when(orderTableRepository.findById(1L)).thenReturn(Optional.of(orderTable));
             when(orderTableRepository.save(any(OrderTable.class))).thenReturn(orderTable);
             // when
@@ -170,5 +170,12 @@ class TableServiceTest {
             // then
             assertThat(orderTable.getNumberOfGuests()).isEqualTo(3);
         }
+    }
+
+    private OrderTable createOrderTable(final Long orderTableId,
+                                        final long tableGroupId,
+                                        final int numberOfGuests,
+                                        final boolean empty) {
+        return new OrderTable(orderTableId, tableGroupId, numberOfGuests, empty);
     }
 }

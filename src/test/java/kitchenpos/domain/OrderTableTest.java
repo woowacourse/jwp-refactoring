@@ -20,7 +20,7 @@ class OrderTableTest {
 
     @Test
     void order_table을_생성할_수_있다() {
-        OrderTable orderTable = new OrderTable(id, tableGroupId, numberOfGuests, empty);
+        OrderTable orderTable = createOrderTable(tableGroupId, empty);
 
         Assertions.assertAll(
                 () -> assertThat(orderTable.getId()).isEqualTo(id),
@@ -32,7 +32,7 @@ class OrderTableTest {
 
     @Test
     void order_table을_비울_수_있다() {
-        OrderTable orderTable = new OrderTable(id, tableGroupId, numberOfGuests, empty);
+        OrderTable orderTable = createOrderTable(tableGroupId, empty);
         orderTable.clear();
         Assertions.assertAll(
                 () -> assertThat(orderTable.getTableGroupId()).isNull(),
@@ -42,7 +42,7 @@ class OrderTableTest {
 
     @Test
     void order_table을_채울_수_있다() {
-        OrderTable orderTable = new OrderTable(id, tableGroupId, numberOfGuests, empty);
+        OrderTable orderTable = createOrderTable(tableGroupId, empty);
         orderTable.fillOrderTableGroup(3L);
         Assertions.assertAll(
                 () -> assertThat(orderTable.getTableGroupId()).isEqualTo(3L),
@@ -53,21 +53,21 @@ class OrderTableTest {
     @ParameterizedTest
     @CsvSource(value = {"true, false", "false, true"})
     void empty_상태를_바꿀_수_있다(boolean before, boolean after) {
-        OrderTable orderTable = new OrderTable(id, null, numberOfGuests, before);
+        OrderTable orderTable = createOrderTable(null, before);
         orderTable.changeEmpty(after, orderTableValidator);
         assertThat(orderTable.isEmpty()).isEqualTo(after);
     }
 
     @Test
     void empty_상태를_바꿀_때_table_group_id가_null이_아니면_예외를_반환한다() {
-        OrderTable orderTable = new OrderTable(id, tableGroupId, numberOfGuests, false);
+        OrderTable orderTable = createOrderTable(tableGroupId, false);
         assertThatThrownBy(() -> orderTable.changeEmpty(true, orderTableValidator))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void guest_수를_바꿀_수_있다() {
-        OrderTable orderTable = new OrderTable(id, tableGroupId, numberOfGuests, empty);
+        OrderTable orderTable = createOrderTable(tableGroupId, empty);
         orderTable.changeNumberOfGuests(10);
         Assertions.assertAll(
                 () -> assertThat(orderTable.getNumberOfGuests()).isNotEqualTo(numberOfGuests),
@@ -77,16 +77,20 @@ class OrderTableTest {
 
     @Test
     void guest_수를_바꿀_때_비어있으면_예외를_반환한다() {
-        OrderTable orderTable = new OrderTable(id, tableGroupId, numberOfGuests, true);
+        OrderTable orderTable = createOrderTable(tableGroupId, true);
         assertThatThrownBy(() -> orderTable.changeNumberOfGuests(10))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void guest_수를_바꿀_때_음수이면_예외를_반환한다() {
-        OrderTable orderTable = new OrderTable(id, tableGroupId, numberOfGuests, empty);
+        OrderTable orderTable = createOrderTable(tableGroupId, empty);
         int negativeNumberOfGuests = -1;
         assertThatThrownBy(() -> orderTable.changeNumberOfGuests(negativeNumberOfGuests))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private OrderTable createOrderTable(final Long tableGroupId, final boolean empty) {
+        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
     }
 }

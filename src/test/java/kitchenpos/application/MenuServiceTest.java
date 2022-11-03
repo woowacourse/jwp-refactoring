@@ -57,10 +57,10 @@ class MenuServiceTest {
             // given
             MenuCreateRequest request = 메뉴_생성_dto를_만든다(price, menuGroupId, menuProducts);
             when(menuRepository.save(any(Menu.class))).thenReturn(
-                    new Menu(1L, "pasta", new Price(price), menuGroupId, menuProducts));
+                    createMenu(1L, "pasta", price, menuGroupId, menuProducts));
             when(menuGroupRepository.existsById(any(Long.class))).thenReturn(true);
             when(productRepository.findById(any(Long.class))).thenReturn(
-                    Optional.of(new Product(1L, "pasta", new Price(BigDecimal.valueOf(13000)))));
+                    Optional.of(createProduct(1L, "pasta", BigDecimal.valueOf(13000))));
 
             // when
             MenuResponse response = menuService.create(request);
@@ -137,7 +137,7 @@ class MenuServiceTest {
     @Nested
     class list는 {
 
-        private final Price price = new Price(BigDecimal.valueOf(13000));
+        private final BigDecimal price = BigDecimal.valueOf(13000);
         private final Long menuGroupId = 11L;
         private final MenuProduct menuProduct = new MenuProduct(1L, 1L, 10L);
         private final List<MenuProduct> menuProducts = Arrays.asList(menuProduct);
@@ -146,7 +146,7 @@ class MenuServiceTest {
         void 메뉴_목록을_조회한다() {
             // given
             when(menuRepository.findAllWithMenuProducts()).thenReturn(
-                    Arrays.asList(new Menu(1L, "pasta", price, menuGroupId, menuProducts)));
+                    Arrays.asList(createMenu(1L, "pasta", price, menuGroupId, menuProducts)));
 
             // when
             List<MenuResponse> responses = menuService.list();
@@ -168,5 +168,13 @@ class MenuServiceTest {
                 menuProducts.stream()
                         .map(MenuProductDto::new)
                         .collect(Collectors.toList()));
+    }
+
+    private Menu createMenu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        return new Menu(id, name, new Price(price), menuGroupId, menuProducts);
+    }
+
+    private Product createProduct(Long id, String name, BigDecimal price) {
+        return new Product(id, name, new Price(price));
     }
 }

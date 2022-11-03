@@ -28,7 +28,7 @@ class MenuRepositoryTest {
     @Test
     void 저장한다() {
         // given
-        Menu menu = menu(1L, "pasta", 13000);
+        Menu menu = 메뉴를_생성한다(1L, "pasta", 13000);
 
         // when
         Menu savedMenu = menuRepository.save(menu);
@@ -76,12 +76,12 @@ class MenuRepositoryTest {
                         .ignoringFields("price", "menuProducts")
                         .isEqualTo(
                                 Arrays.asList(
-                                        menu(1L, "후라이드치킨", 16000),
-                                        menu(2L, "양념치킨", 16000),
-                                        menu(3L, "반반치킨", 16000),
-                                        menu(4L, "통구이", 16000),
-                                        menu(5L, "간장치킨", 17000),
-                                        menu(6L, "순살치킨", 17000)
+                                        메뉴를_생성한다(1L, "후라이드치킨", 16000),
+                                        메뉴를_생성한다(2L, "양념치킨", 16000),
+                                        메뉴를_생성한다(3L, "반반치킨", 16000),
+                                        메뉴를_생성한다(4L, "통구이", 16000),
+                                        메뉴를_생성한다(5L, "간장치킨", 17000),
+                                        메뉴를_생성한다(6L, "순살치킨", 17000)
                                 )
                         )
         );
@@ -110,14 +110,14 @@ class MenuRepositoryTest {
                 () -> assertThat(menus.get(0))
                         .usingRecursiveComparison()
                         .ignoringFields("price", "menuProducts")
-                        .isEqualTo(menu(1L, "후라이드치킨", 16000)));
+                        .isEqualTo(메뉴를_생성한다(1L, "후라이드치킨", 16000)));
     }
 
-    private Menu menu(final long id, final String name, final int price) {
-        return new Menu(id, name, price(price), 2L, new ArrayList<>());
+    private Menu 메뉴를_생성한다(final long id, final String name, final int price) {
+        return new Menu(id, name, price를_생성한다(price), 2L, new ArrayList<>());
     }
 
-    private Price price(final int price) {
+    private Price price를_생성한다(final int price) {
         return new Price(BigDecimal.valueOf(price));
     }
 }

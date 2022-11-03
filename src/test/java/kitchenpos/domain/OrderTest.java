@@ -25,7 +25,7 @@ class OrderTest {
 
     @Test
     void order를_생성할_수_있다() {
-        Order order = new Order(id, orderTableId, orderStatus, orderedTime, orderLineItems);
+        Order order = createOrder(orderStatus, orderLineItems);
 
         Assertions.assertAll(
                 () -> assertThat(order.getId()).isEqualTo(id),
@@ -39,13 +39,13 @@ class OrderTest {
     @Test
     void order_line_items가_비어있으면_예외를_반환한다() {
         List<OrderLineItem> emptyOrderLineItems = new ArrayList<>();
-        assertThatThrownBy(() -> new Order(id, orderTableId, orderStatus, orderedTime, emptyOrderLineItems))
+        assertThatThrownBy(() -> createOrder(orderStatus, emptyOrderLineItems))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void order_상태를_바꿀_수_있다() {
-        Order order = new Order(id, orderTableId, orderStatus, orderedTime, orderLineItems);
+        Order order = createOrder(orderStatus, orderLineItems);
         OrderStatus completion = OrderStatus.COMPLETION;
         order.changeOrderStatus(completion);
 
@@ -58,8 +58,12 @@ class OrderTest {
     @Test
     void 상태를_바꿀_때_완료_상태이면_예외를_던진다() {
         OrderStatus completion = OrderStatus.COMPLETION;
-        Order order = new Order(id, orderTableId, completion, orderedTime, orderLineItems);
+        Order order = createOrder(completion, orderLineItems);
         assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.COOKING))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private Order createOrder(final OrderStatus completion, final List<OrderLineItem> orderLineItems) {
+        return new Order(id, orderTableId, completion, orderedTime, orderLineItems);
     }
 }

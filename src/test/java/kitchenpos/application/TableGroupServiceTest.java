@@ -6,7 +6,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -44,17 +43,16 @@ class TableGroupServiceTest {
     @Nested
     class create는 {
 
-        private final Long id = 1L;
-        private final LocalDateTime createdDate = LocalDateTime.now();
         private final Long orderId = 11L;
         private final Long orderId2 = 12L;
         private final Long tableGroupId = null;
         private final int numberOfGuests = 3;
         private final boolean empty = true;
-        private final OrderTable orderTable = new OrderTable(orderId, tableGroupId, numberOfGuests, empty);
-        private final OrderTable orderTable2 = new OrderTable(orderId2, tableGroupId, numberOfGuests, empty);
-        private final List<OrderTable> orderTables = Arrays.asList(orderTable, orderTable2);
+        private final OrderTable orderTable = createOrderTable(orderId, tableGroupId, numberOfGuests, empty);
 
+        private final OrderTable orderTable2 = createOrderTable(orderId2, tableGroupId, numberOfGuests, empty);
+
+        private final List<OrderTable> orderTables = Arrays.asList(orderTable, orderTable2);
         @Test
         void order_table이_비어있으면_예외를_반환한다() {
             ArrayList<OrderTable> emptyOrderTable = new ArrayList<>();
@@ -76,7 +74,7 @@ class TableGroupServiceTest {
         @Test
         void 저장된_order_table이_비어있지_않으면_예외를_반환한다() {
             // given
-            OrderTable orderTable = new OrderTable(orderId, tableGroupId, numberOfGuests, false);
+            OrderTable orderTable = createOrderTable(orderId, tableGroupId, numberOfGuests, false);
             List<OrderTable> orderTables = Arrays.asList(orderTable, orderTable2);
             TableGroupCreateRequest request = 테이블_그룹_생성_dto를_만든다(
                     orderTables);
@@ -91,7 +89,7 @@ class TableGroupServiceTest {
         void 저장된_order_table의_table_group_id가_null이_아니면_예외를_반환한다() {
             // given
             Long notNullTableGroupId = 111L;
-            OrderTable orderTable = new OrderTable(orderId, notNullTableGroupId, numberOfGuests, empty);
+            OrderTable orderTable = createOrderTable(orderId, notNullTableGroupId, numberOfGuests, empty);
             List<OrderTable> orderTables = Arrays.asList(orderTable, orderTable2);
             TableGroupCreateRequest request = 테이블_그룹_생성_dto를_만든다(orderTables);
             when(orderTableRepository.findAllByOrderTableIdsIn(any())).thenReturn(orderTables);
@@ -122,8 +120,8 @@ class TableGroupServiceTest {
                     .map(OrderTableIdDto::new)
                     .collect(Collectors.toList()));
         }
-    }
 
+    }
     @Nested
     class ungroup은 {
 
@@ -134,7 +132,6 @@ class TableGroupServiceTest {
         private final boolean empty = true;
         private final OrderTable orderTable1 = new OrderTable(orderId, tableGroupId, numberOfGuests, empty);
         private final OrderTable orderTable2 = new OrderTable(orderId2, tableGroupId, numberOfGuests, empty);
-
         @Test
         void order가_COOKING_또는_MEAL_상태이면_예외를_반환한다() {
             // given
@@ -160,5 +157,12 @@ class TableGroupServiceTest {
                     () -> assertThat(orderTable1.isEmpty()).isFalse()
             );
         }
+
+    }
+    private OrderTable createOrderTable(final Long orderId,
+                                        final Long tableGroupId,
+                                        final int numberOfGuests,
+                                        final boolean empty) {
+        return new OrderTable(orderId, tableGroupId, numberOfGuests, empty);
     }
 }
