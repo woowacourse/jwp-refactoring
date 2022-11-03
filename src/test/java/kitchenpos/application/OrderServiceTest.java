@@ -23,11 +23,17 @@ import kitchenpos.common.builder.OrderBuilder;
 import kitchenpos.common.builder.OrderLineItemBuilder;
 import kitchenpos.common.builder.OrderTableBuilder;
 import kitchenpos.common.builder.ProductBuilder;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderMenu;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
@@ -38,11 +44,6 @@ import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.dto.response.OrdersResponse;
 import kitchenpos.exception.MenuNotFoundException;
 import kitchenpos.exception.OrderNotFoundException;
-import kitchenpos.dao.MenuGroupRepository;
-import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.OrderTableRepository;
-import kitchenpos.dao.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -58,6 +59,7 @@ class OrderServiceTest extends ServiceTest {
     private final MenuRepository menuRepository;
 
     private Menu 야채곱창_메뉴;
+    private OrderMenu 주문한_야채곱창_메뉴;
     private OrderTable 야채곱창_주문_테이블;
 
     @Autowired
@@ -80,6 +82,7 @@ class OrderServiceTest extends ServiceTest {
         MenuProduct 루나_야채곱창 = 메뉴_상품_생성(야채곱창, 메뉴_상품_수량);
 
         야채곱창_메뉴 = menuRepository.save(메뉴_생성(야채곱창_이름, 야채곱창_가격, 루나세트, 루나_야채곱창));
+        주문한_야채곱창_메뉴 = new OrderMenu(야채곱창_메뉴.getName(), 야채곱창_메뉴.getPrice());
         야채곱창_주문_테이블 = orderTableRepository.save(주문_테이블_생성(테이블_손님_수, 사용중인_테이블));
     }
 
@@ -156,7 +159,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void 주문_목록을_조회한다() {
         // given
-        OrderLineItem 야채곱창_주문항목 = 주문_항목_생성(야채곱창_메뉴);
+        OrderLineItem 야채곱창_주문항목 = 주문_항목_생성(주문한_야채곱창_메뉴);
         Order 야채곱창_주문 = 주문_생성(야채곱창_주문_테이블, List.of(야채곱창_주문항목), COOKING);
         orderRepository.save(야채곱창_주문);
 
@@ -171,7 +174,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void 주문의_주문_상태를_변경한다() {
         // given
-        OrderLineItem 야채곱창_주문항목 = 주문_항목_생성(야채곱창_메뉴);
+        OrderLineItem 야채곱창_주문항목 = 주문_항목_생성(주문한_야채곱창_메뉴);
         Order 야채곱창_주문 = orderRepository.save(주문_생성(야채곱창_주문_테이블, List.of(야채곱창_주문항목), COOKING));
 
         // when
@@ -197,7 +200,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void 주문의_주문_상태를_변경할_때_주문_상태가_계산이면_예외가_발생한다() {
         // given
-        OrderLineItem 야채곱창_주문항목 = 주문_항목_생성(야채곱창_메뉴);
+        OrderLineItem 야채곱창_주문항목 = 주문_항목_생성(주문한_야채곱창_메뉴);
         Order 야채곱창_주문 = orderRepository.save(주문_생성(야채곱창_주문_테이블, List.of(야채곱창_주문항목), COMPLETION));
         Long 야채곱창_주문_아이디 = 야채곱창_주문.getId();
 
@@ -214,9 +217,9 @@ class OrderServiceTest extends ServiceTest {
                 .build();
     }
 
-    private OrderLineItem 주문_항목_생성(final Menu menu) {
+    private OrderLineItem 주문_항목_생성(final OrderMenu orderMenu) {
         return new OrderLineItemBuilder()
-                .menu(menu)
+                .orderMenu(orderMenu)
                 .quantity(1)
                 .build();
     }

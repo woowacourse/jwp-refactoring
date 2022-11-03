@@ -26,4 +26,16 @@ public class OrderMenu {
     public static OrderMenu from(final Menu menu) {
         return new OrderMenu(menu.getName(), menu.getPrice());
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
 }
