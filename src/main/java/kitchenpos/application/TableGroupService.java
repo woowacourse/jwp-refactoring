@@ -3,11 +3,13 @@ package kitchenpos.application;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableDao;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.domain.table.TableGroup;
 import kitchenpos.domain.table.TableGroupRepository;
+import kitchenpos.domain.table.TableGroupValidator;
 import kitchenpos.ui.dto.TableGroupRequest;
 import kitchenpos.ui.dto.TableGroupRequest.TableGroupInnerOrderTable;
 import org.springframework.stereotype.Service;
@@ -16,16 +18,22 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableGroupService {
 
+    private final TableGroupValidator tableGroupValidator;
     private final OrderTableDao orderTableDao;
     private final OrderTableRepository orderTables;
     private final TableGroupRepository tableGroups;
+    private final OrderRepository orders;
 
-    public TableGroupService(final OrderTableDao orderTableDao,
+    public TableGroupService(final TableGroupValidator tableGroupValidator,
+                             final OrderTableDao orderTableDao,
                              final OrderTableRepository orderTables,
-                             final TableGroupRepository tableGroups) {
+                             final TableGroupRepository tableGroups,
+                             final OrderRepository orders) {
+        this.tableGroupValidator = tableGroupValidator;
         this.orderTables = orderTables;
         this.orderTableDao = orderTableDao;
         this.tableGroups = tableGroups;
+        this.orders = orders;
     }
 
     @Transactional
@@ -54,8 +62,19 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final var tableGroup = tableGroups.get(tableGroupId);
+        final var orderTableIds = collectOrderTableIds(tableGroup);
+        final var allOrdersInGroup = orders.getOrderTableIdsIn(orderTableIds);
+
+        tableGroupValidator.validateOnUngroup(allOrdersInGroup);
         tableGroup.ungroup();
 
         orderTables.addAll(tableGroup.getOrderTables());
+    }
+
+    private List<Long> collectOrderTableIds(final TableGroup tableGroup) {
+        return tableGroup.getOrderTables()
+                .stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
     }
 }

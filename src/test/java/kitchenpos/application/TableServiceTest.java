@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 
 class TableServiceTest extends FakeSpringContext {
 
-    private final TableService tableService = new TableService(orderTables);
+    private final TableService tableService = new TableService(orderTableValidator, orderTables, orders);
 
     @DisplayName("주문 테이블 등록")
     @Test

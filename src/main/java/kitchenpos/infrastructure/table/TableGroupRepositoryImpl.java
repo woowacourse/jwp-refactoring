@@ -44,8 +44,7 @@ public class TableGroupRepositoryImpl implements TableGroupRepository {
                             orderTable.getId(),
                             tableGroupId,
                             orderTable.getNumberOfGuests(),
-                            false,
-                            orderTable.getOrders());
+                            false);
                     return orderTableDao.save(entity);
                 }).collect(Collectors.toList());
     }
@@ -72,8 +71,7 @@ public class TableGroupRepositoryImpl implements TableGroupRepository {
                             orderTable.getId(),
                             orderTable.getTableGroupId(),
                             orderTable.getNumberOfGuests(),
-                            orderTable.isEmpty(),
-                            orders);
+                            orderTable.isEmpty());
                 }).collect(Collectors.toList());
     }
 }

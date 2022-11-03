@@ -1,10 +1,6 @@
 package kitchenpos.domain.table;
 
-import java.util.ArrayList;
-import java.util.List;
 import kitchenpos.domain.Entity;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderStatus;
 
 public class OrderTable implements Entity {
 
@@ -12,30 +8,20 @@ public class OrderTable implements Entity {
     private Long tableGroupId;
     private Guests numberOfGuests;
     private boolean empty;
-    private List<Order> orders;
 
     public OrderTable(final int numberOfGuests,
                       final boolean empty) {
-        this(null, null, numberOfGuests, empty, new ArrayList<>());
+        this(null, null, numberOfGuests, empty);
     }
 
     public OrderTable(final Long id,
                       final Long tableGroupId,
                       final int numberOfGuests,
                       final boolean empty) {
-        this(id, tableGroupId, numberOfGuests, empty, new ArrayList<>());
-    }
-
-    public OrderTable(final Long id,
-                      final Long tableGroupId,
-                      final int numberOfGuests,
-                      final boolean empty,
-                      final List<Order> orders) {
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = new Guests(numberOfGuests);
         this.empty = empty;
-        this.orders = orders;
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
@@ -51,7 +37,7 @@ public class OrderTable implements Entity {
 
     public void changeEmptyTo(final boolean status) {
         validateNotGrouped();
-        validateAllOrderCompleted();
+//        validateAllOrderCompleted();
         this.empty = status;
     }
 
@@ -59,21 +45,6 @@ public class OrderTable implements Entity {
         if (tableGroupId != null) {
             throw new IllegalArgumentException();
         }
-    }
-
-    private void validateAllOrderCompleted() {
-        if (!isAllOrderCompleted()) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private boolean isAllOrderCompleted() {
-        return orders.stream()
-                .noneMatch(order -> order.getOrderStatus() != OrderStatus.COMPLETION);
-    }
-
-    public boolean canBeUngrouped() {
-        return isAllOrderCompleted();
     }
 
     public void ungroup() {
@@ -112,10 +83,6 @@ public class OrderTable implements Entity {
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public List<Order> getOrders() {
-        return orders;
     }
 
     private static class Guests {

@@ -21,7 +21,8 @@ import org.junit.jupiter.api.Test;
 
 class TableGroupServiceTest extends FakeSpringContext {
 
-    private final TableGroupService tableGroupService = new TableGroupService(orderTableDao, orderTables, tableGroups);
+    private final TableGroupService tableGroupService = new TableGroupService(
+            tableGroupValidator, orderTableDao, orderTables, tableGroups, orders);
 
     @DisplayName("테이블 그룹 등록")
     @Test

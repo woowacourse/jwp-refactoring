@@ -31,18 +31,7 @@ public class TableGroup implements Entity {
     }
 
     public void ungroup() {
-        validateCanBeUngrouped();
         orderTables.forEach(OrderTable::ungroup);
-    }
-
-    private void validateCanBeUngrouped() {
-        final var isAllTablesCanBeUngrouped = orderTables
-                .stream()
-                .allMatch(OrderTable::canBeUngrouped);
-
-        if (!isAllTablesCanBeUngrouped) {
-            throw new IllegalArgumentException();
-        }
     }
 
     @Override

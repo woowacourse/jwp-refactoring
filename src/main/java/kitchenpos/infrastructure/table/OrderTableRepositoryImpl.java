@@ -2,7 +2,6 @@ package kitchenpos.infrastructure.table;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.order.OrderDao;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableDao;
 import kitchenpos.domain.table.OrderTableRepository;
@@ -11,12 +10,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class OrderTableRepositoryImpl implements OrderTableRepository {
 
-    private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
 
-    public OrderTableRepositoryImpl(final OrderDao orderDao,
-                                    final OrderTableDao orderTableDao) {
-        this.orderDao = orderDao;
+    public OrderTableRepositoryImpl(final OrderTableDao orderTableDao) {
         this.orderTableDao = orderTableDao;
     }
 
@@ -25,15 +21,11 @@ public class OrderTableRepositoryImpl implements OrderTableRepository {
         final var orderTable = orderTableDao.findById(id)
                 .orElseThrow(IllegalArgumentException::new);
 
-        final var orders = orderDao.findByOrderTableId(orderTable.getId());
-
         return new OrderTable(
                 orderTable.getId(),
                 orderTable.getTableGroupId(),
                 orderTable.getNumberOfGuests(),
-                orderTable.isEmpty(),
-                orders
-        );
+                orderTable.isEmpty());
     }
 
     @Override

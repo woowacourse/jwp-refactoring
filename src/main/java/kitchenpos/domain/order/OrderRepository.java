@@ -8,5 +8,9 @@ public interface OrderRepository {
 
     Order get(Long id);
 
+    List<Order> getByOrderTableId(Long orderTableId);
+
+    List<Order> getOrderTableIdsIn(List<Long> ids);
+
     List<Order> getAll();
 }

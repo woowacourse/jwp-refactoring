@@ -65,9 +65,23 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public List<Order> getAll() {
-        final List<Order> orders = orderDao.findAll();
+    public List<Order> getByOrderTableId(final Long orderTableId) {
+        final var orders = orderDao.findByOrderTableId(orderTableId);
 
+        return fetchOrderLineItems(orders);
+    }
+
+    @Override
+    public List<Order> getOrderTableIdsIn(final List<Long> orderTableIds) {
+        final var orders = orderTableIds.stream()
+                .map(orderDao::findByOrderTableId)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
+
+        return fetchOrderLineItems(orders);
+    }
+
+    private List<Order> fetchOrderLineItems(final List<Order> orders) {
         return orders.stream()
                 .map(order -> {
                     final var orderLineItems = orderLineItemDao.findAllByOrderId(order.getId());
@@ -78,5 +92,12 @@ public class OrderRepositoryImpl implements OrderRepository {
                             order.getOrderedTime(),
                             orderLineItems);
                 }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Order> getAll() {
+        final List<Order> orders = orderDao.findAll();
+
+        return fetchOrderLineItems(orders);
     }
 }
