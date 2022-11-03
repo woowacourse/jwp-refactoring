@@ -60,6 +60,23 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
         return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
+    @Override
+    public boolean existsByMenuId(final Long menuId) {
+        final String sql = "SELECT EXISTS (SELECT 1 FROM order_line_item WHERE menu_id = (:menuId)";
+        final SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("menuId", menuId);
+        return jdbcTemplate.queryForObject(sql, parameters, Integer.class) != 0;
+    }
+
+    @Override
+    public void updateMenuIds(final Long originalMenuId, final Long menuId) {
+        final String sql = "UPDATE order_line_item set menu_id = (:menuId) where menuId = (:originalMenuId)";
+        final SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("menuId", menuId)
+                .addValue("originalMenuId", originalMenuId);
+        jdbcTemplate.update(sql, parameters);
+    }
+
     private OrderLineItem select(final Long id) {
         final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item WHERE seq = (:seq)";
         final SqlParameterSource parameters = new MapSqlParameterSource()

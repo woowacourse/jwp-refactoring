@@ -12,4 +12,8 @@ public interface OrderLineItemDao {
     List<OrderLineItem> findAll();
 
     List<OrderLineItem> findAllByOrderId(Long orderId);
+
+    boolean existsByMenuId(Long originalMenuId);
+
+    void updateMenuIds(Long originalMenuId, Long menuId);
 }
