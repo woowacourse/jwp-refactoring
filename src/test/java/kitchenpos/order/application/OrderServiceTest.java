@@ -184,7 +184,9 @@ class OrderServiceTest extends IntegrationServiceTest {
             void setUp() {
                 Menu 메뉴 = 메뉴_저장후_반환();
                 OrderTable 주문테이블 = 주문테이블_저장후_반환(false);
-                List<OrderLineItem> 주문항목들 = List.of(new OrderLineItem(메뉴.getId(), 1L));
+                // TODO 1
+                final OrderLineItem e1 = new OrderLineItem(null, 메뉴.getId(), 메뉴.getName(), 메뉴.getPrice(), 1L);
+                List<OrderLineItem> 주문항목들 = List.of(e1);
                 Order 주문 = new Order(null, COMPLETION, now(), 주문테이블, null);
                 주문.mapOrderLineItems(주문항목들);
                 savedOrderId = orderRepository.save(주문).getId();

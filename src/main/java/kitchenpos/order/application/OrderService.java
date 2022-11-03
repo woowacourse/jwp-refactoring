@@ -2,6 +2,7 @@ package kitchenpos.order.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
@@ -9,7 +10,6 @@ import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.presentation.dto.request.OrderLineItemRequest;
 import kitchenpos.order.presentation.dto.request.OrderRequest;
-import kitchenpos.order.repository.OrderLineItemRepository;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.order.repository.TableRepository;
 import kitchenpos.order.specification.OrderSpecification;
@@ -23,19 +23,13 @@ public class OrderService {
     private final OrderSpecification orderSpecification;
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
     private final TableRepository tableRepository;
 
-    public OrderService(
-            OrderSpecification orderSpecification,
-            MenuRepository menuRepository,
-            OrderRepository orderRepository,
-            OrderLineItemRepository orderLineItemRepository,
-            TableRepository tableRepository) {
+    public OrderService(OrderSpecification orderSpecification, MenuRepository menuRepository,
+                        OrderRepository orderRepository, TableRepository tableRepository) {
         this.orderSpecification = orderSpecification;
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderLineItemRepository = orderLineItemRepository;
         this.tableRepository = tableRepository;
     }
 
@@ -58,13 +52,7 @@ public class OrderService {
 
     public List<Order> list() {
 
-        final List<Order> orders = orderRepository.findAll();
-
-        for (final Order order : orders) {
-            order.mapOrderLineItems(orderLineItemRepository.findAllByOrderId(order.getId()));
-        }
-
-        return orders;
+        return orderRepository.findAllWithOrderLineItems();
     }
 
     @Transactional
@@ -85,7 +73,11 @@ public class OrderService {
 
     private List<OrderLineItem> convertOrderLineItems(Order order, List<OrderLineItemRequest> orderLineItemRequests) {
         return orderLineItemRequests.stream()
-                .map(it -> new OrderLineItem(order, it.getMenuId(), it.getQuantity()))
+                .map(it -> {
+                    Menu menu = menuRepository.findById(it.getMenuId()).get();
+                    // TODO 2
+                    return new OrderLineItem(order, it.getMenuId(), menu.getName(), menu.getPrice(), it.getQuantity());
+                })
                 .collect(Collectors.toList());
     }
 }

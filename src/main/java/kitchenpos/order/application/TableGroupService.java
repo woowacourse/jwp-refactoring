@@ -44,8 +44,7 @@ public class TableGroupService {
         tableGroup.initCurrentDateTime();
         tableGroup.changeStatusNotEmpty();
 
-        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-        return savedTableGroup;
+        return tableGroupRepository.save(tableGroup);
     }
 
 
