@@ -25,24 +25,24 @@ public class OrderService {
     private final MenuDao menuDao;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
-    private final OrderTableDao orderTableDao;
+    private final OrderValidator orderValidator;
 
     public OrderService(
         final MenuDao menuDao,
         final OrderDao orderDao,
         final OrderLineItemDao orderLineItemDao,
-        final OrderTableDao orderTableDao
+        final OrderValidator orderValidator
     ) {
         this.menuDao = menuDao;
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
-        this.orderTableDao = orderTableDao;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest request) {
         validateNotDuplicateMenuId(request.getOrderLineItems());
-        validateTableNotEmpty(request.getOrderTableId());
+        orderValidator.validateTableNotEmpty(request.getOrderTableId());
 
         final Order order = orderDao.save(request.toEntity());
         final List<OrderLineItem> orderLineItems = saveOrderLineItems(
@@ -89,15 +89,6 @@ public class OrderService {
         final List<Long> menuIds = items.getMenuIds();
 
         if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateTableNotEmpty(final Long orderTableId) {
-        final OrderTable orderTable = orderTableDao.findById(orderTableId)
-            .orElseThrow(IllegalArgumentException::new);
-
-        if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
     }
