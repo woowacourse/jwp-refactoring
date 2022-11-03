@@ -5,7 +5,7 @@ import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-public class DataCleanerExtension implements BeforeEachCallback {
+public class DataCleanerDefaultExtension implements BeforeEachCallback {
 
     @Override
     public void beforeEach(final ExtensionContext context) {
