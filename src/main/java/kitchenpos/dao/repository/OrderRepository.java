@@ -6,6 +6,7 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.jdbctemplate.JdbcTemplateOrderDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderLineItems;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Repository;
 
@@ -39,7 +40,7 @@ public class OrderRepository implements OrderDao {
             item.placeOrderId(save.getId());
             saveItem(items, item);
         }
-        save.placeOrderLineItems(items);
+        save.placeOrderLineItems(new OrderLineItems(items));
     }
 
     private void saveItem(List<OrderLineItem> items, OrderLineItem item) {
@@ -55,7 +56,7 @@ public class OrderRepository implements OrderDao {
     public Order findById(Long id) {
         Order order = orderDao.findById(id)
                 .orElseThrow(() -> new InvalidDataAccessApiUsageException("해당 아이디의 주문은 존재하지 않는다."));
-        order.placeOrderLineItems(itemRepository.findAllByOrderId(order.getId()));
+        order.placeOrderLineItems(new OrderLineItems(itemRepository.findAllByOrderId(order.getId())));
         return order;
     }
 
@@ -63,7 +64,7 @@ public class OrderRepository implements OrderDao {
     public List<Order> findAll() {
         List<Order> orders = orderDao.findAll();
         for (Order order : orders) {
-            order.placeOrderLineItems(itemRepository.findAllByOrderId(order.getId()));
+            order.placeOrderLineItems(new OrderLineItems(itemRepository.findAllByOrderId(order.getId())));
         }
         return orders;
     }

@@ -3,9 +3,7 @@ package kitchenpos.application;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -21,47 +19,39 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
-    private final MenuDao menuDao;
     private final OrderDao orderDao;
-    private final OrderLineItemDao orderLineItemDao;
     private final OrderTableDao orderTableDao;
 
-    public OrderService(
-            final MenuDao menuDao,
-            final OrderDao orderDao,
-            final OrderLineItemDao orderLineItemDao,
-            final OrderTableDao orderTableDao
-    ) {
-        this.menuDao = menuDao;
+    public OrderService(final OrderDao orderDao,
+                        final OrderTableDao orderTableDao) {
         this.orderDao = orderDao;
-        this.orderLineItemDao = orderLineItemDao;
         this.orderTableDao = orderTableDao;
     }
 
     @Transactional
     public OrderResponse create(final OrderRequest orderRequest) {
-        final OrderLineItems orderLineItems = new OrderLineItems(toOrderLineItems(orderRequest));
-        final OrderTable orderTable = orderTableDao.findById(orderRequest.getOrderTableId());
-        orderTable.validateTableIsFull();
+        final OrderTable table = orderTableDao.findById(orderRequest.getOrderTableId());
+        table.validateTableIsFull();
 
-        Order entity = new Order(null,
-                orderTable.getId(),
+        Order order = new Order(null,
+                table.getId(),
                 OrderStatus.COOKING.name(),
                 LocalDateTime.now(),
-                orderLineItems.getItems());
+                toOrderLineItems(orderRequest));
 
-        return toOrderResponse(orderDao.save(entity));
+        return toOrderResponse(orderDao.save(order));
     }
 
-    private OrderResponse toOrderResponse(Order savedOrder) {
-        return new OrderResponse(savedOrder.getId(), savedOrder.getOrderTableId(), savedOrder.getOrderStatus(),
-                savedOrder.getOrderedTime(), toOrderLineItemResponses(savedOrder));
+    private OrderResponse toOrderResponse(Order order) {
+        return new OrderResponse(order.getId(), order.getOrderTableId(), order.getOrderStatus(),
+                order.getOrderedTime(), toOrderLineItemResponses(order));
     }
 
-    private List<OrderLineItem> toOrderLineItems(OrderRequest orderRequest) {
-        return orderRequest.getOrderLineItems().stream()
+    private OrderLineItems toOrderLineItems(OrderRequest orderRequest) {
+        List<OrderLineItem> items = orderRequest.getOrderLineItems().stream()
                 .map(itemRequest -> new OrderLineItem(null, null, itemRequest.getMenuId(), itemRequest.getQuantity()))
                 .collect(Collectors.toList());
+        return new OrderLineItems(items);
     }
 
     private List<OrderLineItemResponse> toOrderLineItemResponses(Order savedOrder) {

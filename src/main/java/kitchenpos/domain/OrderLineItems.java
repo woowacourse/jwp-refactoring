@@ -1,10 +1,13 @@
 package kitchenpos.domain;
 
 import java.util.List;
-import org.springframework.util.CollectionUtils;
 
 public class OrderLineItems {
-    private final List<OrderLineItem> items;
+    private List<OrderLineItem> items;
+
+    public OrderLineItems() {
+    }
+
     public OrderLineItems(List<OrderLineItem> items) {
         this.items = items;
         validateItem();

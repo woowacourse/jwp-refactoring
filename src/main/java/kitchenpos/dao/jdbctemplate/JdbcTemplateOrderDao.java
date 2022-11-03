@@ -3,12 +3,12 @@ package kitchenpos.dao.jdbctemplate;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import javax.sql.DataSource;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItems;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -95,6 +95,6 @@ public class JdbcTemplateOrderDao {
                 resultSet.getLong("order_table_id"),
                 resultSet.getString("order_status"),
                 resultSet.getObject("ordered_time", LocalDateTime.class),
-                new ArrayList<>());
+                new OrderLineItems());
     }
 }

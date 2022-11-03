@@ -8,10 +8,10 @@ public class Order {
     private final Long orderTableId;
     private String orderStatus;
     private final LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+    private OrderLineItems orderLineItems;
 
     public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
-                 List<OrderLineItem> orderLineItems) {
+                 OrderLineItems orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -19,7 +19,7 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public void placeOrderLineItems(final List<OrderLineItem> orderLineItems) {
+    public void placeOrderLineItems(final OrderLineItems orderLineItems) {
         this.orderLineItems = orderLineItems;
     }
 
@@ -51,6 +51,6 @@ public class Order {
     }
 
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+        return orderLineItems.getItems();
     }
 }
