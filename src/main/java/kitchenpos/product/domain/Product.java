@@ -38,4 +38,11 @@ public class Product {
     public boolean isSameProductId(final Long productId) {
         return id.equals(productId);
     }
+
+    public BigDecimal calculateAmount(final Quantity quantity) {
+        if (quantity.isSameProductId(id)) {
+            return price.multiply(BigDecimal.valueOf(quantity.getQuantity()));
+        }
+        return BigDecimal.ZERO;
+    }
 }

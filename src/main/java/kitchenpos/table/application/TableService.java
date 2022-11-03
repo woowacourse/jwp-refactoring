@@ -1,11 +1,10 @@
 package kitchenpos.table.application;
 
-import static kitchenpos.order.domain.OrderStatus.COOKING;
-import static kitchenpos.order.domain.OrderStatus.MEAL;
+import static kitchenpos.table.domain.OrderStatus.COOKING;
+import static kitchenpos.table.domain.OrderStatus.MEAL;
 
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.order.dao.OrderDao;
 import kitchenpos.table.dao.OrderTableDao;
 import kitchenpos.table.domain.OrderTable;
 import org.springframework.stereotype.Service;
@@ -15,11 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class TableService {
 
-    private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
 
-    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
-        this.orderDao = orderDao;
+    public TableService(final OrderTableDao orderTableDao) {
         this.orderTableDao = orderTableDao;
     }
 
@@ -40,7 +37,7 @@ public class TableService {
     }
 
     private void validateOrderTableIdAndOrderStatusIn(final Long orderTableId) {
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
+        if (orderTableDao.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(COOKING.name(), MEAL.name()))) {
             throw new IllegalArgumentException();
         }

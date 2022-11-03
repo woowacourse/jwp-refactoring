@@ -2,7 +2,6 @@ package kitchenpos.product.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.menu.domain.MenuProduct;
 
 public class Products {
 
@@ -12,18 +11,18 @@ public class Products {
         this.products = products;
     }
 
-    public BigDecimal calculateAmount(final List<MenuProduct> menuProducts) {
+    public BigDecimal calculateAmount(final List<Quantity> quantities) {
         BigDecimal amount = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
-            amount = amount.add(calculateTotalPrice(menuProduct));
+        for (final Quantity quantity : quantities) {
+            amount = amount.add(calculateTotalPrice(quantity));
         }
         return amount;
     }
 
-    private BigDecimal calculateTotalPrice(final MenuProduct menuProduct) {
+    private BigDecimal calculateTotalPrice(final Quantity quantity) {
         BigDecimal sum = BigDecimal.ZERO;
         for (final Product product : products) {
-            sum = sum.add(menuProduct.calculateAmount(product));
+            sum = sum.add(product.calculateAmount(quantity));
         }
         return sum;
     }

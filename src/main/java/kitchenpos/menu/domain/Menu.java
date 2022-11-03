@@ -2,7 +2,6 @@ package kitchenpos.menu.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.product.domain.Products;
 
 public class Menu {
@@ -11,7 +10,7 @@ public class Menu {
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
-    private List<MenuProduct> menuProducts;
+    private MenuProducts menuProducts;
 
     public Long getId() {
         return id;
@@ -46,21 +45,19 @@ public class Menu {
     }
 
     public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
+        return menuProducts.getMenuProducts();
     }
 
     public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
+        this.menuProducts = new MenuProducts(menuProducts);
     }
 
     public List<Long> getProductIds() {
-        return menuProducts.stream()
-                .map(MenuProduct::getProductId)
-                .collect(Collectors.toList());
+        return menuProducts.getProductIds();
     }
 
     public void validatePrice(final Products products) {
-        final BigDecimal amount = products.calculateAmount(menuProducts);
+        final BigDecimal amount = products.calculateAmount(menuProducts.toQuantities());
         if (isNullOrNegativePrice() || isGreaterPriceThan(amount)) {
             throw new IllegalArgumentException();
         }

@@ -5,7 +5,7 @@ import java.util.Optional;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTables;
 
-public interface OrderTableDao {
+public interface OrderTableDao extends OrderDao {
 
     OrderTable save(OrderTable entity);
 

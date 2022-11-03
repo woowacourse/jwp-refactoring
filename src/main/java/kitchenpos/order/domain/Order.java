@@ -3,6 +3,7 @@ package kitchenpos.order.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.table.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 
 public class Order {
@@ -88,7 +89,7 @@ public class Order {
         return new Order(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
     }
 
-    private static void validateOrderTable(final OrderTable orderTable) {
+    private void validateOrderTable(final OrderTable orderTable) {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }

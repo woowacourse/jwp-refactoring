@@ -71,12 +71,6 @@ public class OrderTable {
         return new OrderTable(id, tableGroupId, newNumberOfGuests, false);
     }
 
-    public void validateNumberOfGuests() {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-    }
-
     public OrderTable init() {
         return new OrderTable(null, null, numberOfGuests, empty);
     }

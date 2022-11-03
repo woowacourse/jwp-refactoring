@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.Optional;
 import javax.sql.DataSource;
 import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.table.domain.OrderStatus;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -54,25 +54,6 @@ public class JdbcTemplateOrderDao {
     public List<Order> findAll() {
         final String sql = "SELECT id, order_table_id, order_status, ordered_time FROM orders";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
-    }
-
-    public boolean existsByOrderTableIdAndOrderStatusIn(final Long orderTableId, final List<String> orderStatuses) {
-        final String sql = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END" +
-                " FROM orders WHERE order_table_id = (:orderTableId) AND order_status IN (:orderStatuses)";
-        final SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("orderTableId", orderTableId)
-                .addValue("orderStatuses", orderStatuses);
-        return jdbcTemplate.queryForObject(sql, parameters, Boolean.class);
-    }
-
-    public boolean existsByOrderTableIdInAndOrderStatusIn(final List<Long> orderTableIds,
-                                                          final List<String> orderStatuses) {
-        final String sql = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END" +
-                " FROM orders WHERE order_table_id IN (:orderTableIds) AND order_status IN (:orderStatuses)";
-        final SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("orderTableIds", orderTableIds)
-                .addValue("orderStatuses", orderStatuses);
-        return jdbcTemplate.queryForObject(sql, parameters, Boolean.class);
     }
 
     private Order select(final Long id) {
