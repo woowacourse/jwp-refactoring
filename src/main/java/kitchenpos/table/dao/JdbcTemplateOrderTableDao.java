@@ -55,13 +55,13 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
 
     @Override
     public List<OrderTable> findAll() {
-        final String sql = "SELECT id, table_group_id, number_of_guests, empty FROM order_table";
+        final String sql = "SELECT id, table_group_id, number_of_guests, empty, ordered FROM order_table";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     @Override
     public List<OrderTable> findAllByIdIn(final List<Long> ids) {
-        final String sql = "SELECT id, table_group_id, number_of_guests, empty FROM order_table WHERE id IN (:ids)";
+        final String sql = "SELECT id, table_group_id, number_of_guests, empty, ordered FROM order_table WHERE id IN (:ids)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("ids", ids);
         return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
@@ -69,7 +69,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
 
     @Override
     public List<OrderTable> findAllByTableGroupId(final Long tableGroupId) {
-        final String sql = "SELECT id, table_group_id, number_of_guests, empty" +
+        final String sql = "SELECT id, table_group_id, number_of_guests, empty, ordered" +
                 " FROM order_table WHERE table_group_id = (:tableGroupId)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("tableGroupId", tableGroupId);
@@ -79,7 +79,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
     @Override
     public void updateAll(final List<OrderTable> entities) {
         final String sql = "UPDATE order_table SET table_group_id = (:tableGroupId)," +
-                " number_of_guests = (:numberOfGuests), empty = (:empty) WHERE id = (:id)";
+                " number_of_guests = (:numberOfGuests), empty = (:empty), ordered = (:ordered) WHERE id = (:id)";
 
         final List<MapSqlParameterSource> params = new ArrayList<>();
         for (final OrderTable entity : entities) {
@@ -87,6 +87,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
                     .addValue("tableGroupId", entity.getTableGroupId())
                     .addValue("numberOfGuests", entity.getNumberOfGuests())
                     .addValue("empty", entity.isEmpty())
+                    .addValue("ordered", entity.isOrdered())
                     .addValue("id", entity.getId());
             params.add(param);
         }
@@ -94,7 +95,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
     }
 
     private OrderTable select(final Long id) {
-        final String sql = "SELECT id, table_group_id, number_of_guests, empty FROM order_table WHERE id = (:id)";
+        final String sql = "SELECT id, table_group_id, number_of_guests, empty, ordered FROM order_table WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("id", id);
         return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
@@ -102,11 +103,12 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
 
     private void update(final OrderTable entity) {
         final String sql = "UPDATE order_table SET table_group_id = (:tableGroupId)," +
-                " number_of_guests = (:numberOfGuests), empty = (:empty) WHERE id = (:id)";
+                " number_of_guests = (:numberOfGuests), empty = (:empty), ordered = (:ordered) WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("tableGroupId", entity.getTableGroupId())
                 .addValue("numberOfGuests", entity.getNumberOfGuests())
                 .addValue("empty", entity.isEmpty())
+                .addValue("ordered", entity.isOrdered())
                 .addValue("id", entity.getId());
         jdbcTemplate.update(sql, parameters);
     }
@@ -116,7 +118,8 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
                 resultSet.getLong(KEY_COLUMN_NAME),
                 resultSet.getObject("table_group_id", Long.class),
                 resultSet.getInt("number_of_guests"),
-                resultSet.getBoolean("empty")
+                resultSet.getBoolean("empty"),
+                resultSet.getBoolean("ordered")
         );
     }
 }

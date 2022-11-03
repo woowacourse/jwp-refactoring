@@ -4,9 +4,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.AbstractAggregateRoot;
 import org.springframework.util.CollectionUtils;
 
-public class Order {
+public class Order extends AbstractAggregateRoot<Order> {
 
     private final Long id;
     private final Long orderTableId;

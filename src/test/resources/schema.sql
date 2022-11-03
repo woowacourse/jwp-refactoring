@@ -98,3 +98,6 @@ ALTER TABLE order_line_item
 
 ALTER TABLE order_line_item
     ADD COLUMN menu_price DECIMAL(19, 2) NOT NULL;
+
+ALTER TABLE order_table
+    ADD COLUMN ordered BIT(1) NOT NULL DEFAULT FALSE;

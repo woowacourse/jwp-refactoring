@@ -60,6 +60,14 @@ public class JdbcTemplateOrderDao implements OrderDao {
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
+    public List<Order> findByOrderTableId(final Long orderTableId) {
+        final String sql = "SELECT id, order_table_id, order_status, ordered_time FROM orders WHERE order_table_id = (:orderTableId)";
+        final SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("orderTableId", orderTableId);
+
+        return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
+    }
+
     @Override
     public boolean existsByOrderTableIdAndOrderStatusIn(final Long orderTableId, final List<String> orderStatuses) {
         final String sql = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END" +

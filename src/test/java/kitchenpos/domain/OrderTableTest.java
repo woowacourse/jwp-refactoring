@@ -74,7 +74,7 @@ public class OrderTableTest {
     @DisplayName("그룹에 속해 있을 때 빈 상태를 변경하려하면 예외를 던진다.")
     void changeEmpty_hasGroup_throwException() {
         // given
-        final OrderTable orderTable = new OrderTable(1L, 1L, 3, false);
+        final OrderTable orderTable = new OrderTable(1L, 1L, 3, false, false);
 
         // when & then
         assertThatThrownBy(() -> orderTable.changeEmpty(true))

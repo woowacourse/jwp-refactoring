@@ -37,15 +37,15 @@ public class TableGroup {
         return new TableGroup(id, createdDate, groupedTables);
     }
 
-    private static void validateCanGroup(final List<OrderTable> orderTables) {
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.checkCanGroup();
-        }
-    }
-
     private void validateTableSize(final List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException();
+        }
+    }
+
+    private static void validateCanGroup(final List<OrderTable> orderTables) {
+        for (final OrderTable orderTable : orderTables) {
+            orderTable.checkCanGroup();
         }
     }
 

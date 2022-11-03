@@ -5,21 +5,21 @@ import kitchenpos.menu.application.MenuGroupService;
 import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.dao.MenuGroupDao;
 import kitchenpos.menu.dao.MenuProductDao;
-import kitchenpos.order.application.OrderService;
-import kitchenpos.order.dao.OrderLineItemDao;
-import kitchenpos.product.application.ProductService;
-import kitchenpos.table.application.TableGroupService;
-import kitchenpos.table.application.TableService;
-import kitchenpos.table.dao.OrderTableDao;
-import kitchenpos.product.dao.ProductDao;
-import kitchenpos.table.dao.TableGroupDao;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.dao.OrderLineItemDao;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.table.domain.OrderTable;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.dao.ProductDao;
 import kitchenpos.product.domain.Product;
+import kitchenpos.table.application.TableGroupService;
+import kitchenpos.table.application.TableService;
+import kitchenpos.table.dao.OrderTableDao;
+import kitchenpos.table.dao.TableGroupDao;
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -97,6 +97,9 @@ public abstract class ServiceTest {
     }
 
     protected Order 주문등록(final Order order) {
+        final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
+                .orElseThrow();
+        orderTableDao.save(orderTable.order());
         return orderRepository.save(order);
     }
 }

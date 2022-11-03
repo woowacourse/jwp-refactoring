@@ -3,17 +3,20 @@ package kitchenpos.order.application;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.table.dao.OrderTableDao;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderCompletedEvent;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderProceededEvent;
 import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.table.domain.OrderTable;
 import kitchenpos.order.dto.request.OrderLineItemRequest;
 import kitchenpos.order.dto.request.OrderRequest;
 import kitchenpos.order.dto.request.OrderStatusRequest;
 import kitchenpos.order.dto.response.OrderResponse;
+import kitchenpos.table.dao.OrderTableDao;
+import kitchenpos.table.domain.OrderTable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,15 +26,17 @@ public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderTableDao orderTableDao;
+    private final ApplicationEventPublisher eventPublisher;
 
     public OrderService(
             final MenuRepository menuRepository,
             final OrderRepository orderRepository,
-            final OrderTableDao orderTableDao
-    ) {
+            final OrderTableDao orderTableDao,
+            final ApplicationEventPublisher eventPublisher) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderTableDao = orderTableDao;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
@@ -39,6 +44,7 @@ public class OrderService {
         final Order order = proceedOrder(request);
         validateEmptyTable(order.getOrderTableId());
         validateOrderMenus(order);
+        eventPublisher.publishEvent(new OrderProceededEvent(order, order.getOrderTableId()));
 
         return OrderResponse.of(orderRepository.save(order));
     }
@@ -83,6 +89,9 @@ public class OrderService {
         final Order savedOrder = orderRepository.getById(orderId);
         final Order changeOrder = savedOrder.changeOrderStatus(request.getOrderStatus());
 
-        return OrderResponse.of(orderRepository.save(changeOrder));
+        orderRepository.save(changeOrder);
+        eventPublisher.publishEvent(new OrderCompletedEvent(changeOrder, changeOrder.getOrderTableId()));
+
+        return OrderResponse.of(changeOrder);
     }
 }

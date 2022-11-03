@@ -149,7 +149,34 @@
 ```
 
 ## 의존성 리팩토링
+
 - 메뉴의 이름과 가격이 변경되면 주문 항목도 함께 변경된다. 메뉴 정보가 변경되더라도 주문 항목이 변경되지 않게 구현한다.
-  - [x] 주문이 들어올 때 주문 내용을 OrderLineItem 에 직접 삽입한다.
-  - [x] Order 조회 시 MenuName, MenuPrice 반환한다.
+    - [x] 주문이 들어올 때 주문 내용을 OrderLineItem 에 직접 삽입한다.
+    - [x] Order 조회 시 MenuName, MenuPrice 반환한다.
 - 클래스 간의 방향도 중요하고 패키지 간의 방향도 중요하다. 클래스 사이, 패키지 사이의 의존 관계는 단방향이 되도록 해야 한다.
+- [x] 도메인 간의 의존관계를 그려본다.
+    - 도메인 간의 직접적인 의존관계에 대한 사이클은 보이지 않음.
+- [x] 서비스 레이어에서의 의존관계를 그려본다.
+- [x] Order-Table 간의 의존성 싸이클을 해결한다.
+    - 싸이클 정리
+        - Table 에서 해당 테이블을 비우거나 단체 지정을 해제할 때 테이블에 진행중인 주문이 있는지를 검사하기 위해 의존관계가 필요하다. (to OrderRepository)
+        - Order 에서 빈 테이블인지 확인하기 위해 Table에 대한 의존관계가 필요하다. (to OrderTableDao)
+    - Table -> Order 의존관계 끊기 ( 이제.. 이벤트 리스너를 곁들인 )
+        - 먼저 Table 에서 주문이 진행되고 있는지 상태를 저장하기 위한 ordered 필드를 추가한다. (DB에도 반영 - V4)
+        - 이벤트를 활용하여 Order가 생성, 또는 Completion 으로 상태가 변경될 경우 각각 이벤트로 table의 ordered 필드도 변경을 적용한다.
+        - 덕분에 OrderTableService 와 TableGroupService 에서 OrderRepository에 대한 의존을 제거할 수 있었다.
+        - 하지만 이벤트 리스너에서 Order 에 위치한 Event들을 의존하기 때문에 다시 문제가 생긴다.
+    - Table 에 Order 가 여러 개 존재할 수 있다
+        - 그렇기 때문에 리스너에서 이벤트를 받아 ordered 필드를 변경할 경우 해당 테이블에 존재하는 모든 주문이 결재 완료가 된 상태여야한다.
+        - 이를 막기 위해서 OrderRepository.findByOrderTableId 를 추가하고 해당 로직을 이용해서 모든 주문의 상태를 확인한 후 ordered 상태를 바꾼다. (ordered ->
+          false)
+    - billing 패키지 도입
+        - Table과 Order 사이의 의존관계가 이벤트리스너를 써도 끊어지지않는다.
+        - 패키지 분리를 해보자.
+        - billing 패키지 도입으로 의존관계가 정리되었다.
+    - 솔직히..
+        - 솔직히 이벤트리스너 방법보다 Validator를 구현, 의존성 역전 을 이용하여 의존방향을 단방향으로 바꿀 수 있었을 것이다.
+        - 하지만 학습을 위해서 이벤트 리스너를 도입해보았다. 도입하니 생각보다 신기하다.
+        - 처음에는 AbstractAggerateRoot 를 상속받아 이벤트를 발행하려했으나 Spring Data 를 사용했을 때 save 메서드 발생 시 적용된다고 한다.
+        - 따라서 생 JdbcTemplate을 쓰는 지금 코드에서는 사용이 불가능해서 Publisher 를 직접 사용했다.
+        - 

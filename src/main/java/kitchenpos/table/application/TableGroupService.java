@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.table.dao.OrderTableDao;
 import kitchenpos.table.dao.TableGroupDao;
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.dto.request.TableGroupRequest;
@@ -16,16 +14,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableGroupService {
 
-    private final OrderRepository orderRepository;
     private final TableGroupDao tableGroupDao;
     private final OrderTableDao orderTableDao;
 
     public TableGroupService(
-            final OrderRepository orderRepository,
             final TableGroupDao tableGroupDao,
             final OrderTableDao orderTableDao
     ) {
-        this.orderRepository = orderRepository;
         this.tableGroupDao = tableGroupDao;
         this.orderTableDao = orderTableDao;
     }
@@ -67,9 +62,9 @@ public class TableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, List.of(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
+        final List<OrderTable> tables = orderTableDao.findAllByIdIn(orderTableIds);
+        for (final OrderTable table : tables) {
+            table.checkCanUnGroup();
         }
     }
 }
