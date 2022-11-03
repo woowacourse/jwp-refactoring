@@ -1,6 +1,7 @@
 package kitchenpos.domain.order;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,8 +21,8 @@ public class OrderLineItem {
     @JoinColumn(name = "order_id")
     private Order order;
 
-    @Column
-    private Long menuId;
+    @Embedded
+    private OrderedMenu orderedMenu;
 
     @Column
     private long quantity;
@@ -29,21 +30,21 @@ public class OrderLineItem {
     public OrderLineItem() {
     }
 
-    public OrderLineItem(final Long menuId, final long quantity) {
-        this.menuId = menuId;
+    public OrderLineItem(final OrderedMenu orderedMenu, final long quantity) {
+        this.orderedMenu = orderedMenu;
         this.quantity = quantity;
     }
 
-    public OrderLineItem(final Order order, final Long menuId, final long quantity) {
+    public OrderLineItem(final Order order, final OrderedMenu orderedMenu, final long quantity) {
         this.order = order;
-        this.menuId = menuId;
+        this.orderedMenu = orderedMenu;
         this.quantity = quantity;
     }
 
     private OrderLineItem(Builder builder) {
         this.seq = builder.seq;
         this.order = builder.order;
-        this.menuId = builder.menuId;
+        this.orderedMenu = builder.orderedMenu;
         this.quantity = builder.quantity;
     }
 
@@ -59,8 +60,8 @@ public class OrderLineItem {
         return order;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public OrderedMenu getOrderedMenu() {
+        return orderedMenu;
     }
 
     public long getQuantity() {
@@ -70,7 +71,7 @@ public class OrderLineItem {
     public static class Builder {
         private Long seq;
         private Order order;
-        private Long menuId;
+        private OrderedMenu orderedMenu;
         private long quantity;
 
         public Builder seq(final Long seq) {
@@ -83,8 +84,8 @@ public class OrderLineItem {
             return this;
         }
 
-        public Builder menuId(final Long menuId) {
-            this.menuId = menuId;
+        public Builder orderedMenu(final OrderedMenu orderedMenu) {
+            this.orderedMenu = orderedMenu;
             return this;
         }
 

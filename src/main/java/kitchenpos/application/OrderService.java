@@ -4,10 +4,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.order.OrderedMenu;
 import kitchenpos.exception.NotFoundException;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;
@@ -56,8 +58,9 @@ public class OrderService {
         final Order order = orderRepository.save(new Order(orderTableId, OrderStatus.COOKING, LocalDateTime.now()));
         List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (final OrderLineItemDto orderLineItemDto : orderItemDtos) {
+            final Long menuId = orderLineItemDto.getMenuId();
             final OrderLineItem orderLineItem = orderLineItemRepository.save(
-                    new OrderLineItem(order, orderLineItemDto.getMenuId(), orderLineItemDto.getQuantity()));
+                    new OrderLineItem(order, getOrderedMenu(menuId), orderLineItemDto.getQuantity()));
             orderLineItems.add(orderLineItem);
         }
 
@@ -79,6 +82,12 @@ public class OrderService {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
+    }
+
+    private OrderedMenu getOrderedMenu(final Long menuId) {
+        final Menu menu = menuRepository.findById(menuId)
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_MENU_ERROR_MESSAGE));
+        return new OrderedMenu(menu.getName(), menu.getPrice());
     }
 
     public List<OrderFindAllResponse> list() {

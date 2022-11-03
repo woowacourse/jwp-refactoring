@@ -1,5 +1,6 @@
 package kitchenpos.ui.dto.response;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.order.OrderLineItem;
@@ -8,16 +9,19 @@ public class OrderLineItemFindAllResponse {
 
     private Long seq;
     private Long orderId;
-    private Long menuId;
+    private String menuName;
+    private BigDecimal menuPrice;
     private long quantity;
 
     public OrderLineItemFindAllResponse() {
     }
 
-    public OrderLineItemFindAllResponse(final Long seq, final Long orderId, final Long menuId, final long quantity) {
+    public OrderLineItemFindAllResponse(final Long seq, final Long orderId, final String menuName,
+                                        final BigDecimal menuPrice, final long quantity) {
         this.seq = seq;
         this.orderId = orderId;
-        this.menuId = menuId;
+        this.menuName = menuName;
+        this.menuPrice = menuPrice;
         this.quantity = quantity;
     }
 
@@ -29,7 +33,8 @@ public class OrderLineItemFindAllResponse {
 
     private static OrderLineItemFindAllResponse from(final OrderLineItem orderLineItem) {
         return new OrderLineItemFindAllResponse(orderLineItem.getSeq(), orderLineItem.getOrder().getId(),
-                orderLineItem.getMenuId(), orderLineItem.getQuantity());
+                orderLineItem.getOrderedMenu().getMenuName(), orderLineItem.getOrderedMenu().getMenuPrice(),
+                orderLineItem.getQuantity());
     }
 
     public Long getSeq() {
@@ -40,8 +45,12 @@ public class OrderLineItemFindAllResponse {
         return orderId;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public String getMenuName() {
+        return menuName;
+    }
+
+    public BigDecimal getMenuPrice() {
+        return menuPrice;
     }
 
     public long getQuantity() {
