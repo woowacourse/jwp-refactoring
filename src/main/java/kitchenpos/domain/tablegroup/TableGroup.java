@@ -35,13 +35,13 @@ public class TableGroup {
     }
 
     public TableGroup(Long id, LocalDateTime createdDate, List<OrderTableRef> orderTableRefs) {
-        validateOrderTableIdsSize(orderTableRefs);
+        validateOrderTableRefsSize(orderTableRefs);
         this.id = id;
         this.createdDate = createdDate;
         this.orderTableRefs = orderTableRefs;
     }
 
-    private void validateOrderTableIdsSize(List<OrderTableRef> orderTableRefs) {
+    private void validateOrderTableRefsSize(List<OrderTableRef> orderTableRefs) {
         if (CollectionUtils.isEmpty(orderTableRefs) || orderTableRefs.size() < 2) {
             throw new IllegalArgumentException();
         }

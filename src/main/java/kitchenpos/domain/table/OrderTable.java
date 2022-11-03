@@ -90,7 +90,7 @@ public class OrderTable {
         }
     }
 
-    public void addOrder(Long orderId, OrderStatus orderStatus) {
+    public void addRecord(Long orderId, OrderStatus orderStatus) {
         this.records.add(new OrderRecord(orderId, orderStatus));
     }
 

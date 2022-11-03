@@ -124,14 +124,14 @@ class TableGroupServiceTest {
         // given
         OrderTable orderTableA = createOrderTable();
         orderTableRepository.save(orderTableA);
-        orderTableA.addOrder(
+        orderTableA.addRecord(
                 orderRepository.save(createOrder(orderTableA.getId(), OrderStatus.MEAL)).getId(),
                 OrderStatus.MEAL
         );
 
         OrderTable orderTableB = createOrderTable();
         orderTableRepository.save(orderTableB);
-        orderTableB.addOrder(
+        orderTableB.addRecord(
                 orderRepository.save(createOrder(orderTableA.getId(), OrderStatus.COMPLETION)).getId(),
                 OrderStatus.COMPLETION
         );

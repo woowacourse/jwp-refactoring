@@ -88,7 +88,7 @@ class TableServiceTest {
         // given
         long orderId = 1L;
         OrderTable orderTable = OrderTableFixtures.createOrderTable();
-        orderTable.addOrder(orderId, OrderStatus.COOKING);
+        orderTable.addRecord(orderId, OrderStatus.COOKING);
         orderTableRepository.save(orderTable);
 
         // when & then

@@ -39,7 +39,7 @@ public class OrderService {
         List<OrderLineItem> orderLineItems = getOrderLineItems(request);
 
         Order order = orderRepository.save(Order.of(orderTable.getId(), orderLineItems, orderTable.isEmpty()));
-        orderTable.addOrder(order.getId(), order.getOrderStatus());
+        orderTable.addRecord(order.getId(), order.getOrderStatus());
         return OrderResponse.from(order);
     }
 
