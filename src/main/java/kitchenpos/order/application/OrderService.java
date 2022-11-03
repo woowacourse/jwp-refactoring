@@ -103,6 +103,6 @@ public class OrderService {
     public OrderResponse changeOrderStatus(final Long orderId, final ChangeOrderStatusRequest request) {
         final Order order = orderRepository.getOrder(orderId)
                 .changeOrderStatus(request.getOrderStatus());
-        return OrderResponse.from(orderRepository.save(order));
+        return OrderResponse.from(orderRepository.save(toValidOrder(order)));
     }
 }
