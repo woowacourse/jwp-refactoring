@@ -15,7 +15,8 @@ public class TableGroupResponse {
     private TableGroupResponse() {
     }
 
-    public TableGroupResponse(final Long id, final LocalDateTime createdDate,
+    public TableGroupResponse(final Long id,
+                              final LocalDateTime createdDate,
                               final List<TableGroupInnerOrderTable> orderTables) {
         this.id = id;
         this.createdDate = createdDate;
@@ -50,20 +51,45 @@ public class TableGroupResponse {
     public static class TableGroupInnerOrderTable {
 
         private Long id;
+        private Long tableGroupId;
+        private int numberOfGuests;
+        private boolean empty;
 
         private TableGroupInnerOrderTable() {
         }
 
-        public TableGroupInnerOrderTable(final Long id) {
+        private TableGroupInnerOrderTable(final Long id,
+                                         final Long tableGroupId,
+                                         final int numberOfGuests,
+                                         final boolean empty) {
             this.id = id;
+            this.tableGroupId = tableGroupId;
+            this.numberOfGuests = numberOfGuests;
+            this.empty = empty;
         }
 
         public static TableGroupInnerOrderTable from(final OrderTable orderTable) {
-            return new TableGroupInnerOrderTable(orderTable.getId());
+            return new TableGroupInnerOrderTable(
+                    orderTable.getId(),
+                    orderTable.getTableGroupId(),
+                    orderTable.getNumberOfGuests(),
+                    orderTable.isEmpty());
         }
 
         public Long getId() {
             return id;
+        }
+
+        public Long getTableGroupId() {
+            return tableGroupId;
+        }
+
+        public int getNumberOfGuests() {
+            return numberOfGuests;
+        }
+
+        public boolean isEmpty() {
+            return empty;
         }
     }
 }

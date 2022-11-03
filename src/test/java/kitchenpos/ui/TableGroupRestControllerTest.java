@@ -8,8 +8,8 @@ import java.util.List;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.fixture.OrderTableFactory;
-import kitchenpos.ui.dto.TableGroupInnerOrderTableRequest;
 import kitchenpos.ui.dto.TableGroupRequest;
+import kitchenpos.ui.dto.TableGroupRequest.TableGroupInnerOrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +34,8 @@ class TableGroupRestControllerTest {
         final var singleTable = orderTableDao.save(OrderTableFactory.emptyTable(1));
         final var coupleTable = orderTableDao.save(OrderTableFactory.emptyTable(2));
 
-        final var singTableRequest = new TableGroupInnerOrderTableRequest(singleTable.getId());
-        final var coupleTableRequest = new TableGroupInnerOrderTableRequest(coupleTable.getId());
+        final var singTableRequest = new TableGroupInnerOrderTable(singleTable.getId());
+        final var coupleTableRequest = new TableGroupInnerOrderTable(coupleTable.getId());
         final var request = new TableGroupRequest(List.of(singTableRequest, coupleTableRequest));
 
         final var response = tableGroupRestController.create(request);

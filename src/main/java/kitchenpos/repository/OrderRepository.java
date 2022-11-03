@@ -48,8 +48,17 @@ public class OrderRepository {
     }
 
     public Order get(final Long id) {
-        return orderDao.findById(id)
+        final var orderLineItems = orderLineItemDao.findAllByOrderId(id);
+        final var order = orderDao.findById(id)
                 .orElseThrow(IllegalArgumentException::new);
+
+        return new Order(
+                id,
+                order.getOrderTableId(),
+                order.getOrderStatus(),
+                order.getOrderedTime(),
+                orderLineItems
+        );
     }
 
     public List<Order> getAll() {

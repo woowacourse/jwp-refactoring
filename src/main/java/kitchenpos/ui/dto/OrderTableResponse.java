@@ -12,7 +12,7 @@ public class OrderTableResponse {
     private OrderTableResponse() {
     }
 
-    public OrderTableResponse(final Long id,
+    private OrderTableResponse(final Long id,
                               final Long tableGroupId,
                               final int numberOfGuests,
                               final boolean empty) {
@@ -29,5 +29,21 @@ public class OrderTableResponse {
                 orderTable.getNumberOfGuests(),
                 orderTable.isEmpty()
         );
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getTableGroupId() {
+        return tableGroupId;
+    }
+
+    public int getNumberOfGuests() {
+        return numberOfGuests;
+    }
+
+    public boolean isEmpty() {
+        return empty;
     }
 }

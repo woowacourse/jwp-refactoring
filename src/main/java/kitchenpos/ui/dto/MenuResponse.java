@@ -17,7 +17,7 @@ public class MenuResponse {
     private MenuResponse() {
     }
 
-    public MenuResponse(final Long id,
+    private MenuResponse(final Long id,
                         final String name,
                         final BigDecimal price,
                         final Long menuGroupId,
@@ -45,6 +45,26 @@ public class MenuResponse {
                 .collect(Collectors.toList());
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public Long getMenuGroupId() {
+        return menuGroupId;
+    }
+
+    public List<MenuInnerMenuProductResponse> getMenuProducts() {
+        return menuProducts;
+    }
+
     public static class MenuInnerMenuProductResponse {
 
         private Long seq;
@@ -55,7 +75,7 @@ public class MenuResponse {
         private MenuInnerMenuProductResponse() {
         }
 
-        public MenuInnerMenuProductResponse(final Long seq,
+        private MenuInnerMenuProductResponse(final Long seq,
                                             final Long menuUd,
                                             final Long productId,
                                             final long quantity) {

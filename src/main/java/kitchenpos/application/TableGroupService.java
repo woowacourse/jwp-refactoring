@@ -8,8 +8,8 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
-import kitchenpos.ui.dto.TableGroupInnerOrderTableRequest;
 import kitchenpos.ui.dto.TableGroupRequest;
+import kitchenpos.ui.dto.TableGroupRequest.TableGroupInnerOrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,14 +30,14 @@ public class TableGroupService {
 
     @Transactional
     public TableGroup create(final TableGroupRequest request) {
-        final List<OrderTable> savedOrderTables = mapToOrderTables(request.getOrderTableRequests());
+        final List<OrderTable> savedOrderTables = mapToOrderTables(request.getOrderTables());
         final var tableGroup = new TableGroup(LocalDateTime.now(), savedOrderTables);
         return tableGroups.add(tableGroup);
     }
 
     // - 비즈니스 오류 (x)
     // - 논리적 오류 (o)
-    private List<OrderTable> mapToOrderTables(final List<TableGroupInnerOrderTableRequest> requests) {
+    private List<OrderTable> mapToOrderTables(final List<TableGroupInnerOrderTable> requests) {
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(collectIds(requests));
         if (requests.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
@@ -45,9 +45,9 @@ public class TableGroupService {
         return savedOrderTables;
     }
 
-    private List<Long> collectIds(final List<TableGroupInnerOrderTableRequest> requests) {
+    private List<Long> collectIds(final List<TableGroupInnerOrderTable> requests) {
         return requests.stream()
-                .map(TableGroupInnerOrderTableRequest::getId)
+                .map(TableGroupInnerOrderTable::getId)
                 .collect(Collectors.toList());
     }
 
