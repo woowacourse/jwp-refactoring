@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.product.Product;
 
 public class MenuCreateRequest {
 
@@ -40,13 +41,31 @@ public class MenuCreateRequest {
         return menuProducts;
     }
 
-    public Menu toEntity() {
-        return new Menu(getName(), getPrice(), getMenuGroupId(), toMenuProductEntities());
+    public Menu toEntity(List<Product> products) {
+        return Menu.create(getName(), getPrice(), getMenuGroupId(), toMenuProductEntities(products));
     }
 
-    private List<MenuProduct> toMenuProductEntities() {
+    private List<MenuProduct> toMenuProductEntities(List<Product> products) {
         return menuProducts.stream()
-                .map(menuProduct -> new MenuProduct(null, menuProduct.getProductId(), menuProduct.getQuantity()))
+                .map(menuProduct -> MenuProduct.createWithPrice(
+                        null,
+                        menuProduct.getProductId(),
+                        toProductPrice(menuProduct.getProductId(), products),
+                        menuProduct.getQuantity()))
+                .collect(Collectors.toList());
+    }
+
+    private BigDecimal toProductPrice(Long productId, List<Product> products) {
+        return products.stream()
+                .filter(product -> product.getId().equals(productId))
+                .findAny()
+                .map(Product::getPrice)
+                .orElseThrow(IllegalArgumentException::new);
+    }
+
+    public List<Long> getProductIds() {
+        return menuProducts.stream()
+                .map(MenuProductCreateRequest::getProductId)
                 .collect(Collectors.toList());
     }
 }

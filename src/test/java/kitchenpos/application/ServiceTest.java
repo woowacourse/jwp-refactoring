@@ -74,9 +74,9 @@ public abstract class ServiceTest {
         return 메뉴_상품을_생성한다(null, productName, productPrice, quantity);
     }
 
-    protected MenuProduct 메뉴_상품을_생성한다(Long id, String productName, int productPrice, Long quantity) {
+    protected MenuProduct 메뉴_상품을_생성한다(Long menuId, String productName, int productPrice, Long quantity) {
         Product product = 상품을_저장한다(productName, productPrice);
-        return new MenuProduct(id, product.getId(), quantity);
+        return MenuProduct.createWithPrice(menuId, product.getId(), BigDecimal.valueOf(productPrice), quantity);
     }
 
     protected Product 상품을_저장한다(String name, int price) {
@@ -101,7 +101,7 @@ public abstract class ServiceTest {
 
         MenuGroup menuGroup = 메뉴_그룹을_저장한다("메뉴 그룹");
 
-        Menu menu = new Menu(
+        Menu menu = Menu.create(
                 menuName, BigDecimal.valueOf(menuProducts.size() * 5000L), menuGroup.getId(), menuProducts);
 
         return menuDao.save(menu);

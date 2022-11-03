@@ -5,8 +5,6 @@ import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuProduct;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -36,7 +34,8 @@ public class MenuRepository {
     private List<MenuProduct> saveMenuProducts(Menu menu, Long menuId) {
         return menu.getMenuProducts()
                 .stream()
-                .map(menuProduct -> new MenuProduct(menuId, menuProduct.getProductId(), menuProduct.getQuantity()))
+                .map(menuProduct -> MenuProduct.createEntity(null, menuId, menuProduct.getProductId(),
+                        menuProduct.getQuantity()))
                 .map(menuProductDao::save)
                 .collect(Collectors.toList());
     }

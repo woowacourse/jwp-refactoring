@@ -26,24 +26,9 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(MenuCreateRequest request) {
-        validateMenuPrice(request.getPrice(), request.getMenuProducts());
+        List<Product> products = productRepository.findAllByIdIn(request.getProductIds());
 
-        return MenuResponse.from(menuRepository.save(request.toEntity()));
-    }
-
-    private void validateMenuPrice(BigDecimal menuPrice, List<MenuProductCreateRequest> menuProductsRequest) {
-        BigDecimal sum = BigDecimal.ZERO;
-        for (MenuProductCreateRequest menuProductRequest : menuProductsRequest) {
-            Product product = productRepository.findById(menuProductRequest.getProductId());
-            sum = sum.add(product.calculatePrice(menuProductRequest.getQuantity()));
-        }
-        validateMenuPriceLessThanTotalProductPrice(menuPrice, sum);
-    }
-
-    private void validateMenuPriceLessThanTotalProductPrice(BigDecimal menuPrice, BigDecimal productsSum) {
-        if (menuPrice.compareTo(productsSum) > 0) {
-            throw new IllegalArgumentException();
-        }
+        return MenuResponse.from(menuRepository.save(request.toEntity(products)));
     }
 
     public List<MenuResponse> list() {

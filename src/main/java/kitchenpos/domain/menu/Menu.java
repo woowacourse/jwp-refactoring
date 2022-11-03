@@ -25,8 +25,24 @@ public class Menu {
         this(id, name, price, menuGroupId, new ArrayList<>());
     }
 
-    public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        this(null, name, price, menuGroupId, menuProducts);
+    public static Menu create(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        validateMenuPrice(price, menuProducts);
+
+        return new Menu(null, name, price, menuGroupId, menuProducts);
+    }
+
+    private static void validateMenuPrice(BigDecimal menuPrice, List<MenuProduct> menuProducts) {
+        BigDecimal sum = menuProducts.stream()
+                .map(MenuProduct::calculateTotalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        validateMenuPriceLessThanTotalProductPrice(menuPrice, sum);
+    }
+
+    private static void validateMenuPriceLessThanTotalProductPrice(BigDecimal menuPrice, BigDecimal productsSum) {
+        if (menuPrice.compareTo(productsSum) > 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {

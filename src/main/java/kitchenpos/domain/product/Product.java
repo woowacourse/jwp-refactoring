@@ -20,10 +20,6 @@ public class Product {
         this(null, name, price);
     }
 
-    public BigDecimal calculatePrice(long quantity) {
-        return price.calculateTotalAmount(quantity);
-    }
-
     public Long getId() {
         return id;
     }

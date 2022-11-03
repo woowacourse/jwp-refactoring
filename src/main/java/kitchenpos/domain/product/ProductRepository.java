@@ -2,7 +2,6 @@ package kitchenpos.domain.product;
 
 import java.util.List;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.product.Product;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -25,5 +24,9 @@ public class ProductRepository {
     public Product findById(Long id) {
         return productDao.findById(id)
                 .orElseThrow(IllegalArgumentException::new);
+    }
+
+    public List<Product> findAllByIdIn(List<Long> ids) {
+        return productDao.findAllByIdIn(ids);
     }
 }

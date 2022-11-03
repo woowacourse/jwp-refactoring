@@ -24,6 +24,6 @@ public class MenuProductCreateRequest {
     }
 
     public MenuProduct toEntity(Long menuId) {
-        return new MenuProduct(menuId, productId, quantity);
+        return MenuProduct.createEntity(null, menuId, productId, quantity);
     }
 }
