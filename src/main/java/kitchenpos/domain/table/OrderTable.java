@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.table;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import kitchenpos.domain.order.Order;
 
 @Entity
 @Table(name = "order_table")
@@ -94,7 +95,7 @@ public class OrderTable {
         this.tableGroup = tableGroup;
     }
 
-    void setOrder(Order order) {
+    public void setOrder(Order order) {
         this.order = order;
     }
 

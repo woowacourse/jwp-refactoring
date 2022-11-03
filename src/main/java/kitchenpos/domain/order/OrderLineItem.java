@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -34,7 +34,7 @@ public class OrderLineItem {
         return seq;
     }
 
-    void setOrder(Order order) {
+    public void setOrder(Order order) {
         this.order = order;
     }
 

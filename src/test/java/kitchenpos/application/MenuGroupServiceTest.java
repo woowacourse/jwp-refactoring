@@ -3,7 +3,7 @@ package kitchenpos.application;
 import static kitchenpos.fixture.MenuGroupFactory.createMenuGroupRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import kitchenpos.domain.MenuGroupRepository;
+import kitchenpos.domain.menu.MenuGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
