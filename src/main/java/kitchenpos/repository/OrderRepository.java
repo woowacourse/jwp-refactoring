@@ -7,7 +7,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.exception.badrequest.OrderIdInvalidException;
 import kitchenpos.exception.notfound.OrderNotFoundException;
-import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 
 public interface OrderRepository extends Repository<Order, Long> {
@@ -22,7 +22,7 @@ public interface OrderRepository extends Repository<Order, Long> {
 
     Optional<Order> findById(Long id);
 
-    @EntityGraph(attributePaths = {"orderLineItems"})
+    @Query(value = "select o from Order o join fetch o.orderLineItems.orderLineItems")
     List<Order> findAll();
 
     boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<OrderStatus> orderStatuses);

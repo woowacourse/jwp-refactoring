@@ -97,11 +97,17 @@ class OrderServiceTest extends ServiceTest {
                 () -> assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING),
                 () -> assertThat(actual.getOrderedTime()).isAfter(beforeOrder),
                 () -> assertThat(actual.getOrderedTime()).isBefore(afterOrder),
-                () -> assertThat(actual.getOrderLineItems()).extracting("order").extracting("id")
+                () -> assertThat(actual.getOrderLineItems().getOrderLineItems())
+                        .extracting("order")
+                        .extracting("id")
                         .containsExactly(orderId),
-                () -> assertThat(actual.getOrderLineItems()).extracting("menuId")
+                () -> assertThat(actual.getOrderLineItems()
+                        .getOrderLineItems())
+                        .extracting("menuId")
                         .containsExactly(menu.getId()),
-                () -> assertThat(actual.getOrderLineItems()).extracting("quantity").containsExactly(1L)
+                () -> assertThat(actual.getOrderLineItems().getOrderLineItems())
+                        .extracting("quantity")
+                        .containsExactly(1L)
         );
     }
 
@@ -215,8 +221,12 @@ class OrderServiceTest extends ServiceTest {
                 () -> assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING),
                 () -> assertThat(order.getOrderedTime()).isAfter(beforeOrder),
                 () -> assertThat(order.getOrderedTime()).isBefore(afterOrder),
-                () -> assertThat(order.getOrderLineItems()).extracting("menuId").containsExactly(menu.getId()),
-                () -> assertThat(order.getOrderLineItems()).extracting("quantity").containsExactly(1L)
+                () -> assertThat(order.getOrderLineItems().getOrderLineItems())
+                        .extracting("menuId")
+                        .containsExactly(menu.getId()),
+                () -> assertThat(order.getOrderLineItems().getOrderLineItems())
+                        .extracting("quantity")
+                        .containsExactly(1L)
         );
     }
 

@@ -30,7 +30,7 @@ public class OrderResponse {
                 order.getOrderTableId(),
                 order.getOrderStatus().name(),
                 order.getOrderedTime(),
-                OrderLineItemResponse.from(order.getOrderLineItems())
+                OrderLineItemResponse.from(order.getOrderLineItems().getOrderLineItems())
         );
     }
 
