@@ -10,14 +10,13 @@ public class TableGroupResponse {
 
     private Long id;
     private LocalDateTime createdDate;
-    private List<OrderTableResponse> orderTables;
+    private List<TableGroupInnerOrderTable> orderTables;
 
     private TableGroupResponse() {
     }
 
-    public TableGroupResponse(final Long id,
-                              final LocalDateTime createdDate,
-                              final List<OrderTableResponse> orderTables) {
+    public TableGroupResponse(final Long id, final LocalDateTime createdDate,
+                              final List<TableGroupInnerOrderTable> orderTables) {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
@@ -30,9 +29,9 @@ public class TableGroupResponse {
                 mapToOrderTableResponse(tableGroup.getOrderTables()));
     }
 
-    private static List<OrderTableResponse> mapToOrderTableResponse(final List<OrderTable> orderTables) {
+    private static List<TableGroupInnerOrderTable> mapToOrderTableResponse(final List<OrderTable> orderTables) {
         return orderTables.stream()
-                .map(OrderTableResponse::from)
+                .map(TableGroupInnerOrderTable::from)
                 .collect(Collectors.toList());
     }
 
@@ -44,7 +43,27 @@ public class TableGroupResponse {
         return createdDate;
     }
 
-    public List<OrderTableResponse> getOrderTables() {
+    public List<TableGroupInnerOrderTable> getOrderTables() {
         return orderTables;
+    }
+
+    public static class TableGroupInnerOrderTable {
+
+        private Long id;
+
+        private TableGroupInnerOrderTable() {
+        }
+
+        public TableGroupInnerOrderTable(final Long id) {
+            this.id = id;
+        }
+
+        public static TableGroupInnerOrderTable from(final OrderTable orderTable) {
+            return new TableGroupInnerOrderTable(orderTable.getId());
+        }
+
+        public Long getId() {
+            return id;
+        }
     }
 }
