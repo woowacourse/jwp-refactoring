@@ -10,15 +10,15 @@ import static kitchenpos.Fixture.테이블집합;
 
 import java.math.BigDecimal;
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroupDao;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductDao;
 import org.springframework.beans.factory.annotation.Autowired;
