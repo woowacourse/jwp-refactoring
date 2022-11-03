@@ -26,7 +26,7 @@ public class MenuProductResponse {
     }
 
     public static List<MenuProductResponse> from(Menu menu) {
-        return menu.getMenuProducts().stream()
+        return menu.getMenuProductValues().stream()
                 .map(mp -> from(menu.getId(), mp))
                 .collect(Collectors.toList());
     }

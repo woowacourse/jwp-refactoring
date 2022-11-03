@@ -13,6 +13,12 @@ public class MenuProducts {
         this.menuProducts = menuProducts;
     }
 
+    public MenuProducts(Long menuId, Price price, List<MenuProduct> menuProducts) {
+        this.menuProducts = menuProducts;
+        validateAmount(price);
+        changeAllMenuId(menuId);
+    }
+
     public MenuProducts(Price price, List<MenuProduct> menuProducts) {
         this.menuProducts = menuProducts;
         validateAmount(price);

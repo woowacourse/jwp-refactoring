@@ -35,8 +35,7 @@ public class MenuService {
         menuGroupDao.findById(menuRequest.getMenuGroupId());
 
         final Menu menu = menuDao.save(toMenu(menuRequest));
-        final Price price = new Price(menuRequest.getPrice());
-        final MenuProducts menuProducts = new MenuProducts(price, menu.getMenuProducts())
+        final MenuProducts menuProducts = menu.getMenuProducts()
                 .changeAllMenuId(menu.getId());
 
         menu.placeMenuProducts(menuProducts);

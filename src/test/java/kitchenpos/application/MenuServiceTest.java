@@ -76,8 +76,8 @@ class MenuServiceTest extends ServiceTest {
                 1L, List.of(메뉴상품요청_후라이드()));
 
         assertThatThrownBy(() -> menuService.create(메뉴요청_후라이드치킨))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("메뉴 가격은 내부 모든 상품가격보다 낮아야 한다.");
+                .isInstanceOf(InvalidDataAccessApiUsageException.class)
+                .hasMessageContaining("메뉴 가격은 내부 모든 상품가격보다 낮아야 한다.");
     }
 
     void init() {

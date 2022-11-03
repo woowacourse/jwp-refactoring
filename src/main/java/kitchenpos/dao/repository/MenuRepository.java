@@ -31,7 +31,7 @@ public class MenuRepository implements MenuDao {
     }
 
     private void saveMenuProduct(Menu entity, Menu save) {
-        MenuProducts menuProducts = new MenuProducts(save.getId(), entity.getMenuProducts());
+        MenuProducts menuProducts = new MenuProducts(save.getId(), entity.getPrice(), entity.getMenuProductValues());
         for (MenuProduct menuProduct : menuProducts.getMenuProducts()) {
             menuProduct.placeSeq(menuProductRepository.save(menuProduct).getSeq());
         }

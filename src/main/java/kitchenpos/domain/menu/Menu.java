@@ -39,7 +39,11 @@ public class Menu {
         return name;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
+        return price;
+    }
+
+    public BigDecimal getPriceValue() {
         return price.getPrice();
     }
 
@@ -47,7 +51,11 @@ public class Menu {
         return menuGroupId;
     }
 
-    public List<MenuProduct> getMenuProducts() {
+    public MenuProducts getMenuProducts() {
+        return menuProducts;
+    }
+
+    public List<MenuProduct> getMenuProductValues() {
         return menuProducts.getMenuProducts();
     }
 }

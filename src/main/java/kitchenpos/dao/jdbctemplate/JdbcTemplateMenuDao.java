@@ -32,7 +32,7 @@ public class JdbcTemplateMenuDao {
     public Menu save(final Menu entity) {
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("name", entity.getName())
-                .addValue("price", entity.getPrice())
+                .addValue("price", entity.getPriceValue())
                 .addValue("menu_group_id", entity.getMenuGroupId());
         final Number key = jdbcInsert.executeAndReturnKey(parameters);
         return select(key.longValue());
