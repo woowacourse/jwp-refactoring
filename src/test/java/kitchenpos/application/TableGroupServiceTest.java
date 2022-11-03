@@ -10,11 +10,12 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.TableGroupRepository;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.table.application.TableGroupService;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
 import kitchenpos.application.dto.TableGroupCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -30,9 +31,9 @@ class TableGroupServiceTest extends ServiceTest {
     private TableGroupService tableGroupService;
 
     @MockBean
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
     @MockBean
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
     @MockBean
     private OrderDao orderDao;
 
@@ -57,9 +58,9 @@ class TableGroupServiceTest extends ServiceTest {
             savedTableGroup = new TableGroup(TABLE_GROUP_ID, LocalDateTime.now(),
                     Arrays.asList(orderTableA, orderTableB));
 
-            given(orderTableDao.findAllByIdIn(any()))
+            given(orderTableRepository.findAllByIdIn(any()))
                     .willReturn(Arrays.asList(orderTableA, orderTableB));
-            given(tableGroupDao.save(any(TableGroup.class)))
+            given(tableGroupRepository.save(any(TableGroup.class)))
                     .willReturn(savedTableGroup);
         }
 
@@ -83,7 +84,7 @@ class TableGroupServiceTest extends ServiceTest {
             //given
             List<OrderTable> orderTables = Arrays.asList(orderTableA);
             createRequest = new TableGroupCreateRequest(orderTables);
-            given(orderTableDao.findAllByIdIn(any()))
+            given(orderTableRepository.findAllByIdIn(any()))
                     .willReturn(orderTables);
 
             //when & then
@@ -95,7 +96,7 @@ class TableGroupServiceTest extends ServiceTest {
         @DisplayName("그룹으로 지정할 주문 테이블이 존재하지 않으면, 예외를 던진다.")
         void fail_noExistTable() {
             //given
-            given(orderTableDao.findAllByIdIn(any()))
+            given(orderTableRepository.findAllByIdIn(any()))
                     .willReturn(Arrays.asList(orderTableB));
 
             //when & then
@@ -143,7 +144,7 @@ class TableGroupServiceTest extends ServiceTest {
             orderTableA = new OrderTable(ORDER_TABLE_A_ID, null, 0, true);
             orderTableB = new OrderTable(ORDER_TABLE_B_ID, null, 0, true);
 
-            given(orderTableDao.findAllByTableGroupId(TABLE_GROUP_ID))
+            given(orderTableRepository.findAllByTableGroupId(TABLE_GROUP_ID))
                     .willReturn(Arrays.asList(orderTableA, orderTableB));
 
             given(orderDao.existsByOrderTableIdInAndOrderStatusIn(

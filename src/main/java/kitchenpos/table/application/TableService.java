@@ -1,10 +1,10 @@
-package kitchenpos.application;
+package kitchenpos.table.application;
 
 import java.util.List;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.application.dto.OrderTableCreateRequest;
 import kitchenpos.application.dto.OrderTableUpdateRequest;
 import org.springframework.stereotype.Service;
@@ -14,15 +14,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class TableService {
     private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
+    private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
+    public TableService(final OrderDao orderDao, final OrderTableRepository orderTableRepository) {
         this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
+        this.orderTableRepository = orderTableRepository;
     }
 
     public OrderTable create(final OrderTableCreateRequest request) {
-        return orderTableDao.save(new OrderTable(null,
+        return orderTableRepository.save(new OrderTable(null,
                 null,
                 request.getNumberOfGuests(),
                 request.isEmpty()));
@@ -30,16 +30,16 @@ public class TableService {
 
     @Transactional(readOnly = true)
     public List<OrderTable> list() {
-        return orderTableDao.findAll();
+        return orderTableRepository.findAll();
     }
 
     public OrderTable changeEmpty(final Long orderTableId, final OrderTableUpdateRequest request) {
-        final OrderTable orderTable = orderTableDao.findById(orderTableId)
+        final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
         checkOrderIsInProgress(orderTableId);
         orderTable.updateEmpty(request.isEmpty());
-        return orderTableDao.save(orderTable);
+        return orderTableRepository.save(orderTable);
     }
 
     private void checkOrderIsInProgress(Long orderTableId) {
@@ -49,9 +49,9 @@ public class TableService {
     }
 
     public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTableUpdateRequest request) {
-        final OrderTable orderTable = orderTableDao.findById(orderTableId)
+        final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
         orderTable.updateNumberOfGuests(request.getNumberOfGuests());
-        return orderTableDao.save(orderTable);
+        return orderTableRepository.save(orderTable);
     }
 }

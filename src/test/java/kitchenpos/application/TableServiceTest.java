@@ -7,9 +7,10 @@ import static org.mockito.BDDMockito.given;
 import java.util.Arrays;
 import java.util.Optional;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.table.application.TableService;
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.application.dto.OrderTableUpdateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,7 +26,7 @@ class TableServiceTest extends ServiceTest {
     private TableService tableService;
 
     @MockBean
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
     @MockBean
     private OrderDao orderDao;
 
@@ -44,12 +45,12 @@ class TableServiceTest extends ServiceTest {
             savedOrderTable = new OrderTable(ORDER_TABLE_ID, null, 2, false);
             request = new OrderTableUpdateRequest(0, true);
 
-            given(orderTableDao.findById(ORDER_TABLE_ID))
+            given(orderTableRepository.findById(ORDER_TABLE_ID))
                     .willReturn(Optional.of(savedOrderTable));
             given(orderDao.existsByOrderTableIdAndOrderStatusIn(ORDER_TABLE_ID,
                     Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
                     .willReturn(false);
-            given(orderTableDao.save(savedOrderTable))
+            given(orderTableRepository.save(savedOrderTable))
                     .willReturn(savedOrderTable);
 
         }
@@ -68,7 +69,7 @@ class TableServiceTest extends ServiceTest {
         @DisplayName("주문 테이블이 존재하지 않으면, 예외를 던진다.")
         void fail_noExistTable() {
             //given
-            given(orderTableDao.findById(ORDER_TABLE_ID))
+            given(orderTableRepository.findById(ORDER_TABLE_ID))
                     .willReturn(Optional.empty());
 
             //when & then
@@ -81,7 +82,7 @@ class TableServiceTest extends ServiceTest {
         void fail_existTableGroup() {
             //given
             savedOrderTable = new OrderTable(ORDER_TABLE_ID, TABLE_GROUP_ID, 2, false);
-            given(orderTableDao.findById(ORDER_TABLE_ID))
+            given(orderTableRepository.findById(ORDER_TABLE_ID))
                     .willReturn(Optional.of(savedOrderTable));
 
             //when & then
@@ -116,9 +117,9 @@ class TableServiceTest extends ServiceTest {
             savedOrderTable = new OrderTable(ORDER_TABLE_ID, null, 2, false);
             request = new OrderTableUpdateRequest(3, false);
 
-            given(orderTableDao.findById(ORDER_TABLE_ID))
+            given(orderTableRepository.findById(ORDER_TABLE_ID))
                     .willReturn(Optional.of(savedOrderTable));
-            given(orderTableDao.save(savedOrderTable))
+            given(orderTableRepository.save(savedOrderTable))
                     .willReturn(savedOrderTable);
         }
 
@@ -147,7 +148,7 @@ class TableServiceTest extends ServiceTest {
         @DisplayName("주문 테이블이 존재하지 않으면, 예외를 던진다.")
         void fail_noExistOrderTable() {
             //given
-            given(orderTableDao.findById(ORDER_TABLE_ID))
+            given(orderTableRepository.findById(ORDER_TABLE_ID))
                     .willReturn(Optional.empty());
 
             //when & then

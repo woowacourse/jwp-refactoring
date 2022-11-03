@@ -15,11 +15,11 @@ import kitchenpos.application.dto.OrderCreateRequest;
 import kitchenpos.application.dto.OrderLineItemCreateRequest;
 import kitchenpos.application.dto.OrderUpdateRequest;
 import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -36,7 +36,7 @@ class OrderServiceTest extends ServiceTest {
     @MockBean
     private MenuRepository menuRepository;
     @MockBean
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Nested
     @DisplayName("create 메서드는")
@@ -62,7 +62,7 @@ class OrderServiceTest extends ServiceTest {
 
             given(menuRepository.countByIdIn(any()))
                     .willReturn((long) request.getOrderLineItems().size());
-            given(orderTableDao.findById(request.getOrderTableId()))
+            given(orderTableRepository.findById(request.getOrderTableId()))
                     .willReturn(Optional.of(orderTable));
         }
 
@@ -144,7 +144,7 @@ class OrderServiceTest extends ServiceTest {
             orderTable = new OrderTable(ORDER_TABLE_ID, null, 2, false);
 
             createRequest = new OrderCreateRequest(ORDER_TABLE_ID, Arrays.asList(orderLineItemA, orderLineItemB));
-            given(orderTableDao.findById(any()))
+            given(orderTableRepository.findById(any()))
                     .willReturn(Optional.of(orderTable));
             given(menuRepository.countByIdIn(any()))
                     .willReturn(2L);

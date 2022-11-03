@@ -1,7 +1,7 @@
 package kitchenpos.application.dto;
 
 import java.util.List;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.table.domain.OrderTable;
 
 public class TableGroupCreateRequest {
     private List<OrderTable> orderTables;

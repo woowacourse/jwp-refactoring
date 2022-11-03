@@ -6,9 +6,9 @@ import java.util.stream.Collectors;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.table.domain.OrderTable;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,14 +16,14 @@ public class OrderValidator {
     private final MenuRepository menuRepository;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
-    private final OrderTableDao orderTableDao;
+    private final OrderTableRepository orderTableRepository;
 
     public OrderValidator(MenuRepository menuRepository, OrderDao orderDao, OrderLineItemDao orderLineItemDao,
-                          OrderTableDao orderTableDao) {
+                          OrderTableRepository orderTableRepository) {
         this.menuRepository = menuRepository;
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
-        this.orderTableDao = orderTableDao;
+        this.orderTableRepository = orderTableRepository;
     }
 
     public void validate(Long orderTableId, List<OrderLineItem> orderLineItems) {
@@ -49,7 +49,7 @@ public class OrderValidator {
     }
 
     private void checkExistOrderTable(Long orderTableId) {
-        final OrderTable orderTable = orderTableDao.findById(orderTableId)
+        final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
         if (orderTable.isEmpty()) {
