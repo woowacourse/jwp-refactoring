@@ -29,15 +29,15 @@ public class OrderTables {
         }
     }
 
-    public void ungroup() {
-        for (final OrderTable orderTable : value) {
-            orderTable.ungroup();
-        }
-    }
-
     private void validateOrderTableIsAbleToGroup(final OrderTable orderTable) {
         if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroupId())) {
             throw new IllegalArgumentException();
+        }
+    }
+
+    public void ungroup() {
+        for (final OrderTable orderTable : value) {
+            orderTable.ungroup();
         }
     }
 

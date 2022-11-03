@@ -116,19 +116,6 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
         });
     }
 
-    private List<OrderLineItem> findAllOrderItemByOrderId(final Long orderId) {
-        final String sql = "SELECT seq, order_id, menu_name, menu_price, quantity FROM order_line_item WHERE order_id = (:orderId)";
-        final SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("orderId", orderId);
-        return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> {
-            final Long seq = resultSet.getLong("seq");
-            final String menuName = resultSet.getString("menu_name");
-            final BigDecimal menuPrice = resultSet.getBigDecimal("menu_price");
-            final long quantity = resultSet.getLong("quantity");
-            return new OrderLineItem(seq, orderId, menuName, Price.valueOf(menuPrice), quantity);
-        });
-    }
-
     private void update(final OrderTable entity) {
         final String sql = "UPDATE order_table SET table_group_id = (:tableGroupId)," +
                 " number_of_guests = (:numberOfGuests), empty = (:empty) WHERE id = (:id)";
@@ -153,12 +140,23 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("order_table_id", orderTableId);
         return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> {
-            final Order entity = new Order();
-            entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-            entity.setOrderTableId(resultSet.getLong("order_table_id"));
-            entity.setOrderStatus(OrderStatus.valueOf(resultSet.getString("order_status")));
-            entity.setOrderedTime(resultSet.getObject("ordered_time", LocalDateTime.class));
-            return entity;
+            Long id = resultSet.getLong(KEY_COLUMN_NAME);
+            OrderStatus orderStatus = OrderStatus.valueOf(resultSet.getString("order_status"));
+            LocalDateTime orderedTime = resultSet.getObject("ordered_time", LocalDateTime.class);
+            return new Order(id, orderTableId, orderStatus, orderedTime, findAllOrderItemByOrderId(id));
+        });
+    }
+
+    private List<OrderLineItem> findAllOrderItemByOrderId(final Long orderId) {
+        final String sql = "SELECT seq, order_id, menu_name, menu_price, quantity FROM order_line_item WHERE order_id = (:orderId)";
+        final SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("orderId", orderId);
+        return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> {
+            final Long seq = resultSet.getLong("seq");
+            final String menuName = resultSet.getString("menu_name");
+            final BigDecimal menuPrice = resultSet.getBigDecimal("menu_price");
+            final long quantity = resultSet.getLong("quantity");
+            return new OrderLineItem(seq, orderId, menuName, Price.valueOf(menuPrice), quantity);
         });
     }
 }

@@ -8,7 +8,7 @@ public class Product {
     private String name;
     private Price price;
 
-    public Product() {
+    private Product() {
     }
 
     public Product(final String name, final Price price) {

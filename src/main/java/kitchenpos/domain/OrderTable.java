@@ -79,12 +79,19 @@ public class OrderTable {
         }
     }
 
-    public Long getId() {
-        return id;
+    private void validateUngroup() {
+        if (orders.isEmpty()) {
+            return;
+        }
+        final boolean notCompletedOrder = orders.stream()
+                .anyMatch(it -> !it.isComplete());
+        if (notCompletedOrder) {
+            throw new IllegalArgumentException();
+        }
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
     public Long getTableGroupId() {
@@ -109,16 +116,5 @@ public class OrderTable {
 
     public List<Order> getOrders() {
         return orders;
-    }
-
-    private void validateUngroup() {
-        if (orders.isEmpty()) {
-            return;
-        }
-        final boolean notCompletedOrder = orders.stream()
-                .anyMatch(it -> !it.isComplete());
-        if (notCompletedOrder) {
-            throw new IllegalArgumentException();
-        }
     }
 }
