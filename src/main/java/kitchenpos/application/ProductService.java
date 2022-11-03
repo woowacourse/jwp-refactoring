@@ -1,34 +1,49 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.domain.entity.Product;
+import kitchenpos.repository.ProductRepository;
+import kitchenpos.ui.jpa.dto.product.ProductCreateRequest;
+import kitchenpos.ui.jpa.dto.product.ProductCreateResponse;
+import kitchenpos.ui.jpa.dto.product.ProductListResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Objects;
-
 @Service
 public class ProductService {
-    private final ProductDao productDao;
 
-    public ProductService(final ProductDao productDao) {
-        this.productDao = productDao;
+    private final ProductRepository productRepository;
+
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     @Transactional
-    public Product create(final Product product) {
-        final BigDecimal price = product.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        return productDao.save(product);
+    public ProductCreateResponse create(ProductCreateRequest productCreateRequest) {
+        Product product = new Product(productCreateRequest.getName(), productCreateRequest.getPrice());
+        productRepository.save(product);
+        return new ProductCreateResponse(product.getId(), product.getName(), product.getPrice());
     }
 
-    public List<Product> list() {
-        return productDao.findAll();
+    public List<ProductListResponse> list() {
+        List<Product> products = productRepository.findAll();
+        return products.stream()
+                .map(product -> new ProductListResponse(product.getId(), product.getName(), product.getPrice()))
+                .collect(Collectors.toList());
+    }
+
+    public List<Product> findProducts(List<Long> ids) {
+        List<Product> products = new ArrayList<>();
+        for (Long id : ids) {
+            products.add(findProduct(id));
+        }
+        return products;
+    }
+
+    public Product findProduct(Long id) {
+        return productRepository.findById(id)
+                .orElseThrow(IllegalArgumentException::new);
     }
 }
