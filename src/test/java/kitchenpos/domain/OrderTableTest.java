@@ -13,7 +13,7 @@ class OrderTableTest {
         TableGroup tableGroup = new TableGroup(LocalDateTime.now(), new ArrayList<>());
 
         assertThatThrownBy(
-                () -> new OrderTable(tableGroup, -1, false)
+                () -> new OrderTable(tableGroup.getId(), -1, false)
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -23,7 +23,7 @@ class OrderTableTest {
 
         assertThatThrownBy(
                 () -> {
-                    OrderTable orderTable = new OrderTable(tableGroup, 2, true);
+                    OrderTable orderTable = new OrderTable(tableGroup.getId(), 2, true);
                     orderTable.validateEmptyForChangeGuestNumber();
                 }
         ).isInstanceOf(IllegalArgumentException.class);
@@ -31,11 +31,9 @@ class OrderTableTest {
 
     @Test
     void 빈_상태로_변경할_때_테이블_그룹이_비어있지_않으면_예외가_발생한다() {
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), new ArrayList<>());
-
         assertThatThrownBy(
                 () -> {
-                    OrderTable orderTable = new OrderTable(tableGroup, 2, false);
+                    OrderTable orderTable = new OrderTable(1L, 2, false);
                     orderTable.validateTableGroupForChangeEmpty();
                 }
         ).isInstanceOf(IllegalArgumentException.class);

@@ -47,7 +47,7 @@ public class TableGroupService {
     private OrderTables getOrderTables(OrderTables savedOrderTables) {
         return new OrderTables(savedOrderTables.getOrderTables()
                 .stream()
-                .map(orderTable -> new OrderTable(orderTable.getId(), orderTable.getTableGroup(),
+                .map(orderTable -> new OrderTable(orderTable.getId(), orderTable.getTableGroupId(),
                         orderTable.getNumberOfGuests(), false))
                 .collect(Collectors.toList()));
     }

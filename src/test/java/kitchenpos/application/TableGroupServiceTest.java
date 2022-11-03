@@ -110,8 +110,8 @@ class TableGroupServiceTest extends ServiceTest {
         List<OrderTable> tables = tableService.list();
 
         assertAll(
-                () -> assertThat(tables.get(0).getTableGroup()).isNull(),
-                () -> assertThat(tables.get(1).getTableGroup()).isNull()
+                () -> assertThat(tables.get(0).getTableGroupId()).isNull(),
+                () -> assertThat(tables.get(1).getTableGroupId()).isNull()
         );
     }
 
@@ -139,8 +139,8 @@ class TableGroupServiceTest extends ServiceTest {
                 .collect(Collectors.toList());
 
         TableGroup tableGroup = tableGroupService.create(new TableGroupRequest(LocalDateTime.now(), 주문_테이블_ID));
-        orderTables.get(0).setTableGroup(tableGroup);
-        orderTables.get(1).setTableGroup(tableGroup);
+        orderTables.get(0).setTableGroupId(tableGroup.getId());
+        orderTables.get(1).setTableGroupId(tableGroup.getId());
         return tableGroup;
     }
 }

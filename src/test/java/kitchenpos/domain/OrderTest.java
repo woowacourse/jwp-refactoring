@@ -11,7 +11,7 @@ public class OrderTest {
     @Test
     void 주문_항목들이_없으면_주문을_생성할_수_없다() {
         TableGroup tableGroup = new TableGroup(LocalDateTime.now(), new ArrayList<>());
-        OrderTable orderTable = new OrderTable(tableGroup, 3, true);
+        OrderTable orderTable = new OrderTable(tableGroup.getId(), 3, true);
 
         assertThatThrownBy(
                 () -> new Order(null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>())
@@ -21,7 +21,7 @@ public class OrderTest {
     @Test
     void 배달이_완료된_상태를_변경하면_예외가_발생한다() {
         TableGroup tableGroup = new TableGroup(LocalDateTime.now(), new ArrayList<>());
-        OrderTable orderTable = new OrderTable(tableGroup, 3, false);
+        OrderTable orderTable = new OrderTable(tableGroup.getId(), 3, false);
 
         assertThatThrownBy(
                 () -> {

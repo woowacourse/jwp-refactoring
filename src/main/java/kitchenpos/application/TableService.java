@@ -46,7 +46,7 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        return orderTableRepository.save(new OrderTable(savedOrderTable.getId(), savedOrderTable.getTableGroup(),
+        return orderTableRepository.save(new OrderTable(savedOrderTable.getId(), savedOrderTable.getTableGroupId(),
                 savedOrderTable.getNumberOfGuests(), orderTableRequest.isEmpty()));
     }
 
@@ -56,7 +56,7 @@ public class TableService {
                 .orElseThrow(IllegalArgumentException::new);
         savedOrderTable.validateEmptyForChangeGuestNumber();
 
-        return orderTableRepository.save(new OrderTable(savedOrderTable.getId(), savedOrderTable.getTableGroup(),
+        return orderTableRepository.save(new OrderTable(savedOrderTable.getId(), savedOrderTable.getTableGroupId(),
                 orderTableRequest.getNumberOfGuests(), savedOrderTable.isEmpty()));
     }
 }

@@ -91,8 +91,8 @@ class TableServiceTest extends ServiceTest {
                 .collect(Collectors.toList());
 
         TableGroup tableGroup = tableGroupService.create(new TableGroupRequest(LocalDateTime.now(), 주문_테이블_ID));
-        주문_테이블.get(0).setTableGroup(tableGroup);
-        주문_테이블.get(1).setTableGroup(tableGroup);
+        주문_테이블.get(0).setTableGroupId(tableGroup.getId());
+        주문_테이블.get(1).setTableGroupId(tableGroup.getId());
 
         assertThatThrownBy(
                 () -> tableService.changeEmpty(주문_테이블.get(0).getId(), 빈_주문_테이블_3인())
