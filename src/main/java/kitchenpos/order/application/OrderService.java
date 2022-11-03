@@ -61,7 +61,7 @@ public class OrderService {
     private List<OrderLineItem> generateOrderLineItems(final OrderTable orderTable,
                                                        final List<OrderLineItemCreateRequest> orderLineItems) {
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (OrderLineItemCreateRequest orderLineItem : orderLineItems) {
+        for (final OrderLineItemCreateRequest orderLineItem : orderLineItems) {
             savedOrderLineItems.add(
                     orderLineItemDao.save(
                             new OrderLineItem(
@@ -84,7 +84,11 @@ public class OrderService {
     public List<OrderFindResponse> list() {
         final List<Order> orders = orderDao.findAll();
         return orders.stream()
-                .map(OrderFindResponse::from)
+                .map(order -> {
+                    final List<OrderLineItem> orderLineItems = orderLineItemDao.findAllByOrderId(order.getId());
+                    order.addOrderLineItem(orderLineItems);
+                    return OrderFindResponse.from(order);
+                })
                 .collect(Collectors.toList());
     }
 

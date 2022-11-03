@@ -9,6 +9,8 @@ public interface OrderLineItemDao {
 
     Optional<OrderLineItem> findById(Long id);
 
+    List<OrderLineItem> findAllByOrderId(Long orderId);
+
     List<OrderLineItem> findAll();
 
     void update(OrderLineItem entity);
