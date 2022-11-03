@@ -22,14 +22,13 @@ public class OrderRepository {
 
 
     public Order save(Order order) {
-        Order orderWithLocalDateTime = new Order(order.getOrderTableId(), LocalDateTime.now(),
-                order.getOrderLineItems());
+        Order orderWithLocalDateTime = Order.toOrderWithLocalDateTime(order, LocalDateTime.now());
         Long orderId = orderDao.save(orderWithLocalDateTime).getId();
 
         List<OrderLineItem> savedOrderLineItems = saveOrderLineItems(order, orderId);
 
-        return new Order(orderId, order.getOrderTableId(), order.getOrderStatus(), order.getOrderedTime(),
-                savedOrderLineItems);
+        return new Order(orderId, order.getOrderTableId(), order.getOrderStatus(),
+                orderWithLocalDateTime.getOrderedTime(), savedOrderLineItems);
     }
 
     private List<OrderLineItem> saveOrderLineItems(Order order, Long orderId) {

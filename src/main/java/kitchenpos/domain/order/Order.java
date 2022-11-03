@@ -27,8 +27,8 @@ public class Order {
         this(id, orderTableId, orderStatus, orderedTime, new ArrayList<>());
     }
 
-    public Order(Long orderTableId, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, OrderStatus.COOKING.name(), orderedTime, orderLineItems);
+    public static Order toOrderWithLocalDateTime(Order order, LocalDateTime orderedTime) {
+        return new Order(null, order.getOrderTableId(), order.getOrderStatus(), orderedTime, order.getOrderLineItems());
     }
 
     public static Order newCookingInstanceOf(Long orderTableId, List<OrderLineItem> orderLineItems) {

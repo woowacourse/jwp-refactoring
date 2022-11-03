@@ -19,6 +19,7 @@ import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.table.TableGroup;
+import org.aspectj.weaver.ast.Or;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,13 +129,15 @@ public abstract class ServiceTest {
     protected Order 주문을_저장한다(OrderTable orderTable) {
         Menu menu = 메뉴를_저장한다("메뉴");
         OrderLineItem orderLineItem = new OrderLineItem(null, menu.getName(), menu.getPrice(), 3L);
-        Order order = new Order(orderTable.getId(), LocalDateTime.now(), List.of(orderLineItem));
+        Order order = Order.newCookingInstanceOf(orderTable.getId(), List.of(orderLineItem));
+        Order orderWithLocalDateTime = Order.toOrderWithLocalDateTime(order, LocalDateTime.now());
 
-        Order savedOrder = orderDao.save(order);
-        orderLineItemDao.save(
+        Order savedOrder = orderDao.save(orderWithLocalDateTime);
+        OrderLineItem savedOrderLineItem = orderLineItemDao.save(
                 new OrderLineItem(savedOrder.getId(), orderLineItem.getMenuName(), orderLineItem.getMenuPrice(),
                         orderLineItem.getQuantity()));
 
-        return savedOrder;
+        return new Order(savedOrder.getId(), savedOrder.getOrderTableId(), savedOrder.getOrderStatus(),
+                savedOrder.getOrderedTime(), List.of(savedOrderLineItem));
     }
 }

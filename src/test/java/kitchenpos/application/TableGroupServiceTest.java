@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.domain.order.Order;
@@ -136,9 +137,10 @@ class TableGroupServiceTest extends ServiceTest {
 
             OrderTable orderTableWithGuest = orderTableDao.save(new OrderTable(savedOrderTable1.getId(), 3, false));
             Order savedOrder = 주문을_저장한다(orderTableWithGuest);
-            Order orderWithCookingStatus = new Order(savedOrder.getOrderTableId(), savedOrder.getOrderedTime(),
-                    savedOrder.getOrderLineItems());
-            orderDao.save(orderWithCookingStatus);
+            Order orderWithCookingStatus = Order.newCookingInstanceOf(
+                    savedOrder.getOrderTableId(), savedOrder.getOrderLineItems());
+            Order orderWithLocalDateTime = Order.toOrderWithLocalDateTime(orderWithCookingStatus, LocalDateTime.now());
+            orderDao.save(orderWithLocalDateTime);
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
