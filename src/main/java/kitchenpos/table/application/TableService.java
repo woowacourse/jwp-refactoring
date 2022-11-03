@@ -3,14 +3,11 @@ package kitchenpos.table.application;
 import static kitchenpos.exception.ExceptionType.NOT_FOUND_TABLE_EXCEPTION;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import kitchenpos.exception.CustomIllegalArgumentException;
-import kitchenpos.order.domain.JpaOrderRepository;
-import kitchenpos.table.domain.JpaOrderTableRepository;
-import kitchenpos.order.domain.Order;
-import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.application.response.OrderTableResponse;
+import kitchenpos.table.domain.JpaOrderTableRepository;
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.ui.request.OrderTableRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,11 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class TableService {
 
-    private final JpaOrderRepository orderRepository;
+    private final TableValidator validator;
     private final JpaOrderTableRepository orderTableRepository;
 
-    public TableService(final JpaOrderRepository orderRepository, final JpaOrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(final TableValidator validator, final JpaOrderTableRepository orderTableRepository) {
+        this.validator = validator;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -42,17 +39,9 @@ public class TableService {
 
     public OrderTableResponse changeEmpty(final Long orderTableId) {
         final OrderTable savedOrderTable = getOrderTable(orderTableId);
-
-        savedOrderTable.validTableGroupCondition();
-        validExistOrderTables(orderTableId);
+        validator.validateChangeStatus(savedOrderTable);
         savedOrderTable.clearTable();
-
         return OrderTableResponse.from(savedOrderTable);
-    }
-
-    private void validExistOrderTables(final Long orderTableId) {
-        final Optional<Order> order = orderRepository.findByOrderTableId(orderTableId);
-        order.ifPresent(Order::validExistOrderStatus);
     }
 
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {

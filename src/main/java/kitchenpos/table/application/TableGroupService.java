@@ -1,19 +1,16 @@
 package kitchenpos.table.application;
 
-import static kitchenpos.exception.ExceptionType.NOT_FOUND_ORDER_EXCEPTION;
 import static kitchenpos.exception.ExceptionType.NOT_FOUND_TABLE_EXCEPTION;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.exception.CustomIllegalArgumentException;
-import kitchenpos.order.domain.JpaOrderRepository;
+import kitchenpos.table.application.response.TableGroupResponse;
 import kitchenpos.table.domain.JpaOrderTableRepository;
 import kitchenpos.table.domain.JpaTableGroupRepository;
-import kitchenpos.order.domain.Order;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
-import kitchenpos.table.application.response.TableGroupResponse;
 import kitchenpos.table.ui.request.OrderTableIdRequest;
 import kitchenpos.table.ui.request.TableGroupRequest;
 import org.springframework.stereotype.Service;
@@ -23,22 +20,23 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class TableGroupService {
 
-    private final JpaOrderRepository orderRepository;
+    private final TableValidator validator;
     private final JpaOrderTableRepository orderTableRepository;
     private final JpaTableGroupRepository tableGroupRepository;
 
-    public TableGroupService(final JpaOrderRepository orderRepository,
-                             final JpaOrderTableRepository orderTableRepository,
+    public TableGroupService(final TableValidator validator, final JpaOrderTableRepository orderTableRepository,
                              final JpaTableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
+        this.validator = validator;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
 
     public TableGroupResponse create(final TableGroupRequest request) {
         final List<OrderTable> savedOrderTables = getSavedOrderTables(request.getOrderTables());
+
         final TableGroup saveTableGroup = tableGroupRepository.save(
                 TableGroup.of(LocalDateTime.now(), savedOrderTables));
+
         return TableGroupResponse.from(saveTableGroup);
     }
 
@@ -50,31 +48,35 @@ public class TableGroupService {
     }
 
     private List<OrderTable> getSavedOrderTables(final List<OrderTableIdRequest> orderTables) {
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTableIdRequest::getId)
-                .collect(Collectors.toList());
+        final List<Long> orderTableIds = extractOrderTableId(orderTables);
+
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllById(orderTableIds);
         validateSize(orderTables, savedOrderTables);
         return savedOrderTables;
     }
 
-    public void ungroup(final Long tableGroupId) {
-        TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
-                .orElseThrow(() -> new CustomIllegalArgumentException(NOT_FOUND_TABLE_EXCEPTION));
-
-        //:todo 더 예쁘게 변경해보기
-        validChangeOrderTableStatusCondition(tableGroup.getOrderTables());
-
-        for (final OrderTable orderTable : tableGroup.getOrderTables()) {
-            orderTable.clear();
-        }
+    private List<Long> extractOrderTableId(final List<OrderTableIdRequest> orderTables) {
+        return orderTables.stream()
+                .map(OrderTableIdRequest::getId)
+                .collect(Collectors.toList());
     }
 
-    private void validChangeOrderTableStatusCondition(final List<OrderTable> orderTables) {
-        for (OrderTable orderTable : orderTables) {
-            final Order order = orderRepository.findById(orderTable.getId())
-                    .orElseThrow(() -> new CustomIllegalArgumentException(NOT_FOUND_ORDER_EXCEPTION));
-            order.validExistOrderStatus();
+    public void ungroup(final Long tableGroupId) {
+        TableGroup tableGroup = getTableGroup(tableGroupId);
+
+        validator.validateUngroup(tableGroup);
+
+        clearOrderTables(tableGroup);
+    }
+
+    private TableGroup getTableGroup(final Long tableGroupId) {
+        return tableGroupRepository.findById(tableGroupId)
+                .orElseThrow(() -> new CustomIllegalArgumentException(NOT_FOUND_TABLE_EXCEPTION));
+    }
+
+    private void clearOrderTables(final TableGroup tableGroup) {
+        for (final OrderTable orderTable : tableGroup.getOrderTables()) {
+            orderTable.clear();
         }
     }
 }
