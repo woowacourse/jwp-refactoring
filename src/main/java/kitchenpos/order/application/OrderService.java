@@ -2,12 +2,12 @@ package kitchenpos.order.application;
 
 import kitchenpos.menu.dao.MenuDao;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.order.application.dto.request.OrderCreateRequest;
-import kitchenpos.order.application.dto.request.OrderLineItemCreateRequest;
 import kitchenpos.order.application.dto.response.OrderResponse;
 import kitchenpos.order.dao.OrderDao;
 import kitchenpos.order.dao.OrderLineItemDao;
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.application.dto.request.OrderCreateRequest;
+import kitchenpos.order.application.dto.request.OrderLineItemCreateRequest;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.table.dao.OrderTableDao;
 import kitchenpos.table.domain.OrderTable;
@@ -43,8 +43,6 @@ public class OrderService {
     public OrderResponse create(final OrderCreateRequest request) {
         final OrderTable orderTable = findOrderTable(request.getOrderTableId());
         orderTable.validateEmpty();
-//        final Order order = Order.from(request.getOrderTableId(), request.getOrderLineItems(),
-//                menuDao.countByIdIn(getMenuIds(request)));
         final Order order = saveOrder(request, orderTable);
         final Order savedOrder = orderDao.save(order);
         final List<OrderLineItem> savedOrderLineItems = saveOrderLineItems(request, savedOrder.getId());
@@ -65,7 +63,7 @@ public class OrderService {
         return orderDao.save(order);
     }
 
-    private List<OrderLineItem> toOrderLineItems(OrderCreateRequest orderCreateRequest) {
+    private List<OrderLineItem> toOrderLineItems(final OrderCreateRequest orderCreateRequest) {
         List<OrderLineItemCreateRequest> orderLineItems = orderCreateRequest.getOrderLineItems();
         return orderLineItems.stream()
                 .map(it -> {
@@ -100,7 +98,7 @@ public class OrderService {
         return OrderResponse.of(orderDao.save(savedOrder), orderLineItemDao.findAllByOrderId(orderId));
     }
 
-    private List<OrderLineItem> saveOrderLineItems(OrderCreateRequest request, Long orderId) {
+    private List<OrderLineItem> saveOrderLineItems(final OrderCreateRequest request, final Long orderId) {
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (OrderLineItemCreateRequest orderLineItem : request.getOrderLineItems()) {
             Menu menu = menuDao.findById(orderLineItem.getMenuId())

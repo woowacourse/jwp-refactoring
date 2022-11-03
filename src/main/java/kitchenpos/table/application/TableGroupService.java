@@ -1,7 +1,5 @@
 package kitchenpos.table.application;
 
-import kitchenpos.order.dao.OrderDao;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.application.dto.request.TableGroupCreateRequest;
 import kitchenpos.table.application.dto.response.TableGroupResponse;
 import kitchenpos.table.dao.OrderTableDao;
@@ -12,7 +10,6 @@ import kitchenpos.table.domain.TableGroup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,14 +17,15 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class TableGroupService {
 
-    private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
     private final TableGroupRepository tableGroupRepository;
+    private final OrderValidator orderValidator;
 
-    public TableGroupService(OrderDao orderDao, OrderTableDao orderTableDao, TableGroupRepository tableGroupRepository) {
-        this.orderDao = orderDao;
+    public TableGroupService(final OrderTableDao orderTableDao, final TableGroupRepository tableGroupRepository,
+                             final OrderValidator orderValidator) {
         this.orderTableDao = orderTableDao;
         this.tableGroupRepository = tableGroupRepository;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
@@ -54,14 +52,7 @@ public class TableGroupService {
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
-        validateOrderStatus(orderTableIds);
+        orderValidator.validateCompletion(orderTableIds);
         return orderTables;
-    }
-
-    private void validateOrderStatus(final List<Long> orderTableIds) {
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
     }
 }
