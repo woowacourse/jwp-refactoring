@@ -12,7 +12,7 @@ import kitchenpos.domain.Product;
 import kitchenpos.dto.request.ProductCreateRequest;
 import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.dto.response.ProductsResponse;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,13 +22,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 class ProductServiceTest extends ServiceTest {
 
     private final ProductService productService;
-    private final ProductDao productDao;
+    private final ProductRepository productRepository;
 
     @Autowired
     ProductServiceTest(final ProductService productService,
-                       final ProductDao productDao) {
+                       final ProductRepository productRepository) {
         this.productService = productService;
-        this.productDao = productDao;
+        this.productRepository = productRepository;
     }
 
     @DisplayName("상품을 등록한다.")
@@ -80,7 +80,7 @@ class ProductServiceTest extends ServiceTest {
                 .name(야채곱창_이름)
                 .price(야채곱창_가격)
                 .build();
-        productDao.save(야채곱창);
+        productRepository.save(야채곱창);
 
         // when
         ProductsResponse 상품들 = productService.list();

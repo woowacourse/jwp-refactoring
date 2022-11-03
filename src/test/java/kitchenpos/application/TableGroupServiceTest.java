@@ -14,8 +14,8 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.TableGroupCreateRequest;
 import kitchenpos.dto.response.TableGroupResponse;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.TableGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,8 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 class TableGroupServiceTest extends ServiceTest {
 
     private final TableGroupService tableGroupService;
-    private final TableGroupDao tableGroupDao;
-    private final OrderTableDao orderTableDao;
+    private final TableGroupRepository tableGroupRepository;
+    private final OrderTableRepository orderTableRepository;
 
     private OrderTable 야채곱창_주문_테이블;
     private OrderTable 치킨_주문_테이블;
@@ -33,11 +33,11 @@ class TableGroupServiceTest extends ServiceTest {
 
     @Autowired
     TableGroupServiceTest(final TableGroupService tableGroupService,
-                          final TableGroupDao tableGroupDao,
-                          final OrderTableDao orderTableDao) {
+                          final TableGroupRepository tableGroupRepository,
+                          final OrderTableRepository orderTableRepository) {
         this.tableGroupService = tableGroupService;
-        this.tableGroupDao = tableGroupDao;
-        this.orderTableDao = orderTableDao;
+        this.tableGroupRepository = tableGroupRepository;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @BeforeEach
@@ -46,9 +46,9 @@ class TableGroupServiceTest extends ServiceTest {
         치킨_주문_테이블 = 주문_테이블_생성(3, 사용가능_테이블);
         피자_주문_테이블 = 주문_테이블_생성(5, 사용가능_테이블);
 
-        야채곱창_주문_테이블 = orderTableDao.save(야채곱창_주문_테이블);
-        치킨_주문_테이블 = orderTableDao.save(치킨_주문_테이블);
-        피자_주문_테이블 = orderTableDao.save(피자_주문_테이블);
+        야채곱창_주문_테이블 = orderTableRepository.save(야채곱창_주문_테이블);
+        치킨_주문_테이블 = orderTableRepository.save(치킨_주문_테이블);
+        피자_주문_테이블 = orderTableRepository.save(피자_주문_테이블);
     }
 
     @DisplayName("단체 지정을 등록한다.")
@@ -99,7 +99,7 @@ class TableGroupServiceTest extends ServiceTest {
     void 단체_지정을_등록할_때_주문_테이블이_빈_테이블이_아니면_예외가_발생한다() {
         // given
         OrderTable 이미_사용중인_테이블 = 주문_테이블_생성(3, 사용중인_테이블);
-        이미_사용중인_테이블 = orderTableDao.save(이미_사용중인_테이블);
+        이미_사용중인_테이블 = orderTableRepository.save(이미_사용중인_테이블);
         List<Long> 주문_테이블들_아아디 = List.of(이미_사용중인_테이블.getId(), 피자_주문_테이블.getId());
         TableGroupCreateRequest 단체_테이블_생성_요청 = new TableGroupCreateRequest(주문_테이블들_아아디);
 
@@ -129,7 +129,7 @@ class TableGroupServiceTest extends ServiceTest {
         // given
         List<OrderTable> 주문_테이블들 = List.of(야채곱창_주문_테이블, 치킨_주문_테이블, 피자_주문_테이블);
         TableGroup 단체_테이블 = 테이블_그룹_생성(주문_테이블들);
-        단체_테이블 = tableGroupDao.save(단체_테이블);
+        단체_테이블 = tableGroupRepository.save(단체_테이블);
 
         // when
         tableGroupService.ungroup(단체_테이블.getId());
@@ -137,7 +137,7 @@ class TableGroupServiceTest extends ServiceTest {
         // then
         Long 단체_테이블_아이디 = 단체_테이블.getId();
         assertAll(
-                () -> assertThat(orderTableDao.findAllByTableGroupId(단체_테이블_아이디)).isEmpty()
+                () -> assertThat(orderTableRepository.findAllByTableGroupId(단체_테이블_아이디)).isEmpty()
         );
     }
 

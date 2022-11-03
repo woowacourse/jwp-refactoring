@@ -38,11 +38,11 @@ import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.dto.response.OrdersResponse;
 import kitchenpos.exception.MenuNotFoundException;
 import kitchenpos.exception.OrderNotFoundException;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,43 +51,43 @@ import org.springframework.beans.factory.annotation.Autowired;
 class OrderServiceTest extends ServiceTest {
 
     private final OrderService orderService;
-    private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
-    private final ProductDao productDao;
-    private final MenuGroupDao menuGroupDao;
-    private final MenuDao menuDao;
+    private final OrderRepository orderRepository;
+    private final OrderTableRepository orderTableRepository;
+    private final ProductRepository productRepository;
+    private final MenuGroupRepository menuGroupRepository;
+    private final MenuRepository menuRepository;
 
     private Menu 야채곱창_메뉴;
     private OrderTable 야채곱창_주문_테이블;
 
     @Autowired
-    OrderServiceTest(final OrderService orderService, final OrderDao orderDao,
-                     final OrderTableDao orderTableDao, final ProductDao productDao,
-                     final MenuGroupDao menuGroupDao, final MenuDao menuDao) {
+    OrderServiceTest(final OrderService orderService, final OrderRepository orderRepository,
+                     final OrderTableRepository orderTableRepository, final ProductRepository productRepository,
+                     final MenuGroupRepository menuGroupRepository, final MenuRepository menuRepository) {
         this.orderService = orderService;
-        this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
-        this.productDao = productDao;
-        this.menuGroupDao = menuGroupDao;
-        this.menuDao = menuDao;
+        this.orderRepository = orderRepository;
+        this.orderTableRepository = orderTableRepository;
+        this.productRepository = productRepository;
+        this.menuGroupRepository = menuGroupRepository;
+        this.menuRepository = menuRepository;
     }
 
     @BeforeEach
     void setUp() {
-        MenuGroup 루나세트 = menuGroupDao.save(메뉴_그룹_생성(루나세트_이름));
+        MenuGroup 루나세트 = menuGroupRepository.save(메뉴_그룹_생성(루나세트_이름));
 
-        Product 야채곱창 = productDao.save(상품_생성(야채곱창_이름, 야채곱창_가격));
+        Product 야채곱창 = productRepository.save(상품_생성(야채곱창_이름, 야채곱창_가격));
         MenuProduct 루나_야채곱창 = 메뉴_상품_생성(야채곱창, 메뉴_상품_수량);
 
-        야채곱창_메뉴 = menuDao.save(메뉴_생성(야채곱창_이름, 야채곱창_가격, 루나세트, 루나_야채곱창));
-        야채곱창_주문_테이블 = orderTableDao.save(주문_테이블_생성(테이블_손님_수, 사용중인_테이블));
+        야채곱창_메뉴 = menuRepository.save(메뉴_생성(야채곱창_이름, 야채곱창_가격, 루나세트, 루나_야채곱창));
+        야채곱창_주문_테이블 = orderTableRepository.save(주문_테이블_생성(테이블_손님_수, 사용중인_테이블));
     }
 
     @DisplayName("주문을 등록할 때, 주문 테이블이 빈 테이블 이면 예외가 발생한다")
     @Test
     void 주문을_등록할_때_주문_테이블이_빈_테이블_이면_예외가_발생() {
         // given
-        OrderTable 빈_테이블 = orderTableDao.save(주문_테이블_생성(테이블_손님_수, 사용가능_테이블));
+        OrderTable 빈_테이블 = orderTableRepository.save(주문_테이블_생성(테이블_손님_수, 사용가능_테이블));
         OrderLineItemRequest 야채곱창_주문항목_생성_요청 = new OrderLineItemRequest(야채곱창_메뉴.getId(), 메뉴_상품_수량);
         OrderCreateRequest 야채곱창_주문_생성_요청 = new OrderCreateRequest(빈_테이블.getId(), List.of(야채곱창_주문항목_생성_요청));
 
@@ -143,7 +143,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void 주문을_등록할_때_주문_테이블이_빈_테이블_이면_예외가_발생한다() {
         // given
-        OrderTable 빈_테이블 = orderTableDao.save(주문_테이블_생성(테이블_손님_수, 사용가능_테이블));
+        OrderTable 빈_테이블 = orderTableRepository.save(주문_테이블_생성(테이블_손님_수, 사용가능_테이블));
         OrderLineItemRequest 야채곱창_주문항목_생성_요청 = new OrderLineItemRequest(야채곱창_메뉴.getId(), 메뉴_상품_수량);
         OrderCreateRequest 야채곱창_주문_생성_요청 = new OrderCreateRequest(빈_테이블.getId(), List.of(야채곱창_주문항목_생성_요청));
 
@@ -158,7 +158,7 @@ class OrderServiceTest extends ServiceTest {
         // given
         OrderLineItem 야채곱창_주문항목 = 주문_항목_생성(야채곱창_메뉴);
         Order 야채곱창_주문 = 주문_생성(야채곱창_주문_테이블, List.of(야채곱창_주문항목), COOKING);
-        orderDao.save(야채곱창_주문);
+        orderRepository.save(야채곱창_주문);
 
         // when
         OrdersResponse 주문들 = orderService.list();
@@ -172,7 +172,7 @@ class OrderServiceTest extends ServiceTest {
     void 주문의_주문_상태를_변경한다() {
         // given
         OrderLineItem 야채곱창_주문항목 = 주문_항목_생성(야채곱창_메뉴);
-        Order 야채곱창_주문 = orderDao.save(주문_생성(야채곱창_주문_테이블, List.of(야채곱창_주문항목), COOKING));
+        Order 야채곱창_주문 = orderRepository.save(주문_생성(야채곱창_주문_테이블, List.of(야채곱창_주문항목), COOKING));
 
         // when
         OrderResponse 변경된_야채곱창_주문 = orderService.changeOrderStatus(야채곱창_주문.getId(),
@@ -198,7 +198,7 @@ class OrderServiceTest extends ServiceTest {
     void 주문의_주문_상태를_변경할_때_주문_상태가_계산이면_예외가_발생한다() {
         // given
         OrderLineItem 야채곱창_주문항목 = 주문_항목_생성(야채곱창_메뉴);
-        Order 야채곱창_주문 = orderDao.save(주문_생성(야채곱창_주문_테이블, List.of(야채곱창_주문항목), COMPLETION));
+        Order 야채곱창_주문 = orderRepository.save(주문_생성(야채곱창_주문_테이블, List.of(야채곱창_주문항목), COMPLETION));
         Long 야채곱창_주문_아이디 = 야채곱창_주문.getId();
 
         // when & then

@@ -13,9 +13,9 @@ import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.dto.response.OrdersResponse;
 import kitchenpos.exception.MenuNotFoundException;
 import kitchenpos.exception.OrderNotFoundException;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,17 +23,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class OrderService {
 
-    private final MenuDao menuDao;
-    private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
+    private final MenuRepository menuRepository;
+    private final OrderRepository orderRepository;
+    private final OrderTableRepository orderTableRepository;
 
     public OrderService(
-            final MenuDao menuDao,
-            final OrderDao orderDao,
-            final OrderTableDao orderTableDao) {
-        this.menuDao = menuDao;
-        this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
+            final MenuRepository menuRepository,
+            final OrderRepository orderRepository,
+            final OrderTableRepository orderTableRepository) {
+        this.menuRepository = menuRepository;
+        this.orderRepository = orderRepository;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
@@ -41,7 +41,7 @@ public class OrderService {
         List<OrderLineItem> orderLineItems = orderLineItems(request.getOrderLineItems());
         Order order = request.toEntity(orderLineItems);
         validateExistOrderTable(order);
-        orderDao.save(order);
+        orderRepository.save(order);
         return OrderResponse.from(order);
     }
 
@@ -52,13 +52,13 @@ public class OrderService {
     }
 
     private OrderLineItem toOrderLineItem(final OrderLineItemRequest request) {
-        Menu menu = menuDao.findById(request.getMenuId())
+        Menu menu = menuRepository.findById(request.getMenuId())
                 .orElseThrow(MenuNotFoundException::new);
         return new OrderLineItem(menu, request.getQuantity());
     }
 
     private void validateExistOrderTable(final Order order) {
-        OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
+        OrderTable orderTable = orderTableRepository.findById(order.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
@@ -66,13 +66,13 @@ public class OrderService {
     }
 
     public OrdersResponse list() {
-        List<Order> orders = orderDao.findAll();
+        List<Order> orders = orderRepository.findAll();
         return OrdersResponse.from(orders);
     }
 
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderUpdateRequest request) {
-        Order order = orderDao.findById(orderId)
+        Order order = orderRepository.findById(orderId)
                 .orElseThrow(OrderNotFoundException::new);
         order.changeStatus(request.getOrderStatus());
         return OrderResponse.from(order);

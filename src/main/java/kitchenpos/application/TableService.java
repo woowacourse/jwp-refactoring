@@ -11,8 +11,8 @@ import kitchenpos.dto.request.OrderTableUpdateGuestRequest;
 import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.dto.response.OrderTablesResponse;
 import kitchenpos.exception.OrderTableNotFoundException;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,24 +20,24 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class TableService {
 
-    private final OrderTableDao orderTableDao;
-    private final OrderDao orderDao;
+    private final OrderTableRepository orderTableRepository;
+    private final OrderRepository orderRepository;
 
-    public TableService(final OrderTableDao orderTableDao,
-                        final OrderDao orderDao) {
-        this.orderTableDao = orderTableDao;
-        this.orderDao = orderDao;
+    public TableService(final OrderTableRepository orderTableRepository,
+                        final OrderRepository orderRepository) {
+        this.orderTableRepository = orderTableRepository;
+        this.orderRepository = orderRepository;
     }
 
     @Transactional
     public OrderTableResponse create(final OrderTableCreateRequest request) {
         OrderTable orderTable = request.toEntity();
-        orderTableDao.save(orderTable);
+        orderTableRepository.save(orderTable);
         return OrderTableResponse.from(orderTable);
     }
 
     public OrderTablesResponse list() {
-        List<OrderTable> orderTables = orderTableDao.findAll();
+        List<OrderTable> orderTables = orderTableRepository.findAll();
         return OrderTablesResponse.from(orderTables);
     }
 
@@ -51,7 +51,7 @@ public class TableService {
     }
 
     private void validatePossibleChangeToEmpty(final Long orderTableId) {
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, List.of(COOKING, MEAL))) {
             throw new IllegalArgumentException("조리중이거나 식사 중인 테이블 입니다.");
         }
@@ -66,7 +66,7 @@ public class TableService {
     }
 
     private OrderTable getOrderTable(final Long orderTableId) {
-        return orderTableDao.findById(orderTableId)
+        return orderTableRepository.findById(orderTableId)
                 .orElseThrow(OrderTableNotFoundException::new);
     }
 }
