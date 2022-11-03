@@ -30,26 +30,8 @@ public class MenuProduct {
     protected MenuProduct() {
     }
 
-    /**
-     * DB 에 저장되지 않은 객체
-     * Service 로직을 단순화하기 위해 Price 정보 추가
-     */
     public MenuProduct(final Long productId, final long quantity, final BigDecimal price) {
         this(null, productId, quantity, new Price(price));
-    }
-
-    /**
-     * DB 에 저장하기 위한 객체
-     */
-    public MenuProduct(final Long productId, final long quantity) {
-        this(null, productId, quantity, null);
-    }
-
-    /**
-     * DB 에 저장된 객체
-     */
-    public MenuProduct(final Long seq, final Long productId, final long quantity) {
-        this(seq, productId, quantity, null);
     }
 
     public MenuProduct(final Long seq, final Long productId, final long quantity, final Price price) {

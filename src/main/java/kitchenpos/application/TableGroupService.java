@@ -58,7 +58,7 @@ public class TableGroupService {
 
     private List<OrderTable> createOrderTables(final List<OrderTableChangeRequest> requests) {
         return requests.stream()
-            .map(orderTable -> new OrderTable(
+            .map(orderTable -> OrderTable.updated(
                 orderTable.getId(),
                 orderTable.getNumberOfGuests(),
                 orderTable.isEmpty()

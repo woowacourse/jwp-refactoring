@@ -38,16 +38,10 @@ public class Order {
     protected Order() {
     }
 
-    /**
-     * DB 에 저장되지 않은 객체
-     */
     public Order(final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
-    /**
-     * DB 에 저장된 객체
-     */
     public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime) {
         this.id = id;
         this.orderTableId = orderTableId;

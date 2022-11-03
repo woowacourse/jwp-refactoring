@@ -26,16 +26,10 @@ public class TableGroup {
     protected TableGroup() {
     }
 
-    /**
-     * DB 에 저장되지 않은 객체
-     */
     public TableGroup(final List<OrderTable> orderTables) {
         this(null, LocalDateTime.now(), orderTables);
     }
 
-    /**
-     * DB 에 저장된 객체
-     */
     public TableGroup(final Long id, final LocalDateTime createdDate) {
         this.id = id;
         this.createdDate = createdDate;

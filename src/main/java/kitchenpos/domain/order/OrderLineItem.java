@@ -22,17 +22,10 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    /**
-     * DB 에 저장되지 않은 객체
-     * DB 에 저장하기 위한 객체
-     */
     public OrderLineItem(final Long orderMenuId, final long quantity) {
         this(null, orderMenuId, quantity);
     }
 
-    /**
-     * DB 에 저장된 객체
-     */
     public OrderLineItem(final Long seq, final Long orderMenuId, final long quantity) {
         this.seq = seq;
         this.orderMenuId = orderMenuId;

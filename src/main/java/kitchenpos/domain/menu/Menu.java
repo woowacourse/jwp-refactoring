@@ -34,19 +34,9 @@ public class Menu {
     protected Menu() {
     }
 
-    /**
-     * DB 에 저장되지 않은 객체
-     */
     public Menu(final String name, final BigDecimal price, final Long menuGroupId, final List<MenuProduct> menuProducts) {
         this(null, name, price, menuGroupId, menuProducts);
         this.menuProducts.validatePriceIsLowerThanTotalPrice(this.price);
-    }
-
-    /**
-     * DB 에 저장된 객체
-     */
-    public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId) {
-        this(id, name, price, menuGroupId, null);
     }
 
     public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId, final List<MenuProduct> menuProducts) {

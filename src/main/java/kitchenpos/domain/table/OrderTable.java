@@ -25,28 +25,19 @@ public class OrderTable {
     protected OrderTable() {
     }
 
-    /**
-     * DB 에 저장되지 않은 객체
-     */
     public OrderTable(final int numberOfGuests, final boolean empty) {
         this(null, null, numberOfGuests, empty);
     }
 
-    /**
-     * OrderTable 정보를 수정하기 위한 객체
-     */
-    public OrderTable(final Long id, final int numberOfGuests, final boolean empty) {
-        this(id, null, numberOfGuests, empty);
-    }
-
-    /**
-     * DB 에 저장된 객체
-     */
     public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+    }
+
+    public static OrderTable updated(final Long id, final int numberOfGuests, final boolean empty) {
+        return new OrderTable(id, null, numberOfGuests, empty);
     }
 
     public void changeEmpty(final boolean empty) {
