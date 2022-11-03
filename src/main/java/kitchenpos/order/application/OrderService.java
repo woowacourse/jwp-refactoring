@@ -7,8 +7,9 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.event.CheckExistMenusEvent;
 import kitchenpos.event.CheckOrderableTableEvent;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.application.request.OrderLineItemRequest;
 import kitchenpos.order.application.request.OrderRequest;
 import kitchenpos.order.application.request.OrderStatusUpdateRequest;
@@ -23,10 +24,13 @@ import kitchenpos.order.domain.OrderStatus;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final MenuRepository menuRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    public OrderService(OrderRepository orderRepository, ApplicationEventPublisher applicationEventPublisher) {
+    public OrderService(OrderRepository orderRepository, MenuRepository menuRepository,
+                        ApplicationEventPublisher applicationEventPublisher) {
         this.orderRepository = orderRepository;
+        this.menuRepository = menuRepository;
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
@@ -41,19 +45,17 @@ public class OrderService {
     }
 
     private List<OrderLineItem> getOrderLineItems(List<OrderLineItemRequest> orderLineItemRequests) {
-        validateExistMenus(orderLineItemRequests);
-
         return orderLineItemRequests.stream()
-                .map(o -> new OrderLineItem(o.getMenuId(), o.getQuantity()))
+                .map(o -> {
+                    Menu menu = findMenu(o.getMenuId());
+                    return new OrderLineItem(menu.getName(), menu.getPrice(), o.getQuantity());
+                })
                 .collect(Collectors.toList());
     }
 
-    private void validateExistMenus(List<OrderLineItemRequest> orderLineItemRequests) {
-        List<Long> menuIds = orderLineItemRequests.stream()
-                .map(OrderLineItemRequest::getMenuId)
-                .collect(Collectors.toList());
-
-        applicationEventPublisher.publishEvent(new CheckExistMenusEvent(menuIds));
+    private Menu findMenu(Long menuId) {
+        return menuRepository.findById(menuId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴입니다."));
     }
 
     private void validateOrderItemSize(List<OrderLineItem> orderLineItems) {

@@ -3,4 +3,9 @@ spring:
     enabled: false
   datasource:
     initialization-mode: always
-    schema: classpath:db/migration/V1__Initialize_project_tables.sql
+    schema: classpath:db/migration/V1__Initialize_project_tables.sql, classpath:db/migration/V3__modify_order_item_table.sql
+  jpa:
+    properties:
+      hibernate.dialect: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate.ddl-auto: validate

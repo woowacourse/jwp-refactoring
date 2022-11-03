@@ -30,6 +30,7 @@ public class TableGroup {
     private final List<OrderTable> orderTables = new ArrayList<>();
 
     public TableGroup() {
+        this.createdDate = LocalDateTime.now();
     }
 
     public void group(List<OrderTable> orderTables) {

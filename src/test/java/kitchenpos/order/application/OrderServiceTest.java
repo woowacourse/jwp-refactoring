@@ -114,7 +114,7 @@ class OrderServiceTest {
 
             assertThatThrownBy(() -> orderService.create(orderRequest))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("존재하지 않는 메뉴가 있습니다.");
+                    .hasMessageContaining("존재하지 않는 메뉴입니다.");
         }
 
         @DisplayName("존재하지 않는 테이블일 경우 예외가 발생한다")
@@ -189,7 +189,7 @@ class OrderServiceTest {
     }
 
     private Order createOrder() {
-        OrderLineItem orderLineItem = new OrderLineItem(후라이드_양념치킨_두마리세트.getId(), 3L);
+        OrderLineItem orderLineItem = new OrderLineItem(후라이드_양념치킨_두마리세트.getName(), 후라이드_양념치킨_두마리세트.getPrice(), 3L);
 
         return orderRepository.save(new Order(orderTable.getId(), OrderStatus.COOKING, List.of(orderLineItem)));
     }

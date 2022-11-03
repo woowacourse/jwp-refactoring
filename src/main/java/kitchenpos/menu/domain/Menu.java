@@ -32,7 +32,7 @@ public class Menu {
     private MenuGroup menuGroup;
 
     @OneToMany(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "menu_id")
+    @JoinColumn(name = "menu_id", nullable = false)
     private List<MenuProduct> menuProducts;
 
     protected Menu() {
@@ -67,8 +67,8 @@ public class Menu {
         return name;
     }
 
-    public BigDecimal getPrice() {
-        return price.getValue();
+    public Price getPrice() {
+        return price;
     }
 
     public MenuGroup getMenuGroup() {
