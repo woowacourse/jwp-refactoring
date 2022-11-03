@@ -21,4 +21,12 @@ public class TableValidatorImpl implements TableValidator {
             throw new IllegalArgumentException();
         }
     }
+
+    @Override
+    public void validateUnGroupCondition(Long orderTableId) {
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
+                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+            throw new IllegalArgumentException();
+        }
+    }
 }

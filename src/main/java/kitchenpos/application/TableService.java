@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableValidator;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -14,11 +15,11 @@ import java.util.List;
 @Service
 public class TableService {
 
-    private final OrderRepository orderRepository;
+    private final TableValidator tableValidator;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(OrderRepository orderRepository, OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(TableValidator tableValidator, OrderTableRepository orderTableRepository) {
+        this.tableValidator = tableValidator;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -41,10 +42,7 @@ public class TableService {
                 .orElseThrow(IllegalArgumentException::new);
         savedOrderTable.validateTableGroupForChangeEmpty();
 
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                savedOrderTable.getId(), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
+        tableValidator.validateUnGroupCondition(savedOrderTable.getId());
 
         return orderTableRepository.save(new OrderTable(savedOrderTable.getId(), savedOrderTable.getTableGroupId(),
                 savedOrderTable.getNumberOfGuests(), orderTableRequest.isEmpty()));
