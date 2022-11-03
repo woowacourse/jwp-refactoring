@@ -3,29 +3,29 @@ package kitchenpos;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import kitchenpos.menu.application.MenuGroupService;
+import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.dao.MenuDao;
 import kitchenpos.menu.dao.MenuGroupDao;
 import kitchenpos.menu.dao.MenuProductDao;
-import kitchenpos.order.application.OrderService;
-import kitchenpos.order.dao.OrderDao;
-import kitchenpos.order.dao.OrderLineItemDao;
-import kitchenpos.product.application.ProductService;
-import kitchenpos.table.application.TableGroupService;
-import kitchenpos.table.application.TableService;
-import kitchenpos.table.dao.OrderTableDao;
-import kitchenpos.product.dao.ProductDao;
-import kitchenpos.table.dao.TableGroupDao;
-import kitchenpos.menu.application.MenuGroupService;
-import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProducts;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.dao.OrderDao;
+import kitchenpos.order.dao.OrderLineItemDao;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItems;
-import kitchenpos.table.domain.OrderTable;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.dao.ProductDao;
 import kitchenpos.product.domain.Product;
+import kitchenpos.table.application.TableGroupService;
+import kitchenpos.table.application.TableService;
+import kitchenpos.table.dao.OrderTableDao;
+import kitchenpos.table.dao.TableGroupDao;
+import kitchenpos.table.domain.OrderTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
@@ -107,8 +107,8 @@ public class ServiceTest {
         return menuProductDao.save(new MenuProduct(id, menuId, productId, 1));
     }
 
-    protected OrderLineItem saveAndGetOrderLineItem(final Long id, final Long menuId, final Long orderId) {
-        return orderLineItemDao.save(new OrderLineItem(id, orderId, menuId, 1));
+    protected OrderLineItem saveAndGetOrderLineItem(final Long id, final Long orderId) {
+        return orderLineItemDao.save(new OrderLineItem(id, orderId, 1));
     }
 
     protected Order saveAndGetOrder(final Long id, final String status) {
@@ -124,7 +124,7 @@ public class ServiceTest {
         final OrderTable orderTable = saveAndGetNotEmptyOrderTable(1L);
         final OrderLineItems orderLineItems = new OrderLineItems(new ArrayList<>());
         final Order order = new Order(id, orderTable.getId(), status, LocalDateTime.now(), orderLineItems);
-        order.addOrderLineItem(saveAndGetOrderLineItem(1L, menu.getId(), order.getId()));
+        order.addOrderLineItem(saveAndGetOrderLineItem(1L, order.getId()));
         return orderDao.save(order);
     }
 
@@ -140,7 +140,7 @@ public class ServiceTest {
 
         final OrderLineItems orderLineItems = new OrderLineItems(new ArrayList<>());
         final Order order = new Order(id, orderTable.getId(), status, LocalDateTime.now(), orderLineItems);
-        order.addOrderLineItem(saveAndGetOrderLineItem(1L, menu.getId(), order.getId()));
+        order.addOrderLineItem(saveAndGetOrderLineItem(1L, order.getId()));
         return orderDao.save(order);
     }
 }

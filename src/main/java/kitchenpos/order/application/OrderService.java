@@ -1,47 +1,44 @@
 package kitchenpos.order.application;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.menu.dao.MenuDao;
 import kitchenpos.order.dao.OrderDao;
 import kitchenpos.order.dao.OrderLineItemDao;
-import kitchenpos.table.dao.OrderTableDao;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.order.domain.OrderLineItems;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
 import kitchenpos.order.dto.OrderCreateRequest;
 import kitchenpos.order.dto.OrderCreateResponse;
 import kitchenpos.order.dto.OrderFindResponse;
+import kitchenpos.order.dto.OrderLineItemCreateRequest;
+import kitchenpos.order.dto.OrderLineItemsValidateEvent;
 import kitchenpos.order.dto.OrderStatusChangeResponse;
+import kitchenpos.table.dao.OrderTableDao;
+import kitchenpos.table.domain.OrderTable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
-    private final MenuDao menuDao;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
     private final OrderTableDao orderTableDao;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public OrderService(
-            final MenuDao menuDao,
-            final OrderDao orderDao,
-            final OrderLineItemDao orderLineItemDao,
-            final OrderTableDao orderTableDao
-    ) {
-        this.menuDao = menuDao;
+    public OrderService(final OrderDao orderDao, final OrderLineItemDao orderLineItemDao,
+                        final OrderTableDao orderTableDao, final ApplicationEventPublisher eventPublisher) {
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
         this.orderTableDao = orderTableDao;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
     public OrderCreateResponse create(final OrderCreateRequest orderCreateRequest) {
-        final OrderLineItems orderLineItems = new OrderLineItems(orderCreateRequest.getOrderLineItems());
-        validateOrderLineItems(orderLineItems);
+        eventPublisher.publishEvent(new OrderLineItemsValidateEvent(orderCreateRequest));
 
         final OrderTable orderTable = orderTableDao.findById(orderCreateRequest.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
@@ -51,37 +48,37 @@ public class OrderService {
                 new Order(
                         orderTable.getId(),
                         OrderStatus.COOKING.name(),
-                        LocalDateTime.now(),
-                        orderLineItems
+                        LocalDateTime.now()
                 )
         );
-        updateOrderLineItemsByOrderId(savedOrder, orderCreateRequest.getOrderLineItems());
+        final List<OrderLineItemCreateRequest> orderLineItems = orderCreateRequest.getOrderLineItems();
+        final List<OrderLineItem> savedOrderLineItems = generateOrderLineItems(orderTable, orderLineItems);
+        savedOrder.addOrderLineItem(savedOrderLineItems);
 
         return OrderCreateResponse.from(savedOrder);
     }
 
-    private void validateOrderLineItems(final OrderLineItems orderLineItems) {
-        if (orderLineItems.isEmpty()) {
-            throw new IllegalArgumentException();
+    private List<OrderLineItem> generateOrderLineItems(final OrderTable orderTable,
+                                                       final List<OrderLineItemCreateRequest> orderLineItems) {
+        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
+        for (OrderLineItemCreateRequest orderLineItem : orderLineItems) {
+            savedOrderLineItems.add(
+                    orderLineItemDao.save(
+                            new OrderLineItem(
+                                    null,
+                                    orderTable.getId(),
+                                    orderLineItem.getQuantity()
+                            )
+                    )
+            );
         }
-
-        final long orderMenuIdCounts = menuDao.countByIdIn(orderLineItems.getOrderLineItemMenuIds());
-        if (!orderLineItems.hasValidMenus(orderMenuIdCounts)) {
-            throw new IllegalArgumentException();
-        }
+        return savedOrderLineItems;
     }
 
     private void validateIfTableEmpty(final OrderTable orderTable) {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
-    }
-
-    private void updateOrderLineItemsByOrderId(final Order order, final List<OrderLineItem> orderLineItems) {
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItemDao.update(orderLineItem);
-        }
-        order.addOrderIdsToOrderLineItems(order.getId());
     }
 
     public List<OrderFindResponse> list() {

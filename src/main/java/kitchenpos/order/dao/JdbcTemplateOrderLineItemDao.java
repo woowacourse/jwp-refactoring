@@ -48,23 +48,22 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
 
     @Override
     public List<OrderLineItem> findAll() {
-        final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item";
+        final String sql = "SELECT seq, order_id, quantity FROM order_line_item";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     private OrderLineItem select(final Long id) {
-        final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item WHERE seq = (:seq)";
+        final String sql = "SELECT seq, order_id, quantity FROM order_line_item WHERE seq = (:seq)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("seq", id);
         return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     public void update(final OrderLineItem entity) {
-        final String sql = "UPDATE order_line_item SET order_id = (:orderId), menu_id = (:menuId),"
+        final String sql = "UPDATE order_line_item SET order_id = (:orderId),"
                 + " quantity = (:quantity) WHERE seq = (:seq)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("orderId", entity.getOrderId())
-                .addValue("menuId", entity.getMenuId())
                 .addValue("quantity", entity.getQuantity())
                 .addValue("seq", entity.getSeq());
         jdbcTemplate.update(sql, parameters);
@@ -73,8 +72,7 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
     private OrderLineItem toEntity(final ResultSet resultSet) throws SQLException {
         final long seq = resultSet.getLong(KEY_COLUMN_NAME);
         final long orderId = resultSet.getLong("order_id");
-        final long menuId = resultSet.getLong("menu_id");
         final long quantity = resultSet.getLong("quantity");
-        return new OrderLineItem(seq, orderId, menuId, quantity);
+        return new OrderLineItem(seq, orderId, quantity);
     }
 }

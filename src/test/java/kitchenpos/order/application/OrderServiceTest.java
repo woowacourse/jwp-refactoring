@@ -13,13 +13,15 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProducts;
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItems;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
 import kitchenpos.order.dto.OrderCreateRequest;
 import kitchenpos.order.dto.OrderCreateResponse;
 import kitchenpos.order.dto.OrderFindResponse;
+import kitchenpos.order.dto.OrderLineItemCreateRequest;
 import kitchenpos.order.dto.OrderStatusChangeResponse;
+import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -103,13 +105,17 @@ class OrderServiceTest extends ServiceTest {
         menuDao.save(menu);
 
         final OrderTable orderTable = saveAndGetNotEmptyOrderTable(1L);
-        final OrderLineItems orderLineItems = new OrderLineItems(new ArrayList<>());
-        final Order order = new Order(1L, orderTable.getId(), orderStatus, LocalDateTime.now(), orderLineItems);
-        order.addOrderLineItem(saveAndGetOrderLineItem(1L, orderMenuId, order.getId()));
 
+        final Order order = new Order(1L, orderTable.getId(), orderStatus, LocalDateTime.now(),
+                new OrderLineItems(new ArrayList<>()));
+        final OrderLineItem orderLineItem = saveAndGetOrderLineItem(1L, order.getId());
+        order.addOrderLineItem(orderLineItem);
+
+        final List<OrderLineItemCreateRequest> orderLineItemCreateRequests = new ArrayList<>();
+        orderLineItemCreateRequests.add(OrderLineItemCreateRequest.of(orderMenuId, orderLineItem));
         return new OrderCreateRequest(
                 order.getOrderTableId(),
-                orderLineItems.getOrderLineItems()
+                orderLineItemCreateRequests
         );
     }
 }
