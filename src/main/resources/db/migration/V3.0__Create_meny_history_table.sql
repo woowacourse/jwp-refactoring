@@ -4,6 +4,7 @@ CREATE TABLE menu_history (
     price DECIMAL(19, 2) NOT NULL,
     menu_id BIGINT(20) NOT NULL,
     menu_group_id BIGINT(20) NOT NULL,
+    created_time DATETIME NOT NULL,
     PRIMARY KEY (id)
 );
 
