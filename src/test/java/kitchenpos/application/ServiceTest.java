@@ -25,6 +25,7 @@ import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.product.application.ProductService;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
+import kitchenpos.relay.application.OrderStatusChangedEventHandler;
 import kitchenpos.table.application.TableGroupService;
 import kitchenpos.table.application.TableService;
 import kitchenpos.table.domain.OrderTable;
@@ -61,6 +62,9 @@ abstract class ServiceTest {
 
     @Autowired
     protected OrderService orderService;
+
+    @Autowired
+    protected OrderStatusChangedEventHandler orderStatusChangedEventHandler;
 
     @Autowired
     private ProductRepository productRepository;
