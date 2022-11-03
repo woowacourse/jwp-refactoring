@@ -44,9 +44,6 @@ class MenuServiceTest extends ServiceTest {
     @Autowired
     private MenuProductRepository menuProductRepository;
 
-    @Autowired
-    private DatabaseCleaner databaseCleaner;
-
     private Product product;
 
     private MenuGroup menuGroup;

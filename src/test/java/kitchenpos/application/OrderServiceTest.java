@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.common.DatabaseCleaner;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -29,7 +28,6 @@ import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.ProductRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,11 +57,7 @@ class OrderServiceTest extends ServiceTest {
     @Autowired
     private OrderLineItemRepository orderLineItemRepository;
 
-    @Autowired
-    private DatabaseCleaner databaseCleaner;
-
     private Menu menu;
-
 
     @Override
     void setObject() {
@@ -131,7 +125,8 @@ class OrderServiceTest extends ServiceTest {
         final Order newOrder = new Order(orderTable.getId(), "COOKING", LocalDateTime.now(),
                 createOrderLineItem(menu.getId()));
         final Order order = orderRepository.save(newOrder);
-        orderLineItemRepository.save(new OrderLineItem(order.getId(), menu.getId(), 10));
+        orderLineItemRepository.save(
+                new OrderLineItem(order.getId(), menu.getId(), menu.getName(), menu.getPrice(), 10));
         final List<OrderResponse> response = orderService.list();
 
         assertAll(

@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderLineItems;
@@ -18,9 +20,13 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     private final OrderLineItemDao orderLineItemDao;
 
-    public OrderRepositoryImpl(final OrderDao orderDao, final OrderLineItemDao orderLineItemDao) {
+    private final MenuDao menuDao;
+
+    public OrderRepositoryImpl(final OrderDao orderDao, final OrderLineItemDao orderLineItemDao,
+                               final MenuDao menuDao) {
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
+        this.menuDao = menuDao;
     }
 
     @Override
@@ -28,8 +34,17 @@ public class OrderRepositoryImpl implements OrderRepository {
         final Order savedOrder = orderDao.save(entity);
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (final OrderLineItem orderLineItem : entity.getOrderLineItems()) {
+            final Menu menu = menuDao.findById(orderLineItem.getMenuId())
+                    .orElseThrow(IllegalArgumentException::new);
             final OrderLineItem savedOrderLineItem = orderLineItemDao.save(
-                    new OrderLineItem(savedOrder.getId(), orderLineItem.getMenuId(), orderLineItem.getQuantity()));
+                    new OrderLineItem(
+                            savedOrder.getId(),
+                            menu.getId(),
+                            menu.getName(),
+                            menu.getPrice(),
+                            orderLineItem.getQuantity()
+                    )
+            );
             savedOrderLineItems.add(savedOrderLineItem);
         }
         return new Order(

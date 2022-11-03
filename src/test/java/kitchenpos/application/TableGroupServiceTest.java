@@ -62,9 +62,6 @@ class TableGroupServiceTest extends ServiceTest {
     @Autowired
     private MenuRepository menuRepository;
 
-    @Autowired
-    private DatabaseCleaner databaseCleaner;
-
     private OrderTable firstOrderTable;
 
     private OrderTable secondOrderTable;

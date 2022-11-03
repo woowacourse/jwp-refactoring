@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +25,12 @@ class OrderTest {
     void hasValidSize() {
         Order order = new Order(1L, "COOKING", LocalDateTime.now(),
                 new OrderLineItems(
-                        Arrays.asList(new OrderLineItem(1L, 1L, 1L, 10), new OrderLineItem(2L, 1L, 2L, 10))));
+                        Arrays.asList(
+                                new OrderLineItem(1L, 1L, 1L, "후라이드 치킨", BigDecimal.valueOf(10000), 1),
+                                new OrderLineItem(2L, 1L, 2L, "양념 치킨", BigDecimal.valueOf(11000), 10)
+                        )
+                )
+        );
 
         assertThat(order.hasValidSize(2L)).isTrue();
     }
@@ -34,7 +40,12 @@ class OrderTest {
     void hasStatus() {
         Order order = new Order(1L, "COOKING", LocalDateTime.now(),
                 new OrderLineItems(
-                        Arrays.asList(new OrderLineItem(1L, 1L, 1L, 10), new OrderLineItem(2L, 1L, 2L, 10))));
+                        Arrays.asList(
+                                new OrderLineItem(1L, 1L, 1L, "후라이드 치킨", BigDecimal.valueOf(10000), 1),
+                                new OrderLineItem(2L, 1L, 2L, "양념 치킨", BigDecimal.valueOf(11000), 10)
+                        )
+                )
+        );
 
         assertAll(
                 () -> assertThat(order.hasStatus(OrderStatus.COOKING)).isTrue(),
