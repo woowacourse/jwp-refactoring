@@ -11,11 +11,11 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import kitchenpos.exception.CompletedOrderStatusChangeException;
 import kitchenpos.exception.NotContainsOrderLineItemException;
-import kitchenpos.exception.OrderLineItemRemoveFailException;
 import org.springframework.util.CollectionUtils;
 
 @Entity
@@ -28,7 +28,8 @@ public class Order {
     @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "order_id", nullable = false)
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     protected Order() {
@@ -39,7 +40,6 @@ public class Order {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new NotContainsOrderLineItemException();
         }
-        orderLineItems.forEach(orderLineItem -> orderLineItem.setOrder(this));
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -49,17 +49,6 @@ public class Order {
 
     public static Order of(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
         return new Order(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
-    }
-
-    public void addOrderLineItem(final OrderLineItem orderLineItem) {
-        orderLineItems.add(orderLineItem);
-    }
-
-    public void removeOrderLineItem(final OrderLineItem orderLineItem) {
-        final boolean removeSuccess = orderLineItems.remove(orderLineItem);
-        if (!removeSuccess) {
-            throw new OrderLineItemRemoveFailException();
-        }
     }
 
     public boolean isNotComplete() {

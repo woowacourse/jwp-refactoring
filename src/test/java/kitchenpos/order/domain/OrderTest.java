@@ -8,7 +8,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.stream.Stream;
@@ -47,25 +46,6 @@ class OrderTest {
         // given, when, then
         assertThatThrownBy(() -> Order.of(1L, Collections.emptyList()))
                 .isExactlyInstanceOf(NotContainsOrderLineItemException.class);
-    }
-
-    @Test
-    @DisplayName("주문 목록을 추가한다.")
-    void addOrderLineItem() {
-        // given
-        final OrderLineItem orderLineItem1 = new OrderLineItem(1L, 1);
-        final OrderLineItem orderLineItem2 = new OrderLineItem(2L, 1);
-        final OrderLineItem orderLineItem3 = new OrderLineItem(3L, 1);
-        final ArrayList<OrderLineItem> orderLineItems =
-                new ArrayList<>(Arrays.asList(orderLineItem1, orderLineItem2));
-        final Order order = Order.of(1L, orderLineItems);
-
-        // when
-        order.addOrderLineItem(orderLineItem3);
-
-        // then
-        assertThat(order.getOrderLineItems()).hasSize(3)
-                .containsExactly(orderLineItem1, orderLineItem2, orderLineItem3);
     }
 
     @ParameterizedTest
