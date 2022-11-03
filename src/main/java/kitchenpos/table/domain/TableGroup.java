@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.table.domain;
 
 import static kitchenpos.application.exception.ExceptionType.INVALID_TABLE_GROUP_EXCEPTION;
 

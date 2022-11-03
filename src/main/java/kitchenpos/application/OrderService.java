@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import kitchenpos.application.exception.CustomIllegalArgumentException;
 import kitchenpos.menu.domain.JpaMenuRepository;
 import kitchenpos.dao.JpaOrderRepository;
-import kitchenpos.dao.JpaOrderTableRepository;
+import kitchenpos.table.domain.JpaOrderTableRepository;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;

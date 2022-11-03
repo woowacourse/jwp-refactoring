@@ -1,6 +1,6 @@
-package kitchenpos.ui.dto.request;
+package kitchenpos.table.ui.request;
 
-import kitchenpos.domain.OrderTable;
+import kitchenpos.table.domain.OrderTable;
 
 public class OrderTableRequest {
 

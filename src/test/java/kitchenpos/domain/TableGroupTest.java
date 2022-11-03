@@ -5,6 +5,8 @@ import static kitchenpos.application.exception.ExceptionType.INVALID_TABLE_GROUP
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

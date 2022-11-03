@@ -8,9 +8,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Arrays;
-import kitchenpos.ui.dto.OrderTableResponse;
-import kitchenpos.ui.dto.request.OrderTableIdRequest;
-import kitchenpos.ui.dto.request.TableGroupRequest;
+import kitchenpos.table.application.response.OrderTableResponse;
+import kitchenpos.table.ui.request.OrderTableIdRequest;
+import kitchenpos.table.ui.request.TableGroupRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 

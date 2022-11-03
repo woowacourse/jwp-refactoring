@@ -10,7 +10,7 @@ import kitchenpos.menu.ui.request.MenuProductRequest;
 import kitchenpos.menu.ui.request.MenuRequest;
 import kitchenpos.ui.dto.request.OrderLineItemRequest;
 import kitchenpos.ui.dto.request.OrderRequest;
-import kitchenpos.ui.dto.request.OrderTableRequest;
+import kitchenpos.table.ui.request.OrderTableRequest;
 import kitchenpos.product.ui.request.ProductRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

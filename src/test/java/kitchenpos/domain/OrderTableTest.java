@@ -2,8 +2,7 @@ package kitchenpos.domain;
 
 import static kitchenpos.application.exception.ExceptionType.INVALID_CHANGE_NUMBER_OF_GUEST;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
+import kitchenpos.table.domain.OrderTable;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

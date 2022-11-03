@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.table.application;
 
 import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_ORDER_EXCEPTION;
 import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_TABLE_EXCEPTION;
@@ -8,14 +8,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.exception.CustomIllegalArgumentException;
 import kitchenpos.dao.JpaOrderRepository;
-import kitchenpos.dao.JpaOrderTableRepository;
-import kitchenpos.dao.JpaTableGroupRepository;
+import kitchenpos.table.domain.JpaOrderTableRepository;
+import kitchenpos.table.domain.JpaTableGroupRepository;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.ui.dto.TableGroupResponse;
-import kitchenpos.ui.dto.request.OrderTableIdRequest;
-import kitchenpos.ui.dto.request.TableGroupRequest;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.application.response.TableGroupResponse;
+import kitchenpos.table.ui.request.OrderTableIdRequest;
+import kitchenpos.table.ui.request.TableGroupRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

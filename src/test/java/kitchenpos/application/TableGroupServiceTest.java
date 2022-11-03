@@ -1,13 +1,11 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.exception.ExceptionType.INVALID_TABLE_UNGROUP_EXCEPTION;
 import static kitchenpos.application.exception.ExceptionType.NOT_FOUND_TABLE_EXCEPTION;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import kitchenpos.ui.dto.request.TableGroupRequest;
+import kitchenpos.table.application.TableGroupService;
+import kitchenpos.table.ui.request.TableGroupRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
