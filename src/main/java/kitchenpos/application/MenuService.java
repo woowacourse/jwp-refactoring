@@ -8,7 +8,7 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.Product;
-import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.JpaMenuRepository;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,12 +20,12 @@ import java.util.stream.Collectors;
 @Service
 public class MenuService {
 
-    private final MenuRepository menuRepository;
+    private final JpaMenuRepository menuRepository;
     private final MenuGroupDao menuGroupDao;
     private final ProductDao productDao;
 
     public MenuService(
-            final MenuRepository menuRepository,
+            final JpaMenuRepository menuRepository,
             final MenuGroupDao menuGroupDao,
             final ProductDao productDao
     ) {

@@ -17,7 +17,7 @@ public class FakeMenuProductDao implements MenuProductDao {
     @Override
     public MenuProduct save(final MenuProduct entity) {
         final MenuProduct savedMenuProduct = new MenuProduct(
-            ++id, entity.getMenuId(), entity.getProductId(), entity.getQuantity()
+            ++id, entity.getProductId(), entity.getQuantity()
         );
         menuProducts.put(savedMenuProduct.getSeq(), savedMenuProduct);
         return savedMenuProduct;
@@ -35,12 +35,6 @@ public class FakeMenuProductDao implements MenuProductDao {
 
     @Override
     public List<MenuProduct> findAllByMenuId(final Long menuId) {
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (MenuProduct menuProduct : menuProducts.values()) {
-            if (menuProduct.getMenuId().equals(menuId)) {
-                savedMenuProducts.add(menuProduct);
-            }
-        }
-        return savedMenuProducts;
+        return null;
     }
 }

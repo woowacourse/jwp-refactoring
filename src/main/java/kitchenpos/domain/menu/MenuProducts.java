@@ -5,12 +5,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import kitchenpos.domain.Price;
-import kitchenpos.domain.menu.MenuProduct;
+import javax.persistence.CascadeType;
+import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 
+import kitchenpos.domain.Price;
+
+@Embeddable
 public class MenuProducts {
 
-    private final List<MenuProduct> value;
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @JoinColumn(name = "menu_id", nullable = false)
+    private List<MenuProduct> value;
+
+    protected MenuProducts() {
+    }
 
     public MenuProducts(final List<MenuProduct> menuProducts) {
         if (menuProducts == null) {

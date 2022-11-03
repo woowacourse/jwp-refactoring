@@ -13,23 +13,26 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.application.dto.request.MenuProductRequest;
 import kitchenpos.application.dto.request.MenuRequest;
 import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.fake.FakeMenuDao;
 import kitchenpos.dao.fake.FakeMenuGroupDao;
-import kitchenpos.dao.fake.FakeMenuProductDao;
 import kitchenpos.dao.fake.FakeProductDao;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.Product;
-import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.JpaMenuRepository;
 
 @SuppressWarnings("NonAsciiCharacters")
+@SpringBootTest
+@Transactional
 @DisplayName("Menu 서비스 테스트")
 class MenuServiceTest {
 
@@ -38,7 +41,9 @@ class MenuServiceTest {
     private static final int MENU_PRODUCT_QUANTITY = 1;
 
     private MenuService menuService;
-    private MenuRepository menuRepository;
+
+    @Autowired
+    private JpaMenuRepository menuRepository;
 
     private MenuGroup 저장된_치킨_세트;
     private Product 저장된_후라이드_치킨;
@@ -48,7 +53,6 @@ class MenuServiceTest {
         final MenuGroupDao menuGroupDao = new FakeMenuGroupDao();
         final ProductDao productDao = new FakeProductDao();
 
-        menuRepository = new MenuRepository(new FakeMenuDao(), new FakeMenuProductDao());
         menuService = new MenuService(menuRepository, menuGroupDao, productDao);
 
         저장된_후라이드_치킨 = productDao.save(후라이드_치킨());

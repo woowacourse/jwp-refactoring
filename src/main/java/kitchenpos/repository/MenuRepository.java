@@ -24,7 +24,7 @@ public class MenuRepository {
 
     public Menu save(final Menu menu) {
         final Menu savedMenu = menuDao.save(menu);
-        final List<MenuProduct> savedMenuProducts = saveMenuProducts(savedMenu.getId(), menu.getMenuProducts());
+        final List<MenuProduct> savedMenuProducts = saveMenuProducts(menu.getMenuProducts());
         return new Menu(
             savedMenu.getId(),
             savedMenu.getName(),
@@ -55,11 +55,11 @@ public class MenuRepository {
         return menuDao.countByIdIn(ids);
     }
 
-    private List<MenuProduct> saveMenuProducts(final Long menuId, final List<MenuProduct> menuProducts) {
+    private List<MenuProduct> saveMenuProducts(final List<MenuProduct> menuProducts) {
         return menuProducts.stream()
             .map(menuProduct -> menuProductDao.save(
                 new MenuProduct(
-                    menuId, menuProduct.getProductId(), menuProduct.getQuantity()
+                    menuProduct.getProductId(), menuProduct.getQuantity()
                 )
             ))
             .collect(Collectors.toUnmodifiableList());

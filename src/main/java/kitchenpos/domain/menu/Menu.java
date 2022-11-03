@@ -3,15 +3,36 @@ package kitchenpos.domain.menu;
 import java.math.BigDecimal;
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
 import kitchenpos.domain.Price;
 
+@Entity
 public class Menu {
 
-    private final Long id;
-    private final String name;
-    private final Price price;
-    private final Long menuGroupId;
-    private final MenuProducts menuProducts;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Column(nullable = false)
+    private String name;
+    
+    @Embedded
+    private Price price;
+    
+    @Column(nullable = false)
+    private Long menuGroupId;
+    
+    @Embedded
+    private MenuProducts menuProducts;
+
+    protected Menu() {
+    }
 
     /**
      * DB 에 저장되지 않은 객체
