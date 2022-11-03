@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static kitchenpos.table.domain.OrderStatus.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -13,6 +15,7 @@ import kitchenpos.menu.domain.MenuProductService;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderMenu;
+import kitchenpos.table.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.product.domain.Product;
 import kitchenpos.table.domain.TableGroup;
@@ -111,6 +114,11 @@ abstract class ServiceTest {
         return orderTableRepository.save(orderTable);
     }
 
+    protected OrderTable saveOrderTable(final int numberOfGuests, final boolean empty, final OrderStatus orderStatus) {
+        final OrderTable orderTable = new OrderTable(null, null, numberOfGuests, empty, orderStatus);
+        return orderTableRepository.save(orderTable);
+    }
+
     protected Order saveOrder(final OrderTable orderTable, final String orderStatus,
                               final OrderLineItem... orderLineItems) {
         final Order order = new Order(
@@ -140,9 +148,14 @@ abstract class ServiceTest {
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         for (final OrderTable orderTable : orderTables) {
+            OrderStatus orderStatus = orderTable.getOrderStatus();
+            if (orderStatus == null) {
+                orderStatus = NO_ORDER;
+            }
             final OrderTable saved = new OrderTable(orderTable.getId(), savedTableGroup.getId(),
                     orderTable.getNumberOfGuests(),
-                    orderTable.isEmpty());
+                    orderTable.isEmpty(),
+                    orderStatus);
             orderTableRepository.save(saved);
         }
 

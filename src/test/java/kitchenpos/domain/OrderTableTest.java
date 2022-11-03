@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import static kitchenpos.table.domain.OrderStatus.NO_ORDER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -51,7 +52,7 @@ class OrderTableTest {
         @DisplayName("방문한 손님 수를 0명 미만으로 변경할 수 없다.")
         void changeNumberOfGuests_lessThanZero_exception() {
             // given
-            final OrderTable orderTable = OrderTable.of(1,  false);
+            final OrderTable orderTable = OrderTable.of(1, false);
 
             // when & then
             assertThatThrownBy(() -> orderTable.changeNumberOfGuests(-1))
@@ -67,7 +68,7 @@ class OrderTableTest {
         @DisplayName("단체 지정된 테이블은 주문 등록 가능 여부를 변경할 수 없다.")
         void changeEmpty_tableGroupIdIsNotNull_exception() {
             // given
-            final OrderTable orderTable = new OrderTable(1L, 7L, 1, false);
+            final OrderTable orderTable = new OrderTable(1L, 7L, 1, false, NO_ORDER);
 
             // when, then
             assertThatThrownBy(() -> orderTable.changeEmpty(true))
@@ -83,7 +84,7 @@ class OrderTableTest {
         @DisplayName("비어있고 단체 지정 되어있지 않는 테이블을 통과시킨다.")
         void verifyCanGroup_emptyAndTableGroupIdIsNull_success() {
             // given
-            final OrderTable orderTable = new OrderTable(1L, null, 1, true);
+            final OrderTable orderTable = new OrderTable(1L, null, 1, true, NO_ORDER);
 
             // when, then
             assertThatCode(orderTable::verifyCanGroup)
@@ -94,7 +95,7 @@ class OrderTableTest {
         @DisplayName("비어있지 않은 주문 테이블에 대해서 예외를 던진다.")
         void verifyCanGroup_notEmptyOrderTable_exception() {
             // given
-            final OrderTable orderTable = new OrderTable(1L, null, 1, false);
+            final OrderTable orderTable = new OrderTable(1L, null, 1, false, NO_ORDER);
 
             // when, then
             assertThatThrownBy(orderTable::verifyCanGroup)
@@ -105,7 +106,7 @@ class OrderTableTest {
         @DisplayName("단체 지정 되어있는 주문 테이블에 대해서 예외를 던진다.")
         void verifyCanGroup_tableGroupIdIsNotNull_exception() {
             // given
-            final OrderTable orderTable = new OrderTable(1L, 7L, 1, true);
+            final OrderTable orderTable = new OrderTable(1L, 7L, 1, true, NO_ORDER);
 
             // when, then
             assertThatThrownBy(orderTable::verifyCanGroup)
@@ -121,7 +122,7 @@ class OrderTableTest {
         @DisplayName("단체 지정 ID가 null이고 비어있지 않은 주문 테이블은 생성한다.")
         void ungroup_success() {
             // given
-            final OrderTable orderTable = new OrderTable(1L, 7L, 1, true);
+            final OrderTable orderTable = new OrderTable(1L, 7L, 1, true, NO_ORDER);
 
             // when
             final OrderTable expected = orderTable.ungroup();

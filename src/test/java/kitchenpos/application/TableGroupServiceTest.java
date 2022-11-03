@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static kitchenpos.table.domain.OrderStatus.COMPLETION;
+import static kitchenpos.table.domain.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -8,14 +10,14 @@ import static org.assertj.core.api.Assertions.tuple;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderMenu;
-import kitchenpos.table.domain.OrderTable;
 import kitchenpos.product.domain.Product;
-import kitchenpos.table.ui.dto.TableGroupCreateRequest;
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.ui.dto.OrderTableResponse;
+import kitchenpos.table.ui.dto.TableGroupCreateRequest;
 import kitchenpos.table.ui.dto.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -156,8 +158,8 @@ class TableGroupServiceTest extends ServiceTest {
         @DisplayName("모든 주문 테이블에 주문이 있다면 주문 상태는 계산 완료여야 한다.")
         void ungroup_orderStatusIsNotCompletion_exception() {
             // given
-            final OrderTable orderTable1 = saveOrderTable(1, true);
-            final OrderTable orderTable2 = saveOrderTable(2, false);
+            final OrderTable orderTable1 = saveOrderTable(1, true, COOKING);
+            final OrderTable orderTable2 = saveOrderTable(2, false, COMPLETION);
 
             final Long tableGroupId = saveTableGroup(orderTable1, orderTable2).getId();
 
@@ -165,8 +167,8 @@ class TableGroupServiceTest extends ServiceTest {
             final MenuGroup menuGroup = saveMenuGroup("감자");
             final Menu menu = saveMenu("감자세트", BigDecimal.ONE, menuGroup,
                     new MenuProduct(product.getId(), 1L));
-            saveOrder(orderTable1, "COOKING", new OrderLineItem(1L, OrderMenu.from(menu)));
-            saveOrder(orderTable2, "COMPLETION", new OrderLineItem(2L, OrderMenu.from(menu)));
+            saveOrder(orderTable1, COOKING.name(), new OrderLineItem(1L, OrderMenu.from(menu)));
+            saveOrder(orderTable2, COMPLETION.name(), new OrderLineItem(2L, OrderMenu.from(menu)));
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))

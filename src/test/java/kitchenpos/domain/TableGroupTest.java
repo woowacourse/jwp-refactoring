@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import static kitchenpos.table.domain.OrderStatus.NO_ORDER;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
@@ -62,7 +63,7 @@ class TableGroupTest {
         }
 
         private OrderTable getOrderTable(final int id) {
-            return new OrderTable((long) id, null, 1, true);
+            return new OrderTable((long) id, null, 1, true, NO_ORDER);
         }
     }
 }
