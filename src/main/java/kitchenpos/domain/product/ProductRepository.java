@@ -1,11 +1,9 @@
-package kitchenpos.domain.repository;
+package kitchenpos.domain.product;
 
 import java.util.List;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class ProductRepository {

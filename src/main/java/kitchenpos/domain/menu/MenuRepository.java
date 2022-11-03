@@ -1,12 +1,12 @@
-package kitchenpos.domain.repository;
+package kitchenpos.domain.menu;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuProduct;
 import org.springframework.stereotype.Component;
 
 @Component

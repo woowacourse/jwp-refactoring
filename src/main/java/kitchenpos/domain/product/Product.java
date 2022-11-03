@@ -1,7 +1,8 @@
-package kitchenpos.domain;
+package kitchenpos.domain.product;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import kitchenpos.domain.Price;
 
 public class Product {
 

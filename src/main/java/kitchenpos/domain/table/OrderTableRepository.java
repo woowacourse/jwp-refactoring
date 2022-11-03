@@ -1,9 +1,8 @@
-package kitchenpos.domain.repository;
+package kitchenpos.domain.table;
 
 import java.util.List;
-import java.util.Optional;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.table.OrderTable;
 import org.springframework.stereotype.Component;
 
 @Component

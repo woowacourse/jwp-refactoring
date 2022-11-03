@@ -1,10 +1,9 @@
-package kitchenpos.domain;
+package kitchenpos.domain.table;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dto.request.TableIdRequest;
 import org.springframework.util.CollectionUtils;
 
 public class TableGroup {
