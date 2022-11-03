@@ -10,6 +10,7 @@ import kitchenpos.table.application.TableGroupService;
 import kitchenpos.table.application.TableService;
 import kitchenpos.table.dao.OrderTableDao;
 import kitchenpos.table.dao.TableGroupDao;
+import kitchenpos.table.domain.TableGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +36,9 @@ public class SpringServiceTest {
 
     @Autowired
     protected TableGroupService tableGroupService;
+
+    @Autowired
+    protected TableGroupRepository tableGroupRepository;
 
     @Autowired
     protected TableGroupDao tableGroupDao;
