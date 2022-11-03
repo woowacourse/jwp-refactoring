@@ -69,14 +69,14 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
+        final OrderTables orderTables = new OrderTables(orderTableRepository.findAllByTableGroupId(tableGroupId));
 
-        if (orderRepository.existsByOrderTableInAndOrderStatusIn(
-                orderTables, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
+                mapToIds(orderTables), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
 
-        for (final OrderTable orderTable : orderTables) {
+        for (final OrderTable orderTable : orderTables.getOrderTables()) {
             orderTableRepository.save(new OrderTable(orderTable.getId(), null,
                     orderTable.getNumberOfGuests(), orderTable.isEmpty()));
         }

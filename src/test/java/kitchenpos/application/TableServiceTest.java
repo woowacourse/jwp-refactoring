@@ -102,11 +102,11 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 주문_테이블을_빈_테이블로_변경하려_할_때_주문_테이블이_식사중이거나_요리중이면_예외가_발생한다() {
         OrderTable orderTable = tableService.create(주문_테이블_3인());
-        Order 요리중_주문 = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now());
+        Order 요리중_주문 = new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
 
         List<OrderLineItemRequest> orderLineItemRequests = 주문_항목_요청을_생성한다(요리중_주문);
 
-        orderService.create(new OrderRequest(요리중_주문.getOrderTable().getId(), 요리중_주문.getOrderStatus(),
+        orderService.create(new OrderRequest(요리중_주문.getOrderTableId(), 요리중_주문.getOrderStatus(),
                 요리중_주문.getOrderedTime(), orderLineItemRequests));
 
         assertThatThrownBy(

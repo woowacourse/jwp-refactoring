@@ -119,13 +119,13 @@ class TableGroupServiceTest extends ServiceTest {
     void 단체를_해제하려는_테이블의_상태가_식사_중이거나_요리_중이면_예외가_발생한다() {
         List<OrderTable> orderTables = 주문_테이블들(false, false);
 
-        Order 요리중_주문 = new Order(orderTables.get(0), OrderStatus.COOKING.name(), LocalDateTime.now());
+        Order 요리중_주문 = new Order(orderTables.get(0).getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
         List<OrderLineItemRequest> orderLineItemRequests = 주문_항목_요청을_생성한다(요리중_주문);
 
         orderTables.get(0).setEmpty(true);
         orderTables.get(1).setEmpty(true);
         TableGroup 단체_테이블 = 단체_지정(orderTables);
-        orderService.create(new OrderRequest(요리중_주문.getOrderTable().getId(), 요리중_주문.getOrderStatus(),
+        orderService.create(new OrderRequest(요리중_주문.getOrderTableId(), 요리중_주문.getOrderStatus(),
                 요리중_주문.getOrderedTime(), orderLineItemRequests));
 
         assertThatThrownBy(

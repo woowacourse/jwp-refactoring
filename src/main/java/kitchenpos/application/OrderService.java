@@ -5,12 +5,9 @@ import kitchenpos.application.dto.OrderRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderLineItems;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderValidator;
-import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderLineItemRepository;
 import kitchenpos.domain.repository.OrderRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,27 +20,24 @@ public class OrderService {
     private final OrderValidator orderValidator;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
-    private final OrderTableRepository orderTableRepository;
 
     public OrderService(OrderValidator orderValidator, OrderRepository orderRepository,
-                        OrderLineItemRepository orderLineItemRepository, OrderTableRepository orderTableRepository) {
+                        OrderLineItemRepository orderLineItemRepository) {
         this.orderValidator = orderValidator;
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
-        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
     public Order create(final OrderRequest orderRequest) {
         final OrderLineItems orderLineItems = createOrderLineItemsByRequest(orderRequest);
 
-        final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
+        orderValidator.validateOrderTableEmpty(orderRequest.getOrderTableId());
 
-        final Order order = orderRepository.save(new Order(null, orderTable, orderRequest.getOrderStatus(),
-                orderRequest.getOrderedTime(), orderLineItems.getOrderLineItems()));
+        final Order order = orderRepository.save(new Order(null, orderRequest.getOrderTableId(),
+                orderRequest.getOrderStatus(), orderRequest.getOrderedTime(), orderLineItems.getOrderLineItems()));
 
-        return new Order(order.getId(), order.getOrderTable(), order.getOrderStatus(),
+        return new Order(order.getId(), orderRequest.getOrderTableId(), order.getOrderStatus(),
                 order.getOrderedTime(), createOrderLineItems(orderLineItems, order).getOrderLineItems());
     }
 
@@ -84,8 +78,8 @@ public class OrderService {
 
         savedOrder.validateStatusForChange();
 
-        return orderRepository.save(new Order(savedOrder.getId(), savedOrder.getOrderTable(), order.getOrderStatus(),
-                savedOrder.getOrderedTime(),
+        return orderRepository.save(new Order(savedOrder.getId(), savedOrder.getOrderTableId(),
+                order.getOrderStatus(), savedOrder.getOrderedTime(),
                 new OrderLineItems(orderLineItemRepository.findAllByOrderId(orderId)).getOrderLineItems()));
     }
 }

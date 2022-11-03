@@ -5,4 +5,6 @@ import java.util.List;
 public interface OrderValidator {
 
     void validateMenuExists(List<OrderLineItem> orderLineItems, List<Long> menuIds);
+
+    void validateOrderTableEmpty(Long orderTableId);
 }

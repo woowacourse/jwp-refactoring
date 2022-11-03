@@ -14,17 +14,7 @@ public class OrderTest {
         OrderTable orderTable = new OrderTable(tableGroup, 3, true);
 
         assertThatThrownBy(
-                () -> new Order(null, orderTable, OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>())
-        ).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 주문_테이블이_비어있으면_주문을_생성할_수_없다() {
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), new ArrayList<>());
-        OrderTable orderTable = new OrderTable(tableGroup, 3, true);
-
-        assertThatThrownBy(
-                () -> new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now())
+                () -> new Order(null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>())
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -35,7 +25,7 @@ public class OrderTest {
 
         assertThatThrownBy(
                 () -> {
-                    Order order = new Order(orderTable, OrderStatus.COMPLETION.name(), LocalDateTime.now());
+                    Order order = new Order(orderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now());
                     order.validateStatusForChange();
                 }
         ).isInstanceOf(IllegalArgumentException.class);

@@ -41,8 +41,8 @@ public class TableService {
                 .orElseThrow(IllegalArgumentException::new);
         savedOrderTable.validateTableGroupForChangeEmpty();
 
-        if (orderRepository.existsByOrderTableAndOrderStatusIn(
-                savedOrderTable, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
+                savedOrderTable.getId(), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
 

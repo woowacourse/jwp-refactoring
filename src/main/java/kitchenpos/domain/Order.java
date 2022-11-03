@@ -24,9 +24,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "order_table_id")
-    private OrderTable orderTable;
+    private Long orderTableId;
 
     private String orderStatus;
 
@@ -39,24 +37,18 @@ public class Order {
     public Order() {
     }
 
-    public Order(Long id, OrderTable orderTable, String orderStatus, LocalDateTime orderedTime,
+    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
                  List<OrderLineItem> orderLineItems) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
         this.id = id;
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = new OrderLineItems(orderLineItems).getOrderLineItems();
     }
 
-    public Order(OrderTable orderTable, String orderStatus, LocalDateTime orderedTime) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
         this.id = null;
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = new ArrayList<>();
@@ -80,12 +72,12 @@ public class Order {
         this.id = id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
-    public void setOrderTable(OrderTable orderTable) {
-        this.orderTable = orderTable;
+    public void setOrderTableId(Long orderTableId) {
+        this.orderTableId = orderTableId;
     }
 
     public String getOrderStatus() {
