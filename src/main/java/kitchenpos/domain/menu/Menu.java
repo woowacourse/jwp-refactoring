@@ -50,16 +50,21 @@ public class Menu {
     public Menu() {
     }
 
-    public void validatePrice(final BigDecimal price, final List<MenuProduct> menuProducts) {
+    private void validatePrice(final BigDecimal price, final List<MenuProduct> menuProducts) {
+        final BigDecimal sum = calculateTotalPrice(menuProducts);
+
+        if (price.compareTo(sum) > 0) {
+            throw new IllegalArgumentException("메뉴의 가격과 메뉴 상품의 총 가격은 동일해야합니다.");
+        }
+    }
+
+    private BigDecimal calculateTotalPrice(final List<MenuProduct> menuProducts) {
         BigDecimal sum = BigDecimal.ZERO;
         for (MenuProduct menuProduct : menuProducts) {
             final BigDecimal menuProductPrice = menuProduct.calculateTotalPrice();
             sum = sum.add(menuProductPrice);
         }
-
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException("메뉴의 가격과 메뉴 상품의 총 가격은 동일해야합니다.");
-        }
+        return sum;
     }
 
     public Long getId() {
