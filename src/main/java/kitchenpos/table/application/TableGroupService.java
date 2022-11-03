@@ -46,7 +46,7 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         OrderTables orderTables = new OrderTables(orderTableRepository.findAllByTableGroupId(tableGroupId));
-        orderTables.upgroup(orderTableValidator);
+        orderTables.upgroup(orderTableValidator::validateAllCompletionStatus);
         orderTableRepository.saveAll(orderTables.getValues());
     }
 

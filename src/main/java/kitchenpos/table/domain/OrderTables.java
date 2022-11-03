@@ -2,8 +2,8 @@ package kitchenpos.table.domain;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import kitchenpos.table.application.OrderTableValidator;
 import org.springframework.util.CollectionUtils;
 
 public class OrderTables {
@@ -40,8 +40,8 @@ public class OrderTables {
         }
     }
 
-    public void upgroup(final OrderTableValidator orderTableValidator) {
-        orderTableValidator.validateAllCompletionStatus(this.getOrderIds());
+    public void upgroup(final Consumer<List<Long>> validator) {
+        validator.accept(this.getOrderIds());
         for (final OrderTable orderTable : this.values) {
             orderTable.clear();
         }

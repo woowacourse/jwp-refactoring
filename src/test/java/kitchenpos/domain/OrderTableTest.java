@@ -54,14 +54,14 @@ class OrderTableTest {
     @CsvSource(value = {"true, false", "false, true"})
     void empty_상태를_바꿀_수_있다(boolean before, boolean after) {
         OrderTable orderTable = createOrderTable(null, before);
-        orderTable.changeEmpty(after, orderTableValidator);
+        orderTable.changeEmpty(after, (orderTableId) -> orderTableValidator.validateCompletionStatus(orderTableId));
         assertThat(orderTable.isEmpty()).isEqualTo(after);
     }
 
     @Test
     void empty_상태를_바꿀_때_table_group_id가_null이_아니면_예외를_반환한다() {
         OrderTable orderTable = createOrderTable(tableGroupId, false);
-        assertThatThrownBy(() -> orderTable.changeEmpty(true, orderTableValidator))
+        assertThatThrownBy(() -> orderTable.changeEmpty(true, (orderTableId) -> orderTableValidator.validateCompletionStatus(orderTableId)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

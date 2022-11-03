@@ -65,7 +65,7 @@ class OrderTablesTest {
     @Test
     void upgroup_할_수_있다() {
         OrderTables orderTables = OrderTables.fromCreate(Arrays.asList(orderTable1, orderTable2));
-        orderTables.upgroup(orderTableValidator);
+        orderTables.upgroup((orderTableIds) -> orderTableValidator.validateAllCompletionStatus(orderTableIds));
 
         assertThat(orderTables.getValues()).extracting("tableGroupId", "empty")
                 .isEqualTo(Arrays.asList(tuple(null, false), tuple(null, false)));

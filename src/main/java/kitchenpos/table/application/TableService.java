@@ -40,7 +40,7 @@ public class TableService {
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeStatusRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-        savedOrderTable.changeEmpty(request.isEmpty(), orderTableValidator);
+        savedOrderTable.changeEmpty(request.isEmpty(), orderTableValidator::validateCompletionStatus);
         return OrderTableResponse.from(orderTableRepository.save(savedOrderTable));
     }
 
