@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Test;
 class MenuTest {
 
     private final List<MenuProduct> menuProducts = List.of(
-            new MenuProduct(1L, new BigDecimal(10_000), 1),
-            new MenuProduct(2L, new BigDecimal(10_000), 1)
+            MenuProduct.of(1L, 1, new BigDecimal(10_000)),
+            MenuProduct.of(2L, 1, new BigDecimal(10_000))
     );
 
     @Test

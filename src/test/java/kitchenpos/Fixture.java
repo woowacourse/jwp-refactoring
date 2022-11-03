@@ -25,7 +25,7 @@ public class Fixture {
     }
 
     public static MenuProduct 메뉴의_상품은(Product product) {
-        return new MenuProduct(product.getId(), product.getPrice(), 1);
+        return MenuProduct.of(product.getId(), 1, product.getPrice());
     }
 
     public static Menu 메뉴(MenuGroup menuGroup, MenuProduct... menuProducts) {

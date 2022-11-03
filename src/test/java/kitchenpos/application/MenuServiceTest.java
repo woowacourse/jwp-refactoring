@@ -63,7 +63,7 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void 생성할때_상품이_존재하지_않는_경우_예외를_발생시킨다() {
         MenuProduct 햄버거1 = 메뉴의_상품은(상품_생성(100_000));
-        MenuProduct 존재하지_않는_상품 = new MenuProduct(-1L, new BigDecimal(100_000), 1);
+        MenuProduct 존재하지_않는_상품 = MenuProduct.of(-1L, 1, new BigDecimal(100_000));
         Menu menu = new Menu("햄버억", new BigDecimal(200_000), 메뉴집합().getId(), List.of(햄버거1, 존재하지_않는_상품));
 
         assertThatThrownBy(() -> menuService.create(menu))

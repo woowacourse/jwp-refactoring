@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.dao.infrastructure.JdbcTemplateMenuDao;
-import kitchenpos.dao.infrastructure.JdbcTemplateMenuProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import org.springframework.stereotype.Repository;
@@ -13,12 +12,11 @@ import org.springframework.stereotype.Repository;
 public class MenuRepository implements MenuDao {
 
     private final JdbcTemplateMenuDao jdbcTemplateMenuDao;
-    private final JdbcTemplateMenuProductDao jdbcTemplateMenuProductDao;
+    private final MenuProductDao menuProductDao;
 
-    public MenuRepository(JdbcTemplateMenuDao jdbcTemplateMenuDao,
-                          JdbcTemplateMenuProductDao jdbcTemplateMenuProductDao) {
+    public MenuRepository(JdbcTemplateMenuDao jdbcTemplateMenuDao, MenuProductDao menuProductDao) {
         this.jdbcTemplateMenuDao = jdbcTemplateMenuDao;
-        this.jdbcTemplateMenuProductDao = jdbcTemplateMenuProductDao;
+        this.menuProductDao = menuProductDao;
     }
 
     @Override
@@ -36,7 +34,7 @@ public class MenuRepository implements MenuDao {
     }
 
     private MenuProduct saveMenuProduct(Menu menu, MenuProduct menuProduct) {
-        return jdbcTemplateMenuProductDao.save(
+        return menuProductDao.save(
                 new MenuProduct(
                         menu.getId(),
                         menuProduct.getProductId(),
