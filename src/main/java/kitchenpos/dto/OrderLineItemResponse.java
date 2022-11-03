@@ -16,7 +16,7 @@ public class OrderLineItemResponse {
     public OrderLineItemResponse(final OrderLineItem orderLineItem) {
         this.seq = orderLineItem.getSeq();
         this.name = orderLineItem.getName();
-        this.price = orderLineItem.getPrice();
+        this.price = orderLineItem.getPrice().getValue();
         this.quantity = orderLineItem.getQuantity();
     }
 

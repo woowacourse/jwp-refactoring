@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 import kitchenpos.dto.MenuProductSaveRequest;
 import kitchenpos.dto.MenuSaveRequest;
 
@@ -25,7 +26,7 @@ public class MenuFixtures {
     }
 
     public static final Menu generateMenu(final Long id, final Menu menu) {
-        return generateMenu(id, menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menu.getMenuProducts());
+        return generateMenu(id, menu.getName(), menu.getPrice().getValue(), menu.getMenuGroupId(), menu.getMenuProducts());
     }
 
     public static final Menu generateMenu(final Long id,
@@ -49,7 +50,7 @@ public class MenuFixtures {
 
             Field priceField = clazz.getDeclaredField("price");
             priceField.setAccessible(true);
-            priceField.set(menu, price);
+            priceField.set(menu, new Price(price));
 
             Field menuGroupIdField = clazz.getDeclaredField("menuGroupId");
             menuGroupIdField.setAccessible(true);

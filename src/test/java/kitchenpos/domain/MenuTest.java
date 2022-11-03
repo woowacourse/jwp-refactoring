@@ -27,7 +27,6 @@ class MenuTest {
 
         assertAll(() -> {
             assertThat(actual.getName()).isEqualTo("후라이드치킨");
-            assertThat(actual.getPrice().compareTo(BigDecimal.valueOf(16000))).isEqualTo(0);
             assertThat(actual.getMenuGroupId()).isEqualTo(한마리메뉴.getId());
             assertThat(actual.getMenuProducts()).hasSize(1);
         });

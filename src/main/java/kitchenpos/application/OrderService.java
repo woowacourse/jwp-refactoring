@@ -44,7 +44,7 @@ public class OrderService {
 
     private OrderLineItem toOrderLineItem(final OrderLineItemSaveRequest it) {
         Menu menu = menuRepository.getById(it.getMenuId());
-        return new OrderLineItem(menu.getName(), menu.getPrice(), it.getQuantity());
+        return new OrderLineItem(menu.getName(), menu.getPrice().getValue(), it.getQuantity());
     }
 
     public List<OrderResponse> list() {

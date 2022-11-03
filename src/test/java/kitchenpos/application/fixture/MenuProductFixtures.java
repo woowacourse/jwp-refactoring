@@ -4,15 +4,15 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 
 public class MenuProductFixtures {
 
     public static final MenuProduct generateMenuProduct(final Long productId, final long quantity) {
-        return generateMenuProduct(null, null, productId, quantity, BigDecimal.valueOf(16000));
+        return generateMenuProduct(null, productId, quantity, BigDecimal.valueOf(16000));
     }
 
     public static final MenuProduct generateMenuProduct(final Long seq,
-                                                        final Long menuId,
                                                         final Long productId,
                                                         final long quantity,
                                                         final BigDecimal price) {
@@ -36,7 +36,7 @@ public class MenuProductFixtures {
 
             Field priceField = clazz.getDeclaredField("price");
             priceField.setAccessible(true);
-            priceField.set(menuProduct, price);
+            priceField.set(menuProduct, new Price(price));
 
             return menuProduct;
         } catch (final Exception e) {

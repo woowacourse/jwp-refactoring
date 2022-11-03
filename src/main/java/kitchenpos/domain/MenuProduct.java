@@ -22,7 +22,7 @@ public class MenuProduct {
     private long quantity;
 
     @Transient
-    private BigDecimal price;
+    private Price price;
 
     protected MenuProduct() {
     }
@@ -30,7 +30,7 @@ public class MenuProduct {
     public MenuProduct(final Long productId, final long quantity, final BigDecimal price) {
         this.productId = productId;
         this.quantity = quantity;
-        this.price = price;
+        this.price = new Price(price);
     }
 
     public BigDecimal getAmount() {
@@ -49,7 +49,7 @@ public class MenuProduct {
         return quantity;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
     }
 }

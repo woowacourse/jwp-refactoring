@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.Price;
 
 public class OrderLineItemFixtures {
 
@@ -33,7 +34,7 @@ public class OrderLineItemFixtures {
 
             Field priceField = clazz.getDeclaredField("price");
             priceField.setAccessible(true);
-            priceField.set(orderLineItem, price);
+            priceField.set(orderLineItem, new Price(price));
 
             Field quantityField = clazz.getDeclaredField("quantity");
             quantityField.setAccessible(true);

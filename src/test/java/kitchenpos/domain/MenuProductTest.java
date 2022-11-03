@@ -17,7 +17,6 @@ class MenuProductTest {
         assertAll(() -> {
             assertThat(actual.getProductId()).isEqualTo(1L);
             assertThat(actual.getQuantity()).isEqualTo(1L);
-            assertThat(actual.getPrice().compareTo(BigDecimal.valueOf(16000))).isEqualTo(0);
         });
     }
 
