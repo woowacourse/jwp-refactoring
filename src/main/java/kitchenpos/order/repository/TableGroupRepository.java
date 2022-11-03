@@ -4,5 +4,5 @@ import kitchenpos.order.domain.TableGroup;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface TableGroupRepository extends JpaRepository<TableGroup, Long>, TableRepositoryCustom {
+public interface TableGroupRepository extends JpaRepository<TableGroup, Long> {
 }

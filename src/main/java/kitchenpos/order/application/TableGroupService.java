@@ -32,10 +32,9 @@ public class TableGroupService {
     @Transactional
     public TableGroup create(TableGroupRequest request) {
 
-        List<Long> requestOrderTableIds = request.tableIds();
+        List<Long> requestTableIds = request.tableIds();
 
-        List<OrderTable> savedTables =
-                tableRepository.findAllWithTableGroupByIdIn(requestOrderTableIds);
+        List<OrderTable> savedTables = tableRepository.findAllByIdIn(requestTableIds);
 
         tableGroupSpecification.validateCreate(request, savedTables);
 
@@ -53,13 +52,15 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
 
-        List<OrderTable> orderTables = tableRepository.findAllWithTableGroup(tableGroupId);
+        List<OrderTable> orderTables = tableRepository.findAllWithGroupByTableGroupId(tableGroupId);
 
         tableGroupSpecification.validateUngroup(orderTables);
 
         for (OrderTable orderTable : orderTables) {
+            final TableGroup tableGroup = orderTable.getTableGroup();
             orderTable.changeStatusNotEmpty();
             orderTable.ungroup();
+            tableGroupRepository.delete(tableGroup);
         }
 
         tableRepository.saveAll(orderTables);

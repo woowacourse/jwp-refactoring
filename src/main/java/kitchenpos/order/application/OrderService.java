@@ -70,7 +70,7 @@ public class OrderService {
     @Transactional
     public Order changeOrderStatus(Long orderId, OrderRequest request) {
 
-        Order savedOrder = orderRepository.findWithOrderItemsById(orderId)
+        Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문입니다."));
 
         orderSpecification.validateChangeOrderStatus(savedOrder);

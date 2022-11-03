@@ -9,6 +9,7 @@ import static org.assertj.core.util.Lists.emptyList;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
+import java.util.Optional;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.domain.TableGroup;
@@ -38,7 +39,7 @@ class TableGroupServiceTest extends IntegrationServiceTest {
         }
 
         @Nested
-        class 존재하지_않는_주문테이블을_요청한_경우 {
+        class 요청한_테이블의_개수가_기존의_테이블과_다른_경우 {
 
             private final List<OrderTableRequest> 존재하지_않는_주문테이블_내포 =
                     List.of(new OrderTableRequest(-1L, 1L, 4, false),
@@ -54,7 +55,7 @@ class TableGroupServiceTest extends IntegrationServiceTest {
             @Test
             void 예외가_발생한다() {
 
-                assertThrows_create(tableGroupRequest, "존재하지 않는 주문 테이블에 대해 그룹화를 할 수 없습니다.");
+                assertThrows_create(tableGroupRequest, "요청한 테이블의 개수가 기존의 테이블과 다릅니다.");
             }
         }
 
@@ -231,10 +232,12 @@ class TableGroupServiceTest extends IntegrationServiceTest {
 
                 final OrderTable 검증할_테이블_1 = tableRepository.findWithTableGroupById(tableId1).get();
                 final OrderTable 검증할_테이블_2 = tableRepository.findWithTableGroupById(tableId2).get();
+                final Optional<TableGroup> 없어져야할_테이블_그룹 = tableGroupRepository.findById(savedTableGroupId);
 
                 assertAll(
                         () -> assertThat(검증할_테이블_1.getTableGroup()).isNull(),
-                        () -> assertThat(검증할_테이블_2.getTableGroup()).isNull()
+                        () -> assertThat(검증할_테이블_2.getTableGroup()).isNull(),
+                        () -> assertThat(없어져야할_테이블_그룹).isEmpty()
                 );
             }
         }

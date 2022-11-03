@@ -19,7 +19,7 @@ public class MenuSpecification {
 
     public void validateCreate(Menu menu, MenuRequest request) {
 
-        if (!menuGroupRepository.existsBy(request.getMenuGroupId())) {
+        if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException("존재하지 않는 메뉴 그룹의 ID입니다.");
         }
 
