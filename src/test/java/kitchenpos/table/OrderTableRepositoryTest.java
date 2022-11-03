@@ -39,7 +39,7 @@ class OrderTableRepositoryTest {
                 () -> assertThat(saved.getId()).isNotNull(),
                 () -> assertThat(saved.getNumberOfGuests()).isEqualTo(2),
                 () -> assertThat(saved.isEmpty()).isFalse(),
-                () -> assertThat(saved.getTableGroup()).isNull()
+                () -> assertThat(saved.getTableGroupId()).isNull()
         );
     }
 
@@ -115,7 +115,7 @@ class OrderTableRepositoryTest {
         final TableGroup tableGroup = TableGroupFixtures.create();
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-        final OrderTable orderTable = new OrderTable(null, savedTableGroup, 2, false);
+        final OrderTable orderTable = new OrderTable(null, savedTableGroup.getId(), 2, false);
         final OrderTable saved = orderTableRepository.save(orderTable);
 
         // when

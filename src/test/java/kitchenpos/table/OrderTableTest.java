@@ -2,6 +2,7 @@ package kitchenpos.table;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.time.LocalDateTime;
 import kitchenpos.exception.AlreadyGroupedException;
 import kitchenpos.exception.CanNotGroupException;
 import kitchenpos.exception.NumberOfGuestsSizeException;
@@ -30,7 +31,7 @@ class OrderTableTest {
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 3);
         final TableGroup tableGroup = TableGroupFixtures.create();
 
-        assertThatThrownBy(() -> orderTable.groupTableBy(tableGroup))
+        assertThatThrownBy(() -> orderTable.groupTableBy(tableGroup.getId()))
                 .isExactlyInstanceOf(CanNotGroupException.class);
     }
 
@@ -40,15 +41,15 @@ class OrderTableTest {
         final OrderTable orderTable = OrderTableFixtures.createWithGuests(null, 3);
         final TableGroup tableGroup = TableGroupFixtures.create();
 
-        assertThatThrownBy(() -> orderTable.groupTableBy(tableGroup))
+        assertThatThrownBy(() -> orderTable.groupTableBy(tableGroup.getId()))
                 .isExactlyInstanceOf(CanNotGroupException.class);
     }
 
     @Test
     @DisplayName("주문 테이블이 단체로 지정되어 있다면 테이블을 비울 수 없다")
     void validateNotGrouping() {
-        final TableGroup tableGroup = TableGroupFixtures.create();
-        final OrderTable orderTable = OrderTableFixtures.createWithGuests(tableGroup, 3);
+        final TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now());
+        final OrderTable orderTable = OrderTableFixtures.createWithGuests(tableGroup.getId(), 3);
 
         assertThatThrownBy(() -> orderTable.updateEmpty(true))
                 .isExactlyInstanceOf(AlreadyGroupedException.class);

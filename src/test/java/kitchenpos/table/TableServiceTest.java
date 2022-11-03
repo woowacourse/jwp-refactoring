@@ -114,7 +114,7 @@ class TableServiceTest extends ServiceTest {
         final TableGroup tableGroup = TableGroupFixtures.create();
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-        final OrderTable orderTable = OrderTableFixtures.createEmptyTable(savedTableGroup);
+        final OrderTable orderTable = OrderTableFixtures.createEmptyTable(savedTableGroup.getId());
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         // when, then

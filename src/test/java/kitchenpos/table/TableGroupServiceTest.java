@@ -138,12 +138,12 @@ class TableGroupServiceTest extends ServiceTest {
         final TableGroup tableGroup = TableGroupFixtures.create();
         final TableGroup alreadyGroupedTable = tableGroupRepository.save(tableGroup);
 
-        final OrderTable orderTable1 = OrderTableFixtures.createWithGuests(alreadyGroupedTable, 2);
+        final OrderTable orderTable1 = OrderTableFixtures.createWithGuests(alreadyGroupedTable.getId(), 2);
         final OrderTable alreadyGroupedOrderTable1 = orderTableRepository.save(orderTable1);
         final OrderTableRequest alreadyGroupedOrderTableRequest = new OrderTableRequest(
                 alreadyGroupedOrderTable1.getId());
 
-        final OrderTable orderTable2 = OrderTableFixtures.createWithGuests(alreadyGroupedTable, 2);
+        final OrderTable orderTable2 = OrderTableFixtures.createWithGuests(alreadyGroupedTable.getId(), 2);
         orderTableRepository.save(orderTable2);
 
         final OrderTable orderTable3 = OrderTableFixtures.createWithGuests(null, 2);
@@ -171,10 +171,10 @@ class TableGroupServiceTest extends ServiceTest {
         final TableGroup tableGroup = TableGroupFixtures.create();
         final TableGroup alreadyGroupedTable = tableGroupRepository.save(tableGroup);
 
-        final OrderTable orderTable1 = OrderTableFixtures.createWithGuests(alreadyGroupedTable, 2);
+        final OrderTable orderTable1 = OrderTableFixtures.createWithGuests(alreadyGroupedTable.getId(), 2);
         final OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
 
-        final OrderTable orderTable2 = OrderTableFixtures.createWithGuests(alreadyGroupedTable, 2);
+        final OrderTable orderTable2 = OrderTableFixtures.createWithGuests(alreadyGroupedTable.getId(), 2);
         final OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
 
         final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu, 2);
@@ -191,7 +191,7 @@ class TableGroupServiceTest extends ServiceTest {
 
         assertAll(
                 () -> assertThat(ungroupedOrderTable).isNotEmpty(),
-                () -> assertThat(ungroupedOrderTable).extracting("tableGroup")
+                () -> assertThat(ungroupedOrderTable).extracting("tableGroupId")
                         .containsExactly(null, null),
                 () -> assertThat(ungroupedOrderTable).extracting("empty")
                         .containsExactly(false, false)
@@ -212,10 +212,10 @@ class TableGroupServiceTest extends ServiceTest {
         final TableGroup tableGroup = TableGroupFixtures.create();
         final TableGroup alreadyGroupedTable = tableGroupRepository.save(tableGroup);
 
-        final OrderTable orderTable1 = OrderTableFixtures.createWithGuests(alreadyGroupedTable, 2);
+        final OrderTable orderTable1 = OrderTableFixtures.createWithGuests(alreadyGroupedTable.getId(), 2);
         final OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
 
-        final OrderTable orderTable2 = OrderTableFixtures.createWithGuests(alreadyGroupedTable, 2);
+        final OrderTable orderTable2 = OrderTableFixtures.createWithGuests(alreadyGroupedTable.getId(), 2);
         orderTableRepository.save(orderTable2);
 
         final OrderLineItem orderLineItem = OrderLineItemFixtures.create(null, savedMenu, 2);

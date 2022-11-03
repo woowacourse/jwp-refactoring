@@ -32,7 +32,7 @@ public class TableGroupService {
         final TableGroup newTableGroup = new TableGroup(null, LocalDateTime.now());
         final TableGroup savedTableGroup = tableGroupRepository.save(newTableGroup);
 
-        final List<OrderTable> groupedOrderTables = groupOrderTable(savedOrderTables, savedTableGroup);
+        final List<OrderTable> groupedOrderTables = groupOrderTable(savedOrderTables, savedTableGroup.getId());
 
         savedTableGroup.updateOrderTables(groupedOrderTables);
         return TableGroupResponse.from(savedTableGroup);
@@ -46,10 +46,10 @@ public class TableGroupService {
         return orderTableRepository.findAllByIdIn(orderTableIds);
     }
 
-    private List<OrderTable> groupOrderTable(final List<OrderTable> savedOrderTables, final TableGroup tableGroup) {
+    private List<OrderTable> groupOrderTable(final List<OrderTable> savedOrderTables, final Long tableGroupId) {
         final List<OrderTable> newOrderTables = new ArrayList<>();
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.groupTableBy(tableGroup);
+            savedOrderTable.groupTableBy(tableGroupId);
             newOrderTables.add(orderTableRepository.save(savedOrderTable));
         }
         return newOrderTables;
