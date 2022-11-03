@@ -122,7 +122,7 @@ abstract class ServiceTest {
                     .orElseThrow();
             final MenuGroup menuGroup = menuGroupRepository.findById(menu.getMenuGroupId())
                     .orElseThrow();
-            final OrderMenu orderMenu = OrderMenu.of(menu, menuGroup);
+            final OrderMenu orderMenu = OrderMenu.from(menu);
             final OrderLineItem orderLineItem = new OrderLineItem(old.getQuantity(), orderMenu);
             newOrderLineItems.add(orderLineItem);
         }

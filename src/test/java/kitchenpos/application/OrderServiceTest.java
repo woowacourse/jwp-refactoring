@@ -153,7 +153,7 @@ class OrderServiceTest extends ServiceTest {
                     new MenuProduct(chicken2.getId(), 4L));
 
             final OrderTable orderTable1 = saveOrderTable(10, false);
-            saveOrder(orderTable1, "COOKING", new OrderLineItem(2L, OrderMenu.of(chickenMenu, chickenMenuGroup)));
+            saveOrder(orderTable1, "COOKING", new OrderLineItem(2L, OrderMenu.from(chickenMenu)));
 
             final Product sushi1 = saveProduct("연어초밥");
             final Product sushi2 = saveProduct("광어초밥");
@@ -165,7 +165,7 @@ class OrderServiceTest extends ServiceTest {
                     new MenuProduct(sushi3.getId(), 1L));
 
             final OrderTable orderTable2 = saveOrderTable(2, false);
-            saveOrder(orderTable2, "MEAL", new OrderLineItem(3L, OrderMenu.of(sushiMenu, sushiMenuGroup)));
+            saveOrder(orderTable2, "MEAL", new OrderLineItem(3L, OrderMenu.from(sushiMenu)));
 
             // when
             final List<OrderResponse> actual = orderService.list();
@@ -235,7 +235,7 @@ class OrderServiceTest extends ServiceTest {
             final Menu menu = saveMenu("반반치킨", BigDecimal.valueOf(10_000), chickenMenuGroup,
                     new MenuProduct(chicken1.getId(), 2L),
                     new MenuProduct(chicken2.getId(), 4L));
-            return OrderMenu.of(menu, chickenMenuGroup);
+            return OrderMenu.from(menu);
         }
     }
 }

@@ -7,21 +7,18 @@ public class OrderMenu {
     private final Long menuId;
     private final String menuName;
     private final BigDecimal menuPrice;
-    private final String menuGroupName;
 
-    private OrderMenu(final Long menuId, final String menuName, final BigDecimal menuPrice, final String menuGroupName) {
+    private OrderMenu(final Long menuId, final String menuName, final BigDecimal menuPrice) {
         this.menuId = menuId;
         this.menuName = menuName;
         this.menuPrice = menuPrice;
-        this.menuGroupName = menuGroupName;
     }
 
-    public static OrderMenu of(final Menu menu, final MenuGroup menuGroup) {
+    public static OrderMenu from(final Menu menu) {
         return new OrderMenu(
                 menu.getId(),
                 menu.getName(),
-                menu.getPrice(),
-                menuGroup.getName()
+                menu.getPrice()
         );
     }
 
@@ -35,9 +32,5 @@ public class OrderMenu {
 
     public BigDecimal getMenuPrice() {
         return menuPrice;
-    }
-
-    public String getMenuGroupName() {
-        return menuGroupName;
     }
 }

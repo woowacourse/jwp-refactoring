@@ -109,7 +109,7 @@ class TableServiceTest extends ServiceTest {
             final MenuGroup menuGroup = saveMenuGroup("감자");
             final Menu menu = saveMenu("감자세트", BigDecimal.ONE, menuGroup, new MenuProduct(product.getId(), 1L));
             final OrderTable orderTable = saveOrderTable(10, false);
-            saveOrder(orderTable, orderStatus, new OrderLineItem(1L, OrderMenu.of(menu, menuGroup)));
+            saveOrder(orderTable, orderStatus, new OrderLineItem(1L, OrderMenu.from(menu)));
 
             final ChangeEmptyRequest request = new ChangeEmptyRequest(true);
 
