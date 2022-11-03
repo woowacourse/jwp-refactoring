@@ -105,17 +105,13 @@ public abstract class ServiceTestBase {
     }
 
     protected OrderTable 주문_테이블_생성() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(2);
+        OrderTable orderTable = new OrderTable(2, false);
 
         return orderTable;
     }
 
     protected OrderTable 빈_주문_테이블_생성() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
-        orderTable.setNumberOfGuests(0);
+        OrderTable orderTable = new OrderTable(0, true);
 
         return orderTable;
     }
@@ -141,11 +137,7 @@ public abstract class ServiceTestBase {
         List<OrderTable> orderTableList = Arrays.stream(orderTables)
                 .collect(Collectors.toList());
 
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        tableGroup.setOrderTables(orderTableList);
-
-        return tableGroup;
+        return new TableGroup(LocalDateTime.now(), orderTableList);
     }
 
     protected TableGroupCreateRequest createTableGroupCreateRequest(final OrderTable... orderTables) {

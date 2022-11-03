@@ -21,6 +21,11 @@ public class OrderTable {
         this.tableGroupId = tableGroupId;
     }
 
+    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        this(tableGroupId, numberOfGuests, empty);
+        this.id = id;
+    }
+
     public void validateEmpty() {
         if (isEmpty()) {
             throw new IllegalArgumentException("빈 주문 테이블입니다.");
@@ -69,10 +74,6 @@ public class OrderTable {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public Long getTableGroupId() {
         return tableGroupId;
     }
@@ -83,10 +84,6 @@ public class OrderTable {
 
     public int getNumberOfGuests() {
         return numberOfGuests;
-    }
-
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
     }
 
     public boolean isEmpty() {
