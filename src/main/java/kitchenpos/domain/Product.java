@@ -7,14 +7,14 @@ public class Product {
     private final String name;
     private final Price price;
 
+    public Product(String name, BigDecimal price) {
+        this(null, name, price);
+    }
+
     public Product(Long id, String name, BigDecimal price) {
         this.id = id;
         this.name = name;
         this.price = new Price(price);
-    }
-
-    public Product(String name, BigDecimal price) {
-        this(null, name, price);
     }
 
     public Long getId() {
