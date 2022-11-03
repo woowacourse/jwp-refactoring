@@ -37,9 +37,9 @@ public class TableGroupService {
         return TableGroupResponse.from(tableGroup, orderTables);
     }
 
-    private OrderTables getOrderTables(final List<OrderTableIdDto> orderTableIdDtos) {
+    private OrderTables getOrderTables(final List<OrderTableIdDto> orderTableIdsDto) {
         List<OrderTable> orderTables = orderTableRepository.findAllByOrderTableIdsIn(
-                extractOrderTableIds(orderTableIdDtos));
+                extractOrderTableIds(orderTableIdsDto));
         return OrderTables.fromCreate(orderTables);
     }
 

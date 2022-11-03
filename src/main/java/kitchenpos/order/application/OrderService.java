@@ -70,17 +70,19 @@ public class OrderService {
 
     private List<OrderLineItem> extractOrderLineItemFrom(final List<OrderLineItemDto> orderLineItemsDto) {
         return orderLineItemsDto.stream()
-                .map(orderLineItemDto -> {
-                    Menu menu = getMenu(orderLineItemDto);
-                    return new OrderLineItem(
-                            orderLineItemDto.getMenuId(),
-                            orderLineItemDto.getMenuId(),
-                            menu.getName(),
-                            menu.getPrice(),
-                            orderLineItemDto.getQuantity()
-                    );
-                })
+                .map(this::getOrderLineItemFrom)
                 .collect(Collectors.toList());
+    }
+
+    private OrderLineItem getOrderLineItemFrom(OrderLineItemDto orderLineItemDto) {
+            Menu menu = getMenu(orderLineItemDto);
+            return new OrderLineItem(
+                    orderLineItemDto.getMenuId(),
+                    orderLineItemDto.getMenuId(),
+                    menu.getName(),
+                    menu.getPrice(),
+                    orderLineItemDto.getQuantity()
+            );
     }
 
     private Menu getMenu(final OrderLineItemDto orderLineItemDto) {
