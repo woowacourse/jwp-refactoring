@@ -1,7 +1,9 @@
 package kitchenpos.application;
 
 import static kitchenpos.table.domain.OrderStatus.COMPLETION;
+import static kitchenpos.table.domain.OrderStatus.COOKING;
 import static kitchenpos.table.domain.OrderStatus.MEAL;
+import static kitchenpos.table.domain.OrderStatus.NO_ORDER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
@@ -48,7 +50,7 @@ class OrderServiceTest extends ServiceTest {
 
             // then
             softly.assertThat(actual.getOrderTableId()).isEqualTo(orderTableId);
-            softly.assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+            softly.assertThat(actual.getOrderStatus()).isEqualTo(COOKING.name());
             softly.assertThat(actual.getOrderLineItems()).extracting("orderId", "menuId", "quantity")
                     .containsExactly(tuple(actual.getId(), orderLineItemRequests.get(0).getMenuId(), 2L));
             softly.assertAll();
@@ -153,7 +155,7 @@ class OrderServiceTest extends ServiceTest {
                     new MenuProduct(chicken2.getId(), 4L));
 
             final OrderTable orderTable1 = saveOrderTable(10, false);
-            saveOrder(orderTable1, "COOKING", new OrderLineItem(2L, OrderMenu.from(chickenMenu)));
+            saveOrder(orderTable1, COOKING, new OrderLineItem(2L, OrderMenu.from(chickenMenu)));
 
             final Product sushi1 = saveProduct("연어초밥");
             final Product sushi2 = saveProduct("광어초밥");
@@ -165,7 +167,7 @@ class OrderServiceTest extends ServiceTest {
                     new MenuProduct(sushi3.getId(), 1L));
 
             final OrderTable orderTable2 = saveOrderTable(2, false);
-            saveOrder(orderTable2, "MEAL", new OrderLineItem(3L, OrderMenu.from(sushiMenu)));
+            saveOrder(orderTable2, MEAL, new OrderLineItem(3L, OrderMenu.from(sushiMenu)));
 
             // when
             final List<OrderResponse> actual = orderService.list();
@@ -173,7 +175,7 @@ class OrderServiceTest extends ServiceTest {
             // then
             assertThat(actual).extracting(OrderResponse::getOrderTableId, OrderResponse::getOrderStatus)
                     .contains(
-                            tuple(orderTable1.getId(), OrderStatus.COOKING.name()),
+                            tuple(orderTable1.getId(), COOKING.name()),
                             tuple(orderTable2.getId(), MEAL.name())
                     );
         }
@@ -184,14 +186,14 @@ class OrderServiceTest extends ServiceTest {
     class ChangeOrderStatus {
 
         @ParameterizedTest(name = "{0} -> {1}")
-        @DisplayName("주문 상태를 변경할 수 있다.")
+        @DisplayName("주문 상태를 변경하고 주문 테이블 상태도 변경된다.")
         @CsvSource(value = {"COOKING,COMPLETION", "MEAL,COMPLETION", "MEAL,COOKING"})
-        void changeOrderStatus_validOrderStatus_success(final String sourceOrderStatus,
-                                                        final String targetOrderStatus) {
+        void changeOrderStatus_validOrderStatus_success(final OrderStatus sourceOrderStatus,
+                                                        final OrderStatus targetOrderStatus) {
             // given
             final OrderMenu orderMenu = getOrderMenu();
             final OrderTable orderTable = saveOrderTable(10, false);
-            final Long orderId = saveOrder(orderTable, sourceOrderStatus, new OrderLineItem( 2L, orderMenu)).getId();
+            final Long orderId = saveOrder(orderTable, sourceOrderStatus, new OrderLineItem(2L, orderMenu)).getId();
 
             final ChangeOrderStatusRequest request = new ChangeOrderStatusRequest(targetOrderStatus);
 
@@ -199,14 +201,19 @@ class OrderServiceTest extends ServiceTest {
             final OrderResponse actual = orderService.changeOrderStatus(orderId, request);
 
             // then
-            assertThat(actual.getOrderStatus()).isEqualTo(targetOrderStatus);
+            assertThat(actual.getOrderStatus()).isEqualTo(targetOrderStatus.name());
+
+            final OrderStatus changedOrderTableStatus = getOrderTable(orderTable.getId())
+                    .getOrderStatus();
+            assertThat(orderTable.getOrderStatus()).isEqualTo(NO_ORDER);
+            assertThat(changedOrderTableStatus).isEqualTo(targetOrderStatus);
         }
 
         @Test
         @DisplayName("주문이 존재하지 않으면 주문 상태를 변경할 수 없다.")
         void changeOrderStatus_notExistOrder_exception() {
             // given
-            final ChangeOrderStatusRequest request = new ChangeOrderStatusRequest(COMPLETION.name());
+            final ChangeOrderStatusRequest request = new ChangeOrderStatusRequest(COMPLETION);
 
             // when & then
             assertThatThrownBy(() -> orderService.changeOrderStatus(999L, request))
@@ -219,9 +226,9 @@ class OrderServiceTest extends ServiceTest {
             // given
             final OrderMenu orderMenu = getOrderMenu();
             final OrderTable orderTable = saveOrderTable(10, false);
-            final Long orderId = saveOrder(orderTable, COMPLETION.name(), new OrderLineItem(2L, orderMenu)).getId();
+            final Long orderId = saveOrder(orderTable, COMPLETION, new OrderLineItem(2L, orderMenu)).getId();
 
-            final ChangeOrderStatusRequest request = new ChangeOrderStatusRequest(MEAL.name());
+            final ChangeOrderStatusRequest request = new ChangeOrderStatusRequest(MEAL);
 
             // when & then
             assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, request))

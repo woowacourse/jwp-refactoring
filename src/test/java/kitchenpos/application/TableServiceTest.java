@@ -7,12 +7,13 @@ import static org.assertj.core.api.Assertions.tuple;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderMenu;
-import kitchenpos.table.domain.OrderTable;
 import kitchenpos.product.domain.Product;
+import kitchenpos.table.domain.OrderStatus;
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.ui.dto.ChangeEmptyRequest;
 import kitchenpos.table.ui.dto.ChangeNumberOfGuestsRequest;
 import kitchenpos.table.ui.dto.OrderTableCreateRequest;
@@ -22,7 +23,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.EnumSource;
 
 @DisplayName("TableService의")
 class TableServiceTest extends ServiceTest {
@@ -102,8 +103,8 @@ class TableServiceTest extends ServiceTest {
 
         @ParameterizedTest(name = "주문 상태: {0}")
         @DisplayName("주문 테이블에 주문이 있다면 주문 상태가 계산 완료인 경우에만 주문 등록 가능 여부를 변경할 수 있다.")
-        @ValueSource(strings = {"COOKING", "MEAL"})
-        void changeEmpty_orderStatusIsCompletion_exception(final String orderStatus) {
+        @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
+        void changeEmpty_orderStatusIsCompletion_exception(final OrderStatus orderStatus) {
             // given
             final Product product = saveProduct("감자튀김");
             final MenuGroup menuGroup = saveMenuGroup("감자");

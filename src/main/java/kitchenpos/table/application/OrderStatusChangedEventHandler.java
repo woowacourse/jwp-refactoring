@@ -19,6 +19,6 @@ public class OrderStatusChangedEventHandler {
     public void handle(final OrderStatusChangedEvent event) {
         final OrderTable orderTable = orderTableRepository.findById(event.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
-        orderTableRepository.save(orderTable.changeToCooking(event.getOrderStatus()));
+        orderTableRepository.save(orderTable.changeOrderStatus(event.getOrderStatus()));
     }
 }

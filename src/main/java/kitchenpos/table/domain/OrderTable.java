@@ -64,6 +64,10 @@ public class OrderTable {
         return new OrderTable(id, null, numberOfGuests, false, orderStatus);
     }
 
+    public OrderTable changeOrderStatus(final OrderStatus orderStatus) {
+        return new OrderTable(id, tableGroupId, numberOfGuests, empty, orderStatus);
+    }
+
     public Long getId() {
         return id;
     }

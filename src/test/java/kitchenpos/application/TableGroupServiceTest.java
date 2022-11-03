@@ -167,8 +167,8 @@ class TableGroupServiceTest extends ServiceTest {
             final MenuGroup menuGroup = saveMenuGroup("감자");
             final Menu menu = saveMenu("감자세트", BigDecimal.ONE, menuGroup,
                     new MenuProduct(product.getId(), 1L));
-            saveOrder(orderTable1, COOKING.name(), new OrderLineItem(1L, OrderMenu.from(menu)));
-            saveOrder(orderTable2, COMPLETION.name(), new OrderLineItem(2L, OrderMenu.from(menu)));
+            saveOrder(orderTable1, COOKING, new OrderLineItem(1L, OrderMenu.from(menu)));
+            saveOrder(orderTable2, COMPLETION, new OrderLineItem(2L, OrderMenu.from(menu)));
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))

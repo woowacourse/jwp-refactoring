@@ -119,10 +119,11 @@ abstract class ServiceTest {
         return orderTableRepository.save(orderTable);
     }
 
-    protected Order saveOrder(final OrderTable orderTable, final String orderStatus,
+    protected Order saveOrder(final OrderTable orderTable, final OrderStatus orderStatus,
                               final OrderLineItem... orderLineItems) {
         final Order order = new Order(
-                orderTable.getId(), orderStatus,
+                orderTable.getId(),
+                orderStatus,
                 LocalDateTime.now(),
                 toNewOrderLineItems(orderLineItems)
         );
@@ -133,8 +134,6 @@ abstract class ServiceTest {
         final List<OrderLineItem> newOrderLineItems = new ArrayList<>();
         for (final OrderLineItem old : oldOrderLineItems) {
             final Menu menu = menuRepository.findById(old.getMenuId())
-                    .orElseThrow();
-            final MenuGroup menuGroup = menuGroupRepository.findById(menu.getMenuGroupId())
                     .orElseThrow();
             final OrderMenu orderMenu = OrderMenu.from(menu);
             final OrderLineItem orderLineItem = new OrderLineItem(old.getQuantity(), orderMenu);
@@ -160,5 +159,10 @@ abstract class ServiceTest {
         }
 
         return savedTableGroup;
+    }
+
+    protected OrderTable getOrderTable(final Long orderTableId) {
+        return orderTableRepository.findById(orderTableId)
+                .orElseThrow();
     }
 }
