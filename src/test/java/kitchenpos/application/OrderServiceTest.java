@@ -20,6 +20,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderLineItemRequest;
+import kitchenpos.dto.OrderResponse;
 import kitchenpos.dto.OrderStatusRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -70,7 +71,7 @@ class OrderServiceTest extends ServiceTestBase {
         Order order2 = 주문_생성_및_저장(orderTable1, originalAndSeasonedChicken, 1);
 
         // when
-        List<Order> orders = orderService.list();
+        List<OrderResponse> orders = orderService.list();
 
         //then
         assertThat(orders).hasSize(2);
@@ -154,7 +155,7 @@ class OrderServiceTest extends ServiceTestBase {
                 Arrays.asList(orderLineItem1, orderLineItem2));
 
         // when
-        Order savedOrder = orderService.create(orderRequest);
+        OrderResponse savedOrder = orderService.create(orderRequest);
 
         // then
         assertAll(
@@ -204,7 +205,7 @@ class OrderServiceTest extends ServiceTestBase {
 
         // when
         OrderStatusRequest orderStatusRequest = createOrderStatusRequest(OrderStatus.COMPLETION);
-        Order changedOrder = orderService.changeOrderStatus(order1.getId(), orderStatusRequest);
+        OrderResponse changedOrder = orderService.changeOrderStatus(order1.getId(), orderStatusRequest);
 
         //then
         assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
