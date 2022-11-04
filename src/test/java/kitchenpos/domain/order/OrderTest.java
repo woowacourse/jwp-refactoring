@@ -2,6 +2,7 @@ package kitchenpos.domain.order;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.ordertable.OrderTable;
@@ -30,7 +31,8 @@ class OrderTest {
         void Should_ThrowIAE_When_OrderTableIsEmpty() {
             // given
             OrderTable orderTable = new OrderTable(10, true);
-            OrderLineItem orderLineItem = new OrderLineItem(1L, 10L);
+            OrderedMenu orderedMenu = new OrderedMenu(1L, "메뉴", BigDecimal.valueOf(10_000));
+            OrderLineItem orderLineItem = new OrderLineItem(orderedMenu, 10L);
 
             // when & then
             assertThatThrownBy(() -> new Order(orderTable, List.of(orderLineItem)))
@@ -45,7 +47,8 @@ class OrderTest {
         @Test
         void Should_ThrowIAE_When_OrderStatusIsCompletion() {
             // given
-            OrderLineItem orderLineItem = new OrderLineItem(1L, 1L);
+            OrderedMenu orderedMenu = new OrderedMenu(1L, "메뉴", BigDecimal.valueOf(10_000));
+            OrderLineItem orderLineItem = new OrderLineItem(orderedMenu, 1L);
             OrderTable orderTable = new OrderTable(10, false);
             Order order = new Order(1L, orderTable, OrderStatus.COMPLETION, LocalDateTime.now(),
                     List.of(orderLineItem));

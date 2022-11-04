@@ -11,6 +11,7 @@ import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderedMenu;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.product.Product;
 import kitchenpos.dto.request.OrderLineItemRequest;
@@ -46,8 +47,8 @@ class OrderServiceTest extends ServiceTest {
         savedMenu = saveMenu("메뉴", 10_000, savedMenuGroup, List.of(
                 new MenuProduct(savedProduct.getId(), 10)
         ));
-        createdOrderLineItem = new OrderLineItem(savedMenu.getId(), 10);
-
+        createdOrderLineItem = new OrderLineItem(
+                new OrderedMenu(savedMenu.getId(), savedMenu.getName(), savedMenu.getPrice().getValue()), 10);
     }
 
     @DisplayName("create 메소드는")
@@ -58,8 +59,10 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void Should_CreateOrder() {
             // given
-            OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(createdOrderLineItem.getMenuId(),
-                    createdOrderLineItem.getQuantity());
+            OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(
+                    createdOrderLineItem.getOrderedMenu().getMenuId(),
+                    createdOrderLineItem.getQuantity()
+            );
             OrderRequest request = new OrderRequest(savedOrderTable.getId(), List.of(orderLineItemRequest));
 
             // when
@@ -87,8 +90,10 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderTableDoesNotExist() {
             // given
-            OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(createdOrderLineItem.getMenuId(),
-                    createdOrderLineItem.getQuantity());
+            OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(
+                    createdOrderLineItem.getOrderedMenu().getMenuId(),
+                    createdOrderLineItem.getQuantity()
+            );
             OrderRequest request = new OrderRequest(savedOrderTable.getId() + 1, List.of(orderLineItemRequest));
 
             // when & then
@@ -101,8 +106,10 @@ class OrderServiceTest extends ServiceTest {
         void Should_ThrowIAE_When_OrderTableIsEmpty() {
             // given
             OrderTable emptyOrderTable = saveOrderTable(10, true);
-            OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(createdOrderLineItem.getMenuId(),
-                    createdOrderLineItem.getQuantity());
+            OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(
+                    createdOrderLineItem.getOrderedMenu().getMenuId(),
+                    createdOrderLineItem.getQuantity()
+            );
 
             OrderRequest request = new OrderRequest(emptyOrderTable.getId(), List.of(orderLineItemRequest));
 
@@ -122,8 +129,10 @@ class OrderServiceTest extends ServiceTest {
             // given
             int expected = 3;
             for (int i = 0; i < expected; i++) {
-                OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(createdOrderLineItem.getMenuId(),
-                        createdOrderLineItem.getQuantity());
+                OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(
+                        createdOrderLineItem.getOrderedMenu().getMenuId(),
+                        createdOrderLineItem.getQuantity()
+                );
                 OrderRequest request = new OrderRequest(savedOrderTable.getId(), List.of(orderLineItemRequest));
                 orderService.create(request);
             }
@@ -145,8 +154,10 @@ class OrderServiceTest extends ServiceTest {
         @ParameterizedTest
         void Should_ChangeOrderStatus(final OrderStatus after) {
             // given
-            OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(createdOrderLineItem.getMenuId(),
-                    createdOrderLineItem.getQuantity());
+            OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(
+                    createdOrderLineItem.getOrderedMenu().getMenuId(),
+                    createdOrderLineItem.getQuantity()
+            );
             OrderRequest createRequest = new OrderRequest(savedOrderTable.getId(), List.of(orderLineItemRequest));
             OrderResponse oldOrder = orderService.create(createRequest);
 
@@ -163,8 +174,10 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void Should_ThrowIAE_When_OrderDoesNotExist() {
             // given
-            OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(createdOrderLineItem.getMenuId(),
-                    createdOrderLineItem.getQuantity());
+            OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(
+                    createdOrderLineItem.getOrderedMenu().getMenuId(),
+                    createdOrderLineItem.getQuantity()
+            );
             OrderRequest createRequest = new OrderRequest(savedOrderTable.getId(), List.of(orderLineItemRequest));
             OrderResponse order = orderService.create(createRequest);
 
