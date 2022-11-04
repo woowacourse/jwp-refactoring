@@ -1,4 +1,4 @@
-package kitchenpos.application.dto;
+package kitchenpos.tableGroup.application.dto;
 
 import java.util.List;
 import kitchenpos.order.application.dto.OrderTableRequest;
