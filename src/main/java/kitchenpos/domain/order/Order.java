@@ -35,28 +35,16 @@ public class Order {
     protected Order() {
     }
 
-    public Order(final Long id,
+    private Order(final Long id,
                  final Long orderTableId,
                  final OrderStatus orderStatus,
                  final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
-        addOrderLineItems(orderLineItems);
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = new OrderLineItems(orderLineItems, this);
-    }
-
-    public void addOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems.addAll(orderLineItems, this);
-    }
-
-    public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime) {
-        this.id = id;
-        this.orderTableId = orderTableId;
-        this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
     }
 
     public static Order create(final Long orderTableId, final List<OrderLineItem> orderLineItems) {

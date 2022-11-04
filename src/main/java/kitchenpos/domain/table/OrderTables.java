@@ -23,6 +23,11 @@ public class OrderTables {
         this.values = values;
     }
 
+    private void addAll(final List<OrderTable> orderTables, final TableGroup tableGroup) {
+        orderTables.forEach(orderTable -> orderTable.joinTableGroup(tableGroup));
+        this.values.addAll(orderTables);
+    }
+
     private void validateTableGrouping(final OrderTable orderTable) {
         if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
             throw new IllegalArgumentException();
@@ -31,10 +36,5 @@ public class OrderTables {
 
     public List<OrderTable> getValues() {
         return values;
-    }
-
-    public void addAll(final List<OrderTable> orderTables, final TableGroup tableGroup) {
-        orderTables.forEach(orderTable -> orderTable.joinTableGroup(tableGroup));
-        this.values.addAll(orderTables);
     }
 }

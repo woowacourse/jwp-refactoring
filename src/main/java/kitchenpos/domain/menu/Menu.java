@@ -42,12 +42,11 @@ public class Menu {
                 final Price price,
                 final MenuGroup menuGroup,
                 final List<MenuProduct> menuProducts) {
-        addMenuProducts(menuProducts);
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
-        this.menuProducts = new MenuProducts(menuProducts);
+        this.menuProducts = new MenuProducts(menuProducts, this);
     }
 
     public Menu(final Long id, final String name, final Price price, final MenuGroup menuGroup) {
@@ -62,10 +61,6 @@ public class Menu {
                               final MenuGroup menuGroup,
                               final List<MenuProduct> menuProducts) {
         return new Menu(null, name, Price.valueOf(price), menuGroup, menuProducts);
-    }
-
-    public void addMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts.addAll(menuProducts, this);
     }
 
     public void validateOverPrice(final CalculateProductPriceService calculateProductPriceService) {

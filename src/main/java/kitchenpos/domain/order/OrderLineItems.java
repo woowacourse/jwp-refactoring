@@ -21,12 +21,12 @@ public class OrderLineItems {
         this.values = values;
     }
 
-    public List<OrderLineItem> getValues() {
-        return values;
-    }
-
-    public void addAll(final List<OrderLineItem> orderLineItems, final Order order) {
+    private void addAll(final List<OrderLineItem> orderLineItems, final Order order) {
         orderLineItems.forEach(orderLineItem -> orderLineItem.changeOrder(order));
         values.addAll(orderLineItems);
+    }
+
+    public List<OrderLineItem> getValues() {
+        return values;
     }
 }
