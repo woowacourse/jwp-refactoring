@@ -1,8 +1,6 @@
 package kitchenpos.acceptance;
 
 import io.restassured.response.ValidatableResponse;
-import kitchenpos.dto.request.OrderRequest;
-import kitchenpos.dto.request.OrderStatusRequest;
 import kitchenpos.menu.MenuGroup;
 import kitchenpos.menu.MenuProduct;
 import kitchenpos.menu.Product;
@@ -10,6 +8,8 @@ import kitchenpos.order.MenuInfo;
 import kitchenpos.order.Order;
 import kitchenpos.order.OrderLineItem;
 import kitchenpos.order.OrderStatus;
+import kitchenpos.order.dto.OrderRequest;
+import kitchenpos.order.dto.OrderStatusRequest;
 import kitchenpos.ordertable.OrderTable;
 import kitchenpos.support.RequestBuilder;
 import org.hamcrest.Matchers;

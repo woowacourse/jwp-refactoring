@@ -2,12 +2,12 @@ package kitchenpos.menu.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dto.request.MenuProductRequest;
-import kitchenpos.dto.request.MenuRequest;
-import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.menu.Menu;
 import kitchenpos.menu.MenuProduct;
 import kitchenpos.menu.Product;
+import kitchenpos.menu.dto.MenuProductRequest;
+import kitchenpos.menu.dto.MenuRequest;
+import kitchenpos.menu.dto.MenuResponse;
 import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.menu.repository.ProductRepository;

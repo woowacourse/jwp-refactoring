@@ -4,11 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.util.List;
-import kitchenpos.dto.request.TableGroupRequest;
-import kitchenpos.dto.response.TableGroupResponse;
 import kitchenpos.order.OrderStatus;
 import kitchenpos.ordertable.OrderTable;
 import kitchenpos.ordertable.TableGroup;
+import kitchenpos.ordertable.dto.TableGroupRequest;
+import kitchenpos.ordertable.dto.TableGroupResponse;
 import kitchenpos.support.DataSupport;
 import kitchenpos.support.RequestBuilder;
 import org.junit.jupiter.api.BeforeEach;

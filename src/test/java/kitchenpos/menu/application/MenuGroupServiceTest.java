@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.dto.request.MenuGroupRequest;
-import kitchenpos.dto.response.MenuGroupResponse;
+import kitchenpos.menu.dto.MenuGroupRequest;
+import kitchenpos.menu.dto.MenuGroupResponse;
 import kitchenpos.menu.MenuGroup;
 import kitchenpos.support.DataSupport;
 import kitchenpos.support.RequestBuilder;

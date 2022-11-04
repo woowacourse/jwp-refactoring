@@ -1,9 +1,9 @@
 package kitchenpos.ordertable.application;
 
 import java.util.List;
-import kitchenpos.dto.request.OrderTableRequest;
-import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.ordertable.OrderTable;
+import kitchenpos.ordertable.dto.OrderTableRequest;
+import kitchenpos.ordertable.dto.OrderTableResponse;
 import kitchenpos.ordertable.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

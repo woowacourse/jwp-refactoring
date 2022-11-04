@@ -5,11 +5,11 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.dto.request.OrderTableRequest;
-import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.order.OrderStatus;
 import kitchenpos.ordertable.OrderTable;
 import kitchenpos.ordertable.TableGroup;
+import kitchenpos.ordertable.dto.OrderTableRequest;
+import kitchenpos.ordertable.dto.OrderTableResponse;
 import kitchenpos.support.DataSupport;
 import kitchenpos.support.RequestBuilder;
 import org.junit.jupiter.api.DisplayName;

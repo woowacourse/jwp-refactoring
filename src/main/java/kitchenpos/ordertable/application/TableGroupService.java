@@ -2,12 +2,12 @@ package kitchenpos.ordertable.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dto.request.IdRequest;
-import kitchenpos.dto.request.TableGroupRequest;
-import kitchenpos.dto.response.TableGroupResponse;
+import kitchenpos.common.dto.IdRequest;
 import kitchenpos.ordertable.OrderTable;
 import kitchenpos.ordertable.OrderTables;
 import kitchenpos.ordertable.TableGroup;
+import kitchenpos.ordertable.dto.TableGroupRequest;
+import kitchenpos.ordertable.dto.TableGroupResponse;
 import kitchenpos.ordertable.repository.OrderTableRepository;
 import kitchenpos.ordertable.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;

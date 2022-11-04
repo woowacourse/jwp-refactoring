@@ -1,9 +1,9 @@
 package kitchenpos.menu.application;
 
 import java.util.List;
-import kitchenpos.dto.request.ProductRequest;
-import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.menu.Product;
+import kitchenpos.menu.dto.ProductRequest;
+import kitchenpos.menu.dto.ProductResponse;
 import kitchenpos.menu.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

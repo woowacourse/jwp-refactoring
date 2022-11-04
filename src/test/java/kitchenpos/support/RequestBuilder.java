@@ -5,22 +5,22 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dto.request.IdRequest;
-import kitchenpos.dto.request.MenuGroupRequest;
-import kitchenpos.dto.request.MenuProductRequest;
-import kitchenpos.dto.request.MenuRequest;
-import kitchenpos.dto.request.OrderLineItemRequest;
-import kitchenpos.dto.request.OrderRequest;
-import kitchenpos.dto.request.OrderStatusRequest;
-import kitchenpos.dto.request.OrderTableRequest;
-import kitchenpos.dto.request.ProductRequest;
-import kitchenpos.dto.request.TableGroupRequest;
+import kitchenpos.common.dto.IdRequest;
 import kitchenpos.menu.Menu;
 import kitchenpos.menu.MenuGroup;
 import kitchenpos.menu.MenuProduct;
+import kitchenpos.menu.dto.MenuGroupRequest;
+import kitchenpos.menu.dto.MenuProductRequest;
+import kitchenpos.menu.dto.MenuRequest;
+import kitchenpos.menu.dto.ProductRequest;
 import kitchenpos.order.MenuInfo;
 import kitchenpos.order.OrderStatus;
+import kitchenpos.order.dto.OrderLineItemRequest;
+import kitchenpos.order.dto.OrderRequest;
+import kitchenpos.order.dto.OrderStatusRequest;
 import kitchenpos.ordertable.OrderTable;
+import kitchenpos.ordertable.dto.OrderTableRequest;
+import kitchenpos.ordertable.dto.TableGroupRequest;
 
 public class RequestBuilder {
 

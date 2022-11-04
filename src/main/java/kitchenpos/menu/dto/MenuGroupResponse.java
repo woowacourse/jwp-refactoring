@@ -1,4 +1,4 @@
-package kitchenpos.dto.response;
+package kitchenpos.menu.dto;
 
 import java.util.List;
 import java.util.stream.Collectors;

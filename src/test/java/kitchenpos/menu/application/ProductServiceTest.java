@@ -5,9 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.dto.request.ProductRequest;
-import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.menu.Product;
+import kitchenpos.menu.dto.ProductRequest;
+import kitchenpos.menu.dto.ProductResponse;
 import kitchenpos.support.DataSupport;
 import kitchenpos.support.RequestBuilder;
 import org.junit.jupiter.api.DisplayName;

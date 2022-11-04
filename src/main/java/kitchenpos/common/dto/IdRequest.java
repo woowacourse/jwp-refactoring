@@ -1,4 +1,4 @@
-package kitchenpos.dto.request;
+package kitchenpos.common.dto;
 
 public class IdRequest {
 
