@@ -113,7 +113,7 @@ public class TableServiceTest {
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        final OrderLineItem orderLineItem = new OrderLineItem(1L, 3, "menuName", BigDecimal.valueOf(3000));
+        final OrderLineItem orderLineItem = new OrderLineItem(3, "menuName", BigDecimal.valueOf(3000));
         final Order order = new Order(savedOrderTable, OrderStatus.COOKING, LocalDateTime.now(),
                 Arrays.asList(orderLineItem));
         final Order savedOrder = orderRepository.save(order);

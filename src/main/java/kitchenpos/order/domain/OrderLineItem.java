@@ -16,9 +16,6 @@ public class OrderLineItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @Column(name = "menu_id")
-    private Long menuId;
-
     @Column(name = "quantity")
     private long quantity;
 
@@ -28,8 +25,7 @@ public class OrderLineItem {
     @Column(name = "menu_price")
     private BigDecimal menuPrice;
 
-    public OrderLineItem(final Long menuId, final long quantity, final String menuName, final BigDecimal menuPrice) {
-        this.menuId = menuId;
+    public OrderLineItem(final long quantity, final String menuName, final BigDecimal menuPrice) {
         this.quantity = quantity;
         this.menuName = menuName;
         this.menuPrice = menuPrice;
