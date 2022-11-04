@@ -32,12 +32,20 @@ public class TableGroupService {
     }
 
     public TableGroupResponse create(final TableGroupRequest request) {
-        final List<OrderTable> savedOrderTables = getSavedOrderTables(request.getOrderTables());
-
-        final TableGroup saveTableGroup = tableGroupRepository.save(
-                TableGroup.of(LocalDateTime.now(), savedOrderTables));
-
+        final TableGroup tableGroup = toTableGroup(request);
+        final TableGroup saveTableGroup = tableGroupRepository.save(tableGroup);
         return TableGroupResponse.from(saveTableGroup);
+    }
+
+    private TableGroup toTableGroup(final TableGroupRequest request) {
+        final List<OrderTable> savedOrderTables = getSavedOrderTables(request.getOrderTables());
+        return TableGroup.of(LocalDateTime.now(), savedOrderTables);
+    }
+
+    private List<OrderTable> getSavedOrderTables(final List<OrderTableIdRequest> orderTables) {
+        final List<OrderTable> savedOrderTables = getOrderTables(orderTables);
+        validateSize(orderTables, savedOrderTables);
+        return savedOrderTables;
     }
 
     private void validateSize(final List<OrderTableIdRequest> targetOrderTables,
@@ -47,12 +55,9 @@ public class TableGroupService {
         }
     }
 
-    private List<OrderTable> getSavedOrderTables(final List<OrderTableIdRequest> orderTables) {
+    private List<OrderTable> getOrderTables(final List<OrderTableIdRequest> orderTables) {
         final List<Long> orderTableIds = extractOrderTableId(orderTables);
-
-        final List<OrderTable> savedOrderTables = orderTableRepository.findAllById(orderTableIds);
-        validateSize(orderTables, savedOrderTables);
-        return savedOrderTables;
+        return orderTableRepository.findAllById(orderTableIds);
     }
 
     private List<Long> extractOrderTableId(final List<OrderTableIdRequest> orderTables) {
@@ -63,9 +68,7 @@ public class TableGroupService {
 
     public void ungroup(final Long tableGroupId) {
         TableGroup tableGroup = getTableGroup(tableGroupId);
-
         validator.validateUngroup(tableGroup);
-
         clearOrderTables(tableGroup);
     }
 
