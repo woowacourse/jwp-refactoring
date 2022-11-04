@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.dao.OrderTableDao;
@@ -40,10 +39,6 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("테이블을 비우기위한 테이블이 존재하지 않습니다."));
 
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException("테이블 그룹에 속해 있어 테이블을 비우지 못합니다.");
-        }
-
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException("조리중이거나 식사중인 테이블이 있는 경우 테이블을 비울 수 없습니다.");
@@ -55,8 +50,6 @@ public class TableService {
     }
 
     public OrderTableResponse changeNumberOfGuests(Long orderTableId, OrderTable orderTable) {
-        int numberOfGuests = orderTable.getNumberOfGuests();
-
         OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("테이블의 손님 수를 변경하기 위한 테이블이 존재하지 않습니다."));
 
@@ -68,7 +61,7 @@ public class TableService {
                 new OrderTable(
                         savedOrderTable.getId(),
                         savedOrderTable.getTableGroupId(),
-                        numberOfGuests,
+                        orderTable.getNumberOfGuests(),
                         savedOrderTable.isEmpty()
                 )
         );

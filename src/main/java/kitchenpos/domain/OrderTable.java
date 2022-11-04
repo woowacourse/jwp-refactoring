@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
+
 public class OrderTable {
     private final Long id;
     private final Long tableGroupId;
@@ -14,12 +16,8 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public OrderTable(Long tableGroupId, int numberOfGuests, boolean empty) {
-        this(null, tableGroupId, numberOfGuests, empty);
-    }
-
-    public OrderTable(int numberOfGuests, boolean empty) {
-        this(null, null, numberOfGuests, empty);
+    public static OrderTable of(int numberOfGuests, boolean empty) {
+        return new OrderTable(null, null, numberOfGuests, empty);
     }
 
     public void validateGuestNumber(int numberOfGuests) {
@@ -49,6 +47,9 @@ public class OrderTable {
     }
 
     public void changeEmpty(boolean empty) {
+        if (Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException("테이블 그룹에 속해 있어 테이블을 비우지 못합니다.");
+        }
         this.empty = empty;
     }
 }

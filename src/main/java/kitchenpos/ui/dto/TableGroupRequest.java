@@ -1,6 +1,5 @@
 package kitchenpos.ui.dto;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.OrderTable;
@@ -8,17 +7,14 @@ import kitchenpos.domain.TableGroup;
 
 public class TableGroupRequest {
 
-    private List<OrderTableRequest> orderTables;
+    private final List<OrderTableRequest> orderTables;
 
     public TableGroupRequest(List<OrderTableRequest> orderTables) {
         this.orderTables = orderTables;
     }
 
-    private TableGroupRequest() {
-    }
-
     public TableGroup toTableGroup() {
-        return new TableGroup(LocalDateTime.now(), toOrderTable(orderTables));
+        return TableGroup.of(toOrderTable(orderTables));
     }
 
     private List<OrderTable> toOrderTable(List<OrderTableRequest> orderTables) {

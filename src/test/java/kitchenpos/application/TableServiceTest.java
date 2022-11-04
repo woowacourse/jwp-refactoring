@@ -25,7 +25,7 @@ class TableServiceTest extends ServiceTest {
 
     @Test
     void 테이블을_생성한다() {
-        OrderTable orderTableRequest = new OrderTable(1, true);
+        OrderTable orderTableRequest = OrderTable.of(1, true);
         OrderTableResponse actual = tableService.create(orderTableRequest);
         assertThat(actual.getId()).isExactlyInstanceOf(Long.class);
     }
@@ -61,7 +61,7 @@ class TableServiceTest extends ServiceTest {
         Order request = Order.of(savedTable.getId(), null, List.of(주문정보(메뉴_생성().getId())));
         orderService.create(request);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(savedTable.getId(), new OrderTable(0, true)))
+        assertThatThrownBy(() -> tableService.changeEmpty(savedTable.getId(), OrderTable.of(0, true)))
                 .isExactlyInstanceOf(IllegalArgumentException.class)
                 .hasMessage("조리중이거나 식사중인 테이블이 있는 경우 테이블을 비울 수 없습니다.");
     }
@@ -72,7 +72,7 @@ class TableServiceTest extends ServiceTest {
         Order savedOrder = 주문_생성(savedTable.getId());
         orderService.changeOrderStatus(savedOrder.getId(), OrderStatus.MEAL);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(savedTable.getId(), new OrderTable(0, true)))
+        assertThatThrownBy(() -> tableService.changeEmpty(savedTable.getId(), OrderTable.of(0, true)))
                 .isExactlyInstanceOf(IllegalArgumentException.class)
                 .hasMessage("조리중이거나 식사중인 테이블이 있는 경우 테이블을 비울 수 없습니다.");
     }
@@ -93,7 +93,7 @@ class TableServiceTest extends ServiceTest {
         OrderTable savedTable = 테이블_생성(false);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(
-                savedTable.getId(), new OrderTable(-1, false)))
+                savedTable.getId(), OrderTable.of(-1, false)))
                 .isExactlyInstanceOf(IllegalArgumentException.class)
                 .hasMessage("손님의 수는 음수일 수 없습니다.");
     }
