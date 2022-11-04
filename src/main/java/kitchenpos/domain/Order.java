@@ -46,8 +46,8 @@ public class Order {
         return new Order(id, orderTableId, OrderStatus.valueOf(orderStatus), orderedTime);
     }
 
-    public boolean isValidMenuSize(final int menuCount) {
-        return orderLineItems.size() == menuCount;
+    public boolean isValidMenuSize(final long menuCount) {
+        return (long) orderLineItems.size() == menuCount;
     }
 
     public void changeOrderStatus(final OrderStatus changeOrderStatus) {

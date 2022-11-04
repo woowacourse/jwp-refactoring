@@ -39,7 +39,7 @@ public class OrderService {
         validateEmptyOrderTable(orderTable);
 
         final Order order = createOrderRequest(orderTable.getId(), request.getOrderLineItems());
-        validateSameCountAsItemAndMenu(request.getOrderLineItems(), order);
+        validateSameCountAsItemAndMenu(request.toOrderLineItems(), order);
 
         return OrderResponse.from(orderRepository.save(order));
     }
@@ -65,18 +65,19 @@ public class OrderService {
                         .collect(Collectors.toList()));
     }
 
-    private void validateSameCountAsItemAndMenu(final List<OrderLineItemCreateRequest> orderLineItems,
+    private void validateSameCountAsItemAndMenu(final List<OrderLineItem> orderLineItems,
                                                 final Order order) {
-        final int countOfMenuIds = getCountOfMenuIds(orderLineItems);
-        if (!order.isValidMenuSize(countOfMenuIds)) {
+        final List<Long> menuIds = getCountOfMenuIds(orderLineItems);
+        final long countByIdIn = menuRepository.countByIdIn(menuIds);
+        if (!order.isValidMenuSize(countByIdIn)) {
             throw new IllegalArgumentException();
         }
     }
 
-    private int getCountOfMenuIds(final List<OrderLineItemCreateRequest> orderLineItems) {
-        return (int) orderLineItems.stream()
-                .map(OrderLineItemCreateRequest::getMenuId)
-                .count();
+    private List<Long> getCountOfMenuIds(final List<OrderLineItem> orderLineItems) {
+        return orderLineItems.stream()
+                .map(OrderLineItem::getMenuId)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
