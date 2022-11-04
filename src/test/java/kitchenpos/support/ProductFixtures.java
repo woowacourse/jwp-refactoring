@@ -3,7 +3,7 @@ package kitchenpos.support;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.domain.menu.Product;
+import kitchenpos.product.domain.Product;
 
 public enum ProductFixtures {
 
@@ -15,14 +15,19 @@ public enum ProductFixtures {
     PRODUCT6(6L, "순살치킨", 17000),
     ;
 
-    private Long id;
-    private String name;
-    private int price;
+    private final Long id;
+    private final String name;
+    private final int price;
 
     ProductFixtures(final Long id, final String name, final int price) {
         this.id = id;
         this.name = name;
         this.price = price;
+    }
+
+    public static List<Product> createAll() {
+        return Arrays.asList(PRODUCT1.create(), PRODUCT2.create(), PRODUCT3.create(), PRODUCT4.create(),
+                PRODUCT5.create(), PRODUCT6.create());
     }
 
     public Product create() {
@@ -31,10 +36,5 @@ public enum ProductFixtures {
 
     public Product createWithNullId() {
         return new Product(null, name, BigDecimal.valueOf(price));
-    }
-
-    public static List<Product> createAll() {
-        return Arrays.asList(PRODUCT1.create(), PRODUCT2.create(), PRODUCT3.create(), PRODUCT4.create(),
-                PRODUCT5.create(), PRODUCT6.create());
     }
 }

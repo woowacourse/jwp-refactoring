@@ -9,16 +9,17 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.dao.order.OrderRepository;
-import kitchenpos.dao.order.OrderTableRepository;
-import kitchenpos.dao.order.TableGroupRepository;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.order.OrderTable;
-import kitchenpos.domain.order.TableGroup;
 import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.support.DatabaseCleaner;
+import kitchenpos.table.application.TableService;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.domain.TableGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -91,7 +92,7 @@ public class TableServiceTest {
     void changeEmpty_tableGroupIdNonNull_throwsException() {
         // given
         final OrderTable orderTable = ORDER_TABLE_NOT_EMPTY.createWithIdNull();
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(),Arrays.asList(orderTable));
+        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), Arrays.asList(orderTable));
         tableGroupRepository.save(tableGroup);
         orderTable.setTableGroupId(1L);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);

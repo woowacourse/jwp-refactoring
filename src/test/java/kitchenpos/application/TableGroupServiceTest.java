@@ -12,23 +12,24 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.dao.menu.MenuGroupRepository;
-import kitchenpos.dao.menu.MenuRepository;
-import kitchenpos.dao.menu.ProductRepository;
-import kitchenpos.dao.order.OrderRepository;
-import kitchenpos.dao.order.OrderTableRepository;
-import kitchenpos.dao.order.TableGroupRepository;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.order.OrderTable;
-import kitchenpos.domain.order.TableGroup;
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.menu.Product;
 import kitchenpos.dto.request.TableGroupRequest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.support.DatabaseCleaner;
+import kitchenpos.table.application.TableGroupService;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.domain.TableGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -120,7 +121,8 @@ public class TableGroupServiceTest {
         final List<Long> orderTableIds = Arrays.asList(orderTable1.getId(), orderTable2.getId());
         final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 3);
 
-        final Order order = new Order(orderTable1, OrderStatus.COOKING, LocalDateTime.now(), Arrays.asList(orderLineItem));
+        final Order order = new Order(orderTable1, OrderStatus.COOKING, LocalDateTime.now(),
+                Arrays.asList(orderLineItem));
         final Order savedOrder = orderRepository.save(order);
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(orderTableIds);
 
@@ -175,7 +177,8 @@ public class TableGroupServiceTest {
         final List<Long> orderTableIds = Arrays.asList(orderTable1.getId(), orderTable2.getId());
         final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 3);
 
-        final Order order = new Order(orderTable1, OrderStatus.COOKING, LocalDateTime.now(), Arrays.asList(orderLineItem));
+        final Order order = new Order(orderTable1, OrderStatus.COOKING, LocalDateTime.now(),
+                Arrays.asList(orderLineItem));
         final Order savedOrder = orderRepository.save(order);
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(orderTableIds);
         final TableGroup tableGroup = tableGroupService.create(tableGroupRequest);
