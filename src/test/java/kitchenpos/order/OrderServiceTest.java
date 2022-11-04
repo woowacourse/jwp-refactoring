@@ -65,15 +65,17 @@ class OrderServiceTest extends ServiceTest {
                     List.of(new MenuProduct(1L, null, 1L, 10L))));
 
             MenuProduct menuProduct = new MenuProduct(1L, null, 1L, 10L);
-            Menu menu = new Menu(MENU_A_ID, "menuA", BigDecimal.valueOf(1000L), 1L,
+            Menu menuA = new Menu(MENU_A_ID, "menuA", BigDecimal.valueOf(1000L), 1L,
+                    List.of(menuProduct));
+            Menu menuB = new Menu(MENU_B_ID, "menuB", BigDecimal.valueOf(1000L), 1L,
                     List.of(menuProduct));
 
             orderTable = new OrderTable(ORDER_TABLE_ID, null, 2, false);
 
             request = new OrderCreateRequest(ORDER_TABLE_ID, Arrays.asList(orderLineItemA, orderLineItemB));
 
-            given(menuRepository.findById(any()))
-                    .willReturn(Optional.of(menu));
+            given(menuRepository.findAllById(any()))
+                    .willReturn(List.of(menuA, menuB));
             given(menuRepository.countByIdIn(any()))
                     .willReturn((long) request.getOrderLineItems().size());
             given(orderTableRepository.findById(request.getOrderTableId()))
@@ -158,7 +160,9 @@ class OrderServiceTest extends ServiceTest {
             orderTable = new OrderTable(ORDER_TABLE_ID, null, 2, false);
 
             MenuProduct menuProduct = new MenuProduct(1L, null, 1L, 10L);
-            Menu menu = new Menu(MENU_A_ID, "menuA", BigDecimal.valueOf(1000L), 1L,
+            Menu menuA = new Menu(MENU_A_ID, "menuA", BigDecimal.valueOf(1000L), 1L,
+                    List.of(menuProduct));
+            Menu menuB = new Menu(MENU_B_ID, "menuB", BigDecimal.valueOf(1000L), 1L,
                     List.of(menuProduct));
 
             createRequest = new OrderCreateRequest(ORDER_TABLE_ID, Arrays.asList(orderLineItemA, orderLineItemB));
@@ -166,8 +170,8 @@ class OrderServiceTest extends ServiceTest {
                     .willReturn(Optional.of(orderTable));
             given(menuRepository.countByIdIn(any()))
                     .willReturn(2L);
-            given(menuRepository.findById(any()))
-                    .willReturn(Optional.of(menu));
+            given(menuRepository.findAllById(any()))
+                    .willReturn(List.of(menuA, menuB));
 
             savedOrder = orderService.create(createRequest);
             request = new OrderUpdateRequest(OrderStatus.MEAL.name());

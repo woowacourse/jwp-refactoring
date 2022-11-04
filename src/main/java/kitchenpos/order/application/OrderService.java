@@ -2,6 +2,7 @@ package kitchenpos.order.application;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuRepository;
@@ -45,12 +46,30 @@ public class OrderService {
     private List<OrderLineItem> toOrderLineItems(List<OrderLineItemCreateRequest> orderLineItemRequests) {
         checkExistMenu(orderLineItemRequests);
         List<OrderLineItem> result = new ArrayList<>();
+        Map<Long, Menu> menuMap = mapMenu(orderLineItemRequests);
         for (OrderLineItemCreateRequest request : orderLineItemRequests) {
-            Menu menu = menuRepository.findById(request.getMenuId())
-                    .orElseThrow(IllegalArgumentException::new);
+            Menu menu = findMenu(menuMap, request.getMenuId());
             result.add(new OrderLineItem(null, null, menu.getName(), menu.getPrice(), request.getQuantity()));
         }
         return result;
+    }
+
+    private Menu findMenu(Map<Long, Menu> menuMap, Long menuId) {
+        try {
+            return menuMap.get(menuId);
+        } catch (NullPointerException e) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private Map<Long, Menu> mapMenu(List<OrderLineItemCreateRequest> orderLineItemRequests) {
+        List<Long> menuIds = orderLineItemRequests.stream()
+                .map(OrderLineItemCreateRequest::getMenuId)
+                .collect(Collectors.toList());
+        List<Menu> foundMenus = menuRepository.findAllById(menuIds);
+
+        return foundMenus.stream()
+                .collect(Collectors.toMap(Menu::getId, menu -> menu));
     }
 
     private void checkExistMenu(final List<OrderLineItemCreateRequest> requests) {
