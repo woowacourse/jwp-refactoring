@@ -14,7 +14,7 @@ class ProductTest {
     @ParameterizedTest(name = "{0}원인 상품 {1}개로 구성된 메뉴 상품의 총 정가는 {2}이다.")
     void calculatePrice(final long price, final long quantity, final int expected) {
         final Product product = Product.ofUnsaved("피자", BigDecimal.valueOf(price));
-        final Price actual = product.calculatePrice(quantity);
+        final Price actual = product.calculateAmount(quantity);
 
         assertThat(actual).isEqualTo(Price.from(expected));
     }

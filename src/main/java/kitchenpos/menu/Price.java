@@ -24,10 +24,9 @@ public class Price {
     }
 
     public static Price sum(List<Price> prices) {
-        BigDecimal sum = BigDecimal.ZERO;
-        for (Price price : prices) {
-            sum = sum.add(price.value);
-        }
+        final BigDecimal sum = prices.stream()
+                .map(price -> price.value)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
         return new Price(sum);
     }
 

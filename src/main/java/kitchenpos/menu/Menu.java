@@ -39,7 +39,7 @@ public class Menu {
 
     public void changeMenuProducts(final List<MenuProduct> rawMenuProducts) {
         final MenuProducts menuProducts = new MenuProducts(rawMenuProducts);
-        if (this.isExpensiveThan(menuProducts.calculateTotalPrice())) {
+        if (this.isExpensiveThan(menuProducts.calculateTotalAmount())) {
             throw new IllegalArgumentException();
         }
         this.menuProducts = menuProducts;

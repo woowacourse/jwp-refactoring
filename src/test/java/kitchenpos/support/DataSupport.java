@@ -124,7 +124,7 @@ public class DataSupport {
 
     private MenuProduct mapMenuToMenuProduct(final Menu menu, final MenuProduct menuProduct) {
         return new MenuProduct(
-                null, menu, menuProduct.getProductId(), menuProduct.getQuantity(), menuProduct.getPrice());
+                null, menu, menuProduct.getProductId(), menuProduct.getQuantity(), menuProduct.getAmount());
     }
 
     private OrderLineItem mapOrderToOrderLineItem(final Order order, final OrderLineItem orderLineItem) {

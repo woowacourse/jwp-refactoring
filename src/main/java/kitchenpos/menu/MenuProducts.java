@@ -19,11 +19,11 @@ public class MenuProducts {
         this.values = new ArrayList<>(values);
     }
 
-    public Price calculateTotalPrice() {
-        final List<Price> prices = values.stream()
-                .map(MenuProduct::getPrice)
+    public Price calculateTotalAmount() {
+        final List<Price> amounts = values.stream()
+                .map(MenuProduct::getAmount)
                 .collect(Collectors.toList());
-        return Price.sum(prices);
+        return Price.sum(amounts);
     }
 
     public List<MenuProduct> getValues() {

@@ -11,7 +11,7 @@ class MenuProductsTest {
 
     @DisplayName("메뉴에 포함된 상품의 총 정가를 계산한다.")
     @Test
-    void calculateTotalPrice() {
+    void calculateTotalAmount() {
         // given
         final Product product_13000 = Product.ofUnsaved("피자", BigDecimal.valueOf(13000));
         final Product product_4500 = Product.ofUnsaved("버팔로윙", BigDecimal.valueOf(4500));
@@ -21,8 +21,8 @@ class MenuProductsTest {
         final MenuProducts menuProducts = new MenuProducts(Arrays.asList(menuProduct_26000, menuProduct_4500));
 
         // when
-        final Price price = menuProducts.calculateTotalPrice();
+        final Price amount = menuProducts.calculateTotalAmount();
 
-        assertThat(price).isEqualTo(Price.from(30500));
+        assertThat(amount).isEqualTo(Price.from(30500));
     }
 }

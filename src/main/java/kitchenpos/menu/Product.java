@@ -27,7 +27,7 @@ public class Product {
         return new Product(null, name, price);
     }
 
-    public Price calculatePrice(final long quantity) {
+    public Price calculateAmount(final long quantity) {
         return price.multiply(quantity);
     }
 
