@@ -31,8 +31,7 @@ public class MenuProduct {
     }
 
     public BigDecimal calculateSumOfPrice() {
-        return product.getPrice()
-                .multiply(BigDecimal.valueOf(quantity));
+        return product.multiply(BigDecimal.valueOf(quantity));
     }
 
     public Long getSeq() {

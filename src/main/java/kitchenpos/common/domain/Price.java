@@ -27,6 +27,10 @@ public class Price {
         return this.price.compareTo(otherPrice) > 0;
     }
 
+    public BigDecimal multiply(final BigDecimal quantity) {
+        return this.price.multiply(quantity);
+    }
+
     public BigDecimal getPrice() {
         return new BigDecimal(price.intValue());
     }

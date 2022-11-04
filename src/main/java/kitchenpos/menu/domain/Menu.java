@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import kitchenpos.common.domain.Price;
+import kitchenpos.menu.service.MenuValidator;
 
 @Entity
 public class Menu {
@@ -40,6 +41,10 @@ public class Menu {
         if (price.isExpensiveThan(sumOfPrice)) {
             throw new IllegalArgumentException("메뉴 가격은 상품 가격의 합 보다 작아야 합니다.");
         }
+    }
+
+    public void validate(final MenuValidator menuValidator) {
+        menuValidator.validateInMenuGroup(this);
     }
 
     public Long getId() {
