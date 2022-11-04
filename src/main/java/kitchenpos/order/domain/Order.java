@@ -1,7 +1,6 @@
 package kitchenpos.order.domain;
 
 import java.time.LocalDateTime;
-import kitchenpos.table.domain.OrderTable;
 
 public class Order {
     private final Long id;
@@ -18,14 +17,6 @@ public class Order {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-    }
-
-    public static Order from(OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        return new Order(null, orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now());
     }
 
     public boolean isCompletion() {

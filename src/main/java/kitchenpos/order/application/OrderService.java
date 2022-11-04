@@ -1,15 +1,14 @@
 package kitchenpos.order.application;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.dao.MenuDao;
 import kitchenpos.order.dao.OrderDao;
 import kitchenpos.order.dao.OrderLineItemDao;
-import kitchenpos.table.dao.OrderTableDao;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
 import kitchenpos.order.dto.OrderChangeOrderStatusRequest;
 import kitchenpos.order.dto.OrderCreateRequest;
 import kitchenpos.order.dto.OrderLineItemRequest;
@@ -24,23 +23,24 @@ public class OrderService {
     private final MenuDao menuDao;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
-    private final OrderTableDao orderTableDao;
+    private final OrderValidator orderValidator;
 
     public OrderService(
             final MenuDao menuDao,
             final OrderDao orderDao,
             final OrderLineItemDao orderLineItemDao,
-            final OrderTableDao orderTableDao
+            final OrderValidator orderValidator
     ) {
         this.menuDao = menuDao;
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
-        this.orderTableDao = orderTableDao;
+        this.orderValidator = orderValidator;
     }
 
     public OrderResponse create(final OrderCreateRequest request) {
-        final OrderTable orderTable = findOrderTable(request.getOrderTableId());
-        final Order order = Order.from(orderTable);
+        final Long orderTableId = request.getOrderTableId();
+        orderValidator.validateEmpty(orderTableId);
+        final Order order = new Order(orderTableId, OrderStatus.COOKING, LocalDateTime.now());
         final List<OrderLineItem> orderLineItems = createOrderLineItems(request.getOrderLineItems());
         validateOrderLineItems(orderLineItems);
 
@@ -48,11 +48,6 @@ public class OrderService {
         final List<OrderLineItem> savedOrderLineItems = getSavedOrderLineItems(savedOrder.getId(), orderLineItems);
 
         return OrderResponse.of(savedOrder, savedOrderLineItems);
-    }
-
-    private OrderTable findOrderTable(Long orderTableId) {
-        return orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
     }
 
     private List<OrderLineItem> createOrderLineItems(List<OrderLineItemRequest> orderLineItems) {
