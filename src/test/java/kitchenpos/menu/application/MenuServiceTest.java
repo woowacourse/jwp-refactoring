@@ -7,8 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.ServiceTest;
-import kitchenpos.menu.ui.request.MenuCreateRequest;
-import kitchenpos.menu.ui.request.MenuProductCreateRequest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.response.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,8 +18,8 @@ class MenuServiceTest extends ServiceTest {
     @DisplayName("메뉴를 생성한다.")
     void createMenu() {
         final BigDecimal menuPrice = BigDecimal.valueOf(16000L);
-        final MenuCreateRequest request = new MenuCreateRequest("후라이드치킨", menuPrice, 2L,
-                List.of(new MenuProductCreateRequest(1L, 1L)));
+        final Menu request = new Menu("후라이드치킨", menuPrice, 2L,
+                List.of(MenuProduct.of(1L, 1L)));
 
         final MenuResponse menuResponse = menuService.create(request);
 
@@ -34,8 +34,8 @@ class MenuServiceTest extends ServiceTest {
     @DisplayName("메뉴 그룹이 올바르지 않은 경우 예외 발생")
     void whenInvalidMenuGroup() {
         long invalidMenuGroupId = 99999L;
-        final MenuCreateRequest request = new MenuCreateRequest("후라이드치킨", BigDecimal.valueOf(16000L),
-                invalidMenuGroupId, List.of(new MenuProductCreateRequest(1L, 1L)));
+        final Menu request = new Menu("후라이드치킨", BigDecimal.valueOf(16000L),
+                invalidMenuGroupId, List.of(MenuProduct.of(1L, 1L)));
 
         assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);

@@ -30,8 +30,8 @@ class OrderServiceTest extends ServiceTest {
     @Test
     @DisplayName("주문을 생성한다.")
     void createOrder() {
-        final OrderCreateRequest request = new OrderCreateRequest(1L,
-                List.of(new OrderLineItemRequest(1L, 1)));
+        final Order request = Order.of(1L,
+                List.of(new OrderLineItem(1L, 1)));
 
         final OrderResponse actual = orderService.create(request);
 
@@ -43,20 +43,11 @@ class OrderServiceTest extends ServiceTest {
     }
 
     @Test
-    @DisplayName("주문 항목이 없으면 예외 발생")
-    void whenOrderLineItemsIsEmpty() {
-        final OrderCreateRequest request = new OrderCreateRequest(1L, new ArrayList<>());
-
-        assertThatThrownBy(() -> orderService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
     @DisplayName("존재하지 않는 메뉴를 포함할 경우 예외 발생")
     void whenInvalidMenu() {
         long invalidMenuId = 99999L;
-        final OrderCreateRequest request = new OrderCreateRequest(1L,
-                Collections.singletonList(new OrderLineItemRequest(invalidMenuId, 1L)));
+        final Order request = Order.of(1L,
+                Collections.singletonList(new OrderLineItem(invalidMenuId, 1L)));
 
         assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -67,8 +58,8 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("존재하지 않는 주문 테이블을 포함할 경우 예외 발생")
     void whenInvalidOrderTable() {
         long invalidOrderTable = 99999L;
-        final OrderCreateRequest request = new OrderCreateRequest(invalidOrderTable,
-                Collections.singletonList(new OrderLineItemRequest(1L, 1)));
+        final Order request = Order.of(invalidOrderTable,
+                Collections.singletonList(new OrderLineItem(1L, 1)));
 
         assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -77,8 +68,8 @@ class OrderServiceTest extends ServiceTest {
     @Test
     @DisplayName("주문 테이블이 빈테이블일 경우 예외 발생")
     void whenOrderTableIsEmpty() {
-        final OrderCreateRequest request = new OrderCreateRequest(3L,
-                Collections.singletonList(new OrderLineItemRequest(1L, 1)));
+        final Order request = Order.of(3L,
+                Collections.singletonList(new OrderLineItem(1L, 1)));
 
         assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -87,8 +78,8 @@ class OrderServiceTest extends ServiceTest {
     @Test
     @DisplayName("주문을 생성하면 상태가 조리 상태가 된다.")
     void createOrderWithCookingStatus() {
-        final OrderCreateRequest request = new OrderCreateRequest(1L,
-                Collections.singletonList(new OrderLineItemRequest(1L, 1)));
+        final Order request = Order.of(1L,
+                Collections.singletonList(new OrderLineItem(1L, 1)));
 
         final OrderResponse actual = orderService.create(request);
 
@@ -99,8 +90,8 @@ class OrderServiceTest extends ServiceTest {
     @Test
     @DisplayName("주문의 목록을 조회한다.")
     void getOrders() {
-        final OrderCreateRequest request = new OrderCreateRequest(1L,
-                Collections.singletonList(new OrderLineItemRequest(1L, 1)));
+        final Order request = Order.of(1L,
+                Collections.singletonList(new OrderLineItem(1L, 1)));
         final OrderResponse expected = orderService.create(request);
 
         final List<OrderResponse> orders = orderService.list();

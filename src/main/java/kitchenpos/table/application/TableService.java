@@ -22,9 +22,8 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTableResponse create(final OrderTableCreateReqeust request) {
-        final OrderTable orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
-        return OrderTableResponse.from(orderTableDao.save(orderTable));
+    public OrderTableResponse create(final OrderTable request) {
+        return OrderTableResponse.from(orderTableDao.save(request));
     }
 
     public List<OrderTableResponse> list() {

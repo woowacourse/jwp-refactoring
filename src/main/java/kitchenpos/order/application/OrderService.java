@@ -31,27 +31,18 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse create(final OrderCreateRequest request) {
-        final Order order = Order.of(getOrderTableId(request), mapToOrderLineItems(request));
+    public OrderResponse create(final Order request) {
+        final Order order = Order.of(getOrderTableId(request), request.getOrderLineItems());
         order.checkActualOrderLineItems(menuRepository.countByIdIn(order.getMenuIds()));
         return OrderResponse.from(orderRepository.save(order));
     }
 
-    private Long getOrderTableId(final OrderCreateRequest request) {
+    private Long getOrderTableId(final Order request) {
         final Long orderTableId = request.getOrderTableId();
         final OrderTable orderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
         validateOrderTableEmpty(orderTable);
         return orderTable.getId();
-    }
-
-    private List<OrderLineItem> mapToOrderLineItems(final OrderCreateRequest request) {
-        return request.getOrderLineItems()
-                .stream()
-                .map(orderLineItemRequest -> new OrderLineItem(
-                        orderLineItemRequest.getMenuId(),
-                        orderLineItemRequest.getQuantity()
-                )).collect(Collectors.toList());
     }
 
     private static void validateOrderTableEmpty(final OrderTable orderTable) {

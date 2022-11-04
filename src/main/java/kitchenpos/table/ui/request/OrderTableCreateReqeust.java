@@ -1,5 +1,7 @@
 package kitchenpos.table.ui.request;
 
+import kitchenpos.table.domain.OrderTable;
+
 public class OrderTableCreateReqeust {
 
     private int numberOfGuests;
@@ -19,5 +21,9 @@ public class OrderTableCreateReqeust {
 
     public boolean isEmpty() {
         return empty;
+    }
+
+    public OrderTable toEntity() {
+        return new OrderTable(numberOfGuests, empty);
     }
 }

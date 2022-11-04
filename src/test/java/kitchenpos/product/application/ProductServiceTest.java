@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.ServiceTest;
+import kitchenpos.product.domain.Product;
 import kitchenpos.product.ui.request.ProductCreateRequest;
 import kitchenpos.product.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -18,7 +19,7 @@ class ProductServiceTest extends ServiceTest {
     void createProduct() {
         final String productName = "맥북m1";
         final BigDecimal productPrice = BigDecimal.valueOf(3000);
-        final ProductCreateRequest request = new ProductCreateRequest(productName, productPrice);
+        final Product request = new Product(productName, productPrice);
 
         final ProductResponse response = productService.create(request);
 

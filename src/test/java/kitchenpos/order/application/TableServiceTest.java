@@ -22,7 +22,7 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("테이블을 생성한다.")
     void createTable() {
         final int actualNumberOfGuests = 2;
-        final OrderTableCreateReqeust request = new OrderTableCreateReqeust(actualNumberOfGuests, true);
+        final OrderTable request = new OrderTable(actualNumberOfGuests, true);
 
         final OrderTableResponse actual = tableService.create(request);
 

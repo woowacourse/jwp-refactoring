@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.application.ServiceTest;
+import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.ui.request.MenuGroupCreateRequest;
 import kitchenpos.menu.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -16,7 +17,7 @@ class MenuGroupServiceTest extends ServiceTest {
     @DisplayName("메뉴 그룹을 생성할 수 있다.")
     void createMenuGroup() {
         final String newMenuGroupName = "베스트메뉴";
-        final MenuGroupCreateRequest request = new MenuGroupCreateRequest(newMenuGroupName);
+        final MenuGroup request = new MenuGroup(newMenuGroupName);
 
         final MenuGroupResponse actual = menuGroupService.create(request);
 

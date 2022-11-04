@@ -46,8 +46,8 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     @DisplayName("테이블 그룹을 생성한다.")
     void createTableGroup() {
-        final TableGroupCreateRequest request = new TableGroupCreateRequest(
-                List.of(new OrderTableGroupRequest(1L), new OrderTableGroupRequest(2L)));
+        final TableGroup request = new TableGroup(LocalDateTime.now(),
+                List.of(OrderTable.createByOnlyId(1L), OrderTable.createByOnlyId(2L)));
         final TableGroupResponse actual = tableGroupService.create(request);
 
         for (OrderTableResponse orderTable : actual.getOrderTables()) {
@@ -58,8 +58,8 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     @DisplayName("주문 테이블의 상태가 주문 테이블로 변경된다.")
     void createTableGroupIsChangeOrderTableStatus() {
-        final TableGroupCreateRequest request = new TableGroupCreateRequest(
-                List.of(new OrderTableGroupRequest(notIncludeOrderTable1), new OrderTableGroupRequest(notIncludeOrderTable2)));
+        final TableGroup request = new TableGroup(LocalDateTime.now(),
+                List.of(OrderTable.createByOnlyId(notIncludeOrderTable1), OrderTable.createByOnlyId(notIncludeOrderTable2)));
 
         final TableGroupResponse response = tableGroupService.create(request);
         final List<OrderTableResponse> actualOrderTables = response.getOrderTables();
