@@ -2,6 +2,7 @@ package kitchenpos.order.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
@@ -54,8 +55,14 @@ public class OrderService {
     private List<OrderLineItem> mapToOrderLineItem(final OrderCreateRequest orderRequest) {
         return orderRequest.getOrderLineItemRequests()
                 .stream()
-                .map(OrderLineItemRequest::toEntity)
+                .map(this::toOrderLineItem)
                 .collect(Collectors.toList());
+    }
+
+    private OrderLineItem toOrderLineItem(final OrderLineItemRequest orderLineItemRequest) {
+        Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId()).get();
+        return new OrderLineItem(orderLineItemRequest.getMenuId(), menu.getName(), menu.getPrice(),
+                orderLineItemRequest.getQuantity());
     }
 
     public List<OrderResponse> list() {

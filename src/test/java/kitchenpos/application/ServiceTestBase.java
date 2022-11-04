@@ -127,8 +127,9 @@ public abstract class ServiceTestBase {
         return new OrderCreateRequest(orderTableId, orderLineItemRequests);
     }
 
-    protected OrderLineItem createOrderLineItem(Long menuId, long quantity) {
-        return new OrderLineItem(menuId, quantity);
+    protected OrderLineItem createOrderLineItem(Long menuId, long quantity, final String menuName,
+                                                final BigDecimal menuPrice) {
+        return new OrderLineItem(menuId, menuName, menuPrice, quantity);
     }
 
     protected OrderLineItemRequest createOrderLineItemRequest(final Long menuId, final long quantity) {
@@ -137,7 +138,8 @@ public abstract class ServiceTestBase {
 
 
     protected Order 주문_생성_및_저장(final OrderTable orderTable, final Menu menu, final long quantity) {
-        List<OrderLineItem> orderLineItems = Collections.singletonList(createOrderLineItem(menu.getId(), quantity));
+        List<OrderLineItem> orderLineItems = Collections.singletonList(
+                createOrderLineItem(menu.getId(), quantity, menu.getName(), menu.getPrice()));
         Order order = createOrder(orderTable.getId(), orderLineItems);
 
         return orderRepository.save(order);

@@ -49,7 +49,7 @@ class TableGroupServiceTest extends ServiceTestBase {
                 createMenuProduct(product.getId(), 1, BigDecimal.valueOf(18000L));
         Menu menu = menuRepository.save(createMenu("치킨", BigDecimal.valueOf(18000L), menuGroup.getId(),
                 Collections.singletonList(menuProduct)));
-        OrderLineItem orderLineItem = createOrderLineItem(menu.getId(), 1);
+        OrderLineItem orderLineItem = createOrderLineItem(menu.getId(), 1, menu.getName(), menu.getPrice());
 
         Order order1 = createOrder(savedOrderTable1.getId(), Collections.singletonList(orderLineItem));
         order1.changeOrderStatus(orderStatus.name());
@@ -78,7 +78,7 @@ class TableGroupServiceTest extends ServiceTestBase {
                 createMenuProduct(product.getId(), 1, BigDecimal.valueOf(18000L));
         Menu menu = menuRepository.save(createMenu("치킨", BigDecimal.valueOf(18000L), menuGroup.getId(),
                 Collections.singletonList(menuProduct)));
-        OrderLineItem orderLineItem = createOrderLineItem(menu.getId(), 1);
+        OrderLineItem orderLineItem = createOrderLineItem(menu.getId(), 1, menu.getName(), menu.getPrice());
 
         Order order1 = new Order(savedOrderTable1.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now(),
                 Collections.singletonList(orderLineItem));
