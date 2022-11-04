@@ -25,7 +25,7 @@ public class MenuResponse {
     public static MenuResponse from(final Menu menu) {
         return new MenuResponse(menu.getId(),
                 menu.getName(),
-                menu.getPrice(),
+                menu.getPrice().getValue(),
                 menu.getMenuGroupId(),
                 menu.getMenuProducts().stream()
                         .map(MenuProductResponse::from)

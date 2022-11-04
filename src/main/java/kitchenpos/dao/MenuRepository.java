@@ -24,7 +24,7 @@ public class MenuRepository implements MenuDao {
         return new Menu(
                 savedMenu.getId(),
                 savedMenu.getName(),
-                savedMenu.getPrice(),
+                savedMenu.getPrice().getValue(),
                 savedMenu.getMenuGroupId(),
                 getMenuProducts(entity.getMenuProducts(), savedMenu.getId()));
     }
@@ -46,7 +46,7 @@ public class MenuRepository implements MenuDao {
         return menuDao.findAll().stream()
                 .map(it -> new Menu(it.getId(),
                         it.getName(),
-                        it.getPrice(),
+                        it.getPrice().getValue(),
                         it.getMenuGroupId(),
                         menuProductDao.findAllByMenuId(it.getId())))
                 .collect(Collectors.toList());
