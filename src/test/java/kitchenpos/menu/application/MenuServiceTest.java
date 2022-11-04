@@ -9,13 +9,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.menugroup.domain.MenuGroupDao;
 import kitchenpos.menu.domain.MenuDao;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.product.domain.ProductDao;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.product.domain.Product;
-import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.dto.MenuResponse;
 import kitchenpos.menu.dto.MenuSaveRequest;
 import org.junit.jupiter.api.DisplayNameGeneration;
