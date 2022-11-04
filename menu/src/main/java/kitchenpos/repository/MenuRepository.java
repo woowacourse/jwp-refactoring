@@ -18,4 +18,5 @@ public interface MenuRepository extends Repository<Menu, Long> {
             + " join fetch MenuGroup mg on m.menuGroupId = mg.id"
             + " where m.id in :menuIds")
     List<OrderingMenu> findByIdIn(@Param("menuIds") Collection<Long> menuIds);
+
 }

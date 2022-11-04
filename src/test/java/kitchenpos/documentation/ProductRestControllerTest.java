@@ -9,6 +9,9 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.domain.Product;
+import kitchenpos.domain.vo.ProductPrice;
+import kitchenpos.ui.dto.request.ProductCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;

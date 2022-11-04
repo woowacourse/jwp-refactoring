@@ -2,3 +2,6 @@ rootProject.name = 'kitchenpos'
 
 include 'exception'
 include 'product'
+include 'ordertable'
+include 'order'
+include 'menu'

@@ -20,6 +20,9 @@ configurations {
 dependencies {
     compile project(':exception')
     compile project(':product')
+    compile project(':ordertable')
+    compile project(':order')
+    compile project(':menu')
 
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
