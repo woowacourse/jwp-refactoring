@@ -22,6 +22,8 @@ public class FakeOrderLineItemDao implements OrderLineItemDao {
         OrderLineItem orderLineItem = new OrderLineItem(seq++,
                 entity.getOrderId(),
                 entity.getMenuId(),
+                entity.getName(),
+                entity.getPrice(),
                 entity.getQuantity());
         IN_MEMORY_ORDER_LINE_ITEM.add(orderLineItem);
         return orderLineItem;

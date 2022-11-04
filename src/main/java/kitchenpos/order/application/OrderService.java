@@ -2,7 +2,10 @@ package kitchenpos.order.application;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import kitchenpos.menu.dao.MenuDao;
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.dao.OrderDao;
 import kitchenpos.order.dao.OrderLineItemDao;
 import kitchenpos.order.domain.Order;
@@ -17,13 +20,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class OrderService {
 
+    private final MenuDao menuDao;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
     private final OrderValidator orderValidator;
 
-    public OrderService(final OrderDao orderDao,
+    public OrderService(final MenuDao menuDao,
+                        final OrderDao orderDao,
                         final OrderLineItemDao orderLineItemDao,
                         final OrderValidator orderValidator) {
+        this.menuDao = menuDao;
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
         this.orderValidator = orderValidator;
@@ -42,11 +48,21 @@ public class OrderService {
     private List<OrderLineItem> saveOrderLineItems(final List<OrderLineItemRequest> orderLineItemRequests,
                                                    final Order savedOrder) {
         return orderLineItemRequests.stream()
-                .map(orderLineItemRequest -> new OrderLineItem(savedOrder.getId(),
-                        orderLineItemRequest.getMenuId(),
-                        orderLineItemRequest.getQuantity()))
+                .map(orderLineItemRequest -> generateOrderLineItem(orderLineItemRequest, savedOrder))
                 .map(this::saveAndGetOrderLineItem)
                 .collect(Collectors.toList());
+    }
+
+    private OrderLineItem generateOrderLineItem(OrderLineItemRequest orderLineItemRequest, Order order) {
+        Optional<Menu> menu = menuDao.findById(orderLineItemRequest.getMenuId());
+        if (!menu.isPresent()) {
+            throw new IllegalArgumentException("존재하지 않는 메뉴입니다.");
+        }
+        return new OrderLineItem(order.getId(),
+                orderLineItemRequest.getMenuId(),
+                menu.get().getName(),
+                menu.get().getPrice(),
+                orderLineItemRequest.getQuantity());
     }
 
     private OrderLineItem saveAndGetOrderLineItem(final OrderLineItem orderLineItem) {

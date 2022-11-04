@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
+import kitchenpos.common.domain.Price;
 import kitchenpos.order.domain.OrderLineItem;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -71,6 +72,8 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
         return new OrderLineItem(resultSet.getLong(KEY_COLUMN_NAME),
                 resultSet.getLong("order_id"),
                 resultSet.getLong("menu_id"),
+                resultSet.getString("name"),
+                resultSet.getObject("price", Price.class),
                 resultSet.getLong("quantity"));
     }
 }
