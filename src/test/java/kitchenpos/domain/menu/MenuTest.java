@@ -27,7 +27,7 @@ class MenuTest {
         return Menu.create(
                 "테스트 메뉴",
                 BigDecimal.valueOf(1000L),
-                testMenuGroup.getId(),
+                getTestMenuGroup().getId(),
                 List.of(testMenuProduct1, testMenuProduct2)
         );
     }
@@ -35,6 +35,7 @@ class MenuTest {
     @Test
     @DisplayName("메뉴를 생성한다.")
     void create() {
+        final MenuGroup testMenuGroup = getTestMenuGroup();
         final Menu menu = createTestMenu();
 
         assertAll(
