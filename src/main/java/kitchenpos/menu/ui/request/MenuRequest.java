@@ -2,9 +2,6 @@ package kitchenpos.menu.ui.request;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuProduct;
 
 public class MenuRequest {
 
@@ -38,15 +35,5 @@ public class MenuRequest {
 
     public List<MenuProductRequest> getMenuProducts() {
         return menuProducts;
-    }
-
-    public Menu toMenu(List<MenuProduct> products) {
-        return new Menu(name, price, menuGroupId, products);
-    }
-
-    private List<MenuProduct> menuProducts() {
-        final List<MenuProduct> products = menuProducts.stream().map(MenuProductRequest::toMenuProduct)
-                .collect(Collectors.toList());
-        return products;
     }
 }
