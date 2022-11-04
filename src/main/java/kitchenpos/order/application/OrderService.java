@@ -3,6 +3,8 @@ package kitchenpos.order.application;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.dao.MenuDao;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.order.application.OrderCreateRequest.OrderLineItemCreateRequest;
 import kitchenpos.order.dao.OrderDao;
 import kitchenpos.order.dao.OrderLineItemDao;
 import kitchenpos.order.domain.Order;
@@ -38,9 +40,12 @@ public class OrderService {
                 parseOrderTableId(request.getOrderTableId()),
                 request.getOrderLineItems()
                         .stream()
-                        .map(orderLineItemCreateRequest -> new OrderLineItem(orderLineItemCreateRequest.getMenuId(), orderLineItemCreateRequest.getQuantity()))
+                        .map(this::mapToOrderLineItem)
                         .collect(Collectors.toList()));
-        order.validateMenuSize(menuDao.countByIdIn(order.menuIds()));
+        order.validateMenuSize(menuDao.countByIdIn(request.getOrderLineItems()
+                .stream()
+                .map(OrderLineItemCreateRequest::getMenuId)
+                .collect(Collectors.toList())));
         return orderDao.save(order);
     }
 
@@ -64,5 +69,11 @@ public class OrderService {
 
         savedOrder.changeOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
         return orderDao.save(savedOrder);
+    }
+
+    private OrderLineItem mapToOrderLineItem(final OrderLineItemCreateRequest request) {
+        Menu menu = menuDao.findById(request.getMenuId())
+                .orElseThrow(() -> new IllegalArgumentException("실제 메뉴가 아닙니다."));
+        return new OrderLineItem(menu.getName(), menu.getPrice(), request.getQuantity());
     }
 }

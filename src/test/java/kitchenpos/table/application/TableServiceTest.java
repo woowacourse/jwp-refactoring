@@ -5,6 +5,7 @@ import static kitchenpos.order.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -102,7 +103,7 @@ class TableServiceTest {
             @BeforeEach
             void setUp() {
                 orderDao.save(new Order(orderTableId, COOKING.name(), LocalDateTime.now(),
-                        Arrays.asList(new OrderLineItem(1L, 1))));
+                        Arrays.asList(new OrderLineItem(1L, "후라이드", BigDecimal.ONE, 1))));
             }
 
             @Test
@@ -122,7 +123,7 @@ class TableServiceTest {
             @BeforeEach
             void setUp() {
                 orderDao.save(new Order(orderTableId, MEAL.name(), LocalDateTime.now(),
-                        Arrays.asList(new OrderLineItem(1L, 1))));
+                        Arrays.asList(new OrderLineItem(1L, "후라이드", BigDecimal.ONE, 1))));
             }
 
             @Test

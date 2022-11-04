@@ -3,6 +3,7 @@ package kitchenpos.order.dao;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import kitchenpos.menu.dao.JdbcTemplateMenuDao;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import org.springframework.stereotype.Repository;
@@ -12,10 +13,13 @@ public class OrderRepository implements OrderDao {
 
     private final JdbcTemplateOrderDao orderDao;
     private final JdbcTemplateOrderLineItemDao orderLineItemDao;
+    private final JdbcTemplateMenuDao menuDao;
 
-    public OrderRepository(final JdbcTemplateOrderDao orderDao, final JdbcTemplateOrderLineItemDao orderLineItemDao) {
+    public OrderRepository(final JdbcTemplateOrderDao orderDao, final JdbcTemplateOrderLineItemDao orderLineItemDao,
+                           final JdbcTemplateMenuDao menuDao) {
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
+        this.menuDao = menuDao;
     }
 
     @Override
@@ -23,7 +27,7 @@ public class OrderRepository implements OrderDao {
         Order order = orderDao.save(entity);
         List<OrderLineItem> orderLineItems = entity.getOrderLineItems()
                 .stream()
-                .map(orderLineItem -> new OrderLineItem(orderLineItem.getMenuId(), orderLineItem.getQuantity()))
+                .map(orderLineItem -> new OrderLineItem(orderLineItem.getName(), orderLineItem.getPrice(), orderLineItem.getQuantity()))
                 .map(orderLineItem -> orderLineItemDao.save(orderLineItem, order.getId()))
                 .collect(Collectors.toList());
 

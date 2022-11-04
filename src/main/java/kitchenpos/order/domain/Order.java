@@ -3,7 +3,6 @@ package kitchenpos.order.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import org.springframework.util.CollectionUtils;
 
 public class Order {
@@ -41,12 +40,6 @@ public class Order {
         if (orderLineItems.size() != size) {
             throw new IllegalArgumentException("실제 메뉴로만 주문이 가능합니다.");
         }
-    }
-
-    public List<Long> menuIds() {
-        return orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
-                .collect(Collectors.toList());
     }
 
     public String changeOrderStatus(final OrderStatus orderStatus) {

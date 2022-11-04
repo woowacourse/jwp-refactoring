@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -129,7 +130,7 @@ class TableGroupServiceTest {
                                 )))
                         .getId();
                 orderDao.save(new Order(1L, COOKING.name(), LocalDateTime.now(),
-                        Arrays.asList(new OrderLineItem(1L, 1))));
+                        Arrays.asList(new OrderLineItem(1L, "후라이드", BigDecimal.ONE, 1))));
             }
 
             @Test
@@ -154,7 +155,7 @@ class TableGroupServiceTest {
                                 )))
                         .getId();
                 orderDao.save(new Order(1L, MEAL.name(), LocalDateTime.now(),
-                        Arrays.asList(new OrderLineItem(1L, 2))));
+                        Arrays.asList(new OrderLineItem(1L, "후라이드", BigDecimal.ONE, 2))));
             }
 
             @Test

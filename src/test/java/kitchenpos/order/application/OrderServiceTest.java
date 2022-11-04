@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,7 +60,7 @@ class OrderServiceTest {
             void 예외가_발생한다() {
                 assertThatThrownBy(() -> orderService.create(request))
                         .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessage("실제 메뉴로만 주문이 가능합니다.");
+                        .hasMessage("실제 메뉴가 아닙니다.");
             }
         }
 
@@ -154,7 +155,7 @@ class OrderServiceTest {
             @BeforeEach
             void setUp() {
                 orderId = orderDao.save(new Order(1L, COMPLETION.name(), LocalDateTime.now(),
-                                Arrays.asList(new OrderLineItem(1L, 2))))
+                                Arrays.asList(new OrderLineItem(1L, "후라이드", BigDecimal.ONE, 2))))
                         .getId();
             }
 
@@ -175,7 +176,7 @@ class OrderServiceTest {
             @BeforeEach
             void setUp() {
                 orderId = orderDao.save(new Order(1L, COOKING.name(), LocalDateTime.now(),
-                                Arrays.asList(new OrderLineItem(1L, 2))))
+                                Arrays.asList(new OrderLineItem(1L, "후라이드", BigDecimal.ONE, 2))))
                         .getId();
             }
 
