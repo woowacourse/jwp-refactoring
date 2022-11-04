@@ -2,6 +2,7 @@ package kitchenpos.order.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.TableDao;
 import kitchenpos.order.application.dto.OrderLineItemRequest;
 import kitchenpos.order.application.dto.OrderLineItemRequest.Create;
 import kitchenpos.order.application.dto.OrderRequest;
@@ -9,10 +10,9 @@ import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.menu.domain.repository.MenuDao;
 import kitchenpos.order.domain.repository.OrderDao;
 import kitchenpos.order.domain.repository.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.order.domain.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,18 +22,18 @@ public class OrderService {
     private final MenuDao menuDao;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
-    private final OrderTableDao orderTableDao;
+    private final TableDao tableDao;
 
     public OrderService(
             final MenuDao menuDao,
             final OrderDao orderDao,
             final OrderLineItemDao orderLineItemDao,
-            final OrderTableDao orderTableDao
+            final TableDao tableDao
     ) {
         this.menuDao = menuDao;
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
-        this.orderTableDao = orderTableDao;
+        this.tableDao = tableDao;
     }
 
     @Transactional
@@ -45,7 +45,7 @@ public class OrderService {
                 .collect(Collectors.toList());
 
         validateMenuExists(orderLineItems, menuIds);
-        final OrderTable orderTable = orderTableDao.findById(request.getOrderTableId())
+        final OrderTable orderTable = tableDao.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
         validateIsEmpty(orderTable);
 

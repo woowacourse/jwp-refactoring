@@ -6,7 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 
 import java.util.List;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.domain.OrderTables;
+import kitchenpos.order.domain.repository.OrderTableDao;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
