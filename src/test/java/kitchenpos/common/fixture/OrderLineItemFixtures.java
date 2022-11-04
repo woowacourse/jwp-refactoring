@@ -3,8 +3,8 @@ package kitchenpos.common.fixture;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
-import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.domain.Price;
+import kitchenpos.order.domain.OrderLineItem;
 
 public class OrderLineItemFixtures {
 

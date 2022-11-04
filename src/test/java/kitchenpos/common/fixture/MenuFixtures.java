@@ -1,14 +1,14 @@
 package kitchenpos.common.fixture;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toList;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.domain.Price;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.domain.Price;
 import kitchenpos.menu.dto.MenuProductSaveRequest;
 import kitchenpos.menu.dto.MenuSaveRequest;
 
