@@ -31,9 +31,7 @@ public class TableGroupService {
     @Transactional
     public TableGroupResponse create(final TableGroupRequest request) {
         final List<IdRequest> orderTableIdRequests = request.getOrderTables();
-        final List<OrderTable> savedOrderTables = orderTableIdRequests.stream()
-                .map(this::getOrderTableFrom)
-                .collect(Collectors.toList());
+        final List<OrderTable> savedOrderTables = getOrderTablesOf(orderTableIdRequests);
         final OrderTables orderTables = new OrderTables(savedOrderTables);
 
         final TableGroup tableGroup = TableGroup.ofUnsaved();
@@ -52,6 +50,12 @@ public class TableGroupService {
         orderTableValidator.checkOrderComplete(orderTableIds);
 
         groupedTables.ungroup();
+    }
+
+    private List<OrderTable> getOrderTablesOf(final List<IdRequest> orderTableIdRequests) {
+        return orderTableIdRequests.stream()
+                .map(this::getOrderTableFrom)
+                .collect(Collectors.toList());
     }
 
     private OrderTable getOrderTableFrom(final IdRequest request) {
