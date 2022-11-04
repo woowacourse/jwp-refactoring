@@ -42,11 +42,6 @@ public class OrderTableRepositoryImpl implements OrderTableRepository {
     }
 
     @Override
-    public List<OrderTable> findAllByIdIn(List<Long> ids) {
-        return tableDao.findAllByIdIn(ids);
-    }
-
-    @Override
     public List<OrderTable> findAllByTableGroupId(Long tableGroupId) {
         return tableDao.findAllByTableGroupId(tableGroupId);
     }
