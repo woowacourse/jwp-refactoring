@@ -1,7 +1,7 @@
-package kitchenpos.application.dto;
+package kitchenpos.menu.application.dto;
 
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.product.domain.Product;
 
 public class MenuProductRequest {
 
