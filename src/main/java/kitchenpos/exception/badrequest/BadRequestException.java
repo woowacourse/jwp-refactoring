@@ -13,7 +13,4 @@ public class BadRequestException extends KitchenPosException {
         super(message);
     }
 
-    public BadRequestException(final String message, final Exception e) {
-        super(message, e);
-    }
 }

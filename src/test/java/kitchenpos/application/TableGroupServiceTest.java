@@ -192,7 +192,8 @@ class TableGroupServiceTest extends ServiceTest {
                     new Order(
                             tableA.getId(),
                             OrderStatus.COOKING,
-                            List.of(new OrderLineItem(menu.getId(), 1L)))
+                            List.of(new OrderLineItem(menu.getId(), menu.getName(), menuGroup.getName(),
+                                    menu.getPrice().getValue(), 1L)))
             );
 
             // when & then

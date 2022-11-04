@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -22,8 +23,26 @@ public class OrderLineItem {
     private Long menuId;
     @Column(name = "quantity", nullable = false)
     private long quantity;
+    @Column(name = "menu_name", nullable = false)
+    private String menuName;
+    @Column(name = "menu_group_name", nullable = false)
+    private String menuGroupName;
+    @Column(name = "menu_price", nullable = false)
+    private BigDecimal menuPrice;
 
     protected OrderLineItem() {
+    }
+
+    public OrderLineItem(final Long seq, final Order order, final Long menuId, final long quantity,
+                         final String menuName, final String menuGroupName,
+                         final BigDecimal menuPrice) {
+        this.seq = seq;
+        this.order = order;
+        this.menuId = menuId;
+        this.quantity = quantity;
+        this.menuName = menuName;
+        this.menuGroupName = menuGroupName;
+        this.menuPrice = menuPrice;
     }
 
     public OrderLineItem(final Long seq, final Order order, final Long menuId, final long quantity) {
@@ -33,8 +52,9 @@ public class OrderLineItem {
         this.quantity = quantity;
     }
 
-    public OrderLineItem(final Long menuId, final long quantity) {
-        this(null, null, menuId, quantity);
+    public OrderLineItem(final Long menuId, final String menuName, final String menuGroupName,
+                         final BigDecimal menuPrice, final long quantity) {
+        this(null, null, menuId, quantity, menuName, menuGroupName, menuPrice);
     }
 
     public void mapOrder(final Order order) {
@@ -55,5 +75,17 @@ public class OrderLineItem {
 
     public long getQuantity() {
         return quantity;
+    }
+
+    public String getMenuName() {
+        return menuName;
+    }
+
+    public String getMenuGroupName() {
+        return menuGroupName;
+    }
+
+    public BigDecimal getMenuPrice() {
+        return menuPrice;
     }
 }

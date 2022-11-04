@@ -8,8 +8,13 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import javax.sql.DataSource;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
@@ -19,6 +24,8 @@ import kitchenpos.exception.badrequest.OrderIdInvalidException;
 import kitchenpos.exception.badrequest.OrderTableIdInvalidException;
 import kitchenpos.exception.notfound.OrderNotFoundException;
 import kitchenpos.exception.notfound.OrderTableNotFoundException;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderingMenu;
 import kitchenpos.ui.dto.request.MenuCreateRequest;
 import kitchenpos.ui.dto.request.MenuGroupCreateRequest;
 import kitchenpos.ui.dto.request.MenuProductRequest;
@@ -35,6 +42,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 class OrderServiceTest extends ServiceTest {
     @Autowired
@@ -47,6 +55,10 @@ class OrderServiceTest extends ServiceTest {
     private ProductService productService;
     @Autowired
     private MenuGroupService menuGroupService;
+    @Autowired
+    private DataSource dataSource;
+    @Autowired
+    private MenuRepository menuRepository;
     private MenuGroup menuGroup;
     private Product productA;
     private Product productB;
@@ -312,5 +324,73 @@ class OrderServiceTest extends ServiceTest {
             assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, request))
                     .isInstanceOf(OrderAlreadyCompletedException.class);
         }
+    }
+
+    @DisplayName("주문 생성 후 메뉴 이름을 수정해도 주문 정보는 수정되지 않는다")
+    @Test
+    void testMethodNameHere() {
+        // given
+        final var order = createOrder();
+        final var menuNamesBefore = findOrderedMenuNames(order);
+        final var orderedMenuIds = menuIds(order);
+        final var newName = "메뉴명 수정";
+
+        // when
+        updateMenuNamesByIdIn(orderedMenuIds, newName);
+        final var updatedMenuNames = findUpdatedMenuNames(orderedMenuIds);
+        final var menuNamesAfter = findOrderedMenuNames(order);
+
+        // then
+        assertAll(
+                () -> assertThat(menuNamesBefore).containsExactly(name),
+                () -> assertThat(updatedMenuNames).containsExactly(newName),
+                () -> assertThat(menuNamesAfter).containsExactly(name)
+        );
+    }
+
+    private Order createOrder() {
+        final var orderRequest = new OrderCreateRequest(
+                tableA.getId(),
+                List.of(new OrderLineItemRequest(menu.getId(), 1L))
+        );
+
+        return orderService.create(orderRequest);
+    }
+
+    private List<String> findOrderedMenuNames(final Order order) {
+        return orderService.list()
+                .stream()
+                .filter(savedOrder -> Objects.equals(savedOrder.getId(), order.getId()))
+                .findAny()
+                .orElseThrow()
+                .getOrderLineItems()
+                .getOrderLineItems()
+                .stream()
+                .map(OrderLineItem::getMenuName)
+                .collect(Collectors.toList());
+    }
+
+    private List<Long> menuIds(final Order order) {
+        return order.getOrderLineItems()
+                .getOrderLineItems()
+                .stream()
+                .map(OrderLineItem::getMenuId)
+                .collect(Collectors.toList());
+    }
+
+    private void updateMenuNamesByIdIn(final List<Long> orderedMenuIds, final String newMenuName) {
+        final var menuIdsJoined = orderedMenuIds.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(", "));
+
+        new JdbcTemplate(dataSource)
+                .execute(String.format("update menu set name = '%s' where id in (%s)", newMenuName, menuIdsJoined));
+    }
+
+    private List<String> findUpdatedMenuNames(final List<Long> orderedMenuIds) {
+        return menuRepository.findByIdIn(orderedMenuIds)
+                .stream()
+                .map(OrderingMenu::getMenuName)
+                .collect(Collectors.toList());
     }
 }

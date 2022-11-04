@@ -11,7 +11,6 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.vo.MenuPrice;
 import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
 import kitchenpos.ui.dto.request.MenuCreateRequest;
 import kitchenpos.ui.dto.request.MenuProductRequest;
@@ -23,13 +22,10 @@ import org.springframework.util.StringUtils;
 public class MenuMapper {
     private final ProductRepository productRepository;
     private final MenuGroupRepository menuGroupRepository;
-    private final MenuRepository menuRepository;
 
-    public MenuMapper(final ProductRepository productRepository, final MenuGroupRepository menuGroupRepository,
-                      final MenuRepository menuRepository) {
+    public MenuMapper(final ProductRepository productRepository, final MenuGroupRepository menuGroupRepository) {
         this.productRepository = productRepository;
         this.menuGroupRepository = menuGroupRepository;
-        this.menuRepository = menuRepository;
     }
 
     public Menu mapFrom(final MenuCreateRequest request) {
