@@ -36,7 +36,7 @@ public class OrderRestController {
 
     private OrderResponse createResponse(final Order order) {
         final List<OrderLineItemResponse> items = order.getOrderLineItems().stream()
-                .map(item -> new OrderLineItemResponse(item.getMenuId(), item.getQuantity()))
+                .map(item -> new OrderLineItemResponse(item.getMenuName(), item.getPrice(), item.getQuantity()))
                 .collect(Collectors.toList());
         return new OrderResponse(order.getId(), order.getOrderTableId(), order.getOrderStatus().name(), order.getOrderedTime(),
                 items);

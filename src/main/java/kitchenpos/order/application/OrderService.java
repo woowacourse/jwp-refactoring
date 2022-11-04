@@ -2,6 +2,7 @@ package kitchenpos.order.application;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.domain.repository.OrderRepository;
@@ -48,14 +49,19 @@ public class OrderService {
                 .map(OrderLineItemRequest::getMenuId)
                 .collect(Collectors.toList());
 
-        List<Menu> menus = menuRepository.findAllByIdIn(menuIds);
+        Map<Long, Menu> menus = menuRepository.findAllByIdIn(menuIds).stream().collect(
+                Collectors.toMap(Menu::getId, menu -> menu)
+        );
 
         if (menus.size() != menuIds.size()) {
             throw new IllegalArgumentException();
         }
 
         return request.getOrderLineItems().stream()
-                .map(i -> new OrderLineItem(i.getMenuId(), i.getQuantity()))
+                .map(i -> {
+                    Menu menu = menus.get(i.getMenuId());
+                    return new OrderLineItem(menu.getId(), menu.getName(),menu.getPrice(), i.getQuantity());
+                })
                 .collect(Collectors.toList());
     }
 

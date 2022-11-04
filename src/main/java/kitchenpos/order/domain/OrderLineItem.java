@@ -1,19 +1,17 @@
 package kitchenpos.order.domain;
 
+import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.Transient;
 
 @Embeddable
 public class OrderLineItem {
 
-    private Long seq;
-
-    @Transient
-    private Long orderId;
-
-    @Column(nullable = false)
     private Long menuId;
+
+    private String menuName;
+
+    private BigDecimal price;
 
     @Column(nullable = false)
     private long quantity;
@@ -21,36 +19,22 @@ public class OrderLineItem {
     public OrderLineItem() {
     }
 
-    public OrderLineItem(final Long menuId, final long quantity) {
+    public OrderLineItem(final Long menuId, final String menuName, final BigDecimal price, final long quantity) {
         this.menuId = menuId;
+        this.menuName = menuName;
+        this.price = price;
         this.quantity = quantity;
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
+    public BigDecimal getPrice() {
+        return price;
     }
 
-    public void setOrderId(final Long orderId) {
-        this.orderId = orderId;
-    }
-
-    public Long getOrderId() {
-        return orderId;
-    }
-
-    public Long getMenuId() {
-        return menuId;
-    }
-
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
+    public String getMenuName() {
+        return menuName;
     }
 
     public long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
     }
 }

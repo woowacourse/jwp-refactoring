@@ -7,6 +7,7 @@ import static kitchenpos.order.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.order.domain.Order;
@@ -27,7 +28,11 @@ class OrderTest {
     @Test
     void changeCompletionOrderStatus() {
         // arrange
-        List<OrderLineItem> items = List.of(new OrderLineItem(후라이드치킨_메뉴.id(), 1L));
+
+
+        List<OrderLineItem> items = List.of(
+                new OrderLineItem(후라이드치킨_메뉴.id(), 후라이드치킨_메뉴.이름(), BigDecimal.valueOf(후라이드치킨_메뉴.가격()), 1L)
+        );
         Order order = new Order(1L, LocalDateTime.now(), items);
         order.changeStatus(MEAL);
         order.changeStatus(COMPLETION);
@@ -41,7 +46,9 @@ class OrderTest {
     @Test
     void changeCookingToCompletion() {
         // arrange
-        List<OrderLineItem> items = List.of(new OrderLineItem(후라이드치킨_메뉴.id(), 1L));
+        List<OrderLineItem> items = List.of(
+                new OrderLineItem(후라이드치킨_메뉴.id(), 후라이드치킨_메뉴.이름(), BigDecimal.valueOf(후라이드치킨_메뉴.가격()), 1L)
+        );
         Order order = new Order(1L, LocalDateTime.now(), items);
 
         // act
@@ -53,7 +60,9 @@ class OrderTest {
     @Test
     void changeCookingToMeal() {
         // arrange
-        List<OrderLineItem> items = List.of(new OrderLineItem(후라이드치킨_메뉴.id(), 1L));
+        List<OrderLineItem> items = List.of(
+                new OrderLineItem(후라이드치킨_메뉴.id(), 후라이드치킨_메뉴.이름(), BigDecimal.valueOf(후라이드치킨_메뉴.가격()), 1L)
+        );
         Order order = new Order(1L, LocalDateTime.now(), items);
 
         // act
@@ -67,7 +76,9 @@ class OrderTest {
     @Test
     void changeMealToCooking() {
         // arrange
-        List<OrderLineItem> items = List.of(new OrderLineItem(후라이드치킨_메뉴.id(), 1L));
+        List<OrderLineItem> items = List.of(
+                new OrderLineItem(후라이드치킨_메뉴.id(), 후라이드치킨_메뉴.이름(), BigDecimal.valueOf(후라이드치킨_메뉴.가격()), 1L)
+        );
         Order order = new Order(1L, LocalDateTime.now(), items);
         order.changeStatus(MEAL);
 
@@ -80,7 +91,9 @@ class OrderTest {
     @Test
     void changeMealToCompletion() {
         // arrange
-        List<OrderLineItem> items = List.of(new OrderLineItem(후라이드치킨_메뉴.id(), 1L));
+        List<OrderLineItem> items = List.of(
+                new OrderLineItem(후라이드치킨_메뉴.id(), 후라이드치킨_메뉴.이름(), BigDecimal.valueOf(후라이드치킨_메뉴.가격()), 1L)
+        );
         Order order = new Order(1L, LocalDateTime.now(), items);
         order.changeStatus(MEAL);
 

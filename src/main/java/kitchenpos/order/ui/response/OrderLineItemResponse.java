@@ -1,20 +1,27 @@
 package kitchenpos.order.ui.response;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import java.math.BigDecimal;
 
 public class OrderLineItemResponse {
 
-    private final long menuId;
+    private final String name;
+    private final BigDecimal price;
     private final long quantity;
 
     @JsonCreator
-    public OrderLineItemResponse(final long menuId, final long quantity) {
-        this.menuId = menuId;
+    public OrderLineItemResponse(final String name, final BigDecimal price, final long quantity) {
+        this.name = name;
+        this.price = price;
         this.quantity = quantity;
     }
 
-    public long getMenuId() {
-        return menuId;
+    public String getName() {
+        return name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
     }
 
     public long getQuantity() {
