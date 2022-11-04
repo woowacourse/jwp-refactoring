@@ -7,8 +7,7 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderDao;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.ordertable.domain.OrderTableDao;
+import kitchenpos.order.support.OrderTableValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,29 +17,24 @@ public class OrderService {
 
     private final MenuDao menuDao;
     private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
+    private final OrderTableValidator orderTableValidator;
 
     public OrderService(
             MenuDao menuDao,
             OrderDao orderDao,
-            OrderTableDao orderTableDao
+            OrderTableValidator orderTableValidator
     ) {
         this.menuDao = menuDao;
         this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
+        this.orderTableValidator = orderTableValidator;
     }
 
     public OrderResponse create(Order request) {
         validateOrderLineItems(request);
 
-        OrderTable orderTable = orderTableDao.findById(request.getOrderTableId())
-                .orElseThrow(() -> new IllegalArgumentException("주문을 생성하기 위한 테이블이 존재하지 않습니다."));
+        Long orderTableId = orderTableValidator.validateOrderTable(request.getOrderTableId());
 
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("테이블이 비었습니다");
-        }
-
-        Order order = orderDao.save(Order.of(orderTable.getId(), OrderStatus.COOKING, request.getOrderLineItems()));
+        Order order = orderDao.save(Order.of(orderTableId, OrderStatus.COOKING, request.getOrderLineItems()));
         return new OrderResponse(order);
     }
 
