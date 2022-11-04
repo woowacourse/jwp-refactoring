@@ -1,10 +1,10 @@
-package kitchenpos.tablegroup;
+package kitchenpos.tablegroup.ui;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.ui.OrderTableRequest;
+import kitchenpos.tablegroup.domain.TableGroup;
 
 public class TableGroupRequest {
 

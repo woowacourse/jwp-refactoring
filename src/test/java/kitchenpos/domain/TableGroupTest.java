@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.util.List;
 import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

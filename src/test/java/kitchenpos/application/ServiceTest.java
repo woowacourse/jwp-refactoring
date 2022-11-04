@@ -9,8 +9,6 @@ import static kitchenpos.Fixture.테이블;
 import static kitchenpos.Fixture.테이블집합;
 
 import java.math.BigDecimal;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuDao;
 import kitchenpos.menugroup.domain.MenuGroup;
@@ -21,6 +19,8 @@ import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableDao;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductDao;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroupDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
