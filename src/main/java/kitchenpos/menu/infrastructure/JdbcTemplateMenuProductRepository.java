@@ -1,4 +1,4 @@
-package kitchenpos.menu.dao;
+package kitchenpos.menu.infrastructure;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
@@ -18,7 +18,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class JdbcTemplateMenuProductDao implements MenuProductRepository {
+public class JdbcTemplateMenuProductRepository implements MenuProductRepository {
 
     private static final String TABLE_NAME = "menu_product";
     private static final String KEY_COLUMN_NAME = "id";
@@ -26,7 +26,7 @@ public class JdbcTemplateMenuProductDao implements MenuProductRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    public JdbcTemplateMenuProductDao(final DataSource dataSource) {
+    public JdbcTemplateMenuProductRepository(final DataSource dataSource) {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName(TABLE_NAME)

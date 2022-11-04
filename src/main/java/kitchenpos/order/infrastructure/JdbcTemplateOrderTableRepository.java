@@ -1,4 +1,4 @@
-package kitchenpos.order.dao;
+package kitchenpos.order.infrastructure;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,7 +17,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class JdbcTemplateOrderTableDao implements OrderTableRepository {
+public class JdbcTemplateOrderTableRepository implements OrderTableRepository {
 
     private static final String TABLE_NAME = "order_table";
     private static final String KEY_COLUMN_NAME = "id";
@@ -25,7 +25,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    public JdbcTemplateOrderTableDao(final DataSource dataSource) {
+    public JdbcTemplateOrderTableRepository(final DataSource dataSource) {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName(TABLE_NAME)
