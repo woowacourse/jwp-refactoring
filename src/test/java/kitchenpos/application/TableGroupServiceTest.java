@@ -5,9 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import kitchenpos.order.domain.entity.Order;
-import kitchenpos.table.domain.entity.OrderTable;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.application.TableGroupService;
+import kitchenpos.table.domain.entity.OrderTable;
 import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.table.ui.dto.tablegroup.TableGroupCreateRequest;
 import kitchenpos.table.ui.dto.tablegroup.TableGroupCreateResponse;

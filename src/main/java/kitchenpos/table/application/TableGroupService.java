@@ -1,10 +1,10 @@
 package kitchenpos.table.application;
 
 import java.util.List;
-import kitchenpos.table.domain.collection.OrderTables;
-import kitchenpos.order.domain.collection.Orders;
-import kitchenpos.table.domain.entity.TableGroup;
 import kitchenpos.order.application.OrderService;
+import kitchenpos.order.domain.collection.Orders;
+import kitchenpos.table.domain.collection.OrderTables;
+import kitchenpos.table.domain.entity.TableGroup;
 import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.table.repository.TableGroupRepository;
 import kitchenpos.table.ui.dto.tablegroup.TableGroupCreateRequest;

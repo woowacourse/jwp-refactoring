@@ -2,19 +2,19 @@ package kitchenpos.order.application;
 
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.table.application.TableServiceAssistant;
+import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.domain.collection.OrderLineItems;
-import kitchenpos.table.domain.collection.OrderTables;
 import kitchenpos.order.domain.collection.Orders;
 import kitchenpos.order.domain.entity.Order;
 import kitchenpos.order.domain.entity.OrderStatus;
-import kitchenpos.table.domain.entity.OrderTable;
-import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.order.ui.dto.order.ChangeOrderStatusResponse;
 import kitchenpos.order.ui.dto.order.OrderCreateRequest;
 import kitchenpos.order.ui.dto.order.OrderCreateResponse;
 import kitchenpos.order.ui.dto.order.OrderListResponse;
+import kitchenpos.table.application.TableServiceAssistant;
+import kitchenpos.table.domain.collection.OrderTables;
+import kitchenpos.table.domain.entity.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

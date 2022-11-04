@@ -3,12 +3,12 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import kitchenpos.order.application.OrderService;
 import kitchenpos.order.domain.entity.Order;
 import kitchenpos.order.domain.entity.OrderStatus;
-import kitchenpos.table.domain.entity.OrderTable;
-import kitchenpos.order.application.OrderService;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.application.TableService;
+import kitchenpos.table.domain.entity.OrderTable;
 import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.table.ui.dto.ordertable.ChangeEmptyRequest;
 import kitchenpos.table.ui.dto.ordertable.ChangeNumberOfGuestsRequest;

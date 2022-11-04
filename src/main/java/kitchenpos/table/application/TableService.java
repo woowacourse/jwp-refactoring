@@ -2,8 +2,8 @@ package kitchenpos.table.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.table.domain.entity.OrderTable;
 import kitchenpos.order.application.OrderService;
+import kitchenpos.table.domain.entity.OrderTable;
 import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.table.ui.dto.ordertable.ChangeEmptyRequest;
 import kitchenpos.table.ui.dto.ordertable.ChangeEmptyResponse;

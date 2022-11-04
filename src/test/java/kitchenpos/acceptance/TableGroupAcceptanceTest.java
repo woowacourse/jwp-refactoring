@@ -1,6 +1,7 @@
 package kitchenpos.acceptance;
 
-import static kitchenpos.fixture.OrderTableFixture.*;
+import static kitchenpos.fixture.OrderTableFixture.ORDER_TABLE_1;
+import static kitchenpos.fixture.OrderTableFixture.ORDER_TABLE_2;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.restassured.response.ExtractableResponse;
