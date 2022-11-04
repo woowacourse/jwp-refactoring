@@ -9,17 +9,16 @@ import static org.mockito.BDDMockito.given;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.support.ServiceTest;
+import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.application.dto.MenuCreateRequest;
 import kitchenpos.menu.application.dto.MenuProductCreateRequest;
-import kitchenpos.menu.application.MenuService;
-import kitchenpos.menu.domain.MenuGroupRepository;
-import kitchenpos.menu.domain.MenuProductRepository;
-import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuGroupRepository;
+import kitchenpos.menu.domain.MenuProductRepository;
 import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
+import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -145,34 +144,5 @@ public class MenuServiceTest extends ServiceTest {
             assertThatThrownBy(() -> menuService.create(createRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
-    }
-
-    @Nested
-    @DisplayName("list 메서드는")
-    class ListMethod {
-        private static final long PRODUCT_A_ID = 1L;
-        private static final long PRODUCT_B_ID = 2L;
-        private static final long MENU_ID = 1L;
-
-        private MenuProduct menuProductA;
-        private MenuProduct menuProductB;
-
-//        @Test
-//        @DisplayName("전체 메뉴를 조회할 때, 메뉴상품도 같이 조회할 수 있다.")
-//        void success_getMenuProducts() {
-//            //given
-//            menuProductA = new MenuProduct(null, MENU_ID, PRODUCT_A_ID, 2);
-//            menuProductB = new MenuProduct(null, MENU_ID, PRODUCT_B_ID, 2);
-//
-//            given(menuProductDao.findAllByMenuId(1L))
-//                    .willReturn(Arrays.asList(menuProductA, menuProductB));
-//
-//            //when
-//            List<Menu> actual = menuService.list();
-//            Menu actualMenu = actual.iterator().next();
-//
-//            //then
-//            assertThat(actualMenu.getMenuProducts()).hasSize(2);
-//        }
     }
 }
