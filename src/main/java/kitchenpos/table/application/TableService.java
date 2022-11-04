@@ -32,9 +32,8 @@ public class TableService {
     @Transactional(readOnly = true)
     public List<OrderTableResponse> list() {
         final List<OrderTable> orderTables = orderTableRepository.findAll();
-        final List<OrderTableResponse> tableResponses = orderTables.stream().map(OrderTableResponse::from)
+        return orderTables.stream().map(OrderTableResponse::from)
                 .collect(Collectors.toList());
-        return tableResponses;
     }
 
     public OrderTableResponse changeEmpty(final Long orderTableId) {

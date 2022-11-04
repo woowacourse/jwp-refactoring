@@ -13,13 +13,16 @@ public class MenuProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-    //:todo 객체로 바꾸기
+
     @Column(name = "menu_id", nullable = false, updatable = false, insertable = false)
     private Long menuId;
+
     @Column
     private Long productId;
+
     @Column
     private long quantity;
+
     @Transient
     private BigDecimal price;
 
