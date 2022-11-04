@@ -62,11 +62,9 @@ public class OrderTable {
     }
 
     private void validateCookingOrMealOrderNotExistsWhenChangeEmpty() {
-        orderStatusRecords.forEach(orderStatusRecord -> {
-            if (orderStatusRecord.isNotCompleted()) {
-                throw new CookingOrMealOrderTableCannotChangeEmptyException();
-            }
-        });
+        if (orderStatusRecords.stream().anyMatch(OrderStatusRecord::isNotCompleted)) {
+            throw new CookingOrMealOrderTableCannotChangeEmptyException();
+        }
     }
 
     private void validateNotGrouped() {
@@ -102,11 +100,9 @@ public class OrderTable {
     }
 
     private void validateCookingOrMealOrderNotExistsWhenUngroup() {
-        orderStatusRecords.forEach(orderStatusRecord -> {
-            if (orderStatusRecord.isNotCompleted()) {
-                throw new CookingOrMealOrderTableCannotUngroupedException();
-            }
-        });
+        if (orderStatusRecords.stream().anyMatch(OrderStatusRecord::isNotCompleted)) {
+            throw new CookingOrMealOrderTableCannotUngroupedException();
+        }
     }
 
     public void add(final OrderStatusRecord orderStatusRecord) {
