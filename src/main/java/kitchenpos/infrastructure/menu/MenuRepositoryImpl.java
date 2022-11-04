@@ -2,6 +2,7 @@ package kitchenpos.infrastructure.menu;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.persistence.NoResultException;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuDao;
 import kitchenpos.domain.menu.MenuProduct;
@@ -23,17 +24,36 @@ public class MenuRepositoryImpl implements MenuRepository {
 
     @Override
     public Menu add(final Menu menu) {
-        final Menu savedMenu = menuDao.save(menu);
+        final var saved = menuDao.save(menu);
+        final var menuId = saved.getId();
+        final var menuProducts = menu.getMenuProducts();
+        if (isNewEntities(menuProducts)) {
+            final var savedMenuProducts = saveAllMenuProducts(menuProducts, menuId);
 
-        final Long menuId = savedMenu.getId();
-        final var savedMenuProducts = saveAllMenuProducts(menu.getMenuProducts(), menuId);
+            return new Menu(
+                    saved.getId(),
+                    saved.getName(),
+                    saved.getPrice(),
+                    saved.getMenuGroupId(),
+                    savedMenuProducts);
+        }
+        updateMenuProducts(menuProducts, menuId);
+        return get(saved.getId());
+    }
 
-        return new Menu(
-                savedMenu.getId(),
-                savedMenu.getName(),
-                savedMenu.getPrice(),
-                savedMenu.getMenuGroupId(),
-                savedMenuProducts);
+    private boolean isNewEntities(final List<MenuProduct> menuProducts) {
+        return menuProducts.get(0).isNew();
+    }
+
+    private void updateMenuProducts(final List<MenuProduct> menuProducts, final Long menuId) {
+        menuProducts.forEach(menuProduct -> {
+            final var entity = new MenuProduct(
+                    menuProduct.getSeq(),
+                    menuId,
+                    menuProduct.getProductId(),
+                    menuProduct.getQuantity());
+            menuProductDao.update(entity);
+        });
     }
 
     private List<MenuProduct> saveAllMenuProducts(final List<MenuProduct> menuProducts, final Long menuId) {
@@ -56,5 +76,19 @@ public class MenuRepositoryImpl implements MenuRepository {
         }
 
         return menus;
+    }
+
+    @Override
+    public Menu get(final Long id) {
+        final var menu = menuDao.findById(id)
+                .orElseThrow(NoResultException::new);
+        final var menuProducts = menuProductDao.findAllByMenuId(id);
+
+        return new Menu(
+                menu.getId(),
+                menu.getName(),
+                menu.getPrice(),
+                menu.getMenuGroupId(),
+                menuProducts);
     }
 }

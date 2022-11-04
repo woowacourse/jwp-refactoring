@@ -61,6 +61,15 @@ public class JdbcTemplateMenuProductDao implements MenuProductDao {
         return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
+    @Override
+    public void update(final MenuProduct entity) {
+        final String sql = "UPDATE menu_product SET menu_id = (:menuId) WHERE seq = (:seq)";
+        final SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("menuId", entity.getMenuId())
+                .addValue("seq", entity.getSeq());
+        jdbcTemplate.update(sql, parameters);
+    }
+
     private MenuProduct select(final Long id) {
         final String sql = "SELECT seq, menu_id, product_id, quantity FROM menu_product WHERE seq = (:seq)";
         final SqlParameterSource parameters = new MapSqlParameterSource()

@@ -8,6 +8,7 @@ import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.menu.ProductRepository;
 import kitchenpos.ui.dto.MenuRequest;
+import kitchenpos.ui.dto.MenuUpdateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,5 +52,19 @@ public class MenuService {
 
     public List<Menu> list() {
         return menus.getAll();
+    }
+
+    @Transactional
+    public Menu update(final Long menuId, final MenuUpdateRequest request) {
+        final var oldMenu = menus.get(menuId);
+        final var menuProducts = oldMenu.getMenuProducts();
+
+        final var updatedMenu = new Menu(
+                request.getName(),
+                request.getPrice(),
+                oldMenu.getMenuGroupId(),
+                menuProducts
+        );
+        return menus.add(updatedMenu);
     }
 }

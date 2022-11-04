@@ -14,4 +14,9 @@ public class MenuProductFakeDao extends BaseFakeDao<MenuProduct> implements Menu
                 .filter(menuProduct -> menuProduct.getMenuId().equals(menuId))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public void update(final MenuProduct entity) {
+        entities.put(entity.getSeq(), entity);
+    }
 }

@@ -7,4 +7,6 @@ public interface MenuRepository {
     Menu add(Menu menu);
 
     List<Menu> getAll();
+
+    Menu get(Long id);
 }

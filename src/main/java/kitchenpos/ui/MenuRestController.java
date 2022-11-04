@@ -7,9 +7,12 @@ import kitchenpos.application.MenuService;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.ui.dto.MenuRequest;
 import kitchenpos.ui.dto.MenuResponse;
+import kitchenpos.ui.dto.MenuUpdateRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -44,5 +47,14 @@ public class MenuRestController {
         return menus.stream()
                 .map(MenuResponse::from)
                 .collect(Collectors.toList());
+    }
+
+    @PutMapping("/api/menus/{menuId}")
+    public ResponseEntity<MenuResponse> changeMenuInfo(@PathVariable final Long menuId,
+                                                       @RequestBody final MenuUpdateRequest request) {
+        final var updated = menuService.update(menuId, request);
+        final var response = MenuResponse.from(updated);
+
+        return ResponseEntity.ok(response);
     }
 }
