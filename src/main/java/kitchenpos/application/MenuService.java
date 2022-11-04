@@ -47,7 +47,7 @@ public class MenuService {
         return Menu.create(
                 createMenuDto.getName(),
                 createMenuDto.getPrice(),
-                createMenuDto.getMenuGroupId(),
+                menuGroupRepository.findById(createMenuDto.getMenuGroupId()).orElseThrow(),
                 menuProducts
         );
     }

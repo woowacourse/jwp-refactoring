@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
 
 public class OrderDto {
 
@@ -33,9 +34,9 @@ public class OrderDto {
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
         Long id = order.getId();
         Long orderTableId = order.getOrderTableId();
-        String orderStatus = order.getOrderStatus();
+        OrderStatus orderStatus = order.getOrderStatus();
         LocalDateTime orderedTime = order.getOrderedTime();
-        return new OrderDto(id, orderTableId, orderStatus, orderedTime, toOrderLineItemDtos(orderLineItems));
+        return new OrderDto(id, orderTableId, orderStatus.name(), orderedTime, toOrderLineItemDtos(orderLineItems));
     }
 
     private static List<OrderLineItemDto> toOrderLineItemDtos(List<OrderLineItem> orderLineItems) {

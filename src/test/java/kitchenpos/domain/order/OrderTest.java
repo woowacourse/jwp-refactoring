@@ -41,9 +41,9 @@ class OrderTest {
         final OrderTable testOrderTable1 = getTestOrderTable1();
         final Order order = Order.create(testOrderTable1.getId(), List.of(orderLineItem));
 
-        order.changeOrderStatus(OrderStatus.MEAL.name());
+        order.changeOrderStatus(OrderStatus.MEAL);
 
-        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.MEAL);
     }
 
     @Test
@@ -53,9 +53,9 @@ class OrderTest {
         final OrderLineItem orderLineItem = new OrderLineItem(testMenu.getId(), 1);
         final OrderTable testOrderTable1 = getTestOrderTable1();
         final Order order = Order.create(testOrderTable1.getId(), List.of(orderLineItem));
-        order.changeOrderStatus(OrderStatus.COMPLETION.name());
+        order.changeOrderStatus(OrderStatus.COMPLETION);
 
-        assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.MEAL.name()))
+        assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.MEAL))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

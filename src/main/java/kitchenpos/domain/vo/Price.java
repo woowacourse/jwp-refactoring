@@ -8,6 +8,7 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class Price {
 
+
     protected Price() {
     }
 

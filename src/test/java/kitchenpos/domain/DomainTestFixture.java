@@ -36,7 +36,7 @@ public class DomainTestFixture {
                 1L,
                 "테스트 메뉴",
                 Price.valueOf(BigDecimal.valueOf(2500L)),
-                getTestMenuGroup().getId(),
+                getTestMenuGroup(),
                 List.of(
                         new MenuProduct(getTestProduct1().getId(), 1),
                         new MenuProduct(getTestProduct2().getId(), 1)

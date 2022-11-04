@@ -78,17 +78,17 @@ class OrderRepositoryTest extends RepositoryTest {
         final OrderLineItem orderLineItem2 = new OrderLineItem(menu.getId(), 1);
         final Order order2 = Order.create(orderTable2.getId(), List.of(orderLineItem2));
         final Order savedOrder2 = orderRepository.save(order2);
-        savedOrder2.changeOrderStatus(OrderStatus.MEAL.name());
+        savedOrder2.changeOrderStatus(OrderStatus.MEAL);
         orderRepository.save(savedOrder2);
 
         final boolean existTrue = orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTable2.getId(),
-                List.of(OrderStatus.MEAL.name())
+                List.of(OrderStatus.MEAL)
         );
 
         final boolean existFalse = orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTable1.getId(),
-                List.of(OrderStatus.MEAL.name())
+                List.of(OrderStatus.MEAL)
         );
 
         assertAll(
@@ -107,17 +107,17 @@ class OrderRepositoryTest extends RepositoryTest {
         final OrderLineItem orderLineItem2 = new OrderLineItem(menu.getId(), 1);
         final Order order2 = Order.create(orderTable2.getId(), List.of(orderLineItem2));
         final Order savedOrder2 = orderRepository.save(order2);
-        savedOrder2.changeOrderStatus(OrderStatus.MEAL.name());
+        savedOrder2.changeOrderStatus(OrderStatus.MEAL);
         orderRepository.save(savedOrder2);
 
         final boolean existTrue = orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 List.of(orderTable1.getId(), orderTable2.getId()),
-                List.of(OrderStatus.MEAL.name())
+                List.of(OrderStatus.MEAL)
         );
 
         final boolean existFalse = orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 List.of(orderTable1.getId(), orderTable2.getId()),
-                List.of(OrderStatus.COMPLETION.name())
+                List.of(OrderStatus.COMPLETION)
         );
 
         assertAll(

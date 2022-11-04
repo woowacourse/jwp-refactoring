@@ -17,12 +17,6 @@ public class FindOrderTableInOrderStatusService {
     }
 
     public boolean existByOrderStatus(final Long orderTableId, final List<OrderStatus> orderStatuses) {
-        return orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, mapToName(orderStatuses));
-    }
-
-    private List<String> mapToName(final List<OrderStatus> orderStatuses) {
-        return orderStatuses.stream()
-                .map(Enum::name)
-                .collect(Collectors.toList());
+        return orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, orderStatuses);
     }
 }

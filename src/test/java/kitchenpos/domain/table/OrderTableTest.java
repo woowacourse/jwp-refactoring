@@ -1,6 +1,7 @@
 package kitchenpos.domain.table;
 
 import static kitchenpos.domain.DomainTestFixture.*;
+import static kitchenpos.domain.DomainTestFixture.getTestOrderTable2;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
@@ -8,10 +9,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import kitchenpos.domain.DomainTestFixture;
+import java.time.LocalDateTime;
+import java.util.List;
 import kitchenpos.domain.service.FindOrderTableInOrderStatusService;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +23,7 @@ class OrderTableTest {
         final OrderTable orderTable = OrderTable.create();
 
         assertAll(
-                () -> assertThat(orderTable.getTableGroupId()).isNull(),
+                () -> assertThat(orderTable.getTableGroup()).isNull(),
                 () -> assertThat(orderTable.getNumberOfGuests()).isEqualTo(0)
         );
     }
@@ -32,13 +32,20 @@ class OrderTableTest {
     @DisplayName("테이블이 그룹에 속했는지 확인한다.")
     void isGrouped() {
         final OrderTable testOrderTable1 = getTestOrderTable1();
-        testOrderTable1.joinTableGroup(1L);
         final OrderTable testOrderTable2 = getTestOrderTable2();
-        testOrderTable2.ungroup();
+        testOrderTable1.joinTableGroup(
+                new TableGroup(
+                        1L,
+                        LocalDateTime.now(),
+                        List.of(testOrderTable1, testOrderTable2)
+                )
+        );
+        final OrderTable testOrderTable3 = getTestOrderTable2();
+        testOrderTable3.ungroup();
 
         assertAll(
                 () -> assertThat(testOrderTable1.isGrouped()).isTrue(),
-                () -> assertThat(testOrderTable2.isGrouped()).isFalse()
+                () -> assertThat(testOrderTable3.isGrouped()).isFalse()
         );
     }
 
@@ -65,7 +72,14 @@ class OrderTableTest {
     @DisplayName("테이블을 테이블 그룹에 소속시킨다.")
     void joinTableGroup() {
         final OrderTable testOrderTable1 = getTestOrderTable1();
-        testOrderTable1.joinTableGroup(1L);
+        final OrderTable testOrderTable2 = getTestOrderTable2();
+        testOrderTable1.joinTableGroup(
+                new TableGroup(
+                        1L,
+                        LocalDateTime.now(),
+                        List.of(testOrderTable1, testOrderTable2)
+                )
+        );
 
         assertThat(testOrderTable1.getTableGroupId()).isEqualTo(1L);
     }
@@ -74,11 +88,18 @@ class OrderTableTest {
     @DisplayName("테이블을 그룹에서 해제시킨다.")
     void ungroup() {
         final OrderTable testOrderTable1 = getTestOrderTable1();
-        testOrderTable1.joinTableGroup(1L);
+        final OrderTable testOrderTable2 = getTestOrderTable2();
+        testOrderTable1.joinTableGroup(
+                new TableGroup(
+                        1L,
+                        LocalDateTime.now(),
+                        List.of(testOrderTable1, testOrderTable2)
+                )
+        );
 
         testOrderTable1.ungroup();
 
-        assertThat(testOrderTable1.getTableGroupId()).isNull();
+        assertThat(testOrderTable1.getTableGroup()).isNull();
     }
 
     @Test

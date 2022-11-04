@@ -19,13 +19,13 @@ import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuProductRepository;
+import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
-import kitchenpos.domain.vo.Price;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -57,6 +57,9 @@ public abstract class ServiceTest {
     @Autowired
     protected MenuProductRepository menuProductRepository;
 
+    @Autowired
+    protected MenuRepository menuRepository;
+
     protected Product 토마토파스타;
     protected Product 목살스테이크;
     protected Product 탄산음료;
@@ -66,15 +69,15 @@ public abstract class ServiceTest {
     protected MenuGroup 음료;
     protected MenuGroup 세트;
 
-    protected Menu 파스타한상;
+    protected MenuDto 파스타한상;
 
-    protected OrderTable 빈_테이블1;
-    protected OrderTable 빈_테이블2;
+    protected TableDto 빈_테이블1;
+    protected TableDto 빈_테이블2;
 
-    protected OrderTable 손님있는_식사중_테이블;
-    protected OrderTable 손님있는_테이블;
+    protected TableDto 손님있는_식사중_테이블;
+    protected TableDto 손님있는_테이블;
 
-    protected Order 식사중인_주문;
+    protected OrderDto 식사중인_주문;
 
     @BeforeEach
     void setUp() {
@@ -136,11 +139,11 @@ public abstract class ServiceTest {
                 .collect(Collectors.toList());
     }
 
-    public Menu 메뉴_등록(final String name, final Long price, final MenuGroup menuGroup, final Long... productIds) {
+    public MenuDto 메뉴_등록(final String name, final Long price, final MenuGroup menuGroup, final Long... productIds) {
         final List<MenuProduct> menuProducts = Arrays.stream(productIds)
                 .map(MenuProduct::new)
                 .collect(Collectors.toList());
-        final Menu menu = Menu.create(name, createBigDecimalPrice(price), menuGroup.getId(), menuProducts);
+        final Menu menu = Menu.create(name, createBigDecimalPrice(price), menuGroup, menuProducts);
         final List<CreateMenuProductDto> createMenuProductDtos = menu.getMenuProducts()
                 .stream()
                 .map(menuProduct ->
@@ -152,9 +155,7 @@ public abstract class ServiceTest {
                 menu.getMenuGroupId(),
                 createMenuProductDtos
         );
-        final MenuDto menuDto = menuService.create(createMenuDto);
-
-        return makeMenu(menuDto);
+        return menuService.create(createMenuDto);
     }
 
     private BigDecimal createBigDecimalPrice(final Long price) {
@@ -164,130 +165,54 @@ public abstract class ServiceTest {
         return BigDecimal.valueOf(price);
     }
 
-    public List<Menu> 메뉴_전체_조회() {
-        return menuService.list()
-                .stream()
-                .map(this::makeMenu)
-                .collect(Collectors.toList());
+    public List<MenuDto> 메뉴_전체_조회() {
+        return menuService.list();
     }
 
-    private Menu makeMenu(final MenuDto menuDto) {
-        final List<MenuProduct> menuProducts = menuDto.getMenuProducts()
-                .stream()
-                .map(dto -> new MenuProduct(dto.getSeq(), dto.getMenuId(), dto.getProductId(), dto.getQuantity()))
-                .collect(Collectors.toList());
-        return new Menu(
-                menuDto.getId(),
-                menuDto.getName(),
-                Price.valueOf(menuDto.getPrice()),
-                menuDto.getMenuGroupId(),
-                menuProducts
-        );
-    }
-
-    public Menu 메뉴_찾기(final Long id) {
+    public MenuDto 메뉴_찾기(final Long id) {
         return 메뉴_전체_조회().stream()
                 .filter(menu -> menu.getId().equals(id))
                 .findFirst()
                 .orElseThrow();
     }
 
-    public List<MenuProduct> 메뉴_상품_조회(final Menu menu) {
-        return menuProductRepository.findAllByMenuId(menu.getId());
-    }
-
-    public OrderTable 테이블_등록() {
+    public TableDto 테이블_등록() {
         final OrderTable orderTable = OrderTable.create();
-        final TableDto tableDto = tableService.create(orderTable.getNumberOfGuests(), orderTable.isEmpty());
-
-        return new OrderTable(
-                tableDto.getId(),
-                tableDto.getTableGroupId(),
-                tableDto.getNumberOfGuests(),
-                tableDto.getEmpty()
-        );
+        return tableService.create(orderTable.getNumberOfGuests(), orderTable.isEmpty());
     }
 
-    public OrderTable 손님_채운_테이블_생성(final int numberOfGuests) {
-        final TableDto tableDto = tableService.create(numberOfGuests, false);
-        return new OrderTable(
-                tableDto.getId(),
-                tableDto.getTableGroupId(),
-                tableDto.getNumberOfGuests(),
-                tableDto.getEmpty()
-        );
+    public TableDto 손님_채운_테이블_생성(final int numberOfGuests) {
+        return tableService.create(numberOfGuests, false);
     }
 
-    public List<OrderTable> 테이블_전체_조회() {
-        return tableService.list()
-                .stream()
-                .map(tableDto ->
-                        new OrderTable(
-                                tableDto.getId(),
-                                tableDto.getTableGroupId(),
-                                tableDto.getNumberOfGuests(),
-                                tableDto.getEmpty()
-                        )
-                )
-                .collect(Collectors.toList());
+    public List<TableDto> 테이블_전체_조회() {
+        return tableService.list();
     }
 
-    public OrderTable 테이블_손님_수_변경(final Long orderTableId, final int numberOfGuests) {
-        final TableDto tableDto = tableService.changeNumberOfGuests(orderTableId, numberOfGuests);
-        return new OrderTable(
-                tableDto.getId(),
-                tableDto.getTableGroupId(),
-                tableDto.getNumberOfGuests(),
-                tableDto.getEmpty()
-        );
+    public TableDto 테이블_손님_수_변경(final Long orderTableId, final int numberOfGuests) {
+        return tableService.changeNumberOfGuests(orderTableId, numberOfGuests);
     }
 
-    public OrderTable 테이블_채움(final Long orderTableId) {
-        final TableDto tableDto = tableService.changeEmpty(orderTableId, false);
-        return new OrderTable(
-                tableDto.getId(),
-                tableDto.getTableGroupId(),
-                tableDto.getNumberOfGuests(),
-                tableDto.getEmpty()
-        );
+    public TableDto 테이블_채움(final Long orderTableId) {
+        return tableService.changeEmpty(orderTableId, false);
     }
 
-    public OrderTable 테이블_비움(final Long orderTableId) {
-        final TableDto tableDto = tableService.changeEmpty(orderTableId, true);
-        return new OrderTable(
-                tableDto.getId(),
-                tableDto.getTableGroupId(),
-                tableDto.getNumberOfGuests(),
-                tableDto.getEmpty()
-        );
+    public TableDto 테이블_비움(final Long orderTableId) {
+        return tableService.changeEmpty(orderTableId, true);
     }
 
-    public TableGroup 테이블을_그룹으로_묶는다(final OrderTable... tables) {
+    public TableGroupDto 테이블을_그룹으로_묶는다(final TableDto... tables) {
         final List<Long> tableIds = Stream.of(tables)
-                .map(OrderTable::getId)
+                .map(TableDto::getId)
                 .collect(Collectors.toList());
-        final TableGroupDto tableGroupDto = tableGroupService.create(tableIds);
-        final List<OrderTable> orderTables = tableGroupDto.getOrderTables()
-                .stream().map(tableDto ->
-                        new OrderTable(
-                                tableDto.getId(),
-                                tableDto.getTableGroupId(),
-                                tableDto.getNumberOfGuests(),
-                                tableDto.getEmpty()
-                        )
-                ).collect(Collectors.toList());
-        return new TableGroup(
-                tableGroupDto.getId(),
-                tableGroupDto.getCreatedDate(),
-                orderTables
-        );
+        return tableGroupService.create(tableIds);
     }
 
-    public void 테이블_그룹을_해제한다(final TableGroup tableGroup) {
+    public void 테이블_그룹을_해제한다(final TableGroupDto tableGroup) {
         tableGroupService.ungroup(tableGroup.getId());
     }
 
-    public Order 주문_요청한다(final OrderTable orderTable, final Long... menuIds) {
+    public OrderDto 주문_요청한다(final TableDto orderTable, final Long... menuIds) {
         final List<OrderLineItem> orderLineItems = Arrays.stream(menuIds)
                 .map(menuId -> new OrderLineItem(menuId, 1))
                 .collect(Collectors.toList());
@@ -305,51 +230,14 @@ public abstract class ServiceTest {
                 orderTable.getId(),
                 createOrderLineItemDtos
         );
-        final OrderDto orderDto = orderService.create(createOrderDto);
-        final List<OrderLineItem> savedOrderLineItems = orderDto.getOrderLineItems().stream()
-                .map(dto -> new OrderLineItem(dto.getSeq(), dto.getOrderId(), dto.getMenuId(), dto.getQuantity()))
-                .collect(Collectors.toList());
-
-        return new Order(
-                orderDto.getId(),
-                orderDto.getOrderTableId(),
-                orderDto.getOrderStatus(),
-                orderDto.getOrderedTime(),
-                savedOrderLineItems
-        );
+        return orderService.create(createOrderDto);
     }
 
-    public List<Order> 모든_주문_조회() {
-        return orderService.list()
-                .stream()
-                .map(orderDto ->
-                        new Order(
-                                orderDto.getId(),
-                                orderDto.getOrderTableId(),
-                                orderDto.getOrderStatus(),
-                                orderDto.getOrderedTime()
-                        )
-                )
-                .collect(Collectors.toList());
+    public OrderDto 주문을_식사_상태로_만든다(final OrderDto order) {
+        return orderService.changeOrderStatus(order.getId(), OrderStatus.MEAL);
     }
 
-    public Order 주문을_식사_상태로_만든다(final Order order) {
-        final OrderDto orderDto = orderService.changeOrderStatus(order.getId(), OrderStatus.MEAL);
-        return new Order(
-                orderDto.getId(),
-                orderDto.getOrderTableId(),
-                orderDto.getOrderStatus(),
-                orderDto.getOrderedTime()
-        );
-    }
-
-    public Order 주문을_완료_상태로_만든다(final Order order) {
-        final OrderDto orderDto = orderService.changeOrderStatus(order.getId(), OrderStatus.COMPLETION);
-        return new Order(
-                orderDto.getId(),
-                orderDto.getOrderTableId(),
-                orderDto.getOrderStatus(),
-                orderDto.getOrderedTime()
-        );
+    public OrderDto 주문을_완료_상태로_만든다(final OrderDto order) {
+        return orderService.changeOrderStatus(order.getId(), OrderStatus.COMPLETION);
     }
 }

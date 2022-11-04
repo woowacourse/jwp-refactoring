@@ -27,7 +27,7 @@ class MenuTest {
         return Menu.create(
                 "테스트 메뉴",
                 BigDecimal.valueOf(1000L),
-                getTestMenuGroup().getId(),
+                getTestMenuGroup(),
                 List.of(testMenuProduct1, testMenuProduct2)
         );
     }

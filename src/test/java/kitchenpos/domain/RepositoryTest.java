@@ -73,7 +73,7 @@ public abstract class RepositoryTest {
         final Menu menu = Menu.create(
                 "테스트메뉴",
                 BigDecimal.valueOf(2500L),
-                menuGroup.getId(),
+                menuGroup,
                 List.of(menuProduct1, menuProduct2)
         );
 

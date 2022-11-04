@@ -1,32 +1,36 @@
 package kitchenpos.domain.table;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
+@Entity
 public class TableGroup {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false)
     private LocalDateTime createdDate;
-    private List<OrderTable> orderTables = new ArrayList<>();
+
+    private OrderTables orderTables = new OrderTables();
+
+    protected TableGroup() {
+    }
 
     public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         this.id = id;
         this.createdDate = createdDate;
-        this.orderTables = orderTables;
+        this.orderTables = new OrderTables(orderTables);
     }
 
     public static TableGroup of(final List<OrderTable> orderTables) {
-        orderTables.forEach(TableGroup::validateTableGrouping);
-        return new TableGroup(null, LocalDateTime.now(), new ArrayList<>(orderTables));
-    }
-
-    private static void validateTableGrouping(final OrderTable orderTable) {
-        if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
-        }
+        return new TableGroup(null, LocalDateTime.now(), orderTables);
     }
 
     public Long getId() {
@@ -38,6 +42,6 @@ public class TableGroup {
     }
 
     public List<OrderTable> getOrderTables() {
-        return orderTables;
+        return orderTables.getValues();
     }
 }

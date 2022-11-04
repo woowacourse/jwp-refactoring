@@ -163,8 +163,7 @@ public class AcceptanceTest {
         final List<MenuProduct> menuProducts = productIds.stream()
                 .map(MenuProduct::new)
                 .collect(Collectors.toList());
-        final Menu menu = Menu.create(name, BigDecimal.valueOf(price), menuGroupId, menuProducts);
-        final List<CreateMenuProductRequest> createMenuProductRequests = menu.getMenuProducts()
+        final List<CreateMenuProductRequest> createMenuProductRequests = menuProducts
                 .stream()
                 .map(menuProduct -> new CreateMenuProductRequest(menuProduct.getProductId(), menuProduct.getQuantity()))
                 .collect(Collectors.toList());

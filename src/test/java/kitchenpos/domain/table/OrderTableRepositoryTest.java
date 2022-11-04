@@ -1,11 +1,9 @@
 package kitchenpos.domain.table;
 
-import static kitchenpos.domain.DomainTestFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
-import kitchenpos.domain.DomainTestFixture;
 import kitchenpos.domain.RepositoryTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,7 +17,7 @@ class OrderTableRepositoryTest extends RepositoryTest {
         final OrderTable savedTable = orderTableRepository.save(orderTable);
 
         assertAll(
-                () -> assertThat(savedTable.getTableGroupId()).isEqualTo(orderTable.getTableGroupId()),
+                () -> assertThat(savedTable.getTableGroup()).isEqualTo(orderTable.getTableGroup()),
                 () -> assertThat(savedTable.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests())
         );
     }
@@ -34,7 +32,7 @@ class OrderTableRepositoryTest extends RepositoryTest {
 
         assertAll(
                 () -> assertThat(findTable.getId()).isEqualTo(savedTable.getId()),
-                () -> assertThat(findTable.getTableGroupId()).isEqualTo(savedTable.getTableGroupId()),
+                () -> assertThat(findTable.getTableGroup()).isEqualTo(savedTable.getTableGroup()),
                 () -> assertThat(findTable.getNumberOfGuests()).isEqualTo(savedTable.getNumberOfGuests())
         );
     }
@@ -69,8 +67,8 @@ class OrderTableRepositoryTest extends RepositoryTest {
         final OrderTable orderTable2 = OrderTable.create();
         final TableGroup tableGroup = TableGroup.of(List.of(orderTable1, orderTable2));
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-        orderTable1.joinTableGroup(savedTableGroup.getId());
-        orderTable2.joinTableGroup(savedTableGroup.getId());
+        orderTable1.joinTableGroup(savedTableGroup);
+        orderTable2.joinTableGroup(savedTableGroup);
         final OrderTable savedTable1 = orderTableRepository.save(orderTable1);
         final OrderTable savedTable2 = orderTableRepository.save(orderTable2);
 

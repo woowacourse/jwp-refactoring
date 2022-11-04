@@ -19,7 +19,7 @@ class MenuRepositoryTest extends RepositoryTest {
         final Menu newMenu = Menu.create(
                 "메뉴생성",
                 BigDecimal.valueOf(3000L),
-                menuGroup.getId(),
+                menuGroup,
                 List.of(testMenuProduct1, testMenuProduct2)
         );
 
@@ -61,7 +61,7 @@ class MenuRepositoryTest extends RepositoryTest {
         final Menu newMenu = Menu.create(
                 "메뉴생성",
                 BigDecimal.valueOf(3000L),
-                menuGroup.getId(),
+                menuGroup,
                 List.of(testMenuProduct1, testMenuProduct2)
         );
 
@@ -80,7 +80,7 @@ class MenuRepositoryTest extends RepositoryTest {
         final Menu newMenu = Menu.create(
                 "메뉴생성",
                 BigDecimal.valueOf(3000L),
-                menuGroup.getId(),
+                menuGroup,
                 List.of(testMenuProduct1, testMenuProduct2)
         );
 

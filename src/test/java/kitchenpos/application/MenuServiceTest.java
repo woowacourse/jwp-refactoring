@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
+import kitchenpos.application.dto.MenuDto;
+import kitchenpos.application.dto.MenuProductDto;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
@@ -18,12 +20,12 @@ class MenuServiceTest extends ServiceTest {
     @Test
     @DisplayName("메뉴를 추가할 수 있다.")
     void create() {
-        final Menu menu1 = 메뉴_등록("런치세트", 15000L, 세트, 토마토파스타.getId(), 탄산음료.getId());
-        final Menu menu2 = 메뉴_등록("목살스테이크", 20000L, 스테이크, 목살스테이크.getId());
+        final MenuDto menu1 = 메뉴_등록("런치세트", 15000L, 세트, 토마토파스타.getId(), 탄산음료.getId());
+        final MenuDto menu2 = 메뉴_등록("목살스테이크", 20000L, 스테이크, 목살스테이크.getId());
 
-        final List<Menu> findMenus = 메뉴_전체_조회();
-        final Menu findMenu1 = 메뉴_찾기(menu1.getId());
-        final Menu findMenu2 = 메뉴_찾기(menu2.getId());
+        final List<MenuDto> findMenus = 메뉴_전체_조회();
+        final MenuDto findMenu1 = 메뉴_찾기(menu1.getId());
+        final MenuDto findMenu2 = 메뉴_찾기(menu2.getId());
 
         assertAll(
                 () -> assertThat(findMenus).usingElementComparatorIgnoringFields("menuProducts")
@@ -82,9 +84,9 @@ class MenuServiceTest extends ServiceTest {
     @Test
     @DisplayName("메뉴가 등록될 때 메뉴 상품도 같이 등록한다.")
     void createWithMenuProducts() {
-        final Menu menu = 메뉴_등록("런치세트", 15000L, 세트, 토마토파스타.getId(), 탄산음료.getId());
+        final MenuDto menu = 메뉴_등록("런치세트", 15000L, 세트, 토마토파스타.getId(), 탄산음료.getId());
 
-        final List<MenuProduct> menuProducts = menu.getMenuProducts();
+        final List<MenuProductDto> menuProducts = menu.getMenuProducts();
 
         assertThat(menuProducts).extracting("productId")
                 .contains(토마토파스타.getId(), 탄산음료.getId());
