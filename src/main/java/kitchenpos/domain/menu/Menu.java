@@ -32,7 +32,7 @@ public class Menu {
     private MenuGroup menuGroup;
 
     @Embedded
-    private MenuProducts menuProducts = new MenuProducts();
+    private MenuProducts menuProducts;
 
     protected Menu() {
     }
@@ -50,10 +50,7 @@ public class Menu {
     }
 
     public Menu(final Long id, final String name, final Price price, final MenuGroup menuGroup) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
-        this.menuGroup = menuGroup;
+        this(id, name, price, menuGroup, new ArrayList<>());
     }
 
     public static Menu create(final String name,

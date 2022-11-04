@@ -43,10 +43,6 @@ public class MenuProduct {
         this(productId, 1);
     }
 
-    public void changeMenu(final Menu menu) {
-        this.menu = menu;
-    }
-
     public Long getSeq() {
         return seq;
     }

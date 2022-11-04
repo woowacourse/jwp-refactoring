@@ -2,6 +2,7 @@ package kitchenpos.domain.order;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
@@ -18,12 +19,13 @@ public class OrderLineItems {
 
     public OrderLineItems(final List<OrderLineItem> values, final Order order) {
         addAll(values, order);
-        this.values = values;
     }
 
     private void addAll(final List<OrderLineItem> orderLineItems, final Order order) {
-        orderLineItems.forEach(orderLineItem -> orderLineItem.changeOrder(order));
-        values.addAll(orderLineItems);
+        final List<OrderLineItem> orderInserted = orderLineItems.stream()
+                .map(orderLineItem -> new OrderLineItem(order, orderLineItem.getMenuId(), orderLineItem.getQuantity()))
+                .collect(Collectors.toList());
+        values.addAll(orderInserted);
     }
 
     public List<OrderLineItem> getValues() {

@@ -41,7 +41,8 @@ class MenuTest {
         assertAll(
                 () -> assertThat(menu.getName()).isEqualTo("테스트 메뉴"),
                 () -> assertThat(menu.getMenuGroupId()).isEqualTo(testMenuGroup.getId()),
-                () -> assertThat(menu.getMenuProducts()).containsExactly(testMenuProduct1, testMenuProduct2),
+                () -> assertThat(menu.getMenuProducts()).extracting("seq")
+                        .containsExactly(testMenuProduct1.getSeq(), testMenuProduct2.getSeq()),
                 () -> assertThat(menu.getPrice().longValue()).isEqualTo(1000L)
         );
     }

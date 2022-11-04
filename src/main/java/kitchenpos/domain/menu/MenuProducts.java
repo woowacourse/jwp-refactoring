@@ -2,6 +2,7 @@ package kitchenpos.domain.menu;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
@@ -17,12 +18,13 @@ public class MenuProducts {
 
     public MenuProducts(final List<MenuProduct> values, final Menu menu) {
         addAll(values, menu);
-        this.values = values;
     }
 
     private void addAll(final List<MenuProduct> menuProducts, final Menu menu) {
-        menuProducts.forEach(menuProduct -> menuProduct.changeMenu(menu));
-        values.addAll(menuProducts);
+        final List<MenuProduct> menuInserted = menuProducts.stream()
+                .map(menuProduct -> new MenuProduct(menu, menuProduct.getProductId(), menuProduct.getQuantity()))
+                .collect(Collectors.toList());
+        values.addAll(menuInserted);
     }
 
     public List<MenuProduct> getValues() {

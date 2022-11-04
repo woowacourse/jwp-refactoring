@@ -28,18 +28,14 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(final Long seq, final Long menuId, final Long quantity) {
-        this.seq = seq;
+    public OrderLineItem(final Order order, final Long menuId, final Long quantity) {
+        this.order = order;
         this.menuId = menuId;
         this.quantity = quantity;
     }
 
     public OrderLineItem(final Long menuId, final long quantity) {
         this(null, menuId, quantity);
-    }
-
-    public void changeOrder(final Order order) {
-        this.order = order;
     }
 
     public Long getSeq() {

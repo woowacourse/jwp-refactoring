@@ -20,7 +20,6 @@ public class OrderTables {
     public OrderTables(final List<OrderTable> values, final TableGroup tableGroup) {
         values.forEach(this::validateTableGrouping);
         addAll(values, tableGroup);
-        this.values = values;
     }
 
     private void addAll(final List<OrderTable> orderTables, final TableGroup tableGroup) {
