@@ -2,17 +2,16 @@ package kitchenpos.table.application;
 
 import static java.util.stream.Collectors.*;
 
-import kitchenpos.table.validator.TableValidator;
-import kitchenpos.table.domain.OrderTableRepository;
+import java.util.List;
 import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.dto.OrderTableChangeEmptyRequest;
-import kitchenpos.table.dto.OrderTableSaveRequest;
-import kitchenpos.table.dto.OrderTableResponse;
 import kitchenpos.table.dto.OrderTableChangeNumberOfGuestsRequest;
+import kitchenpos.table.dto.OrderTableResponse;
+import kitchenpos.table.dto.OrderTableSaveRequest;
+import kitchenpos.table.validator.TableValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

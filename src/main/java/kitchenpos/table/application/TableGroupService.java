@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Objects;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
-import kitchenpos.table.domain.TableGroupRepository;
-import kitchenpos.table.validator.TableGroupValidator;
 import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.domain.TableGroupRepository;
 import kitchenpos.table.dto.TableGroupResponse;
 import kitchenpos.table.dto.TableGroupSaveRequest;
+import kitchenpos.table.validator.TableGroupValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
