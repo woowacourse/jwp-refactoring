@@ -1,11 +1,8 @@
 package kitchenpos.table.application;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dto.request.TableGroupRequest;
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.domain.TableGroup;
@@ -16,13 +13,14 @@ import org.springframework.util.CollectionUtils;
 
 @Service
 public class TableGroupService {
-    private final OrderRepository orderRepository;
+    private final Validator tableGroupValidator;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository,
+    public TableGroupService(final Validator tableGroupValidator,
+                             final OrderTableRepository orderTableRepository,
                              final TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
+        this.tableGroupValidator = tableGroupValidator;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
@@ -57,10 +55,7 @@ public class TableGroupService {
                 .orElseThrow(() -> new IllegalArgumentException("테이블 그룹이 존재하지 않습니다."));
 
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
-        if (orderRepository.existsByOrderTableInAndOrderStatusIn(
-                orderTables, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException("주문이 요리중이거나 식사중이여서 변경할 수 없습니다.");
-        }
+        tableGroupValidator.validateOrdersStatus(orderTables);
 
         for (final OrderTable orderTable : orderTables) {
             orderTable.cancelGroup();
