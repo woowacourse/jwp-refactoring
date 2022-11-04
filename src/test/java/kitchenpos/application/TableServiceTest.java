@@ -91,16 +91,14 @@ public class TableServiceTest {
     @Test
     void changeEmpty_tableGroupIdNonNull_throwsException() {
         // given
-        final OrderTable orderTable = ORDER_TABLE_NOT_EMPTY.createWithIdNull();
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(3, true));
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), Arrays.asList(orderTable));
         tableGroupRepository.save(tableGroup);
-        orderTable.setTableGroupId(1L);
-        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final OrderTableRequest orderTableRequest = new OrderTableRequest(true);
 
         // when, then
-        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), orderTableRequest))
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), orderTableRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -112,7 +110,6 @@ public class TableServiceTest {
 
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), Arrays.asList(orderTable));
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-        orderTable.setTableGroupId(savedTableGroup.getId());
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final OrderLineItem orderLineItem = new OrderLineItem(1L, 3);

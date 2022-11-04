@@ -144,21 +144,22 @@ public class TableGroupServiceTest {
         final MenuProduct menuProduct = new MenuProduct(product, 3);
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
         final Menu menu = menuRepository.save(
-                new Menu("menu", BigDecimal.valueOf(3000), menuGroup, Arrays.asList(menuProduct)));
+                new Menu("menu", BigDecimal.valueOf(9000), menuGroup, Arrays.asList(menuProduct)));
 
         final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(3, true));
         final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(4, true));
-        final List<Long> orderTableIds = Arrays.asList(orderTable1.getId(), orderTable2.getId());
         final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 3);
-
         final Order order = new Order(orderTable1, OrderStatus.COOKING, LocalDateTime.now(),
                 Arrays.asList(orderLineItem));
-        final Order savedOrder = orderRepository.save(order);
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), Arrays.asList(orderTable1, orderTable2));
-        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
+
+        orderRepository.save(order);
+
+        final TableGroupRequest tableGroupRequest = new TableGroupRequest(
+                Arrays.asList(orderTable1.getId(), orderTable2.getId()));
+        final TableGroup tableGroup = tableGroupService.create(tableGroupRequest);
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
+        assertThatThrownBy(() -> tableGroupService.ungroup(1L))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -177,7 +178,7 @@ public class TableGroupServiceTest {
         final List<Long> orderTableIds = Arrays.asList(orderTable1.getId(), orderTable2.getId());
         final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 3);
 
-        final Order order = new Order(orderTable1, OrderStatus.COOKING, LocalDateTime.now(),
+        final Order order = new Order(orderTable1, OrderStatus.COMPLETION, LocalDateTime.now(),
                 Arrays.asList(orderLineItem));
         final Order savedOrder = orderRepository.save(order);
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(orderTableIds);

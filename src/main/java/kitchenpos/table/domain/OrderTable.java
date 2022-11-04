@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "order_table")
@@ -17,10 +18,10 @@ public class OrderTable {
     private Long id;
 
     @Column
-    private Long tableGroupId;
-
-    @Column
     private int numberOfGuests;
+
+    @Transient
+    private Long tableGroupId;
 
     @Column
     private boolean empty;
@@ -53,12 +54,7 @@ public class OrderTable {
         return tableGroupId;
     }
 
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-    }
-
     public void cancelGroup() {
-        this.tableGroupId = null;
         this.empty = false;
     }
 

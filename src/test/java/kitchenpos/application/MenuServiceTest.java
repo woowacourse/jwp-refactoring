@@ -6,13 +6,18 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
+import kitchenpos.support.DatabaseCleaner;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,13 +32,27 @@ public class MenuServiceTest {
     @Autowired
     private MenuGroupRepository menuGroupRepository;
 
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private MenuRepository menuRepository;
+
+    @Autowired
+    private DatabaseCleaner databaseCleaner;
+
+    @BeforeEach
+    void setUp() {
+        databaseCleaner.execute();
+    }
+
     @DisplayName("menu의 menuGroup이 존재하지 않은 경우 예외가 발생한다.")
     @Test
     void create_ifMenuGroupNotExist_throwsException() {
         // given
-        final MenuProductRequest menuProduct1 = new MenuProductRequest(1L, 3);
-        final MenuProductRequest menuProduct2 = new MenuProductRequest(2L, 3);
-        final List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
+        final Product product = productRepository.save(new Product("name", BigDecimal.valueOf(3000)));
+        final MenuProductRequest menuProduct1 = new MenuProductRequest(product.getId(), 3);
+        final List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct1);
         final MenuRequest menu = new MenuRequest("메뉴1", BigDecimal.valueOf(1000), 99L, menuProducts);
 
         // when, then
@@ -47,9 +66,9 @@ public class MenuServiceTest {
     void create_ifMenuProductNotExist_throwsExcpetion() {
         // given
         final MenuProductRequest menuProduct1 = new MenuProductRequest(99L, 3);
-        final MenuProductRequest menuProduct2 = new MenuProductRequest(2L, 3);
-        final List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
-        final MenuRequest menu = new MenuRequest("메뉴1", BigDecimal.valueOf(1000), 1L, menuProducts);
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("name"));
+        final List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct1);
+        final MenuRequest menu = new MenuRequest("메뉴1", BigDecimal.valueOf(1000), menuGroup.getId(), menuProducts);
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -61,10 +80,12 @@ public class MenuServiceTest {
     @Test
     void create_ifMenuPriceIsNegative_throwsException() {
         // given
-        final MenuProductRequest menuProduct1 = new MenuProductRequest(1L, 3);
-        final MenuProductRequest menuProduct2 = new MenuProductRequest(2L, 3);
-        final List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
-        final MenuRequest menuRequest = new MenuRequest("메뉴1", BigDecimal.valueOf(-1000), 1L, menuProducts);
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
+        final Product product = productRepository.save(new Product("name", BigDecimal.valueOf(3000)));
+        final MenuProductRequest menuProduct1 = new MenuProductRequest(product.getId(), 3);
+        final List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct1);
+        final MenuRequest menuRequest = new MenuRequest("메뉴1", BigDecimal.valueOf(-1000), menuGroup.getId(),
+                menuProducts);
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menuRequest))
@@ -76,10 +97,11 @@ public class MenuServiceTest {
     @Test
     void create_ifMenuPriceIsNull_throwsException() {
         // given
-        final MenuProductRequest menuProduct1 = new MenuProductRequest(1L, 3);
-        final MenuProductRequest menuProduct2 = new MenuProductRequest(2L, 3);
-        final List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
-        final MenuRequest menu = new MenuRequest("메뉴1", null, 1L, menuProducts);
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
+        final Product product = productRepository.save(new Product("name", BigDecimal.valueOf(3000)));
+        final MenuProductRequest menuProduct1 = new MenuProductRequest(product.getId(), 3);
+        final List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct1);
+        final MenuRequest menu = new MenuRequest("메뉴1", null, menuGroup.getId(), menuProducts);
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -91,9 +113,10 @@ public class MenuServiceTest {
     @Test
     void create_ifMenuPriceMoreExpensiveThanProducts_throwsException() {
         // given
-        final MenuProductRequest menuProduct1 = new MenuProductRequest(1L, 1);
-        final MenuProductRequest menuProduct2 = new MenuProductRequest(2L, 1);
-        final List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
+        final Product product = productRepository.save(new Product("name", BigDecimal.valueOf(3000)));
+        final MenuProductRequest menuProduct1 = new MenuProductRequest(product.getId(), 1);
+        final List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct1);
         final MenuRequest menu = new MenuRequest("메뉴1", BigDecimal.valueOf(40000), 1L, menuProducts);
 
         // when, then
@@ -106,9 +129,9 @@ public class MenuServiceTest {
     @Test
     void create() {
         // given
-        final MenuProductRequest menuProduct1 = new MenuProductRequest(1L, 1);
-        final MenuProductRequest menuProduct2 = new MenuProductRequest(2L, 1);
-        final List<MenuProductRequest> menuProductRequests = Arrays.asList(menuProduct1, menuProduct2);
+        final Product product = productRepository.save(new Product("name", BigDecimal.valueOf(32000)));
+        final MenuProductRequest menuProduct1 = new MenuProductRequest(product.getId(), 1);
+        final List<MenuProductRequest> menuProductRequests = Arrays.asList(menuProduct1);
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
 
         final MenuRequest menuRequest = new MenuRequest("메뉴1", BigDecimal.valueOf(32000), menuGroup.getId(),
@@ -124,14 +147,17 @@ public class MenuServiceTest {
     @DisplayName("menu들을 조회한다.")
     @Test
     void list() {
+        // given
+        final Product product = productRepository.save(new Product("name", BigDecimal.valueOf(3000)));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("name"));
+        final MenuProduct menuProduct = new MenuProduct(product, 3);
+        final Menu menu = new Menu("name", BigDecimal.valueOf(3000), menuGroup, Arrays.asList(menuProduct));
+        final Menu savedMenu = menuRepository.save(menu);
+
         // when
         final List<Menu> menus = menuService.list();
 
-        final List<Long> ids = menus.stream()
-                .map(Menu::getId)
-                .collect(Collectors.toList());
-
         // then
-        assertThat(ids).containsExactly(1L, 2L, 3L, 4L, 5L, 6L);
+        assertThat(menus.size()).isEqualTo(1);
     }
 }

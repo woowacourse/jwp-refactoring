@@ -13,7 +13,6 @@ import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.domain.MenuProductRepository;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
@@ -47,9 +46,6 @@ public class OrderServiceTest {
 
     @Autowired
     private MenuRepository menuRepository;
-
-    @Autowired
-    private MenuProductRepository menuProductRepository;
 
     @Autowired
     private ProductRepository productRepository;
@@ -108,7 +104,8 @@ public class OrderServiceTest {
         final MenuProduct menuProduct = new MenuProduct(product, 3);
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
         final Menu menu = menuRepository.save(
-                new Menu("menu", BigDecimal.valueOf(3000), menuGroup, Arrays.asList(menuProduct)));
+                new Menu("menu", BigDecimal.valueOf(9000), menuGroup, Arrays.asList(menuProduct)));
+        final BigDecimal price = menu.getPrice();
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(3, false));
         final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 3);
         final OrderRequest orderRequest = new OrderRequest(orderTable.getId(), Arrays.asList(orderLineItemRequest));
@@ -128,7 +125,7 @@ public class OrderServiceTest {
         final MenuProduct menuProduct = new MenuProduct(product, 3);
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
         final Menu menu = menuRepository.save(
-                new Menu("menu", BigDecimal.valueOf(3000), menuGroup, Arrays.asList(menuProduct)));
+                new Menu("menu", BigDecimal.valueOf(9000), menuGroup, Arrays.asList(menuProduct)));
         final OrderTable orderTable = orderTableRepository.save(ORDER_TABLE_NOT_EMPTY.createWithIdNull());
         final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 3);
         final OrderRequest orderRequest = new OrderRequest(orderTable.getId(), Arrays.asList(orderLineItemRequest));
@@ -165,7 +162,7 @@ public class OrderServiceTest {
         final MenuProduct menuProduct = new MenuProduct(product, 3);
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
         final Menu menu = menuRepository.save(
-                new Menu("menu", BigDecimal.valueOf(3000), menuGroup, Arrays.asList(menuProduct)));
+                new Menu("menu", BigDecimal.valueOf(9000), menuGroup, Arrays.asList(menuProduct)));
 
         final OrderTable orderTable = orderTableRepository.save(ORDER_TABLE_NOT_EMPTY.createWithIdNull());
         final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 3);
