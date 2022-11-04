@@ -11,7 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import kitchenpos.core.event.Events;
+import kitchenpos.common.event.Events;
 import kitchenpos.domain.order.event.OrderStatusChangedEvent;
 
 @Table(name = "orders")

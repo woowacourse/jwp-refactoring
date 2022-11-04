@@ -1,4 +1,4 @@
-package kitchenpos.core.event;
+package kitchenpos.common.event;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;

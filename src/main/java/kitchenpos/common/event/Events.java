@@ -1,4 +1,4 @@
-package kitchenpos.core.event;
+package kitchenpos.common.event;
 
 import kitchenpos.domain.order.event.OrderStatusChangedEvent;
 import org.springframework.context.ApplicationEventPublisher;
