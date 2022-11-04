@@ -3,7 +3,6 @@ package kitchenpos.product.domain;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import kitchenpos.domain.Price;
 
 public class Products {
 
@@ -20,8 +19,8 @@ public class Products {
         }
     }
 
-    public Price calculateAmount(Map<Long, Long> productIdsQuantity) {
-        return new Price(values.stream()
+    public ProductPrice calculateAmount(Map<Long, Long> productIdsQuantity) {
+        return new ProductPrice(values.stream()
                 .map(product -> multiply(productIdsQuantity, product))
                 .reduce(BigDecimal.ZERO, BigDecimal::add));
     }

@@ -3,7 +3,7 @@ package kitchenpos.menu.domain;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Price;
+import kitchenpos.product.domain.ProductPrice;
 import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.product.domain.Products;
 import org.springframework.stereotype.Component;
@@ -20,14 +20,14 @@ public class MenuValidator {
         this.menuGroupRepository = menuGroupRepository;
     }
 
-    public void validate(long menuGroupId, Price price, List<MenuProduct> menuProducts) {
+    public void validate(long menuGroupId, MenuPrice menuPrice, List<MenuProduct> menuProducts) {
         if (!menuGroupRepository.existsById(menuGroupId)) {
             throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다.");
         }
-        validate(price, menuProducts);
+        validate(menuPrice, menuProducts);
     }
 
-    public void validate(Price menuPrice, List<MenuProduct> menuProducts) {
+    public void validate(MenuPrice menuPrice, List<MenuProduct> menuProducts) {
         Products products = new Products(productRepository.findAllByIdIn(collectProductId(menuProducts)));
         validateAmount(menuPrice, products.calculateAmount(toMap(menuProducts)));
     }
@@ -43,7 +43,7 @@ public class MenuValidator {
                 .collect(Collectors.toList());
     }
 
-    private void validateAmount(Price menuPrice, Price amount) {
+    private void validateAmount(MenuPrice menuPrice, ProductPrice amount) {
         if (menuPrice.isGreaterThan(amount)) {
             throw new IllegalArgumentException("메뉴의 가격이 상품의 가격보다 높습니다.");
         }

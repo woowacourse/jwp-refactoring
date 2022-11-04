@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.common.DataClearExtension;
-import kitchenpos.domain.Price;
+import kitchenpos.menu.domain.MenuPrice;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuGroupRepository;
@@ -205,7 +205,7 @@ class TableServiceTest {
         Product product = productRepository.save(new Product("강정치킨", BigDecimal.valueOf(18000)));
         List<MenuProduct> menuProducts = List.of(new MenuProduct(product.getId(), 2L));
         return menuRepository.save(
-                Menu.create(name, new Price(BigDecimal.valueOf(price)), menuGroup.getId(), menuProducts,
+                Menu.create(name, new MenuPrice(BigDecimal.valueOf(price)), menuGroup.getId(), menuProducts,
                         menuValidator));
     }
 }

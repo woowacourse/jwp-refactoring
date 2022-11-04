@@ -10,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import kitchenpos.domain.Price;
 
 @Entity
 public class Menu {
@@ -23,7 +22,7 @@ public class Menu {
     private String name;
 
     @Embedded
-    private Price price;
+    private MenuPrice menuPrice;
 
     @Column(name = "menu_group_id", nullable = false)
     private Long menuGroupId;
@@ -34,10 +33,10 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(Long id, String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    public Menu(Long id, String name, MenuPrice menuPrice, Long menuGroupId, List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
-        this.price = price;
+        this.menuPrice = menuPrice;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
         for (MenuProduct menuProduct : menuProducts) {
@@ -45,17 +44,17 @@ public class Menu {
         }
     }
 
-    private Menu(String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        this(null, name, price, menuGroupId, menuProducts);
+    private Menu(String name, MenuPrice menuPrice, Long menuGroupId, List<MenuProduct> menuProducts) {
+        this(null, name, menuPrice, menuGroupId, menuProducts);
     }
 
     public static Menu create(String name,
-                              Price price,
+                              MenuPrice menuPrice,
                               Long menuGroupId,
                               List<MenuProduct> menuProducts,
                               MenuValidator menuValidator) {
-        menuValidator.validate(menuGroupId, price, menuProducts);
-        return new Menu(name, price, menuGroupId, menuProducts);
+        menuValidator.validate(menuGroupId, menuPrice, menuProducts);
+        return new Menu(name, menuPrice, menuGroupId, menuProducts);
     }
 
     public Long getId() {
@@ -66,8 +65,8 @@ public class Menu {
         return name;
     }
 
-    public Price getPrice() {
-        return price;
+    public MenuPrice getPrice() {
+        return menuPrice;
     }
 
     public Long getMenuGroupId() {

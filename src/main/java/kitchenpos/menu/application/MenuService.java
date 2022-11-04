@@ -2,7 +2,7 @@ package kitchenpos.menu.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Price;
+import kitchenpos.menu.domain.MenuPrice;
 import kitchenpos.menu.application.dto.request.MenuCommand;
 import kitchenpos.menu.application.dto.request.MenuProductCommand;
 import kitchenpos.menu.application.dto.response.MenuResponse;
@@ -30,7 +30,7 @@ public class MenuService {
         return MenuResponse.from(menuRepository.save(
                         Menu.create(
                                 menuCommand.getName(),
-                                new Price(menuCommand.getPrice()),
+                                new MenuPrice(menuCommand.getPrice()),
                                 menuCommand.getMenuGroupId(),
                                 toMenuProducts(menuCommand),
                                 menuValidator)

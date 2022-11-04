@@ -8,7 +8,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import kitchenpos.domain.Price;
 
 @Entity
 @Table(name = "product")
@@ -22,23 +21,23 @@ public class Product {
     private String name;
 
     @Embedded
-    private Price price;
+    private ProductPrice productPrice;
 
     protected Product() {
     }
 
-    public Product(Long id, String name, Price price) {
+    public Product(Long id, String name, ProductPrice productPrice) {
         this.id = id;
         this.name = name;
-        this.price = price;
+        this.productPrice = productPrice;
     }
 
     public Product(String name, int price) {
-        this(null, name, Price.from(price));
+        this(null, name, ProductPrice.from(price));
     }
 
     public Product(String name, BigDecimal price) {
-        this(null, name, new Price(price));
+        this(null, name, new ProductPrice(price));
     }
 
     public Long getId() {
@@ -49,7 +48,7 @@ public class Product {
         return name;
     }
 
-    public Price getPrice() {
-        return price;
+    public ProductPrice getPrice() {
+        return productPrice;
     }
 }
