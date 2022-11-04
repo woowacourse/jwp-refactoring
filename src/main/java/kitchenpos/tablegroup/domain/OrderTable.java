@@ -1,12 +1,12 @@
 package kitchenpos.tablegroup.domain;
 
+import java.util.function.Consumer;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import kitchenpos.tablegroup.service.TableValidator;
 
 @Entity
 public class OrderTable {
@@ -51,8 +51,8 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public void validate(final TableValidator tableValidator) {
-        tableValidator.validatePossibleChangeToEmpty(this.id);
+    public void validate(final Consumer tableValidator) {
+        tableValidator.accept(this.id);
     }
 
     public Long getId() {

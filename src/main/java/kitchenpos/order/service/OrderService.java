@@ -31,7 +31,7 @@ public class OrderService {
     @Transactional
     public OrderResponse create(final OrderCreateRequest request) {
         Order order = orderMapper.mappingToOrder(request);
-        order.validate(orderValidator);
+        order.validate((it) -> orderValidator.validateExistInOrderTable((Order) it));
         orderRepository.save(order);
         return OrderResponse.from(order);
     }

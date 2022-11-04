@@ -5,6 +5,7 @@ import static kitchenpos.order.domain.OrderStatus.valueOf;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.Consumer;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -13,7 +14,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import kitchenpos.order.service.OrderValidator;
 
 @Entity
 @Table(name = "orders")
@@ -50,8 +50,8 @@ public class Order {
         }
     }
 
-    public void validate(final OrderValidator orderValidator) {
-        orderValidator.validateExistInOrderTable(this);
+    public void validate(final Consumer orderValidator) {
+        orderValidator.accept(this);
     }
 
     public Long getId() {

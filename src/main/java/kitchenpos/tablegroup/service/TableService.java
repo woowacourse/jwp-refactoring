@@ -41,7 +41,7 @@ public class TableService {
     public OrderTableResponse changeEmpty(final Long orderTableId,
                                           final OrderTableUpdateEmptyRequest request) {
         OrderTable orderTable = getOrderTable(orderTableId);
-        orderTable.validate(tableValidator);
+        orderTable.validate((it) -> tableValidator.validatePossibleChangeToEmpty((Long) it));
         orderTable.changeToEmpty(request.isEmpty());
         return OrderTableResponse.from(orderTable);
     }

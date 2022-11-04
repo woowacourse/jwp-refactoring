@@ -28,7 +28,7 @@ public class MenuService {
     @Transactional
     public MenuResponse create(final MenuCreateRequest request) {
         Menu menu = menuMapper.mappingToMenu(request);
-        menu.validate(menuValidator);
+        menu.validate(it -> menuValidator.validateInMenuGroup((Menu) it));
         menuRepository.save(menu);
         return MenuResponse.from(menu);
     }

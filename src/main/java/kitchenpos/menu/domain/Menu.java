@@ -2,13 +2,13 @@ package kitchenpos.menu.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.function.Consumer;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import kitchenpos.common.domain.Price;
-import kitchenpos.menu.service.MenuValidator;
 
 @Entity
 public class Menu {
@@ -43,8 +43,8 @@ public class Menu {
         }
     }
 
-    public void validate(final MenuValidator menuValidator) {
-        menuValidator.validateInMenuGroup(this);
+    public void validate(final Consumer menuValidator) {
+        menuValidator.accept(this);
     }
 
     public Long getId() {

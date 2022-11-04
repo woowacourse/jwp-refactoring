@@ -2,12 +2,12 @@ package kitchenpos.tablegroup.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.Consumer;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import kitchenpos.tablegroup.service.TableValidator;
 
 @Entity
 public class TableGroup {
@@ -23,7 +23,7 @@ public class TableGroup {
         this.createdDate = LocalDateTime.now();
     }
 
-    public void validate(final TableValidator tableValidator) {
+    public void validate(final Consumer tableValidator) {
         List<OrderTable> orderTables = this.orderTables.getOrderTables();
         for (OrderTable orderTable : orderTables) {
             orderTable.validate(tableValidator);

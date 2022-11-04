@@ -48,7 +48,7 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(TableGroupNotFoundException::new);
-        tableGroup.validate(tableValidator);
+        tableGroup.validate((it) -> tableValidator.validatePossibleChangeToEmpty((Long) it));
         tableGroup.ungrouping();
     }
 }
