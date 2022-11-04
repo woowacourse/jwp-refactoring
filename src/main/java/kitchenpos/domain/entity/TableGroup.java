@@ -21,24 +21,10 @@ public class TableGroup {
     @Column(name = "table_group_id")
     private Long id;
 
-    @OneToMany(mappedBy = "tableGroup")
-    private List<OrderTable> orderTables = new ArrayList<>();
-
     private LocalDateTime createdDate;
 
-    protected TableGroup() {
-    }
-
-    public TableGroup(List<OrderTable> orderTables) {
-        validate(orderTables);
+    public TableGroup() {
         this.createdDate = LocalDateTime.now();
-        this.orderTables = orderTables;
-    }
-
-    private void validate(List<OrderTable> orderTables) {
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
-        }
     }
 
     public Long getId() {
@@ -47,9 +33,5 @@ public class TableGroup {
 
     public LocalDateTime getCreatedDate() {
         return createdDate;
-    }
-
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
     }
 }

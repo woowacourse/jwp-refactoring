@@ -9,6 +9,7 @@ import org.springframework.util.CollectionUtils;
 
 public class OrderTables {
 
+    private static final int GROUPING_CONDITION = 2;
     private List<OrderTable> elements;
 
     public OrderTables(List<OrderTable> elements) {
@@ -55,5 +56,9 @@ public class OrderTables {
         for (OrderTable orderTable : elements) {
             orderTable.exitFromGroup();
         }
+    }
+
+    public boolean isAbleToGroup() {
+        return elements.size() >= GROUPING_CONDITION;
     }
 }

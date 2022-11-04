@@ -34,17 +34,20 @@ public class TableGroupService {
         OrderTables orderTables = tableServiceAssistant.findOrderTables(tableGroupCreateRequest.getOrderTableIds());
         List<Long> orderTableIds = orderTables.getOrderTableIds();
         OrderTables savedOrderTables = new OrderTables(orderTableRepository.findAllById(orderTableIds));
+        if (!savedOrderTables.isAbleToGroup()) {
+            throw new IllegalArgumentException();
+        }
 
         if (!savedOrderTables.isReadyToGroup(orderTables)) {
             throw new IllegalArgumentException();
         }
 
-        TableGroup tableGroup = new TableGroup(savedOrderTables.getElements());
+        TableGroup tableGroup = new TableGroup();
         tableGroupRepository.save(tableGroup);
         savedOrderTables.group(tableGroup);
 
 
-        return new TableGroupCreateResponse(tableGroup.getId(), tableGroup.getCreatedDate(), new OrderTables(tableGroup.getOrderTables()).getOrderTableIds());
+        return new TableGroupCreateResponse(tableGroup.getId(), tableGroup.getCreatedDate(), savedOrderTables.getOrderTableIds());
     }
 
     @Transactional
