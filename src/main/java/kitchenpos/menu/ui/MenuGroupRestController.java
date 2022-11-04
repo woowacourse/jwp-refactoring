@@ -11,9 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import kitchenpos.menu.application.MenuGroupService;
-import kitchenpos.menu.application.response.MenuGroupResponse;
-import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.application.request.MenuGroupRequest;
+import kitchenpos.menu.application.response.MenuGroupResponse;
 
 @RestController
 @RequestMapping("/api/menu-groups")

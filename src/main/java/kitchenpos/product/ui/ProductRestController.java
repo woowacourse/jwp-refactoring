@@ -11,9 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import kitchenpos.product.application.ProductService;
-import kitchenpos.product.application.response.ProductResponse;
-import kitchenpos.product.domain.Product;
 import kitchenpos.product.application.request.ProductCreateRequest;
+import kitchenpos.product.application.response.ProductResponse;
 
 @RestController
 @RequestMapping("/api/products")

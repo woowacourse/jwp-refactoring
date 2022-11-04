@@ -13,9 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import kitchenpos.order.application.OrderService;
-import kitchenpos.order.application.response.OrderResponse;
-import kitchenpos.order.domain.Order;
 import kitchenpos.order.application.request.OrderRequest;
+import kitchenpos.order.application.response.OrderResponse;
 
 @RestController
 @RequestMapping("/api/orders")

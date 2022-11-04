@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 import kitchenpos.common.AcceptanceTest;
+import kitchenpos.menu.application.request.MenuGroupRequest;
 import kitchenpos.menu.application.request.MenuProductRequest;
 import kitchenpos.menu.application.request.MenuRequest;
-import kitchenpos.menu.application.request.MenuGroupRequest;
 import kitchenpos.product.application.request.ProductCreateRequest;
 
 public class MenuAcceptanceTest extends AcceptanceTest {
@@ -33,7 +33,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         MenuRequest request2 = createMenuFixture();
 
         _메뉴등록검증(request1);
-        _메뉴등록검증(request1);
+        _메뉴등록검증(request2);
 
         // when, then
         _메뉴조회검증();

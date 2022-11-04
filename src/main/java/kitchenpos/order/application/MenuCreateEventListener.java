@@ -2,7 +2,6 @@ package kitchenpos.order.application;
 
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.event.TransactionalEventListener;
 
 import kitchenpos.menu.domain.MenuCreateEvent;
 import kitchenpos.order.dao.OrderMenuDao;

@@ -7,9 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.order.application.request.OrderTableRequest;
 import kitchenpos.order.application.response.OrderTableResponse;
+import kitchenpos.order.application.validator.TableChangeEmptyValidator;
 import kitchenpos.order.dao.OrderTableDao;
 import kitchenpos.order.domain.OrderTable;
-import kitchenpos.order.application.validator.TableChangeEmptyValidator;
 
 @Service
 @Transactional(readOnly = true)

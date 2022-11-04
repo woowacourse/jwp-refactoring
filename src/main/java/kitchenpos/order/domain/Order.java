@@ -1,17 +1,15 @@
 package kitchenpos.order.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -34,25 +32,23 @@ public class Order {
     @Column(name = "ordered_time")
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "orderId", cascade = CascadeType.PERSIST)
-    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+    @Embedded
+    private OrderLineItems orderLineItems;
 
     protected Order() {
     }
 
-    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
+    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+        final List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
+        this.orderLineItems = new OrderLineItems(orderLineItems);
     }
 
     public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
-        this.id = null;
-        this.orderTableId = orderTableId;
-        this.orderStatus = OrderStatus.COOKING.name();
-        this.orderedTime = LocalDateTime.now();
-        this.orderLineItems.addAll(orderLineItems);
+        this(null, orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
     }
 
     public void changeStatus(final String orderStatus) {
@@ -64,6 +60,10 @@ public class Order {
 
     public boolean isCompletion() {
         return !OrderStatus.COMPLETION.name().equals(this.orderStatus);
+    }
+
+    public void setIdToOrderLineItems() {
+        orderLineItems.setOrderId(id);
     }
 
     public Long getId() {
@@ -83,7 +83,7 @@ public class Order {
     }
 
     public List<OrderLineItem> getOrderLineItems() {
-        return List.copyOf(orderLineItems);
+        return orderLineItems.getValues();
     }
 
     @Override

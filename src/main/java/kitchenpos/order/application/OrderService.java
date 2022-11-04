@@ -36,7 +36,6 @@ public class OrderService {
         List<OrderLineItem> orderLineItems = mapToOrderLineItems(request.getOrderLineItemRequests());
         Order order = new Order(request.getOrderTableId(), orderLineItems);
         orderValidator.validate(order);
-
         return OrderResponse.from(orderDao.save(order));
     }
 

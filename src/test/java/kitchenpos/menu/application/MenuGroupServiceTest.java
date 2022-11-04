@@ -8,10 +8,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import kitchenpos.common.ServiceTest;
-import kitchenpos.menu.application.response.MenuGroupResponse;
-import kitchenpos.menu.application.response.MenuResponse;
-import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.application.request.MenuGroupRequest;
+import kitchenpos.menu.application.response.MenuGroupResponse;
 
 public class MenuGroupServiceTest extends ServiceTest {
 

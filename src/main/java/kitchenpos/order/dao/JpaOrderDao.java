@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
+import kitchenpos.order.dao.repository.JpaOrderLineItemRepository;
 import kitchenpos.order.dao.repository.JpaOrderRepository;
 import kitchenpos.order.domain.Order;
 
@@ -12,14 +13,20 @@ import kitchenpos.order.domain.Order;
 public class JpaOrderDao implements OrderDao {
 
     private final JpaOrderRepository orderRepository;
+    private final JpaOrderLineItemRepository orderLineItemRepository;
 
-    public JpaOrderDao(final JpaOrderRepository orderRepository) {
+    public JpaOrderDao(final JpaOrderRepository orderRepository,
+        final JpaOrderLineItemRepository orderLineItemRepository) {
         this.orderRepository = orderRepository;
+        this.orderLineItemRepository = orderLineItemRepository;
     }
 
     @Override
     public Order save(final Order entity) {
-        return orderRepository.save(entity);
+        Order savedOrder = orderRepository.save(entity);
+        savedOrder.setIdToOrderLineItems();
+        orderLineItemRepository.saveAll(savedOrder.getOrderLineItems());
+        return savedOrder;
     }
 
     @Override
