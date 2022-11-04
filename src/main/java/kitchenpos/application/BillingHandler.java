@@ -1,5 +1,8 @@
 package kitchenpos.application;
 
+import java.util.Arrays;
+import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order.event.OrderStatusChangedEvent;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableStatus;
@@ -13,9 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class BillingHandler {
 
     private final OrderTableRepository orderTableRepository;
+    private final OrderRepository orderRepository;
 
-    public BillingHandler(final OrderTableRepository orderTableRepository) {
+    public BillingHandler(final OrderTableRepository orderTableRepository, final OrderRepository orderRepository) {
         this.orderTableRepository = orderTableRepository;
+        this.orderRepository = orderRepository;
     }
 
     @EventListener(OrderStatusChangedEvent.class)
@@ -23,7 +28,10 @@ public class BillingHandler {
         final OrderTable orderTable = orderTableRepository.findById(event.getOrderTableId())
             .orElseThrow(IllegalArgumentException::new);
 
-        final TableStatus tableStatus = TableStatus.find(event.getOrderStatus());
-        orderTable.changeTableStatus(tableStatus);
+        if (!orderRepository.existsByOrderTableIdAndOrderStatusIn(
+            orderTable.getId(), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+            final TableStatus tableStatus = TableStatus.find(event.getOrderStatus());
+            orderTable.changeTableStatus(tableStatus);
+        }
     }
 }
