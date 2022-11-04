@@ -5,8 +5,8 @@ import static kitchenpos.order.domain.OrderStatus.MEAL;
 
 import java.util.List;
 import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.tablegroup.domain.OrderTableRepository;
 import kitchenpos.tablegroup.domain.OrderTable;
+import kitchenpos.tablegroup.domain.OrderTableRepository;
 import kitchenpos.tablegroup.dto.request.OrderTableCreateRequest;
 import kitchenpos.tablegroup.dto.request.OrderTableUpdateEmptyRequest;
 import kitchenpos.tablegroup.dto.request.OrderTableUpdateGuestRequest;

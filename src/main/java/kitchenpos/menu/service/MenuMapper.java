@@ -2,12 +2,12 @@ package kitchenpos.menu.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.product.domain.Product;
 import kitchenpos.menu.dto.request.MenuCreateRequest;
 import kitchenpos.menu.dto.request.MenuProductCreateRequest;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.product.exception.ProductNotFoundException;
 import org.springframework.stereotype.Component;
 

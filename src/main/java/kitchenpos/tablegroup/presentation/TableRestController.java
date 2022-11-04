@@ -2,12 +2,12 @@ package kitchenpos.tablegroup.presentation;
 
 import java.net.URI;
 import java.util.List;
-import kitchenpos.tablegroup.service.TableService;
 import kitchenpos.tablegroup.dto.request.OrderTableCreateRequest;
 import kitchenpos.tablegroup.dto.request.OrderTableUpdateEmptyRequest;
 import kitchenpos.tablegroup.dto.request.OrderTableUpdateGuestRequest;
 import kitchenpos.tablegroup.dto.response.OrderTableResponse;
 import kitchenpos.tablegroup.dto.response.OrderTablesResponse;
+import kitchenpos.tablegroup.service.TableService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

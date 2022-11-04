@@ -1,15 +1,15 @@
 package kitchenpos.order.service;
 
 import java.util.List;
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.tablegroup.domain.OrderTableRepository;
 import kitchenpos.order.domain.Order;
-import kitchenpos.tablegroup.domain.OrderTable;
+import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.dto.request.OrderCreateRequest;
 import kitchenpos.order.dto.request.OrderUpdateRequest;
 import kitchenpos.order.dto.response.OrderResponse;
 import kitchenpos.order.dto.response.OrdersResponse;
 import kitchenpos.order.exception.OrderNotFoundException;
+import kitchenpos.tablegroup.domain.OrderTable;
+import kitchenpos.tablegroup.domain.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
