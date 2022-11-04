@@ -1,8 +1,8 @@
-package kitchenpos.tableGroup.application;
+package kitchenpos.table.application;
 
 import kitchenpos.order.application.OrderTableValidator;
-import kitchenpos.order.domain.OrderTable;
-import kitchenpos.order.domain.repository.OrderTableDao;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.repository.OrderTableDao;
 import org.springframework.stereotype.Component;
 
 @Component

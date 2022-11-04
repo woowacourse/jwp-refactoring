@@ -1,4 +1,4 @@
-package kitchenpos.tableGroup.infra;
+package kitchenpos.table.infra;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -7,8 +7,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
-import kitchenpos.tableGroup.domain.TableGroup;
-import kitchenpos.tableGroup.repository.TableGroupDao;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.domain.repository.TableGroupDao;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;

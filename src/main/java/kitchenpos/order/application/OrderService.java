@@ -34,6 +34,10 @@ public class OrderService {
         this.orderTableValidator = orderTableValidator;
     }
 
+    /*
+    메뉴의 이름과 가격이 변경되면 주문 항목도 함께 변경된다.
+    메뉴 정보가 변경되더라도 주문 항목이 변경되지 않게 구현한다.
+   */
     @Transactional
     public OrderResponse create(final OrderRequest.Create request) {
         final List<OrderLineItemRequest.Create> orderLineItems = request.getOrderLineItems();

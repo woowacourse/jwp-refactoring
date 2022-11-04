@@ -1,9 +1,8 @@
-package kitchenpos.tableGroup.domain;
+package kitchenpos.table.domain;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.order.domain.OrderTable;
 import org.springframework.util.CollectionUtils;
 
 public class TableGroup {
