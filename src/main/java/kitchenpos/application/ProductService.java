@@ -23,6 +23,7 @@ public class ProductService {
         return ProductResponse.from(product);
     }
 
+    @Transactional(readOnly = true)
     public List<ProductResponse> list() {
         return productDao.findAll().stream()
                 .map(ProductResponse::from)
