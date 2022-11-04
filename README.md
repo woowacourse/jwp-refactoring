@@ -214,3 +214,15 @@ ALTER TABLE order_line_item
 ALTER TABLE order_line_item
     DROP COLUMN menu_id;
 ```
+
+## 🚀 4단계 - 멀티 모듈 적용
+
+### 요구 사항
+ * [x] Gradle의 멀티 모듈 개념을 적용해 자유롭게 서로 다른 프로젝트로 분리해 본다.
+   * [ ] 컨텍스트 간의 독립된 모듈로 만들 수 있다.
+   * [x] 계층 간의 독립된 모듈로 만들 수 있다. 
+ * [x] 의존성 주입, HTTP 요청/응답, 이벤트 발행/구독 등 다양한 방식으로 모듈 간 데이터를 주고받을 수 있다.
+
+### 의존성 그림
+
+![img.png](images/img.png)
