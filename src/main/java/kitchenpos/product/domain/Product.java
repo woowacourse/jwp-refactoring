@@ -19,7 +19,7 @@ public class Product {
     @Enumerated
     private Price price;
 
-    public Product() {
+    protected Product() {
     }
 
     public Product(String name, BigDecimal price) {

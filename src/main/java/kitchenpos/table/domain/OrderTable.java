@@ -32,7 +32,7 @@ public class OrderTable {
     @Column
     private boolean empty;
 
-    public OrderTable() {
+    protected OrderTable() {
     }
 
     public OrderTable(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {

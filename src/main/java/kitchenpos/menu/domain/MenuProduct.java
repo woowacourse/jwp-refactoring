@@ -14,9 +14,6 @@ public class MenuProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @Column(name = "menu_id", nullable = false, updatable = false, insertable = false)
-    private Long menuId;
-
     @Column
     private Long productId;
 
@@ -26,26 +23,24 @@ public class MenuProduct {
     @Transient
     private BigDecimal price;
 
-    public MenuProduct() {
+    protected MenuProduct() {
     }
 
     public MenuProduct(final Long productId, final long quantity) {
-        this(null, null, productId, quantity, null);
+        this( null, productId, quantity, null);
     }
 
 
     public MenuProduct(final Long menuId, final Long productId, final long quantity) {
-        this(null, menuId, productId, quantity, null);
+        this(menuId, productId, quantity, null);
     }
 
     public MenuProduct(final Long productId, final long quantity, final BigDecimal price) {
-        this(null, null, productId, quantity, price);
+        this( null, productId, quantity, price);
     }
 
-    public MenuProduct(final Long seq, final Long menuId, final Long productId, final long quantity,
-                       final BigDecimal price) {
+    public MenuProduct(final Long seq, final Long productId, final long quantity, final BigDecimal price) {
         this.seq = seq;
-        this.menuId = menuId;
         this.productId = productId;
         this.quantity = quantity;
         this.price = price;
@@ -53,14 +48,6 @@ public class MenuProduct {
 
     public Long getSeq() {
         return seq;
-    }
-
-    public Long getMenuId() {
-        return menuId;
-    }
-
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
     }
 
     public Long getProductId() {

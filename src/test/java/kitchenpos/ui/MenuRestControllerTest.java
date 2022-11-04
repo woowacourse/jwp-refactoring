@@ -26,7 +26,7 @@ class MenuRestControllerTest extends RestControllerTest {
         MenuRequest menuRequest = new MenuRequest("메뉴", BigDecimal.valueOf(1_000), 1L,
                 Arrays.asList(menuProductRequest));
         MenuProduct expectedMenuProduct =
-                new MenuProduct(1L, 1L, 1L, 1, BigDecimal.valueOf(1_000));
+                new MenuProduct( 1L, 1L, 1, BigDecimal.valueOf(1_000));
         Menu expected =
                 new Menu(1L, "메뉴", BigDecimal.valueOf(1_000), 1L, Arrays.asList(expectedMenuProduct));
 
@@ -42,7 +42,7 @@ class MenuRestControllerTest extends RestControllerTest {
 
     @Test
     void 메뉴_목록_조회에_성공한다() throws Exception {
-        MenuProduct expectedMenuProduct = new MenuProduct(1L, 1L, 1L, 1, BigDecimal.valueOf(1_000));
+        MenuProduct expectedMenuProduct = new MenuProduct( 1L, 1L, 1, BigDecimal.valueOf(1_000));
         Menu expected =
                 new Menu(1L, "메뉴", BigDecimal.valueOf(1_000), 1L, Arrays.asList(expectedMenuProduct));
 
