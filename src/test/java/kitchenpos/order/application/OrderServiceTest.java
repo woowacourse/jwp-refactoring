@@ -17,7 +17,7 @@ import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.table.domain.OrderTableRepository;
-import kitchenpos.product.domain.ProductDao;
+import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
@@ -42,7 +42,7 @@ import org.springframework.test.context.jdbc.Sql;
 class OrderServiceTest {
 
     private final MenuGroupRepository menuGroupRepository;
-    private final ProductDao productDao;
+    private final ProductRepository productRepository;
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
@@ -50,13 +50,13 @@ class OrderServiceTest {
 
     @Autowired
     public OrderServiceTest(final MenuGroupRepository menuGroupRepository,
-                            final ProductDao productDao,
+                            final ProductRepository productRepository,
                             final MenuRepository menuRepository,
                             final OrderRepository orderRepository,
                             final OrderTableRepository orderTableRepository,
                             final OrderService orderService) {
         this.menuGroupRepository = menuGroupRepository;
-        this.productDao = productDao;
+        this.productRepository = productRepository;
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
@@ -66,7 +66,7 @@ class OrderServiceTest {
     @Test
     void order를_생성한다() {
         MenuGroup 한마리메뉴 = menuGroupRepository.save(generateMenuGroup("한마리메뉴"));
-        Product 후라이드 = productDao.save(generateProduct("후라이드"));
+        Product 후라이드 = productRepository.save(generateProduct("후라이드"));
 
         List<MenuProduct> menuProducts = List.of(generateMenuProduct(후라이드.getId(), 1));
         Menu menu = menuRepository.save(generateMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId(), menuProducts));
@@ -106,7 +106,7 @@ class OrderServiceTest {
     @Test
     void orderTable이_비어있는_경우_예외를_던진다() {
         MenuGroup 한마리메뉴 = menuGroupRepository.save(generateMenuGroup("한마리메뉴"));
-        Product 후라이드 = productDao.save(generateProduct("후라이드"));
+        Product 후라이드 = productRepository.save(generateProduct("후라이드"));
 
         List<MenuProduct> menuProducts = List.of(generateMenuProduct(후라이드.getId(), 1));
         Menu menu = menuRepository.save(generateMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId(), menuProducts));

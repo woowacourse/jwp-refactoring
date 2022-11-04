@@ -12,7 +12,7 @@ import java.util.List;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.product.domain.ProductDao;
+import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.product.domain.Product;
 import kitchenpos.menu.dto.MenuResponse;
@@ -33,24 +33,24 @@ class MenuServiceTest {
 
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
-    private final ProductDao productDao;
+    private final ProductRepository productRepository;
     private final MenuService menuService;
 
     @Autowired
     public MenuServiceTest(final MenuRepository menuRepository,
                            final MenuGroupRepository menuGroupRepository,
-                           final ProductDao productDao,
+                           final ProductRepository productRepository,
                            final MenuService menuService) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
-        this.productDao = productDao;
+        this.productRepository = productRepository;
         this.menuService = menuService;
     }
 
     @Test
     void menu를_생성한다() {
         MenuGroup 한마리메뉴 = menuGroupRepository.save(generateMenuGroup("한마리메뉴"));
-        Product 후라이드 = productDao.save(generateProduct("후라이드"));
+        Product 후라이드 = productRepository.save(generateProduct("후라이드"));
 
         List<MenuProduct> menuProducts = List.of(generateMenuProduct(후라이드.getId(), 1));
         MenuSaveRequest request = generateMenuSaveRequest(
@@ -96,7 +96,7 @@ class MenuServiceTest {
     @Test
     void menu를_등록할_때_price가_menu에_속한_product의_총_price보다_큰_경우_예외를_던진다() {
         MenuGroup 한마리메뉴 = menuGroupRepository.save(generateMenuGroup("한마리메뉴"));
-        Product 후라이드 = productDao.save(generateProduct("후라이드", BigDecimal.valueOf(16000)));
+        Product 후라이드 = productRepository.save(generateProduct("후라이드", BigDecimal.valueOf(16000)));
 
         List<MenuProduct> menuProducts = List.of(generateMenuProduct(후라이드.getId(), 1));
         MenuSaveRequest request =

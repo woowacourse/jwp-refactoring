@@ -8,8 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.product.application.ProductService;
-import kitchenpos.product.domain.ProductDao;
+import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.dto.ProductResponse;
 import kitchenpos.product.dto.ProductSaveRequest;
@@ -27,12 +26,12 @@ import org.springframework.test.context.jdbc.Sql;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class ProductServiceTest {
 
-    private final ProductDao productDao;
+    private final ProductRepository productRepository;
     private final ProductService productService;
 
     @Autowired
-    public ProductServiceTest(final ProductDao productDao, final ProductService productService) {
-        this.productDao = productDao;
+    public ProductServiceTest(final ProductRepository productRepository, final ProductService productService) {
+        this.productRepository = productRepository;
         this.productService = productService;
     }
 
@@ -68,8 +67,8 @@ class ProductServiceTest {
 
     @Test
     void product_list를_조회한다() {
-        Product 후라이드 = productDao.save(generateProduct("후라이드"));
-        Product 양념치킨 = productDao.save(generateProduct("양념치킨"));
+        Product 후라이드 = productRepository.save(generateProduct("후라이드"));
+        Product 양념치킨 = productRepository.save(generateProduct("양념치킨"));
 
         List<String> actual = productService.list()
                 .stream()
