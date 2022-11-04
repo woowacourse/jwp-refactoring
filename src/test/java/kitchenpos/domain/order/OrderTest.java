@@ -3,14 +3,19 @@ package kitchenpos.domain.order;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.domain.ordertable.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class OrderTest {
+
+    @Mock
+    private OrderValidator orderValidator;
 
     @DisplayName("주문 생성자")
     @Nested
@@ -18,24 +23,8 @@ class OrderTest {
         @DisplayName("주문 항목이 비어있다면, IAE를 던진다.")
         @Test
         void Should_ThrowIAE_When_OrderLineItemsIsEmpty() {
-            // given
-            OrderTable orderTable = new OrderTable(10, false);
-
-            // when & then
-            assertThatThrownBy(() -> new Order(orderTable, List.of()))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @DisplayName("주문 테이블이 비어있다면, IAE를 던진다.")
-        @Test
-        void Should_ThrowIAE_When_OrderTableIsEmpty() {
-            // given
-            OrderTable orderTable = new OrderTable(10, true);
-            OrderedMenu orderedMenu = new OrderedMenu(1L, "메뉴", BigDecimal.valueOf(10_000));
-            OrderLineItem orderLineItem = new OrderLineItem(orderedMenu, 10L);
-
-            // when & then
-            assertThatThrownBy(() -> new Order(orderTable, List.of(orderLineItem)))
+            // given & when & then
+            assertThatThrownBy(() -> new Order(1L, List.of(), orderValidator))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -49,9 +38,8 @@ class OrderTest {
             // given
             OrderedMenu orderedMenu = new OrderedMenu(1L, "메뉴", BigDecimal.valueOf(10_000));
             OrderLineItem orderLineItem = new OrderLineItem(orderedMenu, 1L);
-            OrderTable orderTable = new OrderTable(10, false);
-            Order order = new Order(1L, orderTable, OrderStatus.COMPLETION, LocalDateTime.now(),
-                    List.of(orderLineItem));
+            Order order = new Order(1L, List.of(orderLineItem), orderValidator);
+            order.changeOrderStatus(OrderStatus.COMPLETION);
 
             // when & then
             assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.COOKING))

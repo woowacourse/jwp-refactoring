@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.application.mapper.TableGroupMapper;
+import kitchenpos.domain.ordertable.OrderTableValidator;
 import kitchenpos.domain.ordertable.TableGroup;
 import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.TableGroupResponse;
@@ -14,10 +15,13 @@ public class TableGroupService {
 
     private final TableGroupRepository tableGroupRepository;
     private final TableGroupMapper tableGroupMapper;
+    private final OrderTableValidator orderTableValidator;
 
-    public TableGroupService(final TableGroupRepository tableGroupRepository, final TableGroupMapper tableGroupMapper) {
+    public TableGroupService(final TableGroupRepository tableGroupRepository, final TableGroupMapper tableGroupMapper,
+                             final OrderTableValidator orderTableValidator) {
         this.tableGroupRepository = tableGroupRepository;
         this.tableGroupMapper = tableGroupMapper;
+        this.orderTableValidator = orderTableValidator;
     }
 
     @Transactional
@@ -32,6 +36,6 @@ public class TableGroupService {
         TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        tableGroup.ungroup();
+        tableGroup.ungroup(orderTableValidator);
     }
 }

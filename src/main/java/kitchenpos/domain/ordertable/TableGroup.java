@@ -56,18 +56,14 @@ public class TableGroup {
 
     private void setOrderTable(final List<OrderTable> orderTables) {
         for (OrderTable orderTable : orderTables) {
-            orderTable.changeTableGroup(id);
-            orderTable.changeEmpty(false);
+            orderTable.joinTableGroup(id);
         }
     }
 
-    public void ungroup() {
+    public void ungroup(final OrderTableValidator orderTableValidator) {
         for (OrderTable orderTable : orderTables) {
-            if (orderTable.hasNotCompletedOrder()) {
-                throw new IllegalArgumentException();
-            }
-
-            orderTable.changeTableGroup(null);
+            orderTableValidator.validateExistsNotCompletedOrder(orderTable);
+            orderTable.joinTableGroup(null);
         }
     }
 

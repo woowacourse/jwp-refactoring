@@ -15,7 +15,7 @@ public class OrderResponse {
     private List<OrderLineItemResponse> orderLineItems;
 
     public OrderResponse(final Order order) {
-        this(order.getId(), order.getOrderTable().getId(), order.getOrderStatus(), order.getOrderedTime(),
+        this(order.getId(), order.getOrderTableId(), order.getOrderStatus(), order.getOrderedTime(),
                 order.getOrderLineItems().stream().map(OrderLineItemResponse::new).collect(Collectors.toList()));
     }
 

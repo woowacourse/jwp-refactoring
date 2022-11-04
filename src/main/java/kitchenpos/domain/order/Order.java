@@ -12,10 +12,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import kitchenpos.domain.ordertable.OrderTable;
 import org.springframework.util.CollectionUtils;
 
 @Table(name = "orders")
@@ -26,9 +24,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_table_id")
-    private OrderTable orderTable;
+    private Long orderTableId;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
@@ -42,18 +38,19 @@ public class Order {
     protected Order() {
     }
 
-    public Order(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
-        this(null, orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+    public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems,
+                 final OrderValidator orderValidator) {
+        this(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems, orderValidator);
     }
 
-    public Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus,
-                 final LocalDateTime orderedTime,
-                 final List<OrderLineItem> orderLineItems) {
+    private Order(final Long id, final Long orderTableId, final OrderStatus orderStatus,
+                  final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems,
+                  final OrderValidator orderValidator) {
         validateOrderLineItems(orderLineItems);
-        validateOrderTable(orderTable);
+        orderValidator.validateOnOrderCreated(orderTableId);
 
         this.id = id;
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
@@ -61,12 +58,6 @@ public class Order {
 
     private void validateOrderLineItems(final List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateOrderTable(final OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
     }
@@ -79,8 +70,8 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public OrderStatus getOrderStatus() {

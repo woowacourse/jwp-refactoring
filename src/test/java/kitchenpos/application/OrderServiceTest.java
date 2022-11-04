@@ -11,6 +11,7 @@ import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderValidator;
 import kitchenpos.domain.order.OrderedMenu;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.product.Product;
@@ -31,6 +32,9 @@ class OrderServiceTest extends ServiceTest {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private OrderValidator orderValidator;
 
     private OrderTable savedOrderTable;
     private MenuGroup savedMenuGroup;
@@ -194,8 +198,7 @@ class OrderServiceTest extends ServiceTest {
             // given
             OrderTable orderTable = saveOrderTable(10, false);
             Order completionOrder = new Order(
-                    new OrderTable(orderTable.getId(), null, 10, false),
-                    List.of(createdOrderLineItem)
+                    orderTable.getId(), List.of(createdOrderLineItem), orderValidator
             );
             completionOrder.changeOrderStatus(OrderStatus.COMPLETION);
 

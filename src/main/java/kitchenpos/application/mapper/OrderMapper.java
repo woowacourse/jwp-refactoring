@@ -5,8 +5,8 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderValidator;
 import kitchenpos.domain.order.OrderedMenu;
-import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.repository.MenuRepository;
@@ -18,29 +18,26 @@ public class OrderMapper {
 
     private final OrderTableRepository orderTableRepository;
     private final MenuRepository menuRepository;
+    private final OrderValidator orderValidator;
 
-    public OrderMapper(final OrderTableRepository orderTableRepository, final MenuRepository menuRepository) {
+    public OrderMapper(final OrderTableRepository orderTableRepository, final MenuRepository menuRepository,
+                       final OrderValidator orderValidator) {
         this.orderTableRepository = orderTableRepository;
         this.menuRepository = menuRepository;
+        this.orderValidator = orderValidator;
     }
 
     public Order from(final OrderRequest orderRequest) {
-        OrderTable orderTable = getOrderTable(orderRequest.getOrderTableId());
         List<OrderLineItem> orderLineItems = mapToOrderLineItems(orderRequest.getOrderLineItems());
 
-        return new Order(orderTable, orderLineItems);
-    }
-
-    private OrderTable getOrderTable(final Long orderTableId) {
-        return orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+        return new Order(orderRequest.getOrderTableId(), orderLineItems, orderValidator);
     }
 
     private List<OrderLineItem> mapToOrderLineItems(final List<OrderLineItemRequest> orderLineItemRequests) {
         return orderLineItemRequests.stream()
                 .map(orderLineItemRequest -> {
                             Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
-                                    .orElseThrow(IllegalAccessError::new);
+                                    .orElseThrow(IllegalArgumentException::new);
                             return new OrderLineItem(
                                     new OrderedMenu(menu.getId(), menu.getName(), menu.getPrice().getValue()),
                                     orderLineItemRequest.getQuantity()
