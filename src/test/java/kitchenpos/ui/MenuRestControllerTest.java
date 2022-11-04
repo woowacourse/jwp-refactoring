@@ -6,8 +6,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.application.MenuService;
-import kitchenpos.application.dto.request.MenuCreateRequest;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.application.dto.MenuCreateRequest;
+import kitchenpos.menu.ui.MenuRestController;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

@@ -2,8 +2,8 @@ package kitchenpos;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.application.dto.request.MenuCreateRequest;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.menu.application.dto.MenuCreateRequest;
+import kitchenpos.menu.domain.MenuProduct;
 
 public class RequestFixture {
 

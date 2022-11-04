@@ -8,10 +8,11 @@ import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.application.dto.request.ProductCreateRequest;
-import kitchenpos.application.dto.response.ProductResponse;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
+import kitchenpos.product.application.dto.ProductCreateRequest;
+import kitchenpos.product.application.dto.ProductResponse;
+import kitchenpos.product.dao.ProductDao;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.application.ProductService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
