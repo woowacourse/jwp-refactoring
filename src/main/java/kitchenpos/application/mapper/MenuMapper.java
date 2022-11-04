@@ -2,7 +2,7 @@ package kitchenpos.application.mapper;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Price;
+import kitchenpos.domain.common.Price;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;

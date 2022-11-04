@@ -3,7 +3,7 @@ package kitchenpos.domain.menu;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Price;
+import kitchenpos.domain.common.Price;
 import kitchenpos.repository.ProductRepository;
 import org.springframework.stereotype.Component;
 
