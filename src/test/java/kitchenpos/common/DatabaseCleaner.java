@@ -17,7 +17,7 @@ public class DatabaseCleaner {
     public void tableClear() {
         jdbcTemplate.execute("SET REFERENTIAL_INTEGRITY FALSE");
 
-        List<String> tableNames = findTableNames();
+        final List<String> tableNames = findTableNames();
         for (String tableName : tableNames) {
             jdbcTemplate.execute(String.format("TRUNCATE TABLE %s RESTART IDENTITY", tableName));
         }
