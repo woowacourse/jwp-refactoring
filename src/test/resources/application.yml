@@ -1,7 +1,10 @@
 spring:
   flyway:
     enabled: false
-
-  datasource:
-    initialization-mode: always
-    schema: classpath:db/migration/V3__Initialize_project_tables.sql
+  h2:
+    console:
+      enabled: true
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
