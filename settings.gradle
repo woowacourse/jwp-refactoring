@@ -1,1 +1,8 @@
 rootProject.name = 'kitchenpos'
+include 'module-api'
+include 'module-core'
+include 'module-core:menu'
+findProject(':module-core:menu')?.name = 'menu'
+include 'module-core:order'
+findProject(':module-core:order')?.name = 'order'
+
