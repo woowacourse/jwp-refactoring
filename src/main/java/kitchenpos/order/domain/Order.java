@@ -54,10 +54,6 @@ public class Order {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
-    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
-        this(id, orderTableId, orderStatus, orderedTime, new ArrayList<>());
-    }
-
     public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
         this.id = id;

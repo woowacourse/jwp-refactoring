@@ -45,6 +45,11 @@ public class TableGroup {
         return new TableGroup(createdDate, orderTables);
     }
 
+    public void ungroup() {
+        orderTables.forEach(OrderTable::clear);
+        this.orderTables.clear();
+    }
+
     private void validateTableGroup(final List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new CustomIllegalArgumentException(INVALID_TABLE_GROUP_EXCEPTION);
@@ -61,10 +66,6 @@ public class TableGroup {
 
     public LocalDateTime getCreatedDate() {
         return createdDate;
-    }
-
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
     }
 
     public List<OrderTable> getOrderTables() {

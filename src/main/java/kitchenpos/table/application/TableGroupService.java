@@ -69,17 +69,11 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         TableGroup tableGroup = getTableGroup(tableGroupId);
         validator.validateUngroup(tableGroup);
-        clearOrderTables(tableGroup);
+        tableGroup.ungroup();
     }
 
     private TableGroup getTableGroup(final Long tableGroupId) {
         return tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(() -> new CustomIllegalArgumentException(NOT_FOUND_TABLE_EXCEPTION));
-    }
-
-    private void clearOrderTables(final TableGroup tableGroup) {
-        for (final OrderTable orderTable : tableGroup.getOrderTables()) {
-            orderTable.clear();
-        }
     }
 }

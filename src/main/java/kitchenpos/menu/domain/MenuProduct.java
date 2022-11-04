@@ -26,17 +26,8 @@ public class MenuProduct {
     protected MenuProduct() {
     }
 
-    public MenuProduct(final Long productId, final long quantity) {
-        this( null, productId, quantity, null);
-    }
-
-
-    public MenuProduct(final Long menuId, final Long productId, final long quantity) {
-        this(menuId, productId, quantity, null);
-    }
-
     public MenuProduct(final Long productId, final long quantity, final BigDecimal price) {
-        this( null, productId, quantity, price);
+        this(null, productId, quantity, price);
     }
 
     public MenuProduct(final Long seq, final Long productId, final long quantity, final BigDecimal price) {

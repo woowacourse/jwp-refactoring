@@ -16,6 +16,7 @@ public class OrderLineItem {
 
     @Column
     private Long menuId;
+
     @Column
     private long quantity;
 

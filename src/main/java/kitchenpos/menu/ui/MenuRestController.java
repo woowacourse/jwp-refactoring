@@ -21,7 +21,6 @@ public class MenuRestController {
 
     @PostMapping("/api/menus")
     public ResponseEntity<Menu> create(@RequestBody final MenuRequest request) {
-        // : todo 여기서 바인딩 될 때 리플랙션 써서 검증 안탐 DTO로 변경?
         final Menu created = menuService.create(request);
         final URI uri = URI.create("/api/menus/" + created.getId());
         return ResponseEntity.created(uri)
