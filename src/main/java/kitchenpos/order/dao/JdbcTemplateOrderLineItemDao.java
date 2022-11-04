@@ -22,7 +22,7 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
             new OrderLineItem(
                     rs.getLong("seq"),
                     rs.getLong("order_id"),
-                    rs.getLong("menu_id"),
+                    rs.getLong("order_menu_id"),
                     rs.getLong("quantity")
             );
 
@@ -55,20 +55,20 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
 
     @Override
     public List<OrderLineItem> findAll() {
-        final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item";
+        final String sql = "SELECT seq, order_id, order_menu_id, quantity FROM order_line_item";
         return jdbcTemplate.query(sql, ORDER_LINE_ITEM_MAPPER);
     }
 
     @Override
     public List<OrderLineItem> findAllByOrderId(final Long orderId) {
-        final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item WHERE order_id = (:orderId)";
+        final String sql = "SELECT seq, order_id, order_menu_id, quantity FROM order_line_item WHERE order_id = (:orderId)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("orderId", orderId);
         return jdbcTemplate.query(sql, parameters, ORDER_LINE_ITEM_MAPPER);
     }
 
     private OrderLineItem select(final Long id) {
-        final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item WHERE seq = (:seq)";
+        final String sql = "SELECT seq, order_id, order_menu_id, quantity FROM order_line_item WHERE seq = (:seq)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("seq", id);
         return jdbcTemplate.queryForObject(sql, parameters, ORDER_LINE_ITEM_MAPPER);

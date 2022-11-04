@@ -23,7 +23,7 @@ public class OrderResponse {
                 .map(orderLineItem -> new OrderLineItemResponse(
                         orderLineItem.getSeq(),
                         orderLineItem.getOrderId(),
-                        orderLineItem.getMenuId(),
+                        orderLineItem.getOrderMenuId(),
                         orderLineItem.getQuantity()
                 )).collect(Collectors.toList());
     }

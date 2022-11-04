@@ -60,7 +60,7 @@ public class OrderService {
 
     private void validateIsOrdable(List<OrderLineItem> orderLineItems, Order order) {
         List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
+                .map(OrderLineItem::getOrderMenuId)
                 .collect(Collectors.toList());
         order.validateIsOrdable(orderValidator, menuIds);
     }
