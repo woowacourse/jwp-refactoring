@@ -1,16 +1,14 @@
 package kitchenpos.table.application;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.order.dao.OrderDao;
 import kitchenpos.table.dao.OrderTableDao;
 import kitchenpos.table.dao.TableGroupDao;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.domain.TableValidator;
 import kitchenpos.table.dto.request.OrderTableRequest;
 import kitchenpos.table.dto.request.TableGroupRequest;
 import kitchenpos.table.dto.response.TableGroupResponse;
@@ -21,16 +19,16 @@ import org.springframework.util.CollectionUtils;
 @Service
 public class TableGroupService {
 
-    private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
     private final TableGroupDao tableGroupDao;
+    private final TableValidator tableValidator;
 
-    public TableGroupService(final OrderDao orderDao,
-                             final OrderTableDao orderTableDao,
-                             final TableGroupDao tableGroupDao) {
-        this.orderDao = orderDao;
+    public TableGroupService(final OrderTableDao orderTableDao,
+                             final TableGroupDao tableGroupDao,
+                             final TableValidator tableValidator) {
         this.orderTableDao = orderTableDao;
         this.tableGroupDao = tableGroupDao;
+        this.tableValidator = tableValidator;
     }
 
     @Transactional
@@ -78,21 +76,11 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
-
-        validateOrderStatus(orderTables);
-
+        tableValidator.validateTableGroup(orderTables);
         orderTables.stream()
                 .peek(OrderTable::ungroup)
                 .forEach(orderTableDao::save);
     }
 
-    private void validateOrderStatus(final List<OrderTable> orderTables) {
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException("주문이 Cooking이거나 Meal인 경우 그룹 해제할 수 없습니다.");
-        }
-    }
+
 }

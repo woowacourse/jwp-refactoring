@@ -11,12 +11,13 @@ import java.util.List;
 import kitchenpos.dao.FakeOrderDao;
 import kitchenpos.dao.FakeOrderTableDao;
 import kitchenpos.order.dao.OrderDao;
-import kitchenpos.table.dao.OrderTableDao;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.table.application.TableService;
+import kitchenpos.table.dao.OrderTableDao;
+import kitchenpos.table.domain.TableValidator;
 import kitchenpos.table.dto.request.OrderTableCreateRequest;
 import kitchenpos.table.dto.response.OrderTableResponse;
-import kitchenpos.table.application.TableService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,12 +28,14 @@ public class TableServiceTest {
 
     private OrderDao orderDao;
     private OrderTableDao orderTableDao;
+    private TableValidator tableValidator;
 
     @BeforeEach
     void beforeEach() {
         this.orderDao = new FakeOrderDao();
         this.orderTableDao = new FakeOrderTableDao();
-        this.tableService = new TableService(orderDao, orderTableDao);
+        this.tableValidator = new TableValidator(orderDao);
+        this.tableService = new TableService(orderTableDao, tableValidator);
     }
 
     @Test
