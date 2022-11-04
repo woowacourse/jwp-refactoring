@@ -1,17 +1,15 @@
 package kitchenpos.exception;
 
-import org.springframework.http.HttpStatus;
-
 public abstract class ApplicationException extends RuntimeException {
 
-    private final HttpStatus httpStatus;
+    private final int httpStatusCode;
 
-    public ApplicationException(final String message, final HttpStatus httpStatus) {
+    public ApplicationException(final String message, final int httpStatusCode) {
         super(message);
-        this.httpStatus = httpStatus;
+        this.httpStatusCode = httpStatusCode;
     }
 
-    public HttpStatus getHttpStatus() {
-        return httpStatus;
+    public int getHttpStatusCode() {
+        return httpStatusCode;
     }
 }

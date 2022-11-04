@@ -12,7 +12,7 @@ public class GlobalControllerAdvice {
 
     @ExceptionHandler(ApplicationException.class)
     public ResponseEntity<ErrorResponse> handleApplicationException(final ApplicationException e) {
-        return ResponseEntity.status(e.getHttpStatus()).body(new ErrorResponse(e.getMessage()));
+        return ResponseEntity.status(e.getHttpStatusCode()).body(new ErrorResponse(e.getMessage()));
     }
 
     @ExceptionHandler(RuntimeException.class)
