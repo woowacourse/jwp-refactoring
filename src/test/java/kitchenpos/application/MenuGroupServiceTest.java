@@ -4,9 +4,10 @@ import static kitchenpos.support.DataFixture.createMenuGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import kitchenpos.dto.request.MenuGroupRequest;
-import kitchenpos.dto.response.MenuGroupResponse;
-import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.menu.application.MenuGroupService;
+import kitchenpos.menu.domain.MenuGroupRepository;
+import kitchenpos.menu.dto.request.MenuGroupRequest;
+import kitchenpos.menu.dto.response.MenuGroupResponse;
 import kitchenpos.support.DatabaseCleanUp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
