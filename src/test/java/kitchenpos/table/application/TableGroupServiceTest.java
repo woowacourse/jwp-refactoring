@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.List;
 import kitchenpos.common.DataClearExtension;
 import kitchenpos.table.application.request.TableGroupCommand;
+import kitchenpos.table.application.response.TableGroupResponse;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.domain.TableGroup;
@@ -43,7 +44,7 @@ class TableGroupServiceTest {
             OrderTable orderTable2 = orderTableRepository.save(new OrderTable(2, true));
             List<Long> orderTableIds = List.of(orderTable1.getId(), orderTable2.getId());
 
-            TableGroup tableGroup = tableGroupService.create(new TableGroupCommand(orderTableIds));
+            TableGroupResponse tableGroup = tableGroupService.create(new TableGroupCommand(orderTableIds));
 
             assertThat(tableGroup).isNotNull();
         }

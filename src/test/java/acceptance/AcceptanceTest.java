@@ -22,6 +22,7 @@ import kitchenpos.order.ui.request.OrderTableRequest;
 import kitchenpos.product.application.response.ProductResponse;
 import kitchenpos.product.ui.request.ProductRequest;
 import kitchenpos.table.application.response.OrderTableResponse;
+import kitchenpos.table.application.response.TableGroupResponse;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.ui.request.TableGroupRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -145,7 +146,7 @@ public class AcceptanceTest {
                 .extract().as(OrderTableResponse.class);
     }
 
-    protected TableGroup 테이블_그룹을_생성한다(List<Long> orderTableId) {
+    protected TableGroupResponse 테이블_그룹을_생성한다(List<Long> orderTableId) {
         TableGroupRequest tableGroup = new TableGroupRequest(orderTableId);
 
         return RestAssured.given().log().all()
@@ -155,7 +156,7 @@ public class AcceptanceTest {
                 .post("/api/table-groups")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
-                .extract().as(TableGroup.class);
+                .extract().as(TableGroupResponse.class);
     }
 
     protected void 테이블_그룹을_해제한다(Long id) {

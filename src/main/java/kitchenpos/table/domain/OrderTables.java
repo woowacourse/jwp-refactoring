@@ -51,4 +51,8 @@ public class OrderTables {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
     }
+
+    public List<OrderTable> getValues() {
+        return values;
+    }
 }

@@ -2,6 +2,7 @@ package kitchenpos.table.application;
 
 import java.util.List;
 import kitchenpos.table.application.request.TableGroupCommand;
+import kitchenpos.table.application.response.TableGroupResponse;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.domain.OrderTables;
 import kitchenpos.table.domain.TableGroup;
@@ -25,11 +26,11 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(TableGroupCommand tableGroupCommand) {
+    public TableGroupResponse create(TableGroupCommand tableGroupCommand) {
         List<Long> orderTableId = tableGroupCommand.getOrderTableId();
         OrderTables orderTables = OrderTables.group(orderTableRepository.findAllByIdIn(orderTableId));
         tableGroupValidator.validate(orderTables, orderTableId);
-        return tableGroupRepository.save(new TableGroup(orderTables));
+        return TableGroupResponse.from(tableGroupRepository.save(new TableGroup(orderTables)));
     }
 
     @Transactional

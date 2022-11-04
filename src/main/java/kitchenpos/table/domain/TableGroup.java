@@ -40,4 +40,12 @@ public class TableGroup {
     public Long getId() {
         return id;
     }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public OrderTables getOrderTables() {
+        return orderTables;
+    }
 }
