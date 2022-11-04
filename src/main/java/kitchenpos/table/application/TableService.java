@@ -1,9 +1,6 @@
 package kitchenpos.table.application;
 
-import java.util.Arrays;
 import java.util.List;
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.table.application.dto.OrderTableCreateRequest;
 import kitchenpos.table.application.dto.OrderTableEmptyUpdateRequest;
 import kitchenpos.table.application.dto.OrderTableNumberOfGuestsUpdateRequest;
@@ -17,12 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final TableDomainService tableDomainService;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(final OrderTableRepository orderTableRepository, final TableDomainService tableDomainService) {
         this.orderTableRepository = orderTableRepository;
+        this.tableDomainService = tableDomainService;
     }
 
     @Transactional
@@ -38,16 +35,8 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableEmptyUpdateRequest request) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
-        final OrderTable orderTable = savedOrderTable.updateEmpty(request.getEmpty());
-
-        return OrderTableResponse.from(orderTableRepository.save(orderTable));
+        final OrderTable orderTable = tableDomainService.changeEmpty(orderTableId, request.getEmpty());
+        return OrderTableResponse.from(orderTable);
     }
 
     @Transactional
