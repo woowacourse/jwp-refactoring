@@ -30,7 +30,7 @@ OneToMany 단방향으로 걸고 싶었지만, 시간이 부족하고 insert후 
 
 <서비스, Repository 구조>
 
-![레벨5-3](images/레벨5-3.jpg)
+![레벨5-3](images/레벨5-3.jpg)
 
 패키지 사이의 의존관계가 양방향으로 존재하지 않았는데, 이게 Validator를 미리 구현해서 그런건가? Repository에서 Service를 참조하고 있지 않고 Service는 Repository들을 참조하고 있으니 의존관계가 단방향이 안될수가 있나 고민이 된다.
 
