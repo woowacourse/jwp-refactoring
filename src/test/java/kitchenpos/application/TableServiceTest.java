@@ -9,8 +9,8 @@ import kitchenpos.order.application.TableService;
 import kitchenpos.order.application.dto.OrderTableCreationDto;
 import kitchenpos.order.application.dto.OrderTableDto;
 import kitchenpos.common.annotation.SpringTestWithData;
-import kitchenpos.order.dao.OrderDao;
-import kitchenpos.order.dao.OrderTableDao;
+import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderTableRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
@@ -28,10 +28,10 @@ class TableServiceTest {
     private TableService tableService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @DisplayName("주문 테이블을 생성한다.")
     @Test
@@ -66,8 +66,8 @@ class TableServiceTest {
     @Test
     void changeEmpty() {
         final OrderTable orderTable = new OrderTable(0, true);
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
-        orderDao.save(new Order(savedOrderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now(),
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
+        orderRepository.save(new Order(savedOrderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now(),
                 List.of(new OrderLineItem(1L, 1L))));
         final OrderTableDto orderTableDto = tableService.changeEmpty(savedOrderTable.getId(), false);
 
@@ -78,8 +78,8 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuests() {
         final OrderTable orderTable = new OrderTable(0, true);
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
-        orderDao.save(new Order(savedOrderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now(),
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
+        orderRepository.save(new Order(savedOrderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now(),
                 List.of(new OrderLineItem(1L, 1L))));
         tableService.changeEmpty(savedOrderTable.getId(), false);
         final OrderTableDto orderTableDto = tableService.changeNumberOfGuests(savedOrderTable.getId(), 3);

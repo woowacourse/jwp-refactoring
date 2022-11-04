@@ -13,7 +13,7 @@ import kitchenpos.acceptance.common.httpcommunication.OrderTableHttpCommunicatio
 import kitchenpos.acceptance.common.httpcommunication.ProductHttpCommunication;
 import kitchenpos.acceptance.common.httpcommunication.TableGroupHttpCommunication;
 import kitchenpos.common.fixture.RequestBody;
-import kitchenpos.order.dao.OrderDao;
+import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.menu.ui.dto.response.MenuGroupResponse;
 import kitchenpos.menu.ui.dto.response.MenuResponse;
 import kitchenpos.order.ui.dto.response.OrderResponse;
@@ -30,7 +30,7 @@ import org.springframework.http.HttpStatus;
 public class TableGroupAcceptanceTest extends AcceptanceTest {
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @DisplayName("테이블 그룹을 생성할 떄 ")
     @Nested

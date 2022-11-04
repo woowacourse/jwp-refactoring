@@ -10,9 +10,9 @@ import kitchenpos.order.application.TableGroupService;
 import kitchenpos.order.application.dto.TableGroupCreationDto;
 import kitchenpos.order.application.dto.TableGroupDto;
 import kitchenpos.common.annotation.SpringTestWithData;
-import kitchenpos.order.dao.OrderDao;
-import kitchenpos.order.dao.OrderTableDao;
-import kitchenpos.order.dao.TableGroupDao;
+import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderTableRepository;
+import kitchenpos.order.domain.TableGroupRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
@@ -33,19 +33,19 @@ class TableGroupServiceTest {
     private TableGroupService tableGroupService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @DisplayName("테이블 그룹을 생성한다.")
     @Test
     void createTableGroup() {
-        final OrderTable orderTable1 = orderTableDao.save(new OrderTable(0, true));
-        final OrderTable orderTable2 = orderTableDao.save(new OrderTable(0, true));
+        final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(0, true));
+        final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(0, true));
         final TableGroupCreationRequest tableGroupCreationRequest = new TableGroupCreationRequest(
                 List.of(new OrderTableIdDto(orderTable1.getId()), new OrderTableIdDto(orderTable2.getId())));
         final TableGroupCreationDto tableGroupCreationDto = TableGroupCreationDto.from(tableGroupCreationRequest);
@@ -63,9 +63,9 @@ class TableGroupServiceTest {
         @DisplayName("해제 가능한 조건이면 그룹을 해제한다.")
         @Test
         void ungroupTableSuccess() {
-            final OrderTable orderTable1 = orderTableDao.save(new OrderTable(0, true));
-            final OrderTable orderTable2 = orderTableDao.save(new OrderTable(0, true));
-            final TableGroup tableGroup = tableGroupDao.save(
+            final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(0, true));
+            final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(0, true));
+            final TableGroup tableGroup = tableGroupRepository.save(
                     new TableGroup(List.of(orderTable1, orderTable2), LocalDateTime.now()));
 
             assertDoesNotThrow(() -> tableGroupService.ungroupTable(tableGroup.getId()));
@@ -74,15 +74,15 @@ class TableGroupServiceTest {
         @DisplayName("그룹에 있는 주문의 상태가 COMPLETION이 아니면 에러를 던진다.")
         @Test
         void ungorupTableFail() {
-            final OrderTable orderTable1 = orderTableDao.save(new OrderTable(0, true));
-            final OrderTable orderTable2 = orderTableDao.save(new OrderTable(0, true));
-            final Order order = orderDao.save(new Order(orderTable1.getId(), OrderStatus.COOKING, LocalDateTime.now(),
+            final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(0, true));
+            final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(0, true));
+            final Order order = orderRepository.save(new Order(orderTable1.getId(), OrderStatus.COOKING, LocalDateTime.now(),
                     List.of(new OrderLineItem(null, 1L))));
-            final TableGroup tableGroup = tableGroupDao.save(
+            final TableGroup tableGroup = tableGroupRepository.save(
                     new TableGroup(List.of(orderTable1, orderTable2), LocalDateTime.now()));
-            orderTableDao.save(new OrderTable(orderTable1.getId(), tableGroup.getId(), orderTable1.getNumberOfGuests(),
+            orderTableRepository.save(new OrderTable(orderTable1.getId(), tableGroup.getId(), orderTable1.getNumberOfGuests(),
                     orderTable1.isEmpty()));
-            orderTableDao.save(new OrderTable(orderTable2.getId(), tableGroup.getId(), orderTable1.getNumberOfGuests(),
+            orderTableRepository.save(new OrderTable(orderTable2.getId(), tableGroup.getId(), orderTable1.getNumberOfGuests(),
                     orderTable1.isEmpty()));
 
             assertThatThrownBy(() -> tableGroupService.ungroupTable(tableGroup.getId()))
