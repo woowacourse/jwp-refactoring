@@ -9,7 +9,7 @@ import java.util.List;
 import kitchenpos.NestedApplicationTest;
 import kitchenpos.product.application.ProductService;
 import kitchenpos.product.application.dto.ProductResponse;
-import kitchenpos.product.domain.dao.JdbcTemplateProductDao;
+import kitchenpos.product.infrastructure.JdbcTemplateProductDao;
 import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

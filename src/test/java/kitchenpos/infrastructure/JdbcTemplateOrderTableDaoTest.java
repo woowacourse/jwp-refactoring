@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.infrastructure;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

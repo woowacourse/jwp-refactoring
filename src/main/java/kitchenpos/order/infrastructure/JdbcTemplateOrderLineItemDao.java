@@ -1,4 +1,4 @@
-package kitchenpos.order.domain.dao;
+package kitchenpos.order.infrastructure;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,6 +9,7 @@ import kitchenpos.common.domain.Name;
 import kitchenpos.common.domain.Price;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderMenu;
+import kitchenpos.order.domain.dao.OrderLineItemDao;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;

@@ -7,7 +7,7 @@ import java.util.List;
 import kitchenpos.NestedApplicationTest;
 import kitchenpos.menu.application.MenuGroupService;
 import kitchenpos.menu.application.dto.MenuGroupResponse;
-import kitchenpos.menu.domain.dao.JdbcTemplateMenuGroupDao;
+import kitchenpos.menu.infrastructure.JdbcTemplateMenuGroupDao;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.support.fixture.dto.MenuGroupDtoFixture;
 import org.junit.jupiter.api.BeforeEach;

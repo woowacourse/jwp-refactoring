@@ -10,7 +10,7 @@ import kitchenpos.support.fixture.dto.OrderTableDtoFixture;
 import kitchenpos.table.application.TableService;
 import kitchenpos.table.application.dto.OrderTableResponse;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.dao.JdbcTemplateOrderTableDao;
+import kitchenpos.table.infrastructure.JdbcTemplateOrderTableDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
