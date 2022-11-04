@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.order.domain;
 
 import static kitchenpos.common.fixture.OrderFixtures.generateOrder;
 import static kitchenpos.common.fixture.OrderLineItemFixtures.*;
@@ -10,6 +10,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.common.UnitTest;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
 import org.junit.jupiter.api.Test;
 
 @UnitTest

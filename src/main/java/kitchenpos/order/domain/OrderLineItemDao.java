@@ -1,6 +1,4 @@
-package kitchenpos.dao;
-
-import kitchenpos.domain.OrderLineItem;
+package kitchenpos.order.domain;
 
 import java.util.List;
 

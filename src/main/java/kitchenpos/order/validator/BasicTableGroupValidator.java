@@ -1,12 +1,13 @@
-package kitchenpos.application.validator;
+package kitchenpos.order.validator;
 
-import static kitchenpos.domain.OrderStatus.COOKING;
-import static kitchenpos.domain.OrderStatus.MEAL;
+import static kitchenpos.order.domain.OrderStatus.COOKING;
+import static kitchenpos.order.domain.OrderStatus.MEAL;
 
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.application.validator.TableGroupValidator;
+import kitchenpos.order.domain.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;

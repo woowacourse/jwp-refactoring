@@ -4,12 +4,12 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.dto.OrderChangeOrderStatusRequest;
-import kitchenpos.dto.OrderLineItemSaveRequest;
-import kitchenpos.dto.OrderSaveRequest;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.dto.OrderChangeOrderStatusRequest;
+import kitchenpos.order.dto.OrderLineItemSaveRequest;
+import kitchenpos.order.dto.OrderSaveRequest;
 
 public class OrderFixtures {
 

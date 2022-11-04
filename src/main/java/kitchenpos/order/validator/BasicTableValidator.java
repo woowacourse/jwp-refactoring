@@ -1,11 +1,12 @@
-package kitchenpos.application.validator;
+package kitchenpos.order.validator;
 
-import static kitchenpos.domain.OrderStatus.*;
-import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.order.domain.OrderStatus.*;
+import static kitchenpos.order.domain.OrderStatus.COOKING;
 
 import java.util.List;
 import java.util.function.Supplier;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.application.validator.TableValidator;
+import kitchenpos.order.domain.OrderDao;
 import org.springframework.stereotype.Component;
 
 @Component
