@@ -3,10 +3,9 @@ package kitchenpos.table.application;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.dao.OrderDao;
+import kitchenpos.order.application.OrderStatusValidator;
 import kitchenpos.table.dao.OrderTableDao;
 import kitchenpos.table.dao.TableGroupDao;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTables;
 import kitchenpos.table.domain.TableGroup;
@@ -17,13 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableGroupService {
 
-    private final OrderDao orderDao;
+    private final OrderStatusValidator orderStatusValidator;
     private final OrderTableDao orderTableDao;
     private final TableGroupDao tableGroupDao;
 
-    public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao,
+    public TableGroupService(final OrderStatusValidator orderStatusValidator,
+                             final OrderTableDao orderTableDao,
                              final TableGroupDao tableGroupDao) {
-        this.orderDao = orderDao;
+        this.orderStatusValidator = orderStatusValidator;
         this.orderTableDao = orderTableDao;
         this.tableGroupDao = tableGroupDao;
     }
@@ -51,7 +51,6 @@ public class TableGroupService {
 
     private void validateOrderTablesSize(final OrderTables orderTables, final List<OrderTable> savedOrderTables) {
         orderTables.validateIsSameSize(savedOrderTables);
-
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
             savedOrderTable.validateOrderTableSize();
@@ -87,8 +86,7 @@ public class TableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, OrderStatus.getCookingAndMealStatusNames())) {
+        if (orderStatusValidator.existsByOrderTableIdInAndStatusNotCompletion(orderTableIds)) {
             throw new IllegalArgumentException();
         }
     }

@@ -1,10 +1,8 @@
 package kitchenpos.table.application;
 
-import java.util.Arrays;
 import java.util.List;
-import kitchenpos.order.dao.OrderDao;
+import kitchenpos.order.application.OrderStatusValidator;
 import kitchenpos.table.dao.OrderTableDao;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.dto.OrderTableRequest;
 import org.springframework.stereotype.Service;
@@ -12,11 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
-    private final OrderDao orderDao;
+    private final OrderStatusValidator orderStatusValidator;
     private final OrderTableDao orderTableDao;
 
-    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
-        this.orderDao = orderDao;
+    public TableService(final OrderStatusValidator orderStatusValidator, final OrderTableDao orderTableDao) {
+        this.orderStatusValidator = orderStatusValidator;
         this.orderTableDao = orderTableDao;
     }
 
@@ -48,9 +46,7 @@ public class TableService {
 
     private void validateAbleToChangeEmpty(final Long orderTableId, final OrderTable savedOrderTable) {
         savedOrderTable.validateHasGroupId();
-
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+        if (orderStatusValidator.existsByIdAndStatusNotCompletion(orderTableId)) {
             throw new IllegalArgumentException();
         }
     }
