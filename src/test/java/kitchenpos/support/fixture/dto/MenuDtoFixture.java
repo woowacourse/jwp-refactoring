@@ -6,7 +6,7 @@ import kitchenpos.menu.application.dto.MenuProductSaveRequest;
 import kitchenpos.menu.application.dto.MenuResponse;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.presentation.dto.MenuSaveRequest;
+import kitchenpos.menu.application.dto.MenuSaveRequest;
 
 public class MenuDtoFixture {
 

@@ -9,7 +9,7 @@ import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.dao.MenuDao;
 import kitchenpos.menu.domain.dao.MenuProductDao;
 import kitchenpos.menu.exception.InvalidMenuPriceCreateException;
-import kitchenpos.menu.presentation.dto.MenuSaveRequest;
+import kitchenpos.menu.application.dto.MenuSaveRequest;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.dao.ProductDao;
 import kitchenpos.product.exception.ProductNotFoundException;

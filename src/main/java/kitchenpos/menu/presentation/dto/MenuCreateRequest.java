@@ -3,6 +3,7 @@ package kitchenpos.menu.presentation.dto;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.application.dto.MenuProductSaveRequest;
+import kitchenpos.menu.application.dto.MenuSaveRequest;
 
 public class MenuCreateRequest {
 
