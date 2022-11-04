@@ -1,6 +1,7 @@
 package kitchenpos.menu.application;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.application.dto.MenuProductDto;
@@ -66,10 +67,15 @@ public class MenuService {
     }
 
     private List<MenuProduct> setMenuProductToMenu(final List<MenuProductDto> menuProductDtos, Long menuId) {
-        return menuProductDtos.stream()
-                .map(menuProduct -> new MenuProduct(menuId, menuProduct.getProductId(), menuProduct.getQuantity()))
-                .map(menuProductRepository::save)
-                .collect(Collectors.toList());
+        List<MenuProduct> menuProducts = new ArrayList<>();
+        for (MenuProductDto menuProductDto : menuProductDtos) {
+            final Product product = findProduct(menuProductDto.getProductId());
+            final MenuProduct menuProduct = new MenuProduct(menuId, product.getName(), product.getPrice(),
+                    menuProductDto.getQuantity());
+            menuProductRepository.save(menuProduct);
+            menuProducts.add(menuProduct);
+        }
+        return menuProducts;
     }
 
     private Product findProduct(final Long productId) {
