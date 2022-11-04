@@ -7,7 +7,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.ServiceTest;
 import kitchenpos.product.domain.Product;
-import kitchenpos.product.ui.request.ProductCreateRequest;
 import kitchenpos.product.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

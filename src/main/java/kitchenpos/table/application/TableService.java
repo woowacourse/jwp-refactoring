@@ -2,7 +2,6 @@ package kitchenpos.table.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.table.ui.request.OrderTableCreateReqeust;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.repository.dao.OrderTableDao;
 import kitchenpos.table.response.OrderTableResponse;

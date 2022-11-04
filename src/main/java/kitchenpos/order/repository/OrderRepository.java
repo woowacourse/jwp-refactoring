@@ -3,11 +3,11 @@ package kitchenpos.order.repository;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.repository.dao.JdbcTemplateOrderDao;
 import kitchenpos.order.repository.dao.JdbcTemplateOrderLineItemDao;
 import kitchenpos.order.repository.dao.OrderDao;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderLineItem;
 import org.springframework.stereotype.Repository;
 
 @Repository
