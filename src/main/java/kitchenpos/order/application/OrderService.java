@@ -41,17 +41,6 @@ public class OrderService {
         return orderRepository.save(convertSaveConditionOrder(request.getOrderTableId(), orderLineItems));
     }
 
-    private Order convertSaveConditionOrder(final Long orderTableId, List<OrderLineItem> orderLineItems) {
-        return new Order(orderTableId, COOKING.name(), LocalDateTime.now(),
-                orderLineItems);
-    }
-
-    private void validOrderTable(final Long orderTableId) {
-        if (!orderTableRepository.existsById(orderTableId)) {
-            throw new CustomIllegalArgumentException(NOT_FOUND_TABLE_EXCEPTION);
-        }
-    }
-
     private void validMenu(final List<OrderLineItem> orderLineItems) {
         final List<Long> menuIds = orderLineItems.stream()
                 .map(OrderLineItem::getMenuId)
@@ -64,15 +53,30 @@ public class OrderService {
         }
     }
 
+    private void validOrderTable(final Long orderTableId) {
+        if (!orderTableRepository.existsById(orderTableId)) {
+            throw new CustomIllegalArgumentException(NOT_FOUND_TABLE_EXCEPTION);
+        }
+    }
+
+    private Order convertSaveConditionOrder(final Long orderTableId, List<OrderLineItem> orderLineItems) {
+        return new Order(orderTableId, COOKING.name(), LocalDateTime.now(),
+                orderLineItems);
+    }
+
     @Transactional(readOnly = true)
     public List<Order> list() {
         return orderRepository.findAll();
     }
 
     public Order changeOrderStatus(final Long orderId, final Order order) {
-        final Order savedOrder = orderRepository.findById(orderId)
+        final Order savedOrder = getOrder(orderId);
+        savedOrder.changeOrderStatus(order);
+        return savedOrder;
+    }
+
+    private Order getOrder(final Long orderId) {
+        return orderRepository.findById(orderId)
                 .orElseThrow(() -> new CustomIllegalArgumentException(NOT_FOUND_ORDER_EXCEPTION));
-        savedOrder.changeOrderStatus(order.getOrderStatus());
-        return orderRepository.save(savedOrder);
     }
 }
