@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Order {
-    private Long id;
-    private Long orderTableId;
+    private final Long id;
+    private final Long orderTableId;
     private String orderStatus;
-    private LocalDateTime orderedTime;
-    private OrderLineItems orderLineItems;
+    private final LocalDateTime orderedTime;
+    private final OrderLineItems orderLineItems;
 
     public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
                  final OrderLineItems orderLineItems) {

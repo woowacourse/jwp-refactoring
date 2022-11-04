@@ -1,9 +1,8 @@
 package kitchenpos.product.dao;
 
-import kitchenpos.product.domain.Product;
-
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.product.domain.Product;
 
 public interface ProductDao {
     Product save(Product entity);

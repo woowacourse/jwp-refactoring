@@ -1,4 +1,4 @@
-package kitchenpos.order.application;
+package kitchenpos.menu.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,10 +9,10 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrderLineItemsValidateEventHandler {
+public class MenuValidateEventHandler {
     private final MenuDao menuDao;
 
-    public OrderLineItemsValidateEventHandler(final MenuDao menuDao) {
+    public MenuValidateEventHandler(final MenuDao menuDao) {
         this.menuDao = menuDao;
     }
 

@@ -1,9 +1,9 @@
 package kitchenpos.order.domain;
 
 public class OrderLineItem {
-    private Long seq;
+    private final Long seq;
     private Long orderId;
-    private long quantity;
+    private final long quantity;
 
     public OrderLineItem(final Long seq, final Long orderId, final long quantity) {
         this.seq = seq;
@@ -19,11 +19,11 @@ public class OrderLineItem {
         return orderId;
     }
 
-    public long getQuantity() {
-        return quantity;
-    }
-
     public void setOrderId(final Long orderId) {
         this.orderId = orderId;
+    }
+
+    public long getQuantity() {
+        return quantity;
     }
 }
