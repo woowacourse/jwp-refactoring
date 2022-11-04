@@ -1,11 +1,10 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import kitchenpos.domain.group.TableGroup;
-import kitchenpos.domain.order.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +17,8 @@ class OrderTableTest {
                 .numberOfGuests(2)
                 .empty(true)
                 .build();
-        TableGroup tableGroup = new TableGroup();
+        TableGroup tableGroup = TableGroup.builder()
+                .build();
 
         orderTable.arrangeGroup(tableGroup);
 
@@ -31,8 +31,10 @@ class OrderTableTest {
     @Test
     @DisplayName("그룹을 해제한다.")
     void ungroup() {
+        TableGroup tableGroup = TableGroup.builder()
+                .build();
         OrderTable orderTable = OrderTable.builder()
-                .tableGroup(new TableGroup())
+                .tableGroup(tableGroup)
                 .numberOfGuests(2)
                 .empty(true)
                 .build();
@@ -58,8 +60,10 @@ class OrderTableTest {
     @Test
     @DisplayName("단체 지정된 테이블 상태 변경 시 예외가 발생한다.")
     void changeEmptyFails() {
+        TableGroup tableGroup = TableGroup.builder()
+                .build();
         OrderTable orderTable = OrderTable.builder()
-                .tableGroup(new TableGroup())
+                .tableGroup(tableGroup)
                 .numberOfGuests(2)
                 .empty(true)
                 .build();

@@ -1,6 +1,7 @@
 package kitchenpos.domain.order;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -9,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.vo.Price;
 
 @Entity
 @Table(name = "order_line_item")
@@ -23,9 +24,11 @@ public class OrderLineItem {
     @JoinColumn(name = "order_id")
     private Order order;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_id")
-    private Menu menu;
+    @Column(name = "menu_name", nullable = false)
+    private String name;
+
+    @Embedded
+    private Price price;
 
     @Column(name = "quantity", nullable = false)
     private long quantity;
@@ -33,10 +36,11 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(final Long seq, final Order order, final Menu menu, final long quantity) {
+    public OrderLineItem(final Long seq, final Order order, final String name, final Price price, final long quantity) {
         this.seq = seq;
         this.order = order;
-        this.menu = menu;
+        this.name = name;
+        this.price = price;
         this.quantity = quantity;
     }
 
@@ -56,8 +60,12 @@ public class OrderLineItem {
         return order;
     }
 
-    public Menu getMenu() {
-        return menu;
+    public String getName() {
+        return name;
+    }
+
+    public Price getPrice() {
+        return price;
     }
 
     public long getQuantity() {
@@ -68,7 +76,8 @@ public class OrderLineItem {
 
         private Long seq;
         private Order order;
-        private Menu menu;
+        private String name;
+        private Price price;
         private long quantity;
 
         public Builder seq(final Long seq) {
@@ -81,8 +90,13 @@ public class OrderLineItem {
             return this;
         }
 
-        public Builder menu(final Menu menu) {
-            this.menu = menu;
+        public Builder name(final String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder price(final Price price) {
+            this.price = price;
             return this;
         }
 
@@ -92,7 +106,7 @@ public class OrderLineItem {
         }
 
         public OrderLineItem build() {
-            return new OrderLineItem(seq, order, menu, quantity);
+            return new OrderLineItem(seq, order, name, price, quantity);
         }
     }
 }

@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.application.order;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.application.ServiceTest;
+import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderLineItems;
@@ -152,6 +154,7 @@ class OrderServiceTest extends ServiceTest {
         @Nested
         class 정상적인_요청일_경우 {
 
+            private final Menu menu = menuRepository.findById(1L).orElseThrow();
             private final Order order = orderRepository.save(Order.builder()
                     .orderTable(OrderTable.builder()
                             .numberOfGuests(2)
@@ -160,7 +163,8 @@ class OrderServiceTest extends ServiceTest {
                     .orderStatus(OrderStatus.COOKING)
                     .orderedTime(LocalDateTime.now())
                     .orderLineItems(new OrderLineItems(List.of(OrderLineItem.builder()
-                            .menu(menuRepository.findById(1L).orElseThrow())
+                            .name(menu.getName())
+                            .price(menu.getPrice())
                             .quantity(1L)
                             .build())))
                     .build());
@@ -180,6 +184,7 @@ class OrderServiceTest extends ServiceTest {
         @Nested
         class 정상적인_요청일_경우 {
 
+            private final Menu menu = menuRepository.findById(1L).orElseThrow();
             private final Order order = orderRepository.save(Order.builder()
                     .orderTable(OrderTable.builder()
                             .numberOfGuests(2)
@@ -188,7 +193,8 @@ class OrderServiceTest extends ServiceTest {
                     .orderStatus(OrderStatus.COOKING)
                     .orderedTime(LocalDateTime.now())
                     .orderLineItems(new OrderLineItems(List.of(OrderLineItem.builder()
-                            .menu(menuRepository.findById(1L).orElseThrow())
+                            .name(menu.getName())
+                            .price(menu.getPrice())
                             .quantity(1L)
                             .build())))
                     .build());
@@ -223,6 +229,7 @@ class OrderServiceTest extends ServiceTest {
         @Nested
         class 주문이_이미_계산_완료_상태인_경우 {
 
+            private final Menu menu = menuRepository.findById(1L).orElseThrow();
             private final Order order = orderRepository.save(Order.builder()
                     .orderTable(OrderTable.builder()
                             .numberOfGuests(2)
@@ -231,7 +238,8 @@ class OrderServiceTest extends ServiceTest {
                     .orderStatus(OrderStatus.COMPLETION)
                     .orderedTime(LocalDateTime.now())
                     .orderLineItems(new OrderLineItems(List.of(OrderLineItem.builder()
-                            .menu(menuRepository.findById(1L).orElseThrow())
+                            .name(menu.getName())
+                            .price(menu.getPrice())
                             .quantity(1L)
                             .build())))
                     .build());

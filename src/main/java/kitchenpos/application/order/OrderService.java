@@ -76,7 +76,8 @@ public class OrderService {
         Menu menu = menuRepository.findById(request.getMenuId())
                 .orElseThrow(() -> new IllegalArgumentException("메뉴가 존재하지 않습니다."));
         return OrderLineItem.builder()
-                .menu(menu)
+                .name(menu.getName())
+                .price(menu.getPrice())
                 .quantity(request.getQuantity())
                 .build();
     }

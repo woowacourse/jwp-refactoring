@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.application.order;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -6,7 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.application.ServiceTest;
 import kitchenpos.domain.group.TableGroup;
+import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderLineItems;
@@ -135,12 +137,14 @@ class TableServiceTest extends ServiceTest {
                     .numberOfGuests(2)
                     .empty(false)
                     .build();
+            private final Menu menu = menuRepository.findById(1L).orElseThrow();
             private final Order order = orderRepository.save(Order.builder()
                     .orderTable(orderTable)
                     .orderStatus(OrderStatus.COOKING)
                     .orderedTime(LocalDateTime.now())
                     .orderLineItems(new OrderLineItems(List.of(OrderLineItem.builder()
-                            .menu(menuRepository.findById(1L).orElseThrow())
+                            .name(menu.getName())
+                            .price(menu.getPrice())
                             .quantity(1L)
                             .build())))
                     .build());
@@ -162,13 +166,15 @@ class TableServiceTest extends ServiceTest {
                     .numberOfGuests(2)
                     .empty(false)
                     .build();
+            private final Menu menu = menuRepository.findById(1L).orElseThrow();
             private final Order order = orderRepository.save(Order.builder()
                     .orderTable(orderTable)
                     .orderStatus(OrderStatus.MEAL)
                     .orderedTime(LocalDateTime.now())
                     .orderLineItems(new OrderLineItems(
                             List.of(OrderLineItem.builder()
-                                    .menu(menuRepository.findById(1L).orElseThrow())
+                                    .name(menu.getName())
+                                    .price(menu.getPrice())
                                     .quantity(1L)
                                     .build())))
                     .build());

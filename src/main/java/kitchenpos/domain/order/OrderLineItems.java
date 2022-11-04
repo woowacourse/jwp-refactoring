@@ -26,8 +26,7 @@ public class OrderLineItems {
 
     public boolean hasDuplicate() {
         return orderLineItems.size() != orderLineItems.stream()
-                .map(orderLineItem -> orderLineItem.getMenu()
-                        .getId())
+                .map(OrderLineItem::getName)
                 .collect(Collectors.toSet())
                 .size();
     }

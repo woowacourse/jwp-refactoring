@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.application.group;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.application.ServiceTest;
 import kitchenpos.domain.group.TableGroup;
 import kitchenpos.domain.order.OrderTable;
 import kitchenpos.domain.order.OrderTables;

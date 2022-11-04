@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -7,10 +7,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.order.OrderTable;
 import kitchenpos.domain.product.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,7 +39,8 @@ class OrderTest {
                 .menuProducts(List.of(menuProduct))
                 .build();
         OrderLineItem orderLineItem = OrderLineItem.builder()
-                .menu(menu)
+                .name(menu.getName())
+                .price(menu.getPrice())
                 .build();
 
         assertThatThrownBy(() -> Order.builder()
@@ -69,7 +66,8 @@ class OrderTest {
                 .menuProducts(List.of(menuProduct))
                 .build();
         OrderLineItem orderLineItem = OrderLineItem.builder()
-                .menu(menu)
+                .name(menu.getName())
+                .price(menu.getPrice())
                 .build();
         OrderTable orderTable = OrderTable.builder()
                 .empty(true)
@@ -99,7 +97,8 @@ class OrderTest {
                 .menuProducts(List.of(menuProduct))
                 .build();
         OrderLineItem orderLineItem = OrderLineItem.builder()
-                .menu(menu)
+                .name(menu.getName())
+                .price(menu.getPrice())
                 .build();
         OrderTable orderTable = OrderTable.builder()
                 .empty(false)
@@ -131,7 +130,8 @@ class OrderTest {
                 .menuProducts(List.of(menuProduct))
                 .build();
         OrderLineItem orderLineItem = OrderLineItem.builder()
-                .menu(menu)
+                .name(menu.getName())
+                .price(menu.getPrice())
                 .build();
         OrderTable orderTable = OrderTable.builder()
                 .empty(false)
