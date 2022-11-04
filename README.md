@@ -214,4 +214,3 @@ ALTER TABLE order_line_item
 ALTER TABLE order_line_item
     DROP COLUMN menu_id;
 ```
-]()
