@@ -54,6 +54,7 @@ public class MenuService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<MenuResponse> list() {
         return menuDao.findAll().stream()
                 .map(MenuResponse::from)

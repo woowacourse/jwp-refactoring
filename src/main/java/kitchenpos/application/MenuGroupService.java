@@ -23,6 +23,7 @@ public class MenuGroupService {
         return MenuGroupResponse.from(menuGroup);
     }
 
+    @Transactional(readOnly = true)
     public List<MenuGroupResponse> list() {
         return menuGroupDao.findAll().stream()
                 .map(MenuGroupResponse::from)

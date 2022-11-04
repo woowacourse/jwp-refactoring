@@ -79,6 +79,7 @@ public class OrderService {
                 .count();
     }
 
+    @Transactional(readOnly = true)
     public List<OrderResponse> list() {
         return orderDao.findAll().stream()
                 .map(OrderResponse::from)

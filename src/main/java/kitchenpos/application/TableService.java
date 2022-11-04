@@ -30,6 +30,7 @@ public class TableService {
                 orderTableDao.save(new OrderTable(request.getNumberOfGuests(), request.getEmpty())));
     }
 
+    @Transactional(readOnly = true)
     public List<OrderTableResponse> list() {
         final List<OrderTable> orderTables = orderTableDao.findAll();
         return orderTables.stream()
