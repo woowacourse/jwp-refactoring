@@ -1,11 +1,10 @@
 package kitchenpos.domain;
 
-import static kitchenpos.fixture.OrderTableFixture.generateOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import kitchenpos.order.domain.Order;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

@@ -3,7 +3,8 @@ package kitchenpos.dao;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.menu.dao.MenuGroupDao;
+import kitchenpos.menu.domain.MenuGroup;
 
 public class FakeMenuGroupDao implements MenuGroupDao {
 

@@ -3,7 +3,8 @@ package kitchenpos.dao;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.Product;
+import kitchenpos.product.dao.ProductDao;
+import kitchenpos.product.domain.Product;
 
 public class FakeProductDao implements ProductDao {
 

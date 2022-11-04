@@ -2,11 +2,11 @@ package kitchenpos.fixture;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Price;
-import kitchenpos.dto.request.MenuProductRequest;
-import kitchenpos.dto.request.MenuRequest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.common.domain.Price;
+import kitchenpos.menu.dto.request.MenuProductRequest;
+import kitchenpos.menu.dto.request.MenuRequest;
 
 public class MenuFixture {
 

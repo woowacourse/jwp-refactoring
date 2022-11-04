@@ -3,7 +3,8 @@ package kitchenpos.dao;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.dao.TableGroupDao;
 
 public class FakeTableGroupDao implements TableGroupDao {
 
