@@ -23,7 +23,7 @@ public class OrderLineItemRequest {
         return quantity;
     }
 
-    public OrderLineItem toEntity(final Long orderId) {
-        return new OrderLineItem(orderId, menuId, quantity);
+    public OrderLineItem toEntity() {
+        return new OrderLineItem(menuId, quantity);
     }
 }

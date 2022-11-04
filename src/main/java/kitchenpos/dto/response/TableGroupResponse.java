@@ -32,11 +32,11 @@ public class TableGroupResponse {
     }
 
     public static TableGroupResponse of(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
-        final List<OrderTableResponse> orderTableResponses = orderTables.stream()
-                .map(OrderTableResponse::of)
-                .collect(Collectors.toList());
+//        final List<OrderTable> orderTables = tableGroup.getOrderTables();
+//        final List<OrderTableResponse> orderTableResponses = orderTables.stream()
+//                .map(OrderTableResponse::of)
+//                .collect(Collectors.toList());
 
-        return new TableGroupResponse(tableGroup.getId(), tableGroup.getCreatedDate(), orderTableResponses);
+        return new TableGroupResponse(tableGroup.getId(), tableGroup.getCreatedDate(), null);
     }
 }

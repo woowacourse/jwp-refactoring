@@ -28,11 +28,11 @@ public enum OrderTableFixtures {
     }
 
     public OrderTable create() {
-        return new OrderTable(id, numberOfGuests, empty);
+        return new OrderTable( numberOfGuests, empty);
     }
 
     public OrderTable createWithIdNull() {
-        return new OrderTable(null, numberOfGuests, empty);
+        return new OrderTable(numberOfGuests, empty);
     }
 
     public static List<OrderTable> createAll() {

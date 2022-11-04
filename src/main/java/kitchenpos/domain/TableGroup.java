@@ -3,34 +3,41 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
+@Entity
+@Table(name = "table_group")
 public class TableGroup {
-    private Long id;
-    private LocalDateTime createdDate;
-    private List<OrderTable> orderTables;
 
-    public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
-        this.id = id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column
+    private LocalDateTime createdDate;
+
+    @OneToMany(cascade = CascadeType.MERGE, mappedBy = "tableGroupId", fetch = FetchType.LAZY)
+    private List<OrderTable> orderTables = new ArrayList<>();
+
+    public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         this.createdDate = createdDate;
         this.orderTables = orderTables;
     }
 
-    public TableGroup(final Long id, final LocalDateTime createdDate) {
-        this.id = id;
-        this.createdDate = createdDate;
-        this.orderTables = new ArrayList<>();
-    }
-
-    public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
-        this(null, createdDate, orderTables);
+    public TableGroup() {
     }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public LocalDateTime getCreatedDate() {
@@ -39,9 +46,5 @@ public class TableGroup {
 
     public List<OrderTable> getOrderTables() {
         return orderTables;
-    }
-
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
     }
 }
