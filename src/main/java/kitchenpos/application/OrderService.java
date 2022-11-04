@@ -3,8 +3,6 @@ package kitchenpos.application;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -42,7 +40,6 @@ public class OrderService {
     public Order create(final OrderDto orderDto) {
         final List<OrderLineItem> orderLineItems = orderDto.getOrderLineItems();
         validateOrderLineItems(orderLineItems);
-        validateMenu(orderLineItems);
         final OrderTable orderTable = searchOrderTable(orderDto.toEntity());
         validateOrderTable(orderTable);
         Order orderForSave =
@@ -56,19 +53,6 @@ public class OrderService {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException("[ERROR] 주문 목록이 존재하지 않습니다.");
         }
-    }
-
-    private void validateMenu(final List<OrderLineItem> orderLineItems) {
-        if (orderLineItems.size() != menuDao.countByIdIn(getMenuIds(orderLineItems))) {
-            throw new IllegalArgumentException("[ERROR] 메뉴가 존재하지 않습니다.");
-        }
-    }
-
-    private List<Long> getMenuIds(final List<OrderLineItem> orderLineItems) {
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
-                .collect(Collectors.toList());
-        return menuIds;
     }
 
     private OrderTable searchOrderTable(final Order order) {
