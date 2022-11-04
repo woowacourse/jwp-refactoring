@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.util.List;
+import kitchenpos.ordertable.domain.OrderTable;
 import org.springframework.util.CollectionUtils;
 
 public class OrderTables {
