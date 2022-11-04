@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import static java.util.stream.Collectors.*;
-import static kitchenpos.application.fixture.ProductFixtures.*;
+import static kitchenpos.common.fixture.ProductFixtures.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;

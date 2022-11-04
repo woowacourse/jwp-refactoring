@@ -1,4 +1,4 @@
-package kitchenpos.application.fixture;
+package kitchenpos.common.fixture;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;

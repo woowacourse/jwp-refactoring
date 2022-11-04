@@ -1,9 +1,9 @@
-package kitchenpos.application.fixture;
+package kitchenpos.common.fixture;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.domain.Price;
 
 public class MenuProductFixtures {

@@ -2,7 +2,7 @@ package kitchenpos.application;
 
 import static java.util.stream.Collectors.*;
 
-import kitchenpos.domain.Menu;
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.dto.OrderLineItemSaveRequest;

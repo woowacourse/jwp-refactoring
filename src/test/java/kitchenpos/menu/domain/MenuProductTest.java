@@ -1,10 +1,11 @@
-package kitchenpos.domain;
+package kitchenpos.menu.domain;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import kitchenpos.common.UnitTest;
+import kitchenpos.menu.domain.MenuProduct;
 import org.junit.jupiter.api.Test;
 
 @UnitTest

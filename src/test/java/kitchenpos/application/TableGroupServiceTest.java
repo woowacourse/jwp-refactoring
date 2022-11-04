@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.fixture.OrderFixtures.generateOrder;
-import static kitchenpos.application.fixture.OrderTableFixtures.*;
-import static kitchenpos.application.fixture.TableGroupFixtures.*;
+import static kitchenpos.common.fixture.OrderFixtures.generateOrder;
+import static kitchenpos.common.fixture.OrderTableFixtures.*;
+import static kitchenpos.common.fixture.TableGroupFixtures.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 

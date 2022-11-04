@@ -1,9 +1,9 @@
 package kitchenpos.repository;
 
 import java.util.List;
-import kitchenpos.dao.MenuDao;
+import kitchenpos.menu.repository.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.Menu;
+import kitchenpos.menu.domain.Menu;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 

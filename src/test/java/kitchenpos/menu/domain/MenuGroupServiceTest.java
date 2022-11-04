@@ -1,11 +1,12 @@
-package kitchenpos.application;
+package kitchenpos.menu.domain;
 
 import static java.util.stream.Collectors.*;
-import static kitchenpos.application.fixture.MenuGroupFixtures.*;
+import static kitchenpos.common.fixture.MenuGroupFixtures.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
+import kitchenpos.application.MenuGroupService;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.MenuGroupResponse;

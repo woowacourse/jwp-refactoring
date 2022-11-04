@@ -1,7 +1,7 @@
 package kitchenpos.domain;
 
-import static kitchenpos.application.fixture.OrderFixtures.generateOrder;
-import static kitchenpos.application.fixture.OrderLineItemFixtures.*;
+import static kitchenpos.common.fixture.OrderFixtures.generateOrder;
+import static kitchenpos.common.fixture.OrderLineItemFixtures.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;

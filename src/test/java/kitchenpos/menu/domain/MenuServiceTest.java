@@ -1,22 +1,22 @@
-package kitchenpos.application;
+package kitchenpos.menu.domain;
 
-import static kitchenpos.application.fixture.MenuFixtures.*;
-import static kitchenpos.application.fixture.MenuGroupFixtures.*;
-import static kitchenpos.application.fixture.MenuProductFixtures.*;
-import static kitchenpos.application.fixture.ProductFixtures.*;
+import static kitchenpos.common.fixture.MenuFixtures.*;
+import static kitchenpos.common.fixture.MenuGroupFixtures.*;
+import static kitchenpos.common.fixture.MenuProductFixtures.*;
+import static kitchenpos.common.fixture.ProductFixtures.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
+import kitchenpos.menu.repository.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import kitchenpos.dto.MenuResponse;
-import kitchenpos.dto.MenuSaveRequest;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.dto.MenuResponse;
+import kitchenpos.menu.dto.MenuSaveRequest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
