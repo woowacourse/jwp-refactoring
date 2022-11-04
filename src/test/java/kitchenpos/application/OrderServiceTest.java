@@ -105,9 +105,13 @@ class OrderServiceTest extends ServiceTest {
     void changeOrderStatus() {
         init();
         OrderResponse 주문 = orderService.create(주문요청_테이블1());
-        OrderResponse 변경된_주문 = 주문_상태를_변경했다(주문.getId(), MEAL);
+        System.out.println("주문 = " + 주문);
 
+        OrderResponse 변경된_주문 = 주문_상태를_변경했다(주문.getId(), MEAL);
         OrderResponse 저장된_주문 = orderService.list().get(0);
+
+        System.out.println("변경된_주문 = " + 변경된_주문);
+        System.out.println("저장된_주문 = " + 저장된_주문);
 
         assertThat(저장된_주문)
                 .usingRecursiveComparison()

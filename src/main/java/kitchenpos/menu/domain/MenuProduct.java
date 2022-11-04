@@ -4,11 +4,11 @@ import java.math.BigDecimal;
 import kitchenpos.common.Price;
 
 public class MenuProduct {
-    private Long seq;
+    private final Long seq;
     private Long menuId;
     private final Long productId;
     private final long quantity;
-    private transient final Price price;
+    private final Price price;
 
     public MenuProduct(Long seq, Long menuId, Long productId, long quantity, Price price) {
         this.seq = seq;
@@ -44,9 +44,5 @@ public class MenuProduct {
 
     public BigDecimal getPrice() {
         return price.getPrice();
-    }
-
-    public void placeSeq(Long seq) {
-        this.seq = seq;
     }
 }

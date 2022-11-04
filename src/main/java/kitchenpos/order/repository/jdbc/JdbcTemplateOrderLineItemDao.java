@@ -3,6 +3,7 @@ package kitchenpos.order.repository.jdbc;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import javax.sql.DataSource;
 import kitchenpos.order.domain.OrderLineItem;
@@ -31,9 +32,13 @@ public class JdbcTemplateOrderLineItemDao {
     }
 
     public OrderLineItem save(final OrderLineItem entity) {
-        final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
-        final Number key = jdbcInsert.executeAndReturnKey(parameters);
-        return select(key.longValue());
+        if (Objects.isNull(entity.getSeq())) {
+            final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
+            final Number key = jdbcInsert.executeAndReturnKey(parameters);
+            return select(key.longValue());
+        }
+        update(entity);
+        return entity;
     }
 
     public Optional<OrderLineItem> findById(final Long id) {
@@ -61,6 +66,17 @@ public class JdbcTemplateOrderLineItemDao {
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("seq", id);
         return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
+    }
+
+    private void update(final OrderLineItem entity) {
+        final String sql = "UPDATE order_line_item SET order_id = (:orderId)," +
+                " menu_id = (:menuId), quantity = (:quantity) WHERE seq = (:seq)";
+        final SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("orderId", entity.getOrderId())
+                .addValue("menuId", entity.getMenuId())
+                .addValue("quantity", entity.getQuantity())
+                .addValue("seq", entity.getSeq());
+        jdbcTemplate.update(sql, parameters);
     }
 
     private OrderLineItem toEntity(final ResultSet resultSet) throws SQLException {

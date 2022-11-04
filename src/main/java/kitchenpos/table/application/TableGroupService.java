@@ -51,6 +51,6 @@ public class TableGroupService {
         Tables tables = tableGroup.getOrderTables();
         orderRepository.validateComplete(tables.getOrderTableIds());
         tables.ungroup();
-        tableGroupRepository.save(tableGroup);
+        TableGroup save = tableGroupRepository.save(tableGroup);
     }
 }

@@ -1,12 +1,14 @@
 package kitchenpos.order.repository;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItems;
+import kitchenpos.order.domain.OrderLineItemsMapper;
+import kitchenpos.order.domain.OrderMapper;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.repository.jdbc.JdbcTemplateOrderDao;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
@@ -18,55 +20,48 @@ public class OrderRepositoryImpl implements OrderRepository {
     private final JdbcTemplateOrderDao orderDao;
     private final OrderLineItemRepository itemRepository;
     private final MenuRepository menuRepository;
+    private final OrderMapper orderMapper;
+    private final OrderLineItemsMapper orderLineItemsMapper;
 
     public OrderRepositoryImpl(JdbcTemplateOrderDao orderDao, OrderLineItemRepository itemRepository,
-                               MenuRepository menuRepository) {
+                               MenuRepository menuRepository, OrderMapper orderMapper,
+                               OrderLineItemsMapper orderLineItemsMapper) {
         this.orderDao = orderDao;
         this.itemRepository = itemRepository;
         this.menuRepository = menuRepository;
+        this.orderMapper = orderMapper;
+        this.orderLineItemsMapper = orderLineItemsMapper;
     }
 
     @Override
     public Order save(Order entity) {
         Order save = orderDao.save(entity);
-
-        if (entity.getId() == null) {
-            saveItems(entity, save);
-        }
-        return save;
+        List<OrderLineItem> foundItems = findItems(save.getId(), entity);
+        return orderMapper.mapOrder(save, itemRepository.saveAll(foundItems));
     }
 
-    private void saveItems(Order entity, Order save) {
-        List<OrderLineItem> items = new ArrayList<>();
-        for (OrderLineItem item : entity.getOrderLineItems()) {
-            saveItem(items, item.placeOrderId(save.getId()));
-        }
-        save.placeOrderLineItems(new OrderLineItems(items));
-    }
-
-    private void saveItem(List<OrderLineItem> items, OrderLineItem item) {
-        if (item.getSeq() == null) {
-            menuRepository.findById(item.getMenuId());
-            items.add(itemRepository.save(item));
-            return;
-        }
-        items.add(itemRepository.findById(item.getSeq()));
+    private List<OrderLineItem> findItems(Long id, Order entity) {
+        return entity.getOrderLineItems().stream()
+                .map(orderLineItem -> {
+                    Long menuId = menuRepository.findById(orderLineItem.getMenuId()).getId();
+                    return orderLineItemsMapper.mapItem(orderLineItem, id, menuId);
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
     public Order findById(Long id) {
-        return orderDao.findById(id)
-                .orElseThrow(() -> new InvalidDataAccessApiUsageException("해당 아이디의 주문은 존재하지 않는다."))
-                .placeOrderLineItems(new OrderLineItems(itemRepository.findAllByOrderId(id)));
+        Order order = orderDao.findById(id)
+                .orElseThrow(() -> new InvalidDataAccessApiUsageException("해당 아이디의 주문은 존재하지 않는다."));
+        OrderLineItems orderLineItems = new OrderLineItems(itemRepository.findAllByOrderId(id));
+        return orderMapper.mapOrder(order, orderLineItems.getItems());
     }
 
     @Override
     public List<Order> findAll() {
-        List<Order> orders = orderDao.findAll();
-        for (Order order : orders) {
-            order.placeOrderLineItems(new OrderLineItems(itemRepository.findAllByOrderId(order.getId())));
-        }
-        return orders;
+        return orderDao.findAll().stream()
+                .map(order -> orderMapper.mapOrder(order, itemRepository.findAllByOrderId(order.getId())))
+                .collect(Collectors.toList());
     }
 
     @Override

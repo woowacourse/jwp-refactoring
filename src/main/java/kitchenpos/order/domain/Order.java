@@ -8,7 +8,7 @@ public class Order {
     private final Long orderTableId;
     private String orderStatus;
     private final LocalDateTime orderedTime;
-    private OrderLineItems orderLineItems;
+    private final OrderLineItems orderLineItems;
 
     public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
                  OrderLineItems orderLineItems) {
@@ -22,11 +22,6 @@ public class Order {
     public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime,
                  OrderLineItems orderLineItems) {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
-    }
-
-    public Order placeOrderLineItems(final OrderLineItems orderLineItems) {
-        this.orderLineItems = orderLineItems;
-        return this;
     }
 
     public void placeOrderStatus(final String orderStatus) {

@@ -9,7 +9,7 @@ public class Menu {
     private final String name;
     private final Price price;
     private final Long menuGroupId;
-    private MenuProducts menuProducts;
+    private final MenuProducts menuProducts;
 
     public Menu(Long id, String name, BigDecimal price, Long menuGroupId, MenuProducts menuProducts) {
         this.id = id;
@@ -27,8 +27,8 @@ public class Menu {
         this(id, name, price, menuGroupId, new MenuProducts());
     }
 
-    public void placeMenuProducts(final MenuProducts menuProducts) {
-        this.menuProducts = menuProducts;
+    public void placeMenuId() {
+        menuProducts.changeAllMenuId(id);
     }
 
     public Long getId() {
@@ -57,5 +57,9 @@ public class Menu {
 
     public List<MenuProduct> getMenuProductValues() {
         return menuProducts.getMenuProducts();
+    }
+
+    public void validatePrice() {
+        menuProducts.validateAmount(price);
     }
 }

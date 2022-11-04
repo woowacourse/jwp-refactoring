@@ -6,6 +6,8 @@ import kitchenpos.order.domain.OrderLineItem;
 public interface OrderLineItemRepository {
     OrderLineItem save(OrderLineItem entity);
 
+    List<OrderLineItem> saveAll(List<OrderLineItem> items);
+
     OrderLineItem findById(Long id);
 
     List<OrderLineItem> findAll();

@@ -13,27 +13,16 @@ public class MenuProducts {
         this.menuProducts = menuProducts;
     }
 
-    public MenuProducts(Long menuId, Price price, List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
-        validateAmount(price);
-        changeAllMenuId(menuId);
-    }
-
     public MenuProducts(Price price, List<MenuProduct> menuProducts) {
         this.menuProducts = menuProducts;
         validateAmount(price);
-    }
-
-    public MenuProducts(Long menuId, List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
-        changeAllMenuId(menuId);
     }
 
     public MenuProducts() {
         this.menuProducts = new ArrayList<>();
     }
 
-    private void validateAmount(Price price) {
+    public void validateAmount(Price price) {
         if (price.isExpensive(sum())) {
             throw new IllegalArgumentException("메뉴 가격은 내부 모든 상품가격보다 낮아야 한다.");
         }

@@ -17,11 +17,9 @@ public class OrderLineItem {
         this(null, null, menuId, quantity);
     }
 
-    public OrderLineItem placeOrderId(final Long orderId) {
+    public void placeOrderId(final Long orderId) {
         this.orderId = orderId;
-        return this;
     }
-
     public Long getSeq() {
         return seq;
     }

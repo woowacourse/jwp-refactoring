@@ -44,4 +44,15 @@ public class OrderResponse {
     public List<OrderLineItemResponse> getOrderLineItems() {
         return orderLineItems;
     }
+
+    @Override
+    public String toString() {
+        return "OrderResponse{" +
+                "id=" + id +
+                ", orderTableId=" + orderTableId +
+                ", orderStatus='" + orderStatus + '\'' +
+                ", orderedTime=" + orderedTime +
+                ", orderLineItems=" + orderLineItems +
+                '}';
+    }
 }
