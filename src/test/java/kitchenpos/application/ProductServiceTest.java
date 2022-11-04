@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import kitchenpos.domain.Product;
-import kitchenpos.dto.ProductRequest;
+import kitchenpos.menu.domain.Product;
+import kitchenpos.menu.dto.ProductRequest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 

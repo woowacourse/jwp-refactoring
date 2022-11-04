@@ -2,13 +2,13 @@ package kitchenpos.application;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.MenuProductRequest;
-import kitchenpos.dto.OrderLineItemRequest;
-import kitchenpos.dto.OrderTableRequest;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.menu.dto.MenuProductRequest;
+import kitchenpos.order.dto.OrderLineItemRequest;
+import kitchenpos.table.dto.OrderTableRequest;
 
 public class ServiceTestFixture {
     public static final MenuGroup MENU_GROUP1 = new MenuGroup(1L, "한마리메뉴");
