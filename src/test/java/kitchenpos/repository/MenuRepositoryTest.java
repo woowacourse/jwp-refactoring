@@ -7,8 +7,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Price;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.Price;
+import kitchenpos.menu.repository.MenuRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ class MenuRepositoryTest {
     @Test
     void 저장한다() {
         // given
-        Menu menu = new Menu(null, "pasta", new Price(BigDecimal.valueOf(13000)), 1L, new ArrayList<>());
+        Menu menu = 메뉴를_생성한다(1L, "pasta", 13000);
 
         // when
         Menu savedMenu = menuRepository.save(menu);
@@ -35,8 +36,7 @@ class MenuRepositoryTest {
         // then
         Assertions.assertAll(
                 () -> assertThat(savedMenu.getId()).isNotNull(),
-                () -> assertThat(savedMenu.getName()).isEqualTo("pasta"),
-                () -> assertThat(savedMenu.getMenuGroupId()).isEqualTo(1L)
+                () -> assertThat(savedMenu.getName()).isEqualTo("pasta")
         );
     }
 
@@ -76,18 +76,12 @@ class MenuRepositoryTest {
                         .ignoringFields("price", "menuProducts")
                         .isEqualTo(
                                 Arrays.asList(
-                                        new Menu(1L, "후라이드치킨", new Price(BigDecimal.valueOf(16000)), 2L,
-                                                new ArrayList<>()),
-                                        new Menu(2L, "양념치킨", new Price(BigDecimal.valueOf(16000)), 2L,
-                                                new ArrayList<>()),
-                                        new Menu(3L, "반반치킨", new Price(BigDecimal.valueOf(16000)), 2L,
-                                                new ArrayList<>()),
-                                        new Menu(4L, "통구이", new Price(BigDecimal.valueOf(16000)), 2L,
-                                                new ArrayList<>()),
-                                        new Menu(5L, "간장치킨", new Price(BigDecimal.valueOf(17000)), 2L,
-                                                new ArrayList<>()),
-                                        new Menu(6L, "순살치킨", new Price(BigDecimal.valueOf(17000)), 2L,
-                                                new ArrayList<>())
+                                        메뉴를_생성한다(1L, "후라이드치킨", 16000),
+                                        메뉴를_생성한다(2L, "양념치킨", 16000),
+                                        메뉴를_생성한다(3L, "반반치킨", 16000),
+                                        메뉴를_생성한다(4L, "통구이", 16000),
+                                        메뉴를_생성한다(5L, "간장치킨", 17000),
+                                        메뉴를_생성한다(6L, "순살치킨", 17000)
                                 )
                         )
         );
@@ -116,12 +110,14 @@ class MenuRepositoryTest {
                 () -> assertThat(menus.get(0))
                         .usingRecursiveComparison()
                         .ignoringFields("price", "menuProducts")
-                        .isEqualTo(new Menu(
-                                1L,
-                                "후라이드치킨",
-                                new Price(BigDecimal.valueOf(16000)),
-                                2L,
-                                new ArrayList<>()
-                        )));
+                        .isEqualTo(메뉴를_생성한다(1L, "후라이드치킨", 16000)));
+    }
+
+    private Menu 메뉴를_생성한다(final long id, final String name, final int price) {
+        return new Menu(id, name, price를_생성한다(price), 2L, new ArrayList<>());
+    }
+
+    private Price price를_생성한다(final int price) {
+        return new Price(BigDecimal.valueOf(price));
     }
 }

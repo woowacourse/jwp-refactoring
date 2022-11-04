@@ -9,9 +9,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.ControllerTest;
-import kitchenpos.application.MenuGroupService;
-import kitchenpos.application.dto.request.MenuGroupCreateRequest;
-import kitchenpos.application.dto.response.MenuGroupResponse;
+import kitchenpos.menu.application.MenuGroupService;
+import kitchenpos.menu.application.dto.MenuGroupCreateRequest;
+import kitchenpos.menu.application.dto.MenuGroupResponse;
+import kitchenpos.menu.ui.MenuGroupRestController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

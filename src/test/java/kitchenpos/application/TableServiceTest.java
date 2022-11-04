@@ -1,22 +1,22 @@
 package kitchenpos.application;
 
-import static kitchenpos.domain.OrderStatus.COOKING;
-import static kitchenpos.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.application.dto.request.OrderTableChangeNumberOfGuestsRequest;
-import kitchenpos.application.dto.request.OrderTableChangeStatusRequest;
-import kitchenpos.application.dto.request.OrderTableCreateRequest;
-import kitchenpos.application.dto.response.OrderTableResponse;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.table.application.OrderTableValidator;
+import kitchenpos.table.application.TableService;
+import kitchenpos.table.application.dto.OrderTableChangeNumberOfGuestsRequest;
+import kitchenpos.table.application.dto.OrderTableChangeStatusRequest;
+import kitchenpos.table.application.dto.OrderTableCreateRequest;
+import kitchenpos.table.application.dto.OrderTableResponse;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.repository.OrderTableRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,10 +28,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class TableServiceTest {
 
     @Mock
-    private OrderRepository orderRepository;
+    private OrderTableRepository orderTableRepository;
 
     @Mock
-    private OrderTableRepository orderTableRepository;
+    private OrderTableValidator orderTableValidator;
 
     @InjectMocks
     private TableService tableService;
@@ -85,7 +85,7 @@ class TableServiceTest {
         void table_group_id_값이_null이_아니면_예외를_반환한다() {
             // given
             Long notNullTableGroupId = 11L;
-            OrderTable orderTable = new OrderTable(1L, notNullTableGroupId, 3, false);
+            OrderTable orderTable = createOrderTable(1L, notNullTableGroupId, 3, false);
             when(orderTableRepository.findById(any(Long.class))).thenReturn(Optional.of(orderTable));
 
             // when & then
@@ -99,9 +99,7 @@ class TableServiceTest {
             Long orderTableId = 1L;
             OrderTable orderTable = new OrderTable(orderTableId, null, 3, false);
             when(orderTableRepository.findById(any(Long.class))).thenReturn(Optional.of(orderTable));
-            when(orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId,
-                    Arrays.asList(COOKING, MEAL))).thenReturn(
-                    true);
+            doThrow(IllegalArgumentException.class).when(orderTableValidator).validateCompletionStatus(any(Long.class));
 
             // when & then
             assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, new OrderTableChangeStatusRequest(true)))
@@ -114,10 +112,8 @@ class TableServiceTest {
             Long orderTableId = 1L;
             OrderTable orderTable = new OrderTable(orderTableId, null, 3, false);
             when(orderTableRepository.findById(any(Long.class))).thenReturn(Optional.of(orderTable));
-            when(orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId,
-                    Arrays.asList(COOKING, MEAL))).thenReturn(
-                    false);
             when(orderTableRepository.save(any(OrderTable.class))).thenReturn(orderTable);
+
             // when
             tableService.changeEmpty(1L, new OrderTableChangeStatusRequest(true));
 
@@ -152,7 +148,7 @@ class TableServiceTest {
         void order_table이_비어있으면_예외를_반환한다() {
             // given
             Long orderTableId = 1L;
-            OrderTable orderTable = new OrderTable(orderTableId, 11L, 5, true);
+            OrderTable orderTable = createOrderTable(orderTableId, 11L, 5, true);
             when(orderTableRepository.findById(orderTableId)).thenReturn(Optional.of(orderTable));
 
             // when & then
@@ -165,7 +161,7 @@ class TableServiceTest {
         void 손님의_수를_변경할_수_있다() {
             // given
             Long orderTableId = 1L;
-            OrderTable orderTable = new OrderTable(orderTableId, 11L, 5, false);
+            OrderTable orderTable = createOrderTable(orderTableId, 11L, 5, false);
             when(orderTableRepository.findById(1L)).thenReturn(Optional.of(orderTable));
             when(orderTableRepository.save(any(OrderTable.class))).thenReturn(orderTable);
             // when
@@ -174,5 +170,12 @@ class TableServiceTest {
             // then
             assertThat(orderTable.getNumberOfGuests()).isEqualTo(3);
         }
+    }
+
+    private OrderTable createOrderTable(final Long orderTableId,
+                                        final long tableGroupId,
+                                        final int numberOfGuests,
+                                        final boolean empty) {
+        return new OrderTable(orderTableId, tableGroupId, numberOfGuests, empty);
     }
 }

@@ -9,9 +9,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import kitchenpos.ControllerTest;
-import kitchenpos.application.TableGroupService;
-import kitchenpos.application.dto.request.TableGroupCreateRequest;
-import kitchenpos.application.dto.response.TableGroupResponse;
+import kitchenpos.table.application.TableGroupService;
+import kitchenpos.table.application.dto.TableGroupCreateRequest;
+import kitchenpos.table.application.dto.TableGroupResponse;
+import kitchenpos.table.ui.TableGroupRestController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

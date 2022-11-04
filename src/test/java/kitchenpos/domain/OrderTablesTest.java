@@ -7,12 +7,17 @@ import static org.assertj.core.groups.Tuple.tuple;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
+import kitchenpos.table.application.OrderTableValidator;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTables;
+import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.Test;
 
 class OrderTablesTest {
 
     private OrderTable orderTable1 = new OrderTable(null, null, 3, true);
     private OrderTable orderTable2 = new OrderTable(null, null, 5, true);
+    private OrderTableValidator orderTableValidator = new FakeOrderTableValidator();
 
     @Test
     void order_tables를_생성할_수_있다() {
@@ -60,7 +65,7 @@ class OrderTablesTest {
     @Test
     void upgroup_할_수_있다() {
         OrderTables orderTables = OrderTables.fromCreate(Arrays.asList(orderTable1, orderTable2));
-        orderTables.upgroup();
+        orderTables.upgroup((orderTableIds) -> orderTableValidator.validateAllCompletionStatus(orderTableIds));
 
         assertThat(orderTables.getValues()).extracting("tableGroupId", "empty")
                 .isEqualTo(Arrays.asList(tuple(null, false), tuple(null, false)));

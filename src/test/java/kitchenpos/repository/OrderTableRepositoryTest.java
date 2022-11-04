@@ -6,8 +6,10 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.repository.OrderTableRepository;
+import kitchenpos.table.repository.TableGroupRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,12 +52,8 @@ class OrderTableRepositoryTest {
                 () -> assertThat(savedOrderTable.getId()).isNotNull(),
                 () -> assertThat(savedOrderTable).usingRecursiveComparison()
                         .ignoringFields("id", "tableGroupId")
-                        .isEqualTo(new OrderTable(3, true))
+                        .isEqualTo(order_table을_생성한다(3, true))
         );
-    }
-
-    private OrderTable order_table을_생성한다(final int numberOfGuests, final boolean empty) {
-        return new OrderTable(numberOfGuests, empty);
     }
 
     @Test
@@ -165,7 +163,7 @@ class OrderTableRepositoryTest {
         assertThat(orderTables).hasSize(1)
                 .usingRecursiveComparison()
                 .ignoringFields("id", "tableGroupId")
-                .isEqualTo(Arrays.asList(new OrderTable(10, false)));
+                .isEqualTo(Arrays.asList(order_table을_생성한다(10, false)));
     }
 
     @Test
@@ -187,5 +185,9 @@ class OrderTableRepositoryTest {
         List<OrderTable> orderTables = orderTableRepository.findAll();
         // then
         assertThat(orderTables).hasSize(10);
+    }
+
+    private OrderTable order_table을_생성한다(final int numberOfGuests, final boolean empty) {
+        return new OrderTable(numberOfGuests, empty);
     }
 }

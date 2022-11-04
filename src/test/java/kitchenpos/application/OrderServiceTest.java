@@ -1,26 +1,32 @@
 package kitchenpos.application;
 
-import static kitchenpos.domain.OrderStatus.COMPLETION;
-import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.order.domain.OrderStatus.COMPLETION;
+import static kitchenpos.order.domain.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.request.OrderChangeRequest;
-import kitchenpos.application.dto.request.OrderCreateRequest;
-import kitchenpos.application.dto.request.OrderLineItemDto;
-import kitchenpos.application.dto.response.OrderResponse;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderRepository;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.Price;
+import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.application.dto.OrderChangeRequest;
+import kitchenpos.order.application.dto.OrderCreateRequest;
+import kitchenpos.order.application.dto.OrderLineItemDto;
+import kitchenpos.order.application.dto.OrderResponse;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.repository.OrderRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -48,13 +54,16 @@ class OrderServiceTest {
         private final Long orderTableId = 11L;
         private final OrderStatus orderStatus = COOKING;
         private final LocalDateTime orderedTime = LocalDateTime.now();
-        private final OrderLineItem orderLineItem = new OrderLineItem(1L, 3L);
+        private final OrderLineItem orderLineItem = new OrderLineItem(1L, "pasta", BigDecimal.valueOf(13000), 3L);
         private final List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
+        private final BigDecimal price = BigDecimal.valueOf(13000);
+        private final Long menuGroupId = 11L;
+        private final MenuProduct menuProduct = new MenuProduct(1L, 1L, 10L);
+        private final Menu menu = new Menu(1L, "pasta", new Price(price), menuGroupId, Arrays.asList(menuProduct));
 
         @Test
-        void order_line_itmes가_비어있으면_예외를_반환한다() {
-            OrderCreateRequest request = 주문_생성_dto를_만든다(id, orderTableId, orderStatus, orderedTime,
-                    Arrays.asList(new OrderLineItem(1L, 3L)));
+        void order_line_items가_비어있으면_예외를_반환한다() {
+            OrderCreateRequest request = 주문_생성_dto를_만든다(id, orderTableId, new ArrayList<>());
             assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
@@ -62,8 +71,9 @@ class OrderServiceTest {
         @Test
         void order_line_itmes_크기와_메뉴_ID의_개수가_맞지_않으면_예외를_반환한다() {
             // given
-            OrderCreateRequest request = 주문_생성_dto를_만든다(id, orderTableId, orderStatus, orderedTime,
-                    orderLineItems);
+            OrderCreateRequest request = 주문_생성_dto를_만든다(id, orderTableId, orderLineItems);
+
+            when(menuRepository.findById(any())).thenReturn(Optional.of(menu));
             when(menuRepository.countByIdIn(any())).thenReturn(3L);
 
             // when & then
@@ -74,11 +84,11 @@ class OrderServiceTest {
         @Test
         void order를_생성할_수_있다() {
             // given
-            OrderCreateRequest request = 주문_생성_dto를_만든다(id, orderTableId, orderStatus, orderedTime,
-                    orderLineItems);
+            OrderCreateRequest request = 주문_생성_dto를_만든다(id, orderTableId, orderLineItems);
+            when(menuRepository.findById(any())).thenReturn(Optional.of(menu));
             when(menuRepository.countByIdIn(any())).thenReturn(Long.valueOf(orderLineItems.size()));
 
-            Order order = request.toOrder();
+            Order order = new Order(id, orderTableId, orderStatus, orderedTime, orderLineItems);
             when(orderRepository.save(any(Order.class))).thenReturn(order);
 
             // when
@@ -94,8 +104,6 @@ class OrderServiceTest {
 
         private OrderCreateRequest 주문_생성_dto를_만든다(final Long id,
                                                   final Long orderTableId,
-                                                  final OrderStatus orderStatus,
-                                                  final LocalDateTime orderedTime,
                                                   final List<OrderLineItem> orderLineItems) {
             return new OrderCreateRequest(
                     orderTableId,
@@ -108,7 +116,7 @@ class OrderServiceTest {
     @Nested
     class list는 {
 
-        private final OrderLineItem orderLineItem = new OrderLineItem(1L, 3L);
+        private final OrderLineItem orderLineItem = new OrderLineItem(1L, "pasta", BigDecimal.valueOf(13000), 3L);
         private final List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
 
         @Test
@@ -127,6 +135,10 @@ class OrderServiceTest {
 
     @Nested
     class change_status는 {
+
+        private final OrderLineItem orderLineItem = new OrderLineItem(1L, "pasta", BigDecimal.valueOf(13000), 3L);
+        private final List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
+
         @Test
         void 일치하는_order_id가_없을_경우_예외를_반환한다() {
             // given
@@ -141,7 +153,7 @@ class OrderServiceTest {
         @Test
         void 이미_완료상태이면_예외를_반환한다() {
             // given
-            Order order = order_객체를_생성한다(1L, Arrays.asList(new OrderLineItem(1L, 3L)));
+            Order order = order_객체를_생성한다(1L, orderLineItems);
             Long orderId = 1L;
             order.changeOrderStatus(COMPLETION);
             when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
@@ -154,7 +166,7 @@ class OrderServiceTest {
         @Test
         void aorder_status를_변경할_수_있다() {
             // given
-            Order order = order_객체를_생성한다(1L, Arrays.asList(new OrderLineItem(1L, 3L)));
+            Order order = order_객체를_생성한다(1L, orderLineItems);
             when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
 
             // when
@@ -164,8 +176,7 @@ class OrderServiceTest {
             assertThat(response.getOrderStatus()).isEqualTo(COMPLETION.name());
         }
 
-        private Order order_객체를_생성한다(final Long orderTableId,
-                                     final List<OrderLineItem> orderLineItems) {
+        private Order order_객체를_생성한다(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
             return new Order(orderTableId, orderLineItems);
         }
     }
