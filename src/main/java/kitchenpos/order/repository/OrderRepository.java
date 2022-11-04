@@ -79,4 +79,14 @@ public class OrderRepository implements OrderDao {
                                                           final List<String> orderStatuses) {
         return jdbcTemplateOrderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, orderStatuses);
     }
+
+    @Override
+    public List<Order> findByOrderTableIds(final List<Long> orderTableIds) {
+        return jdbcTemplateOrderDao.findByOrderTableIds(orderTableIds);
+    }
+
+    @Override
+    public List<Order> findByOrderTableId(final Long orderTableId) {
+        return jdbcTemplateOrderDao.findByOrderTableId(orderTableId);
+    }
 }

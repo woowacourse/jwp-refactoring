@@ -1,4 +1,4 @@
-package kitchenpos.order.domain;
+package kitchenpos.table.domain;
 
 import java.util.Objects;
 
@@ -7,6 +7,10 @@ public class OrderTable {
     private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
+
+    public OrderTable(final Long id) {
+        this.id = id;
+    }
 
     public OrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         this(null, tableGroupId, numberOfGuests, empty);
@@ -21,6 +25,10 @@ public class OrderTable {
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+    }
+
+    public static OrderTable createByOnlyId(final Long id) {
+        return new OrderTable(id);
     }
 
     public void changeEmpty(final boolean empty) {

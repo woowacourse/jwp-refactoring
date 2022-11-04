@@ -1,8 +1,8 @@
-package kitchenpos.order.repository.dao;
+package kitchenpos.table.repository.dao;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.order.domain.TableGroup;
+import kitchenpos.table.domain.TableGroup;
 
 public interface TableGroupDao {
     TableGroup save(TableGroup entity);

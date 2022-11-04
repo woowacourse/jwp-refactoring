@@ -1,26 +1,24 @@
-package kitchenpos.order.application;
+package kitchenpos.table.application;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.ui.request.OrderTableCreateReqeust;
-import kitchenpos.order.response.OrderTableResponse;
-import kitchenpos.order.repository.dao.OrderDao;
-import kitchenpos.order.repository.dao.OrderTableDao;
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.OrderTable;
+import kitchenpos.table.ui.request.OrderTableCreateReqeust;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.repository.dao.OrderTableDao;
+import kitchenpos.table.response.OrderTableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 public class TableService {
-    private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
 
-    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
-        this.orderDao = orderDao;
+    private final OrderTableDao orderTableDao;
+    private final OrderValidator orderValidator;
+
+    public TableService(final OrderTableDao orderTableDao, final OrderValidator orderValidator) {
         this.orderTableDao = orderTableDao;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
@@ -39,7 +37,7 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final boolean empty) {
         final OrderTable savedOrderTable = getOrderTable(orderTableId);
-        validateOrderStatusInCookingOrMeal(orderTableId);
+        orderValidator.validateChangeEmpty(orderTableId);
         savedOrderTable.changeEmpty(empty);
         return OrderTableResponse.from(orderTableDao.save(savedOrderTable));
     }
@@ -49,17 +47,17 @@ public class TableService {
                 .orElseThrow(IllegalArgumentException::new);
     }
 
-    private void validateOrderStatusInCookingOrMeal(final Long orderTableId) {
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException("주문 테이블의 주문 상태가 조리, 식사라면 상태를 변경할 수 없습니다.");
-        }
-    }
-
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {
         final OrderTable savedOrderTable = getOrderTable(orderTableId);
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
         return OrderTableResponse.from(orderTableDao.save(savedOrderTable));
+    }
+
+    public List<OrderTableResponse> findAllByTableGroupId(Long tableGroupId) {
+        return orderTableDao.findAllByTableGroupId(tableGroupId)
+                .stream()
+                .map(OrderTableResponse::from)
+                .collect(Collectors.toList());
     }
 }

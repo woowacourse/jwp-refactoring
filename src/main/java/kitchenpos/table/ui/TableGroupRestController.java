@@ -1,9 +1,9 @@
-package kitchenpos.order.ui;
+package kitchenpos.table.ui;
 
 import java.net.URI;
-import kitchenpos.order.application.TableGroupService;
-import kitchenpos.order.ui.request.TableGroupCreateRequest;
-import kitchenpos.order.response.TableGroupResponse;
+import kitchenpos.table.application.TableGroupService;
+import kitchenpos.table.ui.request.TableGroupCreateRequest;
+import kitchenpos.table.response.TableGroupResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +21,7 @@ public class TableGroupRestController {
 
     @PostMapping("/api/table-groups")
     public ResponseEntity<TableGroupResponse> create(@RequestBody final TableGroupCreateRequest tableGroupCreateRequest) {
-        final TableGroupResponse created = tableGroupService.create(tableGroupCreateRequest);
+        final TableGroupResponse created = tableGroupService.create(tableGroupCreateRequest.toEntity());
         final URI uri = URI.create("/api/table-groups/" + created.getId());
         return ResponseEntity.created(uri)
                 .body(created)

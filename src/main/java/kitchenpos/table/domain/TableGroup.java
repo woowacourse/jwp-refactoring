@@ -1,4 +1,4 @@
-package kitchenpos.order.domain;
+package kitchenpos.table.domain;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -10,6 +10,11 @@ public class TableGroup {
     private Long id;
     private LocalDateTime createdDate;
     private List<OrderTable> orderTables;
+
+    public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+        this.createdDate = createdDate;
+        this.orderTables = orderTables;
+    }
 
     private TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         this.id = id;
@@ -42,6 +47,10 @@ public class TableGroup {
 
     public static TableGroup of(final List<OrderTable> orderTables) {
         return of(null, LocalDateTime.now(), orderTables);
+    }
+
+    public static TableGroup createSingleTables(final List<OrderTable> orderTables) {
+        return new TableGroup(LocalDateTime.now(), orderTables);
     }
 
     public static TableGroup toEntity(final Long id, final LocalDateTime createdDate) {

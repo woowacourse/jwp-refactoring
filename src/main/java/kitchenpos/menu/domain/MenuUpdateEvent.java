@@ -1,8 +1,5 @@
 package kitchenpos.menu.domain;
 
-import kitchenpos.menu.domain.Menu;
-import org.springframework.context.ApplicationEvent;
-
 public class MenuUpdateEvent {
 
     private final Menu menu;

@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.Optional;
 import javax.sql.DataSource;
 import kitchenpos.order.domain.Order;
+import kitchenpos.table.domain.OrderTable;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -71,6 +72,20 @@ public class JdbcTemplateOrderDao {
                 .addValue("orderTableIds", orderTableIds)
                 .addValue("orderStatuses", orderStatuses);
         return jdbcTemplate.queryForObject(sql, parameters, Boolean.class);
+    }
+
+    public List<Order> findByOrderTableIds(List<Long> orderTableIds) {
+        final String sql = "SELECT * FROM orders WHERE order_table_id IN (:ordertalbeIds)";
+        final SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("orderTableIds", orderTableIds);
+        return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
+    }
+
+    public List<Order> findByOrderTableId(final Long orderTableId) {
+        final String sql = "SELECT * FROM orders WHERE order_table_id = (:orderTableId)";
+        final SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("orderTableId", orderTableId);
+        return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     private Order select(final Long id) {

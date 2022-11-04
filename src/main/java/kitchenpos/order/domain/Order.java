@@ -66,6 +66,10 @@ public class Order {
         this.orderStatus = orderStatus.name();
     }
 
+    public boolean unableUngroup() {
+        return orderStatus.equals(OrderStatus.COOKING) || orderStatus.equals(OrderStatus.MEAL);
+    }
+
     public Long getId() {
         return id;
     }
