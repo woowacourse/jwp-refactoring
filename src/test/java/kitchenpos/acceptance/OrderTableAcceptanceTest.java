@@ -5,10 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.fixture.OrderTableFixture;
-import kitchenpos.ui.jpa.dto.ordertable.ChangeEmptyRequest;
-import kitchenpos.ui.jpa.dto.ordertable.ChangeNumberOfGuestsRequest;
-import kitchenpos.ui.jpa.dto.ordertable.OrderTableCreateRequest;
+import kitchenpos.table.ui.dto.ordertable.ChangeEmptyRequest;
+import kitchenpos.table.ui.dto.ordertable.ChangeNumberOfGuestsRequest;
+import kitchenpos.table.ui.dto.ordertable.OrderTableCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;

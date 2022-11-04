@@ -1,6 +1,6 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.entity.MenuProduct;
+import kitchenpos.menu.domain.entity.MenuProduct;
 
 public class MenuProductFixture {
 

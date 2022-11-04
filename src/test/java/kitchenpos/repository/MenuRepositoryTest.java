@@ -1,15 +1,13 @@
 package kitchenpos.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
-import kitchenpos.domain.collection.MenuProducts;
-import kitchenpos.domain.entity.Menu;
-import kitchenpos.domain.entity.MenuGroup;
-import kitchenpos.domain.entity.MenuProduct;
-import kitchenpos.domain.entity.Price;
-import kitchenpos.domain.entity.Product;
+import kitchenpos.menu.domain.entity.Menu;
+import kitchenpos.menu.domain.entity.MenuGroup;
+import kitchenpos.vo.Price;
+import kitchenpos.product.domain.entity.Product;
+import kitchenpos.menu.repository.MenuRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

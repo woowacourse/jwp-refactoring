@@ -2,8 +2,8 @@ package kitchenpos.fixture;
 
 import static kitchenpos.fixture.MenuGroupFixture.MENU_GROUP_2;
 
-import kitchenpos.domain.entity.Menu;
-import kitchenpos.domain.entity.Price;
+import kitchenpos.menu.domain.entity.Menu;
+import kitchenpos.vo.Price;
 
 public class MenuFixture {
 
