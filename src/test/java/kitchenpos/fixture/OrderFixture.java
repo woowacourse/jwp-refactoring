@@ -68,24 +68,25 @@ public class OrderFixture {
 
     private static List<OrderLineItem> mapToOrderLineItems(final Long orderId, final List<OrderLineItemRequest> orderLineItemsRequest) {
         return orderLineItemsRequest.stream()
-                .map(it -> new OrderLineItem(orderId, it.getQuantity(), "추천메뉴", BigDecimal.valueOf(10000)))
+                .map(it -> new OrderLineItem(orderId, it.getQuantity(), 1L, "추천메뉴", BigDecimal.valueOf(10000)))
                 .collect(Collectors.toList());
     }
 
     public static OrderLineItem getOrderLineItem() {
-        return getOrderLineItem(1L, 1L, 1, "추천메뉴", BigDecimal.valueOf(10000));
+        return getOrderLineItem(1L, 1L, 1, 1L, "추천메뉴", BigDecimal.valueOf(10000));
     }
 
     public static OrderLineItem getOrderLineItem(final Long orderId) {
-        return getOrderLineItem(1L, orderId, 1, "추천메뉴", BigDecimal.valueOf(10000));
+        return getOrderLineItem(1L, orderId, 1, 1L, "추천메뉴", BigDecimal.valueOf(10000));
     }
 
     public static OrderLineItem getOrderLineItem(final Long seq,
                                                  final Long orderId,
                                                  final long quantity,
+                                                 final Long menuId,
                                                  final String name,
                                                  final BigDecimal price) {
-        return new OrderLineItem(seq, orderId, quantity, name, price);
+        return new OrderLineItem(seq, orderId, quantity, menuId, name, price);
     }
 
     public static OrderLineItemRequest getOrderLineItemRequest() {

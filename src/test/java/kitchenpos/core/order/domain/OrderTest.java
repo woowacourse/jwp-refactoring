@@ -37,6 +37,6 @@ class OrderTest {
     }
 
     private Order getOrder() {
-        return Order.of(1L, Arrays.asList(new OrderLineItem(1L, 2, "추천메뉴", BigDecimal.valueOf(10000))), order -> {});
+        return Order.of(1L, Arrays.asList(new OrderLineItem(1L, 2, 1L, "추천메뉴", BigDecimal.valueOf(10000))), order -> {});
     }
 }

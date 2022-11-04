@@ -54,7 +54,7 @@ public class OrderService {
         return orderLineItemsRequest.stream()
                 .map(it -> {
                     final Menu menu = getMenu(it.getMenuId());
-                    return new OrderLineItem(null, it.getQuantity(), menu.getName(), menu.getPrice());
+                    return new OrderLineItem(null, it.getQuantity(), menu.getId(), menu.getName(), menu.getPrice());
                 })
                 .collect(Collectors.toList());
     }
@@ -82,6 +82,7 @@ public class OrderService {
             savedOrderLineItems.add(orderLineItemDao.save(new OrderLineItem(
                     savedOrder.getId(),
                     orderLineItem.getQuantity(),
+                    orderLineItem.getMenuId(),
                     orderLineItem.getName(),
                     orderLineItem.getPrice()
             )));

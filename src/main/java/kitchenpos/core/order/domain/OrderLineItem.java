@@ -5,28 +5,32 @@ import java.math.BigDecimal;
 public class OrderLineItem {
     private Long seq;
     private Long orderId;
-    private long quantity;
-
-    private String name;
-    private BigDecimal price;
+    private OrderMenu orderMenu;
 
     private OrderLineItem() {
     }
 
-    public OrderLineItem(final Long seq, final Long orderId, final long quantity, final String name,
-                         final BigDecimal price) {
+    private OrderLineItem(final Long seq, final Long orderId, final OrderMenu orderMenu) {
         this.seq = seq;
         this.orderId = orderId;
-        this.quantity = quantity;
-        this.name = name;
-        this.price = price;
+        this.orderMenu = orderMenu;
     }
 
-    public OrderLineItem(final Long orderId, final long quantity, final String name, final BigDecimal price) {
-        this.orderId = orderId;
-        this.quantity = quantity;
-        this.name = name;
-        this.price = price;
+    public OrderLineItem(final Long seq,
+                         final Long orderId,
+                         final long quantity,
+                         final Long menuId,
+                         final String name,
+                         final BigDecimal price) {
+        this(seq, orderId, new OrderMenu(quantity, menuId, name, price));
+    }
+
+    public OrderLineItem(final Long orderId,
+                         final long quantity,
+                         final Long menuId,
+                         final String name,
+                         final BigDecimal price) {
+        this(null, orderId, quantity, menuId, name, price);
     }
 
     public Long getSeq() {
@@ -38,14 +42,18 @@ public class OrderLineItem {
     }
 
     public long getQuantity() {
-        return quantity;
+        return orderMenu.getQuantity();
+    }
+
+    public Long getMenuId() {
+        return orderMenu.getMenuId();
     }
 
     public String getName() {
-        return name;
+        return orderMenu.getName();
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return orderMenu.getPrice();
     }
 }
