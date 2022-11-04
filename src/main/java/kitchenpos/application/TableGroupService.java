@@ -20,13 +20,13 @@ public class TableGroupService {
 
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
-    private final TableGroupDao tableGroupDao;
+    private final TableGroupDao tableGroupRepository;
 
     public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao,
-                             final TableGroupDao tableGroupDao) {
+                             final TableGroupDao tableGroupRepository) {
         this.orderDao = orderDao;
         this.orderTableDao = orderTableDao;
-        this.tableGroupDao = tableGroupDao;
+        this.tableGroupRepository = tableGroupRepository;
     }
 
     @Transactional
@@ -36,7 +36,7 @@ public class TableGroupService {
 
         tableGroup.validate(orderTableIds.size());
 
-        return TableGroupResponse.from(tableGroupDao.save(tableGroup));
+        return TableGroupResponse.from(tableGroupRepository.save(tableGroup));
     }
 
     private List<Long> getTableIds(final List<OrderTableIdRequest> orderTableIds) {
