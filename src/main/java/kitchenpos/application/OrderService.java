@@ -58,7 +58,7 @@ public class OrderService {
     private static Order createOrderRequest(final Long orderTableId,
                                             final List<OrderLineItemCreateRequest> orderLineItems) {
         return new Order(orderTableId,
-                OrderStatus.COOKING.name(),
+                OrderStatus.COOKING,
                 LocalDateTime.now(),
                 orderLineItems.stream()
                         .map(it -> new OrderLineItem(it.getMenuId(), it.getQuantity()))
@@ -91,8 +91,8 @@ public class OrderService {
         final Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        savedOrder.changeOrderStatus(request.getOrderStatus());
+        savedOrder.changeOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
 
-        return new OrderStatusDto(savedOrder.getOrderStatus());
+        return new OrderStatusDto(savedOrder.getOrderStatus().name());
     }
 }

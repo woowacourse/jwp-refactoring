@@ -20,7 +20,7 @@ import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -113,9 +113,9 @@ class TableGroupServiceTest {
     }
 
     @DisplayName("테이블 주문 상태가 COOKING 또는 MEAL일 때 단체를 해제하면, 예외를 발생한다")
-    @ValueSource(strings = {"COOKING", "MEAL"})
+    @EnumSource(names = {"COOKING", "MEAL"})
     @ParameterizedTest
-    void not_completion_exception(final String status) {
+    void not_completion_exception(final OrderStatus status) {
         // given
         final OrderTable orderTable1 = orderTableDao.save(new OrderTable(10, false));
         final OrderTable orderTable2 = orderTableDao.save(new OrderTable(10, false));
@@ -142,9 +142,9 @@ class TableGroupServiceTest {
 
         final TableGroup tableGroup = tableGroupDao.save(new TableGroup(Arrays.asList(orderTable1, orderTable2)));
 
-        orderDao.save(new Order(orderTable1.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now(),
+        orderDao.save(new Order(orderTable1.getId(), OrderStatus.COMPLETION, LocalDateTime.now(),
                 Collections.singletonList(new OrderLineItem(1L, 1L))));
-        orderDao.save(new Order(orderTable2.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now(),
+        orderDao.save(new Order(orderTable2.getId(), OrderStatus.COMPLETION, LocalDateTime.now(),
                 Collections.singletonList(new OrderLineItem(1L, 1L))));
 
         // when

@@ -118,7 +118,7 @@ class OrderServiceTest {
     @Test
     void order_state_completion_exception() {
         // given
-        final Order orderRequest = new Order(1L, OrderStatus.COMPLETION.name(), LocalDateTime.now(),
+        final Order orderRequest = new Order(1L, OrderStatus.COMPLETION, LocalDateTime.now(),
                 Collections.singletonList(new OrderLineItem(1L, 1L)));
         final Order order = orderDao.save(orderRequest);
 
@@ -132,7 +132,7 @@ class OrderServiceTest {
     @Test
     void change_order_status() {
         // given
-        final Order orderRequest = new Order(1L, OrderStatus.COOKING.name(), LocalDateTime.now(),
+        final Order orderRequest = new Order(1L, OrderStatus.COOKING, LocalDateTime.now(),
                 Collections.singletonList(new OrderLineItem(1L, 1L)));
         final Order order = orderDao.save(orderRequest);
         final OrderStatusDto changeOrderStatus = new OrderStatusDto("MEAL");

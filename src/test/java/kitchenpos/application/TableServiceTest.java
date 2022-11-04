@@ -22,7 +22,7 @@ import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -83,9 +83,9 @@ class TableServiceTest {
     }
 
     @DisplayName("빈 테이블로 변경할 때 주문 상테가 cooking 또는 meal 이라면, 예외를 발생한다")
-    @ValueSource(strings = {"COOKING", "MEAL"})
+    @EnumSource(names = {"COOKING", "MEAL"})
     @ParameterizedTest
-    void order_status_not_completion_exception(final String status) {
+    void order_status_not_completion_exception(final OrderStatus status) {
         final Order order = orderDao.save(new Order(1L, status, LocalDateTime.now(),
                 Collections.singletonList(new OrderLineItem(1L, 1L))));
 
@@ -99,7 +99,7 @@ class TableServiceTest {
     void changeEmptyTable() {
         final OrderTable savedOrderTable = orderTableDao.save(new OrderTable(2, false));
 
-        orderDao.save(new Order(1L, OrderStatus.COMPLETION.name(), LocalDateTime.now(),
+        orderDao.save(new Order(1L, OrderStatus.COMPLETION, LocalDateTime.now(),
                 Collections.singletonList(new OrderLineItem(1L, 1L))));
 
         final OrderTableResponse response = tableService.changeEmpty(savedOrderTable.getId(),
