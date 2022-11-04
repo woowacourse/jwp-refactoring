@@ -1,12 +1,13 @@
-package kitchenpos.table.repository;
+package kitchenpos.tablegroup.repository;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.TableGroup;
-import kitchenpos.table.domain.TableGroupMapper;
-import kitchenpos.table.domain.Tables;
-import kitchenpos.table.repository.jdbc.JdbcTemplateTableGroupDao;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.repository.OrderTableRepository;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroupMapper;
+import kitchenpos.tablegroup.domain.Tables;
+import kitchenpos.tablegroup.repository.jdbc.JdbcTemplateTableGroupDao;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Repository;
 

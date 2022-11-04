@@ -1,7 +1,7 @@
-package kitchenpos.table.repository;
+package kitchenpos.order.repository;
 
 import java.util.List;
-import kitchenpos.table.domain.OrderTable;
+import kitchenpos.order.domain.OrderTable;
 
 public interface OrderTableRepository {
     OrderTable save(OrderTable entity);

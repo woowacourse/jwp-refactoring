@@ -1,6 +1,7 @@
-package kitchenpos.table.dto;
+package kitchenpos.tablegroup.dto;
 
 import java.util.List;
+import kitchenpos.order.dto.OrderTableRequest;
 
 public class TableGroupRequest {
     private final List<OrderTableRequest> orderTables;

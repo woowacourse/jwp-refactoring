@@ -16,10 +16,10 @@ import kitchenpos.menu.dto.MenuProductRequest;
 import kitchenpos.menu.dto.MenuRequest;
 import kitchenpos.order.dto.OrderLineItemRequest;
 import kitchenpos.order.dto.OrderRequest;
-import kitchenpos.table.dto.OrderTableCreateRequest;
-import kitchenpos.table.dto.OrderTableRequest;
+import kitchenpos.order.dto.OrderTableCreateRequest;
+import kitchenpos.order.dto.OrderTableRequest;
 import kitchenpos.product.dto.ProductRequest;
-import kitchenpos.table.dto.TableGroupRequest;
+import kitchenpos.tablegroup.dto.TableGroupRequest;
 import kitchenpos.common.Price;
 import org.assertj.core.api.ListAssert;
 

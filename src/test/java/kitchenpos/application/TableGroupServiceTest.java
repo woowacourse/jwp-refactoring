@@ -5,9 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.dto.OrderTableChangeEmptyRequest;
-import kitchenpos.table.dto.TableGroupRequest;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.dto.OrderTableChangeEmptyRequest;
+import kitchenpos.tablegroup.dto.TableGroupRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
