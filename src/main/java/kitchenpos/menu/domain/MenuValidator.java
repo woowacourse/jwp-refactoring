@@ -32,15 +32,15 @@ public class MenuValidator {
         validateAmount(menuPrice, products.calculateAmount(toMap(menuProducts)));
     }
 
-    private Map<Long, Long> toMap(List<MenuProduct> menuProducts) {
-        return menuProducts.stream()
-                .collect(Collectors.toMap(MenuProduct::getProductId, MenuProduct::getQuantity));
-    }
-
     private List<Long> collectProductId(List<MenuProduct> menuProducts) {
         return menuProducts.stream()
                 .map(MenuProduct::getProductId)
                 .collect(Collectors.toList());
+    }
+
+    private Map<Long, Long> toMap(List<MenuProduct> menuProducts) {
+        return menuProducts.stream()
+                .collect(Collectors.toMap(MenuProduct::getProductId, MenuProduct::getQuantity));
     }
 
     private void validateAmount(MenuPrice menuPrice, ProductPrice amount) {
