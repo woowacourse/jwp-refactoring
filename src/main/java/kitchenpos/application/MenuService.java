@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 public class MenuService {
 
     private final MenuRepository menuRepository;
@@ -41,7 +42,14 @@ public class MenuService {
         this.productRepository = productRepository;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
+    public List<MenuDto> list() {
+        final List<Menu> menus = menuRepository.findAll();
+        return menus.stream()
+                .map(menu -> MenuDto.of(menu, menuProductRepository.findAllByMenuId(menu.getId())))
+                .collect(Collectors.toList());
+    }
+
     public MenuDto create(final CreateMenuDto createMenuDto) {
         if (!menuGroupRepository.existsById(createMenuDto.getMenuGroupId())) {
             throw new IllegalArgumentException("존재하지 않는 메뉴 그룹입니다.");
@@ -65,12 +73,5 @@ public class MenuService {
             menuProducts.add(menuProductRepository.save(menuProduct));
         }
         return menuProducts;
-    }
-
-    public List<MenuDto> list() {
-        final List<Menu> menus = menuRepository.findAll();
-        return menus.stream()
-                .map(menu -> MenuDto.of(menu, menuProductRepository.findAllByMenuId(menu.getId())))
-                .collect(Collectors.toList());
     }
 }

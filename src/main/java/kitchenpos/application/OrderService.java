@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class OrderService {
 
     private final MenuRepository menuRepository;
@@ -42,7 +43,14 @@ public class OrderService {
         this.orderTableRepository = orderTableRepository;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
+    public List<OrderDto> list() {
+        return orderRepository.findAll()
+                .stream()
+                .map(it -> OrderDto.of(it, orderLineItemRepository.findAllByOrderId(it.getId())))
+                .collect(Collectors.toList());
+    }
+
     public OrderDto create(final CreateOrderDto createOrderDto) {
         validateMenus(createOrderDto);
         final Order order = orderRepository.save(Order.of(orderTableRepository.get(createOrderDto.getOrderTableId())));
@@ -71,14 +79,6 @@ public class OrderService {
         return orderLineItems;
     }
 
-    public List<OrderDto> list() {
-        return orderRepository.findAll()
-                .stream()
-                .map(it -> OrderDto.of(it, orderLineItemRepository.findAllByOrderId(it.getId())))
-                .collect(Collectors.toList());
-    }
-
-    @Transactional
     public OrderDto changeOrderStatus(final UpdateOrderStatusDto updateOrderStatusDto) {
         final Long orderId = updateOrderStatusDto.getOrderId();
         Order order = orderRepository.get(orderId);

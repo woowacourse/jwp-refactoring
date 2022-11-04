@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 public class ProductService {
 
     private final ProductRepository productRepository;
@@ -19,16 +20,16 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    @Transactional
-    public ProductDto create(final CreateProductDto createProductDto) {
-        final Product product = createProductDto.toEntity();
-        return ProductDto.of(productRepository.save(product));
-    }
-
+    @Transactional(readOnly = true)
     public List<ProductDto> list() {
         return productRepository.findAll()
                 .stream()
                 .map(ProductDto::of)
                 .collect(Collectors.toList());
+    }
+
+    public ProductDto create(final CreateProductDto createProductDto) {
+        final Product product = createProductDto.toEntity();
+        return ProductDto.of(productRepository.save(product));
     }
 }

@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 public class TableService {
 
     private final OrderRepository orderRepository;
@@ -25,12 +26,7 @@ public class TableService {
         this.orderTableRepository = orderTableRepository;
     }
 
-    @Transactional
-    public TableDto create(final CreateTableDto createTableDto) {
-        OrderTable orderTable = new OrderTable(createTableDto.getNumberOfGuests(), createTableDto.getEmpty());
-        return TableDto.of(orderTableRepository.save(orderTable));
-    }
-
+    @Transactional(readOnly = true)
     public List<TableDto> list() {
         return orderTableRepository.findAll()
                 .stream()
@@ -38,7 +34,11 @@ public class TableService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
+    public TableDto create(final CreateTableDto createTableDto) {
+        OrderTable orderTable = new OrderTable(createTableDto.getNumberOfGuests(), createTableDto.getEmpty());
+        return TableDto.of(orderTableRepository.save(orderTable));
+    }
+
     public TableDto changeEmpty(EmptyTableDto emptyTableDto) {
         Long orderTableId = emptyTableDto.getOrderTableId();
         final OrderTable savedOrderTable = orderTableRepository.get(orderTableId);
@@ -49,7 +49,6 @@ public class TableService {
         return TableDto.of(orderTableRepository.save(savedOrderTable));
     }
 
-    @Transactional
     public TableDto changeNumberOfGuests(UpdateGuestNumberDto updateGuestNumberDto) {
         final Long orderTableId = updateGuestNumberDto.getOrderTableId();
         final int numberOfGuests = updateGuestNumberDto.getNumberOfGuests();
