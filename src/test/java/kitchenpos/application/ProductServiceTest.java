@@ -8,11 +8,12 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import kitchenpos.common.builder.ProductBuilder;
-import kitchenpos.domain.Product;
-import kitchenpos.dto.request.ProductCreateRequest;
-import kitchenpos.dto.response.ProductResponse;
-import kitchenpos.dto.response.ProductsResponse;
-import kitchenpos.dao.ProductRepository;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.dto.reqeust.ProductCreateRequest;
+import kitchenpos.product.dto.response.ProductResponse;
+import kitchenpos.product.dto.response.ProductsResponse;
+import kitchenpos.product.domain.ProductRepository;
+import kitchenpos.product.service.ProductService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

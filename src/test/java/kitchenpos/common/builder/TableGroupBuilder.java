@@ -1,8 +1,8 @@
 package kitchenpos.common.builder;
 
 import java.util.List;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.tablegroup.domain.OrderTable;
+import kitchenpos.tablegroup.domain.TableGroup;
 
 public class TableGroupBuilder {
 
