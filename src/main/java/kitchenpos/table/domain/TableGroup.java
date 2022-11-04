@@ -1,0 +1,35 @@
+package kitchenpos.table.domain;
+
+import java.time.LocalDateTime;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
+
+@Entity
+public class TableGroup {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotNull
+    private LocalDateTime createdDate;
+
+    public TableGroup() {
+        this(null, LocalDateTime.now());
+    }
+
+    public TableGroup(final Long id, final LocalDateTime createdDate) {
+        this.id = id;
+        this.createdDate = createdDate;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+}

@@ -3,7 +3,8 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
-import kitchenpos.vo.Price;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.common.vo.Price;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

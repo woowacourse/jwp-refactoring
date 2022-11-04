@@ -7,13 +7,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.dto.OrderTableRequest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.product.domain.Product;
+import kitchenpos.table.dto.OrderTableRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ class TableServiceTest extends ServiceTest {
         OrderTable savedOrderTable = tableService.create(orderTable);
 
         // then
-        Optional<OrderTable> actual = orderTableDao.findById(savedOrderTable.getId());
+        Optional<OrderTable> actual = orderTableRepository.findById(savedOrderTable.getId());
         assertThat(actual).isPresent();
     }
 
@@ -130,7 +130,7 @@ class TableServiceTest extends ServiceTest {
                     createOrderTableRequest(4, false));
 
             // then
-            Optional<OrderTable> actual = orderTableDao.findById(updatedOrderTable.getId());
+            Optional<OrderTable> actual = orderTableRepository.findById(updatedOrderTable.getId());
             assertThat(actual).isPresent();
             assertThat(actual.get().getNumberOfGuests()).isEqualTo(4);
         }

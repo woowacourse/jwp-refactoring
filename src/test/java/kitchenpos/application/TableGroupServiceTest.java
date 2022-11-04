@@ -9,16 +9,14 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTables;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.TableGroupRequest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.product.domain.Product;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.dto.TableGroupRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -44,7 +42,7 @@ class TableGroupServiceTest extends ServiceTest {
             TableGroup savedTableGroup = tableGroupService.create(request);
 
             // then
-            Optional<TableGroup> actual = tableGroupDao.findById(savedTableGroup.getId());
+            Optional<TableGroup> actual = tableGroupRepository.findById(savedTableGroup.getId());
             assertThat(actual).isPresent();
         }
 
@@ -107,8 +105,8 @@ class TableGroupServiceTest extends ServiceTest {
             tableGroupService.ungroup(savedTableGroup.getId());
 
             // then
-            Optional<OrderTable> actualOrderTable1 = orderTableDao.findById(orderTable1.getId());
-            Optional<OrderTable> actualOrderTable2 = orderTableDao.findById(orderTable2.getId());
+            Optional<OrderTable> actualOrderTable1 = orderTableRepository.findById(orderTable1.getId());
+            Optional<OrderTable> actualOrderTable2 = orderTableRepository.findById(orderTable2.getId());
             assertThat(actualOrderTable1).isPresent();
             assertThat(actualOrderTable2).isPresent();
             assertAll(

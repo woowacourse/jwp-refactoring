@@ -8,14 +8,14 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.dto.OrderLineItemRequest;
-import kitchenpos.dto.OrderRequest;
-import kitchenpos.dto.OrderStatusRequest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.order.domain.Order;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.product.domain.Product;
+import kitchenpos.order.dto.OrderLineItemRequest;
+import kitchenpos.order.dto.OrderRequest;
+import kitchenpos.order.dto.OrderStatusRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -129,7 +129,7 @@ class OrderServiceTest extends ServiceTest {
             entityManager.flush();
 
             // then
-            Optional<Order> actual = orderDao.findById(savedOrder.getId());
+            Optional<Order> actual = orderRepository.findById(savedOrder.getId());
             assertThat(actual).isPresent();
         }
 

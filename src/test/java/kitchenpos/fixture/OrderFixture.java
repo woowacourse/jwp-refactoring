@@ -2,11 +2,11 @@ package kitchenpos.fixture;
 
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.OrderLineItemRequest;
-import kitchenpos.dto.OrderRequest;
-import kitchenpos.dto.OrderStatusRequest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.order.dto.OrderLineItemRequest;
+import kitchenpos.order.dto.OrderRequest;
+import kitchenpos.order.dto.OrderStatusRequest;
 
 public class OrderFixture {
 
