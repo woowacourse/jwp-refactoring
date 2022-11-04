@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import kitchenpos.order.service.OrderValidator;
 
 @Entity
 @Table(name = "orders")
@@ -47,6 +48,10 @@ public class Order {
         if (COMPLETION == this.orderStatus) {
             throw new IllegalArgumentException("이미 계산이 완료된 테이블 입니다.");
         }
+    }
+
+    public void validate(final OrderValidator orderValidator) {
+        orderValidator.validateExistInOrderTable(this);
     }
 
     public Long getId() {

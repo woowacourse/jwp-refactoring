@@ -8,8 +8,6 @@ import kitchenpos.order.dto.request.OrderUpdateRequest;
 import kitchenpos.order.dto.response.OrderResponse;
 import kitchenpos.order.dto.response.OrdersResponse;
 import kitchenpos.order.exception.OrderNotFoundException;
-import kitchenpos.tablegroup.domain.OrderTable;
-import kitchenpos.tablegroup.domain.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,32 +16,24 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderService {
 
     private final OrderMapper orderMapper;
+    private final OrderValidator orderValidator;
     private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
 
     public OrderService(
             final OrderMapper orderMapper,
-            final OrderRepository orderRepository,
-            final OrderTableRepository orderTableRepository) {
+            final OrderValidator orderValidator,
+            final OrderRepository orderRepository) {
         this.orderMapper = orderMapper;
+        this.orderValidator = orderValidator;
         this.orderRepository = orderRepository;
-        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest request) {
         Order order = orderMapper.mappingToOrder(request);
-        validateExistOrderTable(order);
+        order.validate(orderValidator);
         orderRepository.save(order);
         return OrderResponse.from(order);
-    }
-
-    private void validateExistOrderTable(final Order order) {
-        OrderTable orderTable = orderTableRepository.findById(order.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
     }
 
     public OrdersResponse list() {
