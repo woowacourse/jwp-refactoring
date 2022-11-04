@@ -3,14 +3,11 @@ package kitchenpos.application;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 import kitchenpos.menu.domain.JpaMenuRepository;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menuGroup.domain.JpaMenuGroupRepository;
 import kitchenpos.order.domain.JpaOrderRepository;
 import kitchenpos.order.domain.Order;
@@ -19,7 +16,6 @@ import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.ui.request.OrderLineItemRequest;
 import kitchenpos.order.ui.request.OrderRequest;
 import kitchenpos.product.domain.JpaProductRepository;
-import kitchenpos.product.domain.Product;
 import kitchenpos.table.domain.JpaOrderTableRepository;
 import kitchenpos.table.domain.JpaTableGroupRepository;
 import kitchenpos.table.domain.OrderTable;
@@ -87,13 +83,11 @@ public class ServiceTest {
     }
 
     protected void 존재하는_요리중_테이블_세팅() {
-        final Order order = new Order(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(),
-                Arrays.asList(new OrderLineItem(1L, 1L, 5)));
-        Mockito.when(orderRepository.findByOrderTableId(anyLong())).thenReturn(Optional.of(order));
+        Mockito.when(orderRepository.existsByOrderTableAndOrderStatusIn(any(), any())).thenReturn(true);
     }
 
     protected Order 주문_생성(OrderStatus status) {
-        final Order 주문 = new Order(1L, 1L, status.name(), LocalDateTime.now(),
+        final Order 주문 = new Order(1L, new OrderTable(5, true), status.name(), LocalDateTime.now(),
                 Arrays.asList(new OrderLineItem(1L, 1L, 5)));
         final OrderLineItem 주문_수량 = new OrderLineItem(1L, 1L, 1);
 

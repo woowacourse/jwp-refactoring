@@ -14,6 +14,7 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.ui.request.OrderLineItemRequest;
 import kitchenpos.order.ui.request.OrderRequest;
+import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
@@ -24,7 +25,7 @@ class OrderRestControllerTest extends RestControllerTest {
         OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1L, 1L);
         OrderRequest orderRequest = new OrderRequest(Arrays.asList(orderLineItemRequest));
         OrderLineItem expectedItem = new OrderLineItem(1L, 1L, 1);
-        Order expected = new Order(1L, 1L, COOKING.name(), LocalDateTime.now(), Arrays.asList(expectedItem));
+        Order expected = new Order(1L, new OrderTable(5,true), COOKING.name(), LocalDateTime.now(), Arrays.asList(expectedItem));
 
         when(orderService.create(any())).thenReturn(expected);
 

@@ -1,10 +1,8 @@
 package kitchenpos.order.domain;
 
 import static kitchenpos.exception.ExceptionType.INVALID_CHANGE_ORDER_STATUS_EXCEPTION;
-import static kitchenpos.exception.ExceptionType.INVALID_TABLE_UNGROUP_EXCEPTION;
 import static kitchenpos.exception.ExceptionType.NOT_FOUND_ORDER_LINE_ITEM_EXCEPTION;
 import static kitchenpos.order.domain.OrderStatus.COMPLETION;
-import static kitchenpos.order.domain.OrderStatus.COOKING;
 import static kitchenpos.order.domain.OrderStatus.valueOf;
 
 import java.time.LocalDateTime;
@@ -22,8 +20,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import kitchenpos.exception.CustomIllegalArgumentException;
+import kitchenpos.table.domain.OrderTable;
 import org.springframework.util.CollectionUtils;
 
 @Entity
@@ -33,8 +33,9 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private Long orderTableId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_table_id")
+    private OrderTable orderTable;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
@@ -49,15 +50,15 @@ public class Order {
     protected Order() {
     }
 
-    public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+    public Order(final OrderTable orderTable, final String orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
+        this(null, orderTable, orderStatus, orderedTime, orderLineItems);
     }
 
-    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+    public Order(final Long id, final OrderTable orderTable, final String orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
         this.id = id;
-        this.orderTableId = orderTableId;
+        this.orderTable = orderTable;
         this.orderStatus = valueOf(orderStatus);
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
@@ -69,12 +70,6 @@ public class Order {
             throw new CustomIllegalArgumentException(INVALID_CHANGE_ORDER_STATUS_EXCEPTION);
         }
         this.orderStatus = valueOf(order.getOrderStatus());
-    }
-
-    public void validExistOrderStatus() {
-        if (orderStatus.equals(COOKING) || orderStatus.equals(OrderStatus.MEAL)) {
-            throw new CustomIllegalArgumentException(INVALID_TABLE_UNGROUP_EXCEPTION);
-        }
     }
 
     private void validEmpty() {
@@ -92,8 +87,8 @@ public class Order {
         return id;
     }
 
-    public Long getOrderTableId() {
-        return orderTableId;
+    public OrderTable getOrderTable() {
+        return orderTable;
     }
 
     public String getOrderStatus() {

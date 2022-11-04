@@ -16,6 +16,7 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.ui.request.OrderRequest;
 import kitchenpos.table.domain.JpaOrderTableRepository;
+import kitchenpos.table.domain.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,8 +61,14 @@ public class OrderService {
     }
 
     private Order convertSaveConditionOrder(final Long orderTableId, List<OrderLineItem> orderLineItems) {
-        return new Order(orderTableId, COOKING.name(), LocalDateTime.now(),
+        final OrderTable orderTable = getOrderTable(orderTableId);
+        return new Order(orderTable, COOKING.name(), LocalDateTime.now(),
                 orderLineItems);
+    }
+
+    private OrderTable getOrderTable(final Long orderTableId) {
+        return orderTableRepository.findById(orderTableId)
+                .orElseThrow(() -> new CustomIllegalArgumentException(NOT_FOUND_TABLE_EXCEPTION));
     }
 
     @Transactional(readOnly = true)

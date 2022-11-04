@@ -1,11 +1,14 @@
 package kitchenpos.order.application;
 
-import static kitchenpos.exception.ExceptionType.NOT_FOUND_ORDER_EXCEPTION;
+import static kitchenpos.exception.ExceptionType.INVALID_TABLE_UNGROUP_EXCEPTION;
+import static kitchenpos.order.domain.OrderStatus.COOKING;
+import static kitchenpos.order.domain.OrderStatus.MEAL;
 
-import java.util.Optional;
+import java.util.Arrays;
+import java.util.List;
 import kitchenpos.exception.CustomIllegalArgumentException;
 import kitchenpos.order.domain.JpaOrderRepository;
-import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.application.TableValidator;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
@@ -13,6 +16,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class OrderChangeValidator implements TableValidator {
+
+    private static final List<OrderStatus> INVALID_ORDER_STATUS = Arrays.asList(COOKING, MEAL);
 
     private final JpaOrderRepository orderRepository;
 
@@ -23,20 +28,24 @@ public class OrderChangeValidator implements TableValidator {
     @Override
     public void validateChangeStatus(final OrderTable orderTable) {
         orderTable.validTableGroupCondition();
-        validExistOrderTables(orderTable.getId());
+        validExistOrderTables(orderTable);
     }
 
-    private void validExistOrderTables(final Long orderTableId) {
-        final Optional<Order> order = orderRepository.findByOrderTableId(orderTableId);
-        order.ifPresent(Order::validExistOrderStatus);
+    private void validExistOrderTables(final OrderTable orderTable) {
+        final boolean exists = orderRepository.existsByOrderTableAndOrderStatusIn(orderTable, INVALID_ORDER_STATUS);
+
+        if (exists) {
+            throw new CustomIllegalArgumentException(INVALID_TABLE_UNGROUP_EXCEPTION);
+        }
     }
 
     @Override
     public void validateUngroup(final TableGroup tableGroup) {
-        for (OrderTable orderTable : tableGroup.getOrderTables()) {
-            final Order order = orderRepository.findById(orderTable.getId())
-                    .orElseThrow(() -> new CustomIllegalArgumentException(NOT_FOUND_ORDER_EXCEPTION));
-            order.validExistOrderStatus();
+        final boolean exists = orderRepository.existsByOrderTableInAndOrderStatusIn(tableGroup.getOrderTables(),
+                INVALID_ORDER_STATUS);
+
+        if (exists) {
+            throw new CustomIllegalArgumentException(INVALID_TABLE_UNGROUP_EXCEPTION);
         }
     }
 }
