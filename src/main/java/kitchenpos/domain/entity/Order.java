@@ -1,8 +1,6 @@
 package kitchenpos.domain.entity;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 @Entity(name = "orders")
@@ -27,9 +24,6 @@ public class Order {
     @JoinColumn(name = "order_table_id")
     private OrderTable orderTable;
 
-    @OneToMany(mappedBy = "order")
-    private List<OrderLineItem> orderLineItems = new ArrayList<>();
-
     @Column(name = "order_status")
     @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
@@ -39,11 +33,10 @@ public class Order {
     protected Order() {
     }
 
-    public Order(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+    public Order(OrderTable orderTable) {
         this.orderedTime = LocalDateTime.now();
         this.orderStatus = OrderStatus.COOKING;
         this.orderTable = orderTable;
-        this.orderLineItems = orderLineItems;
     }
 
     // for test
@@ -59,10 +52,6 @@ public class Order {
 
     public OrderTable getOrderTable() {
         return orderTable;
-    }
-
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
     }
 
     public OrderStatus getOrderStatus() {

@@ -105,7 +105,7 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("완료되지 않은 주문이 포함된 테이블 그룹은 해제할 수 없다.")
     @Test
     void ungroup_Exception_Not_Completion_Order() {
-        Order order = new Order(emptyOrderTable1, Collections.emptyList());
+        Order order = new Order(emptyOrderTable1);
         orderRepository.save(order);
         TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(List.of(emptyOrderTable1.getId(),
                 emptyOrderTable2.getId()));

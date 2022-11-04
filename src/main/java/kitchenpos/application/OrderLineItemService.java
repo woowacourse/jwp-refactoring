@@ -33,4 +33,8 @@ public class OrderLineItemService {
                 .collect(Collectors.toList());
         return new OrderLineItems(orderLineItems);
     }
+
+    public OrderLineItems findOrderLineItemsInOrder(Long orderId) {
+        return new OrderLineItems(orderLineItemRepository.findAllByOrderId(orderId));
+    }
 }
