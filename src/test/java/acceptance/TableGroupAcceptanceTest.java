@@ -4,9 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
 import java.util.List;
-import kitchenpos.application.dto.response.OrderTableResponse;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.table.application.response.OrderTableResponse;
+import kitchenpos.table.application.response.TableGroupResponse;
+import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +19,7 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
         long 테이블1 = 테이블을_생성한다(2, true);
         long 테이블2 = 테이블을_생성한다(4, true);
 
-        TableGroup tableGroup = 테이블_그룹을_생성한다(List.of(테이블1, 테이블2));
+        TableGroupResponse tableGroup = 테이블_그룹을_생성한다(List.of(테이블1, 테이블2));
 
         assertThat(tableGroup.getId()).isNotNull();
     }
@@ -30,7 +30,7 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
         long 테이블1 = 테이블을_생성한다(2, true);
         long 테이블2 = 테이블을_생성한다(4, true);
 
-        TableGroup tableGroup = 테이블_그룹을_생성한다(List.of(테이블1, 테이블2));
+        TableGroupResponse tableGroup = 테이블_그룹을_생성한다(List.of(테이블1, 테이블2));
 
         assertThatCode(() -> 테이블_그룹을_해제한다(tableGroup.getId()));
     }

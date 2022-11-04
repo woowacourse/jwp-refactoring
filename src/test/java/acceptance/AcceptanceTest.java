@@ -9,21 +9,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import kitchenpos.Application;
-import kitchenpos.application.dto.response.MenuGroupResponse;
-import kitchenpos.application.dto.response.MenuResponse;
-import kitchenpos.application.dto.response.OrderResponse;
-import kitchenpos.application.dto.response.OrderTableResponse;
-import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.common.DataClearExtension;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.ui.dto.request.MenuProductRequest;
-import kitchenpos.ui.dto.request.MenuRequest;
-import kitchenpos.ui.dto.request.OrderChangeRequest;
-import kitchenpos.ui.dto.request.OrderLineItemRequest;
-import kitchenpos.ui.dto.request.OrderRequest;
-import kitchenpos.ui.dto.request.OrderTableRequest;
-import kitchenpos.ui.dto.request.ProductRequest;
-import kitchenpos.ui.dto.request.TableGroupRequest;
+import kitchenpos.menu.application.dto.response.MenuGroupResponse;
+import kitchenpos.menu.application.dto.response.MenuResponse;
+import kitchenpos.menu.ui.request.MenuProductRequest;
+import kitchenpos.menu.ui.request.MenuRequest;
+import kitchenpos.order.application.response.OrderResponse;
+import kitchenpos.order.ui.request.OrderChangeRequest;
+import kitchenpos.order.ui.request.OrderLineItemRequest;
+import kitchenpos.order.ui.request.OrderRequest;
+import kitchenpos.order.ui.request.OrderTableRequest;
+import kitchenpos.product.application.response.ProductResponse;
+import kitchenpos.product.ui.request.ProductRequest;
+import kitchenpos.table.application.response.OrderTableResponse;
+import kitchenpos.table.application.response.TableGroupResponse;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.ui.request.TableGroupRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -145,7 +146,7 @@ public class AcceptanceTest {
                 .extract().as(OrderTableResponse.class);
     }
 
-    protected TableGroup 테이블_그룹을_생성한다(List<Long> orderTableId) {
+    protected TableGroupResponse 테이블_그룹을_생성한다(List<Long> orderTableId) {
         TableGroupRequest tableGroup = new TableGroupRequest(orderTableId);
 
         return RestAssured.given().log().all()
@@ -155,7 +156,7 @@ public class AcceptanceTest {
                 .post("/api/table-groups")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
-                .extract().as(TableGroup.class);
+                .extract().as(TableGroupResponse.class);
     }
 
     protected void 테이블_그룹을_해제한다(Long id) {
