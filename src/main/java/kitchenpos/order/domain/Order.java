@@ -65,11 +65,11 @@ public class Order {
         validEmpty();
     }
 
-    public void changeOrderStatus(final Order order) {
+    public void changeOrderStatus(final String orderStatus) {
         if (Objects.equals(COMPLETION, this.orderStatus)) {
             throw new CustomIllegalArgumentException(INVALID_CHANGE_ORDER_STATUS_EXCEPTION);
         }
-        this.orderStatus = valueOf(order.getOrderStatus());
+        this.orderStatus = valueOf(orderStatus);
     }
 
     private void validEmpty() {

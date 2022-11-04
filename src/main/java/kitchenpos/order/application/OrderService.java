@@ -11,10 +11,14 @@ import java.util.stream.Collectors;
 import kitchenpos.exception.CustomIllegalArgumentException;
 import kitchenpos.menu.domain.JpaMenuRepository;
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.order.application.response.OrderResponse;
 import kitchenpos.order.domain.JpaOrderRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderMenu;
+import kitchenpos.order.ui.request.OrderLineItemRequest;
 import kitchenpos.order.ui.request.OrderRequest;
+import kitchenpos.order.ui.request.OrderStatusRequest;
 import kitchenpos.table.domain.JpaOrderTableRepository;
 import kitchenpos.table.domain.OrderTable;
 import org.springframework.stereotype.Service;
@@ -34,24 +38,33 @@ public class OrderService {
         this.orderTableRepository = orderTableRepository;
     }
 
-    public Order create(final OrderRequest request) {
-        final List<OrderLineItem> orderLineItems = request.toOrderLineItem();
-        validMenu(orderLineItems);
+    public OrderResponse create(final OrderRequest request) {
+        final List<OrderLineItem> orderLineItems = toOrderLineItems(request.getOrderLineItems());
+        validMenu(request, orderLineItems);
         validOrderTable(request.getOrderTableId());
-
-        return orderRepository.save(convertSaveConditionOrder(request.getOrderTableId(), orderLineItems));
+        final Order order = orderRepository.save(convertSaveConditionOrder(request.getOrderTableId(), orderLineItems));
+        return new OrderResponse(order);
     }
 
-    private void validMenu(final List<OrderLineItem> orderLineItems) {
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
-                .collect(Collectors.toList());
-
-        final List<Menu> menus = menuRepository.findAllById(menuIds);
-
-        if (orderLineItems.size() != menus.size()) {
+    private void validMenu(final OrderRequest request, final List<OrderLineItem> orderLineItems) {
+        if (request.getOrderLineItems().size() != orderLineItems.size()) {
             throw new CustomIllegalArgumentException(NOT_FOUND_MENU_EXCEPTION);
         }
+    }
+
+    private List<OrderLineItem> toOrderLineItems(final List<OrderLineItemRequest> orderLineItems) {
+        return orderLineItems.stream().map(this::toOrderLineItem).collect(Collectors.toList());
+    }
+
+    private OrderLineItem toOrderLineItem(final OrderLineItemRequest request) {
+        return new OrderLineItem(toOrderMenu(request), request.getQuantity());
+    }
+
+    private OrderMenu toOrderMenu(final OrderLineItemRequest data) {
+        final Menu menu = menuRepository.findById(data.getMenuId())
+                .orElseThrow(() -> new CustomIllegalArgumentException(NOT_FOUND_MENU_EXCEPTION));
+
+        return new OrderMenu(menu.getName(), menu.getPrice());
     }
 
     private void validOrderTable(final Long orderTableId) {
@@ -72,14 +85,17 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public List<Order> list() {
-        return orderRepository.findAll();
+    public List<OrderResponse> list() {
+        final List<Order> orders = orderRepository.findAll();
+        return orders.stream()
+                .map(OrderResponse::new)
+                .collect(Collectors.toList());
     }
 
-    public Order changeOrderStatus(final Long orderId, final Order order) {
+    public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusRequest request) {
         final Order savedOrder = getOrder(orderId);
-        savedOrder.changeOrderStatus(order);
-        return savedOrder;
+        savedOrder.changeOrderStatus(request.getOrderStatus());
+        return new OrderResponse(savedOrder);
     }
 
     private Order getOrder(final Long orderId) {

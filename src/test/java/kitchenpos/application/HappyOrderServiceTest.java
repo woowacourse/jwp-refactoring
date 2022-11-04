@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import kitchenpos.application.happy.HappyServiceTest;
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.order.application.response.OrderResponse;
 import kitchenpos.order.domain.Order;
 import kitchenpos.menuGroup.ui.request.MenuGroupRequest;
 import kitchenpos.menu.ui.request.MenuProductRequest;
@@ -19,7 +20,7 @@ class HappyOrderServiceTest extends HappyServiceTest {
 
     @Test
     void 주문_생성() {
-        final Long 테이블_번호 = tableService.create(new OrderTableRequest(5, false)).getId();
+        final Long 테이블_번호 = tableService.create(new OrderTableRequest(5, true)).getId();
 
         final MenuGroupRequest 코틀린하는_사람들이_먹는_떡볶이_그룹_요청 = new MenuGroupRequest("코틀린하는 사람들이 먹는 떡볶이");
         final Long 코틀린하는_사람들이_먹는_떡볶이_ID = menuGroupService.create(코틀린하는_사람들이_먹는_떡볶이_그룹_요청).getId();
@@ -45,7 +46,7 @@ class HappyOrderServiceTest extends HappyServiceTest {
         final OrderLineItemRequest 주문_상세_요청 = new OrderLineItemRequest(menu.getId(), 2);
         final OrderRequest 주문요청 = new OrderRequest(테이블_번호, Arrays.asList(주문_상세_요청));
 
-        final Order 주문 = orderService.create(주문요청);
+        final OrderResponse 주문 = orderService.create(주문요청);
 
         Assertions.assertThat(주문).isNotNull();
 

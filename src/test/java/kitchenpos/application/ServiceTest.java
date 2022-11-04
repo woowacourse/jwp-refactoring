@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,6 +13,7 @@ import kitchenpos.menuGroup.domain.JpaMenuGroupRepository;
 import kitchenpos.order.domain.JpaOrderRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderMenu;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.ui.request.OrderLineItemRequest;
 import kitchenpos.order.ui.request.OrderRequest;
@@ -88,8 +90,8 @@ public class ServiceTest {
 
     protected Order 주문_생성(OrderStatus status) {
         final Order 주문 = new Order(1L, new OrderTable(5, true), status.name(), LocalDateTime.now(),
-                Arrays.asList(new OrderLineItem(1L, 1L, 5)));
-        final OrderLineItem 주문_수량 = new OrderLineItem(1L, 1L, 1);
+                Arrays.asList(new OrderLineItem(1L, new OrderMenu("주문 테스트", BigDecimal.TEN), 5)));
+        final OrderLineItem 주문_수량 = new OrderLineItem(1L, new OrderMenu("주문 테스트", BigDecimal.TEN), 1);
 
         주문.setOrderLineItems(Arrays.asList(주문_수량));
 

@@ -35,9 +35,5 @@ public class OrderRequest {
         return orderLineItems;
     }
 
-    public List<OrderLineItem> toOrderLineItem() {
-        return this.orderLineItems.stream()
-                .map(OrderLineItemRequest::toOrderLineItem)
-                .collect(Collectors.toList());
-    }
+
 }
