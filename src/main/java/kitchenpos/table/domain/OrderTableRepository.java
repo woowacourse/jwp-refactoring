@@ -1,11 +1,9 @@
 package kitchenpos.table.domain;
 
-import kitchenpos.table.domain.OrderTable;
-
 import java.util.List;
 import java.util.Optional;
 
-public interface OrderTableDao {
+public interface OrderTableRepository {
 
     OrderTable save(final OrderTable entity);
 

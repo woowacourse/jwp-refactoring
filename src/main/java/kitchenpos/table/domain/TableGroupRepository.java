@@ -1,63 +1,13 @@
 package kitchenpos.table.domain;
 
-import static java.util.stream.Collectors.*;
-
 import java.util.List;
-import java.util.Objects;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+import java.util.Optional;
 
-@Component
-@Transactional(readOnly = true)
-public class TableGroupRepository {
+public interface TableGroupRepository {
 
-    private final OrderTableDao orderTableDao;
-    private final TableGroupDao tableGroupDao;
+    TableGroup save(final TableGroup entity);
 
-    public TableGroupRepository(final OrderTableDao orderTableDao,
-                                final TableGroupDao tableGroupDao) {
-        this.orderTableDao = orderTableDao;
-        this.tableGroupDao = tableGroupDao;
-    }
+    Optional<TableGroup> findById(final Long id);
 
-    @Transactional
-    public TableGroup save(final TableGroup entity) {
-        List<Long> orderTableIds = toOrderTableIds(entity);
-
-        List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
-        validateSizeOrderTable(orderTableIds, savedOrderTables);
-        validateEmptyOrderTables(savedOrderTables);
-
-        return tableGroupDao.save(entity);
-    }
-
-    private List<Long> toOrderTableIds(final TableGroup entity) {
-        return entity.getOrderTables()
-                .stream()
-                .map(OrderTable::getId)
-                .collect(toList());
-    }
-
-    private void validateSizeOrderTable(final List<Long> orderTableIds, final List<OrderTable> orderTables) {
-        if (orderTableIds.size() != orderTables.size()) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateEmptyOrderTables(final List<OrderTable> orderTables) {
-        for (final OrderTable savedOrderTable : orderTables) {
-            validateEmptyOrderTable(savedOrderTable);
-        }
-    }
-
-    private void validateEmptyOrderTable(final OrderTable savedOrderTable) {
-        if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    public TableGroup getById(final Long id) {
-        return tableGroupDao.findById(id)
-                .orElseThrow(IllegalArgumentException::new);
-    }
+    List<TableGroup> findAll();
 }

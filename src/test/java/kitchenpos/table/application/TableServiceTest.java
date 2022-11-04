@@ -8,10 +8,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.order.domain.OrderDao;
-import kitchenpos.table.application.TableService;
-import kitchenpos.table.domain.OrderTableDao;
-import kitchenpos.table.domain.TableGroupDao;
+import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.TableGroupRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
@@ -34,19 +33,19 @@ import org.springframework.test.context.jdbc.Sql;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class TableServiceTest {
 
-    private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
-    private final TableGroupDao tableGroupDao;
+    private final OrderRepository orderRepository;
+    private final OrderTableRepository orderTableRepository;
+    private final TableGroupRepository tableGroupRepository;
     private final TableService tableService;
 
     @Autowired
-    public TableServiceTest(final OrderDao orderDao,
-                            final OrderTableDao orderTableDao,
-                            final TableGroupDao tableGroupDao,
+    public TableServiceTest(final OrderRepository orderRepository,
+                            final OrderTableRepository orderTableRepository,
+                            final TableGroupRepository tableGroupRepository,
                             final TableService tableService) {
-        this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
-        this.tableGroupDao = tableGroupDao;
+        this.orderRepository = orderRepository;
+        this.orderTableRepository = orderTableRepository;
+        this.tableGroupRepository = tableGroupRepository;
         this.tableService = tableService;
     }
 
@@ -64,11 +63,11 @@ class TableServiceTest {
 
     @Test
     void orderTable_list를_조회한다() {
-        orderTableDao.save(generateOrderTable(0, true));
-        orderTableDao.save(generateOrderTable(0, true));
-        orderTableDao.save(generateOrderTable(0, true));
-        orderTableDao.save(generateOrderTable(0, true));
-        orderTableDao.save(generateOrderTable(0, true));
+        orderTableRepository.save(generateOrderTable(0, true));
+        orderTableRepository.save(generateOrderTable(0, true));
+        orderTableRepository.save(generateOrderTable(0, true));
+        orderTableRepository.save(generateOrderTable(0, true));
+        orderTableRepository.save(generateOrderTable(0, true));
 
         List<OrderTableResponse> actual = tableService.list();
 
@@ -77,7 +76,7 @@ class TableServiceTest {
 
     @Test
     void orderTable의_empty를_변경한다() {
-        OrderTable orderTable = orderTableDao.save(generateOrderTable(null, 0, true));
+        OrderTable orderTable = orderTableRepository.save(generateOrderTable(null, 0, true));
 
         OrderTableResponse actual =
                 tableService.changeEmpty(orderTable.getId(), new OrderTableChangeEmptyRequest(false));
@@ -90,8 +89,8 @@ class TableServiceTest {
 
     @Test
     void tableGroupId가_null이_아닌_경우_예외를_던진다() {
-        TableGroup tableGroup = tableGroupDao.save(generateTableGroup(List.of()));
-        OrderTable orderTable = orderTableDao.save(generateOrderTable(tableGroup.getId(), 0, true));
+        TableGroup tableGroup = tableGroupRepository.save(generateTableGroup(List.of()));
+        OrderTable orderTable = orderTableRepository.save(generateOrderTable(tableGroup.getId(), 0, true));
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), new OrderTableChangeEmptyRequest(false)))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -100,9 +99,9 @@ class TableServiceTest {
     @ParameterizedTest(name = "orderTable에 속한 order 중 {0}이 존재하는 경우 예외를 던진다.")
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     void orderTable에_속한_order_중_COOKING_MEAL이_존재하는_경우_예외를_던진다(final OrderStatus orderStatus) {
-        OrderTable orderTable = orderTableDao.save(generateOrderTable(null, 0, true));
+        OrderTable orderTable = orderTableRepository.save(generateOrderTable(null, 0, true));
 
-        orderDao.save(generateOrder(orderTable.getId(), orderStatus, List.of()));
+        orderRepository.save(generateOrder(orderTable.getId(), orderStatus, List.of()));
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), new OrderTableChangeEmptyRequest(false)))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -110,7 +109,7 @@ class TableServiceTest {
 
     @Test
     void orderTable의_changeNumberOfGuests를_변경한다() {
-        OrderTable orderTable = orderTableDao.save(generateOrderTable(0, false));
+        OrderTable orderTable = orderTableRepository.save(generateOrderTable(0, false));
 
         OrderTableResponse actual =
                 tableService.changeNumberOfGuests(orderTable.getId(), new OrderTableChangeNumberOfGuestsRequest(1));
@@ -124,7 +123,7 @@ class TableServiceTest {
     @ParameterizedTest(name = "numberOfGuests가 {0}미만인 경우 예외를 던진다")
     @ValueSource(ints = {-15000, -10, Integer.MIN_VALUE})
     void numberOfGuests가_0미만인_경우_예외를_던진다(final int numberOfGuests) {
-        OrderTable orderTable = orderTableDao.save(generateOrderTable(0, false));
+        OrderTable orderTable = orderTableRepository.save(generateOrderTable(0, false));
 
         OrderTableChangeNumberOfGuestsRequest request = new OrderTableChangeNumberOfGuestsRequest(numberOfGuests);
 
@@ -135,7 +134,7 @@ class TableServiceTest {
 
     @Test
     void 저장된_orderTable이_비어있는_경우_예외를_던진다() {
-        OrderTable orderTable = orderTableDao.save(generateOrderTable(0, true));
+        OrderTable orderTable = orderTableRepository.save(generateOrderTable(0, true));
 
         OrderTableChangeNumberOfGuestsRequest request = new OrderTableChangeNumberOfGuestsRequest(2);
 

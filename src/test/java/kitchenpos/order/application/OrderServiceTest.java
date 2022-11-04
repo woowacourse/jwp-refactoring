@@ -15,8 +15,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
-import kitchenpos.order.domain.OrderDao;
-import kitchenpos.table.domain.OrderTableDao;
+import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.product.domain.ProductDao;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menugroup.domain.MenuGroup;
@@ -44,22 +44,22 @@ class OrderServiceTest {
     private final MenuGroupRepository menuGroupRepository;
     private final ProductDao productDao;
     private final MenuRepository menuRepository;
-    private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
+    private final OrderRepository orderRepository;
+    private final OrderTableRepository orderTableRepository;
     private final OrderService orderService;
 
     @Autowired
     public OrderServiceTest(final MenuGroupRepository menuGroupRepository,
                             final ProductDao productDao,
                             final MenuRepository menuRepository,
-                            final OrderDao orderDao,
-                            final OrderTableDao orderTableDao,
+                            final OrderRepository orderRepository,
+                            final OrderTableRepository orderTableRepository,
                             final OrderService orderService) {
         this.menuGroupRepository = menuGroupRepository;
         this.productDao = productDao;
         this.menuRepository = menuRepository;
-        this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
+        this.orderRepository = orderRepository;
+        this.orderTableRepository = orderTableRepository;
         this.orderService = orderService;
     }
 
@@ -71,7 +71,7 @@ class OrderServiceTest {
         List<MenuProduct> menuProducts = List.of(generateMenuProduct(후라이드.getId(), 1));
         Menu menu = menuRepository.save(generateMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId(), menuProducts));
 
-        OrderTable orderTable = orderTableDao.save(generateOrderTable(0, false));
+        OrderTable orderTable = orderTableRepository.save(generateOrderTable(0, false));
         OrderLineItemSaveRequest orderLineItemSaveRequest = new OrderLineItemSaveRequest(menu.getId(), 1);
 
         OrderResponse actual = orderService.create(
@@ -94,7 +94,7 @@ class OrderServiceTest {
 
     @Test
     void orderLineItems에_속하는_menuId가_존재하지_않는_경우_예외를_던진다() {
-        OrderTable orderTable = orderTableDao.save(generateOrderTable(0, false));
+        OrderTable orderTable = orderTableRepository.save(generateOrderTable(0, false));
         OrderLineItemSaveRequest orderLineItemSaveRequest = new OrderLineItemSaveRequest(0L, 1);
 
         assertThatThrownBy(
@@ -111,7 +111,7 @@ class OrderServiceTest {
         List<MenuProduct> menuProducts = List.of(generateMenuProduct(후라이드.getId(), 1));
         Menu menu = menuRepository.save(generateMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId(), menuProducts));
 
-        OrderTable orderTable = orderTableDao.save(generateOrderTable(0, true));
+        OrderTable orderTable = orderTableRepository.save(generateOrderTable(0, true));
         OrderLineItemSaveRequest orderLineItemSaveRequest = new OrderLineItemSaveRequest(menu.getId(), 1);
 
         assertThatThrownBy(
@@ -122,9 +122,9 @@ class OrderServiceTest {
 
     @Test
     void order_list를_조회한다() {
-        OrderTable orderTable = orderTableDao.save(generateOrderTable(0, true));
-        orderDao.save(generateOrder(orderTable.getId(), OrderStatus.COOKING, List.of()));
-        orderDao.save(generateOrder(orderTable.getId(), OrderStatus.COOKING, List.of()));
+        OrderTable orderTable = orderTableRepository.save(generateOrderTable(0, true));
+        orderRepository.save(generateOrder(orderTable.getId(), OrderStatus.COOKING, List.of()));
+        orderRepository.save(generateOrder(orderTable.getId(), OrderStatus.COOKING, List.of()));
 
         List<OrderResponse> actual = orderService.list();
 
@@ -133,8 +133,8 @@ class OrderServiceTest {
 
     @Test
     void order의_상태를_변경한다() {
-        OrderTable orderTable = orderTableDao.save(generateOrderTable(0, true));
-        Order order = orderDao.save(generateOrder(orderTable.getId(), OrderStatus.COOKING, List.of()));
+        OrderTable orderTable = orderTableRepository.save(generateOrderTable(0, true));
+        Order order = orderRepository.save(generateOrder(orderTable.getId(), OrderStatus.COOKING, List.of()));
         OrderChangeOrderStatusRequest request = generateOrderChangeOrderStatusRequest(OrderStatus.MEAL);
 
         OrderResponse actual = orderService.changeOrderStatus(order.getId(), request);
@@ -147,8 +147,8 @@ class OrderServiceTest {
 
     @Test
     void order의_상태가_COMPLETION인_경우_예외를_던진다() {
-        OrderTable orderTable = orderTableDao.save(generateOrderTable(0, true));
-        Order order = orderDao.save(generateOrder(orderTable.getId(), OrderStatus.COMPLETION, List.of()));
+        OrderTable orderTable = orderTableRepository.save(generateOrderTable(0, true));
+        Order order = orderRepository.save(generateOrder(orderTable.getId(), OrderStatus.COMPLETION, List.of()));
         OrderChangeOrderStatusRequest request = generateOrderChangeOrderStatusRequest(OrderStatus.MEAL);
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), request))

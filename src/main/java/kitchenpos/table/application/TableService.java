@@ -3,7 +3,7 @@ package kitchenpos.table.application;
 import static java.util.stream.Collectors.*;
 
 import kitchenpos.table.validator.TableValidator;
-import kitchenpos.table.domain.OrderTableDao;
+import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.table.dto.OrderTableSaveRequest;
@@ -18,22 +18,22 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class TableService {
 
-    private final OrderTableDao orderTableDao;
+    private final OrderTableRepository orderTableRepository;
     private final TableValidator tableValidator;
 
-    public TableService(final OrderTableDao orderTableDao, final TableValidator tableValidator) {
-        this.orderTableDao = orderTableDao;
+    public TableService(final OrderTableRepository orderTableRepository, final TableValidator tableValidator) {
+        this.orderTableRepository = orderTableRepository;
         this.tableValidator = tableValidator;
     }
 
     @Transactional
     public OrderTableResponse create(final OrderTableSaveRequest request) {
-        OrderTable orderTable = orderTableDao.save(request.toEntity());
+        OrderTable orderTable = orderTableRepository.save(request.toEntity());
         return new OrderTableResponse(orderTable);
     }
 
     public List<OrderTableResponse> list() {
-        return orderTableDao.findAll()
+        return orderTableRepository.findAll()
                 .stream()
                 .map(OrderTableResponse::new)
                 .collect(toList());
@@ -41,7 +41,7 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
-        final OrderTable savedOrderTable = orderTableDao.getById(orderTableId);
+        final OrderTable savedOrderTable = orderTableRepository.getById(orderTableId);
         savedOrderTable.changeEmpty(tableValidator.validate(savedOrderTable.getId()), request.isEmpty());
         return new OrderTableResponse(savedOrderTable);
     }
@@ -49,7 +49,7 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
                                                    final OrderTableChangeNumberOfGuestsRequest request) {
-        OrderTable savedOrderTable = orderTableDao.getById(orderTableId);
+        OrderTable savedOrderTable = orderTableRepository.getById(orderTableId);
         savedOrderTable.changeNumberOfGuests(request.getNumberOfGuests());
         return new OrderTableResponse(savedOrderTable);
     }

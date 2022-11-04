@@ -6,7 +6,7 @@ import static kitchenpos.order.domain.OrderStatus.COOKING;
 import java.util.List;
 import java.util.function.Supplier;
 import kitchenpos.table.validator.TableValidator;
-import kitchenpos.order.domain.OrderDao;
+import kitchenpos.order.domain.OrderRepository;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,14 +14,14 @@ public class BasicTableValidator implements TableValidator {
 
     private static final List<String> NONE_EMPTY_ORDER_TABLE = List.of(COOKING.name(), MEAL.name());
 
-    private final OrderDao orderDao;
+    private final OrderRepository orderRepository;
 
-    public BasicTableValidator(final OrderDao orderDao) {
-        this.orderDao = orderDao;
+    public BasicTableValidator(final OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
     }
 
     @Override
     public Supplier<Boolean> validate(final Long orderTableId) {
-        return () -> orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, NONE_EMPTY_ORDER_TABLE);
+        return () -> orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, NONE_EMPTY_ORDER_TABLE);
     }
 }
