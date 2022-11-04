@@ -2,14 +2,14 @@ package kitchenpos.menu.application;
 
 import static java.util.stream.Collectors.*;
 
-import kitchenpos.dao.ProductDao;
+import kitchenpos.product.domain.ProductDao;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.product.domain.Product;
 import kitchenpos.menu.dto.MenuProductSaveRequest;
 import kitchenpos.menu.dto.MenuResponse;
 import kitchenpos.menu.dto.MenuSaveRequest;
-import kitchenpos.repository.MenuRepository;
+import kitchenpos.menu.domain.MenuRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

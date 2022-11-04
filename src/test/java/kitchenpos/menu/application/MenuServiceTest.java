@@ -1,4 +1,4 @@
-package kitchenpos.menu.domain;
+package kitchenpos.menu.application;
 
 import static kitchenpos.common.fixture.MenuFixtures.*;
 import static kitchenpos.common.fixture.MenuGroupFixtures.*;
@@ -9,11 +9,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.menu.repository.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.menu.domain.MenuDao;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.product.domain.ProductDao;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Product;
+import kitchenpos.product.domain.Product;
 import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.dto.MenuResponse;
 import kitchenpos.menu.dto.MenuSaveRequest;

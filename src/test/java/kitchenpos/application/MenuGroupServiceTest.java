@@ -1,4 +1,4 @@
-package kitchenpos.menu.domain;
+package kitchenpos.application;
 
 import static java.util.stream.Collectors.*;
 import static kitchenpos.common.fixture.MenuGroupFixtures.*;

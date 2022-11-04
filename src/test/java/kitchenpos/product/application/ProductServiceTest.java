@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.product.application;
 
 import static java.util.stream.Collectors.*;
 import static kitchenpos.common.fixture.ProductFixtures.*;
@@ -8,10 +8,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
-import kitchenpos.dto.ProductResponse;
-import kitchenpos.dto.ProductSaveRequest;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.domain.ProductDao;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.dto.ProductResponse;
+import kitchenpos.product.dto.ProductSaveRequest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;

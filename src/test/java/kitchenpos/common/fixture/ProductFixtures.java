@@ -3,8 +3,8 @@ package kitchenpos.common.fixture;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
-import kitchenpos.domain.Product;
-import kitchenpos.dto.ProductSaveRequest;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.dto.ProductSaveRequest;
 
 public class ProductFixtures {
 
