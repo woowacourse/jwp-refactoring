@@ -17,12 +17,12 @@ INSERT INTO menu (id, name, price, menu_group_id) VALUES (4, '통구이', 16000,
 INSERT INTO menu (id, name, price, menu_group_id) VALUES (5, '간장치킨', 17000, 2);
 INSERT INTO menu (id, name, price, menu_group_id) VALUES (6, '순살치킨', 17000, 2);
 
-INSERT INTO menu_product (menu_id, product_id, quantity) VALUES (1, 1, 1);
-INSERT INTO menu_product (menu_id, product_id, quantity) VALUES (2, 2, 1);
-INSERT INTO menu_product (menu_id, product_id, quantity) VALUES (3, 3, 1);
-INSERT INTO menu_product (menu_id, product_id, quantity) VALUES (4, 4, 1);
-INSERT INTO menu_product (menu_id, product_id, quantity) VALUES (5, 5, 1);
-INSERT INTO menu_product (menu_id, product_id, quantity) VALUES (6, 6, 1);
+INSERT INTO menu_product (menu_id, product_name, product_price, quantity) VALUES (1, '후라이드치킨', 16000, 1);
+INSERT INTO menu_product (menu_id, product_name, product_price, quantity) VALUES (2, '양념치킨', 16000, 1);
+INSERT INTO menu_product (menu_id, product_name, product_price, quantity) VALUES (3, '반반치킨', 16000, 1);
+INSERT INTO menu_product (menu_id, product_name, product_price, quantity) VALUES (4, '통구이', 16000, 1);
+INSERT INTO menu_product (menu_id, product_name, product_price, quantity) VALUES (5, '간장치킨', 17000, 1);
+INSERT INTO menu_product (menu_id, product_name, product_price, quantity) VALUES (6, '순살치킨', 17000, 1);
 
 INSERT INTO order_table (id, number_of_guests, empty) VALUES (1, 0, true);
 INSERT INTO order_table (id, number_of_guests, empty) VALUES (2, 0, true);
