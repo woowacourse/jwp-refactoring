@@ -13,11 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class TableService {
 
     private final OrderTableDao orderTableDao;
-    private final OrderValidator orderValidator;
+    private final OrderStatusValidator orderStatusValidator;
 
-    public TableService(final OrderTableDao orderTableDao, final OrderValidator orderValidator) {
+    public TableService(final OrderTableDao orderTableDao, final OrderStatusValidator orderStatusValidator) {
         this.orderTableDao = orderTableDao;
-        this.orderValidator = orderValidator;
+        this.orderStatusValidator = orderStatusValidator;
     }
 
     @Transactional
@@ -35,7 +35,7 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final boolean empty) {
         final OrderTable savedOrderTable = getOrderTable(orderTableId);
-        orderValidator.validateChangeEmpty(orderTableId);
+        orderStatusValidator.validateChangeEmpty(orderTableId);
         savedOrderTable.changeEmpty(empty);
         return OrderTableResponse.from(orderTableDao.save(savedOrderTable));
     }

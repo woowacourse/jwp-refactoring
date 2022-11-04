@@ -3,7 +3,7 @@ package kitchenpos.table.application;
 import java.util.List;
 import kitchenpos.table.domain.OrderTable;
 
-public interface OrderValidator {
+public interface OrderStatusValidator {
 
     void validateUngroup(List<OrderTable> orderTables);
 

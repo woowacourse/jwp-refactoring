@@ -15,13 +15,13 @@ public class TableGroupService {
 
     private final TableGroupRepository tableGroupRepository;
     private final OrderTableDao orderTableDao;
-    private final OrderValidator orderValidator;
+    private final OrderStatusValidator orderStatusValidator;
 
     public TableGroupService(final TableGroupRepository tableGroupRepository, final OrderTableDao orderTableDao,
-                             final OrderValidator orderValidator) {
+                             final OrderStatusValidator orderStatusValidator) {
         this.tableGroupRepository = tableGroupRepository;
         this.orderTableDao = orderTableDao;
-        this.orderValidator = orderValidator;
+        this.orderStatusValidator = orderStatusValidator;
     }
 
     @Transactional
@@ -45,7 +45,7 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
-        orderValidator.validateUngroup(orderTables);
+        orderStatusValidator.validateUngroup(orderTables);
         for (OrderTable orderTable : orderTables) {
             orderTableDao.save(orderTable.changeEmptyTable());
         }

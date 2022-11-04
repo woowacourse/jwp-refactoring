@@ -5,16 +5,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.table.application.OrderValidator;
+import kitchenpos.table.application.OrderStatusValidator;
 import kitchenpos.table.domain.OrderTable;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrderValidatorImpl implements OrderValidator {
+public class OrderStatusValidatorImpl implements OrderStatusValidator {
 
     private final OrderRepository orderRepository;
 
-    public OrderValidatorImpl(final OrderRepository orderRepository) {
+    public OrderStatusValidatorImpl(final OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
 
