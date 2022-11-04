@@ -1,10 +1,7 @@
 package kitchenpos.application.table;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.order.OrderRepository;
-import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.dto.table.request.ChangeGuestNumberRequest;
@@ -18,12 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class TableService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final TableValidator tableValidator;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(final OrderTableRepository orderTableRepository, final TableValidator tableValidator) {
         this.orderTableRepository = orderTableRepository;
+        this.tableValidator = tableValidator;
     }
 
     @Transactional
@@ -47,7 +44,7 @@ public class TableService {
     public OrderTableResponse changeEmpty(final Long orderTableId,
                                           final EmptyOrderTableRequest request) {
         OrderTable orderTable = getOrderTable(orderTableId);
-        checkOrderTableStatus(orderTableId);
+        tableValidator.checkOrderTableStatus(orderTableId);
         orderTable.changeEmpty(request.isEmpty());
         return OrderTableResponse.from(orderTable);
     }
@@ -63,12 +60,5 @@ public class TableService {
     private OrderTable getOrderTable(final Long orderTableId) {
         return orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
-    }
-
-    private void checkOrderTableStatus(final Long orderTableId) {
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException("조리중이거나 식사중인 주문 테이블은 비활성화할 수 없습니다.");
-        }
     }
 }

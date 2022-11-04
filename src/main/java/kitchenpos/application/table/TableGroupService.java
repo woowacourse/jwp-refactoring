@@ -1,11 +1,8 @@
 package kitchenpos.application.table;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.order.OrderRepository;
-import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.domain.table.OrderTables;
@@ -23,14 +20,14 @@ public class TableGroupService {
 
     private final TableGroupRepository tableGroupRepository;
     private final OrderTableRepository orderTableRepository;
-    private final OrderRepository orderRepository;
+    private final TableValidator tableValidator;
 
     public TableGroupService(final TableGroupRepository tableGroupRepository,
                              final OrderTableRepository orderTableRepository,
-                             final OrderRepository orderRepository) {
+                             final TableValidator tableValidator) {
         this.tableGroupRepository = tableGroupRepository;
         this.orderTableRepository = orderTableRepository;
-        this.orderRepository = orderRepository;
+        this.tableValidator = tableValidator;
     }
 
     @Transactional
@@ -49,7 +46,7 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         OrderTables orderTables = new OrderTables(orderTableRepository.findAllByTableGroupId(tableGroupId));
-        checkOrderStatus(orderTables);
+        tableValidator.checkOrderStatus(orderTables.getIds());
         orderTables.ungroup();
     }
 
@@ -64,13 +61,6 @@ public class TableGroupService {
     private void validate(final TableGroupCreateRequest request, final List<OrderTable> orderTables) {
         if (request.getOrderTables().size() != orderTables.size()) {
             throw new IllegalArgumentException("주문 테이블은 중복되거나 존재하지 않을 수 없습니다.");
-        }
-    }
-
-    private void checkOrderStatus(final OrderTables orderTables) {
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTables.getIds(), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException("아직 조리중이거나 식사중인 주문 테이블이 포함되어 있습니다.");
         }
     }
 }
