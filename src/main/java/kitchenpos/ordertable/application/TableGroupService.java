@@ -1,11 +1,9 @@
 package kitchenpos.ordertable.application;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.ordertable.domain.OrderStatusValidator;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
 import kitchenpos.ordertable.domain.TableGroup;
@@ -17,15 +15,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableGroupService {
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final OrderStatusValidator orderStatusValidator;
 
-    public TableGroupService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository,
-                             final TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
+    public TableGroupService(final OrderTableRepository orderTableRepository,
+                             final TableGroupRepository tableGroupRepository,
+                             final OrderStatusValidator orderStatusValidator) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.orderStatusValidator = orderStatusValidator;
     }
 
     @Transactional
@@ -60,9 +59,6 @@ public class TableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException("완료되지 않은 주문이 존재합니다.");
-        }
+        orderStatusValidator.validateStatusChange(orderTableIds);
     }
 }
