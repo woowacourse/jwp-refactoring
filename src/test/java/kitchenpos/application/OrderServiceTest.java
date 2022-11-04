@@ -10,7 +10,7 @@ import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.util.Price;
+import kitchenpos.common.Price;
 import kitchenpos.product.domain.Product;
 import kitchenpos.order.dto.ChangeOrderStatusRequest;
 import kitchenpos.order.dto.OrderLineItemRequest;

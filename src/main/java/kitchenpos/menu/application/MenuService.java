@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.product.repository.ProductRepository;
-import kitchenpos.util.Price;
+import kitchenpos.common.Price;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProducts;

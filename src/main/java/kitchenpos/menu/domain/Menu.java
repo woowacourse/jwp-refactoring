@@ -2,7 +2,7 @@ package kitchenpos.menu.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.util.Price;
+import kitchenpos.common.Price;
 
 public class Menu {
     private final Long id;

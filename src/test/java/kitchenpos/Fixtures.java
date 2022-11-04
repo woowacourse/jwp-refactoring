@@ -20,7 +20,7 @@ import kitchenpos.table.dto.OrderTableCreateRequest;
 import kitchenpos.table.dto.OrderTableRequest;
 import kitchenpos.product.dto.ProductRequest;
 import kitchenpos.table.dto.TableGroupRequest;
-import kitchenpos.util.Price;
+import kitchenpos.common.Price;
 import org.assertj.core.api.ListAssert;
 
 @SuppressWarnings("NonAsciiCharacters")

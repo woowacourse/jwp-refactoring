@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
-import kitchenpos.util.Price;
+import kitchenpos.common.Price;
 import kitchenpos.product.domain.Product;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;

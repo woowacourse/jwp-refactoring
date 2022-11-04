@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.repository.jdbc.JdbcTemplateMenuProductDao;
 import kitchenpos.product.repository.ProductRepository;
-import kitchenpos.util.Price;
+import kitchenpos.common.Price;
 import org.springframework.stereotype.Repository;
 
 @Repository

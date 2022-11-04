@@ -22,4 +22,10 @@ public class OrderLineItems {
     public List<OrderLineItem> getItems() {
         return items;
     }
+
+    public void placeOrderId(Long id) {
+        for (final OrderLineItem item : items) {
+            item.placeOrderId(id);
+        }
+    }
 }

@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProducts;
-import kitchenpos.util.Price;
+import kitchenpos.common.Price;
 import org.junit.jupiter.api.Test;
 
 class MenuProductsTest {

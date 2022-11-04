@@ -40,6 +40,10 @@ public class Order {
         }
     }
 
+    public void placeOrderId() {
+        orderLineItems.placeOrderId(id);
+    }
+
     public Long getId() {
         return id;
     }
