@@ -1,4 +1,4 @@
-package kitchenpos.application.group;
+package kitchenpos.application.table;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -7,15 +7,15 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.application.ServiceTest;
-import kitchenpos.domain.group.TableGroup;
-import kitchenpos.domain.order.OrderTable;
-import kitchenpos.domain.order.OrderTables;
-import kitchenpos.dto.group.request.TableGroupCreateRequest;
-import kitchenpos.dto.group.response.TableGroupResponse;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTables;
+import kitchenpos.domain.table.TableGroup;
 import kitchenpos.dto.order.request.OrderCreateRequest;
 import kitchenpos.dto.order.request.OrderLineItemRequest;
-import kitchenpos.dto.order.request.OrderTableRequest;
 import kitchenpos.dto.order.response.OrderResponse;
+import kitchenpos.dto.table.request.OrderTableRequest;
+import kitchenpos.dto.table.request.TableGroupCreateRequest;
+import kitchenpos.dto.table.response.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;

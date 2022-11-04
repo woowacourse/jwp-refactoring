@@ -1,4 +1,4 @@
-package kitchenpos.domain.order;
+package kitchenpos.domain.table;
 
 import java.util.List;
 import java.util.Objects;
@@ -7,7 +7,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import kitchenpos.domain.group.TableGroup;
 import org.springframework.util.CollectionUtils;
 
 @Embeddable

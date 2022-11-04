@@ -1,4 +1,4 @@
-package kitchenpos.domain.order;
+package kitchenpos.domain.table;
 
 import java.util.Objects;
 import javax.persistence.CascadeType;
@@ -10,7 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import kitchenpos.domain.group.TableGroup;
 
 @Entity
 @Table(name = "order_table")

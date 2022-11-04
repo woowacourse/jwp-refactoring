@@ -12,7 +12,7 @@ import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderLineItems;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.dto.order.request.ChangeOrderStatusRequest;
 import kitchenpos.dto.order.request.OrderCreateRequest;
 import kitchenpos.dto.order.request.OrderLineItemRequest;

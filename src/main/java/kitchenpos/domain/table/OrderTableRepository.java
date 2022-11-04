@@ -1,4 +1,4 @@
-package kitchenpos.domain.order;
+package kitchenpos.domain.table;
 
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
