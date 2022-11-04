@@ -6,7 +6,6 @@ import static kitchenpos.KitchenPosFixtures.프로덕트_URL;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.ui.dto.response.ProductResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
