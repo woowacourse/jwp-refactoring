@@ -3,6 +3,7 @@ package kitchenpos.table.domain;
 import static kitchenpos.exception.ExceptionType.INVALID_TABLE_GROUP_EXCEPTION;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -24,7 +25,7 @@ public class TableGroup {
     private LocalDateTime createdDate;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "tableGroup")
-    private List<OrderTable> orderTables;
+    private List<OrderTable> orderTables = new ArrayList<>();
 
     protected TableGroup() {
     }
