@@ -2,5 +2,5 @@ package kitchenpos.menugroup.domain;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface JpaMenuGroupDao extends JpaRepository<MenuGroup, Long>, MenuGroupDao {
+public interface JpaMenuGroupRepository extends JpaRepository<MenuGroup, Long>, MenuGroupRepository {
 }

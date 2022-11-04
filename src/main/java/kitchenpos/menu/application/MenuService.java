@@ -2,6 +2,7 @@ package kitchenpos.menu.application;
 
 import static java.util.stream.Collectors.*;
 
+import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.product.domain.ProductDao;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
@@ -21,14 +22,18 @@ public class MenuService {
 
     private final ProductDao productDao;
     private final MenuRepository menuRepository;
+    private final MenuGroupRepository menuGroupRepository;
 
-    public MenuService(final ProductDao productDao, final MenuRepository menuRepository) {
+    public MenuService(final ProductDao productDao, final MenuRepository menuRepository,
+                       final MenuGroupRepository menuGroupRepository) {
         this.productDao = productDao;
         this.menuRepository = menuRepository;
+        this.menuGroupRepository = menuGroupRepository;
     }
 
     @Transactional
     public MenuResponse create(final MenuSaveRequest request) {
+        validateExsistsMenuGroup(request);
         Menu savedMenu = menuRepository.save(new Menu(
                 request.getName(),
                 request.getPrice(),
@@ -37,6 +42,12 @@ public class MenuService {
         );
 
         return new MenuResponse(savedMenu);
+    }
+
+    private void validateExsistsMenuGroup(final MenuSaveRequest request) {
+        if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private List<MenuProduct> toMenuProducts(final List<MenuProductSaveRequest> requests) {

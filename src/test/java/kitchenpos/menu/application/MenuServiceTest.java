@@ -9,8 +9,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.menugroup.domain.MenuGroupDao;
-import kitchenpos.menu.domain.MenuDao;
+import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.product.domain.ProductDao;
 import kitchenpos.menugroup.domain.MenuGroup;
@@ -31,25 +31,25 @@ import org.springframework.test.context.jdbc.Sql;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class MenuServiceTest {
 
-    private final MenuDao menuDao;
-    private final MenuGroupDao menuGroupDao;
+    private final MenuRepository menuRepository;
+    private final MenuGroupRepository menuGroupRepository;
     private final ProductDao productDao;
     private final MenuService menuService;
 
     @Autowired
-    public MenuServiceTest(final MenuDao menuDao,
-                           final MenuGroupDao menuGroupDao,
+    public MenuServiceTest(final MenuRepository menuRepository,
+                           final MenuGroupRepository menuGroupRepository,
                            final ProductDao productDao,
                            final MenuService menuService) {
-        this.menuDao = menuDao;
-        this.menuGroupDao = menuGroupDao;
+        this.menuRepository = menuRepository;
+        this.menuGroupRepository = menuGroupRepository;
         this.productDao = productDao;
         this.menuService = menuService;
     }
 
     @Test
     void menu를_생성한다() {
-        MenuGroup 한마리메뉴 = menuGroupDao.save(generateMenuGroup("한마리메뉴"));
+        MenuGroup 한마리메뉴 = menuGroupRepository.save(generateMenuGroup("한마리메뉴"));
         Product 후라이드 = productDao.save(generateProduct("후라이드"));
 
         List<MenuProduct> menuProducts = List.of(generateMenuProduct(후라이드.getId(), 1));
@@ -95,7 +95,7 @@ class MenuServiceTest {
 
     @Test
     void menu를_등록할_때_price가_menu에_속한_product의_총_price보다_큰_경우_예외를_던진다() {
-        MenuGroup 한마리메뉴 = menuGroupDao.save(generateMenuGroup("한마리메뉴"));
+        MenuGroup 한마리메뉴 = menuGroupRepository.save(generateMenuGroup("한마리메뉴"));
         Product 후라이드 = productDao.save(generateProduct("후라이드", BigDecimal.valueOf(16000)));
 
         List<MenuProduct> menuProducts = List.of(generateMenuProduct(후라이드.getId(), 1));
@@ -108,9 +108,9 @@ class MenuServiceTest {
 
     @Test
     void menu_list를_조회한다() {
-        MenuGroup 한마리메뉴 = menuGroupDao.save(generateMenuGroup("한마리메뉴"));
-        menuDao.save(generateMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId()));
-        menuDao.save(generateMenu("양념치킨", BigDecimal.valueOf(17000), 한마리메뉴.getId()));
+        MenuGroup 한마리메뉴 = menuGroupRepository.save(generateMenuGroup("한마리메뉴"));
+        menuRepository.save(generateMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId()));
+        menuRepository.save(generateMenu("양념치킨", BigDecimal.valueOf(17000), 한마리메뉴.getId()));
 
         List<MenuResponse> actual = menuService.list();
 

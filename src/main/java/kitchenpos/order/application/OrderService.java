@@ -43,8 +43,13 @@ public class OrderService {
     }
 
     private OrderLineItem toOrderLineItem(final OrderLineItemSaveRequest it) {
-        Menu menu = menuRepository.getById(it.getMenuId());
+        Menu menu = getById(it.getMenuId());
         return new OrderLineItem(menu.getName(), menu.getPrice().getValue(), it.getQuantity());
+    }
+
+    private Menu getById(final Long id) {
+        return menuRepository.findById(id)
+                .orElseThrow(IllegalArgumentException::new);
     }
 
     public List<OrderResponse> list() {

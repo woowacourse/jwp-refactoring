@@ -6,8 +6,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
-import kitchenpos.menugroup.application.MenuGroupService;
-import kitchenpos.menugroup.domain.MenuGroupDao;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.dto.MenuGroupResponse;
 import kitchenpos.menugroup.dto.MenuGroupSaveRequest;
@@ -23,12 +22,12 @@ import org.springframework.test.context.jdbc.Sql;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class MenuGroupServiceTest {
 
-    private final MenuGroupDao menuGroupDao;
+    private final MenuGroupRepository menuGroupRepository;
     private final MenuGroupService menuGroupService;
 
     @Autowired
-    public MenuGroupServiceTest(final MenuGroupDao menuGroupDao, final MenuGroupService menuGroupService) {
-        this.menuGroupDao = menuGroupDao;
+    public MenuGroupServiceTest(final MenuGroupRepository menuGroupRepository, final MenuGroupService menuGroupService) {
+        this.menuGroupRepository = menuGroupRepository;
         this.menuGroupService = menuGroupService;
     }
 
@@ -44,9 +43,9 @@ class MenuGroupServiceTest {
 
     @Test
     void menuGroup_list를_조회한다() {
-        MenuGroup 한마리메뉴 = menuGroupDao.save(generateMenuGroup("한마리메뉴"));
-        MenuGroup 두마리메뉴 = menuGroupDao.save(generateMenuGroup("두마리메뉴"));
-        MenuGroup 순살파닭두마리메뉴 = menuGroupDao.save(generateMenuGroup("순살파닭두마리메뉴"));
+        MenuGroup 한마리메뉴 = menuGroupRepository.save(generateMenuGroup("한마리메뉴"));
+        MenuGroup 두마리메뉴 = menuGroupRepository.save(generateMenuGroup("두마리메뉴"));
+        MenuGroup 순살파닭두마리메뉴 = menuGroupRepository.save(generateMenuGroup("순살파닭두마리메뉴"));
 
         List<String> actual = menuGroupService.list()
                 .stream()

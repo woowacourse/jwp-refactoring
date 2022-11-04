@@ -13,8 +13,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.menu.domain.MenuDao;
-import kitchenpos.menugroup.domain.MenuGroupDao;
+import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.order.domain.OrderDao;
 import kitchenpos.table.domain.OrderTableDao;
 import kitchenpos.product.domain.ProductDao;
@@ -41,23 +41,23 @@ import org.springframework.test.context.jdbc.Sql;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class OrderServiceTest {
 
-    private final MenuGroupDao menuGroupDao;
+    private final MenuGroupRepository menuGroupRepository;
     private final ProductDao productDao;
-    private final MenuDao menuDao;
+    private final MenuRepository menuRepository;
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
     private final OrderService orderService;
 
     @Autowired
-    public OrderServiceTest(final MenuGroupDao menuGroupDao,
+    public OrderServiceTest(final MenuGroupRepository menuGroupRepository,
                             final ProductDao productDao,
-                            final MenuDao menuDao,
+                            final MenuRepository menuRepository,
                             final OrderDao orderDao,
                             final OrderTableDao orderTableDao,
                             final OrderService orderService) {
-        this.menuGroupDao = menuGroupDao;
+        this.menuGroupRepository = menuGroupRepository;
         this.productDao = productDao;
-        this.menuDao = menuDao;
+        this.menuRepository = menuRepository;
         this.orderDao = orderDao;
         this.orderTableDao = orderTableDao;
         this.orderService = orderService;
@@ -65,11 +65,11 @@ class OrderServiceTest {
 
     @Test
     void order를_생성한다() {
-        MenuGroup 한마리메뉴 = menuGroupDao.save(generateMenuGroup("한마리메뉴"));
+        MenuGroup 한마리메뉴 = menuGroupRepository.save(generateMenuGroup("한마리메뉴"));
         Product 후라이드 = productDao.save(generateProduct("후라이드"));
 
         List<MenuProduct> menuProducts = List.of(generateMenuProduct(후라이드.getId(), 1));
-        Menu menu = menuDao.save(generateMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId(), menuProducts));
+        Menu menu = menuRepository.save(generateMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId(), menuProducts));
 
         OrderTable orderTable = orderTableDao.save(generateOrderTable(0, false));
         OrderLineItemSaveRequest orderLineItemSaveRequest = new OrderLineItemSaveRequest(menu.getId(), 1);
@@ -105,11 +105,11 @@ class OrderServiceTest {
 
     @Test
     void orderTable이_비어있는_경우_예외를_던진다() {
-        MenuGroup 한마리메뉴 = menuGroupDao.save(generateMenuGroup("한마리메뉴"));
+        MenuGroup 한마리메뉴 = menuGroupRepository.save(generateMenuGroup("한마리메뉴"));
         Product 후라이드 = productDao.save(generateProduct("후라이드"));
 
         List<MenuProduct> menuProducts = List.of(generateMenuProduct(후라이드.getId(), 1));
-        Menu menu = menuDao.save(generateMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId(), menuProducts));
+        Menu menu = menuRepository.save(generateMenu("후라이드치킨", BigDecimal.valueOf(16000), 한마리메뉴.getId(), menuProducts));
 
         OrderTable orderTable = orderTableDao.save(generateOrderTable(0, true));
         OrderLineItemSaveRequest orderLineItemSaveRequest = new OrderLineItemSaveRequest(menu.getId(), 1);

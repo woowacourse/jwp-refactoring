@@ -1,38 +1,13 @@
 package kitchenpos.menu.domain;
 
 import java.util.List;
-import kitchenpos.menugroup.domain.MenuGroupDao;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+import java.util.Optional;
 
-@Component
-@Transactional(readOnly = true)
-public class MenuRepository {
+public interface MenuRepository {
 
-    private final MenuDao menuDao;
-    private final MenuGroupDao menuGroupDao;
+    Menu save(final Menu entity);
 
-    public MenuRepository(final MenuDao menuDao,
-                          final MenuGroupDao menuGroupDao) {
-        this.menuDao = menuDao;
-        this.menuGroupDao = menuGroupDao;
-    }
+    Optional<Menu> findById(final Long id);
 
-    @Transactional
-    public Menu save(final Menu entity) {
-        if (!menuGroupDao.existsById(entity.getMenuGroupId())) {
-            throw new IllegalArgumentException();
-        }
-
-        return menuDao.save(entity);
-    }
-
-    public Menu getById(final Long id) {
-        return menuDao.findById(id)
-                .orElseThrow(IllegalArgumentException::new);
-    }
-
-    public List<Menu> findAll() {
-        return menuDao.findAll();
-    }
+    List<Menu> findAll();
 }

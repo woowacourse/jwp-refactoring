@@ -2,7 +2,7 @@ package kitchenpos.menugroup.application;
 
 import static java.util.stream.Collectors.*;
 
-import kitchenpos.menugroup.domain.MenuGroupDao;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.dto.MenuGroupResponse;
 import kitchenpos.menugroup.dto.MenuGroupSaveRequest;
@@ -15,20 +15,20 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class MenuGroupService {
 
-    private final MenuGroupDao menuGroupDao;
+    private final MenuGroupRepository menuGroupRepository;
 
-    public MenuGroupService(final MenuGroupDao menuGroupDao) {
-        this.menuGroupDao = menuGroupDao;
+    public MenuGroupService(final MenuGroupRepository menuGroupRepository) {
+        this.menuGroupRepository = menuGroupRepository;
     }
 
     @Transactional
     public MenuGroupResponse create(final MenuGroupSaveRequest request) {
-        MenuGroup menuGroup = menuGroupDao.save(request.toEntity());
+        MenuGroup menuGroup = menuGroupRepository.save(request.toEntity());
         return new MenuGroupResponse(menuGroup);
     }
 
     public List<MenuGroupResponse> list() {
-        return menuGroupDao.findAll()
+        return menuGroupRepository.findAll()
                 .stream()
                 .map(MenuGroupResponse::new)
                 .collect(toList());
