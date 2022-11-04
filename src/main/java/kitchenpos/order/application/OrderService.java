@@ -7,42 +7,31 @@ import java.util.stream.Collectors;
 import kitchenpos.order.application.dto.OrderChangeRequest;
 import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderResponse;
-import kitchenpos.menu.dao.MenuDao;
-import kitchenpos.ordertable.dao.OrderTableDao;
 import kitchenpos.order.dao.OrderDao;
 import kitchenpos.order.dao.OrderLineItemDao;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.ordertable.domain.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
-    private final MenuDao menuDao;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
-    private final OrderTableDao orderTableDao;
+    private final OrderValidator orderValidator;
 
-    public OrderService(
-            final MenuDao menuDao,
-            final OrderDao orderDao,
-            final OrderLineItemDao orderLineItemDao,
-            final OrderTableDao orderTableDao
-    ) {
-        this.menuDao = menuDao;
+    public OrderService(OrderDao orderDao, OrderLineItemDao orderLineItemDao, OrderValidator orderValidator) {
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
-        this.orderTableDao = orderTableDao;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest dto) {
-        final Long orderTableId = findOrderTableId(dto.getOrderTableId());
         final List<OrderLineItem> orderLineItems = getOrderLineItems(dto);
-        final Order order = new Order(orderTableId, LocalDateTime.now(), orderLineItems);
+        final Order order = new Order(dto.getOrderTableId(), LocalDateTime.now(), orderLineItems);
+        validateIsOrdable(orderLineItems, order);
         final Order savedOrder = orderDao.save(order);
-
         final List<OrderLineItem> savedOrderLineItems = saveOrderLineItems(orderLineItems, savedOrder.getId());
 
         return new OrderResponse(
@@ -55,7 +44,7 @@ public class OrderService {
     }
 
     private List<OrderLineItem> saveOrderLineItems(List<OrderLineItem> orderLineItems, Long orderId) {
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
+        List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (final OrderLineItem orderLineItem : orderLineItems) {
             orderLineItem.associateOrderId(orderId);
             savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
@@ -64,26 +53,16 @@ public class OrderService {
     }
 
     private List<OrderLineItem> getOrderLineItems(OrderCreateRequest dto) {
-        final List<OrderLineItem> orderLineItems = dto.getOrderLineItems().stream()
+        return dto.getOrderLineItems().stream()
                 .map(orderLineItemDto -> new OrderLineItem(orderLineItemDto.getMenuId(), orderLineItemDto.getMenuId()))
                 .collect(Collectors.toList());
-        final List<Long> menuIds = orderLineItems.stream()
+    }
+
+    private void validateIsOrdable(List<OrderLineItem> orderLineItems, Order order) {
+        List<Long> menuIds = orderLineItems.stream()
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
-        validateIsCorrectOrderLineItemSize(orderLineItems, menuIds);
-        return orderLineItems;
-    }
-
-    private void validateIsCorrectOrderLineItemSize(List<OrderLineItem> orderLineItems, List<Long> menuIds) {
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private Long findOrderTableId(Long orderTableId) {
-        final OrderTable orderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-        return orderTable.getId();
+        order.validateIsOrdable(orderValidator, menuIds);
     }
 
     public List<OrderResponse> list() {

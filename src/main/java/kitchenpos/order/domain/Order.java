@@ -2,6 +2,7 @@ package kitchenpos.order.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.order.application.OrderValidator;
 
 public class Order {
     private Long id;
@@ -9,8 +10,6 @@ public class Order {
     private String orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
-
-
 
     public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
         this.id = id;
@@ -55,6 +54,16 @@ public class Order {
         this.orderStatus = OrderStatus.valueOf(beChangeOrderStatus).name();
     }
 
+    public void validateOrderLineItemSize(OrderValidator orderValidator, List<Long> menuIds) {
+        orderValidator.validate(this, menuIds);
+    }
+
+    public void validateOrderLineItemMatchMenu(long menuCount) {
+        if (orderLineItems.size() != menuCount) {
+            throw new IllegalArgumentException("메뉴와 오더의 사이즈가 다릅니다.");
+        }
+    }
+
     public Long getId() {
         return id;
     }
@@ -73,5 +82,9 @@ public class Order {
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
+    }
+
+    public void validateIsOrdable(OrderValidator orderValidator, List<Long> menuIds) {
+        orderValidator.validate(this, menuIds);
     }
 }

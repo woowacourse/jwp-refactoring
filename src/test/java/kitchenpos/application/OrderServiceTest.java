@@ -11,6 +11,7 @@ import static org.mockito.BDDMockito.given;
 
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.order.application.OrderValidator;
 import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderLineItemCreateRequest;
 import kitchenpos.order.application.dto.OrderResponse;
@@ -38,20 +39,15 @@ class OrderServiceTest {
     private OrderDao orderDao;
 
     @Mock
-    private MenuDao menuDao;
-
-    @Mock
-    private OrderTableDao orderTableDao;
-
-    @Mock
     private OrderLineItemDao orderLineItemDao;
+
+    @Mock
+    private OrderValidator orderValidator;
 
     @DisplayName("주문을 한다.")
     @Test
     void create() {
         //given
-        given(menuDao.countByIdIn(anyList())).willReturn(1L);
-        given(orderTableDao.findById(anyLong())).willReturn(Optional.of(ORDER_TABLE));
         given(orderDao.save(any(Order.class))).willReturn(ORDER);
         given(orderLineItemDao.save(any(OrderLineItem.class))).willReturn(ORDER_LINE_ITEM);
 

@@ -3,14 +3,14 @@ package kitchenpos.ordertable.application;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.order.dao.OrderDao;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.ordertable.application.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.ordertable.application.dto.OrderTableChangeNumberOfGuestRequest;
 import kitchenpos.ordertable.application.dto.OrderTableCreateRequest;
 import kitchenpos.ordertable.application.dto.OrderTableResponse;
-import kitchenpos.order.dao.OrderDao;
-import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.dao.OrderTableDao;
-import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.ordertable.domain.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,7 +49,7 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest dto) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+        OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
         savedOrderTable.validateTableGroupIdNotNull();
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
