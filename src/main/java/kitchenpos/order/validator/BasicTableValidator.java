@@ -5,7 +5,7 @@ import static kitchenpos.order.domain.OrderStatus.COOKING;
 
 import java.util.List;
 import java.util.function.Supplier;
-import kitchenpos.application.validator.TableValidator;
+import kitchenpos.table.validator.TableValidator;
 import kitchenpos.order.domain.OrderDao;
 import org.springframework.stereotype.Component;
 

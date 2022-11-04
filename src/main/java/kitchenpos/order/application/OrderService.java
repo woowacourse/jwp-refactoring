@@ -10,7 +10,7 @@ import kitchenpos.order.dto.OrderResponse;
 import kitchenpos.order.dto.OrderSaveRequest;
 import kitchenpos.order.dto.OrderChangeOrderStatusRequest;
 import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.repository.OrderRepository;
+import kitchenpos.order.domain.OrderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -6,11 +6,11 @@ import static kitchenpos.order.domain.OrderStatus.MEAL;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import kitchenpos.application.validator.TableGroupValidator;
+import kitchenpos.table.validator.TableGroupValidator;
 import kitchenpos.order.domain.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.table.domain.OrderTableDao;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
 import org.springframework.stereotype.Component;
 
 @Component

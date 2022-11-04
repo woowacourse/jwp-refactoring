@@ -2,8 +2,8 @@ package kitchenpos.common.fixture;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.OrderTableSaveRequest;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.dto.OrderTableSaveRequest;
 
 public class OrderTableFixtures {
 
