@@ -119,7 +119,7 @@ public class TableGroupServiceTest {
         final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(3, true));
         final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(4, true));
         final List<Long> orderTableIds = Arrays.asList(orderTable1.getId(), orderTable2.getId());
-        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 3);
+        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 3, "menuName", BigDecimal.valueOf(3000));
 
         final Order order = new Order(orderTable1, OrderStatus.COOKING, LocalDateTime.now(),
                 Arrays.asList(orderLineItem));
@@ -148,7 +148,7 @@ public class TableGroupServiceTest {
 
         final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(3, true));
         final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(4, true));
-        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 3);
+        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 3, "menuName", BigDecimal.valueOf(3000));
         final Order order = new Order(orderTable1, OrderStatus.COOKING, LocalDateTime.now(),
                 Arrays.asList(orderLineItem));
 
@@ -176,7 +176,7 @@ public class TableGroupServiceTest {
         final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(3, true));
         final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(4, true));
         final List<Long> orderTableIds = Arrays.asList(orderTable1.getId(), orderTable2.getId());
-        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 3);
+        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 3, "menuName", BigDecimal.valueOf(3000));
 
         final Order order = new Order(orderTable1, OrderStatus.COMPLETION, LocalDateTime.now(),
                 Arrays.asList(orderLineItem));

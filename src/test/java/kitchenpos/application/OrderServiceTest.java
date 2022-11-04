@@ -144,7 +144,7 @@ public class OrderServiceTest {
     void changeOrderStatus_notExistOrder_throwsException() {
         // given
         final OrderTable orderTable = orderTableRepository.save(ORDER_TABLE_NOT_EMPTY.createWithIdNull());
-        final OrderLineItem orderLineItem = new OrderLineItem(1L, 3);
+        final OrderLineItem orderLineItem = new OrderLineItem(1L, 3, "menuName", BigDecimal.valueOf(3000));
         final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(),
                 Arrays.asList(orderLineItem));
         final OrderRequest request = new OrderRequest(OrderStatus.COOKING.name());
@@ -165,7 +165,7 @@ public class OrderServiceTest {
                 new Menu("menu", BigDecimal.valueOf(9000), menuGroup, Arrays.asList(menuProduct)));
 
         final OrderTable orderTable = orderTableRepository.save(ORDER_TABLE_NOT_EMPTY.createWithIdNull());
-        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 3);
+        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 3, "menuName", BigDecimal.valueOf(3000));
         final Order order = new Order(orderTable, OrderStatus.COMPLETION, LocalDateTime.now(),
                 Arrays.asList(orderLineItem));
         final Order savedOrder = orderRepository.save(order);
@@ -182,7 +182,7 @@ public class OrderServiceTest {
     void changeOrderStatus() {
         // given
         final OrderTable orderTable = orderTableRepository.save(ORDER_TABLE_NOT_EMPTY.createWithIdNull());
-        final OrderLineItem orderLineItem = new OrderLineItem(1L, 3);
+        final OrderLineItem orderLineItem = new OrderLineItem(1L, 3, "menuName", BigDecimal.valueOf(3000));
         final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(),
                 Arrays.asList(orderLineItem));
         final Order savedOrder = orderRepository.save(order);
