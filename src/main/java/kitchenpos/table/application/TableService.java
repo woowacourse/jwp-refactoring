@@ -2,7 +2,6 @@ package kitchenpos.table.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.application.OrderService;
 import kitchenpos.table.domain.entity.OrderTable;
 import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.table.ui.dto.ordertable.ChangeEmptyRequest;
@@ -20,14 +19,14 @@ public class TableService {
 
     private TableServiceAssistant tableServiceAssistant;
     private OrderTableRepository orderTableRepository;
-    private OrderService orderService;
+    private TableRule tableRule;
 
     public TableService(TableServiceAssistant tableServiceAssistant,
                         OrderTableRepository orderTableRepository,
-                        OrderService orderService) {
+                        TableRule tableRule) {
         this.tableServiceAssistant = tableServiceAssistant;
         this.orderTableRepository = orderTableRepository;
-        this.orderService = orderService;
+        this.tableRule = tableRule;
     }
 
     @Transactional
@@ -50,7 +49,7 @@ public class TableService {
     public ChangeEmptyResponse changeEmpty(Long orderTableId,
                                            ChangeEmptyRequest changeEmptyRequest) {
         OrderTable orderTable = tableServiceAssistant.findTable(orderTableId);
-        if (orderService.isNotAllOrderFinish(orderTable)) {
+        if (tableRule.unableToChangeEmpty(orderTable)) {
             throw new IllegalArgumentException();
         }
 

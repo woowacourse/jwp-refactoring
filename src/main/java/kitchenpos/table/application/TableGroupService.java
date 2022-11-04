@@ -1,8 +1,6 @@
 package kitchenpos.table.application;
 
 import java.util.List;
-import kitchenpos.order.application.OrderService;
-import kitchenpos.order.domain.collection.Orders;
 import kitchenpos.table.domain.collection.OrderTables;
 import kitchenpos.table.domain.entity.TableGroup;
 import kitchenpos.table.repository.OrderTableRepository;
@@ -18,16 +16,16 @@ public class TableGroupService {
     private TableGroupRepository tableGroupRepository;
     private OrderTableRepository orderTableRepository;
     private TableServiceAssistant tableServiceAssistant;
-    private OrderService orderService;
+    private TableGroupRule tableGroupRule;
 
     public TableGroupService(TableGroupRepository tableGroupRepository,
                              OrderTableRepository orderTableRepository,
                              TableServiceAssistant tableServiceAssistant,
-                             OrderService orderService) {
+                             TableGroupRule tableGroupRule) {
         this.tableGroupRepository = tableGroupRepository;
         this.orderTableRepository = orderTableRepository;
         this.tableServiceAssistant = tableServiceAssistant;
-        this.orderService = orderService;
+        this.tableGroupRule = tableGroupRule;
     }
 
     @Transactional
@@ -54,9 +52,8 @@ public class TableGroupService {
     @Transactional
     public void ungroup(Long tableGroupId) {
         OrderTables orderTables = tableServiceAssistant.findTablesInGroup(tableGroupId);
-        Orders orders = orderService.findOrdersInOrderTables(orderTables);
-        if (!orders.isAllCompleted()) {
-            throw new IllegalStateException("모든 주문이 완료되지 않았습니다.");
+        if (tableGroupRule.unableToUngroup(orderTables)) {
+            throw new IllegalStateException();
         }
 
         orderTables.ungroup();
