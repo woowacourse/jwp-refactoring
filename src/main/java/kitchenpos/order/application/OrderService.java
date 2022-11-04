@@ -4,10 +4,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.dao.MenuDao;
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.dao.OrderDao;
 import kitchenpos.order.dao.OrderLineItemDao;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderLineItems;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.dto.OrderChangeOrderStatusRequest;
 import kitchenpos.order.dto.OrderCreateRequest;
@@ -40,54 +42,41 @@ public class OrderService {
     public OrderResponse create(final OrderCreateRequest request) {
         final Long orderTableId = request.getOrderTableId();
         orderValidator.validateEmpty(orderTableId);
-        final Order order = new Order(orderTableId, OrderStatus.COOKING, LocalDateTime.now());
-        final List<OrderLineItem> orderLineItems = createOrderLineItems(request.getOrderLineItems());
-        validateOrderLineItems(orderLineItems);
+        final Order savedOrder = orderDao.save(new Order(orderTableId, OrderStatus.COOKING, LocalDateTime.now()));
 
-        final Order savedOrder = orderDao.save(order);
-        final List<OrderLineItem> savedOrderLineItems = getSavedOrderLineItems(savedOrder.getId(), orderLineItems);
+        final OrderLineItems orderLineItems = new OrderLineItems(
+                createOrderLineItems(savedOrder.getId(), request.getOrderLineItems())
+        );
+        validateOrderLineItems(orderLineItems);
+        final List<OrderLineItem> savedOrderLineItems = getSavedOrderLineItems(orderLineItems.getOrderLineItems());
 
         return OrderResponse.of(savedOrder, savedOrderLineItems);
     }
 
-    private List<OrderLineItem> createOrderLineItems(List<OrderLineItemRequest> orderLineItems) {
+    private List<OrderLineItem> createOrderLineItems(Long orderId, List<OrderLineItemRequest> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException();
         }
 
         return orderLineItems.stream()
-                .map(request -> new OrderLineItem(request.getMenuId(), request.getQuantity()))
+                .map(request -> {
+                    final Long menuId = request.getMenuId();
+                    final Menu menu = menuDao.findById(menuId).orElseThrow(IllegalArgumentException::new);
+
+                    return new OrderLineItem(orderId, menuId, menu.getName(), menu.getPrice(), request.getQuantity());
+                })
                 .collect(Collectors.toList());
     }
 
-    private void validateOrderLineItems(List<OrderLineItem> orderLineItems) {
-        validateEmpty(orderLineItems);
-        validateExists(orderLineItems);
-    }
-
-    private void validateEmpty(List<OrderLineItem> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
+    private void validateOrderLineItems(OrderLineItems orderLineItems) {
+        if (orderLineItems.hasSameMenu()) {
             throw new IllegalArgumentException();
         }
     }
 
-    private void validateExists(List<OrderLineItem> orderLineItems) {
-        final List<Long> menuIds = getMenuIds(orderLineItems);
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private List<Long> getMenuIds(List<OrderLineItem> orderLineItems) {
+    private List<OrderLineItem> getSavedOrderLineItems(List<OrderLineItem> orderLineItems) {
         return orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
-                .collect(Collectors.toList());
-    }
-
-    private List<OrderLineItem> getSavedOrderLineItems(Long orderId, List<OrderLineItem> orderLineItems) {
-        return orderLineItems.stream()
-                .map(orderLineItem -> orderLineItemDao.save(
-                        new OrderLineItem(orderId, orderLineItem.getMenuId(), orderLineItem.getQuantity())))
+                .map(orderLineItemDao::save)
                 .collect(Collectors.toList());
     }
 
