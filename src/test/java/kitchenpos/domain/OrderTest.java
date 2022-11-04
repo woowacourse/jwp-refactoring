@@ -27,7 +27,8 @@ public class OrderTest {
         final Product product = new Product("후라이드", BigDecimal.valueOf(16000));
         final MenuProduct menuProduct = new MenuProduct(product, 5);
         final Menu menu = new Menu("후라이드", BigDecimal.valueOf(16000), menuGroup, List.of(menuProduct));
-        final Order sut = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(menu, 1)));
+        final Order sut = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(),
+                List.of(new OrderLineItem(menu.getName(), menu.getPrice(), 1)));
 
         sut.changeOrderStatus(OrderStatus.MEAL);
 
@@ -42,7 +43,8 @@ public class OrderTest {
         final Product product = new Product("후라이드", BigDecimal.valueOf(16000));
         final MenuProduct menuProduct = new MenuProduct(product, 5);
         final Menu menu = new Menu("후라이드", BigDecimal.valueOf(16000), menuGroup, List.of(menuProduct));
-        final Order sut = new Order(orderTable, OrderStatus.COMPLETION, LocalDateTime.now(), List.of(new OrderLineItem(menu, 1)));
+        final Order sut = new Order(orderTable, OrderStatus.COMPLETION, LocalDateTime.now(),
+                List.of(new OrderLineItem(menu.getName(), menu.getPrice(), 1)));
 
         assertThatThrownBy(() -> sut.changeOrderStatus(OrderStatus.MEAL))
                 .isInstanceOf(IllegalArgumentException.class);

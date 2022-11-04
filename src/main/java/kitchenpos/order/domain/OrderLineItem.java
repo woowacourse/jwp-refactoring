@@ -1,5 +1,6 @@
-package kitchenpos.domain;
+package kitchenpos.order.domain;
 
+import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -20,9 +21,9 @@ public class OrderLineItem {
     @JoinColumn(name = "order_id")
     private Order order;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_id")
-    private Menu menu;
+    private String menuName;
+
+    private BigDecimal price;
 
     @Column
     private long quantity;
@@ -30,8 +31,9 @@ public class OrderLineItem {
     public OrderLineItem() {
     }
 
-    public OrderLineItem(final Menu menu, final long quantity) {
-        this.menu = menu;
+    public OrderLineItem(final String menuName, final BigDecimal price, final long quantity) {
+        this.menuName = menuName;
+        this.price = price;
         this.quantity = quantity;
     }
 
@@ -47,8 +49,12 @@ public class OrderLineItem {
         return order;
     }
 
-    public Menu getMenu() {
-        return menu;
+    public String getMenuName() {
+        return menuName;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
     }
 
     public long getQuantity() {

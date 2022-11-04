@@ -1,7 +1,7 @@
-package kitchenpos.application.dto;
+package kitchenpos.order.application.dto;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.order.domain.OrderLineItem;
 
 public class OrderLineItemRequest {
 
@@ -14,7 +14,7 @@ public class OrderLineItemRequest {
     }
 
     public OrderLineItem toOrderLineItem(final Menu menu) {
-        return new OrderLineItem(menu, quantity);
+        return new OrderLineItem(menu.getName(), menu.getPrice(), quantity);
     }
 
     public Long getMenuId() {
