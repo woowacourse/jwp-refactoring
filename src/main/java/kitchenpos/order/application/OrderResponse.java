@@ -51,6 +51,8 @@ public class OrderResponse {
                         orderLineItemResponse.getSeq(),
                         orderLineItemResponse.getOrderId(),
                         orderLineItemResponse.getMenuId(),
+                        orderLineItemResponse.getMenuName(),
+                        orderLineItemResponse.getMenuPrice(),
                         orderLineItemResponse.getQuantity()
                 ))
                 .collect(Collectors.toList());

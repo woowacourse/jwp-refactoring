@@ -40,7 +40,7 @@ public class Fixture {
     }
 
     public static OrderLineItem 주문정보(Long menuId) {
-        return new OrderLineItem(1L, menuId, 1);
+        return new OrderLineItem(1L, menuId, "햄버거", new BigDecimal(100_000), 1);
     }
 
     public static Order 주문(Long tableId, Long menuId) {

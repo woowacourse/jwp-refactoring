@@ -37,6 +37,8 @@ public class OrderRepository implements OrderDao {
                     new OrderLineItem(
                             savedOrder.getId(),
                             orderLineItem.getMenuId(),
+                            orderLineItem.getMenuName(),
+                            orderLineItem.getMenuPrice(),
                             orderLineItem.getQuantity()
                     )
             );
@@ -59,6 +61,14 @@ public class OrderRepository implements OrderDao {
         }
 
         return orders;
+    }
+
+    @Override
+    public Order updateStatus(Order order) {
+        Order savedOrder = jdbcTemplateOrderDao.save(order);
+        order.changeOrderLineItems(ordersOrderLineItemDao.findAllByOrderId(savedOrder.getId()));
+
+        return savedOrder;
     }
 
     @Override

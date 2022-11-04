@@ -17,6 +17,6 @@ public class OrderLineItemRequest {
     }
 
     public OrderLineItem toOrderLineItemRequest() {
-        return new OrderLineItem(seq, orderId, menuId, quantity);
+        return OrderLineItem.of(seq, orderId, menuId, quantity);
     }
 }

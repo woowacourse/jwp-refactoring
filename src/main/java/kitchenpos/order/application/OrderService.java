@@ -6,7 +6,6 @@ import kitchenpos.menu.domain.MenuDao;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderDao;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.order.domain.OrderLineItemDao;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableDao;
@@ -16,20 +15,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @Service
 public class OrderService {
+
     private final MenuDao menuDao;
     private final OrderDao orderDao;
-    private final OrderLineItemDao orderLineItemDao;
     private final OrderTableDao orderTableDao;
 
     public OrderService(
             MenuDao menuDao,
             OrderDao orderDao,
-            OrderLineItemDao orderLineItemDao,
             OrderTableDao orderTableDao
     ) {
         this.menuDao = menuDao;
         this.orderDao = orderDao;
-        this.orderLineItemDao = orderLineItemDao;
         this.orderTableDao = orderTableDao;
     }
 
@@ -70,12 +67,12 @@ public class OrderService {
     }
 
     public OrderResponse changeOrderStatus(Long orderId, OrderStatus orderStatus) {
-        final Order savedOrder = orderDao.findById(orderId)
+        Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("상태를 변화시키기 위한 주문이 없습니다."));
 
         savedOrder.changeOrderStatus(orderStatus);
-        savedOrder.changeOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
+        Order order = orderDao.updateStatus(savedOrder);
 
-        return new OrderResponse(orderDao.save(savedOrder));
+        return new OrderResponse(order);
     }
 }

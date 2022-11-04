@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Menu {
+    private final Long id;
     private final String name;
     private final Price price;
     private final Long menuGroupId;
-    private final Long id;
     private List<MenuProduct> menuProducts;
 
     public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {

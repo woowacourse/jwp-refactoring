@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
@@ -16,7 +17,8 @@ class OrderTest {
 
     @Test
     void 주문_생성() {
-        Assertions.assertDoesNotThrow(() -> Order.of(1L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, 1))));
+        Assertions.assertDoesNotThrow(() -> Order.of(1L, OrderStatus.COOKING,
+                List.of(new OrderLineItem(1L, 1L, "메뉴", new BigDecimal(10_000), 1))));
     }
 
     @Test
@@ -27,14 +29,15 @@ class OrderTest {
     @ParameterizedTest
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     void 주문의_상태를_변경한다(OrderStatus orderStatus) {
-        Order order = Order.of(1L, orderStatus, List.of(new OrderLineItem(1L, 1L, 1)));
+        Order order = Order.of(1L, orderStatus, List.of(new OrderLineItem(1L, 1L, "메뉴", new BigDecimal(10_000), 1)));
 
         Assertions.assertDoesNotThrow(() -> order.changeOrderStatus(OrderStatus.COMPLETION));
     }
 
     @Test
     void 주문의_상태가_완료된_경우_상태를_변경할_수_없다() {
-        Order order = Order.of(1L, OrderStatus.COMPLETION, List.of(new OrderLineItem(1L, 1L, 1)));
+        Order order = Order.of(1L, OrderStatus.COMPLETION,
+                List.of(new OrderLineItem(1L, 1L, "메뉴", new BigDecimal(10_000), 1)));
         assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.COMPLETION))
                 .isExactlyInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문이 완료된 상태이므로 상태를 변화시킬 수 없습니다.");
