@@ -70,7 +70,7 @@ public class OrderService {
     }
 
     private void validateOrderTableNotEmpty(OrderTable orderTable) {
-        if (!orderTable.isEmpty()) {
+        if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
     }
