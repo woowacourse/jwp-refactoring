@@ -24,7 +24,10 @@ public class TableGroup {
     }
 
     public void validate(final TableValidator tableValidator) {
-        tableValidator.validatePossibleUngrouping(this);
+        List<OrderTable> orderTables = this.orderTables.getOrderTables();
+        for (OrderTable orderTable : orderTables) {
+            orderTable.validate(tableValidator);
+        }
     }
 
     public void grouping(final List<OrderTable> orderTables) {
