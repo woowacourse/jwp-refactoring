@@ -23,18 +23,23 @@ public class ServiceTestFixture {
     public static final List<MenuProductRequest> MENU_PRODUCT_REQUESTS = List.of(MENU_PRODUCT_REQUEST1,
             MENU_PRODUCT_REQUEST2);
 
-    public static final OrderLineItemRequest ORDER_LINE_ITEM_REQUEST1 = new OrderLineItemRequest(1L, 1L, 1L, 1);
-    public static final OrderLineItemRequest ORDER_LINE_ITEM_REQUEST2 = new OrderLineItemRequest(2L, 1L, 2L, 1);
+    public static final OrderLineItemRequest ORDER_LINE_ITEM_REQUEST1 = new OrderLineItemRequest(1L, 1L,
+            1L, BigDecimal.valueOf(16000), "후라이드치킨", 1);
+    public static final OrderLineItemRequest ORDER_LINE_ITEM_REQUEST2 = new OrderLineItemRequest(2L, 1L,
+            2L, BigDecimal.valueOf(16000), "양념치킨", 1);
 
     public static final OrderLineItemRequest ORDER_LINE_ITEM_REQUEST_NOT_EXIST_MENU_ID = new OrderLineItemRequest(3L,
-            1L, 100L, 1);
+            1L, 100L, BigDecimal.valueOf(15000), "없는메뉴", 1);
 
     public static final List<OrderLineItemRequest> ORDER_LINE_ITEM_REQUESTS = List.of(ORDER_LINE_ITEM_REQUEST1,
             ORDER_LINE_ITEM_REQUEST2);
 
-    public static final OrderLineItem ORDER_LINE_ITEM1 = new OrderLineItem(1L, 1L, 1);
-    public static final OrderLineItem ORDER_LINE_ITEM2 = new OrderLineItem(1L, 2L, 1);
-    public static final OrderLineItem ORDER_LINE_ITEM_NOT_EXIST_MENU_ID = new OrderLineItem(1L, 100L, 1);
+    public static final OrderLineItem ORDER_LINE_ITEM1 = new OrderLineItem(1L, 1L, BigDecimal.valueOf(16000),
+            "후라이드치킨", 1);
+    public static final OrderLineItem ORDER_LINE_ITEM2 = new OrderLineItem(1L, 2L, BigDecimal.valueOf(16000),
+            "양념치킨", 1);
+    public static final OrderLineItem ORDER_LINE_ITEM_NOT_EXIST_MENU_ID = new OrderLineItem(1L, 100L,
+            BigDecimal.valueOf(15000), "없는메뉴", 1);
 
     public static final List<OrderLineItem> ORDER_LINE_ITEMS = List.of(ORDER_LINE_ITEM1, ORDER_LINE_ITEM2);
 

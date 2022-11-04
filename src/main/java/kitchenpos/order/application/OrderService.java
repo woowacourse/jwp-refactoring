@@ -65,6 +65,8 @@ public class OrderService {
         return orderLineItemRequests.stream()
                 .map(it -> new OrderLineItem(it.getSeq(),
                         it.getMenuId(),
+                        it.getMenuPrice(),
+                        it.getMenuName(),
                         it.getQuantity())).collect(Collectors.toList());
     }
 
