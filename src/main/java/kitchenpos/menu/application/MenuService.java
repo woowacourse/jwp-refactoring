@@ -9,7 +9,7 @@ import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.dao.MenuDao;
 import kitchenpos.menu.domain.dao.MenuProductDao;
 import kitchenpos.menu.exception.InvalidMenuPriceCreateException;
-import kitchenpos.menu.presentation.dto.MenuSaveRequest;
+import kitchenpos.menu.application.dto.MenuSaveRequest;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.dao.ProductDao;
 import kitchenpos.product.exception.ProductNotFoundException;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class MenuService {
 
     private final MenuDao menuDao;
@@ -29,7 +30,6 @@ public class MenuService {
         this.productDao = productDao;
     }
 
-    @Transactional
     public MenuResponse create(MenuSaveRequest request) {
         Menu menu = menuDao.save(request.toEntity());
         List<MenuProduct> menuProducts = request.toMenuProductEntities(menu.getId());
@@ -52,6 +52,7 @@ public class MenuService {
         return menuProduct.calculateTotalPrice(product.getPrice());
     }
 
+    @Transactional(readOnly = true)
     public List<MenuResponse> list() {
        return menuDao.findAll().stream()
             .map(MenuResponse::toResponse)

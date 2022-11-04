@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.infrastructure;
 
 import static kitchenpos.support.fixture.domain.ProductFixture.APPLE_1000;
 import static org.assertj.core.api.Assertions.assertThat;

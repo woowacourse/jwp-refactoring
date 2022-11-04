@@ -4,18 +4,18 @@ public class OrderLineItem {
 
     private final Long id;
     private final Long orderId;
-    private final Long menuId;
+    private final OrderMenu orderMenu;
     private final long quantity;
 
-    public OrderLineItem(Long id, Long orderId, Long menuId, long quantity) {
+    public OrderLineItem(Long id, Long orderId, OrderMenu orderMenu, long quantity) {
         this.id = id;
         this.orderId = orderId;
-        this.menuId = menuId;
+        this.orderMenu = orderMenu;
         this.quantity = quantity;
     }
 
-    public OrderLineItem(Long orderId, Long menuId, long quantity) {
-        this(null, orderId, menuId, quantity);
+    public OrderLineItem(Long orderId, OrderMenu orderMenu, long quantity) {
+        this(null, orderId, orderMenu, quantity);
     }
 
     public Long getId() {
@@ -27,7 +27,11 @@ public class OrderLineItem {
     }
 
     public Long getMenuId() {
-        return menuId;
+        return orderMenu.getMenuId();
+    }
+
+    public OrderMenu getOrderMenu() {
+        return orderMenu;
     }
 
     public long getQuantity() {

@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.infrastructure;
 
 import static kitchenpos.support.fixture.domain.OrderTableFixture.GUEST_ONE_EMPTY_TRUE;
 import static kitchenpos.support.fixture.domain.TableGroupFixture.getTableGroup;

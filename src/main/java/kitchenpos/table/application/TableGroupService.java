@@ -1,7 +1,6 @@
 package kitchenpos.table.application;
 
 import java.util.List;
-import kitchenpos.order.domain.dao.OrderDao;
 import kitchenpos.table.application.dto.TableGroupResponse;
 import kitchenpos.table.application.dto.TableGroupSaveRequest;
 import kitchenpos.table.domain.OrderTable;
@@ -14,34 +13,34 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class TableGroupService {
 
-    private final OrderDao orderDao;
+    private final UngroupValidator ungroupValidator;
     private final OrderTableDao orderTableDao;
     private final TableGroupDao tableGroupDao;
 
-    public TableGroupService(OrderDao orderDao, OrderTableDao orderTableDao, TableGroupDao tableGroupDao) {
-        this.orderDao = orderDao;
+    public TableGroupService(UngroupValidator ungroupValidator, OrderTableDao orderTableDao, TableGroupDao tableGroupDao) {
+        this.ungroupValidator = ungroupValidator;
         this.orderTableDao = orderTableDao;
         this.tableGroupDao = tableGroupDao;
     }
 
-    @Transactional
     public TableGroupResponse create(TableGroupSaveRequest request) {
         List<Long> orderTableIds = request.toEntities();
         OrderTables orderTables = findOrderTables(orderTableIds);
         TableGroup tableGroup = tableGroupDao.save(TableGroup.from());
-        orderTables.joinWithTableGroup(tableGroup);
-        saveOrderTables(orderTables);
+        OrderTables updatedOrderTables = orderTables.joinWithTableGroup(tableGroup);
+        saveOrderTables(updatedOrderTables);
 
-        return TableGroupResponse.toResponse(tableGroup, orderTables);
+        return TableGroupResponse.toResponse(tableGroup, updatedOrderTables);
     }
 
-    @Transactional
     public void ungroup(Long tableGroupId) {
         OrderTables orderTables = findOrderTables(tableGroupId);
-        orderTables.ungroup(orderDao.findAll());
-       saveOrderTables(orderTables);
+        ungroupValidator.validateUngroup(orderTables.getOrderTableIds());
+        OrderTables updatedOrderTables = orderTables.ungroup();
+        saveOrderTables(updatedOrderTables);
     }
 
     private void saveOrderTables(OrderTables orderTables) {

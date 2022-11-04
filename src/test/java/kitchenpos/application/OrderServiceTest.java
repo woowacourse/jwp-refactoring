@@ -7,13 +7,13 @@ import java.util.List;
 import kitchenpos.NestedApplicationTest;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.menu.domain.dao.JdbcTemplateMenuDao;
-import kitchenpos.menu.domain.dao.JdbcTemplateMenuGroupDao;
+import kitchenpos.menu.infrastructure.JdbcTemplateMenuDao;
+import kitchenpos.menu.infrastructure.JdbcTemplateMenuGroupDao;
 import kitchenpos.order.application.OrderService;
 import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.order.domain.dao.JdbcTemplateOrderDao;
+import kitchenpos.order.infrastructure.JdbcTemplateOrderDao;
 import kitchenpos.support.fixture.domain.MenuFixture;
 import kitchenpos.support.fixture.domain.MenuGroupFixture;
 import kitchenpos.support.fixture.domain.OrderFixture;
@@ -23,8 +23,8 @@ import kitchenpos.support.fixture.domain.TableGroupFixture;
 import kitchenpos.support.fixture.dto.OrderDtoFixture;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
-import kitchenpos.table.domain.dao.JdbcTemplateOrderTableDao;
-import kitchenpos.table.domain.dao.JdbcTemplateTableGroupDao;
+import kitchenpos.table.infrastructure.JdbcTemplateOrderTableDao;
+import kitchenpos.table.infrastructure.JdbcTemplateTableGroupDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -69,7 +69,7 @@ class OrderServiceTest {
             OrderResponse actual = orderService.create(OrderDtoFixture.주문_생성_요청(order, orderLineItems));
 
             assertThat(actual).usingRecursiveComparison()
-                .ignoringFields("id", "orderedTime", "orderLineItems.id", "orderLineItems.orderId")
+                .ignoringFields("id", "orderedTime", "orderLineItems.id", "orderLineItems.orderId", "orderLineItems.menuName")
                 .isEqualTo(OrderDtoFixture.주문_생성_응답(order, orderLineItems));
         }
     }

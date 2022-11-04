@@ -8,9 +8,9 @@ import kitchenpos.table.exception.InvalidTableGroupJoinException;
 public class OrderTable {
 
     private final Long id;
-    private Long tableGroupId;
-    private int numberOfGuests;
-    private boolean empty;
+    private final Long tableGroupId;
+    private final int numberOfGuests;
+    private final boolean empty;
 
     public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
         this.id = id;
@@ -27,10 +27,9 @@ public class OrderTable {
         this(null, numberOfGuests, empty);
     }
 
-    public void occupyTableGroup(Long tableGroupId) {
+    public OrderTable occupyTableGroup(Long tableGroupId) {
         shouldNotJoinTableGroup();
-        this.tableGroupId = tableGroupId;
-        this.empty = false;
+        return new OrderTable(id, tableGroupId, numberOfGuests, false);
     }
 
     private void shouldNotJoinTableGroup() {
@@ -43,18 +42,17 @@ public class OrderTable {
         return (this.empty && Objects.isNull(this.tableGroupId));
     }
 
-    public void unOccupyTableGroup() {
-        this.tableGroupId = null;
-        this.empty = false;
+    public OrderTable unOccupyTableGroup() {
+        return new OrderTable(id, null, numberOfGuests, false);
     }
 
-    public void changeEmpty(Boolean empty) {
-        this.empty = empty;
+    public OrderTable changeEmpty(Boolean empty) {
+        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
     }
 
-    public void changeNumberOfGuests(int numberOfGuests) {
+    public OrderTable changeNumberOfGuests(int numberOfGuests) {
         validateNumberOfGuests(numberOfGuests);
-        this.numberOfGuests = numberOfGuests;
+        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
     }
 
     private void validateNumberOfGuests(int numberOfGuests) {

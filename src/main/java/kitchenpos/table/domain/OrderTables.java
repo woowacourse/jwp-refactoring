@@ -1,8 +1,8 @@
 package kitchenpos.table.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.domain.Order;
 import kitchenpos.table.exception.InvalidGroupOrderTablesSizeException;
 
 public class OrderTables {
@@ -22,29 +22,29 @@ public class OrderTables {
         }
     }
 
-    public void joinWithTableGroup(TableGroup tableGroup) {
+    public OrderTables joinWithTableGroup(TableGroup tableGroup) {
+        List<OrderTable> orderTables = new ArrayList<>();
         for (OrderTable orderTable : this.orderTables) {
-            orderTable.occupyTableGroup(tableGroup.getId());
+            orderTables.add(orderTable.occupyTableGroup(tableGroup.getId()));
         }
+        return new OrderTables(orderTables);
     }
 
-    public void ungroup(List<Order> orders) {
-        validateUngroup(orders);
+    public OrderTables ungroup() {
+        List<OrderTable> orderTables = new ArrayList<>();
         for (OrderTable orderTable : this.orderTables) {
-            orderTable.unOccupyTableGroup();
+            orderTables.add(orderTable.unOccupyTableGroup());
         }
-    }
-
-    private void validateUngroup(List<Order> orders) {
-        List<Long> orderTableIds = orderTables.stream()
-            .map(OrderTable::getId)
-            .collect(Collectors.toList());
-        for (Order order : orders) {
-            order.validateUngroup(orderTableIds);
-        }
+        return new OrderTables(orderTables);
     }
 
     public List<OrderTable> getOrderTables() {
         return orderTables;
+    }
+
+    public List<Long> getOrderTableIds() {
+        return orderTables.stream()
+            .map(OrderTable::getId)
+            .collect(Collectors.toList());
     }
 }

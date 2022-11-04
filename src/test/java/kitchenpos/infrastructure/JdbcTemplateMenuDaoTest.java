@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.infrastructure;
 
 import static kitchenpos.support.fixture.domain.MenuFixture.CHICKEN_1000;
 import static kitchenpos.support.fixture.domain.MenuFixture.PIZZA_2000;

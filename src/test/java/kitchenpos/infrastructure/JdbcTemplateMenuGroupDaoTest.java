@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.infrastructure;
 
 import static kitchenpos.support.fixture.domain.MenuGroupFixture.KOREAN;
 import static org.assertj.core.api.Assertions.assertThat;
