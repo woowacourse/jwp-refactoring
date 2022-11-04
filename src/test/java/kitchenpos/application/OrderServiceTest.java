@@ -57,7 +57,7 @@ class OrderServiceTest {
         Menu menu = createMenu();
         OrderRequest.Create request = createOrderRequest(menu.getId());
         order = orderDao.save(Order.create(request.getOrderTableId()));
-        orderLineItemDao.save(new OrderLineItem(order.getId(), menu.getId(), 3L));
+        orderLineItemDao.save(new OrderLineItem(order.getId(), menu.getId(), menu.getName(), menu.getPrice(), 3L));
     }
 
     private Menu createMenu() {

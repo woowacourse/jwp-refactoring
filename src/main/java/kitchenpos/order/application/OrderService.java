@@ -2,15 +2,16 @@ package kitchenpos.order.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.repository.MenuDao;
 import kitchenpos.order.application.dto.OrderLineItemRequest;
 import kitchenpos.order.application.dto.OrderLineItemRequest.Create;
 import kitchenpos.order.application.dto.OrderRequest;
 import kitchenpos.order.application.dto.OrderResponse;
-import kitchenpos.order.domain.repository.OrderDao;
-import kitchenpos.order.domain.repository.OrderLineItemDao;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.menu.domain.repository.MenuDao;
+import kitchenpos.order.domain.repository.OrderDao;
+import kitchenpos.order.domain.repository.OrderLineItemDao;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,10 +35,6 @@ public class OrderService {
         this.orderTableValidator = orderTableValidator;
     }
 
-    /*
-    메뉴의 이름과 가격이 변경되면 주문 항목도 함께 변경된다.
-    메뉴 정보가 변경되더라도 주문 항목이 변경되지 않게 구현한다.
-   */
     @Transactional
     public OrderResponse create(final OrderRequest.Create request) {
         final List<OrderLineItemRequest.Create> orderLineItems = request.getOrderLineItems();
@@ -64,7 +61,11 @@ public class OrderService {
     private void setOrderItemsInOrder(List<OrderLineItemRequest.Create> orderLineItems, Order savedOrder,
                                       Long orderId) {
         List<OrderLineItem> collect = orderLineItems.stream()
-                .map(it -> orderLineItemDao.save(new OrderLineItem(orderId, it.getMenuId(), it.getQuantity())))
+                .map(it -> {
+                    Menu menu = menuDao.findById(it.getMenuId()).orElseThrow(IllegalArgumentException::new);
+                    return orderLineItemDao.save(
+                            new OrderLineItem(orderId, menu.getId(), menu.getName(), menu.getPrice(), it.getQuantity()));
+                })
                 .collect(Collectors.toList());
         savedOrder.addOrderLineItems(collect);
     }
