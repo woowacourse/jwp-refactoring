@@ -55,11 +55,19 @@ public class Menu {
         return name;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
+        return price;
+    }
+
+    public BigDecimal getPriceValue() {
         return price.getValue();
     }
 
     public Long getMenuGroupId() {
         return menuGroupId;
+    }
+
+    public void changeName(String name) {
+        this.name = name;
     }
 }

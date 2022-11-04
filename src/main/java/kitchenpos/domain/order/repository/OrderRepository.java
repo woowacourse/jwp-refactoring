@@ -1,15 +1,12 @@
-package kitchenpos.domain.repository;
+package kitchenpos.domain.order.repository;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderStatus;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.repository.Repository;
 
-@Repository
-public interface OrderRepository extends JpaRepository<Order, Long> {
+public interface OrderRepository extends Repository<Order, Long> {
 
     Order save(Order entity);
 
@@ -20,4 +17,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<OrderStatus> orderStatuses);
 
     boolean existsByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds, List<OrderStatus> orderStatuses);
+
+    default Order get(Long id) {
+        return findById(id).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문입니다."));
+    }
 }

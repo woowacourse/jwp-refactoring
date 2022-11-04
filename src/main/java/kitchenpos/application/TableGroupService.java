@@ -3,9 +3,9 @@ package kitchenpos.application;
 import kitchenpos.application.dto.request.CreateTableGroupDto;
 import kitchenpos.application.dto.response.TableGroupDto;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.repository.OrderRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.domain.repository.TableGroupRepository;
+import kitchenpos.domain.order.repository.OrderRepository;
+import kitchenpos.domain.table.repository.OrderTableRepository;
+import kitchenpos.domain.table.repository.TableGroupRepository;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTables;
 import kitchenpos.domain.table.TableGroup;
@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class TableGroupService {
 
     private final OrderRepository orderRepository;
@@ -30,7 +31,6 @@ public class TableGroupService {
         this.tableGroupRepository = tableGroupRepository;
     }
 
-    @Transactional
     public TableGroupDto create(CreateTableGroupDto createTableGroupDto) {
         final List<Long> tableIds = createTableGroupDto.getOrderTableIds();
         final OrderTables orderTables = findValidOrderTables(tableIds);
@@ -51,7 +51,6 @@ public class TableGroupService {
         return new OrderTables(orderTables);
     }
 
-    @Transactional
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
         validateNoOngoingOrder(orderTables);

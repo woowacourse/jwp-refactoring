@@ -30,7 +30,7 @@ public class MenuDto {
         List<MenuProductDto> menuProductDtos = menuProducts.stream()
                 .map(MenuProductDto::of)
                 .collect(Collectors.toList());
-        return new MenuDto(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menuProductDtos);
+        return new MenuDto(menu.getId(), menu.getName(), menu.getPriceValue(), menu.getMenuGroupId(), menuProductDtos);
     }
 
     public Long getId() {

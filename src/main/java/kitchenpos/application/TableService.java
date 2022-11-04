@@ -6,8 +6,8 @@ import kitchenpos.application.dto.request.EmptyTableDto;
 import kitchenpos.application.dto.response.TableDto;
 import kitchenpos.application.dto.request.UpdateGuestNumberDto;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.repository.OrderRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.order.repository.OrderRepository;
+import kitchenpos.domain.table.repository.OrderTableRepository;
 import kitchenpos.domain.table.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 public class TableService {
 
     private final OrderRepository orderRepository;
@@ -25,12 +26,7 @@ public class TableService {
         this.orderTableRepository = orderTableRepository;
     }
 
-    @Transactional
-    public TableDto create(final CreateTableDto createTableDto) {
-        OrderTable orderTable = new OrderTable(createTableDto.getNumberOfGuests(), createTableDto.getEmpty());
-        return TableDto.of(orderTableRepository.save(orderTable));
-    }
-
+    @Transactional(readOnly = true)
     public List<TableDto> list() {
         return orderTableRepository.findAll()
                 .stream()
@@ -38,10 +34,14 @@ public class TableService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
+    public TableDto create(final CreateTableDto createTableDto) {
+        OrderTable orderTable = new OrderTable(createTableDto.getNumberOfGuests(), createTableDto.getEmpty());
+        return TableDto.of(orderTableRepository.save(orderTable));
+    }
+
     public TableDto changeEmpty(EmptyTableDto emptyTableDto) {
         Long orderTableId = emptyTableDto.getOrderTableId();
-        final OrderTable savedOrderTable = getOrderTable(orderTableId);
+        final OrderTable savedOrderTable = orderTableRepository.get(orderTableId);
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, OrderStatus.getOngoingStatuses())) {
             throw new IllegalArgumentException("식사 중인 테이블은 비울 수 없습니다.");
         }
@@ -49,17 +49,11 @@ public class TableService {
         return TableDto.of(orderTableRepository.save(savedOrderTable));
     }
 
-    @Transactional
     public TableDto changeNumberOfGuests(UpdateGuestNumberDto updateGuestNumberDto) {
         final Long orderTableId = updateGuestNumberDto.getOrderTableId();
         final int numberOfGuests = updateGuestNumberDto.getNumberOfGuests();
-        final OrderTable savedOrderTable = getOrderTable(orderTableId);
+        final OrderTable savedOrderTable = orderTableRepository.get(orderTableId);
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
         return TableDto.of(orderTableRepository.save(savedOrderTable));
-    }
-
-    private OrderTable getOrderTable(Long orderTableId) {
-        return orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
     }
 }
