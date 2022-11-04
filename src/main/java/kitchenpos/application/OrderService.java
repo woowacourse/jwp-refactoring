@@ -43,10 +43,13 @@ public class OrderService {
             .orElseThrow(IllegalArgumentException::new);
 
         final Order order = orderRepository.save(
-            new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), new OrderLineItems(request.getOrderLineItems()
-                .stream()
-                .map(this::createOrderLineItem)
-                .collect(Collectors.toList()))));
+            Order.createOfEvent(
+                orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
+                new OrderLineItems(request.getOrderLineItems()
+                    .stream()
+                    .map(this::createOrderLineItem)
+                    .collect(Collectors.toList())))
+        );
 
         return OrderResponse.createResponse(order);
     }

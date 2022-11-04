@@ -33,15 +33,7 @@ public class Order {
     protected Order() {
     }
 
-    public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime, final OrderLineItems orderLineItems) {
-        this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
-    }
-
-    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
-        this(id, orderTableId, orderStatus, orderedTime, null);
-    }
-
-    public Order(final Long id, final Long orderTableId, final String orderStatus,
+    private Order(final Long id, final Long orderTableId, final String orderStatus,
                  final LocalDateTime orderedTime, final OrderLineItems orderLineItems) {
         validateOrderLineItems(orderLineItems);
         this.id = id;
@@ -49,13 +41,18 @@ public class Order {
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
-        Events.publishEvent(new OrderStatusChangedEvent(orderTableId, COOKING.name()));
     }
 
     private void validateOrderLineItems(final OrderLineItems orderLineItems) {
         if (orderLineItems.getOrderLineItems().size() < 1) {
             throw new IllegalArgumentException();
         }
+    }
+
+    public static Order createOfEvent(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime, final OrderLineItems orderLineItems) {
+        final Order order = new Order(null, orderTableId, orderStatus, orderedTime, orderLineItems);
+        Events.publishEvent(new OrderStatusChangedEvent(orderTableId, COOKING.name()));
+        return order;
     }
 
     public void changeOrderStatus(final OrderStatus orderStatus) {
