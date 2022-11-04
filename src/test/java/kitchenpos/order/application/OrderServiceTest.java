@@ -1,6 +1,6 @@
-package kitchenpos.application;
+package kitchenpos.order.application;
 
-import static kitchenpos.fixture.Fixture.삼인테이블_생성요청;
+import static kitchenpos.common.fixture.Fixture.삼인테이블_생성요청;
 import static kitchenpos.order.domain.OrderStatus.COMPLETION;
 import static kitchenpos.order.domain.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,7 +13,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.fixture.Fixture;
+import kitchenpos.common.ServiceTest;
+import kitchenpos.common.fixture.Fixture;
 import kitchenpos.menu.application.request.MenuCreateRequest;
 import kitchenpos.menu.application.request.MenuProductRequest;
 import kitchenpos.menu.domain.Menu;
@@ -21,6 +22,7 @@ import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.order.application.request.OrderCreateRequest;
 import kitchenpos.order.application.request.OrderLineItemRequest;
 import kitchenpos.order.application.request.OrderUpdateRequest;
+import kitchenpos.order.domain.MenuInfo;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.ordertable.application.request.OrderTableUpdateRequest;
@@ -67,7 +69,7 @@ public class OrderServiceTest {
 
                 assertThatThrownBy(() -> orderService.create(request))
                         .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessage("해당 메뉴가 존재하지 않습니다.");
+                        .hasMessage("존재하지 않는 Menu가 존재합니다.");
             }
         }
 
@@ -76,33 +78,63 @@ public class OrderServiceTest {
 
             private static final long NOT_EXIST_ORDER_TABLE_ID = -1L;
 
-            private final OrderCreateRequest request = new OrderCreateRequest(NOT_EXIST_ORDER_TABLE_ID,
-                    List.of(new OrderLineItemRequest(1L, 1L)));
+            private Menu menu;
+
+            @BeforeEach
+            void setUp() {
+                menu = createMenu("후라이드치킨", BigDecimal.valueOf(16000));
+            }
 
             @Test
             void 예외가_발생한다() {
                 final OrderTable orderTable = tableService.create(삼인테이블_생성요청);
                 tableService.changeEmpty(orderTable.getId(), new OrderTableUpdateRequest(5, false));
+                final OrderCreateRequest request = new OrderCreateRequest(NOT_EXIST_ORDER_TABLE_ID,
+                        List.of(new OrderLineItemRequest(1L, 1L)));
 
                 assertThatThrownBy(() -> orderService.create(request))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("존재하지 않는 OrderTable 입니다.");
+            }
+
+            private Menu createMenu(final String name, final BigDecimal price) {
+                final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("한마리메뉴"));
+                Product product1 = productRepository.save(
+                        new Product("후라이드치킨", new ProductPrice(BigDecimal.valueOf(16000))));
+
+                List<MenuProductRequest> menuProducts = List.of(new MenuProductRequest(product1.getId(), 1L));
+                return menuService.create(new MenuCreateRequest(name, price, menuGroup.getId(), menuProducts));
             }
         }
 
         @Nested
         class 입력받은_OrderTable의_상태가_empty인_경우 extends ServiceTest {
 
-            private final OrderCreateRequest request = new OrderCreateRequest(1L,
-                    List.of(new OrderLineItemRequest(1L, 1L)));
+            private Menu menu;
+
+            @BeforeEach
+            void setUp() {
+                menu = createMenu("후라이드치킨", BigDecimal.valueOf(16000));
+            }
 
             @Test
             void 예외가_발생한다() {
-                tableService.create(삼인테이블_생성요청);
+                final OrderTable orderTable = tableService.create(삼인테이블_생성요청);
+                final OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(),
+                        List.of(new OrderLineItemRequest(1L, 1L)));
 
                 assertThatThrownBy(() -> orderService.create(request))
                         .isInstanceOf(IllegalStateException.class)
                         .hasMessage("해당 OrderTable이 empty 상태 입니다.");
+            }
+
+            private Menu createMenu(final String name, final BigDecimal price) {
+                final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("한마리메뉴"));
+                Product product1 = productRepository.save(
+                        new Product("후라이드치킨", new ProductPrice(BigDecimal.valueOf(16000))));
+
+                List<MenuProductRequest> menuProducts = List.of(new MenuProductRequest(product1.getId(), 1L));
+                return menuService.create(new MenuCreateRequest(name, price, menuGroup.getId(), menuProducts));
             }
         }
 
@@ -201,7 +233,8 @@ public class OrderServiceTest {
             @Test
             void 예외가_발생한다() {
                 final Order actual = orderRepository.save(
-                        new Order(1L, COMPLETION, List.of(new OrderLineItem(1L, 1L))));
+                        new Order(1L, COMPLETION,
+                                List.of(new OrderLineItem(1L, 1L, new MenuInfo("name", BigDecimal.valueOf(16000))))));
 
                 assertThatThrownBy(() -> orderService.changeOrderStatus(actual.getId(),
                         new OrderUpdateRequest(COOKING.name()))).isInstanceOf(IllegalStateException.class)

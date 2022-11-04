@@ -1,11 +1,12 @@
-package kitchenpos.application;
+package kitchenpos.menugroup.application;
 
-import static kitchenpos.fixture.Fixture.두마리메뉴_생성요청;
-import static kitchenpos.fixture.Fixture.한마리메뉴_생성요청;
+import static kitchenpos.common.fixture.Fixture.두마리메뉴_생성요청;
+import static kitchenpos.common.fixture.Fixture.한마리메뉴_생성요청;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
+import kitchenpos.common.ServiceTest;
 import kitchenpos.menugroup.application.request.MenuGroupCreateRequest;
 import kitchenpos.menugroup.domain.MenuGroup;
 import org.junit.jupiter.api.Nested;

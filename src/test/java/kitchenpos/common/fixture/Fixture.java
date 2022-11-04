@@ -1,4 +1,4 @@
-package kitchenpos.fixture;
+package kitchenpos.common.fixture;
 
 import static kitchenpos.order.domain.OrderStatus.COOKING;
 
@@ -28,7 +28,7 @@ public class Fixture {
             List.of(new MenuProduct(PRODUCT_양념치킨.getId(), 1L)));
 
     public static final Order ORDER_첫번째_주문 = new Order(1L, 1L, COOKING, LocalDateTime.now(),
-            List.of(new OrderLineItem(MENU_후라이드치킨.getId(), 1L)));
+            List.of(new OrderLineItem(MENU_후라이드치킨.getId(), 1L, null)));
 
     public static final MenuGroupCreateRequest 한마리메뉴_생성요청 = new MenuGroupCreateRequest("한마리메뉴");
     public static final MenuGroupCreateRequest 두마리메뉴_생성요청 = new MenuGroupCreateRequest("두마리메뉴");

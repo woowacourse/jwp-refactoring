@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.tablegroup.application;
 
 import static kitchenpos.order.domain.OrderStatus.COMPLETION;
 import static kitchenpos.order.domain.OrderStatus.COOKING;
@@ -6,8 +6,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.common.ServiceTest;
+import kitchenpos.order.domain.MenuInfo;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.ordertable.application.request.OrderTableCreateRequest;
@@ -52,7 +55,7 @@ class TableGroupServiceTest {
 
                 assertThatThrownBy(() -> tableGroupService.create(request))
                         .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessage("해당 OrderTable이 존재하지 않습니다.");
+                        .hasMessage("OrderTable의 크기가 2 미만입니다.");
             }
         }
 
@@ -145,8 +148,10 @@ class TableGroupServiceTest {
             void setUp() {
                 orderTable1 = tableService.create(new OrderTableCreateRequest(5, true));
                 orderTable2 = tableService.create(new OrderTableCreateRequest(5, true));
-                orderRepository.save(new Order(orderTable1.getId(), COOKING, List.of(new OrderLineItem(1L, 1L))));
-                orderRepository.save(new Order(orderTable2.getId(), COOKING, List.of(new OrderLineItem(1L, 1L))));
+                orderRepository.save(new Order(orderTable1.getId(), COOKING,
+                        List.of(new OrderLineItem(1L, 1L, new MenuInfo("name", BigDecimal.valueOf(16000))))));
+                orderRepository.save(new Order(orderTable2.getId(), COOKING,
+                        List.of(new OrderLineItem(1L, 1L, new MenuInfo("name", BigDecimal.valueOf(16000))))));
             }
 
             @Test
@@ -172,8 +177,12 @@ class TableGroupServiceTest {
             void setUp() {
                 orderTable1 = tableService.create(new OrderTableCreateRequest(5, true));
                 orderTable2 = tableService.create(new OrderTableCreateRequest(5, true));
-                orderRepository.save(new Order(orderTable1.getId(), COMPLETION, List.of(new OrderLineItem(1L, 1L))));
-                orderRepository.save(new Order(orderTable2.getId(), COMPLETION, List.of(new OrderLineItem(1L, 1L))));
+                orderRepository.save(
+                        new Order(orderTable1.getId(), COMPLETION,
+                                List.of(new OrderLineItem(1L, 1L, new MenuInfo("name", BigDecimal.valueOf(16000))))));
+                orderRepository.save(
+                        new Order(orderTable2.getId(), COMPLETION,
+                                List.of(new OrderLineItem(1L, 1L, new MenuInfo("name", BigDecimal.valueOf(16000))))));
             }
 
             @Test

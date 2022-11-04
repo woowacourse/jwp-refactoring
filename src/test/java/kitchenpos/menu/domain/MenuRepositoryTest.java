@@ -1,4 +1,4 @@
-package kitchenpos.domain.menu;
+package kitchenpos.menu.domain;
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 

@@ -1,13 +1,16 @@
-package kitchenpos.application;
+package kitchenpos.ordertable.application;
 
-import static kitchenpos.fixture.Fixture.사인테이블_생성요청;
-import static kitchenpos.fixture.Fixture.삼인테이블_생성요청;
+import static kitchenpos.common.fixture.Fixture.사인테이블_생성요청;
+import static kitchenpos.common.fixture.Fixture.삼인테이블_생성요청;
 import static kitchenpos.order.domain.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.common.ServiceTest;
+import kitchenpos.order.domain.MenuInfo;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.ordertable.application.request.OrderTableCreateRequest;
@@ -69,7 +72,8 @@ class TableServiceTest {
 
             @Test
             void 예외가_발생한다() {
-                assertThatThrownBy(() -> tableService.changeEmpty(NOT_EXIST_ORDER_TABLE_ID, null))
+                assertThatThrownBy(
+                        () -> tableService.changeEmpty(NOT_EXIST_ORDER_TABLE_ID, new OrderTableUpdateRequest(5, true)))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("존재하지 않는 OrderTable 입니다.");
             }
@@ -95,7 +99,8 @@ class TableServiceTest {
             @Test
             void 예외가_발생한다() {
                 final OrderTable orderTable = orderTableRepository.save(new OrderTable(1L, 5, false));
-                orderRepository.save(new Order(orderTable.getId(), COOKING, List.of(new OrderLineItem(1L, 1L))));
+                orderRepository.save(new Order(orderTable.getId(), COOKING,
+                        List.of(new OrderLineItem(1L, 1L, new MenuInfo("name", BigDecimal.valueOf(16000))))));
 
                 assertThatThrownBy(
                         () -> tableService.changeEmpty(orderTable.getId(), new OrderTableUpdateRequest(5, false)))

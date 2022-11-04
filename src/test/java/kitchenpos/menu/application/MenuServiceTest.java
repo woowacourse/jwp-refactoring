@@ -1,8 +1,8 @@
-package kitchenpos.application;
+package kitchenpos.menu.application;
 
-import static kitchenpos.fixture.Fixture.양념치킨상품_생성요청;
-import static kitchenpos.fixture.Fixture.한마리메뉴_생성요청;
-import static kitchenpos.fixture.Fixture.후라이드상품_생성요청;
+import static kitchenpos.common.fixture.Fixture.양념치킨상품_생성요청;
+import static kitchenpos.common.fixture.Fixture.한마리메뉴_생성요청;
+import static kitchenpos.common.fixture.Fixture.후라이드상품_생성요청;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.groups.Tuple.tuple;
@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.common.ServiceTest;
 import kitchenpos.menu.application.request.MenuCreateRequest;
 import kitchenpos.menu.application.request.MenuProductRequest;
 import kitchenpos.menu.domain.Menu;

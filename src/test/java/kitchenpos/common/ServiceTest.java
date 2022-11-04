@@ -1,6 +1,5 @@
-package kitchenpos.application;
+package kitchenpos.common;
 
-import kitchenpos.common.DatabaseInitializer;
 import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menugroup.application.MenuGroupService;
