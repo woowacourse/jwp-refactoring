@@ -8,7 +8,6 @@ import kitchenpos.application.dto.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.application.dto.OrderTableCreateRequest;
 import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.table.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,12 +18,9 @@ import java.util.List;
 @Service
 public class TableService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderRepository orderRepository,
-                        final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(final OrderTableRepository orderTableRepository) {
         this.orderTableRepository = orderTableRepository;
     }
 
