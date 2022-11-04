@@ -4,15 +4,14 @@ import java.util.List;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.Validator;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrderValidator implements Validator {
+public class Validator implements kitchenpos.table.domain.Validator {
 
     private final OrderRepository orderRepository;
 
-    public OrderValidator(final OrderRepository orderRepository) {
+    public Validator(final OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
 
