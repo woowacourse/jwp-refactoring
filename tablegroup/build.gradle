@@ -1,0 +1,6 @@
+dependencies {
+    compile project(':exception')
+    compile project(':ordertable')
+    compile project(':menu')
+    compile project(':order')
+}
