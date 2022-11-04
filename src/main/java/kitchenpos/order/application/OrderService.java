@@ -1,42 +1,73 @@
 package kitchenpos.order.application;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.application.dto.OrderCreateRequest;
+import kitchenpos.order.application.dto.OrderLineItemCreateRequest;
 import kitchenpos.order.application.dto.OrderUpdateRequest;
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderLineItemRepository;
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderLineItemRepository;
+import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
     private final OrderValidator orderValidator;
+    private final MenuRepository menuRepository;
 
-    public OrderService(OrderRepository orderRepository, OrderLineItemRepository orderLineItemRepository, OrderValidator orderValidator) {
+    public OrderService(OrderRepository orderRepository, OrderLineItemRepository orderLineItemRepository,
+                        OrderValidator orderValidator, MenuRepository menuRepository) {
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
         this.orderValidator = orderValidator;
+        this.menuRepository = menuRepository;
     }
 
-    @Transactional
     public Order create(final OrderCreateRequest request) {
-        Order order = Order.create(request.getOrderTableId(),
-                request.getOrderLineItems(),
-                orderValidator);
+        List<OrderLineItem> orderLineItems = toOrderLineItems(request.getOrderLineItems());
 
+        Order order = Order.create(request.getOrderTableId(),
+                orderLineItems,
+                orderValidator);
         return orderRepository.save(order);
     }
 
+    private List<OrderLineItem> toOrderLineItems(List<OrderLineItemCreateRequest> orderLineItemRequests) {
+        checkExistMenu(orderLineItemRequests);
+        List<OrderLineItem> result = new ArrayList<>();
+        for (OrderLineItemCreateRequest request : orderLineItemRequests) {
+            Menu menu = menuRepository.findById(request.getMenuId())
+                    .orElseThrow(IllegalArgumentException::new);
+            result.add(new OrderLineItem(null, null, menu.getName(), menu.getPrice(), request.getQuantity()));
+        }
+        return result;
+    }
+
+    private void checkExistMenu(final List<OrderLineItemCreateRequest> requests) {
+        List<Long> menuIds = requests.stream()
+                .map(OrderLineItemCreateRequest::getMenuId)
+                .collect(Collectors.toList());
+
+        if (requests.size() != menuRepository.countByIdIn(menuIds)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    @Transactional(readOnly = true)
     public List<Order> list() {
         return orderRepository.findAll();
     }
 
-    @Transactional
     public Order changeOrderStatus(final Long orderId, final OrderUpdateRequest request) {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);

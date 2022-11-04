@@ -6,22 +6,25 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import kitchenpos.support.ServiceTest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.application.OrderService;
 import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderLineItemCreateRequest;
 import kitchenpos.order.application.dto.OrderUpdateRequest;
-import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.support.ServiceTest;
 import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -58,10 +61,19 @@ class OrderServiceTest extends ServiceTest {
             orderLineItemA = new OrderLineItemCreateRequest(MENU_A_ID, 10L);
             orderLineItemB = new OrderLineItemCreateRequest(MENU_B_ID, 20L);
 
+            menuRepository.save(new Menu(MENU_A_ID, "menuA", BigDecimal.valueOf(1000L), 1L,
+                    List.of(new MenuProduct(1L, null, 1L, 10L))));
+
+            MenuProduct menuProduct = new MenuProduct(1L, null, 1L, 10L);
+            Menu menu = new Menu(MENU_A_ID, "menuA", BigDecimal.valueOf(1000L), 1L,
+                    List.of(menuProduct));
+
             orderTable = new OrderTable(ORDER_TABLE_ID, null, 2, false);
 
             request = new OrderCreateRequest(ORDER_TABLE_ID, Arrays.asList(orderLineItemA, orderLineItemB));
 
+            given(menuRepository.findById(any()))
+                    .willReturn(Optional.of(menu));
             given(menuRepository.countByIdIn(any()))
                     .willReturn((long) request.getOrderLineItems().size());
             given(orderTableRepository.findById(request.getOrderTableId()))
@@ -99,7 +111,7 @@ class OrderServiceTest extends ServiceTest {
             //given
             request = new OrderCreateRequest(ORDER_TABLE_ID, Arrays.asList(orderLineItemA, orderLineItemA));
             Set<Long> distinctMenus = request.getOrderLineItems().stream()
-                    .map(OrderLineItem::getMenuId)
+                    .map(OrderLineItemCreateRequest::getMenuId)
                     .collect(Collectors.toSet());
 
             given(menuRepository.countByIdIn(any()))
@@ -145,11 +157,17 @@ class OrderServiceTest extends ServiceTest {
 
             orderTable = new OrderTable(ORDER_TABLE_ID, null, 2, false);
 
+            MenuProduct menuProduct = new MenuProduct(1L, null, 1L, 10L);
+            Menu menu = new Menu(MENU_A_ID, "menuA", BigDecimal.valueOf(1000L), 1L,
+                    List.of(menuProduct));
+
             createRequest = new OrderCreateRequest(ORDER_TABLE_ID, Arrays.asList(orderLineItemA, orderLineItemB));
             given(orderTableRepository.findById(any()))
                     .willReturn(Optional.of(orderTable));
             given(menuRepository.countByIdIn(any()))
                     .willReturn(2L);
+            given(menuRepository.findById(any()))
+                    .willReturn(Optional.of(menu));
 
             savedOrder = orderService.create(createRequest);
             request = new OrderUpdateRequest(OrderStatus.MEAL.name());
