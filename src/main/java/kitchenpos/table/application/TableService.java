@@ -51,11 +51,4 @@ public class TableService {
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
         return OrderTableResponse.from(orderTableDao.save(savedOrderTable));
     }
-
-    public List<OrderTableResponse> findAllByTableGroupId(Long tableGroupId) {
-        return orderTableDao.findAllByTableGroupId(tableGroupId)
-                .stream()
-                .map(OrderTableResponse::from)
-                .collect(Collectors.toList());
-    }
 }
