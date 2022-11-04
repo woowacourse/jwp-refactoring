@@ -26,7 +26,7 @@ public class TableGroup {
     public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         this.id = id;
         this.createdDate = createdDate;
-        this.orderTables = new OrderTables(orderTables);
+        this.orderTables = new OrderTables(orderTables, this);
     }
 
     public static TableGroup of(final List<OrderTable> orderTables) {

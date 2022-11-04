@@ -1,7 +1,10 @@
 package kitchenpos.infrastructure.repository.querydsl;
 
 import static kitchenpos.domain.table.QOrderTable.orderTable;
+import static kitchenpos.infrastructure.repository.querydsl.QuerydslUtils.*;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
@@ -29,9 +32,12 @@ public class QuerydslOrderTableRepository implements OrderTableRepository {
 
     @Override
     public Optional<OrderTable> findById(final Long id) {
+        if (id == null) {
+            return Optional.empty();
+        }
         return Optional.ofNullable(
                 queryFactory.selectFrom(orderTable)
-                        .where(orderTable.id.eq(id))
+                        .where(idEq(id))
                         .fetchOne()
         );
     }
@@ -45,14 +51,26 @@ public class QuerydslOrderTableRepository implements OrderTableRepository {
     @Override
     public List<OrderTable> findAllByIdIn(final List<Long> ids) {
         return queryFactory.selectFrom(orderTable)
-                .where(orderTable.id.in(ids))
+                .where(idIn(ids))
                 .fetch();
     }
 
     @Override
     public List<OrderTable> findAllByTableGroupId(final Long tableGroupId) {
         return queryFactory.selectFrom(orderTable)
-                .where(orderTable.tableGroup.id.eq(tableGroupId))
+                .where(tableGroupIdEq(tableGroupId))
                 .fetch();
+    }
+
+    private BooleanBuilder idEq(final Long id) {
+        return nullSafeBuilder(() -> orderTable.id.eq(id));
+    }
+
+    private BooleanBuilder idIn(final List<Long> ids) {
+        return nullSafeBuilder(() -> orderTable.id.in(ids));
+    }
+
+    private BooleanBuilder tableGroupIdEq(final Long tableGroupId) {
+        return nullSafeBuilder(() -> orderTable.tableGroup.id.eq(tableGroupId));
     }
 }

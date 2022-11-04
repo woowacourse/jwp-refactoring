@@ -1,7 +1,9 @@
 package kitchenpos.infrastructure.repository.querydsl;
 
 import static kitchenpos.domain.menu.QMenuGroup.menuGroup;
+import static kitchenpos.infrastructure.repository.querydsl.QuerydslUtils.*;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
@@ -29,9 +31,12 @@ public class QuerydslMenuGroupRepository implements MenuGroupRepository {
 
     @Override
     public Optional<MenuGroup> findById(final Long id) {
+        if (id == null) {
+            return Optional.empty();
+        }
         return Optional.ofNullable(
                 queryFactory.selectFrom(menuGroup)
-                        .where(menuGroup.id.eq(id))
+                        .where(idEq(id))
                         .fetchOne()
         );
     }
@@ -46,8 +51,12 @@ public class QuerydslMenuGroupRepository implements MenuGroupRepository {
     public boolean existsById(final Long id) {
         final Integer fetchFirst = queryFactory.selectOne()
                 .from(menuGroup)
-                .where(menuGroup.id.eq(id))
+                .where(idEq(id))
                 .fetchFirst();
         return fetchFirst != null;
+    }
+
+    private BooleanBuilder idEq(final Long id) {
+        return nullSafeBuilder(() -> menuGroup.id.eq(id));
     }
 }

@@ -1,7 +1,9 @@
 package kitchenpos.infrastructure.repository.querydsl;
 
 import static kitchenpos.domain.order.QOrder.order;
+import static kitchenpos.infrastructure.repository.querydsl.QuerydslUtils.nullSafeBuilder;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
@@ -30,9 +32,12 @@ public class QuerydslOrderRepository implements OrderRepository {
 
     @Override
     public Optional<Order> findById(final Long id) {
+        if (id == null) {
+            return Optional.empty();
+        }
         return Optional.ofNullable(
                 queryFactory.selectFrom(order)
-                        .where(order.id.eq(id))
+                        .where(idEq(id))
                         .fetchOne()
         );
     }
@@ -49,8 +54,8 @@ public class QuerydslOrderRepository implements OrderRepository {
         final Integer fetchFirst = queryFactory.selectOne()
                 .from(order)
                 .where(
-                        order.orderTableId.eq(orderTableId)
-                                .and(order.orderStatus.in(orderStatuses))
+                        orderTableIdEq(orderTableId)
+                                .and(orderStatusIn(orderStatuses))
                 ).fetchFirst();
         return fetchFirst != null;
     }
@@ -60,8 +65,24 @@ public class QuerydslOrderRepository implements OrderRepository {
                                                           final List<OrderStatus> orderStatuses) {
         final Integer fetchFirst = queryFactory.selectOne()
                 .from(order)
-                .where(order.orderTableId.in(orderTableIds).and(order.orderStatus.in(orderStatuses)))
+                .where(orderTableIdIn(orderTableIds).and(orderStatusIn(orderStatuses)))
                 .fetchFirst();
         return fetchFirst != null;
+    }
+
+    private BooleanBuilder idEq(final Long id) {
+        return nullSafeBuilder(() -> order.id.eq(id));
+    }
+
+    private BooleanBuilder orderTableIdEq(final Long orderTableId) {
+        return nullSafeBuilder(() -> order.orderTableId.eq(orderTableId));
+    }
+
+    private BooleanBuilder orderStatusIn(final List<OrderStatus> orderStatuses) {
+        return nullSafeBuilder(() -> order.orderStatus.in(orderStatuses));
+    }
+
+    private BooleanBuilder orderTableIdIn(final List<Long> orderTableIds) {
+        return nullSafeBuilder(() -> order.orderTableId.in(orderTableIds));
     }
 }

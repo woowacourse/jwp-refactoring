@@ -17,8 +17,9 @@ public class OrderTables {
     protected OrderTables() {
     }
 
-    public OrderTables(final List<OrderTable> values) {
+    public OrderTables(final List<OrderTable> values, final TableGroup tableGroup) {
         values.forEach(this::validateTableGrouping);
+        addAll(values, tableGroup);
         this.values = values;
     }
 
@@ -30,5 +31,10 @@ public class OrderTables {
 
     public List<OrderTable> getValues() {
         return values;
+    }
+
+    public void addAll(final List<OrderTable> orderTables, final TableGroup tableGroup) {
+        orderTables.forEach(orderTable -> orderTable.joinTableGroup(tableGroup));
+        this.values.addAll(orderTables);
     }
 }

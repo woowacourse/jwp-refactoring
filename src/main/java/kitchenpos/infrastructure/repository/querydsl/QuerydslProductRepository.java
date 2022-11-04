@@ -1,7 +1,10 @@
 package kitchenpos.infrastructure.repository.querydsl;
 
 import static kitchenpos.domain.product.QProduct.product;
+import static kitchenpos.infrastructure.repository.querydsl.QuerydslUtils.nullSafeBuilder;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
@@ -29,9 +32,12 @@ public class QuerydslProductRepository implements ProductRepository {
 
     @Override
     public Optional<Product> findById(final Long id) {
+        if (id == null) {
+            return Optional.empty();
+        }
         return Optional.ofNullable(
                 queryFactory.selectFrom(product)
-                        .where(product.id.eq(id))
+                        .where(idEq(id))
                         .fetchOne()
         );
     }
@@ -40,5 +46,9 @@ public class QuerydslProductRepository implements ProductRepository {
     public List<Product> findAll() {
         return queryFactory.selectFrom(product)
                 .fetch();
+    }
+
+    private BooleanBuilder idEq(final Long id) {
+        return nullSafeBuilder(() -> product.id.eq(id));
     }
 }

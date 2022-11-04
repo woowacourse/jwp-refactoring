@@ -1,7 +1,10 @@
 package kitchenpos.infrastructure.repository.querydsl;
 
 import static kitchenpos.domain.table.QTableGroup.tableGroup;
+import static kitchenpos.infrastructure.repository.querydsl.QuerydslUtils.*;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
@@ -29,9 +32,12 @@ public class QuerydslTableGroupRepository implements TableGroupRepository {
 
     @Override
     public Optional<TableGroup> findById(final Long id) {
+        if (id == null) {
+            return Optional.empty();
+        }
         return Optional.ofNullable(
                 queryFactory.selectFrom(tableGroup)
-                        .where(tableGroup.id.eq(id))
+                        .where(idEq(id))
                         .fetchOne()
         );
     }
@@ -40,5 +46,9 @@ public class QuerydslTableGroupRepository implements TableGroupRepository {
     public List<TableGroup> findAll() {
         return queryFactory.selectFrom(tableGroup)
                 .fetch();
+    }
+
+    private BooleanBuilder idEq(final Long id) {
+        return nullSafeBuilder(() -> tableGroup.id.eq(id));
     }
 }

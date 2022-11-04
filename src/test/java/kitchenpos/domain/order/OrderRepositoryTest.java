@@ -22,7 +22,7 @@ class OrderRepositoryTest extends RepositoryTest {
 
         assertAll(
                 () -> assertThat(savedOrder.getId()).isNotNull(),
-                () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
+                () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING),
                 () -> assertThat(savedOrder.getOrderedTime()).isBefore(LocalDateTime.now()),
                 () -> assertThat(savedOrder.getOrderedTime()).isAfter(startTime),
                 () -> assertThat(savedOrder.getOrderLineItems()).hasSize(1)

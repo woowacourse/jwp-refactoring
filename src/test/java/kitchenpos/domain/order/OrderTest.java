@@ -29,7 +29,7 @@ class OrderTest {
                 () -> assertThat(order.getOrderedTime()).isBefore(LocalDateTime.now()),
                 () -> assertThat(order.getOrderedTime()).isAfter(startTime),
                 () -> assertThat(order.getOrderTableId()).isEqualTo(testOrderTable1.getId()),
-                () -> assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name())
+                () -> assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING)
         );
     }
 

@@ -1,7 +1,10 @@
 package kitchenpos.infrastructure.repository.querydsl;
 
 import static kitchenpos.domain.order.QOrderLineItem.orderLineItem;
+import static kitchenpos.infrastructure.repository.querydsl.QuerydslUtils.nullSafeBuilder;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
@@ -29,9 +32,12 @@ public class QuerydslOrderLineItemRepository implements OrderLineItemRepository 
 
     @Override
     public Optional<OrderLineItem> findById(final Long id) {
+        if (id == null) {
+            return Optional.empty();
+        }
         return Optional.ofNullable(
                 queryFactory.selectFrom(orderLineItem)
-                        .where(orderLineItem.seq.eq(id))
+                        .where(idEq(id))
                         .fetchOne()
         );
     }
@@ -45,7 +51,15 @@ public class QuerydslOrderLineItemRepository implements OrderLineItemRepository 
     @Override
     public List<OrderLineItem> findAllByOrderId(final Long orderId) {
         return queryFactory.selectFrom(orderLineItem)
-                .where(orderLineItem.order.id.eq(orderId))
+                .where(orderIdEq(orderId))
                 .fetch();
+    }
+
+    private BooleanBuilder orderIdEq(final Long orderId) {
+        return nullSafeBuilder(() -> orderLineItem.order.id.eq(orderId));
+    }
+
+    private BooleanBuilder idEq(final Long id) {
+        return nullSafeBuilder(() -> orderLineItem.seq.eq(id));
     }
 }
