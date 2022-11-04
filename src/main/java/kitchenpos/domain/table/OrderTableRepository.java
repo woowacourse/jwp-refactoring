@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OrderTableRepository {
+
     OrderTable save(OrderTable entity);
 
     Optional<OrderTable> findById(Long id);

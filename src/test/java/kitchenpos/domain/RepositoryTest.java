@@ -59,11 +59,11 @@ public abstract class RepositoryTest {
 
     @BeforeEach
     void setUp() {
-        product1 = productRepository.save(testProduct1);
-        product2 = productRepository.save(testProduct2);
-        orderTable1 = orderTableRepository.save(testOrderTable1);
-        orderTable2 = orderTableRepository.save(testOrderTable2);
-        menuGroup = menuGroupRepository.save(testMenuGroup);
+        product1 = productRepository.save(Product.create("상품1", BigDecimal.valueOf(1000L)));
+        product2 = productRepository.save(Product.create("상품2", BigDecimal.valueOf(1500L)));
+        orderTable1 = orderTableRepository.save(OrderTable.create());
+        orderTable2 = orderTableRepository.save(OrderTable.create());
+        menuGroup = menuGroupRepository.save(new MenuGroup("메뉴그룹"));
         menu = createMenu();
     }
 
