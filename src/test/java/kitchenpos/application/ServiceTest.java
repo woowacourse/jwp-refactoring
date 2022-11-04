@@ -3,18 +3,18 @@ package kitchenpos.application;
 import javax.sql.DataSource;
 import kitchenpos.DatabaseCleaner;
 import kitchenpos.Fixtures;
-import kitchenpos.application.menu.MenuGroupService;
-import kitchenpos.application.menu.MenuService;
-import kitchenpos.application.order.OrderService;
-import kitchenpos.application.product.ProductService;
-import kitchenpos.application.table.TableGroupService;
-import kitchenpos.application.table.TableService;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.menu.application.MenuGroupService;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.table.application.TableGroupService;
+import kitchenpos.table.application.TableService;
+import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.menu.repository.MenuGroupRepository;
+import kitchenpos.menu.repository.MenuProductRepository;
+import kitchenpos.table.repository.OrderTableRepository;
+import kitchenpos.product.repository.ProductRepository;
+import kitchenpos.table.repository.TableGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,22 +42,22 @@ public abstract class ServiceTest extends Fixtures {
     TableGroupService tableGroupService;
 
     @Autowired
-    ProductDao productDao;
+    ProductRepository productRepository;
 
     @Autowired
-    MenuProductDao menuProductDao;
+    MenuProductRepository menuProductRepository;
 
     @Autowired
-    TableGroupDao tableGroupDao;
+    TableGroupRepository tableGroupRepository;
 
     @Autowired
-    OrderTableDao orderTableDao;
+    OrderTableRepository orderTableRepository;
 
     @Autowired
-    MenuGroupDao menuGroupDao;
+    MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    MenuDao menuDao;
+    MenuRepository menuRepository;
 
     @Autowired
     DataSource dataSource;

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import java.math.BigDecimal;
+import kitchenpos.util.Price;
 import org.junit.jupiter.api.Test;
 
 class PriceTest {

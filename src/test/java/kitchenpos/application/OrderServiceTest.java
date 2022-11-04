@@ -1,23 +1,23 @@
 package kitchenpos.application;
 
-import static kitchenpos.domain.order.OrderStatus.MEAL;
+import static kitchenpos.order.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.Price;
-import kitchenpos.domain.product.Product;
-import kitchenpos.dto.ChangeOrderStatusRequest;
-import kitchenpos.dto.OrderLineItemRequest;
-import kitchenpos.dto.OrderRequest;
-import kitchenpos.dto.OrderResponse;
-import kitchenpos.dto.OrderTableChangeEmptyRequest;
-import kitchenpos.dto.OrderTableResponse;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.util.Price;
+import kitchenpos.product.domain.Product;
+import kitchenpos.order.dto.ChangeOrderStatusRequest;
+import kitchenpos.order.dto.OrderLineItemRequest;
+import kitchenpos.order.dto.OrderRequest;
+import kitchenpos.order.dto.OrderResponse;
+import kitchenpos.table.dto.OrderTableChangeEmptyRequest;
+import kitchenpos.table.dto.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
@@ -25,12 +25,12 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 @SuppressWarnings("NonAsciiCharacters")
 class OrderServiceTest extends ServiceTest {
     private void init() {
-        menuGroupDao.save(new MenuGroup("한마리메뉴"));
+        menuGroupRepository.save(new MenuGroup("한마리메뉴"));
         Price price = new Price(16000);
-        productDao.save(new Product(null, "후라이드", price));
-        menuDao.save(메뉴_후라이드치킨());
-        orderTableDao.save(new OrderTable(null, null, 0, false));
-        menuProductDao.save(new MenuProduct(null, 1L, 1L, 1, price));
+        productRepository.save(new Product(null, "후라이드", price));
+        menuRepository.save(메뉴_후라이드치킨());
+        orderTableRepository.save(new OrderTable(null, null, 0, false));
+        menuProductRepository.save(new MenuProduct(null, 1L, 1L, 1, price));
     }
 
     @DisplayName("주문을 추가하면 주문 목록에 추가된다.")

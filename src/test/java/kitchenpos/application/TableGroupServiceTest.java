@@ -5,9 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.dto.OrderTableChangeEmptyRequest;
-import kitchenpos.dto.TableGroupRequest;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.dto.OrderTableChangeEmptyRequest;
+import kitchenpos.table.dto.TableGroupRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
@@ -30,7 +30,7 @@ class TableGroupServiceTest extends ServiceTest {
         init();
         Long 테이블그룹Id = tableGroupService.create(테이블그룹요청_id(빈테이블_1_id, 빈테이블_2_id)).getId();
 
-        List<OrderTable> 테이블_목록 = orderTableDao.findAllByTableGroupId(테이블그룹Id);
+        List<OrderTable> 테이블_목록 = orderTableRepository.findAllByTableGroupId(테이블그룹Id);
         boolean empty = false;
         검증_필드비교_동일_목록(테이블_목록, List.of(
                 new OrderTable(빈테이블_1_id, 테이블그룹Id, 0, empty),
@@ -95,16 +95,16 @@ class TableGroupServiceTest extends ServiceTest {
 
         tableGroupService.ungroup(테이블그룹Id);
 
-        List<OrderTable> 테이블_목록 = orderTableDao.findAllByTableGroupId(테이블그룹Id);
+        List<OrderTable> 테이블_목록 = orderTableRepository.findAllByTableGroupId(테이블그룹Id);
         assertThat(테이블_목록).hasSize(0);
     }
 
     @DisplayName("단체 지정 속 모든 테이블들의 주문이 있다면 COMPLETION 상태여야 한다.")
     @Test
     void ungroup_noCompleteOrder() {
-        menuGroupDao.save(메뉴그룹_한마리메뉴());
-        productDao.save(상품_후라이드());
-        menuDao.save(메뉴_후라이드치킨());
+        menuGroupRepository.save(메뉴그룹_한마리메뉴());
+        productRepository.save(상품_후라이드());
+        menuRepository.save(메뉴_후라이드치킨());
         init();
 
         Long 테이블그룹Id = tableGroupService.create(테이블그룹요청_id(빈테이블_1_id, 빈테이블_2_id)).getId();

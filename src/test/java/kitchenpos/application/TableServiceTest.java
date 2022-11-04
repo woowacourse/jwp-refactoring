@@ -4,10 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import kitchenpos.dto.OrderTableChangeEmptyRequest;
-import kitchenpos.dto.OrderTableRequest;
-import kitchenpos.dto.OrderTableResponse;
-import kitchenpos.dto.TableGuestChangeRequest;
+import kitchenpos.table.dto.OrderTableChangeEmptyRequest;
+import kitchenpos.table.dto.OrderTableRequest;
+import kitchenpos.table.dto.OrderTableResponse;
+import kitchenpos.table.dto.TableGuestChangeRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
@@ -83,9 +83,9 @@ class TableServiceTest extends ServiceTest {
     }
 
     private Long createTableWithOrder() {
-        menuGroupDao.save(메뉴그룹_한마리메뉴());
-        productDao.save(상품_후라이드());
-        menuDao.save(메뉴_후라이드치킨());
+        menuGroupRepository.save(메뉴그룹_한마리메뉴());
+        productRepository.save(상품_후라이드());
+        menuRepository.save(메뉴_후라이드치킨());
         OrderTableResponse 테이블1 = tableService.create(빈테이블생성요청());
         Long id = 테이블1.getId();
         테이블_빈_여부_변경(id, false);
