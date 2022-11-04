@@ -1,11 +1,7 @@
 package kitchenpos.tablegroup.service;
 
-import static kitchenpos.order.domain.OrderStatus.COOKING;
-import static kitchenpos.order.domain.OrderStatus.MEAL;
-
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.tablegroup.domain.OrderTable;
 import kitchenpos.tablegroup.domain.OrderTableRepository;
 import kitchenpos.tablegroup.domain.TableGroup;
@@ -20,14 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class TableGroupService {
 
-    private final OrderRepository orderRepository;
+    private final TableGroupValidator tableGroupValidator;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(final OrderRepository orderRepository,
+    public TableGroupService(final TableGroupValidator tableGroupValidator,
                              final OrderTableRepository orderTableRepository,
                              final TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
+        this.tableGroupValidator = tableGroupValidator;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
@@ -52,14 +48,7 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(TableGroupNotFoundException::new);
-        validatePossibleUngrouping(tableGroup);
+        tableGroup.validate(tableGroupValidator);
         tableGroup.ungrouping();
-    }
-
-    private void validatePossibleUngrouping(final TableGroup tableGroup) {
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                tableGroup.getOrderTables(), List.of(COOKING, MEAL))) {
-            throw new IllegalArgumentException("조리중이거나 식사 중인 테이블이 있습니다.");
-        }
     }
 }
