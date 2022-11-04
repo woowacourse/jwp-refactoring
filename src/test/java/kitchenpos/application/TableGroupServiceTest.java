@@ -13,7 +13,7 @@ import kitchenpos.application.dto.request.CreateOrderLineItemDto;
 import kitchenpos.application.dto.request.CreateTableDto;
 import kitchenpos.application.dto.request.CreateTableGroupDto;
 import kitchenpos.application.dto.response.TableGroupDto;
-import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.table.repository.OrderTableRepository;
 import kitchenpos.domain.table.OrderTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
