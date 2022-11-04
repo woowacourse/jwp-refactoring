@@ -8,7 +8,7 @@
 
 ![Generic badge](https://img.shields.io/badge/Level4-Kitchen_POS-green.svg)
 ![Generic badge](https://img.shields.io/badge/test-101_passed-blue.svg)
-![Generic badge](https://img.shields.io/badge/version-3.0.0-brightgreen.svg)
+![Generic badge](https://img.shields.io/badge/version-4.0.0-brightgreen.svg)
 
 > 우아한테크코스 웹 백엔드 4기, 레거시 코드 리팩터링 - Kitchen POS 저장소입니다.
 
@@ -42,13 +42,14 @@
 - [x] 도메인 엔티티에 유효성 검증 및 비즈니스 로직 내재화
 - [x] 2단계 서비스 리팩터링 PR
 - [x] 일급 컬렉션 도입
-- [ ] 도메인 엔티티 VO 적용
-- [ ] 도메인 엔티티 단위 테스트 구현
-- [ ] 메뉴 이름 변경 시 기존 주문 이력이 변경되지 않도록 구현
+- [x] 도메인 엔티티 VO 적용
+- [x] 메뉴 이름 변경 시 기존 주문 이력이 변경되지 않도록 구현
 - [ ] 클래스간, 패키지 간 단방향으로 리팩터링
-- [ ] 가장 많이 팔린 메뉴 조회 가능해야함
-- [ ] Flyway 도입
-- [ ] 3단계 의존성 리팩터링 PR
+- [x] 가장 많이 팔린 메뉴 조회 가능해야함
+- [x] Flyway 도입
+- [x] 메뉴 정보가 변경되더라도 주문 항목이 변경되지 않게 구현한다.
+- [x] 3단계 의존성 리팩터링 PR
+- [x] Gradle의 멀티 모듈 개념을 적용해 자유롭게 서로 다른 프로젝트로 분리해 본다.
 
 <br><br>
 
