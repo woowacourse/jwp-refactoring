@@ -55,6 +55,13 @@ public class OrderTable {
         changeEmpty(false);
     }
 
+    public void validateEmptyAvailable(final FindOrderTableInOrderStatusService findOrderTableInOrderStatusService) {
+        final List<OrderStatus> availableStatuses = List.of(OrderStatus.MEAL, OrderStatus.COOKING);
+        if (findOrderTableInOrderStatusService.existByOrderStatus(getId(), availableStatuses)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public Long getId() {
         return id;
     }
@@ -69,12 +76,5 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void validateEmptyAvailable(final FindOrderTableInOrderStatusService findOrderTableInOrderStatusService) {
-        final List<OrderStatus> availableStatuses = List.of(OrderStatus.MEAL, OrderStatus.COOKING);
-        if (findOrderTableInOrderStatusService.existByOrderStatus(getId(), availableStatuses)) {
-            throw new IllegalArgumentException();
-        }
     }
 }
