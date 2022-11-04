@@ -5,9 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.stream.Stream;
-import kitchenpos.application.dto.ProductRequest;
-import kitchenpos.application.dto.ProductResponse;
-import kitchenpos.domain.Product;
+import kitchenpos.product.application.dto.ProductRequest;
+import kitchenpos.product.application.dto.ProductResponse;
+import kitchenpos.product.application.ProductService;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,8 +15,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 @ServiceTest
 class ProductServiceTest {
