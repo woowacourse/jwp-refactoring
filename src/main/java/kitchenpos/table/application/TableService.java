@@ -1,10 +1,7 @@
 package kitchenpos.table.application;
 
-import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dto.request.OrderTableRequest;
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -12,11 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
-    private final OrderRepository orderRepository;
+    private final Validator orderValidator;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(final Validator orderValidator, final OrderTableRepository orderTableRepository) {
+        this.orderValidator = orderValidator;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -39,11 +36,7 @@ public class TableService {
             throw new IllegalArgumentException("그룹화된 테이블입니다.");
         }
 
-        if (orderRepository.existsByOrderTableAndOrderStatusIn(orderTable,
-                Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException("주문이 요리중이거나 식사중이여서 변경할 수 없습니다.");
-        }
-
+        orderValidator.validateOrderStatus(orderTable);
         orderTable.changeEmpty(orderTableRequest.getEmpty());
         return orderTable;
     }
