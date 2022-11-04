@@ -2,7 +2,7 @@ package kitchenpos.repository;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.tablegroup.TableGroup;
+import kitchenpos.domain.ordertable.TableGroup;
 
 public interface TableGroupRepository {
     TableGroup save(TableGroup entity);

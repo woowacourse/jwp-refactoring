@@ -1,16 +1,15 @@
-package kitchenpos.domain.tablegroup;
+package kitchenpos.domain.ordertable;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import kitchenpos.domain.ordertable.OrderTable;
 import org.springframework.util.CollectionUtils;
 
 @Table(name = "table_group")
@@ -23,7 +22,8 @@ public class TableGroup {
 
     private LocalDateTime createdDate;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "tableGroup")
+    @OneToMany
+    @JoinColumn(name = "table_group_id")
     private List<OrderTable> orderTables;
 
     protected TableGroup() {
@@ -48,7 +48,7 @@ public class TableGroup {
         }
 
         for (final OrderTable savedOrderTable : orderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
+            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
                 throw new IllegalArgumentException();
             }
         }
@@ -56,7 +56,8 @@ public class TableGroup {
 
     private void setOrderTable(final List<OrderTable> orderTables) {
         for (OrderTable orderTable : orderTables) {
-            orderTable.changeTableGroup(this);
+            orderTable.changeTableGroup(id);
+            orderTable.changeEmpty(false);
         }
     }
 

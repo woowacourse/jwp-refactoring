@@ -1,17 +1,15 @@
 package kitchenpos.domain.ordertable;
 
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import kitchenpos.domain.order.Order;
-import kitchenpos.domain.tablegroup.TableGroup;
 
 @Table(name = "order_table")
 @Entity
@@ -24,9 +22,8 @@ public class OrderTable {
     @OneToMany(mappedBy = "orderTable", fetch = FetchType.LAZY)
     private List<Order> orders;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
+    @Column(name = "table_group_id")
+    private Long tableGroupId;
 
     private int numberOfGuests;
 
@@ -39,11 +36,11 @@ public class OrderTable {
         this(null, null, numberOfGuests, empty);
     }
 
-    public OrderTable(final Long id, final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
+    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         validateNumberOfGuests(numberOfGuests);
 
         this.id = id;
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -68,7 +65,7 @@ public class OrderTable {
     }
 
     public void changeEmpty(final boolean empty) {
-        if (tableGroup != null) {
+        if (tableGroupId != null) {
             throw new IllegalArgumentException();
         }
 
@@ -88,16 +85,12 @@ public class OrderTable {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
-    public void changeTableGroup(final TableGroup tableGroup) {
-        if (tableGroup != null) {
-            empty = false;
-        }
-
-        this.tableGroup = tableGroup;
+    public void changeTableGroup(final Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
     }
 
     public int getNumberOfGuests() {

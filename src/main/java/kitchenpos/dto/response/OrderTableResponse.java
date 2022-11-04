@@ -10,13 +10,8 @@ public class OrderTableResponse {
     private boolean empty;
 
     public OrderTableResponse(final OrderTable orderTable) {
-        Long tableGroupId = null;
-        if (orderTable.getTableGroup() != null) {
-            tableGroupId = orderTable.getTableGroup().getId();
-        }
-
         this.id = orderTable.getId();
-        this.tableGroupId = tableGroupId;
+        this.tableGroupId = orderTable.getTableGroupId();
         this.numberOfGuests = orderTable.getNumberOfGuests();
         this.empty = orderTable.isEmpty();
     }
