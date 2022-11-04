@@ -1,6 +1,4 @@
-package kitchenpos.domain;
-
-import java.util.Objects;
+package kitchenpos.domain.menu;
 
 public class MenuProduct {
     private final Long seq;

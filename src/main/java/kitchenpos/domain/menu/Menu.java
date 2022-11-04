@@ -1,6 +1,5 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 public class Menu {
@@ -38,6 +37,14 @@ public class Menu {
 
     public Menu changeMenuProducts(List<MenuProduct> menuProducts) {
         return new Menu(this.id, this.name, this.price, this.menuGroupId, menuProducts);
+    }
+
+    public Menu changePrice(Long price) {
+        return new Menu(this.id, this.name, price, this.menuGroupId, menuProducts);
+    }
+
+    public Menu changeName(String name) {
+        return new Menu(this.id, name, this.price, this.menuGroupId, menuProducts);
     }
 
     public Long getId() {

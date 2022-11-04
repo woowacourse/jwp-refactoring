@@ -1,6 +1,4 @@
-package kitchenpos.domain;
-
-import javax.persistence.criteria.CriteriaBuilder;
+package kitchenpos.domain.table;
 
 public class OrderTable {
     private final Long id;

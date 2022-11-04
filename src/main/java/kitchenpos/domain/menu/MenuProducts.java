@@ -1,6 +1,7 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class MenuProducts {

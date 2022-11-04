@@ -1,24 +1,24 @@
 package kitchenpos.service;
 
+import kitchenpos.application.MenuService;
 import kitchenpos.application.OrderService;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.*;
-import kitchenpos.dto.OrderCreateRequest;
-import kitchenpos.dto.OrderLineItemRequest;
-import kitchenpos.dto.OrderResponse;
-import kitchenpos.dto.OrderStatusUpdateRequest;
-import kitchenpos.util.FakeMenuDao;
-import kitchenpos.util.FakeOrderDao;
-import kitchenpos.util.FakeOrderLineItemDao;
-import kitchenpos.util.FakeOrderTableDao;
+import kitchenpos.dao.*;
+import kitchenpos.domain.history.MenuHistory;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.dto.*;
+import kitchenpos.util.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -30,7 +30,8 @@ public class OrderServiceTest {
     private final OrderDao orderDao = new FakeOrderDao();
     private final OrderLineItemDao orderLineItemDao = new FakeOrderLineItemDao();
     private final OrderTableDao orderTableDao = new FakeOrderTableDao();
-    private final OrderService orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
+    private final MenuHistoryDao menuHistoryDao = new FakeMenuHistoryDao();
+    private final OrderService orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao, menuHistoryDao);
     @DisplayName("주문을 생성한다")
     @Test
     void create() {
@@ -136,6 +137,30 @@ public class OrderServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    @DisplayName("메뉴의 가격과 이름을 바꿔도 주문의 내역은 변동이 없어야 한다")
+    @ParameterizedTest
+    @CsvSource(value = {"초밥세트:8000", "밥초세트:8000", "초밥세트:7000"}, delimiter = ':')
+    void notAffectedByMenuChange(String name, Long price) {
+        preprocessWhenCreate(
+                new OrderTable(4L, null, 4, false),
+                List.of(new OrderLineItem(null, 1L, 1L)),
+                List.of(new Menu(1L, "초밥세트", 8000L, null, null)));
+        menuHistoryDao.save(new MenuHistory(1L, 8000L, "초밥세트", LocalDateTime.now()));
+        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(4L,
+                List.of(new OrderLineItemRequest(1L, 1L)));
+        OrderResponse orderResponse = orderService.create(orderCreateRequest);
+
+        doChange(1L, price, name, 8000L, "초밥세트");
+        OrderInfoSearchResponse orderInfoSearchResponse = orderService.getInfo(new OrderInfoSearchRequest(orderResponse.getId()));
+
+        assertAll(
+                () -> assertThat(orderInfoSearchResponse.getOrderInfo().size()).isEqualTo(1),
+                () -> assertThat(orderInfoSearchResponse.getOrderInfo().get(0).getMenuName()).isEqualTo("초밥세트"),
+                () -> assertThat(orderInfoSearchResponse.getOrderInfo().get(0).getPrice()).isEqualTo(8000L),
+                () -> assertThat(orderInfoSearchResponse.getOrderInfo().get(0).getQuantity()).isEqualTo(1L)
+        );
+    }
+
     private void preprocessWhenCreate(OrderTable orderTable, List<OrderLineItem> orderLineItems, List<Menu> menus) {
         orderTableDao.save(orderTable);
         orderLineItems.forEach(orderLineItemDao::save);
@@ -151,5 +176,17 @@ public class OrderServiceTest {
     private void preprocessWhenChange(Order order, List<OrderLineItem> orderLineItems) {
         orderDao.save(order);
         orderLineItems.forEach(orderLineItemDao::save);
+    }
+
+    private void doChange(Long menuId, Long newPrice, String newName, Long oldPrice, String oldName) {
+        MenuService menuService = new MenuService(menuDao, new FakeMenuGroupDao(), new FakeMenuProductDao(), new FakeProductDao(), new FakeMenuHistoryDao());
+        if (!newName.equals(oldName)) {
+            MenuNameChangeRequest menuNameChangeRequest = new MenuNameChangeRequest(menuId, newName, LocalDateTime.now());
+            menuService.changMenuName(menuNameChangeRequest);
+        }
+        if (!Objects.equals(newPrice, oldPrice)) {
+            MenuPriceChangeRequest menuPriceChangeRequest = new MenuPriceChangeRequest(menuId, newPrice, LocalDateTime.now());
+            menuService.changMenuPrice(menuPriceChangeRequest);
+        }
     }
 }

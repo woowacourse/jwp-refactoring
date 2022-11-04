@@ -2,7 +2,7 @@ package kitchenpos.service;
 
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.dto.MenuGroupCreateRequest;
 import kitchenpos.dto.MenuGroupResponse;
 import kitchenpos.util.FakeMenuGroupDao;

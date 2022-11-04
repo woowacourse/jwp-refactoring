@@ -1,17 +1,20 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.*;
+import kitchenpos.dao.*;
+import kitchenpos.domain.history.MenuHistory;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuProducts;
+import kitchenpos.domain.product.Product;
 import kitchenpos.dto.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,17 +23,20 @@ public class MenuService {
     private final MenuGroupDao menuGroupDao;
     private final MenuProductDao menuProductDao;
     private final ProductDao productDao;
+    private final MenuHistoryDao menuHistoryDao;
 
     public MenuService(
             final MenuDao menuDao,
             final MenuGroupDao menuGroupDao,
             final MenuProductDao menuProductDao,
-            final ProductDao productDao
-    ) {
+            final ProductDao productDao,
+            final MenuHistoryDao menuHistoryDao
+            ) {
         this.menuDao = menuDao;
         this.menuGroupDao = menuGroupDao;
         this.menuProductDao = menuProductDao;
         this.productDao = productDao;
+        this.menuHistoryDao = menuHistoryDao;
     }
 
     @Transactional
@@ -47,6 +53,7 @@ public class MenuService {
         List<MenuProductResponse> menuProductResponses = menu.getMenuProducts().stream()
                 .map(each -> new MenuProductResponse(each.getSeq(), each.getMenuId(), each.getProductId(), each.getQuantity()))
                 .collect(Collectors.toUnmodifiableList());
+        menuHistoryDao.save(new MenuHistory(menu.getId(), menu.getPrice(), menu.getName(), LocalDateTime.now()));
         return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menuProductResponses);
     }
 
@@ -115,5 +122,27 @@ public class MenuService {
         if (menuProducts.isOverThanTotalPrice(groupedPriceByProductId, menuCreateRequest.getPrice())) {
             throw new IllegalArgumentException();
         }
+    }
+
+    public void changMenuPrice(MenuPriceChangeRequest menuPriceChangeRequest) {
+        Optional<Menu> searchedMenu = menuDao.findById(menuPriceChangeRequest.getMenuId());
+        if (searchedMenu.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        Menu menu = searchedMenu.get();
+        menu = menu.changePrice(menuPriceChangeRequest.getNewPrice());
+        menuDao.save(menu);
+        menuHistoryDao.save(new MenuHistory(menu.getId(), menu.getPrice(), menu.getName(), LocalDateTime.now()));
+    }
+
+    public void changMenuName(MenuNameChangeRequest menuNameChangeRequest) {
+        Optional<Menu> searchedMenu = menuDao.findById(menuNameChangeRequest.getMenuId());
+        if (searchedMenu.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        Menu menu = searchedMenu.get();
+        menu = menu.changeName(menuNameChangeRequest.getNewName());
+        menuDao.save(menu);
+        menuHistoryDao.save(new MenuHistory(menu.getId(), menu.getPrice(), menu.getName(), LocalDateTime.now()));
     }
 }

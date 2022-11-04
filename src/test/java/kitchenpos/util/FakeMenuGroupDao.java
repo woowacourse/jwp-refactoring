@@ -1,7 +1,7 @@
 package kitchenpos.util;
 
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menu.MenuGroup;
 
 import java.util.HashMap;
 import java.util.List;

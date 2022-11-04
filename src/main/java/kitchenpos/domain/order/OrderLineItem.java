@@ -1,6 +1,4 @@
-package kitchenpos.domain;
-
-import java.util.Objects;
+package kitchenpos.domain.order;
 
 public class OrderLineItem {
     private final Long seq;

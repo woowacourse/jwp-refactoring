@@ -1,21 +1,21 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.*;
+import kitchenpos.dao.*;
+import kitchenpos.domain.history.MenuHistories;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItems;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.dto.*;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,16 +25,20 @@ public class OrderService {
     private final OrderLineItemDao orderLineItemDao;
     private final OrderTableDao orderTableDao;
 
+    private final MenuHistoryDao menuHistoryDao;
+
     public OrderService(
             final MenuDao menuDao,
             final OrderDao orderDao,
             final OrderLineItemDao orderLineItemDao,
-            final OrderTableDao orderTableDao
+            final OrderTableDao orderTableDao,
+            final MenuHistoryDao menuHistoryDao
     ) {
         this.menuDao = menuDao;
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
         this.orderTableDao = orderTableDao;
+        this.menuHistoryDao = menuHistoryDao;
     }
 
     @Transactional
@@ -143,5 +147,21 @@ public class OrderService {
         if (order.isCompletion()) {
             throw new IllegalArgumentException();
         }
+    }
+
+    public OrderInfoSearchResponse getInfo(OrderInfoSearchRequest orderInfoSearchRequest) {
+        Order order = orderDao.findById(orderInfoSearchRequest.getOrderId()).orElseThrow(IllegalArgumentException::new);
+        List<OrderLineItem> orderLineItems = orderLineItemDao.findAllByOrderId(orderInfoSearchRequest.getOrderId());
+        List<OrderInfoResponse> orderInfoResponses = new ArrayList<>();
+        for (OrderLineItem orderLineItem : orderLineItems) {
+            MenuHistories menuHistories = new MenuHistories(menuHistoryDao.findAllByDateAndMenuId(orderLineItem.getMenuId(), order.getOrderedTime()));
+            orderInfoResponses.add(
+                    new OrderInfoResponse(
+                            orderLineItem.getOrderId(),
+                            orderLineItem.getQuantity(),
+                            menuHistories.getLatestPrice(orderLineItem.getMenuId(), order.getOrderedTime()),
+                            menuHistories.getLatestName(orderLineItem.getMenuId(), order.getOrderedTime())));
+        }
+        return new OrderInfoSearchResponse(orderInfoResponses);
     }
 }

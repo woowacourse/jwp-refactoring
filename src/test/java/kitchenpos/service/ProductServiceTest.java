@@ -2,7 +2,7 @@ package kitchenpos.service;
 
 import kitchenpos.application.ProductService;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
 import kitchenpos.dto.ProductCreateRequest;
 import kitchenpos.dto.ProductResponse;
 import kitchenpos.util.FakeProductDao;

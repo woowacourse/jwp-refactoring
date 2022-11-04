@@ -1,8 +1,7 @@
 package kitchenpos.util;
 
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.table.TableGroup;
 
 import java.util.HashMap;
 import java.util.List;

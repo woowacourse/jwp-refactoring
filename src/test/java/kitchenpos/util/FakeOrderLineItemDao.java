@@ -1,8 +1,7 @@
 package kitchenpos.util;
 
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItem;
 
 import java.util.*;
 import java.util.stream.Collectors;
