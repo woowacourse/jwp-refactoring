@@ -7,11 +7,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
-import kitchenpos.domain.entity.Order;
 import kitchenpos.domain.entity.OrderLineItem;
 import kitchenpos.ui.jpa.dto.order.ChangeOrderStatusRequest;
 import kitchenpos.ui.jpa.dto.order.OrderCreateRequest;
-import kitchenpos.ui.jpa.dto.order.OrderCreateResponse;
 import kitchenpos.ui.jpa.dto.ordertable.ChangeEmptyRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,7 +25,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         ChangeEmptyRequest changeEmptyRequest = new ChangeEmptyRequest(false);
         HttpMethodFixture.httpPut(changeEmptyRequest, "/api/tables/" + ORDER_TABLE_1.getId() + "/empty");
 
-        OrderLineItem orderLineItem = new OrderLineItem(MENU_1, 1);
+        OrderLineItem orderLineItem = new OrderLineItem(MENU_1.getId(), MENU_1.getPrice().getValue(), 1);
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(ORDER_TABLE_1.getId(), List.of(orderLineItem));
 
         ExtractableResponse<Response> response = HttpMethodFixture.httpPost(orderCreateRequest, API);
@@ -49,7 +47,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         ChangeEmptyRequest changeEmptyRequest = new ChangeEmptyRequest(false);
         HttpMethodFixture.httpPut(changeEmptyRequest, "/api/tables/" + ORDER_TABLE_1.getId() + "/empty");
 
-        OrderLineItem orderLineItem = new OrderLineItem(MENU_1, 1);
+        OrderLineItem orderLineItem = new OrderLineItem(MENU_1.getId(), MENU_1.getPrice().getValue(), 1);
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(ORDER_TABLE_1.getId(), List.of(orderLineItem));
         ExtractableResponse<Response> orderCreateResponse = HttpMethodFixture.httpPost(orderCreateRequest, API);
 

@@ -69,7 +69,7 @@ class OrderServiceTest extends ServiceTest {
         Menu menu = new Menu("name", menuGroup, List.of(menuProduct), new Price(5000L));
         menuRepository.save(menu);
 
-        orderLineItem = new OrderLineItem(menu, 1L);
+        orderLineItem = new OrderLineItem(menu.getId(), menu.getPrice().getValue(), 1L);
     }
 
     @DisplayName("주문을 생성한다.")
