@@ -2,7 +2,7 @@ package kitchenpos.ui;
 
 import java.net.URI;
 import kitchenpos.application.TableGroupService;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.order.TableGroup;
 import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.TableGroupResponse;
 import org.springframework.http.ResponseEntity;

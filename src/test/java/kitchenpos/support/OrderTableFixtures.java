@@ -2,7 +2,7 @@ package kitchenpos.support;
 
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.order.OrderTable;
 
 public enum OrderTableFixtures {
 

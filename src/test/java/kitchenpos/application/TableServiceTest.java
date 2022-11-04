@@ -12,20 +12,18 @@ import java.util.List;
 import kitchenpos.dao.order.OrderRepository;
 import kitchenpos.dao.order.OrderTableRepository;
 import kitchenpos.dao.order.TableGroupRepository;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.order.TableGroup;
 import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.support.DatabaseCleaner;
-import kitchenpos.support.OrderTableFixtures;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 public class TableServiceTest {
