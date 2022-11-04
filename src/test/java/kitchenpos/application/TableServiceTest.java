@@ -90,7 +90,7 @@ class TableServiceTest {
             EmptyTableDto emptyTableDto = new EmptyTableDto(999999L, false);
 
             assertThatThrownBy(() -> tableService.changeEmpty(emptyTableDto))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .hasCauseInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -123,7 +123,7 @@ class TableServiceTest {
         @Test
         void 존재하지_않는_테이블의_고객_수를_수정하려는_경우_예외를_발생시킨다() {
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(new UpdateGuestNumberDto(999999L, 10)))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .hasCauseInstanceOf(IllegalArgumentException.class);
         }
     }
 

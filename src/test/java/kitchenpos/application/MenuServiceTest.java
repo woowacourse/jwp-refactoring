@@ -59,7 +59,7 @@ class MenuServiceTest {
                     List.of(new CreateMenuProductDto(9999999L, 2)));
 
             assertThatThrownBy(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .hasCauseInstanceOf(IllegalArgumentException.class);
         }
 
         @Test

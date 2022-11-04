@@ -73,7 +73,7 @@ class OrderServiceTest {
         void 존재하지_않는_테이블에서_주문한_경우_예외가_발생한다() {
             List<CreateOrderLineItemDto> orderLineItems = List.of(new CreateOrderLineItemDto(1L, 1));
             assertThatThrownBy(() -> orderService.create(new CreateOrderDto(99999999L, orderLineItems)))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .hasCauseInstanceOf(IllegalArgumentException.class);
         }
     }
 
@@ -114,7 +114,7 @@ class OrderServiceTest {
         void 존재하지_않는_주문인_경우_예외를_발생시킨다() {
             UpdateOrderStatusDto updateOrderStatusDto = new UpdateOrderStatusDto(99999L, OrderStatus.MEAL);
             assertThatThrownBy(() -> orderService.changeOrderStatus(updateOrderStatusDto))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .hasCauseInstanceOf(IllegalArgumentException.class);
         }
     }
 
