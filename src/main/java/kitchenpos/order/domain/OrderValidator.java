@@ -33,10 +33,9 @@ public class OrderValidator {
 
     private void validateMenus(final List<OrderLineItem> orderLineItems) {
         final List<Long> menuIds = orderLineItems.stream()
-                .map(it -> it.getMenuId())
+                .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
-
-        if (orderLineItems.size() != menuRepository.countMenuByIdIn(menuIds)) {
+        if (menuIds.size() != menuRepository.countMenuByIdIn(menuIds)) {
             throw new IllegalArgumentException("존재하지 않는 Menu가 존재합니다.");
         }
     }
