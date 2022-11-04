@@ -1,7 +1,5 @@
 package kitchenpos.domain.entity;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -9,7 +7,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 @Entity
@@ -26,21 +23,17 @@ public class Menu {
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
 
-    @OneToMany(mappedBy = "menu")
-    private List<MenuProduct> menuProducts = new ArrayList<>();
-
     @Embedded
     private Price price;
 
     protected Menu() {
     }
 
-    public Menu(String name, MenuGroup menuGroup, List<MenuProduct> menuProducts, Price price) {
-        validatePrice(menuProducts, price);
+    public Menu(String name, MenuGroup menuGroup, Price menuPrice, Price sumPrice) {
+        validatePrice(menuPrice, sumPrice);
         this.name = name;
         this.menuGroup = menuGroup;
-        this.menuProducts = menuProducts;
-        this.price = price;
+        this.price = menuPrice;
     }
 
     public Menu(Long id, String name, MenuGroup menuGroup, Price price) {
@@ -50,12 +43,7 @@ public class Menu {
         this.price = price;
     }
 
-    private void validatePrice(List<MenuProduct> menuProducts, Price menuPrice) {
-        Price sumPrice = new Price(0);
-        for (MenuProduct menuProduct : menuProducts) {
-            Product product = menuProduct.getProduct();
-            sumPrice = sumPrice.add(new Price(menuProduct.getQuantity() * product.getPrice()));
-        }
+    private void validatePrice(Price menuPrice, Price sumPrice) {
         if (menuPrice.isExpensiveThan(sumPrice)) {
             throw new IllegalArgumentException();
         }
@@ -75,9 +63,5 @@ public class Menu {
 
     public MenuGroup getMenuGroup() {
         return menuGroup;
-    }
-
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
     }
 }

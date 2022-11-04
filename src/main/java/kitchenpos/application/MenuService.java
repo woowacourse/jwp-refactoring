@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.collection.MenuProducts;
@@ -37,13 +38,10 @@ public class MenuService {
 
         MenuProducts menuProducts = menuProductService.findMenuProducts(menuCreateRequest.getMenuProductIds());
         final List<Product> products = productService.findProducts(menuProducts.getProductIds());
-        long sum = menuProducts.sumPrice(products);
+        long priceSum = menuProducts.sumPrice(products);
 
-        if (menuCreateRequest.getPrice() > sum) {
-            throw new IllegalArgumentException();
-        }
-
-        Menu menu = new Menu(menuCreateRequest.getName(), menuGroup, menuProducts.getElements(), new Price(menuCreateRequest.getPrice()));
+        Menu menu = new Menu(menuCreateRequest.getName(), menuGroup, new Price(menuCreateRequest.getPrice()),
+                new Price(priceSum));
         menuRepository.save(menu);
 
         return new MenuCreateResponse(menu.getId(), menuCreateRequest.getName(), menuCreateRequest.getPrice(),
@@ -52,8 +50,14 @@ public class MenuService {
 
     public List<MenuListResponse> list() {
         List<Menu> menus = menuRepository.findAll();
-        return menus.stream()
-                .map(menu -> new MenuListResponse(menu.getId(), menu.getName(), menu.getPrice().getValue(), menu.getMenuGroup().getId(), (new MenuProducts(menu.getMenuProducts())).getProductIds()))
-                .collect(Collectors.toList());
+        List<MenuListResponse> menuListResponses = new ArrayList<>();
+        for (Menu menu : menus) {
+            MenuProducts menuProducts = menuProductService.findMenuProductsInMenu(menu);
+            MenuListResponse menuListResponse = new MenuListResponse(menu.getId(), menu.getName(),
+                    menu.getPrice().getValue(), menu.getMenuGroup().getId()
+                    , menuProducts.getElements());
+            menuListResponses.add(menuListResponse);
+        }
+        return menuListResponses;
     }
 }

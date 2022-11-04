@@ -66,7 +66,7 @@ class OrderServiceTest extends ServiceTest {
 
         MenuProduct menuProduct = new MenuProduct(product, 5L);
 
-        Menu menu = new Menu("name", menuGroup, List.of(menuProduct), new Price(5000L));
+        Menu menu = new Menu("name", menuGroup, new Price(5000L), new Price(product.getPrice() * menuProduct.getQuantity()));
         menuRepository.save(menu);
 
         orderLineItem = new OrderLineItem(menu.getId(), menu.getPrice().getValue(), 1L);

@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.collection.MenuProducts;
+import kitchenpos.domain.entity.Menu;
 import kitchenpos.domain.entity.MenuProduct;
 import kitchenpos.repository.MenuProductRepository;
 import org.springframework.stereotype.Service;
@@ -26,5 +27,9 @@ public class MenuProductService {
                 .map(this::findMenuProduct)
                 .collect(Collectors.toList());
         return new MenuProducts(menuProducts);
+    }
+
+    public MenuProducts findMenuProductsInMenu(Menu menu) {
+        return new MenuProducts(menuProductRepository.findAllByMenu(menu));
     }
 }

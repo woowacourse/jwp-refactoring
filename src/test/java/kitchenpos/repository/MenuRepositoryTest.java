@@ -29,12 +29,11 @@ class MenuRepositoryTest {
     void setUp() {
         Product product = new Product("name", 1000L);
 
-        MenuProduct menuProduct = new MenuProduct(product, 3);
         MenuGroup menuGroup = new MenuGroup(1L, "name");
-        menu1 = new Menu("이름1", menuGroup, List.of(menuProduct), new Price(1000L));
+        menu1 = new Menu("name", menuGroup, new Price(1000L), new Price(product.getPrice()));
         menuRepository.save(menu1);
 
-        menu2 = new Menu("이름2", menuGroup, List.of(menuProduct), new Price(1000L));
+        menu2 = new Menu("name", menuGroup, new Price(1000L), new Price(product.getPrice()));
         menuRepository.save(menu2);
     }
 

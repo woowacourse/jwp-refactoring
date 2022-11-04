@@ -9,18 +9,18 @@ public class MenuListResponse {
     private String name;
     private long price;
     private Long menuGroupId;
-    private List<Long> menuProductIds;
+    private List<MenuProduct> menuProducts;
 
     public MenuListResponse() {
     }
 
     public MenuListResponse(Long id, String name, long price, Long menuGroupId,
-                              List<Long> menuProductIds) {
+                              List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProductIds = menuProductIds;
+        this.menuProducts = menuProducts;
     }
 
     public Long getId() {
@@ -39,7 +39,7 @@ public class MenuListResponse {
         return menuGroupId;
     }
 
-    public List<Long> getMenuProductIds() {
-        return menuProductIds;
+    public List<MenuProduct> getMenuProducts() {
+        return menuProducts;
     }
 }
