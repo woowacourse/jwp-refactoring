@@ -24,9 +24,8 @@ public class TableGroupJdbcRepository implements TableGroupRepository {
     public TableGroup save(final TableGroup entity) {
         TableGroup tableGroup = tableGroupDao.save(entity);
         List<OrderTable> orderTables = entity.getOrderTables().stream()
-                .map(orderTable -> new OrderTable(orderTable.getId(), tableGroup.getId(),
-                        orderTable.getNumberOfGuests(), false))
-                .map(orderTableDao::save)
+                .map(orderTable -> new OrderTable(orderTable.getId(), orderTable.getNumberOfGuests(), false))
+                .map(orderTable -> orderTableDao.save(orderTable, tableGroup.getId()))
                 .collect(Collectors.toList());
         return new TableGroup(tableGroup.getId(), tableGroup.getCreatedDate(), orderTables);
     }

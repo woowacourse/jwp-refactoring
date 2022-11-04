@@ -10,6 +10,7 @@ import kitchenpos.table.dao.OrderTableDao;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.domain.TableGroupRepository;
+import kitchenpos.table.domain.TableValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,16 +19,20 @@ public class TableGroupService {
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
     private final TableGroupRepository tableGroupRepository;
+    private final TableValidator tableValidator;
 
-    public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao, final TableGroupRepository tableGroupRepository) {
+    public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao, final TableGroupRepository tableGroupRepository,
+                             final TableValidator tableValidator) {
         this.orderDao = orderDao;
         this.orderTableDao = orderTableDao;
         this.tableGroupRepository = tableGroupRepository;
+        this.tableValidator = tableValidator;
     }
 
     @Transactional
     public TableGroup create(final TableGroupCreateRequest request) {
         final List<Long> orderTableIds = mapToIds(request);
+        tableValidator.validateTableGroup(orderTableIds);
         TableGroup tableGroup = new TableGroup(orderTableDao.findAllByIdIn(orderTableIds));
         tableGroup.validateOrderTableSize(orderTableIds.size());
 

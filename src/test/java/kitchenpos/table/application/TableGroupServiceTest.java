@@ -40,7 +40,8 @@ class TableGroupServiceTest {
         @Nested
         class 주문테이블이_1개인_경우 extends SpringServiceTest {
 
-            private final TableGroupCreateRequest request = new TableGroupCreateRequest(Arrays.asList(new OrderTableGroupRequest(1L)));
+            private final TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    Arrays.asList(new OrderTableGroupRequest(1L)));
 
             @Test
             void 예외가_발생한다() {
@@ -79,7 +80,7 @@ class TableGroupServiceTest {
 
             @BeforeEach
             void setUp() {
-                orderTableDao.save(new OrderTable(2L, null, 0, false));
+                orderTableDao.save(new OrderTable(2L, 0, false));
             }
 
             @Test
@@ -105,7 +106,6 @@ class TableGroupServiceTest {
 
                 assertAll(
                         () -> assertThat(actual).isNotNull(),
-                        () -> assertThat(actual.getOrderTables().get(0).getTableGroupId()).isEqualTo(actual.getId()),
                         () -> assertThat(actual.getOrderTables().get(0).isEmpty()).isFalse()
                 );
             }
@@ -123,10 +123,10 @@ class TableGroupServiceTest {
             @BeforeEach
             void setUp() {
                 tableGroupId = tableGroupRepository.save(new TableGroup(LocalDateTime.now(),
-                        Arrays.asList(
-                                new OrderTable(1L, null, 0, true),
-                                new OrderTable(2L, null, 0, true)
-                        )))
+                                Arrays.asList(
+                                        new OrderTable(1L, 0, true),
+                                        new OrderTable(2L, 0, true)
+                                )))
                         .getId();
                 orderDao.save(new Order(1L, COOKING.name(), LocalDateTime.now(),
                         Arrays.asList(new OrderLineItem(1L, 1))));
@@ -149,8 +149,8 @@ class TableGroupServiceTest {
             void setUp() {
                 tableGroupId = tableGroupRepository.save(new TableGroup(LocalDateTime.now(),
                                 Arrays.asList(
-                                        new OrderTable(1L, null, 0, true),
-                                        new OrderTable(2L, null, 0, true)
+                                        new OrderTable(1L, 0, true),
+                                        new OrderTable(2L, 0, true)
                                 )))
                         .getId();
                 orderDao.save(new Order(1L, MEAL.name(), LocalDateTime.now(),
@@ -174,8 +174,8 @@ class TableGroupServiceTest {
             void setUp() {
                 tableGroupId = tableGroupDao.save(new TableGroup(LocalDateTime.now(),
                                 Arrays.asList(
-                                        orderTableDao.save(new OrderTable(1L, tableGroupId, 0, true)),
-                                        orderTableDao.save(new OrderTable(2L, tableGroupId, 0, true))
+                                        orderTableDao.save(new OrderTable(1L, 0, true), tableGroupId),
+                                        orderTableDao.save(new OrderTable(2L, 0, true), tableGroupId)
                                 )))
                         .getId();
             }
@@ -183,10 +183,9 @@ class TableGroupServiceTest {
             @Test
             void 단체를_해체한다() {
                 tableGroupService.ungroup(tableGroupId);
-                OrderTable actual = orderTableDao.findById(1L)
-                        .get();
+                Long actual = orderTableDao.findTableGroupIdById(1L);
 
-                assertThat(actual.getTableGroupId()).isNull();
+                assertThat(actual).isNull();
             }
         }
     }

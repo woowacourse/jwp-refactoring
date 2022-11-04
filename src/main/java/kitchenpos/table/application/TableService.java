@@ -7,6 +7,7 @@ import kitchenpos.order.dao.OrderDao;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.dao.OrderTableDao;
 import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,15 +15,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class TableService {
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
+    private final TableValidator tableValidator;
 
-    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
+    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao, final TableValidator tableValidator) {
         this.orderDao = orderDao;
         this.orderTableDao = orderTableDao;
+        this.tableValidator = tableValidator;
     }
 
     @Transactional
     public OrderTable create(final OrderTableCreateRequest request) {
-        return orderTableDao.save(new OrderTable(request.getNumberOfGuests(), request.isEmpty()));
+        return orderTableDao.save(new OrderTable(request.getNumberOfGuests(), request.isEmpty()), null);
     }
 
     public List<OrderTable> list() {
@@ -34,6 +37,7 @@ public class TableService {
         OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
         validateCookingOrMeal(orderTableId);
+        tableValidator.validateGroupingTable(savedOrderTable);
         savedOrderTable.changeEmpty(request.isEmpty());
         return orderTableDao.save(savedOrderTable);
     }

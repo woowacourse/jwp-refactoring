@@ -82,14 +82,14 @@ class TableServiceTest {
                                         new OrderTable(0, true)
                                 )))
                         .getId();
-                orderTableDao.save(new OrderTable(orderTableId, tableGroupId, 0, true));
+                orderTableDao.save(new OrderTable(orderTableId, 0, true), tableGroupId);
             }
 
             @Test
             void 예외가_발생한다() {
                 assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, request))
                         .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessage("단체 지정된 테이블 상태를 변화할 수 없습니다.");
+                        .hasMessage("주문 테이블이 비어있지 않거나 이미 단체지정되어있습니다.");
             }
         }
 
@@ -201,7 +201,7 @@ class TableServiceTest {
 
             @BeforeEach
             void setUp() {
-                orderTableDao.save(new OrderTable(1L, null, 0, false));
+                orderTableDao.save(new OrderTable(1L, 0, false));
             }
 
             @Test

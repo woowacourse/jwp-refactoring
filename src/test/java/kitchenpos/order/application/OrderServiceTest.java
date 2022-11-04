@@ -33,7 +33,7 @@ class OrderServiceTest {
 
             @BeforeEach
             void setUp() {
-                orderTableDao.save(new OrderTable(1L, null, 1, false));
+                orderTableDao.save(new OrderTable(1L, 1, false));
             }
 
             @Test
@@ -52,7 +52,7 @@ class OrderServiceTest {
 
             @BeforeEach
             void setUp() {
-                orderTableDao.save(new OrderTable(1L, null, 1, false));
+                orderTableDao.save(new OrderTable(1L, 1, false));
             }
 
             @Test
@@ -98,7 +98,7 @@ class OrderServiceTest {
 
             @BeforeEach
             void setUp() {
-                orderTableDao.save(new OrderTable(1L, null, 1, false));
+                orderTableDao.save(new OrderTable(1L, 1, false));
             }
 
             @Test
