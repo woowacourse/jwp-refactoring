@@ -15,8 +15,7 @@ import kitchenpos.order.dto.OrderFindResponse;
 import kitchenpos.order.dto.OrderLineItemCreateRequest;
 import kitchenpos.order.dto.OrderLineItemsValidateEvent;
 import kitchenpos.order.dto.OrderStatusChangeResponse;
-import kitchenpos.table.dao.OrderTableDao;
-import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.application.OrderTableValidatorImpl;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,14 +24,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderService {
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
-    private final OrderTableDao orderTableDao;
+    private final OrderTableValidator orderTableValidator;
     private final ApplicationEventPublisher eventPublisher;
 
     public OrderService(final OrderDao orderDao, final OrderLineItemDao orderLineItemDao,
-                        final OrderTableDao orderTableDao, final ApplicationEventPublisher eventPublisher) {
+                        final OrderTableValidatorImpl orderTableValidatorImpl,
+                        final ApplicationEventPublisher eventPublisher) {
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
-        this.orderTableDao = orderTableDao;
+        this.orderTableValidator = orderTableValidatorImpl;
         this.eventPublisher = eventPublisher;
     }
 
@@ -40,25 +40,23 @@ public class OrderService {
     public OrderCreateResponse create(final OrderCreateRequest orderCreateRequest) {
         eventPublisher.publishEvent(new OrderLineItemsValidateEvent(orderCreateRequest));
 
-        final OrderTable orderTable = orderTableDao.findById(orderCreateRequest.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
-        validateIfTableEmpty(orderTable);
+        final Long orderTableId = orderTableValidator.validOrderTableAndGet(orderCreateRequest);
 
         final Order savedOrder = orderDao.save(
                 new Order(
-                        orderTable.getId(),
+                        orderTableId,
                         OrderStatus.COOKING.name(),
                         LocalDateTime.now()
                 )
         );
         final List<OrderLineItemCreateRequest> orderLineItems = orderCreateRequest.getOrderLineItems();
-        final List<OrderLineItem> savedOrderLineItems = generateOrderLineItems(orderTable, orderLineItems);
+        final List<OrderLineItem> savedOrderLineItems = generateOrderLineItems(orderTableId, orderLineItems);
         savedOrder.addOrderLineItem(savedOrderLineItems);
 
         return OrderCreateResponse.from(savedOrder);
     }
 
-    private List<OrderLineItem> generateOrderLineItems(final OrderTable orderTable,
+    private List<OrderLineItem> generateOrderLineItems(final Long orderTableId,
                                                        final List<OrderLineItemCreateRequest> orderLineItems) {
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (final OrderLineItemCreateRequest orderLineItem : orderLineItems) {
@@ -66,19 +64,13 @@ public class OrderService {
                     orderLineItemDao.save(
                             new OrderLineItem(
                                     null,
-                                    orderTable.getId(),
+                                    orderTableId,
                                     orderLineItem.getQuantity()
                             )
                     )
             );
         }
         return savedOrderLineItems;
-    }
-
-    private void validateIfTableEmpty(final OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
     }
 
     public List<OrderFindResponse> list() {
