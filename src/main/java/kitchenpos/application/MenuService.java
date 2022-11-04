@@ -16,16 +16,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MenuService {
-    private final MenuDao menuDao;
+    private final MenuDao menuRepository;
     private final MenuGroupDao menuGroupDao;
     private final ProductDao productDao;
 
     public MenuService(
-            final MenuDao menuDao,
+            final MenuDao menuRepository,
             final MenuGroupDao menuGroupDao,
             final ProductDao productDao
     ) {
-        this.menuDao = menuDao;
+        this.menuRepository = menuRepository;
         this.menuGroupDao = menuGroupDao;
         this.productDao = productDao;
     }
@@ -36,7 +36,7 @@ public class MenuService {
             throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다.");
         }
 
-        final Menu savedMenu = menuDao.save(new Menu(request.getName(),
+        final Menu savedMenu = menuRepository.save(new Menu(request.getName(),
                 request.getPrice(),
                 request.getMenuGroupId(),
                 mapToMenuProduct(request.getMenuProducts())));
@@ -56,7 +56,7 @@ public class MenuService {
 
     @Transactional(readOnly = true)
     public List<MenuResponse> list() {
-        return menuDao.findAll().stream()
+        return menuRepository.findAll().stream()
                 .map(MenuResponse::from)
                 .collect(Collectors.toList());
     }

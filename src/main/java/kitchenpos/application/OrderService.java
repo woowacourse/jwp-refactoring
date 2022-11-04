@@ -19,17 +19,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
-    private final MenuDao menuDao;
-    private final OrderDao orderDao;
+    private final MenuDao menuRepository;
+    private final OrderDao orderRepository;
     private final OrderTableDao orderTableDao;
 
     public OrderService(
-            final MenuDao menuDao,
-            final OrderDao orderDao,
+            final MenuDao menuRepository,
+            final OrderDao orderRepository,
             final OrderTableDao orderTableDao
     ) {
-        this.menuDao = menuDao;
-        this.orderDao = orderDao;
+        this.menuRepository = menuRepository;
+        this.orderRepository = orderRepository;
         this.orderTableDao = orderTableDao;
     }
 
@@ -41,7 +41,7 @@ public class OrderService {
         final Order order = createOrderRequest(orderTable.getId(), request.getOrderLineItems());
         validateSameCountAsItemAndMenu(request.getOrderLineItems(), order);
 
-        return OrderResponse.from(orderDao.save(order));
+        return OrderResponse.from(orderRepository.save(order));
     }
 
     private OrderTable getOrderTable(final OrderCreateRequest request) {
@@ -81,14 +81,14 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public List<OrderResponse> list() {
-        return orderDao.findAll().stream()
+        return orderRepository.findAll().stream()
                 .map(OrderResponse::from)
                 .collect(Collectors.toList());
     }
 
     @Transactional
     public OrderStatusDto changeOrderStatus(final Long orderId, final OrderStatusDto request) {
-        final Order savedOrder = orderDao.findById(orderId)
+        final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
         savedOrder.changeOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
