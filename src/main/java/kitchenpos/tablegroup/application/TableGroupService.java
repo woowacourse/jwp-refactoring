@@ -8,6 +8,7 @@ import kitchenpos.table.dao.OrderTableDao;
 import kitchenpos.tablegroup.dao.TableGroupDao;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTables;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.dto.TableGroupResponse;
 import kitchenpos.tablegroup.dto.TableGroupCreateRequest;
@@ -29,9 +30,9 @@ public class TableGroupService {
     }
 
     public TableGroupResponse create(final TableGroupCreateRequest request) {
-        final List<OrderTable> orderTables = findOrderTables(request);
-        final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(orderTables));
-        final List<OrderTable> savedOrderTables = saveOrderTables(savedTableGroup.getId(), orderTables);
+        OrderTables orderTables = new OrderTables(findOrderTables(request));
+        final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup());
+        final List<OrderTable> savedOrderTables = saveOrderTables(savedTableGroup.getId(), orderTables.getOrderTables());
 
         return TableGroupResponse.of(savedTableGroup,  savedOrderTables);
     }
