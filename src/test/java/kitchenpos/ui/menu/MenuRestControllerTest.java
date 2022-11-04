@@ -16,6 +16,10 @@ import kitchenpos.dto.menu.request.MenuCreateRequest;
 import kitchenpos.dto.menu.request.MenuProductCreateRequest;
 import kitchenpos.dto.menu.response.MenuProductResponse;
 import kitchenpos.dto.menu.response.MenuResponse;
+import kitchenpos.exception.badrequest.ExpensiveMenuPriceException;
+import kitchenpos.exception.badrequest.MenuGroupNotExistsException;
+import kitchenpos.exception.badrequest.NegativePriceException;
+import kitchenpos.exception.badrequest.ProductNotExistsException;
 import kitchenpos.ui.product.RestControllerTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -40,6 +44,66 @@ class MenuRestControllerTest extends RestControllerTest {
                         .content(objectMapper.writeValueAsString(menuRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"))
+                .andDo(print());
+    }
+
+    @Test
+    void 메뉴가_존재하지_않는_메뉴_그룹에_속할_경우_400() throws Exception {
+        MenuProductCreateRequest menuProductRequest = new MenuProductCreateRequest(1L, 1);
+        MenuCreateRequest menuRequest = new MenuCreateRequest("메뉴", BigDecimal.valueOf(1_000), 1L,
+                List.of(menuProductRequest));
+
+        when(menuService.create(any(MenuCreateRequest.class))).thenThrow(new MenuGroupNotExistsException());
+
+        mockMvc.perform(post("/api/menus")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(menuRequest)))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+    }
+
+    @Test
+    void 메뉴_가격이_0원_미만이면_400() throws Exception {
+        MenuProductCreateRequest menuProductRequest = new MenuProductCreateRequest(1L, 1);
+        MenuCreateRequest menuRequest = new MenuCreateRequest("메뉴", BigDecimal.valueOf(-1), 1L,
+                List.of(menuProductRequest));
+
+        when(menuService.create(any(MenuCreateRequest.class))).thenThrow(new NegativePriceException());
+
+        mockMvc.perform(post("/api/menus")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(menuRequest)))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+    }
+
+    @Test
+    void 메뉴에_존재하지_않는_상품이_포함되어_있으면_400() throws Exception {
+        MenuProductCreateRequest menuProductRequest = new MenuProductCreateRequest(1L, 1);
+        MenuCreateRequest menuRequest = new MenuCreateRequest("메뉴", BigDecimal.valueOf(1_000), 1L,
+                List.of(menuProductRequest));
+
+        when(menuService.create(any(MenuCreateRequest.class))).thenThrow(new ProductNotExistsException());
+
+        mockMvc.perform(post("/api/menus")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(menuRequest)))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+    }
+
+    @Test
+    void 메뉴_가격이_메뉴_상품_가격_총합보다_크면_400() throws Exception {
+        MenuProductCreateRequest menuProductRequest = new MenuProductCreateRequest(1L, 1);
+        MenuCreateRequest menuRequest = new MenuCreateRequest("메뉴", BigDecimal.valueOf(1_000), 1L,
+                List.of(menuProductRequest));
+
+        when(menuService.create(any(MenuCreateRequest.class))).thenThrow(new ExpensiveMenuPriceException());
+
+        mockMvc.perform(post("/api/menus")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(menuRequest)))
+                .andExpect(status().isBadRequest())
                 .andDo(print());
     }
 

@@ -1,6 +1,7 @@
 package kitchenpos.domain.menu;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
@@ -13,6 +14,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import kitchenpos.domain.common.Price;
+import kitchenpos.exception.badrequest.ExpensiveMenuPriceException;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Table(name = "menu")
@@ -27,10 +30,16 @@ public class Menu {
     private Price price;
     @Column(name = "menu_group_id", nullable = false)
     private Long menuGroupId;
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
-    private List<MenuProduct> menuProducts;
+    @BatchSize(size = 100)
+    @OneToMany(mappedBy = "menu", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+    private List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected Menu() {
+    }
+
+    public Menu(final String name, final BigDecimal price, final Long menuGroupId,
+                final List<MenuProduct> menuProducts) {
+        this(null, name, new Price(price), menuGroupId, menuProducts);
     }
 
     public Menu(final Long id, final String name, final Price price, final Long menuGroupId,
@@ -55,7 +64,7 @@ public class Menu {
                 .map(MenuProduct::getAmount)
                 .reduce(new Price(BigDecimal.ZERO), Price::add);
         if (price.isExpensiveThan(sum)) {
-            throw new IllegalArgumentException();
+            throw new ExpensiveMenuPriceException();
         }
     }
 

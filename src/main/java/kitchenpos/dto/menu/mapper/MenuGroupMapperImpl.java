@@ -9,6 +9,6 @@ public class MenuGroupMapperImpl implements MenuGroupMapper {
 
     @Override
     public MenuGroup toMenuGroup(final MenuGroupCreateRequest menuGroupCreateRequest) {
-        return new MenuGroup(null, menuGroupCreateRequest.getName());
+        return new MenuGroup(menuGroupCreateRequest.getName());
     }
 }

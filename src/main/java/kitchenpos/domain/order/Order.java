@@ -3,6 +3,7 @@ package kitchenpos.domain.order;
 import static kitchenpos.domain.common.OrderStatus.COMPLETION;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
@@ -16,6 +17,10 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import kitchenpos.domain.common.OrderStatus;
+import kitchenpos.exception.badrequest.CompletedOrderCannotChangeException;
+import kitchenpos.exception.badrequest.OrderLineItemNotExistsException;
+import kitchenpos.exception.badrequest.OrderTableEmptyException;
+import org.hibernate.annotations.BatchSize;
 import org.springframework.util.CollectionUtils;
 
 @Entity
@@ -32,19 +37,31 @@ public class Order {
     private OrderStatus orderStatus;
     @Column(name = "ordered_time", nullable = false)
     private LocalDateTime orderedTime;
-    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
-    private List<OrderLineItem> orderLineItems;
+    @BatchSize(size = 100)
+    @OneToMany(mappedBy = "order", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+    private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     protected Order() {
     }
 
+    public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems, final boolean orderTableEmpty) {
+        this(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems, orderTableEmpty);
+    }
+
     public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime,
-                 final List<OrderLineItem> orderLineItems) {
+                 final List<OrderLineItem> orderLineItems, final boolean orderTableEmpty) {
+        validateTableNotEmpty(orderTableEmpty);
         mapOrderLineItems(orderLineItems);
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
+    }
+
+    private void validateTableNotEmpty(final boolean orderTableEmpty) {
+        if (orderTableEmpty) {
+            throw new OrderTableEmptyException();
+        }
     }
 
     private void mapOrderLineItems(final List<OrderLineItem> orderLineItems) {
@@ -57,7 +74,7 @@ public class Order {
 
     private void validateItemExists(final List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
+            throw new OrderLineItemNotExistsException();
         }
     }
 
@@ -68,7 +85,7 @@ public class Order {
 
     private void validateNotCompleted() {
         if (orderStatus == COMPLETION) {
-            throw new IllegalArgumentException();
+            throw new CompletedOrderCannotChangeException();
         }
     }
 

@@ -3,6 +3,7 @@ package kitchenpos.domain.common;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import kitchenpos.exception.badrequest.NegativeNumberOfGuestsException;
 
 @Embeddable
 public class NumberOfGuests {
@@ -18,9 +19,9 @@ public class NumberOfGuests {
         this.value = value;
     }
 
-    private static void validateNotNegative(final int value) {
+    private void validateNotNegative(final int value) {
         if (value < 0) {
-            throw new IllegalArgumentException();
+            throw new NegativeNumberOfGuestsException();
         }
     }
 

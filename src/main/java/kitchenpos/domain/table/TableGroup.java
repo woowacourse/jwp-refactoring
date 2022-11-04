@@ -10,6 +10,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import kitchenpos.exception.badrequest.AlreadyGroupedException;
+import kitchenpos.exception.badrequest.InvalidOrderTableSizeException;
+import kitchenpos.exception.badrequest.OrderTableNotEmptyException;
+import org.hibernate.annotations.BatchSize;
 import org.springframework.util.CollectionUtils;
 
 @Entity
@@ -21,10 +25,15 @@ public class TableGroup {
     private Long id;
     @Column(name = "created_date")
     private LocalDateTime createdDate;
+    @BatchSize(size = 100)
     @OneToMany(mappedBy = "tableGroup")
     private List<OrderTable> orderTables = new ArrayList<>();
 
     protected TableGroup() {
+    }
+
+    public TableGroup(final List<OrderTable> orderTables) {
+        this(null, LocalDateTime.now(), orderTables);
     }
 
     public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
@@ -42,26 +51,26 @@ public class TableGroup {
     private void validateOrderTables(final List<OrderTable> orderTables) {
         validateOrderTablesSize(orderTables);
         for (final OrderTable orderTable : orderTables) {
+            validateNotGrouped(orderTable);
             validateEmptyTable(orderTable);
-            validateTableGroupNotDesignated(orderTable);
         }
     }
 
     private void validateOrderTablesSize(final List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
+            throw new InvalidOrderTableSizeException();
         }
     }
 
     private void validateEmptyTable(final OrderTable orderTable) {
         if (!orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new OrderTableNotEmptyException();
         }
     }
 
-    private void validateTableGroupNotDesignated(final OrderTable orderTable) {
-        if (orderTable.isDesignatedTableGroup()) {
-            throw new IllegalArgumentException();
+    private void validateNotGrouped(final OrderTable orderTable) {
+        if (orderTable.isGrouped()) {
+            throw new AlreadyGroupedException();
         }
     }
 

@@ -16,5 +16,5 @@ import org.springframework.stereotype.Service;
         @Filter(type = FilterType.ANNOTATION, classes = {Repository.class, Service.class}),
         @Filter(type = FilterType.REGEX, pattern = "kitchenpos.dto.*")
 })
-public @interface TransactionalTest {
+public @interface ServiceTest {
 }

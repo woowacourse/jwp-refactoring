@@ -1,7 +1,8 @@
 package kitchenpos.domain.order;
 
+import java.math.BigDecimal;
 import java.util.Objects;
-import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -10,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import kitchenpos.domain.common.Quantity;
 
 @Entity
 @Table(name = "order_line_item")
@@ -21,19 +23,23 @@ public class OrderLineItem {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
-    @Column(name = "menu_id", nullable = false)
-    private Long menuId;
-    @Column(name = "quantity", nullable = false)
-    private long quantity;
+    @Embedded
+    private Quantity quantity;
+    @Embedded
+    private OrderedMenu orderedMenu;
 
-    public OrderLineItem() {
+    protected OrderLineItem() {
     }
 
-    public OrderLineItem(final Long seq, final Order order, final Long menuId, final long quantity) {
+    public OrderLineItem(final long quantity, final OrderedMenu orderedMenu) {
+        this(null, null, new Quantity(quantity), orderedMenu);
+    }
+
+    public OrderLineItem(final Long seq, final Order order, final Quantity quantity, final OrderedMenu orderedMenu) {
         this.seq = seq;
         this.order = order;
-        this.menuId = menuId;
         this.quantity = quantity;
+        this.orderedMenu = orderedMenu;
     }
 
     public void mapOrder(final Order order) {
@@ -48,32 +54,20 @@ public class OrderLineItem {
         return seq;
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
-    }
-
     public Order getOrder() {
         return order;
     }
 
-    public void setOrder(final Order order) {
-        this.order = order;
-    }
-
-    public Long getMenuId() {
-        return menuId;
-    }
-
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
-    }
-
     public long getQuantity() {
-        return quantity;
+        return quantity.getValue();
     }
 
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
+    public String getMenuName() {
+        return orderedMenu.getName();
+    }
+
+    public BigDecimal getMenuPrice() {
+        return orderedMenu.getPrice();
     }
 
     @Override

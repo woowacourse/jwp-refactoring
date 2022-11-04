@@ -4,14 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.TransactionalTest;
-import kitchenpos.application.menu.MenuGroupService;
+import kitchenpos.ServiceTest;
 import kitchenpos.dto.menu.request.MenuGroupCreateRequest;
 import kitchenpos.dto.menu.response.MenuGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@TransactionalTest
+@ServiceTest
 class MenuGroupServiceTest {
 
     @Autowired
