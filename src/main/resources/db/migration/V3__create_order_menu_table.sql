@@ -8,7 +8,7 @@ CREATE TABLE order_menu
     PRIMARY KEY (id)
 );
 
--- alter table order_line_item drop foreign key fk_order_line_item_menu;
+ALTER TABLE order_line_item DROP CONSTRAINT fk_order_line_item_menu;
 
 ALTER TABLE order_line_item
     ADD CONSTRAINT fk_order_line_item_order_menu
