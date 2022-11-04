@@ -6,12 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Product;
-import kitchenpos.dto.request.MenuCreateRequest;
-import kitchenpos.dto.request.MenuProductRequest;
-import kitchenpos.dto.response.MenuGroupResponse;
-import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.product.Product;
+import kitchenpos.dto.menu.request.MenuCreateRequest;
+import kitchenpos.dto.menu.request.MenuProductRequest;
+import kitchenpos.dto.menu.response.MenuGroupResponse;
+import kitchenpos.dto.menu.response.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
