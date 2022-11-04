@@ -1,8 +1,6 @@
 package kitchenpos.order.application.dto;
 
 import java.util.List;
-import kitchenpos.application.dto.OrderLineItemRequest;
-import kitchenpos.application.dto.OrderLineItemRequest.Create;
 import kitchenpos.order.domain.OrderStatus;
 
 public class OrderRequest {

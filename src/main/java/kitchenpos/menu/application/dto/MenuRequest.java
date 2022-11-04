@@ -3,9 +3,9 @@ package kitchenpos.menu.application.dto;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.MenuProductRequest.Create;
+import kitchenpos.menu.application.dto.MenuProductRequest.Create;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProduct;
 
 public class MenuRequest {
 

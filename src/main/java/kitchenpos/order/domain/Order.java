@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import kitchenpos.domain.OrderLineItem;
 import org.springframework.util.CollectionUtils;
 
 public class Order {

@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Stream;
-import kitchenpos.application.dto.MenuProductRequest;
+import kitchenpos.menu.application.dto.MenuProductRequest;
 import kitchenpos.menu.application.dto.MenuRequest;
 import kitchenpos.menu.application.dto.MenuResponse;
 import kitchenpos.menu.domain.repository.MenuGroupDao;

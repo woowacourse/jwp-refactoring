@@ -1,8 +1,8 @@
-package kitchenpos.dao;
+package kitchenpos.order.domain.repository;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderLineItem;
 
 public interface OrderLineItemDao {
     OrderLineItem save(OrderLineItem entity);
