@@ -23,7 +23,7 @@ public class BillingHandler {
         final OrderTable orderTable = orderTableRepository.findById(event.getOrderTableId())
             .orElseThrow(IllegalArgumentException::new);
 
-        final TableStatus tableStatus = TableStatus.valueOf(event.getOrderStatus());
+        final TableStatus tableStatus = TableStatus.find(event.getOrderStatus());
         orderTable.changeTableStatus(tableStatus);
     }
 }

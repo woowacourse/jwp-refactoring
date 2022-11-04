@@ -49,7 +49,7 @@ public class Order {
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
-        Events.publishEvent(new OrderStatusChangedEvent(orderTableId, COOKING));
+        Events.publishEvent(new OrderStatusChangedEvent(orderTableId, COOKING.name()));
     }
 
     private void validateOrderLineItems(final OrderLineItems orderLineItems) {
@@ -62,7 +62,7 @@ public class Order {
         if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
             throw new IllegalArgumentException("이미 주문의 상태가 완료입니다.");
         }
-        Events.publishEvent(new OrderStatusChangedEvent(this.orderTableId, orderStatus));
+        Events.publishEvent(new OrderStatusChangedEvent(this.orderTableId, orderStatus.name()));
         this.orderStatus = orderStatus.name();
     }
 

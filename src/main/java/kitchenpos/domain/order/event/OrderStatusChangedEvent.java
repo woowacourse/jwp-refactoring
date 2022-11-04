@@ -1,14 +1,13 @@
 package kitchenpos.domain.order.event;
 
 import jdk.jfr.Event;
-import kitchenpos.domain.order.OrderStatus;
 
 public class OrderStatusChangedEvent extends Event {
 
     private final Long orderTableId;
-    private final OrderStatus orderStatus;
+    private final String orderStatus;
 
-    public OrderStatusChangedEvent(final Long orderTableId, final OrderStatus orderStatus) {
+    public OrderStatusChangedEvent(final Long orderTableId, final String orderStatus) {
         super();
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -18,7 +17,7 @@ public class OrderStatusChangedEvent extends Event {
         return orderTableId;
     }
 
-    public OrderStatus getOrderStatus() {
+    public String getOrderStatus() {
         return orderStatus;
     }
 }
