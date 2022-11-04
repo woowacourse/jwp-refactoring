@@ -2,6 +2,8 @@ package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -34,22 +36,24 @@ class OrderTablesTest {
         @Test
         @DisplayName("orderTable이 빈 테이블이 아닌 경우 예외를 던진다.")
         void orderTable_NotEmpty_ExceptionThrown() {
+            final TableGroup savedTableGroup = new TableGroup(1L, LocalDateTime.now());
             final OrderTables orderTables = new OrderTables(List.of(
-                    new OrderTable(1L, null, 0, true),
-                    new OrderTable(2L, null, 1, false)
+                    new OrderTable(1L, null, 0, true, Collections.emptyList()),
+                    new OrderTable(2L, null, 1, false, Collections.emptyList())
             ));
-            assertThatThrownBy(() -> orderTables.group())
+            assertThatThrownBy(() -> orderTables.group(savedTableGroup))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         @DisplayName("orderTable이 이미 그룹에 속한 경우 예외를 던진다.")
         void orderTable_AlreadyGrouped_ExceptionThrown() {
-            OrderTables orderTables = new OrderTables(List.of(
-                    new OrderTable(1L, null, 0, true),
-                    new OrderTable(2L, null, 1, false)
+            final TableGroup savedTableGroup = new TableGroup(1L, LocalDateTime.now());
+            final OrderTables orderTables = new OrderTables(List.of(
+                    new OrderTable(1L, null, 0, true, Collections.emptyList()),
+                    new OrderTable(2L, null, 1, false, Collections.emptyList())
             ));
-            assertThatThrownBy(() -> orderTables.group())
+            assertThatThrownBy(() -> orderTables.group(savedTableGroup))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

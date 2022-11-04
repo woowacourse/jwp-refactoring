@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import kitchenpos.vo.Price;
 import org.junit.jupiter.api.DisplayName;
@@ -35,7 +36,7 @@ class OrderTableTest {
         @Test
         @DisplayName("주문 테이블의 empty 여부를 업데이트한다.")
         void success() {
-            final OrderTable orderTable = new OrderTable(1L, null, 2, false);
+            final OrderTable orderTable = new OrderTable(1L, null, 2, false, Collections.emptyList());
             orderTable.updateEmpty(true);
 
             assertThat(orderTable.isEmpty()).isTrue();
@@ -44,7 +45,8 @@ class OrderTableTest {
         @Test
         @DisplayName("주문 테이블이 단체로 지정된 테이블인 경우 empty 상태를 수정할 수 없다.")
         void hasTableGroup_ExceptionThrown() {
-            final OrderTable orderTable = new OrderTable(1L, 1L, 2, false);
+            final TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now());
+            final OrderTable orderTable = new OrderTable(1L, tableGroup, 2, false, Collections.emptyList());
 
             assertThatThrownBy(() -> orderTable.updateEmpty(true))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -53,8 +55,8 @@ class OrderTableTest {
         @Test
         @DisplayName("주문 테이블의 주문 상태가 COMPLETION이 아닌 경우 예외를 던진다.")
         void orderStatus_NotCompletion_ExceptionThrown() {
-            final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, "치킨", Price.valueOf(BigDecimal.TEN), 1);
-            final Order order = new Order(1L, 1L, OrderStatus.MEAL, LocalDateTime.now(), List.of(orderLineItem));
+            final OrderLineItem orderLineItem = new OrderLineItem(1L, "치킨", Price.valueOf(BigDecimal.TEN), 1);
+            final Order order = new Order(1L, OrderStatus.MEAL, LocalDateTime.now(), List.of(orderLineItem));
             final OrderTable orderTable = new OrderTable(1L, null, 2, false, List.of(order));
 
             assertThatThrownBy(() -> orderTable.updateEmpty(true))
@@ -102,9 +104,10 @@ class OrderTableTest {
                 mode = EnumSource.Mode.EXCLUDE)
         @DisplayName("order의 orderStatus가 COMPLETION이 아닌 경우 예외를 던진다.")
         void orderStatus_NotCompletion_ExceptionThrown(OrderStatus orderStatus) {
-            final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, "치킨", Price.valueOf(BigDecimal.TEN), 1);
-            final Order order = new Order(1L, 2L, orderStatus, LocalDateTime.now(), List.of(orderLineItem));
-            OrderTable orderTable = new OrderTable(2L, 1L, 2, false, List.of(order));
+            final OrderLineItem orderLineItem = new OrderLineItem(1L, "치킨", Price.valueOf(BigDecimal.TEN), 1);
+            final Order order = new Order(1L, orderStatus, LocalDateTime.now(), List.of(orderLineItem));
+            final TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now());
+            OrderTable orderTable = new OrderTable(2L, tableGroup, 2, false, List.of(order));
             assertThatThrownBy(orderTable::ungroup)
                     .isInstanceOf(IllegalArgumentException.class);
         }

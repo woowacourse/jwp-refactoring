@@ -19,15 +19,6 @@ public class OrderTableRequest {
         return new OrderTable(numberOfGuests, empty);
     }
 
-    public OrderTable toEntity(final OrderTable savedOrderTable) {
-        return new OrderTable(
-                savedOrderTable.getId(),
-                savedOrderTable.getTableGroupId(),
-                numberOfGuests,
-                empty
-        );
-    }
-
     public int getNumberOfGuests() {
         return numberOfGuests;
     }

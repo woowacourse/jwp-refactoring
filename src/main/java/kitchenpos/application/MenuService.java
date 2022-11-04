@@ -32,18 +32,19 @@ public class MenuService {
     public Menu create(final MenuRequest request) {
         menuGroupDao.findById(request.getMenuGroupId())
                 .orElseThrow(IllegalArgumentException::new);
-        validateMenuProductsExistence(request.getMenuProducts());
+        List<MenuProduct> menuProducts = validateMenuProductsExistence(request.getMenuProducts());
 
-        final Menu menu = request.toEntity();
+        final Menu menu = request.toEntity(menuProducts);
         return menuDao.save(menu);
     }
 
-    private void validateMenuProductsExistence(final List<MenuProduct> menuProducts) {
+    private List<MenuProduct> validateMenuProductsExistence(final List<MenuProduct> menuProducts) {
         for (final MenuProduct menuProduct : menuProducts) {
             final Product product = productDao.findById(menuProduct.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
             menuProduct.setPrice(Price.valueOf(product.getPrice()));
         }
+        return menuProducts;
     }
 
     public List<Menu> list() {

@@ -23,10 +23,12 @@ public class TableGroupService {
 
     @Transactional
     public TableGroup create(final TableGroupRequest request) {
+        final TableGroup tableGroup = new TableGroup();
+        TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
         final OrderTables orderTables = findOrderTables(request.getOrderTables());
-        orderTables.group();
-        final TableGroup tableGroup = new TableGroup(orderTables);
-        return tableGroupDao.save(tableGroup);
+        OrderTables groupedOrderTables = orderTables.group(savedTableGroup);
+        orderTableDao.saveAll(groupedOrderTables.getValues());
+        return savedTableGroup;
     }
 
     private OrderTables findOrderTables(final List<OrderTable> orderTables) {
@@ -48,6 +50,6 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         final OrderTables orderTables = new OrderTables(orderTableDao.findAllByTableGroupId(tableGroupId));
         orderTables.ungroup();
-        orderTableDao.saveAll(orderTables);
+        orderTableDao.saveAll(orderTables.getValues());
     }
 }

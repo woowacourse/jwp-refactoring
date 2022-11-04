@@ -26,7 +26,7 @@ class MenuTest {
         void price_LessThanZero_ExceptionThrown(final BigDecimal price) {
             assertThatThrownBy(
                     () -> new Menu("크림치킨", Price.valueOf(price), 1L,
-                            List.of(new MenuProduct(1L, 1L, Price.valueOf(BigDecimal.TEN)))))
+                            List.of(new MenuProduct(1L, 1L, 1L, Price.valueOf(BigDecimal.TEN)))))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -35,7 +35,7 @@ class MenuTest {
         void price_MoreThanSumOfMenuProducts_ExceptionThrown() {
             assertThatThrownBy(
                     () -> new Menu("크림치킨", Price.valueOf(BigDecimal.valueOf(100L)), 1L,
-                            List.of(new MenuProduct(1L, 1L, Price.valueOf(BigDecimal.TEN)))))
+                            List.of(new MenuProduct(1L, 1L, 1L, Price.valueOf(BigDecimal.TEN)))))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

@@ -97,7 +97,7 @@ class TableServiceTest extends ServiceTest {
                 value = OrderStatus.class,
                 names = {"COMPLETION"},
                 mode = EnumSource.Mode.EXCLUDE)
-        @DisplayName("orderTableId에 해당하는 order의 orderStatus가 COMPLETION이 아닌 경우 예외를 던진다.")
+        @DisplayName("orderTableId에 해당하는 order의 orderStatus가 COOKING 또는 MEAL 상태인 경우 예외를 던진다.")
         void orderStatus_NotCompletion_ExceptionThrown(OrderStatus orderStatus) {
             // given
             OrderTable orderTable = saveOrderTable(2, false);
@@ -106,6 +106,7 @@ class TableServiceTest extends ServiceTest {
             Menu menu1 = saveMenu("크림치킨", menuGroup, product);
             Menu menu2 = saveMenu("크림어니언치킨", menuGroup, product);
             Order savedOrder = saveOrder(orderTable, menu1, menu2);
+            entityManager.flush();
             updateOrder(savedOrder, orderStatus.name());
 
             // when & then

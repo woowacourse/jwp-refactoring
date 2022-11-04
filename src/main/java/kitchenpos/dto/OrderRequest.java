@@ -19,7 +19,7 @@ public class OrderRequest {
     }
 
     public Order toEntity(final List<OrderLineItem> orderLineItems) {
-        return new Order(orderTableId, OrderStatus.COOKING, orderLineItems);
+        return new Order(OrderStatus.COOKING, orderLineItems);
     }
 
     public Long getOrderTableId() {

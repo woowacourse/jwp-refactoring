@@ -10,6 +10,7 @@ import static kitchenpos.fixture.TableFixture.createOrderTableRequest;
 import static kitchenpos.fixture.TableFixture.createTableGroupRequest;
 
 import java.math.BigDecimal;
+import javax.persistence.EntityManager;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
@@ -67,6 +68,9 @@ abstract class ServiceTest {
 
     @Autowired
     protected OrderDao orderDao;
+
+    @Autowired
+    protected EntityManager entityManager;
 
     protected MenuGroup saveMenuGroup(String name) {
         return menuGroupService.create(createMenuGroup(name));

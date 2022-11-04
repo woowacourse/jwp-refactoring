@@ -24,7 +24,7 @@ public class MenuRequest {
         this.menuProducts = menuProducts;
     }
 
-    public Menu toEntity() {
+    public Menu toEntity(final List<MenuProduct> menuProducts) {
         return new Menu(name, Price.valueOf(price), menuGroupId, menuProducts);
     }
 

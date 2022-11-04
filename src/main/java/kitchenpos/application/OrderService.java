@@ -40,7 +40,8 @@ public class OrderService {
         }
         final List<OrderLineItem> orderLineItems = findOrderLineItems(request.getOrderLineItems());
         final Order order = request.toEntity(orderLineItems);
-        return orderDao.save(order);
+        orderTable.add(order);
+        return order;
     }
 
     private List<OrderLineItem> findOrderLineItems(final List<OrderLineItemRequest> orderLineItemsRequest) {

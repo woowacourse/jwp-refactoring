@@ -25,7 +25,7 @@ public class OrderLineItemRequest {
         return quantity;
     }
 
-    public OrderLineItem toEntity(Menu menu) {
-        return new OrderLineItem(null, null, menu.getName(), Price.valueOf(menu.getPrice()), quantity);
+    public OrderLineItem toEntity(final Menu menu) {
+        return new OrderLineItem(null, menu.getName(), Price.valueOf(menu.getPrice()), quantity);
     }
 }

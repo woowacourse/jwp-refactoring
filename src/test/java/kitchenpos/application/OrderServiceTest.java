@@ -61,6 +61,7 @@ class OrderServiceTest extends ServiceTest {
             OrderTable orderTable = saveOrderTable(2, false);
             Order savedOrder = saveOrder(orderTable, menu1, menu2);
             OrderStatusRequest request = updatedOrderStatusRequest("MEAL");
+            entityManager.flush();
 
             // when
             Order actual = orderService.changeOrderStatus(savedOrder.getId(), request);
@@ -96,6 +97,7 @@ class OrderServiceTest extends ServiceTest {
             OrderTable orderTable = saveOrderTable(2, false);
             Order savedOrder = saveOrder(orderTable, menu1, menu2);
             OrderStatusRequest request = updatedOrderStatusRequest("COMPLETION");
+            entityManager.flush();
             orderService.changeOrderStatus(savedOrder.getId(), request);
 
             // when & then
@@ -124,6 +126,7 @@ class OrderServiceTest extends ServiceTest {
 
             // when
             Order savedOrder = orderService.create(request);
+            entityManager.flush();
 
             // then
             Optional<Order> actual = orderDao.findById(savedOrder.getId());

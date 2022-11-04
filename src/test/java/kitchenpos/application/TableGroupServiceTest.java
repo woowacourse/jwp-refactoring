@@ -82,13 +82,8 @@ class TableGroupServiceTest extends ServiceTest {
             OrderTable orderTable2 = saveOrderTable(0, true);
             OrderTable orderTable3 = saveOrderTable(0, true);
             OrderTable orderTable4 = saveOrderTable(0, true);
-            TableGroup tableGroup = saveTableGroup(orderTable1, orderTable2, orderTable3, orderTable4);
-            OrderTable[] orderTables = tableGroup.getOrderTables()
-                    .stream().map(OrderTable::getId)
-                    .map(it -> new OrderTable(orderTable1.getId(), null, 0, true))
-                    .toArray(OrderTable[]::new);
-
-            TableGroupRequest request = createTableGroupRequest(orderTables);
+            saveTableGroup(orderTable1, orderTable2, orderTable3, orderTable4);
+            TableGroupRequest request = createTableGroupRequest(orderTable1, orderTable2);
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(request))
@@ -117,9 +112,9 @@ class TableGroupServiceTest extends ServiceTest {
             assertThat(actualOrderTable1).isPresent();
             assertThat(actualOrderTable2).isPresent();
             assertAll(
-                    () -> assertThat(actualOrderTable1.get().getTableGroupId()).isNull(),
+                    () -> assertThat(actualOrderTable1.get().getTableGroup()).isNull(),
                     () -> assertThat(actualOrderTable1.get().isEmpty()).isFalse(),
-                    () -> assertThat(actualOrderTable2.get().getTableGroupId()).isNull(),
+                    () -> assertThat(actualOrderTable2.get().getTableGroup()).isNull(),
                     () -> assertThat(actualOrderTable2.get().isEmpty()).isFalse()
             );
         }
@@ -141,6 +136,7 @@ class TableGroupServiceTest extends ServiceTest {
             Menu menu1 = saveMenu("크림치킨", menuGroup, product);
             Menu menu2 = saveMenu("크림어니언치킨", menuGroup, product);
             Order savedOrder = saveOrder(orderTable1, menu1, menu2);
+            entityManager.flush();
             updateOrder(savedOrder, orderStatus.name());
 
             // when & then

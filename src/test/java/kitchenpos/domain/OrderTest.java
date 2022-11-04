@@ -3,7 +3,6 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.vo.Price;
@@ -21,7 +20,7 @@ class OrderTest {
         @Test
         @DisplayName("OrderLineItem 리스트가 빈 리스트인 경우 예외를 던진다.")
         void orderLineItems_IsEmpty_ExceptionThrown() {
-            assertThatThrownBy(() -> new Order(1L, OrderStatus.COOKING, Collections.emptyList()))
+            assertThatThrownBy(() -> new Order(OrderStatus.COOKING, Collections.emptyList()))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -33,9 +32,8 @@ class OrderTest {
         @Test
         @DisplayName("order의 상태가 COMPLETION인 경우 예외를 던진다.")
         void orderStatus_IsCompleted_ExceptionThrown() {
-            final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, "치킨", Price.valueOf(BigDecimal.TEN), 1);
-            final Order order = new Order(1L, 1L, OrderStatus.COMPLETION, LocalDateTime.now(),
-                    List.of(orderLineItem));
+            final OrderLineItem orderLineItem = new OrderLineItem(1L, "치킨", Price.valueOf(BigDecimal.TEN), 1);
+            final Order order = new Order(OrderStatus.COMPLETION, List.of(orderLineItem));
             assertThatThrownBy(() -> order.updateOrderStatus(OrderStatus.COMPLETION.name()))
                     .isInstanceOf(IllegalArgumentException.class);
         }

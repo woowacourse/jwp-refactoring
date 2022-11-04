@@ -1,19 +1,26 @@
 package kitchenpos.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import org.springframework.util.CollectionUtils;
 
+@Embeddable
 public class OrderTables {
 
-    private List<OrderTable> value;
+    @OneToMany
+    @JoinColumn(name = "order_table_id")
+    private List<OrderTable> values;
 
-    private OrderTables() {
+    protected OrderTables() {
     }
 
-    public OrderTables(final List<OrderTable> value) {
-        validate(value);
-        this.value = value;
+    public OrderTables(final List<OrderTable> values) {
+        validate(values);
+        this.values = values;
     }
 
     private void validate(final List<OrderTable> orderTables) {
@@ -22,26 +29,30 @@ public class OrderTables {
         }
     }
 
-    public void group() {
-        for (final OrderTable orderTable : value) {
+    public OrderTables group(final TableGroup savedTableGroup) {
+        List<OrderTable> groupedOrderTables = new ArrayList<>();
+        for (final OrderTable orderTable : values) {
             validateOrderTableIsAbleToGroup(orderTable);
-            orderTable.setEmpty(false);
+            OrderTable validatedOrderTable = new OrderTable(orderTable.getId(), savedTableGroup,
+                    orderTable.getNumberOfGuests(), false, orderTable.getOrders());
+            groupedOrderTables.add(validatedOrderTable);
         }
+        return new OrderTables(groupedOrderTables);
     }
 
     private void validateOrderTableIsAbleToGroup(final OrderTable orderTable) {
-        if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroupId())) {
+        if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
             throw new IllegalArgumentException();
         }
     }
 
     public void ungroup() {
-        for (final OrderTable orderTable : value) {
+        for (final OrderTable orderTable : values) {
             orderTable.ungroup();
         }
     }
 
-    public List<OrderTable> getOrderTables() {
-        return value;
+    public List<OrderTable> getValues() {
+        return values;
     }
 }

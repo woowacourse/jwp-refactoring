@@ -1,5 +1,5 @@
 ALTER TABLE order_line_item ADD menu_name VARCHAR(255);
-ALTER TABLE order_line_item ADD menu_price BIGINT(20);
+ALTER TABLE order_line_item ADD menu_price DECIMAL(19, 2);
 
 INSERT INTO order_line_item (menu_name, menu_price)
 SELECT menu.name, menu.price

@@ -2,8 +2,6 @@ package kitchenpos.dto;
 
 import java.util.List;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTables;
-import kitchenpos.domain.TableGroup;
 
 public class TableGroupRequest {
 
@@ -18,9 +16,5 @@ public class TableGroupRequest {
 
     public List<OrderTable> getOrderTables() {
         return orderTables;
-    }
-
-    public TableGroup toEntity() {
-        return new TableGroup(new OrderTables(orderTables));
     }
 }

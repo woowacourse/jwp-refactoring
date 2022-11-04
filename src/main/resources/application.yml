@@ -8,6 +8,10 @@ spring:
     console:
       enabled: true
   jpa:
+    hibernate:
+      ddl-auto: validate
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
     properties:
       hibernate:
         format_sql: true

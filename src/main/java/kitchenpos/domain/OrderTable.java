@@ -1,35 +1,57 @@
 package kitchenpos.domain;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
 
+@Entity
 public class OrderTable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long tableGroupId;
-    private int numberOfGuests;
-    private boolean empty;
-    private List<Order> orders;
 
-    private OrderTable() {
+    @ManyToOne
+    @JoinColumn(name = "table_group_id")
+    private TableGroup tableGroup;
+
+    @NotNull
+    private int numberOfGuests;
+
+    @NotNull
+    private boolean empty;
+
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "order_table_id")
+    private List<Order> orders = new ArrayList<>(); // TODO: 뭔가 이상. 나중에 등록됨
+
+    protected OrderTable() {
     }
 
     public OrderTable(final int numberOfGuests, final boolean empty) {
-        this(null, null, numberOfGuests, empty, Collections.emptyList());
+        this(null, null, numberOfGuests, empty, new ArrayList<>());
     }
 
-    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
-        this(id, tableGroupId, numberOfGuests, empty, Collections.emptyList());
-    }
-
-    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty,
+    public OrderTable(final Long id, final TableGroup tableGroup, final int numberOfGuests, final boolean empty,
                       final List<Order> orders) {
         validateNumberOfGuests(numberOfGuests);
         this.id = id;
-        this.tableGroupId = tableGroupId;
+        this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
         this.orders = orders;
+    }
+
+    public void add(final Order order) {
+        orders.add(order);
     }
 
     public void updateEmpty(final boolean empty) {
@@ -40,7 +62,7 @@ public class OrderTable {
 
     public void ungroup() {
         validateUngroup();
-        tableGroupId = null;
+        tableGroup = null;
         empty = false;
     }
 
@@ -61,14 +83,15 @@ public class OrderTable {
             return;
         }
 
-        orders.stream()
-                .filter(Order::isComplete)
-                .findAny()
-                .orElseThrow(IllegalArgumentException::new);
+        final boolean containsNotCompleteOrder = orders.stream()
+                .anyMatch(it -> !it.isComplete());
+        if (containsNotCompleteOrder) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private void validateGrouped() {
-        if (Objects.nonNull(tableGroupId)) {
+        if (Objects.nonNull(tableGroup)) {
             throw new IllegalArgumentException();
         }
     }
@@ -94,14 +117,6 @@ public class OrderTable {
         return id;
     }
 
-    public Long getTableGroupId() {
-        return tableGroupId;
-    }
-
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-    }
-
     public int getNumberOfGuests() {
         return numberOfGuests;
     }
@@ -116,5 +131,9 @@ public class OrderTable {
 
     public List<Order> getOrders() {
         return orders;
+    }
+
+    public TableGroup getTableGroup() {
+        return tableGroup;
     }
 }
