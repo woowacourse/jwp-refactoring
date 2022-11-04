@@ -31,6 +31,7 @@ import kitchenpos.product.application.ProductService;
 import kitchenpos.product.domain.Product;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.menu.dto.MenuRequest;
+import kitchenpos.table.domain.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,6 +78,9 @@ abstract class ServiceTest {
 
     @Autowired
     protected EntityManager entityManager;
+
+    @Autowired
+    protected Validator validator;
 
     protected MenuGroup saveMenuGroup(String name) {
         return menuGroupService.create(createMenuGroup(name));

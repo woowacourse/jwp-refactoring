@@ -38,6 +38,7 @@ class OrderServiceTest extends ServiceTest {
         saveOrder(orderTable1, menu1, menu2);
         saveOrder(orderTable2, menu1, menu2);
         saveOrder(orderTable3, menu1, menu2);
+        entityManager.flush();
 
         // when
         List<Order> orders = orderService.list();

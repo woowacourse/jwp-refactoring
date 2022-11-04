@@ -29,6 +29,9 @@ public class Order {
     private OrderStatus orderStatus;
 
     @NotNull
+    private Long orderTableId;
+
+    @NotNull
     private LocalDateTime orderedTime;
 
     @OneToMany(cascade = CascadeType.ALL)
@@ -38,17 +41,18 @@ public class Order {
     protected Order() {
     }
 
-    public Order(final OrderStatus orderStatus, final List<OrderLineItem> orderLineItems) {
-        this(null, orderStatus, LocalDateTime.now(), orderLineItems);
+    public Order(final OrderStatus orderStatus, final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+        this(null, orderStatus, orderTableId, LocalDateTime.now(), orderLineItems);
     }
 
-    public Order(final Long id, final OrderStatus orderStatus, final LocalDateTime orderedTime,
+    public Order(final Long id, final OrderStatus orderStatus, final Long orderTableId, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException();
         }
         this.id = id;
         this.orderStatus = orderStatus;
+        this.orderTableId = orderTableId;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
     }

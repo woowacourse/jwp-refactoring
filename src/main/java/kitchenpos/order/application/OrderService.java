@@ -39,9 +39,8 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
         final List<OrderLineItem> orderLineItems = findOrderLineItems(request.getOrderLineItems());
-        final Order order = request.toEntity(orderLineItems);
-        orderTable.add(order);
-        return order;
+        final Order order = request.toEntity(orderTable.getId(), orderLineItems);
+        return orderRepository.save(order);
     }
 
     private List<OrderLineItem> findOrderLineItems(final List<OrderLineItemRequest> orderLineItemsRequest) {

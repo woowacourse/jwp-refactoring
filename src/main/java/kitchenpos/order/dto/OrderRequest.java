@@ -18,8 +18,8 @@ public class OrderRequest {
         this.orderLineItems = orderLineItems;
     }
 
-    public Order toEntity(final List<OrderLineItem> orderLineItems) {
-        return new Order(OrderStatus.COOKING, orderLineItems);
+    public Order toEntity(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+        return new Order(OrderStatus.COOKING, orderTableId, orderLineItems);
     }
 
     public Long getOrderTableId() {

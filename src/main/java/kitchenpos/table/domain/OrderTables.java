@@ -34,7 +34,7 @@ public class OrderTables {
         for (final OrderTable orderTable : values) {
             validateOrderTableIsAbleToGroup(orderTable);
             OrderTable validatedOrderTable = new OrderTable(orderTable.getId(), savedTableGroup,
-                    orderTable.getNumberOfGuests(), false, orderTable.getOrders());
+                    orderTable.getNumberOfGuests(), false);
             groupedOrderTables.add(validatedOrderTable);
         }
         return new OrderTables(groupedOrderTables);
@@ -46,9 +46,9 @@ public class OrderTables {
         }
     }
 
-    public void ungroup() {
+    public void ungroup(final Validator validator) {
         for (final OrderTable orderTable : values) {
-            orderTable.ungroup();
+            orderTable.ungroup(validator);
         }
     }
 

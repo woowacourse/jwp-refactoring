@@ -1,18 +1,13 @@
 package kitchenpos.table.domain;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
-import kitchenpos.order.domain.Order;
 
 @Entity
 public class OrderTable {
@@ -30,39 +25,30 @@ public class OrderTable {
     @NotNull
     private boolean empty;
 
-    @OneToMany(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "order_table_id")
-    private List<Order> orders = new ArrayList<>(); // TODO: 뭔가 이상. 나중에 등록됨
-
     protected OrderTable() {
     }
 
     public OrderTable(final int numberOfGuests, final boolean empty) {
-        this(null, null, numberOfGuests, empty, new ArrayList<>());
+        this(null, null, numberOfGuests, empty);
     }
 
-    public OrderTable(final Long id, final TableGroup tableGroup, final int numberOfGuests, final boolean empty,
-                      final List<Order> orders) {
+    public OrderTable(final Long id, final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
         validateNumberOfGuests(numberOfGuests);
         this.id = id;
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
-        this.orders = orders;
     }
 
-    public void add(final Order order) {
-        orders.add(order);
-    }
 
-    public void updateEmpty(final boolean empty) {
+    public void updateEmpty(final Validator orderValidator, final boolean empty) {
         validateGrouped();
-        validateOrderStatus();
+        orderValidator.validate(this);
         this.empty = empty;
     }
 
-    public void ungroup() {
-        validateUngroup();
+    public void ungroup(final Validator orderValidator) {
+        orderValidator.validate(this);
         tableGroup = null;
         empty = false;
     }
@@ -79,18 +65,6 @@ public class OrderTable {
         }
     }
 
-    private void validateOrderStatus() {
-        if (orders.isEmpty()) {
-            return;
-        }
-
-        final boolean containsNotCompleteOrder = orders.stream()
-                .anyMatch(it -> !it.isComplete());
-        if (containsNotCompleteOrder) {
-            throw new IllegalArgumentException();
-        }
-    }
-
     private void validateGrouped() {
         if (Objects.nonNull(tableGroup)) {
             throw new IllegalArgumentException();
@@ -99,17 +73,6 @@ public class OrderTable {
 
     private void validateEmpty() {
         if (empty) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateUngroup() {
-        if (orders.isEmpty()) {
-            return;
-        }
-        final boolean notCompletedOrder = orders.stream()
-                .anyMatch(it -> !it.isComplete());
-        if (notCompletedOrder) {
             throw new IllegalArgumentException();
         }
     }
@@ -124,14 +87,6 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
-    }
-
-    public List<Order> getOrders() {
-        return orders;
     }
 
     public TableGroup getTableGroup() {

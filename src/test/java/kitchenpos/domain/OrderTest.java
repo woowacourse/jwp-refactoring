@@ -23,7 +23,7 @@ class OrderTest {
         @Test
         @DisplayName("OrderLineItem 리스트가 빈 리스트인 경우 예외를 던진다.")
         void orderLineItems_IsEmpty_ExceptionThrown() {
-            assertThatThrownBy(() -> new Order(OrderStatus.COOKING, Collections.emptyList()))
+            assertThatThrownBy(() -> new Order(OrderStatus.COOKING, 1L, Collections.emptyList()))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -36,7 +36,7 @@ class OrderTest {
         @DisplayName("order의 상태가 COMPLETION인 경우 예외를 던진다.")
         void orderStatus_IsCompleted_ExceptionThrown() {
             final OrderLineItem orderLineItem = new OrderLineItem(1L, "치킨", Price.valueOf(BigDecimal.TEN), 1);
-            final Order order = new Order(OrderStatus.COMPLETION, List.of(orderLineItem));
+            final Order order = new Order(OrderStatus.COMPLETION, 1L, List.of(orderLineItem));
             assertThatThrownBy(() -> order.updateOrderStatus(OrderStatus.COMPLETION.name()))
                     .isInstanceOf(IllegalArgumentException.class);
         }

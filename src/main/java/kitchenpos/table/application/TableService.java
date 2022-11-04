@@ -1,20 +1,22 @@
 package kitchenpos.table.application;
 
-import kitchenpos.table.domain.OrderTableRepository;
+import java.util.List;
 import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.order.application.OrderValidator;
 import kitchenpos.table.dto.OrderTableRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class TableService {
 
     private final OrderTableRepository orderTableRepository;
+    private final OrderValidator orderValidator;
 
-    public TableService( final OrderTableRepository orderTableRepository) {
+    public TableService(final OrderTableRepository orderTableRepository, final OrderValidator orderValidator) {
         this.orderTableRepository = orderTableRepository;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
@@ -31,7 +33,7 @@ public class TableService {
     public OrderTable changeEmpty(final Long orderTableId, final OrderTableRequest request) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-        orderTable.updateEmpty(request.isEmpty());
+        orderTable.updateEmpty(orderValidator, request.isEmpty());
         return orderTableRepository.save(orderTable);
     }
 

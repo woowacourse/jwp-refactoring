@@ -3,7 +3,6 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTables;
@@ -41,8 +40,8 @@ class OrderTablesTest {
         void orderTable_NotEmpty_ExceptionThrown() {
             final TableGroup savedTableGroup = new TableGroup(1L, LocalDateTime.now());
             final OrderTables orderTables = new OrderTables(List.of(
-                    new OrderTable(1L, null, 0, true, Collections.emptyList()),
-                    new OrderTable(2L, null, 1, false, Collections.emptyList())
+                    new OrderTable(1L, null, 0, true),
+                    new OrderTable(2L, null, 1, false)
             ));
             assertThatThrownBy(() -> orderTables.group(savedTableGroup))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -53,8 +52,8 @@ class OrderTablesTest {
         void orderTable_AlreadyGrouped_ExceptionThrown() {
             final TableGroup savedTableGroup = new TableGroup(1L, LocalDateTime.now());
             final OrderTables orderTables = new OrderTables(List.of(
-                    new OrderTable(1L, null, 0, true, Collections.emptyList()),
-                    new OrderTable(2L, null, 1, false, Collections.emptyList())
+                    new OrderTable(1L, null, 0, true),
+                    new OrderTable(2L, null, 1, false)
             ));
             assertThatThrownBy(() -> orderTables.group(savedTableGroup))
                     .isInstanceOf(IllegalArgumentException.class);
