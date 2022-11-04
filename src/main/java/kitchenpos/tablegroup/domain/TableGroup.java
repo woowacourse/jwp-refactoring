@@ -24,7 +24,6 @@ public class TableGroup {
 
     public void grouping(final List<OrderTable> orderTables) {
         this.orderTables = new OrderTables(orderTables);
-        this.orderTables.validateTableCount();
         this.orderTables.grouping();
     }
 

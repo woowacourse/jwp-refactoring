@@ -7,7 +7,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import kitchenpos.common.domain.Price;
-import kitchenpos.menu.domain.Menu;
 
 @Entity
 public class OrderMenu {
@@ -25,10 +24,6 @@ public class OrderMenu {
     public OrderMenu(final String name, final BigDecimal price) {
         this.name = name;
         this.price = new Price(price);
-    }
-
-    public static OrderMenu from(final Menu menu) {
-        return new OrderMenu(menu.getName(), menu.getPrice());
     }
 
     public Long getId() {

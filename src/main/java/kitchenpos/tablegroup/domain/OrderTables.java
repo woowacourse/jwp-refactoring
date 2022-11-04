@@ -19,6 +19,7 @@ public class OrderTables {
     }
 
     public void grouping() {
+        validateTableCount();
         this.orderTables.forEach(OrderTable::changeToUse);
     }
 
@@ -26,7 +27,7 @@ public class OrderTables {
         this.orderTables.forEach(OrderTable::changeToEmpty);
     }
 
-    public void validateTableCount() {
+    private void validateTableCount() {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException("단체 지정은 3개 이상의 정수로 입력해주세요.");
         }

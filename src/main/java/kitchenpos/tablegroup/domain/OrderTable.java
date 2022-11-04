@@ -6,6 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import kitchenpos.tablegroup.service.TableValidator;
 
 @Entity
 public class OrderTable {
@@ -48,6 +49,10 @@ public class OrderTable {
             throw new IllegalArgumentException("변경할 손님수는 0명 이상의 정수로 입력해주세요.");
         }
         this.numberOfGuests = numberOfGuests;
+    }
+
+    public void validate(final TableValidator tableValidator) {
+        tableValidator.validatePossibleChangeToEmpty(this.id);
     }
 
     public Long getId() {

@@ -35,7 +35,7 @@ public class OrderMapper {
     private OrderLineItem toOrderLineItem(final OrderLineItemRequest request) {
         Menu menu = menuRepository.findById(request.getMenuId())
                 .orElseThrow(MenuNotFoundException::new);
-        OrderMenu orderMenu = OrderMenu.from(menu);
+        OrderMenu orderMenu = new OrderMenu(menu.getName(), menu.getPrice());
         return new OrderLineItem(orderMenu, request.getQuantity());
     }
 }

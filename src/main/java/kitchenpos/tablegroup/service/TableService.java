@@ -1,10 +1,6 @@
 package kitchenpos.tablegroup.service;
 
-import static kitchenpos.order.domain.OrderStatus.COOKING;
-import static kitchenpos.order.domain.OrderStatus.MEAL;
-
 import java.util.List;
-import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.tablegroup.domain.OrderTable;
 import kitchenpos.tablegroup.domain.OrderTableRepository;
 import kitchenpos.tablegroup.dto.request.OrderTableCreateRequest;
@@ -20,13 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class TableService {
 
+    private final TableValidator tableValidator;
     private final OrderTableRepository orderTableRepository;
-    private final OrderRepository orderRepository;
 
-    public TableService(final OrderTableRepository orderTableRepository,
-                        final OrderRepository orderRepository) {
+    public TableService(final TableValidator tableValidator,
+                        final OrderTableRepository orderTableRepository) {
+        this.tableValidator = tableValidator;
         this.orderTableRepository = orderTableRepository;
-        this.orderRepository = orderRepository;
     }
 
     @Transactional
@@ -44,17 +40,10 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId,
                                           final OrderTableUpdateEmptyRequest request) {
-        validatePossibleChangeToEmpty(orderTableId);
         OrderTable orderTable = getOrderTable(orderTableId);
+        orderTable.validate(tableValidator);
         orderTable.changeToEmpty(request.isEmpty());
         return OrderTableResponse.from(orderTable);
-    }
-
-    private void validatePossibleChangeToEmpty(final Long orderTableId) {
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, List.of(COOKING, MEAL))) {
-            throw new IllegalArgumentException("조리중이거나 식사 중인 테이블 입니다.");
-        }
     }
 
     @Transactional
