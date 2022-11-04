@@ -5,6 +5,7 @@ import static kitchenpos.order.domain.OrderStatus.MEAL;
 
 import java.util.List;
 import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -20,6 +21,13 @@ public class TableValidator {
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, List.of(COOKING, MEAL))) {
             throw new IllegalArgumentException("조리중이거나 식사 중인 테이블 입니다.");
+        }
+    }
+
+    public void validatePossibleUngrouping(final TableGroup tableGroup) {
+        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
+                tableGroup.getOrderTables(), List.of(COOKING, MEAL))) {
+            throw new IllegalArgumentException("조리중이거나 식사 중인 테이블이 있습니다.");
         }
     }
 }

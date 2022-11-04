@@ -16,14 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class TableGroupService {
 
-    private final TableGroupValidator tableGroupValidator;
+    private final TableValidator tableValidator;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(final TableGroupValidator tableGroupValidator,
+    public TableGroupService(final TableValidator tableValidator,
                              final OrderTableRepository orderTableRepository,
                              final TableGroupRepository tableGroupRepository) {
-        this.tableGroupValidator = tableGroupValidator;
+        this.tableValidator = tableValidator;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
@@ -48,7 +48,7 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(TableGroupNotFoundException::new);
-        tableGroup.validate(tableGroupValidator);
+        tableGroup.validate(tableValidator);
         tableGroup.ungrouping();
     }
 }

@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import kitchenpos.tablegroup.service.TableGroupValidator;
+import kitchenpos.tablegroup.service.TableValidator;
 
 @Entity
 public class TableGroup {
@@ -23,8 +23,8 @@ public class TableGroup {
         this.createdDate = LocalDateTime.now();
     }
 
-    public void validate(final TableGroupValidator tableGroupValidator) {
-        tableGroupValidator.validatePossibleUngrouping(this);
+    public void validate(final TableValidator tableValidator) {
+        tableValidator.validatePossibleUngrouping(this);
     }
 
     public void grouping(final List<OrderTable> orderTables) {
