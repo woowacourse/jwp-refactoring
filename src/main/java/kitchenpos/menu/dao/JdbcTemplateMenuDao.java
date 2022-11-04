@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.product.domain.Price;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -52,14 +53,6 @@ public class JdbcTemplateMenuDao implements MenuDao {
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    @Override
-    public long countByIdIn(final List<Long> ids) {
-        final String sql = "SELECT COUNT(*) FROM menu WHERE id IN (:ids)";
-        final SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("ids", ids);
-        return jdbcTemplate.queryForObject(sql, parameters, Long.class);
-    }
-
     private Menu select(final Long id) {
         final String sql = "SELECT id, name, price, menu_group_id FROM menu WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
@@ -71,7 +64,7 @@ public class JdbcTemplateMenuDao implements MenuDao {
         return new Menu(
                 resultSet.getLong("id"),
                 resultSet.getString("name"),
-                resultSet.getBigDecimal("price"),
+                new Price(resultSet.getBigDecimal("price")),
                 resultSet.getLong("menu_group_id")
         );
     }
