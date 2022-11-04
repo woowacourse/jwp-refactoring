@@ -10,6 +10,7 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,7 +50,7 @@ public class MenuService {
                 .map(it -> {
                     final Product product = productDao.findById(it.getProductId())
                             .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
-                    return new MenuProduct(product.getId(), it.getQuantity(), product.getPrice());
+                    return new MenuProduct(product.getId(), it.getQuantity(), product.getPrice().getValue());
                 })
                 .collect(Collectors.toList());
     }

@@ -3,13 +3,12 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 public class Menu {
 
     private final Long id;
     private final String name;
-    private final BigDecimal price;
+    private final Price price;
     private final Long menuGroupId;
     private final List<MenuProduct> menuProducts;
 
@@ -24,19 +23,12 @@ public class Menu {
 
     public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
                 final List<MenuProduct> menuProducts) {
-        validatePrice(price);
         validateProductPrice(price, menuProducts);
         this.id = id;
         this.name = name;
-        this.price = price;
+        this.price = new Price(price);
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
-    }
-
-    private static void validatePrice(final BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("메뉴 가격은 null이 아니고 0보다 크거나 같아야 합니다.");
-        }
     }
 
     private void validateProductPrice(final BigDecimal price, final List<MenuProduct> menuProducts) {
@@ -60,7 +52,7 @@ public class Menu {
         return name;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
     }
 
