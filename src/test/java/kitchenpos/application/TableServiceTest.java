@@ -1,8 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.support.MenuFixture.메뉴_생성;
-import static kitchenpos.support.MenuGroupFixture.메뉴_그룹;
-import static kitchenpos.support.OrderFixture.주문_생성;
+
 import static kitchenpos.support.OrderTableFixture.비어있는_주문_테이블;
 import static kitchenpos.support.OrderTableFixture.비어있지_않은_주문_테이블;
 import static kitchenpos.support.OrderTableFixture.주문_테이블_생성;

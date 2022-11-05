@@ -1,10 +1,12 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.menu.application.MenuGroupService;
+import kitchenpos.menu.application.dto.MenuGroupRequestDto;
+import kitchenpos.menu.application.dto.MenuGroupResponse;
+import kitchenpos.menu.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +23,7 @@ class MenuGroupServiceTest {
     @Test
     @DisplayName("메뉴 그룹을 생성한다.")
     void create() {
-        final MenuGroup menuGroup = new MenuGroup("test menuGroup");
+        final MenuGroupRequestDto menuGroup = new MenuGroupRequestDto("test menuGroup");
 
         final MenuGroup actual = menuGroupService.create(menuGroup);
 
@@ -31,8 +33,13 @@ class MenuGroupServiceTest {
     @Test
     @DisplayName("메뉴 그룹 리스트로 반환한다.")
     void list() {
-        final List<MenuGroup> actual = menuGroupService.list();
+        final MenuGroupRequestDto menuGroup = new MenuGroupRequestDto("test menuGroup");
+        menuGroupService.create(menuGroup);
+        menuGroupService.create(menuGroup);
+        menuGroupService.create(menuGroup);
 
-        assertThat(actual).hasSize(4);
+        List<MenuGroupResponse> actual = menuGroupService.list();
+
+        assertThat(actual).hasSize(3);
     }
 }

@@ -39,7 +39,7 @@ public class OrderResponse {
 
     private static List<OrderLineItemsResponse> convertToOrderLineItemResponse(final List<OrderLineItem> orderLineItems){
         return orderLineItems.stream()
-                .map(it -> new OrderLineItemsResponse(it.getOrderId(), it.getMenuId(), it.getQuantity()))
+                .map(OrderLineItemsResponse::new)
                 .collect(Collectors.toList());
     }
 

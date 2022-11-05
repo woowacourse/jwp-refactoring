@@ -22,7 +22,7 @@ public class MenuProductResponse {
                 menuProduct.getSeq(),
                 menuProduct.getMenuId(),
                 menuProduct.getProductName(),
-                menuProduct.getProductPrice(),
+                menuProduct.getProductPrice().longValue(),
                 menuProduct.getQuantity());
     }
 

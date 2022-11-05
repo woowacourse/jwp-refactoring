@@ -28,11 +28,6 @@ public class MenuProduct {
     public MenuProduct() {
     }
 
-    public MenuProduct(Long productId, long quantity) {
-        this.productId = productId;
-        this.quantity = quantity;
-    }
-
     public Long getSeq() {
         return seq;
     }
@@ -45,8 +40,8 @@ public class MenuProduct {
         return productName;
     }
 
-    public Long getProductPrice() {
-        return productPrice.getValue().longValue();
+    public BigDecimal getProductPrice() {
+        return productPrice.getValue();
     }
 
     public Long getQuantity() {
