@@ -59,6 +59,13 @@ public class QuerydslMenuRepository implements MenuRepository {
         return count;
     }
 
+    @Override
+    public List<Menu> findAllByIdsIn(final List<Long> menuIds) {
+        return queryFactory.selectFrom(menu)
+                .where(idIn(menuIds))
+                .fetch();
+    }
+
     private BooleanBuilder idIn(final List<Long> ids) {
         return nullSafeBuilder(() -> menu.id.in(ids));
     }

@@ -1,7 +1,7 @@
 package kitchenpos.domain.product;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -36,7 +36,8 @@ class ProductRepositoryTest extends RepositoryTest {
         assertAll(
                 () -> assertThat(findProduct.getId()).isEqualTo(savedProduct.getId()),
                 () -> assertThat(findProduct.getName()).isEqualTo(savedProduct.getName()),
-                () -> assertThat(findProduct.getPriceValue().longValue()).isEqualTo(savedProduct.getPriceValue().longValue())
+                () -> assertThat(findProduct.getPriceValue().longValue()).isEqualTo(
+                        savedProduct.getPriceValue().longValue())
         );
     }
 

@@ -12,4 +12,6 @@ public interface MenuRepository {
     List<Menu> findAll();
 
     long countByIdIn(List<Long> ids);
+
+    List<Menu> findAllByIdsIn(List<Long> menuIds);
 }

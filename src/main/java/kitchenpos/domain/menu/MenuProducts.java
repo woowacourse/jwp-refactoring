@@ -11,7 +11,7 @@ import javax.persistence.OneToMany;
 public class MenuProducts {
 
     @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MenuProduct> values = new ArrayList<>();
+    private final List<MenuProduct> values = new ArrayList<>();
 
     protected MenuProducts() {
     }

@@ -1,7 +1,5 @@
 package kitchenpos.domain;
 
-import static kitchenpos.domain.DomainTestFixture.*;
-
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.menu.Menu;
@@ -68,8 +66,10 @@ public abstract class RepositoryTest {
     }
 
     private Menu createMenu() {
-        final MenuProduct menuProduct1 = new MenuProduct(product1.getName(), product1.getPriceValue(), product1.getId(), 1);
-        final MenuProduct menuProduct2 = new MenuProduct(product2.getName(), product2.getPriceValue(), product2.getId(), 1);
+        final MenuProduct menuProduct1 = new MenuProduct(product1.getName(), product1.getPriceValue(), product1.getId(),
+                1);
+        final MenuProduct menuProduct2 = new MenuProduct(product2.getName(), product2.getPriceValue(), product2.getId(),
+                1);
         final Menu menu = Menu.create(
                 "테스트메뉴",
                 BigDecimal.valueOf(2500L),

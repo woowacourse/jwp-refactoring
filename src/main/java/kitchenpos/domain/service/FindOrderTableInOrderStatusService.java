@@ -1,8 +1,6 @@
 package kitchenpos.domain.service;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
 import org.springframework.stereotype.Service;

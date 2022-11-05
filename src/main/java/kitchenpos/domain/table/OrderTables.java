@@ -12,7 +12,7 @@ import javax.persistence.OneToMany;
 public class OrderTables {
 
     @OneToMany(mappedBy = "tableGroup", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderTable> values = new ArrayList<>();
+    private final List<OrderTable> values = new ArrayList<>();
 
     protected OrderTables() {
     }

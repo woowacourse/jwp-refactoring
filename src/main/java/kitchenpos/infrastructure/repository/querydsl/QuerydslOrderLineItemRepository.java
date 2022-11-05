@@ -4,7 +4,6 @@ import static kitchenpos.domain.order.QOrderLineItem.orderLineItem;
 import static kitchenpos.infrastructure.repository.querydsl.QuerydslUtils.nullSafeBuilder;
 
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;

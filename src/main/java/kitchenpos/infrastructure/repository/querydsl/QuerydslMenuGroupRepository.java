@@ -1,7 +1,7 @@
 package kitchenpos.infrastructure.repository.querydsl;
 
 import static kitchenpos.domain.menu.QMenuGroup.menuGroup;
-import static kitchenpos.infrastructure.repository.querydsl.QuerydslUtils.*;
+import static kitchenpos.infrastructure.repository.querydsl.QuerydslUtils.nullSafeBuilder;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;

@@ -8,9 +8,6 @@ import java.util.List;
 import kitchenpos.application.dto.OrderDto;
 import kitchenpos.application.dto.TableDto;
 import kitchenpos.application.dto.TableGroupDto;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

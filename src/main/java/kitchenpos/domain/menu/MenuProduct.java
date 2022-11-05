@@ -54,17 +54,15 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
-    public MenuProduct(final String productName, final BigDecimal productPrice, final Long productId,
+    public MenuProduct(final String productName,
+                       final BigDecimal productPrice,
+                       final Long productId,
                        final long quantity) {
-        this.productName = productName;
-        this.productPrice = Price.valueOf(productPrice);
-        this.productId = productId;
-        this.quantity = quantity;
+        this(null, productName, productPrice, productId, quantity);
     }
 
     public MenuProduct(final Long productId, final long quantity) {
-        this.productId = productId;
-        this.quantity = quantity;
+        this(null, null, productId, quantity);
     }
 
     public Long getSeq() {

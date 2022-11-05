@@ -23,24 +23,23 @@ import kitchenpos.application.dto.TableDto;
 import kitchenpos.application.dto.TableGroupDto;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.product.Product;
-import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.domain.table.OrderTableRepository;
+import kitchenpos.ui.dto.ChangeOrderStatusRequest;
 import kitchenpos.ui.dto.ChangeTableEmptyRequest;
+import kitchenpos.ui.dto.CraeteTableGroupRequest;
 import kitchenpos.ui.dto.CreateMenuGroupRequest;
 import kitchenpos.ui.dto.CreateMenuProductRequest;
 import kitchenpos.ui.dto.CreateMenuRequest;
 import kitchenpos.ui.dto.CreateOrderLineItemRequest;
 import kitchenpos.ui.dto.CreateOrderRequest;
-import kitchenpos.ui.dto.ChangeOrderStatusRequest;
-import kitchenpos.ui.dto.OrderTableIdRequest;
 import kitchenpos.ui.dto.CreateProductRequest;
-import kitchenpos.ui.dto.CraeteTableGroupRequest;
-import kitchenpos.ui.dto.TableGuestNumberRequest;
 import kitchenpos.ui.dto.CreateTableRequest;
+import kitchenpos.ui.dto.OrderTableIdRequest;
+import kitchenpos.ui.dto.TableGuestNumberRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -74,6 +73,9 @@ public class AcceptanceTest {
 
     @Autowired
     protected OrderTableRepository orderTableRepository;
+
+    @Autowired
+    protected MenuRepository menuRepository;
 
     protected ProductDto 토마토파스타;
     protected ProductDto 목살스테이크;
@@ -161,9 +163,10 @@ public class AcceptanceTest {
                 .as(MenuDto.class);
     }
 
-    protected ExtractableResponse<Response> 메뉴_등록_요청(final String name, final Long price, final Long menuGroupId, final List<Long> productIds) {
+    protected ExtractableResponse<Response> 메뉴_등록_요청(final String name, final Long price, final Long menuGroupId,
+                                                     final List<Long> productIds) {
         final List<MenuProduct> menuProducts = productIds.stream()
-                .map(productId -> new MenuProduct(productId, 1))
+                .map(productId -> new MenuProduct(name, createBigDecimalPrice(price), productId, 1))
                 .collect(Collectors.toList());
         final List<CreateMenuProductRequest> createMenuProductRequests = menuProducts
                 .stream()
@@ -259,8 +262,9 @@ public class AcceptanceTest {
     }
 
     public OrderDto 메뉴_주문(final Long orderTableId, final Long... menuIds) {
-        final List<OrderLineItem> orderLineItems = Arrays.stream(menuIds)
-                .map(menuId -> new OrderLineItem(menuId, 1))
+        final List<Menu> menus = menuRepository.findAllByIdsIn(List.of(menuIds));
+        final List<OrderLineItem> orderLineItems = menus.stream()
+                .map(menu -> new OrderLineItem(menu.getName(), menu.getPrice(), menu.getId(), 1L))
                 .collect(Collectors.toList());
         final Order order = Order.create(orderTableId, orderLineItems);
         return 메뉴_주문_요청(order).body()
@@ -352,5 +356,12 @@ public class AcceptanceTest {
 
     protected <T> void 단일_데이터_검증(final T actual, final T expected) {
         assertThat(actual).isEqualTo(expected);
+    }
+
+    private BigDecimal createBigDecimalPrice(final Long price) {
+        if (price == null) {
+            return null;
+        }
+        return BigDecimal.valueOf(price);
     }
 }

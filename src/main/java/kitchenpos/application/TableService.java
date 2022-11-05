@@ -1,16 +1,13 @@
 package kitchenpos.application;
 
+import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.TableDto;
 import kitchenpos.domain.service.FindOrderTableInOrderStatusService;
-import kitchenpos.domain.table.OrderTableRepository;
-import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Arrays;
-import java.util.List;
 
 @Service
 public class TableService {

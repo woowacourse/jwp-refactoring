@@ -3,7 +3,6 @@ package kitchenpos.application;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.CreateMenuDto;
-import kitchenpos.application.dto.CreateMenuProductDto;
 import kitchenpos.application.dto.MenuDto;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroupRepository;

@@ -1,8 +1,6 @@
 package kitchenpos.domain.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -26,9 +24,9 @@ class CalculateProductPriceServiceTest {
         final Product product2 = new Product(2L, "상품2", BigDecimal.valueOf(1500L));
         final Product product3 = new Product(3L, "상품3", BigDecimal.valueOf(5000L));
         final Menu testMenu = DomainTestFixture.getTestMenu();
-        final MenuProduct menuProduct1 = new MenuProduct(testMenu,"상품1", BigDecimal.valueOf(1000L), 1L, 1);
-        final MenuProduct menuProduct2 = new MenuProduct(testMenu,"상품2", BigDecimal.valueOf(1500L), 2L, 1);
-        final MenuProduct menuProduct3 = new MenuProduct(testMenu,"상품3", BigDecimal.valueOf(5000L), 3L, 2);
+        final MenuProduct menuProduct1 = new MenuProduct(testMenu, "상품1", BigDecimal.valueOf(1000L), 1L, 1);
+        final MenuProduct menuProduct2 = new MenuProduct(testMenu, "상품2", BigDecimal.valueOf(1500L), 2L, 1);
+        final MenuProduct menuProduct3 = new MenuProduct(testMenu, "상품3", BigDecimal.valueOf(5000L), 3L, 2);
         final ProductRepository productRepository = mock(ProductRepository.class);
         when(productRepository.findById(1L)).thenReturn(Optional.of(product1));
         when(productRepository.findById(2L)).thenReturn(Optional.of(product2));

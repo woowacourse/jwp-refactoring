@@ -1,13 +1,13 @@
 package kitchenpos.domain.order;
 
-import static kitchenpos.domain.DomainTestFixture.*;
+import static kitchenpos.domain.DomainTestFixture.getTestMenu;
+import static kitchenpos.domain.DomainTestFixture.getTestOrderTable1;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.domain.DomainTestFixture;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.table.OrderTable;
 import org.junit.jupiter.api.DisplayName;
@@ -20,7 +20,12 @@ class OrderTest {
     void create() {
         final LocalDateTime startTime = LocalDateTime.now();
         final Menu testMenu = getTestMenu();
-        final OrderLineItem orderLineItem = new OrderLineItem(testMenu.getId(), 1);
+        final OrderLineItem orderLineItem = new OrderLineItem(
+                testMenu.getName(),
+                testMenu.getPrice(),
+                testMenu.getId(),
+                1L
+        );
 
         final OrderTable testOrderTable1 = getTestOrderTable1();
         final Order order = Order.create(testOrderTable1.getId(), List.of(orderLineItem));
@@ -37,7 +42,12 @@ class OrderTest {
     @DisplayName("주문의 상태를 변경한다.")
     void changeOrderStatus() {
         final Menu testMenu = getTestMenu();
-        final OrderLineItem orderLineItem = new OrderLineItem(testMenu.getId(), 1);
+        final OrderLineItem orderLineItem = new OrderLineItem(
+                testMenu.getName(),
+                testMenu.getPrice(),
+                testMenu.getId(),
+                1L
+        );
         final OrderTable testOrderTable1 = getTestOrderTable1();
         final Order order = Order.create(testOrderTable1.getId(), List.of(orderLineItem));
 
@@ -50,7 +60,12 @@ class OrderTest {
     @DisplayName("주문이 완료 상태일 때 상태를 변경하려 하면 예외가 발생한다.")
     void changeOrderStatusAlreadyCompletion() {
         final Menu testMenu = getTestMenu();
-        final OrderLineItem orderLineItem = new OrderLineItem(testMenu.getId(), 1);
+        final OrderLineItem orderLineItem = new OrderLineItem(
+                testMenu.getName(),
+                testMenu.getPrice(),
+                testMenu.getId(),
+                1L
+        );
         final OrderTable testOrderTable1 = getTestOrderTable1();
         final Order order = Order.create(testOrderTable1.getId(), List.of(orderLineItem));
         order.changeOrderStatus(OrderStatus.COMPLETION);

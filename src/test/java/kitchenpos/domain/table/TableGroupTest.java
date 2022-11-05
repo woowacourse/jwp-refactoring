@@ -1,13 +1,12 @@
 package kitchenpos.domain.table;
 
-import static kitchenpos.domain.DomainTestFixture.*;
+import static kitchenpos.domain.DomainTestFixture.getTestOrderTable1;
+import static kitchenpos.domain.DomainTestFixture.getTestOrderTable2;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.domain.DomainTestFixture;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

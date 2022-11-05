@@ -1,10 +1,8 @@
 package kitchenpos.domain.order;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -36,10 +34,10 @@ public class Order {
     }
 
     private Order(final Long id,
-                 final Long orderTableId,
-                 final OrderStatus orderStatus,
-                 final LocalDateTime orderedTime,
-                 final List<OrderLineItem> orderLineItems) {
+                  final Long orderTableId,
+                  final OrderStatus orderStatus,
+                  final LocalDateTime orderedTime,
+                  final List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;

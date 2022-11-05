@@ -10,8 +10,6 @@ import kitchenpos.application.dto.OrderDto;
 import kitchenpos.application.dto.OrderLineItemDto;
 import kitchenpos.application.dto.TableDto;
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.vo.Price;

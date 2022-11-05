@@ -1,22 +1,21 @@
 package kitchenpos.application;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.application.dto.CreateOrderDto;
 import kitchenpos.application.dto.CreateOrderLineItemDto;
 import kitchenpos.application.dto.OrderDto;
+import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuRepository;
-import kitchenpos.domain.order.OrderRepository;
-import kitchenpos.domain.order.OrderLineItemRepository;
-import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItemRepository;
+import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -42,7 +41,7 @@ public class OrderService {
     public OrderDto create(final CreateOrderDto createOrderDto) {
         final Order order = Order.create(
                 createOrderDto.getOrderTableId(),
-                mapToOrderLineItems(createOrderDto.getOrderLineItems())
+                mapToOrderLineItems(createOrderDto)
         );
         validateExistMenus(createOrderDto.getMenuIds(), order.getOrderLineItems());
         validateTableFull(order);
@@ -52,10 +51,24 @@ public class OrderService {
         return OrderDto.of(savedOrder);
     }
 
-    private List<OrderLineItem> mapToOrderLineItems(final List<CreateOrderLineItemDto> createOrderLineItemDtos) {
+    private List<OrderLineItem> mapToOrderLineItems(final CreateOrderDto createOrderDto) {
+        final List<CreateOrderLineItemDto> createOrderLineItemDtos = createOrderDto.getOrderLineItems();
+        final List<Long> menuIds = createOrderDto.getMenuIds();
+        final List<Menu> menus = menuRepository.findAllByIdsIn(menuIds);
+
         return createOrderLineItemDtos.stream()
-                .map(it -> new OrderLineItem(it.getMenuId(), it.getQuantity()))
+                .map(it -> {
+                    final Menu menu = findMenuById(menus, it.getMenuId());
+                    return new OrderLineItem(menu.getName(), menu.getPrice(), it.getMenuId(), it.getQuantity());
+                })
                 .collect(Collectors.toList());
+    }
+
+    private Menu findMenuById(final List<Menu> menus, final Long menuId) {
+        return menus.stream()
+                .filter(menu -> menu.getId().equals(menuId))
+                .findAny()
+                .orElseThrow(IllegalArgumentException::new);
     }
 
     private void validateExistMenus(final List<Long> menuIds, final List<OrderLineItem> orderLineItems) {

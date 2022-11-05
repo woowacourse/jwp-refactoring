@@ -23,10 +23,7 @@ import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.product.Product;
-import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -200,8 +197,9 @@ public abstract class ServiceTest {
     }
 
     public OrderDto 주문_요청한다(final TableDto orderTable, final Long... menuIds) {
-        final List<OrderLineItem> orderLineItems = Arrays.stream(menuIds)
-                .map(menuId -> new OrderLineItem(menuId, 1))
+        final List<Menu> menus = menuRepository.findAllByIdsIn(List.of(menuIds));
+        final List<OrderLineItem> orderLineItems = menus.stream()
+                .map(menu -> new OrderLineItem(menu.getName(), menu.getPrice(), menu.getId(), 1L))
                 .collect(Collectors.toList());
         final Order order = Order.create(orderTable.getId(), orderLineItems);
         final List<CreateOrderLineItemDto> createOrderLineItemDtos = order.getOrderLineItems()

@@ -15,7 +15,7 @@ class OrderRepositoryTest extends RepositoryTest {
     @DisplayName("주문을 저장한다.")
     void save() {
         final LocalDateTime startTime = LocalDateTime.now();
-        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1);
+        final OrderLineItem orderLineItem = new OrderLineItem(menu.getName(), menu.getPrice(), menu.getId(), 1L);
         final Order order = Order.create(orderTable1.getId(), List.of(orderLineItem));
 
         final Order savedOrder = orderRepository.save(order);
@@ -32,7 +32,7 @@ class OrderRepositoryTest extends RepositoryTest {
     @Test
     @DisplayName("주문을 id로 조회한다.")
     void findById() {
-        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1);
+        final OrderLineItem orderLineItem = new OrderLineItem(menu.getName(), menu.getPrice(), menu.getId(), 1L);
         final Order order = Order.create(orderTable1.getId(), List.of(orderLineItem));
         final Order savedOrder = orderRepository.save(order);
 
@@ -50,11 +50,11 @@ class OrderRepositoryTest extends RepositoryTest {
     @Test
     @DisplayName("주문정보 전체를 조회한다.")
     void findAll() {
-        final OrderLineItem orderLineItem1 = new OrderLineItem(menu.getId(), 1);
+        final OrderLineItem orderLineItem1 = new OrderLineItem(menu.getName(), menu.getPrice(), menu.getId(), 1L);
         final Order order1 = Order.create(orderTable1.getId(), List.of(orderLineItem1));
         final Order savedOrder1 = orderRepository.save(order1);
 
-        final OrderLineItem orderLineItem2 = new OrderLineItem(menu.getId(), 1);
+        final OrderLineItem orderLineItem2 = new OrderLineItem(menu.getName(), menu.getPrice(), menu.getId(), 1L);
         final Order order2 = Order.create(orderTable2.getId(), List.of(orderLineItem2));
         final Order savedOrder2 = orderRepository.save(order2);
 
@@ -71,11 +71,11 @@ class OrderRepositoryTest extends RepositoryTest {
     @Test
     @DisplayName("테이블 id와 주문 상태 목록 조건으로 주문이 있는지 확인한다.")
     void existsByOrderTableIdAndOrderStatusIn() {
-        final OrderLineItem orderLineItem1 = new OrderLineItem(menu.getId(), 1);
+        final OrderLineItem orderLineItem1 = new OrderLineItem(menu.getName(), menu.getPrice(), menu.getId(), 1L);
         final Order order1 = Order.create(orderTable1.getId(), List.of(orderLineItem1));
         orderRepository.save(order1);
 
-        final OrderLineItem orderLineItem2 = new OrderLineItem(menu.getId(), 1);
+        final OrderLineItem orderLineItem2 = new OrderLineItem(menu.getName(), menu.getPrice(), menu.getId(), 1L);
         final Order order2 = Order.create(orderTable2.getId(), List.of(orderLineItem2));
         final Order savedOrder2 = orderRepository.save(order2);
         savedOrder2.changeOrderStatus(OrderStatus.MEAL);
@@ -100,11 +100,11 @@ class OrderRepositoryTest extends RepositoryTest {
     @Test
     @DisplayName("테이블 id 목록과 주문상태 목록을 조건으로 주문이 있는지 확인한다.")
     void existsByOrderTableIdInAndOrderStatusIn() {
-        final OrderLineItem orderLineItem1 = new OrderLineItem(menu.getId(), 1);
+        final OrderLineItem orderLineItem1 = new OrderLineItem(menu.getName(), menu.getPrice(), menu.getId(), 1L);
         final Order order1 = Order.create(orderTable1.getId(), List.of(orderLineItem1));
         orderRepository.save(order1);
 
-        final OrderLineItem orderLineItem2 = new OrderLineItem(menu.getId(), 1);
+        final OrderLineItem orderLineItem2 = new OrderLineItem(menu.getName(), menu.getPrice(), menu.getId(), 1L);
         final Order order2 = Order.create(orderTable2.getId(), List.of(orderLineItem2));
         final Order savedOrder2 = orderRepository.save(order2);
         savedOrder2.changeOrderStatus(OrderStatus.MEAL);

@@ -1,7 +1,7 @@
 package kitchenpos.domain.order;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.domain.RepositoryTest;
@@ -13,7 +13,7 @@ class OrderLineItemRepositoryTest extends RepositoryTest {
     @Test
     @DisplayName("주문 id로 모든 주문 항목을 불러온다.")
     void findAllByOrderId() {
-        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1);
+        final OrderLineItem orderLineItem = new OrderLineItem(menu.getName(), menu.getPrice(), menu.getId(), 1L);
         final Order order = Order.create(orderTable1.getId(), List.of(orderLineItem));
         final Order savedOrder = orderRepository.save(order);
 

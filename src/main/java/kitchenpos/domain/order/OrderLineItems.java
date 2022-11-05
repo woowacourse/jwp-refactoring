@@ -12,7 +12,7 @@ import javax.persistence.OneToMany;
 public class OrderLineItems {
 
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderLineItem> values = new ArrayList<>();
+    private final List<OrderLineItem> values = new ArrayList<>();
 
     protected OrderLineItems() {
     }
@@ -23,7 +23,15 @@ public class OrderLineItems {
 
     private void addAll(final List<OrderLineItem> orderLineItems, final Order order) {
         final List<OrderLineItem> orderInserted = orderLineItems.stream()
-                .map(orderLineItem -> new OrderLineItem(order, orderLineItem.getMenuId(), orderLineItem.getQuantity()))
+                .map(orderLineItem ->
+                        new OrderLineItem(
+                                order,
+                                orderLineItem.getMenuName(),
+                                orderLineItem.getMenuPriceValue(),
+                                orderLineItem.getMenuId(),
+                                orderLineItem.getQuantity()
+                        )
+                )
                 .collect(Collectors.toList());
         values.addAll(orderInserted);
     }
