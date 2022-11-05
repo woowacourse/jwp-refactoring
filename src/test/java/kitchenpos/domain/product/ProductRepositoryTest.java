@@ -21,7 +21,7 @@ class ProductRepositoryTest extends RepositoryTest {
         assertAll(
                 () -> assertThat(savedProduct.getId()).isNotNull(),
                 () -> assertThat(savedProduct.getName()).isEqualTo("상품"),
-                () -> assertThat(savedProduct.getPrice().longValue()).isEqualTo(1000L)
+                () -> assertThat(savedProduct.getPriceValue().longValue()).isEqualTo(1000L)
         );
     }
 
@@ -36,7 +36,7 @@ class ProductRepositoryTest extends RepositoryTest {
         assertAll(
                 () -> assertThat(findProduct.getId()).isEqualTo(savedProduct.getId()),
                 () -> assertThat(findProduct.getName()).isEqualTo(savedProduct.getName()),
-                () -> assertThat(findProduct.getPrice().longValue()).isEqualTo(savedProduct.getPrice().longValue())
+                () -> assertThat(findProduct.getPriceValue().longValue()).isEqualTo(savedProduct.getPriceValue().longValue())
         );
     }
 

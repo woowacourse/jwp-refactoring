@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import kitchenpos.application.dto.ProductDto;
 import kitchenpos.domain.product.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,10 +15,10 @@ class ProductServiceTest extends ServiceTest {
     @Test
     @DisplayName("상품을 저장한다.")
     void create() {
-        final Product product1 = 상품_등록("상품1", 1000L);
-        final Product product2 = 상품_등록("상품2", 1000L);
+        final ProductDto product1 = 상품_등록("상품1", 1000L);
+        final ProductDto product2 = 상품_등록("상품2", 1000L);
 
-        final List<Product> products = 상품_전체_조회();
+        final List<ProductDto> products = 상품_전체_조회();
 
         assertThat(products).usingElementComparatorIgnoringFields()
                 .contains(product1, product2);

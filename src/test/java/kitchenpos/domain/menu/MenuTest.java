@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.DomainTestFixture;
 import kitchenpos.domain.service.CalculateProductPriceService;
+import kitchenpos.domain.vo.Price;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,8 +21,17 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class MenuTest {
 
-    final MenuProduct testMenuProduct1 = new MenuProduct(1L, 1);
-    final MenuProduct testMenuProduct2 = new MenuProduct(2L, 1);
+    final MenuProduct testMenuProduct1 = new MenuProduct(
+            "상품1",
+            BigDecimal.valueOf(1000L),
+            1L,
+            1
+    );
+    final MenuProduct testMenuProduct2 = new MenuProduct("상품2",
+            BigDecimal.valueOf(2000L),
+            2L,
+            1
+    );
 
     private Menu createTestMenu() {
         return Menu.create(

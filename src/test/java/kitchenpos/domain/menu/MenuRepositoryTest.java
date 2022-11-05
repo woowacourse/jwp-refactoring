@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.RepositoryTest;
+import kitchenpos.domain.vo.Price;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,8 +15,17 @@ class MenuRepositoryTest extends RepositoryTest {
     @Test
     @DisplayName("메뉴를 저장한다.")
     void save() {
-        final MenuProduct testMenuProduct1 = new MenuProduct(product1.getId(), 1);
-        final MenuProduct testMenuProduct2 = new MenuProduct(product2.getId(), 1);
+        final MenuProduct testMenuProduct1 = new MenuProduct(
+                "상품1",
+                BigDecimal.valueOf(1000L),
+                product1.getId(),
+                1
+        );
+        final MenuProduct testMenuProduct2 = new MenuProduct("상품2",
+                BigDecimal.valueOf(2000L),
+                product2.getId(),
+                1
+        );
         final Menu newMenu = Menu.create(
                 "메뉴생성",
                 BigDecimal.valueOf(3000L),
@@ -56,8 +66,17 @@ class MenuRepositoryTest extends RepositoryTest {
     @Test
     @DisplayName("모든 메뉴를 찾는다.")
     void findAll() {
-        final MenuProduct testMenuProduct1 = new MenuProduct(product1.getId(), 1);
-        final MenuProduct testMenuProduct2 = new MenuProduct(product2.getId(), 1);
+        final MenuProduct testMenuProduct1 = new MenuProduct(
+                "상품1",
+                BigDecimal.valueOf(1000L),
+                product1.getId(),
+                1
+        );
+        final MenuProduct testMenuProduct2 = new MenuProduct("상품2",
+                BigDecimal.valueOf(2000L),
+                product2.getId(),
+                1
+        );
         final Menu newMenu = Menu.create(
                 "메뉴생성",
                 BigDecimal.valueOf(3000L),
@@ -75,8 +94,17 @@ class MenuRepositoryTest extends RepositoryTest {
     @Test
     @DisplayName("메뉴아이디 목록으로 카운트를 구한다.")
     void countByIdIn() {
-        final MenuProduct testMenuProduct1 = new MenuProduct(product1.getId(), 1);
-        final MenuProduct testMenuProduct2 = new MenuProduct(product2.getId(), 1);
+        final MenuProduct testMenuProduct1 = new MenuProduct(
+                "상품1",
+                BigDecimal.valueOf(1000L),
+                product1.getId(),
+                1
+        );
+        final MenuProduct testMenuProduct2 = new MenuProduct("상품2",
+                BigDecimal.valueOf(2000L),
+                product2.getId(),
+                1
+        );
         final Menu newMenu = Menu.create(
                 "메뉴생성",
                 BigDecimal.valueOf(3000L),

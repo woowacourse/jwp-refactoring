@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +16,7 @@ class ProductTest {
 
         assertAll(
                 () -> assertThat(product.getName()).isEqualTo("테스트상품"),
-                () -> assertThat(product.getPrice().longValue()).isEqualTo(15000L)
+                () -> assertThat(product.getPriceValue().longValue()).isEqualTo(15000L)
         );
     }
 }

@@ -68,8 +68,8 @@ public abstract class RepositoryTest {
     }
 
     private Menu createMenu() {
-        final MenuProduct menuProduct1 = new MenuProduct(product1.getId(), 1);
-        final MenuProduct menuProduct2 = new MenuProduct(product2.getId(), 1);
+        final MenuProduct menuProduct1 = new MenuProduct(product1.getName(), product1.getPriceValue(), product1.getId(), 1);
+        final MenuProduct menuProduct2 = new MenuProduct(product2.getName(), product2.getPriceValue(), product2.getId(), 1);
         final Menu menu = Menu.create(
                 "테스트메뉴",
                 BigDecimal.valueOf(2500L),

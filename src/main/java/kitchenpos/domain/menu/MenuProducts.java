@@ -22,7 +22,15 @@ public class MenuProducts {
 
     private void addAll(final List<MenuProduct> menuProducts, final Menu menu) {
         final List<MenuProduct> menuInserted = menuProducts.stream()
-                .map(menuProduct -> new MenuProduct(menu, menuProduct.getProductId(), menuProduct.getQuantity()))
+                .map(menuProduct ->
+                        new MenuProduct(
+                                menu,
+                                menuProduct.getProductName(),
+                                menuProduct.getProductPriceValue(),
+                                menuProduct.getProductId(),
+                                menuProduct.getQuantity()
+                        )
+                )
                 .collect(Collectors.toList());
         values.addAll(menuInserted);
     }

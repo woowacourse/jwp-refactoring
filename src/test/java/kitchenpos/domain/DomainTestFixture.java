@@ -32,14 +32,16 @@ public class DomainTestFixture {
     }
 
     public static Menu getTestMenu() {
+        final Product testProduct1 = getTestProduct1();
+        final Product testProduct2 = getTestProduct2();
         return new Menu(
                 1L,
                 "테스트 메뉴",
                 Price.valueOf(BigDecimal.valueOf(2500L)),
                 getTestMenuGroup(),
                 List.of(
-                        new MenuProduct(getTestProduct1().getId(), 1),
-                        new MenuProduct(getTestProduct2().getId(), 1)
+                        new MenuProduct(testProduct1.getName(), testProduct1.getPriceValue(), testProduct1.getId(), 1),
+                        new MenuProduct(testProduct2.getName(), testProduct2.getPriceValue(), testProduct2.getId(), 1)
                 )
         );
     }

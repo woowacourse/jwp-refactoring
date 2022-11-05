@@ -24,6 +24,7 @@ import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,9 +61,9 @@ public abstract class ServiceTest {
     @Autowired
     protected MenuRepository menuRepository;
 
-    protected Product 토마토파스타;
-    protected Product 목살스테이크;
-    protected Product 탄산음료;
+    protected ProductDto 토마토파스타;
+    protected ProductDto 목살스테이크;
+    protected ProductDto 탄산음료;
 
     protected MenuGroup 파스타;
     protected MenuGroup 스테이크;
@@ -97,26 +98,12 @@ public abstract class ServiceTest {
         식사중인_주문 = 주문을_식사_상태로_만든다(식사중인_주문);
     }
 
-    public Product 상품_등록(final String name, final Long price) {
-        final ProductDto productDto = productService.create(name, createBigDecimalPrice(price));
-        return new Product(
-                productDto.getId(),
-                productDto.getName(),
-                productDto.getPrice()
-        );
+    public ProductDto 상품_등록(final String name, final Long price) {
+        return productService.create(name, createBigDecimalPrice(price));
     }
 
-    public List<Product> 상품_전체_조회() {
-        return productService.list()
-                .stream()
-                .map(productDto ->
-                        new Product(
-                                productDto.getId(),
-                                productDto.getName(),
-                                productDto.getPrice()
-                        )
-                )
-                .collect(Collectors.toList());
+    public List<ProductDto> 상품_전체_조회() {
+        return productService.list();
     }
 
     public MenuGroup 메뉴_그룹_등록(final String name) {
@@ -141,7 +128,7 @@ public abstract class ServiceTest {
 
     public MenuDto 메뉴_등록(final String name, final Long price, final MenuGroup menuGroup, final Long... productIds) {
         final List<MenuProduct> menuProducts = Arrays.stream(productIds)
-                .map(MenuProduct::new)
+                .map(productId -> new MenuProduct(name, createBigDecimalPrice(price), productId, 1))
                 .collect(Collectors.toList());
         final Menu menu = Menu.create(name, createBigDecimalPrice(price), menuGroup, menuProducts);
         final List<CreateMenuProductDto> createMenuProductDtos = menu.getMenuProducts()
