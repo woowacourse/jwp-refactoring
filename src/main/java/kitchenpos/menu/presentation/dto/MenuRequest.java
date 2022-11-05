@@ -15,6 +15,9 @@ public class MenuRequest {
     private Long menuGroupId;
     private List<MenuProductRequest> menuProducts;
 
+    public MenuRequest() {
+    }
+
     public MenuRequest(final String name,
                        final BigDecimal price,
                        final Long menuGroupId,
