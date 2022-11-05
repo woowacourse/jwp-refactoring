@@ -2,7 +2,6 @@ package kitchenpos.table.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.table.domain.OrderTable;
 import org.springframework.util.CollectionUtils;
 
 public class TableGroup {
@@ -11,7 +10,8 @@ public class TableGroup {
     private List<OrderTable> orderTables;
 
 
-    public TableGroup() {}
+    public TableGroup() {
+    }
 
     public TableGroup(LocalDateTime now) {
         this.createdDate = now;
@@ -47,8 +47,9 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
 
-    public void validateOrderTablesEmpty(List<OrderTable> orderTables){
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2)
+    public void validateOrderTablesEmpty(List<OrderTable> orderTables) {
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException();
+        }
     }
 }

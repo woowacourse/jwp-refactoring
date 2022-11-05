@@ -7,11 +7,10 @@ import java.util.List;
 import kitchenpos.menu.application.dto.MenuGroupRequestDto;
 import kitchenpos.menu.application.dto.MenuGroupResponse;
 import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.menu.presentation.dto.MenuGroupRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class MenuGroupTest extends ServiceTest{
+class MenuGroupTest extends ServiceTest {
 
     @Test
     @DisplayName("메뉴 그룹을 생성한다.")

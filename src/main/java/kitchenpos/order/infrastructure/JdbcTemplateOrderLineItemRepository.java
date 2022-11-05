@@ -1,5 +1,10 @@
 package kitchenpos.order.infrastructure;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
+import javax.sql.DataSource;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.repository.OrderLineItemRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -9,12 +14,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-
-import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class JdbcTemplateOrderLineItemRepository implements OrderLineItemRepository {

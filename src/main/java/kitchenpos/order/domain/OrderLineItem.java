@@ -37,7 +37,8 @@ public class OrderLineItem {
         this.productQuantity = productQuantity;
     }
 
-    public OrderLineItem(Long menuId, String menuName , BigDecimal price, Long quantity, String productName, BigDecimal productPrice, Long productQuantity) {
+    public OrderLineItem(Long menuId, String menuName, BigDecimal price, Long quantity, String productName,
+                         BigDecimal productPrice, Long productQuantity) {
         this(null, null, menuId, menuName, price, quantity, productName, productPrice, productQuantity);
     }
 

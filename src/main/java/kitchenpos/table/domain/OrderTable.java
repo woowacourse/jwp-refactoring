@@ -1,8 +1,7 @@
 package kitchenpos.table.domain;
 
-import java.util.Objects;
-
-public class OrderTable {
+public class
+OrderTable {
     private Long id;
     private Long tableGroupId;
     private Integer numberOfGuests;
@@ -11,12 +10,12 @@ public class OrderTable {
     public OrderTable() {
     }
 
-    public OrderTable(final Integer numberOfGuests, final Boolean empty){
-        this(null, null , numberOfGuests, empty);
+    public OrderTable(final Integer numberOfGuests, final Boolean empty) {
+        this(null, null, numberOfGuests, empty);
     }
 
     public OrderTable(final Long tableGroupId, final Integer numberOfGuests, final Boolean empty) {
-        this(null, tableGroupId , numberOfGuests, empty);
+        this(null, tableGroupId, numberOfGuests, empty);
     }
 
     public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
@@ -59,31 +58,31 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    private void validateNumberOfGuests(final Integer numberOfGuests){
+    private void validateNumberOfGuests(final Integer numberOfGuests) {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();
         }
     }
 
-    public void validateEmptyTable(){
+    public void validateEmptyTable() {
         if (!this.isEmpty()) {
-              throw new IllegalArgumentException();
-          }
-    }
-
-    public void validateNotEmptyTable(){
-        if (this.isEmpty()) {
-              throw new IllegalArgumentException();
-          }
-    }
-
-    public void validateNotGroupTable(){
-        if(this.getTableGroupId() != null){
             throw new IllegalArgumentException();
         }
     }
 
-    public void addTableId(final Long tableGroupId){
+    public void validateNotEmptyTable() {
+        if (this.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void validateNotGroupTable() {
+        if (this.getTableGroupId() != null) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void addTableId(final Long tableGroupId) {
         this.tableGroupId = tableGroupId;
         this.empty = false;
     }

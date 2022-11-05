@@ -20,10 +20,8 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.presentation.dto.OrderLineItemRequest;
 import kitchenpos.product.application.dto.ProductResponse;
-import kitchenpos.product.domain.Product;
 import kitchenpos.table.application.dto.OrderTableRequestDto;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -42,7 +40,6 @@ class OrderServiceTest extends ServiceTest {
     @Nested
     @DisplayName("주문 생성 로직 테스트")
     class create {
-
 
         @Test
         @DisplayName("주문을 생성한다.")
