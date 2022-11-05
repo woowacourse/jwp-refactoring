@@ -1,4 +1,4 @@
-package kitchenpos.menu.ui.request;
+package kitchenpos.menugroup.ui.request;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 

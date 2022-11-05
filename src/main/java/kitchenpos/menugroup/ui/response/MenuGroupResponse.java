@@ -1,4 +1,4 @@
-package kitchenpos.menu.ui.response;
+package kitchenpos.menugroup.ui.response;
 
 public class MenuGroupResponse {
 

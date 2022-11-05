@@ -9,19 +9,19 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class MenuGroupTest {
+class MenuTest {
 
     @DisplayName("메뉴를 생성한다.")
     @Test
     void createMenu() {
         // arrange
-        MenuGroup menuGroup = new MenuGroup(1L, "추천메뉴");
+        long menuGroupId = 1L;
         PendingMenuProducts products = createPendingMenuProducts(
                 new PendingMenuProduct(1L, BigDecimal.valueOf(1000), 1)
         );
 
         // act
-        Menu menu = menuGroup.createMenu("한마리치킨", BigDecimal.valueOf(999), products);
+        Menu menu = Menu.create("한마리치킨", BigDecimal.valueOf(999), products, menuGroupId);
 
         // assert
         assertThat(menu.getName()).isEqualTo("한마리치킨");
@@ -38,13 +38,13 @@ class MenuGroupTest {
     @Test
     void createMenuByNegativePrice() {
         // arrange
-        MenuGroup menuGroup = new MenuGroup(1L, "추천메뉴");
+        long menuGroupId = 1L;
         PendingMenuProducts menuProducts = createPendingMenuProducts(
                 new PendingMenuProduct(1L, BigDecimal.valueOf(1000), 1)
         );
 
         // act & assert
-        assertThatThrownBy(() -> menuGroup.createMenu("한마리치킨", BigDecimal.ONE.negate(), menuProducts))
+        assertThatThrownBy(() -> Menu.create("한마리치킨", BigDecimal.ONE.negate(), menuProducts, menuGroupId))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -52,13 +52,13 @@ class MenuGroupTest {
     @Test
     void createMenuByNullPrice() {
         // arrange
-        MenuGroup menuGroup = new MenuGroup(1L, "추천메뉴");
+        long menuGroupId = 1L;
         PendingMenuProducts menuProducts = createPendingMenuProducts(
                 new PendingMenuProduct(1L, BigDecimal.valueOf(1000), 1)
         );
 
         // act & assert
-        assertThatThrownBy(() -> menuGroup.createMenu("한마리치킨", null, menuProducts))
+        assertThatThrownBy(() -> Menu.create("한마리치킨", null, menuProducts, menuGroupId))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -66,14 +66,14 @@ class MenuGroupTest {
     @Test
     void createMenuByOverThanMenuProductsPrice() {
         // arrange
-        MenuGroup menuGroup = new MenuGroup(1L, "추천메뉴");
+        long menuGroupId = 1L;
         PendingMenuProducts menuProducts = createPendingMenuProducts(
                 new PendingMenuProduct(1L, BigDecimal.valueOf(1000), 1),
                 new PendingMenuProduct(2L, BigDecimal.valueOf(2000), 1)
         );
 
         // act & assert
-        assertThatThrownBy(() -> menuGroup.createMenu("한마리치킨", BigDecimal.valueOf(3001), menuProducts))
+        assertThatThrownBy(() -> Menu.create("한마리치킨", BigDecimal.valueOf(3001), menuProducts, menuGroupId))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

@@ -31,16 +31,21 @@ public class Menu {
     protected Menu() {
     }
 
-    Menu(final String name, final BigDecimal price, final long menuGroupId, final List<MenuProduct> products) {
-        this(null, name, price, menuGroupId, products);
-    }
-
-    private Menu(final Long id, final String name, final BigDecimal price, final long menuGroupId, final List<MenuProduct> products) {
-        this.id = id;
+    private Menu(final String name, final BigDecimal price, final long menuGroupId, final List<MenuProduct> products) {
+        this.id = null;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = products;
+    }
+
+    public static Menu create(
+            final String name, final BigDecimal price, final PendingMenuProducts products, final long menuGroupId
+    ) {
+        if (price == null || price.compareTo(BigDecimal.ZERO) < 0 || price.compareTo(products.getTotalPrice()) > 0) {
+            throw new IllegalArgumentException();
+        }
+        return new Menu(name, price, menuGroupId, products.createMenuProducts());
     }
 
     public Long getId() {

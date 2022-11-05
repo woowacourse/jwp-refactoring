@@ -2,9 +2,9 @@ package kitchenpos.menu.application;
 
 import java.util.List;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menu.domain.PendingMenuProducts;
-import kitchenpos.menu.domain.repository.MenuGroupRepository;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.menu.ui.request.MenuRequest;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ public class MenuService {
         final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                 .orElseThrow(IllegalArgumentException::new);
         final PendingMenuProducts products = pendingMenuProductsCreator.create(request);
-        final Menu menu = menuGroup.createMenu(request.getName(), request.getPrice(), products);
+        final Menu menu = Menu.create(request.getName(), request.getPrice(), products, menuGroup.getId());
         return menuRepository.save(menu);
     }
 
