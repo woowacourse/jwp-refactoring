@@ -1,0 +1,16 @@
+bootJar {
+    enabled = true
+}
+
+jar {
+    enabled = false
+}
+
+dependencies {
+    implementation project(':kitchenpos-common')
+    implementation project(':kitchenpos-core')
+    testImplementation testFixtures(project(':kitchenpos-core'))
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework:spring-tx:5.3.23'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+}
