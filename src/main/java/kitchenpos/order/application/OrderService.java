@@ -50,13 +50,13 @@ public class OrderService {
                 )
         );
         final List<OrderLineItemCreateRequest> orderLineItems = orderCreateRequest.getOrderLineItems();
-        final List<OrderLineItem> savedOrderLineItems = generateOrderLineItems(orderTableId, orderLineItems);
+        final List<OrderLineItem> savedOrderLineItems = generateOrderLineItems(savedOrder.getId(), orderLineItems);
         savedOrder.addOrderLineItem(savedOrderLineItems);
 
         return OrderCreateResponse.from(savedOrder);
     }
 
-    private List<OrderLineItem> generateOrderLineItems(final Long orderTableId,
+    private List<OrderLineItem> generateOrderLineItems(final Long orderId,
                                                        final List<OrderLineItemCreateRequest> orderLineItems) {
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (final OrderLineItemCreateRequest orderLineItem : orderLineItems) {
@@ -64,7 +64,7 @@ public class OrderService {
                     orderLineItemDao.save(
                             new OrderLineItem(
                                     null,
-                                    orderTableId,
+                                    orderId,
                                     orderLineItem.getQuantity()
                             )
                     )
