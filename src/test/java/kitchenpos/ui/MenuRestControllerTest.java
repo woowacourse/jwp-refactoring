@@ -9,10 +9,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.math.BigDecimal;
 import java.util.Arrays;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.ui.dto.request.MenuProductRequest;
-import kitchenpos.ui.dto.request.MenuRequest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.ui.request.MenuProductRequest;
+import kitchenpos.menu.ui.request.MenuRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
@@ -26,7 +26,7 @@ class MenuRestControllerTest extends RestControllerTest {
         MenuRequest menuRequest = new MenuRequest("메뉴", BigDecimal.valueOf(1_000), 1L,
                 Arrays.asList(menuProductRequest));
         MenuProduct expectedMenuProduct =
-                new MenuProduct(1L, 1L, 1L, 1, BigDecimal.valueOf(1_000));
+                new MenuProduct( 1L, 1L, 1, BigDecimal.valueOf(1_000));
         Menu expected =
                 new Menu(1L, "메뉴", BigDecimal.valueOf(1_000), 1L, Arrays.asList(expectedMenuProduct));
 
@@ -42,7 +42,7 @@ class MenuRestControllerTest extends RestControllerTest {
 
     @Test
     void 메뉴_목록_조회에_성공한다() throws Exception {
-        MenuProduct expectedMenuProduct = new MenuProduct(1L, 1L, 1L, 1, BigDecimal.valueOf(1_000));
+        MenuProduct expectedMenuProduct = new MenuProduct( 1L, 1L, 1, BigDecimal.valueOf(1_000));
         Menu expected =
                 new Menu(1L, "메뉴", BigDecimal.valueOf(1_000), 1L, Arrays.asList(expectedMenuProduct));
 

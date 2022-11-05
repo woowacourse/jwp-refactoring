@@ -14,11 +14,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.ui.dto.OrderTableResponse;
-import kitchenpos.ui.dto.request.OrderTableEmptyRequest;
-import kitchenpos.ui.dto.request.OrderTableNumberOfGuestsRequest;
-import kitchenpos.ui.dto.request.OrderTableRequest;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.application.response.OrderTableResponse;
+import kitchenpos.table.ui.request.OrderTableEmptyRequest;
+import kitchenpos.table.ui.request.OrderTableNumberOfGuestsRequest;
+import kitchenpos.table.ui.request.OrderTableRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;

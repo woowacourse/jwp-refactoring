@@ -1,12 +1,18 @@
 package kitchenpos.ui;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kitchenpos.application.MenuGroupService;
-import kitchenpos.application.MenuService;
-import kitchenpos.application.OrderService;
-import kitchenpos.application.ProductService;
-import kitchenpos.application.TableGroupService;
-import kitchenpos.application.TableService;
+import kitchenpos.menuGroup.applicaiton.MenuGroupService;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menuGroup.ui.MenuGroupRestController;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.menu.ui.MenuRestController;
+import kitchenpos.order.ui.OrderRestController;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.table.application.TableGroupService;
+import kitchenpos.table.application.TableService;
+import kitchenpos.product.ui.ProductRestController;
+import kitchenpos.table.ui.TableGroupRestController;
+import kitchenpos.table.ui.TableRestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;

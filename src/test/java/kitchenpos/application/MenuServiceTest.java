@@ -3,7 +3,11 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import kitchenpos.ui.dto.request.MenuRequest;
+import java.util.Arrays;
+import java.util.List;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.ui.request.MenuProductRequest;
+import kitchenpos.menu.ui.request.MenuRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -24,7 +28,9 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void 메뉴그룹이_존재하지_않으면_예외를_반환한다() {
         //given
-        final MenuRequest 세트A = new MenuRequest("세트A", BigDecimal.valueOf(1000), 1L, null);
+        List<MenuProductRequest> menuProducts = Arrays.asList(new MenuProductRequest(1L, 3),
+                new MenuProductRequest(1L, 2));
+        final MenuRequest 세트A = new MenuRequest("세트A", BigDecimal.valueOf(1000), 1L, menuProducts);
         메뉴그룹에서_없는_메뉴로_세팅한다();
 
         // when then
@@ -34,8 +40,10 @@ class MenuServiceTest extends ServiceTest {
 
     @Test
     void 메뉴가_존재하지_않으면_예외를_반환한다() {
+        List<MenuProductRequest> menuProducts = Arrays.asList(new MenuProductRequest(1L, 3),
+                new MenuProductRequest(1L, 2));
         //given
-        final MenuRequest 세트A = new MenuRequest("세트A", BigDecimal.valueOf(1000), 1L, null);
+        final MenuRequest 세트A = new MenuRequest("세트A", BigDecimal.valueOf(1000), 1L, menuProducts);
         메뉴그룹에서_있는_메뉴로_세팅한다();
         없는_상품으로_세팅한다();
 

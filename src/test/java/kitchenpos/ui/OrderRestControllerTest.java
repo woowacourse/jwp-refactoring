@@ -1,6 +1,6 @@
 package kitchenpos.ui;
 
-import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.order.domain.OrderStatus.COOKING;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -8,12 +8,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.ui.dto.request.OrderLineItemRequest;
-import kitchenpos.ui.dto.request.OrderRequest;
+import kitchenpos.order.application.response.OrderResponse;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderMenu;
+import kitchenpos.order.ui.request.OrderLineItemRequest;
+import kitchenpos.order.ui.request.OrderRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
@@ -21,19 +24,16 @@ class OrderRestControllerTest extends RestControllerTest {
 
     @Test
     void 주문_생성에_성공한다() throws Exception {
-        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1L, 1L, 1L);
-        OrderRequest orderRequest = new OrderRequest(1L, Arrays.asList(orderLineItemRequest));
-        OrderLineItem expectedItem = new OrderLineItem(1L, 1L, 1);
-        Order expected = new Order(1L, 1L, COOKING.name(), LocalDateTime.now(),
-                Arrays.asList(expectedItem));
+        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1L, 1L);
+        OrderRequest orderRequest = new OrderRequest(Arrays.asList(orderLineItemRequest));
+        final OrderMenu 치킨_두마리 = new OrderMenu("치킨 두마리", BigDecimal.TEN);
+        OrderLineItem expectedItem = new OrderLineItem(1L, 치킨_두마리, 1);
+        OrderResponse expected = new OrderResponse(1L, 1L, COOKING.name(), LocalDateTime.now(), new ArrayList<>());
 
         when(orderService.create(any())).thenReturn(expected);
 
-        mockMvc.perform(post("/api/orders")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(objectMapper.writeValueAsString(orderRequest)))
-                .andExpect(status().isCreated())
-                .andExpect(header().exists("Location"))
-                .andDo(print());
+        mockMvc.perform(post("/api/orders").contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(orderRequest))).andExpect(status().isCreated())
+                .andExpect(header().exists("Location")).andDo(print());
     }
 }
