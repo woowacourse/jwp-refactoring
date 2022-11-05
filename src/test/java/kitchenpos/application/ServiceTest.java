@@ -3,35 +3,41 @@ package kitchenpos.application;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.request.MenuCreateRequest;
-import kitchenpos.dto.request.MenuGroupCreateRequest;
-import kitchenpos.dto.request.MenuProductCreateRequest;
-import kitchenpos.dto.request.OrderCreateRequest;
-import kitchenpos.dto.request.OrderLineItemCreateRequest;
-import kitchenpos.dto.request.OrderTableCreateRequest;
-import kitchenpos.dto.request.OrderTableIdRequest;
-import kitchenpos.dto.request.OrderTableUpdateEmptyRequest;
-import kitchenpos.dto.request.OrderTableUpdateNumberOfGuestsRequest;
-import kitchenpos.dto.request.OrderUpdateStatusRequest;
-import kitchenpos.dto.request.ProductCreateRequest;
-import kitchenpos.dto.request.TableGroupCreateRequest;
+import kitchenpos.menugroup.application.MenuGroupService;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.tablegroup.application.TableGroupService;
+import kitchenpos.ordertable.application.TableService;
+import kitchenpos.menu.dao.MenuDao;
+import kitchenpos.menugroup.dao.MenuGroupDao;
+import kitchenpos.menu.dao.MenuProductDao;
+import kitchenpos.order.dao.OrderDao;
+import kitchenpos.order.dao.OrderLineItemDao;
+import kitchenpos.ordertable.dao.OrderTableDao;
+import kitchenpos.product.dao.ProductDao;
+import kitchenpos.tablegroup.dao.TableGroupDao;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.ordertable.domain.OrderStatus;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.product.domain.Product;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.menu.dto.request.MenuCreateRequest;
+import kitchenpos.menugroup.dto.request.MenuGroupCreateRequest;
+import kitchenpos.menu.dto.request.MenuProductCreateRequest;
+import kitchenpos.order.dto.request.OrderCreateRequest;
+import kitchenpos.order.dto.request.OrderLineItemCreateRequest;
+import kitchenpos.ordertable.dto.request.OrderTableCreateRequest;
+import kitchenpos.ordertable.dto.request.OrderTableIdRequest;
+import kitchenpos.ordertable.dto.request.OrderTableUpdateEmptyRequest;
+import kitchenpos.ordertable.dto.request.OrderTableUpdateNumberOfGuestsRequest;
+import kitchenpos.order.dto.request.OrderUpdateStatusRequest;
+import kitchenpos.product.dto.request.ProductCreateRequest;
+import kitchenpos.tablegroup.dto.request.TableGroupCreateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -117,7 +123,11 @@ public class ServiceTest {
     }
 
     private OrderLineItem saveAndGetOrderLineItem(final Long menuId, final Long orderId) {
-        return orderLineItemDao.save(new OrderLineItem(null, orderId, menuId, 1));
+        final Menu menu = menuDao.findById(menuId)
+            .orElseThrow();
+
+        return orderLineItemDao.save(new OrderLineItem(null, orderId, menuId, 1,
+            menu.getName(), menu.getPrice()));
     }
 
     protected Order saveAndGetOrder() {

@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.dto.request.MenuGroupCreateRequest;
-import kitchenpos.dto.response.MenuGroupResponse;
+import kitchenpos.menugroup.dto.request.MenuGroupCreateRequest;
+import kitchenpos.menugroup.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

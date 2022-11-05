@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dto.request.ProductCreateRequest;
-import kitchenpos.dto.response.ProductResponse;
+import kitchenpos.product.dto.request.ProductCreateRequest;
+import kitchenpos.product.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
