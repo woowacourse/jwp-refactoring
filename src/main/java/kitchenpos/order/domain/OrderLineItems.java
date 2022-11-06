@@ -18,13 +18,6 @@ public class OrderLineItems {
         }
     }
 
-    public boolean hasSameMenu() {
-        return this.orderLineItems.size() != this.orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
-                .distinct()
-                .count();
-    }
-
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
     }

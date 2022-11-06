@@ -47,7 +47,7 @@ public class OrderService {
         final OrderLineItems orderLineItems = new OrderLineItems(
                 createOrderLineItems(savedOrder.getId(), request.getOrderLineItems())
         );
-        validateOrderLineItems(orderLineItems);
+        validateOrderLineItems(request.getOrderLineItems());
         final List<OrderLineItem> savedOrderLineItems = getSavedOrderLineItems(orderLineItems.getOrderLineItems());
 
         return OrderResponse.of(savedOrder, savedOrderLineItems);
@@ -60,16 +60,18 @@ public class OrderService {
 
         return orderLineItems.stream()
                 .map(request -> {
-                    final Long menuId = request.getMenuId();
-                    final Menu menu = menuDao.findById(menuId).orElseThrow(IllegalArgumentException::new);
-
-                    return new OrderLineItem(orderId, menuId, menu.getName(), menu.getPrice(), request.getQuantity());
+                    final Menu menu = menuDao.findById(request.getMenuId()).orElseThrow(IllegalArgumentException::new);
+                    return new OrderLineItem(orderId, menu.getName(), menu.getPrice(), request.getQuantity());
                 })
                 .collect(Collectors.toList());
     }
 
-    private void validateOrderLineItems(OrderLineItems orderLineItems) {
-        if (orderLineItems.hasSameMenu()) {
+    private void validateOrderLineItems(List<OrderLineItemRequest> orderLineItems) {
+        final long actualSize = orderLineItems.stream()
+                .map(OrderLineItemRequest::getMenuId)
+                .distinct()
+                .count();
+        if (actualSize != orderLineItems.size()) {
             throw new IllegalArgumentException();
         }
     }
