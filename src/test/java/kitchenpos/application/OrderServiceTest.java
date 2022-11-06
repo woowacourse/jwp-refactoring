@@ -10,20 +10,18 @@ import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.dto.order.OrderChangeOrderStatusRequest;
-import kitchenpos.dto.order.OrderCreateRequest;
-import kitchenpos.dto.order.OrderLineItemRequest;
-import kitchenpos.dto.order.OrderResponse;
+import kitchenpos.menu.dao.MenuDao;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menugroup.dao.MenuGroupDao;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.dto.OrderChangeOrderStatusRequest;
+import kitchenpos.order.dto.OrderCreateRequest;
+import kitchenpos.order.dto.OrderLineItemRequest;
+import kitchenpos.order.dto.OrderResponse;
+import kitchenpos.table.dao.OrderTableDao;
+import kitchenpos.table.domain.OrderTable;
 import org.assertj.core.data.TemporalUnitWithinOffset;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -42,9 +40,6 @@ class OrderServiceTest {
 
     @Autowired
     private MenuDao menuDao;
-
-    @Autowired
-    private ProductDao productDao;
 
     @Autowired
     private MenuGroupDao menuGroupDao;
@@ -214,23 +209,12 @@ class OrderServiceTest {
     }
 
     public Menu 후라이드_세트_메뉴() {
-        Menu menu = new Menu("후라이드+후라이드", BigDecimal.valueOf(19000), 추천메뉴().getId(),
-                Collections.singletonList(후라이드_세트_메뉴_상품()));
+        Menu menu = new Menu("후라이드+후라이드", BigDecimal.valueOf(19000), 추천메뉴().getId());
 
         return menuDao.save(menu);
     }
 
     public MenuGroup 추천메뉴() {
         return menuGroupDao.save(new MenuGroup("추천메뉴"));
-    }
-
-    public MenuProduct 후라이드_세트_메뉴_상품() {
-        final Product 후라이드 = 후라이드();
-        return new MenuProduct(후라이드.getId(), 2, 후라이드.getPrice());
-    }
-
-
-    public Product 후라이드() {
-        return productDao.save(new Product("후라이드", BigDecimal.valueOf(10000)));
     }
 }
