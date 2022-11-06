@@ -9,9 +9,9 @@ import kitchenpos.acceptance.common.httpcommunication.MenuGroupHttpCommunication
 import kitchenpos.acceptance.common.httpcommunication.MenuHttpCommunication;
 import kitchenpos.acceptance.common.httpcommunication.ProductHttpCommunication;
 import kitchenpos.common.fixture.RequestBody;
-import kitchenpos.ui.dto.response.MenuGroupResponse;
-import kitchenpos.ui.dto.response.MenuResponse;
-import kitchenpos.ui.dto.response.ProductResponse;
+import kitchenpos.menu.ui.dto.response.MenuGroupResponse;
+import kitchenpos.menu.ui.dto.response.MenuResponse;
+import kitchenpos.product.ui.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;

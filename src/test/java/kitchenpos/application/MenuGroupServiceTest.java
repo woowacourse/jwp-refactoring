@@ -4,10 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.application.dto.MenuGroupCreationDto;
-import kitchenpos.application.dto.MenuGroupDto;
+import kitchenpos.menu.application.dto.MenuGroupCreationDto;
+import kitchenpos.menu.application.dto.MenuGroupDto;
 import kitchenpos.common.annotation.SpringTestWithData;
-import kitchenpos.ui.dto.request.MenuGroupCreationRequest;
+import kitchenpos.menu.application.MenuGroupService;
+import kitchenpos.menu.ui.dto.request.MenuGroupCreationRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

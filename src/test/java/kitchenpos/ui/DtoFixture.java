@@ -3,20 +3,20 @@ package kitchenpos.ui;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.application.dto.MenuDto;
-import kitchenpos.application.dto.MenuGroupDto;
-import kitchenpos.application.dto.OrderDto;
-import kitchenpos.application.dto.OrderTableDto;
-import kitchenpos.application.dto.ProductDto;
-import kitchenpos.application.dto.TableGroupDto;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.product.Product;
+import kitchenpos.menu.application.dto.MenuDto;
+import kitchenpos.menu.application.dto.MenuGroupDto;
+import kitchenpos.order.application.dto.OrderDto;
+import kitchenpos.order.application.dto.OrderTableDto;
+import kitchenpos.product.application.dto.ProductDto;
+import kitchenpos.order.application.dto.TableGroupDto;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.product.domain.Product;
 
 public class DtoFixture {
 

@@ -5,15 +5,16 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.application.dto.MenuCreationDto;
-import kitchenpos.application.dto.MenuDto;
+import kitchenpos.menu.application.dto.MenuCreationDto;
+import kitchenpos.menu.application.dto.MenuDto;
 import kitchenpos.common.annotation.SpringTestWithData;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.product.Product;
-import kitchenpos.ui.dto.request.MenuCreationRequest;
-import kitchenpos.ui.dto.request.MenuProductRequest;
+import kitchenpos.menu.domain.MenuGroupRepository;
+import kitchenpos.product.domain.ProductRepository;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.product.domain.Product;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.ui.dto.request.MenuCreationRequest;
+import kitchenpos.menu.ui.dto.request.MenuProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,16 +27,16 @@ class MenuServiceTest {
     private MenuService menuService;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @DisplayName("메뉴를 생성한다.")
     @Test
     void create() {
-        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("menuGroup"));
-        final Product product = productDao.save(new Product("productName", BigDecimal.valueOf(1000L)));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
+        final Product product = productRepository.save(new Product("productName", BigDecimal.valueOf(1000L)));
         final List<MenuProductRequest> menuProductsRequest = List.of(new MenuProductRequest(product.getId(), 2));
         final MenuCreationRequest menuCreationRequest = new MenuCreationRequest("menuName", BigDecimal.valueOf(1500L),
                 menuGroup.getId(),
@@ -51,8 +52,8 @@ class MenuServiceTest {
     @DisplayName("메뉴 목록을 조회한다.")
     @Test
     void getMenus() {
-        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("menuGroup"));
-        final Product product = productDao.save(new Product("productName", BigDecimal.valueOf(1000L)));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
+        final Product product = productRepository.save(new Product("productName", BigDecimal.valueOf(1000L)));
         final List<MenuProductRequest> menuProductsRequest = List.of(new MenuProductRequest(product.getId(), 2));
         final MenuCreationRequest menuCreationRequest = new MenuCreationRequest("menuName", BigDecimal.valueOf(1500L),
                 menuGroup.getId(),

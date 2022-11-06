@@ -4,10 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.application.dto.ProductCreationDto;
-import kitchenpos.application.dto.ProductDto;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.application.dto.ProductCreationDto;
+import kitchenpos.product.application.dto.ProductDto;
 import kitchenpos.common.annotation.SpringTestWithData;
-import kitchenpos.ui.dto.request.ProductCreationRequest;
+import kitchenpos.product.ui.dto.request.ProductCreationRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
