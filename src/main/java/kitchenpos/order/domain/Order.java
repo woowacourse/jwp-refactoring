@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import kitchenpos.exception.OrderCompletionException;
 import kitchenpos.exception.OrderLineItemEmptyException;
 import kitchenpos.exception.OrderLineItemSizeException;
+import kitchenpos.order.application.OrderValidator;
 import org.springframework.util.CollectionUtils;
 
 @Table(name = "orders")
