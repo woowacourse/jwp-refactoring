@@ -7,6 +7,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.exception.NotFoundOrderTableException;
+import kitchenpos.exception.NotFoundTableGroupException;
 import kitchenpos.exception.OrderTableGroupingSizeException;
 import kitchenpos.exception.OrderTableUnableUngroupingStatusException;
 import kitchenpos.repository.OrderRepository;
@@ -74,10 +75,17 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(Long tableGroupId) {
+        validateOrderTablesGroupId(tableGroupId);
         List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
         validateOrderTablesStatus(orderTables);
 
         ungroupingOrderTables(orderTables);
+    }
+
+    private void validateOrderTablesGroupId(Long tableGroupId) {
+        if (!tableGroupRepository.existsById(tableGroupId)) {
+            throw new NotFoundTableGroupException();
+        }
     }
 
     private void validateOrderTablesStatus(List<OrderTable> orderTables) {

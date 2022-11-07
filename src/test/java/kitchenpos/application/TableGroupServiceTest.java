@@ -12,6 +12,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.exception.NotFoundOrderTableException;
+import kitchenpos.exception.NotFoundTableGroupException;
 import kitchenpos.exception.OrderTableGroupingSizeException;
 import kitchenpos.exception.OrderTableUnableUngroupingStatusException;
 import kitchenpos.exception.UnableToGroupingException;
@@ -100,6 +101,12 @@ class TableGroupServiceTest extends ServiceTest {
         tableGroupService.ungroup(savedTableGroup.getId());
 
         assertThat(orderTableRepository.findById(saved1.getId()).get().getTableGroup()).isNull();
+    }
+
+    @Test
+    void 없는_테이블그룹_아이디면_예외를_발생한다() {
+        assertThatThrownBy(() -> tableGroupService.ungroup(0L))
+                .isInstanceOf(NotFoundTableGroupException.class);
     }
 
     @Test
