@@ -9,6 +9,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class OrderTableValidatorImpl implements OrderTableValidator {
 
+    private static final List<String> NOT_COMPLETION = Arrays.asList(OrderStatus.COOKING.name(),
+            OrderStatus.MEAL.name());
+
     private final OrderRepository orderRepository;
 
     public OrderTableValidatorImpl(final OrderRepository orderRepository) {
@@ -17,16 +20,14 @@ public class OrderTableValidatorImpl implements OrderTableValidator {
 
     @Override
     public void validate(final Long orderTableId) {
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId,
-                Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, NOT_COMPLETION)) {
             throw new OrderNotCompletionException();
         }
     }
 
     @Override
     public void validate(final List<Long> orderTableIds) {
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds,
-                Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, NOT_COMPLETION)) {
             throw new OrderNotCompletionException();
         }
     }
