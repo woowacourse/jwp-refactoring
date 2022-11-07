@@ -27,7 +27,7 @@ public class TableGroup {
     @Column(name = "created_date")
     private LocalDateTime createdDate;
 
-    @OneToMany(cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     @JoinColumn(name = "table_group_id")
     private final List<OrderTable> orderTables = new ArrayList<>();
 

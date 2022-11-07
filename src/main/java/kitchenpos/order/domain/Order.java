@@ -34,7 +34,7 @@ public class Order {
     @Column(name = "ordered_time")
     private LocalDateTime orderedTime;
 
-    @OneToMany(cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     @JoinColumn(name = "order_id", nullable = false, updatable = false)
     private List<OrderLineItem> orderLineItems;
 
