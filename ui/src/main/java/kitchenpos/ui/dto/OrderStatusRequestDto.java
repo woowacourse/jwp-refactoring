@@ -1,7 +1,6 @@
 package kitchenpos.ui.dto;
 
 import kitchenpos.application.dto.request.UpdateOrderStatusDto;
-import kitchenpos.common.domain.order.OrderStatus;
 
 public class OrderStatusRequestDto {
 
@@ -11,7 +10,7 @@ public class OrderStatusRequestDto {
     }
 
     public UpdateOrderStatusDto toUpdateOrderStatusDto(Long orderId) {
-        return new UpdateOrderStatusDto(orderId, OrderStatus.valueOf(orderStatus));
+        return new UpdateOrderStatusDto(orderId, orderStatus);
     }
 
     public String getOrderStatus() {

@@ -99,7 +99,7 @@ class OrderServiceTest {
             List<CreateOrderLineItemDto> orderLineItems = List.of(new CreateOrderLineItemDto(savedMenuId, 1));
             Long orderId = orderService.create(new CreateOrderDto(orderTableId, orderLineItems)).getId();
 
-            UpdateOrderStatusDto updateOrderStatusDto = new UpdateOrderStatusDto(orderId, OrderStatus.MEAL);
+            UpdateOrderStatusDto updateOrderStatusDto = new UpdateOrderStatusDto(orderId, OrderStatus.MEAL.name());
             OrderDto actual = orderService.changeOrderStatus(updateOrderStatusDto);
             assertAll(
                     () -> assertThat(actual.getId()).isNotNull(),
@@ -112,7 +112,7 @@ class OrderServiceTest {
 
         @Test
         void 존재하지_않는_주문인_경우_예외를_발생시킨다() {
-            UpdateOrderStatusDto updateOrderStatusDto = new UpdateOrderStatusDto(99999L, OrderStatus.MEAL);
+            UpdateOrderStatusDto updateOrderStatusDto = new UpdateOrderStatusDto(99999L, OrderStatus.MEAL.name());
             assertThatThrownBy(() -> orderService.changeOrderStatus(updateOrderStatusDto))
                     .hasCauseInstanceOf(IllegalArgumentException.class);
         }
