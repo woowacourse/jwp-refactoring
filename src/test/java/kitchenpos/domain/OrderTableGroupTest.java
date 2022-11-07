@@ -1,15 +1,11 @@
 package kitchenpos.domain;
 
-import static kitchenpos.support.DomainFixture.한개;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.Empty;
 import kitchenpos.domain.table.GuestNumber;
 import kitchenpos.domain.table.OrderTable;
@@ -77,7 +73,7 @@ class OrderTableGroupTest {
             final var group = new TableGroup(List.of(tableA, tableB), LocalDateTime.now());
 
             // when
-            group.ungroup();
+            group.ungroup(new TrueOrderTableValidator());
 
             // then
             assertAll(
@@ -89,14 +85,12 @@ class OrderTableGroupTest {
         @Test
         void 계산이_완료되지않은_주문이_있는_경우_예외를_던진다() {
             // given
-            final var tableA = new OrderTable(null, null, new TableStatus(new Empty(true), new GuestNumber(0)),
-                    List.of(new Order(1L, OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(1L, 한개)))));
-            final var tableB = new OrderTable(null, null, new TableStatus(new Empty(true), new GuestNumber(0)),
-                    List.of(new Order(1L, OrderStatus.COMPLETION, LocalDateTime.now(), List.of(new OrderLineItem(1L, 한개)))));
+            final var tableA = new OrderTable(null, null, new TableStatus(new Empty(true), new GuestNumber(0)));
+            final var tableB = new OrderTable(null, null, new TableStatus(new Empty(true), new GuestNumber(0)));
             final var group = new TableGroup(List.of(tableA, tableB), LocalDateTime.now());
 
             // when & then
-            assertThatThrownBy(group::ungroup)
+            assertThatThrownBy(() -> group.ungroup(new FalseOrderTableValidator()))
                     .isInstanceOf(DomainLogicException.class)
                     .extracting("errorCode")
                     .isEqualTo(CustomError.UNCOMPLETED_ORDER_IN_TABLE_ERROR);

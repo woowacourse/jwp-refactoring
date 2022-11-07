@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTableValidator;
 import kitchenpos.domain.table.TableGroup;
 import kitchenpos.dto.request.TableGroupCreateRequest;
 import kitchenpos.dto.response.TableGroupResponse;
@@ -20,11 +21,14 @@ public class TableGroupService {
 
     private final TableGroupRepository tableGroupRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderTableValidator orderTableValidator;
 
-    public TableGroupService(final TableGroupRepository tableGroupRepository,
-                             final OrderTableRepository orderTableRepository) {
+    public TableGroupService(TableGroupRepository tableGroupRepository,
+                             OrderTableRepository orderTableRepository,
+                             OrderTableValidator orderTableValidator) {
         this.tableGroupRepository = tableGroupRepository;
         this.orderTableRepository = orderTableRepository;
+        this.orderTableValidator = orderTableValidator;
     }
 
     @Transactional
@@ -56,6 +60,6 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(() -> new NotFoundException(CustomError.TABLE_GROUP_NOT_FOUND_ERROR));
-        tableGroup.ungroup();
+        tableGroup.ungroup(orderTableValidator);
     }
 }

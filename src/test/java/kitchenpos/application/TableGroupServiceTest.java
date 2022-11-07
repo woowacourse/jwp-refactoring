@@ -10,12 +10,14 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.application.table.TableGroupService;
+import kitchenpos.domain.order.OrderTableValidatorImpl;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
 import kitchenpos.dto.request.TableGroupCreateRequest;
 import kitchenpos.dto.request.TableGroupCreateWithTableRequest;
 import kitchenpos.exception.CustomError;
 import kitchenpos.exception.DomainLogicException;
+import kitchenpos.repository.order.OrderRepository;
 import kitchenpos.repository.table.OrderTableRepository;
 import kitchenpos.repository.table.TableGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,10 +37,12 @@ class TableGroupServiceTest {
 
     @Autowired
     public TableGroupServiceTest(final OrderTableRepository orderTableRepository,
-                                 final TableGroupRepository tableGroupRepository) {
+                                 final TableGroupRepository tableGroupRepository,
+                                 final OrderRepository orderRepository) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
-        this.tableGroupService = new TableGroupService(tableGroupRepository, orderTableRepository);
+        this.tableGroupService = new TableGroupService(tableGroupRepository,
+                orderTableRepository, new OrderTableValidatorImpl(orderRepository));
     }
 
     private OrderTable tableA;

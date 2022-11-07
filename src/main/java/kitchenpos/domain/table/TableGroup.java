@@ -66,9 +66,9 @@ public class TableGroup {
         }
     }
 
-    public void ungroup() {
+    public void ungroup(final OrderTableValidator validator) {
         for (OrderTable orderTable : this.orderTables) {
-            orderTable.validateAllOrderCompleted();
+            validator.validateAllOrderCompleted(orderTable.getId());
         }
         for (OrderTable orderTable : orderTables) {
             orderTable.ungroup();

@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.application.table.OrderTableService;
+import kitchenpos.domain.order.OrderTableValidatorImpl;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
 import kitchenpos.dto.request.OrderTableChangeEmptyRequest;
@@ -18,6 +19,7 @@ import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.exception.CustomError;
 import kitchenpos.exception.DomainLogicException;
 import kitchenpos.exception.NotFoundException;
+import kitchenpos.repository.order.OrderRepository;
 import kitchenpos.repository.table.OrderTableRepository;
 import kitchenpos.repository.table.TableGroupRepository;
 import org.junit.jupiter.api.Test;
@@ -35,10 +37,12 @@ class OrderTableServiceTest {
     private final OrderTableService orderTableService;
 
     @Autowired
-    public OrderTableServiceTest(final OrderTableRepository orderTableRepository, final TableGroupRepository tableGroupRepository) {
+    public OrderTableServiceTest(final OrderTableRepository orderTableRepository,
+                                 final TableGroupRepository tableGroupRepository,
+                                 final OrderRepository orderRepository) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
-        this.orderTableService = new OrderTableService(orderTableRepository);
+        this.orderTableService = new OrderTableService(orderTableRepository, new OrderTableValidatorImpl(orderRepository));
     }
 
     @Test

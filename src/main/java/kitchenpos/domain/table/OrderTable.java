@@ -1,17 +1,11 @@
 package kitchenpos.domain.table;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import kitchenpos.domain.order.Order;
 import kitchenpos.exception.CustomError;
 import kitchenpos.exception.DomainLogicException;
 
@@ -28,39 +22,30 @@ public class OrderTable {
     @Embedded
     private TableStatus status;
 
-    @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
-    @JoinColumn(name = "order_table_id")
-    private List<Order> orders = new ArrayList<>();
-
     protected OrderTable() {
     }
 
     public OrderTable(final Long id) {
-        this(id, null, null, new ArrayList<>());
-    }
-
-    public OrderTable(final Long tableGroupId, final TableStatus status) {
-        this(null, tableGroupId, status, new ArrayList<>());
+        this(id, null, null);
     }
 
     public OrderTable(final TableStatus status) {
-        this(null, null, status, new ArrayList<>());
+        this(null, null, status);
     }
 
-    public OrderTable(final TableStatus status, final List<Order> orders) {
-        this(null, null, status, orders);
+    public OrderTable(final Long tableGroupId, final TableStatus status) {
+        this(null, tableGroupId, status);
     }
 
-    public OrderTable(final Long id, final Long tableGroupId, final TableStatus status, final List<Order> orders) {
+    public OrderTable(final Long id, final Long tableGroupId, final TableStatus status) {
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.status = status;
-        this.orders = orders;
     }
 
-    public void changeEmpty(final boolean empty) {
+    public void changeEmpty(final boolean empty, final OrderTableValidator validator) {
         validateUngrouped();
-        validateAllOrderCompleted();
+        validator.validateAllOrderCompleted(this.id);
         status.changeEmpty(empty);
     }
 
@@ -76,18 +61,6 @@ public class OrderTable {
 
     public void changeTableGroupId(final Long tableGroupId) {
         this.tableGroupId = tableGroupId;
-    }
-
-    public void validateAllOrderCompleted() {
-        for (Order order : orders) {
-            validateOrderCompleted(order);
-        }
-    }
-
-    private void validateOrderCompleted(final Order order) {
-        if (!order.isCompleted()) {
-            throw new DomainLogicException(CustomError.UNCOMPLETED_ORDER_IN_TABLE_ERROR);
-        }
     }
 
     public void ungroup() {
@@ -107,10 +80,6 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return status.isEmpty();
-    }
-
-    public List<Order> getOrders() {
-        return orders;
     }
 
     public Long getId() {
