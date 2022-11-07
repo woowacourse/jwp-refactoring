@@ -40,11 +40,13 @@ subprojects {
 project(':ui') {
     dependencies {
         implementation project(':application')
+        testImplementation project(':application')
     }
 }
 
 project(':application') {
     dependencies {
         implementation project(':common')
+        testImplementation project(':common')
     }
 }
