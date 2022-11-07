@@ -3,17 +3,16 @@ package kitchenpos.order.application;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.event.CheckOrderableTableEvent;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.application.request.OrderLineItemRequest;
 import kitchenpos.order.application.request.OrderRequest;
 import kitchenpos.order.application.request.OrderStatusUpdateRequest;
 import kitchenpos.order.application.response.OrderResponse;
+import kitchenpos.order.domain.ChangeTableValidator;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderRepository;
@@ -25,20 +24,20 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final MenuRepository menuRepository;
-    private final ApplicationEventPublisher applicationEventPublisher;
+    private final ChangeTableValidator changeTableValidator;
 
     public OrderService(OrderRepository orderRepository, MenuRepository menuRepository,
-                        ApplicationEventPublisher applicationEventPublisher) {
+                        ChangeTableValidator changeTableValidator) {
         this.orderRepository = orderRepository;
         this.menuRepository = menuRepository;
-        this.applicationEventPublisher = applicationEventPublisher;
+        this.changeTableValidator = changeTableValidator;
     }
 
     public OrderResponse create(OrderRequest request) {
         List<OrderLineItem> orderLineItems = getOrderLineItems(request.getOrderLineItems());
         validateOrderItemSize(orderLineItems);
 
-        applicationEventPublisher.publishEvent(new CheckOrderableTableEvent(request.getOrderTableId()));
+        changeTableValidator.validateOrderableTable(request.getOrderTableId());
         Order order = orderRepository.save(new Order(request.getOrderTableId(), OrderStatus.COOKING, orderLineItems));
 
         return new OrderResponse(order);

@@ -1,13 +1,14 @@
 package kitchenpos.table.application;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.event.CheckTableCanChangeEvent;
+import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.application.request.ChangeNumOfTableGuestsRequest;
 import kitchenpos.table.application.request.ChangeOrderTableEmptyRequest;
 import kitchenpos.table.application.request.OrderTableRequest;
@@ -19,13 +20,12 @@ import kitchenpos.table.domain.OrderTableRepository;
 @Transactional
 public class TableService {
 
+    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
-    private final ApplicationEventPublisher applicationEventPublisher;
 
-    public TableService(OrderTableRepository orderTableRepository,
-                        ApplicationEventPublisher applicationEventPublisher) {
+    public TableService(OrderRepository orderRepository, OrderTableRepository orderTableRepository) {
+        this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
-        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     public OrderTableResponse create(OrderTableRequest request) {
@@ -45,11 +45,18 @@ public class TableService {
 
     public OrderTableResponse changeEmpty(ChangeOrderTableEmptyRequest request) {
         OrderTable orderTable = findOrderTable(request.getOrderTableId());
-        applicationEventPublisher.publishEvent(new CheckTableCanChangeEvent(List.of(request.getOrderTableId())));
+        validateIsPossibleToChange(List.of(request.getOrderTableId()));
 
         orderTable.changeEmptyStatus(request.isEmpty());
 
         return new OrderTableResponse(orderTable);
+    }
+
+    public void validateIsPossibleToChange(List<Long> orderTableIds) {
+        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
+                orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+            throw new IllegalArgumentException("조리중이나 식사중인 주문이 존재합니다.");
+        }
     }
 
     public OrderTableResponse changeNumberOfGuests(ChangeNumOfTableGuestsRequest request) {

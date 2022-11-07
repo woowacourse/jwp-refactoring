@@ -1,14 +1,13 @@
-package kitchenpos.table.eventHandler;
+package kitchenpos.table.validator;
 
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import kitchenpos.event.CheckOrderableTableEvent;
+import kitchenpos.order.domain.ChangeTableValidator;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 
 @Component
-public class TableEventHandler {
+public class TableEventHandler implements ChangeTableValidator {
 
     private final OrderTableRepository orderTableRepository;
 
@@ -16,9 +15,9 @@ public class TableEventHandler {
         this.orderTableRepository = orderTableRepository;
     }
 
-    @EventListener
-    public void checkOrderableTable(CheckOrderableTableEvent event) {
-        OrderTable orderTable = orderTableRepository.findById(event.getId())
+    @Override
+    public void validateOrderableTable(Long id) {
+        OrderTable orderTable = orderTableRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
 
         if (orderTable.isEmpty()) {
