@@ -7,7 +7,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Table(name = "menu_product")
@@ -18,14 +17,18 @@ public class MenuProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @OneToOne
+    @ManyToOne
+    private Menu menu;
+
+    @ManyToOne
     private Product product;
 
     private long quantity;
 
     public MenuProduct() {}
 
-    public MenuProduct(Product product, long quantity) {
+    public MenuProduct(Menu menu, Product product, long quantity) {
+        this.menu = menu;
         this.product = product;
         this.quantity = quantity;
     }

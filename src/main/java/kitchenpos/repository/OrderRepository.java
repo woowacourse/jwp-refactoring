@@ -10,6 +10,6 @@ import kitchenpos.domain.OrderStatus;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    @Query(value="select o from Order o where o.orderTable.id in :orderTableIds and o.orderStatus in :status")
+    @Query(value="select o from Order o join OrderTable ot on ot.order = o where ot.id in :orderTableIds and o.orderStatus in :status")
     List<Order> findByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds, List<OrderStatus> status);
 }

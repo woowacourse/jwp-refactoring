@@ -15,7 +15,7 @@ public class MenuProductTest {
     @ParameterizedTest
     void calculatePrice(int productPrice, int productCount, int expect) {
         Product product = new Product("라면", BigDecimal.valueOf(productPrice));
-        MenuProduct menuProduct = new MenuProduct(product, productCount);
+        MenuProduct menuProduct = new MenuProduct(null, product, productCount);
 
         assertThat(menuProduct.calculatePrice()).isEqualTo(BigDecimal.valueOf(expect));
     }

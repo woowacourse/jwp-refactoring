@@ -8,6 +8,7 @@ public class MenuRequest {
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
+
     private List<MenuProductRequest> menuProducts;
 
     public MenuRequest() {

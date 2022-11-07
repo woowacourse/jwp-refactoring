@@ -12,11 +12,15 @@ import kitchenpos.application.dto.request.OrderLineItemRequest;
 import kitchenpos.application.dto.request.OrderRequest;
 import kitchenpos.application.dto.request.OrderStatusRequest;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
+import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 
@@ -24,50 +28,78 @@ import kitchenpos.repository.OrderTableRepository;
 public class OrderService {
 
     private final MenuRepository menuRepository;
+    private final MenuProductRepository menuProductRepository;
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderLineItemRepository orderLineItemRepository;
 
     public OrderService(
             MenuRepository menuRepository,
             OrderRepository orderRepository,
-            OrderTableRepository orderTableRepository) {
-
+            OrderTableRepository orderTableRepository,
+            OrderLineItemRepository orderLineItemRepository,
+            MenuProductRepository menuProductRepository) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
+        this.orderLineItemRepository = orderLineItemRepository;
+        this.menuProductRepository = menuProductRepository;
     }
 
     @Transactional
     public Order create(final OrderRequest orderRequest) {
-        final List<OrderLineItem> orderLineItems = toOrderLineItems(orderRequest.getOrderLineItems());
         final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
-        validateOrderLineItemNotDuplicatedAndExist(orderRequest.getOrderLineItems(), orderLineItems);
+        final Order order = new Order(OrderStatus.COOKING, LocalDateTime.now());
+        final Order savedOrder = orderRepository.save(order);
 
-        Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
-        return orderRepository.save(order);
+        final List<OrderLineItem> orderLineItems = toOrderLineItems(order, orderRequest.getOrderLineItems());
+        validateOrderLineItemsIsNotDuplicatedAndExist(orderRequest.getOrderLineItems(), orderLineItems);
+        validateOrderLineItemsIsNotEmpty(orderLineItems);
+        validateOrderTableNotEmpty(orderTable);
+
+        orderTable.enrollOrder(order);
+        return savedOrder;
     }
 
-    private void validateOrderLineItemNotDuplicatedAndExist(
+    private void validateOrderLineItemsIsNotEmpty(List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateOrderTableNotEmpty(OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateOrderLineItemsIsNotDuplicatedAndExist(
             List<OrderLineItemRequest> orderLineItemRequests, List<OrderLineItem> orderLineItems) {
         if (orderLineItems.size() != orderLineItemRequests.size()) {
             throw new IllegalArgumentException();
         }
     }
 
-    private List<OrderLineItem> toOrderLineItems(List<OrderLineItemRequest> orderLineItemRequests) {
+    private List<OrderLineItem> toOrderLineItems(Order order, List<OrderLineItemRequest> orderLineItemRequests) {
         return orderLineItemRequests.stream()
-                .map(this::toOrderLineItem)
+                .map(orderLineItemRequest -> toOrderLineItem(order, orderLineItemRequest))
                 .distinct()
                 .collect(Collectors.toList());
     }
 
-    private OrderLineItem toOrderLineItem(OrderLineItemRequest orderLineItemRequest) {
-        Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
+    private OrderLineItem toOrderLineItem(Order order, OrderLineItemRequest orderLineItemRequest) {
+        final MenuProduct menuProduct = menuProductRepository.findById(
+                orderLineItemRequest.getMenuId())
                 .orElseThrow(IllegalArgumentException::new);
+        final Product product = menuProduct.getProduct();
 
-        return new OrderLineItem(menu, orderLineItemRequest.getQuantity());
+        return orderLineItemRepository.save(new OrderLineItem(
+                order,
+                product.getName(),
+                product.getPrice(),
+                orderLineItemRequest.getQuantity()));
     }
 
     public List<Order> list() {
