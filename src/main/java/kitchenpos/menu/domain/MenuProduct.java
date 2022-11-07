@@ -10,6 +10,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import kitchenpos.product.domain.Product;
+
 @Entity
 @Table(name = "menu_product")
 public class MenuProduct {

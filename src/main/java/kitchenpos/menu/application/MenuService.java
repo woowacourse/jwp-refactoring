@@ -9,12 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 import kitchenpos.menu.application.request.MenuRequest;
 import kitchenpos.menu.application.response.MenuResponse;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.menu.domain.MenuGroupRepository;
+import kitchenpos.menuGroup.domain.MenuGroup;
+import kitchenpos.menuGroup.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.menu.domain.Product;
-import kitchenpos.menu.domain.ProductRepository;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 
 @Service
 @Transactional

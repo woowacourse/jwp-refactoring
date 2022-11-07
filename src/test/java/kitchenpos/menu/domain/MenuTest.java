@@ -9,6 +9,9 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import kitchenpos.menuGroup.domain.MenuGroup;
+import kitchenpos.product.domain.Product;
+
 class MenuTest {
 
     @DisplayName("모든 메뉴 상품이 추가된 메뉴를 생성한다")

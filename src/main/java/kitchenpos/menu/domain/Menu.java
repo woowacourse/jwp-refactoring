@@ -15,6 +15,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import kitchenpos.menuGroup.domain.MenuGroup;
+
 @Entity
 @Table(name = "menu")
 public class Menu {
