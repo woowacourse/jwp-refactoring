@@ -5,10 +5,10 @@ import kitchenpos.application.dto.request.CreateTableDto;
 import kitchenpos.application.dto.request.EmptyTableDto;
 import kitchenpos.application.dto.response.TableDto;
 import kitchenpos.application.dto.request.UpdateGuestNumberDto;
-import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.repository.order.OrderRepository;
-import kitchenpos.repository.table.OrderTableRepository;
-import kitchenpos.domain.table.OrderTable;
+import kitchenpos.common.domain.order.OrderStatus;
+import kitchenpos.common.repository.order.OrderRepository;
+import kitchenpos.common.repository.table.OrderTableRepository;
+import kitchenpos.common.domain.table.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

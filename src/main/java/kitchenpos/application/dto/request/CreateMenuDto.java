@@ -2,8 +2,8 @@ package kitchenpos.application.dto.request;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.ProductQuantities;
+import kitchenpos.common.domain.menu.Menu;
+import kitchenpos.common.domain.menu.ProductQuantities;
 
 public class CreateMenuDto {
 

@@ -1,6 +1,6 @@
 package kitchenpos.application.dto.request;
 
-import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.common.domain.order.OrderStatus;
 
 public class UpdateOrderStatusDto {
 

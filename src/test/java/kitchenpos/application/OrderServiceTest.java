@@ -13,7 +13,7 @@ import kitchenpos.application.dto.request.CreateOrderLineItemDto;
 import kitchenpos.application.dto.request.CreateTableDto;
 import kitchenpos.application.dto.response.OrderDto;
 import kitchenpos.application.dto.request.UpdateOrderStatusDto;
-import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.common.domain.order.OrderStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
