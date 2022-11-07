@@ -3,10 +3,13 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderMenu;
+import kitchenpos.order.domain.OrderMenus;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.Test;
@@ -18,6 +21,7 @@ class OrderTest {
     void 주문_상태를_변경한다() {
         // given
         final Order order = new Order();
+        order.setOrderLineItems(List.of());
         order.setOrderStatus(OrderStatus.MEAL);
 
         // when
@@ -42,13 +46,19 @@ class OrderTest {
     void 주문을_초기화한다() {
         // given
         final Order order = new Order();
-        order.setOrderLineItems(List.of(new OrderLineItem()));
+        final OrderLineItem orderLineItem = new OrderLineItem();
+        final Long menuId = 1L;
+        orderLineItem.setMenuId(menuId);
+        order.setOrderLineItems(List.of(orderLineItem));
         order.setOrderTableId(1L);
         final OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(false);
+        final OrderMenu orderMenu = new OrderMenu(1L, "메뉴이름", BigDecimal.valueOf(100), "메뉴그룹");
+        orderMenu.setMenuId(menuId);
+        final OrderMenus orderMenus = new OrderMenus(List.of(orderMenu));
 
         // when
-        final Order actual = order.init(orderTable, 1L);
+        final Order actual = order.init(orderTable, orderMenus);
 
         // then
         final Order expected = new Order(null, order.getOrderTableId(), OrderStatus.COOKING, LocalDateTime.now(),

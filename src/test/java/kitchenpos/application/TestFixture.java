@@ -121,7 +121,7 @@ public class TestFixture {
 
     public static OrderLineItem 주문_상품_생성(final Long menuId) {
         final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menuId);
+        orderLineItem.setOrderMenuId(menuId);
         return orderLineItem;
     }
 

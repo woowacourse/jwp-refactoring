@@ -43,16 +43,14 @@ class OrderServiceTest extends ServiceTest {
         final Menu expectedMenu = 메뉴를_저장한다(
                 메뉴_생성("테스트-메뉴-1", BigDecimal.valueOf(99999), menuGroup.getId(), List.of(menuProduct))
         );
-        final OrderLineItem orderLineItem = 주문_상품_생성(expectedMenu.getId());
+        final OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setMenuId(expectedMenu.getId());
 
         // when
         final Order actual = orderService.create(주문_생성(List.of(orderLineItem), expectedOrderTable.getId()));
 
         // then
-        assertAll(
-                () -> assertThat(actual.getOrderTableId()).isEqualTo(expectedOrderTable.getId()),
-                () -> assertThat(actual.getOrderLineItems().get(0).getMenuId()).isEqualTo(expectedMenu.getId())
-        );
+        assertThat(actual.getOrderTableId()).isEqualTo(expectedOrderTable.getId());
     }
 
     @Test
@@ -69,10 +67,9 @@ class OrderServiceTest extends ServiceTest {
     void 주문_생성시_메뉴에_등록된_상품이_아니라면_예외가_발생한다() {
         // given
         final OrderTable orderTable = 주문_테이블을_저장한다(주문_테이블_생성(1, false));
-        final OrderLineItem orderLineItem = 주문_상품_생성(1L);
 
         // when, then
-        assertThatThrownBy(() -> orderService.create(주문_생성(List.of(orderLineItem), orderTable.getId())))
+        assertThatThrownBy(() -> orderService.create(주문_생성(List.of(), orderTable.getId())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -101,8 +98,8 @@ class OrderServiceTest extends ServiceTest {
         final MenuGroup menuGroup = 메뉴_그룹을_저장한다(메뉴_그룹_생성("테스트-메뉴-그룹"));
         final Menu menu = 메뉴를_저장한다(
                 메뉴_생성("테스트-메뉴-1", BigDecimal.valueOf(99999), menuGroup.getId(), List.of(menuProduct)));
-        final OrderLineItem orderLineItem = 주문_상품_생성(menu.getId());
-        final Order expected = 주문을_저장한다(주문_생성(List.of(orderLineItem), orderTable.getId(), OrderStatus.COOKING));
+//        final OrderLineItem orderLineItem = 주문_상품_생성(menu.getId());
+        final Order expected = 주문을_저장한다(주문_생성(List.of(), orderTable.getId(), OrderStatus.COOKING));
 
         // when
         final List<Order> actual = orderService.list();
@@ -124,8 +121,7 @@ class OrderServiceTest extends ServiceTest {
         final MenuGroup menuGroup = 메뉴_그룹을_저장한다(메뉴_그룹_생성("테스트-메뉴-그룹"));
         final Menu menu = 메뉴를_저장한다(
                 메뉴_생성("테스트-메뉴-1", BigDecimal.valueOf(99999), menuGroup.getId(), List.of(menuProduct)));
-        final OrderLineItem orderLineItem = 주문_상품_생성(menu.getId());
-        final Long orderId = 주문을_저장한다(주문_생성(List.of(orderLineItem), orderTable.getId(), OrderStatus.COOKING))
+        final Long orderId = 주문을_저장한다(주문_생성(List.of(), orderTable.getId(), OrderStatus.COOKING))
                 .getId();
 
         // when
@@ -151,8 +147,7 @@ class OrderServiceTest extends ServiceTest {
         final MenuGroup menuGroup = 메뉴_그룹을_저장한다(메뉴_그룹_생성("테스트-메뉴-그룹"));
         final Menu menu = 메뉴를_저장한다(
                 메뉴_생성("테스트-메뉴-1", BigDecimal.valueOf(99999), menuGroup.getId(), List.of(menuProduct)));
-        final OrderLineItem orderLineItem = 주문_상품_생성(menu.getId());
-        final Order order = 주문을_저장한다(주문_생성(List.of(orderLineItem), orderTable.getId(), OrderStatus.COMPLETION));
+        final Order order = 주문을_저장한다(주문_생성(List.of(), orderTable.getId(), OrderStatus.COMPLETION));
 
         //when, then
         assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), 주문_생성(OrderStatus.COMPLETION)))

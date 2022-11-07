@@ -2,6 +2,8 @@ package kitchenpos.menu.domain;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.Products;
 import kitchenpos.product.domain.Quantity;
 
 public class MenuProducts {
@@ -26,5 +28,12 @@ public class MenuProducts {
         return menuProducts.stream()
                 .map(MenuProduct::getProductId)
                 .collect(Collectors.toList());
+    }
+
+    public void setProducts(final Products products) {
+        for (final MenuProduct menuProduct : menuProducts) {
+            final Product product = products.findById(menuProduct.getProductId());
+            menuProduct.setProduct(product);
+        }
     }
 }

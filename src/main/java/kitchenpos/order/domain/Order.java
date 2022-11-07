@@ -2,16 +2,14 @@ package kitchenpos.order.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.table.domain.OrderTable;
 
 public class Order {
-
     private Long id;
     private Long orderTableId;
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+    private OrderLineItems orderLineItems;
 
     public Order() {
     }
@@ -22,7 +20,7 @@ public class Order {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
+        this.orderLineItems = new OrderLineItems(orderLineItems);
     }
 
     public Long getId() {
@@ -58,16 +56,16 @@ public class Order {
     }
 
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+        return orderLineItems.getOrderLineItems();
     }
 
     public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
+        this.orderLineItems = new OrderLineItems(orderLineItems);
     }
 
     public Order updateOrderStatus(final OrderStatus newOrderStatus) {
         validateOrderStatus();
-        return new Order(id, orderTableId, newOrderStatus, orderedTime, orderLineItems);
+        return new Order(id, orderTableId, newOrderStatus, orderedTime, orderLineItems.getOrderLineItems());
     }
 
     private void validateOrderStatus() {
@@ -77,15 +75,19 @@ public class Order {
     }
 
     public List<Long> getMenuIds() {
-        return orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
-                .collect(Collectors.toList());
+        return orderLineItems.getMenuIds();
     }
 
-    public Order init(final OrderTable orderTable, final Long savedMenuCount) {
+    public Order init(final OrderTable orderTable, final OrderMenus orderMenus) {
         validateOrderTable(orderTable);
-        validateOrderLineItems(savedMenuCount);
-        return new Order(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+        validateOrderLineItems(orderMenus.size());
+        setOrderMenus(orderMenus);
+        return new Order(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(),
+                orderLineItems.getOrderLineItems());
+    }
+
+    private void setOrderMenus(final OrderMenus orderMenus) {
+        this.orderLineItems.setOrderMenuId(orderMenus);
     }
 
     private void validateOrderTable(final OrderTable orderTable) {
@@ -94,7 +96,7 @@ public class Order {
         }
     }
 
-    private void validateOrderLineItems(final Long savedMenuCount) {
+    private void validateOrderLineItems(final int savedMenuCount) {
         if (orderLineItems.isEmpty() || (orderLineItems.size() != savedMenuCount)) {
             throw new IllegalArgumentException();
         }

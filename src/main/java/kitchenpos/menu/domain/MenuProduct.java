@@ -1,10 +1,16 @@
 package kitchenpos.menu.domain;
 
+import java.math.BigDecimal;
+import kitchenpos.product.domain.Product;
+
 public class MenuProduct {
 
     private Long seq;
     private Long menuId;
     private Long productId;
+
+    private Product product;
+
     private long quantity;
 
     public Long getSeq() {
@@ -37,5 +43,17 @@ public class MenuProduct {
 
     public void setQuantity(final long quantity) {
         this.quantity = quantity;
+    }
+
+    public void setProduct(final Product product) {
+        this.product = product;
+    }
+
+    public String getProductName() {
+        return product.getName();
+    }
+
+    public BigDecimal getPrice() {
+        return product.getPrice();
     }
 }

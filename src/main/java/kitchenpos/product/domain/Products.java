@@ -26,4 +26,15 @@ public class Products {
         }
         return sum;
     }
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public Product findById(final Long id) {
+        return products.stream()
+                .filter(it -> it.isSameProductId(id))
+                .findFirst()
+                .get();
+    }
 }

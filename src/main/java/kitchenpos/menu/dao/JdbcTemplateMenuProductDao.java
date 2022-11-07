@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
 import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProducts;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -54,11 +55,13 @@ public class JdbcTemplateMenuProductDao implements MenuProductDao {
     }
 
     @Override
-    public List<MenuProduct> findAllByMenuId(final Long menuId) {
+    public MenuProducts findAllByMenuId(final Long menuId) {
         final String sql = "SELECT seq, menu_id, product_id, quantity FROM menu_product WHERE menu_id = (:menuId)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("menuId", menuId);
-        return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
+        final List<MenuProduct> menuProducts = jdbcTemplate.query(sql, parameters,
+                (resultSet, rowNumber) -> toEntity(resultSet));
+        return new MenuProducts(menuProducts);
     }
 
     private MenuProduct select(final Long id) {

@@ -2,6 +2,7 @@ package kitchenpos.menu.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.product.domain.Products;
 
 public class Menu {
@@ -10,6 +11,7 @@ public class Menu {
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
+    private MenuGroup menuGroup;
     private MenuProducts menuProducts;
 
     public Long getId() {
@@ -69,5 +71,13 @@ public class Menu {
 
     private boolean isGreaterPriceThan(final BigDecimal sum) {
         return price.compareTo(sum) > 0;
+    }
+
+    public void setMenuGroup(final MenuGroup menuGroup) {
+        this.menuGroup = menuGroup;
+    }
+
+    public String getMenuGroupName() {
+        return menuGroup.getName();
     }
 }

@@ -3,6 +3,7 @@ package kitchenpos.menu.dao;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProducts;
 
 public interface MenuProductDao {
 
@@ -12,5 +13,5 @@ public interface MenuProductDao {
 
     List<MenuProduct> findAll();
 
-    List<MenuProduct> findAllByMenuId(Long menuId);
+    MenuProducts findAllByMenuId(Long menuId);
 }
