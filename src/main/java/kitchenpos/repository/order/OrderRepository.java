@@ -1,4 +1,4 @@
-package kitchenpos.domain.order.repository;
+package kitchenpos.repository.order;
 
 import java.util.List;
 import java.util.Optional;

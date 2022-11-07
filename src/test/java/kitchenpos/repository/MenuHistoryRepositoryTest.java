@@ -1,4 +1,4 @@
-package kitchenpos.domain.repository;
+package kitchenpos.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -6,8 +6,8 @@ import java.math.BigDecimal;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuHistory;
 import kitchenpos.domain.menu.Price;
-import kitchenpos.domain.menu.repository.MenuHistoryRepository;
-import kitchenpos.domain.menu.repository.MenuRepository;
+import kitchenpos.repository.menu.MenuHistoryRepository;
+import kitchenpos.repository.menu.MenuRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

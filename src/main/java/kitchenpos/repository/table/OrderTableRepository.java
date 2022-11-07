@@ -1,4 +1,4 @@
-package kitchenpos.domain.table.repository;
+package kitchenpos.repository.table;
 
 import java.util.List;
 import java.util.Optional;
