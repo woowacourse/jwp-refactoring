@@ -3,8 +3,8 @@ package kitchenpos.application.menu;
 import java.util.stream.Collectors;
 import kitchenpos.application.menu.dto.request.CreateMenuGroupDto;
 import kitchenpos.application.menu.dto.response.MenuGroupDto;
-import kitchenpos.common.domain.menu.MenuGroup;
-import kitchenpos.common.repository.menu.MenuGroupRepository;
+import kitchenpos.core.domain.menu.MenuGroup;
+import kitchenpos.core.repository.menu.MenuGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

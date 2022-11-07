@@ -46,7 +46,7 @@ project(':ui') {
 
 project(':application') {
     dependencies {
-        implementation project(':common')
-        testImplementation project(':common')
+        implementation project(':core')
+        testImplementation project(':core')
     }
 }

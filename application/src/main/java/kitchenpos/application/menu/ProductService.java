@@ -3,8 +3,8 @@ package kitchenpos.application.menu;
 import java.util.stream.Collectors;
 import kitchenpos.application.menu.dto.request.CreateProductDto;
 import kitchenpos.application.menu.dto.response.ProductDto;
-import kitchenpos.common.domain.menu.Product;
-import kitchenpos.common.repository.menu.ProductRepository;
+import kitchenpos.core.domain.menu.Product;
+import kitchenpos.core.repository.menu.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

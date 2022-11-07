@@ -1,6 +1,6 @@
 package kitchenpos.application.order.dto.request;
 
-import kitchenpos.common.domain.order.OrderLineItem;
+import kitchenpos.core.domain.order.OrderLineItem;
 
 public class OrderLineItemDto {
 

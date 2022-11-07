@@ -3,8 +3,8 @@ package kitchenpos.application.table.dto.response;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.common.domain.table.OrderTable;
-import kitchenpos.common.domain.table.TableGroup;
+import kitchenpos.core.domain.table.OrderTable;
+import kitchenpos.core.domain.table.TableGroup;
 
 public class TableGroupDto {
 
