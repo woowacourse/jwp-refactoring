@@ -69,8 +69,8 @@ public class Menu {
         return name;
     }
 
-    public Price getPrice() {
-        return price;
+    public BigDecimal getPrice() {
+        return price.getValue();
     }
 
     public MenuGroup getMenuGroup() {

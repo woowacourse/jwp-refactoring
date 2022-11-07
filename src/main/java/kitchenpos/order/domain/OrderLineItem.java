@@ -1,5 +1,7 @@
 package kitchenpos.order.domain;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -7,8 +9,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
-import kitchenpos.menu.domain.Price;
 
 @Entity
 @Table(name = "order_line_item")
@@ -29,9 +29,9 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(String menuName, Price price, long quantity) {
+    public OrderLineItem(String menuName, BigDecimal price, long quantity) {
         this.menuName = menuName;
-        this.price = price;
+        this.price = new Price(price);
         this.quantity = quantity;
     }
 
