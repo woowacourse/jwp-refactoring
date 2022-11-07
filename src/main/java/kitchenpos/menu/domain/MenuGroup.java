@@ -16,16 +16,20 @@ public class MenuGroup {
     @Column(nullable = false)
     private String name;
 
-    public MenuGroup() {
+    protected MenuGroup() {
     }
 
     public MenuGroup(final String name) {
         this.name = name;
     }
 
-    public MenuGroup(final Long id, final String name) {
-        this.id = id;
-        this.name = name;
+    private MenuGroup(final Builder builder) {
+        this.id = builder.id;
+        this.name = builder.name;
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     public Long getId() {
@@ -42,5 +46,24 @@ public class MenuGroup {
 
     public void setName(final String name) {
         this.name = name;
+    }
+
+    public static class Builder {
+        private Long id;
+        private String name;
+
+        public Builder id(final Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder name(final String name) {
+            this.name = name;
+            return this;
+        }
+
+        public MenuGroup build() {
+            return new MenuGroup(this);
+        }
     }
 }
