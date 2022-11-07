@@ -30,7 +30,7 @@ public class DomainFixture {
         return new Menu(
                 뿌링클_치즈볼, Price.valueOf(23_000), menuGroupId,
                 Arrays.stream(products)
-                        .map(product -> new MenuProduct(product, 한개))
+                        .map(product -> new MenuProduct(product.getId(), product.getPrice(), 1))
                         .collect(Collectors.toList())
         );
     }

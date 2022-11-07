@@ -2,7 +2,6 @@ package kitchenpos.application.menu;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Quantity;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.product.Product;
 import kitchenpos.dto.request.MenuCreateRequest;
@@ -45,10 +44,10 @@ public class MenuService {
 
     private List<MenuProduct> mapToMenuProduct(final List<MenuProductCreateRequest> request) {
         return request.stream()
-                .map(mpr -> new MenuProduct(
-                        findProductById(mpr.getProductId()),
-                        new Quantity(mpr.getQuantity())
-                )).collect(Collectors.toList());
+                .map(mpr -> {
+                    final Product product = findProductById(mpr.getProductId());
+                    return new MenuProduct(product.getId(), product.getPrice(), mpr.getQuantity());
+                }).collect(Collectors.toList());
     }
 
     private Product findProductById(final Long id) {

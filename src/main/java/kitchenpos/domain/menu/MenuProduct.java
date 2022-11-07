@@ -1,14 +1,15 @@
 package kitchenpos.domain.menu;
 
+import java.math.BigDecimal;
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Quantity;
-import kitchenpos.domain.product.Product;
 
 @Entity
 public class MenuProduct {
@@ -17,8 +18,11 @@ public class MenuProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @ManyToOne
-    private Product product;
+    private Long productId;
+
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "product_price"))
+    private Price productPrice;
 
     @Embedded
     private Quantity quantity;
@@ -26,26 +30,31 @@ public class MenuProduct {
     protected MenuProduct() {
     }
 
-    public MenuProduct(final Product product, final Quantity quantity) {
-        this(null, product, quantity);
+    public MenuProduct(final Long productId, final BigDecimal productPrice, final long quantity) {
+        this(null, productId, new Price(productPrice), new Quantity(quantity));
     }
 
-    private MenuProduct(final Long seq, final Product product, final Quantity quantity) {
+    public MenuProduct(final Long seq, final Long productId, final Price productPrice, final Quantity quantity) {
         this.seq = seq;
-        this.product = product;
+        this.productId = productId;
+        this.productPrice = productPrice;
         this.quantity = quantity;
     }
 
     public Price calculateAmount() {
-        return this.product.multiplyPriceWith(quantity);
+        return this.productPrice.multiply(quantity);
     }
 
     public Long getSeq() {
         return seq;
     }
 
-    public Product getProduct() {
-        return product;
+    public Long getProductId() {
+        return productId;
+    }
+
+    public Price getProductPrice() {
+        return productPrice;
     }
 
     public long getQuantity() {

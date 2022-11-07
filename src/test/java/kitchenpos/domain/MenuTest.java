@@ -3,7 +3,6 @@ package kitchenpos.domain;
 import static kitchenpos.support.DomainFixture.뿌링클;
 import static kitchenpos.support.DomainFixture.뿌링클_치즈볼;
 import static kitchenpos.support.DomainFixture.치즈볼;
-import static kitchenpos.support.DomainFixture.한개;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
@@ -22,7 +21,8 @@ class MenuTest {
                         뿌링클_치즈볼,
                         Price.valueOf(30_000),
                         0L,
-                        List.of(new MenuProduct(뿌링클, 한개), new MenuProduct(치즈볼, 한개))
+                        List.of(new MenuProduct(1L, 뿌링클.getPrice(), 1),
+                                new MenuProduct(2L, 치즈볼.getPrice(), 1))
                 )
         ).isInstanceOf(DomainLogicException.class)
                 .extracting("errorCode")
