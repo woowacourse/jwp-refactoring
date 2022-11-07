@@ -22,8 +22,9 @@ public class TableGroupService {
     private final TableGroupRepository tableGroupRepository;
     private final ApplicationEventPublisher publisher;
 
-    public TableGroupService(OrderTableRepository orderTableRepository, TableGroupRepository tableGroupRepository,
-        ApplicationEventPublisher publisher) {
+    public TableGroupService(final OrderTableRepository orderTableRepository,
+        final TableGroupRepository tableGroupRepository,
+        final ApplicationEventPublisher publisher) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
         this.publisher = publisher;

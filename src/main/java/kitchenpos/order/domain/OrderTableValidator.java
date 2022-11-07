@@ -16,7 +16,7 @@ public class OrderTableValidator {
 
     private final OrderRepository orderRepository;
 
-    public OrderTableValidator(OrderRepository orderRepository) {
+    public OrderTableValidator(final OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
 

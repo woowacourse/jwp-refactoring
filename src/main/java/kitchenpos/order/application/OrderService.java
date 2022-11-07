@@ -26,7 +26,9 @@ public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderValidator orderValidator;
 
-    public OrderService(OrderRepository orderRepository, MenuRepository menuRepository, OrderValidator orderValidator) {
+    public OrderService(final OrderRepository orderRepository,
+        final MenuRepository menuRepository,
+        final OrderValidator orderValidator) {
         this.orderRepository = orderRepository;
         this.menuRepository = menuRepository;
         this.orderValidator = orderValidator;

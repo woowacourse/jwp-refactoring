@@ -16,7 +16,7 @@ public class MenuValidator {
     private final MenuGroupRepository menuGroupRepository;
     private final ProductRepository productRepository;
 
-    public MenuValidator(MenuGroupRepository menuGroupRepository, ProductRepository productRepository) {
+    public MenuValidator(final MenuGroupRepository menuGroupRepository, final ProductRepository productRepository) {
         this.menuGroupRepository = menuGroupRepository;
         this.productRepository = productRepository;
     }

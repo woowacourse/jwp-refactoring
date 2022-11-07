@@ -21,7 +21,8 @@ public class TableService {
     private final OrderTableRepository orderTableRepository;
     private final OrderTableValidator orderTableValidator;
 
-    public TableService(OrderTableRepository orderTableRepository, OrderTableValidator orderTableValidator) {
+    public TableService(final OrderTableRepository orderTableRepository,
+        final OrderTableValidator orderTableValidator) {
         this.orderTableRepository = orderTableRepository;
         this.orderTableValidator = orderTableValidator;
     }

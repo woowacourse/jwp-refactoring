@@ -12,7 +12,7 @@ import kitchenpos.order.repository.OrderTableRepository;
 public class OrderValidator {
     private final OrderTableRepository orderTableRepository;
 
-    public OrderValidator(OrderTableRepository orderTableRepository) {
+    public OrderValidator(final OrderTableRepository orderTableRepository) {
         this.orderTableRepository = orderTableRepository;
     }
 
