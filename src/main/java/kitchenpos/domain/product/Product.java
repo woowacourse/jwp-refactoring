@@ -26,8 +26,8 @@ public class Product {
     protected Product() {
     }
 
-    public Product(final Name name, final Price price) {
-        this(null, name, price);
+    public Product(final String name, final int price) {
+        this(null, new Name(name), Price.valueOf(price));
     }
 
     private Product(final Long id, final Name name, final Price price) {

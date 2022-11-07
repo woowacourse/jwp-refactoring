@@ -38,8 +38,8 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(final Name name, final Price price, final Long menuGroupId, final List<MenuProduct> products) {
-        this(null, name, price, menuGroupId, products);
+    public Menu(final String name, final int price, final Long menuGroupId, final List<MenuProduct> products) {
+        this(null, new Name(name), Price.valueOf(price), menuGroupId, products);
     }
 
     private Menu(final Long id, final Name name, final Price price, final Long menuGroupId,

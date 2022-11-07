@@ -1,8 +1,6 @@
 package kitchenpos.dto.request;
 
 import javax.validation.constraints.NotNull;
-import kitchenpos.domain.Name;
-import kitchenpos.domain.Price;
 import kitchenpos.domain.product.Product;
 
 public class ProductCreateRequest {
@@ -22,7 +20,7 @@ public class ProductCreateRequest {
     }
 
     public Product toProduct() {
-        return new Product(new Name(this.name), Price.valueOf(this.price));
+        return new Product(this.name, this.price);
     }
 
     public String getName() {

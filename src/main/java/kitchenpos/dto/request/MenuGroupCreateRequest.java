@@ -1,7 +1,6 @@
 package kitchenpos.dto.request;
 
 import com.sun.istack.NotNull;
-import kitchenpos.domain.Name;
 import kitchenpos.domain.menu.MenuGroup;
 
 public class MenuGroupCreateRequest {
@@ -17,7 +16,7 @@ public class MenuGroupCreateRequest {
     }
 
     public MenuGroup toMenuGroup() {
-        return new MenuGroup(new Name(name));
+        return new MenuGroup(name);
     }
 
     public String getName() {

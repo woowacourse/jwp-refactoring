@@ -3,9 +3,6 @@ package kitchenpos.application.order;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Name;
-import kitchenpos.domain.Price;
-import kitchenpos.domain.Quantity;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
@@ -53,8 +50,7 @@ public class OrderService {
                 .stream()
                 .map(item -> {
                     final Menu menu = getMenuById(item);
-                    return new OrderLineItem(item.getMenuId(), new Quantity(item.getQuantity()),
-                            new Name(menu.getName()), new Price(menu.getPrice()));
+                    return new OrderLineItem(item.getMenuId(), item.getQuantity(), menu.getName(), menu.getPrice());
                 }).collect(Collectors.toList());
     }
 

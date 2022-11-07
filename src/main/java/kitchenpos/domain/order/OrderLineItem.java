@@ -35,12 +35,12 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(final Long menuId, final Quantity quantity) {
-        this(null, menuId, quantity, null, null);
+    public OrderLineItem(final Long menuId, final long quantity) {
+        this(null, menuId, new Quantity(quantity), null, null);
     }
 
-    public OrderLineItem(final Long menuId, final Quantity quantity, final Name menuName, final Price price) {
-        this(null, menuId, quantity, menuName, price);
+    public OrderLineItem(final Long menuId, final long quantity, final String menuName, final BigDecimal price) {
+        this(null, menuId, new Quantity(quantity), new Name(menuName), new Price(price));
     }
 
     private OrderLineItem(final Long seq, final Long menuId, final Quantity quantity, final Name menuName, final Price price) {

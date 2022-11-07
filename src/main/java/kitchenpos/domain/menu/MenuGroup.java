@@ -20,8 +20,8 @@ public class MenuGroup {
     protected MenuGroup() {
     }
 
-    public MenuGroup(final Name name) {
-        this(null, name);
+    public MenuGroup(final String name) {
+        this(null, new Name(name));
     }
 
     private MenuGroup(final Long id, final Name name) {

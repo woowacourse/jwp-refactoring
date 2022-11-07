@@ -6,7 +6,6 @@ import static kitchenpos.support.DomainFixture.뿌링클_치즈볼_메뉴_생성
 import static kitchenpos.support.DomainFixture.세트_메뉴;
 import static kitchenpos.support.DomainFixture.채워진_테이블_생성;
 import static kitchenpos.support.DomainFixture.치즈볼;
-import static kitchenpos.support.DomainFixture.한개;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -14,8 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.application.order.OrderService;
-import kitchenpos.domain.Name;
-import kitchenpos.domain.Price;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
@@ -151,9 +148,9 @@ class OrderServiceTest {
     void 주문_목록을_조회한다() {
         // given
         orderRepository.save(new Order(null, table.getId(), OrderStatus.COOKING, LocalDateTime.now(),
-                List.of(new OrderLineItem(menu.getId(), 한개, new Name(menu.getName()), new Price(menu.getPrice())))));
+                List.of(new OrderLineItem(menu.getId(), 1, menu.getName(), menu.getPrice()))));
         orderRepository.save(new Order(null, table.getId(), OrderStatus.COOKING, LocalDateTime.now(),
-                List.of(new OrderLineItem(menu.getId(), 한개, new Name(menu.getName()), new Price(menu.getPrice())))));
+                List.of(new OrderLineItem(menu.getId(), 1, menu.getName(), menu.getPrice()))));
 
         // when
         final var foundOrders = orderService.list();
@@ -167,8 +164,7 @@ class OrderServiceTest {
         // given
         final var orderId = orderRepository.save(
                 new Order(null, table.getId(), OrderStatus.COOKING, LocalDateTime.now(),
-                        List.of(new OrderLineItem(menu.getId(), 한개, new Name(menu.getName()),
-                                new Price(menu.getPrice()))))).getId();
+                        List.of(new OrderLineItem(menu.getId(), 1, menu.getName(), menu.getPrice())))).getId();
         final var request = new OrderChangeStatusRequest(OrderStatus.MEAL.name());
 
         // when
@@ -186,8 +182,7 @@ class OrderServiceTest {
         // given
         final var orderId = orderRepository.save(
                 new Order(null, table.getId(), OrderStatus.COOKING, LocalDateTime.now(),
-                        List.of(new OrderLineItem(menu.getId(), 한개, new Name(menu.getName()),
-                                new Price(menu.getPrice()))))).getId();
+                        List.of(new OrderLineItem(menu.getId(), 1, menu.getName(), menu.getPrice())))).getId();
         final var request = new OrderChangeStatusRequest(OrderStatus.COMPLETION.name());
 
         // when
@@ -217,8 +212,7 @@ class OrderServiceTest {
         // given
         final var orderId = orderRepository.save(
                 new Order(null, table.getId(), OrderStatus.COMPLETION, LocalDateTime.now(),
-                        List.of(new OrderLineItem(menu.getId(), 한개, new Name(menu.getName()),
-                                new Price(menu.getPrice()))))).getId();
+                        List.of(new OrderLineItem(menu.getId(), 1, menu.getName(), menu.getPrice())))).getId();
         final var request = new OrderChangeStatusRequest(OrderStatus.MEAL.name());
 
         // when & then
