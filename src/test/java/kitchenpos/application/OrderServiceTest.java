@@ -4,24 +4,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import kitchenpos.domain.entity.Menu;
-import kitchenpos.domain.entity.MenuGroup;
-import kitchenpos.domain.entity.MenuProduct;
-import kitchenpos.domain.entity.Order;
-import kitchenpos.domain.entity.OrderLineItem;
-import kitchenpos.domain.entity.OrderTable;
-import kitchenpos.domain.entity.Price;
-import kitchenpos.domain.entity.Product;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuProductRepository;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderLineItemRepository;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.ProductRepository;
-import kitchenpos.ui.jpa.dto.order.OrderCreateRequest;
-import kitchenpos.ui.jpa.dto.order.OrderCreateResponse;
-import org.aspectj.weaver.ast.Or;
+import kitchenpos.menu.domain.entity.Menu;
+import kitchenpos.menu.domain.entity.MenuGroup;
+import kitchenpos.menu.domain.entity.MenuProduct;
+import kitchenpos.menu.repository.MenuGroupRepository;
+import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.domain.entity.Order;
+import kitchenpos.order.domain.entity.OrderLineItem;
+import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.order.ui.dto.order.OrderCreateRequest;
+import kitchenpos.order.ui.dto.order.OrderCreateResponse;
+import kitchenpos.product.domain.entity.Product;
+import kitchenpos.product.repository.ProductRepository;
+import kitchenpos.table.domain.entity.OrderTable;
+import kitchenpos.table.repository.OrderTableRepository;
+import kitchenpos.vo.Price;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -66,10 +64,10 @@ class OrderServiceTest extends ServiceTest {
 
         MenuProduct menuProduct = new MenuProduct(product, 5L);
 
-        Menu menu = new Menu("name", menuGroup, List.of(menuProduct), new Price(5000L));
+        Menu menu = new Menu("name", menuGroup, new Price(5000L), new Price(product.getPrice() * menuProduct.getQuantity()));
         menuRepository.save(menu);
 
-        orderLineItem = new OrderLineItem(menu, 1L);
+        orderLineItem = new OrderLineItem(menu.getId(), menu.getPrice().getValue(), 1L);
     }
 
     @DisplayName("주문을 생성한다.")

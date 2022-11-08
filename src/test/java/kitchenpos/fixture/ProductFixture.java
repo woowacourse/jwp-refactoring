@@ -1,7 +1,7 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.entity.Price;
-import kitchenpos.domain.entity.Product;
+import kitchenpos.product.domain.entity.Product;
+import kitchenpos.vo.Price;
 
 public class ProductFixture {
 

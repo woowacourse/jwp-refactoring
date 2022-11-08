@@ -1,15 +1,13 @@
 package kitchenpos.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
-import kitchenpos.domain.collection.MenuProducts;
-import kitchenpos.domain.entity.Menu;
-import kitchenpos.domain.entity.MenuGroup;
-import kitchenpos.domain.entity.MenuProduct;
-import kitchenpos.domain.entity.Price;
-import kitchenpos.domain.entity.Product;
+import kitchenpos.menu.domain.entity.Menu;
+import kitchenpos.menu.domain.entity.MenuGroup;
+import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.product.domain.entity.Product;
+import kitchenpos.vo.Price;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,12 +27,11 @@ class MenuRepositoryTest {
     void setUp() {
         Product product = new Product("name", 1000L);
 
-        MenuProduct menuProduct = new MenuProduct(product, 3);
         MenuGroup menuGroup = new MenuGroup(1L, "name");
-        menu1 = new Menu("이름1", menuGroup, List.of(menuProduct), new Price(1000L));
+        menu1 = new Menu("name", menuGroup, new Price(1000L), new Price(product.getPrice()));
         menuRepository.save(menu1);
 
-        menu2 = new Menu("이름2", menuGroup, List.of(menuProduct), new Price(1000L));
+        menu2 = new Menu("name", menuGroup, new Price(1000L), new Price(product.getPrice()));
         menuRepository.save(menu2);
     }
 

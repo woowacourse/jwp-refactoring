@@ -2,8 +2,9 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import kitchenpos.ui.jpa.dto.product.ProductCreateRequest;
-import kitchenpos.ui.jpa.dto.product.ProductCreateResponse;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.ui.dto.product.ProductCreateRequest;
+import kitchenpos.product.ui.dto.product.ProductCreateResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

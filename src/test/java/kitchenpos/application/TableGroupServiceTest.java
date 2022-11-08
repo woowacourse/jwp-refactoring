@@ -3,14 +3,14 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.Collections;
 import java.util.List;
-import kitchenpos.domain.entity.Order;
-import kitchenpos.domain.entity.OrderTable;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.ui.jpa.dto.tablegroup.TableGroupCreateRequest;
-import kitchenpos.ui.jpa.dto.tablegroup.TableGroupCreateResponse;
+import kitchenpos.order.domain.entity.Order;
+import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.table.application.TableGroupService;
+import kitchenpos.table.domain.entity.OrderTable;
+import kitchenpos.table.repository.OrderTableRepository;
+import kitchenpos.table.ui.dto.tablegroup.TableGroupCreateRequest;
+import kitchenpos.table.ui.dto.tablegroup.TableGroupCreateResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -105,7 +105,7 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("완료되지 않은 주문이 포함된 테이블 그룹은 해제할 수 없다.")
     @Test
     void ungroup_Exception_Not_Completion_Order() {
-        Order order = new Order(emptyOrderTable1, Collections.emptyList());
+        Order order = new Order(emptyOrderTable1);
         orderRepository.save(order);
         TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(List.of(emptyOrderTable1.getId(),
                 emptyOrderTable2.getId()));

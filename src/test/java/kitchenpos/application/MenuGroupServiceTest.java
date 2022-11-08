@@ -2,8 +2,9 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import kitchenpos.ui.jpa.dto.menugroup.MenuGroupCreateRequest;
-import kitchenpos.ui.jpa.dto.menugroup.MenuGroupCreateResponse;
+import kitchenpos.menu.application.MenuGroupService;
+import kitchenpos.menu.ui.dto.menugroup.MenuGroupCreateRequest;
+import kitchenpos.menu.ui.dto.menugroup.MenuGroupCreateResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
