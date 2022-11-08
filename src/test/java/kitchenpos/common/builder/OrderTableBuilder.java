@@ -1,6 +1,6 @@
 package kitchenpos.common.builder;
 
-import kitchenpos.tablegroup.domain.OrderTable;
+import kitchenpos.table.domain.OrderTable;
 
 public class OrderTableBuilder {
 

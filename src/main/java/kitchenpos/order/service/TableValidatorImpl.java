@@ -5,7 +5,7 @@ import static kitchenpos.order.domain.OrderStatus.MEAL;
 
 import java.util.List;
 import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.tablegroup.service.TableValidator;
+import kitchenpos.table.service.TableValidator;
 import org.springframework.stereotype.Component;
 
 @Component
