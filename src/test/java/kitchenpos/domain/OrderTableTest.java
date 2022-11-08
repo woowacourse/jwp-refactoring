@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -28,7 +30,7 @@ public class OrderTableTest {
     void changeAlreadyGroupTableStatus() {
         final OrderTable sut = new OrderTable(5, true);
         final TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now());
-        sut.groupTable(tableGroup);
+        sut.groupTable(tableGroup.getId());
 
         assertThatThrownBy(() -> sut.changeEmpty(false))
                 .isInstanceOf(IllegalArgumentException.class);

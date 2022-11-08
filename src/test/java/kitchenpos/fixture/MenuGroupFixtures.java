@@ -3,7 +3,7 @@ package kitchenpos.fixture;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroup;
 
 public enum MenuGroupFixtures {
 
