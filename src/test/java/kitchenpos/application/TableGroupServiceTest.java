@@ -8,17 +8,18 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import kitchenpos.application.fixture.MenuGroupFixture;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.TableGroupCreateRequest;
-import kitchenpos.dto.TableGroupResponse;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.ordertable.application.TableGroupService;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.TableGroup;
+import kitchenpos.ordertable.ui.dto.request.TableGroupCreateRequest;
+import kitchenpos.ordertable.ui.dto.response.TableGroupResponse;
+import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -41,19 +42,19 @@ class TableGroupServiceTest extends ServiceTestBase {
         TableGroup tableGroup = 단체_지정_생성(orderTable1);
         TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
         orderTable1.setTableGroupId(savedTableGroup.getId());
-        OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
-        MenuGroup menuGroup = menuGroupDao.save(MenuGroupFixture.치킨());
-        Product product = productDao.save(createProduct("치킨", BigDecimal.valueOf(18000L)));
+        OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
+        MenuGroup menuGroup = menuGroupRepository.save(MenuGroupFixture.치킨());
+        Product product = productRepository.save(createProduct("치킨", BigDecimal.valueOf(18000L)));
         MenuProduct menuProduct =
                 createMenuProduct(product.getId(), 1, BigDecimal.valueOf(18000L));
         Menu menu = menuRepository.save(createMenu("치킨", BigDecimal.valueOf(18000L), menuGroup.getId(),
                 Collections.singletonList(menuProduct)));
-        OrderLineItem orderLineItem = createOrderLineItem(menu.getId(), 1);
+        OrderLineItem orderLineItem = createOrderLineItem(menu.getId(), 1, menu.getName(), menu.getPrice());
 
         Order order1 = createOrder(savedOrderTable1.getId(), Collections.singletonList(orderLineItem));
         order1.changeOrderStatus(orderStatus.name());
         order1.setOrderedTime(LocalDateTime.now());
-        Order savedOrder = jdbcTemplateOrderDao.save(order1);
+        Order savedOrder = orderRepository.save(order1);
 
         // when & then
         assertThatThrownBy(
@@ -68,33 +69,33 @@ class TableGroupServiceTest extends ServiceTestBase {
         // given
         OrderTable orderTable1 = 주문_테이블_생성();
         TableGroup tableGroup = 단체_지정_생성(orderTable1);
-        TableGroup savedTableGroup = jdbcTemplateTableGroupDao.save(tableGroup);
+        TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
         orderTable1.setTableGroupId(savedTableGroup.getId());
-        OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
-        MenuGroup menuGroup = menuGroupDao.save(MenuGroupFixture.치킨());
-        Product product = productDao.save(createProduct("치킨", BigDecimal.valueOf(18000L)));
+        OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
+        MenuGroup menuGroup = menuGroupRepository.save(MenuGroupFixture.치킨());
+        Product product = productRepository.save(createProduct("치킨", BigDecimal.valueOf(18000L)));
         MenuProduct menuProduct =
                 createMenuProduct(product.getId(), 1, BigDecimal.valueOf(18000L));
         Menu menu = menuRepository.save(createMenu("치킨", BigDecimal.valueOf(18000L), menuGroup.getId(),
                 Collections.singletonList(menuProduct)));
-        OrderLineItem orderLineItem = createOrderLineItem(menu.getId(), 1);
+        OrderLineItem orderLineItem = createOrderLineItem(menu.getId(), 1, menu.getName(), menu.getPrice());
 
         Order order1 = new Order(savedOrderTable1.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now(),
                 Collections.singletonList(orderLineItem));
-        Order savedOrder = jdbcTemplateOrderDao.save(order1);
+        Order savedOrder = orderRepository.save(order1);
 
         // when
         tableGroupService.ungroup(savedTableGroup.getId());
 
         //then
-        assertThat(orderTableDao.findAllByTableGroupId(savedTableGroup.getId())).isEmpty();
+        assertThat(orderTableRepository.findAllByTableGroupId(savedTableGroup.getId())).isEmpty();
     }
 
     @DisplayName("orderTable의 크기가 2보다 작은경우 예외를 발생한다.")
     @Test
     void orderTableSizeSmallerThan2() {
         // given
-        OrderTable orderTable1 = orderTableDao.save(빈_주문_테이블_생성());
+        OrderTable orderTable1 = orderTableRepository.save(빈_주문_테이블_생성());
         TableGroupCreateRequest tableGroup = createTableGroupCreateRequest(orderTable1);
 
         // when & then
@@ -108,7 +109,7 @@ class TableGroupServiceTest extends ServiceTestBase {
     @Test
     void orderTableDifferentInTableGroup() {
         // given
-        OrderTable savedOrderTable = orderTableDao.save(빈_주문_테이블_생성());
+        OrderTable savedOrderTable = orderTableRepository.save(빈_주문_테이블_생성());
         OrderTable notSavedOrderTable = 빈_주문_테이블_생성();
         TableGroupCreateRequest tableGroup = createTableGroupCreateRequest(savedOrderTable, notSavedOrderTable);
 
@@ -123,8 +124,8 @@ class TableGroupServiceTest extends ServiceTestBase {
     @Test
     void emptyOrderTable() {
         // given
-        OrderTable notEmptyOrderTable = orderTableDao.save(주문_테이블_생성());
-        OrderTable emptyOrderTable = orderTableDao.save(빈_주문_테이블_생성());
+        OrderTable notEmptyOrderTable = orderTableRepository.save(주문_테이블_생성());
+        OrderTable emptyOrderTable = orderTableRepository.save(빈_주문_테이블_생성());
         TableGroupCreateRequest tableGroup = createTableGroupCreateRequest(notEmptyOrderTable, emptyOrderTable);
 
         // when & then
@@ -139,10 +140,10 @@ class TableGroupServiceTest extends ServiceTestBase {
     void otherGroupOrderTable() {
         // given
         OrderTable orderTable = 빈_주문_테이블_생성();
-        TableGroup otherTableGroup = jdbcTemplateTableGroupDao.save(단체_지정_생성(orderTable));
+        TableGroup otherTableGroup = tableGroupRepository.save(단체_지정_생성(orderTable));
         orderTable.setTableGroupId(otherTableGroup.getId());
-        OrderTable otherGroupOrderTable = orderTableDao.save(orderTable);
-        OrderTable thisGroupOrderTable = orderTableDao.save(빈_주문_테이블_생성());
+        OrderTable otherGroupOrderTable = orderTableRepository.save(orderTable);
+        OrderTable thisGroupOrderTable = orderTableRepository.save(빈_주문_테이블_생성());
         TableGroupCreateRequest tableGroup = createTableGroupCreateRequest(otherGroupOrderTable, thisGroupOrderTable);
 
         // when & then
@@ -156,8 +157,8 @@ class TableGroupServiceTest extends ServiceTestBase {
     @Test
     void group() {
         // given
-        OrderTable orderTable1 = orderTableDao.save(빈_주문_테이블_생성());
-        OrderTable orderTable2 = orderTableDao.save(빈_주문_테이블_생성());
+        OrderTable orderTable1 = orderTableRepository.save(빈_주문_테이블_생성());
+        OrderTable orderTable2 = orderTableRepository.save(빈_주문_테이블_생성());
         TableGroupCreateRequest tableGroup = createTableGroupCreateRequest(orderTable1, orderTable2);
 
         // when
@@ -165,8 +166,8 @@ class TableGroupServiceTest extends ServiceTestBase {
 
         //then
         assertAll(
-                () -> assertThat(jdbcTemplateTableGroupDao.findById(savedTableGroup.getId())).isPresent(),
-                () -> assertThat(orderTableDao.findAllByTableGroupId(savedTableGroup.getId())).hasSize(2)
+                () -> assertThat(tableGroupRepository.findById(savedTableGroup.getId())).isPresent(),
+                () -> assertThat(orderTableRepository.findAllByTableGroupId(savedTableGroup.getId())).hasSize(2)
         );
     }
 }

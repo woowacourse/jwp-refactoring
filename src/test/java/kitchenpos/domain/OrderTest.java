@@ -2,10 +2,14 @@ package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -27,8 +31,8 @@ class OrderTest {
     @ValueSource(ints = {1, 3})
     void differentMenuSizeThrowException(int menuSize) {
         List<OrderLineItem> orderLineItems = Arrays.asList(
-                new OrderLineItem(1L, 1),
-                new OrderLineItem(2L, 1)
+                new OrderLineItem(1L, "메뉴 이름", BigDecimal.ZERO, 1),
+                new OrderLineItem(2L, "메뉴 이름", BigDecimal.ZERO, 1)
         );
         assertThatThrownBy(
                 () -> Order.create(1L, orderLineItems, menuSize)
@@ -41,7 +45,7 @@ class OrderTest {
     void changeOrderStatusThrowException() {
         // given
         Order order = new Order(1L, OrderStatus.COMPLETION.name(),
-                LocalDateTime.now(), Collections.singletonList(new OrderLineItem(1L, 1)
+                LocalDateTime.now(), Collections.singletonList(new OrderLineItem(1L, "메뉴 이름", BigDecimal.ZERO, 1)
         ));
 
         // when & then

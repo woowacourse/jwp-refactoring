@@ -6,9 +6,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.dto.MenuGroupRequest;
-import kitchenpos.dto.MenuGroupResponse;
+import kitchenpos.menu.application.MenuGroupService;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.ui.dto.request.MenuGroupRequest;
+import kitchenpos.menu.ui.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +24,8 @@ class MenuGroupServiceTest extends ServiceTestBase {
     @Test
     void findAll() {
         // given
-        menuGroupDao.save(치킨());
-        menuGroupDao.save(피자());
+        menuGroupRepository.save(치킨());
+        menuGroupRepository.save(피자());
 
         // when
         List<MenuGroupResponse> menuGroups = menuGroupService.list();
@@ -43,7 +44,7 @@ class MenuGroupServiceTest extends ServiceTestBase {
         MenuGroupResponse savedMenuGroup = menuGroupService.create(menuGroup);
 
         //then
-        List<MenuGroup> savedMenuGroups = menuGroupDao.findAll();
+        List<MenuGroup> savedMenuGroups = menuGroupRepository.findAll();
         assertAll(() -> assertThat(savedMenuGroups).hasSize(1),
                 () -> assertThat(savedMenuGroup).extracting("name").isEqualTo(menuGroup.getName()));
     }

@@ -6,36 +6,31 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.MenuRepository;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderRepository;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.TableGroupRepository;
-import kitchenpos.dto.MenuGroupRequest;
-import kitchenpos.dto.MenuProductRequest;
-import kitchenpos.dto.MenuRequest;
-import kitchenpos.dto.OrderCreateRequest;
-import kitchenpos.dto.OrderLineItemRequest;
-import kitchenpos.dto.OrderTableCreateRequest;
-import kitchenpos.dto.OrderTableEmptyStatusRequest;
-import kitchenpos.dto.OrderTableGuestRequest;
-import kitchenpos.dto.ProductRequest;
-import kitchenpos.dto.TableGroupCreateRequest;
-import kitchenpos.dto.TableGroupOrderTableIdRequest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroupRepository;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menu.ui.dto.request.MenuGroupRequest;
+import kitchenpos.menu.ui.dto.request.MenuProductRequest;
+import kitchenpos.menu.ui.dto.request.MenuRequest;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.ui.dto.request.OrderCreateRequest;
+import kitchenpos.order.ui.dto.request.OrderLineItemRequest;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTableRepository;
+import kitchenpos.ordertable.domain.TableGroup;
+import kitchenpos.ordertable.domain.TableGroupRepository;
+import kitchenpos.ordertable.ui.dto.request.OrderTableCreateRequest;
+import kitchenpos.ordertable.ui.dto.request.OrderTableEmptyStatusRequest;
+import kitchenpos.ordertable.ui.dto.request.OrderTableGuestRequest;
+import kitchenpos.ordertable.ui.dto.request.TableGroupCreateRequest;
+import kitchenpos.ordertable.ui.dto.request.TableGroupOrderTableIdRequest;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
+import kitchenpos.product.ui.dto.request.ProductRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
@@ -45,34 +40,19 @@ import org.springframework.test.context.jdbc.Sql;
 public abstract class ServiceTestBase {
 
     @Autowired
-    protected OrderDao jdbcTemplateOrderDao;
-
-    @Autowired
     protected OrderRepository orderRepository;
 
     @Autowired
-    protected ProductDao productDao;
+    protected ProductRepository productRepository;
 
     @Autowired
-    protected MenuProductDao menuProductDao;
-
-    @Autowired
-    protected MenuGroupDao menuGroupDao;
-
-    @Autowired
-    protected MenuDao jdbcTemplateMenuDao;
+    protected MenuGroupRepository menuGroupRepository;
 
     @Autowired
     protected MenuRepository menuRepository;
 
     @Autowired
-    protected OrderLineItemDao orderLineItemDao;
-
-    @Autowired
-    protected OrderTableDao orderTableDao;
-
-    @Autowired
-    protected TableGroupDao jdbcTemplateTableGroupDao;
+    protected OrderTableRepository orderTableRepository;
 
     @Autowired
     protected TableGroupRepository tableGroupRepository;
@@ -105,15 +85,11 @@ public abstract class ServiceTestBase {
     }
 
     protected OrderTable 주문_테이블_생성() {
-        OrderTable orderTable = new OrderTable(2, false);
-
-        return orderTable;
+        return new OrderTable(2, false);
     }
 
     protected OrderTable 빈_주문_테이블_생성() {
-        OrderTable orderTable = new OrderTable(0, true);
-
-        return orderTable;
+        return new OrderTable(0, true);
     }
 
     protected OrderTableCreateRequest createOrderTableCreateRequest(final int guest) {
@@ -126,11 +102,6 @@ public abstract class ServiceTestBase {
 
     protected OrderTableGuestRequest createOrderTableGuestRequest(final int guest) {
         return new OrderTableGuestRequest(guest);
-    }
-
-    protected Order 주문_생성(final OrderTable orderTable) {
-
-        return Order.create(orderTable.getId(), Collections.emptyList(), 1);
     }
 
     protected TableGroup 단체_지정_생성(final OrderTable... orderTables) {
@@ -156,8 +127,9 @@ public abstract class ServiceTestBase {
         return new OrderCreateRequest(orderTableId, orderLineItemRequests);
     }
 
-    protected OrderLineItem createOrderLineItem(Long menuId, long quantity) {
-        return new OrderLineItem(menuId, quantity);
+    protected OrderLineItem createOrderLineItem(Long menuId, long quantity, final String menuName,
+                                                final BigDecimal menuPrice) {
+        return new OrderLineItem(menuId, menuName, menuPrice, quantity);
     }
 
     protected OrderLineItemRequest createOrderLineItemRequest(final Long menuId, final long quantity) {
@@ -166,7 +138,8 @@ public abstract class ServiceTestBase {
 
 
     protected Order 주문_생성_및_저장(final OrderTable orderTable, final Menu menu, final long quantity) {
-        List<OrderLineItem> orderLineItems = Collections.singletonList(createOrderLineItem(menu.getId(), quantity));
+        List<OrderLineItem> orderLineItems = Collections.singletonList(
+                createOrderLineItem(menu.getId(), quantity, menu.getName(), menu.getPrice()));
         Order order = createOrder(orderTable.getId(), orderLineItems);
 
         return orderRepository.save(order);

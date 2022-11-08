@@ -11,17 +11,18 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.dto.OrderCreateRequest;
-import kitchenpos.dto.OrderLineItemRequest;
-import kitchenpos.dto.OrderResponse;
-import kitchenpos.dto.OrderStatusRequest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.ui.dto.request.OrderCreateRequest;
+import kitchenpos.order.ui.dto.request.OrderLineItemRequest;
+import kitchenpos.order.ui.dto.request.OrderStatusRequest;
+import kitchenpos.order.ui.dto.response.OrderResponse;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,9 +40,9 @@ class OrderServiceTest extends ServiceTestBase {
     @DisplayName("메뉴 및 메뉴 그룹 생성")
     @BeforeEach
     void setUp() {
-        Product productChicken1 = productDao.save(후라이드_치킨());
-        Product productChicken2 = productDao.save(양념_치킨());
-        MenuGroup chickenMenuGroup = menuGroupDao.save(치킨());
+        Product productChicken1 = productRepository.save(후라이드_치킨());
+        Product productChicken2 = productRepository.save(양념_치킨());
+        MenuGroup chickenMenuGroup = menuGroupRepository.save(치킨());
 
         MenuProduct menuProductChicken1 = createMenuProduct(productChicken1.getId(), 1, productChicken1.getPrice());
         MenuProduct menuProductChicken2 = createMenuProduct(productChicken2.getId(), 1, productChicken2.getPrice());
@@ -65,7 +66,7 @@ class OrderServiceTest extends ServiceTestBase {
     @Test
     void findAll() {
         // given
-        OrderTable orderTable1 = orderTableDao.save(주문_테이블_생성());
+        OrderTable orderTable1 = orderTableRepository.save(주문_테이블_생성());
 
         Order order1 = 주문_생성_및_저장(orderTable1, originalAndSeasonedChicken, 1);
         Order order2 = 주문_생성_및_저장(orderTable1, originalAndSeasonedChicken, 1);
@@ -81,7 +82,7 @@ class OrderServiceTest extends ServiceTestBase {
     @Test
     void orderWithEmptyOrderLineItem() {
         // given
-        OrderTable orderTable1 = orderTableDao.save(주문_테이블_생성());
+        OrderTable orderTable1 = orderTableRepository.save(주문_테이블_생성());
 
         OrderCreateRequest orderRequest = createOrderCreateRequest(orderTable1.getId(),
                 Collections.emptyList());
@@ -97,7 +98,7 @@ class OrderServiceTest extends ServiceTestBase {
     @Test
     void orderWithDifferentMenuSize() {
         // given
-        OrderTable orderTable1 = orderTableDao.save(주문_테이블_생성());
+        OrderTable orderTable1 = orderTableRepository.save(주문_테이블_생성());
 
         OrderLineItemRequest orderLineItem1 = createOrderLineItemRequest(originalAndSeasonedChicken.getId(), 1);
         OrderLineItemRequest orderLineItem2 = createOrderLineItemRequest(originalAndSeasonedChicken.getId(), 1);
@@ -130,7 +131,7 @@ class OrderServiceTest extends ServiceTestBase {
     @Test
     void orderWithEmptyOrderTableId() {
         // given
-        OrderTable orderTable1 = orderTableDao.save(빈_주문_테이블_생성());
+        OrderTable orderTable1 = orderTableRepository.save(빈_주문_테이블_생성());
 
         OrderLineItemRequest orderLineItem1 = createOrderLineItemRequest(originalAndSeasonedChicken.getId(), 1);
         OrderCreateRequest orderRequest = createOrderCreateRequest(orderTable1.getId(),
@@ -147,7 +148,7 @@ class OrderServiceTest extends ServiceTestBase {
     @Test
     void orderSuccessful() {
         // given
-        OrderTable orderTable1 = orderTableDao.save(주문_테이블_생성());
+        OrderTable orderTable1 = orderTableRepository.save(주문_테이블_생성());
 
         OrderLineItemRequest orderLineItem1 = createOrderLineItemRequest(originalAndSeasonedChicken.getId(), 1);
         OrderLineItemRequest orderLineItem2 = createOrderLineItemRequest(originalChicken.getId(), 2);
@@ -181,7 +182,7 @@ class OrderServiceTest extends ServiceTestBase {
     @Test
     void updateStatusWithCompletedOrder() {
         // given
-        OrderTable orderTable1 = orderTableDao.save(주문_테이블_생성());
+        OrderTable orderTable1 = orderTableRepository.save(주문_테이블_생성());
 
         Order order1 = 주문_생성_및_저장(orderTable1, originalAndSeasonedChicken, 1);
 
@@ -199,7 +200,7 @@ class OrderServiceTest extends ServiceTestBase {
     @Test
     void updateOrderStatus() {
         // given
-        OrderTable orderTable1 = orderTableDao.save(주문_테이블_생성());
+        OrderTable orderTable1 = orderTableRepository.save(주문_테이블_생성());
 
         Order order1 = 주문_생성_및_저장(orderTable1, originalAndSeasonedChicken, 1);
 

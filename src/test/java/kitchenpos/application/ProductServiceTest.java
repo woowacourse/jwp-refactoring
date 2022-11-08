@@ -7,9 +7,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.ProductResponse;
-import kitchenpos.dto.ProductRequest;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.ui.dto.request.ProductRequest;
+import kitchenpos.product.ui.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,8 @@ class ProductServiceTest extends ServiceTestBase {
     @Test
     void findAllProduct() {
         // given
-        productDao.save(후라이드_치킨());
-        productDao.save(양념_치킨());
+        productRepository.save(후라이드_치킨());
+        productRepository.save(양념_치킨());
 
         // when
         List<ProductResponse> products = productService.list();
@@ -44,7 +45,7 @@ class ProductServiceTest extends ServiceTestBase {
         ProductResponse savedChicken = productService.create(chicken);
 
         // then
-        List<Product> products = productDao.findAll();
+        List<Product> products = productRepository.findAll();
         assertAll(
                 () -> assertThat(products).hasSize(1),
                 () -> assertThat(savedChicken.getName()).isEqualTo(chicken.getName()),
