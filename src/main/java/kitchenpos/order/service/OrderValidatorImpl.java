@@ -3,6 +3,7 @@ package kitchenpos.order.service;
 import kitchenpos.order.domain.Order;
 import kitchenpos.tablegroup.domain.OrderTable;
 import kitchenpos.tablegroup.domain.OrderTableRepository;
+import kitchenpos.tablegroup.exception.OrderTableNotFoundException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,9 +17,9 @@ public class OrderValidatorImpl implements OrderValidator {
 
     public void validateExistInOrderTable(final Order order) {
         OrderTable orderTable = orderTableRepository.findById(order.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(OrderTableNotFoundException::new);
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("비어있는 테이블은 주문을 할 수 없습니다.");
         }
     }
 }
