@@ -7,11 +7,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import kitchenpos.domain.Product;
+import kitchenpos.exception.badrequest.PriceInvalidException;
 import kitchenpos.exception.badrequest.ProductNameInvalidException;
-import kitchenpos.exception.badrequest.ProductPriceInvalidException;
 import kitchenpos.ui.dto.request.ProductCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,7 +35,7 @@ class ProductServiceTest extends ServiceTest {
         assertAll(
                 () -> assertThat(actual.getId()).isEqualTo(1L),
                 () -> assertThat(actual.getName()).isEqualTo(productRequest.getName()),
-                () -> assertThat(actual.getPrice()).isEqualTo(productRequest.getPrice())
+                () -> assertThat(actual.getPrice().getValue()).isEqualTo(productRequest.getPrice())
         );
     }
 
@@ -61,9 +59,9 @@ class ProductServiceTest extends ServiceTest {
                 Arguments.of("Product 생성 시, name이 비어있으면 예외가 발생한다",
                         "", new BigDecimal("20000.00"), ProductNameInvalidException.class),
                 Arguments.of("Product 생성 시, price가 null이면 예외가 발생한다",
-                        "상품명", null, ProductPriceInvalidException.class),
+                        "상품명", null, PriceInvalidException.class),
                 Arguments.of("Product 생성 시, price가 0 보다 작으면 예외가 발생한다",
-                        "상품명", new BigDecimal("-10000.00"), ProductPriceInvalidException.class)
+                        "상품명", new BigDecimal("-10000.00"), PriceInvalidException.class)
         );
     }
 
@@ -76,9 +74,6 @@ class ProductServiceTest extends ServiceTest {
 
         // when
         final var products = productService.list();
-        final var prices = products.stream()
-                .map(Product::getPrice)
-                .collect(Collectors.toList());
 
         // then
         assertAll(
@@ -87,7 +82,9 @@ class ProductServiceTest extends ServiceTest {
                         .containsExactly(1L, 2L),
                 () -> assertThat(products).extracting("name")
                         .containsExactly(까르보치킨_생성요청.getName(), 짜장치킨_생성요청.getName()),
-                () -> assertThat(prices).containsExactly(까르보치킨_생성요청.getPrice(), 짜장치킨_생성요청.getPrice())
+                () -> assertThat(products).extracting("price")
+                        .extracting("price")
+                        .containsExactly(까르보치킨_생성요청.getPrice(), 짜장치킨_생성요청.getPrice())
         );
     }
 }

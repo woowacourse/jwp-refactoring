@@ -7,8 +7,8 @@
 ---
 
 ![Generic badge](https://img.shields.io/badge/Level4-Kitchen_POS-green.svg)
-![Generic badge](https://img.shields.io/badge/test-100_passed-blue.svg)
-![Generic badge](https://img.shields.io/badge/version-2.0.0-brightgreen.svg)
+![Generic badge](https://img.shields.io/badge/test-101_passed-blue.svg)
+![Generic badge](https://img.shields.io/badge/version-4.0.0-brightgreen.svg)
 
 > 우아한테크코스 웹 백엔드 4기, 레거시 코드 리팩터링 - Kitchen POS 저장소입니다.
 
@@ -39,11 +39,17 @@
 - [x] 1단계 테스트를 통한 코드 보호 PR
 - [x] JdbcTempalte -> JPA 전환
 - [x] 프로덕트, 메뉴그룹 name 유니크 제약조건 제거. 기존 프로덕션 로직 및 스키마에 없는 제약조건.
-- [ ] 일급 컬렉션 도입
-- [ ] 도메인 엔티티 VO 적용
 - [x] 도메인 엔티티에 유효성 검증 및 비즈니스 로직 내재화
-- [ ] 도메인 엔티티 단위 테스트 구현
 - [x] 2단계 서비스 리팩터링 PR
+- [x] 일급 컬렉션 도입
+- [x] 도메인 엔티티 VO 적용
+- [x] 메뉴 이름 변경 시 기존 주문 이력이 변경되지 않도록 구현
+- [ ] 클래스간, 패키지 간 단방향으로 리팩터링
+- [x] 가장 많이 팔린 메뉴 조회 가능해야함
+- [x] Flyway 도입
+- [x] 메뉴 정보가 변경되더라도 주문 항목이 변경되지 않게 구현한다.
+- [x] 3단계 의존성 리팩터링 PR
+- [x] Gradle의 멀티 모듈 개념을 적용해 자유롭게 서로 다른 프로젝트로 분리해 본다.
 
 <br><br>
 
@@ -55,6 +61,7 @@
     - 그로인해 레이어간 결합이 발생했고, 엔드포인트마다 어떤 데이터가 필요하고 사용되는지 파악하기 어려웠습니다.
     - DTO를 도입하여 서비스 레이어 내에서 도메인 객체로 변환하여 처리하도록 구성하였습니다.
     - 컨트롤러에서는 RequestDTO를 받도록 구성하여 서비스 레이어와 의존성을 분리했고, 어떤 데이터가 사용되는지 파악하기 쉬워졌습니다.
+- JDBC에서 JPA 기반으로 마이그레이션 완료하였습니다.
 
 <br><br>
 

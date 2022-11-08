@@ -1,0 +1,4 @@
+dependencies {
+    compile project(':exception')
+    compile project(':product')
+}

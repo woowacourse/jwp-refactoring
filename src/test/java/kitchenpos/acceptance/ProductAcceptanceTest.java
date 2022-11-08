@@ -6,7 +6,7 @@ import static kitchenpos.KitchenPosFixtures.프로덕트_URL;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.response.ProductResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
@@ -15,14 +15,14 @@ public class ProductAcceptanceTest extends AcceptanceTest {
     void 신규_프로덕트를_생성할_수_있다() {
         // given & when
         final var 프로덕트_생성응답 = 생성요청(프로덕트_URL, 까르보치킨_생성요청);
-        final var 생성된_프로덕트 = 프로덕트_생성응답.body().as(Product.class);
+        final var 생성된_프로덕트 = 프로덕트_생성응답.body().as(ProductResponse.class);
 
         // then
         assertAll(
                 응답일치(프로덕트_생성응답, HttpStatus.CREATED),
                 단일_데이터_검증(생성된_프로덕트.getId(), 1L),
                 단일_데이터_검증(생성된_프로덕트.getName(), 까르보치킨_생성요청.getName()),
-                단일_데이터_검증(생성된_프로덕트.getPrice(), 까르보치킨_생성요청.getPrice())
+                단일_데이터_검증(생성된_프로덕트.getPrice(), 까르보치킨_생성요청.getPrice().doubleValue())
         );
     }
 

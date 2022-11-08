@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.vo.MenuPrice;
+import kitchenpos.domain.vo.ProductPrice;
 import kitchenpos.exception.notfound.MenuGroupNotFoundException;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.ProductRepository;
@@ -41,8 +43,8 @@ class MenuServiceTest extends ServiceTest {
     @BeforeEach
     void setUpForMenu() {
         menuGroup = menuGroupRepository.save(new MenuGroup("순살 두 마리"));
-        productA = productRepository.save(new Product("순살 까르보치킨", new BigDecimal("20000.00")));
-        productB = productRepository.save(new Product("순살 짜장치킨", new BigDecimal("19000.00")));
+        productA = productRepository.save(new Product("순살 까르보치킨", ProductPrice.from("20000.00")));
+        productB = productRepository.save(new Product("순살 짜장치킨", ProductPrice.from("19000.00")));
         name = "순살 까르보 한 마리 + 순살 짜장 한 마리";
         price = new BigDecimal("35000.00");
         menuGroupId = menuGroup.getId();
@@ -63,8 +65,10 @@ class MenuServiceTest extends ServiceTest {
         assertAll(
                 () -> assertThat(menu)
                         .usingRecursiveComparison()
-                        .isEqualTo(new Menu(1L, name, price, menuGroup.getId(), menu.getMenuProducts())),
-                () -> assertThat(menu.getMenuProducts())
+                        .isEqualTo(
+                                new Menu(1L, name, MenuPrice.from(price), menuGroup.getId(),
+                                        menu.getMenuProducts().getMenuProducts())),
+                () -> assertThat(menu.getMenuProducts().getMenuProducts())
                         .extracting("menu")
                         .extracting("id")
                         .containsExactly(menu.getId(), menu.getId())
@@ -158,14 +162,14 @@ class MenuServiceTest extends ServiceTest {
         // when
         final var actual = menuService.list();
         final var menuProducts = actual.stream()
-                .flatMap(menu -> menu.getMenuProducts().stream())
+                .flatMap(menu -> menu.getMenuProducts().getMenuProducts().stream())
                 .collect(Collectors.toList());
 
         // then
         assertAll(
                 () -> assertThat(actual).extracting("id").containsExactly(1L, 2L),
                 () -> assertThat(actual).extracting("name").containsExactly(name, secondName),
-                () -> assertThat(actual).extracting("price").containsExactly(price, secondPrice),
+                () -> assertThat(actual).extracting("price").extracting("price").containsExactly(price, secondPrice),
                 () -> assertThat(actual).extracting("menuGroupId").containsExactly(menuGroupId, menuGroupId),
                 () -> assertThat(menuProducts).extracting("product").extracting("id").containsExactly(1L, 2L, 1L, 2L),
                 () -> assertThat(menuProducts).extracting("quantity").containsExactly(1L, 1L, 1L, 1L)
