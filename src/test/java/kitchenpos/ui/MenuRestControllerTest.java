@@ -6,14 +6,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
-import kitchenpos.fixture.MenuFactory;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuGroupDao;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuProductDao;
+import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.menu.ProductDao;
+import kitchenpos.ui.dto.MenuRequest;
+import kitchenpos.ui.dto.MenuRequest.MenuInnerMenuProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -42,21 +42,20 @@ class MenuRestControllerTest {
         final var coke = productDao.save(product("콜라", 1000));
         final var menuGroup = menuGroupDao.save(menuGroup("콜라메뉴"));
 
-        final var menu = MenuFactory.menu("콜라세트", menuGroup, List.of(coke));
-        final var response = menuRestController.create(menu);
+        final var cokeInMenu = menuProductDao.save(new MenuProduct(menuGroup.getId(), coke, 1));
+        final var menuProduct = new MenuProduct(cokeInMenu.getMenuId(), coke, cokeInMenu.getQuantity());
+
+        final var menuInnerRequest = new MenuInnerMenuProductRequest(
+                menuProduct.getProductId(), menuProduct.getQuantity()
+        );
+        final var request = new MenuRequest("콜라세트", coke.getPrice(), menuGroup.getId(), List.of(menuInnerRequest));
+
+        final var response = menuRestController.create(request);
 
         assertAll(
                 () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED),
                 () -> assertThat(response.getHeaders().getLocation()).isNotNull()
         );
-    }
-
-    @DisplayName("메뉴 그룹 목록 조회")
-    @Test
-    void list() {
-        final var response = menuRestController.list();
-
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @DisplayName("create 메서드는")
@@ -71,13 +70,25 @@ class MenuRestControllerTest {
         @DisplayName("메뉴를 등록하고 CREATED를 반환한다")
         @Test
         void addMenuGroup() {
-            final var menu = new Menu("콜라세트", coke.getPrice(), menuGroup.getId(), List.of(fetchMenuProduct));
-            final var response = menuRestController.create(menu);
+            final var menuInnerRequest = new MenuInnerMenuProductRequest(
+                    fetchMenuProduct.getProductId(), fetchMenuProduct.getQuantity()
+            );
+            final var request = new MenuRequest("콜라세트", coke.getPrice(), menuGroup.getId(), List.of(menuInnerRequest));
+
+            final var response = menuRestController.create(request);
 
             assertAll(
                     () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED),
                     () -> assertThat(response.getHeaders().getLocation()).isNotNull()
             );
         }
+    }
+
+    @DisplayName("메뉴 그룹 목록 조회")
+    @Test
+    void list() {
+        final var response = menuRestController.list();
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 }

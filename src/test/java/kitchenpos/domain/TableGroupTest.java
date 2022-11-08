@@ -7,10 +7,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.application.FakeSpringContext;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class TableGroupTest {
+class TableGroupTest extends FakeSpringContext {
 
     @DisplayName("테이블 목록은 비어있을 수 없다")
     @Test

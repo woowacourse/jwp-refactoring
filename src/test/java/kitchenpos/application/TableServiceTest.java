@@ -11,24 +11,26 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.ui.dto.OrderTableRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class TableServiceTest extends FakeSpringContext {
 
-    private final TableService tableService = new TableService(orderTables);
+    private final TableService tableService = new TableService(orderTableValidator, orderTables, orders);
 
     @DisplayName("주문 테이블 등록")
     @Test
     void create() {
-        final var table = emptyTable(2);
+        final var request = new OrderTableRequest(2, true);
 
-        final var result = tableService.create(table);
+        final var result = tableService.create(request);
 
-        assertThat(table).usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(result);
+        assertAll(
+                () -> assertThat(result.getNumberOfGuests()).isEqualTo(2),
+                () -> assertThat(request.isEmpty()).isTrue()
+        );
     }
 
     @DisplayName("등록된 주문 테이블의 빈 테이블 여부 상태 변경")
@@ -36,12 +38,10 @@ class TableServiceTest extends FakeSpringContext {
     void changeEmpty() {
         final var table = orderTableDao.save(notEmptyTable(2));
 
-        final var updatedTable = emptyTable(table.getId(), 2);
-
-        final var result = tableService.changeEmpty(table.getId(), updatedTable);
+        final var result = tableService.changeEmpty(table.getId(), true);
         assertAll(
                 () -> assertThat(result.getId()).isEqualTo(table.getId()),
-                () -> assertThat(result.isEmpty()).isEqualTo(updatedTable.isEmpty())
+                () -> assertThat(result.isEmpty()).isTrue()
         );
     }
 
@@ -57,10 +57,8 @@ class TableServiceTest extends FakeSpringContext {
 
         orderDao.save(order(table, OrderStatus.MEAL, pizzaMenu));
 
-        final var changed = emptyTable(2);
-
         assertThatThrownBy(
-                () -> tableService.changeEmpty(table.getId(), changed)
+                () -> tableService.changeEmpty(table.getId(), true)
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -68,13 +66,12 @@ class TableServiceTest extends FakeSpringContext {
     @Test
     void changeNumberOfGuests() {
         final var table = orderTableDao.save(notEmptyTable(2));
+        final var guests = 3;
 
-        final var updatedTable = notEmptyTable(3);
-
-        final var result = tableService.changeNumberOfGuests(table.getId(), updatedTable);
+        final var result = tableService.changeNumberOfGuests(table.getId(), guests);
         assertAll(
                 () -> assertThat(result.getId()).isEqualTo(table.getId()),
-                () -> assertThat(result.getNumberOfGuests()).isEqualTo(updatedTable.getNumberOfGuests())
+                () -> assertThat(result.getNumberOfGuests()).isEqualTo(guests)
         );
     }
 
@@ -83,10 +80,10 @@ class TableServiceTest extends FakeSpringContext {
     void changeNumberOfGuests_tableIsEmptyTrue_throwsException() {
         final var table = orderTableDao.save(emptyTable(2));
 
-        final var updatedTable = emptyTable(3);
+        final var guests = 3;
 
         assertThatThrownBy(
-                () -> tableService.changeNumberOfGuests(table.getId(), updatedTable)
+                () -> tableService.changeNumberOfGuests(table.getId(), guests)
         ).isInstanceOf(IllegalArgumentException.class);
     }
 

@@ -1,8 +1,9 @@
 package kitchenpos.application;
 
 import java.util.List;
-import kitchenpos.domain.Product;
-import kitchenpos.repository.ProductRepository;
+import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.menu.ProductRepository;
+import kitchenpos.ui.dto.ProductRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,8 +17,8 @@ public class ProductService {
     }
 
     @Transactional
-    public Product create(final Product product) {
-        return products.add(product);
+    public Product create(final ProductRequest request) {
+        return products.add(request.toEntity());
     }
 
     public List<Product> list() {

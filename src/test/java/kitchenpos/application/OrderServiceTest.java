@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static kitchenpos.fixture.MenuFactory.menu;
 import static kitchenpos.fixture.MenuGroupFactory.menuGroup;
 import static kitchenpos.fixture.OrderFactory.order;
+import static kitchenpos.fixture.OrderRequestFactory.orderRequestFrom;
 import static kitchenpos.fixture.OrderTableFactory.notEmptyTable;
 import static kitchenpos.fixture.ProductFactory.product;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -10,18 +11,19 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.ui.dto.OrderChangeStatusRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class OrderServiceTest extends FakeSpringContext {
 
     private final OrderService orderService = new OrderService(
-            menuDao, orderTables, orders);
+            orderValidator, menuDao, orderTables, orders);
 
     @DisplayName("주문 등록")
     @Test
@@ -37,8 +39,9 @@ class OrderServiceTest extends FakeSpringContext {
         final var table = orderTableDao.save(notEmptyTable(2));
 
         final var order = order(table, pizzaMenu, cokeMenu);
+        final var request = orderRequestFrom(order);
 
-        final var result = orderService.create(order);
+        final var result = orderService.create(request);
         assertAll(
                 () -> assertThat(result.getOrderTableId()).isEqualTo(order.getOrderTableId()),
                 () -> assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.COOKING)
@@ -55,9 +58,10 @@ class OrderServiceTest extends FakeSpringContext {
         final var table = orderTableDao.save(notEmptyTable(2));
 
         final var order = order(table, pizzaMenu, pizzaMenu);
+        final var request = orderRequestFrom(order);
 
         assertThatThrownBy(
-                () -> orderService.create(order)
+                () -> orderService.create(request)
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -71,12 +75,12 @@ class OrderServiceTest extends FakeSpringContext {
         final var table = orderTableDao.save(notEmptyTable(2));
 
         final var order = createThenSaveOrderAndRelateds(pizzaMenu, table);
-        final var updatedOrder = order(table, OrderStatus.MEAL, pizzaMenu);
 
-        final var result = orderService.changeOrderStatus(order.getId(), updatedOrder);
+        final var request = new OrderChangeStatusRequest(OrderStatus.MEAL);
+        final var result = orderService.changeOrderStatus(order.getId(), request);
         assertAll(
                 () -> assertThat(result.getId()).isEqualTo(order.getId()),
-                () -> assertThat(result.getOrderStatus()).isEqualTo(updatedOrder.getOrderStatus())
+                () -> assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.MEAL)
         );
     }
 
@@ -90,10 +94,11 @@ class OrderServiceTest extends FakeSpringContext {
         final var table = orderTableDao.save(notEmptyTable(2));
 
         final var order = orderDao.save(order(table, OrderStatus.COMPLETION, pizzaMenu));
-        final var updatedOrder = order(table, OrderStatus.MEAL, pizzaMenu);
+
+        final var request = new OrderChangeStatusRequest(OrderStatus.MEAL);
 
         assertThatThrownBy(
-                () -> orderService.changeOrderStatus(order.getId(), updatedOrder)
+                () -> orderService.changeOrderStatus(order.getId(), request)
         ).isInstanceOf(IllegalArgumentException.class);
     }
 

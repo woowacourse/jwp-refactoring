@@ -3,7 +3,7 @@ package kitchenpos.ui;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.ui.dto.MenuGroupRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,8 @@ class MenuGroupRestControllerTest {
     @DisplayName("메뉴 그룹 등록")
     @Test
     void create() {
-        final var response = menuGroupRestController.create(new MenuGroup("야식"));
+        final var request = new MenuGroupRequest("야식");
+        final var response = menuGroupRestController.create(request);
 
         assertAll(
                 () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED),

@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
-import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.ProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -26,8 +26,8 @@ class ProductRestControllerTest {
         @DisplayName("상품을 등록하고 CREATED를 반환한다")
         @Test
         void addProduct() {
-            final var response = productRestController.create(
-                    new Product(null, "콜라", BigDecimal.valueOf(1000)));
+            final var request = new ProductRequest("콜라", BigDecimal.valueOf(1000));
+            final var response = productRestController.create(request);
 
             assertAll(
                     () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED),
@@ -38,16 +38,18 @@ class ProductRestControllerTest {
         @DisplayName("가격이 null인 상품은 등록되지 않고 예외를 던진다")
         @Test
         void priceIsNull_throwsException() {
+            final var request = new ProductRequest("콜라", null);
             assertThatThrownBy(
-                    () -> productRestController.create(new Product(null, "콜라", null))
+                    () -> productRestController.create(request)
             ).isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("가격이 0 미만 상품은 등록되지 않고 예외를 던진다")
         @Test
         void priceIsUnderZero_throwsException() {
+            final var request = new ProductRequest("콜라", BigDecimal.valueOf(-1));
             assertThatThrownBy(
-                    () -> productRestController.create(new Product(null, "콜라", BigDecimal.valueOf(-1)))
+                    () -> productRestController.create(request)
             ).isInstanceOf(IllegalArgumentException.class);
         }
     }

@@ -2,11 +2,13 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.ProductRepository;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroupRepository;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.menu.ProductRepository;
+import kitchenpos.ui.dto.MenuRequest;
+import kitchenpos.ui.dto.MenuUpdateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +28,7 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final Menu request) {
+    public Menu create(final MenuRequest request) {
         final var menuGroup = menuGroups.get(request.getMenuGroupId());
         final var menuProducts = mapMenuProducts(request);
 
@@ -38,7 +40,7 @@ public class MenuService {
         );
     }
 
-    private List<MenuProduct> mapMenuProducts(final Menu request) {
+    private List<MenuProduct> mapMenuProducts(final MenuRequest request) {
         return request.getMenuProducts()
                 .stream()
                 .map(menuProductRequest -> {
@@ -50,5 +52,19 @@ public class MenuService {
 
     public List<Menu> list() {
         return menus.getAll();
+    }
+
+    @Transactional
+    public Menu update(final Long menuId, final MenuUpdateRequest request) {
+        final var oldMenu = menus.get(menuId);
+        final var menuProducts = oldMenu.getMenuProducts();
+
+        final var updatedMenu = new Menu(
+                request.getName(),
+                request.getPrice(),
+                oldMenu.getMenuGroupId(),
+                menuProducts
+        );
+        return menus.add(updatedMenu);
     }
 }

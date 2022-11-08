@@ -11,15 +11,18 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.TableGroup;
+import kitchenpos.ui.dto.TableGroupRequest;
+import kitchenpos.ui.dto.TableGroupRequest.TableGroupInnerOrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class TableGroupServiceTest extends FakeSpringContext {
 
-    private final TableGroupService tableGroupService = new TableGroupService(orderTableDao, orderTables, tableGroups);
+    private final TableGroupService tableGroupService = new TableGroupService(
+            tableGroupValidator, orderTableDao, orderTables, tableGroups, orders);
 
     @DisplayName("테이블 그룹 등록")
     @Test
@@ -27,10 +30,12 @@ class TableGroupServiceTest extends FakeSpringContext {
         final var singleTable = orderTableDao.save(emptyTable(1));
         final var doubleTable = orderTableDao.save(emptyTable(2));
 
-        final var tableGroup = tableGroup(singleTable, doubleTable);
+        final var singTableRequest = new TableGroupInnerOrderTable(singleTable.getId());
+        final var doubleTableRequest = new TableGroupInnerOrderTable(doubleTable.getId());
+        final var request = new TableGroupRequest(List.of(singTableRequest, doubleTableRequest));
 
-        final var result = tableGroupService.create(tableGroup);
-        assertThat(result.getOrderTables().size()).isEqualTo(tableGroup.getOrderTables().size());
+        final var result = tableGroupService.create(request);
+        assertThat(result.getOrderTables().size()).isEqualTo(request.getOrderTables().size());
     }
 
     @DisplayName("테이블 그룹 해제")

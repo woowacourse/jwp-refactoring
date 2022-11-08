@@ -3,11 +3,11 @@ package kitchenpos.fixture;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
 
 public class OrderFactory {
 
@@ -18,7 +18,7 @@ public class OrderFactory {
             orderLineItems.add(orderLineItem);
         }
 
-        return new Order(null, table, table.getId(), OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+        return new Order(null, table.getId(), OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
     }
 
     public static Order order(final OrderTable table, final OrderStatus status, final Menu... menus) {
@@ -28,6 +28,6 @@ public class OrderFactory {
             orderLineItems.add(orderLineItem);
         }
 
-        return new Order(null, table, table.getId(), status, LocalDateTime.now(), orderLineItems);
+        return new Order(null, table.getId(), status, LocalDateTime.now(), orderLineItems);
     }
 }

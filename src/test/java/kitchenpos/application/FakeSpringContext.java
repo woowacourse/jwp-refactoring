@@ -1,27 +1,36 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuFakeDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuGroupFakeDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.MenuProductFakeDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderFakeDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderLineItemFakeDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.OrderTableFakeDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.ProductFakeDao;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.dao.TableGroupFakeDao;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.ProductRepository;
-import kitchenpos.repository.TableGroupRepository;
+import kitchenpos.domain.menu.MenuDao;
+import kitchenpos.domain.menu.MenuGroupDao;
+import kitchenpos.domain.menu.MenuGroupRepository;
+import kitchenpos.domain.menu.MenuProductDao;
+import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.menu.ProductDao;
+import kitchenpos.domain.menu.ProductRepository;
+import kitchenpos.domain.order.OrderDao;
+import kitchenpos.domain.order.OrderLineItemDao;
+import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.order.OrderValidator;
+import kitchenpos.domain.table.OrderTableDao;
+import kitchenpos.domain.table.OrderTableRepository;
+import kitchenpos.domain.table.OrderTableValidator;
+import kitchenpos.domain.table.TableGroupDao;
+import kitchenpos.domain.table.TableGroupRepository;
+import kitchenpos.domain.table.TableGroupValidator;
+import kitchenpos.infrastructure.MenuFakeDao;
+import kitchenpos.infrastructure.MenuGroupFakeDao;
+import kitchenpos.infrastructure.MenuProductFakeDao;
+import kitchenpos.infrastructure.OrderFakeDao;
+import kitchenpos.infrastructure.OrderLineItemFakeDao;
+import kitchenpos.infrastructure.OrderTableFakeDao;
+import kitchenpos.infrastructure.ProductFakeDao;
+import kitchenpos.infrastructure.TableGroupFakeDao;
+import kitchenpos.infrastructure.menu.MenuGroupRepositoryImpl;
+import kitchenpos.infrastructure.menu.MenuRepositoryImpl;
+import kitchenpos.infrastructure.menu.ProductRepositoryImpl;
+import kitchenpos.infrastructure.order.OrderRepositoryImpl;
+import kitchenpos.infrastructure.table.OrderTableRepositoryImpl;
+import kitchenpos.infrastructure.table.TableGroupRepositoryImpl;
 
 public abstract class FakeSpringContext {
 
@@ -34,10 +43,14 @@ public abstract class FakeSpringContext {
     protected final ProductDao productDao = new ProductFakeDao();
     protected final TableGroupDao tableGroupDao = new TableGroupFakeDao();
 
-    protected final MenuRepository menus = new MenuRepository(menuDao, menuProductDao);
-    protected final ProductRepository products = new ProductRepository(productDao);
-    protected final MenuGroupRepository menuGroups = new MenuGroupRepository(menuGroupDao);
-    protected final OrderTableRepository orderTables = new OrderTableRepository(orderDao, orderTableDao);
-    protected final OrderRepository orders = new OrderRepository(orderDao, orderLineItemDao);
-    protected final TableGroupRepository tableGroups = new TableGroupRepository(tableGroupDao, orderTableDao, orderDao);
+    protected final MenuRepository menus = new MenuRepositoryImpl(menuDao, menuProductDao);
+    protected final ProductRepository products = new ProductRepositoryImpl(productDao);
+    protected final MenuGroupRepository menuGroups = new MenuGroupRepositoryImpl(menuGroupDao);
+    protected final OrderTableRepository orderTables = new OrderTableRepositoryImpl(orderTableDao);
+    protected final OrderRepository orders = new OrderRepositoryImpl(orderDao, orderLineItemDao);
+    protected final TableGroupRepository tableGroups = new TableGroupRepositoryImpl(tableGroupDao, orderTableDao, orderDao);
+
+    protected final TableGroupValidator tableGroupValidator = new TableGroupValidator(orderTables, orders);
+    protected final OrderTableValidator orderTableValidator = new OrderTableValidator(orders);
+    protected final OrderValidator orderValidator = new OrderValidator(orderTables);
 }
