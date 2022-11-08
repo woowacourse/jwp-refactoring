@@ -100,8 +100,8 @@ class TableGroupServiceTest extends ServiceTest {
         saved1 = orderTableRepository.save(createOrderTable(savedTableGroup, true));
         saved2 = orderTableRepository.save(createOrderTable(savedTableGroup, true));
 
-        Order savedOrder1 = orderRepository.save(new Order(saved1.getId()));
-        Order savedOrder2 = orderRepository.save(new Order(saved2.getId()));
+        Order savedOrder1 = orderRepository.save(new Order());
+        Order savedOrder2 = orderRepository.save(new Order());
 
         savedOrder1.changeOrderStatus(OrderStatus.COMPLETION);
         savedOrder2.changeOrderStatus(OrderStatus.COMPLETION);
@@ -128,8 +128,8 @@ class TableGroupServiceTest extends ServiceTest {
         saved1 = orderTableRepository.save(createOrderTable(savedTableGroup, true));
         saved2 = orderTableRepository.save(createOrderTable(savedTableGroup, true));
 
-        Order savedOrder1 = orderRepository.save(new Order(saved1.getId()));
-        Order savedOrder2 = orderRepository.save(new Order(saved2.getId()));
+        Order savedOrder1 = orderRepository.save(new Order());
+        Order savedOrder2 = orderRepository.save(new Order());
 
         orderDetailRepository.save(new OrderDetail(savedOrder1, saved1));
         orderDetailRepository.save(new OrderDetail(savedOrder2, saved2));

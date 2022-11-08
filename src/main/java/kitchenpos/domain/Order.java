@@ -19,18 +19,12 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long orderTableId;
-
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
     private LocalDateTime orderedTime;
 
-    protected Order() {
-    }
-
-    public Order(Long orderTableId) {
-        this.orderTableId = orderTableId;
+    public Order() {
         this.orderStatus = OrderStatus.COOKING;
         this.orderedTime = LocalDateTime.now();
     }
@@ -48,10 +42,6 @@ public class Order {
 
     public Long getId() {
         return id;
-    }
-
-    public Long getOrderTableId() {
-        return orderTableId;
     }
 
     public OrderStatus getOrderStatus() {

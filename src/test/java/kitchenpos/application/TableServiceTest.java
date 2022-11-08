@@ -42,7 +42,7 @@ class TableServiceTest extends ServiceTest {
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
         OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(true);
 
-        Order savedOrder = orderRepository.save(new Order(savedOrderTable.getId()));
+        Order savedOrder = orderRepository.save(new Order());
         savedOrder.changeOrderStatus(OrderStatus.COMPLETION);
         orderDetailRepository.save(new OrderDetail(savedOrder, savedOrderTable));
 
@@ -62,7 +62,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 주문테이블을_비울수_없는_상태면_예외를_반환한다() {
         OrderTable savedOrderTable = orderTableRepository.save(createOrderTable());
-        Order savedOrder = orderRepository.save(new Order(savedOrderTable.getId()));
+        Order savedOrder = orderRepository.save(new Order());
         orderDetailRepository.save(new OrderDetail(savedOrder, savedOrderTable));
 
         OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(true);

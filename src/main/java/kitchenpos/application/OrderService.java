@@ -55,7 +55,7 @@ public class OrderService {
         validateOrderLineItems(orderCreateRequest.getOrderLineItems());
 
         OrderTable orderTable = getOrderTable(orderCreateRequest.getOrderTableId());
-        Order savedOrder = saveOrder(orderTable);
+        Order savedOrder = saveOrder();
         saveOrderLineItems(orderCreateRequest.getOrderLineItems(), savedOrder);
         saveOrderDetail(savedOrder, orderTable);
 
@@ -91,8 +91,8 @@ public class OrderService {
         return orderTable;
     }
 
-    private Order saveOrder(OrderTable orderTable) {
-        return orderRepository.save(new Order(orderTable.getId()));
+    private Order saveOrder() {
+        return orderRepository.save(new Order());
     }
 
     private void saveOrderLineItems(List<OrderLineItemDto> orderLineItemDtos, Order order) {

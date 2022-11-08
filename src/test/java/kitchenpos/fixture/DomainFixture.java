@@ -46,8 +46,4 @@ public class DomainFixture {
     public static TableGroup createTableGroup() {
         return new TableGroup(LocalDateTime.now());
     }
-
-    public static Order createOrder(OrderTable orderTable) {
-        return new Order(orderTable.getId());
-    }
 }

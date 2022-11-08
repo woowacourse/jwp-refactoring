@@ -87,14 +87,14 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void 주문_목록을_반환한다() {
         int beforeSize = orderService.list().size();
-        orderRepository.save(new Order(orderTable.getId()));
+        orderRepository.save(new Order());
 
         assertThat(orderService.list().size()).isEqualTo(beforeSize + 1);
     }
 
     @Test
     void 주문_상태를_변경한다() {
-        Order savedOrder = orderRepository.save(new Order(orderTable.getId()));
+        Order savedOrder = orderRepository.save(new Order());
 
         ChangeOrderStatusRequest changeOrderStatusRequest = new ChangeOrderStatusRequest(MEAL.name());
         orderService.changeOrderStatus(savedOrder.getId(), changeOrderStatusRequest);
@@ -112,7 +112,7 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문_상태를_변경할때_완료상태면_예외를_반환한다() {
-        Order savedOrder = orderRepository.save(new Order(orderTable.getId()));
+        Order savedOrder = orderRepository.save(new Order());
         savedOrder.changeOrderStatus(COMPLETION);
         ChangeOrderStatusRequest changeOrderStatusRequest = new ChangeOrderStatusRequest(MEAL.name());
 
