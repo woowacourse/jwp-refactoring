@@ -55,7 +55,7 @@ public class OrderService {
     }
 
     private Order saveOrder(final OrderCreateRequest request, final OrderTable orderTable) {
-        Order order = Order.from(
+        final Order order = Order.from(
                 orderTable.getId(),
                 toOrderLineItems(request),
                 menuDao.countByIdIn(getMenuIds(request))
@@ -64,7 +64,7 @@ public class OrderService {
     }
 
     private List<OrderLineItem> toOrderLineItems(final OrderCreateRequest orderCreateRequest) {
-        List<OrderLineItemCreateRequest> orderLineItems = orderCreateRequest.getOrderLineItems();
+        final List<OrderLineItemCreateRequest> orderLineItems = orderCreateRequest.getOrderLineItems();
         return orderLineItems.stream()
                 .map(it -> {
                     Menu menu = menuDao.findById(it.getMenuId())
