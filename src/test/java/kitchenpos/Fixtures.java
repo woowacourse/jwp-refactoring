@@ -3,23 +3,24 @@ package kitchenpos;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Price;
-import kitchenpos.domain.Product;
-import kitchenpos.dto.MenuGroupRequest;
-import kitchenpos.dto.MenuProductRequest;
-import kitchenpos.dto.MenuRequest;
-import kitchenpos.dto.OrderLineItemRequest;
-import kitchenpos.dto.OrderRequest;
-import kitchenpos.dto.OrderTableCreateRequest;
-import kitchenpos.dto.OrderTableRequest;
-import kitchenpos.dto.ProductRequest;
-import kitchenpos.dto.TableGroupRequest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProducts;
+import kitchenpos.product.domain.Product;
+import kitchenpos.menu.dto.MenuGroupRequest;
+import kitchenpos.menu.dto.MenuProductRequest;
+import kitchenpos.menu.dto.MenuRequest;
+import kitchenpos.order.dto.OrderLineItemRequest;
+import kitchenpos.order.dto.OrderRequest;
+import kitchenpos.order.dto.OrderTableCreateRequest;
+import kitchenpos.order.dto.OrderTableRequest;
+import kitchenpos.product.dto.ProductRequest;
+import kitchenpos.tablegroup.dto.TableGroupRequest;
+import kitchenpos.common.Price;
 import org.assertj.core.api.ListAssert;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -34,8 +35,8 @@ public class Fixtures {
     }
 
     public static Menu 메뉴_후라이드치킨() {
-        return new Menu(null, "후라이드치킨", BigDecimal.valueOf(16000),
-                1L, new ArrayList<>());
+        return new Menu("후라이드치킨", BigDecimal.valueOf(16000),
+                1L, new MenuProducts(List.of(new MenuProduct(1L, 2, new Price(16000)))));
     }
 
     public static MenuGroupRequest 메뉴그룹요청_한마리메뉴() {

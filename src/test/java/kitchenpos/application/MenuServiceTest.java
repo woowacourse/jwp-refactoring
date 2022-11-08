@@ -5,12 +5,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Price;
-import kitchenpos.domain.Product;
-import kitchenpos.dto.MenuProductRequest;
-import kitchenpos.dto.MenuRequest;
-import kitchenpos.dto.MenuResponse;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.common.Price;
+import kitchenpos.product.domain.Product;
+import kitchenpos.menu.dto.MenuProductRequest;
+import kitchenpos.menu.dto.MenuRequest;
+import kitchenpos.menu.dto.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
@@ -76,12 +76,12 @@ class MenuServiceTest extends ServiceTest {
                 1L, List.of(메뉴상품요청_후라이드()));
 
         assertThatThrownBy(() -> menuService.create(메뉴요청_후라이드치킨))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("메뉴 가격은 내부 모든 상품가격보다 낮아야 한다.");
+                .isInstanceOf(InvalidDataAccessApiUsageException.class)
+                .hasMessageContaining("메뉴 가격은 내부 모든 상품가격보다 낮아야 한다.");
     }
 
     void init() {
-        menuGroupDao.save(new MenuGroup("한마리메뉴"));
-        productDao.save(new Product(null, "후라이드", new Price(16000)));
+        menuGroupRepository.save(new MenuGroup("한마리메뉴"));
+        productRepository.save(new Product(null, "후라이드", new Price(16000)));
     }
 }

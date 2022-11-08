@@ -5,6 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProducts;
+import kitchenpos.common.Price;
 import org.junit.jupiter.api.Test;
 
 class MenuProductsTest {
@@ -17,7 +20,7 @@ class MenuProductsTest {
                         new MenuProduct(1L, 10, new Price(10000))
                 )
         );
-        assertThat(menuProducts.getSum()).isEqualTo(new BigDecimal("20000.0"));
+        assertThat(menuProducts.sum()).isEqualTo(new BigDecimal("20000.0"));
     }
 
     @Test
