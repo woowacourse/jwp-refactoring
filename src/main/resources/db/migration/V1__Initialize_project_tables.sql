@@ -65,10 +65,6 @@ ALTER TABLE order_line_item
     ADD CONSTRAINT fk_order_line_item_orders
         FOREIGN KEY (order_id) REFERENCES orders (id);
 
-ALTER TABLE order_line_item
-    ADD CONSTRAINT fk_order_line_item_menu
-        FOREIGN KEY (menu_id) REFERENCES menu (id);
-
 ALTER TABLE menu
     ADD CONSTRAINT fk_menu_menu_group
         FOREIGN KEY (menu_group_id) REFERENCES menu_group (id);
