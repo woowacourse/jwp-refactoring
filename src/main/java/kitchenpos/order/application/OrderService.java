@@ -15,7 +15,6 @@ import kitchenpos.order.dto.OrderFindResponse;
 import kitchenpos.order.dto.OrderLineItemCreateRequest;
 import kitchenpos.order.dto.OrderLineItemsValidateEvent;
 import kitchenpos.order.dto.OrderStatusChangeResponse;
-import kitchenpos.table.application.OrderTableValidatorImpl;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +27,7 @@ public class OrderService {
     private final ApplicationEventPublisher eventPublisher;
 
     public OrderService(final OrderDao orderDao, final OrderLineItemDao orderLineItemDao,
-                        final OrderTableValidatorImpl orderTableValidatorImpl,
+                        final OrderTableValidator orderTableValidatorImpl,
                         final ApplicationEventPublisher eventPublisher) {
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
