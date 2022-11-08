@@ -14,10 +14,10 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderLineItemRequest;
 import kitchenpos.application.dto.OrderRequest;
 import kitchenpos.application.dto.TableGroupRequest;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.tablegroup.TableGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -108,8 +108,8 @@ class TableGroupServiceTest extends ServiceTest {
         List<OrderTable> tables = tableService.list();
 
         assertAll(
-                () -> assertThat(tables.get(0).getTableGroup()).isNull(),
-                () -> assertThat(tables.get(1).getTableGroup()).isNull()
+                () -> assertThat(tables.get(0).getTableGroupId()).isNull(),
+                () -> assertThat(tables.get(1).getTableGroupId()).isNull()
         );
     }
 
@@ -117,20 +117,13 @@ class TableGroupServiceTest extends ServiceTest {
     void 단체를_해제하려는_테이블의_상태가_식사_중이거나_요리_중이면_예외가_발생한다() {
         List<OrderTable> orderTables = 주문_테이블들(false, false);
 
-        Order 요리중_주문 = new Order(orderTables.get(0), OrderStatus.COOKING.name(), LocalDateTime.now());
-        주문_항목을_추가한다(요리중_주문);
-
-        final List<OrderLineItemRequest> orderLineItemRequests = 요리중_주문.getOrderLineItems()
-                .stream()
-                .map(orderLineItem -> new OrderLineItemRequest(orderLineItem.getOrder().getId(),
-                        orderLineItem.getMenuId(),
-                        orderLineItem.getQuantity()))
-                .collect(Collectors.toList());
+        Order 요리중_주문 = new Order(orderTables.get(0).getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
+        List<OrderLineItemRequest> orderLineItemRequests = 주문_항목_요청을_생성한다(요리중_주문);
 
         orderTables.get(0).setEmpty(true);
         orderTables.get(1).setEmpty(true);
         TableGroup 단체_테이블 = 단체_지정(orderTables);
-        orderService.create(new OrderRequest(요리중_주문.getOrderTable().getId(), 요리중_주문.getOrderStatus(),
+        orderService.create(new OrderRequest(요리중_주문.getOrderTableId(), 요리중_주문.getOrderStatus(),
                 요리중_주문.getOrderedTime(), orderLineItemRequests));
 
         assertThatThrownBy(
@@ -144,8 +137,8 @@ class TableGroupServiceTest extends ServiceTest {
                 .collect(Collectors.toList());
 
         TableGroup tableGroup = tableGroupService.create(new TableGroupRequest(LocalDateTime.now(), 주문_테이블_ID));
-        orderTables.get(0).setTableGroup(tableGroup);
-        orderTables.get(1).setTableGroup(tableGroup);
+        orderTables.get(0).setTableGroupId(tableGroup.getId());
+        orderTables.get(1).setTableGroupId(tableGroup.getId());
         return tableGroup;
     }
 }

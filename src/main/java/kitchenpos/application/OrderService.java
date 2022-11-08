@@ -2,14 +2,12 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.OrderLineItemRequest;
 import kitchenpos.application.dto.OrderRequest;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderLineItems;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.repository.MenuRepository;
-import kitchenpos.domain.repository.OrderLineItemRepository;
-import kitchenpos.domain.repository.OrderRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItems;
+import kitchenpos.domain.order.OrderValidator;
+import kitchenpos.domain.order.repository.OrderLineItemRepository;
+import kitchenpos.domain.order.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,30 +17,27 @@ import java.util.stream.Collectors;
 @Service
 public class OrderService {
 
-    private final MenuRepository menuRepository;
+    private final OrderValidator orderValidator;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
-    private final OrderTableRepository orderTableRepository;
 
-    public OrderService(MenuRepository menuRepository, OrderRepository orderRepository,
-                        OrderLineItemRepository orderLineItemRepository, OrderTableRepository orderTableRepository) {
-        this.menuRepository = menuRepository;
+    public OrderService(OrderValidator orderValidator, OrderRepository orderRepository,
+                        OrderLineItemRepository orderLineItemRepository) {
+        this.orderValidator = orderValidator;
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
-        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
     public Order create(final OrderRequest orderRequest) {
         final OrderLineItems orderLineItems = createOrderLineItemsByRequest(orderRequest);
 
-        final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
+        orderValidator.validateOrderTableEmpty(orderRequest.getOrderTableId());
 
-        final Order order = orderRepository.save(new Order(null, orderTable, orderRequest.getOrderStatus(),
-                orderRequest.getOrderedTime(), orderLineItems.getOrderLineItems()));
+        final Order order = orderRepository.save(new Order(null, orderRequest.getOrderTableId(),
+                orderRequest.getOrderStatus(), orderRequest.getOrderedTime(), orderLineItems.getOrderLineItems()));
 
-        return new Order(order.getId(), order.getOrderTable(), order.getOrderStatus(),
+        return new Order(order.getId(), orderRequest.getOrderTableId(), order.getOrderStatus(),
                 order.getOrderedTime(), createOrderLineItems(orderLineItems, order).getOrderLineItems());
     }
 
@@ -50,17 +45,17 @@ public class OrderService {
         return new OrderLineItems(orderLineItems.getOrderLineItems()
                 .stream()
                 .map(orderLineItem -> orderLineItemRepository.save(new OrderLineItem(order,
-                        orderLineItem.getMenuId(), orderLineItem.getQuantity())))
+                        orderLineItem.getName(), orderLineItem.getPrice(), orderLineItem.getQuantity())))
                 .collect(Collectors.toList()));
     }
 
     private OrderLineItems createOrderLineItemsByRequest(OrderRequest orderRequest) {
         final OrderLineItems orderLineItems = new OrderLineItems(orderRequest.getOrderLineItems()
                 .stream()
-                .map(it -> new OrderLineItem(null, it.getMenuId(), it.getQuantity()))
+                .map(it -> new OrderLineItem(null, it.getName(), it.getPrice(), it.getQuantity()))
                 .collect(Collectors.toList()));
 
-        orderLineItems.validateMenuSize(menuRepository.countByIdIn(mapToMenuIds(orderRequest)));
+        orderValidator.validateMenuExists(orderLineItems.getOrderLineItems(), mapToMenuIds(orderRequest));
         return orderLineItems;
     }
 
@@ -83,8 +78,8 @@ public class OrderService {
 
         savedOrder.validateStatusForChange();
 
-        return orderRepository.save(new Order(savedOrder.getId(), savedOrder.getOrderTable(), order.getOrderStatus(),
-                savedOrder.getOrderedTime(),
+        return orderRepository.save(new Order(savedOrder.getId(), savedOrder.getOrderTableId(),
+                order.getOrderStatus(), savedOrder.getOrderedTime(),
                 new OrderLineItems(orderLineItemRepository.findAllByOrderId(orderId)).getOrderLineItems()));
     }
 }

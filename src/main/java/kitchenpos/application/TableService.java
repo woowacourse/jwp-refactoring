@@ -1,24 +1,22 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.OrderTableRequest;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.repository.OrderRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.ordertable.TableValidator;
+import kitchenpos.domain.ordertable.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class TableService {
 
-    private final OrderRepository orderRepository;
+    private final TableValidator tableValidator;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(OrderRepository orderRepository, OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(TableValidator tableValidator, OrderTableRepository orderTableRepository) {
+        this.tableValidator = tableValidator;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -41,12 +39,9 @@ public class TableService {
                 .orElseThrow(IllegalArgumentException::new);
         savedOrderTable.validateTableGroupForChangeEmpty();
 
-        if (orderRepository.existsByOrderTableAndOrderStatusIn(
-                savedOrderTable, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
+        tableValidator.validateUnGroupCondition(savedOrderTable.getId());
 
-        return orderTableRepository.save(new OrderTable(savedOrderTable.getId(), savedOrderTable.getTableGroup(),
+        return orderTableRepository.save(new OrderTable(savedOrderTable.getId(), savedOrderTable.getTableGroupId(),
                 savedOrderTable.getNumberOfGuests(), orderTableRequest.isEmpty()));
     }
 
@@ -56,7 +51,7 @@ public class TableService {
                 .orElseThrow(IllegalArgumentException::new);
         savedOrderTable.validateEmptyForChangeGuestNumber();
 
-        return orderTableRepository.save(new OrderTable(savedOrderTable.getId(), savedOrderTable.getTableGroup(),
+        return orderTableRepository.save(new OrderTable(savedOrderTable.getId(), savedOrderTable.getTableGroupId(),
                 orderTableRequest.getNumberOfGuests(), savedOrderTable.isEmpty()));
     }
 }

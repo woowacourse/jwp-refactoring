@@ -1,23 +1,23 @@
 package kitchenpos.application.dto;
 
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import kitchenpos.domain.Order;
+import java.math.BigDecimal;
 
 public class OrderLineItemRequest {
 
     private Long orderId;
-
     private Long menuId;
-
+    private String name;
+    private BigDecimal price;
     private long quantity;
 
     public OrderLineItemRequest() {
     }
 
-    public OrderLineItemRequest(Long orderId, Long menuId, long quantity) {
+    public OrderLineItemRequest(Long orderId, Long menuId, String name, BigDecimal price, long quantity) {
         this.orderId = orderId;
         this.menuId = menuId;
+        this.name = name;
+        this.price = price;
         this.quantity = quantity;
     }
 
@@ -25,23 +25,19 @@ public class OrderLineItemRequest {
         return orderId;
     }
 
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
-    }
-
     public Long getMenuId() {
         return menuId;
     }
 
-    public void setMenuId(Long menuId) {
-        this.menuId = menuId;
+    public String getName() {
+        return name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
     }
 
     public long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(long quantity) {
-        this.quantity = quantity;
     }
 }

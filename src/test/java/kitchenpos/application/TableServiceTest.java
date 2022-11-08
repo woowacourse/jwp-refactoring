@@ -15,10 +15,10 @@ import kitchenpos.application.dto.OrderLineItemRequest;
 import kitchenpos.application.dto.OrderRequest;
 import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.application.dto.TableGroupRequest;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.tablegroup.TableGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -87,8 +87,8 @@ class TableServiceTest extends ServiceTest {
                 .collect(Collectors.toList());
 
         TableGroup tableGroup = tableGroupService.create(new TableGroupRequest(LocalDateTime.now(), 주문_테이블_ID));
-        주문_테이블.get(0).setTableGroup(tableGroup);
-        주문_테이블.get(1).setTableGroup(tableGroup);
+        주문_테이블.get(0).setTableGroupId(tableGroup.getId());
+        주문_테이블.get(1).setTableGroupId(tableGroup.getId());
 
         assertThatThrownBy(
                 () -> tableService.changeEmpty(주문_테이블.get(0).getId(), 빈_주문_테이블_3인())
@@ -98,17 +98,11 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 주문_테이블을_빈_테이블로_변경하려_할_때_주문_테이블이_식사중이거나_요리중이면_예외가_발생한다() {
         OrderTable orderTable = tableService.create(주문_테이블_3인());
-        Order 요리중_주문 = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now());
-        주문_항목을_추가한다(요리중_주문);
+        Order 요리중_주문 = new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
 
-        final List<OrderLineItemRequest> orderLineItemRequests = 요리중_주문.getOrderLineItems()
-                .stream()
-                .map(orderLineItem -> new OrderLineItemRequest(orderLineItem.getOrder().getId(),
-                        orderLineItem.getMenuId(),
-                        orderLineItem.getQuantity()))
-                .collect(Collectors.toList());
+        List<OrderLineItemRequest> orderLineItemRequests = 주문_항목_요청을_생성한다(요리중_주문);
 
-        orderService.create(new OrderRequest(요리중_주문.getOrderTable().getId(), 요리중_주문.getOrderStatus(),
+        orderService.create(new OrderRequest(요리중_주문.getOrderTableId(), 요리중_주문.getOrderStatus(),
                 요리중_주문.getOrderedTime(), orderLineItemRequests));
 
         assertThatThrownBy(

@@ -3,10 +3,10 @@ package kitchenpos.acceptance;
 import static kitchenpos.DomainFixtures.라면_메뉴;
 import static kitchenpos.DomainFixtures.맛있는_라면;
 import static kitchenpos.DomainFixtures.면_메뉴_그룹;
-import static kitchenpos.DomainFixtures.빈_주문_테이블_3인;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,14 +15,14 @@ import kitchenpos.application.dto.MenuRequest;
 import kitchenpos.application.dto.OrderLineItemRequest;
 import kitchenpos.application.dto.OrderRequest;
 import kitchenpos.application.dto.OrderTableRequest;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.product.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -59,8 +59,10 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     @Test
     void 주문을_추가한다() {
         OrderRequest 주문 = new OrderRequest(테이블.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>());
-        주문.addOrderLineItem(new OrderLineItemRequest(null, 메뉴1.getId(), 1));
-        주문.addOrderLineItem(new OrderLineItemRequest(null, 메뉴2.getId(), 1));
+        주문.addOrderLineItem(new OrderLineItemRequest(null, 메뉴1.getId(), "라면",
+                BigDecimal.valueOf(1200), 1));
+        주문.addOrderLineItem(new OrderLineItemRequest(null, 메뉴2.getId(),
+                "라면", BigDecimal.valueOf(1200), 1));
 
         Order target = testRestTemplate.postForObject("http://localhost:" + port + "/api/orders", 주문, Order.class);
 
@@ -71,8 +73,10 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     @Test
     void 주문들을_조회한다() {
         OrderRequest 주문 = new OrderRequest(테이블.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>());
-        주문.addOrderLineItem(new OrderLineItemRequest(null, 메뉴1.getId(), 1));
-        주문.addOrderLineItem(new OrderLineItemRequest(null, 메뉴2.getId(), 1));
+        주문.addOrderLineItem(new OrderLineItemRequest(null, 메뉴1.getId(),
+                "라면", BigDecimal.valueOf(1200), 1));
+        주문.addOrderLineItem(new OrderLineItemRequest(null, 메뉴2.getId(),
+                "라면", BigDecimal.valueOf(1200), 1));
 
         testRestTemplate.postForObject("http://localhost:" + port + "/api/orders", 주문, Order.class);
 
@@ -84,9 +88,9 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
     @Test
     void 주문을_수정한다() {
-        Order 주문 = new Order(테이블, OrderStatus.COOKING.name(), LocalDateTime.now());
-        주문.addOrderLineItem(new OrderLineItem(주문, 메뉴1.getId(), 1));
-        주문.addOrderLineItem(new OrderLineItem(주문, 메뉴2.getId(), 1));
+        Order 주문 = new Order(테이블.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
+        주문.addOrderLineItem(new OrderLineItem(주문, "라면", BigDecimal.valueOf(1200), 1));
+        주문.addOrderLineItem(new OrderLineItem(주문, "라면", BigDecimal.valueOf(1200), 1));
 
         Order order = testRestTemplate.postForObject("http://localhost:" + port + "/api/orders", 주문, Order.class);
 

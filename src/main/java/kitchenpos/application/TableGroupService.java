@@ -1,30 +1,28 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.TableGroupRequest;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTables;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.repository.OrderRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.domain.repository.TableGroupRepository;
+import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.ordertable.OrderTables;
+import kitchenpos.domain.tablegroup.TableGroup;
+import kitchenpos.domain.ordertable.TableValidator;
+import kitchenpos.domain.ordertable.repository.OrderTableRepository;
+import kitchenpos.domain.tablegroup.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class TableGroupService {
 
-    private final OrderRepository orderRepository;
+    private final TableValidator tableValidator;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(OrderRepository orderRepository, final OrderTableRepository orderTableRepository,
+    public TableGroupService(TableValidator tableValidator, OrderTableRepository orderTableRepository,
                              TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
+        this.tableValidator = tableValidator;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
@@ -47,7 +45,7 @@ public class TableGroupService {
     private OrderTables getOrderTables(OrderTables savedOrderTables) {
         return new OrderTables(savedOrderTables.getOrderTables()
                 .stream()
-                .map(orderTable -> new OrderTable(orderTable.getId(), orderTable.getTableGroup(),
+                .map(orderTable -> new OrderTable(orderTable.getId(), orderTable.getTableGroupId(),
                         orderTable.getNumberOfGuests(), false))
                 .collect(Collectors.toList()));
     }
@@ -69,16 +67,14 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
+        final OrderTables orderTables = new OrderTables(orderTableRepository.findAllByTableGroupId(tableGroupId));
+        final List<Long> orderTableIds = mapToIds(orderTables);
 
-        if (orderRepository.existsByOrderTableInAndOrderStatusIn(
-                orderTables, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
+        tableValidator.validateUnGroupCondition(orderTableIds);
 
-        for (final OrderTable orderTable : orderTables) {
-            orderTableRepository.save(new OrderTable(orderTable.getId(), null,
-                    orderTable.getNumberOfGuests(), orderTable.isEmpty()));
+        for (final OrderTable orderTable : orderTables.getOrderTables()) {
+            orderTableRepository.save(new OrderTable(orderTable.getId(),
+                    null, orderTable.getNumberOfGuests(), orderTable.isEmpty()));
         }
     }
 }
