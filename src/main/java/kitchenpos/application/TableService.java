@@ -1,26 +1,33 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.order.OrderRepository;
-import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.application.dto.request.OrderTableIdRequest;
+import kitchenpos.application.dto.request.OrderTableRequest;
+import kitchenpos.application.dto.request.TableGroupRequest;
+import kitchenpos.application.dto.response.OrderTableResponse;
+import kitchenpos.application.dto.response.TableGroupResponse;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.ordertable.OrderTableRepository;
-import kitchenpos.dto.request.OrderTableRequest;
-import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.domain.ordertable.validator.OrderTableValidator;
+import kitchenpos.domain.tablegroup.TableGroup;
+import kitchenpos.domain.tablegroup.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 public class TableService {
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final TableGroupRepository tableGroupRepository;
+    private final OrderTableValidator orderTableValidator;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(final OrderTableRepository orderTableRepository,
+                        final TableGroupRepository tableGroupRepository,
+                        final OrderTableValidator orderTableValidator) {
         this.orderTableRepository = orderTableRepository;
+        this.tableGroupRepository = tableGroupRepository;
+        this.orderTableValidator = orderTableValidator;
     }
 
     @Transactional
@@ -40,12 +47,7 @@ public class TableService {
         OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                List.of(orderTableId), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException("테이블의 주문이 완료되지 않아 빈 테이블로 변경할 수 없습니다.");
-        }
-
-        savedOrderTable.changeEmpty(request.isEmpty());
+        savedOrderTable.changeEmpty(request.isEmpty(), orderTableValidator);
         return new OrderTableResponse(savedOrderTable);
     }
 
@@ -56,5 +58,24 @@ public class TableService {
 
         savedOrderTable.changeNumberOfGuests(request.getNumberOfGuests());
         return new OrderTableResponse(savedOrderTable);
+    }
+
+    @Transactional
+    public TableGroupResponse group(final TableGroupRequest request) {
+        List<Long> orderTableIds = request.getOrderTables().stream()
+                .map(OrderTableIdRequest::getId)
+                .collect(Collectors.toList());
+        List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+
+        TableGroup tableGroup = new TableGroup(orderTables);
+        return new TableGroupResponse(tableGroupRepository.save(tableGroup));
+    }
+
+    @Transactional
+    public void ungroup(final Long tableGroupId) {
+        TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
+                .orElseThrow(IllegalArgumentException::new);
+
+        tableGroup.ungroup(orderTableValidator);
     }
 }

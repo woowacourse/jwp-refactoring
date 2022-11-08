@@ -3,14 +3,13 @@ package kitchenpos.application;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.MenuGroupRepository;
+import kitchenpos.domain.menugroup.MenuGroupRepository;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.product.ProductRepository;
-import kitchenpos.dto.request.MenuProductRequest;
-import kitchenpos.dto.request.MenuRequest;
-import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.application.dto.request.MenuProductRequest;
+import kitchenpos.application.dto.request.MenuRequest;
+import kitchenpos.application.dto.response.MenuResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,14 +29,19 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuRequest request) {
-        MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
-                .orElseThrow(IllegalArgumentException::new);
+        validateExistMenuGroupId(request.getMenuGroupId());
+
         List<MenuProduct> menuProducts = request.getMenuProducts().stream()
                 .map(this::getMenuProduct)
                 .collect(Collectors.toList());
-
-        Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup, menuProducts);
+        Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(), menuProducts);
         return new MenuResponse(menuRepository.save(menu));
+    }
+
+    private void validateExistMenuGroupId(final Long menuGroupId) {
+        if (!menuGroupRepository.existsById(menuGroupId)) {
+            throw new IllegalArgumentException("존재하지 않는 메뉴 그룹입니다.");
+        }
     }
 
     private MenuProduct getMenuProduct(MenuProductRequest request) {

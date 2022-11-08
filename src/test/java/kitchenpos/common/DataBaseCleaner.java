@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DataBaseCleaner {
-
     private static final String FLYWAY_SCHEMA_NAME = "flyway_schema_history";
 
     @Autowired

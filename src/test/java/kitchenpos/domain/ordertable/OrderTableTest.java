@@ -2,6 +2,7 @@ package kitchenpos.domain.ordertable;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import kitchenpos.common.FakeOrderTableValidator;
 import org.junit.jupiter.api.Test;
 
 class OrderTableTest {
@@ -12,10 +13,10 @@ class OrderTableTest {
     }
 
     @Test
-    void 그룹화된_테이블은_빈_상태로_변경할_수_없다() {
-        OrderTable orderTable = new OrderTable(new TableGroup(), 2, false);
+    void 그룹으로_지정된_테이블은_빈_상태로_변경할_수_없다() {
+        OrderTable orderTable = new OrderTable(1L, 2, false);
 
-        assertThatThrownBy(() -> orderTable.changeEmpty(true))
+        assertThatThrownBy(() -> orderTable.changeEmpty(true, new FakeOrderTableValidator()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

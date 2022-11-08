@@ -2,29 +2,32 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderRepository;
-import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.ordertable.OrderTableRepository;
-import kitchenpos.dto.request.OrderRequest;
-import kitchenpos.dto.request.OrderStatusRequest;
-import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.application.dto.request.OrderLineItemRequest;
+import kitchenpos.application.dto.request.OrderRequest;
+import kitchenpos.application.dto.request.OrderStatusRequest;
+import kitchenpos.application.dto.response.OrderResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 public class OrderService {
-    private static final OrderStatus FIRST_STATUS = OrderStatus.COOKING;
-
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final MenuRepository menuRepository;
 
-    public OrderService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
+    public OrderService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository,
+                        final MenuRepository menuRepository) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
+        this.menuRepository = menuRepository;
     }
 
     @Transactional
@@ -32,12 +35,22 @@ public class OrderService {
         OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("빈 테이블은 주문할 수 없습니다.");
+        }
+
         List<OrderLineItem> orderLineItems = request.getOrderLineItems().stream()
-                .map(item -> new OrderLineItem(item.getMenuId(), item.getQuantity()))
+                .map(this::getOrderLineItem)
                 .collect(Collectors.toList());
 
-        Order order = new Order(orderTable, FIRST_STATUS, orderLineItems);
+        Order order = Order.start(orderTable.getId(), orderLineItems);
         return new OrderResponse(orderRepository.save(order));
+    }
+
+    private OrderLineItem getOrderLineItem(final OrderLineItemRequest request) {
+        Menu menu = menuRepository.findById(request.getMenuId())
+                .orElseThrow(IllegalArgumentException::new);
+        return new OrderLineItem(menu.getName(), menu.getPrice(), request.getQuantity());
     }
 
     public List<OrderResponse> list() {

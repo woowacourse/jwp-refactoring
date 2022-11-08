@@ -11,10 +11,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.MenuGroupRepository;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.domain.menugroup.MenuGroupRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderRepository;
@@ -22,10 +22,10 @@ import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.ordertable.OrderTableRepository;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductRepository;
-import kitchenpos.dto.request.OrderLineItemRequest;
-import kitchenpos.dto.request.OrderRequest;
-import kitchenpos.dto.request.OrderStatusRequest;
-import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.application.dto.request.OrderLineItemRequest;
+import kitchenpos.application.dto.request.OrderRequest;
+import kitchenpos.application.dto.request.OrderStatusRequest;
+import kitchenpos.application.dto.response.OrderResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -58,11 +58,11 @@ class OrderServiceTest extends ServiceTest {
         MenuProduct menuProduct3 = new MenuProduct(product2, 2);
         MenuProduct menuProduct4 = new MenuProduct(product2, 2);
 
-        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
+        Long menuGroupId = menuGroupRepository.save(new MenuGroup("메뉴 그룹1")).getId();
 
-        Menu menu1 = menuRepository.save(new Menu("메뉴1", new BigDecimal(40000), menuGroup,
+        Menu menu1 = menuRepository.save(new Menu("메뉴1", new BigDecimal(40000), menuGroupId,
                 List.of(menuProduct1, menuProduct2)));
-        Menu menu2 = menuRepository.save(new Menu("메뉴2", new BigDecimal(40000), menuGroup,
+        Menu menu2 = menuRepository.save(new Menu("메뉴2", new BigDecimal(40000), menuGroupId,
                 List.of(menuProduct3, menuProduct4)));
 
         OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
@@ -79,18 +79,9 @@ class OrderServiceTest extends ServiceTest {
             assertThat(actual.getId()).isNotNull();
             assertThat(actual.getOrderStatus()).isEqualTo(COOKING);
             assertThat(actual.getOrderLineItems()).hasSize(2)
-                    .extracting("seq")
-                    .isNotNull();
+                    .extracting("menuName")
+                    .containsOnly("메뉴1", "메뉴2");
         });
-    }
-
-    @Test
-    void 주문_항목이_비어있는_경우_주문을_생성할_수_없다() {
-        OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
-
-        OrderRequest request = new OrderRequest(orderTable.getId(), new ArrayList<>());
-
-        assertThatThrownBy(() -> orderService.create(request)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -103,11 +94,11 @@ class OrderServiceTest extends ServiceTest {
         MenuProduct menuProduct3 = new MenuProduct(product2, 2);
         MenuProduct menuProduct4 = new MenuProduct(product2, 2);
 
-        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
+        Long menuGroupId = menuGroupRepository.save(new MenuGroup("메뉴 그룹1")).getId();
 
-        Menu menu1 = menuRepository.save(new Menu("메뉴1", new BigDecimal(40000), menuGroup,
+        Menu menu1 = menuRepository.save(new Menu("메뉴1", new BigDecimal(40000), menuGroupId,
                 List.of(menuProduct1, menuProduct2)));
-        Menu menu2 = menuRepository.save(new Menu("메뉴2", new BigDecimal(40000), menuGroup,
+        Menu menu2 = menuRepository.save(new Menu("메뉴2", new BigDecimal(40000), menuGroupId,
                 List.of(menuProduct3, menuProduct4)));
 
         OrderLineItemRequest orderLineItemRequest1 = new OrderLineItemRequest(menu1.getId(), 1);
@@ -122,19 +113,23 @@ class OrderServiceTest extends ServiceTest {
     }
 
     @Test
-    void 전체_주문_목록을_조회할_수_있다() {
-        Product product = productRepository.save(new Product("상품", new BigDecimal(10000)));
-        MenuProduct menuProduct = new MenuProduct(product, 1);
-        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
-        Menu menu = menuRepository.save(new Menu("메뉴1", new BigDecimal(10000), menuGroup, List.of(menuProduct)));
-
+    void 주문_항목이_비어있는_경우_주문을_생성할_수_없다() {
         OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
 
-        OrderLineItem orderLineItem1 = new OrderLineItem(menu.getId(), 1);
-        OrderLineItem orderLineItem2 = new OrderLineItem(menu.getId(), 1);
+        OrderRequest request = new OrderRequest(orderTable.getId(), new ArrayList<>());
 
-        Order order1 = new Order(orderTable, COOKING, List.of(orderLineItem1));
-        Order order2 = new Order(orderTable, COOKING, List.of(orderLineItem2));
+        assertThatThrownBy(() -> orderService.create(request)).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 전체_주문_목록을_조회할_수_있다() {
+        Long orderTableId = orderTableRepository.save(new OrderTable(null, 5, false)).getId();
+
+        OrderLineItem orderLineItem1 = new OrderLineItem("메뉴", new BigDecimal(10000), 1);
+        OrderLineItem orderLineItem2 = new OrderLineItem("메뉴", new BigDecimal(10000), 1);
+
+        Order order1 = new Order(orderTableId, COOKING, List.of(orderLineItem1));
+        Order order2 = new Order(orderTableId, COOKING, List.of(orderLineItem2));
 
         orderRepository.save(order1);
         orderRepository.save(order2);
@@ -146,16 +141,11 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 주문_상태를_변경할_수_있다() {
-        Product product = productRepository.save(new Product("상품", new BigDecimal(10000)));
-        MenuProduct menuProduct = new MenuProduct(product, 1);
-        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
-        Menu menu = menuRepository.save(new Menu("메뉴1", new BigDecimal(10000), menuGroup, List.of(menuProduct)));
+        Long orderTableId = orderTableRepository.save(new OrderTable(null, 5, false)).getId();
 
-        OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
+        OrderLineItem orderLineItem = new OrderLineItem("메뉴", new BigDecimal(10000), 1);
 
-        OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1);
-
-        Order order = orderRepository.save(new Order(orderTable, COOKING, List.of(orderLineItem)));
+        Order order = orderRepository.save(new Order(orderTableId, COOKING, List.of(orderLineItem)));
         OrderStatusRequest request = new OrderStatusRequest(MEAL);
 
         OrderResponse actual = orderService.changeOrderStatus(order.getId(), request);
@@ -165,16 +155,11 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 기존_주문_상태가_계산_완료_상태인_경우_상태를_변경할_수_없다() {
-        Product product = productRepository.save(new Product("상품", new BigDecimal(10000)));
-        MenuProduct menuProduct = new MenuProduct(product, 1);
-        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
-        Menu menu = menuRepository.save(new Menu("메뉴1", new BigDecimal(10000), menuGroup, List.of(menuProduct)));
+        Long orderTableId = orderTableRepository.save(new OrderTable(null, 5, false)).getId();
 
-        OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
+        OrderLineItem orderLineItem = new OrderLineItem("메뉴", new BigDecimal(10000), 1);
 
-        OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1);
-
-        Order order = orderRepository.save(new Order(orderTable, COMPLETION, List.of(orderLineItem)));
+        Order order = orderRepository.save(new Order(orderTableId, COMPLETION, List.of(orderLineItem)));
         OrderStatusRequest request = new OrderStatusRequest(MEAL);
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), request))

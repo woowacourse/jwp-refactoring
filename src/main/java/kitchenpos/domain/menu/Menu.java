@@ -10,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 @Entity
@@ -26,9 +25,8 @@ public class Menu {
     @Column(name = "price", nullable = false)
     private BigDecimal price;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_group_id", nullable = false)
-    private MenuGroup menuGroup;
+    @Column(name = "menu_group_id", nullable = false)
+    private Long menuGroupId;
 
     @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_id", nullable = false)
@@ -37,28 +35,27 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(final String name, final BigDecimal price, final MenuGroup menuGroup,
+    public Menu(final String name, final BigDecimal price, final Long menuGroupId,
                 final List<MenuProduct> menuProducts) {
-        validatePrice(price);
-        validateSumOfProducts(price, menuProducts);
         this.name = name;
         this.price = price;
-        this.menuGroup = menuGroup;
+        this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
+        validatePrice();
+        validateSumOfProducts();
     }
 
-    private void validatePrice(final BigDecimal price) {
+    private void validatePrice() {
         if (price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("메뉴의 가격은 음수일 수 없습니다.");
         }
     }
 
-    private void validateSumOfProducts(final BigDecimal price, final List<MenuProduct> menuProducts) {
+    private void validateSumOfProducts() {
         BigDecimal sum = BigDecimal.ZERO;
         for (MenuProduct menuProduct : menuProducts) {
-            sum = sum.add(menuProduct.getProduct().getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+            sum = sum.add(menuProduct.calculateAmount());
         }
-
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException("메뉴의 가격이 상품의 총 가격포다 클 수 없습니다.");
         }
@@ -76,8 +73,8 @@ public class Menu {
         return price;
     }
 
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
+    public Long getMenuGroupId() {
+        return menuGroupId;
     }
 
     public List<MenuProduct> getMenuProducts() {
