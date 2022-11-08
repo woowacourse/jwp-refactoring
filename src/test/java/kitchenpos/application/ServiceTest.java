@@ -1,25 +1,38 @@
 package kitchenpos.application;
 
+import static kitchenpos.table.domain.TableStatus.EMPTY;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.MenuProductService;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.ProductRepository;
-import kitchenpos.repository.TableGroupRepository;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProductService;
+import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menugroup.application.MenuGroupService;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderMenu;
+import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
+import kitchenpos.relay.application.OrderStatusChangedEventHandler;
+import kitchenpos.table.application.TableGroupService;
+import kitchenpos.table.application.TableService;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.domain.TableGroupRepository;
+import kitchenpos.table.domain.TableStatus;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +62,9 @@ abstract class ServiceTest {
 
     @Autowired
     protected OrderService orderService;
+
+    @Autowired
+    protected OrderStatusChangedEventHandler orderStatusChangedEventHandler;
 
     @Autowired
     private ProductRepository productRepository;
@@ -103,10 +119,32 @@ abstract class ServiceTest {
         return orderTableRepository.save(orderTable);
     }
 
-    protected Order saveOrder(final OrderTable orderTable, final String orderStatus,
+    protected OrderTable saveOrderTable(final int numberOfGuests, final boolean empty, final TableStatus tableStatus) {
+        final OrderTable orderTable = new OrderTable(null, null, numberOfGuests, empty, tableStatus);
+        return orderTableRepository.save(orderTable);
+    }
+
+    protected Order saveOrder(final OrderTable orderTable, final OrderStatus orderStatus,
                               final OrderLineItem... orderLineItems) {
-        final Order order = new Order(orderTable.getId(), orderStatus, LocalDateTime.now(), List.of(orderLineItems));
+        final Order order = new Order(
+                orderTable.getId(),
+                orderStatus,
+                LocalDateTime.now(),
+                toNewOrderLineItems(orderLineItems)
+        );
         return orderRepository.save(order);
+    }
+
+    private List<OrderLineItem> toNewOrderLineItems(final OrderLineItem[] oldOrderLineItems) {
+        final List<OrderLineItem> newOrderLineItems = new ArrayList<>();
+        for (final OrderLineItem old : oldOrderLineItems) {
+            final Menu menu = menuRepository.findById(old.getMenuId())
+                    .orElseThrow();
+            final OrderMenu orderMenu = OrderMenu.from(menu);
+            final OrderLineItem orderLineItem = new OrderLineItem(old.getQuantity(), orderMenu);
+            newOrderLineItems.add(orderLineItem);
+        }
+        return newOrderLineItems;
     }
 
     protected TableGroup saveTableGroup(final OrderTable... orderTables) {
@@ -114,12 +152,22 @@ abstract class ServiceTest {
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         for (final OrderTable orderTable : orderTables) {
+            TableStatus tableStatus = orderTable.getTableStatus();
+            if (tableStatus == null) {
+                tableStatus = EMPTY;
+            }
             final OrderTable saved = new OrderTable(orderTable.getId(), savedTableGroup.getId(),
                     orderTable.getNumberOfGuests(),
-                    orderTable.isEmpty());
+                    orderTable.isEmpty(),
+                    tableStatus);
             orderTableRepository.save(saved);
         }
 
         return savedTableGroup;
+    }
+
+    protected OrderTable getOrderTable(final Long orderTableId) {
+        return orderTableRepository.findById(orderTableId)
+                .orElseThrow();
     }
 }

@@ -1,14 +1,18 @@
 package kitchenpos.domain;
 
+import static kitchenpos.order.domain.OrderStatus.COMPLETION;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.EnumSource;
 
 @DisplayName("주문 도메인의")
 class OrderTest {
@@ -39,8 +43,8 @@ class OrderTest {
 
         @ParameterizedTest
         @DisplayName("주문이 이미 완료된 상태면 주문 상태를 변경할 수 없다.")
-        @ValueSource(strings = {"COOKING", "MEAL"})
-        void changeOrderStatus_orderStatusIsCompletion_exception(final String orderStatus) {
+        @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
+        void changeOrderStatus_orderStatusIsCompletion_exception(final OrderStatus orderStatus) {
             // given
             final Order order = getCompletedOrder();
 
@@ -50,7 +54,7 @@ class OrderTest {
         }
 
         private Order getCompletedOrder() {
-            return new Order(1L, OrderStatus.COMPLETION.name(), LocalDateTime.now(), Collections.emptyList());
+            return new Order(1L, COMPLETION, LocalDateTime.now(), Collections.emptyList());
         }
     }
 }

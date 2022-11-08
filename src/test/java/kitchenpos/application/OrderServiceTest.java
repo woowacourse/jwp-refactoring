@@ -1,7 +1,10 @@
 package kitchenpos.application;
 
-import static kitchenpos.domain.OrderStatus.COMPLETION;
-import static kitchenpos.domain.OrderStatus.MEAL;
+import static kitchenpos.order.domain.OrderStatus.COMPLETION;
+import static kitchenpos.order.domain.OrderStatus.COOKING;
+import static kitchenpos.order.domain.OrderStatus.MEAL;
+import static kitchenpos.table.domain.TableStatus.EAT_IN;
+import static kitchenpos.table.domain.TableStatus.EMPTY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
@@ -10,17 +13,19 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.ui.dto.request.ChangeOrderStatusRequest;
-import kitchenpos.ui.dto.request.OrderCreateRequest;
-import kitchenpos.ui.dto.request.OrderLineItemRequest;
-import kitchenpos.ui.dto.response.OrderResponse;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderMenu;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.application.dto.ChangeOrderStatusRequest;
+import kitchenpos.order.application.dto.OrderCreateRequest;
+import kitchenpos.order.application.dto.OrderLineItemRequest;
+import kitchenpos.order.application.dto.OrderResponse;
+import kitchenpos.product.domain.Product;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -47,10 +52,23 @@ class OrderServiceTest extends ServiceTest {
 
             // then
             softly.assertThat(actual.getOrderTableId()).isEqualTo(orderTableId);
-            softly.assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+            softly.assertThat(actual.getOrderStatus()).isEqualTo(COOKING.name());
             softly.assertThat(actual.getOrderLineItems()).extracting("orderId", "menuId", "quantity")
                     .containsExactly(tuple(actual.getId(), orderLineItemRequests.get(0).getMenuId(), 2L));
             softly.assertAll();
+        }
+
+        @Test
+        @DisplayName("주문하려는 테이블이 매장 식사 상태라면 주문할 수 없다.")
+        void create_eatInTable_exception() {
+            // given
+            final List<OrderLineItemRequest> orderLineItemRequests = getOrderLineItemsRequest();
+            final Long orderTableId = saveOrderTable(10, false, EAT_IN).getId();
+            final OrderCreateRequest request = new OrderCreateRequest(orderTableId, orderLineItemRequests);
+
+            // when & then
+            assertThatThrownBy(() -> orderService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -152,7 +170,7 @@ class OrderServiceTest extends ServiceTest {
                     new MenuProduct(chicken2.getId(), 4L));
 
             final OrderTable orderTable1 = saveOrderTable(10, false);
-            saveOrder(orderTable1, "COOKING", new OrderLineItem(chickenMenu.getId(), 2L));
+            saveOrder(orderTable1, COOKING, new OrderLineItem(2L, OrderMenu.from(chickenMenu)));
 
             final Product sushi1 = saveProduct("연어초밥");
             final Product sushi2 = saveProduct("광어초밥");
@@ -164,7 +182,7 @@ class OrderServiceTest extends ServiceTest {
                     new MenuProduct(sushi3.getId(), 1L));
 
             final OrderTable orderTable2 = saveOrderTable(2, false);
-            saveOrder(orderTable2, "MEAL", new OrderLineItem(sushiMenu.getId(), 3L));
+            saveOrder(orderTable2, MEAL, new OrderLineItem(3L, OrderMenu.from(sushiMenu)));
 
             // when
             final List<OrderResponse> actual = orderService.list();
@@ -172,7 +190,7 @@ class OrderServiceTest extends ServiceTest {
             // then
             assertThat(actual).extracting(OrderResponse::getOrderTableId, OrderResponse::getOrderStatus)
                     .contains(
-                            tuple(orderTable1.getId(), OrderStatus.COOKING.name()),
+                            tuple(orderTable1.getId(), COOKING.name()),
                             tuple(orderTable2.getId(), MEAL.name())
                     );
         }
@@ -182,15 +200,16 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("changeOrderStatus 메서드는")
     class ChangeOrderStatus {
 
-        @ParameterizedTest(name = "{0} -> {1}")
-        @DisplayName("주문 상태를 변경할 수 있다.")
-        @CsvSource(value = {"COOKING,COMPLETION", "MEAL,COMPLETION", "MEAL,COOKING"})
-        void changeOrderStatus_validOrderStatus_success(final String sourceOrderStatus,
-                                                        final String targetOrderStatus) {
+        @ParameterizedTest(name = "주문 상태 : {0} -> {1}, 테이블 상태 : EMPTY -> {2}")
+        @DisplayName("주문 상태를 변경하고 주문 테이블 상태도 변경된다.")
+        @CsvSource(value = {"COOKING,COMPLETION,EMPTY", "MEAL,COMPLETION,EMPTY", "MEAL,COOKING,EAT_IN"})
+        void changeOrderStatus_validOrderStatus_success(final OrderStatus sourceOrderStatus,
+                                                        final OrderStatus targetOrderStatus,
+                                                        final TableStatus expectedTableStatus) {
             // given
-            final Menu chickenMenu = getMenu();
+            final OrderMenu orderMenu = getOrderMenu();
             final OrderTable orderTable = saveOrderTable(10, false);
-            final Long orderId = saveOrder(orderTable, sourceOrderStatus, new OrderLineItem(chickenMenu.getId(), 2L)).getId();
+            final Long orderId = saveOrder(orderTable, sourceOrderStatus, new OrderLineItem(2L, orderMenu)).getId();
 
             final ChangeOrderStatusRequest request = new ChangeOrderStatusRequest(targetOrderStatus);
 
@@ -198,14 +217,19 @@ class OrderServiceTest extends ServiceTest {
             final OrderResponse actual = orderService.changeOrderStatus(orderId, request);
 
             // then
-            assertThat(actual.getOrderStatus()).isEqualTo(targetOrderStatus);
+            assertThat(actual.getOrderStatus()).isEqualTo(targetOrderStatus.name());
+
+            final TableStatus changedOrderTableStatus = getOrderTable(orderTable.getId())
+                    .getTableStatus();
+            assertThat(orderTable.getTableStatus()).isEqualTo(EMPTY);
+            assertThat(changedOrderTableStatus).isEqualTo(expectedTableStatus);
         }
 
         @Test
         @DisplayName("주문이 존재하지 않으면 주문 상태를 변경할 수 없다.")
         void changeOrderStatus_notExistOrder_exception() {
             // given
-            final ChangeOrderStatusRequest request = new ChangeOrderStatusRequest(COMPLETION.name());
+            final ChangeOrderStatusRequest request = new ChangeOrderStatusRequest(COMPLETION);
 
             // when & then
             assertThatThrownBy(() -> orderService.changeOrderStatus(999L, request))
@@ -216,24 +240,25 @@ class OrderServiceTest extends ServiceTest {
         @DisplayName("계산 완료인 주문은 주문 상태를 변경할 수 없다.")
         void changeOrderStatus_orderStatusIsCompletion_exception() {
             // given
-            final Menu chickenMenu = getMenu();
+            final OrderMenu orderMenu = getOrderMenu();
             final OrderTable orderTable = saveOrderTable(10, false);
-            final Long orderId = saveOrder(orderTable, COMPLETION.name(), new OrderLineItem(chickenMenu.getId(), 2L)).getId();
+            final Long orderId = saveOrder(orderTable, COMPLETION, new OrderLineItem(2L, orderMenu)).getId();
 
-            final ChangeOrderStatusRequest request = new ChangeOrderStatusRequest(MEAL.name());
+            final ChangeOrderStatusRequest request = new ChangeOrderStatusRequest(MEAL);
 
             // when & then
             assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
-        private Menu getMenu() {
+        private OrderMenu getOrderMenu() {
             final Product chicken1 = saveProduct("간장치킨");
             final Product chicken2 = saveProduct("앙념치킨");
             final MenuGroup chickenMenuGroup = saveMenuGroup("치킨");
-            return saveMenu("반반치킨", BigDecimal.valueOf(10_000), chickenMenuGroup,
+            final Menu menu = saveMenu("반반치킨", BigDecimal.valueOf(10_000), chickenMenuGroup,
                     new MenuProduct(chicken1.getId(), 2L),
                     new MenuProduct(chicken2.getId(), 4L));
+            return OrderMenu.from(menu);
         }
     }
 }

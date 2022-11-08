@@ -1,9 +1,12 @@
 package kitchenpos.domain;
 
+import static kitchenpos.table.domain.TableStatus.EMPTY;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -60,7 +63,7 @@ class TableGroupTest {
         }
 
         private OrderTable getOrderTable(final int id) {
-            return new OrderTable((long) id, null, 1, true);
+            return new OrderTable((long) id, null, 1, true, EMPTY);
         }
     }
 }
