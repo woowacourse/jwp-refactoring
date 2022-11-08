@@ -1,16 +1,16 @@
 package kitchenpos.acceptance;
 
 import io.restassured.response.ValidatableResponse;
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.ordertable.OrderTable;
-import kitchenpos.domain.product.Product;
-import kitchenpos.dto.request.OrderRequest;
-import kitchenpos.dto.request.OrderStatusRequest;
+import kitchenpos.menu.MenuGroup;
+import kitchenpos.menu.MenuProduct;
+import kitchenpos.order.OrderedMenu;
+import kitchenpos.order.Order;
+import kitchenpos.order.OrderLineItem;
+import kitchenpos.order.OrderStatus;
+import kitchenpos.order.dto.OrderRequest;
+import kitchenpos.order.dto.OrderStatusRequest;
+import kitchenpos.ordertable.OrderTable;
+import kitchenpos.product.Product;
 import kitchenpos.support.RequestBuilder;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
@@ -25,10 +25,10 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     void create() {
         // given
         final OrderTable savedTable = 손님이_있는_테이블_등록();
-        final Menu savedMenu = 메뉴_등록();
+        final OrderedMenu orderedMenu = 메뉴_등록();
 
         // when
-        final OrderRequest request = RequestBuilder.ofOrder(savedMenu, savedTable);
+        final OrderRequest request = RequestBuilder.ofOrder(orderedMenu, savedTable);
         final ValidatableResponse response = post("/api/orders", request);
 
         // then
@@ -51,9 +51,9 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     void changeOrderStatus() {
         // given
         final OrderTable savedTable = 손님이_있는_테이블_등록();
-        final Menu savedMenu = 메뉴_등록();
+        final OrderedMenu orderedMenu = 메뉴_등록();
 
-        final OrderLineItem orderLineItem = OrderLineItem.ofUnsaved(null, savedMenu.getId(), 1);
+        final OrderLineItem orderLineItem = OrderLineItem.ofUnsaved(null, orderedMenu, 1);
         final Order savedOrder = dataSupport.saveOrder(savedTable.getId(), OrderStatus.COOKING, orderLineItem);
 
         // when
@@ -69,12 +69,12 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         return dataSupport.saveOrderTable(2, false);
     }
 
-    private Menu 메뉴_등록() {
+    private OrderedMenu 메뉴_등록() {
         final int price = 3500;
         final Product savedProduct = dataSupport.saveProduct("치킨마요", price);
         final MenuGroup savedMenuGroup = dataSupport.saveMenuGroup("추천 메뉴");
 
         final MenuProduct menuProduct = MenuProduct.ofUnsaved(null, savedProduct, 1L);
-        return dataSupport.saveMenu("치킨마요", price, savedMenuGroup.getId(), menuProduct);
+        return dataSupport.saveMenuAndGetInfo("치킨마요", price, savedMenuGroup.getId(), menuProduct);
     }
 }

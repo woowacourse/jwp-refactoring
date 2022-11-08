@@ -5,21 +5,23 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.order.OrderRepository;
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.MenuGroupRepository;
-import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.menu.MenuRepository;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.ordertable.OrderTable;
-import kitchenpos.domain.ordertable.OrderTableRepository;
-import kitchenpos.domain.ordertable.TableGroup;
-import kitchenpos.domain.ordertable.TableGroupRepository;
-import kitchenpos.domain.product.Product;
-import kitchenpos.domain.product.ProductRepository;
+import kitchenpos.menu.Menu;
+import kitchenpos.menu.MenuGroup;
+import kitchenpos.menu.MenuProduct;
+import kitchenpos.menu.repository.MenuGroupRepository;
+import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.order.OrderedMenu;
+import kitchenpos.order.Order;
+import kitchenpos.order.OrderLineItem;
+import kitchenpos.order.OrderStatus;
+import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.ordertable.OrderTable;
+import kitchenpos.ordertable.OrderTables;
+import kitchenpos.ordertable.TableGroup;
+import kitchenpos.ordertable.repository.OrderTableRepository;
+import kitchenpos.ordertable.repository.TableGroupRepository;
+import kitchenpos.product.Product;
+import kitchenpos.product.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,17 +66,31 @@ public class DataSupport {
         return menuRepository.save(menu);
     }
 
-    public TableGroup saveTableGroup() {
-        final OrderTable orderTable1 = saveOrderTable(0, true);
-        final OrderTable orderTable2 = saveOrderTable(0, true);
-        final TableGroup tableGroup = TableGroup.ofUnsaved(Arrays.asList(orderTable1, orderTable2));
-
-        return tableGroupRepository.save(tableGroup);
+    public OrderedMenu saveMenuAndGetInfo(final String name,
+                                          final int price,
+                                          final Long menuGroupId,
+                                          final MenuProduct... menuProducts) {
+        final Menu menu = saveMenu(name, price, menuGroupId, menuProducts);
+        return new OrderedMenu(menu.getId(), menu.getName(), menu.getPrice());
     }
 
     public OrderTable saveOrderTable(final int numberOfGuests, final boolean empty) {
         final OrderTable orderTable = OrderTable.ofUnsaved(numberOfGuests, empty);
         return orderTableRepository.save(orderTable);
+    }
+
+    public TableGroup saveTableGroup() {
+        final TableGroup tableGroup = TableGroup.ofUnsaved();
+        return tableGroupRepository.save(tableGroup);
+    }
+
+    public List<OrderTable> saveTwoGroupedTables(final TableGroup tableGroup) {
+        final OrderTable orderTable1 = saveOrderTable(0, true);
+        final OrderTable orderTable2 = saveOrderTable(0, true);
+        final OrderTables orderTables = new OrderTables(Arrays.asList(orderTable1, orderTable2));
+        orderTables.joinGroup(tableGroup.getId());
+
+        return orderTables.getValues();
     }
 
     public Order saveOrderWithoutItem(final Long orderTableId, final OrderStatus orderStatus) {
@@ -83,7 +99,9 @@ public class DataSupport {
         return orderRepository.save(order);
     }
 
-    public Order saveOrder(final Long orderTableId, final OrderStatus orderStatus, final OrderLineItem... orderLineItems) {
+    public Order saveOrder(final Long orderTableId,
+                           final OrderStatus orderStatus,
+                           final OrderLineItem... orderLineItems) {
         final Order order = new Order(null, orderTableId, orderStatus, LocalDateTime.now());
         final List<OrderLineItem> mappedOrderLineItems = Arrays.stream(orderLineItems)
                 .map(orderLineItem -> mapOrderToOrderLineItem(order, orderLineItem))
@@ -106,10 +124,10 @@ public class DataSupport {
 
     private MenuProduct mapMenuToMenuProduct(final Menu menu, final MenuProduct menuProduct) {
         return new MenuProduct(
-                null, menu, menuProduct.getProductId(), menuProduct.getQuantity(), menuProduct.getPrice());
+                null, menu, menuProduct.getProductId(), menuProduct.getQuantity(), menuProduct.getAmount());
     }
 
     private OrderLineItem mapOrderToOrderLineItem(final Order order, final OrderLineItem orderLineItem) {
-        return new OrderLineItem(null, order, orderLineItem.getMenuId(), orderLineItem.getQuantity());
+        return new OrderLineItem(null, order, orderLineItem.getMenuInfo(), orderLineItem.getQuantity());
     }
 }

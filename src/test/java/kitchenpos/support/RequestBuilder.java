@@ -2,23 +2,25 @@ package kitchenpos.support;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.ordertable.OrderTable;
-import kitchenpos.dto.request.IdRequest;
-import kitchenpos.dto.request.MenuGroupRequest;
-import kitchenpos.dto.request.MenuProductRequest;
-import kitchenpos.dto.request.MenuRequest;
-import kitchenpos.dto.request.OrderLineItemRequest;
-import kitchenpos.dto.request.OrderRequest;
-import kitchenpos.dto.request.OrderStatusRequest;
-import kitchenpos.dto.request.OrderTableRequest;
-import kitchenpos.dto.request.ProductRequest;
-import kitchenpos.dto.request.TableGroupRequest;
+import kitchenpos.common.dto.IdRequest;
+import kitchenpos.menu.Menu;
+import kitchenpos.menu.MenuGroup;
+import kitchenpos.menu.MenuProduct;
+import kitchenpos.menu.dto.MenuGroupRequest;
+import kitchenpos.menu.dto.MenuProductRequest;
+import kitchenpos.menu.dto.MenuRequest;
+import kitchenpos.order.OrderedMenu;
+import kitchenpos.order.OrderStatus;
+import kitchenpos.order.dto.OrderLineItemRequest;
+import kitchenpos.order.dto.OrderRequest;
+import kitchenpos.order.dto.OrderStatusRequest;
+import kitchenpos.ordertable.OrderTable;
+import kitchenpos.ordertable.dto.OrderTableRequest;
+import kitchenpos.ordertable.dto.TableGroupRequest;
+import kitchenpos.product.dto.ProductRequest;
 
 public class RequestBuilder {
 
@@ -86,12 +88,16 @@ public class RequestBuilder {
         return ofOrder(menu.getId(), orderTable.getId());
     }
 
+    public static OrderRequest ofOrder(final OrderedMenu orderedMenu, final OrderTable orderTable) {
+        return ofOrder(orderedMenu.getId(), orderTable.getId());
+    }
+
     public static OrderRequest ofOrderWithoutMenu(final OrderTable orderTable) {
         return ofOrder(null, orderTable.getId());
     }
 
     private static OrderRequest ofOrder(final Long menuId, final Long tableId) {
         final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menuId, 1);
-        return new OrderRequest(tableId, Arrays.asList(orderLineItemRequest));
+        return new OrderRequest(tableId, Collections.singletonList(orderLineItemRequest));
     }
 }
