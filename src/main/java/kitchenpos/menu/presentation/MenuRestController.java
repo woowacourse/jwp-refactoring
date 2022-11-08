@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class MenuRestController {
+    
     private final MenuService menuService;
 
     public MenuRestController(final MenuService menuService) {
