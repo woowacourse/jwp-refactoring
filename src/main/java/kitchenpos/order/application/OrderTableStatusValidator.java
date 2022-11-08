@@ -8,11 +8,11 @@ import kitchenpos.ordertable.application.OrderTableValidator;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrderTableValidatorImpl implements OrderTableValidator {
+public class OrderTableStatusValidator implements OrderTableValidator {
 
     private final OrderRepository orderRepository;
 
-    public OrderTableValidatorImpl(final OrderRepository orderRepository) {
+    public OrderTableStatusValidator(final OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
 
@@ -27,9 +27,9 @@ public class OrderTableValidatorImpl implements OrderTableValidator {
     @Override
     public void checkOrderComplete(final List<Long> orderTableIds) {
         final List<Order> orders = orderRepository.findByOrderTableIdIn(orderTableIds);
-        final boolean isAllComplete = orders.stream()
-                .allMatch(Order::isComplete);
-        if (!isAllComplete) {
+        final boolean isNotAllComplete = orders.stream()
+                .noneMatch(Order::isComplete);
+        if (isNotAllComplete) {
             throw new IllegalArgumentException();
         }
     }
