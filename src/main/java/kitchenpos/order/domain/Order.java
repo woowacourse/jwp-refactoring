@@ -38,7 +38,8 @@ public class Order {
     @Column(nullable = false)
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "order_id", nullable = false, updatable = false)
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     protected Order() {
@@ -71,9 +72,8 @@ public class Order {
         }
     }
 
-    public void addOrderLineItems(List<OrderLineItem> orderLineItems) {
+    private void addOrderLineItems(List<OrderLineItem> orderLineItems) {
         validateItemSize(orderLineItems);
-        orderLineItems.forEach(item -> item.updateOrder(this));
         this.orderLineItems.addAll(orderLineItems);
     }
 

@@ -6,22 +6,20 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.table.repository.OrderTableRepository;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.dto.OrderTableRequest;
 import kitchenpos.table.dto.OrderTableResponse;
+import kitchenpos.table.repository.OrderTableRepository;
 
 @Service
 public class TableService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final TableValidator tableValidator;
 
-    public TableService(OrderRepository orderRepository, OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(OrderTableRepository orderTableRepository, TableValidator tableValidator) {
         this.orderTableRepository = orderTableRepository;
+        this.tableValidator = tableValidator;
     }
 
     @Transactional
@@ -40,21 +38,9 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeEmpty(Long orderTableId, Boolean empty) {
         OrderTable orderTable = getTableById(orderTableId);
-        validateNotCompletedOrderExist(orderTable);
+        tableValidator.validateChangeStatus(orderTable);
         orderTable.changeEmpty(empty);
         return OrderTableResponse.from(orderTable);
-    }
-
-    private void validateNotCompletedOrderExist(OrderTable orderTable) {
-        if (existNotCompletedOrder(orderTable)) {
-            throw new IllegalArgumentException("주문이 완료되지 않아 상태를 변경할 수 없습니다.");
-        }
-    }
-
-    private boolean existNotCompletedOrder(OrderTable orderTable) {
-        return orderRepository.existsByOrderTableAndOrderStatusIn(
-            orderTable, OrderStatus.listInProgress()
-        );
     }
 
     @Transactional

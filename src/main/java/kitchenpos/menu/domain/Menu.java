@@ -33,7 +33,8 @@ public class Menu {
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
 
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "menu_id", nullable = false, updatable = false)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected Menu() {
@@ -55,7 +56,6 @@ public class Menu {
 
     public void addMenuProducts(List<MenuProduct> menuProducts) {
         validateMenuPrice(menuProducts);
-        menuProducts.forEach(menuProduct -> menuProduct.updateMenu(this));
         this.menuProducts.addAll(menuProducts);
     }
 

@@ -61,9 +61,6 @@ class MenuServiceTest extends ServiceTest {
                     .extracting("seq")
                     .isNotNull(),
                 () -> assertThat(menuProducts)
-                    .extracting("menuId")
-                    .containsOnly(menuId),
-                () -> assertThat(menuProducts)
                     .extracting("productId")
                     .containsOnly(ProductId.후라이드, ProductId.양념치킨),
                 () -> assertThat(menuProducts)

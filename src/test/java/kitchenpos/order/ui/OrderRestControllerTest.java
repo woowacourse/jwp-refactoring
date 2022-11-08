@@ -4,6 +4,7 @@ import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderedMenu;
 import kitchenpos.order.dto.OrderLineItemRequest;
 import kitchenpos.order.dto.OrderLineItemResponse;
 import kitchenpos.order.dto.OrderRequest;
@@ -33,8 +35,12 @@ class OrderRestControllerTest extends ControllerTest {
             OrderStatus.COOKING.name(),
             LocalDateTime.now(),
             List.of(
-                new OrderLineItemResponse(1L, 1L, 1L, 2L),
-                new OrderLineItemResponse(2L, 1L, 2L, 1L)
+                new OrderLineItemResponse(
+                    1L, new OrderedMenu("치킨", BigDecimal.valueOf(20000)), 2L
+                ),
+                new OrderLineItemResponse(
+                    2L, new OrderedMenu("콜라", BigDecimal.valueOf(1500)), 1L
+                )
             )
         );
 
@@ -71,8 +77,12 @@ class OrderRestControllerTest extends ControllerTest {
                 OrderStatus.COOKING.name(),
                 LocalDateTime.now(),
                 List.of(
-                    new OrderLineItemResponse(1L, 1L, 1L, 2L),
-                    new OrderLineItemResponse(2L, 1L, 2L, 1L)
+                    new OrderLineItemResponse(
+                        1L, new OrderedMenu("치킨", BigDecimal.valueOf(20000)), 2L
+                    ),
+                    new OrderLineItemResponse(
+                        2L, new OrderedMenu("콜라", BigDecimal.valueOf(1500)), 1L
+                    )
                 )
             ));
 

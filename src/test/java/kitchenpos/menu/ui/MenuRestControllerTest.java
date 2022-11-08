@@ -30,8 +30,8 @@ class MenuRestControllerTest extends ControllerTest {
             BigDecimal.valueOf(20000),
             1L,
             List.of(
-                new MenuProductResponse(1L, 1L, 1L, 2),
-                new MenuProductResponse(2L, 1L, 2L, 1)
+                new MenuProductResponse(1L, 1L, 2),
+                new MenuProductResponse(2L, 2L, 1)
             )
         );
 
@@ -70,8 +70,8 @@ class MenuRestControllerTest extends ControllerTest {
                 BigDecimal.valueOf(20000),
                 1L,
                 List.of(
-                    new MenuProductResponse(1L, 1L, 1L, 2),
-                    new MenuProductResponse(2L, 1L, 2L, 1)
+                    new MenuProductResponse(1L, 1L, 2),
+                    new MenuProductResponse(2L, 2L, 1)
                 )
             ),
             new MenuResponse(
@@ -80,8 +80,8 @@ class MenuRestControllerTest extends ControllerTest {
                 BigDecimal.valueOf(20000),
                 2L,
                 List.of(
-                    new MenuProductResponse(3L, 2L, 3L, 1),
-                    new MenuProductResponse(4L, 2L, 4L, 1)
+                    new MenuProductResponse(3L, 3L, 1),
+                    new MenuProductResponse(4L, 4L, 1)
                 )
             )
         );
