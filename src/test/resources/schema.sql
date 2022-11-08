@@ -92,3 +92,12 @@ ALTER TABLE menu_product
 ALTER TABLE order_table
     ADD CONSTRAINT fk_order_table_table_group
         FOREIGN KEY (table_group_id) REFERENCES table_group (id);
+
+ALTER TABLE order_line_item
+    ADD COLUMN menu_name VARCHAR(255) NOT NULL;
+
+ALTER TABLE order_line_item
+    ADD COLUMN menu_price DECIMAL(19, 2) NOT NULL;
+
+ALTER TABLE order_table
+    ADD COLUMN ordered BIT(1) NOT NULL DEFAULT FALSE;

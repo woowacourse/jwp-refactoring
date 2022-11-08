@@ -3,8 +3,8 @@ package kitchenpos.fixture.dto;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.request.TableGroupRequest;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.dto.request.TableGroupRequest;
 
 public class TableGroupDtoFixture {
 

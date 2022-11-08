@@ -3,11 +3,11 @@ package kitchenpos.fixture.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.table.domain.OrderTable;
 
 public class OrderFixture {
 
@@ -21,7 +21,7 @@ public class OrderFixture {
     private static List<OrderLineItem> createOrderLineItems(final Menu[] menus) {
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (final Menu menu : menus) {
-            orderLineItems.add(new OrderLineItem(menu.getId(), QUANTITY));
+            orderLineItems.add(new OrderLineItem(menu.getId(), menu.getName(), menu.getPrice(), QUANTITY));
         }
         return orderLineItems;
     }

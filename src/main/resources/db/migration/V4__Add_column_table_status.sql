@@ -1,0 +1,2 @@
+ALTER TABLE order_table
+    ADD COLUMN ordered BIT(1) NOT NULL DEFAULT FALSE;

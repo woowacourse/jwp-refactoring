@@ -4,10 +4,10 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Product;
-import kitchenpos.dto.request.MenuProductRequest;
-import kitchenpos.dto.request.MenuRequest;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.product.domain.Product;
+import kitchenpos.menu.dto.request.MenuProductRequest;
+import kitchenpos.menu.dto.request.MenuRequest;
 
 public class MenuDtoFixture {
 
