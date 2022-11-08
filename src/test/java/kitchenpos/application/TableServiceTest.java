@@ -6,12 +6,15 @@ import static org.assertj.core.api.Assertions.tuple;
 
 import java.util.List;
 import kitchenpos.RepositoryTest;
-import kitchenpos.application.request.OrderTableRequest;
-import kitchenpos.application.response.OrderTableResponse;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.repository.MenuRepository;
-import kitchenpos.domain.repository.OrderRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.table.application.TableService;
+import kitchenpos.table.application.request.OrderTableRequest;
+import kitchenpos.table.application.response.OrderTableResponse;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.table.domain.repository.OrderTableRepository;
+import kitchenpos.table.validator.TableEmptyValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,8 +37,9 @@ class TableServiceTest {
 
     @BeforeEach
     void setUp() {
+        final TableEmptyValidator tableEmptyValidator = new TableEmptyValidator(orderTableRepository);
         sut = new TableService(orderTableRepository);
-        orderService = new OrderService(menuRepository, orderRepository, orderTableRepository);
+        orderService = new OrderService(menuRepository, orderRepository, tableEmptyValidator);
     }
 
     @DisplayName("새로운 주문 테이블을 생성할 수 있다.")

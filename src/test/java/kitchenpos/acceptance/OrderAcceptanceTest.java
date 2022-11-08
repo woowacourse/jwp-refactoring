@@ -1,7 +1,7 @@
 package kitchenpos.acceptance;
 
-import static kitchenpos.domain.OrderStatus.COMPLETION;
-import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.order.domain.OrderStatus.COMPLETION;
+import static kitchenpos.order.domain.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
@@ -11,10 +11,10 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.application.request.OrderLineItemRequest;
-import kitchenpos.application.request.OrderRequest;
-import kitchenpos.application.response.OrderResponse;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.order.application.request.OrderLineItemRequest;
+import kitchenpos.order.application.request.OrderRequest;
+import kitchenpos.order.application.response.OrderResponse;
+import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;

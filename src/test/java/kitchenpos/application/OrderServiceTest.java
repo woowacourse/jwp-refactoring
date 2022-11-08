@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import static kitchenpos.domain.OrderStatus.COMPLETION;
-import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.order.domain.OrderStatus.COMPLETION;
+import static kitchenpos.order.domain.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
@@ -9,22 +9,26 @@ import static org.assertj.core.api.Assertions.tuple;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.RepositoryTest;
-import kitchenpos.application.request.OrderLineItemRequest;
-import kitchenpos.application.request.OrderRequest;
-import kitchenpos.application.request.OrderTableRequest;
-import kitchenpos.application.response.OrderResponse;
-import kitchenpos.application.response.OrderTableResponse;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.repository.MenuRepository;
-import kitchenpos.domain.repository.OrderRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.application.request.OrderLineItemRequest;
+import kitchenpos.order.application.request.OrderRequest;
+import kitchenpos.order.application.response.OrderResponse;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.table.application.TableService;
+import kitchenpos.table.application.request.OrderTableRequest;
+import kitchenpos.table.application.response.OrderTableResponse;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.repository.OrderTableRepository;
+import kitchenpos.table.validator.TableEmptyValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 @RepositoryTest
 class OrderServiceTest {
@@ -38,17 +42,21 @@ class OrderServiceTest {
     private TableService tableService;
 
     @Autowired
-    private MenuRepository menuRepository;
-
-    @Autowired
     private OrderRepository orderRepository;
 
     @Autowired
     private OrderTableRepository orderTableRepository;
 
+    @Autowired
+    private MenuRepository menuRepository;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     @BeforeEach
     void setUp() {
-        sut = new OrderService(menuRepository, orderRepository, orderTableRepository);
+        final TableEmptyValidator tableEmptyValidator = new TableEmptyValidator(orderTableRepository);
+        sut = new OrderService(menuRepository, orderRepository, tableEmptyValidator);
         tableService = new TableService(orderTableRepository);
     }
 
@@ -137,7 +145,8 @@ class OrderServiceTest {
         final OrderTableResponse orderTableResponse = tableService.create(orderTableRequest);
 
         final OrderLineItem orderLineItem = toOrderLineItem(orderLineItemRequest);
-        final Order order = new Order(notExistOrderId, orderTableResponse.getId(), COOKING, LocalDateTime.now(), List.of(orderLineItem));
+        final Order order = new Order(notExistOrderId, orderTableResponse.getId(), COOKING, LocalDateTime.now(),
+                List.of(orderLineItem));
         final OrderRequest changeRequest = new OrderRequest(orderTableResponse.getId(), "COMPLETION",
                 LocalDateTime.now(),
                 List.of(orderLineItemRequest));
@@ -172,6 +181,27 @@ class OrderServiceTest {
                                 orderResponse1.getOrderStatus()),
                         tuple(orderResponse2.getId(), orderResponse2.getOrderTableId(), orderResponse2.getOrderStatus())
                 );
+    }
+
+    @DisplayName("메뉴의 정보가 변경되어도 주문 항목은 주문 당시의 메뉴 이름과 가격을 기억해야 한다.")
+    @Test
+    void afterChangeMenu() {
+        // given
+        final OrderTable orderTable = OrderTable.of(1, false);
+        final OrderRequest orderRequest = createdOrderRequest(orderTable, createOrderLineItemRequest());
+
+        final OrderResponse orderResponse = sut.create(orderRequest);
+
+        // when
+        final int updatedRowCount = jdbcTemplate.update(
+                "UPDATE menu SET menu.name = '변경된 메뉴 이름' WHERE menu.id = " + MENU_ID);
+        final Order order = orderRepository.findById(orderResponse.getId()).get();
+        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
+
+        // then
+        assertThat(updatedRowCount).isEqualTo(1);
+        assertThat(orderLineItems.get(0).getMenuName()).isEqualTo("후라이드치킨");
+        assertThat(orderLineItems.get(0).getMenuPrice().longValue()).isEqualTo(16000L);
     }
 
     private OrderLineItem toOrderLineItem(final OrderLineItemRequest orderLineItemRequest) {

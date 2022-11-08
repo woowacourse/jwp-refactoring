@@ -5,8 +5,8 @@ import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
 import io.restassured.RestAssured;
 import java.util.List;
-import kitchenpos.application.request.MenuGroupRequest;
-import kitchenpos.application.response.MenuGroupResponse;
+import kitchenpos.menu.application.request.MenuGroupRequest;
+import kitchenpos.menu.application.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;

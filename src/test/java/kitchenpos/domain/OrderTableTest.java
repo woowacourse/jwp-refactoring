@@ -1,11 +1,13 @@
 package kitchenpos.domain;
 
-import static kitchenpos.domain.OrderStatus.*;
+import static kitchenpos.order.domain.OrderStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.order.domain.Order;
+import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
