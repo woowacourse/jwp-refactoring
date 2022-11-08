@@ -14,8 +14,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import kitchenpos.exception.CompletedOrderStatusChangeException;
 import kitchenpos.exception.NotContainsOrderLineItemException;
-import kitchenpos.menu.domain.UpdatableMenuInfo;
-import kitchenpos.product.domain.Price;
+import kitchenpos.order.OrderPrice;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -44,9 +43,9 @@ class OrderTest {
 
     private static List<OrderLineItem> getOrderLineItems() {
         final OrderLineItem orderLineItem1 = new OrderLineItem(
-                new UpdatableMenuInfo(new Price(1000L), "orderLine1"), 1);
+                "orderLine1", new OrderPrice(1000L), 1);
         final OrderLineItem orderLineItem2 = new OrderLineItem(
-                new UpdatableMenuInfo(new Price(2000L), "orderLine2"), 1);
+                "orderLine2", new OrderPrice(2000L), 1);
         return Arrays.asList(orderLineItem1, orderLineItem2);
     }
 

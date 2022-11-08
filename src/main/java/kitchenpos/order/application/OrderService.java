@@ -10,6 +10,7 @@ import kitchenpos.exception.OrderLineItemMenuException;
 import kitchenpos.exception.OrderNotFoundException;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.order.OrderPrice;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderRepository;
@@ -66,7 +67,8 @@ public class OrderService {
     private OrderLineItem mapToOrderLineItem(final OrderLineItemCreateRequest orderLineItemCreateRequest) {
         final Menu menu = menuRepository.findById(orderLineItemCreateRequest.getMenuId())
                 .orElseThrow(MenuNotFoundException::new);
-        return new OrderLineItem(menu.getUpdatableMenuInfo(), orderLineItemCreateRequest.getQuantity());
+        final OrderPrice orderPrice = new OrderPrice(menu.getPrice());
+        return new OrderLineItem(menu.getName(), orderPrice, orderLineItemCreateRequest.getQuantity());
     }
 
     private void validateTable(final Long orderTableId) {

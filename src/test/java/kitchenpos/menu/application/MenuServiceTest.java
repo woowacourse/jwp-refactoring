@@ -7,14 +7,14 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.support.application.ServiceTestEnvironment;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuProductCreateRequest;
+import kitchenpos.exception.MenuGroupNotFoundException;
+import kitchenpos.exception.ProductNotFoundException;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.product.domain.Product;
-import kitchenpos.exception.MenuGroupNotFoundException;
-import kitchenpos.exception.ProductNotFoundException;
+import kitchenpos.support.application.ServiceTestEnvironment;
 import kitchenpos.support.fixture.MenuFixture;
 import kitchenpos.support.fixture.MenuGroupFixture;
 import kitchenpos.support.fixture.ProductFixture;
@@ -33,17 +33,21 @@ class MenuServiceTest extends ServiceTestEnvironment {
         // given
         final Product product1 = ProductFixture.createWithPrice(1000L);
         final Product product2 = ProductFixture.createWithPrice(1000L);
-        final Product savedProduct1 =serviceDependencies.save(product1);
-        final Product savedProduct2 =serviceDependencies.save(product2);
+        final Product savedProduct1 = serviceDependencies.save(product1);
+        final Product savedProduct2 = serviceDependencies.save(product2);
 
         final MenuGroup menuGroup = MenuGroupFixture.createDefaultWithoutId();
         final MenuGroup savedMenuGroup = serviceDependencies.save(menuGroup);
 
-        final List<MenuProductCreateRequest> menuProducts = Arrays.asList(new MenuProductCreateRequest(1L, 1L),
-                 new MenuProductCreateRequest(2L, 1L));
-        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("name", BigDecimal.valueOf(2000L), savedMenuGroup.getId(),
-                menuProducts);
-        final Menu menu = MenuFixture.createWithPrice(savedMenuGroup.getId(), 2000L, savedProduct1.getId(), savedProduct2.getId());
+        final List<MenuProductCreateRequest> menuProducts = Arrays.asList(new MenuProductCreateRequest(savedProduct1.getId(), 1L),
+                new MenuProductCreateRequest(savedProduct2.getId(), 1L));
+
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("name", BigDecimal.valueOf(2000L),
+                savedMenuGroup.getId(), menuProducts);
+
+        final Menu menu = MenuFixture.createWithPrice(savedMenuGroup.getId(), 2000L,
+                Arrays.asList(savedProduct1.getId(), savedProduct2.getId()),
+                Arrays.asList(1000L, 1000L));
 
         // when
         final Menu actual = menuService.create(menuCreateRequest);
@@ -72,14 +76,14 @@ class MenuServiceTest extends ServiceTestEnvironment {
 
         final List<MenuProductCreateRequest> menuProducts = Arrays.asList(new MenuProductCreateRequest(1L, 1L),
                 new MenuProductCreateRequest(2L, 1L));
-        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("name", BigDecimal.valueOf(2000L), notSavedMenuGroup.getId(),
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("name", BigDecimal.valueOf(2000L),
+                notSavedMenuGroup.getId(),
                 menuProducts);
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menuCreateRequest))
                 .isExactlyInstanceOf(MenuGroupNotFoundException.class);
     }
-
     @Test
     @DisplayName("메뉴의 메뉴 상품들의 상품이 등록되어 있어야 한다.")
     void create_exceptionWhenMenuProductNotExists() {
@@ -89,7 +93,8 @@ class MenuServiceTest extends ServiceTestEnvironment {
 
         final List<MenuProductCreateRequest> menuProducts = Arrays.asList(new MenuProductCreateRequest(-1L, 1L),
                 new MenuProductCreateRequest(-2L, 1L));
-        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("name", BigDecimal.valueOf(2000L), savedMenuGroup.getId(),
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("name", BigDecimal.valueOf(2000L),
+                savedMenuGroup.getId(),
                 menuProducts);
 
         // when, then
@@ -101,16 +106,8 @@ class MenuServiceTest extends ServiceTestEnvironment {
     @DisplayName("등록된 메뉴를 조회한다.")
     void list() {
         // given
-        final Product product1 = ProductFixture.createWithPrice(1000L);
-        final Product product2 = ProductFixture.createWithPrice(1000L);
-        final Product savedProduct1 = serviceDependencies.save(product1);
-        final Product savedProduct2 = serviceDependencies.save(product2);
-
-        final MenuGroup menuGroup = MenuGroupFixture.createDefaultWithoutId();
-        final MenuGroup savedMenuGroup = serviceDependencies.save(menuGroup);
-
-        final Menu menu = MenuFixture.createWithPrice(savedMenuGroup.getId(), 2000L, savedProduct1.getId(), savedProduct2.getId());
-         serviceDependencies.save(menu);
+        final Menu menu = createValidMenu();
+        serviceDependencies.save(menu);
 
         // when
         final List<Menu> actual = menuService.list();
@@ -119,5 +116,21 @@ class MenuServiceTest extends ServiceTestEnvironment {
         assertThat(actual)
                 .extracting("id")
                 .containsExactly(1L);
+    }
+
+    private Menu createValidMenu() {
+        final Product product1 = ProductFixture.createWithPrice(1000L);
+        final Product product2 = ProductFixture.createWithPrice(1000L);
+        final Product savedProduct1 = serviceDependencies.save(product1);
+        final Product savedProduct2 = serviceDependencies.save(product2);
+
+        final MenuGroup menuGroup = MenuGroupFixture.createDefaultWithoutId();
+        final MenuGroup savedMenuGroup = serviceDependencies.save(menuGroup);
+
+        final List<MenuProductCreateRequest> menuProducts = Arrays.asList(new MenuProductCreateRequest(1L, 1L),
+                new MenuProductCreateRequest(2L, 1L));
+        return MenuFixture.createWithPrice(savedMenuGroup.getId(), 2000L,
+                Arrays.asList(savedProduct1.getId(), savedProduct2.getId()),
+                Arrays.asList(1000L, 1000L));
     }
 }

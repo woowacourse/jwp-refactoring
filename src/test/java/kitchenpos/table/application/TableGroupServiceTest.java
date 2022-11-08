@@ -13,6 +13,7 @@ import kitchenpos.exception.NotCompletedOrderTableException;
 import kitchenpos.exception.NotEnoughOrderTablesSizeException;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.order.OrderPrice;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
@@ -204,7 +205,7 @@ class TableGroupServiceTest extends ServiceTestEnvironment {
         final TableGroup savedTableGroup = serviceDependencies.save(tableGroup);
 
         final Menu savedMenu = saveValidMenu();
-        final OrderLineItem orderLineItem = OrderLineItemFixture.create(savedMenu.getName(), savedMenu.getPrice());
+        final OrderLineItem orderLineItem = OrderLineItemFixture.create(savedMenu.getName(), new OrderPrice(savedMenu.getPrice()));
         final Order order = OrderFixture.create(savedTable1.getId(), orderStatus, orderLineItem);
         serviceDependencies.save(order);
 
@@ -224,7 +225,9 @@ class TableGroupServiceTest extends ServiceTestEnvironment {
         final MenuGroup menuGroup1 = MenuGroupFixture.createDefaultWithoutId();
         final MenuGroup savedMenuGroup1 = serviceDependencies.save(menuGroup1);
 
-        final Menu menu = MenuFixture.createWithPrice(savedMenuGroup1.getId(), 2000L, savedProduct1.getId(), savedProduct2.getId());
+        final Menu menu = MenuFixture.createWithPrice(savedMenuGroup1.getId(), 2000L,
+                Arrays.asList(savedProduct1.getId(), savedProduct2.getId()),
+                Arrays.asList(1000L, 1000L));
         return serviceDependencies.save(menu);
     }
 }

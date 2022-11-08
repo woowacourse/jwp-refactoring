@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -16,10 +17,11 @@ import kitchenpos.exception.OrderTableEmptyException;
 import kitchenpos.exception.OrderTableNotFoundException;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.Price;
+import kitchenpos.order.OrderPrice;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.product.domain.Price;
 import kitchenpos.product.domain.Product;
 import kitchenpos.support.application.ServiceTestEnvironment;
 import kitchenpos.support.fixture.MenuFixture;
@@ -29,6 +31,7 @@ import kitchenpos.support.fixture.OrderLineItemFixture;
 import kitchenpos.support.fixture.OrderTableFixture;
 import kitchenpos.support.fixture.ProductFixture;
 import kitchenpos.table.domain.OrderTable;
+import org.assertj.core.util.BigDecimalComparator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,7 +92,10 @@ class OrderServiceTest extends ServiceTestEnvironment {
         // then
         assertAll(
                 () -> assertThat(actual).extracting("name").containsOnly("name"),
-                () -> assertThat(actual).extracting("price").containsOnly(new Price(2000L))
+                () -> assertThat(actual)
+                        .extracting("price")
+                        .usingComparatorForType(BigDecimalComparator.BIG_DECIMAL_COMPARATOR, BigDecimal.class)
+                        .containsOnly(BigDecimal.valueOf(2000L))
         );
 
     }
@@ -163,7 +169,8 @@ class OrderServiceTest extends ServiceTestEnvironment {
         final OrderTable orderTable = OrderTableFixture.create(false, 2);
         final OrderTable savedTable = serviceDependencies.save(orderTable);
         final Menu savedMenu = saveValidMenu();
-        final OrderLineItem orderLineItem = OrderLineItemFixture.create(savedMenu.getName(), savedMenu.getPrice());
+        final OrderLineItem orderLineItem = OrderLineItemFixture.create(savedMenu.getName(),
+                new OrderPrice(savedMenu.getPrice()));
         final Order order = OrderFixture.create(savedTable.getId(), OrderStatus.COMPLETION, orderLineItem);
         final Order savedOrder = serviceDependencies.save(order);
 
@@ -197,7 +204,9 @@ class OrderServiceTest extends ServiceTestEnvironment {
         final MenuGroup menuGroup1 = MenuGroupFixture.createDefaultWithoutId();
         final MenuGroup savedMenuGroup1 = serviceDependencies.save(menuGroup1);
 
-        final Menu menu = MenuFixture.createWithPrice(savedMenuGroup1.getId(), 2000L, savedProduct1.getId(), savedProduct2.getId());
+        final Menu menu = MenuFixture.createWithPrice(savedMenuGroup1.getId(), 2000L,
+                Arrays.asList(savedProduct1.getId(), savedProduct2.getId()),
+                Arrays.asList(1000L, 1000L));
         return serviceDependencies.save(menu);
     }
 }

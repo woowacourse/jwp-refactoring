@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.dto.request.ProductCreateRequest;
-import kitchenpos.product.domain.Price;
 import kitchenpos.product.domain.Product;
 import kitchenpos.support.application.ServiceTestEnvironment;
 import kitchenpos.support.fixture.ProductFixture;
@@ -33,7 +32,7 @@ class ProductServiceTest extends ServiceTestEnvironment {
                 () -> assertThat(saved).usingRecursiveComparison()
                         .ignoringFields("id", "price")
                         .isEqualTo(productCreateRequest),
-                () -> assertThat(saved.getPrice()).isEqualTo(new Price(BigDecimal.valueOf(1000)))
+                () -> assertThat(saved.getPrice()).isEqualTo(BigDecimal.valueOf(1000))
         );
     }
 

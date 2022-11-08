@@ -37,19 +37,6 @@ public class Price {
         }
     }
 
-    public Price multiply(final long value) {
-        final BigDecimal consequent = mapToBigDecimal(value);
-        return new Price(this.value.multiply(consequent));
-    }
-
-    public Price add(final Price consequent) {
-        return new Price(this.value.add(consequent.value));
-    }
-
-    public boolean isExpansiveThan(final Price consequent) {
-       return this.value.compareTo(consequent.value) > 0;
-    }
-
     public BigDecimal getValue() {
         return value;
     }

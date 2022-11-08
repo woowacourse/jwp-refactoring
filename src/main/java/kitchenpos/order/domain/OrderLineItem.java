@@ -1,12 +1,13 @@
 package kitchenpos.order.domain;
 
+import java.math.BigDecimal;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import kitchenpos.menu.domain.UpdatableMenuInfo;
-import kitchenpos.product.domain.Price;
+import kitchenpos.order.OrderPrice;
 
 @Entity
 @Table(name = "order_line_item")
@@ -14,24 +15,23 @@ public class OrderLineItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-    private UpdatableMenuInfo updatableMenuInfo;
+    @Embedded
+    private OrderPrice price;
+    private String name;
     private long quantity;
 
     protected OrderLineItem() {
     }
 
-    private OrderLineItem(final Long seq, final UpdatableMenuInfo updatableMenuInfo, final long quantity) {
+    private OrderLineItem(final Long seq, final String name, final OrderPrice price, final long quantity) {
         this.seq = seq;
-        this.updatableMenuInfo = updatableMenuInfo;
+        this.name = name;
+        this.price = price;
         this.quantity = quantity;
     }
 
-    public OrderLineItem(final UpdatableMenuInfo updatableMenuInfo, final long quantity) {
-        this(null, updatableMenuInfo, quantity);
-    }
-
-    public OrderLineItem(final String name, final Price price, final long quantity) {
-        this(null, new UpdatableMenuInfo(price, name), quantity);
+    public OrderLineItem(final String name, final OrderPrice price, final long quantity) {
+        this(null, name, price, quantity);
     }
 
     public Long getSeq() {
@@ -39,11 +39,11 @@ public class OrderLineItem {
     }
 
     public String getName() {
-        return updatableMenuInfo.getName();
+        return this.name;
     }
 
-    public Price getPrice() {
-        return updatableMenuInfo.getPrice();
+    public BigDecimal getPrice() {
+        return this.price.getValue();
     }
 
     public long getQuantity() {

@@ -3,7 +3,9 @@ package kitchenpos.table.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.Arrays;
 import java.util.List;
+import kitchenpos.order.OrderPrice;
 import kitchenpos.support.application.ServiceTestEnvironment;
 import kitchenpos.dto.request.OrderTableCreateRequest;
 import kitchenpos.dto.request.OrderTableGuestNumberRequest;
@@ -129,10 +131,12 @@ class TableServiceTest extends ServiceTestEnvironment {
         final Product savedProduct1 = serviceDependencies.save(product1);
         final Product savedProduct2 = serviceDependencies.save(product2);
 
-        final Menu menu = MenuFixture.createWithPrice(savedMenuGroup1.getId(), 2000L, savedProduct1.getId(), savedProduct2.getId());
+        final Menu menu = MenuFixture.createWithPrice(savedMenuGroup1.getId(), 2000L,
+                Arrays.asList(savedProduct1.getId(), savedProduct2.getId()),
+                Arrays.asList(1000L, 1000L));
         final Menu savedMenu = serviceDependencies.save(menu);
 
-        final OrderLineItem orderLineItem = OrderLineItemFixture.create(savedMenu.getName(), savedMenu.getPrice());
+        final OrderLineItem orderLineItem = OrderLineItemFixture.create(savedMenu.getName(), new OrderPrice(savedMenu.getPrice()));
         final Order order = OrderFixture.create(savedTable.getId(), orderStatus, orderLineItem);
         serviceDependencies.save(order);
 
