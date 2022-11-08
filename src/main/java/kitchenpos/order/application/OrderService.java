@@ -38,8 +38,9 @@ public class OrderService {
     @Transactional
     public OrderCreateResponse create(final OrderCreateRequest orderCreateRequest) {
         eventPublisher.publishEvent(new OrderLineItemsValidateEvent(orderCreateRequest));
+        orderTableValidator.validOrderTable(orderCreateRequest);
 
-        final Long orderTableId = orderTableValidator.validOrderTableAndGet(orderCreateRequest);
+        final Long orderTableId = orderCreateRequest.getOrderTableId();
 
         final Order savedOrder = orderDao.save(
                 new Order(

@@ -15,11 +15,10 @@ public class OrderTableValidatorImpl implements OrderTableValidator {
     }
 
     @Override
-    public Long validOrderTableAndGet(final OrderCreateRequest orderCreateRequest) {
+    public void validOrderTable(final OrderCreateRequest orderCreateRequest) {
         final OrderTable orderTable = orderTableDao.findById(orderCreateRequest.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
         validateIfTableEmpty(orderTable);
-        return orderTable.getId();
     }
 
     private void validateIfTableEmpty(final OrderTable orderTable) {
