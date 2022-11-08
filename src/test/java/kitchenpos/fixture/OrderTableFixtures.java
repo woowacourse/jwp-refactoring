@@ -1,8 +1,8 @@
 package kitchenpos.fixture;
 
-import kitchenpos.dto.request.OrderTableCreateRequest;
-import kitchenpos.dto.request.OrderTableUpdateEmptyRequest;
-import kitchenpos.dto.request.OrderTableUpdateNumberOfGuestsRequest;
+import kitchenpos.table.application.dto.request.OrderTableCreateRequest;
+import kitchenpos.table.application.dto.request.OrderTableUpdateEmptyRequest;
+import kitchenpos.table.application.dto.request.OrderTableUpdateNumberOfGuestsRequest;
 
 public class OrderTableFixtures {
 

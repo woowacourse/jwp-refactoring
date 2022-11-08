@@ -1,7 +1,8 @@
 package kitchenpos.application;
 
-import kitchenpos.dto.request.ProductCreateRequest;
-import kitchenpos.dto.response.ProductResponse;
+import kitchenpos.product.application.dto.request.ProductCreateRequest;
+import kitchenpos.product.application.dto.response.ProductResponse;
+import kitchenpos.product.application.ProductService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

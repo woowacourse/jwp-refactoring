@@ -1,15 +1,20 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.dto.request.MenuCreateRequest;
-import kitchenpos.dto.request.OrderCreateRequest;
-import kitchenpos.dto.request.OrderLineItemCreateRequest;
-import kitchenpos.dto.response.MenuGroupResponse;
-import kitchenpos.dto.response.MenuResponse;
-import kitchenpos.dto.response.OrderResponse;
-import kitchenpos.dto.response.OrderTableResponse;
-import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.fixture.OrderTableFixtures;
+import kitchenpos.menu.application.MenuGroupService;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.application.dto.request.MenuCreateRequest;
+import kitchenpos.menu.application.dto.response.MenuGroupResponse;
+import kitchenpos.menu.application.dto.response.MenuResponse;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.application.dto.request.OrderCreateRequest;
+import kitchenpos.order.application.dto.request.OrderLineItemCreateRequest;
+import kitchenpos.order.application.dto.response.OrderResponse;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.application.dto.response.ProductResponse;
+import kitchenpos.table.application.TableService;
+import kitchenpos.table.application.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -178,7 +183,7 @@ class OrderServiceTest {
         // 상태를 식사로 변경
         OrderCreateRequest changedOrder = createOrder(orderTable.getId(), OrderStatus.MEAL.name(),
                 List.of(orderLineItem));
-        OrderResponse actual = orderService.changeOrderStatus(order.getId(), changedOrder.toEntity());
+        OrderResponse actual = orderService.changeOrderStatus(order.getId(), changedOrder);
 
         assertAll(
                 () -> assertThat(actual.getOrderTableId()).isEqualTo(orderTable.getId()),
@@ -207,9 +212,9 @@ class OrderServiceTest {
 
         // 계산완료로 변경
         OrderCreateRequest changedOrder = createOrder(orderTable.getId(), OrderStatus.COMPLETION.name(), List.of(orderLineItem));
-        OrderResponse actual = orderService.changeOrderStatus(order.getId(), changedOrder.toEntity());
+        orderService.changeOrderStatus(order.getId(), changedOrder);
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), actual.toEntity()))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), changedOrder))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

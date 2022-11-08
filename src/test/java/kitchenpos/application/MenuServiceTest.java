@@ -1,10 +1,13 @@
 package kitchenpos.application;
 
-import kitchenpos.dto.request.MenuCreateRequest;
-import kitchenpos.dto.response.MenuGroupResponse;
-import kitchenpos.dto.response.MenuResponse;
-import kitchenpos.dto.response.ProductResponse;
+import kitchenpos.menu.application.dto.request.MenuCreateRequest;
+import kitchenpos.menu.application.dto.response.MenuGroupResponse;
+import kitchenpos.menu.application.dto.response.MenuResponse;
+import kitchenpos.product.application.dto.response.ProductResponse;
 import kitchenpos.fixture.ProductFixtures;
+import kitchenpos.menu.application.MenuGroupService;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.product.application.ProductService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
