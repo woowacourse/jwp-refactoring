@@ -1,4 +1,4 @@
-package kitchenpos.menu;
+package kitchenpos.product;
 
 import java.math.BigDecimal;
 import javax.persistence.Embedded;
@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import kitchenpos.common.Price;
 
 @Entity
 public class Product {

@@ -6,6 +6,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
+import kitchenpos.common.Price;
+import kitchenpos.product.Product;
 
 @Entity
 public class MenuProduct {

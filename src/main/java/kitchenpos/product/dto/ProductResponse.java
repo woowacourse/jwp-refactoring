@@ -1,9 +1,9 @@
-package kitchenpos.menu.dto;
+package kitchenpos.product.dto;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.menu.Product;
+import kitchenpos.product.Product;
 
 public class ProductResponse {
 

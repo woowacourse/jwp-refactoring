@@ -12,7 +12,6 @@ import kitchenpos.menu.MenuProduct;
 import kitchenpos.menu.dto.MenuGroupRequest;
 import kitchenpos.menu.dto.MenuProductRequest;
 import kitchenpos.menu.dto.MenuRequest;
-import kitchenpos.menu.dto.ProductRequest;
 import kitchenpos.order.MenuInfo;
 import kitchenpos.order.OrderStatus;
 import kitchenpos.order.dto.OrderLineItemRequest;
@@ -21,6 +20,7 @@ import kitchenpos.order.dto.OrderStatusRequest;
 import kitchenpos.ordertable.OrderTable;
 import kitchenpos.ordertable.dto.OrderTableRequest;
 import kitchenpos.ordertable.dto.TableGroupRequest;
+import kitchenpos.product.dto.ProductRequest;
 
 public class RequestBuilder {
 

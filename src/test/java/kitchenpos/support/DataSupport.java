@@ -8,10 +8,8 @@ import java.util.stream.Collectors;
 import kitchenpos.menu.Menu;
 import kitchenpos.menu.MenuGroup;
 import kitchenpos.menu.MenuProduct;
-import kitchenpos.menu.Product;
 import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.menu.repository.MenuRepository;
-import kitchenpos.menu.repository.ProductRepository;
 import kitchenpos.order.MenuInfo;
 import kitchenpos.order.Order;
 import kitchenpos.order.OrderLineItem;
@@ -22,6 +20,8 @@ import kitchenpos.ordertable.OrderTables;
 import kitchenpos.ordertable.TableGroup;
 import kitchenpos.ordertable.repository.OrderTableRepository;
 import kitchenpos.ordertable.repository.TableGroupRepository;
+import kitchenpos.product.Product;
+import kitchenpos.product.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,9 +67,9 @@ public class DataSupport {
     }
 
     public MenuInfo saveMenuAndGetInfo(final String name,
-                         final int price,
-                         final Long menuGroupId,
-                         final MenuProduct... menuProducts) {
+                                       final int price,
+                                       final Long menuGroupId,
+                                       final MenuProduct... menuProducts) {
         final Menu menu = saveMenu(name, price, menuGroupId, menuProducts);
         return new MenuInfo(menu.getId(), menu.getName(), menu.getPrice());
     }
