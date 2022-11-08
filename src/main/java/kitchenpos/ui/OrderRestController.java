@@ -1,15 +1,19 @@
 package kitchenpos.ui;
 
+import java.net.URI;
+import java.util.List;
 import kitchenpos.application.OrderService;
 import kitchenpos.application.dto.OrderDto;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.ui.dto.CreateOrderRequest;
 import kitchenpos.ui.dto.ChangeOrderStatusRequest;
+import kitchenpos.ui.dto.CreateOrderRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.net.URI;
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class OrderRestController {
@@ -40,6 +44,7 @@ public class OrderRestController {
             @PathVariable final Long orderId,
             @RequestBody final ChangeOrderStatusRequest changeOrderStatusRequest
     ) {
-        return ResponseEntity.ok(orderService.changeOrderStatus(orderId, OrderStatus.valueOf(changeOrderStatusRequest.getOrderStatus())));
+        return ResponseEntity.ok(orderService.changeOrderStatus(orderId,
+                OrderStatus.valueOf(changeOrderStatusRequest.getOrderStatus())));
     }
 }

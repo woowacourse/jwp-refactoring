@@ -2,22 +2,38 @@ package kitchenpos.domain.table;
 
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.service.FindOrderTableInOrderStatusService;
 
+@Entity
 public class OrderTable {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long tableGroupId;
+
+    @ManyToOne
+    @JoinColumn(name = "table_group_id")
+    private TableGroup tableGroup;
+
+    @Column(nullable = false)
     private int numberOfGuests;
+    @Column(nullable = false)
     private boolean empty;
 
-    private OrderTable() {
+    protected OrderTable() {
     }
 
-    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+    public OrderTable(final Long id, final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
         this.id = id;
-        this.tableGroupId = tableGroupId;
+        this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -31,7 +47,7 @@ public class OrderTable {
     }
 
     public boolean isGrouped() {
-        return Objects.nonNull(getTableGroupId());
+        return Objects.nonNull(getTableGroup());
     }
 
     public void changeEmpty(final boolean empty) {
@@ -45,22 +61,36 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public void joinTableGroup(final Long tableGroupId) {
+    public void joinTableGroup(final TableGroup tableGroup) {
         this.empty = false;
-        this.tableGroupId = tableGroupId;
+        this.tableGroup = tableGroup;
     }
 
     public void ungroup() {
-        this.tableGroupId = null;
+        this.tableGroup = null;
         changeEmpty(false);
+    }
+
+    public void validateEmptyAvailable(final FindOrderTableInOrderStatusService findOrderTableInOrderStatusService) {
+        final List<OrderStatus> availableStatuses = List.of(OrderStatus.MEAL, OrderStatus.COOKING);
+        if (findOrderTableInOrderStatusService.existByOrderStatus(getId(), availableStatuses)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
         return id;
     }
 
+    public TableGroup getTableGroup() {
+        return tableGroup;
+    }
+
     public Long getTableGroupId() {
-        return tableGroupId;
+        if (tableGroup == null) {
+            return null;
+        }
+        return tableGroup.getId();
     }
 
     public int getNumberOfGuests() {
@@ -69,12 +99,5 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void validateEmptyAvailable(final FindOrderTableInOrderStatusService findOrderTableInOrderStatusService) {
-        final List<OrderStatus> availableStatuses = List.of(OrderStatus.MEAL, OrderStatus.COOKING);
-        if (findOrderTableInOrderStatusService.existByOrderStatus(getId(), availableStatuses)) {
-            throw new IllegalArgumentException();
-        }
     }
 }

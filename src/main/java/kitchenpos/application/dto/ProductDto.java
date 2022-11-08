@@ -19,7 +19,7 @@ public class ProductDto {
     }
 
     public static ProductDto from(Product product) {
-        return new ProductDto(product.getId(), product.getName(), product.getPrice());
+        return new ProductDto(product.getId(), product.getName(), product.getPriceValue());
     }
 
     public Long getId() {

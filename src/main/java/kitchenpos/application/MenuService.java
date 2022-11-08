@@ -8,6 +8,8 @@ import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroupRepository;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.domain.service.CalculateProductPriceService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,13 +19,16 @@ public class MenuService {
 
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
+    private final ProductRepository productRepository;
     private final CalculateProductPriceService calculateProductPriceService;
 
     public MenuService(final MenuRepository menuRepository,
                        final MenuGroupRepository menuGroupRepository,
+                       final ProductRepository productRepository,
                        final CalculateProductPriceService calculateProductPriceService) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
+        this.productRepository = productRepository;
         this.calculateProductPriceService = calculateProductPriceService;
     }
 
@@ -47,21 +52,33 @@ public class MenuService {
         return Menu.create(
                 createMenuDto.getName(),
                 createMenuDto.getPrice(),
-                createMenuDto.getMenuGroupId(),
+                menuGroupRepository.findById(createMenuDto.getMenuGroupId()).orElseThrow(),
                 menuProducts
         );
     }
 
     private List<MenuProduct> extractToMenuProduct(final CreateMenuDto createMenuDto) {
+        final List<Long> productIds = createMenuDto.getProductIds();
+        final List<Product> products = productRepository.findAllByIds(productIds);
         return createMenuDto.getMenuProducts()
                 .stream()
-                .map(createMenuProductDto ->
-                        new MenuProduct(
-                                createMenuProductDto.getProductId(),
-                                createMenuProductDto.getQuantity()
-                        )
-                )
+                .map(createMenuProductDto -> {
+                    final Product product = findProductById(products, createMenuProductDto.getProductId());
+                    return new MenuProduct(
+                            product.getName(),
+                            product.getPriceValue(),
+                            createMenuProductDto.getProductId(),
+                            createMenuProductDto.getQuantity()
+                    );
+                })
                 .collect(Collectors.toList());
+    }
+
+    private Product findProductById(final List<Product> products, final Long productId) {
+        return products.stream()
+                .filter(product -> product.getId().equals(productId))
+                .findAny()
+                .orElseThrow(IllegalArgumentException::new);
     }
 
     public List<MenuDto> list() {

@@ -20,7 +20,8 @@ public class TableDto {
     }
 
     public static TableDto of(OrderTable orderTable) {
-        return new TableDto(orderTable.getId(), orderTable.getTableGroupId(), orderTable.getNumberOfGuests(), orderTable.isEmpty());
+        return new TableDto(orderTable.getId(), orderTable.getTableGroupId(), orderTable.getNumberOfGuests(),
+                orderTable.isEmpty());
     }
 
     public Long getId() {

@@ -43,8 +43,8 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
                 .orElseThrow();
         assertAll(
                 () -> 응답_코드_일치_검증(response, HttpStatus.NO_CONTENT),
-                () -> 단일_데이터_검증(orderTable1.getTableGroupId(), null),
-                () -> 단일_데이터_검증(orderTable2.getTableGroupId(), null)
+                () -> 단일_데이터_검증(orderTable1.getTableGroup(), null),
+                () -> 단일_데이터_검증(orderTable2.getTableGroup(), null)
         );
     }
 }

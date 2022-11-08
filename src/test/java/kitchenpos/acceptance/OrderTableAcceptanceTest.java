@@ -18,11 +18,11 @@ public class OrderTableAcceptanceTest extends AcceptanceTest {
     void createOrderTable() {
         final OrderTable orderTable = OrderTable.create();
         final ExtractableResponse<Response> response = 테이블_등록_요청(orderTable);
-        final OrderTable responseBody = response.body().as(OrderTable.class);
+        final TableDto responseBody = response.body().as(TableDto.class);
 
         assertAll(
                 () -> 응답_코드_일치_검증(response, HttpStatus.CREATED),
-                () -> 단일_데이터_검증(responseBody.isEmpty(), true),
+                () -> 단일_데이터_검증(responseBody.getEmpty(), true),
                 () -> 단일_데이터_검증(responseBody.getNumberOfGuests(), 0)
         );
     }
@@ -34,9 +34,9 @@ public class OrderTableAcceptanceTest extends AcceptanceTest {
         final TableDto orderTable2 = 테이블_등록(0, true);
 
         final ExtractableResponse<Response> response = 테이블_전체_조회_요청();
-        final List<OrderTable> responseBody = response.body()
+        final List<TableDto> responseBody = response.body()
                 .jsonPath()
-                .getList(".", OrderTable.class);
+                .getList(".", TableDto.class);
 
         assertAll(
                 () -> 응답_코드_일치_검증(response, HttpStatus.OK),
@@ -59,13 +59,13 @@ public class OrderTableAcceptanceTest extends AcceptanceTest {
 
         // when
         final ExtractableResponse<Response> response = 테이블_empty_변경_요청(orderTable.getId(), false);
-        final OrderTable responseBody = response.body()
-                .as(OrderTable.class);
+        final TableDto responseBody = response.body()
+                .as(TableDto.class);
 
         // then
         assertAll(
                 () -> 응답_코드_일치_검증(response, HttpStatus.OK),
-                () -> 단일_데이터_검증(responseBody.isEmpty(), false),
+                () -> 단일_데이터_검증(responseBody.getEmpty(), false),
                 () -> 단일_데이터_검증(responseBody.getId(), orderTable.getId())
         );
     }
@@ -78,12 +78,12 @@ public class OrderTableAcceptanceTest extends AcceptanceTest {
         final int numberOfGuests = 5;
 
         final ExtractableResponse<Response> response = 테이블_손님_수_변경_요청(fullTable.getId(), numberOfGuests);
-        final OrderTable responseBody = response.body()
-                .as(OrderTable.class);
+        final TableDto responseBody = response.body()
+                .as(TableDto.class);
 
         assertAll(
                 () -> 응답_코드_일치_검증(response, HttpStatus.OK),
-                () -> 단일_데이터_검증(responseBody.isEmpty(), false),
+                () -> 단일_데이터_검증(responseBody.getEmpty(), false),
                 () -> 단일_데이터_검증(responseBody.getNumberOfGuests(), numberOfGuests),
                 () -> 단일_데이터_검증(responseBody.getId(), orderTable.getId())
         );

@@ -6,7 +6,7 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.math.BigDecimal;
 import kitchenpos.application.dto.ProductDto;
-import kitchenpos.domain.product.Product;
+import kitchenpos.ui.dto.CreateProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -16,7 +16,7 @@ public class ProductAcceptanceTest extends AcceptanceTest {
     @Test
     @DisplayName("신규 상품을 생성할 수 있다")
     void createProduct() {
-        final Product requestBody = Product.create("까르보나라", BigDecimal.valueOf(16000L));
+        final CreateProductRequest requestBody = new CreateProductRequest("까르보나라", BigDecimal.valueOf(16000L));
 
         final ExtractableResponse<Response> response = 상품_등록_요청(requestBody);
         final ProductDto responseBody = response.body().as(ProductDto.class);

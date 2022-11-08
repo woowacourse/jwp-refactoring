@@ -22,7 +22,8 @@ public class OrdersAcceptanceTest extends AcceptanceTest {
     @Test
     @DisplayName("신규 주문을 생성할 수 있다")
     void createOrder() {
-        final Order order = Order.create(손님있는_테이블.getId(), List.of(new OrderLineItem(파스타한상.getId(), 1)));
+        final Order order = Order.create(손님있는_테이블.getId(),
+                List.of(new OrderLineItem(파스타한상.getName(), 파스타한상.getPrice(), 파스타한상.getId(), 1L)));
 
         final ExtractableResponse<Response> response = 메뉴_주문_요청(order);
         final OrderDto responseBody = response.body().as(OrderDto.class);

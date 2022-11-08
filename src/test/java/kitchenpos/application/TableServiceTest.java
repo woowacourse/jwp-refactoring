@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.table.OrderTable;
+import kitchenpos.application.dto.OrderDto;
+import kitchenpos.application.dto.TableDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -15,11 +15,11 @@ class TableServiceTest extends ServiceTest {
     @Test
     @DisplayName("주문 테이블을 생성한다.")
     void create() {
-        final OrderTable savedOrderTable1 = 테이블_등록();
-        final OrderTable savedOrderTable2 = 테이블_등록();
-        final OrderTable savedOrderTable3 = 테이블_등록();
+        final TableDto savedOrderTable1 = 테이블_등록();
+        final TableDto savedOrderTable2 = 테이블_등록();
+        final TableDto savedOrderTable3 = 테이블_등록();
 
-        final List<OrderTable> orderTables = 테이블_전체_조회();
+        final List<TableDto> orderTables = 테이블_전체_조회();
 
         assertAll(
                 () -> assertThat(orderTables).usingElementComparatorIgnoringFields()
@@ -44,7 +44,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     @DisplayName("조리 상태인 테이블은 빈 테이블이 될 수 없다.")
     void changeEmptyWithCookingStatus() {
-        final Order order = 주문_요청한다(손님있는_테이블, 파스타한상.getId());
+        final OrderDto order = 주문_요청한다(손님있는_테이블, 파스타한상.getId());
 
         assertThatThrownBy(() -> 테이블_비움(order.getOrderTableId()))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -53,8 +53,8 @@ class TableServiceTest extends ServiceTest {
     @Test
     @DisplayName("식사 상태인 테이블은 빈 테이블이 될 수 없다.")
     void changeEmptyWithMealStatus() {
-        final Order order = 주문_요청한다(손님있는_테이블, 파스타한상.getId());
-        final Order mealOrder = 주문을_식사_상태로_만든다(order);
+        final OrderDto order = 주문_요청한다(손님있는_테이블, 파스타한상.getId());
+        final OrderDto mealOrder = 주문을_식사_상태로_만든다(order);
         assertThatThrownBy(() -> 테이블_비움(mealOrder.getOrderTableId()))
                 .isInstanceOf(IllegalArgumentException.class);
     }

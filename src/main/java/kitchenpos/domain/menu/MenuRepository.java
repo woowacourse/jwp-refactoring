@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MenuRepository {
+
     Menu save(Menu entity);
 
     Optional<Menu> findById(Long id);
@@ -11,4 +12,6 @@ public interface MenuRepository {
     List<Menu> findAll();
 
     long countByIdIn(List<Long> ids);
+
+    List<Menu> findAllByIdsIn(List<Long> menuIds);
 }

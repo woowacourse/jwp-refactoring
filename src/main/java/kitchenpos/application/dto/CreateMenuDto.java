@@ -2,6 +2,7 @@ package kitchenpos.application.dto;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CreateMenuDto {
 
@@ -37,5 +38,12 @@ public class CreateMenuDto {
 
     public List<CreateMenuProductDto> getMenuProducts() {
         return menuProducts;
+    }
+
+    public List<Long> getProductIds() {
+        return getMenuProducts()
+                .stream()
+                .map(CreateMenuProductDto::getProductId)
+                .collect(Collectors.toList());
     }
 }
