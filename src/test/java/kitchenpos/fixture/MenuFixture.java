@@ -5,12 +5,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import kitchenpos.application.dto.request.MenuProductRequest;
-import kitchenpos.application.dto.request.MenuRequest;
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.menu.Product;
+import kitchenpos.menu.application.request.MenuProductRequest;
+import kitchenpos.menu.application.request.MenuRequest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menuGroup.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.product.domain.Product;
 
 @SuppressWarnings("NonAsciiCharacters")
 public enum MenuFixture {
@@ -34,16 +34,13 @@ public enum MenuFixture {
     }
 
     public Menu toMenu(MenuGroup menuGroup, Product... products) {
-        Menu menu = new Menu(name, price, menuGroup);
-        addMenuProducts(menu, products);
-        return menu;
+        List<MenuProduct> menuProducts = createMenuProducts(products);
+        return new Menu(name, price, menuGroup, menuProducts);
     }
 
-    private void addMenuProducts(Menu menu, Product... products) {
-        List<MenuProduct> menuProducts = Arrays.stream(products)
-                .map(p -> new MenuProduct(menu, p, 1))
+    private List<MenuProduct> createMenuProducts(Product... products) {
+        return Arrays.stream(products)
+                .map(p -> new MenuProduct(p, 1))
                 .collect(Collectors.toList());
-
-        menu.addMenuProducts(menuProducts);
     }
 }
