@@ -5,9 +5,9 @@ import static org.assertj.core.api.Assertions.tuple;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.application.dto.ProductRequest;
-import kitchenpos.domain.Product;
-import kitchenpos.ui.dto.ProductResponse;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.application.dto.request.ProductRequest;
+import kitchenpos.product.application.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +22,13 @@ public class ProductServiceTest extends ApplicationTest {
     void saveProduct() {
         ProductRequest productRequest = new ProductRequest("강정치킨", BigDecimal.valueOf(17_000));
 
-        Product savedProduct = productService.create(productRequest);
+        Long productId = productService.create(productRequest);
 
         List<ProductResponse> products = productService.list();
         assertThat(products).extracting(ProductResponse::getId, ProductResponse::getName,
                         p -> p.getPrice().intValueExact())
                 .containsExactlyInAnyOrder(
-                        tuple(savedProduct.getId(), "강정치킨", 17000)
+                        tuple(productId, "강정치킨", 17000)
                 );
     }
 
@@ -39,17 +39,17 @@ public class ProductServiceTest extends ApplicationTest {
         ProductRequest productRequest2 = new ProductRequest("마늘치킨", BigDecimal.valueOf(18_000));
         ProductRequest productRequest3 = new ProductRequest("간장치킨", BigDecimal.valueOf(19_000));
 
-        Product savedProduct1 = productService.create(productRequest1);
-        Product savedProduct2 = productService.create(productRequest2);
-        Product savedProduct3 = productService.create(productRequest3);
+        Long productId1 = productService.create(productRequest1);
+        Long productId2 = productService.create(productRequest2);
+        Long productId3 = productService.create(productRequest3);
 
         List<ProductResponse> products = productService.list();
         assertThat(products).extracting(ProductResponse::getId, ProductResponse::getName,
                         p -> p.getPrice().intValueExact())
                 .containsExactlyInAnyOrder(
-                        tuple(savedProduct1.getId(), "강정치킨", 17000),
-                        tuple(savedProduct2.getId(), "마늘치킨", 18000),
-                        tuple(savedProduct3.getId(), "간장치킨", 19000)
+                        tuple(productId1, "강정치킨", 17000),
+                        tuple(productId2, "마늘치킨", 18000),
+                        tuple(productId3, "간장치킨", 19000)
                 );
     }
 }

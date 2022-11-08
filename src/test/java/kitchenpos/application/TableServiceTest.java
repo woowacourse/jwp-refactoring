@@ -5,13 +5,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.application.dto.TableEmptyRequest;
-import kitchenpos.common.exception.InvalidOrderException;
-import kitchenpos.common.exception.InvalidTableException;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.exception.InvalidOrderException;
+import kitchenpos.table.application.TableService;
+import kitchenpos.table.application.dto.request.TableEmptyRequest;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.exception.InvalidTableException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -38,14 +39,14 @@ class TableServiceTest extends ApplicationTest {
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
     void changeEmpty(boolean empty) {
-        OrderTable table = 주문테이블_생성(new OrderTable(null, 5, true));
+        Long tableId = 주문테이블_생성(new OrderTable(null, 5, true));
         TableEmptyRequest tableEmptyRequest = new TableEmptyRequest(empty);
 
-        tableService.changeEmpty(table.getId(), tableEmptyRequest);
+        tableService.changeEmpty(tableId, tableEmptyRequest);
 
         List<OrderTable> tables = tableService.list();
         OrderTable foundTable = tables.stream()
-                .filter(t -> table.getId().equals(t.getId()))
+                .filter(t -> tableId.equals(t.getId()))
                 .findFirst()
                 .orElseThrow();
 
@@ -65,11 +66,11 @@ class TableServiceTest extends ApplicationTest {
     @DisplayName("테이블의 empty 변경시 단체 지정 정보가 존재하면 예외가 발생한다.")
     @Test
     void changeEmptyWithTableGroup() {
-        TableGroup tableGroup = 단체지정_생성(new TableGroup(LocalDateTime.now()));
-        OrderTable table = 주문테이블_생성(new OrderTable(tableGroup.getId(), 5, true));
+        Long tableGroupId = 단체지정_생성(new TableGroup(LocalDateTime.now()));
+        Long tableId = 주문테이블_생성(new OrderTable(tableGroupId, 5, true));
         TableEmptyRequest tableEmptyRequest = new TableEmptyRequest(true);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(table.getId(), tableEmptyRequest))
+        assertThatThrownBy(() -> tableService.changeEmpty(tableId, tableEmptyRequest))
                 .isInstanceOf(InvalidTableException.class)
                 .hasMessage("단체 지정 정보가 존재합니다.");
     }
@@ -78,11 +79,11 @@ class TableServiceTest extends ApplicationTest {
     @ParameterizedTest
     @ValueSource(strings = {"COOKING", "MEAL"})
     void changeEmptyWithInvalidOrderStatus(String status) {
-        OrderTable table = 주문테이블_생성(new OrderTable(null, 5, true));
-        주문_생성(new Order(table.getId(), OrderStatus.find(status), LocalDateTime.now()));
+        Long tableId = 주문테이블_생성(new OrderTable(null, 5, true));
+        주문_생성(new Order(tableId, OrderStatus.find(status), LocalDateTime.now()));
         TableEmptyRequest tableEmptyRequest = new TableEmptyRequest(true);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(table.getId(), tableEmptyRequest))
+        assertThatThrownBy(() -> tableService.changeEmpty(tableId, tableEmptyRequest))
                 .isInstanceOf(InvalidOrderException.class)
                 .hasMessage("주문이 완료 상태가 아닙니다.");
     }

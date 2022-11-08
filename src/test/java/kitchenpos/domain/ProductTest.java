@@ -4,7 +4,8 @@ import static kitchenpos.domain.DomainFixture.PRODUCT_NAME;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import kitchenpos.common.exception.InvalidProductException;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.exception.InvalidProductException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

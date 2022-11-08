@@ -5,11 +5,11 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import io.restassured.RestAssured;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.table.application.dto.request.OrderTableRequest;
+import kitchenpos.table.application.dto.request.TableGroupOrderTableRequest;
+import kitchenpos.table.application.dto.request.TableGroupRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -19,15 +19,15 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
     @DisplayName("단체 지정을 저장한다.")
     @Test
     void saveTableGroup() {
-        long table1 = createTable(new OrderTable(null, 2, true));
-        long table2 = createTable(new OrderTable(null, 2, true));
-        long table3 = createTable(new OrderTable(null, 3, true));
+        long table1 = createTable(new OrderTableRequest(2, true));
+        long table2 = createTable(new OrderTableRequest(2, true));
+        long table3 = createTable(new OrderTableRequest(3, true));
 
         List<Long> tableIds = List.of(table1, table2, table3);
-        List<OrderTable> orderTables = tableIds.stream()
-                .map(id -> new OrderTable(id, null, 0, true))
+        List<TableGroupOrderTableRequest> orderTableRequests = tableIds.stream()
+                .map(TableGroupOrderTableRequest::new)
                 .collect(Collectors.toList());
-        TableGroup tableGroup = TableGroup.create(LocalDateTime.now(), orderTables);
+        TableGroupRequest tableGroup = new TableGroupRequest(orderTableRequests);
 
         RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
@@ -35,7 +35,6 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
                 .when().log().all()
                 .post("/api/table-groups")
                 .then().log().all()
-                .statusCode(HttpStatus.CREATED.value())
-                .extract().jsonPath().getLong("id");
+                .statusCode(HttpStatus.CREATED.value());
     }
 }

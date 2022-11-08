@@ -8,25 +8,26 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import io.restassured.RestAssured;
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.ui.dto.MenuResponse;
+import kitchenpos.menu.application.dto.request.MenuProductRequest;
+import kitchenpos.menu.application.dto.request.MenuRequest;
+import kitchenpos.menu.application.dto.response.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
-
 public class MenuAcceptanceTest extends AcceptanceTest {
 
-    public static long createMenu(Menu menu) {
-        return RestAssured.given().log().all()
+    public static Long createMenu(MenuRequest menu) {
+        String location = RestAssured.given().log().all()
                 .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
                 .body(menu)
                 .when().log().all()
                 .post("/api/menus")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
-                .extract().jsonPath().getLong("id");
+                .extract().header("Location");
+
+        return Long.parseLong(location.split("/api/menus/")[1]);
     }
 
     @DisplayName("메뉴 목록을 조회한다.")
@@ -39,19 +40,21 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         Long productId3 = ProductAcceptanceTest.createProduct("피자", 12000);
         Long productId4 = ProductAcceptanceTest.createProduct("수육", 18000);
 
-        MenuProduct menuProduct1 = new MenuProduct(productId1, 1, BigDecimal.valueOf(9000));
-        MenuProduct menuProduct2 = new MenuProduct(productId2, 1, BigDecimal.valueOf(7000));
-        MenuProduct menuProduct3 = new MenuProduct(productId3, 1, BigDecimal.valueOf(12000));
-        MenuProduct menuProduct4 = new MenuProduct(productId4, 1, BigDecimal.valueOf(18000));
+        MenuProductRequest menuProduct1 = new MenuProductRequest(productId1, 1);
+        MenuProductRequest menuProduct2 = new MenuProductRequest(productId2, 1);
+        MenuProductRequest menuProduct3 = new MenuProductRequest(productId3, 1);
+        MenuProductRequest menuProduct4 = new MenuProductRequest(productId4, 1);
 
         Long menuId1 = createMenu(
-                Menu.create("해장 세트", BigDecimal.valueOf(15_000), menuGroupId, List.of(menuProduct1, menuProduct2)));
+                new MenuRequest("해장 세트", BigDecimal.valueOf(15_000), menuGroupId, List.of(menuProduct1, menuProduct2)));
         Long menuId2 = createMenu(
-                Menu.create("아재 세트", BigDecimal.valueOf(13_000), menuGroupId, List.of(menuProduct3, menuProduct2)));
+                new MenuRequest("아재 세트", BigDecimal.valueOf(13_000), menuGroupId, List.of(menuProduct3, menuProduct2)));
         Long menuId3 = createMenu(
-                Menu.create("피자치킨 세트", BigDecimal.valueOf(12_000), menuGroupId, List.of(menuProduct1, menuProduct3)));
+                new MenuRequest("피자치킨 세트", BigDecimal.valueOf(12_000), menuGroupId,
+                        List.of(menuProduct1, menuProduct3)));
         Long menuId4 = createMenu(
-                Menu.create("국밥 수육 메뉴", BigDecimal.valueOf(27_000), menuGroupId, List.of(menuProduct3, menuProduct4)));
+                new MenuRequest("국밥 수육 메뉴", BigDecimal.valueOf(27_000), menuGroupId,
+                        List.of(menuProduct3, menuProduct4)));
 
         List<MenuResponse> menus = getMenus();
 

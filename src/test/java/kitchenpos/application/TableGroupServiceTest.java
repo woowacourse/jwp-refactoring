@@ -5,11 +5,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.common.exception.InvalidOrderException;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.exception.InvalidOrderException;
+import kitchenpos.table.application.TableGroupService;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -24,13 +25,13 @@ class TableGroupServiceTest extends ApplicationTest {
     @DisplayName("테이블의 그룹을 해제한다.")
     @Test
     void ungroup() {
-        TableGroup tableGroup = 단체지정_생성(new TableGroup(LocalDateTime.now()));
-        OrderTable table1 = 주문테이블_생성(new OrderTable(tableGroup.getId(), 5, true));
-        OrderTable table2 = 주문테이블_생성(new OrderTable(tableGroup.getId(), 5, true));
+        Long tableGroupId = 단체지정_생성(new TableGroup(LocalDateTime.now()));
+        Long tableId1 = 주문테이블_생성(new OrderTable(tableGroupId, 5, true));
+        Long tableId2 = 주문테이블_생성(new OrderTable(tableGroupId, 5, true));
 
-        tableGroupService.ungroup(tableGroup.getId());
+        tableGroupService.ungroup(tableGroupId);
 
-        List<OrderTable> tables = orderTableDao.findAllByIdIn(List.of(table1.getId(), table2.getId()));
+        List<OrderTable> tables = orderTableDao.findAllByIdIn(List.of(tableId1, tableId2));
 
         assertThat(tables).extracting("tableGroupId")
                 .containsOnlyNulls();
@@ -40,13 +41,13 @@ class TableGroupServiceTest extends ApplicationTest {
     @ParameterizedTest
     @ValueSource(strings = {"COOKING", "MEAL"})
     void ungroupNotCompletion(String status) {
-        TableGroup tableGroup = 단체지정_생성(new TableGroup(LocalDateTime.now()));
-        OrderTable table1 = 주문테이블_생성(new OrderTable(tableGroup.getId(), 5, true));
-        OrderTable table2 = 주문테이블_생성(new OrderTable(tableGroup.getId(), 5, true));
+        Long tableGroupId = 단체지정_생성(new TableGroup(LocalDateTime.now()));
+        Long tableId1 = 주문테이블_생성(new OrderTable(tableGroupId, 5, true));
+        Long tableId2 = 주문테이블_생성(new OrderTable(tableGroupId, 5, true));
 
-        주문_생성(new Order(table1.getId(), OrderStatus.find(status), LocalDateTime.now()));
+        주문_생성(new Order(tableId1, OrderStatus.find(status), LocalDateTime.now()));
 
-        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
+        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
                 .isInstanceOf(InvalidOrderException.class)
                 .hasMessage("주문이 완료 상태가 아닙니다.");
     }

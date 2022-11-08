@@ -1,21 +1,19 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.menu.dao.MenuDao;
+import kitchenpos.menu.dao.MenuGroupDao;
+import kitchenpos.menu.dao.MenuProductDao;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.order.dao.OrderDao;
+import kitchenpos.order.dao.OrderLineItemDao;
+import kitchenpos.order.domain.Order;
+import kitchenpos.product.dao.ProductDao;
+import kitchenpos.product.domain.Product;
+import kitchenpos.table.dao.OrderTableDao;
+import kitchenpos.table.dao.TableGroupDao;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -49,35 +47,27 @@ public class ApplicationTest {
     @Autowired
     protected ProductDao productDao;
 
-    protected Menu 메뉴_생성(Menu menu) {
+    protected Long 메뉴_생성(Menu menu) {
         return menuDao.save(menu);
     }
 
-    protected MenuGroup 메뉴그룹_생성(MenuGroup menuGroup) {
+    protected Long 메뉴그룹_생성(MenuGroup menuGroup) {
         return menuGroupDao.save(menuGroup);
     }
 
-    protected MenuProduct 메뉴상품_생성(MenuProduct menuProduct) {
-        return menuProductDao.save(menuProduct);
-    }
-
-    protected OrderTable 주문테이블_생성(OrderTable orderTable) {
+    protected Long 주문테이블_생성(OrderTable orderTable) {
         return orderTableDao.save(orderTable);
     }
 
-    protected TableGroup 단체지정_생성(TableGroup tableGroup) {
+    protected Long 단체지정_생성(TableGroup tableGroup) {
         return tableGroupDao.save(tableGroup);
     }
 
-    protected OrderLineItem 주문아이템_생성(OrderLineItem orderLineItem) {
-        return orderLineItemDao.save(orderLineItem);
-    }
-
-    protected Product 상품_생성(Product product) {
+    protected Long 상품_생성(Product product) {
         return productDao.save(product);
     }
 
-    protected Order 주문_생성(Order order) {
+    protected Long 주문_생성(Order order) {
         return orderDao.save(order);
     }
 }
