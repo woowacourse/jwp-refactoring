@@ -27,6 +27,6 @@ public class ProductService {
     }
 
     public List<ProductResponse> list() {
-        return ProductResponse.fromAll(productDao.findAll());
+        return ProductResponse.from(productDao.findAll());
     }
 }

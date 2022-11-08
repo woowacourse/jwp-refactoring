@@ -20,12 +20,12 @@ public class OrderResponse {
         this.orderedTime = orderedTime;
     }
 
-    public static OrderResponse from(Order order) {
+    public static OrderResponse from(final Order order) {
         return new OrderResponse(order.getId(), order.getOrderTableId(), order.getOrderStatus(),
             order.getOrderedTime());
     }
 
-    public static List<OrderResponse> fromAll(final List<Order> orders) {
+    public static List<OrderResponse> from(final List<Order> orders) {
         return orders.stream()
             .map(OrderResponse::from)
             .collect(Collectors.toUnmodifiableList());

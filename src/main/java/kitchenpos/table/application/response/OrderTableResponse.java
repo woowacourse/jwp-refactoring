@@ -24,7 +24,7 @@ public class OrderTableResponse {
             orderTable.getEmpty());
     }
 
-    public static List<OrderTableResponse> fromAll(final List<OrderTable> orderTables) {
+    public static List<OrderTableResponse> from(final List<OrderTable> orderTables) {
         return orderTables.stream()
             .map(OrderTableResponse::from)
             .collect(Collectors.toUnmodifiableList());

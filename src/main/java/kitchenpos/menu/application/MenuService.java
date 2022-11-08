@@ -28,8 +28,7 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuRequest request) {
-        Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(),
-            request.getMenuProducts());
+        Menu menu = request.toEntity();
         menuValidator.validate(menu);
         Menu savedMenu = menuDao.save(menu);
         menuCreateEventPublisher.publish(savedMenu);
@@ -37,6 +36,6 @@ public class MenuService {
     }
 
     public List<MenuResponse> list() {
-        return MenuResponse.fromAll(menuDao.findAll());
+        return MenuResponse.from(menuDao.findAll());
     }
 }

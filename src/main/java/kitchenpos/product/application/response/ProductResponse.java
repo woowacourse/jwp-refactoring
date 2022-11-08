@@ -22,7 +22,7 @@ public class ProductResponse {
         return new ProductResponse(product.getId(), product.getName(), product.getPrice());
     }
 
-    public static List<ProductResponse> fromAll(final List<Product> products) {
+    public static List<ProductResponse> from(final List<Product> products) {
         return products.stream()
             .map(ProductResponse::from)
             .collect(Collectors.toUnmodifiableList());

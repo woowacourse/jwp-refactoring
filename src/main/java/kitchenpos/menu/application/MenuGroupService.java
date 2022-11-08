@@ -27,6 +27,6 @@ public class MenuGroupService {
     }
 
     public List<MenuGroupResponse> list() {
-        return MenuGroupResponse.fromAll(menuGroupDao.findAll());
+        return MenuGroupResponse.from(menuGroupDao.findAll());
     }
 }

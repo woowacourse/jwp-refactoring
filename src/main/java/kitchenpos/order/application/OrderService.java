@@ -51,7 +51,7 @@ public class OrderService {
     }
 
     public List<OrderResponse> list() {
-        return OrderResponse.fromAll(orderDao.findAll());
+        return OrderResponse.from(orderDao.findAll());
     }
 
     @Transactional

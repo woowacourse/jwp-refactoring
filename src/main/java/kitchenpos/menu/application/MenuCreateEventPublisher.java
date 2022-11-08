@@ -8,10 +8,10 @@ import kitchenpos.menu.domain.MenuCreateEvent;
 
 @Component
 public class MenuCreateEventPublisher {
+
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    public MenuCreateEventPublisher(
-        final ApplicationEventPublisher applicationEventPublisher) {
+    public MenuCreateEventPublisher(final ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 

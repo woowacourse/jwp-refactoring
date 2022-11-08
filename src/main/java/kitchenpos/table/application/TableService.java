@@ -32,7 +32,7 @@ public class TableService {
     }
 
     public List<OrderTableResponse> list() {
-        return OrderTableResponse.fromAll(orderTableDao.findAll());
+        return OrderTableResponse.from(orderTableDao.findAll());
     }
 
     @Transactional
