@@ -47,10 +47,6 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
-    public void addOrderIdsToOrderLineItems(final Long orderId) {
-        orderLineItems.addOrderId(orderId);
-    }
-
     public Long getId() {
         return id;
     }

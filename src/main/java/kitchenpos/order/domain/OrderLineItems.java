@@ -26,10 +26,4 @@ public class OrderLineItems {
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
     }
-
-    public void addOrderId(final Long orderId) {
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.setOrderId(orderId);
-        }
-    }
 }
