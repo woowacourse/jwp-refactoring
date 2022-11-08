@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.request.MenuCreateRequest;
-import kitchenpos.application.request.MenuCreateRequest.MenuProductCreateRequest;
+import kitchenpos.menu.application.MenuCreateRequest;
+import kitchenpos.menu.application.MenuCreateRequest.MenuProductCreateRequest;
 
 public class MenuCreateRequestFixture {
 
