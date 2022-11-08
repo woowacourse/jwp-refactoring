@@ -1,13 +1,12 @@
 package kitchenpos.domain;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.common.vo.Price;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -28,7 +27,8 @@ class MenuTest {
         @DisplayName("메뉴의 가격이 null이거나 음수인 경우 예외를 던진다.")
         void price_LessThanZero_ExceptionThrown(final BigDecimal price) {
             assertThatThrownBy(
-                    () -> new Menu("크림치킨", Price.valueOf(price), 1L, List.of(new MenuProduct(1L, 1L, BigDecimal.TEN))))
+                    () -> new Menu("크림치킨", Price.valueOf(price), 1L,
+                            List.of(new MenuProduct(1L, 1L, 1L, Price.valueOf(BigDecimal.TEN)))))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -37,7 +37,7 @@ class MenuTest {
         void price_MoreThanSumOfMenuProducts_ExceptionThrown() {
             assertThatThrownBy(
                     () -> new Menu("크림치킨", Price.valueOf(BigDecimal.valueOf(100L)), 1L,
-                            List.of(new MenuProduct(1L, 1L, BigDecimal.TEN))))
+                            List.of(new MenuProduct(1L, 1L, 1L, Price.valueOf(BigDecimal.TEN)))))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

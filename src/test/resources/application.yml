@@ -6,3 +6,10 @@ spring:
     password:
   flyway:
     enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true

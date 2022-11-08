@@ -4,7 +4,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +21,7 @@ class MenuGroupServiceTest extends ServiceTest {
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
 
         // then
-        Optional<MenuGroup> actual = menuGroupDao.findById(savedMenuGroup.getId());
+        Optional<MenuGroup> actual = menuGroupRepository.findById(savedMenuGroup.getId());
         assertThat(actual).isPresent();
     }
 

@@ -9,16 +9,14 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTables;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.TableGroupRequest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.product.domain.Product;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.dto.TableGroupRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -38,28 +36,14 @@ class TableGroupServiceTest extends ServiceTest {
             // given
             OrderTable orderTable1 = saveOrderTable(2, true);
             OrderTable orderTable2 = saveOrderTable(4, true);
-            OrderTables orderTables = new OrderTables(List.of(orderTable1, orderTable2));
-
-            TableGroupRequest request = new TableGroupRequest(orderTables);
+            TableGroupRequest request = new TableGroupRequest(List.of(orderTable1, orderTable2));
 
             // when
             TableGroup savedTableGroup = tableGroupService.create(request);
 
             // then
-            Optional<TableGroup> actual = tableGroupDao.findById(savedTableGroup.getId());
+            Optional<TableGroup> actual = tableGroupRepository.findById(savedTableGroup.getId());
             assertThat(actual).isPresent();
-        }
-
-        @Test
-        @DisplayName("그룹화할 orderTable이 2개 미만인 경우 예외를 던진다.")
-        void orderTableSize_SmallerThanTwo_ExceptionThrown() {
-            // given
-            OrderTable orderTable1 = saveOrderTable(2, true);
-            TableGroupRequest request = createTableGroupRequest(orderTable1);
-
-            // when & then
-            assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -96,13 +80,8 @@ class TableGroupServiceTest extends ServiceTest {
             OrderTable orderTable2 = saveOrderTable(0, true);
             OrderTable orderTable3 = saveOrderTable(0, true);
             OrderTable orderTable4 = saveOrderTable(0, true);
-            TableGroup tableGroup = saveTableGroup(orderTable1, orderTable2, orderTable3, orderTable4);
-            OrderTable[] orderTables = tableGroup.getOrderTables()
-                    .stream().map(OrderTable::getId)
-                    .map(it -> new OrderTable(orderTable1.getId(), null, 0, true))
-                    .toArray(OrderTable[]::new);
-
-            TableGroupRequest request = createTableGroupRequest(orderTables);
+            saveTableGroup(orderTable1, orderTable2, orderTable3, orderTable4);
+            TableGroupRequest request = createTableGroupRequest(orderTable1, orderTable2);
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(request))
@@ -126,14 +105,14 @@ class TableGroupServiceTest extends ServiceTest {
             tableGroupService.ungroup(savedTableGroup.getId());
 
             // then
-            Optional<OrderTable> actualOrderTable1 = orderTableDao.findById(orderTable1.getId());
-            Optional<OrderTable> actualOrderTable2 = orderTableDao.findById(orderTable2.getId());
+            Optional<OrderTable> actualOrderTable1 = orderTableRepository.findById(orderTable1.getId());
+            Optional<OrderTable> actualOrderTable2 = orderTableRepository.findById(orderTable2.getId());
             assertThat(actualOrderTable1).isPresent();
             assertThat(actualOrderTable2).isPresent();
             assertAll(
-                    () -> assertThat(actualOrderTable1.get().getTableGroupId()).isNull(),
+                    () -> assertThat(actualOrderTable1.get().getTableGroup()).isNull(),
                     () -> assertThat(actualOrderTable1.get().isEmpty()).isFalse(),
-                    () -> assertThat(actualOrderTable2.get().getTableGroupId()).isNull(),
+                    () -> assertThat(actualOrderTable2.get().getTableGroup()).isNull(),
                     () -> assertThat(actualOrderTable2.get().isEmpty()).isFalse()
             );
         }
@@ -155,6 +134,7 @@ class TableGroupServiceTest extends ServiceTest {
             Menu menu1 = saveMenu("크림치킨", menuGroup, product);
             Menu menu2 = saveMenu("크림어니언치킨", menuGroup, product);
             Order savedOrder = saveOrder(orderTable1, menu1, menu2);
+            entityManager.flush();
             updateOrder(savedOrder, orderStatus.name());
 
             // when & then

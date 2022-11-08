@@ -7,8 +7,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.Product;
-import kitchenpos.dto.ProductRequest;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.dto.ProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -47,7 +47,7 @@ class ProductServiceTest extends ServiceTest {
             Product savedProduct = productService.create(request);
 
             // then
-            Optional<Product> actual = productDao.findById(savedProduct.getId());
+            Optional<Product> actual = productRepository.findById(savedProduct.getId());
             assertThat(actual).isPresent();
         }
 
