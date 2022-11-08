@@ -1,7 +1,7 @@
 package kitchenpos.dto.request;
 
 import javax.validation.constraints.NotNull;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.table.OrderTable;
 
 public class TableGroupCreateWithTableRequest {
 

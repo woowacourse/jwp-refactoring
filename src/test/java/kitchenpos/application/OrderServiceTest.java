@@ -6,34 +6,33 @@ import static kitchenpos.support.DomainFixture.뿌링클_치즈볼_메뉴_생성
 import static kitchenpos.support.DomainFixture.세트_메뉴;
 import static kitchenpos.support.DomainFixture.채워진_테이블_생성;
 import static kitchenpos.support.DomainFixture.치즈볼;
-import static kitchenpos.support.DomainFixture.한개;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.application.order.OrderService;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.dto.request.OrderChangeStatusRequest;
 import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderLineItemCreateRequest;
 import kitchenpos.exception.CustomError;
 import kitchenpos.exception.DomainLogicException;
 import kitchenpos.exception.NotFoundException;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.ProductRepository;
+import kitchenpos.repository.menu.MenuGroupRepository;
+import kitchenpos.repository.menu.MenuRepository;
+import kitchenpos.repository.order.OrderRepository;
+import kitchenpos.repository.product.ProductRepository;
+import kitchenpos.repository.table.OrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.jdbc.Sql;
 
 @DataJpaTest
@@ -59,7 +58,7 @@ class OrderServiceTest {
         this.menuRepository = menuRepository;
         this.orderTableRepository = orderTableRepository;
         this.orderRepository = orderRepository;
-        this.orderService = new OrderService(orderTableRepository, orderRepository);
+        this.orderService = new OrderService(orderTableRepository, orderRepository, menuRepository);
     }
 
     private Menu menu;
@@ -113,7 +112,9 @@ class OrderServiceTest {
 
         // when & then
         assertThatThrownBy(() -> orderService.create(request))
-                .isInstanceOf(DataIntegrityViolationException.class);
+                .isInstanceOf(NotFoundException.class)
+                .extracting("errorCode")
+                .isEqualTo(CustomError.MENU_NOT_FOUND_ERROR);
     }
 
     @Test
@@ -146,10 +147,10 @@ class OrderServiceTest {
     @Test
     void 주문_목록을_조회한다() {
         // given
-        orderRepository.save(new Order(null, table, OrderStatus.COOKING, LocalDateTime.now(),
-                List.of(new OrderLineItem(menu.getId(), 한개))));
-        orderRepository.save(new Order(null, table, OrderStatus.COOKING, LocalDateTime.now(),
-                List.of(new OrderLineItem(menu.getId(), 한개))));
+        orderRepository.save(new Order(null, table.getId(), OrderStatus.COOKING, LocalDateTime.now(),
+                List.of(new OrderLineItem(menu.getId(), 1, menu.getName(), menu.getPrice()))));
+        orderRepository.save(new Order(null, table.getId(), OrderStatus.COOKING, LocalDateTime.now(),
+                List.of(new OrderLineItem(menu.getId(), 1, menu.getName(), menu.getPrice()))));
 
         // when
         final var foundOrders = orderService.list();
@@ -161,8 +162,9 @@ class OrderServiceTest {
     @Test
     void 주문_상태를_식사로_변경한다() {
         // given
-        final var orderId = orderRepository.save(new Order(null, table, OrderStatus.COOKING, LocalDateTime.now(),
-                List.of(new OrderLineItem(menu.getId(), 한개)))).getId();
+        final var orderId = orderRepository.save(
+                new Order(null, table.getId(), OrderStatus.COOKING, LocalDateTime.now(),
+                        List.of(new OrderLineItem(menu.getId(), 1, menu.getName(), menu.getPrice())))).getId();
         final var request = new OrderChangeStatusRequest(OrderStatus.MEAL.name());
 
         // when
@@ -178,8 +180,9 @@ class OrderServiceTest {
     @Test
     void 주문_상태를_계산완료로_변경한다() {
         // given
-        final var orderId = orderRepository.save(new Order(null, table, OrderStatus.COOKING, LocalDateTime.now(),
-                List.of(new OrderLineItem(menu.getId(), 한개)))).getId();
+        final var orderId = orderRepository.save(
+                new Order(null, table.getId(), OrderStatus.COOKING, LocalDateTime.now(),
+                        List.of(new OrderLineItem(menu.getId(), 1, menu.getName(), menu.getPrice())))).getId();
         final var request = new OrderChangeStatusRequest(OrderStatus.COMPLETION.name());
 
         // when
@@ -207,8 +210,9 @@ class OrderServiceTest {
     @Test
     void 주문_상태가_이미_계산완료인_경우_예외를_던진다() {
         // given
-        final var orderId = orderRepository.save(new Order(null, table, OrderStatus.COMPLETION, LocalDateTime.now(),
-                List.of(new OrderLineItem(menu.getId(), 한개)))).getId();
+        final var orderId = orderRepository.save(
+                new Order(null, table.getId(), OrderStatus.COMPLETION, LocalDateTime.now(),
+                        List.of(new OrderLineItem(menu.getId(), 1, menu.getName(), menu.getPrice())))).getId();
         final var request = new OrderChangeStatusRequest(OrderStatus.MEAL.name());
 
         // when & then

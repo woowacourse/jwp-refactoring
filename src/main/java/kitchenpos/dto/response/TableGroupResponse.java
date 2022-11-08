@@ -3,20 +3,20 @@ package kitchenpos.dto.response;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.TableGroup;
 
 public class TableGroupResponse {
 
     private Long id;
     private LocalDateTime createdDate;
-    private List<TableResponse> orderTables;
+    private List<OrderTableResponse> orderTables;
 
     private TableGroupResponse() {
     }
 
     private TableGroupResponse(final Long id, final LocalDateTime createdDate,
-                              final List<TableResponse> orderTables) {
+                              final List<OrderTableResponse> orderTables) {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
@@ -26,9 +26,9 @@ public class TableGroupResponse {
         return new TableGroupResponse(tableGroup.getId(), tableGroup.getCreatedDate(), toTableResponses(tableGroup.getTables()));
     }
 
-    public static List<TableResponse> toTableResponses(final List<OrderTable> orderTables) {
+    public static List<OrderTableResponse> toTableResponses(final List<OrderTable> orderTables) {
         return orderTables.stream()
-                .map(TableResponse::from)
+                .map(OrderTableResponse::from)
                 .collect(Collectors.toUnmodifiableList());
     }
 
@@ -40,7 +40,7 @@ public class TableGroupResponse {
         return createdDate;
     }
 
-    public List<TableResponse> getOrderTables() {
+    public List<OrderTableResponse> getOrderTables() {
         return orderTables;
     }
 }

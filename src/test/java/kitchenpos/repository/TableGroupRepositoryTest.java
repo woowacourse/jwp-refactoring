@@ -7,7 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.EntityManager;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.table.TableGroup;
+import kitchenpos.repository.table.OrderTableRepository;
+import kitchenpos.repository.table.TableGroupRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -39,8 +41,7 @@ class TableGroupRepositoryTest {
         // then
         assertAll(
                 () -> assertThat(saved.getId()).isNotNull(),
-                () -> assertThat(saved.getTables()).hasSize(2),
-                () -> assertThat(tableA.getTableGroup()).isEqualTo(saved)
+                () -> assertThat(saved.getTables()).hasSize(2)
         );
     }
 

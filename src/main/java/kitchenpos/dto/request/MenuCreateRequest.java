@@ -2,10 +2,8 @@ package kitchenpos.dto.request;
 
 import com.sun.istack.NotNull;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Name;
-import kitchenpos.domain.Price;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuProduct;
 
 public class MenuCreateRequest {
 
@@ -49,6 +47,6 @@ public class MenuCreateRequest {
     }
 
     public Menu toMenu(final List<MenuProduct> menuProducts) {
-        return new Menu(new Name(this.name), Price.valueOf(this.price), this.menuGroupId, menuProducts);
+        return new Menu(this.name, this.price, this.menuGroupId, menuProducts);
     }
 }

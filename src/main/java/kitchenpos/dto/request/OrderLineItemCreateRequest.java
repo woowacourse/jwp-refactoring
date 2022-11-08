@@ -1,8 +1,7 @@
 package kitchenpos.dto.request;
 
 import javax.validation.constraints.NotNull;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.Quantity;
+import kitchenpos.domain.order.OrderLineItem;
 
 public class OrderLineItemCreateRequest {
 
@@ -21,7 +20,7 @@ public class OrderLineItemCreateRequest {
     }
 
     public OrderLineItem toOrderLineItem() {
-        return new OrderLineItem(menuId, new Quantity(quantity));
+        return new OrderLineItem(menuId, quantity);
     }
 
     public Long getMenuId() {
