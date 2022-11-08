@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import kitchenpos.exception.OrderTableConvertEmptyStatusException;
 import kitchenpos.exception.OrderTableUnableUngroupingStatusException;
 
 @Entity
@@ -33,14 +34,17 @@ public class OrderDetail {
     }
 
     public void ungrouping() {
-        validateStatus();
+        if (order.isNotCompletion()) {
+            throw new OrderTableUnableUngroupingStatusException();
+        }
         orderTable.ungrouping();
     }
 
-    private void validateStatus() {
-        if (order.isUnableToUngrouping()) {
-            throw new OrderTableUnableUngroupingStatusException();
+    public void changeEmpty(boolean empty) {
+        if (order.isNotCompletion()) {
+            throw new OrderTableConvertEmptyStatusException();
         }
+        this.orderTable.changeEmpty(empty);
     }
 
     public Long getId() {

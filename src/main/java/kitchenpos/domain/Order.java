@@ -42,7 +42,7 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
-    public boolean isUnableToUngrouping() {
+    public boolean isNotCompletion() {
         return !orderStatus.equals(OrderStatus.COMPLETION);
     }
 

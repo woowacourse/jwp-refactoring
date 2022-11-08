@@ -1,11 +1,10 @@
 package kitchenpos.application;
 
 import java.util.List;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderDetail;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.exception.NotFoundOrderTableException;
-import kitchenpos.exception.OrderTableConvertEmptyStatusException;
-import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderDetailRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.ui.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.ui.dto.request.OrderTableChangeNumberOfGuestsRequest;
@@ -15,12 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderDetailRepository orderDetailRepository;
 
-    public TableService(OrderRepository orderRepository, OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(OrderTableRepository orderTableRepository, OrderDetailRepository orderDetailRepository) {
         this.orderTableRepository = orderTableRepository;
+        this.orderDetailRepository = orderDetailRepository;
     }
 
     @Transactional
@@ -35,19 +34,11 @@ public class TableService {
 
     @Transactional
     public OrderTable changeEmpty(Long orderTableId, OrderTableChangeEmptyRequest request) {
-        validateOrderTableStatus(orderTableId);
+        OrderDetail orderDetail = orderDetailRepository.findByOrderTableId(orderTableId)
+                .orElseThrow(NotFoundOrderTableException::new);
+        orderDetail.changeEmpty(request.getEmpty());
 
-        OrderTable orderTable = findOrderTable(orderTableId);
-        orderTable.changeEmpty(request.getEmpty());
-
-        return orderTable;
-    }
-
-    private void validateOrderTableStatus(Long orderTableId) {
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId,
-                List.of(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new OrderTableConvertEmptyStatusException();
-        }
+        return orderDetail.getOrderTable();
     }
 
     @Transactional
