@@ -1,6 +1,6 @@
-package kitchenpos.order.application.validator;
+package kitchenpos.table.application.validator;
 
-import kitchenpos.order.domain.TableGroup;
+import kitchenpos.table.domain.TableGroup;
 
 public interface TableUngroupValidator {
 

@@ -6,7 +6,8 @@ import org.springframework.stereotype.Component;
 
 import kitchenpos.order.dao.OrderDao;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.OrderTable;
+import kitchenpos.table.application.validator.TableChangeEmptyValidator;
+import kitchenpos.table.domain.OrderTable;
 
 @Component
 public class TableChangeEmptyValidatorImpl implements TableChangeEmptyValidator {

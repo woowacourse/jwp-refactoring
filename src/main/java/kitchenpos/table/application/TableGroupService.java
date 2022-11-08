@@ -1,14 +1,14 @@
-package kitchenpos.order.application;
+package kitchenpos.table.application;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.menu.application.request.TableGroupRequest;
-import kitchenpos.order.application.response.TableGroupResponse;
-import kitchenpos.order.application.validator.TableGroupValidator;
-import kitchenpos.order.application.validator.TableUngroupValidator;
-import kitchenpos.order.dao.TableGroupDao;
-import kitchenpos.order.domain.TableGroup;
+import kitchenpos.table.application.response.TableGroupResponse;
+import kitchenpos.table.application.validator.TableGroupValidator;
+import kitchenpos.table.application.validator.TableUngroupValidator;
+import kitchenpos.table.dao.TableGroupDao;
+import kitchenpos.table.domain.TableGroup;
 
 @Service
 @Transactional(readOnly = true)

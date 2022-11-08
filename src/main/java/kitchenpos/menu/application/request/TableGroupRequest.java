@@ -3,8 +3,8 @@ package kitchenpos.menu.application.request;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import kitchenpos.order.application.request.OrderTableRequest;
-import kitchenpos.order.domain.OrderTable;
+import kitchenpos.table.application.request.OrderTableRequest;
+import kitchenpos.table.domain.OrderTable;
 
 public class TableGroupRequest {
 

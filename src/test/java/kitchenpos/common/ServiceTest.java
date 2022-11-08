@@ -7,12 +7,12 @@ import org.springframework.test.context.jdbc.Sql;
 import kitchenpos.menu.application.MenuGroupService;
 import kitchenpos.menu.application.MenuService;
 import kitchenpos.order.application.OrderService;
-import kitchenpos.order.application.TableGroupService;
-import kitchenpos.order.application.TableService;
 import kitchenpos.order.dao.OrderDao;
-import kitchenpos.order.dao.OrderTableDao;
-import kitchenpos.order.dao.TableGroupDao;
 import kitchenpos.product.application.ProductService;
+import kitchenpos.table.application.TableGroupService;
+import kitchenpos.table.application.TableService;
+import kitchenpos.table.dao.OrderTableDao;
+import kitchenpos.table.dao.TableGroupDao;
 
 @SpringBootTest
 @Sql("classpath:truncate.sql")

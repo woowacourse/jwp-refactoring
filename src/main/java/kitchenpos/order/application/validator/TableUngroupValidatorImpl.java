@@ -7,10 +7,11 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 import kitchenpos.order.dao.OrderDao;
-import kitchenpos.order.dao.OrderTableDao;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.OrderTable;
-import kitchenpos.order.domain.TableGroup;
+import kitchenpos.table.application.validator.TableUngroupValidator;
+import kitchenpos.table.dao.OrderTableDao;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
 
 @Component
 public class TableUngroupValidatorImpl implements TableUngroupValidator {

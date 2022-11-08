@@ -12,8 +12,8 @@ import io.restassured.response.ValidatableResponse;
 import kitchenpos.menu.application.request.MenuGroupRequest;
 import kitchenpos.menu.application.request.MenuRequest;
 import kitchenpos.order.application.request.OrderRequest;
-import kitchenpos.order.application.request.OrderTableRequest;
 import kitchenpos.product.application.request.ProductCreateRequest;
+import kitchenpos.table.application.request.OrderTableRequest;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql("classpath:truncate.sql")

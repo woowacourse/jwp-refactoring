@@ -1,12 +1,12 @@
-package kitchenpos.order.acceptance;
+package kitchenpos.table.acceptance;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 import kitchenpos.common.AcceptanceTest;
-import kitchenpos.order.application.request.OrderTableRequest;
-import kitchenpos.order.domain.OrderTable;
+import kitchenpos.table.application.request.OrderTableRequest;
+import kitchenpos.table.domain.OrderTable;
 
 public class TableAcceptanceTest extends AcceptanceTest {
 

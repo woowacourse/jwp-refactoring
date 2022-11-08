@@ -1,4 +1,4 @@
-package kitchenpos.order.ui;
+package kitchenpos.table.ui;
 
 import java.net.URI;
 import java.util.List;
@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import kitchenpos.order.application.TableService;
-import kitchenpos.order.application.request.OrderTableRequest;
-import kitchenpos.order.application.response.OrderTableResponse;
+import kitchenpos.table.application.TableService;
+import kitchenpos.table.application.request.OrderTableRequest;
+import kitchenpos.table.application.response.OrderTableResponse;
 
 @RestController
 @RequestMapping("/api/tables")

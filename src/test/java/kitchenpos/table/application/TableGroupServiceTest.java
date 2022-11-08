@@ -1,4 +1,4 @@
-package kitchenpos.order.application;
+package kitchenpos.table.application;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -9,9 +9,9 @@ import org.junit.jupiter.api.Test;
 
 import kitchenpos.common.ServiceTest;
 import kitchenpos.menu.application.request.TableGroupRequest;
-import kitchenpos.order.application.request.OrderTableRequest;
-import kitchenpos.order.application.response.TableGroupResponse;
-import kitchenpos.order.domain.OrderTable;
+import kitchenpos.table.application.request.OrderTableRequest;
+import kitchenpos.table.application.response.TableGroupResponse;
+import kitchenpos.table.domain.OrderTable;
 
 public class TableGroupServiceTest extends ServiceTest {
 

@@ -5,9 +5,9 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import kitchenpos.order.dao.OrderTableDao;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.table.dao.OrderTableDao;
 
 @Component
 public class OrderValidatorImpl implements OrderValidator {

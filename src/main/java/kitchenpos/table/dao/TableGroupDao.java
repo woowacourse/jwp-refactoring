@@ -1,9 +1,9 @@
-package kitchenpos.order.dao;
+package kitchenpos.table.dao;
 
 import java.util.List;
 import java.util.Optional;
 
-import kitchenpos.order.domain.TableGroup;
+import kitchenpos.table.domain.TableGroup;
 
 public interface TableGroupDao {
 

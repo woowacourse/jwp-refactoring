@@ -1,4 +1,4 @@
-package kitchenpos.order.acceptance;
+package kitchenpos.table.acceptance;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 
 import kitchenpos.common.AcceptanceTest;
 import kitchenpos.menu.application.request.TableGroupRequest;
-import kitchenpos.order.application.request.OrderTableRequest;
+import kitchenpos.table.application.request.OrderTableRequest;
 
 public class TableGroupAcceptanceTest extends AcceptanceTest {
 

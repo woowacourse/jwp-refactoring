@@ -1,9 +1,9 @@
-package kitchenpos.order.dao;
+package kitchenpos.table.dao;
 
 import java.util.List;
 import java.util.Optional;
 
-import kitchenpos.order.domain.OrderTable;
+import kitchenpos.table.domain.OrderTable;
 
 public interface OrderTableDao {
 

@@ -1,15 +1,15 @@
-package kitchenpos.order.application;
+package kitchenpos.table.application;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.order.application.request.OrderTableRequest;
-import kitchenpos.order.application.response.OrderTableResponse;
-import kitchenpos.order.application.validator.TableChangeEmptyValidator;
-import kitchenpos.order.dao.OrderTableDao;
-import kitchenpos.order.domain.OrderTable;
+import kitchenpos.table.application.request.OrderTableRequest;
+import kitchenpos.table.application.response.OrderTableResponse;
+import kitchenpos.table.application.validator.TableChangeEmptyValidator;
+import kitchenpos.table.dao.OrderTableDao;
+import kitchenpos.table.domain.OrderTable;
 
 @Service
 @Transactional(readOnly = true)

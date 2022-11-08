@@ -17,11 +17,11 @@ import kitchenpos.menu.application.request.MenuProductRequest;
 import kitchenpos.menu.application.request.MenuRequest;
 import kitchenpos.order.application.request.OrderLineItemRequest;
 import kitchenpos.order.application.request.OrderRequest;
-import kitchenpos.order.application.request.OrderTableRequest;
 import kitchenpos.order.application.response.OrderResponse;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.product.application.request.ProductCreateRequest;
+import kitchenpos.table.application.request.OrderTableRequest;
 
 public class OrderServiceTest extends ServiceTest {
 
