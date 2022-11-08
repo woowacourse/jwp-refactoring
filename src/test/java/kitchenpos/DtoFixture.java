@@ -3,17 +3,17 @@ package kitchenpos;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.ui.request.menu.MenuCreateRequest;
-import kitchenpos.ui.request.menu.MenuProductDto;
-import kitchenpos.ui.request.menugroup.MenuGroupCreateRequest;
-import kitchenpos.ui.request.order.OrderCreateRequest;
-import kitchenpos.ui.request.order.OrderLineItemDto;
-import kitchenpos.ui.request.prodcut.ProductCreateRequest;
-import kitchenpos.ui.request.table.TableChangeEmptyRequest;
-import kitchenpos.ui.request.table.TableChangeNumberOfGuestsRequest;
-import kitchenpos.ui.request.table.TableCreateRequest;
-import kitchenpos.ui.request.tablegroup.OrderTableDto;
-import kitchenpos.ui.request.tablegroup.TableGroupCreatRequest;
+import kitchenpos.menu.dto.MenuProductDto;
+import kitchenpos.menu.dto.request.MenuCreateRequest;
+import kitchenpos.menu.dto.request.MenuGroupCreateRequest;
+import kitchenpos.order.dto.OrderLineItemDto;
+import kitchenpos.order.dto.request.OrderCreateRequest;
+import kitchenpos.product.dto.request.ProductCreateRequest;
+import kitchenpos.table.dto.OrderTableDto;
+import kitchenpos.table.dto.request.TableChangeEmptyRequest;
+import kitchenpos.table.dto.request.TableChangeNumberOfGuestsRequest;
+import kitchenpos.table.dto.request.TableCreateRequest;
+import kitchenpos.table.dto.request.TableGroupCreatRequest;
 
 public class DtoFixture {
 
@@ -29,7 +29,7 @@ public class DtoFixture {
     }
 
     private static List<OrderLineItemDto> getOrderLineItems(final Long menuId, final long quantity) {
-        return List.of(new OrderLineItemDto(menuId, quantity));
+        return List.of(new OrderLineItemDto(menuId, BigDecimal.valueOf(800), "마이쮸", quantity));
     }
 
     public static TableCreateRequest getEmptyTableCreateRequest() {
