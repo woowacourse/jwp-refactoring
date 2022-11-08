@@ -40,19 +40,14 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = getOrderTables(tableGroupId);
-
-        for (final OrderTable orderTable : orderTables) {
-            orderTableDao.save(new OrderTable(orderTable.getId(), orderTable.getNumberOfGuests(), false));
-        }
-    }
-
-    private List<OrderTable> getOrderTables(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
         orderValidator.validateCompletion(orderTableIds);
-        return orderTables;
+
+        for (final OrderTable orderTable : orderTables) {
+            orderTableDao.save(new OrderTable(orderTable.getId(), orderTable.getNumberOfGuests(), false));
+        }
     }
 }
