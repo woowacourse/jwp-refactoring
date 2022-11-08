@@ -30,8 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ServiceTest {
 
-
-
     @Autowired
     protected ProductService productService;
 

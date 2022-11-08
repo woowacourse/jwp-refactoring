@@ -24,7 +24,7 @@ public class MenuResponse {
 
     private List<MenuProductResponse> convertToMenuProductDtos(List<MenuProduct> menuProducts) {
         return menuProducts.stream()
-                .map(it -> new MenuProductResponse(it.getSeq(), it.getMenuId(), it.getProductId(), it.getQuantity()))
+                .map(MenuProductResponse::of)
                 .collect(Collectors.toList());
     }
 

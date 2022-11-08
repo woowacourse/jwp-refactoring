@@ -13,12 +13,10 @@ import kitchenpos.menu.application.dto.MenuRequestDto;
 import kitchenpos.menu.application.dto.MenuResponse;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.product.application.dto.ProductResponse;
-import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.internal.matchers.Null;
 
 class MenuServiceTest extends ServiceTest {
 

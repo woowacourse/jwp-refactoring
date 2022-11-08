@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import kitchenpos.menu.application.dto.MenuProductDto;
 import kitchenpos.menu.application.dto.MenuRequestDto;
 import kitchenpos.product.application.dto.ProductResponse;
-import kitchenpos.product.domain.Product;
 
 public class MenuFixture {
 

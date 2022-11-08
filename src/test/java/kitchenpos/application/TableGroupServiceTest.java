@@ -1,29 +1,22 @@
 package kitchenpos.application;
 
-import static kitchenpos.support.MenuFixture.메뉴_생성;
-import static kitchenpos.support.MenuGroupFixture.메뉴_그룹;
-import static kitchenpos.support.OrderFixture.주문_생성;
+
 import static kitchenpos.support.OrderTableFixture.비어있는_주문_테이블;
 import static kitchenpos.support.OrderTableFixture.비어있지_않은_주문_테이블;
-import static kitchenpos.support.ProductFixture.상품;
 import static kitchenpos.support.TableGroupFixture.테이블_그룹_구성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.menu.application.dto.MenuResponse;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.table.application.dto.OrderTableResponse;
 import kitchenpos.table.application.dto.TableGroupRequestDto;
 import kitchenpos.table.application.dto.TableGroupResponse;
-import kitchenpos.table.domain.repository.OrderTableRepository;
-import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.product.domain.Product;
+import kitchenpos.table.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

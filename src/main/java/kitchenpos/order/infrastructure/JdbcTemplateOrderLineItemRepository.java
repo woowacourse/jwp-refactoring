@@ -1,5 +1,10 @@
 package kitchenpos.order.infrastructure;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
+import javax.sql.DataSource;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.repository.OrderLineItemRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -9,12 +14,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-
-import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class JdbcTemplateOrderLineItemRepository implements OrderLineItemRepository {
@@ -50,31 +49,35 @@ public class JdbcTemplateOrderLineItemRepository implements OrderLineItemReposit
 
     @Override
     public List<OrderLineItem> findAll() {
-        final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item";
+        final String sql = "SELECT seq, order_id, menu_id, menu_name, menu_price, menu_quantity, product_name, product_price, product_quantity FROM order_line_item";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     @Override
     public List<OrderLineItem> findAllByOrderId(final Long orderId) {
-        final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item WHERE order_id = (:orderId)";
+        final String sql = "SELECT seq, order_id, menu_id, menu_name, menu_price, menu_quantity, product_name, product_price, product_quantity FROM order_line_item WHERE order_id = (:orderId)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("orderId", orderId);
         return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     private OrderLineItem select(final Long id) {
-        final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item WHERE seq = (:seq)";
+        final String sql = "SELECT seq, order_id, menu_id, menu_name, menu_price, menu_quantity, product_name, product_price, product_quantity FROM order_line_item WHERE seq = (:seq)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("seq", id);
         return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     private OrderLineItem toEntity(final ResultSet resultSet) throws SQLException {
-        final OrderLineItem entity = new OrderLineItem();
-        entity.setSeq(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setOrderId(resultSet.getLong("order_id"));
-        entity.setMenuId(resultSet.getLong("menu_id"));
-        entity.setQuantity(resultSet.getLong("quantity"));
-        return entity;
+        return new OrderLineItem(
+                resultSet.getLong(KEY_COLUMN_NAME),
+                resultSet.getLong("order_id"),
+                resultSet.getLong("menu_id"),
+                resultSet.getString("menu_name"),
+                resultSet.getBigDecimal("menu_price"),
+                resultSet.getLong("menu_quantity"),
+                resultSet.getString("product_name"),
+                resultSet.getBigDecimal("product_price"),
+                resultSet.getLong("product_quantity"));
     }
 }

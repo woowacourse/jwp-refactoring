@@ -1,7 +1,6 @@
 package kitchenpos.table.domain;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class OrderTables {
 
@@ -15,7 +14,7 @@ public class OrderTables {
         return orderTables;
     }
 
-    public void group(final Long tableGroupId){
+    public void group(final Long tableGroupId) {
         for (OrderTable orderTable : orderTables) {
             orderTable.addTableId(tableGroupId);
         }
