@@ -19,6 +19,10 @@ public class OrderTableRequest {
         this.empty = empty;
     }
 
+    public OrderTable toEntity() {
+        return new OrderTable(numberOfGuests, empty);
+    }
+
     public Long getId() {
         return id;
     }
@@ -33,9 +37,5 @@ public class OrderTableRequest {
 
     public boolean getEmpty() {
         return empty;
-    }
-
-    public OrderTable toEntity() {
-        return new OrderTable(numberOfGuests, empty);
     }
 }

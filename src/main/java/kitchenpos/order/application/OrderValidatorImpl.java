@@ -1,4 +1,4 @@
-package kitchenpos.order.application.validator;
+package kitchenpos.order.application;
 
 import java.util.List;
 
@@ -7,6 +7,7 @@ import org.springframework.util.CollectionUtils;
 
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderValidator;
 import kitchenpos.table.dao.OrderTableDao;
 
 @Component

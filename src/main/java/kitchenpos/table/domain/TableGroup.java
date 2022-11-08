@@ -12,6 +12,9 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import kitchenpos.table.application.validator.TableGroupValidator;
+import kitchenpos.table.application.validator.TableUngroupValidator;
+
 /**
  * 통합 계산을 위해 개별 OrderTable 을 그룹화하는 객체
  */
@@ -44,13 +47,21 @@ public class TableGroup {
         this(null, LocalDateTime.now(), orderTables);
     }
 
+    public static TableGroup create(final List<OrderTable> orderTables,
+        final TableGroupValidator validator) {
+        TableGroup tableGroup = new TableGroup(orderTables);
+        validator.validate(tableGroup);
+        return tableGroup;
+    }
+
     public void groupOrderTables() {
         for (final OrderTable orderTable : orderTables) {
             orderTable.group(id);
         }
     }
 
-    public void ungroupOrderTables() {
+    public void ungroupOrderTables(final TableUngroupValidator validator) {
+        validator.validate(this);
         for (final OrderTable orderTable : orderTables) {
             orderTable.ungroup();
         }

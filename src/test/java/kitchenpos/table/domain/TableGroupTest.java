@@ -31,7 +31,7 @@ public class TableGroupTest {
         TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now(), List.of(orderTable1, orderTable2));
 
         // when
-        tableGroup.ungroupOrderTables();
+        tableGroup.ungroupOrderTables(it -> {});
 
         // then
         assertThat(orderTable1.getTableGroupId()).isNull();

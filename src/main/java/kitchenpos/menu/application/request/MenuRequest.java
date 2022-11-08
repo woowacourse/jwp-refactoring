@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 
 public class MenuRequest {
@@ -26,11 +25,6 @@ public class MenuRequest {
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
-    }
-
-    public Menu toEntity() {
-        return new Menu(name, price, menuGroupId,
-            getMenuProducts());
     }
 
     public Long getId() {

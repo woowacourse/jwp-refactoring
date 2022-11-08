@@ -51,6 +51,13 @@ public class Order {
         this(null, orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
     }
 
+    public static Order create(final Long orderTableId, final List<OrderLineItem> orderLineItems,
+        final OrderValidator validator) {
+        Order order = new Order(orderTableId, orderLineItems);
+        validator.validate(order);
+        return order;
+    }
+
     public void changeStatus(final String orderStatus) {
         if (OrderStatus.COMPLETION.name().equals(this.orderStatus)) {
             throw new IllegalArgumentException();

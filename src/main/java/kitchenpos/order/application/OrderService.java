@@ -9,12 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 import kitchenpos.order.application.request.OrderLineItemRequest;
 import kitchenpos.order.application.request.OrderRequest;
 import kitchenpos.order.application.response.OrderResponse;
-import kitchenpos.order.application.validator.OrderValidator;
 import kitchenpos.order.dao.OrderDao;
 import kitchenpos.order.dao.OrderMenuDao;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderMenu;
+import kitchenpos.order.domain.OrderValidator;
 
 @Service
 @Transactional(readOnly = true)
@@ -34,8 +34,7 @@ public class OrderService {
     @Transactional
     public OrderResponse create(final OrderRequest request) {
         List<OrderLineItem> orderLineItems = mapToOrderLineItems(request.getOrderLineItemRequests());
-        Order order = new Order(request.getOrderTableId(), orderLineItems);
-        orderValidator.validate(order);
+        Order order = Order.create(request.getOrderTableId(), orderLineItems, orderValidator);
         return OrderResponse.from(orderDao.save(order));
     }
 

@@ -52,6 +52,13 @@ public class Menu {
         this(null, name, price, menuGroupId, menuProducts);
     }
 
+    public static Menu create(final String name, final BigDecimal price, final Long menuGroupId,
+        final List<MenuProduct> menuProducts, final MenuValidator validator) {
+        Menu menu = new Menu(name, price, menuGroupId, menuProducts);
+        validator.validate(menu);
+        return menu;
+    }
+
     public void setIdToMenuProducts() {
         menuProducts.setMenuId(id);
     }

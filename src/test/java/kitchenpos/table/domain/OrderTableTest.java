@@ -14,24 +14,11 @@ public class OrderTableTest {
         OrderTable orderTable = new OrderTable(1, true);
 
         // when
-        orderTable.changeEmpty(false);
+        orderTable.changeEmpty(false, it -> {
+        });
 
         // then
         assertThat(orderTable.isEmpty()).isFalse();
-    }
-
-    @Test
-    @DisplayName("OrderTable 이 TableGroup 에 배정되어 있으면 empty 를 변경할 때 예외를 던진다.")
-    void changeEmpty_grouped_exception() {
-        // given
-        long tableGroupId = 1L;
-        OrderTable orderTable = new OrderTable(1, true);
-        orderTable.group(tableGroupId);
-
-        // when, then
-        assertThatThrownBy(() -> orderTable.changeEmpty(false))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("could not change empty, table is now grouped");
     }
 
     @Test

@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import kitchenpos.table.application.validator.TableChangeEmptyValidator;
+
 /**
  * 매장에서 주문이 발생하는 영역
  * emptyTable: 주문을 등록할 수 없는 OrderTable
@@ -53,13 +55,13 @@ public class OrderTable {
     }
 
     public void group(final Long tableGroupId) {
-        changeEmpty(false);
         this.tableGroupId = tableGroupId;
+        this.empty = false;
     }
 
     public void ungroup() {
         this.tableGroupId = null;
-        changeEmpty(false);
+        this.empty = false;
     }
 
     public void validateCanBeGrouped() {
@@ -68,10 +70,8 @@ public class OrderTable {
         }
     }
 
-    public void changeEmpty(final boolean empty) {
-        if (tableGroupId != null) {
-            throw new IllegalArgumentException("could not change empty, table is now grouped");
-        }
+    public void changeEmpty(final boolean empty, final TableChangeEmptyValidator validator) {
+        validator.validate(this);
         this.empty = empty;
     }
 

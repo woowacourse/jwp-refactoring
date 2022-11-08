@@ -28,8 +28,7 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupRequest request) {
-        TableGroup tableGroup = new TableGroup(request.toOrderTables());
-        tableGroupValidator.validate(tableGroup);
+        TableGroup tableGroup = TableGroup.create(request.toOrderTables(), tableGroupValidator);
 
         TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
         savedTableGroup.groupOrderTables();
@@ -40,7 +39,6 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         TableGroup tableGroup = tableGroupDao.getById(tableGroupId);
-        tableUngroupValidator.validate(tableGroup);
-        tableGroup.ungroupOrderTables();
+        tableGroup.ungroupOrderTables(tableUngroupValidator);
     }
 }

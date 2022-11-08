@@ -7,9 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.menu.application.request.MenuRequest;
 import kitchenpos.menu.application.response.MenuResponse;
-import kitchenpos.menu.application.validator.MenuValidator;
 import kitchenpos.menu.dao.MenuDao;
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuValidator;
 
 @Service
 @Transactional(readOnly = true)
@@ -28,8 +28,8 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuRequest request) {
-        Menu menu = request.toEntity();
-        menuValidator.validate(menu);
+        Menu menu = Menu.create(request.getName(), request.getPrice(), request.getMenuGroupId(),
+            request.getMenuProducts(), menuValidator);
         Menu savedMenu = menuDao.save(menu);
         menuCreateEventPublisher.publish(savedMenu);
         return MenuResponse.from(savedMenu);

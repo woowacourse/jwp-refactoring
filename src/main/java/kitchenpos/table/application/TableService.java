@@ -38,8 +38,7 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableRequest request) {
         final OrderTable orderTable = orderTableDao.getById(orderTableId);
-        tableChangeEmptyValidator.validate(orderTable);
-        orderTable.changeEmpty(request.getEmpty());
+        orderTable.changeEmpty(request.getEmpty(), tableChangeEmptyValidator);
 
         return OrderTableResponse.from(orderTable);
     }

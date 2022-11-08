@@ -1,4 +1,4 @@
-package kitchenpos.order.application.validator;
+package kitchenpos.order.application;
 
 import java.util.Arrays;
 import java.util.List;
