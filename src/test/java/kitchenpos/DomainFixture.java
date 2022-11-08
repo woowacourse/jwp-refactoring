@@ -75,7 +75,8 @@ public class DomainFixture {
     private static void setOrderLineItems(final Order order, final Menu[] menus) {
         final ArrayList<OrderLineItem> orderLineItems = new ArrayList<>();
         for (final Menu menu : menus) {
-            final OrderLineItem orderLineItem = OrderLineItem.ofNullSeq(order.getId(), menu.getId(), ONE_QUANTITY);
+            final OrderLineItem orderLineItem =
+                    OrderLineItem.ofNullSeq(order.getId(), menu.getName(), menu.getPrice(), ONE_QUANTITY);
             orderLineItems.add(orderLineItem);
         }
         order.addAllOrderLineItems(orderLineItems);

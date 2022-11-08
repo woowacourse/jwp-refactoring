@@ -47,21 +47,6 @@ public class OrderServiceTest extends ServiceTest {
     }
 
     @Test
-    @DisplayName("create -> 주문 항목에 기재된 메뉴가 존재하지 않을 경우 예외가 발생한다.")
-    void create_noMenu_throwException() {
-        // given
-        final OrderTable table = 주문테이블등록(createOrderTable(3, false));
-        final Menu menu = createMenu("양념치킨메뉴", 10_000, 메뉴그룹등록(메뉴그룹1), 상품등록(피자));
-        final Menu notRegisteredMenu =
-                new Menu(999L, menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menu.getMenuProducts());
-        final Order order = createOrder(table, notRegisteredMenu);
-
-        // when & then
-        assertThatThrownBy(() -> orderService.create(new OrderDto(order)))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
     @DisplayName("create -> 주문 테이블이 비어있을 경우 예외가 발생한다.")
     void create_emptyTable_throwException() {
         // given
