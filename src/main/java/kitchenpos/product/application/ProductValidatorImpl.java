@@ -27,6 +27,7 @@ public class ProductValidatorImpl implements ProductValidator {
 
     @Override
     public boolean existsProductsByIdIn(final List<Long> productIds) {
-       return productRepository.existsAllById(productIds);
+        final List<Long> foundIds = productRepository.findIdByIds(productIds);
+        return foundIds.size()== productIds.size();
     }
 }
