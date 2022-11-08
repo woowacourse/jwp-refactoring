@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
+import kitchenpos.menu.domain.MenuProduct;
 import org.junit.jupiter.api.Test;
 
 class MenuProductTest {

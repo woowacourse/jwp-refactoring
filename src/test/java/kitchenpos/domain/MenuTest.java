@@ -4,6 +4,7 @@ import static kitchenpos.application.ServiceTestFixture.MENU_PRODUCTS;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
+import kitchenpos.menu.domain.Menu;
 import org.junit.jupiter.api.Test;
 
 class MenuTest {

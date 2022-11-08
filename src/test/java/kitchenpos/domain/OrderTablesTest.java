@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.table.domain.OrderTables;
 import org.junit.jupiter.api.Test;
 
 class OrderTablesTest {

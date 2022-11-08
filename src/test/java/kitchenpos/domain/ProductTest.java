@@ -1,9 +1,9 @@
 package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
+import kitchenpos.menu.domain.Product;
 import org.junit.jupiter.api.Test;
 
 class ProductTest {

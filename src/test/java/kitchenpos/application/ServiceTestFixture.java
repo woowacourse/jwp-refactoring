@@ -2,13 +2,13 @@ package kitchenpos.application;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.MenuProductRequest;
-import kitchenpos.dto.OrderLineItemRequest;
-import kitchenpos.dto.OrderTableRequest;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.menu.dto.MenuProductRequest;
+import kitchenpos.order.dto.OrderLineItemRequest;
+import kitchenpos.table.dto.OrderTableRequest;
 
 public class ServiceTestFixture {
     public static final MenuGroup MENU_GROUP1 = new MenuGroup(1L, "한마리메뉴");
@@ -23,18 +23,23 @@ public class ServiceTestFixture {
     public static final List<MenuProductRequest> MENU_PRODUCT_REQUESTS = List.of(MENU_PRODUCT_REQUEST1,
             MENU_PRODUCT_REQUEST2);
 
-    public static final OrderLineItemRequest ORDER_LINE_ITEM_REQUEST1 = new OrderLineItemRequest(1L, 1L, 1L, 1);
-    public static final OrderLineItemRequest ORDER_LINE_ITEM_REQUEST2 = new OrderLineItemRequest(2L, 1L, 2L, 1);
+    public static final OrderLineItemRequest ORDER_LINE_ITEM_REQUEST1 = new OrderLineItemRequest(1L, 1L,
+            1L, BigDecimal.valueOf(16000), "후라이드치킨", 1);
+    public static final OrderLineItemRequest ORDER_LINE_ITEM_REQUEST2 = new OrderLineItemRequest(2L, 1L,
+            2L, BigDecimal.valueOf(16000), "양념치킨", 1);
 
     public static final OrderLineItemRequest ORDER_LINE_ITEM_REQUEST_NOT_EXIST_MENU_ID = new OrderLineItemRequest(3L,
-            1L, 100L, 1);
+            1L, 100L, BigDecimal.valueOf(15000), "없는메뉴", 1);
 
     public static final List<OrderLineItemRequest> ORDER_LINE_ITEM_REQUESTS = List.of(ORDER_LINE_ITEM_REQUEST1,
             ORDER_LINE_ITEM_REQUEST2);
 
-    public static final OrderLineItem ORDER_LINE_ITEM1 = new OrderLineItem(1L, 1L, 1);
-    public static final OrderLineItem ORDER_LINE_ITEM2 = new OrderLineItem(1L, 2L, 1);
-    public static final OrderLineItem ORDER_LINE_ITEM_NOT_EXIST_MENU_ID = new OrderLineItem(1L, 100L, 1);
+    public static final OrderLineItem ORDER_LINE_ITEM1 = new OrderLineItem(1L, 1L, BigDecimal.valueOf(16000),
+            "후라이드치킨", 1);
+    public static final OrderLineItem ORDER_LINE_ITEM2 = new OrderLineItem(1L, 2L, BigDecimal.valueOf(16000),
+            "양념치킨", 1);
+    public static final OrderLineItem ORDER_LINE_ITEM_NOT_EXIST_MENU_ID = new OrderLineItem(1L, 100L,
+            BigDecimal.valueOf(15000), "없는메뉴", 1);
 
     public static final List<OrderLineItem> ORDER_LINE_ITEMS = List.of(ORDER_LINE_ITEM1, ORDER_LINE_ITEM2);
 
