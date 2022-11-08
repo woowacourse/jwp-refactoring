@@ -4,6 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.Products;
+import kitchenpos.product.domain.Quantity;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -19,10 +22,8 @@ class ProductsTest {
         final Products products = new Products(List.of(product));
 
         // when
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(1L);
-        final BigDecimal actual = products.calculateAmount(List.of(menuProduct));
+        final Quantity quantity = new Quantity(productId, 1L);
+        final BigDecimal actual = products.calculateAmount(List.of(quantity));
 
         // then
         assertThat(actual).isEqualTo(BigDecimal.valueOf(100));

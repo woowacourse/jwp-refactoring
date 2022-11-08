@@ -4,7 +4,6 @@ import static kitchenpos.application.TestFixture.메뉴_그룹_생성;
 import static kitchenpos.application.TestFixture.메뉴_상품_생성;
 import static kitchenpos.application.TestFixture.메뉴_생성;
 import static kitchenpos.application.TestFixture.상품_생성;
-import static kitchenpos.application.TestFixture.주문_상품_생성;
 import static kitchenpos.application.TestFixture.주문_생성;
 import static kitchenpos.application.TestFixture.주문_테이블_생성;
 import static kitchenpos.application.TestFixture.테이블_그룹_생성;
@@ -15,14 +14,14 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.product.domain.Product;
+import kitchenpos.table.application.TableGroupService;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -122,10 +121,9 @@ class TableGroupServiceTest extends ServiceTest {
         final MenuGroup menuGroup = 메뉴_그룹을_저장한다(메뉴_그룹_생성("테스트-메뉴-그룹"));
         final Menu menu = 메뉴를_저장한다(
                 메뉴_생성("테스트-메뉴-1", BigDecimal.valueOf(99999), menuGroup.getId(), List.of(menuProduct)));
-        final OrderLineItem orderLineItem = 주문_상품_생성(menu.getId());
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
-        주문을_저장한다(주문_생성(List.of(orderLineItem), orderTables.get(0).getId(), OrderStatus.COOKING));
-        주문을_저장한다(주문_생성(List.of(orderLineItem), orderTables.get(1).getId(), OrderStatus.COOKING));
+        주문을_저장한다(주문_생성(List.of(), orderTables.get(0).getId(), OrderStatus.COOKING));
+        주문을_저장한다(주문_생성(List.of(), orderTables.get(1).getId(), OrderStatus.COOKING));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
@@ -141,10 +139,9 @@ class TableGroupServiceTest extends ServiceTest {
         final MenuGroup menuGroup = 메뉴_그룹을_저장한다(메뉴_그룹_생성("테스트-메뉴-그룹"));
         final Menu menu = 메뉴를_저장한다(
                 메뉴_생성("테스트-메뉴-1", BigDecimal.valueOf(99999), menuGroup.getId(), List.of(menuProduct)));
-        final OrderLineItem orderLineItem = 주문_상품_생성(menu.getId());
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
-        주문을_저장한다(주문_생성(List.of(orderLineItem), orderTables.get(0).getId(), OrderStatus.MEAL));
-        주문을_저장한다(주문_생성(List.of(orderLineItem), orderTables.get(1).getId(), OrderStatus.MEAL));
+        주문을_저장한다(주문_생성(List.of(), orderTables.get(0).getId(), OrderStatus.MEAL));
+        주문을_저장한다(주문_생성(List.of(), orderTables.get(1).getId(), OrderStatus.MEAL));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))

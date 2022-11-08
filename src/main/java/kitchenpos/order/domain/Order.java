@@ -1,0 +1,104 @@
+package kitchenpos.order.domain;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import kitchenpos.table.domain.OrderTable;
+
+public class Order {
+    private Long id;
+    private Long orderTableId;
+    private OrderStatus orderStatus;
+    private LocalDateTime orderedTime;
+    private OrderLineItems orderLineItems;
+
+    public Order() {
+    }
+
+    public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus,
+                 final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
+        this.id = id;
+        this.orderTableId = orderTableId;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+        this.orderLineItems = new OrderLineItems(orderLineItems);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    public Long getOrderTableId() {
+        return orderTableId;
+    }
+
+    public void setOrderTableId(final Long orderTableId) {
+        this.orderTableId = orderTableId;
+    }
+
+    public OrderStatus getOrderStatus() {
+        return orderStatus;
+    }
+
+    public void setOrderStatus(final OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
+    public LocalDateTime getOrderedTime() {
+        return orderedTime;
+    }
+
+    public void setOrderedTime(final LocalDateTime orderedTime) {
+        this.orderedTime = orderedTime;
+    }
+
+    public List<OrderLineItem> getOrderLineItems() {
+        return orderLineItems.getOrderLineItems();
+    }
+
+    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        this.orderLineItems = new OrderLineItems(orderLineItems);
+    }
+
+    public Order updateOrderStatus(final OrderStatus newOrderStatus) {
+        validateOrderStatus();
+        return new Order(id, orderTableId, newOrderStatus, orderedTime, orderLineItems.getOrderLineItems());
+    }
+
+    private void validateOrderStatus() {
+        if (orderStatus == OrderStatus.COMPLETION) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public List<Long> getMenuIds() {
+        return orderLineItems.getMenuIds();
+    }
+
+    public Order init(final OrderTable orderTable, final OrderMenus orderMenus) {
+        validateOrderTable(orderTable);
+        validateOrderLineItems(orderMenus.size());
+        setOrderMenus(orderMenus);
+        return new Order(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(),
+                orderLineItems.getOrderLineItems());
+    }
+
+    private void setOrderMenus(final OrderMenus orderMenus) {
+        this.orderLineItems.setOrderMenuId(orderMenus);
+    }
+
+    private void validateOrderTable(final OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateOrderLineItems(final int savedMenuCount) {
+        if (orderLineItems.isEmpty() || (orderLineItems.size() != savedMenuCount)) {
+            throw new IllegalArgumentException();
+        }
+    }
+}

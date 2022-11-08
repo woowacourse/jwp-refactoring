@@ -5,6 +5,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.Products;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -32,11 +36,16 @@ class MenuTest {
     @Test
     void 메뉴_가격이_음수일_경우_예외가_발생한다() {
         // given
+        final Long productId = 1L;
         final Menu menu = new Menu();
         menu.setPrice(BigDecimal.valueOf(-1));
-        menu.setMenuProducts(List.of(new MenuProduct()));
+        final MenuProduct menuProduct = new MenuProduct();
+        menuProduct.setProductId(productId);
+        menuProduct.setQuantity(1L);
+        menu.setMenuProducts(List.of(menuProduct));
         final Product product = new Product();
-        product.setId(1L);
+        product.setId(productId);
+        product.setPrice(BigDecimal.valueOf(100));
         final Products products = new Products(List.of(product));
 
         // when, then
