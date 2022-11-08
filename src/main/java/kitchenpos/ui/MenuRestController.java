@@ -3,9 +3,12 @@ package kitchenpos.ui;
 import kitchenpos.application.MenuService;
 import kitchenpos.application.dto.MenuCreateRequest;
 import kitchenpos.application.dto.MenuResponse;
+import kitchenpos.application.dto.MenuUpdateValuesRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,5 +38,12 @@ public class MenuRestController {
         return ResponseEntity.ok()
                 .body(menuService.list())
                 ;
+    }
+
+    @PutMapping("/api/menus/{menuId}")
+    public ResponseEntity<Void> update(@PathVariable Long menuId,
+                                       @RequestBody MenuUpdateValuesRequest request) {
+        menuService.updateValues(menuId, request);
+        return ResponseEntity.noContent().build();
     }
 }

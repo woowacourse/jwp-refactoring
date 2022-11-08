@@ -4,15 +4,15 @@ import kitchenpos.application.dto.OrderCreateRequest;
 import kitchenpos.application.dto.OrderLineItemRequest;
 import kitchenpos.application.dto.OrderResponse;
 import kitchenpos.application.dto.OrderUpdateRequest;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderLineItems;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItems;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.table.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -43,10 +43,13 @@ public class OrderService {
             .orElseThrow(IllegalArgumentException::new);
 
         final Order order = orderRepository.save(
-            new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), new OrderLineItems(request.getOrderLineItems()
-                .stream()
-                .map(this::createOrderLineItem)
-                .collect(Collectors.toList()))));
+            Order.createOfEvent(
+                orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
+                new OrderLineItems(request.getOrderLineItems()
+                    .stream()
+                    .map(this::createOrderLineItem)
+                    .collect(Collectors.toList())))
+        );
 
         return OrderResponse.createResponse(order);
     }
@@ -60,7 +63,7 @@ public class OrderService {
     private OrderLineItem createOrderLineItem(final OrderLineItemRequest request) {
         final Menu menu = menuRepository.findById(request.getMenuId())
             .orElseThrow(IllegalArgumentException::new);
-        return new OrderLineItem(menu.getId(), request.getQuantity());
+        return new OrderLineItem(menu.getName(), menu.getPrice(), request.getQuantity());
     }
 
     @Transactional(readOnly = true)

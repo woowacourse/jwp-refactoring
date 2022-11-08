@@ -5,13 +5,14 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.MenuCreateRequest;
 import kitchenpos.application.dto.MenuProductCreateRequest;
 import kitchenpos.application.dto.MenuResponse;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.MenuProducts;
-import kitchenpos.domain.Product;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.ProductRepository;
+import kitchenpos.application.dto.MenuUpdateValuesRequest;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuProducts;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.menu.MenuGroupRepository;
+import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.product.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,5 +63,12 @@ public class MenuService {
         return menus.stream()
             .map(MenuResponse::createResponse)
             .collect(Collectors.toList());
+    }
+
+    public void updateValues(final Long id, final MenuUpdateValuesRequest request) {
+        final Menu menu = menuRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴입니다."));
+
+        menu.updateValues(request.getName(), request.getPrice());
     }
 }

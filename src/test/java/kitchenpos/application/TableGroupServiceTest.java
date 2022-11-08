@@ -98,7 +98,7 @@ class TableGroupServiceTest extends IntegrationTest {
         void 요청으로_지정된_그룹을_해제할_때_주문의_상태가_종료가_아닌경우_예외가_발생한다() {
             // given
             final MenuGroupResponse menuGroup = menuGroupService.create(new MenuGroupRequest("1인 메뉴"));
-            final ProductResponse product = productService.create(new ProductCreateRequest("짜장면", 1000));
+            final ProductResponse product = productService.create(new ProductCreateRequest("짜장면", BigDecimal.valueOf(1000)));
             final MenuResponse menu = menuService.create(new MenuCreateRequest("짜장면", BigDecimal.valueOf(1000), menuGroup.getId(),
                 List.of(new MenuProductCreateRequest(product.getId(), 1))));
             final OrderTableResponse orderTable1 = tableService.create(new OrderTableCreateRequest(2, true));

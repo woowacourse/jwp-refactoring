@@ -32,7 +32,7 @@ public class TableGroupStepDefinition {
 
         RestAssured.given().log().all()
             .when().log().all()
-            .get("/api/table-groups/" + tableGroupId)
+            .delete("/api/table-groups/" + tableGroupId)
             .then().log().all()
             .statusCode(HttpStatus.CREATED.value())
             .extract().body().jsonPath().getLong("id");

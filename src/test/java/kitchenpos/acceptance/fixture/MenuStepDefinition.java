@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.MenuCreateRequest;
 import kitchenpos.application.dto.MenuProductCreateRequest;
 import kitchenpos.application.dto.MenuResponse;
+import kitchenpos.application.dto.MenuUpdateValuesRequest;
 import org.springframework.http.HttpStatus;
 
 public class MenuStepDefinition {
@@ -43,5 +44,20 @@ public class MenuStepDefinition {
             .get("/api/menus")
             .then().log().all()
             .extract().body().jsonPath().getList(".", MenuResponse.class);
+    }
+
+    public static void 메뉴의_정보를_변경한다(
+        long menuId,
+        String name,
+        int price) {
+
+        MenuUpdateValuesRequest menu = new MenuUpdateValuesRequest(name, BigDecimal.valueOf(price));
+        RestAssured.given().log().all()
+            .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+            .body(menu)
+            .when().log().all()
+            .put("/api/menus/" + menuId)
+            .then().log().all()
+            .statusCode(HttpStatus.NO_CONTENT.value());
     }
 }

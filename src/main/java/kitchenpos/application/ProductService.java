@@ -1,11 +1,10 @@
 package kitchenpos.application;
 
-import java.math.BigDecimal;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.ProductCreateRequest;
 import kitchenpos.application.dto.ProductResponse;
-import kitchenpos.domain.Product;
-import kitchenpos.repository.ProductRepository;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +20,7 @@ public class ProductService {
     }
 
     public ProductResponse create(final ProductCreateRequest request) {
-        final Product product = productRepository.save(new Product(request.getName(), BigDecimal.valueOf(request.getPrice())));
+        final Product product = productRepository.save(new Product(request.getName(), request.getPrice()));
 
         return ProductResponse.createResponse(product);
     }

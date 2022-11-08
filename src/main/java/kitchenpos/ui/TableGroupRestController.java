@@ -3,7 +3,6 @@ package kitchenpos.ui;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.application.dto.TableGroupCreateRequest;
 import kitchenpos.application.dto.TableGroupResponse;
-import kitchenpos.domain.TableGroup;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

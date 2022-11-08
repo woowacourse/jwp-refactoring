@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.dto.ProductCreateRequest;
 import kitchenpos.application.dto.ProductResponse;
@@ -15,7 +16,7 @@ class ProductServiceTest {
         @Test
         void 요청을_할_수_있다() {
             // given
-            final ProductCreateRequest product = new ProductCreateRequest("치킨", 1000);
+            final ProductCreateRequest product = new ProductCreateRequest("치킨", BigDecimal.valueOf(1000));
 
             // when
             final ProductResponse extract = productService.create(product);
@@ -30,7 +31,7 @@ class ProductServiceTest {
         @Test
         void 요청을_할_수_있다() {
             // given
-            final ProductCreateRequest product = new ProductCreateRequest("치킨", 1000);
+            final ProductCreateRequest product = new ProductCreateRequest("치킨", BigDecimal.valueOf(1000));
             productService.create(product);
 
             // when

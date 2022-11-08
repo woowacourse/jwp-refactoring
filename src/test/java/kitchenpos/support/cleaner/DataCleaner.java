@@ -1,10 +1,15 @@
 package kitchenpos.support.cleaner;
 
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,39 +19,38 @@ public class DataCleaner implements InitializingBean {
     private static final String TRUNCATE_FORMAT = "TRUNCATE TABLE %s";
     private static final String REFERENTIAL_FORMAT = "SET REFERENTIAL_INTEGRITY %s";
 
-    private final DataSource dataSource;
-    private final JdbcTemplate jdbcTemplate;
-    private List<String> tableNames;
+    @PersistenceContext
+    private EntityManager entityManager;
+    @Autowired
+    private DataSource dataSource;
 
-    public DataCleaner(final DataSource dataSource, final JdbcTemplate jdbcTemplate) {
-        this.dataSource = dataSource;
-        this.jdbcTemplate = jdbcTemplate;
-        this.tableNames = new ArrayList<>();
-    }
+    private List<String> tableNames;
 
     @Transactional
     public void clear() {
-        executeResetTable();
+        entityManager.clear();
+        truncate();
     }
 
-    private void executeResetTable() {
-        jdbcTemplate.execute(String.format(REFERENTIAL_FORMAT, "FALSE"));
+    private void truncate() {
+        entityManager.createNativeQuery(String.format(REFERENTIAL_FORMAT, "FALSE")).executeUpdate();
         tableNames.stream()
             .filter(tableName -> !tableName.contains("flyway_schema_history"))
-            .forEach(tableName -> jdbcTemplate.execute(String.format(TRUNCATE_FORMAT, tableName)));
-        jdbcTemplate.execute(String.format(REFERENTIAL_FORMAT, "TRUE"));
+            .forEach(tableName -> entityManager.createNativeQuery(String.format(TRUNCATE_FORMAT, tableName)).executeUpdate());
+        entityManager.createNativeQuery(String.format(REFERENTIAL_FORMAT, "TRUE")).executeUpdate();
     }
 
     @Override
     public void afterPropertiesSet() {
-        try (final var connection = dataSource.getConnection()) {
-            final var metaData = connection.getMetaData();
-            final var rs = metaData.getTables(null, null, null, new String[]{"TABLE"});
-            while (rs.next()) {
-                tableNames.add(rs.getString("TABLE_NAME"));
+        tableNames = new ArrayList<>();
+        try {
+            final DatabaseMetaData metaData = dataSource.getConnection().getMetaData();
+            final ResultSet tables = metaData.getTables(null, null, null, new String[]{"TABLE"});
+            while (tables.next()) {
+                tableNames.add(tables.getString("TABLE_NAME"));
             }
-        } catch (Exception exception) {
-            throw new RuntimeException("Error with Database cleaner");
+        } catch (SQLException e) {
+            throw new RuntimeException();
         }
     }
 }
