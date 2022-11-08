@@ -1,13 +1,11 @@
 package kitchenpos.table.application;
 
-import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.dto.request.OrderTableCreateRequest;
 import kitchenpos.table.dto.request.OrderTableEmptyUpdateRequest;
@@ -15,13 +13,16 @@ import kitchenpos.table.dto.request.OrderTableNumberOfGuestsUpdateRequest;
 import kitchenpos.table.repository.OrderTableRepository;
 
 @Service
+@Transactional(readOnly = true)
 public class TableService {
-    private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
 
-    public TableService(OrderRepository orderRepository, OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    private final OrderTableRepository orderTableRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
+
+    public TableService(OrderTableRepository orderTableRepository,
+        ApplicationEventPublisher applicationEventPublisher) {
         this.orderTableRepository = orderTableRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Transactional
@@ -41,10 +42,7 @@ public class TableService {
         OrderTable orderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
 
-        if (orderRepository.existsByOrderTableAndOrderStatusIn(
-            orderTable, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
+        applicationEventPublisher.publishEvent(new TableEmptyChangedEvent(orderTable));
 
         orderTable.setEmpty(request.isEmpty());
         return orderTable;

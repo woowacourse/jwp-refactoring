@@ -19,6 +19,7 @@ import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.repository.OrderTableRepository;
 
 @Service
+@Transactional(readOnly = true)
 public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
