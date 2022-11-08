@@ -1,6 +1,6 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,4 +11,6 @@ public interface ProductDao {
     Optional<Product> findById(Long id);
 
     List<Product> findAll();
+
+    List<Product> findAllByIds(List<Long> ids);
 }

@@ -1,6 +1,6 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -14,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class JdbcTemplateProductDao implements ProductDao {
@@ -53,6 +54,15 @@ public class JdbcTemplateProductDao implements ProductDao {
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
+    @Override
+    public List<Product> findAllByIds(List<Long> ids) {
+        final String multiples = ids.stream()
+                .map(each -> "'" + each + "'")
+                .collect(Collectors.joining(", "));
+        final String sql = "SELECT id, name, price FROM product WHERE id IN (" + multiples + ")";
+        return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
+    }
+
     private Product select(final Long id) {
         final String sql = "SELECT id, name, price FROM product WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
@@ -61,10 +71,10 @@ public class JdbcTemplateProductDao implements ProductDao {
     }
 
     private Product toEntity(final ResultSet resultSet) throws SQLException {
-        final Product entity = new Product();
-        entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setName(resultSet.getString("name"));
-        entity.setPrice(resultSet.getBigDecimal("price"));
-        return entity;
+        return new Product(
+                resultSet.getLong(KEY_COLUMN_NAME),
+                resultSet.getString("name"),
+                resultSet.getLong("price")
+        );
     }
 }
