@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class DataCleaner implements InitializingBean {
 
     private static final String TRUNCATE_FORMAT = "TRUNCATE TABLE %s";
-    public static final String REFERENTIAL_FORMAT = "SET REFERENTIAL_INTEGRITY %s";
+    private static final String REFERENTIAL_FORMAT = "SET REFERENTIAL_INTEGRITY %s";
 
     @PersistenceContext
     private EntityManager entityManager;
