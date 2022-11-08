@@ -1,6 +1,7 @@
 package kitchenpos.order.domain;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,6 +21,9 @@ public class OrderMenu {
     @Column(name = "menu_id")
     private Long menuId;
 
+    @Column(name = "created_time")
+    private LocalDateTime createdTime;
+
     @Column(name = "name")
     private String name;
 
@@ -29,15 +33,17 @@ public class OrderMenu {
     protected OrderMenu() {
     }
 
-    public OrderMenu(final Long id, final Long menuId, final String name, final BigDecimal price) {
+    public OrderMenu(final Long id, final Long menuId, final LocalDateTime createdTime, final String name,
+        final BigDecimal price) {
         this.id = id;
         this.menuId = menuId;
+        this.createdTime = createdTime;
         this.name = name;
         this.price = price;
     }
 
     public OrderMenu(final Long menuId, final String name, final BigDecimal price) {
-        this(null, menuId, name, price);
+        this(null, menuId, LocalDateTime.now(), name, price);
     }
 
     public Long getId() {
