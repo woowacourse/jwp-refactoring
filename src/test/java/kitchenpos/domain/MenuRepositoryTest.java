@@ -6,6 +6,13 @@ import static kitchenpos.fixture.ProductBuilder.aProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuGroupRepository;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +37,7 @@ class MenuRepositoryTest {
         Product product = productRepository.save(aProduct().build());
 
         Menu menu = aMenu(savedMenuGroup().getId())
-                .withMenuProducts(List.of(new MenuProduct(product, 1L)))
+                .withMenuProducts(List.of(new MenuProduct(product.getId(), 1L, product.getPrice())))
                 .build();
 
         // when

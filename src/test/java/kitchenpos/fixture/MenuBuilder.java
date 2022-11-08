@@ -3,8 +3,9 @@ package kitchenpos.fixture;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.generic.Price;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuProduct;
 
 public class MenuBuilder {
 
@@ -37,7 +38,7 @@ public class MenuBuilder {
     }
 
     public Menu build() {
-        return new Menu(name, price, menuGroupId, menuProducts);
+        return new Menu(name, new Price(price), menuGroupId, menuProducts);
     }
 
     private MenuBuilder withMenuGroupId(Long menuGroupId) {

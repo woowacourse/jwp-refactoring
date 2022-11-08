@@ -1,7 +1,8 @@
 package kitchenpos.fixture;
 
 import java.math.BigDecimal;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.generic.Price;
+import kitchenpos.domain.product.Product;
 
 public class ProductBuilder {
 
@@ -23,6 +24,6 @@ public class ProductBuilder {
     }
 
     public Product build() {
-        return new Product(name, price);
+        return new Product(name, new Price(price));
     }
 }

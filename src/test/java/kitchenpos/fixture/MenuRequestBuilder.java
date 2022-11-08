@@ -3,8 +3,8 @@ package kitchenpos.fixture;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.application.MenuProductRequest;
-import kitchenpos.application.MenuRequest;
+import kitchenpos.application.menu.MenuProductRequest;
+import kitchenpos.application.menu.MenuRequest;
 
 public class MenuRequestBuilder {
 
