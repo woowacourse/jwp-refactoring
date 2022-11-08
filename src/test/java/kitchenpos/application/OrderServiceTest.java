@@ -11,15 +11,17 @@ import static org.mockito.BDDMockito.given;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.application.dto.request.OrderCreateRequest;
-import kitchenpos.application.dto.request.OrderLineItemCreateRequest;
-import kitchenpos.application.dto.response.OrderResponse;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.order.application.OrderValidator;
+import kitchenpos.order.application.dto.OrderCreateRequest;
+import kitchenpos.order.application.dto.OrderLineItemCreateRequest;
+import kitchenpos.order.application.dto.OrderResponse;
+import kitchenpos.menu.dao.MenuDao;
+import kitchenpos.order.dao.OrderDao;
+import kitchenpos.order.dao.OrderLineItemDao;
+import kitchenpos.ordertable.dao.OrderTableDao;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.application.OrderService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,20 +39,15 @@ class OrderServiceTest {
     private OrderDao orderDao;
 
     @Mock
-    private MenuDao menuDao;
-
-    @Mock
-    private OrderTableDao orderTableDao;
-
-    @Mock
     private OrderLineItemDao orderLineItemDao;
+
+    @Mock
+    private OrderValidator orderValidator;
 
     @DisplayName("주문을 한다.")
     @Test
     void create() {
         //given
-        given(menuDao.countByIdIn(anyList())).willReturn(1L);
-        given(orderTableDao.findById(anyLong())).willReturn(Optional.of(ORDER_TABLE));
         given(orderDao.save(any(Order.class))).willReturn(ORDER);
         given(orderLineItemDao.save(any(OrderLineItem.class))).willReturn(ORDER_LINE_ITEM);
 
