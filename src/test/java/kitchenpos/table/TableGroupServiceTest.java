@@ -1,0 +1,186 @@
+package kitchenpos.table;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import kitchenpos.support.ServiceTest;
+import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.TableGroupRepository;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.table.application.TableGroupService;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.application.dto.TableGroupCreateRequest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+
+@DisplayName("TableGroupService의")
+class TableGroupServiceTest extends ServiceTest {
+
+    @Autowired
+    private TableGroupService tableGroupService;
+
+    @MockBean
+    private OrderTableRepository orderTableRepository;
+    @MockBean
+    private TableGroupRepository tableGroupRepository;
+    @MockBean
+    private OrderRepository orderRepository;
+
+    @Nested
+    @DisplayName("create 메서드는")
+    class Create {
+        private static final long ORDER_TABLE_A_ID = 1L;
+        private static final long ORDER_TABLE_B_ID = 2L;
+        private static final long TABLE_GROUP_ID = 1L;
+
+        private OrderTable orderTableA;
+        private OrderTable orderTableB;
+        private TableGroupCreateRequest createRequest;
+        private TableGroup savedTableGroup;
+
+        @BeforeEach
+        void setUp() {
+            orderTableA = new OrderTable(ORDER_TABLE_A_ID, null, 0, true);
+            orderTableB = new OrderTable(ORDER_TABLE_B_ID, null, 0, true);
+
+            createRequest = new TableGroupCreateRequest(Arrays.asList(orderTableA, orderTableB));
+            savedTableGroup = new TableGroup(TABLE_GROUP_ID, LocalDateTime.now(),
+                    Arrays.asList(orderTableA, orderTableB));
+
+            given(orderTableRepository.findAllByIdIn(any()))
+                    .willReturn(Arrays.asList(orderTableA, orderTableB));
+            given(tableGroupRepository.save(any(TableGroup.class)))
+                    .willReturn(savedTableGroup);
+        }
+
+        @Test
+        @DisplayName("테이블 그룹을 만들 수 있다.")
+        void success() {
+            //when
+            TableGroup actual = tableGroupService.create(createRequest);
+
+            //then
+            assertAll(
+                    () -> assertThat(actual.getOrderTables()).hasSize(2),
+                    () -> assertThat(orderTableA.isEmpty()).isFalse(),
+                    () -> assertThat(orderTableB.isEmpty()).isFalse()
+            );
+        }
+
+        @Test
+        @DisplayName("그룹으로 지정할 주문 테이블의 갯수가 2개보다 적으면, 예외를 던진다.")
+        void fail_lessThanTwoTables() {
+            //given
+            List<OrderTable> orderTables = Arrays.asList(orderTableA);
+            createRequest = new TableGroupCreateRequest(orderTables);
+            given(orderTableRepository.findAllByIdIn(any()))
+                    .willReturn(orderTables);
+
+            //when & then
+            assertThatThrownBy(() -> tableGroupService.create(createRequest))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        @DisplayName("그룹으로 지정할 주문 테이블이 존재하지 않으면, 예외를 던진다.")
+        void fail_noExistTable() {
+            //given
+            given(orderTableRepository.findAllByIdIn(any()))
+                    .willReturn(Arrays.asList(orderTableB));
+
+            //when & then
+            assertThatThrownBy(() -> tableGroupService.create(createRequest))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        @DisplayName("그룹으로 지정할 주문 테이블이 비어있지 않으면, 예외를 던진다.")
+        void fail_notEmptyTable() {
+            //given
+            orderTableA.updateEmpty(false);
+            orderTableB.updateEmpty(false);
+
+            //when & then
+            assertThatThrownBy(() -> tableGroupService.create(createRequest))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        @DisplayName("그룹으로 지정할 주문 테이블이 이미 테이블 그룹이 있으면, 예외를 던진다.")
+        void fail_isAlreadyInGroup() {
+            //given
+            orderTableA.setTableGroupId(2L);
+            orderTableB.setTableGroupId(2L);
+
+            //when & then
+            assertThatThrownBy(() -> tableGroupService.create(createRequest))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("ungroup 메서드는")
+    class Ungroup {
+        private static final long ORDER_TABLE_A_ID = 1L;
+        private static final long ORDER_TABLE_B_ID = 2L;
+        private static final long TABLE_GROUP_ID = 1L;
+
+        private OrderTable orderTableA;
+        private OrderTable orderTableB;
+
+        @BeforeEach
+        void setUp() {
+            orderTableA = new OrderTable(ORDER_TABLE_A_ID, null, 0, true);
+            orderTableB = new OrderTable(ORDER_TABLE_B_ID, null, 0, true);
+
+            given(orderTableRepository.findAllByTableGroupId(TABLE_GROUP_ID))
+                    .willReturn(Arrays.asList(orderTableA, orderTableB));
+
+            given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(
+                    Arrays.asList(ORDER_TABLE_A_ID, ORDER_TABLE_B_ID),
+                    Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
+                    .willReturn(false);
+        }
+
+        @Test
+        @DisplayName("테이블 그룹을 해체할 수 있다.")
+        void success() {
+            //when
+            tableGroupService.ungroup(TABLE_GROUP_ID);
+
+            //then
+            assertAll(
+                    () -> assertThat(orderTableA.isEmpty()).isFalse(),
+                    () -> assertThat(orderTableA.getTableGroupId()).isNull(),
+                    () -> assertThat(orderTableB.isEmpty()).isFalse(),
+                    () -> assertThat(orderTableB.getTableGroupId()).isNull()
+            );
+        }
+
+        @Test
+        @DisplayName("그룹의 주문 테이블들 중 조리중이거나 식사중인 테이블이 존재하면, 예외를 던진다.")
+        void fail_tableIsCookingOrMeal() {
+            //given
+            given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(
+                    Arrays.asList(ORDER_TABLE_A_ID, ORDER_TABLE_B_ID),
+                    Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
+                    .willReturn(true);
+
+            //when & then
+            assertThatThrownBy(() -> tableGroupService.ungroup(TABLE_GROUP_ID))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+    }
+}

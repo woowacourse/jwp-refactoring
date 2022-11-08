@@ -3,12 +3,12 @@ package kitchenpos.study;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.MenuProducts;
-import kitchenpos.domain.Product;
+import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.product.domain.ProductRepository;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProducts;
+import kitchenpos.product.domain.Product;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,17 +20,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenuCascadeTest {
 
     @Autowired
-    ProductDao productDao;
+    ProductRepository productRepository;
 
     @Autowired
-    MenuDao menuDao;
+    MenuRepository menuRepository;
 
     @Test
     void cascade() {
         //given
         Product productA = new Product(null, "nameA", BigDecimal.valueOf(1000L));
         Product productB = new Product(null, "nameB", BigDecimal.valueOf(2000L));
-        productDao.saveAll(Arrays.asList(productA, productB));
+        productRepository.saveAll(Arrays.asList(productA, productB));
 
         MenuProduct menuProductA = new MenuProduct(null, null, productA.getId(), 10L);
         MenuProduct menuProductB = new MenuProduct(null, null, productB.getId(), 20L);
@@ -39,7 +39,7 @@ public class MenuCascadeTest {
         //when
         Menu menu = new Menu(null, "name", BigDecimal.valueOf(1000L), 1L, menuProducts);
 //        menu.setMenuProducts(menuProducts);
-        Menu result = menuDao.save(menu);
+        Menu result = menuRepository.save(menu);
 
         //then
         MenuProducts actual = result.getMenuProducts();

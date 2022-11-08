@@ -1,0 +1,148 @@
+package kitchenpos.menu;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.application.dto.MenuCreateRequest;
+import kitchenpos.menu.application.dto.MenuProductCreateRequest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuGroupRepository;
+import kitchenpos.menu.domain.MenuProductRepository;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
+import kitchenpos.support.ServiceTest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+
+@DisplayName("MenuService의")
+public class MenuServiceTest extends ServiceTest {
+
+    @Autowired
+    private MenuService menuService;
+
+    @MockBean
+    private MenuGroupRepository menuGroupRepository;
+    @MockBean
+    private ProductRepository productRepository;
+    @MockBean
+    private MenuProductRepository menuProductRepository;
+
+    @Nested
+    @DisplayName("create 메서드는")
+    class Create {
+        private static final long PRODUCT_A_ID = 1L;
+        private static final long PRODUCT_B_ID = 2L;
+        private static final int PRODUCT_PRICE = 10000;
+        private static final long MENU_GROUP_ID = 1L;
+        private static final long MENU_PRICE = 10000;
+
+        private Product productA;
+        private Product productB;
+        private MenuProductCreateRequest menuProductA;
+        private MenuProductCreateRequest menuProductB;
+        private MenuGroup menuGroup;
+        private MenuCreateRequest createRequest;
+
+        @BeforeEach
+        void setUp() {
+            productA = new Product(PRODUCT_A_ID, "상품A", BigDecimal.valueOf(PRODUCT_PRICE));
+            productB = new Product(PRODUCT_B_ID, "상품B", BigDecimal.valueOf(PRODUCT_PRICE));
+            productRepository.saveAll(Arrays.asList(productA, productB));
+
+            menuProductA = new MenuProductCreateRequest(PRODUCT_A_ID, 2);
+            menuProductB = new MenuProductCreateRequest(PRODUCT_B_ID, 2);
+
+            menuGroup = new MenuGroup(MENU_GROUP_ID, "메뉴 그룹 이름");
+            menuGroupRepository.save(menuGroup);
+
+            createRequest = new MenuCreateRequest("메뉴 이름", BigDecimal.valueOf(MENU_PRICE), MENU_GROUP_ID,
+                    Arrays.asList(menuProductA, menuProductB));
+
+            given(menuGroupRepository.existsById(any()))
+                    .willReturn(true);
+            given(productRepository.findAllById(any()))
+                    .willReturn(Arrays.asList(productA, productB));
+        }
+
+        @Test
+        @DisplayName("등록할 수 있는 메뉴를 받으면, 메뉴를 저장하고 내용을 반환한다.")
+        void success() {
+            //when
+            Menu actual = menuService.create(createRequest);
+
+            //then
+            assertAll(
+                    () -> assertThat(actual.getId()).isNotNull(),
+                    () -> assertThat(actual.getMenuProducts().getValues()).hasSize(2)
+            );
+        }
+
+        @Test
+        @DisplayName("메뉴 가격이 없으면, 예외를 던진다.")
+        void fail_noPrice() {
+            //given
+            createRequest = new MenuCreateRequest("메뉴 이름", null, MENU_GROUP_ID,
+                    Arrays.asList(menuProductA, menuProductB));
+
+            //when & then
+            assertThatThrownBy(() -> menuService.create(createRequest))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        @DisplayName("메뉴 가격이 음수면, 예외를 던진다.")
+        void fail_priceIsNegative() {
+            //given
+            createRequest = new MenuCreateRequest("메뉴 이름", BigDecimal.valueOf(-1), MENU_GROUP_ID,
+                    Arrays.asList(menuProductA, menuProductB));
+
+            //when & then
+            assertThatThrownBy(() -> menuService.create(createRequest))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        @DisplayName("메뉴가 포함될 메뉴그룹이 존재하지 않으면, 예외를 던진다.")
+        void fail_noExistMenuGroup() {
+            //given
+            given(menuGroupRepository.existsById(createRequest.getMenuGroupId()))
+                    .willReturn(false);
+
+            //when & then
+            assertThatThrownBy(() -> menuService.create(createRequest))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        @DisplayName("메뉴의 가격보다 포함된 상품들의 총합이 싸면, 예외를 던진다.")
+        void fail_sumIsCheaperThenPrice() {
+            //given
+            productA = new Product(PRODUCT_A_ID, "상품A", BigDecimal.valueOf(100));
+            menuProductA = new MenuProductCreateRequest(PRODUCT_A_ID, 1);
+            productB = new Product(PRODUCT_B_ID, "상품B", BigDecimal.valueOf(100));
+            menuProductB = new MenuProductCreateRequest(PRODUCT_B_ID, 1);
+
+            given(productRepository.findAllById(any()))
+                    .willReturn(List.of(productA, productB));
+
+            createRequest = new MenuCreateRequest("메뉴 이름", BigDecimal.valueOf(201), MENU_GROUP_ID,
+                    Arrays.asList(menuProductA, menuProductB));
+
+            //when & then
+            assertThatThrownBy(() -> menuService.create(createRequest))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+    }
+}
