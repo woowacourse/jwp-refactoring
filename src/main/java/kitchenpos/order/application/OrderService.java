@@ -64,6 +64,7 @@ public class OrderService {
                             new OrderLineItem(
                                     null,
                                     orderId,
+                                    orderLineItem.getMenuId(),
                                     orderLineItem.getQuantity()
                             )
                     )

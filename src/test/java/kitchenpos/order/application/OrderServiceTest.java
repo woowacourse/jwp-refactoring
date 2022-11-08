@@ -108,7 +108,7 @@ class OrderServiceTest extends ServiceTest {
 
         final Order order = new Order(1L, orderTable.getId(), orderStatus, LocalDateTime.now(),
                 new OrderLineItems(new ArrayList<>()));
-        final OrderLineItem orderLineItem = saveAndGetOrderLineItem(1L, order.getId());
+        final OrderLineItem orderLineItem = saveAndGetOrderLineItem(1L, 1L, order.getId());
         order.addOrderLineItem(orderLineItem);
 
         final List<OrderLineItemCreateRequest> orderLineItemCreateRequests = new ArrayList<>();

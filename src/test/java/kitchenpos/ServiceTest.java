@@ -107,8 +107,8 @@ public class ServiceTest {
         return menuProductDao.save(new MenuProduct(id, menuId, productId, 1));
     }
 
-    protected OrderLineItem saveAndGetOrderLineItem(final Long id, final Long orderId) {
-        return orderLineItemDao.save(new OrderLineItem(id, orderId, 1));
+    protected OrderLineItem saveAndGetOrderLineItem(final Long id, final Long menuId, final Long orderId) {
+        return orderLineItemDao.save(new OrderLineItem(id, orderId, menuId, 1));
     }
 
     protected Order saveAndGetOrder(final Long id, final String status) {
@@ -124,7 +124,7 @@ public class ServiceTest {
         final OrderTable orderTable = saveAndGetNotEmptyOrderTable(1L);
         final OrderLineItems orderLineItems = new OrderLineItems(new ArrayList<>());
         final Order order = new Order(id, orderTable.getId(), status, LocalDateTime.now(), orderLineItems);
-        order.addOrderLineItem(saveAndGetOrderLineItem(1L, order.getId()));
+        order.addOrderLineItem(saveAndGetOrderLineItem(1L, 1L, order.getId()));
         return orderDao.save(order);
     }
 
@@ -140,7 +140,7 @@ public class ServiceTest {
 
         final OrderLineItems orderLineItems = new OrderLineItems(new ArrayList<>());
         final Order order = new Order(id, orderTable.getId(), status, LocalDateTime.now(), orderLineItems);
-        order.addOrderLineItem(saveAndGetOrderLineItem(1L, order.getId()));
+        order.addOrderLineItem(saveAndGetOrderLineItem(1L, 1L, order.getId()));
         return orderDao.save(order);
     }
 }
