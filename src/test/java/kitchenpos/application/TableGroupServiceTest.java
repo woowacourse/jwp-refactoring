@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderDetail;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.exception.NotFoundOrderTableException;
@@ -98,6 +100,15 @@ class TableGroupServiceTest extends ServiceTest {
         saved1 = orderTableRepository.save(createOrderTable(savedTableGroup, true));
         saved2 = orderTableRepository.save(createOrderTable(savedTableGroup, true));
 
+        Order savedOrder1 = orderRepository.save(new Order(saved1.getId()));
+        Order savedOrder2 = orderRepository.save(new Order(saved2.getId()));
+
+        savedOrder1.changeOrderStatus(OrderStatus.COMPLETION);
+        savedOrder2.changeOrderStatus(OrderStatus.COMPLETION);
+
+        orderDetailRepository.save(new OrderDetail(savedOrder1, saved1));
+        orderDetailRepository.save(new OrderDetail(savedOrder2, saved2));
+
         tableGroupService.ungroup(savedTableGroup.getId());
 
         assertThat(orderTableRepository.findById(saved1.getId()).get().getTableGroup()).isNull();
@@ -114,10 +125,14 @@ class TableGroupServiceTest extends ServiceTest {
         TableGroup tableGroup = new TableGroup(LocalDateTime.now());
         TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-        saved1 = orderTableRepository.save(createOrderTable(savedTableGroup, false));
+        saved1 = orderTableRepository.save(createOrderTable(savedTableGroup, true));
         saved2 = orderTableRepository.save(createOrderTable(savedTableGroup, true));
 
-        orderRepository.save(new Order(saved1.getId()));
+        Order savedOrder1 = orderRepository.save(new Order(saved1.getId()));
+        Order savedOrder2 = orderRepository.save(new Order(saved2.getId()));
+
+        orderDetailRepository.save(new OrderDetail(savedOrder1, saved1));
+        orderDetailRepository.save(new OrderDetail(savedOrder2, saved2));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
                 .isInstanceOf(OrderTableUnableUngroupingStatusException.class);

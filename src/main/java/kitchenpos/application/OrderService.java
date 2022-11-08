@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderDetail;
 import kitchenpos.domain.OrderHistory;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -14,6 +15,7 @@ import kitchenpos.exception.NotFoundOrderTableException;
 import kitchenpos.exception.OrderMenusCountException;
 import kitchenpos.exception.OrderTableEmptyException;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderDetailRepository;
 import kitchenpos.repository.OrderHistoryRepository;
 import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
@@ -32,17 +34,20 @@ public class OrderService {
     private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
     private final OrderHistoryRepository orderHistoryRepository;
+    private final OrderDetailRepository orderDetailRepository;
 
     public OrderService(MenuRepository menuRepository,
                         OrderRepository orderRepository,
                         OrderLineItemRepository orderLineItemRepository,
                         OrderTableRepository orderTableRepository,
-                        OrderHistoryRepository orderHistoryRepository) {
+                        OrderHistoryRepository orderHistoryRepository,
+                        OrderDetailRepository orderDetailRepository) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
         this.orderHistoryRepository = orderHistoryRepository;
+        this.orderDetailRepository = orderDetailRepository;
     }
 
     @Transactional
@@ -52,8 +57,13 @@ public class OrderService {
         OrderTable orderTable = getOrderTable(orderCreateRequest.getOrderTableId());
         Order savedOrder = saveOrder(orderTable);
         saveOrderLineItems(orderCreateRequest.getOrderLineItems(), savedOrder);
+        saveOrderDetail(savedOrder, orderTable);
 
         return savedOrder;
+    }
+
+    private void saveOrderDetail(Order order, OrderTable orderTable) {
+        orderDetailRepository.save(new OrderDetail(order, orderTable));
     }
 
     private void validateOrderLineItems(List<OrderLineItemDto> orderLineItemDtos) {

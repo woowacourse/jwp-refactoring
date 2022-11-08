@@ -42,6 +42,10 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
+    public boolean isUnableToUngrouping() {
+        return !orderStatus.equals(OrderStatus.COMPLETION);
+    }
+
     public Long getId() {
         return id;
     }

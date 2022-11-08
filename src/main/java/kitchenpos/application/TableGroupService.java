@@ -3,14 +3,13 @@ package kitchenpos.application;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderDetail;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.exception.NotFoundOrderTableException;
 import kitchenpos.exception.NotFoundTableGroupException;
 import kitchenpos.exception.OrderTableGroupingSizeException;
-import kitchenpos.exception.OrderTableUnableUngroupingStatusException;
-import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderDetailRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.ui.dto.OrderTableIdDto;
@@ -21,15 +20,15 @@ import org.springframework.util.CollectionUtils;
 
 @Service
 public class TableGroupService {
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final OrderDetailRepository orderDetailRepository;
 
-    public TableGroupService(OrderRepository orderRepository, OrderTableRepository orderTableRepository,
-                             TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
+    public TableGroupService(OrderTableRepository orderTableRepository,
+                             TableGroupRepository tableGroupRepository, OrderDetailRepository orderDetailRepository) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.orderDetailRepository = orderDetailRepository;
     }
 
     @Transactional
@@ -76,10 +75,10 @@ public class TableGroupService {
     @Transactional
     public void ungroup(Long tableGroupId) {
         validateOrderTablesGroupId(tableGroupId);
-        List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
-        validateOrderTablesStatus(orderTables);
+        List<OrderDetail> orderDetails
+                = orderDetailRepository.findAllByOrderTableTableGroupId(tableGroupId);
 
-        ungroupingOrderTables(orderTables);
+        ungroupingOrderTables(orderDetails);
     }
 
     private void validateOrderTablesGroupId(Long tableGroupId) {
@@ -88,23 +87,9 @@ public class TableGroupService {
         }
     }
 
-    private void validateOrderTablesStatus(List<OrderTable> orderTables) {
-        List<Long> orderTableIds = getOrderTableIds(orderTables);
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, List.of(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new OrderTableUnableUngroupingStatusException();
-        }
-    }
-
-    private List<Long> getOrderTableIds(List<OrderTable> orderTables) {
-        return orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-    }
-
-    private void ungroupingOrderTables(List<OrderTable> orderTables) {
-        for (OrderTable orderTable : orderTables) {
-            orderTable.ungrouping();
+    private void ungroupingOrderTables(List<OrderDetail> orderDetails) {
+        for (OrderDetail orderDetail : orderDetails) {
+            orderDetail.ungrouping();
         }
     }
 }
