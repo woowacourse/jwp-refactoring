@@ -16,10 +16,6 @@ public class MenuProduct {
     private Long seq;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_id")
-    private Menu menu;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
 
@@ -28,8 +24,7 @@ public class MenuProduct {
     protected MenuProduct() {
     }
 
-    public MenuProduct(Menu menu, Product product, Long quantity) {
-        this.menu = menu;
+    public MenuProduct(Product product, Long quantity) {
         this.product = product;
         this.quantity = quantity;
     }
@@ -40,10 +35,6 @@ public class MenuProduct {
 
     public Long getSeq() {
         return seq;
-    }
-
-    public Menu getMenu() {
-        return menu;
     }
 
     public Product getProduct() {

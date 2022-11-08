@@ -10,6 +10,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProducts;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.exception.MenuPriceException;
 import kitchenpos.exception.NotFoundMenuGroupException;
@@ -81,7 +83,7 @@ class MenuServiceTest extends ServiceTest {
 
     @Test
     void 메뉴_리스트를_반환한다() {
-        Menu menu = new Menu("", BigDecimal.valueOf(0), menuGroup);
+        Menu menu = new Menu("", new Price(BigDecimal.valueOf(0)), menuGroup, new MenuProducts(List.of()));
         int beforeSize = menuService.list().size();
         menuRepository.save(menu);
 
