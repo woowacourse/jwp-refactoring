@@ -6,48 +6,55 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.OrderTableRequest;
-import kitchenpos.support.OrderTableFixtures;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.support.DatabaseCleaner;
+import kitchenpos.table.application.TableService;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.domain.TableGroupRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
-@Transactional
 public class TableServiceTest {
 
     @Autowired
     private TableService tableService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private DatabaseCleaner databaseCleaner;
+
+    @BeforeEach
+    void setUp() {
+        databaseCleaner.execute();
+    }
 
     @DisplayName("OrderTable을 생성한다.")
     @Test
     void create() {
         // given
-        final OrderTable orderTable = ORDER_TABLE1.create();
-        final OrderTableRequest orderTableRequest = new OrderTableRequest(orderTable.getNumberOfGuests(),
-                orderTable.isEmpty());
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(3, true);
 
         // when
         final OrderTable savedOrderTable = tableService.create(orderTableRequest);
@@ -60,13 +67,14 @@ public class TableServiceTest {
     @Test
     void list() {
         // given
-        final List<OrderTable> expected = OrderTableFixtures.createAll();
+        final OrderTable orderTable = new OrderTable(3, true);
+        orderTableRepository.save(orderTable);
 
         // when
         final List<OrderTable> orderTables = tableService.list();
 
         // then
-        assertThat(orderTables).usingRecursiveFieldByFieldElementComparator().isEqualTo(expected);
+        assertThat(orderTables.size()).isEqualTo(1);
     }
 
     @DisplayName("orderTableId가 존재하지 않은 경우 empty 여부를 변경할 수 없다.")
@@ -84,16 +92,14 @@ public class TableServiceTest {
     @Test
     void changeEmpty_tableGroupIdNonNull_throwsException() {
         // given
-        final OrderTable orderTable = ORDER_TABLE_NOT_EMPTY.createWithIdNull();
-        final TableGroup tableGroup = new TableGroup(null, LocalDateTime.now(), Arrays.asList(orderTable));
-        tableGroupDao.save(tableGroup);
-        orderTable.setTableGroupId(1L);
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(3, true));
+        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), Arrays.asList(orderTable));
+        tableGroupRepository.save(tableGroup);
 
         final OrderTableRequest orderTableRequest = new OrderTableRequest(true);
 
         // when, then
-        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), orderTableRequest))
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), orderTableRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -101,17 +107,16 @@ public class TableServiceTest {
     @Test
     void changeEmpty_orderStatusCookingOrMeal_throwsException() {
         // given
-        final OrderTable orderTable = orderTableDao.save(new OrderTable(2, false));
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(2, false));
 
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), Arrays.asList(orderTable));
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
-        orderTable.setTableGroupId(savedTableGroup.getId());
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        final OrderLineItem orderLineItem = new OrderLineItem(1L, 3);
-        final Order order = new Order(null, savedOrderTable, OrderStatus.COOKING.name(), LocalDateTime.now(),
+        final OrderLineItem orderLineItem = new OrderLineItem(3, "menuName", BigDecimal.valueOf(3000));
+        final Order order = new Order(savedOrderTable, OrderStatus.COOKING, LocalDateTime.now(),
                 Arrays.asList(orderLineItem));
-        final Order savedOrder = orderDao.save(order);
+        final Order savedOrder = orderRepository.save(order);
 
         final OrderTableRequest orderTableRequest = new OrderTableRequest(true);
 
@@ -124,11 +129,11 @@ public class TableServiceTest {
     @Test
     void changeEmpty() {
         // given
-        final OrderTable orderTable = ORDER_TABLE_NOT_EMPTY.create();
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(3, true));
         final OrderTableRequest orderTableRequest = new OrderTableRequest(false);
 
         // when
-        final OrderTable changedOrderTable = tableService.changeEmpty(1L, orderTableRequest);
+        final OrderTable changedOrderTable = tableService.changeEmpty(orderTable.getId(), orderTableRequest);
 
         // then
         assertAll(
@@ -174,7 +179,7 @@ public class TableServiceTest {
     @Test
     void changeNumberOfGuests() {
         // given
-        final OrderTable savedOrderTable = orderTableDao.save(ORDER_TABLE_NOT_EMPTY.createWithIdNull());
+        final OrderTable savedOrderTable = orderTableRepository.save(ORDER_TABLE_NOT_EMPTY.createWithIdNull());
         final OrderTable orderTable = ORDER_TABLE1.create();
         final OrderTableRequest orderTableRequest = new OrderTableRequest(3);
 

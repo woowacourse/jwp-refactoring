@@ -4,36 +4,62 @@ import static kitchenpos.support.OrderTableFixtures.ORDER_TABLE_NOT_EMPTY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.dto.request.OrderRequest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
+import kitchenpos.support.DatabaseCleaner;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
-@Transactional
 public class OrderServiceTest {
 
     @Autowired
     private OrderService orderService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private MenuRepository menuRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private DatabaseCleaner databaseCleaner;
+
+    @BeforeEach
+    void setUp() {
+        databaseCleaner.execute();
+    }
 
     @DisplayName("OrderLineItems이 비어있는 경우 예외가 발생한다.")
     @Test
@@ -74,8 +100,14 @@ public class OrderServiceTest {
     @Test
     void create() {
         // given
-        final OrderTable orderTable = orderTableDao.save(ORDER_TABLE_NOT_EMPTY.createWithIdNull());
-        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 3);
+        final Product product = productRepository.save(new Product("product", BigDecimal.valueOf(3000)));
+        final MenuProduct menuProduct = new MenuProduct(product, 3);
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
+        final Menu menu = menuRepository.save(
+                new Menu("menu", BigDecimal.valueOf(9000), menuGroup, Arrays.asList(menuProduct)));
+        final BigDecimal price = menu.getPrice();
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(3, false));
+        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 3);
         final OrderRequest orderRequest = new OrderRequest(orderTable.getId(), Arrays.asList(orderLineItemRequest));
 
         // when
@@ -89,8 +121,13 @@ public class OrderServiceTest {
     @Test
     void list() {
         // given
-        final OrderTable orderTable = orderTableDao.save(ORDER_TABLE_NOT_EMPTY.createWithIdNull());
-        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 3);
+        final Product product = productRepository.save(new Product("product", BigDecimal.valueOf(3000)));
+        final MenuProduct menuProduct = new MenuProduct(product, 3);
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
+        final Menu menu = menuRepository.save(
+                new Menu("menu", BigDecimal.valueOf(9000), menuGroup, Arrays.asList(menuProduct)));
+        final OrderTable orderTable = orderTableRepository.save(ORDER_TABLE_NOT_EMPTY.createWithIdNull());
+        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 3);
         final OrderRequest orderRequest = new OrderRequest(orderTable.getId(), Arrays.asList(orderLineItemRequest));
 
         final Order savedOrder = orderService.create(orderRequest);
@@ -106,9 +143,10 @@ public class OrderServiceTest {
     @Test
     void changeOrderStatus_notExistOrder_throwsException() {
         // given
-        final OrderTable orderTable = orderTableDao.save(ORDER_TABLE_NOT_EMPTY.createWithIdNull());
-        final OrderLineItem orderLineItem = new OrderLineItem(1L, 3);
-        final Order order = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now());
+        final OrderTable orderTable = orderTableRepository.save(ORDER_TABLE_NOT_EMPTY.createWithIdNull());
+        final OrderLineItem orderLineItem = new OrderLineItem(3, "menuName", BigDecimal.valueOf(3000));
+        final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(),
+                Arrays.asList(orderLineItem));
         final OrderRequest request = new OrderRequest(OrderStatus.COOKING.name());
 
         // when, then
@@ -120,11 +158,17 @@ public class OrderServiceTest {
     @Test
     void changeOrderStatus_orderStatusCompletion_throwsException() {
         // given
-        final OrderTable orderTable = orderTableDao.save(ORDER_TABLE_NOT_EMPTY.createWithIdNull());
-        final OrderLineItem orderLineItem = new OrderLineItem(1L, 3);
-        final Order order = new Order(null, orderTable, OrderStatus.COMPLETION.name(), LocalDateTime.now(),
+        final Product product = productRepository.save(new Product("product", BigDecimal.valueOf(3000)));
+        final MenuProduct menuProduct = new MenuProduct(product, 3);
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
+        final Menu menu = menuRepository.save(
+                new Menu("menu", BigDecimal.valueOf(9000), menuGroup, Arrays.asList(menuProduct)));
+
+        final OrderTable orderTable = orderTableRepository.save(ORDER_TABLE_NOT_EMPTY.createWithIdNull());
+        final OrderLineItem orderLineItem = new OrderLineItem(3, "menuName", BigDecimal.valueOf(3000));
+        final Order order = new Order(orderTable, OrderStatus.COMPLETION, LocalDateTime.now(),
                 Arrays.asList(orderLineItem));
-        final Order savedOrder = orderDao.save(order);
+        final Order savedOrder = orderRepository.save(order);
 
         final OrderRequest request = new OrderRequest(OrderStatus.COOKING.name());
 
@@ -137,11 +181,11 @@ public class OrderServiceTest {
     @Test
     void changeOrderStatus() {
         // given
-        final OrderTable orderTable = orderTableDao.save(ORDER_TABLE_NOT_EMPTY.createWithIdNull());
-        final OrderLineItem orderLineItem = new OrderLineItem(1L, 3);
-        final Order order = new Order(null, orderTable, OrderStatus.COOKING.name(), LocalDateTime.now(),
+        final OrderTable orderTable = orderTableRepository.save(ORDER_TABLE_NOT_EMPTY.createWithIdNull());
+        final OrderLineItem orderLineItem = new OrderLineItem(3, "menuName", BigDecimal.valueOf(3000));
+        final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(),
                 Arrays.asList(orderLineItem));
-        final Order savedOrder = orderDao.save(order);
+        final Order savedOrder = orderRepository.save(order);
         final OrderRequest request = new OrderRequest(OrderStatus.MEAL.name());
 
         // when

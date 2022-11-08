@@ -1,23 +1,35 @@
 package kitchenpos.application;
 
-import static kitchenpos.support.MenuGroupFixtures.createAll;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.request.MenuGroupRequest;
+import kitchenpos.menugroup.application.MenuGroupService;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
+import kitchenpos.support.DatabaseCleaner;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
-@Transactional
 public class MenuGroupServiceTest {
 
     @Autowired
     private MenuGroupService menuGroupService;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private DatabaseCleaner databaseCleaner;
+
+    @BeforeEach
+    void setUp() {
+        databaseCleaner.execute();
+    }
 
     @DisplayName("menuGroup을 생성한다.")
     @Test
@@ -36,12 +48,12 @@ public class MenuGroupServiceTest {
     @Test
     void list() {
         // given
-        final List<MenuGroup> expected = createAll();
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
 
         // when
         final List<MenuGroup> menuGroups = menuGroupService.list();
 
         // then
-        assertThat(menuGroups).usingRecursiveFieldByFieldElementComparator().isEqualTo(expected);
+        assertThat(menuGroups.size()).isEqualTo(1);
     }
 }

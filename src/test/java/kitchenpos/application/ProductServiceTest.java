@@ -1,25 +1,37 @@
 package kitchenpos.application;
 
-import static kitchenpos.support.ProductFixtures.createAll;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Product;
 import kitchenpos.dto.request.ProductRequest;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
+import kitchenpos.support.DatabaseCleaner;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
-@Transactional
 public class ProductServiceTest {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private DatabaseCleaner databaseCleaner;
+
+    @BeforeEach
+    void setUp() {
+        databaseCleaner.execute();
+    }
 
     @DisplayName("product 가격이 0보다 작은 경우 예외가 발생한다.")
     @Test
@@ -60,14 +72,12 @@ public class ProductServiceTest {
     @Test
     void list() {
         // given
-        final List<Product> expected = createAll();
+        productRepository.save(new Product("name", BigDecimal.valueOf(3000)));
 
         // when
         final List<Product> products = productService.list();
 
         // then
-        assertThat(products).usingRecursiveFieldByFieldElementComparator()
-                .usingElementComparatorIgnoringFields("price")
-                .isEqualTo(expected);
+        assertThat(products.size()).isEqualTo(1);
     }
 }

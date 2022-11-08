@@ -2,7 +2,7 @@ package kitchenpos.support;
 
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.table.domain.OrderTable;
 
 public enum OrderTableFixtures {
 
@@ -14,12 +14,11 @@ public enum OrderTableFixtures {
     ORDER_TABLE6(6L, 0, true),
     ORDER_TABLE7(7L, 0, true),
     ORDER_TABLE8(8L, 0, true),
-    ORDER_TABLE_NOT_EMPTY(9L, 0 ,false)
-    ;
+    ORDER_TABLE_NOT_EMPTY(9L, 0, false);
 
-    private Long id;
-    private int numberOfGuests;
-    private boolean empty;
+    private final Long id;
+    private final int numberOfGuests;
+    private final boolean empty;
 
     OrderTableFixtures(final Long id, final int numberOfGuests, final boolean empty) {
         this.id = id;
@@ -27,16 +26,16 @@ public enum OrderTableFixtures {
         this.empty = empty;
     }
 
-    public OrderTable create() {
-        return new OrderTable(id, numberOfGuests, empty);
-    }
-
-    public OrderTable createWithIdNull() {
-        return new OrderTable(null, numberOfGuests, empty);
-    }
-
     public static List<OrderTable> createAll() {
         return Arrays.asList(ORDER_TABLE1.create(), ORDER_TABLE2.create(), ORDER_TABLE3.create(), ORDER_TABLE4.create(),
                 ORDER_TABLE5.create(), ORDER_TABLE6.create(), ORDER_TABLE7.create(), ORDER_TABLE8.create());
+    }
+
+    public OrderTable create() {
+        return new OrderTable(numberOfGuests, empty);
+    }
+
+    public OrderTable createWithIdNull() {
+        return new OrderTable(numberOfGuests, empty);
     }
 }
