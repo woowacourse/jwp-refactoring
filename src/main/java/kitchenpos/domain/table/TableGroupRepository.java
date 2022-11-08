@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.TableGroup;
 import org.springframework.stereotype.Component;
 
 @Component
