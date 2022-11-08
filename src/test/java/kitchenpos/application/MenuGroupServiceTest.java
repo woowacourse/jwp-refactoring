@@ -13,13 +13,13 @@ class MenuGroupServiceTest extends ServiceTest {
         MenuGroupCreateRequest menuGroupCreateRequest = new MenuGroupCreateRequest("한판 메뉴");
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroupCreateRequest);
 
-        assertThat(menuGroupDao.existsById(savedMenuGroup.getId())).isTrue();
+        assertThat(menuGroupRepository.existsById(savedMenuGroup.getId())).isTrue();
     }
 
     @Test
     void 메뉴그룹_리스트를_반환한다() {
         int beforeSize = menuGroupService.list().size();
-        menuGroupDao.save(new MenuGroup("한판 메뉴"));
+        menuGroupRepository.save(new MenuGroup("한판 메뉴"));
 
         assertThat(menuGroupService.list().size()).isEqualTo(beforeSize + 1);
     }

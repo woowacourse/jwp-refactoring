@@ -4,8 +4,8 @@ import static kitchenpos.fixture.DomainFixture.createOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.LocalDateTime;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderDetail;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.exception.GuestSizeException;
@@ -23,7 +23,7 @@ class TableServiceTest extends ServiceTest {
         OrderTableCreateRequest request = new OrderTableCreateRequest(2, false);
         OrderTable savedOrderTable = tableService.create(request);
 
-        assertThat(orderTableDao.findById(savedOrderTable.getId())).isPresent();
+        assertThat(orderTableRepository.findById(savedOrderTable.getId())).isPresent();
     }
 
     @Test
@@ -31,7 +31,7 @@ class TableServiceTest extends ServiceTest {
         OrderTable orderTable = new OrderTable(0, false);
 
         int beforeSize = tableService.list().size();
-        orderTableDao.save(orderTable);
+        orderTableRepository.save(orderTable);
 
         assertThat(tableService.list().size()).isEqualTo(beforeSize + 1);
     }
@@ -39,12 +39,16 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 주문테이블을_비운다() {
         OrderTable orderTable = new OrderTable(0, false);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
         OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(true);
+
+        Order savedOrder = orderRepository.save(new Order());
+        savedOrder.changeOrderStatus(OrderStatus.COMPLETION);
+        orderDetailRepository.save(new OrderDetail(savedOrder, savedOrderTable));
 
         tableService.changeEmpty(savedOrderTable.getId(), request);
 
-        assertThat(orderTableDao.findById(savedOrderTable.getId()).get().isEmpty()).isTrue();
+        assertThat(orderTableRepository.findById(savedOrderTable.getId()).get().isEmpty()).isTrue();
     }
 
     @Test
@@ -57,8 +61,9 @@ class TableServiceTest extends ServiceTest {
 
     @Test
     void 주문테이블을_비울수_없는_상태면_예외를_반환한다() {
-        OrderTable savedOrderTable = orderTableDao.save(createOrderTable());
-        orderDao.save(new Order(savedOrderTable.getId(), OrderStatus.COOKING, LocalDateTime.now()));
+        OrderTable savedOrderTable = orderTableRepository.save(createOrderTable());
+        Order savedOrder = orderRepository.save(new Order());
+        orderDetailRepository.save(new OrderDetail(savedOrder, savedOrderTable));
 
         OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(true);
 
@@ -69,19 +74,19 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 손님_수를_변경한다() {
         OrderTable orderTable = new OrderTable(2, false);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         OrderTableChangeNumberOfGuestsRequest request
                 = new OrderTableChangeNumberOfGuestsRequest(10);
         tableService.changeNumberOfGuests(savedOrderTable.getId(), request);
 
-        assertThat(orderTableDao.findById(savedOrderTable.getId()).get().getNumberOfGuests()).isEqualTo(10);
+        assertThat(orderTableRepository.findById(savedOrderTable.getId()).get().getNumberOfGuests()).isEqualTo(10);
     }
 
     @Test
     void 손님_수를_변경할때_잘못된_수는_예외를_반환한다() {
         OrderTable orderTable = new OrderTable(2, false);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         OrderTableChangeNumberOfGuestsRequest request
                 = new OrderTableChangeNumberOfGuestsRequest(-1);
@@ -102,7 +107,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 손님_수를_변경할때_비어있으면_예외를_반환한다() {
         OrderTable orderTable = new OrderTable(2, true);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         OrderTableChangeNumberOfGuestsRequest request
                 = new OrderTableChangeNumberOfGuestsRequest(10);
