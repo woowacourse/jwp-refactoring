@@ -6,9 +6,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.ApplicationTest;
-import kitchenpos.product.application.ProductService;
-import kitchenpos.product.application.request.ProductRequest;
-import kitchenpos.product.application.response.ProductResponse;
+import kitchenpos.application.request.ProductRequest;
+import kitchenpos.application.response.ProductResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

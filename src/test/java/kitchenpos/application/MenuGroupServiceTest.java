@@ -4,9 +4,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import java.util.List;
 import kitchenpos.ApplicationTest;
-import kitchenpos.menu.application.MenuGroupService;
-import kitchenpos.menu.application.request.MenuGroupCreateRequest;
-import kitchenpos.menu.application.response.MenuGroupResponse;
+import kitchenpos.application.request.MenuGroupCreateRequest;
+import kitchenpos.application.response.MenuGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

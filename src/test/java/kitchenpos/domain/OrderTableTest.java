@@ -3,7 +3,6 @@ package kitchenpos.domain;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
-import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.Test;
 
 class OrderTableTest {
