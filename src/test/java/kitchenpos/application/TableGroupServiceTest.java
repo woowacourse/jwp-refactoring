@@ -7,13 +7,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.TableGroupResponse;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.support.ServiceTestBase;
-import kitchenpos.ui.dto.OrderTableDto;
-import kitchenpos.ui.dto.OrderTableRequest;
+import kitchenpos.table.ui.dto.TableGroupResponse;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.ui.dto.OrderTableRequestDto;
+import kitchenpos.table.ui.dto.OrderTableRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -37,8 +37,8 @@ class TableGroupServiceTest extends ServiceTestBase {
     }
 
     private OrderTableRequest toRequest(final OrderTable... orderTables) {
-        List<OrderTableDto> orderTableDtos = Arrays.stream(orderTables)
-                .map(it -> new OrderTableDto(it.getId()))
+        List<OrderTableRequestDto> orderTableDtos = Arrays.stream(orderTables)
+                .map(it -> new OrderTableRequestDto(it.getId()))
                 .collect(Collectors.toList());
 
         return new OrderTableRequest(orderTableDtos);

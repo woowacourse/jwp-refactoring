@@ -9,10 +9,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.ProductResponse;
-import kitchenpos.domain.Product;
+import kitchenpos.product.ui.dto.ProductResponse;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.ui.dto.ProductRequest;
 import kitchenpos.support.ServiceTestBase;
-import kitchenpos.ui.dto.ProductRequest;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
