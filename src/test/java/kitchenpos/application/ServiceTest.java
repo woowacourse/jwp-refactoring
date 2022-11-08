@@ -11,14 +11,15 @@ import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.table.TableGroup;
+import org.aspectj.weaver.ast.Or;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,9 +74,9 @@ public abstract class ServiceTest {
         return 메뉴_상품을_생성한다(null, productName, productPrice, quantity);
     }
 
-    protected MenuProduct 메뉴_상품을_생성한다(Long id, String productName, int productPrice, Long quantity) {
+    protected MenuProduct 메뉴_상품을_생성한다(Long menuId, String productName, int productPrice, Long quantity) {
         Product product = 상품을_저장한다(productName, productPrice);
-        return new MenuProduct(id, product.getId(), quantity);
+        return MenuProduct.createWithPrice(menuId, product.getId(), BigDecimal.valueOf(productPrice), quantity);
     }
 
     protected Product 상품을_저장한다(String name, int price) {
@@ -100,7 +101,7 @@ public abstract class ServiceTest {
 
         MenuGroup menuGroup = 메뉴_그룹을_저장한다("메뉴 그룹");
 
-        Menu menu = new Menu(
+        Menu menu = Menu.create(
                 menuName, BigDecimal.valueOf(menuProducts.size() * 5000L), menuGroup.getId(), menuProducts);
 
         return menuDao.save(menu);
@@ -127,13 +128,16 @@ public abstract class ServiceTest {
 
     protected Order 주문을_저장한다(OrderTable orderTable) {
         Menu menu = 메뉴를_저장한다("메뉴");
-        OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 3L);
-        Order order = new Order(orderTable.getId(), LocalDateTime.now(), List.of(orderLineItem));
+        OrderLineItem orderLineItem = new OrderLineItem(null, menu.getName(), menu.getPrice(), 3L);
+        Order order = Order.newCookingInstanceOf(orderTable.getId(), List.of(orderLineItem));
+        Order orderWithLocalDateTime = Order.toOrderWithLocalDateTime(order, LocalDateTime.now());
 
-        Order savedOrder = orderDao.save(order);
-        orderLineItemDao.save(
-                new OrderLineItem(savedOrder.getId(), orderLineItem.getMenuId(), orderLineItem.getQuantity()));
+        Order savedOrder = orderDao.save(orderWithLocalDateTime);
+        OrderLineItem savedOrderLineItem = orderLineItemDao.save(
+                new OrderLineItem(savedOrder.getId(), orderLineItem.getMenuName(), orderLineItem.getMenuPrice(),
+                        orderLineItem.getQuantity()));
 
-        return savedOrder;
+        return new Order(savedOrder.getId(), savedOrder.getOrderTableId(), savedOrder.getOrderStatus(),
+                savedOrder.getOrderedTime(), List.of(savedOrderLineItem));
     }
 }

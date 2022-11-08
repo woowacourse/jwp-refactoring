@@ -18,6 +18,10 @@ public class Price {
         }
     }
 
+    public BigDecimal calculateTotalAmount(long quantity) {
+        return amount.multiply(BigDecimal.valueOf(quantity));
+    }
+
     public BigDecimal getAmount() {
         return amount;
     }

@@ -1,6 +1,7 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.OrderLineItem;
+import java.math.BigDecimal;
+import kitchenpos.domain.order.OrderLineItem;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -49,20 +50,20 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
 
     @Override
     public List<OrderLineItem> findAll() {
-        final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item";
+        final String sql = "SELECT seq, order_id, menu_name, menu_price, quantity FROM order_line_item";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     @Override
     public List<OrderLineItem> findAllByOrderId(final Long orderId) {
-        final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item WHERE order_id = (:orderId)";
+        final String sql = "SELECT seq, order_id, menu_name, menu_price, quantity FROM order_line_item WHERE order_id = (:orderId)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("orderId", orderId);
         return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     private OrderLineItem select(final Long id) {
-        final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item WHERE seq = (:seq)";
+        final String sql = "SELECT seq, order_id, menu_name, menu_price, quantity FROM order_line_item WHERE seq = (:seq)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("seq", id);
         return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
@@ -71,9 +72,10 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
     private OrderLineItem toEntity(final ResultSet resultSet) throws SQLException {
         Long seq = resultSet.getLong(KEY_COLUMN_NAME);
         Long orderId = resultSet.getLong("order_id");
-        Long menuId = resultSet.getLong("menu_id");
+        String menuName = resultSet.getString("menu_name");
+        BigDecimal menuPrice = resultSet.getBigDecimal("menu_price");
         long quantity = resultSet.getLong("quantity");
 
-        return new OrderLineItem(seq, orderId, menuId, quantity);
+        return new OrderLineItem(seq, orderId, menuName, menuPrice, quantity);
     }
 }

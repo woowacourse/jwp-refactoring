@@ -1,40 +1,48 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import kitchenpos.domain.Price;
 
 public class Menu {
 
     private final Long id;
     private final String name;
-    private final BigDecimal price;
+    private final Price price;
     private final Long menuGroupId;
     private final List<MenuProduct> menuProducts;
 
     public Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        validatePrice(price);
-
         this.id = id;
         this.name = name;
-        this.price = price;
+        this.price = new Price(price);
         this.menuGroupId = menuGroupId;
         this.menuProducts = new ArrayList<>(menuProducts);
-    }
-
-    private void validatePrice(BigDecimal price) {
-        if (price == null || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
     }
 
     public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
         this(id, name, price, menuGroupId, new ArrayList<>());
     }
 
-    public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        this(null, name, price, menuGroupId, menuProducts);
+    public static Menu create(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        validateMenuPrice(price, menuProducts);
+
+        return new Menu(null, name, price, menuGroupId, menuProducts);
+    }
+
+    private static void validateMenuPrice(BigDecimal menuPrice, List<MenuProduct> menuProducts) {
+        BigDecimal sum = menuProducts.stream()
+                .map(MenuProduct::calculateTotalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        validateMenuPriceLessThanTotalProductPrice(menuPrice, sum);
+    }
+
+    private static void validateMenuPriceLessThanTotalProductPrice(BigDecimal menuPrice, BigDecimal productsSum) {
+        if (menuPrice.compareTo(productsSum) > 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
@@ -46,7 +54,7 @@ public class Menu {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getAmount();
     }
 
     public Long getMenuGroupId() {

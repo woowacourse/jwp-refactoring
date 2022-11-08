@@ -1,11 +1,8 @@
-package kitchenpos.domain.repository;
+package kitchenpos.domain.product;
 
 import java.util.List;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class ProductRepository {
@@ -27,5 +24,9 @@ public class ProductRepository {
     public Product findById(Long id) {
         return productDao.findById(id)
                 .orElseThrow(IllegalArgumentException::new);
+    }
+
+    public List<Product> findAllByIdIn(List<Long> ids) {
+        return productDao.findAllByIdIn(ids);
     }
 }

@@ -1,12 +1,10 @@
-package kitchenpos.domain.repository;
+package kitchenpos.domain.menu;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -36,7 +34,8 @@ public class MenuRepository {
     private List<MenuProduct> saveMenuProducts(Menu menu, Long menuId) {
         return menu.getMenuProducts()
                 .stream()
-                .map(menuProduct -> new MenuProduct(menuId, menuProduct.getProductId(), menuProduct.getQuantity()))
+                .map(menuProduct -> MenuProduct.createEntity(null, menuId, menuProduct.getProductId(),
+                        menuProduct.getQuantity()))
                 .map(menuProductDao::save)
                 .collect(Collectors.toList());
     }
@@ -53,7 +52,7 @@ public class MenuRepository {
                 )).collect(Collectors.toList());
     }
 
-    public Long countByIdIn(List<Long> ids) {
-        return menuDao.countByIdIn(ids);
+    public List<Menu> findByIdIn(List<Long> ids) {
+        return menuDao.findByIdIn(ids);
     }
 }

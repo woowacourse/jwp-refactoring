@@ -1,6 +1,6 @@
 package kitchenpos.dto.request;
 
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.table.OrderTable;
 
 public class TableEmptyUpdateRequest {
 
@@ -18,7 +18,6 @@ public class TableEmptyUpdateRequest {
     }
 
     public OrderTable toUpdateEntity(OrderTable orderTable) {
-        return new OrderTable(orderTable.getId(), orderTable.getTableGroupId(), orderTable.getNumberOfGuests(),
-                isEmpty());
+        return new OrderTable(orderTable.getId(), orderTable.getTableGroupId(), orderTable.getNumberOfGuests(), empty);
     }
 }

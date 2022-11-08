@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -27,26 +27,18 @@ public class Order {
         this(id, orderTableId, orderStatus, orderedTime, new ArrayList<>());
     }
 
-    public Order(Long orderTableId, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, OrderStatus.COOKING.name(), orderedTime, orderLineItems);
+    public static Order toOrderWithLocalDateTime(Order order, LocalDateTime orderedTime) {
+        return new Order(null, order.getOrderTableId(), order.getOrderStatus(), orderedTime, order.getOrderLineItems());
     }
 
-    public static Order newCookingInstanceOf(Long orderTableId, List<OrderLineItem> orderLineItems,
-                                             Long actualMenusSize) {
+    public static Order newCookingInstanceOf(Long orderTableId, List<OrderLineItem> orderLineItems) {
         validateNotEmpty(orderLineItems);
-        validateMenuExistence(orderLineItems, actualMenusSize);
 
         return new Order(null, orderTableId, OrderStatus.COOKING.name(), null, orderLineItems);
     }
 
     private static void validateNotEmpty(List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private static void validateMenuExistence(List<OrderLineItem> orderLineItems, Long actualMenusSize) {
-        if (orderLineItems.size() != actualMenusSize) {
             throw new IllegalArgumentException();
         }
     }

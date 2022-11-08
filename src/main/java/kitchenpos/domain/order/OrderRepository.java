@@ -1,12 +1,12 @@
-package kitchenpos.domain.repository;
+package kitchenpos.domain.order;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -22,20 +22,19 @@ public class OrderRepository {
 
 
     public Order save(Order order) {
-        Order orderWithLocalDateTime = new Order(order.getOrderTableId(), LocalDateTime.now(),
-                order.getOrderLineItems());
+        Order orderWithLocalDateTime = Order.toOrderWithLocalDateTime(order, LocalDateTime.now());
         Long orderId = orderDao.save(orderWithLocalDateTime).getId();
 
         List<OrderLineItem> savedOrderLineItems = saveOrderLineItems(order, orderId);
 
-        return new Order(orderId, order.getOrderTableId(), order.getOrderStatus(), order.getOrderedTime(),
-                savedOrderLineItems);
+        return new Order(orderId, order.getOrderTableId(), order.getOrderStatus(),
+                orderWithLocalDateTime.getOrderedTime(), savedOrderLineItems);
     }
 
     private List<OrderLineItem> saveOrderLineItems(Order order, Long orderId) {
         return order.getOrderLineItems().stream()
                 .map(orderLineItem -> new OrderLineItem(
-                        orderId, orderLineItem.getMenuId(), orderLineItem.getQuantity()))
+                        orderId, orderLineItem.getMenuName(), orderLineItem.getMenuPrice(), orderLineItem.getQuantity()))
                 .map(orderLineItemDao::save)
                 .collect(Collectors.toList());
     }
