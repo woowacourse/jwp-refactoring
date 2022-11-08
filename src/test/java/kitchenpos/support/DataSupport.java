@@ -10,7 +10,7 @@ import kitchenpos.menu.MenuGroup;
 import kitchenpos.menu.MenuProduct;
 import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.menu.repository.MenuRepository;
-import kitchenpos.order.MenuInfo;
+import kitchenpos.order.OrderedMenu;
 import kitchenpos.order.Order;
 import kitchenpos.order.OrderLineItem;
 import kitchenpos.order.OrderStatus;
@@ -66,12 +66,12 @@ public class DataSupport {
         return menuRepository.save(menu);
     }
 
-    public MenuInfo saveMenuAndGetInfo(final String name,
-                                       final int price,
-                                       final Long menuGroupId,
-                                       final MenuProduct... menuProducts) {
+    public OrderedMenu saveMenuAndGetInfo(final String name,
+                                          final int price,
+                                          final Long menuGroupId,
+                                          final MenuProduct... menuProducts) {
         final Menu menu = saveMenu(name, price, menuGroupId, menuProducts);
-        return new MenuInfo(menu.getId(), menu.getName(), menu.getPrice());
+        return new OrderedMenu(menu.getId(), menu.getName(), menu.getPrice());
     }
 
     public OrderTable saveOrderTable(final int numberOfGuests, final boolean empty) {

@@ -16,18 +16,18 @@ public class OrderLineItem {
     @ManyToOne
     private Order order;
     @Embedded
-    private MenuInfo menuInfo;
+    private OrderedMenu orderedMenu;
     private long quantity;
 
-    public OrderLineItem(final Long seq, final Order order, final MenuInfo menuInfo, final long quantity) {
+    public OrderLineItem(final Long seq, final Order order, final OrderedMenu orderedMenu, final long quantity) {
         this.seq = seq;
         this.order = order;
-        this.menuInfo = menuInfo;
+        this.orderedMenu = orderedMenu;
         this.quantity = quantity;
     }
 
-    public static OrderLineItem ofUnsaved(final Order order, final MenuInfo menuInfo, final long quantity) {
-        return new OrderLineItem(null, order, menuInfo, quantity);
+    public static OrderLineItem ofUnsaved(final Order order, final OrderedMenu orderedMenu, final long quantity) {
+        return new OrderLineItem(null, order, orderedMenu, quantity);
     }
 
     public void order(final Order order) {
@@ -42,12 +42,12 @@ public class OrderLineItem {
         return order.getId();
     }
 
-    public MenuInfo getMenuInfo() {
-        return menuInfo;
+    public OrderedMenu getMenuInfo() {
+        return orderedMenu;
     }
 
     public Long getMenuId() {
-        return menuInfo.getId();
+        return orderedMenu.getId();
     }
 
     public long getQuantity() {

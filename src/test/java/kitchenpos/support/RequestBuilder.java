@@ -12,7 +12,7 @@ import kitchenpos.menu.MenuProduct;
 import kitchenpos.menu.dto.MenuGroupRequest;
 import kitchenpos.menu.dto.MenuProductRequest;
 import kitchenpos.menu.dto.MenuRequest;
-import kitchenpos.order.MenuInfo;
+import kitchenpos.order.OrderedMenu;
 import kitchenpos.order.OrderStatus;
 import kitchenpos.order.dto.OrderLineItemRequest;
 import kitchenpos.order.dto.OrderRequest;
@@ -88,8 +88,8 @@ public class RequestBuilder {
         return ofOrder(menu.getId(), orderTable.getId());
     }
 
-    public static OrderRequest ofOrder(final MenuInfo menuInfo, final OrderTable orderTable) {
-        return ofOrder(menuInfo.getId(), orderTable.getId());
+    public static OrderRequest ofOrder(final OrderedMenu orderedMenu, final OrderTable orderTable) {
+        return ofOrder(orderedMenu.getId(), orderTable.getId());
     }
 
     public static OrderRequest ofOrderWithoutMenu(final OrderTable orderTable) {

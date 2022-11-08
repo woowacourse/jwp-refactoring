@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.Menu;
 import kitchenpos.menu.repository.MenuRepository;
-import kitchenpos.order.MenuInfo;
+import kitchenpos.order.OrderedMenu;
 import kitchenpos.order.Order;
 import kitchenpos.order.OrderLineItem;
 import kitchenpos.order.OrderStatus;
@@ -83,7 +83,7 @@ public class OrderService {
 
     private OrderLineItem getOrderLineItemOf(final Order order, final OrderLineItemRequest orderLineItemRequest) {
         final Menu menu = menuRepository.getOne(orderLineItemRequest.getMenuId());
-        final MenuInfo menuInfo = new MenuInfo(menu.getId(), menu.getName(), menu.getPrice());
-        return OrderLineItem.ofUnsaved(order, menuInfo, orderLineItemRequest.getQuantity());
+        final OrderedMenu orderedMenu = new OrderedMenu(menu.getId(), menu.getName(), menu.getPrice());
+        return OrderLineItem.ofUnsaved(order, orderedMenu, orderLineItemRequest.getQuantity());
     }
 }

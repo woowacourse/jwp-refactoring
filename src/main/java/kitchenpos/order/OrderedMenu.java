@@ -5,7 +5,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class MenuInfo {
+public class OrderedMenu {
 
     @Column(name = "menu_id")
     private Long id;
@@ -14,7 +14,7 @@ public class MenuInfo {
     @Column(name = "menu_price")
     private BigDecimal price;
 
-    public MenuInfo(final Long id, final String name, final BigDecimal price) {
+    public OrderedMenu(final Long id, final String name, final BigDecimal price) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -24,6 +24,6 @@ public class MenuInfo {
         return id;
     }
 
-    protected MenuInfo() {
+    protected OrderedMenu() {
     }
 }

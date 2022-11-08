@@ -10,7 +10,7 @@ import java.util.List;
 import kitchenpos.menu.Menu;
 import kitchenpos.menu.MenuGroup;
 import kitchenpos.menu.MenuProduct;
-import kitchenpos.order.MenuInfo;
+import kitchenpos.order.OrderedMenu;
 import kitchenpos.order.Order;
 import kitchenpos.order.OrderLineItem;
 import kitchenpos.order.OrderStatus;
@@ -38,7 +38,7 @@ class OrderServiceTest {
     private DataSupport dataSupport;
 
     private OrderTable savedUnEmptyTable;
-    private MenuInfo menuInfo;
+    private OrderedMenu orderedMenu;
     private OrderLineItem orderLineItem;
 
     @BeforeEach
@@ -49,15 +49,15 @@ class OrderServiceTest {
         final Product savedProduct = dataSupport.saveProduct("치킨마요", price);
         final MenuGroup savedMenuGroup = dataSupport.saveMenuGroup("추천 메뉴");
         final MenuProduct menuProduct = MenuProduct.ofUnsaved(null, savedProduct, 1L);
-        menuInfo = dataSupport.saveMenuAndGetInfo("치킨마요", price, savedMenuGroup.getId(), menuProduct);
-        orderLineItem = OrderLineItem.ofUnsaved(null, menuInfo, 1);
+        orderedMenu = dataSupport.saveMenuAndGetInfo("치킨마요", price, savedMenuGroup.getId(), menuProduct);
+        orderLineItem = OrderLineItem.ofUnsaved(null, orderedMenu, 1);
     }
 
     @DisplayName("테이블에 대해 메뉴를 주문하고 주문 상태를 조리로 변경한다.")
     @Test
     void create() {
         // given, when
-        final OrderRequest request = RequestBuilder.ofOrder(menuInfo, savedUnEmptyTable);
+        final OrderRequest request = RequestBuilder.ofOrder(orderedMenu, savedUnEmptyTable);
         final OrderResponse response = orderService.create(request);
 
         // then
@@ -94,7 +94,7 @@ class OrderServiceTest {
         final OrderTable unsavedTable = new OrderTable(0L, null, 0, true);
 
         // when, then
-        final OrderRequest request = RequestBuilder.ofOrder(menuInfo, unsavedTable);
+        final OrderRequest request = RequestBuilder.ofOrder(orderedMenu, unsavedTable);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> orderService.create(request));
     }
@@ -106,7 +106,7 @@ class OrderServiceTest {
         final OrderTable emptyTable = dataSupport.saveOrderTable(0, true);
 
         // when, then
-        final OrderRequest request = RequestBuilder.ofOrder(menuInfo, emptyTable);
+        final OrderRequest request = RequestBuilder.ofOrder(orderedMenu, emptyTable);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> orderService.create(request));
     }
