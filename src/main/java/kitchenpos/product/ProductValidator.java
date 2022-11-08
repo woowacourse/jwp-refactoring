@@ -1,10 +1,10 @@
-package kitchenpos.product.application;
+package kitchenpos.product;
 
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.product.domain.Price;
 
-public interface ProductValidationService {
+public interface ProductValidator {
 
     Optional<Price> calculateAmountSum(List<Long> productIds);
 

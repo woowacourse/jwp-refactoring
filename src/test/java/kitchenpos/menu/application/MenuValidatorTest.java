@@ -9,7 +9,7 @@ import java.util.Optional;
 import kitchenpos.exception.InvalidMenuPriceException;
 import kitchenpos.exception.ProductNotFoundException;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.product.application.ProductValidationService;
+import kitchenpos.product.ProductValidator;
 import kitchenpos.product.domain.Price;
 import kitchenpos.support.fixture.MenuFixture;
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class MenuValidatorTest {
 
     @Mock
-    private ProductValidationService productValidationService;
+    private ProductValidator productValidator;
 
     @InjectMocks
     private MenuValidator menuValidator;
@@ -32,7 +32,7 @@ class MenuValidatorTest {
     @DisplayName("메뉴에 해당하는 제품이 존재하지 않으면 예외가 발생한다.")
     void validate_notExistsProduct() {
         // given
-        given(productValidationService.existsProductsByIdIn(Arrays.asList(1L, 2L)))
+        given(productValidator.existsProductsByIdIn(Arrays.asList(1L, 2L)))
                 .willReturn(false);
         final Menu menu = MenuFixture.createWithPrice(1L, 1000L, 1L, 2L);
 
@@ -46,9 +46,9 @@ class MenuValidatorTest {
     void validate_expensiveMenuPrice() {
         // given
         final List<Long> productIds = Arrays.asList(1L, 2L);
-        given(productValidationService.existsProductsByIdIn(productIds))
+        given(productValidator.existsProductsByIdIn(productIds))
                 .willReturn(true);
-        given(productValidationService.calculateAmountSum(productIds))
+        given(productValidator.calculateAmountSum(productIds))
                 .willReturn(Optional.of(new Price(1000L)));
         final Menu menu = MenuFixture.createWithPrice(1L, 1001L, 1L, 2L);
 

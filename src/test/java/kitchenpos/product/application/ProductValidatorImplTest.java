@@ -3,6 +3,7 @@ package kitchenpos.product.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
+import kitchenpos.product.ProductValidator;
 import kitchenpos.product.domain.Price;
 import kitchenpos.product.domain.Product;
 import kitchenpos.support.application.ServiceTestEnvironment;
@@ -13,10 +14,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-class ProductValidationServiceImplTest extends ServiceTestEnvironment {
+class ProductValidatorImplTest extends ServiceTestEnvironment {
 
     @Autowired
-    private ProductValidationService productValidationService;
+    private ProductValidator productValidator;
 
     @Test
     @DisplayName("전달받은 ID의 수량 가격 합을 구한다.")
@@ -29,7 +30,7 @@ class ProductValidationServiceImplTest extends ServiceTestEnvironment {
         final Product savedProduct2 = serviceDependencies.save(product2);
 
         // when
-        final Price actual = productValidationService.calculateAmountSum(
+        final Price actual = productValidator.calculateAmountSum(
                         Arrays.asList(savedProduct1.getId(), savedProduct2.getId()))
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -49,7 +50,7 @@ class ProductValidationServiceImplTest extends ServiceTestEnvironment {
         serviceDependencies.save(product2);
 
         // when
-        final boolean actual = productValidationService.existsProductsByIdIn(Arrays.asList(id1, id2));
+        final boolean actual = productValidator.existsProductsByIdIn(Arrays.asList(id1, id2));
 
         // then
         assertThat(actual).isEqualTo(expect);

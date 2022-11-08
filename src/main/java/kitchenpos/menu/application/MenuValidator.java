@@ -7,17 +7,17 @@ import kitchenpos.exception.MenuProductAmountException;
 import kitchenpos.exception.ProductNotFoundException;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.product.application.ProductValidationService;
+import kitchenpos.product.ProductValidator;
 import kitchenpos.product.domain.Price;
 import org.springframework.stereotype.Component;
 
 @Component
 public class MenuValidator {
 
-    private final ProductValidationService productValidationService;
+    private final ProductValidator productValidator;
 
-    public MenuValidator(final ProductValidationService productValidationService) {
-        this.productValidationService = productValidationService;
+    public MenuValidator(final ProductValidator productValidator) {
+        this.productValidator = productValidator;
     }
 
     public void validate(final Menu menu) {
@@ -38,7 +38,7 @@ public class MenuValidator {
         final List<Long> productIds = menuProducts.stream()
                 .map(MenuProduct::getProductId)
                 .collect(Collectors.toList());
-        final Price productAmountSum = productValidationService.calculateAmountSum(productIds)
+        final Price productAmountSum = productValidator.calculateAmountSum(productIds)
                 .orElseThrow(MenuProductAmountException::new);
         return menuPrice.isExpansiveThan(productAmountSum);
     }
@@ -47,7 +47,7 @@ public class MenuValidator {
         final List<Long> productIds = menu.getMenuProducts().stream()
                 .map(MenuProduct::getProductId)
                 .collect(Collectors.toList());
-        if (!productValidationService.existsProductsByIdIn(productIds)) {
+        if (!productValidator.existsProductsByIdIn(productIds)) {
             throw new ProductNotFoundException();
         }
     }

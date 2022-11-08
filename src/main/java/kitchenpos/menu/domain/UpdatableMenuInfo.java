@@ -8,7 +8,6 @@ import kitchenpos.product.domain.Price;
 
 @Embeddable
 public class UpdatableMenuInfo {
-
     @Embedded
     private Price price;
     @Column(name = "name")
