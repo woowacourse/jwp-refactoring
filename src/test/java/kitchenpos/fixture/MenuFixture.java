@@ -2,11 +2,10 @@ package kitchenpos.fixture;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.core.menu.domain.Menu;
+import kitchenpos.core.menu.domain.MenuProduct;
+import kitchenpos.core.menugroup.domain.MenuGroup;
 
 public class MenuFixture {
 
@@ -30,7 +29,7 @@ public class MenuFixture {
     }
 
     public static Menu getMenu(final Long id) {
-        return Menu.of(id, "후라이드+후라이드", BigDecimal.valueOf(17000), null, new LinkedList<>());
+        return Menu.of(id, "후라이드+후라이드", BigDecimal.valueOf(17000), null, Arrays.asList(getMenuProduct(1L), getMenuProduct(1L)));
     }
 
     public static MenuProduct getMenuProductRequest(final Long productId) {
@@ -53,7 +52,11 @@ public class MenuFixture {
         return MenuProduct.of(id, menuId, productId, quantity, price);
     }
 
-    public static MenuGroup getMenuGroupRequest(final Long id) {
+    public static MenuGroup getMenuGroupRequest() {
+        return new MenuGroup("추천메뉴");
+    }
+
+    public static MenuGroup getMenuGroup(final Long id) {
         return new MenuGroup(id, "추천메뉴");
     }
 }
