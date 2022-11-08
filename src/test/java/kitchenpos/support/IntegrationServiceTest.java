@@ -154,5 +154,4 @@ abstract public class IntegrationServiceTest {
         OrderRequest orderRequest = new OrderRequest(주문테이블.getId(), null, now(), 주문항목_요청들);
         orderService.create(orderRequest);
     }
-
 }

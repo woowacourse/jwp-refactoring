@@ -34,7 +34,7 @@ public class TableGroupSpecification {
         }
 
         if (requestOrderTables.size() != savedTables.size()) {
-            throw new IllegalArgumentException("존재하지 않는 주문 테이블에 대해 그룹화를 할 수 없습니다.");
+            throw new IllegalArgumentException("요청한 테이블의 개수가 기존의 테이블과 다릅니다.");
         }
 
         for (final OrderTable orderTable : savedTables) {
@@ -46,9 +46,9 @@ public class TableGroupSpecification {
 
     public void validateUngroup(List<OrderTable> orderTables) {
 
-        List<Long> orderTableIds = orderTableIds(orderTables);
+        List<Long> tableIds = orderTableIds(orderTables);
 
-        if (orderRepository.existsByIdInAndStatusIn(orderTableIds, List.of(COOKING, MEAL))) {
+        if (orderRepository.existsByIdInAndOrderStatusIn(tableIds, List.of(COOKING, MEAL))) {
             throw new IllegalArgumentException("조리 중이거나 식사 중인 주문 테이블이 있는 경우 그룹을 해제할 수 없습니다.");
         }
     }

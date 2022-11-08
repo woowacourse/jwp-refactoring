@@ -2,6 +2,7 @@ package kitchenpos.order.domain;
 
 import static javax.persistence.FetchType.LAZY;
 
+import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -25,23 +26,27 @@ public class OrderLineItem {
     private Long menuId;
 
     @Column(nullable = false)
+    private String menuName;
+
+    @Column(nullable = false)
+    private BigDecimal menuPrice;
+
+    @Column(nullable = false)
     private long quantity;
 
-    public OrderLineItem() {
+    protected OrderLineItem() {
     }
 
-    public OrderLineItem(Long menuId, long quantity) {
-        this(null, menuId, quantity);
+    public OrderLineItem(Order order, Long menuId, String menuName, BigDecimal menuPrice, long quantity) {
+        this(null, order, menuId, menuName, menuPrice, quantity);
     }
 
-    public OrderLineItem(Order order, Long menuId, long quantity) {
-        this(null, order, menuId, quantity);
-    }
-
-    public OrderLineItem(Long seq, Order order, Long menuId, long quantity) {
+    public OrderLineItem(Long seq, Order order, Long menuId, String menuName, BigDecimal menuPrice, long quantity) {
         this.seq = seq;
         this.order = order;
         this.menuId = menuId;
+        this.menuName = menuName;
+        this.menuPrice = menuPrice;
         this.quantity = quantity;
     }
 
@@ -59,6 +64,14 @@ public class OrderLineItem {
 
     public Long getMenuId() {
         return menuId;
+    }
+
+    public String getMenuName() {
+        return menuName;
+    }
+
+    public BigDecimal getMenuPrice() {
+        return menuPrice;
     }
 
     public long getQuantity() {
