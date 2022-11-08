@@ -98,6 +98,7 @@ class MenuServiceTest extends ServiceTestEnvironment {
     }
 
     @Test
+    @DisplayName("등록된 메뉴를 조회한다.")
     void list() {
         // given
         final Product product1 = ProductFixture.createWithPrice(1000L);

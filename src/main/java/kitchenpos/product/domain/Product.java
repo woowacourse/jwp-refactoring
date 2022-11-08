@@ -31,9 +31,6 @@ public class Product {
         this(null, name, price);
     }
 
-    public Price calculateAmount(final long quantity) {
-        return price.multiply(quantity);
-    }
     public Long getId() {
         return id;
     }

@@ -14,7 +14,7 @@ class MenuTest {
     @ParameterizedTest
     @NullSource
     @CsvSource(value = {"-1"})
-    @DisplayName("메뉴 가격이 음수이거나 Null 이면 안된다.")
+    @DisplayName("가격이 음수이거나 Null 이면 안된다.")
     void construct_menuPriceNegativeOrNull(final Long priceValue) {
         // given, when, then
         assertThatThrownBy(() -> new Price(priceValue))
