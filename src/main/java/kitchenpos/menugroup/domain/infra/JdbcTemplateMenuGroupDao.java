@@ -1,0 +1,74 @@
+package kitchenpos.menugroup.domain.infra;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
+import javax.sql.DataSource;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroupDao;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public class JdbcTemplateMenuGroupDao implements MenuGroupDao {
+    private static final String TABLE_NAME = "menu_group";
+    private static final String KEY_COLUMN_NAME = "id";
+
+    private final NamedParameterJdbcTemplate jdbcTemplate;
+    private final SimpleJdbcInsert jdbcInsert;
+
+    public JdbcTemplateMenuGroupDao(DataSource dataSource) {
+        jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+        jdbcInsert = new SimpleJdbcInsert(dataSource)
+                .withTableName(TABLE_NAME)
+                .usingGeneratedKeyColumns(KEY_COLUMN_NAME)
+        ;
+    }
+
+    @Override
+    public MenuGroup save(MenuGroup entity) {
+        SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
+        Number key = jdbcInsert.executeAndReturnKey(parameters);
+        return select(key.longValue());
+    }
+
+    @Override
+    public Optional<MenuGroup> findById(Long id) {
+        try {
+            return Optional.of(select(id));
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public List<MenuGroup> findAll() {
+        String sql = "SELECT id, name FROM menu_group";
+        return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
+    }
+
+    @Override
+    public boolean existsById(Long id) {
+        String sql = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END FROM menu_group WHERE id = (:id)";
+        SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("id", id);
+        return jdbcTemplate.queryForObject(sql, parameters, Boolean.class);
+    }
+
+    private MenuGroup select(Long id) {
+        String sql = "SELECT id, name FROM menu_group WHERE id = (:id)";
+        SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("id", id);
+        return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
+    }
+
+    private MenuGroup toEntity(ResultSet resultSet) throws SQLException {
+        return new MenuGroup(resultSet.getLong("id"), resultSet.getString("name"));
+    }
+}
