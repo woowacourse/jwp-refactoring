@@ -1,0 +1,12 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+  flyway:
+    baseline-on-migrate: true
+    enabled: true
+
+  datasource:
+    initialization-mode: always
+    schema: classpath:db/migration/V1__Initialize_project_tables.sql
