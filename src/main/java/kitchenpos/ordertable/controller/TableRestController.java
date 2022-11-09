@@ -51,7 +51,7 @@ public class TableRestController {
                 ;
     }
 
-    @PutMapping("/api/tables/{orderTableId}/number-of-guests")
+    @PutMapping("/{orderTableId}/number-of-guests")
     public ResponseEntity<OrderTableResponse> changeNumberOfGuests(@PathVariable Long orderTableId,
                                                                    @RequestBody OrderTableGuestNumberChangeRequest
                                                                            orderTableGuestNumberChangeRequest) {
