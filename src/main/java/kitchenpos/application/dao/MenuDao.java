@@ -1,9 +1,8 @@
-package kitchenpos.dao;
-
-import kitchenpos.domain.Menu;
+package kitchenpos.application.dao;
 
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.domain.Menu;
 
 public interface MenuDao {
     Menu save(Menu entity);

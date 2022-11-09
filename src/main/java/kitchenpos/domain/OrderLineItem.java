@@ -1,40 +1,44 @@
 package kitchenpos.domain;
 
+import java.math.BigDecimal;
+
 public class OrderLineItem {
     private Long seq;
     private Long orderId;
-    private Long menuId;
+    private String name;
+    private BigDecimal price;
     private long quantity;
+
+    public OrderLineItem(final Long seq, final Long orderId, final String name, final BigDecimal price,
+                         final long quantity) {
+        this.seq = seq;
+        this.orderId = orderId;
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
+    }
+
+    public OrderLineItem(final Long orderId, final String name, final BigDecimal price, final long quantity) {
+        this(null, orderId, name, price, quantity);
+    }
 
     public Long getSeq() {
         return seq;
-    }
-
-    public void setSeq(final Long seq) {
-        this.seq = seq;
     }
 
     public Long getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(final Long orderId) {
-        this.orderId = orderId;
+    public String getName() {
+        return name;
     }
 
-    public Long getMenuId() {
-        return menuId;
-    }
-
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
+    public BigDecimal getPrice() {
+        return price;
     }
 
     public long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
     }
 }
