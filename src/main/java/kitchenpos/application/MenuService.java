@@ -5,11 +5,11 @@ import java.util.stream.Collectors;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.ProductRepository;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.common.Price;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.ui.dto.MenuCreateRequest;
 import kitchenpos.ui.dto.MenuGroupResponse;
 import kitchenpos.ui.dto.MenuProductResponse;
@@ -40,7 +40,7 @@ public class MenuService {
         final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                 .orElseThrow(IllegalArgumentException::new);
         final List<MenuProduct> menuProducts = createMenuProducts(request);
-        final Menu menu = new Menu(request.getName(), price.getAmount(), menuGroup, menuProducts);
+        final Menu menu = new Menu(request.getName(), price, menuGroup, menuProducts);
         menuRepository.save(menu);
 
         return generateMenuResponse(menu);
@@ -59,18 +59,18 @@ public class MenuService {
                 .map(it -> {
                     final Product product = productRepository.findById(it.getProductId())
                             .orElseThrow(IllegalArgumentException::new);
-                    return new MenuProduct(null, product, it.getQuantity());
+                    return new MenuProduct(product, it.getQuantity());
                 })
                 .collect(Collectors.toList());
     }
 
-    private MenuResponse generateMenuResponse(final Menu it) {
+    private MenuResponse generateMenuResponse(final Menu menu) {
         return new MenuResponse(
-                it.getId(),
-                it.getName(),
-                it.getPrice(),
-                new MenuGroupResponse(it.getMenuGroup().getId(), it.getMenuGroup().getName()),
-                generateMenuProductResponses(it)
+                menu.getId(),
+                menu.getName(),
+                menu.getPrice().getAmount(),
+                new MenuGroupResponse(menu.getMenuGroup().getId(), menu.getMenuGroup().getName()),
+                generateMenuProductResponses(menu)
         );
     }
 
@@ -82,7 +82,7 @@ public class MenuService {
                         new ProductResponse(
                                 it.getProduct().getId(),
                                 it.getProduct().getName(),
-                                it.getProduct().getPrice()),
+                                it.getProduct().getPrice().getAmount()),
                         it.getQuantity()))
                 .collect(Collectors.toList());
     }

@@ -3,9 +3,10 @@ package kitchenpos.dao;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.table.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ class TableGroupRepositoryTest {
     @Nested
     class save_메서드는 {
 
-        private final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), null);
+        private final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), Collections.emptyList());
 
         @Nested
         class 테이블이_주어지면 {
@@ -41,7 +42,7 @@ class TableGroupRepositoryTest {
         @Nested
         class 단체지정_id가_주어지면 {
 
-            private final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), null);
+            private final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), Collections.emptyList());
             private TableGroup savedTableGroup;
 
             @BeforeEach
@@ -64,7 +65,7 @@ class TableGroupRepositoryTest {
         @Nested
         class 호출되면 {
 
-            private final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), null);
+            private final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), Collections.emptyList());
             private TableGroup savedTableGroup;
 
             @BeforeEach

@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -6,13 +6,16 @@ import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import kitchenpos.domain.common.Price;
 
 @Entity
 public class Menu {
@@ -24,38 +27,36 @@ public class Menu {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "price")
-    private BigDecimal price;
+    @Embedded
+    private Price price;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private MenuGroup menuGroup;
 
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "menu_id")
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     public Menu() {
     }
 
     public Menu(final String name,
-                final BigDecimal price,
+                final Price price,
                 final MenuGroup menuGroup,
                 final List<MenuProduct> menuProducts) {
         validateMenuPrice(menuProducts, price);
-        menuProducts.forEach(it -> it.mapMenu(this));
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
     }
 
-    private void validateMenuPrice(final List<MenuProduct> menuProducts, final BigDecimal price) {
+    private void validateMenuPrice(final List<MenuProduct> menuProducts, final Price price) {
         final BigDecimal totalPrice = menuProducts.stream()
                 .map(MenuProduct::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        if (price.compareTo(totalPrice) > 0) {
-            throw new IllegalArgumentException();
-        }
+        price.validateLowerThan(totalPrice);
     }
 
     public Long getId() {
@@ -66,7 +67,7 @@ public class Menu {
         return name;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
     }
 

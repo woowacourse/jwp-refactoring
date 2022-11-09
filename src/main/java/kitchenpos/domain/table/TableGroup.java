@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.table;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 @Entity
@@ -22,7 +23,8 @@ public class TableGroup {
     @Column(name = "created_date")
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "table_group_id")
     private List<OrderTable> orderTables = new ArrayList<>();
 
     public TableGroup() {
@@ -33,16 +35,14 @@ public class TableGroup {
     }
 
     public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+        orderTables.forEach(OrderTable::validateCanGroup);
         this.createdDate = createdDate;
         this.orderTables = orderTables;
     }
 
     public static TableGroup groupTables(final List<OrderTable> orderTables, final LocalDateTime localDateTime) {
-        final TableGroup tableGroup = new TableGroup(localDateTime);
-        orderTables.forEach(it -> {
-            it.mapTableGroup(tableGroup);
-            it.updateToUsed();
-        });
+        final TableGroup tableGroup = new TableGroup(localDateTime, orderTables);
+        orderTables.forEach(OrderTable::updateToUsed);
 
         return tableGroup;
     }

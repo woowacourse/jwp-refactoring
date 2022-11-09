@@ -3,15 +3,17 @@ package kitchenpos.fixtures;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.common.Price;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderedMenu;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.TableGroup;
 import kitchenpos.ui.dto.MenuCreateRequest;
 import kitchenpos.ui.dto.MenuGroupCreateRequest;
 import kitchenpos.ui.dto.MenuProductCreateRequest;
@@ -30,7 +32,7 @@ public class TestFixtures {
     }
 
     public static Product 상품_생성(final String name, final BigDecimal price) {
-        return new Product(name, price);
+        return new Product(name, new Price(price));
     }
 
     public static MenuGroup 메뉴_그룹_생성(final String name) {
@@ -43,7 +45,7 @@ public class TestFixtures {
 
     public static Menu 메뉴_생성(final String name, final BigDecimal price,
                              final Long menuGroupId, final List<MenuProduct> menuProducts) {
-        return new Menu(name, price, null, menuProducts);
+        return new Menu(name, new Price(price), null, menuProducts);
     }
 
     public static MenuCreateRequest 메뉴_생성_요청(final String name,
@@ -54,7 +56,7 @@ public class TestFixtures {
     }
 
     public static MenuProduct 메뉴_상품_생성(final Menu menu, final Product product, final long quantity) {
-        return new MenuProduct(menu, product, quantity);
+        return new MenuProduct(product, quantity);
     }
 
     public static MenuProductCreateRequest 메뉴_상품_생성_요청(final Long menuId,
@@ -79,12 +81,20 @@ public class TestFixtures {
         return new OrderLineItemRequest(menuId, quantity);
     }
 
-    public static OrderLineItem 주문_항목_생성(final Long menuId, final long quantity) {
-        return new OrderLineItem(menuId, quantity);
+    public static OrderLineItem 주문_항목_생성(final OrderedMenu orderedMenu, final long quantity) {
+        return new OrderLineItem(orderedMenu, quantity);
     }
 
-    public static OrderTable 주문_테이블_생성(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
-        return new OrderTable(tableGroup, numberOfGuests, empty);
+    public static Price 가격_생성(final Long amount) {
+        return new Price(BigDecimal.valueOf(amount));
+    }
+
+    public static OrderedMenu 주문_내역_생성(final String name, final Price price) {
+        return new OrderedMenu(name, price);
+    }
+
+    public static OrderTable 주문_테이블_생성(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        return new OrderTable(tableGroupId, numberOfGuests, empty);
     }
 
     public static TableUpdateEmptyRequest 주문_테이블_Empty_변경_요청(final boolean empty) {

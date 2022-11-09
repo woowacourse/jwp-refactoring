@@ -1,11 +1,18 @@
-package kitchenpos.domain;
+package kitchenpos.domain.common;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
+@Embeddable
 public class Price {
 
-    private final BigDecimal amount;
+    @Column(name = "price")
+    private BigDecimal amount;
+
+    protected Price() {
+    }
 
     public Price(final BigDecimal amount) {
         validateValidAmount(amount);
@@ -14,6 +21,12 @@ public class Price {
 
     private void validateValidAmount(final BigDecimal amount) {
         if (Objects.isNull(amount) || amount.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void validateLowerThan(final BigDecimal totalPrice) {
+        if (amount.compareTo(totalPrice) > 0) {
             throw new IllegalArgumentException();
         }
     }

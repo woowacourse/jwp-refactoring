@@ -1,16 +1,19 @@
 package kitchenpos.ui.dto;
 
+import java.math.BigDecimal;
+
 public class OrderLineItemResponse {
 
     private final Long seq;
-    private final Long orderId;
-    private final Long menuId;
+    private final String menuName;
+    private final BigDecimal menuPrice;
     private final long quantity;
 
-    public OrderLineItemResponse(final Long seq, final Long orderId, final Long menuId, final long quantity) {
+    public OrderLineItemResponse(final Long seq, final String menuName, final BigDecimal menuPrice,
+                                 final long quantity) {
         this.seq = seq;
-        this.orderId = orderId;
-        this.menuId = menuId;
+        this.menuName = menuName;
+        this.menuPrice = menuPrice;
         this.quantity = quantity;
     }
 
@@ -18,12 +21,12 @@ public class OrderLineItemResponse {
         return seq;
     }
 
-    public Long getOrderId() {
-        return orderId;
+    public String getMenuName() {
+        return menuName;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public BigDecimal getMenuPrice() {
+        return menuPrice;
     }
 
     public long getQuantity() {

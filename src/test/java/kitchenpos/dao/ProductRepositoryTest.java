@@ -4,9 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.domain.common.Price;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,7 +29,7 @@ class ProductRepositoryTest {
         @Nested
         class 상품이_주어지면 {
 
-            final Product product = new Product("파스타", BigDecimal.valueOf(1_000L));
+            final Product product = new Product("파스타", new Price(BigDecimal.valueOf(1_000L)));
 
             @Test
             void 저장한다() {
@@ -46,7 +46,7 @@ class ProductRepositoryTest {
         @Nested
         class id가_주어지면 {
 
-            final Product product = new Product("파스타", BigDecimal.valueOf(1_000L));
+            final Product product = new Product("파스타", new Price(BigDecimal.valueOf(1_000L)));
             private Product savedProduct;
 
             @BeforeEach
@@ -60,10 +60,7 @@ class ProductRepositoryTest {
 
                 assertAll(
                         () -> assertThat(foundProduct).isPresent(),
-                        () -> assertThat(foundProduct.get()).usingRecursiveComparison()
-                                .usingDefaultComparator()
-                                .withComparatorForType(Comparator.comparing(BigDecimal::intValue), BigDecimal.class)
-                                .isEqualTo(savedProduct)
+                        () -> assertThat(foundProduct).contains(savedProduct)
                 );
             }
         }
@@ -75,7 +72,7 @@ class ProductRepositoryTest {
         @Nested
         class 호출되면 {
 
-            final Product product = new Product("파스타", new BigDecimal(1000));
+            final Product product = new Product("파스타", new Price(new BigDecimal(1000)));
             private Product savedProduct;
 
             @BeforeEach
@@ -87,9 +84,7 @@ class ProductRepositoryTest {
             void 모든_상품들을_반환한다() {
                 final List<Product> products = productRepository.findAll();
 
-                assertThat(products).usingFieldByFieldElementComparator()
-                        .usingComparatorForType(Comparator.comparing(BigDecimal::intValue), BigDecimal.class)
-                        .containsAll(List.of(savedProduct));
+                assertThat(products).containsAll(List.of(savedProduct));
             }
         }
     }

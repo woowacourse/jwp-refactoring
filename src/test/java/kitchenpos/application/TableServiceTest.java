@@ -1,8 +1,10 @@
 package kitchenpos.application;
 
-import static kitchenpos.domain.OrderStatus.COMPLETION;
-import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.domain.order.OrderStatus.COMPLETION;
+import static kitchenpos.domain.order.OrderStatus.COOKING;
+import static kitchenpos.fixtures.TestFixtures.가격_생성;
 import static kitchenpos.fixtures.TestFixtures.단체_지정_생성;
+import static kitchenpos.fixtures.TestFixtures.주문_내역_생성;
 import static kitchenpos.fixtures.TestFixtures.주문_생성;
 import static kitchenpos.fixtures.TestFixtures.주문_테이블_Empty_변경_요청;
 import static kitchenpos.fixtures.TestFixtures.주문_테이블_생성;
@@ -14,10 +16,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.TableGroup;
 import kitchenpos.ui.dto.TableCreateRequest;
 import kitchenpos.ui.dto.TableResponse;
 import kitchenpos.ui.dto.TableUpdateEmptyRequest;
@@ -73,7 +75,7 @@ class TableServiceTest {
         class 주문_테이블이_완료_상태면 extends ServiceTest {
 
             private final OrderTable orderTable = 주문_테이블_생성(null, 5, false);
-            private final OrderLineItem orderLineItem = 주문_항목_생성(1L, 5);
+            private final OrderLineItem orderLineItem = 주문_항목_생성(주문_내역_생성("피자", 가격_생성(0L)), 5);
             private final Order order = 주문_생성(orderTable, COMPLETION, LocalDateTime.now(), List.of(orderLineItem));
             private final TableUpdateEmptyRequest updateEmptyRequest = 주문_테이블_Empty_변경_요청(true);
 
@@ -106,18 +108,19 @@ class TableServiceTest {
         @Nested
         class 단체_지정이_null이_아니면 extends ServiceTest {
 
-            private final TableGroup tableGroup = 단체_지정_생성(LocalDateTime.now(), null);
-            private final OrderTable orderTable = 주문_테이블_생성(tableGroup, 5, false);
-            private final TableUpdateEmptyRequest updateEmptyRequest = 주문_테이블_Empty_변경_요청(false);
+            private final OrderTable orderTable = 주문_테이블_생성(1L, 5, false);
+            private final TableGroup tableGroup = 단체_지정_생성(LocalDateTime.now(), List.of(orderTable));
+            private final TableUpdateEmptyRequest updateEmptyRequest = 주문_테이블_Empty_변경_요청(true);
 
             @BeforeEach
             void setUp() {
                 tableGroupRepository.save(tableGroup);
-                orderTableRepository.save(orderTable);
+//                orderTableRepository.save(orderTable);
             }
 
             @Test
             void 예외가_발생한다() {
+                System.out.println(orderTable);
                 assertThatThrownBy(() -> tableService.changeEmpty(1L, updateEmptyRequest))
                         .isInstanceOf(IllegalArgumentException.class);
             }
@@ -127,7 +130,7 @@ class TableServiceTest {
         class 이미_주문이_존재하면 extends ServiceTest {
 
             private final OrderTable orderTable = 주문_테이블_생성(null, 5, true);
-            private final OrderLineItem orderLineItem = 주문_항목_생성(1L, 5);
+            private final OrderLineItem orderLineItem = 주문_항목_생성(주문_내역_생성("피자", 가격_생성(0L)), 5);
             private final Order order = 주문_생성(orderTable, COOKING, LocalDateTime.now(), List.of(orderLineItem));
             private final TableUpdateEmptyRequest updateEmptyRequest = 주문_테이블_Empty_변경_요청(false);
 

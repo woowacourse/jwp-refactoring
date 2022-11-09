@@ -1,12 +1,13 @@
 package kitchenpos.domain;
 
-import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import kitchenpos.domain.common.Price;
 
 @Entity
 public class Product {
@@ -18,29 +19,15 @@ public class Product {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "price", scale = 2)
-    private BigDecimal price;
+    @Embedded
+    private Price price;
 
     protected Product() {
     }
 
-    public Product(final String name, final BigDecimal price) {
-        validateNotNull(price);
-        validateNotNegative(price);
+    public Product(final String name, final Price price) {
         this.name = name;
         this.price = price;
-    }
-
-    private void validateNotNull(final BigDecimal bigDecimal) {
-        if (bigDecimal == null) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateNotNegative(final BigDecimal decimal) {
-        if (decimal.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
     }
 
     public Long getId() {
@@ -51,7 +38,7 @@ public class Product {
         return name;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
     }
 

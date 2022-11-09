@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.ProductRepository;
+import kitchenpos.domain.common.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.ProductCreateRequest;
 import kitchenpos.ui.dto.ProductResponse;
@@ -20,16 +21,16 @@ public class ProductService {
 
     @Transactional
     public ProductResponse create(final ProductCreateRequest request) {
-        final Product product = new Product(request.getName(), request.getPrice());
+        final Product product = new Product(request.getName(), new Price(request.getPrice()));
         productRepository.save(product);
 
-        return new ProductResponse(product.getId(), product.getName(), product.getPrice());
+        return new ProductResponse(product.getId(), product.getName(), product.getPrice().getAmount());
     }
 
     public List<ProductResponse> list() {
         final List<Product> products = productRepository.findAll();
         return products.stream()
-                .map(it -> new ProductResponse(it.getId(), it.getName(), it.getPrice()))
+                .map(it -> new ProductResponse(it.getId(), it.getName(), it.getPrice().getAmount()))
                 .collect(Collectors.toList());
     }
 }

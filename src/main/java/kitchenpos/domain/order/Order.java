@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -17,6 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import kitchenpos.domain.table.OrderTable;
 
 @Entity
 @Table(name = "orders")
@@ -36,7 +37,8 @@ public class Order {
     @Column(name = "ordered_time")
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "order_id")
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     public Order() {
@@ -63,10 +65,7 @@ public class Order {
                            final LocalDateTime localDateTime,
                            final List<OrderLineItem> orderLineItems) {
         orderTable.validateNotEmpty();
-        final Order order = new Order(orderTable, orderStatus, localDateTime);
-        orderLineItems.forEach(it -> it.mapOrder(order));
-
-        return order;
+        return new Order(orderTable, orderStatus, localDateTime, orderLineItems);
     }
 
     public void updateOrderStatus(final OrderStatus orderStatus) {

@@ -1,13 +1,11 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import java.util.Objects;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 @Entity
 public class OrderLineItem {
@@ -16,39 +14,25 @@ public class OrderLineItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id")
-    private Order order;
+    @Embedded
+    private OrderedMenu orderedMenu;
 
-    private Long menuId;
     private long quantity;
 
     public OrderLineItem() {
     }
 
-    public OrderLineItem(final Long menuId, final long quantity) {
-        this.menuId = menuId;
+    public OrderLineItem(final OrderedMenu orderedMenu, final long quantity) {
+        this.orderedMenu = orderedMenu;
         this.quantity = quantity;
-    }
-
-    public void mapOrder(final Order order) {
-        if (this.order != null) {
-            this.order.getOrderLineItems().remove(this);
-        }
-        this.order = order;
-        order.getOrderLineItems().add(this);
     }
 
     public Long getSeq() {
         return seq;
     }
 
-    public Order getOrder() {
-        return order;
-    }
-
-    public Long getMenuId() {
-        return menuId;
+    public OrderedMenu getOrderedMenu() {
+        return orderedMenu;
     }
 
     public long getQuantity() {
