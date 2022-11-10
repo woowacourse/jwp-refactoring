@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.order.dao.OrderLineItemDao;
+import kitchenpos.order.domain.OrderLineItem;
 
 public class FakeOrderLineItemDao implements OrderLineItemDao {
 
@@ -21,6 +22,8 @@ public class FakeOrderLineItemDao implements OrderLineItemDao {
         OrderLineItem orderLineItem = new OrderLineItem(seq++,
                 entity.getOrderId(),
                 entity.getMenuId(),
+                entity.getName(),
+                entity.getPrice(),
                 entity.getQuantity());
         IN_MEMORY_ORDER_LINE_ITEM.add(orderLineItem);
         return orderLineItem;

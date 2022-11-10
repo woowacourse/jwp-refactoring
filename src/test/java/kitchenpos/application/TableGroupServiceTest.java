@@ -12,14 +12,16 @@ import java.util.stream.Collectors;
 import kitchenpos.dao.FakeOrderDao;
 import kitchenpos.dao.FakeOrderTableDao;
 import kitchenpos.dao.FakeTableGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.request.OrderTableRequest;
-import kitchenpos.dto.request.TableGroupRequest;
-import kitchenpos.dto.response.TableGroupResponse;
+import kitchenpos.order.dao.OrderDao;
+import kitchenpos.table.application.TableGroupService;
+import kitchenpos.table.dao.OrderTableDao;
+import kitchenpos.table.dao.TableGroupDao;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.domain.TableValidator;
+import kitchenpos.table.dto.request.OrderTableRequest;
+import kitchenpos.table.dto.request.TableGroupRequest;
+import kitchenpos.table.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,13 +33,15 @@ public class TableGroupServiceTest {
     private OrderDao orderDao;
     private OrderTableDao orderTableDao;
     private TableGroupDao tableGroupDao;
+    private TableValidator tableValidator;
 
     @BeforeEach
     void beforeEach() {
         this.orderDao = new FakeOrderDao();
         this.orderTableDao = new FakeOrderTableDao();
         this.tableGroupDao = new FakeTableGroupDao();
-        this.tableGroupService = new TableGroupService(orderDao, orderTableDao, tableGroupDao);
+        this.tableValidator = new TableValidator(orderDao);
+        this.tableGroupService = new TableGroupService(orderTableDao, tableGroupDao, tableValidator);
     }
 
     @Test

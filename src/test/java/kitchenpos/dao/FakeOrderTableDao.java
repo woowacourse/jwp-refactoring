@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.dao.OrderTableDao;
 
 public class FakeOrderTableDao implements OrderTableDao {
 

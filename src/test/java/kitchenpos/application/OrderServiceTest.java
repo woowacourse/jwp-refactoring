@@ -21,22 +21,24 @@ import kitchenpos.dao.FakeOrderDao;
 import kitchenpos.dao.FakeOrderLineItemDao;
 import kitchenpos.dao.FakeOrderTableDao;
 import kitchenpos.dao.FakeProductDao;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.dto.request.OrderCreateRequest;
-import kitchenpos.dto.request.OrderLineItemRequest;
-import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.menu.dao.MenuDao;
+import kitchenpos.menu.dao.MenuGroupDao;
+import kitchenpos.menu.dao.MenuProductDao;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.dao.OrderDao;
+import kitchenpos.order.dao.OrderLineItemDao;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderValidator;
+import kitchenpos.order.dto.request.OrderCreateRequest;
+import kitchenpos.order.dto.request.OrderLineItemRequest;
+import kitchenpos.order.dto.response.OrderResponse;
+import kitchenpos.product.dao.ProductDao;
+import kitchenpos.product.domain.Product;
+import kitchenpos.table.dao.OrderTableDao;
+import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -52,6 +54,7 @@ public class OrderServiceTest {
     private MenuGroupDao menuGroupDao;
     private MenuProductDao menuProductDao;
     private ProductDao productDao;
+    private OrderValidator orderValidator;
 
     private Menu 뿌링클_음료두개_세트;
 
@@ -64,7 +67,8 @@ public class OrderServiceTest {
         this.menuGroupDao = new FakeMenuGroupDao();
         this.menuProductDao = new FakeMenuProductDao();
         this.productDao = new FakeProductDao();
-        this.orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
+        this.orderValidator = new OrderValidator(menuDao, orderTableDao);
+        this.orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderValidator);
         Product 사이다_1L = productDao.save(사이다);
         Product 뿌링클_2L = productDao.save(뿌링클);
 
@@ -118,7 +122,7 @@ public class OrderServiceTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문 항목이 비어있을 수 없습니다.");
     }
-    
+
     @Test
     @DisplayName("존재하지 않는 메뉴를 주문한다면 예외를 반환한다.")
     void create_WhenDifferentOrderLineItemsSize() {

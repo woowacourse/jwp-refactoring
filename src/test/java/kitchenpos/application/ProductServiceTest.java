@@ -9,7 +9,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import kitchenpos.dao.FakeProductDao;
-import kitchenpos.dto.response.ProductResponse;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.dto.response.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

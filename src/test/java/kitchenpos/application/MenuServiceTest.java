@@ -19,16 +19,18 @@ import kitchenpos.dao.FakeMenuDao;
 import kitchenpos.dao.FakeMenuGroupDao;
 import kitchenpos.dao.FakeMenuProductDao;
 import kitchenpos.dao.FakeProductDao;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
-import kitchenpos.dto.request.MenuProductRequest;
-import kitchenpos.dto.request.MenuRequest;
-import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.dao.MenuDao;
+import kitchenpos.menu.dao.MenuGroupDao;
+import kitchenpos.menu.dao.MenuProductDao;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuValidator;
+import kitchenpos.menu.dto.request.MenuProductRequest;
+import kitchenpos.menu.dto.request.MenuRequest;
+import kitchenpos.menu.dto.response.MenuResponse;
+import kitchenpos.product.dao.ProductDao;
+import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,6 +42,7 @@ public class MenuServiceTest {
     private MenuGroupDao menuGroupDao;
     private MenuProductDao menuProductDao;
     private ProductDao productDao;
+    private MenuValidator menuValidator;
 
     @BeforeEach
     void beforeEach() {
@@ -47,7 +50,8 @@ public class MenuServiceTest {
         this.menuGroupDao = new FakeMenuGroupDao();
         this.menuProductDao = new FakeMenuProductDao();
         this.productDao = new FakeProductDao();
-        this.menuService = new MenuService(menuDao, this.menuGroupDao, this.menuProductDao, this.productDao);
+        this.menuValidator = new MenuValidator(productDao, menuGroupDao);
+        this.menuService = new MenuService(menuDao, menuProductDao, menuValidator);
     }
 
 
@@ -146,7 +150,7 @@ public class MenuServiceTest {
         menuProducts.add(뿌링클_한개_REQUEST);
 
         MenuRequest 뿌링클_음료두개_세트 = generateMenuRequest("뿌링클 음료두개 세트", BigDecimal.valueOf(21000), 할인메뉴, menuProducts);
-        
+
         // when & then
         assertThatThrownBy(() -> menuService.create(뿌링클_음료두개_세트))
                 .isInstanceOf(IllegalArgumentException.class);
