@@ -1,34 +1,43 @@
 package kitchenpos.domain.table;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
 public class OrderTable {
 
-    private final Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "table_group_id")
     private Long tableGroupId;
+    
+    @Column(nullable = false)
     private int numberOfGuests;
+    
+    @Column(nullable = false)
     private boolean empty;
 
-    /**
-     * DB 에 저장되지 않은 객체
-     */
+    protected OrderTable() {
+    }
+
     public OrderTable(final int numberOfGuests, final boolean empty) {
         this(null, null, numberOfGuests, empty);
     }
 
-    /**
-     * OrderTable 정보를 수정하기 위한 객체
-     */
-    public OrderTable(final Long id, final int numberOfGuests, final boolean empty) {
-        this(id, null, numberOfGuests, empty);
-    }
-
-    /**
-     * DB 에 저장된 객체
-     */
     public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+    }
+
+    public static OrderTable updated(final Long id, final int numberOfGuests, final boolean empty) {
+        return new OrderTable(id, null, numberOfGuests, empty);
     }
 
     public void changeEmpty(final boolean empty) {

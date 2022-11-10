@@ -5,24 +5,43 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "orders")
 public class Order {
 
-    private final Long id;
-    private final Long orderTableId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Column(nullable = false)
+    private Long orderTableId;
+    
+    @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
-    private final LocalDateTime orderedTime;
-    private final OrderLineItems orderLineItems;
+    
+    @Column(nullable = false)
+    private LocalDateTime orderedTime;
+    
+    @Embedded
+    private OrderLineItems orderLineItems;
 
-    /**
-     * DB 에 저장되지 않은 객체
-     */
+    protected Order() {
+    }
+
     public Order(final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
-    /**
-     * DB 에 저장된 객체
-     */
     public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime) {
         this.id = id;
         this.orderTableId = orderTableId;

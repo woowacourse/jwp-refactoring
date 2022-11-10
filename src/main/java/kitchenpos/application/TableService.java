@@ -2,10 +2,11 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.request.OrderTableRequest;
 import kitchenpos.application.dto.response.OrderTableResponse;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,22 +18,23 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 @Service
 public class TableService {
-    private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
 
-    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
-        this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
+    private final OrderRepository orderRepository;
+    private final OrderTableRepository orderTableRepository;
+
+    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
+        this.orderRepository = orderRepository;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
     public OrderTableResponse create(final OrderTableRequest request) {
-        final OrderTable savedOrderTable = orderTableDao.save(createOrderTable(request));
+        final OrderTable savedOrderTable = orderTableRepository.save(createOrderTable(request));
         return new OrderTableResponse(savedOrderTable);
     }
 
     public List<OrderTableResponse> list() {
-        final List<OrderTable> orderTables = orderTableDao.findAll();
+        final List<OrderTable> orderTables = orderTableRepository.findAll();
         return orderTables.stream()
             .map(OrderTableResponse::new)
             .collect(Collectors.toUnmodifiableList());
@@ -52,7 +54,7 @@ public class TableService {
 
         savedOrderTable.changeNumberOfGuests(orderTable.getNumberOfGuests());
 
-        final OrderTable changedOrderTable = orderTableDao.save(savedOrderTable);
+        final OrderTable changedOrderTable = orderTableRepository.save(savedOrderTable);
         return new OrderTableResponse(changedOrderTable);
     }
 
@@ -70,11 +72,11 @@ public class TableService {
         validateOrderStatusIsCompletion(orderTableId);
 
         savedOrderTable.changeEmpty(orderTable.isEmpty());
-        return orderTableDao.save(savedOrderTable);
+        return orderTableRepository.save(savedOrderTable);
     }
 
     private OrderTable findOrderTableById(final Long orderTableId) {
-        return orderTableDao.findById(orderTableId)
+        return orderTableRepository.findById(orderTableId)
             .orElseThrow(() -> new IllegalArgumentException(String.format("존재하지 않는 테이블 입니다. [%s]", orderTableId)));
     }
 
@@ -85,8 +87,8 @@ public class TableService {
     }
 
     private void validateOrderStatusIsCompletion(final Long orderTableId) {
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-            orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
+            orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException("테이블의 주문이 완료되지 않았습니다.");
         }
     }

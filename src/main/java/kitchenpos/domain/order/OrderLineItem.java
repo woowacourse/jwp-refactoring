@@ -1,33 +1,39 @@
 package kitchenpos.domain.order;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+
+@Entity
 public class OrderLineItem {
 
-    private final Long seq;
-    private final Long orderId;
-    private final Long menuId;
-    private final long quantity;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long seq;
 
-    /**
-     * DB 에 저장되지 않은 객체
-     */
-    public OrderLineItem(final Long menuId, final long quantity) {
-        this(null, null, menuId, quantity);
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @JoinColumn(name = "order_menu_id", nullable = false)
+    private OrderMenu orderMenu;
+    
+    @Column(nullable = false)
+    private long quantity;
+
+    protected OrderLineItem() {
     }
 
-    /**
-     * DB 애 저장하기 위한 객체
-     */
-    public OrderLineItem(final Long orderId, final Long menuId, final long quantity) {
-        this(null, orderId, menuId, quantity);
+    public OrderLineItem(final OrderMenu orderMenu, final long quantity) {
+        this(null, orderMenu, quantity);
     }
 
-    /**
-     * DB 에 저장된 객체
-     */
-    public OrderLineItem(final Long seq, final Long orderId, final Long menuId, final long quantity) {
+    public OrderLineItem(final Long seq, final OrderMenu orderMenu, final long quantity) {
         this.seq = seq;
-        this.orderId = orderId;
-        this.menuId = menuId;
+        this.orderMenu = orderMenu;
         this.quantity = quantity;
     }
 
@@ -35,12 +41,8 @@ public class OrderLineItem {
         return seq;
     }
 
-    public Long getOrderId() {
-        return orderId;
-    }
-
-    public Long getMenuId() {
-        return menuId;
+    public OrderMenu getOrderMenu() {
+        return orderMenu;
     }
 
     public long getQuantity() {

@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import java.math.BigDecimal;
 
@@ -9,28 +9,25 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import kitchenpos.domain.Price;
+
 @Entity
-public class Product {
+public class OrderMenu {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Column(nullable = false)
     private String name;
-    
+
     @Embedded
     private Price price;
 
-    protected Product() {
+    protected OrderMenu() {
     }
 
-    public Product(final String name, final BigDecimal price) {
-        this(null, name, price);
-    }
-
-    public Product(final Long id, final String name, final BigDecimal price) {
-        this.id = id;
+    public OrderMenu(final String name, final BigDecimal price) {
         this.name = name;
         this.price = new Price(price);
     }
@@ -43,7 +40,7 @@ public class Product {
         return name;
     }
 
-    public BigDecimal getPrice() {
-        return price.getValue();
+    public Price getPrice() {
+        return price;
     }
 }

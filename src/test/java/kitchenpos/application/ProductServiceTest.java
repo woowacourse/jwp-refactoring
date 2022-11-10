@@ -6,28 +6,27 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.application.dto.request.ProductRequest;
 import kitchenpos.application.dto.response.ProductResponse;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.fake.FakeProductDao;
+import kitchenpos.repository.ProductRepository;
 
 @SuppressWarnings("NonAsciiCharacters")
+@SpringBootTest
+@Transactional
 @DisplayName("Product 서비스 테스트")
 class ProductServiceTest {
 
+    @Autowired
     private ProductService productService;
 
-    private ProductDao productDao;
-
-    @BeforeEach
-    void setUp() {
-        productDao = new FakeProductDao();
-        productService = new ProductService(productDao);
-    }
+    @Autowired
+    private ProductRepository productRepository;
 
     @DisplayName("상품을 등록한다")
     @Test
@@ -44,7 +43,7 @@ class ProductServiceTest {
     void list() {
         final int numberOfProduct = 5;
         for (int i = 0; i < numberOfProduct; i++) {
-            productDao.save(후라이드_치킨());
+            productRepository.save(후라이드_치킨());
         }
 
         final List<ProductResponse> responses = productService.list();

@@ -9,7 +9,6 @@ import kitchenpos.domain.Price;
 public class MenuProductFixture {
 
     private Long seq;
-    private Long menuId;
     private Long productId;
     private long quantity;
     private Price price;
@@ -53,6 +52,6 @@ public class MenuProductFixture {
     }
 
     private MenuProduct build() {
-        return new MenuProduct(seq, menuId, productId, quantity, price);
+        return new MenuProduct(seq, productId, quantity, price);
     }
 }

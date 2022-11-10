@@ -3,25 +3,33 @@ package kitchenpos.domain.table;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.OrderTables;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
+@Entity
 public class TableGroup {
 
-    private final Long id;
-    private final LocalDateTime createdDate;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Column(nullable = false)
+    private LocalDateTime createdDate;
+    
+    @Embedded
     private OrderTables orderTables;
 
-    /**
-     * DB 에 저장되지 않은 객체
-     */
-    public TableGroup(final List<OrderTable> orderTables) {
-        this(null, null, orderTables);
+    protected TableGroup() {
     }
 
-    /**
-     * DB 에 저장된 객체
-     */
+    public TableGroup(final List<OrderTable> orderTables) {
+        this(null, LocalDateTime.now(), orderTables);
+    }
+
     public TableGroup(final Long id, final LocalDateTime createdDate) {
         this.id = id;
         this.createdDate = createdDate;

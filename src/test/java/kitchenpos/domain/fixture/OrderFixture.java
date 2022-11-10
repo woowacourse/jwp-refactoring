@@ -22,6 +22,7 @@ public class OrderFixture {
     public static Order 주문_1번의_주문_항목들은(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
         return 주문()
             .주문_테이블_아이디(orderTableId)
+            .주문한_시간(LocalDateTime.now())
             .주문_항목들(orderLineItems)
             .주문_상태(OrderStatus.COOKING)
             .build();

@@ -18,17 +18,12 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import kitchenpos.application.OrderService;
 import kitchenpos.application.dto.request.OrderLineItemRequest;
 import kitchenpos.application.dto.request.OrderRequest;
 import kitchenpos.application.dto.request.OrderChangeRequest;
+import kitchenpos.application.dto.response.OrderLineItemResponse;
 import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.domain.order.OrderStatus;
 
@@ -45,7 +40,15 @@ class OrderRestControllerTest extends RestControllerTest {
         final OrderRequest request = new OrderRequest(orderTableId, List.of(orderLineItemRequest1, orderLineItemRequest2));
         final String body = objectMapper.writeValueAsString(request);
 
-        final OrderResponse response = new OrderResponse(1L, orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now(), List.of());
+        final OrderLineItemResponse orderLineItemResponse1 = new OrderLineItemResponse(1L, 1L, 1);
+        final OrderLineItemResponse orderLineItemResponse2 = new OrderLineItemResponse(2L, 2L, 1);
+        final OrderResponse response = new OrderResponse(
+            1L,
+            orderTableId,
+            OrderStatus.COOKING.name(),
+            LocalDateTime.now(),
+            List.of(orderLineItemResponse1, orderLineItemResponse2)
+        );
         BDDMockito.given(orderService.create(any()))
                 .willReturn(response);
 

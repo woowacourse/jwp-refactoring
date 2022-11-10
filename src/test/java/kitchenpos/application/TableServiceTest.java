@@ -12,39 +12,43 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.application.dto.request.OrderTableRequest;
 import kitchenpos.application.dto.response.OrderTableResponse;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.dao.fake.FakeOrderDao;
-import kitchenpos.dao.fake.FakeOrderTableDao;
-import kitchenpos.dao.fake.FakeTableGroupDao;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
 import kitchenpos.domain.fixture.OrderTableFixture;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 
 @SuppressWarnings("NonAsciiCharacters")
+@SpringBootTest
+@Transactional
 @DisplayName("Table 서비스 테스트")
 class TableServiceTest {
 
+    @Autowired
     private TableService tableService;
 
-    private OrderDao orderDao;
-    private OrderTableDao orderTableDao;
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private OrderTableRepository orderTableRepository;
+
+    @Autowired
+    private TableGroupRepository tableGroupRepository;
 
     private TableGroup 저장된_테이블_그룹;
 
     @BeforeEach
     void setUp() {
-        final TableGroupDao tableGroupDao = new FakeTableGroupDao();
-        orderDao = new FakeOrderDao();
-        orderTableDao = new FakeOrderTableDao();
-        tableService = new TableService(orderDao, orderTableDao);
-
-        저장된_테이블_그룹 = tableGroupDao.save(새로운_테이블_그룹());
+        저장된_테이블_그룹 = tableGroupRepository.save(새로운_테이블_그룹());
     }
 
     @DisplayName("테이블을 등록한다")
@@ -62,7 +66,7 @@ class TableServiceTest {
     void list() {
         final int numberOfOrderTable = 5;
         for (int i = 0; i < numberOfOrderTable; i++) {
-            orderTableDao.save(OrderTableFixture.새로운_테이블());
+            orderTableRepository.save(OrderTableFixture.새로운_테이블());
         }
 
         final List<OrderTableResponse> responses = tableService.list();
@@ -74,10 +78,10 @@ class TableServiceTest {
     @Test
     void changeEmpty() {
         final OrderTable orderTable = OrderTableFixture.새로운_테이블();
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final Order order = 완료된_주문(savedOrderTable.getId());
-        orderDao.save(order);
+        orderRepository.save(order);
 
         final OrderTableRequest newOrderTable = new OrderTableRequest(savedOrderTable.getNumberOfGuests(), true);
         final OrderTableResponse changedOrderTable = tableService.changeEmpty(savedOrderTable.getId(), newOrderTable);
@@ -99,7 +103,7 @@ class TableServiceTest {
     @Test
     void changeEmptyTableGroupIdIsNull() {
         final OrderTable orderTable = 새로운_테이블(저장된_테이블_그룹.getId());
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), new OrderTableRequest(0, true)))
             .isInstanceOf(IllegalArgumentException.class)
@@ -110,10 +114,10 @@ class TableServiceTest {
     @Test
     void changeEmptyOrderStatusIsCompletion() {
         final OrderTable orderTable = OrderTableFixture.새로운_테이블();
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         final Order order = 요리중인_주문(savedOrderTable.getId());
-        orderDao.save(order);
+        orderRepository.save(order);
 
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), new OrderTableRequest(0, true)))
             .isInstanceOf(IllegalArgumentException.class)
@@ -124,7 +128,7 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuests() {
         final OrderTable orderTable = OrderTableFixture.비어있지_않는_테이블();
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         int changedNumberOfGuests = 1;
         final OrderTableRequest newOrderTable = new OrderTableRequest(changedNumberOfGuests, true);

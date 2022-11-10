@@ -21,6 +21,7 @@ public class MenuFixture {
     public static Menu 후라이드_치킨_세트의_가격과_메뉴_상품_리스트는(final Long menuGroupId, final BigDecimal price, final List<MenuProduct> menuProducts) {
         return 메뉴()
             .메뉴_그룹_아이디(menuGroupId)
+            .이름("후라이드 치킨 세트")
             .가격(price)
             .메뉴_상품_리스트(menuProducts)
             .build();
