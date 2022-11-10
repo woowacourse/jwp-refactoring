@@ -19,7 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
         OrderRestController.class,
         OrderTableRestController.class,
         TableGroupRestController.class
-    }
+}
 )
 public class ControllerTest {
 

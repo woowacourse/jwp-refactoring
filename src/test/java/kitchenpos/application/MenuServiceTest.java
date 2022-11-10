@@ -50,7 +50,7 @@ public class MenuServiceTest extends IntegrationTest {
             productDao.save(new Product("상품1", 1000L));
             productDao.save(new Product("상품2", 2000L));
             menuProducts = productDao.findAll().stream()
-                    .map(product -> new MenuProduct(null, product, 2))
+                    .map(product -> new MenuProduct(product, 2))
                     .collect(Collectors.toList());
         }
 
@@ -80,7 +80,7 @@ public class MenuServiceTest extends IntegrationTest {
         @Test
         void notFoundProduct_exception() {
             // given
-            MenuProduct menuProduct = new MenuProduct(null, new Product("상품", 1000L), 2);
+            MenuProduct menuProduct = new MenuProduct(new Product("상품", 1000L), 2);
             ArrayList<MenuProduct> menuProducts = new ArrayList<>();
             menuProducts.add(menuProduct);
 
@@ -104,8 +104,8 @@ public class MenuServiceTest extends IntegrationTest {
         // given
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
         Product product = productDao.save(new Product("상품1", 1000L));
-        MenuProduct menuProduct = new MenuProduct(null, product, 2);
-        Menu menu = new Menu("메뉴1", new Price(1000L), menuGroup, List.of(menuProduct));
+        MenuProduct menuProduct = new MenuProduct(product, 2);
+        Menu menu = new Menu("메뉴1", new Price(1000L), menuGroup.getId(), List.of(menuProduct));
         menuDao.save(menu);
 
         // when

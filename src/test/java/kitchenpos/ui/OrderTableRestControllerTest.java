@@ -84,7 +84,8 @@ public class OrderTableRestControllerTest extends ControllerTest {
         // given
         OrderTableChangeNumberOfGuestsRequest request = new OrderTableChangeNumberOfGuestsRequest(3);
         OrderTableResponse response = new OrderTableResponse(1L, 1L, 2, true);
-        given(orderTabelApiService.changeNumberOfGuests(any(Long.class), any(OrderTableChangeNumberOfGuestsRequest.class)))
+        given(orderTabelApiService.changeNumberOfGuests(any(Long.class),
+                any(OrderTableChangeNumberOfGuestsRequest.class)))
                 .willReturn(response);
 
         // when

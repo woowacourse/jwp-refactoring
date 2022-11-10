@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.OrderTableGroupDao;
@@ -49,9 +48,6 @@ public class OrderTableServiceTest extends IntegrationTest {
     private ProductDao productDao;
 
     @Autowired
-    private MenuProductDao menuProductDao;
-
-    @Autowired
     private OrderTableService orderTableService;
 
     @DisplayName("주문 테이블을 생성한다.")
@@ -86,7 +82,7 @@ public class OrderTableServiceTest extends IntegrationTest {
         @Test
         void success() {
             // given
-            OrderTableGroup orderTableGroup = orderTableGroupDao.save(new OrderTableGroup(LocalDateTime.now(), List.of(
+            OrderTableGroup orderTableGroup = orderTableGroupDao.save(OrderTableGroup.group(List.of(
                     new OrderTable(2, false),
                     new OrderTable(2, false)
             )));
@@ -94,12 +90,14 @@ public class OrderTableServiceTest extends IntegrationTest {
 
             MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
             Product product = productDao.save(new Product("상품", 1000L));
-            Menu menu = menuDao.save(new Menu("메뉴", new Price(1000L), menuGroup,
-                    List.of(new MenuProduct(null, product, 2))));
+            Menu menu = menuDao.save(new Menu("메뉴", new Price(1000L), menuGroup.getId(),
+                    List.of(new MenuProduct(product, 2))));
             orderDao.save(new Order(orderTable, OrderStatus.COMPLETION.name(), LocalDateTime.now(),
                     List.of(new OrderLineItem(menu, 2))));
             // when
+            System.out.println("===");
             OrderTable actual = orderTableService.changeEmpty(orderTable.getId());
+            System.out.println("===");
 
             // then
             assertThat(actual.isEmpty()).isTrue();
@@ -118,7 +116,7 @@ public class OrderTableServiceTest extends IntegrationTest {
         void existTableGroup_exception() {
             // given
             OrderTableGroup orderTableGroup = orderTableGroupDao.save(
-                    new OrderTableGroup(LocalDateTime.now(), List.of(
+                    OrderTableGroup.group(List.of(
                             new OrderTable(2, false),
                             new OrderTable(3, false)
                     ))
@@ -134,7 +132,7 @@ public class OrderTableServiceTest extends IntegrationTest {
         @Test
         void existsOrderStatusIsCookingOrMeal_exception() {
             // given
-            OrderTableGroup orderTableGroup = orderTableGroupDao.save(new OrderTableGroup(LocalDateTime.now(),
+            OrderTableGroup orderTableGroup = orderTableGroupDao.save(OrderTableGroup.group(
                     List.of(
                             new OrderTable(2, false),
                             new OrderTable(3, false)
@@ -145,8 +143,8 @@ public class OrderTableServiceTest extends IntegrationTest {
 
             MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
             Product product = productDao.save(new Product("상품", 1000L));
-            Menu menu = menuDao.save(new Menu("메뉴", new Price(1000L), menuGroup,
-                    List.of(new MenuProduct(null, product, 2))));
+            Menu menu = menuDao.save(new Menu("메뉴", new Price(1000L), menuGroup.getId(),
+                    List.of(new MenuProduct(product, 2))));
             orderDao.save(new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now(),
                     List.of(new OrderLineItem(menu, 2))));
 

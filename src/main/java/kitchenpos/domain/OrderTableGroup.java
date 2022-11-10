@@ -2,9 +2,7 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,13 +26,17 @@ public class OrderTableGroup {
     public OrderTableGroup() {
     }
 
-    public OrderTableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
-        if (orderTables.size() < 2) {
-            throw new IllegalArgumentException();
-        }
+    private OrderTableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
         this.createdDate = createdDate;
         this.orderTables.addAll(orderTables);
-        orderTables.forEach(table -> table.group(this));
+    }
+
+    public static OrderTableGroup group(List<OrderTable> orderTables) {
+        if (orderTables.size() < 2 || orderTables.stream()
+                .anyMatch(OrderTable::isTableGrouped)) {
+            throw new IllegalArgumentException();
+        }
+        return new OrderTableGroup(LocalDateTime.now(), orderTables);
     }
 
     public void ungroup() {

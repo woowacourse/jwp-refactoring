@@ -1,11 +1,9 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.OrderTableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -14,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class OrderTableGroupService {
 
     private final OrderDao orderDao;
@@ -26,13 +25,13 @@ public class OrderTableGroupService {
 
     @Transactional
     public OrderTableGroup create(List<OrderTable> orderTables) {
-        validateGroupingOrderTable(orderTables);
-        return orderTableGroupDao.save(new OrderTableGroup(LocalDateTime.now(), orderTables));
+        OrderTableGroup orderTableGroup = OrderTableGroup.group(orderTables);
+        return orderTableGroupDao.save(orderTableGroup);
     }
 
     private void validateGroupingOrderTable(List<OrderTable> orderTables) {
         if (orderTables.stream()
-                .anyMatch(OrderTable::isTableGrouping)) {
+                .anyMatch(OrderTable::isTableGrouped)) {
             throw new IllegalArgumentException();
         }
     }
@@ -50,9 +49,8 @@ public class OrderTableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        boolean bb = orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()));
-        if (bb) {
+        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
+                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
     }

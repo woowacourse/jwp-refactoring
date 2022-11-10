@@ -2,8 +2,8 @@ package kitchenpos.ui.apiservice;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.OrderTableService;
 import kitchenpos.application.OrderTableGroupService;
+import kitchenpos.application.OrderTableService;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableGroup;
 import kitchenpos.ui.dto.TableGroupRequest;
@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class TableGroupApiService {
 
     private final OrderTableGroupService orderTableGroupService;

@@ -2,7 +2,6 @@ package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -23,11 +22,11 @@ public class OrderTest {
     @Test
     void distinctOrderLineItem_exception() {
         // given
-        Menu 메뉴1 = new Menu("메뉴1", new Price(1000L), new MenuGroup("메뉴 그룹"), List.of(
-                new MenuProduct(null, new Product("상품", 1000L), 2)
+        Menu 메뉴1 = new Menu("메뉴1", new Price(1000L), 1L, List.of(
+                new MenuProduct(new Product("상품", 1000L), 2)
         ));
-        Menu 메뉴2 = new Menu("메뉴2", new Price(1000L), new MenuGroup("메뉴 그룹"), List.of(
-                new MenuProduct(null, new Product("상품", 1000L), 2)
+        Menu 메뉴2 = new Menu("메뉴2", new Price(1000L), 1L, List.of(
+                new MenuProduct(new Product("상품", 1000L), 2)
         ));
 
         List<OrderLineItem> orderLineItems = List.of(

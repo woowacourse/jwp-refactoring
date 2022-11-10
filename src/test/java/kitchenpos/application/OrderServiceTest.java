@@ -63,8 +63,8 @@ public class OrderServiceTest extends IntegrationTest {
             OrderTable orderTable = orderTableDao.save(new OrderTable(2, false));
             MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
             Product product = productDao.save(new Product("상품", 1000L));
-            MenuProduct menuProduct = new MenuProduct(null, product, 1);
-            Menu menu = menuDao.save(new Menu("메뉴1", new Price(1000L), menuGroup,
+            MenuProduct menuProduct = new MenuProduct(product, 1);
+            Menu menu = menuDao.save(new Menu("메뉴1", new Price(1000L), menuGroup.getId(),
                     List.of(menuProduct)));
             List<OrderLineItem> orderLineItems = new ArrayList<>();
             orderLineItems.add(new OrderLineItem(menu, 3));
@@ -112,7 +112,7 @@ public class OrderServiceTest extends IntegrationTest {
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
         Product product = productDao.save(new Product("상품", 1000L));
         Menu menu = menuDao.save(
-                new Menu("메뉴1", new Price(1000L), menuGroup, List.of(new MenuProduct(null, product, 3))));
+                new Menu("메뉴1", new Price(1000L), menuGroup.getId(), List.of(new MenuProduct(product, 3))));
         ArrayList<OrderLineItem> orderLineItems = new ArrayList<>();
         orderLineItems.add(new OrderLineItem(menu, 3));
         orderDao.save(new Order(orderTable, OrderStatus.MEAL.name(), LocalDateTime.now(), orderLineItems));
@@ -137,8 +137,8 @@ public class OrderServiceTest extends IntegrationTest {
             orderTable = orderTableDao.save(new OrderTable(2, false));
             MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
             Product product = productDao.save(new Product("상품", 1000L));
-            MenuProduct menuProduct = new MenuProduct(null, product, 1);
-            menu = menuDao.save(new Menu("메뉴1", new Price(1000L), menuGroup,
+            MenuProduct menuProduct = new MenuProduct(product, 1);
+            menu = menuDao.save(new Menu("메뉴1", new Price(1000L), menuGroup.getId(),
                     List.of(menuProduct)));
             orderLineItems = new ArrayList<>();
             orderLineItems.add(new OrderLineItem(menu, 3));

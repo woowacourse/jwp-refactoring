@@ -11,8 +11,10 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.ui.dto.MenuRequest;
 import kitchenpos.ui.dto.MenuResponse;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class MenuApiService {
 
     private final MenuService menuService;
@@ -32,12 +34,12 @@ public class MenuApiService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public MenuResponse create(MenuRequest menuRequest) {
         MenuGroup menuGroup = menuGroupService.search(menuRequest.getMenuGroupId());
         List<MenuProduct> menuProducts = menuRequest.getMenuProducts()
                 .stream()
                 .map(it -> new MenuProduct(
-                        null,
                         productService.search(it.getProductId()),
                         it.getQuantity())
                 ).collect(Collectors.toList());

@@ -2,7 +2,6 @@ package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.math.BigDecimal;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,11 +13,11 @@ public class MenuTest {
     void priceLessThanZero_exception() {
         // given
         List<MenuProduct> menuProducts = List.of(
-                new MenuProduct(null, new Product("상품1", 2000L), 2),
-                new MenuProduct(null, new Product("상품2", 1000L), 2)
+                new MenuProduct(new Product("상품1", 2000L), 2),
+                new MenuProduct(new Product("상품2", 1000L), 2)
         );
 
-        assertThatThrownBy(() -> new Menu("상품1", new Price(-1L), new MenuGroup("메뉴 그룹"), menuProducts))
+        assertThatThrownBy(() -> new Menu("상품1", new Price(-1L), 1L, menuProducts))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -27,11 +26,11 @@ public class MenuTest {
     void priceMoreThanSumOfProducts_exception() {
         // given
         List<MenuProduct> menuProducts = List.of(
-                new MenuProduct(null, new Product("상품1", 2000L), 2),
-                new MenuProduct(null, new Product("상품2", 1000L), 2)
+                new MenuProduct(new Product("상품1", 2000L), 2),
+                new MenuProduct(new Product("상품2", 1000L), 2)
         );
 
-        assertThatThrownBy(() -> new Menu("상품1", new Price(7000L), new MenuGroup("메뉴 그룹"), menuProducts))
+        assertThatThrownBy(() -> new Menu("상품1", new Price(7000L), 1L, menuProducts))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

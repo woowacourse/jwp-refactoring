@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class MenuService {
 
     private final MenuDao menuDao;
@@ -20,7 +21,7 @@ public class MenuService {
 
     @Transactional
     public Menu create(String name, Long price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
-        Menu menu = new Menu(name, new Price(price), menuGroup, menuProducts);
+        Menu menu = new Menu(name, new Price(price), menuGroup.getId(), menuProducts);
         return menuDao.save(menu);
     }
 

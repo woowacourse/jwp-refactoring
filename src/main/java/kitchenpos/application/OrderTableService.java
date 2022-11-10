@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class OrderTableService {
 
     private final OrderDao orderDao;
@@ -39,7 +40,7 @@ public class OrderTableService {
             throw new IllegalArgumentException();
         }
         orderTable.changeEmpty();
-        return orderTableDao.save(orderTable);
+        return orderTable;
     }
 
     private boolean canEmpty(OrderTable orderTable) {
@@ -47,7 +48,7 @@ public class OrderTableService {
         boolean anyMatchStatusIsComplete = orders.stream()
                 .noneMatch(Order::isCompletion);
         boolean existsOrderTableGroup = orderTableGroupDao.existsById(
-                orderTable.getOrderTableGroup().getId());
+                orderTable.getOrderTableGroupId());
 
         return !anyMatchStatusIsComplete && existsOrderTableGroup;
     }
