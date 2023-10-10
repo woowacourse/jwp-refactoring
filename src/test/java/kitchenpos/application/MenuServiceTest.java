@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import javax.transaction.Transactional;
 import kitchenpos.dao.JdbcTemplateMenuDao;
 import kitchenpos.dao.JdbcTemplateMenuGroupDao;
 import kitchenpos.dao.JdbcTemplateMenuProductDao;
@@ -30,11 +29,10 @@ import org.springframework.test.context.jdbc.Sql;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@SpringBootTest
-@Transactional
-@Sql("classpath:cleanup.sql")
-@ExtendWith(MockitoExtension.class)
 @TestConstructor(autowireMode = AutowireMode.ALL)
+@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@Sql("classpath:cleanup.sql")
 class MenuServiceTest {
 
     private MenuService menuService;
@@ -139,5 +137,23 @@ class MenuServiceTest {
         // then
         assertThat(createdMenu.getId()).isNotNull();
         assertThat(createdMenu.getName()).isEqualTo(menu.getName());
+    }
+
+    @Test
+    void 전체_메뉴를_조회할_수_있다() {
+        // given
+        Menu menu = new Menu();
+        menu.setName("menuName");
+        menu.setPrice(BigDecimal.valueOf(2000L));
+        menu.setMenuGroupId(savedMenuGroup.getId());
+        menu.setMenuProducts(List.of(savedMenuProduct));
+
+        menuService.create(menu);
+
+        // when
+        List<Menu> list = menuService.list();
+
+        // then
+        assertThat(list).hasSize(2);
     }
 }
