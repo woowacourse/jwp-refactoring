@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class Product {
     private Long id;
@@ -28,6 +29,8 @@ public class Product {
     }
 
     public void setPrice(final BigDecimal price) {
-        this.price = price;
+        if (price != null) {
+            this.price = price.setScale(0, RoundingMode.UNNECESSARY);
+        }
     }
 }
