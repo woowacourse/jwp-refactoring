@@ -17,7 +17,6 @@ import java.util.List;
 import static kitchenpos.support.TestFixtureFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @ServiceTest
@@ -45,15 +44,15 @@ class TableGroupServiceTest {
         주문_테이블2.setTableGroupId(등록된_단체_지정.getId());
         주문_테이블2.setEmpty(false);
 
-        assertAll(
-                () -> assertThat(등록된_단체_지정.getId()).isNotNull(),
-                () -> assertThat(등록된_단체_지정).usingRecursiveComparison()
-                        .ignoringFields("id", "orderTables")
-                        .isEqualTo(단체_지정),
-                () -> assertThat(등록된_단체_지정.getOrderTables())
-                        .usingRecursiveFieldByFieldElementComparator()
-                        .containsExactly(주문_테이블1, 주문_테이블2)
-        );
+        SoftAssertions.assertSoftly(softly -> {
+            assertThat(등록된_단체_지정.getId()).isNotNull();
+            assertThat(등록된_단체_지정).usingRecursiveComparison()
+                    .ignoringFields("id", "orderTables")
+                    .isEqualTo(단체_지정);
+            assertThat(등록된_단체_지정.getOrderTables())
+                    .usingRecursiveFieldByFieldElementComparator()
+                    .containsExactly(주문_테이블1, 주문_테이블2);
+        });
     }
 
     @Test

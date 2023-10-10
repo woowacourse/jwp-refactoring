@@ -23,12 +23,11 @@ class MenuGroupServiceTest {
         MenuGroup 등록된_메뉴_그룹 = menuGroupService.create(메뉴_그룹);
 
         assertSoftly(softly -> {
-                    assertThat(등록된_메뉴_그룹.getId()).isNotNull();
-                    assertThat(등록된_메뉴_그룹).usingRecursiveComparison()
-                            .ignoringFields("id")
-                            .isEqualTo(메뉴_그룹);
-                }
-        );
+            assertThat(등록된_메뉴_그룹.getId()).isNotNull();
+            assertThat(등록된_메뉴_그룹).usingRecursiveComparison()
+                    .ignoringFields("id")
+                    .isEqualTo(메뉴_그룹);
+        });
     }
 
     @Test

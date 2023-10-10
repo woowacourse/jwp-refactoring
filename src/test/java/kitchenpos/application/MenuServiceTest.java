@@ -48,16 +48,15 @@ class MenuServiceTest {
         Menu 등록된_메뉴 = menuService.create(메뉴);
 
         assertSoftly(softly -> {
-                    assertThat(등록된_메뉴.getId()).isNotNull();
-                    assertThat(등록된_메뉴.getPrice()).isEqualByComparingTo(메뉴.getPrice());
-                    assertThat(등록된_메뉴).usingRecursiveComparison()
-                            .ignoringFields("id", "menuProducts")
-                            .isEqualTo(메뉴);
-                    assertThat(등록된_메뉴.getMenuProducts()).hasSize(1)
-                            .usingRecursiveFieldByFieldElementComparatorIgnoringFields("seq")
-                            .containsOnly(메뉴_상품);
-                }
-        );
+            assertThat(등록된_메뉴.getId()).isNotNull();
+            assertThat(등록된_메뉴.getPrice()).isEqualByComparingTo(메뉴.getPrice());
+            assertThat(등록된_메뉴).usingRecursiveComparison()
+                    .ignoringFields("id", "menuProducts")
+                    .isEqualTo(메뉴);
+            assertThat(등록된_메뉴.getMenuProducts()).hasSize(1)
+                    .usingRecursiveFieldByFieldElementComparatorIgnoringFields("seq")
+                    .containsOnly(메뉴_상품);
+        });
     }
 
     @Test
