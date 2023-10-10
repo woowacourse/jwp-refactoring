@@ -56,9 +56,9 @@ class MenuGroupDaoTest {
         MenuGroup 메뉴_그룹1 = menuGroupDao.save(새로운_메뉴_그룹("메뉴 그룹1"));
         MenuGroup 메뉴_그룹2 = menuGroupDao.save(새로운_메뉴_그룹("메뉴 그룹2"));
 
-        List<MenuGroup> 메뉴_그룹_목록 = menuGroupDao.findAll();
+        List<MenuGroup> 모든_메뉴_그룹 = menuGroupDao.findAll();
 
-        assertThat(메뉴_그룹_목록).hasSize(2)
+        assertThat(모든_메뉴_그룹).hasSize(2)
                 .usingRecursiveFieldByFieldElementComparator()
                 .containsExactly(메뉴_그룹1, 메뉴_그룹2);
     }

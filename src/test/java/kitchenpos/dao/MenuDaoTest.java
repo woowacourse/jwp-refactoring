@@ -75,9 +75,9 @@ class MenuDaoTest {
         Menu 메뉴1 = menuDao.save(새로운_메뉴("메뉴1", new BigDecimal(10000), 메뉴_그룹.getId(), null));
         Menu 메뉴2 = menuDao.save(새로운_메뉴("메뉴2", new BigDecimal(10000), 메뉴_그룹.getId(), null));
 
-        List<Menu> 메뉴_목록 = menuDao.findAll();
+        List<Menu> 모든_메뉴 = menuDao.findAll();
 
-        assertThat(메뉴_목록).hasSize(2)
+        assertThat(모든_메뉴).hasSize(2)
                 .usingRecursiveFieldByFieldElementComparatorIgnoringFields("price")
                 .containsExactly(메뉴1, 메뉴2);
     }
