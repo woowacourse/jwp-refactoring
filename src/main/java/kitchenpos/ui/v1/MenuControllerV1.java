@@ -17,7 +17,7 @@ public class MenuControllerV1 {
 
     private final MenuService menuService;
 
-    public MenuControllerV1(final MenuService menuService) {
+    public MenuControllerV1(MenuService menuService) {
         this.menuService = menuService;
     }
 
