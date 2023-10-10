@@ -21,7 +21,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.TestConstructor.AutowireMode;
@@ -47,7 +46,6 @@ class MenuServiceTest {
     private MenuGroup savedMenuGroup;
     private MenuProduct savedMenuProduct;
 
-    @Autowired
     public MenuServiceTest(MenuService menuService, JdbcTemplateProductDao productDao, JdbcTemplateMenuDao menuDao,
             JdbcTemplateMenuGroupDao menuGroupDao,
             JdbcTemplateMenuProductDao menuProductDao) {
@@ -151,9 +149,9 @@ class MenuServiceTest {
         menuService.create(menu);
 
         // when
-        List<Menu> list = menuService.list();
+        List<Menu> products = menuService.list();
 
         // then
-        assertThat(list).hasSize(2);
+        assertThat(products).hasSize(2);
     }
 }
