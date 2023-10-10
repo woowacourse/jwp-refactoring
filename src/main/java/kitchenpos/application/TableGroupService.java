@@ -17,6 +17,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class TableGroupService {
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
@@ -28,7 +29,6 @@ public class TableGroupService {
         this.tableGroupDao = tableGroupDao;
     }
 
-    @Transactional
     public TableGroup create(final TableGroup tableGroup) {
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
 
@@ -67,7 +67,6 @@ public class TableGroupService {
         return savedTableGroup;
     }
 
-    @Transactional
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
 

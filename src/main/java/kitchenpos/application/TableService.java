@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
+@Transactional
 public class TableService {
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
@@ -21,7 +22,6 @@ public class TableService {
         this.orderTableDao = orderTableDao;
     }
 
-    @Transactional
     public OrderTable create(final OrderTable orderTable) {
         orderTable.setId(null);
         orderTable.setTableGroupId(null);
@@ -29,11 +29,11 @@ public class TableService {
         return orderTableDao.save(orderTable);
     }
 
+    @Transactional(readOnly = true)
     public List<OrderTable> list() {
         return orderTableDao.findAll();
     }
 
-    @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
@@ -52,7 +52,6 @@ public class TableService {
         return orderTableDao.save(savedOrderTable);
     }
 
-    @Transactional
     public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
         final int numberOfGuests = orderTable.getNumberOfGuests();
 
