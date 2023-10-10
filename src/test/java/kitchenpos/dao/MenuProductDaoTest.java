@@ -70,9 +70,9 @@ class MenuProductDaoTest {
 
     @Test
     void 존재하지_않는_Seq로_메뉴_상품을_조회하면_Optional_empty를_반환한다() {
-        Optional<MenuProduct> 존재하지_않는_메뉴_상품 = menuProductDao.findById(Long.MIN_VALUE);
+        Optional<MenuProduct> 존재하지_않는_Seq로_조회한_메뉴_상품 = menuProductDao.findById(Long.MIN_VALUE);
 
-        assertThat(존재하지_않는_메뉴_상품).isEmpty();
+        assertThat(존재하지_않는_Seq로_조회한_메뉴_상품).isEmpty();
     }
 
     @Test

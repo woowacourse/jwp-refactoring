@@ -46,9 +46,9 @@ class MenuGroupDaoTest {
 
     @Test
     void 존재하지_않는_ID로_메뉴_그룹을_조회하면_Optional_empty를_반환한다() {
-        Optional<MenuGroup> 존재하지_않는_메뉴_그룹 = menuGroupDao.findById(Long.MIN_VALUE);
+        Optional<MenuGroup> 존재하지_않는_ID로_조회한_메뉴_그룹 = menuGroupDao.findById(Long.MIN_VALUE);
 
-        assertThat(존재하지_않는_메뉴_그룹).isEmpty();
+        assertThat(존재하지_않는_ID로_조회한_메뉴_그룹).isEmpty();
     }
 
     @Test
