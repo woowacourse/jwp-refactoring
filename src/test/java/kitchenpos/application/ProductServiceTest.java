@@ -11,12 +11,6 @@ import org.junit.jupiter.api.Test;
 @SuppressWarnings("NonAsciiCharacters")
 class ProductServiceTest extends ServiceTestContext {
 
-    private ProductService productService;
-
-    public ProductServiceTest(ProductService productService) {
-        this.productService = productService;
-    }
-
     @Test
     void 상품_생성_시_가격이_0보다_작으면_예외를_던진다() {
         // given

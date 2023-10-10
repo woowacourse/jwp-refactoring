@@ -39,6 +39,8 @@ public class ServiceTestContext {
     protected MenuGroupService menuGroupService;
     @Autowired
     protected OrderService orderService;
+    @Autowired
+    protected ProductService productService;
 
     @Autowired
     private JdbcTemplateProductDao productDao;
