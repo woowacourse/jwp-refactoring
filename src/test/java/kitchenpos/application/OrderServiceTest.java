@@ -64,7 +64,7 @@ class OrderServiceTest extends ServiceTestContext {
     }
 
     @Test
-    void 주문을_정상적으로_생성하는_경우_생성한_메뉴가_반환된다() {
+    void 주문을_정상적으로_생성하는_경우_생성한_주문이_반환된다() {
         // given
         Order order = new Order();
         order.setOrderLineItems(List.of(savedOrderLineItem));
@@ -75,5 +75,70 @@ class OrderServiceTest extends ServiceTestContext {
 
         // then
         assertThat(createdOrder.getId()).isNotNull();
+    }
+
+    @Test
+    void 전체_주문을_조회할_수_있다() {
+        // given
+        Order order = new Order();
+        order.setOrderLineItems(List.of(savedOrderLineItem));
+        order.setOrderTableId(savedOrderTable.getId());
+
+        orderService.create(order);
+
+        // when
+        List<Order> orders = orderService.list();
+
+        // then
+        assertThat(orders).hasSize(2);
+    }
+
+    @Test
+    void 주문이_존재하지_않으면_상태를_변경하려_할_때_예외를_던진다() {
+        // given
+        Long orderId = Long.MAX_VALUE;
+
+        Order order = new Order();
+        order.setOrderLineItems(List.of(savedOrderLineItem));
+        order.setOrderTableId(savedOrderTable.getId());
+        order.setOrderStatus("MEAL");
+
+        // when, then
+        assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, order))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 이미_완료된_주문이라면_상태를_변경할_수_없다() {
+        // given
+        Long orderId = savedOrder.getId();
+
+        Order order = new Order();
+        order.setOrderLineItems(List.of(savedOrderLineItem));
+        order.setOrderTableId(savedOrderTable.getId());
+        order.setOrderStatus("COMPLETION");
+
+        orderService.changeOrderStatus(orderId, order);
+
+        // when, then
+        assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, order))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 주문을_정상적으로_변경하는_경우_변경한_주문이_반환된다() {
+        Long orderId = savedOrder.getId();
+
+        Order order = new Order();
+        order.setOrderLineItems(List.of(savedOrderLineItem));
+        order.setOrderTableId(savedOrderTable.getId());
+        order.setOrderStatus("COMPLETION");
+
+        // when
+        Order changedOrder = orderService.changeOrderStatus(orderId, order);
+
+        // then
+        assertThat(changedOrder.getId()).isNotNull();
+        assertThat(changedOrder.getOrderStatus()).isEqualTo("COMPLETION");
     }
 }
