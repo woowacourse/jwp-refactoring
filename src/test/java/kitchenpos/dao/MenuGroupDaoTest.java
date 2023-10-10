@@ -68,7 +68,7 @@ class MenuGroupDaoTest {
         MenuGroup 등록된_메뉴_그룹 = menuGroupDao.save(새로운_메뉴_그룹("메뉴 그룹"));
         MenuGroup 등록되지_않은_메뉴_그룹 = 새로운_메뉴_그룹("메뉴 그룹");
 
-        SoftAssertions.assertSoftly(softly -> {
+        assertSoftly(softly -> {
             assertThat(menuGroupDao.existsById(등록된_메뉴_그룹.getId())).isTrue();
             assertThat(menuGroupDao.existsById(등록되지_않은_메뉴_그룹.getId())).isFalse();
         });

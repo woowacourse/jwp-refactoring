@@ -16,6 +16,7 @@ import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
 import static kitchenpos.support.TestFixtureFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @DaoTest
 class OrderLineItemDaoTest {
@@ -54,7 +55,7 @@ class OrderLineItemDaoTest {
 
         OrderLineItem 등록된_주문_항목 = orderLineItemDao.save(등록되지_않은_주문_항목);
 
-        SoftAssertions.assertSoftly(softly -> {
+        assertSoftly(softly -> {
             assertThat(등록된_주문_항목.getSeq()).isNotNull();
             assertThat(등록된_주문_항목).usingRecursiveComparison()
                     .ignoringFields("seq")

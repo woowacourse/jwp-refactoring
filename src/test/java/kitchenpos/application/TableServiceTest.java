@@ -21,6 +21,7 @@ import static kitchenpos.domain.OrderStatus.MEAL;
 import static kitchenpos.support.TestFixtureFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @ServiceTest
 class TableServiceTest {
@@ -43,7 +44,7 @@ class TableServiceTest {
 
         OrderTable 등록된_주문_테이블 = tableService.create(주문_테이블);
 
-        SoftAssertions.assertSoftly(softly -> {
+        assertSoftly(softly -> {
             assertThat(등록된_주문_테이블.getId()).isNotNull();
             assertThat(등록된_주문_테이블).usingRecursiveComparison()
                     .ignoringFields("id")
@@ -90,7 +91,7 @@ class TableServiceTest {
         orderTableDao.save(주문_테이블1);
         orderTableDao.save(주문_테이블2);
 
-        SoftAssertions.assertSoftly(softly -> {
+        assertSoftly(softly -> {
             assertThatThrownBy(() -> tableService.changeEmpty(주문_테이블1.getId(), 주문_테이블1))
                     .isInstanceOf(IllegalArgumentException.class);
             assertThatThrownBy(() -> tableService.changeEmpty(주문_테이블2.getId(), 주문_테이블2))

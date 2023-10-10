@@ -17,6 +17,7 @@ import java.util.List;
 import static kitchenpos.support.TestFixtureFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @ServiceTest
@@ -44,7 +45,7 @@ class TableGroupServiceTest {
         주문_테이블2.setTableGroupId(등록된_단체_지정.getId());
         주문_테이블2.setEmpty(false);
 
-        SoftAssertions.assertSoftly(softly -> {
+        assertSoftly(softly -> {
             assertThat(등록된_단체_지정.getId()).isNotNull();
             assertThat(등록된_단체_지정).usingRecursiveComparison()
                     .ignoringFields("id", "orderTables")
@@ -103,7 +104,7 @@ class TableGroupServiceTest {
         OrderTable 주문_테이블2 = orderTableDao.save(새로운_주문_테이블(null, 2, true));
         TableGroup 단체_지정 = tableGroupService.create(새로운_단체_지정(LocalDateTime.now(), List.of(주문_테이블1, 주문_테이블2)));
 
-        SoftAssertions.assertSoftly(softly -> {
+        assertSoftly(softly -> {
             assertDoesNotThrow(() -> tableGroupService.ungroup(단체_지정.getId()));
             assertThat(주문_테이블1.getTableGroupId()).isNull();
             assertThat(주문_테이블2.getTableGroupId()).isNull();
