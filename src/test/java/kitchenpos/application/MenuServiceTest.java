@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,30 +30,30 @@ class MenuServiceTest {
     @Autowired
     private MenuService menuService;
 
-    private Long 메뉴_그룹_ID;
-    private Long 상품_ID;
+    private MenuGroup 메뉴_그룹;
+    private Product 상품;
     private MenuProduct 메뉴_상품;
 
     @BeforeEach
     void setUp() {
-        this.메뉴_그룹_ID = menuGroupDao.save(새로운_메뉴_그룹("메뉴 그룹")).getId();
-        this.상품_ID = productDao.save(새로운_상품("상품", new BigDecimal(10000))).getId();
-        this.메뉴_상품 = 새로운_메뉴_상품(null, 상품_ID, 3);
+        this.메뉴_그룹 = menuGroupDao.save(새로운_메뉴_그룹("메뉴 그룹"));
+        this.상품 = productDao.save(새로운_상품("상품", new BigDecimal(10000)));
+        this.메뉴_상품 = 새로운_메뉴_상품(null, 상품.getId(), 3);
     }
 
     @Test
     void 등록된_상품들을_메뉴로_등록한다() {
-        Menu 메뉴 = 새로운_메뉴("메뉴", new BigDecimal("30000.00"), 메뉴_그룹_ID, List.of(메뉴_상품));
+        Menu 메뉴 = 새로운_메뉴("메뉴", new BigDecimal("30000.00"), 메뉴_그룹.getId(), List.of(메뉴_상품));
 
-        Menu 저장된_메뉴 = menuService.create(메뉴);
+        Menu 등록된_메뉴 = menuService.create(메뉴);
 
         assertSoftly(softly -> {
-                    assertThat(저장된_메뉴.getId()).isNotNull();
-                    assertThat(저장된_메뉴.getPrice()).isEqualByComparingTo(메뉴.getPrice());
-                    assertThat(저장된_메뉴).usingRecursiveComparison()
+                    assertThat(등록된_메뉴.getId()).isNotNull();
+                    assertThat(등록된_메뉴.getPrice()).isEqualByComparingTo(메뉴.getPrice());
+                    assertThat(등록된_메뉴).usingRecursiveComparison()
                             .ignoringFields("id", "menuProducts")
                             .isEqualTo(메뉴);
-                    assertThat(저장된_메뉴.getMenuProducts()).hasSize(1)
+                    assertThat(등록된_메뉴.getMenuProducts()).hasSize(1)
                             .usingRecursiveFieldByFieldElementComparatorIgnoringFields("seq")
                             .containsOnly(메뉴_상품);
                 }
@@ -61,7 +62,7 @@ class MenuServiceTest {
 
     @Test
     void 메뉴의_이름은_최대_255자이다() {
-        Menu 메뉴 = 새로운_메뉴("짱".repeat(256), new BigDecimal("30000.00"), 메뉴_그룹_ID, List.of(메뉴_상품));
+        Menu 메뉴 = 새로운_메뉴("짱".repeat(256), new BigDecimal("30000.00"), 메뉴_그룹.getId(), List.of(메뉴_상품));
 
         assertThatThrownBy(() -> menuService.create(메뉴))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -69,7 +70,7 @@ class MenuServiceTest {
 
     @Test
     void 메뉴_가격이_0원_이상이어야_한다() {
-        Menu 메뉴 = 새로운_메뉴("메뉴", new BigDecimal(-1), 메뉴_그룹_ID, List.of(메뉴_상품));
+        Menu 메뉴 = 새로운_메뉴("메뉴", new BigDecimal(-1), 메뉴_그룹.getId(), List.of(메뉴_상품));
 
         assertThatThrownBy(() -> menuService.create(메뉴))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -77,7 +78,7 @@ class MenuServiceTest {
 
     @Test
     void 메뉴_가격이_100조원_미만이어야_한다() {
-        Menu 메뉴 = 새로운_메뉴("메뉴", BigDecimal.valueOf(Math.pow(10, 20)), 메뉴_그룹_ID, List.of(메뉴_상품));
+        Menu 메뉴 = 새로운_메뉴("메뉴", BigDecimal.valueOf(Math.pow(10, 20)), 메뉴_그룹.getId(), List.of(메뉴_상품));
 
         assertThatThrownBy(() -> menuService.create(메뉴))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -87,7 +88,7 @@ class MenuServiceTest {
     void 메뉴에_속한_상품_금액의_합은_메뉴의_가격보다_크거나_같아야_한다() {
         Product 새상품 = 새로운_상품("새상품", new BigDecimal(40000));
         MenuProduct 새메뉴_상품 = 새로운_메뉴_상품(null, 새상품.getId(), 1);
-        Menu 메뉴 = 새로운_메뉴("메뉴", new BigDecimal("30000.00"), 메뉴_그룹_ID, List.of(메뉴_상품, 새메뉴_상품));
+        Menu 메뉴 = 새로운_메뉴("메뉴", new BigDecimal("30000.00"), 메뉴_그룹.getId(), List.of(메뉴_상품, 새메뉴_상품));
 
         assertThatThrownBy(() -> menuService.create(메뉴))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -112,7 +113,7 @@ class MenuServiceTest {
     @Test
     void 존재하지_않는_상품이_등록될_수_없다() {
         MenuProduct 존재하지_않는_상품 = 새로운_메뉴_상품(null, Long.MIN_VALUE, 1);
-        Menu 메뉴 = 새로운_메뉴("메뉴", new BigDecimal("30000.00"), 메뉴_그룹_ID, List.of(존재하지_않는_상품));
+        Menu 메뉴 = 새로운_메뉴("메뉴", new BigDecimal("30000.00"), 메뉴_그룹.getId(), List.of(존재하지_않는_상품));
 
         assertThatThrownBy(() -> menuService.create(메뉴))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -120,8 +121,8 @@ class MenuServiceTest {
 
     @Test
     void 메뉴의_목록을_조회한다() {
-        Menu 메뉴1 = menuService.create(새로운_메뉴("메뉴1", new BigDecimal("30000.00"), 메뉴_그룹_ID, List.of(메뉴_상품)));
-        Menu 메뉴2 = menuService.create(새로운_메뉴("메뉴2", new BigDecimal("30000.00"), 메뉴_그룹_ID, List.of(메뉴_상품)));
+        Menu 메뉴1 = menuService.create(새로운_메뉴("메뉴1", new BigDecimal("30000.00"), 메뉴_그룹.getId(), List.of(메뉴_상품)));
+        Menu 메뉴2 = menuService.create(새로운_메뉴("메뉴2", new BigDecimal("30000.00"), 메뉴_그룹.getId(), List.of(메뉴_상품)));
 
         List<Menu> 메뉴_목록 = menuService.list();
 
