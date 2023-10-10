@@ -4,5 +4,5 @@ spring:
     username: sa
     password: sa
     driver-class-name: org.h2.Driver
-  profiles:
-    active: test
+  flyway:
+    enabled: false
