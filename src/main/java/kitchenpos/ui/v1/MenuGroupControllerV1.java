@@ -32,6 +32,6 @@ public class MenuGroupControllerV1 {
     @GetMapping
     public ResponseEntity<List<MenuGroup>> findAll() {
         return ResponseEntity.ok()
-            .body(menuGroupService.list());
+            .body(menuGroupService.findAll());
     }
 }

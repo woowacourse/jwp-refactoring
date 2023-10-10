@@ -57,7 +57,7 @@ class MenuGroupControllerV1Test {
     @DisplayName("/api/v1/menu-groups로 GET 요청을 보내면 200 응답과 결과가 조회된다.")
     void findAll_with_200() throws Exception {
         // given
-        given(menuGroupService.list())
+        given(menuGroupService.findAll())
             .willReturn(List.of(new MenuGroup(), new MenuGroup()));
 
         // when & then
