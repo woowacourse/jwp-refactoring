@@ -37,6 +37,7 @@ class ProductDaoTest {
         Product product = new Product();
         product.setName("product");
         product.setPrice(new BigDecimal("1000"));
+
         // when
         Product save = productDao.save(product);
 
