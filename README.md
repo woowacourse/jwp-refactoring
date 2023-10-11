@@ -2,6 +2,40 @@
 
 ## 요구 사항
 
+### 메뉴(Menu)
+1. 메뉴를 생성할 수 있다.
+   - id, name, price, menuGroupId, List MenuProduct
+2. 모든 메뉴를 조회할 수 있다.
+
+### 메뉴 그룹(MenuGroup)
+1. 메뉴 그룹을 생성할 수 있다.
+   - id, name
+2. 모든 메뉴 그룹들을 조회할 수 있다.
+
+### 주문(Order)
+1. 주문을 생성할 수 있다.
+   - id, orderTableId, orderStatus, orderedTime, orderLineItems
+2. 모든 주문을 조회할 수 있다.
+3. 특정 주문 상태를 변경할 수 있다.
+
+### 물품(Product)
+1. 물품을 생성할 수 있다.
+   - id, name, price
+2. 모든 물품을 조회할 수 있다.
+
+### 주문 테이블 그룹(TableGroup)
+1. 여러 OrderTable을 가진 TableGroup을 생성할 수 있다.
+   - List OrderTable, createdDate, id
+2. 특정 TableGroup을 삭제할 수 있다.
+
+### 주문 테이블(Table)
+1. 주문 테이블을 생성할 수 있다.
+   - id, tableGroupId, numberOfGuests, empty(boolean)
+2. 모든 주문 테이블들을 조회할 수 있다.
+3. 특정 주문 테이블을 empty 상태로 변경할 수 있다.
+4. 특정 주문 테이블의 손님의 명 수를 변경할 수 있다.
+
+
 ## 용어 사전
 
 | 한글명 | 영문명 | 설명 |
