@@ -1,0 +1,49 @@
+package kitchenpos.application;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+
+import java.util.List;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.supports.MenuGroupFixture;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+@DisplayName("메뉴 그룹 서비스 테스트")
+@ServiceTest
+class MenuGroupServiceTest {
+
+    private final MenuGroupService menuGroupService;
+
+    public MenuGroupServiceTest(final MenuGroupService menuGroupService) {
+        this.menuGroupService = menuGroupService;
+    }
+
+    @DisplayName("메뉴 그룹을 생성할 수 있다")
+    @Test
+    void createMenuGroup() {
+        final MenuGroup menuGroup = new MenuGroup();
+        menuGroup.setName("주인장 최애 메뉴");
+
+        final MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+
+        assertSoftly(softly -> {
+            assertThat(savedMenuGroup.getId()).isNotNull();
+            assertThat(savedMenuGroup.getName()).isEqualTo(menuGroup.getName());
+        });
+    }
+
+    @DisplayName("메뉴 그룹 목록을 조회할 수 있다")
+    @Test
+    void findAllMenuGroups() {
+        final MenuGroup menuGroup1 = MenuGroupFixture.create();
+        final MenuGroup menuGroup2 = MenuGroupFixture.create();
+
+        menuGroupService.create(menuGroup1);
+        menuGroupService.create(menuGroup2);
+
+        final List<MenuGroup> list = menuGroupService.list();
+
+        assertThat(list).hasSize(2);
+    }
+}
