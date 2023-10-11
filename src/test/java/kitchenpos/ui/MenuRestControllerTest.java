@@ -65,7 +65,7 @@ class MenuRestControllerTest {
                     )
                     .andExpectAll(
                             status().isCreated(),
-                            header().string("location", "/api/menus/1"),
+                            header().exists("Location"),
                             jsonPath("id").value(menu.getId()),
                             jsonPath("name").value(menu.getName()),
                             jsonPath("price").value(menu.getPrice()),

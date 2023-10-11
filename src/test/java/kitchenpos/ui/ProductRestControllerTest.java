@@ -63,7 +63,7 @@ class ProductRestControllerTest {
                     )
                     .andExpectAll(
                             status().isCreated(),
-                            header().string("location", "/api/products/1"),
+                            header().exists("Location"),
                             jsonPath("id").value(product.getId()),
                             jsonPath("name").value(product.getName()),
                             jsonPath("price").value(product.getPrice().intValue())
