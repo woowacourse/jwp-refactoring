@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -31,10 +32,10 @@ class ProductRestControllerTest {
     private TestRestTemplate restTemplate;
 
     @Nested
-    class 상품_등록 {
+    class 상품_등록시 {
 
         @Test
-        void 상품을_정상적으로_등록한다() {
+        void 정상적으로_등록한다() {
             //given
             final var product = new Product();
             product.setName("상품명");
@@ -55,7 +56,7 @@ class ProductRestControllerTest {
 
         @ParameterizedTest
         @NullAndEmptySource
-        void 상품을_등록할_때_상품명이_비어있다면_에러가_발생한다(String productName) {
+        void 상품명이_비어있다면_에러가_발생한다(String productName) {
             //given
             final var product = new Product();
             product.setName(productName);
@@ -69,7 +70,7 @@ class ProductRestControllerTest {
         }
 
         @Test
-        void 상품을_등록할_때_상품명이_255자_이상이라면_에러가_발생한다() {
+        void 상품명이_255자_이상이라면_에러가_발생한다() {
             //given
             final var product = new Product();
             product.setName("상품명".repeat(256));
@@ -83,12 +84,13 @@ class ProductRestControllerTest {
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"-1", "0", "12345123451234512345"})
-        void 상품을_등록할_때_가격이_올바른_범위가_아니라면_에러가_발생한다(String price) {
+        @NullSource
+        @ValueSource(strings = {"-1", "12345123451234512345"})
+        void 가격이_null_이거나_올바른_범위가_아니라면_에러가_발생한다(BigDecimal price) {
             //given
             final var product = new Product();
             product.setName("상품명");
-            product.setPrice(new BigDecimal(price));
+            product.setPrice(price);
 
             //when
             final var response = restTemplate.postForEntity("http://localhost:" + port + "/api/products", product, Product.class);

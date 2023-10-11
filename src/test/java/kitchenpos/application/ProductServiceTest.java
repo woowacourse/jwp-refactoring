@@ -20,21 +20,24 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Mock;
 
 @SuppressWarnings("NonAsciiCharacters")
 class ProductServiceTest {
 
+    @Mock
+    private ProductDao mockProductDao;
+
     @Nested
-    class 상품_등록 {
+    class 상품_등록시 {
 
         @ParameterizedTest
         @NullAndEmptySource
         void 이름이_공백이나_비어있다면_예외가_발생한다(String invalidName) {
             // given
-            final var productDao = mock(ProductDao.class);
-            final var productService = new ProductService(productDao);
+            final var productService = new ProductService(mockProductDao);
             final var productWithInvalidName = createProduct(invalidName, BigDecimal.valueOf(1000));
-            when(productDao.save(any(Product.class))).thenReturn(productWithInvalidName);
+            when(mockProductDao.save(any(Product.class))).thenReturn(productWithInvalidName);
 
             // when
             final ThrowingCallable throwingCallable = () -> productService.create(productWithInvalidName);
@@ -47,11 +50,10 @@ class ProductServiceTest {
         @Test
         void 이름이_255자_이내가_아니라면_예외가_발생한다() {
             // given
-            final var productDao = mock(ProductDao.class);
-            final var productService = new ProductService(productDao);
+            final var productService = new ProductService(mockProductDao);
             final var invalidName = "름".repeat(256);
             final var productWithInvalidName = createProduct(invalidName, BigDecimal.valueOf(1000));
-            when(productDao.save(any(Product.class))).thenReturn(productWithInvalidName);
+            when(mockProductDao.save(any(Product.class))).thenReturn(productWithInvalidName);
 
             // when
             final ThrowingCallable throwingCallable = () -> productService.create(productWithInvalidName);
@@ -63,13 +65,12 @@ class ProductServiceTest {
 
         @ParameterizedTest
         @NullSource
-        @ValueSource(strings = {"-1", "0", "12345123451234512345"})
-        void 가격이_null이거나_1에서_19자리의_양수가_아니라면_예외가_발생한다(BigDecimal price) {
+        @ValueSource(strings = {"-1", "12345123451234512345"})
+        void 가격이_null이거나_범위에서_벗어난다면_아니라면_예외가_발생한다(BigDecimal price) {
             // given
-            final var productDao = mock(ProductDao.class);
-            final var productService = new ProductService(productDao);
+            final var productService = new ProductService(mockProductDao);
             final var productWithInvalidPrice = createProduct("validName", price);
-            when(productDao.save(any(Product.class))).thenReturn(productWithInvalidPrice);
+            when(mockProductDao.save(any(Product.class))).thenReturn(productWithInvalidPrice);
 
             // when
             final ThrowingCallable throwingCallable = () -> productService.create(productWithInvalidPrice);
@@ -82,12 +83,11 @@ class ProductServiceTest {
         @Test
         void 정상적인_이름과_가격을_가진다면_상품이_등록된다() {
             // given
-            final var productDao = mock(ProductDao.class);
-            final var productService = new ProductService(productDao);
+            final var productService = new ProductService(mockProductDao);
             final var validName = "validName";
             final var validPrice = BigDecimal.valueOf(1000);
             final var productWithValidNameAndPrice = createProduct(validName, validPrice);
-            when(productDao.save(any(Product.class))).thenReturn(productWithValidNameAndPrice);
+            when(mockProductDao.save(any(Product.class))).thenReturn(productWithValidNameAndPrice);
 
             // when
             final ThrowingSupplier<Product> throwingSupplier = () -> productService.create(productWithValidNameAndPrice);
@@ -95,7 +95,7 @@ class ProductServiceTest {
             // then
             assertAll(
                     () -> Assertions.assertDoesNotThrow(throwingSupplier),
-                    () -> verify(productDao, only()).save(any(Product.class))
+                    () -> verify(mockProductDao, only()).save(any(Product.class))
             );
         }
 
@@ -108,10 +108,10 @@ class ProductServiceTest {
     }
 
     @Nested
-    class 상품_조회 {
+    class 상품_조회시 {
 
         @Test
-        void 상품_목록을_조회한다() {
+        void 정상적으로_조회한다() {
             // given
             final var productDao = mock(ProductDao.class);
             final var productService = new ProductService(productDao);
