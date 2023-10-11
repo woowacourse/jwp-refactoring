@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.TableGroupDao;
@@ -41,8 +40,6 @@ class OrderTableServiceTest {
     @Autowired
     private MenuService menuService;
 
-    @Autowired
-    private OrderDao orderDao;
     @Autowired
     private TableGroupDao tableGroupDao;
     @Autowired
@@ -251,13 +248,6 @@ class OrderTableServiceTest {
         orderLineItem.setQuantity(quantity);
 
         return orderLineItem;
-    }
-
-    private OrderTable saveOrderTable(final boolean empty) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(empty);
-
-        return orderTableDao.save(orderTable);
     }
 
     private Menu saveMenu() {
