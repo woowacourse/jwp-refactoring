@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 public class Menu {
@@ -31,7 +32,9 @@ public class Menu {
     }
 
     public void setPrice(final BigDecimal price) {
-        this.price = price;
+        if (price != null) {
+            this.price = price.setScale(0, RoundingMode.UNNECESSARY);
+        }
     }
 
     public Long getMenuGroupId() {

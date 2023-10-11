@@ -7,6 +7,8 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.exception.MenuGroupException;
+import kitchenpos.exception.ProductException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,11 +41,11 @@ public class MenuService {
         final BigDecimal price = menu.getPrice();
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[ERROR] 메뉴 가격은 null 또는 0 미만의 값일 수 없습니다.");
         }
 
         if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
-            throw new IllegalArgumentException();
+            throw new MenuGroupException.NotFoundMenuGroupException();
         }
 
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
@@ -51,12 +53,12 @@ public class MenuService {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
             final Product product = productDao.findById(menuProduct.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
+                    .orElseThrow(ProductException.NotFoundProductException::new);
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
 
         if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[ERROR] 메뉴의 가격이 메뉴 상품 가격의 합보다 클 수 없습니다.");
         }
 
         final Menu savedMenu = menuDao.save(menu);
