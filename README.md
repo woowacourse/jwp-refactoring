@@ -101,7 +101,7 @@
 
 - [X] 도메인 요구 사항 정리
 - [X] Controller 테스트 추가
-- [ ] Service 테스트 추가
+- [X] Service 테스트 추가
 
 ## 용어 사전
 
