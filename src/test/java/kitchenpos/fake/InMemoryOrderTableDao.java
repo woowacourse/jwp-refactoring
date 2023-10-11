@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -18,10 +19,21 @@ public class InMemoryOrderTableDao implements OrderTableDao {
 
     @Override
     public OrderTable save(OrderTable entity) {
-        long id = this.id.getAndIncrement();
-        entity.setId(id);
-        map.put(id, entity);
+        if (Objects.isNull(entity.getId())) {
+            long id = this.id.getAndIncrement();
+            entity.setId(id);
+            map.put(id, entity);
+            return entity;
+        }
+        update(entity);
         return entity;
+    }
+
+    private void update(OrderTable entity) {
+        OrderTable orderTable = map.get(entity.getId());
+        orderTable.setTableGroupId(entity.getTableGroupId());
+        orderTable.setEmpty(entity.isEmpty());
+        orderTable.setNumberOfGuests(entity.getNumberOfGuests());
     }
 
     @Override
@@ -38,6 +50,7 @@ public class InMemoryOrderTableDao implements OrderTableDao {
     public List<OrderTable> findAllByIdIn(List<Long> ids) {
         return ids.stream()
                 .map(map::get)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 
