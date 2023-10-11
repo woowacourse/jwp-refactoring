@@ -59,6 +59,73 @@
 * `API` 단체 지정된 주문 테이블들을 개별 테이블로 쪼갤 수 있다.
     * 해당 테이블들은 '조리', '식사' 상태가 아니어야 한다.
 
+## 클래스 다이어그램
+
+```puml
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class Menu {
+  - menuProducts: List<MenuProduct>
+  - menuGroupId: Long
+  - id: Long
+  - price: BigDecimal
+  - name: String
+}
+class MenuGroup {
+  - id: Long
+  - name: String
+}
+class MenuProduct {
+  - quantity: long
+  - menuId: Long
+  - seq: Long
+  - productId: Long
+}
+class Order {
+  - orderTableId: Long
+  - orderStatus: String
+  - orderedTime: LocalDateTime
+  - orderLineItems: List<OrderLineItem>
+  - id: Long
+}
+class OrderLineItem {
+  - quantity: long
+  - menuId: Long
+  - orderId: Long
+  - seq: Long
+}
+enum OrderStatus << enumeration >> {
+  + MEAL:
+  + COMPLETION:
+  + COOKING:
+}
+class OrderTable {
+  - empty: boolean
+  - tableGroupId: Long
+  - id: Long
+  - numberOfGuests: int
+}
+class Product {
+  - price: BigDecimal
+  - id: Long
+  - name: String
+}
+class TableGroup {
+  - orderTables: List<OrderTable>
+  - id: Long
+  - createdDate: LocalDateTime
+}
+
+Menu          "1" *-[#595959,plain]-> "menuProducts\n*" MenuProduct
+Order         "1" *-[#595959,plain]-> "orderLineItems\n*" OrderLineItem
+TableGroup    "1" *-[#595959,plain]-> "orderTables\n*" OrderTable
+@enduml
+```
+
 ## 용어 사전
 
 | 한글명 | 영문명 | 설명 |
