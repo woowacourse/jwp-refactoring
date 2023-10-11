@@ -1,5 +1,5 @@
 ###
-POST {{host}}/api/products
+POST {{host}}/api/v1/products
 Content-Type: application/json
 
 {
@@ -8,6 +8,6 @@ Content-Type: application/json
 }
 
 ###
-GET {{host}}/api/products
+GET {{host}}/api/v1/products
 
 ###
