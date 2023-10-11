@@ -14,9 +14,9 @@
 
 ### 2. menu-groups
 1. `GET {{host}}/api/menu-groups`
-    - 메뉴 그룹을 확인한다.
+   > 메뉴 그룹을 확인한다.
 2. `POST {{host}}/api/menu-groups`
-    - 새로운 메뉴 그룹을 추가한다.
+   > 새로운 메뉴 그룹을 추가한다.
 
 ### 3. products
 1. `GET {{host}}/api/products`
