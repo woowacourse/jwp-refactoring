@@ -17,7 +17,7 @@ public class MenuProductFixtures {
     /**
      * QUANTITY
      */
-    public static final long MENU_PRODUCT1_QUANTITY = 1L;
+    public static final long MENU_PRODUCT1_QUANTITY = 2L;
 
     /**
      * REQUEST

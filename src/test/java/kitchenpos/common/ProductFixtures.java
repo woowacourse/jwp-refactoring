@@ -16,7 +16,7 @@ public class ProductFixtures {
      * PRICE
      */
     public static final BigDecimal PRODUCT1_PRICE = BigDecimal.valueOf(16000).setScale(0, RoundingMode.UNNECESSARY);
-    public static final BigDecimal PRODUCT2_PRICE = BigDecimal.valueOf(16000).setScale(0, RoundingMode.UNNECESSARY);
+    public static final BigDecimal PRODUCT2_PRICE = BigDecimal.valueOf(1000).setScale(0, RoundingMode.UNNECESSARY);
 
     /**
      * REQUEST

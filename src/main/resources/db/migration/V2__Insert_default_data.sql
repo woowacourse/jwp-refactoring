@@ -1,7 +1,7 @@
 insert into product (name, price)
 values ('후라이드', 16000);
 insert into product (name, price)
-values ('양념치킨', 16000);
+values ('양념치킨', 20000);
 insert into product (name, price)
 values ('반반치킨', 16000);
 insert into product (name, price)
@@ -21,9 +21,9 @@ insert into menu_group (name)
 values ('신메뉴');
 
 insert into menu (name, price, menu_group_id)
-values ('후라이드치킨', 16000, 2);
+values ('후라이드치킨 & 양념치킨', 52000, 2);
 insert into menu (name, price, menu_group_id)
-values ('양념치킨', 16000, 2);
+values ('양념치킨', 20000, 2);
 insert into menu (name, price, menu_group_id)
 values ('반반치킨', 16000, 2);
 insert into menu (name, price, menu_group_id)
@@ -34,7 +34,9 @@ insert into menu (name, price, menu_group_id)
 values ('순살치킨', 17000, 2);
 
 insert into menu_product (menu_id, product_id, quantity)
-values (1, 1, 1);
+values (1, 1, 2);
+insert into menu_product (menu_id, product_id, quantity)
+values (1, 2, 1);
 insert into menu_product (menu_id, product_id, quantity)
 values (2, 2, 1);
 insert into menu_product (menu_id, product_id, quantity)

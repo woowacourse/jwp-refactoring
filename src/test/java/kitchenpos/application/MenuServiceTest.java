@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import static kitchenpos.common.MenuFixtures.MENU1_MENU_GROUP_ID;
-import static kitchenpos.common.MenuFixtures.MENU1_MENU_PRODUCT;
+import static kitchenpos.common.MenuFixtures.MENU1_MENU_PRODUCT1;
 import static kitchenpos.common.MenuFixtures.MENU1_NAME;
 import static kitchenpos.common.MenuFixtures.MENU1_PRICE;
 import static kitchenpos.common.MenuFixtures.MENU1_REQUEST;
@@ -61,7 +61,7 @@ class MenuServiceTest {
             final Menu menu = new Menu();
             menu.setName(MENU1_NAME);
             menu.setMenuGroupId(MENU1_MENU_GROUP_ID);
-            menu.setMenuProducts(List.of(MENU1_MENU_PRODUCT()));
+            menu.setMenuProducts(List.of(MENU1_MENU_PRODUCT1()));
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menu))
@@ -77,7 +77,7 @@ class MenuServiceTest {
             final Menu menu = new Menu();
             menu.setName(MENU1_NAME);
             menu.setMenuGroupId(MENU1_MENU_GROUP_ID);
-            menu.setMenuProducts(List.of(MENU1_MENU_PRODUCT()));
+            menu.setMenuProducts(List.of(MENU1_MENU_PRODUCT1()));
             menu.setPrice(BigDecimal.valueOf(negativePrice));
 
             // when & then
