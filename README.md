@@ -2,6 +2,53 @@
 
 ## 요구 사항
 
+메뉴 그룹
+* 메뉴 그룹 생성
+* 메뉴 그룹 조회
+
+메뉴
+* 메뉴 생성
+  * 메뉴의 가격은 null이거나 음수일 수 없다.
+  * 메뉴 그룹의 id가 존재해야 한다.
+* 메뉴 조회
+  * MenuProduct를 set하고 반환한다.
+
+주문
+* 주문 생성
+  * OrderLineItem이 비어있으면 안된다.
+  * Menu의 id들이 존재해야 한다.
+  * OrderTable이 존재해야 한다.
+  * OrderTable이 비어있으면 안된다.
+* 주문 조회
+* 주문 상태 변경
+  * 주문이 존재해야 한다.
+  * 기존 Order의 status가 complete면 안된다.
+
+제품
+* Product 생성
+  * price가 null이거나 음수면 안된다.
+* 제품 조회
+
+테이블 그룹
+* 테이블 그룹 생성
+  * orderTables가 비거나 2개 미만이면 안된다.
+  * 저장된 orderTables와 요청한 orderTables의 개수가 같아야 한다.
+  * 저장된 orderTable가 비어있지 않거나 group id가 null이 아니면 안된다.
+* 테이블 그룹 해제
+  * 테이블 중 cooking이거나 meal 상태면 안된다.
+
+테이블
+* 테이블 생성
+* 테이블 조회
+* 테이블 상태를 받아 빈상태 여부 변경
+  * OrderTable이 존재해야 한다.
+  * OrderTable의 groupId가 null이면 안된다.
+  * OrderTable의 status가 cooking이거나 meal이면 안된다.
+* 테이블 손님 수 변경
+  * 변경되는 손님 수가 음수면 안된다.
+  * OrderTable이 존재해야 한다.
+  * OrderTable이 empty면 안된다.
+
 ## 용어 사전
 
 | 한글명 | 영문명 | 설명 |
