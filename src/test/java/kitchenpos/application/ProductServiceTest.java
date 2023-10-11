@@ -105,4 +105,21 @@ class ProductServiceTest {
             return productWithInvalidName;
         }
     }
+
+    @Nested
+    class 상품_조회 {
+
+            @Test
+            void 상품_목록을_조회한다() {
+                // given
+                final var productDao = mock(ProductDao.class);
+                final var productService = new ProductService(productDao);
+
+                // when
+                productService.list();
+
+                // then
+                verify(productDao, only()).findAll();
+            }
+    }
 }
