@@ -41,23 +41,25 @@ public class ServiceTestContext {
     protected OrderService orderService;
     @Autowired
     protected ProductService productService;
+    @Autowired
+    protected TableService tableService;
 
     @Autowired
-    private JdbcTemplateProductDao productDao;
+    protected JdbcTemplateProductDao productDao;
     @Autowired
-    private JdbcTemplateMenuDao menuDao;
+    protected JdbcTemplateMenuDao menuDao;
     @Autowired
-    private JdbcTemplateMenuGroupDao menuGroupDao;
+    protected JdbcTemplateMenuGroupDao menuGroupDao;
     @Autowired
-    private JdbcTemplateMenuProductDao menuProductDao;
+    protected JdbcTemplateMenuProductDao menuProductDao;
     @Autowired
-    private JdbcTemplateOrderDao orderDao;
+    protected JdbcTemplateOrderDao orderDao;
     @Autowired
-    private JdbcTemplateOrderLineItemDao orderLineItemDao;
+    protected JdbcTemplateOrderLineItemDao orderLineItemDao;
     @Autowired
-    private JdbcTemplateTableGroupDao tableGroupDao;
+    protected JdbcTemplateTableGroupDao tableGroupDao;
     @Autowired
-    private JdbcTemplateOrderTableDao orderTableDao;
+    protected JdbcTemplateOrderTableDao orderTableDao;
 
 
     protected Menu savedMenu;
