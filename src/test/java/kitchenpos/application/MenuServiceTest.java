@@ -22,6 +22,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -114,5 +115,21 @@ class MenuServiceTest {
 
     @Test
     void list() {
+        // given
+        final Menu menu = new Menu(1L, "productName", new BigDecimal("35000"), 1L);
+        final MenuProduct menuProduct = new MenuProduct(1L, 1L, 3L, 1L);
+        given(menuDao.findAll()).willReturn(List.of(menu));
+        given(menuProductDao.findAllByMenuId(anyLong())).willReturn(List.of(menuProduct));
+
+        // when
+        final List<Menu> menus = menuService.list();
+
+        // then
+        assertAll(
+                () -> assertThat(menus).hasSize(1),
+                () -> assertThat(menus.get(0)).isEqualTo(menu),
+                () -> assertThat(menus.get(0).getMenuProducts()).hasSize(1),
+                () -> assertThat(menus.get(0).getMenuProducts().get(0)).isEqualTo(menuProduct)
+        );
     }
 }

@@ -3,9 +3,14 @@
 ## 요구 사항
 ### 1. menus
 1. `GET {{host}}/api/menus`
-    - 메뉴 목록을 불러온다.
+   > 메뉴 목록을 불러온다.
+   
 2. `POST {{host}}/api/menus`
-    - 새로운 메뉴를 추가한다.
+   > 새로운 메뉴를 추가한다.
+   - 가격이 null 혹은 음수이면 예외가 발생한다.
+   - 존재하지 않는 메뉴 그룹이라면 예외가 발생한다.
+   - 대응하는 menuProduct가 존재하지 않으면 예외가 발생한다.
+   - 총 가격이 MenuProduct들의 총 합계 금액보다 크면 예외가 발생한다.
 
 ### 2. menu-groups
 1. `GET {{host}}/api/menu-groups`
