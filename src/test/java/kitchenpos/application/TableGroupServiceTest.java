@@ -45,7 +45,7 @@ class TableGroupServiceTest {
             OrderTable orderTable = orderTableDao.save(테이블(true));
             TableGroup tableGroup = 단체_지정(List.of(orderTable));
 
-            // when
+            // expect
             assertThatThrownBy(() -> sut.create(tableGroup))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("단체 지정하려는 테이블은 2개 이상이어야 합니다.");
@@ -58,7 +58,7 @@ class TableGroupServiceTest {
             OrderTable unsavedOrderTable = 테이블(true);
             TableGroup tableGroup = 단체_지정(List.of(orderTable, unsavedOrderTable));
 
-            // when
+            // expect
             assertThatThrownBy(() -> sut.create(tableGroup))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("올바른 테이블을 입력해주세요.");
@@ -71,7 +71,7 @@ class TableGroupServiceTest {
             OrderTable orderTable2 = orderTableDao.save(테이블(false));
             TableGroup tableGroup = 단체_지정(List.of(orderTable1, orderTable2));
 
-            // when
+            // expect
             assertThatThrownBy(() -> sut.create(tableGroup))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("비어있지 않거나, 이미 단체 지정이 된 테이블은 단체 지정을 할 수 없습니다.");
@@ -86,7 +86,7 @@ class TableGroupServiceTest {
             OrderTable orderTable3 = orderTableDao.save(테이블(true));
             TableGroup newTableGroup = 단체_지정(List.of(orderTable2, orderTable3));
 
-            // when
+            // expect
             assertThatThrownBy(() -> sut.create(newTableGroup))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("비어있지 않거나, 이미 단체 지정이 된 테이블은 단체 지정을 할 수 없습니다.");

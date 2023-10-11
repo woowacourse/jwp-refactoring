@@ -164,7 +164,7 @@ public class OrderServiceTest {
             Order order = orderDao.save(주문(orderTable.getId(), COMPLETION));
             order.setOrderStatus(COOKING.name());
 
-            // when
+            // expect
             assertThatThrownBy(() -> sut.changeOrderStatus(order.getId(), order))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("완료된 주문의 상태는 변경할 수 없습니다.");
