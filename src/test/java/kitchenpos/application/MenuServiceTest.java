@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.EntityFactory;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -23,12 +22,10 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 class MenuServiceTest {
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
-    @Autowired
-    private ProductDao productDao;
+    private MenuService menuService;
 
     @Autowired
-    private MenuService menuService;
+    private EntityFactory entityFactory;
 
     @Nested
     @DisplayName("메뉴 생성 테스트")
@@ -37,9 +34,9 @@ class MenuServiceTest {
         @DisplayName("메뉴를 생성할 수 있다")
         void create() {
             //given
-            final Product product = saveProduct("연어", 4000);
+            final Product product = entityFactory.saveProduct("연어", 4000);
             final MenuProduct menuProduct = createMenuProduct(4, product);
-            final MenuGroup menuGroup = saveMenuGroup("일식");
+            final MenuGroup menuGroup = entityFactory.saveMenuGroup("일식");
 
             final Menu request = new Menu();
             request.setMenuGroupId(menuGroup.getId());
@@ -58,7 +55,7 @@ class MenuServiceTest {
         @DisplayName("메뉴를 생성할 때 메뉴 그룹이 없으면 예외가 발생한다")
         void create_fail1() {
             //given
-            final Product product = saveProduct("연어", 4000);
+            final Product product = entityFactory.saveProduct("연어", 4000);
             final MenuProduct menuProduct = createMenuProduct(4, product);
 
             final Menu request = new Menu();
@@ -75,9 +72,9 @@ class MenuServiceTest {
         @Test
         @DisplayName("메뉴를 생성할 때 실제 금액보다 요청 금액이 크면 예외가 발생한다")
         void create_fail2() {
-            final Product product = saveProduct("연어", 4000);
+            final Product product = entityFactory.saveProduct("연어", 4000);
             final MenuProduct menuProduct = createMenuProduct(4, product);
-            final MenuGroup menuGroup = saveMenuGroup("일식");
+            final MenuGroup menuGroup = entityFactory.saveMenuGroup("일식");
 
             final Menu request = new Menu();
             request.setMenuGroupId(menuGroup.getId());
@@ -95,7 +92,7 @@ class MenuServiceTest {
         void create_fail3() {
             final Product product = new Product();
             final MenuProduct menuProduct = createMenuProduct(4, product);
-            final MenuGroup menuGroup = saveMenuGroup("일식");
+            final MenuGroup menuGroup = entityFactory.saveMenuGroup("일식");
 
             final Menu request = new Menu();
             request.setMenuGroupId(menuGroup.getId());
@@ -115,26 +112,11 @@ class MenuServiceTest {
         assertDoesNotThrow(() -> menuService.list());
     }
 
-    private Product saveProduct(final String name, final int price) {
-        final Product product = new Product();
-        product.setName(name);
-        product.setPrice(BigDecimal.valueOf(price));
-
-        return productDao.save(product);
-    }
-
     private MenuProduct createMenuProduct(final int quantity, final Product product) {
         final MenuProduct menuProduct = new MenuProduct();
         menuProduct.setProductId(product.getId());
         menuProduct.setQuantity(quantity);
 
         return menuProduct;
-    }
-
-    private MenuGroup saveMenuGroup(final String name) {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
-
-        return menuGroupDao.save(menuGroup);
     }
 }

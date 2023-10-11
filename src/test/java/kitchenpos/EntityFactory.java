@@ -1,4 +1,4 @@
-package kitchenpos.common;
+package kitchenpos;
 
 import kitchenpos.application.MenuService;
 import kitchenpos.application.OrderService;
@@ -6,6 +6,7 @@ import kitchenpos.application.TableGroupService;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
@@ -38,6 +40,8 @@ public class EntityFactory {
     private MenuGroupDao menuGroupDao;
     @Autowired
     private ProductDao productDao;
+    @Autowired
+    private TableGroupDao tableGroupDao;
 
     public OrderTable saveOrderTable() {
         final OrderTable request = new OrderTable();
@@ -54,6 +58,14 @@ public class EntityFactory {
         return orderTableDao.save(request);
     }
 
+    public OrderTable saveOrderTableWithTableGroup(final TableGroup tableGroup) {
+        final OrderTable request = new OrderTable();
+        request.setNumberOfGuests(5);
+        request.setTableGroupId(tableGroup.getId());
+
+        return orderTableDao.save(request);
+    }
+
     public TableGroup saveTableGroup(final OrderTable orderTable1, final OrderTable orderTable2) {
         final TableGroup request = new TableGroup();
         request.setOrderTables(List.of(orderTable1, orderTable2));
@@ -61,7 +73,26 @@ public class EntityFactory {
         return tableGroupService.create(request);
     }
 
+    public TableGroup saveTableGroup() {
+        final TableGroup tableGroup = new TableGroup();
+        tableGroup.setCreatedDate(LocalDateTime.now());
+
+        return tableGroupDao.save(tableGroup);
+    }
+
     public Order saveOrder(final OrderTable orderTable) {
+        final Menu menu = saveMenu();
+        final OrderLineItem orderLineItem = createOrderLineItem(menu, 2);
+
+        final Order request = new Order();
+        request.setOrderTableId(orderTable.getId());
+        request.setOrderLineItems(List.of(orderLineItem));
+
+        return orderService.create(request);
+    }
+
+    public Order saveOrder() {
+        final OrderTable orderTable = saveOrderTableWithNotEmpty();
         final Menu menu = saveMenu();
         final OrderLineItem orderLineItem = createOrderLineItem(menu, 2);
 

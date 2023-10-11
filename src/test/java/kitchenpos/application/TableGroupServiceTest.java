@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.common.EntityFactory;
+import kitchenpos.EntityFactory;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
