@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import java.util.List;
+import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,9 @@ class TableServiceTest {
     @Autowired
     private TableService tableService;
 
+    @Autowired
+    private OrderTableDao orderTableDao;
+
     @Test
     void 테이블의_주문을_생성할_수_있다() {
         //given
@@ -23,6 +28,20 @@ class TableServiceTest {
 
         //then
         assertThat(생성된_주문.getId()).isNotNull();
+    }
+
+    @Test
+    void 테이블_목록을_조회할_수_있다() {
+        //given
+        OrderTable 생성된_테이블 = orderTableDao.save(new OrderTable());
+
+        //when
+        List<OrderTable> actual = tableService.list();
+
+        //then
+        assertThat(actual)
+                .extracting(OrderTable::getId)
+                .contains(생성된_테이블.getId());
     }
 
 }
