@@ -36,11 +36,8 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹 목록을 조회할 수 있다")
     @Test
     void findAllMenuGroups() {
-        final MenuGroup menuGroup1 = MenuGroupFixture.create();
-        final MenuGroup menuGroup2 = MenuGroupFixture.create();
-
-        menuGroupService.create(menuGroup1);
-        menuGroupService.create(menuGroup2);
+        menuGroupService.create(MenuGroupFixture.create());
+        menuGroupService.create(MenuGroupFixture.create());
 
         final List<MenuGroup> list = menuGroupService.list();
 
