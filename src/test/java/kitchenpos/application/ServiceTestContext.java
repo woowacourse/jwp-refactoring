@@ -43,6 +43,8 @@ public class ServiceTestContext {
     protected ProductService productService;
     @Autowired
     protected TableService tableService;
+    @Autowired
+    protected TableGroupService tableGroupService;
 
     @Autowired
     protected JdbcTemplateProductDao productDao;
