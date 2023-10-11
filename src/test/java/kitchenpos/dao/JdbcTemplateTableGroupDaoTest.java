@@ -4,7 +4,6 @@ import static kitchenpos.common.fixture.TableGroupFixture.단체_지정;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import javax.sql.DataSource;
 import kitchenpos.domain.TableGroup;
@@ -43,7 +42,6 @@ class JdbcTemplateTableGroupDaoTest {
         // then
         assertThat(savedTableGroup).usingRecursiveComparison()
                 .ignoringFields("id")
-                .ignoringFieldsOfTypes(LocalDateTime.class)
                 .isEqualTo(단체_지정());
     }
 
@@ -57,7 +55,6 @@ class JdbcTemplateTableGroupDaoTest {
 
         // then
         assertThat(tableGroup).usingRecursiveComparison()
-                .ignoringFieldsOfTypes(LocalDateTime.class)
                 .isEqualTo(단체_지정(tableGroupId));
     }
 
@@ -72,7 +69,6 @@ class JdbcTemplateTableGroupDaoTest {
 
         // then
         assertThat(tableGroups).usingRecursiveComparison()
-                .ignoringFieldsOfTypes(LocalDateTime.class)
                 .isEqualTo(List.of(단체_지정(tableGroupId_A), 단체_지정(tableGroupId_B)));
     }
 

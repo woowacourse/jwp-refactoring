@@ -8,10 +8,10 @@ import kitchenpos.domain.TableGroup;
 public class TableGroupFixture {
 
     public static TableGroup 단체_지정(Long tableGroupId) {
-        return new TableGroup(tableGroupId, LocalDateTime.now(), List.of());
+        return new TableGroup(tableGroupId, LocalDateTime.MAX, List.of());
     }
 
     public static TableGroup 단체_지정() {
-        return new TableGroup(LocalDateTime.now(), List.of());
+        return new TableGroup(LocalDateTime.MAX, List.of());
     }
 }
