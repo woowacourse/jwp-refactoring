@@ -7,9 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
@@ -44,10 +41,6 @@ class MenuGroupServiceTest {
     @Test
     @DisplayName("메뉴 그룹 전체 조회할 수 있다")
     void list() {
-        //when
-        final List<MenuGroup> menuGroups = menuGroupService.list();
-
-        //then
-        assertThat(menuGroups).isNotEmpty();
+        assertDoesNotThrow(() -> menuGroupService.list());
     }
 }

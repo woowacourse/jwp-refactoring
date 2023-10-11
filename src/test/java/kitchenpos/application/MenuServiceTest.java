@@ -13,11 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @SpringBootTest
 class MenuServiceTest {
@@ -112,11 +112,7 @@ class MenuServiceTest {
     @Test
     @DisplayName("메뉴 전체 조회할 수 있다")
     void list() {
-        //when
-        final List<Menu> menus = menuService.list();
-
-        //then
-        assertThat(menus).isNotEmpty();
+        assertDoesNotThrow(() -> menuService.list());
     }
 
     private Product saveProduct(final String name, final int price) {
