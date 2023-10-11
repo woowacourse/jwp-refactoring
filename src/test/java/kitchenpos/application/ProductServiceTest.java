@@ -13,8 +13,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static java.math.BigDecimal.valueOf;
-import static kitchenpos.domain.ProductFixture.치킨_생성;
-import static kitchenpos.domain.ProductFixture.피자_생성;
+import static kitchenpos.domain.fixture.ProductFixture.치킨_생성;
+import static kitchenpos.domain.fixture.ProductFixture.피자_생성;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
