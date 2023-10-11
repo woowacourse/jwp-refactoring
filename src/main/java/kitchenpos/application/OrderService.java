@@ -50,7 +50,7 @@ public class OrderService {
                 .collect(Collectors.toList());
 
         if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 품목이 주문 테이블에 있지 않이");
         }
 
         order.setId(null);

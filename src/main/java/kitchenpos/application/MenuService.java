@@ -17,6 +17,7 @@ import java.util.Objects;
 
 @Service
 public class MenuService {
+
     private final MenuDao menuDao;
     private final MenuGroupDao menuGroupDao;
     private final MenuProductDao menuProductDao;
@@ -56,7 +57,7 @@ public class MenuService {
         }
 
         if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("메뉴 가격이 메뉴 상품 가격보다 큼");
         }
 
         final Menu savedMenu = menuDao.save(menu);
