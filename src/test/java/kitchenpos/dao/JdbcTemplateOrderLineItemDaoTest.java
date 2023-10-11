@@ -1,22 +1,13 @@
 package kitchenpos.dao;
 
+import kitchenpos.common.repository.RepositoryTest;
 import kitchenpos.domain.OrderLineItem;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
-
-import javax.sql.DataSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
-@JdbcTest
-class JdbcTemplateOrderLineItemDaoTest {
-
-    @Autowired
-    private DataSource dataSource;
+class JdbcTemplateOrderLineItemDaoTest extends RepositoryTest {
 
     private JdbcTemplateOrderLineItemDao jdbcTemplateOrderLineItemDao;
 

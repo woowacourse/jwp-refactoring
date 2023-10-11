@@ -1,21 +1,15 @@
 package kitchenpos.dao;
 
+import kitchenpos.common.repository.RepositoryTest;
 import kitchenpos.domain.MenuProduct;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 
-import javax.sql.DataSource;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@JdbcTest
-class JdbcTemplateMenuProductDaoTest {
-
-    @Autowired
-    private DataSource dataSource;
+class JdbcTemplateMenuProductDaoTest extends RepositoryTest {
 
     private JdbcTemplateMenuProductDao jdbcTemplateMenuProductDao;
 
