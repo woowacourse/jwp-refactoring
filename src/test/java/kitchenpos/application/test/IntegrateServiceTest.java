@@ -1,4 +1,4 @@
-package kitchenpos.application.service;
+package kitchenpos.application.test;
 
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,6 +1,6 @@
-package kitchenpos.application.service;
+package kitchenpos.application;
 
-import kitchenpos.application.ProductService;
+import kitchenpos.application.test.IntegrateServiceTest;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Assertions;
