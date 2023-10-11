@@ -3,7 +3,6 @@ package kitchenpos.application;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,6 +14,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
@@ -44,7 +44,7 @@ class TableServiceTest {
         final OrderTable result = tableService.create(new OrderTable());
 
         // then
-        Assertions.assertAll(
+        assertAll(
                 () -> assertThat(result.getId()).isEqualTo(1),
                 () -> assertThat(result.getTableGroupId()).isNull()
         );
