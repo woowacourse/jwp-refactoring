@@ -156,9 +156,6 @@ class MenuServiceTest {
                     List.of(
                         MenuProductFixture.builder()
                             .withProductId(1L)
-                            .build(),
-                        MenuProductFixture.builder()
-                            .withProductId(1L)
                             .build())
                 )
                 .build();
