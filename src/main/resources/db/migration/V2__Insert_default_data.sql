@@ -62,3 +62,9 @@ insert into order_table (number_of_guests, empty)
 values (0, true);
 insert into order_table (number_of_guests, empty)
 values (0, true);
+
+insert into orders (order_status, ordered_time, order_table_id)
+values ('COOKING', '2020-10-20 12:00:00', 1);
+
+insert into table_group (created_date)
+values ('2020-10-20 12:00:00');
