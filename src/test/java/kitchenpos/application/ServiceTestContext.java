@@ -152,7 +152,6 @@ public class ServiceTestContext {
         menuProduct.setProductId(savedProduct.getId());
         menuProduct.setQuantity(2L);
         menuProduct.setMenuId(savedMenu.getId());
-        menuProduct.setProductId(savedProduct.getId());
 
         savedMenuProduct = menuProductDao.save(menuProduct);
     }
