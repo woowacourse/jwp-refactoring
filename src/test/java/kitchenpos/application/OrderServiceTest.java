@@ -127,6 +127,7 @@ class OrderServiceTest extends ServiceTestContext {
 
     @Test
     void 주문을_정상적으로_변경하는_경우_변경한_주문이_반환된다() {
+        // given
         Long orderId = savedOrder.getId();
 
         Order order = new Order();
