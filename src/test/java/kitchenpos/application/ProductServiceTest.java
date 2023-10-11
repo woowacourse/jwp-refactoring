@@ -61,7 +61,7 @@ class ProductServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("상품 목록을 조할 수 있다")
+    @DisplayName("상품 목록을 조회할 수 있다")
     @Test
     void findAllProducts() {
         productService.create(ProductFixture.create());
