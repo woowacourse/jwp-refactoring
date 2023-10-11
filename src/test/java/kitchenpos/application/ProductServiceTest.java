@@ -11,6 +11,7 @@ import static org.mockito.Mockito.verify;
 import java.math.BigDecimal;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductFactory;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
@@ -36,7 +37,7 @@ class ProductServiceTest {
         void 이름이_공백이나_비어있다면_예외가_발생한다(String invalidName) {
             // given
             final var productService = new ProductService(mockProductDao);
-            final var productWithInvalidName = createProduct(invalidName, BigDecimal.valueOf(1000));
+            final var productWithInvalidName = ProductFactory.createProductOf(invalidName, BigDecimal.valueOf(1000));
             when(mockProductDao.save(any(Product.class))).thenReturn(productWithInvalidName);
 
             // when
@@ -52,7 +53,7 @@ class ProductServiceTest {
             // given
             final var productService = new ProductService(mockProductDao);
             final var invalidName = "름".repeat(256);
-            final var productWithInvalidName = createProduct(invalidName, BigDecimal.valueOf(1000));
+            final var productWithInvalidName = ProductFactory.createProductOf(invalidName, BigDecimal.valueOf(1000));
             when(mockProductDao.save(any(Product.class))).thenReturn(productWithInvalidName);
 
             // when
@@ -69,7 +70,7 @@ class ProductServiceTest {
         void 가격이_null이거나_범위에서_벗어난다면_아니라면_예외가_발생한다(BigDecimal price) {
             // given
             final var productService = new ProductService(mockProductDao);
-            final var productWithInvalidPrice = createProduct("validName", price);
+            final var productWithInvalidPrice = ProductFactory.createProductOf("validName", price);
             when(mockProductDao.save(any(Product.class))).thenReturn(productWithInvalidPrice);
 
             // when
@@ -86,7 +87,7 @@ class ProductServiceTest {
             final var productService = new ProductService(mockProductDao);
             final var validName = "validName";
             final var validPrice = BigDecimal.valueOf(1000);
-            final var productWithValidNameAndPrice = createProduct(validName, validPrice);
+            final var productWithValidNameAndPrice = ProductFactory.createProductOf(validName, validPrice);
             when(mockProductDao.save(any(Product.class))).thenReturn(productWithValidNameAndPrice);
 
             // when
@@ -97,13 +98,6 @@ class ProductServiceTest {
                     () -> Assertions.assertDoesNotThrow(throwingSupplier),
                     () -> verify(mockProductDao, only()).save(any(Product.class))
             );
-        }
-
-        private Product createProduct(final String name, final BigDecimal price) {
-            final var productWithInvalidName = new Product();
-            productWithInvalidName.setName(name);
-            productWithInvalidName.setPrice(price);
-            return productWithInvalidName;
         }
     }
 
