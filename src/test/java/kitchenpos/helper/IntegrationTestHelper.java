@@ -9,13 +9,13 @@ import org.springframework.test.context.support.AbstractTestExecutionListener;
 import java.util.List;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class IntegrationTest extends AbstractTestExecutionListener {
+public class IntegrationTestHelper extends AbstractTestExecutionListener {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @BeforeEach
-    void init() {
+    void initDatabase() {
         validateH2Database();
         List<String> truncateQueries = getTruncateQueries();
         truncateAllTables(truncateQueries);

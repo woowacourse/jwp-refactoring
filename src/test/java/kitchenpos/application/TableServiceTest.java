@@ -2,7 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.helper.IntegrationTest;
+import kitchenpos.helper.IntegrationTestHelper;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
-class TableServiceTest extends IntegrationTest {
+class TableServiceTest extends IntegrationTestHelper {
 
     @Autowired
     private TableService tableService;
