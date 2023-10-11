@@ -1,12 +1,11 @@
 package kitchenpos.dao;
 
 import kitchenpos.domain.Product;
+import kitchenpos.helper.JdbcTestHelper;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
-import org.springframework.context.annotation.Import;
 
 import java.util.Optional;
 
@@ -16,9 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
-@Import(value = JdbcTemplateProductDao.class)
-@JdbcTest
-class JdbcTemplateProductDaoTest {
+class JdbcTemplateProductDaoTest extends JdbcTestHelper {
 
     @Autowired
     private ProductDao productDao;

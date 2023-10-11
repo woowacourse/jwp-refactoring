@@ -1,20 +1,22 @@
 package kitchenpos.dao;
 
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.helper.JdbcTestHelper;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
-import org.springframework.context.annotation.Import;
 
 import java.util.List;
 import java.util.Optional;
 
+import static kitchenpos.fixture.MenuGroupFixture.메뉴그룹_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-@Import(value = JdbcTemplateMenuGroupDao.class)
-@JdbcTest
-class JdbcTemplateMenuGroupDaoTest {
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@SuppressWarnings("NonAsciiCharacters")
+class JdbcTemplateMenuGroupDaoTest extends JdbcTestHelper {
 
     @Autowired
     private JdbcTemplateMenuGroupDao jdbcTemplateMenuGroupDao;
@@ -23,8 +25,7 @@ class JdbcTemplateMenuGroupDaoTest {
     void 메뉴_그룹을_저장한다() {
         // given
         int beforeSize = jdbcTemplateMenuGroupDao.findAll().size();
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("테스트 그룹");
+        MenuGroup menuGroup = 메뉴그룹_생성("테스트 그룹");
 
         // when
         jdbcTemplateMenuGroupDao.save(menuGroup);
@@ -37,27 +38,27 @@ class JdbcTemplateMenuGroupDaoTest {
     @Test
     void id를_기준으로_찾는다() {
         // given
-        Long fixtureId = 1L;
+        MenuGroup menuGroup = jdbcTemplateMenuGroupDao.save(메뉴그룹_생성("테스트 그룹"));
 
         // when
-        Optional<MenuGroup> result = jdbcTemplateMenuGroupDao.findById(fixtureId);
+        Optional<MenuGroup> result = jdbcTemplateMenuGroupDao.findById(menuGroup.getId());
 
         // then
         assertSoftly(softly -> {
             softly.assertThat(result).isPresent();
-            softly.assertThat(result.get().getId()).isEqualTo(fixtureId);
+            softly.assertThat(result.get()).usingRecursiveComparison().isEqualTo(menuGroup);
         });
     }
 
     @Test
     void 모두_찾는다() {
         // given
-        int fixtureSize = 4;
+        MenuGroup menuGroup = jdbcTemplateMenuGroupDao.save(메뉴그룹_생성("테스트 그룹"));
 
         // when
         List<MenuGroup> result = jdbcTemplateMenuGroupDao.findAll();
 
         // then
-        assertThat(result.size()).isEqualTo(fixtureSize);
+        assertThat(result).hasSize(1);
     }
 }
