@@ -18,6 +18,15 @@ public class OrderTableFixture {
             return orderTable;
         }
 
+        public static OrderTable 주문_테이블_1(boolean empty) {
+            final OrderTable orderTable = new OrderTable();
+            orderTable.setId(1L);
+            orderTable.setTableGroupId(1L);
+            orderTable.setNumberOfGuests(3);
+            orderTable.setEmpty(empty);
+            return orderTable;
+        }
+
         public static OrderTable 주문_테이블_2() {
             final OrderTable orderTable = new OrderTable();
             orderTable.setId(2L);

@@ -21,7 +21,7 @@ public class OrderFixture {
             order.setOrderTableId(1L);
             order.setOrderStatus(OrderStatus.COOKING.name());
             order.setOrderedTime(LocalDateTime.of(2021, 8, 24, 0, 0, 0, 0));
-            order.setOrderLineItems(getOrderLineItems(order.getId()));
+            order.setOrderLineItems(getOrderLineItems(order.getId(), order.getId(), order.getId()));
             return order;
         }
 
@@ -32,7 +32,7 @@ public class OrderFixture {
             order.setOrderStatus(OrderStatus.MEAL.name());
             order.setOrderedTime(LocalDateTime.of(2021, 8, 24, 0, 0, 0, 0));
 
-            order.setOrderLineItems(getOrderLineItems(order.getId()));
+            order.setOrderLineItems(getOrderLineItems(order.getId(), order.getId(), order.getId(), order.getId()));
             return order;
         }
 
@@ -47,7 +47,17 @@ public class OrderFixture {
             return order;
         }
 
-        private static List<OrderLineItem> getOrderLineItems(Long ...orderId) {
+        public static Order 주문_요청(OrderStatus orderStatus) {
+            final Order order = new Order();
+            order.setId(1L);
+            order.setOrderTableId(1L);
+            order.setOrderStatus(orderStatus.name());
+            order.setOrderedTime(LocalDateTime.of(2021, 8, 24, 0, 0, 0, 0));
+            order.setOrderLineItems(getOrderLineItems(order.getId(), order.getId(), order.getId()));
+            return order;
+        }
+
+        private static List<OrderLineItem> getOrderLineItems(Long... orderId) {
             List<OrderLineItem> orderLineItems = new ArrayList<>();
             for (Long id : orderId) {
                 OrderLineItem orderLineItem = new OrderLineItem();
