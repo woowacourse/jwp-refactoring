@@ -1,22 +1,3 @@
--- -- Drop foreign key constraints first
--- alter table order_line_item drop foreign key fk_order_line_item_to_orders;
--- alter table order_line_item drop foreign key fk_order_line_item_to_menu;
--- alter table menu_product drop foreign key fk_menu_product_to_product;
--- alter table menu_product drop foreign key fk_menu_product_to_menu;
--- alter table menu drop foreign key fk_menu_to_menu_group;
--- alter table order_table drop foreign key fk_order_table_to_table_group;
--- alter table orders drop foreign key fk_orders_to_order_table;
-
--- Drop tables if they exist
-drop table if exists order_line_item;
-drop table if exists menu_product;
-drop table if exists orders;
-drop table if exists order_table;
-drop table if exists menu;
-drop table if exists menu_group;
-drop table if exists product;
-drop table if exists table_group;
-
 create table menu
 (
     id            bigint         not null auto_increment,
