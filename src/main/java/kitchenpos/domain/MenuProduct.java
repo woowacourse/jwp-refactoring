@@ -17,6 +17,10 @@ public class MenuProduct {
         this(null, menuId, productId, quantity);
     }
 
+    public MenuProduct(Long productId, long quantity) {
+        this(null, null, productId, quantity);
+    }
+
     public MenuProduct() {
         this(null, null, null, 0L);
     }
