@@ -1,0 +1,84 @@
+package kitchenpos.dao;
+
+import kitchenpos.domain.Product;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+@SpringBootTest
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@SuppressWarnings("NonAsciiCharacters")
+class JdbcTemplateProductDaoTest {
+
+    @Autowired
+    private JdbcTemplateProductDao productDao;
+
+    private Product product;
+
+    @BeforeEach
+    void setUp() {
+        product = new Product();
+        product.setName("아메리카노");
+        product.setPrice(BigDecimal.valueOf(5600).setScale(2));
+    }
+
+    @Test
+    void 상품을_등록한다() {
+        // when
+        Product savedProduct = productDao.save(product);
+
+        // then
+        assertThat(savedProduct).usingRecursiveComparison()
+                .ignoringFields("id")
+                .isEqualTo(product);
+
+    }
+
+    @Test
+    void 상품id로_상품을_조회한다() {
+        // when
+        Product savedProduct = productDao.save(product);
+        Product foundProduct = productDao.findById(savedProduct.getId()).get();
+
+        // then
+        assertThat(foundProduct).usingRecursiveComparison()
+                .ignoringFields("id")
+                .isEqualTo(product);
+    }
+
+    @Test
+    void 존재하지_않는_상품id로_상품_조회시_예외가_발생한다() {
+        // when
+        Product savedProduct = productDao.save(product);
+        Long notExistId = savedProduct.getId() + 1;
+
+        Optional<Product> foundProduct = productDao.findById(notExistId);
+        
+        // then
+        assertThat(foundProduct).isEmpty();
+    }
+
+    @Test
+    void 전체_상품_목록을_조회한다() {
+        // given
+        int originSize = productDao.findAll().size();
+
+        // when
+        productDao.save(product);
+        List<Product> savedProducts = productDao.findAll();
+
+        // then
+        assertThat(savedProducts).hasSize(originSize + 1);
+    }
+}
