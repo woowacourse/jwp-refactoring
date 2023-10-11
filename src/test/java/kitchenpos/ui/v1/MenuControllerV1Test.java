@@ -58,7 +58,7 @@ class MenuControllerV1Test {
     void findAll_with_200() throws Exception {
         // given
         List<Menu> response = List.of(new Menu(), new Menu());
-        given(menuService.list())
+        given(menuService.findAll())
             .willReturn(response);
 
         // when & then

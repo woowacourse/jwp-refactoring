@@ -32,6 +32,6 @@ public class MenuControllerV1 {
     @GetMapping
     public ResponseEntity<List<Menu>> findAll() {
         return ResponseEntity.ok()
-            .body(menuService.list());
+            .body(menuService.findAll());
     }
 }
