@@ -1,27 +1,23 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.List;
 
-import static org.mockito.BDDMockito.verify;
-import static org.mockito.Mockito.times;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 class MenuGroupServiceTest {
 
-    @InjectMocks
+    @Autowired
     private MenuGroupService menuGroupService;
-
-    @Mock
-    private MenuGroupDao menuGroupDao;
 
     @Test
     @DisplayName("메뉴 그룹을 생성할 수 있다")
@@ -30,11 +26,19 @@ class MenuGroupServiceTest {
         final MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName("떡볶이");
 
-        //when
-        menuGroupService.create(menuGroup);
+        //when, then
+        assertDoesNotThrow(() -> menuGroupService.create(menuGroup));
+    }
 
-        //then
-        verify(menuGroupDao, times(1)).save(menuGroup);
+    @Test
+    @DisplayName("메뉴 그룹을 생성할 때 이름이 없으면 예외가 발생한다")
+    void create_fail() {
+        //given
+        final MenuGroup menuGroup = new MenuGroup();
+
+        //when, then
+        assertThatThrownBy(() -> menuGroupService.create(menuGroup))
+                .isInstanceOf(DataIntegrityViolationException.class);
     }
 
     @Test
@@ -44,6 +48,6 @@ class MenuGroupServiceTest {
         final List<MenuGroup> menuGroups = menuGroupService.list();
 
         //then
-        verify(menuGroupDao, times(1)).findAll();
+        assertThat(menuGroups).isNotEmpty();
     }
 }
