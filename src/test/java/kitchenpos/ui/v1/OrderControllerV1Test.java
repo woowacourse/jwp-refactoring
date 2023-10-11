@@ -59,7 +59,7 @@ class OrderControllerV1Test {
     @DisplayName("/api/v1/orders로 GET 요청을 보내면 200 응답과 결과가 반환된다.")
     void findAll_with_201() throws Exception {
         // given
-        given(orderService.list())
+        given(orderService.findAll())
             .willReturn(List.of(new Order(), new Order()));
 
         // when & then

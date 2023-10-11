@@ -34,7 +34,7 @@ public class OrderControllerV1 {
     @GetMapping
     public ResponseEntity<List<Order>> findAll() {
         return ResponseEntity.ok()
-            .body(orderService.list());
+            .body(orderService.findAll());
     }
 
     @PutMapping("/{orderId}/order-status")
