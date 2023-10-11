@@ -29,8 +29,8 @@ class ProductDaoTest {
         Product 등록된_상품 = productDao.save(등록되지_않은_상품);
 
         assertSoftly(softly -> {
-            assertThat(등록된_상품.getId()).isNotNull();
-            assertThat(등록된_상품).usingRecursiveComparison()
+            softly.assertThat(등록된_상품.getId()).isNotNull();
+            softly.assertThat(등록된_상품).usingRecursiveComparison()
                     .ignoringFields("id")
                     .isEqualTo(등록되지_않은_상품);
         });

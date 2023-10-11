@@ -46,11 +46,11 @@ class TableGroupServiceTest {
         주문_테이블2.setEmpty(false);
 
         assertSoftly(softly -> {
-            assertThat(등록된_단체_지정.getId()).isNotNull();
-            assertThat(등록된_단체_지정).usingRecursiveComparison()
+            softly.assertThat(등록된_단체_지정.getId()).isNotNull();
+            softly.assertThat(등록된_단체_지정).usingRecursiveComparison()
                     .ignoringFields("id", "orderTables")
                     .isEqualTo(단체_지정);
-            assertThat(등록된_단체_지정.getOrderTables())
+            softly.assertThat(등록된_단체_지정.getOrderTables())
                     .usingRecursiveFieldByFieldElementComparator()
                     .containsExactly(주문_테이블1, 주문_테이블2);
         });
@@ -104,10 +104,11 @@ class TableGroupServiceTest {
         OrderTable 주문_테이블2 = orderTableDao.save(새로운_주문_테이블(null, 2, true));
         TableGroup 단체_지정 = tableGroupService.create(새로운_단체_지정(LocalDateTime.now(), List.of(주문_테이블1, 주문_테이블2)));
 
+        tableGroupService.ungroup(단체_지정.getId());
+
         assertSoftly(softly -> {
-            assertDoesNotThrow(() -> tableGroupService.ungroup(단체_지정.getId()));
-            assertThat(주문_테이블1.getTableGroupId()).isNull();
-            assertThat(주문_테이블2.getTableGroupId()).isNull();
+            softly.assertThat(주문_테이블1.getTableGroupId()).isNull();
+            softly.assertThat(주문_테이블2.getTableGroupId()).isNull();
         });
     }
 

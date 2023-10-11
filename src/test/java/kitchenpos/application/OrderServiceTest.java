@@ -54,11 +54,11 @@ class OrderServiceTest {
         Order 등록된_주문 = orderService.create(주문);
 
         assertSoftly(softly -> {
-            assertThat(등록된_주문.getId()).isNotNull();
-            assertThat(등록된_주문).usingRecursiveComparison()
+            softly.assertThat(등록된_주문.getId()).isNotNull();
+            softly.assertThat(등록된_주문).usingRecursiveComparison()
                     .ignoringFields("id", "orderLineItems")
                     .isEqualTo(주문);
-            assertThat(등록된_주문.getOrderLineItems()).hasSize(1)
+            softly.assertThat(등록된_주문.getOrderLineItems()).hasSize(1)
                     .usingRecursiveFieldByFieldElementComparatorIgnoringFields("seq")
                     .containsOnly(주문_항목);
         });

@@ -40,9 +40,9 @@ class MenuDaoTest {
         Menu 등록된_메뉴 = menuDao.save(등록되기_전의_메뉴);
 
         assertSoftly(softly -> {
-            assertThat(등록된_메뉴.getId()).isNotNull();
-            assertThat(등록된_메뉴.getPrice()).isEqualByComparingTo(등록되기_전의_메뉴.getPrice());
-            assertThat(등록된_메뉴).usingRecursiveComparison()
+            softly.assertThat(등록된_메뉴.getId()).isNotNull();
+            softly.assertThat(등록된_메뉴.getPrice()).isEqualByComparingTo(등록되기_전의_메뉴.getPrice());
+            softly.assertThat(등록된_메뉴).usingRecursiveComparison()
                     .ignoringFields("id", "price")
                     .isEqualTo(등록되기_전의_메뉴);
         });
@@ -56,8 +56,8 @@ class MenuDaoTest {
                 .orElseGet(Assertions::fail);
 
         assertSoftly(softly -> {
-            assertThat(ID로_조회한_메뉴.getPrice()).isEqualByComparingTo(메뉴.getPrice());
-            assertThat(ID로_조회한_메뉴).usingRecursiveComparison()
+            softly.assertThat(ID로_조회한_메뉴.getPrice()).isEqualByComparingTo(메뉴.getPrice());
+            softly.assertThat(ID로_조회한_메뉴).usingRecursiveComparison()
                     .ignoringFields("id", "price")
                     .isEqualTo(메뉴);
         });

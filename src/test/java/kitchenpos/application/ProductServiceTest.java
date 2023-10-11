@@ -27,8 +27,8 @@ class ProductServiceTest {
         Product 등록된_상품 = productService.create(상품);
 
         assertSoftly(softly -> {
-            assertThat(등록된_상품.getId()).isNotNull();
-            assertThat(등록된_상품).usingRecursiveComparison()
+            softly.assertThat(등록된_상품.getId()).isNotNull();
+            softly.assertThat(등록된_상품).usingRecursiveComparison()
                     .ignoringFields("id")
                     .isEqualTo(상품);
         });

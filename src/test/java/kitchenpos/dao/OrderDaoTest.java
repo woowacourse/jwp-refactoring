@@ -42,8 +42,8 @@ class OrderDaoTest {
         Order 등록된_주문 = orderDao.save(등록되지_않은_주문);
 
         assertSoftly(softly -> {
-            assertThat(등록된_주문.getId()).isNotNull();
-            assertThat(등록된_주문).usingRecursiveComparison()
+            softly.assertThat(등록된_주문.getId()).isNotNull();
+            softly.assertThat(등록된_주문).usingRecursiveComparison()
                     .ignoringFields("id")
                     .isEqualTo(등록되지_않은_주문);
         });
@@ -96,9 +96,9 @@ class OrderDaoTest {
         orderDao.save(새로운_주문(주문_테이블.getId(), COOKING.name(), LocalDateTime.now(), null));
 
         assertSoftly(softly -> {
-            assertThat(orderDao.existsByOrderTableIdAndOrderStatusIn(주문_테이블.getId(), List.of(COOKING.name()))).isTrue();
-            assertThat(orderDao.existsByOrderTableIdAndOrderStatusIn(Long.MIN_VALUE, List.of(COOKING.name()))).isFalse();
-            assertThat(orderDao.existsByOrderTableIdAndOrderStatusIn(주문_테이블.getId(), List.of(MEAL.name()))).isFalse();
+            softly.assertThat(orderDao.existsByOrderTableIdAndOrderStatusIn(주문_테이블.getId(), List.of(COOKING.name()))).isTrue();
+            softly.assertThat(orderDao.existsByOrderTableIdAndOrderStatusIn(Long.MIN_VALUE, List.of(COOKING.name()))).isFalse();
+            softly.assertThat(orderDao.existsByOrderTableIdAndOrderStatusIn(주문_테이블.getId(), List.of(MEAL.name()))).isFalse();
         });
     }
 }

@@ -26,8 +26,8 @@ class TableGroupDaoTest {
         TableGroup 등록된_단체_지정 = tableGroupDao.save(등록되지_않은_단체_지정);
 
         assertSoftly(softly -> {
-            assertThat(등록된_단체_지정.getId()).isNotNull();
-            assertThat(등록된_단체_지정).usingRecursiveComparison()
+            softly.assertThat(등록된_단체_지정.getId()).isNotNull();
+            softly.assertThat(등록된_단체_지정).usingRecursiveComparison()
                     .ignoringFields("id")
                     .isEqualTo(등록되지_않은_단체_지정);
         });

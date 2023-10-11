@@ -56,8 +56,8 @@ class OrderLineItemDaoTest {
         OrderLineItem 등록된_주문_항목 = orderLineItemDao.save(등록되지_않은_주문_항목);
 
         assertSoftly(softly -> {
-            assertThat(등록된_주문_항목.getSeq()).isNotNull();
-            assertThat(등록된_주문_항목).usingRecursiveComparison()
+            softly.assertThat(등록된_주문_항목.getSeq()).isNotNull();
+            softly.assertThat(등록된_주문_항목).usingRecursiveComparison()
                     .ignoringFields("seq")
                     .isEqualTo(등록되지_않은_주문_항목);
         });

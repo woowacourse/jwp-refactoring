@@ -50,8 +50,8 @@ class MenuProductDaoTest {
         MenuProduct 등록된_메뉴_상품 = menuProductDao.save(등록되지_않은_메뉴_상품);
 
         assertSoftly(softly -> {
-            assertThat(등록된_메뉴_상품.getSeq()).isNotNull();
-            assertThat(등록된_메뉴_상품).usingRecursiveComparison()
+            softly.assertThat(등록된_메뉴_상품.getSeq()).isNotNull();
+            softly.assertThat(등록된_메뉴_상품).usingRecursiveComparison()
                     .ignoringFields("seq")
                     .isEqualTo(등록되지_않은_메뉴_상품);
         });

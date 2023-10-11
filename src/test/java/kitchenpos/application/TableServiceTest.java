@@ -45,8 +45,8 @@ class TableServiceTest {
         OrderTable 등록된_주문_테이블 = tableService.create(주문_테이블);
 
         assertSoftly(softly -> {
-            assertThat(등록된_주문_테이블.getId()).isNotNull();
-            assertThat(등록된_주문_테이블).usingRecursiveComparison()
+            softly.assertThat(등록된_주문_테이블.getId()).isNotNull();
+            softly.assertThat(등록된_주문_테이블).usingRecursiveComparison()
                     .ignoringFields("id")
                     .isEqualTo(주문_테이블);
         });
@@ -92,9 +92,9 @@ class TableServiceTest {
         orderTableDao.save(주문_테이블2);
 
         assertSoftly(softly -> {
-            assertThatThrownBy(() -> tableService.changeEmpty(주문_테이블1.getId(), 주문_테이블1))
+            softly.assertThatThrownBy(() -> tableService.changeEmpty(주문_테이블1.getId(), 주문_테이블1))
                     .isInstanceOf(IllegalArgumentException.class);
-            assertThatThrownBy(() -> tableService.changeEmpty(주문_테이블2.getId(), 주문_테이블2))
+            softly.assertThatThrownBy(() -> tableService.changeEmpty(주문_테이블2.getId(), 주문_테이블2))
                     .isInstanceOf(IllegalArgumentException.class);
         });
     }

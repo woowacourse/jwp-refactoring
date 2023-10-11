@@ -31,8 +31,8 @@ class OrderTableDaoTest {
         OrderTable 등록된_테이블 = orderTableDao.save(테이블);
 
         assertSoftly(softly -> {
-            assertThat(등록된_테이블.getId()).isNotNull();
-            assertThat(등록된_테이블).usingRecursiveComparison()
+            softly.assertThat(등록된_테이블.getId()).isNotNull();
+            softly.assertThat(등록된_테이블).usingRecursiveComparison()
                     .ignoringFields("id")
                     .isEqualTo(테이블);
         });
