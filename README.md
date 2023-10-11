@@ -1,6 +1,49 @@
 # 키친포스
 
 ## 요구 사항
+### 1. menus
+1. `GET {{host}}/api/menus`
+    - 메뉴 목록을 불러온다.
+2. `POST {{host}}/api/menus`
+    - 새로운 메뉴를 추가한다.
+
+### 2. menu-groups
+1. `GET {{host}}/api/menu-groups`
+    - 메뉴 그룹을 확인한다.
+2. `POST {{host}}/api/menu-groups`
+    - 새로운 메뉴 그룹을 추가한다.
+
+### 3. products
+1. `GET {{host}}/api/products`
+    - 전체 상품을 불러온다.
+2. `POST {{host}}/api/products`
+    - 새로운 상품을 추가한다.
+
+### 4. orders
+1. `POST {{host}}/api/orders`
+    - 주문을 한다.
+2. `GET {{host}}/api/orders`
+    - 전체 주문 정보를 불러온다.
+3. `PUT {{host}}/api/orders/{orderId}/order-status`
+    - 해당 주문의 주문 상태(MEAL, COMPLETION)를 변경한다.
+4. 
+
+### 5. tables
+1. `GET {{host}}/api/tables`
+    - 전체 테이블의 정보를 불러온다.
+2. `POST {{host}}/api/tables`
+    - 새로운 테이블을 추가한다.
+3. `PUT {{host}}/api/tables/{tableId}/empty`
+    - 해당 테이블의 empty 여부를 수정한다.
+4. `PUT {{host}}/api/tables/{tableId}/number-of-guests`
+    - 해당 테이블에 앉은 손님의 수를 수정한다.
+
+### 6. table-groups
+1. `POST {{host}}/api/table-groups`
+    - 테이블 그룹을 생성한다.
+2. `DELETE {{host}}/api/table-groups/{tableGroupId}`
+    - 해당 테이블 그룹을 해제한다.
+
 
 ## 용어 사전
 
