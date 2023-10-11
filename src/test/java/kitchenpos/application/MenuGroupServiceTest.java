@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import static kitchenpos.fixture.FixtureFactory.메뉴_그룹_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -25,8 +26,7 @@ class MenuGroupServiceTest {
     @Test
     void 메뉴_그룹을_저장할_수_있다() {
         // given
-        final MenuGroup expected = new MenuGroup();
-        expected.setName("퓨전피자메뉴");
+        final MenuGroup expected = 메뉴_그룹_생성("퓨전피자메뉴");
 
         // when
         final MenuGroup actual = menuGroupService.create(expected);

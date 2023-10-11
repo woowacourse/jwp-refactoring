@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import static kitchenpos.fixture.FixtureFactory.상품_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -27,9 +28,7 @@ class ProductServiceTest {
     @Test
     void 상품을_저장할_수_있다() {
         // given
-        final Product expected = new Product();
-        expected.setName("치즈피자");
-        expected.setPrice(new BigDecimal(7_000));
+        final Product expected = 상품_생성("치즈피자", new BigDecimal(7_000));
 
         // when
         final Product actual = productService.create(expected);
@@ -45,9 +44,7 @@ class ProductServiceTest {
     @Test
     void 상품_가격이_0보다_작다면_예외가_발생한다() {
         // given
-        final Product expected = new Product();
-        expected.setName("치즈피자");
-        expected.setPrice(new BigDecimal(-1));
+        final Product expected = 상품_생성("치즈피자", new BigDecimal(-1));
 
         // expect
         assertThatThrownBy(() -> productService.create(expected))
@@ -57,9 +54,7 @@ class ProductServiceTest {
     @Test
     void 상품_가격이_없으면_예외가_발생한다() {
         // given
-        final Product expected = new Product();
-        expected.setName("치즈피자");
-        expected.setPrice(null);
+        final Product expected = 상품_생성("치즈피자", null);
 
         // expect
         assertThatThrownBy(() -> productService.create(expected))
