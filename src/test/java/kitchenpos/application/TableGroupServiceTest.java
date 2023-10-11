@@ -58,13 +58,8 @@ class TableGroupServiceTest {
         @Test
         @DisplayName("그룹화할 주문 테이블들의 식별자를 제공하여 그룹화할 수 있다.")
         void given(@Autowired TableService tableService) {
-            final OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(true);
-            final OrderTable savedOrderTable = tableService.create(orderTable);
-
-            final OrderTable orderTable2 = new OrderTable();
-            orderTable2.setEmpty(true);
-            final OrderTable savedOrderTable2 = tableService.create(orderTable2);
+            final OrderTable savedOrderTable = 주문테이블만들기(tableService);
+            final OrderTable savedOrderTable2 = 주문테이블만들기(tableService);
 
             final TableGroup tableGroup = new TableGroup();
             tableGroup.setOrderTables(List.of(savedOrderTable, savedOrderTable2));
@@ -80,9 +75,7 @@ class TableGroupServiceTest {
         @Test
         @DisplayName("그룹화하려는 주문 테이블의 수가 2개 미만이면 그룹화할 수 없다.")
         void invalidOrderTableSize(@Autowired TableService tableService) {
-            final OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(true);
-            final OrderTable savedOrderTable = tableService.create(orderTable);
+            final OrderTable savedOrderTable = 주문테이블만들기(tableService);
 
             final TableGroup tableGroup = new TableGroup();
             tableGroup.setOrderTables(List.of(savedOrderTable));
@@ -94,9 +87,7 @@ class TableGroupServiceTest {
         @Test
         @DisplayName("그룹화하려는 주문 테이블 중 실재하지 않는 주문 테이블이 있다면 그룹화할 수 없다.")
         void notExistingOrderTable(@Autowired TableService tableService) {
-            final OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(true);
-            final OrderTable savedOrderTable = tableService.create(orderTable);
+            final OrderTable savedOrderTable = 주문테이블만들기(tableService);
 
             final OrderTable orderTable2 = new OrderTable();
             orderTable2.setEmpty(true); // 저장하지 않은 orderTable
@@ -112,21 +103,14 @@ class TableGroupServiceTest {
         @DisplayName("그룹화하려는 주문 테이블 중 이미 그룹화 되어있는 주문 테이블이 있다면 그룹화할 수 없다.")
         void alreadyGrouped(@Autowired TableService tableService) {
             // given : 이미 그룹화된 주문 테이블
-            final OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(true);
-            final OrderTable savedOrderTable = tableService.create(orderTable);
-
-            final OrderTable orderTable2 = new OrderTable();
-            orderTable2.setEmpty(true);
-            final OrderTable savedOrderTable2 = tableService.create(orderTable2);
+            final OrderTable savedOrderTable = 주문테이블만들기(tableService);
+            final OrderTable savedOrderTable2 = 주문테이블만들기(tableService);
 
             final TableGroup tableGroup = new TableGroup();
             tableGroup.setOrderTables(List.of(savedOrderTable, savedOrderTable2));
             tableGroupService.create(tableGroup);
 
-            final OrderTable orderTable3 = new OrderTable();
-            orderTable3.setEmpty(true);
-            final OrderTable savedOrderTable3 = tableService.create(orderTable3);
+            final OrderTable savedOrderTable3 = 주문테이블만들기(tableService);
 
             final TableGroup tableGroup2 = new TableGroup();
             tableGroup2.setOrderTables(List.of(savedOrderTable2, savedOrderTable3));
@@ -142,13 +126,8 @@ class TableGroupServiceTest {
         @Test
         @DisplayName("tableGroupId에 해당하는 pathVariable에 단체 식별자를 제공하여 그룹화를 해제할 수 있다.")
         void given(@Autowired TableService tableService) {
-            final OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(true);
-            final OrderTable savedOrderTable = tableService.create(orderTable);
-
-            final OrderTable orderTable2 = new OrderTable();
-            orderTable2.setEmpty(true);
-            final OrderTable savedOrderTable2 = tableService.create(orderTable2);
+            final OrderTable savedOrderTable = 주문테이블만들기(tableService);
+            final OrderTable savedOrderTable2 = 주문테이블만들기(tableService);
 
             final TableGroup tableGroup = new TableGroup();
             tableGroup.setOrderTables(List.of(savedOrderTable, savedOrderTable2));
@@ -172,13 +151,8 @@ class TableGroupServiceTest {
         ) {
 
             // given : 주문 테이블
-            final OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(true);
-            final OrderTable savedOrderTable = tableService.create(orderTable);
-
-            final OrderTable orderTable2 = new OrderTable();
-            orderTable2.setEmpty(true);
-            final OrderTable savedOrderTable2 = tableService.create(orderTable2);
+            final OrderTable savedOrderTable = 주문테이블만들기(tableService);
+            final OrderTable savedOrderTable2 = 주문테이블만들기(tableService);
 
             final TableGroup tableGroup = new TableGroup();
             tableGroup.setOrderTables(List.of(savedOrderTable, savedOrderTable2));
@@ -242,5 +216,11 @@ class TableGroupServiceTest {
             order.setOrderLineItems(List.of(orderLineItem, orderLineItem2));
             return orderService.create(order);
         }
+    }
+
+    private static OrderTable 주문테이블만들기(final TableService tableService) {
+        final OrderTable orderTable = new OrderTable();
+        orderTable.setEmpty(true);
+        return tableService.create(orderTable);
     }
 }

@@ -46,48 +46,23 @@ class OrderServiceTest {
             @Autowired TableService tableService
     ) {
         // given : 상품
-        final Product product = new Product();
-        product.setName("상품!");
-        product.setPrice(new BigDecimal("4000"));
-        final Product savedProduct = productService.create(product);
+        final Product savedProduct = 상품만들기(productService);
 
         // given : 메뉴 그룹
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("메뉴 그룹!");
-        final MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+        final MenuGroup savedMenuGroup = 메뉴그룹만들기(menuGroupService);
 
         // given : 메뉴
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(savedProduct.getId());
-        menuProduct.setQuantity(4L);
+        final MenuProduct menuProduct = 메뉴에담을상품만들기(savedProduct);
 
-        final Menu menu = new Menu();
-        menu.setName("메뉴!");
-        menu.setPrice(new BigDecimal("4000"));
-        menu.setMenuProducts(List.of(menuProduct));
-        menu.setMenuGroupId(savedMenuGroup.getId());
-        final Menu savedMenu = menuService.create(menu);
-
-        final Menu menu2 = new Menu();
-        menu2.setName("메뉴 2!");
-        menu2.setPrice(new BigDecimal("9000"));
-        menu2.setMenuProducts(List.of(menuProduct));
-        menu2.setMenuGroupId(savedMenuGroup.getId());
-        final Menu savedMenu2 = menuService.create(menu2);
+        final Menu savedMenu = 메뉴만들기("메뉴!", "4000", menuProduct, savedMenuGroup, menuService);
+        final Menu savedMenu2 = 메뉴만들기("메뉴 2!", "9000", menuProduct, savedMenuGroup, menuService);
 
         // given : 주문 메뉴
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setQuantity(4);
-        orderLineItem.setMenuId(savedMenu.getId());
-
-        final OrderLineItem orderLineItem2 = new OrderLineItem();
-        orderLineItem2.setQuantity(3);
-        orderLineItem2.setMenuId(savedMenu2.getId());
+        final OrderLineItem orderLineItem = 주문할메뉴만들기(savedMenu, 4);
+        final OrderLineItem orderLineItem2 = 주문할메뉴만들기(savedMenu2, 3);
 
         // given : 주문 테이블
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        final OrderTable savedOrderTable = tableService.create(orderTable);
+        final OrderTable savedOrderTable = 주문테이블만들기(tableService);
 
         // given : 주문
         final Order order = new Order();
@@ -107,39 +82,19 @@ class OrderServiceTest {
             @Autowired TableService tableService
     ) {
         // given : 상품
-        final Product product = new Product();
-        product.setName("상품!");
-        product.setPrice(new BigDecimal("4000"));
-        final Product savedProduct = productService.create(product);
+        final Product savedProduct = 상품만들기(productService);
 
         // given : 메뉴 그룹
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("메뉴 그룹!");
-        final MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+        final MenuGroup savedMenuGroup = 메뉴그룹만들기(menuGroupService);
 
         // given : 메뉴
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(savedProduct.getId());
-        menuProduct.setQuantity(4L);
+        final MenuProduct menuProduct = 메뉴에담을상품만들기(savedProduct);
 
-        final Menu menu = new Menu();
-        menu.setName("메뉴!");
-        menu.setPrice(new BigDecimal("4000"));
-        menu.setMenuProducts(List.of(menuProduct));
-        menu.setMenuGroupId(savedMenuGroup.getId());
-        menuService.create(menu);
-
-        final Menu menu2 = new Menu();
-        menu2.setName("메뉴 2!");
-        menu2.setPrice(new BigDecimal("9000"));
-        menu2.setMenuProducts(List.of(menuProduct));
-        menu2.setMenuGroupId(savedMenuGroup.getId());
-        menuService.create(menu2);
+        메뉴만들기("메뉴!", "4000", menuProduct, savedMenuGroup, menuService);
+        메뉴만들기("메뉴 2!", "9000", menuProduct, savedMenuGroup, menuService);
 
         // given : 주문 테이블
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        final OrderTable savedOrderTable = tableService.create(orderTable);
+        final OrderTable savedOrderTable = 주문테이블만들기(tableService);
 
         // given : 주문
         final Order order = new Order();
@@ -158,41 +113,24 @@ class OrderServiceTest {
             @Autowired TableService tableService
     ) {
         // given : 상품
-        final Product product = new Product();
-        product.setName("상품!");
-        product.setPrice(new BigDecimal("4000"));
-        final Product savedProduct = productService.create(product);
+        final Product savedProduct = 상품만들기(productService);
 
         // given : 메뉴 그룹
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("메뉴 그룹!");
-        final MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+        final MenuGroup savedMenuGroup = 메뉴그룹만들기(menuGroupService);
 
         // given : 메뉴
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(savedProduct.getId());
-        menuProduct.setQuantity(4L);
-
-        final Menu menu2 = new Menu();
-        menu2.setName("메뉴 2!");
-        menu2.setPrice(new BigDecimal("9000"));
-        menu2.setMenuProducts(List.of(menuProduct));
-        menu2.setMenuGroupId(savedMenuGroup.getId());
-        final Menu savedMenu2 = menuService.create(menu2);
+        final MenuProduct menuProduct = 메뉴에담을상품만들기(savedProduct);
+        final Menu savedMenu2 = 메뉴만들기("메뉴 2!", "9000", menuProduct, savedMenuGroup, menuService);
 
         // given : 주문 메뉴
         final OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setQuantity(4);
         orderLineItem.setMenuId(0L); // 존재하지 않는 메뉴
 
-        final OrderLineItem orderLineItem2 = new OrderLineItem();
-        orderLineItem2.setQuantity(3);
-        orderLineItem2.setMenuId(savedMenu2.getId());
+        final OrderLineItem orderLineItem2 = 주문할메뉴만들기(savedMenu2, 3);
 
         // given : 주문 테이블
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        final OrderTable savedOrderTable = tableService.create(orderTable);
+        final OrderTable savedOrderTable = 주문테이블만들기(tableService);
 
         // given : 주문
         final Order order = new Order();
@@ -211,43 +149,19 @@ class OrderServiceTest {
             @Autowired MenuGroupService menuGroupService
     ) {
         // given : 상품
-        final Product product = new Product();
-        product.setName("상품!");
-        product.setPrice(new BigDecimal("4000"));
-        final Product savedProduct = productService.create(product);
+        final Product savedProduct = 상품만들기(productService);
 
         // given : 메뉴 그룹
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("메뉴 그룹!");
-        final MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+        final MenuGroup savedMenuGroup = 메뉴그룹만들기(menuGroupService);
 
         // given : 메뉴
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(savedProduct.getId());
-        menuProduct.setQuantity(4L);
-
-        final Menu menu = new Menu();
-        menu.setName("메뉴!");
-        menu.setPrice(new BigDecimal("4000"));
-        menu.setMenuProducts(List.of(menuProduct));
-        menu.setMenuGroupId(savedMenuGroup.getId());
-        final Menu savedMenu = menuService.create(menu);
-
-        final Menu menu2 = new Menu();
-        menu2.setName("메뉴 2!");
-        menu2.setPrice(new BigDecimal("9000"));
-        menu2.setMenuProducts(List.of(menuProduct));
-        menu2.setMenuGroupId(savedMenuGroup.getId());
-        final Menu savedMenu2 = menuService.create(menu2);
+        final MenuProduct menuProduct = 메뉴에담을상품만들기(savedProduct);
+        final Menu savedMenu = 메뉴만들기("메뉴!", "4000", menuProduct, savedMenuGroup, menuService);
+        final Menu savedMenu2 = 메뉴만들기("메뉴 2!", "9000", menuProduct, savedMenuGroup, menuService);
 
         // given : 주문 메뉴
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setQuantity(4);
-        orderLineItem.setMenuId(savedMenu.getId());
-
-        final OrderLineItem orderLineItem2 = new OrderLineItem();
-        orderLineItem2.setQuantity(3);
-        orderLineItem2.setMenuId(savedMenu2.getId());
+        final OrderLineItem orderLineItem = 주문할메뉴만들기(savedMenu, 4);
+        final OrderLineItem orderLineItem2 = 주문할메뉴만들기(savedMenu2, 3);
 
         // given : 주문
         final Order order = new Order();
@@ -267,48 +181,22 @@ class OrderServiceTest {
             @Autowired TableService tableService
     ) {
         // given : 상품
-        final Product product = new Product();
-        product.setName("상품!");
-        product.setPrice(new BigDecimal("4000"));
-        final Product savedProduct = productService.create(product);
+        final Product savedProduct = 상품만들기(productService);
 
         // given : 메뉴 그룹
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("메뉴 그룹!");
-        final MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+        final MenuGroup savedMenuGroup = 메뉴그룹만들기(menuGroupService);
 
         // given : 메뉴
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(savedProduct.getId());
-        menuProduct.setQuantity(4L);
-
-        final Menu menu = new Menu();
-        menu.setName("메뉴!");
-        menu.setPrice(new BigDecimal("4000"));
-        menu.setMenuProducts(List.of(menuProduct));
-        menu.setMenuGroupId(savedMenuGroup.getId());
-        final Menu savedMenu = menuService.create(menu);
-
-        final Menu menu2 = new Menu();
-        menu2.setName("메뉴 2!");
-        menu2.setPrice(new BigDecimal("9000"));
-        menu2.setMenuProducts(List.of(menuProduct));
-        menu2.setMenuGroupId(savedMenuGroup.getId());
-        final Menu savedMenu2 = menuService.create(menu2);
+        final MenuProduct menuProduct = 메뉴에담을상품만들기(savedProduct);
+        final Menu savedMenu = 메뉴만들기("메뉴!", "4000", menuProduct, savedMenuGroup, menuService);
+        final Menu savedMenu2 = 메뉴만들기("메뉴 2!", "9000", menuProduct, savedMenuGroup, menuService);
 
         // given : 주문 메뉴
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setQuantity(4);
-        orderLineItem.setMenuId(savedMenu.getId());
-
-        final OrderLineItem orderLineItem2 = new OrderLineItem();
-        orderLineItem2.setQuantity(3);
-        orderLineItem2.setMenuId(savedMenu2.getId());
+        final OrderLineItem orderLineItem = 주문할메뉴만들기(savedMenu, 4);
+        final OrderLineItem orderLineItem2 = 주문할메뉴만들기(savedMenu2, 3);
 
         // given : 주문 테이블
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        final OrderTable savedOrderTable = tableService.create(orderTable);
+        final OrderTable savedOrderTable = 주문테이블만들기(tableService);
 
         // given : 주문
         final Order order = new Order();
@@ -317,5 +205,49 @@ class OrderServiceTest {
         final Order savedOrder = orderService.create(order);
 
         assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+    }
+
+    private static OrderTable 주문테이블만들기(final TableService tableService) {
+        final OrderTable orderTable = new OrderTable();
+        orderTable.setEmpty(false);
+        final OrderTable savedOrderTable = tableService.create(orderTable);
+        return savedOrderTable;
+    }
+
+    private static OrderLineItem 주문할메뉴만들기(final Menu savedMenu, final int quantity) {
+        final OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setQuantity(quantity);
+        orderLineItem.setMenuId(savedMenu.getId());
+        return orderLineItem;
+    }
+
+    private static Menu 메뉴만들기(final String name, final String price, final MenuProduct menuProduct,
+                              final MenuGroup savedMenuGroup, final MenuService menuService) {
+        final Menu menu = new Menu();
+        menu.setName(name);
+        menu.setPrice(new BigDecimal(price));
+        menu.setMenuProducts(List.of(menuProduct));
+        menu.setMenuGroupId(savedMenuGroup.getId());
+        return menuService.create(menu);
+    }
+
+    private static MenuProduct 메뉴에담을상품만들기(final Product savedProduct) {
+        final MenuProduct menuProduct = new MenuProduct();
+        menuProduct.setProductId(savedProduct.getId());
+        menuProduct.setQuantity(4L);
+        return menuProduct;
+    }
+
+    private static MenuGroup 메뉴그룹만들기(final MenuGroupService menuGroupService) {
+        final MenuGroup menuGroup = new MenuGroup();
+        menuGroup.setName("메뉴 그룹!");
+        return menuGroupService.create(menuGroup);
+    }
+
+    private static Product 상품만들기(final ProductService productService) {
+        final Product product = new Product();
+        product.setName("상품!");
+        product.setPrice(new BigDecimal("4000"));
+        return productService.create(product);
     }
 }
