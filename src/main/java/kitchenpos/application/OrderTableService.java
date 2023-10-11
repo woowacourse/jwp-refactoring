@@ -12,11 +12,11 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-public class TableService {
+public class OrderTableService {
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
 
-    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
+    public OrderTableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
         this.orderDao = orderDao;
         this.orderTableDao = orderTableDao;
     }
