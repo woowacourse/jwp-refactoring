@@ -57,7 +57,7 @@ class ProductControllerV1Test {
     @DisplayName("/api/v1/products로 GET 요청을 보내면 200 응답과 결과가 반환된다.")
     void findAll_with_200() throws Exception {
         // given
-        given(productService.list())
+        given(productService.findAll())
             .willReturn(List.of(new Product(), new Product()));
 
         // when & then
