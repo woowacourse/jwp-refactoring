@@ -59,9 +59,9 @@ class TableRestControllerTest {
             // when & then
             mockMvc.perform(post("/api/tables")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content("{\n" +
-                                    "  \"numberOfGuests\": 0,\n" +
-                                    "  \"empty\": true\n" +
+                            .content("{" +
+                                    "\"numberOfGuests\": 0," +
+                                    "\"empty\": true" +
                                     "}")
                     )
                     .andExpectAll(
