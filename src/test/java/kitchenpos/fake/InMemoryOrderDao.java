@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -17,10 +18,19 @@ public class InMemoryOrderDao implements OrderDao {
 
     @Override
     public Order save(Order entity) {
-        long id = this.id.getAndIncrement();
-        entity.setId(id);
-        database.put(id, entity);
+        if (Objects.isNull(entity.getId())) {
+            long id = this.id.getAndIncrement();
+            entity.setId(id);
+            database.put(id, entity);
+            return entity;
+        }
+        update(entity);
         return entity;
+    }
+
+    private void update(Order entity) {
+        Order order = database.get(entity.getId());
+        order.setOrderStatus(entity.getOrderStatus());
     }
 
     @Override
