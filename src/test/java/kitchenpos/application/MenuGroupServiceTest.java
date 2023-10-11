@@ -2,24 +2,19 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 
-@SpringBootTest
-class MenuGroupServiceTest {
+class MenuGroupServiceTest extends ServiceTest {
 
     @Autowired
     private MenuGroupService menuGroupService;
 
-    @Autowired
-    private MenuGroupDao menuGroupDao;
 
     @Test
     void 메뉴_그룹을_생성할_수_있다() {

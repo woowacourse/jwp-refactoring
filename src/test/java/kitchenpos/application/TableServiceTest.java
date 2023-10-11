@@ -1,22 +1,18 @@
 package kitchenpos.application;
 
 import java.util.List;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-class TableServiceTest {
+
+class TableServiceTest extends ServiceTest {
 
     @Autowired
     private TableService tableService;
 
-    @Autowired
-    private OrderTableDao orderTableDao;
 
     @Test
     void 테이블의_주문을_생성할_수_있다() {

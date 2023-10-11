@@ -2,30 +2,24 @@ package kitchenpos.application;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
-@SpringBootTest
-class ProductServiceTest {
+
+class ProductServiceTest extends ServiceTest {
 
     @Autowired
     private ProductService productService;
 
-    @Autowired
-    private ProductDao productDao;
 
     @Nested
     class 상품_생성 {
