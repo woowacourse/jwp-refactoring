@@ -16,7 +16,7 @@
     - [ ] MenuGroupService
     - [ ] MenuService
     - [ ] OrderService
-    - [ ] ProductService
+    - [x] ProductService
     - [ ] TableGroupService
     - [ ] TableService
 
