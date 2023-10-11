@@ -104,8 +104,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 없는_주문테이블이면_예외() {
             // when && then
-            //TODO: truncate 변경하고 아이디 1L로 변경
-            assertThatThrownBy(() -> tableService.changeEmpty(100L, true))
+            assertThatThrownBy(() -> tableService.changeEmpty(1L, true))
                 .isInstanceOf(IllegalArgumentException.class);
         }
 
