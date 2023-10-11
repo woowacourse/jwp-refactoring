@@ -1,9 +1,9 @@
 package kitchenpos.dao;
 
-import static kitchenpos.common.ProductFixtures.PRODUCT1;
+import static kitchenpos.common.ProductFixtures.PRODUCT1_REQUEST;
 import static kitchenpos.common.ProductFixtures.PRODUCT1_NAME;
 import static kitchenpos.common.ProductFixtures.PRODUCT1_PRICE;
-import static kitchenpos.common.ProductFixtures.PRODUCT2;
+import static kitchenpos.common.ProductFixtures.PRODUCT2_REQUEST;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -36,7 +36,7 @@ class JdbcTemplateProductDaoTest {
     @DisplayName("Product를 영속화한다.")
     void saveProduct() {
         // given
-        final Product product = PRODUCT1();
+        final Product product = PRODUCT1_REQUEST();
 
         // when
         final Product savedProduct = productDao.save(product);
@@ -57,7 +57,7 @@ class JdbcTemplateProductDaoTest {
         @DisplayName("ProductId에 해당하는 Product가 있으면 값을 반환한다.")
         void findById() {
             // given
-            final Product product = PRODUCT1();
+            final Product product = PRODUCT1_REQUEST();
             final Product savedProduct = productDao.save(product);
 
             // when
@@ -98,8 +98,8 @@ class JdbcTemplateProductDaoTest {
             jdbcTemplate.execute("truncate table product");
             jdbcTemplate.execute("SET REFERENTIAL_INTEGRITY TRUE");
 
-            final Product product1 = PRODUCT1();
-            final Product product2 = PRODUCT2();
+            final Product product1 = PRODUCT1_REQUEST();
+            final Product product2 = PRODUCT2_REQUEST();
             final Product savedProduct1 = productDao.save(product1);
             final Product savedProduct2 = productDao.save(product2);
             List<Product> expected = List.of(savedProduct1, savedProduct2);

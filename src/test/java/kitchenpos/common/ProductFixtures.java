@@ -19,16 +19,16 @@ public class ProductFixtures {
     public static final BigDecimal PRODUCT2_PRICE = BigDecimal.valueOf(16000).setScale(0, RoundingMode.UNNECESSARY);
 
     /**
-     * ENTITY
+     * REQUEST
      */
-    public static Product PRODUCT1() {
+    public static Product PRODUCT1_REQUEST() {
         Product product = new Product();
         product.setName(PRODUCT1_NAME);
         product.setPrice(PRODUCT1_PRICE);
         return product;
     }
 
-    public static Product PRODUCT2() {
+    public static Product PRODUCT2_REQUEST() {
         Product product = new Product();
         product.setName(PRODUCT2_NAME);
         product.setPrice(PRODUCT2_PRICE);

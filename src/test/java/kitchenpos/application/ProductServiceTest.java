@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.common.ProductFixtures.PRODUCT1;
+import static kitchenpos.common.ProductFixtures.PRODUCT1_REQUEST;
 import static kitchenpos.common.ProductFixtures.PRODUCT1_NAME;
 import static kitchenpos.common.ProductFixtures.PRODUCT1_PRICE;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,7 +47,7 @@ class ProductServiceTest {
                     .willReturn(expectedProduct);
 
             // when
-            Product createdProduct = productService.create(PRODUCT1());
+            Product createdProduct = productService.create(PRODUCT1_REQUEST());
 
             // then
             assertThat(createdProduct).usingRecursiveComparison().isEqualTo(expectedProduct);
