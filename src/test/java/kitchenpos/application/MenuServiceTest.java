@@ -23,8 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
 @Transactional
+@SpringBootTest
 class MenuServiceTest {
 
     @Autowired
@@ -69,7 +69,7 @@ class MenuServiceTest {
 
     @DisplayName("메뉴 그룹이 존재하지 않으면, 생성할 수 없다.")
     @Test
-    void createFailTest_ByMenuGroupIsNotExist() {
+    void createFailTest_ByMenuGroupIsNotExists() {
         //given
         menu.setPrice(BigDecimal.ONE);
         menu.setMenuGroupId(99L);
@@ -84,7 +84,7 @@ class MenuServiceTest {
 
     @DisplayName("메뉴에 있는 상품이 존재하지 않으면, 생성할 수 없다")
     @Test
-    void createFailTest_ByMenuProductIsNotExist() {
+    void createFailTest_ByMenuProductIsNotExists() {
         //given
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName("TestMenuGroup");
@@ -180,7 +180,7 @@ class MenuServiceTest {
                 () -> assertThat(findMenus).extractingResultOf("getMenuGroupId")
                         .containsExactly(savedMenu.getMenuGroupId()),
 
-                () -> assertThat(findMenus.size()).isOne(),
+                () -> assertThat(findMenus).hasSize(1),
                 () -> assertThat(findMenus.get(0).getMenuProducts())
                         .usingRecursiveComparison()
                         .ignoringFields("menuId", "seq")
