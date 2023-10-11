@@ -1,5 +1,9 @@
 package kitchenpos.application;
 
+import static kitchenpos.application.kitchenposFixture.메뉴그룹만들기;
+import static kitchenpos.application.kitchenposFixture.메뉴상품만들기;
+import static kitchenpos.application.kitchenposFixture.상품만들기;
+import static kitchenpos.application.kitchenposFixture.저장할메뉴만들기;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -13,7 +17,6 @@ import kitchenpos.dao.JdbcTemplateMenuProductDao;
 import kitchenpos.dao.JdbcTemplateProductDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,7 +53,7 @@ class MenuServiceTest {
             @Autowired ProductService productService
     ) {
         // given : 메뉴 그룹
-        final Long menuGroupId = 메뉴그룹_만들기(menuGroupService);
+        final Long menuGroupId = 메뉴그룹만들기(menuGroupService).getId();
 
         // given : 개별 상품
         final Product savedProduct = 상품만들기("상품 1", "4000", productService);
@@ -60,7 +63,7 @@ class MenuServiceTest {
         final MenuProduct menuProduct = 메뉴상품만들기(savedProduct, 4L);
         final MenuProduct menuProduct2 = 메뉴상품만들기(savedProduct2, 1L);
 
-        final Menu menu = 저장할메뉴만들기("4000", menuGroupId, menuProduct, menuProduct2);
+        final Menu menu = 저장할메뉴만들기("메뉴!", "4000", menuGroupId, menuProduct, menuProduct2);
         final Menu savedMenu = menuService.create(menu);
 
         assertThat(savedMenu).isNotNull();
@@ -79,7 +82,7 @@ class MenuServiceTest {
             @Autowired ProductService productService
     ) {
         // given : 메뉴 그룹
-        final Long menuGroupId = 메뉴그룹_만들기(menuGroupService);
+        final Long menuGroupId = 메뉴그룹만들기(menuGroupService).getId();
 
         // given : 개별 상품
         final Product savedProduct = 상품만들기("상품 1", "4000", productService);
@@ -121,7 +124,7 @@ class MenuServiceTest {
         final MenuProduct menuProduct = 메뉴상품만들기(savedProduct, 4L);
         final MenuProduct menuProduct2 = 메뉴상품만들기(savedProduct2, 1L);
 
-        final Menu menu = 저장할메뉴만들기("4000", 0L, menuProduct, menuProduct2);
+        final Menu menu = 저장할메뉴만들기("메뉴!", "4000", 0L, menuProduct, menuProduct2);
 
         assertThatThrownBy(() -> menuService.create(menu))
                 .as("존재하지 않는 메뉴 그룹에 저장할 수 없다.")
@@ -135,7 +138,7 @@ class MenuServiceTest {
             @Autowired ProductService productService
     ) {
         // given : 메뉴 그룹
-        final Long menuGroupId = 메뉴그룹_만들기(menuGroupService);
+        final Long menuGroupId = 메뉴그룹만들기(menuGroupService).getId();
 
         // given : 개별 상품
         final Product savedProduct = 상품만들기("상품 1", "4000", productService);
@@ -145,7 +148,7 @@ class MenuServiceTest {
         final MenuProduct menuProduct = 메뉴상품만들기(savedProduct, 4L);
         final MenuProduct menuProduct2 = 메뉴상품만들기(savedProduct2, 1L);
 
-        final Menu menu = 저장할메뉴만들기("20001", menuGroupId, menuProduct, menuProduct2);
+        final Menu menu = 저장할메뉴만들기("메뉴!", "20001", menuGroupId, menuProduct, menuProduct2);
 
         assertThatThrownBy(() -> menuService.create(menu))
                 .as("메뉴에 있는 각 상품의 금액 총합보다 메뉴 금액이 크다면 저장할 수 없다.")
@@ -160,7 +163,7 @@ class MenuServiceTest {
             @Autowired MenuProductDao menuProductDao
     ) {
         // given : 메뉴 그룹
-        final Long menuGroupId = 메뉴그룹_만들기(menuGroupService);
+        final Long menuGroupId = 메뉴그룹만들기(menuGroupService).getId();
 
         // given : 개별 상품
         final Product savedProduct = 상품만들기("상품 1", "4000", productService);
@@ -170,7 +173,7 @@ class MenuServiceTest {
         final MenuProduct menuProduct = 메뉴상품만들기(savedProduct, 4L);
         final MenuProduct menuProduct2 = 메뉴상품만들기(savedProduct2, 1L);
 
-        final Menu menu = 저장할메뉴만들기("4000", menuGroupId, menuProduct, menuProduct2);
+        final Menu menu = 저장할메뉴만들기("메뉴!", "4000", menuGroupId, menuProduct, menuProduct2);
         final Menu savedManu = menuService.create(menu);
 
         assertThat(menuProductDao.findAllByMenuId(savedManu.getId()))
@@ -185,7 +188,7 @@ class MenuServiceTest {
             @Autowired ProductService productService
     ) {
         // given : 메뉴 그룹
-        final Long menuGroupId = 메뉴그룹_만들기(menuGroupService);
+        final Long menuGroupId = 메뉴그룹만들기(menuGroupService).getId();
 
         // given : 개별 상품
         final Product savedProduct = 상품만들기("상품 1", "4000", productService);
@@ -222,7 +225,7 @@ class MenuServiceTest {
             @Autowired ProductService productService
     ) {
         // given : 메뉴 그룹
-        final Long menuGroupId = 메뉴그룹_만들기(menuGroupService);
+        final Long menuGroupId = 메뉴그룹만들기(menuGroupService).getId();
 
         // given : 개별 상품
         final Product savedProduct = 상품만들기("상품 1", "12345123451234512", productService);
@@ -246,38 +249,5 @@ class MenuServiceTest {
         menu.setPrice(new BigDecimal("12345123451234512.12"));
         assertThatCode(() -> menuService.create(menu))
                 .doesNotThrowAnyException();
-    }
-
-    private static Menu 저장할메뉴만들기(final String price, final Long menuGroupId, final MenuProduct... menuProducts) {
-        final Menu menu = new Menu();
-        menu.setId(9987L);
-        menu.setName("메뉴!");
-        menu.setPrice(new BigDecimal(price));
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(List.of(menuProducts));
-        return menu;
-    }
-
-    private static MenuProduct 메뉴상품만들기(final Product savedProduct, final long quantity) {
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setSeq(999L);
-        menuProduct.setProductId(savedProduct.getId());
-        menuProduct.setQuantity(quantity);
-        return menuProduct;
-    }
-
-    private static Product 상품만들기(final String name, final String price, final ProductService productService) {
-        final Product product = new Product();
-        product.setName(name);
-        product.setPrice(new BigDecimal(price));
-        final Product savedProduct = productService.create(product);
-        return savedProduct;
-    }
-
-    private static Long 메뉴그룹_만들기(final MenuGroupService menuGroupService) {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("코딱지메뉴그룹");
-        final Long menuGroupId = menuGroupService.create(menuGroup).getId();
-        return menuGroupId;
     }
 }

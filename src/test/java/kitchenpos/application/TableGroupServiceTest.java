@@ -1,9 +1,14 @@
 package kitchenpos.application;
 
+import static kitchenpos.application.kitchenposFixture.메뉴그룹만들기;
+import static kitchenpos.application.kitchenposFixture.메뉴상품만들기;
+import static kitchenpos.application.kitchenposFixture.상품만들기;
+import static kitchenpos.application.kitchenposFixture.저장할메뉴만들기;
+import static kitchenpos.application.kitchenposFixture.주문테이블만들기;
+import static kitchenpos.application.kitchenposFixture.주문할메뉴만들기;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.sql.DataSource;
@@ -58,8 +63,8 @@ class TableGroupServiceTest {
         @Test
         @DisplayName("그룹화할 주문 테이블들의 식별자를 제공하여 그룹화할 수 있다.")
         void given(@Autowired TableService tableService) {
-            final OrderTable savedOrderTable = 주문테이블만들기(tableService);
-            final OrderTable savedOrderTable2 = 주문테이블만들기(tableService);
+            final OrderTable savedOrderTable = 주문테이블만들기(tableService, true);
+            final OrderTable savedOrderTable2 = 주문테이블만들기(tableService, true);
 
             final TableGroup tableGroup = new TableGroup();
             tableGroup.setOrderTables(List.of(savedOrderTable, savedOrderTable2));
@@ -75,7 +80,7 @@ class TableGroupServiceTest {
         @Test
         @DisplayName("그룹화하려는 주문 테이블의 수가 2개 미만이면 그룹화할 수 없다.")
         void invalidOrderTableSize(@Autowired TableService tableService) {
-            final OrderTable savedOrderTable = 주문테이블만들기(tableService);
+            final OrderTable savedOrderTable = 주문테이블만들기(tableService, true);
 
             final TableGroup tableGroup = new TableGroup();
             tableGroup.setOrderTables(List.of(savedOrderTable));
@@ -87,7 +92,7 @@ class TableGroupServiceTest {
         @Test
         @DisplayName("그룹화하려는 주문 테이블 중 실재하지 않는 주문 테이블이 있다면 그룹화할 수 없다.")
         void notExistingOrderTable(@Autowired TableService tableService) {
-            final OrderTable savedOrderTable = 주문테이블만들기(tableService);
+            final OrderTable savedOrderTable = 주문테이블만들기(tableService, true);
 
             final OrderTable orderTable2 = new OrderTable();
             orderTable2.setEmpty(true); // 저장하지 않은 orderTable
@@ -103,14 +108,14 @@ class TableGroupServiceTest {
         @DisplayName("그룹화하려는 주문 테이블 중 이미 그룹화 되어있는 주문 테이블이 있다면 그룹화할 수 없다.")
         void alreadyGrouped(@Autowired TableService tableService) {
             // given : 이미 그룹화된 주문 테이블
-            final OrderTable savedOrderTable = 주문테이블만들기(tableService);
-            final OrderTable savedOrderTable2 = 주문테이블만들기(tableService);
+            final OrderTable savedOrderTable = 주문테이블만들기(tableService, true);
+            final OrderTable savedOrderTable2 = 주문테이블만들기(tableService, true);
 
             final TableGroup tableGroup = new TableGroup();
             tableGroup.setOrderTables(List.of(savedOrderTable, savedOrderTable2));
             tableGroupService.create(tableGroup);
 
-            final OrderTable savedOrderTable3 = 주문테이블만들기(tableService);
+            final OrderTable savedOrderTable3 = 주문테이블만들기(tableService, true);
 
             final TableGroup tableGroup2 = new TableGroup();
             tableGroup2.setOrderTables(List.of(savedOrderTable2, savedOrderTable3));
@@ -126,8 +131,8 @@ class TableGroupServiceTest {
         @Test
         @DisplayName("tableGroupId에 해당하는 pathVariable에 단체 식별자를 제공하여 그룹화를 해제할 수 있다.")
         void given(@Autowired TableService tableService) {
-            final OrderTable savedOrderTable = 주문테이블만들기(tableService);
-            final OrderTable savedOrderTable2 = 주문테이블만들기(tableService);
+            final OrderTable savedOrderTable = 주문테이블만들기(tableService, true);
+            final OrderTable savedOrderTable2 = 주문테이블만들기(tableService, true);
 
             final TableGroup tableGroup = new TableGroup();
             tableGroup.setOrderTables(List.of(savedOrderTable, savedOrderTable2));
@@ -151,8 +156,8 @@ class TableGroupServiceTest {
         ) {
 
             // given : 주문 테이블
-            final OrderTable savedOrderTable = 주문테이블만들기(tableService);
-            final OrderTable savedOrderTable2 = 주문테이블만들기(tableService);
+            final OrderTable savedOrderTable = 주문테이블만들기(tableService, true);
+            final OrderTable savedOrderTable2 = 주문테이블만들기(tableService, true);
 
             final TableGroup tableGroup = new TableGroup();
             tableGroup.setOrderTables(List.of(savedOrderTable, savedOrderTable2));
@@ -172,43 +177,20 @@ class TableGroupServiceTest {
                 final OrderTable orderTable) {
 
             // given : 상품
-            final Product product = new Product();
-            product.setName("상품!");
-            product.setPrice(new BigDecimal("4000"));
-            final Product savedProduct = productService.create(product);
+            final Product savedProduct = 상품만들기("상품!", "4000", productService);
 
             // given : 메뉴 그룹
-            final MenuGroup menuGroup = new MenuGroup();
-            menuGroup.setName("메뉴 그룹!");
-            final MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+            final MenuGroup savedMenuGroup = 메뉴그룹만들기(menuGroupService);
 
             // given : 메뉴
-            final MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProductId(savedProduct.getId());
-            menuProduct.setQuantity(4L);
+            final MenuProduct menuProduct = 메뉴상품만들기(savedProduct, 4L);
 
-            final Menu menu = new Menu();
-            menu.setName("메뉴!");
-            menu.setPrice(new BigDecimal("4000"));
-            menu.setMenuProducts(List.of(menuProduct));
-            menu.setMenuGroupId(savedMenuGroup.getId());
-            final Menu savedMenu = menuService.create(menu);
-
-            final Menu menu2 = new Menu();
-            menu2.setName("메뉴 2!");
-            menu2.setPrice(new BigDecimal("9000"));
-            menu2.setMenuProducts(List.of(menuProduct));
-            menu2.setMenuGroupId(savedMenuGroup.getId());
-            final Menu savedMenu2 = menuService.create(menu2);
+            final Menu savedMenu = menuService.create(저장할메뉴만들기("메뉴!", "4000", savedMenuGroup.getId(), menuProduct));
+            final Menu savedMenu2 = menuService.create(저장할메뉴만들기("메뉴 2!", "9000", savedMenuGroup.getId(), menuProduct));
 
             // given : 주문 메뉴
-            final OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setQuantity(4);
-            orderLineItem.setMenuId(savedMenu.getId());
-
-            final OrderLineItem orderLineItem2 = new OrderLineItem();
-            orderLineItem2.setQuantity(3);
-            orderLineItem2.setMenuId(savedMenu2.getId());
+            final OrderLineItem orderLineItem = 주문할메뉴만들기(savedMenu, 4);
+            final OrderLineItem orderLineItem2 = 주문할메뉴만들기(savedMenu2, 3);
 
             // given : 주문
             final Order order = new Order();
@@ -216,11 +198,5 @@ class TableGroupServiceTest {
             order.setOrderLineItems(List.of(orderLineItem, orderLineItem2));
             return orderService.create(order);
         }
-    }
-
-    private static OrderTable 주문테이블만들기(final TableService tableService) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
-        return tableService.create(orderTable);
     }
 }
