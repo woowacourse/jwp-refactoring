@@ -1,6 +1,6 @@
 package kitchenpos.fixture;
 
-import static kitchenpos.fixture.OrderTableFixture.*;
+import static kitchenpos.fixture.OrderTableFixture.ORDER_TABLE;
 
 import java.util.List;
 import kitchenpos.domain.OrderTable;

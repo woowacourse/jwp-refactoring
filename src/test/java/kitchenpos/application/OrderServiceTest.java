@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static kitchenpos.fixture.OrderTableFixture.ORDER_TABLE;
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -20,7 +19,6 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.fixture.OrderFixture;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
@@ -221,8 +219,6 @@ class OrderServiceTest {
             Long id = order.getId();
             assertThatThrownBy(() -> orderService.changeOrderStatus(id, orderForChange))
                     .isInstanceOf(IllegalArgumentException.class);
-
         }
-
     }
 }
