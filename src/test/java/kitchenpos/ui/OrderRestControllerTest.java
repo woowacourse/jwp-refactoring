@@ -1,6 +1,7 @@
 package kitchenpos.ui;
 
 import io.restassured.RestAssured;
+import kitchenpos.application.OrderService;
 import kitchenpos.common.controller.ControllerTest;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
@@ -28,6 +29,9 @@ import static org.springframework.http.HttpStatus.OK;
 class OrderRestControllerTest extends ControllerTest {
 
     @Autowired
+    private OrderService orderService;
+
+    @Autowired
     private TableGroupDao tableGroupDao;
 
     @Autowired
@@ -39,11 +43,8 @@ class OrderRestControllerTest extends ControllerTest {
     @Autowired
     private MenuGroupDao menuGroupDao;
 
-    @Autowired
-    private OrderDao orderDao;
-
     @Test
-    void create() {
+    void Order를_생성하면_201을_반환한다() {
         // given
         final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
         final OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 0, false));
@@ -66,7 +67,7 @@ class OrderRestControllerTest extends ControllerTest {
     }
 
     @Test
-    void list() {
+    void Order를_조회하면_200을_반환한다() {
         // given
         final var 요청_준비 = RestAssured.given()
                 .contentType(JSON);
@@ -81,14 +82,14 @@ class OrderRestControllerTest extends ControllerTest {
     }
 
     @Test
-    void changeOrderStatus() {
+    void 주문상태를_변경하면_200을_반환한다() {
         //given
         final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
         final OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 0, false));
         final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("마라탕그룹"));
         final Menu menu = menuDao.save(new Menu("디노 마라탕", new BigDecimal(20000), menuGroup.getId(), null));
         final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
-        final Order 주문 = orderDao.save(new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
+        final Order 주문 = orderService.create(new Order(orderTable.getId(), null, LocalDateTime.now(),
                 List.of(orderLineItem)));
 
         final var 요청_준비 = RestAssured.given()

@@ -28,7 +28,7 @@ class MenuGroupRestControllerTest extends ControllerTest {
     }
 
     @Test
-    void list() {
+    void MenuGroup을_조회하면_200을_반환한다() {
         // given
         final var 요청_준비 = RestAssured.given()
                 .contentType(JSON);

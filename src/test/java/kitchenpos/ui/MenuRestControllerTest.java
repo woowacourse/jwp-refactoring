@@ -27,7 +27,7 @@ class MenuRestControllerTest extends ControllerTest {
     private ProductDao productDao;
 
     @Test
-    void create() {
+    void Menu를_생성하면_201을_반환한다() {
         // given
         final Product product = productDao.save(new Product("디노 초코 케이크", new BigDecimal(25000)));
         final MenuProduct menuProduct = new MenuProduct(null, product.getId(), 1);
@@ -48,7 +48,7 @@ class MenuRestControllerTest extends ControllerTest {
     }
 
     @Test
-    void list() {
+    void Menu를_조회하면_200을_반환한다() {
         // given
         final var 요청_준비 = RestAssured.given()
                 .contentType(JSON);

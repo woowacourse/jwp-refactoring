@@ -25,7 +25,7 @@ class TableGroupRestControllerTest extends ControllerTest {
     private OrderTableDao orderTableDao;
 
     @Test
-    void create() {
+    void TableGroup을_생성하면_201을_반환한다() {
         final OrderTable orderTable = orderTableDao.save(new OrderTable(null, 0, true));
         final OrderTable orderTable1 = orderTableDao.save(new OrderTable(null, 0, true));
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now(),
@@ -44,7 +44,7 @@ class TableGroupRestControllerTest extends ControllerTest {
     }
 
     @Test
-    void ungroup() {
+    void TableGroup을_풀면_204를_반환한다() {
         final OrderTable orderTable = orderTableDao.save(new OrderTable(null, 0, true));
         final OrderTable orderTable1 = orderTableDao.save(new OrderTable(null, 0, true));
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now(),

@@ -28,7 +28,7 @@ class TableRestControllerTest extends ControllerTest {
     private OrderTableDao orderTableDao;
 
     @Test
-    void create() {
+    void OrderTable을_생성하면_201을_반환한다() {
         final OrderTable 주문_테이블 = new OrderTable(null, 0, true);
         final var 요청_준비 = RestAssured.given()
                 .body(주문_테이블)
@@ -44,7 +44,7 @@ class TableRestControllerTest extends ControllerTest {
     }
 
     @Test
-    void list() {
+    void OrderTable을_조회하면_200을_반환한다() {
         // given
         final var 요청_준비 = RestAssured.given()
                 .contentType(JSON);
@@ -59,7 +59,7 @@ class TableRestControllerTest extends ControllerTest {
     }
 
     @Test
-    void changeEmpty() {
+    void OrderTable을_비우면_200을_반환한다() {
         final OrderTable 주문_테이블 = tableService.create(new OrderTable(null, 0, false));
         final var 요청_준비 = RestAssured.given()
                 .body(new OrderTable(null, 0, true))
@@ -75,7 +75,7 @@ class TableRestControllerTest extends ControllerTest {
     }
 
     @Test
-    void changeNumberOfGuests() {
+    void OrderTable의_손님_수를_변경하면_200을_반환한다() {
         final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
         final OrderTable 주문_테이블 = orderTableDao.save(new OrderTable(tableGroup.getId(), 0, false));
         final var 요청_준비 = RestAssured.given()
