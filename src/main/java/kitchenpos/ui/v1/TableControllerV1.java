@@ -34,7 +34,7 @@ public class TableControllerV1 {
     @GetMapping
     public ResponseEntity<List<OrderTable>> findAll() {
         return ResponseEntity.ok()
-            .body(tableService.list());
+            .body(tableService.findAll());
     }
 
     @PutMapping("/{orderTableId}/empty")

@@ -59,7 +59,7 @@ class TableControllerV1Test {
     @DisplayName("/api/v1/tables로 GET 요청을 보내면 200 응답과 결과가 조회된다.")
     void findAll_with_200() throws Exception {
         // given
-        given(tableService.list())
+        given(tableService.findAll())
             .willReturn(List.of(new OrderTable(), new OrderTable()));
 
         // when & then
