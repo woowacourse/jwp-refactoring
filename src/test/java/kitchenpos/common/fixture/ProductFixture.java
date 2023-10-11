@@ -7,11 +7,11 @@ import kitchenpos.domain.Product;
 @SuppressWarnings("NonAsciiCharacters")
 public class ProductFixture {
 
-    public static Product 새_상품() {
+    public static Product 상품() {
         return new Product("productName", BigDecimal.valueOf(1).setScale(2, RoundingMode.HALF_UP));
     }
 
-    public static Product 새_상품(Long productId) {
+    public static Product 상품(Long productId) {
         return new Product(productId, "productName", BigDecimal.valueOf(1).setScale(2, RoundingMode.HALF_UP));
     }
 }

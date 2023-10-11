@@ -1,6 +1,6 @@
 package kitchenpos.dao;
 
-import static kitchenpos.common.fixture.MenuFixture.새_메뉴;
+import static kitchenpos.common.fixture.MenuFixture.메뉴;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 
@@ -39,7 +39,7 @@ class JdbcTemplateMenuDaoTest {
     @Test
     void 메뉴를_저장한다() {
         // given
-        Menu menu = 새_메뉴(menuGroupId);
+        Menu menu = 메뉴(menuGroupId);
 
         // when
         Menu savedMenu = jdbcTemplateMenuDao.save(menu);
@@ -48,13 +48,13 @@ class JdbcTemplateMenuDaoTest {
         assertThat(savedMenu).usingRecursiveComparison()
                 .ignoringFields("id")
                 .ignoringActualNullFields()
-                .isEqualTo(새_메뉴(menuGroupId));
+                .isEqualTo(메뉴(menuGroupId));
     }
 
     @Test
     void ID로_메뉴를_조회한다() {
         // given
-        Long menuId = jdbcTemplateMenuDao.save(새_메뉴(menuGroupId)).getId();
+        Long menuId = jdbcTemplateMenuDao.save(메뉴(menuGroupId)).getId();
 
         // when
         Menu menu = jdbcTemplateMenuDao.findById(menuId).get();
@@ -62,14 +62,14 @@ class JdbcTemplateMenuDaoTest {
         // then
         assertThat(menu).usingRecursiveComparison()
                 .ignoringActualNullFields()
-                .isEqualTo(새_메뉴(menuId, menuGroupId));
+                .isEqualTo(메뉴(menuId, menuGroupId));
     }
 
     @Test
     void 전체_메뉴를_조회한다() {
         // given
-        Long menuId1 = jdbcTemplateMenuDao.save(새_메뉴(menuGroupId)).getId();
-        Long menuId2 = jdbcTemplateMenuDao.save(새_메뉴(menuGroupId)).getId();
+        Long menuId_A = jdbcTemplateMenuDao.save(메뉴(menuGroupId)).getId();
+        Long menuId_B = jdbcTemplateMenuDao.save(메뉴(menuGroupId)).getId();
 
         // when
         List<Menu> menus = jdbcTemplateMenuDao.findAll();
@@ -77,13 +77,13 @@ class JdbcTemplateMenuDaoTest {
         // then
         assertThat(menus).usingRecursiveComparison()
                 .ignoringActualNullFields()
-                .isEqualTo(List.of(새_메뉴(menuId1, menuGroupId), 새_메뉴(menuId2, menuGroupId)));
+                .isEqualTo(List.of(메뉴(menuId_A, menuGroupId), 메뉴(menuId_B, menuGroupId)));
     }
 
     @Test
     void ID_목록을_입력하면_ID_목록에_속하는_메뉴의_개수를_센다() {
         // given
-        List<Long> ids = List.of(jdbcTemplateMenuDao.save(새_메뉴(menuGroupId)).getId());
+        List<Long> ids = List.of(jdbcTemplateMenuDao.save(메뉴(menuGroupId)).getId());
 
         // when
         long count = jdbcTemplateMenuDao.countByIdIn(ids);

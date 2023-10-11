@@ -1,6 +1,6 @@
 package kitchenpos.dao;
 
-import static kitchenpos.common.fixture.MenuGroupFixture.새_메뉴_그룹;
+import static kitchenpos.common.fixture.MenuGroupFixture.메뉴_그룹;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 
@@ -34,7 +34,7 @@ class JdbcTemplateMenuGroupDaoTest {
     @Test
     void 메뉴_그룹을_저장한다() {
         // given
-        MenuGroup menuGroup = 새_메뉴_그룹();
+        MenuGroup menuGroup = 메뉴_그룹();
 
         // when
         MenuGroup savedMenuGroup = jdbcTemplateMenuGroupDao.save(menuGroup);
@@ -42,40 +42,40 @@ class JdbcTemplateMenuGroupDaoTest {
         // then
         assertThat(savedMenuGroup).usingRecursiveComparison()
                 .ignoringFields("id")
-                .isEqualTo(새_메뉴_그룹());
+                .isEqualTo(메뉴_그룹());
     }
 
     @Test
     void ID로_메뉴_그룹을_조회한다() {
         // given
-        Long menuGroupId = jdbcTemplateMenuGroupDao.save(새_메뉴_그룹()).getId();
+        Long menuGroupId = jdbcTemplateMenuGroupDao.save(메뉴_그룹()).getId();
 
         // when
-        MenuGroup foundMenuGroupId = jdbcTemplateMenuGroupDao.findById(menuGroupId).get();
+        MenuGroup menuGroup = jdbcTemplateMenuGroupDao.findById(menuGroupId).get();
 
         // then
-        assertThat(foundMenuGroupId).usingRecursiveComparison()
-                .isEqualTo(새_메뉴_그룹(menuGroupId));
+        assertThat(menuGroup).usingRecursiveComparison()
+                .isEqualTo(메뉴_그룹(menuGroupId));
     }
 
     @Test
     void 전체_메뉴_그룹을_조회한다() {
         // given
-        Long menuGroupId1 = jdbcTemplateMenuGroupDao.save(새_메뉴_그룹()).getId();
-        Long menuGroupId2 = jdbcTemplateMenuGroupDao.save(새_메뉴_그룹()).getId();
+        Long menuGroupId_A = jdbcTemplateMenuGroupDao.save(메뉴_그룹()).getId();
+        Long menuGroupId_B = jdbcTemplateMenuGroupDao.save(메뉴_그룹()).getId();
 
         // when
         List<MenuGroup> menuGroups = jdbcTemplateMenuGroupDao.findAll();
 
         // then
         assertThat(menuGroups).usingRecursiveComparison()
-                .isEqualTo(List.of(새_메뉴_그룹(menuGroupId1), 새_메뉴_그룹(menuGroupId2)));
+                .isEqualTo(List.of(메뉴_그룹(menuGroupId_A), 메뉴_그룹(menuGroupId_B)));
     }
 
     @Test
     void 존재하는_메뉴_그룹_ID로_메뉴_그룹이_존재하는지_확인하면_true를_반환한다() {
         // given
-        Long menuGroupId = jdbcTemplateMenuGroupDao.save(새_메뉴_그룹()).getId();
+        Long menuGroupId = jdbcTemplateMenuGroupDao.save(메뉴_그룹()).getId();
 
         // when
         boolean actual = jdbcTemplateMenuGroupDao.existsById(menuGroupId);
