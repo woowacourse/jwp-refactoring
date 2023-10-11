@@ -61,70 +61,7 @@
 
 ## 클래스 다이어그램
 
-```puml
-@startuml
-
-!theme plain
-top to bottom direction
-skinparam linetype ortho
-
-class Menu {
-  - menuProducts: List<MenuProduct>
-  - menuGroupId: Long
-  - id: Long
-  - price: BigDecimal
-  - name: String
-}
-class MenuGroup {
-  - id: Long
-  - name: String
-}
-class MenuProduct {
-  - quantity: long
-  - menuId: Long
-  - seq: Long
-  - productId: Long
-}
-class Order {
-  - orderTableId: Long
-  - orderStatus: String
-  - orderedTime: LocalDateTime
-  - orderLineItems: List<OrderLineItem>
-  - id: Long
-}
-class OrderLineItem {
-  - quantity: long
-  - menuId: Long
-  - orderId: Long
-  - seq: Long
-}
-enum OrderStatus << enumeration >> {
-  + MEAL:
-  + COMPLETION:
-  + COOKING:
-}
-class OrderTable {
-  - empty: boolean
-  - tableGroupId: Long
-  - id: Long
-  - numberOfGuests: int
-}
-class Product {
-  - price: BigDecimal
-  - id: Long
-  - name: String
-}
-class TableGroup {
-  - orderTables: List<OrderTable>
-  - id: Long
-  - createdDate: LocalDateTime
-}
-
-Menu          "1" *-[#595959,plain]-> "menuProducts\n*" MenuProduct
-Order         "1" *-[#595959,plain]-> "orderLineItems\n*" OrderLineItem
-TableGroup    "1" *-[#595959,plain]-> "orderTables\n*" OrderTable
-@enduml
-```
+![class-diagram](https://www.plantuml.com/plantuml/png/XLCzRzim4DtvAwxkbjP3XmuL325j7HX6xIX0lBKTpj8r8SeFXJmDGP7_Nf6GJpO4MFP2FZs-UyTxl8sCWJjhr3j-9alG6jHEiM-1FHmzixVGw40rQ-zK_AjTYm4j6Es8Nri27_ZPArKRZ17sv3hufm2MOFlbG_1DLtCiOASZh_OZL0fd4tpNRfkUujrJHlNvfWswfWA-wQSrrTgYoQX3suEF77HFUvFYWzhWG7Ikd113mvcN3XrhVYt0z2V5v8M_I2yN1lDvOPoqgz1G65HzMX_mQ4Xe0ZyoSXV5ck3K7BIbnAxHh94fRSVFE-reosHFTrkTWwNqFx4ad9c69pwdLp1ezsmBrTWAh5QGC0gOCWDbcKjzWFtTrrsHLz-h_SFkxh2jxa_xwiVsVbECJkN21fjas-JnwBqXT1dYz7acFRsD8uNgpwQZc6Ae7KiD6VoLdCr7w20k9hEMqGXIJaNhGCZKh94ditvJAhyd-Iq-BU1c-VFzvo_f_p4_rT_B4XRdR-sNkrcS1rlbylCQ5wdAAfTvKMEdypgPEuZ8NjsIQpfh_WC0)
 
 ## 용어 사전
 
