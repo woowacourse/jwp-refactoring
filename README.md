@@ -27,12 +27,16 @@
 
 ### 4. orders
 1. `POST {{host}}/api/orders`
-    - 주문을 한다.
+   > 주문을 한다. 
+   - orderLineItems가 비어있으면 예외가 발생한다.
+   - 요청한 메뉴가 존재하지 않음녀 예외가 발생한다.
+   - 요청에 해당하는 orderTable을 찾지 못하면 예외가 발생한다.
+   - 요청에 해당하는 orderTable이 비어있으면(empty) 예외가 발생한다.
 2. `GET {{host}}/api/orders`
-    - 전체 주문 정보를 불러온다.
+   > 전체 주문을 조회한다.
 3. `PUT {{host}}/api/orders/{orderId}/order-status`
-    - 해당 주문의 주문 상태(MEAL, COMPLETION)를 변경한다.
-4. 
+   > 해당 주문의 주문 상태를 변경한다.
+   - 이미 주문 상태가 COMPLETION인 주문은 상태 변경시 예외가 발생한다.
 
 ### 5. tables
 1. `GET {{host}}/api/tables`

@@ -19,6 +19,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class OrderService {
     private final MenuDao menuDao;
     private final OrderDao orderDao;
@@ -37,7 +38,6 @@ public class OrderService {
         this.orderTableDao = orderTableDao;
     }
 
-    @Transactional
     public Order create(final Order order) {
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
 
@@ -53,8 +53,6 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        order.setId(null);
-
         final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -62,16 +60,11 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
+        final Order savedOrder = orderDao.save(new Order(null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now()));
 
-        final Order savedOrder = orderDao.save(order);
-
-        final Long orderId = savedOrder.getId();
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.setOrderId(orderId);
+            orderLineItem.setOrderId(savedOrder.getId());
             savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
         }
         savedOrder.setOrderLineItems(savedOrderLineItems);
@@ -79,6 +72,7 @@ public class OrderService {
         return savedOrder;
     }
 
+    @Transactional(readOnly = true)
     public List<Order> list() {
         final List<Order> orders = orderDao.findAll();
 
@@ -89,7 +83,6 @@ public class OrderService {
         return orders;
     }
 
-    @Transactional
     public Order changeOrderStatus(final Long orderId, final Order order) {
         final Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
@@ -99,7 +92,7 @@ public class OrderService {
         }
 
         final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
+        savedOrder.updateOrderStatus(orderStatus.name());
 
         orderDao.save(savedOrder);
 
