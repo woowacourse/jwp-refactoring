@@ -15,8 +15,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
+@Sql(scripts = "classpath:truncate.sql")
 @Transactional
 @SpringBootTest
 class ProductServiceTest {
@@ -42,6 +44,7 @@ class ProductServiceTest {
 
             // then
             assertAll(
+                    () -> assertThat(savedProduct.getId()).isEqualTo(1L),
                     () -> assertThat(savedProduct.getName()).isEqualTo("떡볶이"),
                     () -> assertThat(savedProduct.getPrice()).isEqualTo("4500.00")
             );
@@ -89,8 +92,10 @@ class ProductServiceTest {
         final Product savedProductB = products.get(1);
         assertAll(
                 () -> assertThat(products).hasSize(2),
+                () -> assertThat(savedProductA.getId()).isEqualTo(1L),
                 () -> assertThat(savedProductA.getName()).isEqualTo("라면"),
                 () -> assertThat(savedProductA.getPrice()).isEqualTo("4000.00"),
+                () -> assertThat(savedProductB.getId()).isEqualTo(2L),
                 () -> assertThat(savedProductB.getName()).isEqualTo("순대"),
                 () -> assertThat(savedProductB.getPrice()).isEqualTo("4500.00")
         );
