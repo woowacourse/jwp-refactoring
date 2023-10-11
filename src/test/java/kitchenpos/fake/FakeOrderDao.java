@@ -41,17 +41,13 @@ public class FakeOrderDao implements OrderDao {
     public boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<String> orderStatuses) {
         return orders.values().stream()
                 .filter(order -> order.getOrderTableId().equals(orderTableId))
-                .filter(order -> orderStatuses.contains(order.getOrderStatus()))
-                .findAny()
-                .isEmpty();
+                .anyMatch(order -> orderStatuses.contains(order.getOrderStatus()));
     }
 
     @Override
     public boolean existsByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds, List<String> orderStatuses) {
         return orders.values().stream()
                 .filter(order -> orderTableIds.contains(order.getOrderTableId()))
-                .filter(order -> orderStatuses.contains(order.getOrderStatus()))
-                .findAny()
-                .isEmpty();
+                .anyMatch(order -> orderStatuses.contains(order.getOrderStatus()));
     }
 }
