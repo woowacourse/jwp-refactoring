@@ -55,9 +55,11 @@ class MenuServiceTest {
         void 가격이_null_이면_예외() {
             // given
             Menu menu = new Menu();
+
+            // when
             menu.setPrice(null);
 
-            // when & then
+            // then
             assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
         }
@@ -67,9 +69,11 @@ class MenuServiceTest {
         void 가격이_0보다_작으면_예외(int price) {
             // given
             Menu menu = new Menu();
+
+            // when
             menu.setPrice(BigDecimal.valueOf(price));
 
-            // when & then
+            // then
             assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
         }
@@ -204,10 +208,17 @@ class MenuServiceTest {
             savedMenu.setId(1L);
             given(menuDao.save(any(Menu.class)))
                 .willReturn(savedMenu);
+            given(menuProductDao.save(any(MenuProduct.class)))
+                .willReturn(menuProduct1, menuProduct2);
+
+            // when
+            Menu actual = menuService.create(menu);
 
             // then
-            assertThatNoException()
-                .isThrownBy(() -> menuService.create(menu));
+            List<MenuProduct> actualMenuProducts = actual.getMenuProducts();
+            assertThat(actualMenuProducts)
+                .map(MenuProduct::getMenuId)
+                .allMatch(menuId -> menuId.equals(actual.getId()));
         }
     }
 
