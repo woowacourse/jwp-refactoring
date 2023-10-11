@@ -7,8 +7,8 @@ import java.util.*;
 
 public class FakeMenuDao implements MenuDao {
 
-    private Map<Long, Menu> menus = new HashMap<>();
-    private Long id = 0L;
+    private static Map<Long, Menu> menus = new HashMap<>();
+    private static Long id = 0L;
 
     @Override
     public Menu save(Menu entity) {
@@ -16,7 +16,8 @@ public class FakeMenuDao implements MenuDao {
             menus.put(entity.getId(), entity);
             return entity;
         }
-        menus.put(++id, entity);
+        entity.setId(++id);
+        menus.put(id, entity);
         return entity;
     }
 

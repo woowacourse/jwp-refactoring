@@ -7,8 +7,8 @@ import java.util.*;
 
 public class FakeTableGroupDao implements TableGroupDao {
 
-    private Map<Long, TableGroup> tableGroups = new HashMap<>();
-    private Long id = 0L;
+    private static Map<Long, TableGroup> tableGroups = new HashMap<>();
+    private static Long id = 0L;
 
     @Override
     public TableGroup save(TableGroup entity) {
@@ -16,7 +16,8 @@ public class FakeTableGroupDao implements TableGroupDao {
             tableGroups.put(entity.getId(), entity);
             return entity;
         }
-        tableGroups.put(++id, entity);
+        entity.setId(++id);
+        tableGroups.put(id, entity);
         return entity;
     }
 

@@ -7,8 +7,8 @@ import java.util.*;
 
 public class FakeProductDao implements ProductDao {
 
-    private Map<Long, Product> products = new HashMap<>();
-    private Long id = 0L;
+    private static Map<Long, Product> products = new HashMap<>();
+    private static Long id = 0L;
 
     @Override
     public Product save(Product entity) {
@@ -16,7 +16,8 @@ public class FakeProductDao implements ProductDao {
             products.put(entity.getId(), entity);
             return entity;
         }
-        products.put(++id, entity);
+        entity.setId(++id);
+        products.put(id, entity);
         return entity;
     }
 

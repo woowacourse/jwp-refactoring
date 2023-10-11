@@ -7,8 +7,8 @@ import java.util.*;
 
 public class FakeMenuGroupDao implements MenuGroupDao {
 
-    private Map<Long, MenuGroup> menuGroups = new HashMap<>();
-    private Long id = 0L;
+    private static Map<Long, MenuGroup> menuGroups = new HashMap<>();
+    private static Long id = 0L;
 
     @Override
     public MenuGroup save(MenuGroup entity) {
@@ -16,7 +16,8 @@ public class FakeMenuGroupDao implements MenuGroupDao {
             menuGroups.put(entity.getId(), entity);
             return entity;
         }
-        menuGroups.put(++id, entity);
+        entity.setId(++id);
+        menuGroups.put(id, entity);
         return entity;
     }
 

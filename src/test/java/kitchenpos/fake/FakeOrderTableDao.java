@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 
 public class FakeOrderTableDao implements OrderTableDao {
 
-    private Map<Long, OrderTable> orderTables = new HashMap<>();
-    private Long id = 0L;
+    private static Map<Long, OrderTable> orderTables = new HashMap<>();
+    private static Long id = 0L;
 
     @Override
     public OrderTable save(OrderTable entity) {
@@ -17,7 +17,8 @@ public class FakeOrderTableDao implements OrderTableDao {
             orderTables.put(entity.getId(), entity);
             return entity;
         }
-        orderTables.put(++id, entity);
+        entity.setId(++id);
+        orderTables.put(id, entity);
         return entity;
     }
 

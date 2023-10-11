@@ -7,8 +7,8 @@ import java.util.*;
 
 public class FakeOrderDao implements OrderDao {
 
-    private Map<Long, Order> orders = new HashMap<>();
-    private Long id = 0L;
+    private static Map<Long, Order> orders = new HashMap<>();
+    private static Long id = 0L;
 
     @Override
     public Order save(Order entity) {
@@ -16,7 +16,8 @@ public class FakeOrderDao implements OrderDao {
             orders.put(entity.getId(), entity);
             return entity;
         }
-        orders.put(++id, entity);
+        entity.setId(++id);
+        orders.put(id, entity);
         return entity;
     }
 

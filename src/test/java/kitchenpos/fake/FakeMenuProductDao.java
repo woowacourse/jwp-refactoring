@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 
 public class FakeMenuProductDao implements MenuProductDao {
 
-    private Map<Long, MenuProduct> menuProducts = new HashMap<>();
-    private Long id = 0L;
+    private static Map<Long, MenuProduct> menuProducts = new HashMap<>();
+    private static Long id = 0L;
 
     @Override
     public MenuProduct save(MenuProduct entity) {
@@ -17,7 +17,8 @@ public class FakeMenuProductDao implements MenuProductDao {
             menuProducts.put(entity.getSeq(), entity);
             return entity;
         }
-        menuProducts.put(++id, entity);
+        entity.setSeq(++id);
+        menuProducts.put(id, entity);
         return entity;
     }
 
