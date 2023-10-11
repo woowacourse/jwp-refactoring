@@ -23,7 +23,7 @@ class ProductServiceTest {
     private ProductDao productDao;
 
     @Nested
-    class 상품을_추가하는_경우 {
+    class 상품을_추가할_때 {
 
         @Test
         void 상품의_가격이_0원_미만인_경우_예외를_던진다() {
