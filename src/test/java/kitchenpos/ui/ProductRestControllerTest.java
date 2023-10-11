@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -37,17 +38,18 @@ class ProductRestControllerTest {
             //given
             final var product = new Product();
             product.setName("상품명");
-            product.setPrice(new BigDecimal("1000.00"));
+            product.setPrice(new BigDecimal("1000"));
 
             //when
             final var response = restTemplate.postForEntity("http://localhost:" + port + "/api/products", product, Product.class);
 
             //then
+            final var body = response.getBody();
             assertAll(
                     () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED),
-                    () -> assertThat(response.getBody().getId()).isNotNull(),
-                    () -> assertThat(response.getBody().getName()).isEqualTo(product.getName()),
-                    () -> assertEquals(response.getBody().getPrice(), product.getPrice())
+                    () -> assertThat(body.getId()).isNotNull(),
+                    () -> assertThat(body.getName()).isEqualTo(product.getName()),
+                    () -> assertEquals(body.getPrice().setScale(2, RoundingMode.HALF_UP), product.getPrice().setScale(2, RoundingMode.HALF_UP))
             );
         }
 
@@ -57,7 +59,7 @@ class ProductRestControllerTest {
             //given
             final var product = new Product();
             product.setName(productName);
-            product.setPrice(new BigDecimal("1000.00"));
+            product.setPrice(new BigDecimal("1000"));
 
             //when
             final var response = restTemplate.postForEntity("http://localhost:" + port + "/api/products", product, Product.class);
@@ -71,7 +73,7 @@ class ProductRestControllerTest {
             //given
             final var product = new Product();
             product.setName("상품명".repeat(256));
-            product.setPrice(new BigDecimal("1000.00"));
+            product.setPrice(new BigDecimal("1000"));
 
             //when
             final var response = restTemplate.postForEntity("http://localhost:" + port + "/api/products", product, Product.class);
@@ -93,6 +95,32 @@ class ProductRestControllerTest {
 
             //then
             assertThat(response.getStatusCode()).isBetween(HttpStatus.BAD_REQUEST, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Nested
+    class 상품_목록_조회 {
+
+        @Test
+        void 상품을_정상적으로_조회한다() {
+            //given
+            final var product = new Product();
+            product.setName("상품명");
+            product.setPrice(new BigDecimal("1000"));
+            restTemplate.postForEntity("http://localhost:" + port + "/api/products", product, Product.class);
+
+            //when
+            final var response = restTemplate.getForEntity("http://localhost:" + port + "/api/products", Product[].class);
+
+            //then
+            final var body = response.getBody();
+            assertAll(
+                    () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK),
+                    () -> assertThat(body).hasSize(1),
+                    () -> assertThat(body[0].getId()).isNotNull(),
+                    () -> assertThat(body[0].getName()).isEqualTo(product.getName()),
+                    () -> assertEquals(body[0].getPrice().setScale(2, RoundingMode.HALF_UP), product.getPrice().setScale(2, RoundingMode.HALF_UP))
+            );
         }
     }
 }
