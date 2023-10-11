@@ -48,6 +48,18 @@ class MenuServiceTest extends ServiceTest {
             assertThatThrownBy(() -> menuService.create(메뉴))
                     .isInstanceOf(IllegalArgumentException.class);
         }
+
+        @Test
+        void 그룹이_존재하지_않으면_예외가_발생한다() {
+            //given
+            Menu 메뉴 = new Menu();
+            메뉴.setMenuGroupId(1000000000000000L);
+            메뉴.setPrice(BigDecimal.valueOf(1000));
+
+            //expect
+            assertThatThrownBy(() -> menuService.create(메뉴))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
     }
 
     private MenuGroup 메뉴_그룹_생성() {
