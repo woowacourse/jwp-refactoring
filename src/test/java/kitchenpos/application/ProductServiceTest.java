@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Product;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -45,8 +46,10 @@ class ProductServiceTest extends ServiceTestContext {
         Product createdProduct = productService.create(product);
 
         // then
-        assertThat(createdProduct.getId()).isNotNull();
-        assertThat(createdProduct.getName()).isEqualTo(product.getName());
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(createdProduct.getId()).isNotNull();
+            softly.assertThat(createdProduct.getName()).isEqualTo(product.getName());
+        });
     }
 
     @Test

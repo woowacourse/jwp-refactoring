@@ -8,6 +8,7 @@ import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -145,7 +146,9 @@ class TableServiceTest extends ServiceTestContext {
         OrderTable changedOrderTable = tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTable);
 
         // then
-        assertThat(changedOrderTable.getId()).isNotNull();
-        assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(5);
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(changedOrderTable.getId()).isNotNull();
+            softly.assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(5);
+        });
     }
 }

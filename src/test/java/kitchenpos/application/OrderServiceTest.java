@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -141,7 +142,9 @@ class OrderServiceTest extends ServiceTestContext {
         Order changedOrder = orderService.changeOrderStatus(orderId, order);
 
         // then
-        assertThat(changedOrder.getId()).isNotNull();
-        assertThat(changedOrder.getOrderStatus()).isEqualTo("COMPLETION");
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(changedOrder.getId()).isNotNull();
+            assertThat(changedOrder.getOrderStatus()).isEqualTo("COMPLETION");
+        });
     }
 }

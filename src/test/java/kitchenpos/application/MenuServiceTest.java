@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -66,8 +67,10 @@ class MenuServiceTest extends ServiceTestContext {
         Menu createdMenu = menuService.create(menu);
 
         // then
-        assertThat(createdMenu.getId()).isNotNull();
-        assertThat(createdMenu.getName()).isEqualTo(menu.getName());
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(createdMenu.getId()).isNotNull();
+            softly.assertThat(createdMenu.getName()).isEqualTo(menu.getName());
+        });
     }
 
     @Test
