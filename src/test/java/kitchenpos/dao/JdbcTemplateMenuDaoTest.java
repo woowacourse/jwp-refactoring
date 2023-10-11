@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 
 @JdbcTest
-class MenuDaoTest {
+class JdbcTemplateMenuDaoTest {
 
     @Autowired
     private DataSource dataSource;
