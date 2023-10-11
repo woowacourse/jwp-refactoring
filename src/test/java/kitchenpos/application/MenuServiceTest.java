@@ -7,7 +7,6 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,9 +19,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -90,6 +89,7 @@ class MenuServiceTest {
         @Test
         @DisplayName("정상적인 메뉴 등록을 진행한다.")
         void createMenu() {
+            // given
             final Product product = new Product(1L, "product", BigDecimal.valueOf(10_000));
             final MenuProduct menuProduct1 = mock(MenuProduct.class);
             final MenuProduct menuProduct2 = mock(MenuProduct.class);
@@ -107,8 +107,10 @@ class MenuServiceTest {
             given(menuProductDao.save(menuProduct2)).willReturn(new MenuProduct(1L, 1L, 2L, 2L));
             given(menuProductDao.save(menuProduct3)).willReturn(new MenuProduct(1L, 1L, 3L, 1L));
 
+            // when
             final Menu savedMenu = menuService.create(new Menu(1L, "productName", new BigDecimal("35000"), 1L, menuProducts));
 
+            // then
             assertThat(savedMenu).isEqualTo(menu);
         }
     }

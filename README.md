@@ -20,9 +20,10 @@
 
 ### 3. products
 1. `GET {{host}}/api/products`
-    - 전체 상품을 불러온다.
+   > 전체 상품을 조회한다.
 2. `POST {{host}}/api/products`
-    - 새로운 상품을 추가한다.
+   > 새로운 상품을 생성한다.
+   - 가격이 null 혹은 음수이면 예외가 발생한다.
 
 ### 4. orders
 1. `POST {{host}}/api/orders`
