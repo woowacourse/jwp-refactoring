@@ -59,8 +59,21 @@ class TableServiceTest extends ServiceTestContext {
 
     @Test
     void 테이블_그룹이_있는_경우_빈_테이블로_변경하려_할_때_예외를_던진다() {
-        // given, when, then
-        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), savedOrderTable))
+        // given
+        OrderTable orderTable = new OrderTable();
+        orderTable.setEmpty(false);
+        orderTable.setNumberOfGuests(2);
+        orderTable.setTableGroupId(savedTableGroup.getId());
+        OrderTable createdOrderTable = orderTableDao.save(orderTable);
+
+        Order order = new Order();
+        order.setOrderStatus(OrderStatus.MEAL.name());
+        order.setOrderTableId(createdOrderTable.getId());
+        order.setOrderedTime(LocalDateTime.now());
+        orderDao.save(order);
+
+        // when, then
+        assertThatThrownBy(() -> tableService.changeEmpty(createdOrderTable.getId(), createdOrderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

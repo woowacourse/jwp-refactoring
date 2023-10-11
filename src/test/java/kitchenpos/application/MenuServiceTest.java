@@ -7,19 +7,18 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
 @SuppressWarnings("NonAsciiCharacters")
 class MenuServiceTest extends ServiceTestContext {
 
-    @ParameterizedTest
-    @ValueSource(ints = {0, -1})
-    void 메뉴_가격이_0보다_작거나_같으면_예외를_던진다(int price) {
+    @Test
+    void 메뉴_가격이_0보다_작으면_예외를_던진다() {
         // given
         Menu menu = new Menu();
         menu.setName("menuName");
-        menu.setPrice(BigDecimal.valueOf(price));
+        menu.setPrice(BigDecimal.valueOf(-1));
+        menu.setMenuGroupId(savedMenuGroup.getId());
+        menu.setMenuProducts(List.of(savedMenuProduct));
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -30,8 +29,10 @@ class MenuServiceTest extends ServiceTestContext {
     void 메뉴_그룹_아이디에_해당하는_메뉴_그룹이_없는_경우_예외를_던진다() {
         // given
         Menu menu = new Menu();
-        menu.setPrice(BigDecimal.valueOf(1000));
+        menu.setName("menuName");
+        menu.setPrice(BigDecimal.valueOf(1000L));
         menu.setMenuGroupId(Long.MAX_VALUE);
+        menu.setMenuProducts(List.of(savedMenuProduct));
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))

@@ -16,6 +16,7 @@ class OrderServiceTest extends ServiceTestContext {
         // given
         Order order = new Order();
         order.setOrderLineItems(List.of());
+        order.setOrderTableId(savedOrderTable.getId());
 
         // when, then
         assertThatThrownBy(() -> orderService.create(order))
@@ -31,6 +32,7 @@ class OrderServiceTest extends ServiceTestContext {
 
         Order order = new Order();
         order.setOrderLineItems(List.of(orderLineItem));
+        order.setOrderTableId(savedOrderTable.getId());
 
         // when, then
         assertThatThrownBy(() -> orderService.create(order))
