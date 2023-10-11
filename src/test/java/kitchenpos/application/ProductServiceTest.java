@@ -32,7 +32,8 @@ class ProductServiceTest {
 
             // expect
             assertThatThrownBy(() -> sut.create(product))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("상품의 가격은 0원 이상이어야 합니다.");
         }
 
         @Test
