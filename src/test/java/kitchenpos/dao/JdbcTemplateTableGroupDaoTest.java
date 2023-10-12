@@ -37,23 +37,23 @@ class JdbcTemplateTableGroupDaoTest {
         final Long findId = savedTableGroup.getId();
 
         // when
-        Optional<TableGroup> findByIdMenu = jdbcTemplateTableGroupDao.findById(findId);
+        final Optional<TableGroup> tableGroupById = jdbcTemplateTableGroupDao.findById(findId);
 
         // then
-        assertThat(findByIdMenu).isPresent();
-        assertThat(findByIdMenu.get().getId()).isEqualTo(findId);
+        assertThat(tableGroupById).isPresent();
+        assertThat(tableGroupById.get().getId()).isEqualTo(findId);
     }
 
     @Test
     void find_by_id_return_empty_when_result_doesnt_exist() {
         // given
-        long doesntExistId = 10000L;
+        final long doesntExistId = 10000L;
 
         // when
-        Optional<TableGroup> findByIdMenu = jdbcTemplateTableGroupDao.findById(doesntExistId);
+        final Optional<TableGroup> tableGroupById = jdbcTemplateTableGroupDao.findById(doesntExistId);
 
         // then
-        assertThat(findByIdMenu).isEmpty();
+        assertThat(tableGroupById).isEmpty();
     }
 
     @Test
@@ -63,7 +63,7 @@ class JdbcTemplateTableGroupDaoTest {
         jdbcTemplateTableGroupDao.save(tableGroupFixture());
 
         // when
-        List<TableGroup> findAll = jdbcTemplateTableGroupDao.findAll();
+        final List<TableGroup> findAll = jdbcTemplateTableGroupDao.findAll();
 
         // then
         assertThat(findAll).hasSize(2);

@@ -23,7 +23,6 @@ class JdbcTemplateOrderTableDaoTest {
         this.jdbcTemplateTableGroupDao = jdbcTemplateTableGroupDao;
     }
 
-    private
     @Test
     void save_order_table() {
         // given
@@ -106,11 +105,13 @@ class JdbcTemplateOrderTableDaoTest {
     @Test
     void find_all_by_table_group_id_in() {
         // given
-        final OrderTable savedOrderTable1 = jdbcTemplateOrderTableDao.save(orderTableFixture(3));
-        final OrderTable savedOrderTable2 = jdbcTemplateOrderTableDao.save(orderTableFixture(4));
+        final OrderTable savedOrderTable = jdbcTemplateOrderTableDao.save(orderTableFixture(3));
+        jdbcTemplateOrderTableDao.save(orderTableFixture(4));
 
         // when
-        List<OrderTable> findAll = jdbcTemplateOrderTableDao.findAllByTableGroupId(savedOrderTable1.getTableGroupId());
+        final List<OrderTable> findAll = jdbcTemplateOrderTableDao.findAllByTableGroupId(
+                savedOrderTable.getTableGroupId()
+        );
 
         // then
         assertThat(findAll).hasSize(1);
@@ -120,11 +121,11 @@ class JdbcTemplateOrderTableDaoTest {
         final OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(numberOfGuests);
         orderTable.setEmpty(false);
-        orderTable.setTableGroupId(getTableGroupId());
+        orderTable.setTableGroupId(getTableGroupFixtureId());
         return orderTable;
     }
 
-    private Long getTableGroupId() {
+    private Long getTableGroupFixtureId() {
         final TableGroup tableGroup = new TableGroup();
         tableGroup.setCreatedDate(LocalDateTime.now());
         return jdbcTemplateTableGroupDao.save(tableGroup).getId();

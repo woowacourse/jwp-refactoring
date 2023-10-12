@@ -26,7 +26,7 @@ class JdbcTemplateMenuDaoTest {
     @Test
     void save_menu() {
         // given
-        final Long savedMenuGroupId = getMenuGroupFixtureId("Chicken-group");
+        final Long savedMenuGroupId = getMenuGroupFixtureIdFrom("Chicken-group");
         final Menu menu = menuFixtureOf("chicken", 22000L, savedMenuGroupId);
 
         // when
@@ -39,13 +39,13 @@ class JdbcTemplateMenuDaoTest {
     @Test
     void find_by_id() {
         // given
-        final Long savedMenuGroupId = getMenuGroupFixtureId("Chicken-group");
+        final Long savedMenuGroupId = getMenuGroupFixtureIdFrom("Chicken-group");
         final Menu menu = menuFixtureOf("chicken", 22000L, savedMenuGroupId);
         final Menu savedMenu = jdbcTemplateMenuDao.save(menu);
         final Long findId = savedMenu.getId();
 
         // when
-        Optional<Menu> findByIdMenu = jdbcTemplateMenuDao.findById(findId);
+        final Optional<Menu> findByIdMenu = jdbcTemplateMenuDao.findById(findId);
 
         // then
         assertThat(findByIdMenu).isPresent();
@@ -55,10 +55,10 @@ class JdbcTemplateMenuDaoTest {
     @Test
     void find_by_id_return_empty_when_result_doesnt_exist() {
         // given
-        long doesntExistId = 10000L;
+        final long doesntExistId = 10000L;
 
         // when
-        Optional<Menu> findByIdMenu = jdbcTemplateMenuDao.findById(doesntExistId);
+        final Optional<Menu> findByIdMenu = jdbcTemplateMenuDao.findById(doesntExistId);
 
         // then
         assertThat(findByIdMenu).isEmpty();
@@ -67,14 +67,14 @@ class JdbcTemplateMenuDaoTest {
     @Test
     void find_all() {
         // given
-        final Long savedMenuGroupId = getMenuGroupFixtureId("Chicken-group");
+        final Long savedMenuGroupId = getMenuGroupFixtureIdFrom("Chicken-group");
         final Menu chicken = menuFixtureOf("chicken", 22000L, savedMenuGroupId);
         final Menu seasoningChicken = menuFixtureOf("seasoningChicken", 24000L, savedMenuGroupId);
         jdbcTemplateMenuDao.save(chicken);
         jdbcTemplateMenuDao.save(seasoningChicken);
 
         // when
-        List<Menu> findAll = jdbcTemplateMenuDao.findAll();
+        final List<Menu> findAll = jdbcTemplateMenuDao.findAll();
 
         // then
         assertThat(findAll).hasSize(2);
@@ -83,16 +83,16 @@ class JdbcTemplateMenuDaoTest {
     @Test
     void count_by_id_in() {
         // given
-        final Long savedMenuGroupId = getMenuGroupFixtureId("Chicken-group");
+        final Long savedMenuGroupId = getMenuGroupFixtureIdFrom("Chicken-group");
         final Menu chicken = menuFixtureOf("chicken", 22000L, savedMenuGroupId);
         final Menu seasoningChicken = menuFixtureOf("seasoningChicken", 24000L, savedMenuGroupId);
-        List<Long> findIds = List.of(
+        final List<Long> findIds = List.of(
                 jdbcTemplateMenuDao.save(chicken).getId(),
                 jdbcTemplateMenuDao.save(seasoningChicken).getId()
         );
 
         // when
-        long countByIdIn = jdbcTemplateMenuDao.countByIdIn(findIds);
+        final long countByIdIn = jdbcTemplateMenuDao.countByIdIn(findIds);
 
         // then
         assertThat(countByIdIn).isEqualTo(2);
@@ -106,7 +106,7 @@ class JdbcTemplateMenuDaoTest {
         return menu;
     }
 
-    private Long getMenuGroupFixtureId(final String name) {
+    private Long getMenuGroupFixtureIdFrom(final String name) {
         final MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(name);
         return jdbcTemplateMenuGroupDao.save(menuGroup).getId();

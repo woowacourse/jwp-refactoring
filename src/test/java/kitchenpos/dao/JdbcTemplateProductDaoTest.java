@@ -20,7 +20,7 @@ class JdbcTemplateProductDaoTest {
     @Test
     void save_product() {
         // given
-        final Product product = productFixtureOf("chicken");
+        final Product product = productFixtureFrom("chicken");
 
         // when
         final Product savedProduct = jdbcTemplateProductDao.save(product);
@@ -33,35 +33,35 @@ class JdbcTemplateProductDaoTest {
     @Test
     void find_by_id() {
         // given
-        final Product product = productFixtureOf("chicken");
+        final Product product = productFixtureFrom("chicken");
         final Product savedProduct = jdbcTemplateProductDao.save(product);
-        final Long savedMenuGroupId = savedProduct.getId();
+        final Long savedProductId = savedProduct.getId();
 
         // when
-        Optional<Product> menuGroupDaoById = jdbcTemplateProductDao.findById(savedMenuGroupId);
+        final Optional<Product> productById = jdbcTemplateProductDao.findById(savedProductId);
 
         // then
-        assertThat(menuGroupDaoById).isPresent();
-        assertThat(menuGroupDaoById.get().getId()).isEqualTo(savedMenuGroupId);
+        assertThat(productById).isPresent();
+        assertThat(productById.get().getId()).isEqualTo(savedProductId);
     }
 
     @Test
     void find_by_id_return_empty_when_result_doesnt_exist() {
         // given
-        long doesntExistId = 10000L;
+        final long doesntExistId = 10000L;
 
         // when
-        Optional<Product> menuGroupDaoById = jdbcTemplateProductDao.findById(doesntExistId);
+        final Optional<Product> productById = jdbcTemplateProductDao.findById(doesntExistId);
 
         // then
-        assertThat(menuGroupDaoById).isEmpty();
+        assertThat(productById).isEmpty();
     }
 
     @Test
     void find_all() {
         // given
-        jdbcTemplateProductDao.save(productFixtureOf("chicken"));
-        jdbcTemplateProductDao.save(productFixtureOf("radish"));
+        jdbcTemplateProductDao.save(productFixtureFrom("chicken"));
+        jdbcTemplateProductDao.save(productFixtureFrom("radish"));
 
         // when
         final List<Product> findAll = jdbcTemplateProductDao.findAll();
@@ -71,7 +71,7 @@ class JdbcTemplateProductDaoTest {
     }
 
 
-    private Product productFixtureOf(final String name) {
+    private Product productFixtureFrom(final String name) {
         final Product product = new Product();
         product.setName(name);
         product.setPrice(BigDecimal.valueOf(1000));

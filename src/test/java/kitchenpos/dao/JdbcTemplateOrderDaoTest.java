@@ -104,7 +104,7 @@ class JdbcTemplateOrderDaoTest {
         final Long mealOrderTableId = mealOrder.getOrderTableId();
 
         // when
-        boolean existsByOrderTableIdAndOrderStatusIn = jdbcTemplateOrderDao.existsByOrderTableIdAndOrderStatusIn(
+        final boolean existsByOrderTableIdAndOrderStatusIn = jdbcTemplateOrderDao.existsByOrderTableIdAndOrderStatusIn(
                 mealOrderTableId,
                 List.of(OrderStatus.MEAL.name())
         );
@@ -124,7 +124,7 @@ class JdbcTemplateOrderDaoTest {
         final Long mealOrderTableId = mealOrder.getOrderTableId();
 
         // when
-        boolean existsByOrderTableIdAndOrderStatusIn = jdbcTemplateOrderDao.existsByOrderTableIdInAndOrderStatusIn(
+        final boolean existsByOrderTableIdAndOrderStatusIn = jdbcTemplateOrderDao.existsByOrderTableIdInAndOrderStatusIn(
                 List.of(mealOrderTableId, cookingOrderTableId),
                 List.of(OrderStatus.MEAL.name(), OrderStatus.COOKING.name())
         );
@@ -137,19 +137,19 @@ class JdbcTemplateOrderDaoTest {
         final Order order = new Order();
         order.setOrderStatus(orderStatus.name());
         order.setOrderedTime(LocalDateTime.now());
-        order.setOrderTableId(getOrderTableId(3));
+        order.setOrderTableId(getOrderTableFixtureId(3));
         return order;
     }
 
-    private Long getOrderTableId(final int numberOfGuests) {
+    private Long getOrderTableFixtureId(final int numberOfGuests) {
         final OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(numberOfGuests);
         orderTable.setEmpty(false);
-        orderTable.setTableGroupId(getTableGroupId());
+        orderTable.setTableGroupId(getTableGroupFixtureId());
         return jdbcTemplateOrderTableDao.save(orderTable).getId();
     }
 
-    private Long getTableGroupId() {
+    private Long getTableGroupFixtureId() {
         final TableGroup tableGroup = new TableGroup();
         tableGroup.setCreatedDate(LocalDateTime.now());
         return jdbcTemplateTableGroupDao.save(tableGroup).getId();

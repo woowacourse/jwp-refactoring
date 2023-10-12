@@ -44,7 +44,7 @@ class JdbcTemplateOrderLineItemDaoTest {
     @Test
     void save_order_line_item() {
         // given
-        final OrderLineItem savedOrderLineItem = orderLineItemFixtureOf(3L);
+        final OrderLineItem savedOrderLineItem = orderLineItemFixtureFrom(3L);
 
         // when
         final OrderLineItem savedOrderLineItemGroup = jdbcTemplateOrderLineItemDao.save(savedOrderLineItem);
@@ -56,12 +56,12 @@ class JdbcTemplateOrderLineItemDaoTest {
     @Test
     void find_by_seq() {
         // given
-        final OrderLineItem savedOrderLineItem = orderLineItemFixtureOf(3L);
+        final OrderLineItem savedOrderLineItem = orderLineItemFixtureFrom(3L);
         final OrderLineItem savedOrderLineItemGroup = jdbcTemplateOrderLineItemDao.save(savedOrderLineItem);
         final Long findSeq = savedOrderLineItemGroup.getSeq();
 
         // when
-        Optional<OrderLineItem> findBySeq = jdbcTemplateOrderLineItemDao.findById(findSeq);
+        final Optional<OrderLineItem> findBySeq = jdbcTemplateOrderLineItemDao.findById(findSeq);
 
         // then
         assertThat(findBySeq).isPresent();
@@ -71,10 +71,10 @@ class JdbcTemplateOrderLineItemDaoTest {
     @Test
     void find_by_id_return_empty_when_result_doesnt_exist() {
         // given
-        long doesntExistId = 10000L;
+        final long doesntExistId = 10000L;
 
         // when
-        Optional<OrderLineItem> findBySeq = jdbcTemplateOrderLineItemDao.findById(doesntExistId);
+        final Optional<OrderLineItem> findBySeq = jdbcTemplateOrderLineItemDao.findById(doesntExistId);
 
         // then
         assertThat(findBySeq).isEmpty();
@@ -83,8 +83,8 @@ class JdbcTemplateOrderLineItemDaoTest {
     @Test
     void find_all() {
         // given
-        jdbcTemplateOrderLineItemDao.save(orderLineItemFixtureOf(3L));
-        jdbcTemplateOrderLineItemDao.save(orderLineItemFixtureOf(5L));
+        jdbcTemplateOrderLineItemDao.save(orderLineItemFixtureFrom(3L));
+        jdbcTemplateOrderLineItemDao.save(orderLineItemFixtureFrom(5L));
 
         // when
         List<OrderLineItem> findAll = jdbcTemplateOrderLineItemDao.findAll();
@@ -96,55 +96,55 @@ class JdbcTemplateOrderLineItemDaoTest {
     @Test
     void find_all_by_order_id() {
         // given
-        OrderLineItem orderLineItem = jdbcTemplateOrderLineItemDao.save(orderLineItemFixtureOf(3L));
-        jdbcTemplateOrderLineItemDao.save(orderLineItemFixtureOf(5L));
+        final OrderLineItem orderLineItem = jdbcTemplateOrderLineItemDao.save(orderLineItemFixtureFrom(3L));
+        jdbcTemplateOrderLineItemDao.save(orderLineItemFixtureFrom(5L));
 
         // when
-        List<OrderLineItem> findAll = jdbcTemplateOrderLineItemDao.findAllByOrderId(orderLineItem.getOrderId());
+        final List<OrderLineItem> findAll = jdbcTemplateOrderLineItemDao.findAllByOrderId(orderLineItem.getOrderId());
 
         // then
         assertThat(findAll).hasSize(1);
     }
 
-    private OrderLineItem orderLineItemFixtureOf(final Long quantity) {
+    private OrderLineItem orderLineItemFixtureFrom(final Long quantity) {
         final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(getMenuFixtureId("fried-chicken", "Chicken-group"));
-        orderLineItem.setOrderId(getOrderId());
+        orderLineItem.setMenuId(getMenuFixtureIdOf("fried-chicken", "Chicken-group"));
+        orderLineItem.setOrderId(getOrderFixtureId());
         orderLineItem.setQuantity(quantity);
         return orderLineItem;
     }
 
-    private Long getOrderId() {
+    private Long getOrderFixtureId() {
         final Order order = new Order();
         order.setOrderStatus(OrderStatus.COOKING.name());
         order.setOrderedTime(LocalDateTime.now());
-        order.setOrderTableId(getOrderTableId(3));
+        order.setOrderTableId(getOrderTableFixtureIdFrom(3));
         return jdbcTemplateOrderDao.save(order).getId();
     }
 
-    private Long getOrderTableId(final int numberOfGuests) {
+    private Long getOrderTableFixtureIdFrom(final int numberOfGuests) {
         final OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(numberOfGuests);
         orderTable.setEmpty(false);
-        orderTable.setTableGroupId(getTableGroupId());
+        orderTable.setTableGroupId(getTableGroupFixtureId());
         return jdbcTemplateOrderTableDao.save(orderTable).getId();
     }
 
-    private Long getTableGroupId() {
+    private Long getTableGroupFixtureId() {
         final TableGroup tableGroup = new TableGroup();
         tableGroup.setCreatedDate(LocalDateTime.now());
         return jdbcTemplateTableGroupDao.save(tableGroup).getId();
     }
 
-    private Long getMenuFixtureId(final String name, final String menuGroupName) {
+    private Long getMenuFixtureIdOf(final String name, final String menuGroupName) {
         final Menu menu = new Menu();
         menu.setName(name);
         menu.setPrice(BigDecimal.valueOf(22000L));
-        menu.setMenuGroupId(getMenuGroupFixtureId(menuGroupName));
+        menu.setMenuGroupId(getMenuGroupFixtureIdFrom(menuGroupName));
         return jdbcTemplateMenuDao.save(menu).getId();
     }
 
-    private Long getMenuGroupFixtureId(final String name) {
+    private Long getMenuGroupFixtureIdFrom(final String name) {
         final MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(name);
         return jdbcTemplateMenuGroupDao.save(menuGroup).getId();

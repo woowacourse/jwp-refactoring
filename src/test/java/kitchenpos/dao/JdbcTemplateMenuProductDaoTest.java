@@ -34,7 +34,7 @@ class JdbcTemplateMenuProductDaoTest {
     @Test
     void save_menu_product() {
         // given
-        final MenuProduct menuProduct = menuProductFixtureOf(3L);
+        final MenuProduct menuProduct = menuProductFixtureFrom(3L);
 
         // when
         final MenuProduct savedMenuProduct = jdbcTemplateMenuProductDao.save(menuProduct);
@@ -47,12 +47,12 @@ class JdbcTemplateMenuProductDaoTest {
     @Test
     void find_by_seq() {
         // given
-        final MenuProduct menuProduct = menuProductFixtureOf(3L);
+        final MenuProduct menuProduct = menuProductFixtureFrom(3L);
         final MenuProduct savedMenuProduct = jdbcTemplateMenuProductDao.save(menuProduct);
         final Long savedMenuProductSeq = savedMenuProduct.getSeq();
 
         // when
-        Optional<MenuProduct> menuProductById = jdbcTemplateMenuProductDao.findById(savedMenuProductSeq);
+        final Optional<MenuProduct> menuProductById = jdbcTemplateMenuProductDao.findById(savedMenuProductSeq);
 
         // then
         assertThat(menuProductById).isPresent();
@@ -62,10 +62,10 @@ class JdbcTemplateMenuProductDaoTest {
     @Test
     void find_by_seq_return_empty_when_result_doesnt_exist() {
         // given
-        long doesntExistId = 10000L;
+        final long doesntExistId = 10000L;
 
         // when
-        Optional<MenuProduct> menuProductById = jdbcTemplateMenuProductDao.findById(doesntExistId);
+        final Optional<MenuProduct> menuProductById = jdbcTemplateMenuProductDao.findById(doesntExistId);
 
         // then
         assertThat(menuProductById).isEmpty();
@@ -74,8 +74,8 @@ class JdbcTemplateMenuProductDaoTest {
     @Test
     void find_all() {
         // given
-        jdbcTemplateMenuProductDao.save(menuProductFixtureOf(3L));
-        jdbcTemplateMenuProductDao.save(menuProductFixtureOf(2L));
+        jdbcTemplateMenuProductDao.save(menuProductFixtureFrom(3L));
+        jdbcTemplateMenuProductDao.save(menuProductFixtureFrom(2L));
 
         // when
         final List<MenuProduct> findAll = jdbcTemplateMenuProductDao.findAll();
@@ -87,8 +87,8 @@ class JdbcTemplateMenuProductDaoTest {
     @Test
     void find_all_by_menu_id() {
         // given
-        final MenuProduct savedMenuProduct1 = jdbcTemplateMenuProductDao.save(menuProductFixtureOf(3L));
-        final MenuProduct savedMenuProduct2 = jdbcTemplateMenuProductDao.save(menuProductFixtureOf(2L));
+        final MenuProduct savedMenuProduct1 = jdbcTemplateMenuProductDao.save(menuProductFixtureFrom(3L));
+        final MenuProduct savedMenuProduct2 = jdbcTemplateMenuProductDao.save(menuProductFixtureFrom(2L));
         final Long findMenuId = savedMenuProduct2.getMenuId();
 
         // when
@@ -100,29 +100,29 @@ class JdbcTemplateMenuProductDaoTest {
     }
 
 
-    private MenuProduct menuProductFixtureOf(final Long quantity) {
+    private MenuProduct menuProductFixtureFrom(final Long quantity) {
         final MenuProduct menuProduct = new MenuProduct();
         menuProduct.setQuantity(quantity);
-        menuProduct.setMenuId(getMenuFixtureId("fried-chicken", "Chicken-group"));
-        menuProduct.setProductId(getProductFixtureId("chicken"));
+        menuProduct.setMenuId(getMenuFixtureIdOf("fried-chicken", "Chicken-group"));
+        menuProduct.setProductId(getProductFixtureIdFrom("chicken"));
         return menuProduct;
     }
 
-    private Long getMenuFixtureId(final String name, final String menuGroupName) {
+    private Long getMenuFixtureIdOf(final String name, final String menuGroupName) {
         final Menu menu = new Menu();
         menu.setName(name);
         menu.setPrice(BigDecimal.valueOf(22000L));
-        menu.setMenuGroupId(getMenuGroupFixtureId(menuGroupName));
+        menu.setMenuGroupId(getMenuGroupFixtureIdFrom(menuGroupName));
         return jdbcTemplateMenuDao.save(menu).getId();
     }
 
-    private Long getMenuGroupFixtureId(final String name) {
+    private Long getMenuGroupFixtureIdFrom(final String name) {
         final MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(name);
         return jdbcTemplateMenuGroupDao.save(menuGroup).getId();
     }
 
-    private Long getProductFixtureId(final String name) {
+    private Long getProductFixtureIdFrom(final String name) {
         final Product product = new Product();
         product.setName(name);
         product.setPrice(BigDecimal.valueOf(10000L));
