@@ -42,8 +42,8 @@ class MenuServiceTest {
     private static final int PRODUCT1_QUANTITY = 2;
     private static final long PRODUCT2_ID = 2L;
     private static final int PRODUCT2_QUANTITY = 3;
-    public static final int PRODUCT1_PRICE = 1000;
-    public static final int PRODUCT2_PRICE = 10000;
+    private static final int PRODUCT1_PRICE = 1000;
+    private static final int PRODUCT2_PRICE = 10000;
 
     @InjectMocks
     private MenuService menuService;
