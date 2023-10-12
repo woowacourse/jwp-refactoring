@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.MenuGroupFixture.추천_메뉴;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
@@ -16,12 +17,8 @@ class MenuGroupServiceTest extends ServiceIntegrateTest {
   @Test
   @DisplayName("메뉴 그룹을 등록할 수 있다.")
   void create_success() {
-    //given
-    final MenuGroup menuGroup = new MenuGroup();
-    menuGroup.setName("추천 메뉴");
-
-    //when
-    final MenuGroup actual = menuGroupService.create(menuGroup);
+    //given, when
+    final MenuGroup actual = menuGroupService.create(추천_메뉴());
 
     //then
     assertThat(actual).isNotNull();

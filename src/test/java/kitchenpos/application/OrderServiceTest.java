@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.OrderFixture.주문;
+import static kitchenpos.fixture.OrderFixture.주문_잘못된_메뉴;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -34,19 +36,10 @@ class OrderServiceTest extends ServiceIntegrateTest {
   }
 
   @Test
-  @DisplayName("주문 등록할 수 있다.")
+  @DisplayName("주문을 등록할 수 있다.")
   void create_success() {
-    //given
-    final OrderLineItem orderLineItem = new OrderLineItem();
-    orderLineItem.setMenuId(1L);
-    orderLineItem.setQuantity(1);
-
-    final Order order = new Order();
-    order.setOrderTableId(orderTableId);
-    order.setOrderLineItems(List.of(orderLineItem));
-
-    //when
-    final Order actual = orderService.create(order);
+    //given, when
+    final Order actual = orderService.create(주문());
 
     //then
     Assertions.assertAll(
@@ -60,8 +53,7 @@ class OrderServiceTest extends ServiceIntegrateTest {
   @DisplayName("주문을 등록할 때 메뉴가 1개도 포함되어 있지 않다면 예외를 반환한다.")
   void create_fail_empty_orderLineItem() {
     //given
-    final Order order = new Order();
-    order.setOrderTableId(orderTableId);
+    final Order order = 주문();
     order.setOrderLineItems(List.of());
 
     //when
@@ -74,17 +66,8 @@ class OrderServiceTest extends ServiceIntegrateTest {
   @Test
   @DisplayName("주문을 등록할 때 존재하지 않는 메뉴가 포함되어 있으면 예외를 반환한다.")
   void create_fail_not_exist_menu() {
-    //given
-    final OrderLineItem orderLineItem = new OrderLineItem();
-    orderLineItem.setMenuId(999L);
-    orderLineItem.setQuantity(1);
-
-    final Order order = new Order();
-    order.setOrderTableId(orderTableId);
-    order.setOrderLineItems(List.of(orderLineItem));
-
-    //when
-    final ThrowingCallable actual = () -> orderService.create(order);
+    //given, when
+    final ThrowingCallable actual = () -> orderService.create(주문_잘못된_메뉴());
 
     //then
     assertThatThrownBy(actual).isInstanceOf(IllegalArgumentException.class);
@@ -94,13 +77,8 @@ class OrderServiceTest extends ServiceIntegrateTest {
   @DisplayName("주문을 등록할 때 존재하지 않는 테이블의 주문이면 예외를 반환한다.")
   void create_fail_not_exist_table() {
     //given
-    final OrderLineItem orderLineItem = new OrderLineItem();
-    orderLineItem.setMenuId(1L);
-    orderLineItem.setQuantity(1);
-
-    final Order order = new Order();
+    final Order order = 주문();
     order.setOrderTableId(999L);
-    order.setOrderLineItems(List.of(orderLineItem));
 
     //when
     final ThrowingCallable actual = () -> orderService.create(order);
@@ -113,13 +91,8 @@ class OrderServiceTest extends ServiceIntegrateTest {
   @DisplayName("주문을 등록할 때 주문한 테이블이 비어있으면 예외를 반환한다.")
   void create_fail_empty_table() {
     //given
-    final OrderLineItem orderLineItem = new OrderLineItem();
-    orderLineItem.setMenuId(1L);
-    orderLineItem.setQuantity(1);
-
-    final Order order = new Order();
+    final Order order = 주문();
     order.setOrderTableId(2L);
-    order.setOrderLineItems(List.of(orderLineItem));
 
     //when
     final ThrowingCallable actual = () -> orderService.create(order);
@@ -153,19 +126,12 @@ class OrderServiceTest extends ServiceIntegrateTest {
   void changeOrderStatus_success() {
     //given
     final String newStatus = OrderStatus.MEAL.name();
-    final OrderLineItem orderLineItem = new OrderLineItem();
-    orderLineItem.setMenuId(1L);
-    orderLineItem.setQuantity(1);
-
-    final Order order = new Order();
-    order.setOrderTableId(1L);
-    order.setOrderLineItems(List.of(orderLineItem));
-    final Order savedOrder = orderService.create(order);
-
+    final Order order = 주문();
+    final Long savedOrderId = orderService.create(order).getId();
     order.setOrderStatus(newStatus);
 
     // when
-    final Order actual = orderService.changeOrderStatus(savedOrder.getId(), order);
+    final Order actual = orderService.changeOrderStatus(savedOrderId, order);
 
     //then
     assertThat(actual.getOrderStatus()).isEqualTo(newStatus);
@@ -176,15 +142,7 @@ class OrderServiceTest extends ServiceIntegrateTest {
   void changeOrderStatus_fail_not_exist_order() {
     //given
     final String newStatus = OrderStatus.MEAL.name();
-    final OrderLineItem orderLineItem = new OrderLineItem();
-    orderLineItem.setMenuId(1L);
-    orderLineItem.setQuantity(1);
-
-    final Order order = new Order();
-    order.setOrderTableId(1L);
-    order.setOrderLineItems(List.of(orderLineItem));
-    final Order savedOrder = orderService.create(order);
-
+    final Order order = 주문();
     order.setOrderStatus(newStatus);
 
     // when
@@ -199,20 +157,14 @@ class OrderServiceTest extends ServiceIntegrateTest {
   void changeOrderStatus_fail_already_COMPLETEION() {
     //given
     final String newStatus = OrderStatus.COMPLETION.name();
-    final OrderLineItem orderLineItem = new OrderLineItem();
-    orderLineItem.setMenuId(1L);
-    orderLineItem.setQuantity(1);
-
-    final Order order = new Order();
-    order.setOrderTableId(1L);
-    order.setOrderLineItems(List.of(orderLineItem));
-    final Order savedOrder = orderService.create(order);
+    final Order order = 주문();
+    final Long savedOrderId = orderService.create(order).getId();
 
     order.setOrderStatus(newStatus);
-    orderService.changeOrderStatus(savedOrder.getId(), order);
+    orderService.changeOrderStatus(savedOrderId, order);
 
     // when
-    final ThrowingCallable actual = () -> orderService.changeOrderStatus(savedOrder.getId(), order);
+    final ThrowingCallable actual = () -> orderService.changeOrderStatus(savedOrderId, order);
 
     //then
     assertThatThrownBy(actual).isInstanceOf(IllegalArgumentException.class);

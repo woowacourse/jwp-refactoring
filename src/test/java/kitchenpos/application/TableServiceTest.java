@@ -1,15 +1,11 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.OrderFixture.주문;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
@@ -21,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 class TableServiceTest extends ServiceIntegrateTest {
 
   @Autowired
-  private OrderDao orderDao;
+  private OrderService orderService;
   @Autowired
   private OrderTableDao orderTableDao;
   @Autowired
@@ -29,8 +25,13 @@ class TableServiceTest extends ServiceIntegrateTest {
   @Autowired
   private TableService tableService;
 
+  private OrderTable table1;
+  private OrderTable table2;
+
   @BeforeEach
   void init() {
+    table1 = orderTableDao.findById(1L).get();
+    table2 = orderTableDao.findById(2L).get();
   }
 
   @Test
@@ -95,14 +96,10 @@ class TableServiceTest extends ServiceIntegrateTest {
   void changeEmpty_fail_in_tableGroup() {
     //given
     final TableGroup tableGroup = new TableGroup();
-    final OrderTable table1 = orderTableDao.findById(1L).get();
-    final OrderTable table2 = orderTableDao.findById(2L).get();
     tableGroup.setOrderTables(List.of(table1, table2));
-
     tableGroupService.create(tableGroup);
 
     final OrderTable changedTable = new OrderTable();
-    changedTable.setNumberOfGuests(0);
     changedTable.setEmpty(false);
 
     //when
@@ -116,20 +113,13 @@ class TableServiceTest extends ServiceIntegrateTest {
   @DisplayName("테이블이 비었는지 여부를 변경할 때 대상 테이블의 주문 중 계산이 완료되지 않은 주문이 있으면 예외를 반환한다.")
   void changeEmpty_fail_not_COMPLETION_order() {
     //given
-    final OrderLineItem orderLineItem = new OrderLineItem();
-    orderLineItem.setMenuId(1L);
-    orderLineItem.setQuantity(1);
-
-    final Order order = new Order();
-    order.setOrderTableId(1L);
-    order.setOrderStatus(OrderStatus.COOKING.name());
-    order.setOrderedTime(LocalDateTime.now());
-    order.setOrderLineItems(List.of(orderLineItem));
-    orderDao.save(order);
-
-    final OrderTable changedTable = new OrderTable();
-    changedTable.setNumberOfGuests(0);
+    final OrderTable changedTable = orderTableDao.findById(1L).get();
+    changedTable.setNumberOfGuests(4);
     changedTable.setEmpty(false);
+    orderTableDao.save(changedTable);
+
+    orderService.create(주문());
+    changedTable.setEmpty(true);
 
     //when
     final ThrowingCallable actual = () -> tableService.changeEmpty(1L, changedTable);
@@ -178,6 +168,9 @@ class TableServiceTest extends ServiceIntegrateTest {
   void changeNumberOfGuests_fail_not_exist_table() {
     //given
     final OrderTable changedTable = new OrderTable();
+    changedTable.setEmpty(false);
+    tableService.changeEmpty(1L, changedTable);
+
     changedTable.setNumberOfGuests(4);
 
     //when

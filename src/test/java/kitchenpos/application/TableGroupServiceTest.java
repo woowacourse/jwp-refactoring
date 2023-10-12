@@ -1,19 +1,16 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.OrderFixture.주문;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -24,18 +21,26 @@ class TableGroupServiceTest extends ServiceIntegrateTest {
   @Autowired
   private OrderTableDao orderTableDao;
   @Autowired
-  private OrderDao orderDao;
+  private OrderService orderService;
   @Autowired
   private TableGroupService tableGroupService;
+
+  private OrderTable table1;
+  private OrderTable table2;
+  private OrderTable table3;
+
+  @BeforeEach
+  void init() {
+    table1 = orderTableDao.findById(1L).get();
+    table2 = orderTableDao.findById(2L).get();
+    table3 = orderTableDao.findById(3L).get();
+  }
 
   @Test
   @DisplayName("단체 테이블을 등록할 수 있다.")
   void create_success() {
     //given
     final TableGroup tableGroup = new TableGroup();
-    final OrderTable table1 = orderTableDao.findById(1L).get();
-    final OrderTable table2 = orderTableDao.findById(2L).get();
-
     tableGroup.setOrderTables(List.of(table1, table2));
 
     //when
@@ -58,8 +63,6 @@ class TableGroupServiceTest extends ServiceIntegrateTest {
   void create_fail_not_multiple_orderTable() {
     //given
     final TableGroup tableGroup = new TableGroup();
-    final OrderTable table1 = orderTableDao.findById(1L).get();
-
     tableGroup.setOrderTables(List.of(table1));
 
     //when
@@ -74,8 +77,6 @@ class TableGroupServiceTest extends ServiceIntegrateTest {
   void create_fail_not_exist_orderTable() {
     //given
     final TableGroup tableGroup = new TableGroup();
-    final OrderTable table1 = orderTableDao.findById(1L).get();
-    final OrderTable table2 = orderTableDao.findById(2L).get();
     table2.setId(999L);
 
     tableGroup.setOrderTables(List.of(table1, table2));
@@ -92,10 +93,8 @@ class TableGroupServiceTest extends ServiceIntegrateTest {
   void create_fail_not_empty_table() {
     //given
     final TableGroup tableGroup = new TableGroup();
-    final OrderTable table1 = orderTableDao.findById(1L).get();
     table1.setEmpty(false);
     final OrderTable notEmptyTable1 = orderTableDao.save(table1);
-    final OrderTable table2 = orderTableDao.findById(2L).get();
 
     tableGroup.setOrderTables(List.of(notEmptyTable1, table2));
 
@@ -112,9 +111,6 @@ class TableGroupServiceTest extends ServiceIntegrateTest {
     //given
     final TableGroup tableGroup1 = new TableGroup();
     final TableGroup tableGroup2 = new TableGroup();
-    final OrderTable table1 = orderTableDao.findById(1L).get();
-    final OrderTable table2 = orderTableDao.findById(2L).get();
-    final OrderTable table3 = orderTableDao.findById(3L).get();
     tableGroup1.setOrderTables(List.of(table1, table2));
     tableGroup2.setOrderTables(List.of(table2, table3));
     tableGroupService.create(tableGroup1);
@@ -130,14 +126,11 @@ class TableGroupServiceTest extends ServiceIntegrateTest {
   void ungroup_success() {
     //given
     final TableGroup tableGroup = new TableGroup();
-    final OrderTable table1 = orderTableDao.findById(1L).get();
-    final OrderTable table2 = orderTableDao.findById(2L).get();
-
     tableGroup.setOrderTables(List.of(table1, table2));
-    tableGroupService.create(tableGroup);
+    final Long savedTableGroupId = tableGroupService.create(tableGroup).getId();
 
     //when
-    final Executable actual = () -> tableGroupService.ungroup(tableGroup.getId());
+    final Executable actual = () -> tableGroupService.ungroup(savedTableGroupId);
 
     //then
     Assertions.assertDoesNotThrow(actual);
@@ -148,29 +141,23 @@ class TableGroupServiceTest extends ServiceIntegrateTest {
   }
 
   @Test
-  @DisplayName("단체 테이블을 삭제할 때 테이블들의 주문들 중 계산이 완료된 주문이 없으면 예외를 반환한다.")
-  void ungroup_fail_not_COMPLETIONI_order() {
+  @DisplayName("단체 테이블을 삭제할 때 테이블들의 주문들 중 계산이 완료되지 않은 주문이 있으면 예외를 반환한다.")
+  void ungroup_fail_not_COMPLETION_order() {
     //given
     final TableGroup tableGroup = new TableGroup();
-    final OrderTable table1 = orderTableDao.findById(1L).get();
-    final OrderTable table2 = orderTableDao.findById(2L).get();
-
-    final OrderLineItem orderLineItem = new OrderLineItem();
-    orderLineItem.setMenuId(1L);
-    orderLineItem.setQuantity(1);
-
-    final Order order = new Order();
-    order.setOrderTableId(1L);
-    order.setOrderStatus(OrderStatus.COOKING.name());
-    order.setOrderedTime(LocalDateTime.now());
-    order.setOrderLineItems(List.of(orderLineItem));
-    orderDao.save(order);
-
     tableGroup.setOrderTables(List.of(table1, table2));
+
     final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+    final Long savedTableGroupId = savedTableGroup.getId();
+
+    final OrderTable savedTable = savedTableGroup.getOrderTables().get(0);
+    savedTable.setEmpty(false);
+    orderTableDao.save(savedTable);
+
+    orderService.create(주문());
 
     //when
-    final ThrowingCallable actual = () -> tableGroupService.ungroup(savedTableGroup.getId());
+    final ThrowingCallable actual = () -> tableGroupService.ungroup(savedTableGroupId);
 
     //then
     assertThatThrownBy(actual).isInstanceOf(IllegalArgumentException.class);
