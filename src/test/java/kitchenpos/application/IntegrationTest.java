@@ -47,14 +47,24 @@ public class IntegrationTest {
     @Autowired
     protected OrderDao orderDao;
 
-    protected Order 맛잇는_메뉴_주문() {
+    protected Order 맛있는_메뉴_주문() {
         OrderTable 주문_테이블 = 주문_테이블(false);
-        return 주문(주문_테이블, 맛있는_메뉴());
+        return 주문(주문_테이블, OrderStatus.COOKING, 맛있는_메뉴());
     }
 
-    protected Order 주문(OrderTable orderTable, Menu... 메뉴들) {
+    protected Order 식사중인_주문() {
+        OrderTable 주문_테이블 = 주문_테이블(false);
+        return 주문(주문_테이블, OrderStatus.MEAL, 맛있는_메뉴());
+    }
+
+    protected Order 완료된_주문() {
+        OrderTable 주문_테이블 = 주문_테이블(false);
+        return 주문(주문_테이블, OrderStatus.COMPLETION, 맛있는_메뉴());
+    }
+
+    protected Order 주문(OrderTable orderTable, OrderStatus orderStatus, Menu... 메뉴들) {
         Order order = new Order();
-        order.setOrderStatus(OrderStatus.COOKING.name());
+        order.setOrderStatus(orderStatus.name());
         order.setOrderedTime(LocalDateTime.now());
         order.setOrderTableId(orderTable.getId());
         List<OrderLineItem> orderLineItems = Arrays.stream(메뉴들)

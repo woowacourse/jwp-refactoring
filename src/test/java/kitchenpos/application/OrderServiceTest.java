@@ -8,6 +8,7 @@ import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -113,7 +114,7 @@ class OrderServiceTest extends IntegrationTest {
             void 주문들을_조회한다() {
                 // given
                 Order order1 = orderService.create(order);
-                Order order2 = 맛잇는_메뉴_주문();
+                Order order2 = 맛있는_메뉴_주문();
 
                 // when
                 List<Order> result = orderService.list();
@@ -124,6 +125,37 @@ class OrderServiceTest extends IntegrationTest {
                         () -> assertThat(result.get(0).getId()).isEqualTo(order1.getId()),
                         () -> assertThat(result.get(1).getId()).isEqualTo(order2.getId())
                 );
+            }
+
+            @Test
+            void 주문이_존재하지_않으면_예외가_발생한다() {
+                // when & then
+                assertThatThrownBy(() -> orderService.changeOrderStatus(1L, order))
+                        .isInstanceOf(IllegalArgumentException.class);
+            }
+
+            @Test
+            void 완료된_주문의_상태를_변경하면_예외가_발생한다() {
+                // given
+                Order order = 완료된_주문();
+                Order 맛있는_메뉴_주문 = 맛있는_메뉴_주문();
+
+                // when & then
+                assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), 맛있는_메뉴_주문))
+                        .isInstanceOf(IllegalArgumentException.class);
+            }
+
+            @Test
+            void 주문의_상태를_변경한다() {
+                // given
+                Order order = 맛있는_메뉴_주문();
+                Order 식사중인_주문 = 식사중인_주문();
+
+                // when
+                Order result = orderService.changeOrderStatus(order.getId(), 식사중인_주문);
+
+                // then
+                assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
             }
         }
     }
