@@ -58,9 +58,9 @@
   - [x] 주문의 setEmpty를 false로 설정한다.
 
 ### Table
-- [ ] 주문(Order)과 주문 테이블(OrderTable)을 저장한다.
-  - [ ] 주문 테이블의 id를 null로 설정한다.
-  - [ ] 주문 테이블의 tableGroupId를 null로 설정한다.
+- [x] 주문 테이블(OrderTable)을 저장한다.
+  - [x] 주문 테이블의 id를 null로 설정한다.
+  - [x] 주문 테이블의 tableGroupId를 null로 설정한다.
 - [ ] 주문 목록을 반환한다.
 - [ ] 주문 테이블을 empty로 변경한다.
   - [ ] 주문 테이블이 존재하지 않는다면 예외가 발생한다.
