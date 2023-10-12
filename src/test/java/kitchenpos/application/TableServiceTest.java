@@ -113,6 +113,27 @@ class TableServiceTest {
     }
 
     @Test
+    void 빈_테이블의_게스트_수를_변경하면_예외를_던진다() {
+        // given
+        OrderTable orderTable = new OrderTable();
+        orderTable.setId(1L);
+        orderTable.setNumberOfGuests(1);
+        orderTable.setEmpty(true);
+
+        OrderTable changedOrderTable = new OrderTable();
+        changedOrderTable.setNumberOfGuests(5);
+
+        given(orderTableDao.findById(orderTable.getId()))
+                .willReturn(Optional.of(orderTable));
+        given(orderTableDao.save(orderTable))
+                .willReturn(orderTable);
+
+        // when & then
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), changedOrderTable))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
     void 주문_테이블의_게스트_수를_0명보다_적게_변경하면_예외를_던진다() {
         // given
         OrderTable orderTable = new OrderTable();
