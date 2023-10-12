@@ -40,7 +40,7 @@ public class OrderTableTestSupport {
         public OrderTable build() {
             final var result = new OrderTable();
             result.setId(id);
-            result.setTableGroupId(id);
+            result.setTableGroupId(tableGroupId);
             result.setNumberOfGuests(numberOfGuests);
             result.setEmpty(empty);
             return result;

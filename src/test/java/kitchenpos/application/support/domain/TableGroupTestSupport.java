@@ -23,17 +23,17 @@ public class TableGroupTestSupport {
                 OrderTableTestSupport.builder().tableGroupId(id).build()
         );
 
-        public Builder Id(final Long id) {
+        public Builder id(final Long id) {
             this.id = id;
             return this;
         }
 
-        public Builder CreatedDate(final LocalDateTime createdDate) {
+        public Builder createdDate(final LocalDateTime createdDate) {
             this.createdDate = createdDate;
             return this;
         }
 
-        public Builder OrderTables(final List<OrderTable> orderTables) {
+        public Builder orderTables(final List<OrderTable> orderTables) {
             this.orderTables = orderTables;
             return this;
         }
