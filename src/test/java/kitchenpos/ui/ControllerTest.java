@@ -12,6 +12,8 @@ import kitchenpos.application.TableService;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -67,5 +69,17 @@ public class ControllerTest {
         menu.setMenuProducts(List.of(menuProduct));
 
         return menu;
+    }
+
+    protected Order 주문() {
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setMenuId(1L);
+        orderLineItem.setQuantity(1);
+
+        Order order = new Order();
+        order.setOrderTableId(1L);
+        order.setOrderLineItems(List.of(orderLineItem));
+
+        return order;
     }
 }
