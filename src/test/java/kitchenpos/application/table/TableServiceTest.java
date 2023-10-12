@@ -2,14 +2,23 @@ package kitchenpos.application.table;
 
 import kitchenpos.application.TableService;
 import kitchenpos.config.ApplicationTestConfig;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -75,24 +84,37 @@ class TableServiceTest extends ApplicationTestConfig {
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
-        // TODO: 2023/10/12 주문 서비스 등록 테스트 이후에 진행한다
-        @Disabled
         @DisplayName("[EXCEPTION] 음식이 준비 중이거나 식사 중일 경우 예외가 발생한다.")
         @Test
         void throwException_when_changeEmpty_orderStatus_isCookieOrMeal() {
             // given
-            final OrderTable orderTable = new OrderTable(null, 5, false);
-            final OrderTable savedOrderTable = tableService.create(orderTable);
+            final MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup("테스트용 메뉴 그룹명"));
+            final Menu savedMenu = menuDao.save(new Menu(
+                    "테스트용 메뉴명",
+                    BigDecimal.ZERO,
+                    savedMenuGroup.getId(),
+                    Collections.emptyList()
+            ));
+            final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, savedMenu.getId(), 10));
+            final OrderTable savedOrderTable = orderTableDao.save(new OrderTable(null, 5, false));
+            orderDao.save(new Order(
+                    savedOrderTable.getId(),
+                    OrderStatus.COOKING.name(),
+                    LocalDateTime.now(),
+                    orderLineItems
+            ));
 
             // expect
             assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), savedOrderTable))
                     .isInstanceOf(IllegalArgumentException.class);
+
         }
     }
 
     @DisplayName("손님 수 수정")
     @Nested
     class ChangeNumberOfGuestsNestedTest {
+
 
         @DisplayName("[EXCEPTION] 손님 수를 0 미만으로 수정할 경우 예외가 발생한다.")
         @ParameterizedTest
