@@ -20,7 +20,7 @@ class TableQueryServiceTest extends ApplicationTestConfig {
         tableService = new TableService(orderDao, orderTableDao);
     }
 
-    @DisplayName("전체 테이블 목록을 조회한다.")
+    @DisplayName("[SUCCESS] 전체 테이블 목록을 조회한다.")
     @Test
     void success_findAll() {
         // given

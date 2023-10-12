@@ -30,7 +30,7 @@ class MenuQueryServiceTest extends ApplicationTestConfig {
         );
     }
 
-    @DisplayName("전체 메뉴 목록을 조회한다.")
+    @DisplayName("[SUCCESS] 전체 메뉴 목록을 조회한다.")
     @Test
     void success_findAll() {
         // given

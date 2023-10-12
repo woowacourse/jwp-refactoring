@@ -18,9 +18,9 @@ class MenuGroupServiceTest extends ApplicationTestConfig {
         menuGroupService = new MenuGroupService(menuGroupDao);
     }
 
-    @DisplayName("메뉴 그룹을 생성한다.")
+    @DisplayName("[SUCCESS] 메뉴 그룹을 생성한다.")
     @Test
-    void create() {
+    void success_create() {
         // given
         final MenuGroup expected = new MenuGroup("테스트 메뉴 그룹");
 

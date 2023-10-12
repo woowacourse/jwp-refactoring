@@ -24,9 +24,9 @@ class ProductServiceTest extends ApplicationTestConfig {
         productService = new ProductService(productDao);
     }
 
-    @DisplayName("상품을 생성한다.")
+    @DisplayName("[SUCCESS] 상품을 생성한다.")
     @Test
-    void create() {
+    void success_create() {
         // given
         final Product expected = new Product("테스트용 상품 이름", new BigDecimal("10000"));
 
@@ -41,10 +41,10 @@ class ProductServiceTest extends ApplicationTestConfig {
         });
     }
 
-    @DisplayName("상품의 가격이 음수일 경우 예외가 발생한다.")
+    @DisplayName("[EXCEPTION] 상품의 가격이 음수일 경우 예외가 발생한다.")
     @ParameterizedTest
     @ValueSource(strings = {"-1", "-10", "-100000"})
-    void throwExceptionWhenPriceIsNegative(final String negativeValue) {
+    void throwException_when_create_price_isNegative(final String negativeValue) {
         // given
         final BigDecimal negativeBigDecimal = new BigDecimal(negativeValue);
         final Product expected = new Product("테스트용 상품 이름", negativeBigDecimal);
@@ -54,9 +54,9 @@ class ProductServiceTest extends ApplicationTestConfig {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("상품의 가격이 null 일 경우 예외가 발생한다.")
+    @DisplayName("[EXCEPTION] 상품의 가격이 null 일 경우 예외가 발생한다.")
     @Test
-    void throwExceptionWhenPriceIsNull() {
+    void throwException_when_create_price_isNull() {
         // given
         final BigDecimal nullBigDecimal = null;
         final Product expected = new Product("테스트용 상품 이름", nullBigDecimal);

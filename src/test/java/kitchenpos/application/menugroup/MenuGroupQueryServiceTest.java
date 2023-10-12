@@ -21,9 +21,9 @@ class MenuGroupQueryServiceTest extends ApplicationTestConfig {
         menuGroupService = new MenuGroupService(menuGroupDao);
     }
 
-    @DisplayName("전체 메뉴 그룹 목록을 조회한다.")
+    @DisplayName("[SUCCESS] 전체 메뉴 그룹 목록을 조회한다.")
     @Test
-    void list() {
+    void success_findAll() {
         // given
         final List<MenuGroup> expected = new ArrayList<>();
         for (int productSaveCount = 1; productSaveCount <= 10; productSaveCount++) {

@@ -28,7 +28,7 @@ class OrderQueryServiceTest extends ApplicationTestConfig {
         orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
     }
 
-    @DisplayName("전체 주문 목록을 조회한다.")
+    @DisplayName("[SUCCESS] 전체 주문 목록을 조회한다.")
     @Test
     void success_findAll() {
         // given

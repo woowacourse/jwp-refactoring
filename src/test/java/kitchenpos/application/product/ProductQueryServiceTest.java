@@ -24,7 +24,7 @@ class ProductQueryServiceTest extends ApplicationTestConfig {
 
     @DisplayName("[SUCCESS]모든 상품 목록을 조회한다.")
     @Test
-    void list() {
+    void success_findAll() {
         // given
         final List<Product> expected = new ArrayList<>();
         for (int productSaveCount = 1; productSaveCount <= 10; productSaveCount++) {
