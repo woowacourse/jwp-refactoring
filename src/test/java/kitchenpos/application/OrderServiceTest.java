@@ -11,6 +11,7 @@ import static kitchenpos.fixture.OrderLineItemFixture.주문_항목;
 import static kitchenpos.fixture.OrderTableFixture.테이블;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
 import kitchenpos.dao.MenuDao;
@@ -122,7 +123,10 @@ public class OrderServiceTest {
 
             // then
             Order findOrder = orderDao.findById(savedOrder.getId()).get();
-            assertThat(findOrder.getOrderStatus()).isEqualTo(COOKING.name());
+            assertSoftly(softly -> {
+                softly.assertThat(savedOrder.getOrderStatus()).isEqualTo(COOKING.name());
+                softly.assertThat(findOrder.getOrderStatus()).isEqualTo(COOKING.name());
+            });
         }
     }
 
@@ -178,11 +182,14 @@ public class OrderServiceTest {
             order.setOrderStatus(MEAL.name());
 
             // when
-            sut.changeOrderStatus(order.getId(), order);
+            Order changedOrder = sut.changeOrderStatus(order.getId(), order);
 
             // then
             Order savedOrder = orderDao.findById(order.getId()).get();
-            assertThat(savedOrder.getOrderStatus()).isEqualTo(MEAL.name());
+            assertSoftly(softly -> {
+                softly.assertThat(changedOrder.getOrderStatus()).isEqualTo(MEAL.name());
+                softly.assertThat(savedOrder.getOrderStatus()).isEqualTo(MEAL.name());
+            });
         }
     }
 }
