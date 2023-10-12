@@ -36,17 +36,17 @@ public class ApiTestConfig {
     protected ProductService productService;
 
     @MockBean
-    private MenuService menuService;
+    protected MenuService menuService;
 
     @MockBean
-    private MenuGroupService menuGroupService;
+    protected MenuGroupService menuGroupService;
 
     @MockBean
-    private OrderService orderService;
+    protected OrderService orderService;
 
     @MockBean
-    private TableService tableService;
+    protected TableService tableService;
 
     @MockBean
-    private TableGroupService tableGroupService;
+    protected TableGroupService tableGroupService;
 }
