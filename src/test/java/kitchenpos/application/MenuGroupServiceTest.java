@@ -4,15 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@IntegrationTest
-class MenuGroupServiceTest {
+class MenuGroupServiceTest extends IntegrationTest {
 
-    private final MenuGroupService menuGroupService;
+    @Autowired
+    private MenuGroupService menuGroupService;
 
-    public MenuGroupServiceTest(final MenuGroupService menuGroupService) {
-        this.menuGroupService = menuGroupService;
-    }
 
     @Test
     void create() {
