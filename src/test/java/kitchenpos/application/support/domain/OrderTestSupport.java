@@ -54,7 +54,7 @@ public class OrderTestSupport {
         public Order build() {
             final var result = new Order();
             result.setId(id);
-            result.setOrderTableId(id);
+            result.setOrderTableId(orderTableId);
             result.setOrderStatus(orderStatus);
             result.setOrderedTime(orderedTime);
             result.setOrderLineItems(orderLineItems);
