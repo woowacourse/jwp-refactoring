@@ -89,7 +89,7 @@ class ProductServiceTest {
         }
     }
 
-    private static Product createProduct(final String name, final Long price) {
+    private Product createProduct(final String name, final Long price) {
         Product product = new Product();
         product.setName(name);
         if (price != null) {

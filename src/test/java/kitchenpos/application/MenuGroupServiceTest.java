@@ -60,7 +60,7 @@ class MenuGroupServiceTest {
         }
     }
 
-    private static MenuGroup createMenuGroup(final String name) {
+    private MenuGroup createMenuGroup(final String name) {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(name);
         return menuGroup;
