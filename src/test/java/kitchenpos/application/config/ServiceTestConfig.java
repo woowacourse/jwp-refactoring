@@ -103,6 +103,13 @@ public class ServiceTestConfig {
         return orderTableDao.save(orderTable);
     }
 
+    protected OrderTable saveOrderTable() {
+        final OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(2);
+        orderTable.setEmpty(true);
+        return orderTableDao.save(orderTable);
+    }
+
     protected TableGroup saveTableGroup() {
         final TableGroup tableGroup = new TableGroup();
         tableGroup.setCreatedDate(LocalDateTime.now().minusMinutes(30));

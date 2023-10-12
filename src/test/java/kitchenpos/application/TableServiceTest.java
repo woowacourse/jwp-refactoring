@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 class TableServiceTest extends ServiceTestConfig {
@@ -60,6 +61,67 @@ class TableServiceTest extends ServiceTestConfig {
                 softly.assertThat(actual.size()).isEqualTo(1);
 //                softly.assertThat(actual).containsExactly(savedProduct);
             });
+        }
+    }
+
+    @DisplayName("주문 테이블 주문 가능 여부 변경")
+    @Nested
+    class ChangeEmpty {
+        @DisplayName("성공한다.")
+        @Test
+        void success() {
+            // given
+            final OrderTable savedOrderTable = saveOrderTable();
+            final OrderTable changing = new OrderTable();
+            changing.setEmpty(false);
+
+            // when
+            final OrderTable actual = tableService.changeEmpty(savedOrderTable.getId(), changing);
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(actual.getId()).isEqualTo(savedOrderTable.getId());
+                softly.assertThat(actual.isEmpty()).isEqualTo(changing.isEmpty());
+            });
+        }
+
+        @DisplayName("주문 테이블이 존재하지 않으면 실패한다.")
+        @Test
+        void fail_if_invalid_orderTable_id() {
+            // given
+            final OrderTable changing = new OrderTable();
+            changing.setEmpty(false);
+
+            // then
+            assertThatThrownBy(() -> tableService.changeEmpty(-111L, changing))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @DisplayName("주문 테이블에 TableGroup 이 존재하면 실패한다.")
+        @Test
+        void fail_if_tableGroup_is_exist() {
+            // given
+            final OrderTable savedOrderTable = saveOrderTable(saveTableGroup());
+            final OrderTable changing = new OrderTable();
+            changing.setEmpty(false);
+
+            // then
+            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), changing))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @DisplayName("주문이 들어간 상태이며 주문 상태가 COOKING 인 경우라면 실패한다.")
+        @Test
+        void fail_if_orderStatus_is_not_COMPLETION() {
+            // given
+            final OrderTable savedOrderTable = saveOrderTable();
+            saveOrder(savedOrderTable);
+            final OrderTable changing = new OrderTable();
+            changing.setEmpty(false);
+
+            // then
+            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), changing))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 }
