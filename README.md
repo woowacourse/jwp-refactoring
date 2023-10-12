@@ -43,15 +43,15 @@
   - [x] 저장된 주문이 이미 완료되었다면 예외가 발생한다.
 
 ### TableGroups
-- [ ] 통합 계산을 위해 TableGroups(단체 설정)을 생성한다.
-  - [ ] 주문이 없으면 예외가 발생한다.
-  - [ ] 주문이 한 개면 예외가 발생한다.
-  - [ ] 저장된 주문 테이블 개수와 TableGroups의 주문 개수가 다르면 예외가 발생한다.
-  - [ ] 저장된 주문 테이블이 없으면 예외가 발생한다.
-  - [ ] 저장된 주문 테이블의 TableGroupId가 null이 아니라면 예외가 발생한다.
-  - [ ] TableGroups를 저장하고
-    - [ ] tableGroupId를 설정한다.
-    - [ ] empty를 false로 설정한다.
+- [x] 통합 계산을 위해 TableGroups(단체 설정)을 생성한다.
+  - [x] 주문이 없으면 예외가 발생한다.
+  - [x] 주문이 한 개면 예외가 발생한다.
+  - [x] 저장된 주문 테이블 개수와 TableGroups의 주문 개수가 다르면 예외가 발생한다.
+  - [x] 저장된 주문 테이블이 비어있지(empty) 않으면 예외가 발생한다.
+  - [x] 저장된 주문 테이블의 TableGroupId가 null이 아니라면 예외가 발생한다.
+  - [x] TableGroups를 저장하고
+    - [x] tableGroupId를 설정한다.
+    - [x] empty를 false로 설정한다.
 - [ ] 통합 계산을 취소한다.
   - [ ] 만약 통합 계산 주문들 중 하나라도 COOKING 또는 MEAL이면 예외가 발생한다.
   - [ ] 주문의 tableGrouId를 null로 설정한다.
