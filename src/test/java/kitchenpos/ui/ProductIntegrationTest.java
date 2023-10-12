@@ -14,16 +14,12 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 
 @SuppressWarnings("NonAsciiCharacters")
-@EnableAutoConfiguration
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ProductRestControllerTest {
+class ProductIntegrationTest extends IntegrationTest {
 
     @LocalServerPort
     private int port;
@@ -33,26 +29,6 @@ class ProductRestControllerTest {
 
     @Nested
     class 상품_등록시 {
-
-        @Test
-        void 정상적으로_등록한다() {
-            //given
-            final var product = new Product();
-            product.setName("상품명");
-            product.setPrice(new BigDecimal("1000"));
-
-            //when
-            final var response = restTemplate.postForEntity("http://localhost:" + port + "/api/products", product, Product.class);
-
-            //then
-            final var body = response.getBody();
-            assertAll(
-                    () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED),
-                    () -> assertThat(body.getId()).isNotNull(),
-                    () -> assertThat(body.getName()).isEqualTo(product.getName()),
-                    () -> assertEquals(body.getPrice().setScale(2, RoundingMode.HALF_UP), product.getPrice().setScale(2, RoundingMode.HALF_UP))
-            );
-        }
 
         @ParameterizedTest
         @NullAndEmptySource
@@ -97,6 +73,26 @@ class ProductRestControllerTest {
 
             //then
             assertThat(response.getStatusCode()).isBetween(HttpStatus.BAD_REQUEST, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        @Test
+        void 정상적으로_등록한다() {
+            //given
+            final var product = new Product();
+            product.setName("상품명");
+            product.setPrice(new BigDecimal("1000"));
+
+            //when
+            final var response = restTemplate.postForEntity("http://localhost:" + port + "/api/products", product, Product.class);
+
+            //then
+            final var body = response.getBody();
+            assertAll(
+                    () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED),
+                    () -> assertThat(body.getId()).isNotNull(),
+                    () -> assertThat(body.getName()).isEqualTo(product.getName()),
+                    () -> assertEquals(body.getPrice().setScale(2, RoundingMode.HALF_UP), product.getPrice().setScale(2, RoundingMode.HALF_UP))
+            );
         }
     }
 
