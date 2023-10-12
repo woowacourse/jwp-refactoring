@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 public class Order {
 
@@ -17,6 +18,10 @@ public class Order {
     public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
         this.orderTableId = orderTableId;
         this.orderLineItems = orderLineItems;
+    }
+
+    public Order(final String orderStatus) {
+        this.orderStatus = orderStatus;
     }
 
     public Long getId() {
@@ -57,5 +62,24 @@ public class Order {
 
     public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
         this.orderLineItems = orderLineItems;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Order order = (Order) o;
+        return Objects.equals(orderTableId, order.orderTableId) && Objects.equals(orderStatus,
+                order.orderStatus) && Objects.equals(orderedTime, order.orderedTime) && Objects.equals(
+                orderLineItems, order.orderLineItems);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 }
