@@ -12,13 +12,19 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestExecutionListeners;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 @JdbcTest
@@ -78,5 +84,36 @@ public class ServiceTestConfig {
         menuProduct.setProductId(product.getId());
         menuProduct.setMenuId(menu.getId());
         return menuProductDao.save(menuProduct);
+    }
+
+    protected Order saveOrder(final OrderTable orderTable) {
+        final Order order = new Order();
+        order.setOrderStatus(OrderStatus.COOKING.name());
+        order.setOrderedTime(LocalDateTime.now().minusMinutes(10));
+        order.setOrderTableId(orderTable.getId());
+        order.setOrderLineItems(new ArrayList<>());
+        return orderDao.save(order);
+    }
+
+    protected OrderTable saveOrderTable(final TableGroup tableGroup) {
+        final OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(2);
+        orderTable.setEmpty(false);
+        orderTable.setTableGroupId(tableGroup.getId());
+        return orderTableDao.save(orderTable);
+    }
+
+    protected TableGroup saveTableGroup() {
+        final TableGroup tableGroup = new TableGroup();
+        tableGroup.setCreatedDate(LocalDateTime.now().minusMinutes(30));
+        return tableGroupDao.save(tableGroup);
+    }
+
+    protected OrderLineItem saveOrderLineItem(final Order order, final Menu menu) {
+        final OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setQuantity(1L);
+        orderLineItem.setOrderId(order.getId());
+        orderLineItem.setMenuId(menu.getId());
+        return orderLineItemDao.save(orderLineItem);
     }
 }
