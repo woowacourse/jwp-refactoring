@@ -1,7 +1,9 @@
 package kitchenpos.application;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.domain.OrderTable;
@@ -14,6 +16,26 @@ class TableGroupServiceTest extends IntegrationTest {
 
     @Autowired
     private TableGroupService tableGroupService;
+
+    @Test
+    void create_table_group_success() {
+        // given
+        final TableGroup tableGroup = new TableGroup();
+        tableGroup.setOrderTables(List.of(
+                generateOrderTableWithOutTableGroup(1, true),
+                generateOrderTableWithOutTableGroup(4, true)
+        ));
+        tableGroup.setCreatedDate(LocalDateTime.now());
+
+        // when
+        final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+
+        // then
+        assertThat(savedTableGroup.getId()).isNotNull();
+        assertThat(savedTableGroup.getOrderTables())
+                .extracting(OrderTable::isEmpty)
+                .containsOnly(false);
+    }
 
     @Nested
     class create_table_group_failure {
