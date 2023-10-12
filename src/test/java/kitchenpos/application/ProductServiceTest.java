@@ -1,4 +1,4 @@
-package kitchenpos.application.product;
+package kitchenpos.application;
 
 import kitchenpos.application.ProductService;
 import kitchenpos.application.config.ServiceTestConfig;
