@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Collections;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -160,6 +161,58 @@ class OrderServiceTest extends ServiceTestConfig {
                 softly.assertThat(actual.size()).isEqualTo(1);
 //                softly.assertThat(actual).containsExactly(savedOrder);
             });
+        }
+    }
+
+    @DisplayName("주문 상태 변경")
+    @Nested
+    class ChangeOrderStatus {
+        @DisplayName("성공한다.")
+        @Test
+        void success() {
+            //given
+            final TableGroup tableGroup = saveTableGroup();
+            final OrderTable orderTable = saveOrderTable(tableGroup);
+            final Order order = saveOrder(orderTable);
+
+            final Order changing = new Order();
+            changing.setOrderStatus(OrderStatus.COOKING.name());
+
+            // when
+            final Order actual = orderService.changeOrderStatus(order.getId(), changing);
+
+            // then
+            assertThat(actual.getOrderStatus()).isEqualTo(changing.getOrderStatus());
+        }
+
+        @DisplayName("존재하지 않는 Order 이면 실패한다.")
+        @Test
+        void fail_if_invalid_order_id() {
+            //given
+            final Order changing = new Order();
+            changing.setOrderStatus(OrderStatus.COOKING.name());
+
+            // then
+            assertThatThrownBy(() -> orderService.changeOrderStatus(-1L, changing))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @DisplayName("완료된 상태의 Order 이면 실패한다.")
+        @Test
+        void fail_if_order_status_of_original_order_is_complete() {
+            //given
+            final TableGroup tableGroup = saveTableGroup();
+            final OrderTable orderTable = saveOrderTable(tableGroup);
+            final Order order = saveOrder(orderTable);
+            order.setOrderStatus(OrderStatus.COMPLETION.name());
+            final Order completedOrder = orderDao.save(order);
+
+            final Order changing = new Order();
+            changing.setOrderStatus(OrderStatus.COOKING.name());
+
+            // then
+            assertThatThrownBy(() -> orderService.changeOrderStatus(completedOrder.getId(), changing))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 }
