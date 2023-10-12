@@ -20,7 +20,7 @@ class ProductAcceptanceTest extends AcceptanceTest {
 
     @Test
     void 상품을_생성한다() {
-        final Product product = 스키야키;
+        final Product product = 스키야키();
         final ExtractableResponse<Response> response = 상품_생성_요청(product);
 
         assertAll(
@@ -36,7 +36,7 @@ class ProductAcceptanceTest extends AcceptanceTest {
 
     @Test
     void 상품을_조회한다() {
-        final List<Product> products = List.of(스키야키, 우동);
+        final List<Product> products = List.of(스키야키(), 우동());
         for (final Product product : products) {
             상품_생성_요청(product);
         }

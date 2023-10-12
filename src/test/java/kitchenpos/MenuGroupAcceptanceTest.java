@@ -7,8 +7,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static kitchenpos.step.MenuGroupStep.MENU_GROUP_JAPANESE;
-import static kitchenpos.step.MenuGroupStep.MENU_GROUP_KOREAN;
 import static kitchenpos.step.MenuGroupStep.메뉴_그룹_생성_요청;
 import static kitchenpos.step.MenuGroupStep.메뉴_그룹_조회_요청;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,7 +18,8 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
 
     @Test
     void 메뉴_그룹을_생성한다() {
-        final MenuGroup menuGroup = MENU_GROUP_JAPANESE;
+        final MenuGroup menuGroup = new MenuGroup();
+        menuGroup.setName("일식");
 
         ExtractableResponse<Response> response = 메뉴_그룹_생성_요청(menuGroup);
 
@@ -30,7 +29,13 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
 
     @Test
     void 메뉴_그룹을_조회한다() {
-        final List<MenuGroup> menuGroups = List.of(MENU_GROUP_JAPANESE, MENU_GROUP_KOREAN);
+        final MenuGroup japaneseMenuGroup = new MenuGroup();
+        japaneseMenuGroup.setName("일식");
+
+        final MenuGroup koreanMenuGroup = new MenuGroup();
+        koreanMenuGroup.setName("한식");
+
+        final List<MenuGroup> menuGroups = List.of(japaneseMenuGroup, koreanMenuGroup);
         for (final MenuGroup menuGroup : menuGroups) {
             메뉴_그룹_생성_요청(menuGroup);
         }
