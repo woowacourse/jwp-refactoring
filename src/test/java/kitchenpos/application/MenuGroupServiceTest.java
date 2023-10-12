@@ -7,19 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Product;
 import kitchenpos.fixture.MenuGroupFixture;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class MenuGroupServiceTest {
-
-    @Autowired
-    private MenuGroupDao menuGroupDao;
+class MenuGroupServiceTest extends ServiceIntegrationTest {
 
     @Autowired
     private MenuGroupService menuGroupService;
@@ -56,21 +51,17 @@ class MenuGroupServiceTest {
         // then
         List<MenuGroup> results = menuGroupService.list()
                 .stream()
-                .filter(menu -> containsMenuGroups(savedMenuGroups, menu))
+                .filter(menuGroup ->
+                        containsObjects(
+                                savedMenuGroups,
+                                menuGroupInSavedMenuGroups ->
+                                        menuGroupInSavedMenuGroups.getId().equals(menuGroup.getId())
+                        )
+                )
                 .collect(Collectors.toList());
         assertThat(results).usingRecursiveComparison()
                 .ignoringFields("id")
                 .isEqualTo(menuGroups);
-    }
-
-    private boolean containsMenuGroups(List<MenuGroup> menuGroups, MenuGroup menu) {
-        for (MenuGroup menuGroup : menuGroups) {
-            if (menuGroup.getId().equals(menu.getId())) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
 }

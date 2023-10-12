@@ -1,7 +1,9 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.ProductFixture.*;
+import static kitchenpos.fixture.ProductFixture.루카_치킨_10000원;
+import static kitchenpos.fixture.ProductFixture.매튜_치킨_10000원;
 import static kitchenpos.fixture.ProductFixture.후추_치킨_10000원;
+import static kitchenpos.fixture.ProductFixture.후추_칰힌_가격_책정;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -11,22 +13,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
-import kitchenpos.fixture.ProductFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ProductServiceTest {
+class ProductServiceTest extends ServiceIntegrationTest {
 
     @Autowired
     private ProductService productService;
-
-    @Autowired
-    private ProductDao productDao;
 
     @Test
     void 정상적으로_상품을_생성한다() {
@@ -84,23 +81,18 @@ class ProductServiceTest {
         // when
         List<Product> results = productService.list()
                 .stream()
-                .filter(product -> containsProducts(savedProducts, product))
+                .filter(product ->
+                        containsObjects(
+                                savedProducts,
+                                productInSavedProducts -> productInSavedProducts.getId().equals(product.getId())
+                        )
+                )
                 .collect(Collectors.toList());
 
         // then
         assertThat(results).usingRecursiveComparison()
                 .ignoringFields("id", "price")
                 .isEqualTo(products);
-    }
-
-    private boolean containsProducts(List<Product> products, Product product) {
-        for (Product productInProducts : products) {
-            if (productInProducts.getId().equals(product.getId())) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
 }

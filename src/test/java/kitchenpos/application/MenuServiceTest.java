@@ -7,8 +7,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
-import kitchenpos.dao.MenuDao;
+import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -23,9 +25,6 @@ class MenuServiceTest extends ServiceIntegrationTest {
 
     @Autowired
     private MenuService menuService;
-
-    @Autowired
-    private MenuDao menuDao;
 
     @Test
     void 메뉴를_성공적으로_저장한다() {
@@ -108,6 +107,37 @@ class MenuServiceTest extends ServiceIntegrationTest {
         // when then
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 전체_Menu을_조회한다() {
+        // given
+        List<Menu> menus = new ArrayList<>();
+        List<Menu> savedMenus = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            Product savedProduct = productDao.save(후추_치킨_10000원());
+            MenuProduct menuProduct = 메뉴_상품(savedProduct, 2);
+            MenuGroup savedMenuGroup = menuGroupDao.save(추천_메뉴_그룹());
+            Menu menu = MenuFixture.메뉴_생성(BigDecimal.valueOf(19000), savedMenuGroup, menuProduct);
+            menus.add(menu);
+            savedMenus.add(menuService.create(menu));
+        }
+
+        // when
+        List<Menu> resultsExcludeExistingData = menuService.list()
+                .stream()
+                .filter(menu ->
+                        containsObjects(
+                                savedMenus,
+                                menuInSavedMenus -> menuInSavedMenus.getId().equals(menu.getId())
+                        )
+                )
+                .collect(Collectors.toList());
+
+        // then
+        assertThat(resultsExcludeExistingData).usingRecursiveComparison()
+                .ignoringFields("id", "price", "menuProducts.seq")
+                .isEqualTo(menus);
     }
 
 }
