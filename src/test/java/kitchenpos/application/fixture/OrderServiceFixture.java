@@ -29,9 +29,11 @@ public class OrderServiceFixture {
         주문_항목들 = List.of(주문_항목1, 주문_항목2);
         주문_항목_수와_다른_개수 = Long.parseLong(String.valueOf(주문_항목들.size() - 1));
 
-        주문_테이블 = new OrderTable(1L, 2, false);
+        주문_테이블 = new OrderTable(2, false);
+        주문_테이블.setTableGroupId(1L);
         주문_테이블.setId(1L);
-        빈_주문_테이블 = new OrderTable(1L, 2, true);
+        빈_주문_테이블 = new OrderTable(2, true);
+        빈_주문_테이블.setTableGroupId(1L);
         빈_주문_테이블.setId(2L);
 
         저장된_주문 = new Order(주문_테이블.getId(), 주문_상태, LocalDateTime.now(), 주문_항목들);
