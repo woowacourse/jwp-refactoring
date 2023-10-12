@@ -43,7 +43,7 @@ public class MenuService {
         }
 
         if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("zzz");
         }
 
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
@@ -55,6 +55,8 @@ public class MenuService {
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
 
+        System.out.println(price);
+        System.out.println(sum);
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }
