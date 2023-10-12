@@ -96,14 +96,33 @@ class TableGroupServiceTest extends IntegrationTest {
             // given
             final TableGroup tableGroup = new TableGroup();
             tableGroup.setOrderTables(List.of(
-                    generateOrderTable(1, true),
-                    generateOrderTable(4, true)
+                    generateOrderTable(1, true, generateTableGroup()),
+                    generateOrderTable(4, true, generateTableGroup())
             ));
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                     .isInstanceOf(IllegalArgumentException.class);
         }
+    }
+
+    @Test
+    void ungroup_table_group_success() {
+        // given
+        final TableGroup tableGroup = generateTableGroup();
+        OrderTable orderTable = generateOrderTable(1, true, tableGroup);
+        tableGroup.setOrderTables(List.of(orderTable));
+        generateOrder(OrderStatus.COMPLETION, orderTable);
+        generateOrder(OrderStatus.COMPLETION, orderTable);
+
+        // when
+        tableGroupService.ungroup(tableGroup.getId());
+
+        // then
+        final List<OrderTable> ungroupedOrderTables = orderTableDao.findAll();
+        assertThat(ungroupedOrderTables)
+                .extracting(OrderTable::getTableGroupId)
+                .containsOnlyNulls();
     }
 
     @Nested
