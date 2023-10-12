@@ -62,6 +62,6 @@ class ProductServiceTest {
     void 모든_상품들을_가져온다() {
         assertThat(productService.list())
                 .usingRecursiveFieldByFieldElementComparator()
-                .containsAll(ProductFixture.listAllInDatabase());
+                .containsExactlyInAnyOrderElementsOf(ProductFixture.listAllInDatabase());
     }
 }
