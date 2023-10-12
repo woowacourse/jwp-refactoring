@@ -104,4 +104,54 @@ class TableServiceTest extends IntegrationTest {
             assertThat(result.isEmpty()).isFalse();
         }
     }
+
+    @Nested
+    class 손님_숫자_변경 {
+
+        @Test
+        void 손님_숫자가_0보다_작으면_예외가_발생한다() {
+            // given
+            OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
+            orderTable2.setNumberOfGuests(-1);
+
+            // when & then
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable1.getId(), orderTable2))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void 존재하지_않는_테이블을_변경하면_예외가_발생한다() {
+            // given
+            orderTable1.setNumberOfGuests(2);
+
+            // when & then
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable1))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void 비어있는_테이블을_변경하면_예외가_발생한다() {
+            // given
+            orderTable1.setEmpty(true);
+            OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
+            orderTable2.setNumberOfGuests(2);
+
+            // when & then
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable1.getId(), orderTable2))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void 손님_숫자를_변경한다() {
+            // given
+            OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
+            orderTable2.setNumberOfGuests(2);
+
+            // when
+            OrderTable result = tableService.changeNumberOfGuests(savedOrderTable1.getId(), orderTable2);
+
+            // then
+            assertThat(result.getNumberOfGuests()).isEqualTo(2);
+        }
+    }
 }
