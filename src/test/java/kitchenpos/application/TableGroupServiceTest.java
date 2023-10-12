@@ -1,12 +1,15 @@
 package kitchenpos.application;
 
 import java.util.List;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static java.time.LocalDateTime.now;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -54,13 +57,6 @@ class TableGroupServiceTest extends ServiceTest {
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
-        private OrderTable 테이블_생성() {
-            final var 테이블 = new OrderTable();
-            테이블.setEmpty(true);
-            테이블.setNumberOfGuests(4);
-            return orderTableDao.save(테이블);
-        }
-
         @Test
         void 이미_그룹에_속한_테이블이_있으면_에외가_발생한다() {
             //given
@@ -77,6 +73,54 @@ class TableGroupServiceTest extends ServiceTest {
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
+    }
+
+    private OrderTable 테이블_생성() {
+        final var 테이블 = new OrderTable();
+        테이블.setEmpty(true);
+        테이블.setNumberOfGuests(4);
+        return orderTableDao.save(테이블);
+    }
+
+    @Nested
+    class 테이블_그룹_해제 {
+        @Test
+        void 성공() {
+            //given
+            TableGroup 테이블_그룹 = new TableGroup();
+            OrderTable 테이블 = 테이블_생성();
+            Order 주문 = new Order();
+            주문.setOrderTableId(테이블.getId());
+            주문.setOrderStatus(OrderStatus.COMPLETION.name());
+            주문.setOrderedTime(now());
+            orderDao.save(주문);
+            테이블_그룹.setOrderTables(List.of(테이블, 테이블_생성()));
+            TableGroup 생성된_테이블_그룹 = tableGroupService.create(테이블_그룹);
+
+            //when
+            tableGroupService.ungroup(생성된_테이블_그룹.getId());
+
+            //then
+            assertThat(orderTableDao.findById(테이블.getId()).get().getTableGroupId()).isNull();
+        }
+
+        @Test
+        void COMPLETION이_아닌_주문이_있으면_예외가_발생한다() {
+            //given
+            TableGroup 테이블_그룹 = new TableGroup();
+            OrderTable 테이블 = 테이블_생성();
+            Order 주문 = new Order();
+            주문.setOrderTableId(테이블.getId());
+            주문.setOrderStatus(OrderStatus.COOKING.name());
+            주문.setOrderedTime(now());
+            orderDao.save(주문);
+            테이블_그룹.setOrderTables(List.of(테이블, 테이블_생성()));
+            TableGroup 생성된_테이블_그룹 = tableGroupService.create(테이블_그룹);
+
+            //expect
+            assertThatThrownBy(() -> tableGroupService.ungroup(생성된_테이블_그룹.getId()))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
     }
 
 }
