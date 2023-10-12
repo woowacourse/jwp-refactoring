@@ -1,13 +1,22 @@
 package kitchenpos.fixture;
 
-import static kitchenpos.fixture.ProductFixture.후추_치킨_10000원;
-
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
 
 public class MenuProductFixture {
 
-    public static MenuProduct 후추_치킨_2개() {
-        return new MenuProduct(후추_치킨_10000원().getId(), 2);
+    public static MenuProduct 메뉴_상품(Product savedProduct, long quantity) {
+        return new MenuProduct(
+                savedProduct.getId(),
+                quantity
+        );
+    }
+
+    public static MenuProduct 존재하지_않는_상품을_가진_메뉴_상품() {
+        return new MenuProduct(
+                Long.MAX_VALUE,
+                0
+        );
     }
 
 }
