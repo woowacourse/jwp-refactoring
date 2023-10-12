@@ -33,7 +33,7 @@ class ProductIntegrationTest extends IntegrationTest {
                 () -> assertThat(response.getHeaders().get("Location"))
                         .contains("/api/products/" + createdProduct.getId()),
                 () -> assertThat(createdProduct.getName()).isEqualTo("상품"),
-                () -> assertThat(createdProduct.getPrice()).isEqualTo(BigDecimal.valueOf(1000))
+                () -> assertThat(createdProduct.getPrice().intValue()).isEqualTo(1000)
         );
     }
 
