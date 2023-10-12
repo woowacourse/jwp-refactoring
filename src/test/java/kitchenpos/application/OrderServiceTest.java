@@ -11,39 +11,23 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.ServiceTest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 
-@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
-@SpringBootTest
-class OrderServiceTest {
+class OrderServiceTest extends ServiceTest {
 
     @Autowired
     private OrderService orderService;
-
-    @Autowired
-    private OrderTableDao orderTableDao;
-
-    @Autowired
-    private OrderDao orderDao;
-
-    @Autowired
-    private MenuDao menuDao;
 
     private OrderTable orderTable;
 
@@ -52,7 +36,7 @@ class OrderServiceTest {
     @BeforeEach
     void setUp() {
         OrderTable newOrderTable = createOrderTable(false, null, 10);
-        orderTable = orderTableDao.save(newOrderTable);
+        orderTable = tableDao.save(newOrderTable);
 
         Menu newMenu = new Menu();
         newMenu.setName("치킨");
@@ -127,7 +111,7 @@ class OrderServiceTest {
         void 주문_테이블이_비어_있으면_예외_발생() {
             // given
             OrderTable newOrderTable = createOrderTable(true, null, 10);
-            OrderTable orderTable = orderTableDao.save(newOrderTable);
+            OrderTable orderTable = tableDao.save(newOrderTable);
             OrderLineItem orderLineItem = createOrderLineItem(null, 1, menu.getId());
             Order order = createOrder(orderTable.getId(), COOKING, orderLineItem);
 
