@@ -31,7 +31,7 @@ class JdbcTemplateOrderDaoTest {
     @Test
     void save_order() {
         // given
-        final Order order = menuProductFixtureOf(OrderStatus.COOKING);
+        final Order order = orderFixtureOf(OrderStatus.COOKING);
 
         // when
         final Order savedOrder = jdbcTemplateOrderDao.save(order);
@@ -43,7 +43,7 @@ class JdbcTemplateOrderDaoTest {
     @Test
     void update_when_save_order_id_exist() {
         // given
-        final Order order = menuProductFixtureOf(OrderStatus.COOKING);
+        final Order order = orderFixtureOf(OrderStatus.COOKING);
         final Order savedOrder = jdbcTemplateOrderDao.save(order);
         savedOrder.setOrderStatus(String.valueOf(OrderStatus.MEAL));
 
@@ -57,16 +57,16 @@ class JdbcTemplateOrderDaoTest {
     @Test
     void find_by_id() {
         // given
-        final Order order = menuProductFixtureOf(OrderStatus.COOKING);
+        final Order order = orderFixtureOf(OrderStatus.COOKING);
         final Order savedOrder = jdbcTemplateOrderDao.save(order);
         final Long savedOrderId = savedOrder.getId();
 
         // when
-        final Optional<Order> menuGroupDaoById = jdbcTemplateOrderDao.findById(savedOrderId);
+        final Optional<Order> orderById = jdbcTemplateOrderDao.findById(savedOrderId);
 
         // then
-        assertThat(menuGroupDaoById).isPresent();
-        assertThat(menuGroupDaoById.get().getId()).isEqualTo(savedOrderId);
+        assertThat(orderById).isPresent();
+        assertThat(orderById.get().getId()).isEqualTo(savedOrderId);
     }
 
     @Test
@@ -75,17 +75,17 @@ class JdbcTemplateOrderDaoTest {
         final long doesntExistId = 10000L;
 
         // when
-        final Optional<Order> menuGroupDaoById = jdbcTemplateOrderDao.findById(doesntExistId);
+        final Optional<Order> orderById = jdbcTemplateOrderDao.findById(doesntExistId);
 
         // then
-        assertThat(menuGroupDaoById).isEmpty();
+        assertThat(orderById).isEmpty();
     }
 
     @Test
     void find_all() {
         // given
-        jdbcTemplateOrderDao.save(menuProductFixtureOf(OrderStatus.COOKING));
-        jdbcTemplateOrderDao.save(menuProductFixtureOf(OrderStatus.COOKING));
+        jdbcTemplateOrderDao.save(orderFixtureOf(OrderStatus.COOKING));
+        jdbcTemplateOrderDao.save(orderFixtureOf(OrderStatus.COOKING));
 
         // when
         final List<Order> findAll = jdbcTemplateOrderDao.findAll();
@@ -97,8 +97,8 @@ class JdbcTemplateOrderDaoTest {
     @Test
     void exists_by_order_table_id_and_order_status_in() {
         // given
-        final Order cookingOrder = menuProductFixtureOf(OrderStatus.COOKING);
-        final Order mealOrder = menuProductFixtureOf(OrderStatus.MEAL);
+        final Order cookingOrder = orderFixtureOf(OrderStatus.COOKING);
+        final Order mealOrder = orderFixtureOf(OrderStatus.MEAL);
         jdbcTemplateOrderDao.save(cookingOrder);
         jdbcTemplateOrderDao.save(mealOrder);
         final Long mealOrderTableId = mealOrder.getOrderTableId();
@@ -116,8 +116,8 @@ class JdbcTemplateOrderDaoTest {
     @Test
     void exists_by_order_table_ids_and_order_status_in() {
         // given
-        final Order cookingOrder = menuProductFixtureOf(OrderStatus.COOKING);
-        final Order mealOrder = menuProductFixtureOf(OrderStatus.MEAL);
+        final Order cookingOrder = orderFixtureOf(OrderStatus.COOKING);
+        final Order mealOrder = orderFixtureOf(OrderStatus.MEAL);
         jdbcTemplateOrderDao.save(cookingOrder);
         jdbcTemplateOrderDao.save(mealOrder);
         final Long cookingOrderTableId = cookingOrder.getOrderTableId();
@@ -133,7 +133,7 @@ class JdbcTemplateOrderDaoTest {
         assertThat(existsByOrderTableIdAndOrderStatusIn).isTrue();
     }
 
-    private Order menuProductFixtureOf(final OrderStatus orderStatus) {
+    private Order orderFixtureOf(final OrderStatus orderStatus) {
         final Order order = new Order();
         order.setOrderStatus(orderStatus.name());
         order.setOrderedTime(LocalDateTime.now());
@@ -154,5 +154,4 @@ class JdbcTemplateOrderDaoTest {
         tableGroup.setCreatedDate(LocalDateTime.now());
         return jdbcTemplateTableGroupDao.save(tableGroup).getId();
     }
-
 }
