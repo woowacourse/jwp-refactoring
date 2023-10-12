@@ -124,8 +124,8 @@ class MenuServiceTest {
             // given
             Menu menu = REQUEST.메뉴_등록_요청();
             Product product = ProductFixture.PRODUCT.후라이드_치킨();
-            menu.setPrice(BigDecimal.valueOf(17000L));
-            product.setPrice(BigDecimal.valueOf(16999L));
+            menu.setPrice(BigDecimal.valueOf(menuPrice));
+            product.setPrice(BigDecimal.valueOf(productPrice));
 
             given(menuGroupDao.existsById(anyLong()))
                     .willReturn(true);

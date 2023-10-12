@@ -48,7 +48,7 @@ class TableGroupServiceTest {
         @Test
         void 테이블_그룹을_생성한다() {
             // given
-            TableGroup tableGroup = TableGroupFixture.TABLE_GROUP.테이블_그룹();
+            TableGroup tableGroup = TableGroupFixture.TABLE_GROUP.테이블_그룹_1();
 
             given(tableGroupDao.save(any(TableGroup.class)))
                     .willReturn(tableGroup);
@@ -68,7 +68,7 @@ class TableGroupServiceTest {
         @Test
         void 주문_테이블이_2개_미만이면_예외() {
             // given
-            TableGroup tableGroup = TableGroupFixture.TABLE_GROUP.테이블_그룹();
+            TableGroup tableGroup = TableGroupFixture.TABLE_GROUP.테이블_그룹_1();
             tableGroup.setOrderTables(List.of(new OrderTable()));
 
             // when & then
@@ -79,7 +79,7 @@ class TableGroupServiceTest {
         @Test
         void 주문_테이블이_비어있으면_예외() {
             // given
-            TableGroup tableGroup = TableGroupFixture.TABLE_GROUP.테이블_그룹();
+            TableGroup tableGroup = TableGroupFixture.TABLE_GROUP.테이블_그룹_1();
             tableGroup.setOrderTables(Collections.emptyList());
 
             // when & then
@@ -90,7 +90,7 @@ class TableGroupServiceTest {
         @Test
         void 주문_테이블_중_비어있지_않은_테이블이_존재하면_예외() {
             // given
-            TableGroup tableGroup = TableGroupFixture.TABLE_GROUP.테이블_그룹();
+            TableGroup tableGroup = TableGroupFixture.TABLE_GROUP.테이블_그룹_1();
             OrderTable orderTable = new OrderTable();
             OrderTable orderTable2 = new OrderTable();
             orderTable.setEmpty(false);
@@ -108,7 +108,7 @@ class TableGroupServiceTest {
         @Test
         void 실제_존재하는_주문_테이블과_개수가_맞지_않으면_예외() {
             // given
-            TableGroup tableGroup = TableGroupFixture.TABLE_GROUP.테이블_그룹();
+            TableGroup tableGroup = TableGroupFixture.TABLE_GROUP.테이블_그룹_1();
 
             given(orderTableDao.findAllByIdIn(anyList()))
                     .willReturn(List.of());

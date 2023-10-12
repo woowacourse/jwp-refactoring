@@ -13,7 +13,7 @@ public class TableGroupFixture {
     }
 
     public static class TABLE_GROUP {
-        public static TableGroup 테이블_그룹() {
+        public static TableGroup 테이블_그룹_1() {
             TableGroup tableGroup = new TableGroup();
             tableGroup.setId(1L);
             OrderTable orderTable = ORDER_TABLE.주문_테이블_1();
