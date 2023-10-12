@@ -10,5 +10,5 @@ import static org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 @SpringBootTest(properties = "spring.sql.init.mode=never")
-public class IntegrateServiceTest {
+public class ServiceIntegrateTest {
 }

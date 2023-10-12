@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.application.test.IntegrateServiceTest;
+import kitchenpos.application.test.ServiceIntegrateTest;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Assertions;
@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ProductServiceTest extends IntegrateServiceTest {
+class ProductServiceIntegrateTest extends ServiceIntegrateTest {
 
     @Autowired
     private ProductDao productDao;

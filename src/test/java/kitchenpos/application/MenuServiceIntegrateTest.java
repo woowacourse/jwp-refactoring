@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.application.test.IntegrateServiceTest;
+import kitchenpos.application.test.ServiceIntegrateTest;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class MenuServiceTest extends IntegrateServiceTest {
+class MenuServiceIntegrateTest extends ServiceIntegrateTest {
 
     @Autowired
     private MenuService menuService;
