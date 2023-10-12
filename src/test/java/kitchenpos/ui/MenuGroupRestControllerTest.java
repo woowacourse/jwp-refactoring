@@ -36,9 +36,10 @@ class MenuGroupRestControllerTest {
 
     @BeforeEach
     void setUp() {
-        menuGroup = new MenuGroup();
-        menuGroup.setId(1L);
-        menuGroup.setName("한식");
+        menuGroup = MenuGroup.builder()
+                .id(1L)
+                .name("한식")
+                .build();
     }
 
     @Nested

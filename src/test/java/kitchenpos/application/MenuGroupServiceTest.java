@@ -29,8 +29,11 @@ class MenuGroupServiceTest {
     @Test
     void 메뉴_그룹을_생성한다() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        given(menuGroupDao.save(any(MenuGroup.class)))
+        MenuGroup menuGroup = MenuGroup.builder()
+                .id(1L)
+                .name("메뉴 그룹")
+                .build();
+        given(menuGroupDao.save(any()))
                 .willReturn(menuGroup);
 
         // when & then
@@ -43,7 +46,10 @@ class MenuGroupServiceTest {
     @Test
     void 메뉴_그룹_목록을_조회한다() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
+        MenuGroup menuGroup = MenuGroup.builder()
+                .id(1L)
+                .name("메뉴 그룹")
+                .build();
         given(menuGroupDao.findAll())
                 .willReturn(List.of(menuGroup));
 
