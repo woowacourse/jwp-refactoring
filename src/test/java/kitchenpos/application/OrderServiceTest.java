@@ -165,7 +165,7 @@ class OrderServiceTest {
             // then
             assertThat(result)
                     .usingRecursiveComparison()
-                    .isEqualTo(order.getOrderLineItems());
+                    .isEqualTo(List.of(order));
         }
     }
 
