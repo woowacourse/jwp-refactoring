@@ -24,3 +24,9 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+task apiTest(type: Test) {
+    useJUnitPlatform {
+        includeTags 'api-test'
+    }
+}
