@@ -1,13 +1,17 @@
 package kitchenpos.ui;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.math.BigDecimal;
+import java.util.List;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.application.MenuService;
 import kitchenpos.application.OrderService;
 import kitchenpos.application.ProductService;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.application.TableService;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -49,5 +53,19 @@ public class ControllerTest {
         menuGroup.setId(id);
         menuGroup.setName(name);
         return menuGroup;
+    }
+
+    protected Menu 메뉴() {
+        MenuProduct menuProduct = new MenuProduct();
+        menuProduct.setProductId(1L);
+        menuProduct.setQuantity(2);
+
+        Menu menu = new Menu();
+        menu.setName("후라이드+후라이드");
+        menu.setPrice(BigDecimal.valueOf(19000));
+        menu.setMenuGroupId(1L);
+        menu.setMenuProducts(List.of(menuProduct));
+
+        return menu;
     }
 }
