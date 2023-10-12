@@ -40,11 +40,14 @@ public class OrderServiceTest {
     public void createOrderTest() {
         //given
         Order order = new Order();
+        order.setId(1L);
         order.setOrderTableId(1L);
         order.setOrderLineItems(List.of(new OrderLineItem()));
+        final OrderTable orderTable = new OrderTable();
+        orderTable.setId(1L);
 
         given(menuDao.countByIdIn(any())).willReturn(1L);
-        given(orderTableDao.findById(anyLong())).willReturn(Optional.of(new OrderTable()));
+        given(orderTableDao.findById(anyLong())).willReturn(Optional.of(orderTable));
         given(orderDao.save(any(Order.class))).willReturn(order);
         given(orderLineItemDao.save(any(OrderLineItem.class))).willReturn(new OrderLineItem());
 
@@ -53,6 +56,7 @@ public class OrderServiceTest {
 
         //then
         assertThat(createdOrder.getOrderTableId()).isEqualTo(1L);
+        assertThat(createdOrder.getOrderLineItems()).hasSize(1);
     }
 
     @Test
