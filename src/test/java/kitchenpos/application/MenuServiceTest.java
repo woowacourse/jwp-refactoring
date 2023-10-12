@@ -5,10 +5,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.Fixture;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -29,12 +31,20 @@ class MenuServiceTest {
     @Autowired
     private MenuGroupService menuGroupService;
 
+    private MenuGroup menuGroup;
+    private Product product;
+    private MenuProduct menuProduct;
+
+    @BeforeEach
+    void setUp() {
+        menuGroup = menuGroupService.create(Fixture.MENU_GROUP);
+        product = productService.create(Fixture.PRODUCT);
+        menuProduct = new MenuProduct(product.getId(), 2);
+    }
+
     @Test
     void create() {
         // given
-        final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("Group1"));
-        final Product product = productService.create(new Product("Product1", BigDecimal.valueOf(10000)));
-        final MenuProduct menuProduct = new MenuProduct(product.getId(), 2);
         final Menu menu = new Menu("후라이드+후라이드", BigDecimal.valueOf(19000), menuGroup.getId(), List.of(menuProduct));
 
         // when
@@ -48,9 +58,6 @@ class MenuServiceTest {
     @ValueSource(ints = {-1, 99999})
     void create_priceException(int price) {
         // given
-        final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("Group1"));
-        final Product product = productService.create(new Product("Product1", BigDecimal.valueOf(10000)));
-        final MenuProduct menuProduct = new MenuProduct(product.getId(), 2);
         final Menu menu = new Menu("후라이드+후라이드", BigDecimal.valueOf(price), menuGroup.getId(), List.of(menuProduct));
 
         // when & then
@@ -61,8 +68,6 @@ class MenuServiceTest {
     @Test
     void create_menuGroupException() {
         // given
-        final Product product = productService.create(new Product("Product1", BigDecimal.valueOf(10000)));
-        final MenuProduct menuProduct = new MenuProduct(product.getId(), 2);
         final Menu menu = new Menu("후라이드+후라이드", BigDecimal.valueOf(-1), -1L, List.of(menuProduct));
 
         // when & then
@@ -73,10 +78,6 @@ class MenuServiceTest {
     @Test
     void list() {
         // given
-        final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("Group1"));
-        final Product product = productService.create(new Product("Product1", BigDecimal.valueOf(10000)));
-        final MenuProduct menuProduct = new MenuProduct(product.getId(), 2);
-
         menuService.create(new Menu("Menu1", BigDecimal.valueOf(1000), menuGroup.getId(), List.of(menuProduct)));
         menuService.create(new Menu("Menu2", BigDecimal.valueOf(2000), menuGroup.getId(), List.of(menuProduct)));
 

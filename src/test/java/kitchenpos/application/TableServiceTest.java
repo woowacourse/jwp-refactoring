@@ -6,6 +6,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.Fixture;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -23,6 +24,10 @@ import org.springframework.test.context.jdbc.Sql;
 @SpringBootTest
 @Sql(value = "classpath:data/truncate.sql")
 class TableServiceTest {
+    private static final OrderTable ORDER_TABLE_STATUS_EMPTY = new OrderTable(true);
+    private static final OrderTable ORDER_TABLE_STATUS_NOT_EMPTY = new OrderTable(false);
+    private static final OrderTable ORDER_TABLE_GUEST_POSITIVE = new OrderTable(1);
+    private static final OrderTable ORDER_TABLE_GUEST_NEGATIVE = new OrderTable(-1);
 
     @Autowired
     private TableService tableService;
@@ -42,7 +47,7 @@ class TableServiceTest {
     @Test
     void create() {
         // given
-        final OrderTable orderTable = new OrderTable(0, true);
+        final OrderTable orderTable = Fixture.ORDER_TABLE_EMPTY;
 
         // when
         final OrderTable result = tableService.create(orderTable);
@@ -57,8 +62,8 @@ class TableServiceTest {
     @Test
     void list() {
         // given
-        tableService.create(new OrderTable(0, true));
-        tableService.create(new OrderTable(0, true));
+        tableService.create(Fixture.ORDER_TABLE_EMPTY);
+        tableService.create(Fixture.ORDER_TABLE_EMPTY);
 
         // when
         final List<OrderTable> result = tableService.list();
@@ -70,11 +75,10 @@ class TableServiceTest {
     @Test
     void changeEmpty() {
         // given
-        final OrderTable saved = tableService.create(new OrderTable(0, true));
+        final OrderTable saved = tableService.create(Fixture.ORDER_TABLE_EMPTY);
 
         // when
-        final OrderTable changed = new OrderTable(false);
-        final OrderTable result = tableService.changeEmpty(saved.getId(), changed);
+        final OrderTable result = tableService.changeEmpty(saved.getId(), ORDER_TABLE_STATUS_NOT_EMPTY);
 
         // then
         assertThat(result.isEmpty()).isFalse();
@@ -83,20 +87,18 @@ class TableServiceTest {
     @Test
     void changeEmpty_tableNullException() {
         // when & then
-        final OrderTable changed = new OrderTable(false);
-        assertThatThrownBy(() -> tableService.changeEmpty(-1L, changed))
+        assertThatThrownBy(() -> tableService.changeEmpty(-1L, ORDER_TABLE_STATUS_NOT_EMPTY))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void changeEmpty_tableGroupException() {
         // given
-        final OrderTable saved = tableService.create(new OrderTable(0, true));
+        final OrderTable saved = tableService.create(Fixture.ORDER_TABLE_EMPTY);
         saved.setTableGroupId(1L);
 
         // when & then
-        final OrderTable changed = new OrderTable(false);
-        assertThatThrownBy(() -> tableService.changeEmpty(saved.getTableGroupId(), changed))
+        assertThatThrownBy(() -> tableService.changeEmpty(saved.getTableGroupId(), ORDER_TABLE_STATUS_NOT_EMPTY))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -104,8 +106,8 @@ class TableServiceTest {
     @ValueSource(strings = {"COOKING", "MEAL"})
     void changeEmpty_tableStatusException(final String status) {
         // given
-        final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("Group1"));
-        final Product product = productService.create(new Product("Product1", BigDecimal.valueOf(10000)));
+        final MenuGroup menuGroup = menuGroupService.create(Fixture.MENU_GROUP);
+        final Product product = productService.create(Fixture.PRODUCT);
         final MenuProduct menuProduct = new MenuProduct(product.getId(), 2);
         final Menu menu = menuService.create(new Menu("후라이드+후라이드",
                 BigDecimal.valueOf(19000),
@@ -113,24 +115,22 @@ class TableServiceTest {
                 List.of(menuProduct)));
         final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1);
 
-        final OrderTable saved = tableService.create(new OrderTable(0, false));
+        final OrderTable saved = tableService.create(Fixture.ORDER_TABLE_NOT_EMPTY);
         final Order order = orderService.create(new Order(saved.getId(), List.of(orderLineItem)));
         orderService.changeOrderStatus(order.getId(), new Order(status));
 
         // when & then
-        final OrderTable changed = new OrderTable(true);
-        assertThatThrownBy(() -> tableService.changeEmpty(saved.getTableGroupId(), changed))
+        assertThatThrownBy(() -> tableService.changeEmpty(saved.getTableGroupId(), ORDER_TABLE_STATUS_EMPTY))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void changeNumberOfGuests() {
         // given
-        final OrderTable saved = tableService.create(new OrderTable(0, false));
+        final OrderTable saved = tableService.create(Fixture.ORDER_TABLE_NOT_EMPTY);
 
         // when
-        final OrderTable changed = new OrderTable(1);
-        final OrderTable result = tableService.changeNumberOfGuests(saved.getId(), changed);
+        final OrderTable result = tableService.changeNumberOfGuests(saved.getId(), ORDER_TABLE_GUEST_POSITIVE);
 
         // then
         assertThat(result.getNumberOfGuests()).isEqualTo(1);
@@ -139,30 +139,27 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuests_numberException() {
         // given
-        final OrderTable saved = tableService.create(new OrderTable(0, false));
+        final OrderTable saved = tableService.create(Fixture.ORDER_TABLE_NOT_EMPTY);
 
         // when & then
-        final OrderTable changed = new OrderTable(-1);
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(saved.getTableGroupId(), changed))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(saved.getTableGroupId(), ORDER_TABLE_GUEST_NEGATIVE))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void changeNumberOfGuests_tableNullException() {
         // when & then
-        final OrderTable changed = new OrderTable(1);
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(-1L, changed))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(-1L, ORDER_TABLE_GUEST_POSITIVE))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void changeNumberOfGuests_tableEmptyException() {
         // given
-        final OrderTable saved = tableService.create(new OrderTable(0, true));
+        final OrderTable saved = tableService.create(Fixture.ORDER_TABLE_EMPTY);
 
         // when & then
-        final OrderTable changed = new OrderTable(1);
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(saved.getTableGroupId(), changed))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(saved.getTableGroupId(), ORDER_TABLE_GUEST_POSITIVE))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

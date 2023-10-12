@@ -6,6 +6,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.Fixture;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -14,6 +15,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -26,6 +28,7 @@ import org.springframework.test.context.jdbc.Sql;
 @Sql(value = "classpath:data/truncate.sql")
 class OrderServiceTest {
 
+    public static final Order ORDER_STATUS_COOKING = new Order("COOKING");
     @Autowired
     private OrderService orderService;
 
@@ -41,19 +44,24 @@ class OrderServiceTest {
     @Autowired
     private MenuGroupService menuGroupService;
 
-    @Test
-    void create() {
-        // given
-        final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("Group1"));
-        final Product product = productService.create(new Product("Product1", BigDecimal.valueOf(10000)));
+    private Menu menu;
+
+    @BeforeEach
+    void setUp() {
+        final MenuGroup menuGroup = menuGroupService.create(Fixture.MENU_GROUP);
+        final Product product = productService.create(Fixture.PRODUCT);
         final MenuProduct menuProduct = new MenuProduct(product.getId(), 2);
-        final Menu menu = menuService.create(new Menu("후라이드+후라이드",
+        menu = menuService.create(new Menu("후라이드+후라이드",
                 BigDecimal.valueOf(19000),
                 menuGroup.getId(),
                 List.of(menuProduct)));
-        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1);
-        final OrderTable orderTable = tableService.create(new OrderTable(0, false));
+    }
 
+    @Test
+    void create() {
+        // given
+        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1);
+        final OrderTable orderTable = tableService.create(Fixture.ORDER_TABLE_NOT_EMPTY);
         final Order order = new Order(orderTable.getId(), List.of(orderLineItem));
 
         // when
@@ -70,17 +78,9 @@ class OrderServiceTest {
     @Test
     void create_duplicatedMenuException() {
         // given
-        final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("Group1"));
-        final Product product = productService.create(new Product("Product1", BigDecimal.valueOf(10000)));
-        final MenuProduct menuProduct = new MenuProduct(product.getId(), 2);
-        final Menu menu = menuService.create(new Menu("후라이드+후라이드",
-                BigDecimal.valueOf(19000),
-                menuGroup.getId(),
-                List.of(menuProduct)));
         final OrderLineItem orderLineItem1 = new OrderLineItem(menu.getId(), 1);
         final OrderLineItem orderLineItem2 = new OrderLineItem(menu.getId(), 2);
-        final OrderTable orderTable = tableService.create(new OrderTable(0, true));
-
+        final OrderTable orderTable = tableService.create(Fixture.ORDER_TABLE_NOT_EMPTY);
         final Order order = new Order(orderTable.getId(), List.of(orderLineItem1, orderLineItem2));
 
         // when & then
@@ -91,15 +91,7 @@ class OrderServiceTest {
     @Test
     void create_tableNullException() {
         // given
-        final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("Group1"));
-        final Product product = productService.create(new Product("Product1", BigDecimal.valueOf(10000)));
-        final MenuProduct menuProduct = new MenuProduct(product.getId(), 2);
-        final Menu menu = menuService.create(new Menu("후라이드+후라이드",
-                BigDecimal.valueOf(19000),
-                menuGroup.getId(),
-                List.of(menuProduct)));
         final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1);
-
         final Order order = new Order(-1L, List.of(orderLineItem));
 
         // when & then
@@ -110,16 +102,8 @@ class OrderServiceTest {
     @Test
     void create_tableEmptyException() {
         // given
-        final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("Group1"));
-        final Product product = productService.create(new Product("Product1", BigDecimal.valueOf(10000)));
-        final MenuProduct menuProduct = new MenuProduct(product.getId(), 2);
-        final Menu menu = menuService.create(new Menu("후라이드+후라이드",
-                BigDecimal.valueOf(19000),
-                menuGroup.getId(),
-                List.of(menuProduct)));
         final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1);
-        final OrderTable orderTable = tableService.create(new OrderTable(0, true));
-
+        final OrderTable orderTable = tableService.create(Fixture.ORDER_TABLE_EMPTY);
         final Order order = new Order(orderTable.getId(), List.of(orderLineItem));
 
         // when & then
@@ -130,16 +114,9 @@ class OrderServiceTest {
     @Test
     void list() {
         // given
-        final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("Group1"));
-        final Product product = productService.create(new Product("Product1", BigDecimal.valueOf(10000)));
-        final MenuProduct menuProduct = new MenuProduct(product.getId(), 2);
-        final Menu menu = menuService.create(new Menu("후라이드+후라이드",
-                BigDecimal.valueOf(19000),
-                menuGroup.getId(),
-                List.of(menuProduct)));
         final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1);
-        final OrderTable orderTable1 = tableService.create(new OrderTable(0, false));
-        final OrderTable orderTable2 = tableService.create(new OrderTable(0, false));
+        final OrderTable orderTable1 = tableService.create(Fixture.ORDER_TABLE_NOT_EMPTY);
+        final OrderTable orderTable2 = tableService.create(Fixture.ORDER_TABLE_NOT_EMPTY);
 
         orderService.create(new Order(orderTable1.getId(), List.of(orderLineItem)));
         orderService.create(new Order(orderTable2.getId(), List.of(orderLineItem)));
@@ -155,16 +132,8 @@ class OrderServiceTest {
     @ValueSource(strings = {"COOKING", "MEAL", "COMPLETION"})
     void changeOrderStatus(final String status) {
         // given
-        final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("Group1"));
-        final Product product = productService.create(new Product("Product1", BigDecimal.valueOf(10000)));
-        final MenuProduct menuProduct = new MenuProduct(product.getId(), 2);
-        final Menu menu = menuService.create(new Menu("후라이드+후라이드",
-                BigDecimal.valueOf(19000),
-                menuGroup.getId(),
-                List.of(menuProduct)));
         final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1);
-        final OrderTable orderTable = tableService.create(new OrderTable(0, false));
-
+        final OrderTable orderTable = tableService.create(Fixture.ORDER_TABLE_NOT_EMPTY);
         final Order saved = orderService.create(new Order(orderTable.getId(), List.of(orderLineItem)));
 
         // when
@@ -178,30 +147,20 @@ class OrderServiceTest {
     @Test
     void changeOrderStatus_orderNullException() {
         // when & then
-        final Order changed = new Order("COOKING");
-        assertThatThrownBy(() -> orderService.changeOrderStatus(-1L, changed))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(-1L, ORDER_STATUS_COOKING))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void changeOrderStatus_orderCompletedException() {
         // given
-        final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("Group1"));
-        final Product product = productService.create(new Product("Product1", BigDecimal.valueOf(10000)));
-        final MenuProduct menuProduct = new MenuProduct(product.getId(), 2);
-        final Menu menu = menuService.create(new Menu("후라이드+후라이드",
-                BigDecimal.valueOf(19000),
-                menuGroup.getId(),
-                List.of(menuProduct)));
         final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1);
-        final OrderTable orderTable = tableService.create(new OrderTable(0, false));
-
+        final OrderTable orderTable = tableService.create(Fixture.ORDER_TABLE_NOT_EMPTY);
         final Order saved = orderService.create(new Order(orderTable.getId(), List.of(orderLineItem)));
         orderService.changeOrderStatus(saved.getId(), new Order(OrderStatus.COMPLETION.name()));
 
         // when & then
-        final Order changed = new Order("COOKING");
-        assertThatThrownBy(() -> orderService.changeOrderStatus(saved.getId(), changed))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(saved.getId(), ORDER_STATUS_COOKING))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

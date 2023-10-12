@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +12,6 @@ import org.springframework.test.context.jdbc.Sql;
 @SpringBootTest
 @Sql(value = "classpath:data/truncate.sql")
 class MenuGroupServiceTest {
-
-    @Autowired
-    private MenuGroupDao menuGroupDao;
 
     @Autowired
     private MenuGroupService menuGroupService;

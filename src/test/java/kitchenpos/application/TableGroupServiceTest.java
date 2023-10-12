@@ -5,6 +5,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.Fixture;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -49,8 +50,8 @@ class TableGroupServiceTest {
     @Test
     void create() {
         // given
-        final OrderTable orderTable1 = tableService.create(new OrderTable(0, true));
-        final OrderTable orderTable2 = tableService.create(new OrderTable(0, true));
+        final OrderTable orderTable1 = tableService.create(Fixture.ORDER_TABLE_EMPTY);
+        final OrderTable orderTable2 = tableService.create(Fixture.ORDER_TABLE_EMPTY);
         final TableGroup tableGroup = new TableGroup(List.of(orderTable1, orderTable2));
 
         // when
@@ -66,7 +67,7 @@ class TableGroupServiceTest {
     @Test
     void create_singleTableException() {
         // given
-        final OrderTable orderTable = tableService.create(new OrderTable(0, true));
+        final OrderTable orderTable = tableService.create(Fixture.ORDER_TABLE_EMPTY);
         final TableGroup tableGroup = new TableGroup(List.of(orderTable));
 
         // when & then
@@ -77,8 +78,8 @@ class TableGroupServiceTest {
     @Test
     void create_tableNullException() {
         // given
-        final OrderTable orderTable1 = tableService.create(new OrderTable(0, true));
-        final OrderTable orderTable2 = new OrderTable(0, true);
+        final OrderTable orderTable1 = tableService.create(Fixture.ORDER_TABLE_EMPTY);
+        final OrderTable orderTable2 = Fixture.ORDER_TABLE_EMPTY;
         final TableGroup tableGroup = new TableGroup(List.of(orderTable1, orderTable2));
 
         // when & then
@@ -89,7 +90,7 @@ class TableGroupServiceTest {
     @Test
     void create_tableDuplicateException() {
         // given
-        final OrderTable orderTable = tableService.create(new OrderTable(0, true));
+        final OrderTable orderTable = tableService.create(Fixture.ORDER_TABLE_EMPTY);
         final TableGroup tableGroup = new TableGroup(List.of(orderTable, orderTable));
 
         // when & then
@@ -100,8 +101,8 @@ class TableGroupServiceTest {
     @Test
     void create_tableNotEmptyException() {
         // given
-        final OrderTable orderTable1 = tableService.create(new OrderTable(0, true));
-        final OrderTable orderTable2 = tableService.create(new OrderTable(0, false));
+        final OrderTable orderTable1 = tableService.create(Fixture.ORDER_TABLE_EMPTY);
+        final OrderTable orderTable2 = tableService.create(Fixture.ORDER_TABLE_NOT_EMPTY);
         final TableGroup tableGroup = new TableGroup(List.of(orderTable1, orderTable2));
 
         // when & then
@@ -112,11 +113,11 @@ class TableGroupServiceTest {
     @Test
     void create_tableHasGroupException() {
         // given
-        final OrderTable orderTable1 = tableService.create(new OrderTable(0, true));
-        final OrderTable orderTable2 = tableService.create(new OrderTable(0, true));
+        final OrderTable orderTable1 = tableService.create(Fixture.ORDER_TABLE_EMPTY);
+        final OrderTable orderTable2 = tableService.create(Fixture.ORDER_TABLE_EMPTY);
         tableGroupService.create(new TableGroup(List.of(orderTable1, orderTable2)));
 
-        final OrderTable orderTable3 = tableService.create(new OrderTable(0, true));
+        final OrderTable orderTable3 = tableService.create(Fixture.ORDER_TABLE_EMPTY);
         final TableGroup tableGroup = new TableGroup(List.of(orderTable1, orderTable3));
 
         // when & then
@@ -127,8 +128,8 @@ class TableGroupServiceTest {
     @Test
     void ungroup() {
         // given
-        final OrderTable orderTable1 = tableService.create(new OrderTable(0, true));
-        final OrderTable orderTable2 = tableService.create(new OrderTable(0, true));
+        final OrderTable orderTable1 = tableService.create(Fixture.ORDER_TABLE_EMPTY);
+        final OrderTable orderTable2 = tableService.create(Fixture.ORDER_TABLE_EMPTY);
         final TableGroup tableGroup = tableGroupService.create(new TableGroup(List.of(orderTable1, orderTable2)));
 
         // when
@@ -151,12 +152,12 @@ class TableGroupServiceTest {
     @ValueSource(strings = {"COOKING", "MEAL"})
     void ungroup_tableStatusException(final String status) {
         // given
-        final OrderTable orderTable1 = tableService.create(new OrderTable(0, true));
-        final OrderTable orderTable2 = tableService.create(new OrderTable(0, true));
+        final OrderTable orderTable1 = tableService.create(Fixture.ORDER_TABLE_EMPTY);
+        final OrderTable orderTable2 = tableService.create(Fixture.ORDER_TABLE_EMPTY);
         final TableGroup tableGroup = tableGroupService.create(new TableGroup(List.of(orderTable1, orderTable2)));
 
-        final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("Group1"));
-        final Product product = productService.create(new Product("Product1", BigDecimal.valueOf(10000)));
+        final MenuGroup menuGroup = menuGroupService.create(Fixture.MENU_GROUP);
+        final Product product = productService.create(Fixture.PRODUCT);
         final MenuProduct menuProduct = new MenuProduct(product.getId(), 2);
         final Menu menu = menuService.create(
                 new Menu("Menu1", BigDecimal.valueOf(19000), menuGroup.getId(), List.of(menuProduct)));
