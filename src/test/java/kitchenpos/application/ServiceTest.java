@@ -18,16 +18,7 @@ public abstract class ServiceTest {
     protected TableGroupService tableGroupService;
 
     @Autowired
-    protected ProductService productService;
-
-    @Autowired
     protected OrderService orderService;
-
-    @Autowired
-    protected MenuService menuService;
-
-    @Autowired
-    protected MenuGroupService menuGroupService;
 
     protected OrderTable createOrderTable(
             final Long orderTableId,
