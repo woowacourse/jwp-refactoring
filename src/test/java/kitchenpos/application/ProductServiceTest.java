@@ -45,8 +45,8 @@ class ProductServiceTest extends IntegrationTest {
     }
 
     @Test
-    @DisplayName("상품 등록 시 금액 정보가 있어야 한다.")
-    void 상품_등록_실패_금액_없음() {
+    @DisplayName("상품 등록 시 가격 정보가 있어야 한다.")
+    void 상품_등록_실패_가격_없음() {
         // given
         final Product product = new Product();
         product.setName("상품");
@@ -58,8 +58,8 @@ class ProductServiceTest extends IntegrationTest {
     }
 
     @Test
-    @DisplayName("상품 등록 시 금액은 0 이상의 수여야 한다.")
-    void 상품_등록_실패_금액_음수() {
+    @DisplayName("상품 등록 시 가격은 0 이상의 수여야 한다.")
+    void 상품_등록_실패_가격_음수() {
         // given
         final Product product = new Product();
         product.setName("상품");
