@@ -2,6 +2,7 @@ package kitchenpos.common.fixture;
 
 import kitchenpos.domain.OrderLineItem;
 
+@SuppressWarnings("NonAsciiCharacters")
 public class OrderLineItemFixture {
 
 
