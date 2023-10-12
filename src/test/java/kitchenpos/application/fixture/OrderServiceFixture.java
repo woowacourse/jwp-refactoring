@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings("NonAsciiCharacters")
 public class OrderServiceFixture {
 
     protected Order 요청된_주문;

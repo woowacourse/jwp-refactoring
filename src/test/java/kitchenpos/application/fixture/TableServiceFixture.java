@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 
 import java.util.List;
 
+@SuppressWarnings("NonAsciiCharacters")
 public class TableServiceFixture {
 
     protected OrderTable 요청한_주문테이블;

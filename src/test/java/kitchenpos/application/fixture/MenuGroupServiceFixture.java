@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 
 import java.util.List;
 
+@SuppressWarnings("NonAsciiCharacters")
 public class MenuGroupServiceFixture {
 
     protected MenuGroup 저장된_메뉴_그룹 = new MenuGroup();

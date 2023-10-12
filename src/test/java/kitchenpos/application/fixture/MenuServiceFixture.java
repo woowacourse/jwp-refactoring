@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import java.math.BigDecimal;
 import java.util.List;
 
+@SuppressWarnings("NonAsciiCharacters")
 public class MenuServiceFixture {
 
     protected Menu 저장된_메뉴 = new Menu();

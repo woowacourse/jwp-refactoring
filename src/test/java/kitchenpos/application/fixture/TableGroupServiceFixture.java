@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings("NonAsciiCharacters")
 public class TableGroupServiceFixture {
 
     protected TableGroup 생성한_테이블그룹;

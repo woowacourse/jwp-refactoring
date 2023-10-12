@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import java.math.BigDecimal;
 import java.util.List;
 
+@SuppressWarnings("NonAsciiCharacters")
 public class ProductServiceFixture {
 
     protected Product 등록_요청한_상품;
