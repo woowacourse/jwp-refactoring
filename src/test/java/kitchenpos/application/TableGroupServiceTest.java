@@ -86,11 +86,11 @@ class TableGroupServiceTest {
         }
 
         @Test
-        void 빈_테이블이면_예외발생() {
+        void 빈_테이블이_아니면_예외발생() {
             // given
             int orderTableSize = 3;
             List<OrderTable> orderTables = LongStream.range(0, orderTableSize).boxed()
-                .map(i -> OrderTableFixture.fixture().id(i + 1).empty(true).build())
+                .map(i -> OrderTableFixture.fixture().id(i + 1).empty(false).tableGroupId(null).build())
                 .collect(Collectors.toList());
             TableGroup tableGroup = TableGroupFixture.fixture().orderTables(orderTables).build();
 
