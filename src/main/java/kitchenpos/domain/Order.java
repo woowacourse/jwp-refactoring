@@ -4,11 +4,20 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class Order {
+
     private Long id;
     private Long orderTableId;
     private String orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
+
+    public Order() {
+    }
+
+    public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+        this.orderTableId = orderTableId;
+        this.orderLineItems = orderLineItems;
+    }
 
     public Long getId() {
         return id;
