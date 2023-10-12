@@ -10,6 +10,7 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.fixture.ProductFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +26,9 @@ class ProductServiceTest {
     private ProductDao productDao;
 
     @Test
-    @DisplayName("Product 를 생성한다.")
-    void createProduct_success() {
+    void 정상적으로_상품을_생성한다() {
         // given
-        Product product = new Product("상품", BigDecimal.ONE);
+        Product product = ProductFixture.후추_치킨_10000원();
 
         // when
         Long id = productService.create(product)
@@ -44,10 +44,9 @@ class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("price 가 null 인 경우 저장에 실패한다.")
-    void createProduct_failByPriceIsNull() {
+    void price가_null_인_경우_상품_저장에_실패한다() {
         // given
-        Product product = new Product("price 가 null 인 상품", null);
+        Product product = ProductFixture.후추_칰힌_가격_책정(null);
 
         // when
         assertThatThrownBy(() -> productService.create(product))
@@ -56,9 +55,9 @@ class ProductServiceTest {
 
     @Test
     @DisplayName("price 가 음수인 경우 저장에 실패한다.")
-    void createProduct_failByPriceLowerThanZero() {
+    void price가_음수인_경우_상품_저장에_실패한다() {
         // given
-        Product product = new Product("price 가 0원 미만인 상품", BigDecimal.valueOf(-1));
+        Product product = ProductFixture.후추_칰힌_가격_책정(BigDecimal.valueOf(-1));
 
         // when
         assertThatThrownBy(() -> productService.create(product))
@@ -67,12 +66,12 @@ class ProductServiceTest {
 
     @Test
     @DisplayName("Product 전체를 조회한다.")
-    void findAllProduct() {
+    void 상품_전체를_조회한다() {
         // given
         List<Product> products = List.of(
-                new Product("상품1", BigDecimal.ZERO),
-                new Product("상품2", BigDecimal.ZERO),
-                new Product("상품3", BigDecimal.ZERO)
+                ProductFixture.후추_치킨_10000원(),
+                ProductFixture.후추_치킨_10000원(),
+                ProductFixture.후추_치킨_10000원()
         );
 
         for (Product product : products) {
