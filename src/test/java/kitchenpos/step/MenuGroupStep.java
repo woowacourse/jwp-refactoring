@@ -12,6 +12,11 @@ public class MenuGroupStep {
     public static final MenuGroup MENU_GROUP_JAPANESE = new MenuGroup("일식");
     public static final MenuGroup MENU_GROUP_KOREAN = new MenuGroup("한식");
 
+    public static Long 메뉴_그룹_생성_요청하고_아이디_반환(final MenuGroup menuGroup) {
+        final ExtractableResponse<Response> response = 메뉴_그룹_생성_요청(menuGroup);
+        return response.jsonPath().getLong("id");
+    }
+
     public static ExtractableResponse<Response> 메뉴_그룹_생성_요청(final MenuGroup menuGroup) {
         return RestAssured.given()
                 .log().all()
