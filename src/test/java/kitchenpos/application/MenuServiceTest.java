@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.JdbcTemplateMenuDao;
-import kitchenpos.dao.JdbcTemplateMenuGroupDao;
-import kitchenpos.dao.JdbcTemplateMenuProductDao;
+import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -29,11 +29,11 @@ class MenuServiceTest {
     @Autowired
     private MenuService menuService;
     @Autowired
-    private JdbcTemplateMenuDao menuDao;
+    private MenuDao menuDao;
     @Autowired
-    private JdbcTemplateMenuGroupDao menuGroupDao;
+    private MenuGroupDao menuGroupDao;
     @Autowired
-    private JdbcTemplateMenuProductDao menuProductDao;
+    private MenuProductDao menuProductDao;
 
     private List<Menu> preSavedMenus;
     private Menu menu1;

@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.JdbcTemplateMenuGroupDao;
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +21,7 @@ class MenuGroupServiceTest {
     @Autowired
     private MenuGroupService menuGroupService;
     @Autowired
-    private JdbcTemplateMenuGroupDao menuGroupDao;
+    private MenuGroupDao menuGroupDao;
 
     private List<MenuGroup> preSavedMenuGroups;
 
