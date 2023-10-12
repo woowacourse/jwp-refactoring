@@ -57,14 +57,15 @@ public class OrderFixture {
             return order;
         }
 
-        private static List<OrderLineItem> getOrderLineItems(Long... orderIds) {
+        private static List<OrderLineItem> getOrderLineItems(Long... orderId) {
             List<OrderLineItem> orderLineItems = new ArrayList<>();
-            for (Long id : orderIds) {
-                OrderLineItem orderLineItem = new OrderLineItem();
-                orderLineItem.setSeq(1L);
-                orderLineItem.setOrderId(id);
-                orderLineItem.setMenuId(1L);
-                orderLineItem.setQuantity(1);
+            for (Long id : orderId) {
+                OrderLineItem orderLineItem = OrderLineItem.builder()
+                        .seq(1L)
+                        .orderId(id)
+                        .menuId(1L)
+                        .quantity(1L)
+                        .build();
                 orderLineItems.add(orderLineItem);
             }
             return orderLineItems;

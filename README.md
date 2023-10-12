@@ -103,7 +103,7 @@
     - [ ] Order
     - [ ] Product
     - [ ] OrderTable
-    - [ ] OrderLineItem
+    - [x] OrderLineItem
     - [ ] TableGroup
     - [x] MenuGroup
     - [x] MenuProduct

@@ -71,8 +71,8 @@ public class OrderService {
         final Long orderId = savedOrder.getId();
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.setOrderId(orderId);
-            savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
+            OrderLineItem updated = orderLineItem.updateOrderId(orderId);
+            savedOrderLineItems.add(orderLineItemDao.save(updated));
         }
         savedOrder.setOrderLineItems(savedOrderLineItems);
 

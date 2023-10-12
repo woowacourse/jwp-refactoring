@@ -81,7 +81,7 @@ class OrderServiceTest {
             given(orderDao.save(any(Order.class)))
                     .willReturn(order);
             given(orderLineItemDao.save(any(OrderLineItem.class)))
-                    .willReturn(new OrderLineItem());
+                    .willReturn(OrderLineItem.builder().build());
 
             // when
             Order result = orderService.create(order);
@@ -157,7 +157,7 @@ class OrderServiceTest {
             given(orderDao.findAll())
                     .willReturn(List.of(order));
             given(orderLineItemDao.findAllByOrderId(anyLong()))
-                    .willReturn(List.of(new OrderLineItem()));
+                    .willReturn(List.of(OrderLineItem.builder().build()));
 
             // when
             List<Order> result = orderService.list();
@@ -182,7 +182,7 @@ class OrderServiceTest {
             given(orderDao.save(any(Order.class)))
                     .willReturn(orderForChange);
             given(orderLineItemDao.findAllByOrderId(anyLong()))
-                    .willReturn(List.of(new OrderLineItem()));
+                    .willReturn(List.of(OrderLineItem.builder().build()));
 
             // when
             Order result = orderService.changeOrderStatus(order.getId(), orderForChange);
