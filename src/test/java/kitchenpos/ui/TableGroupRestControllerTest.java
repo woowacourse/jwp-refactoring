@@ -22,8 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(TableGroupRestController.class)
 class TableGroupRestControllerTest {
-
-
+    
     @Autowired
     MockMvc mockMvc;
 
