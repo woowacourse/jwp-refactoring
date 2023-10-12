@@ -180,4 +180,24 @@ class OrderServiceTest extends ServiceUnitTest {
 
     }
 
+    @Nested
+    class 주문_목록을_반환한다 {
+
+        @Test
+        void 주문_목록을_반환한다() {
+            // given
+            when(orderDao.findAll()).thenReturn(List.of(order));
+
+            // when
+            List<Order> orders = orderService.list();
+
+            // then
+            Assertions.assertAll(
+                    () -> assertThat(orders).hasSize(1),
+                    () -> assertThat(orders.get(0)).isEqualTo(order)
+            );
+        }
+
+    }
+
 }
