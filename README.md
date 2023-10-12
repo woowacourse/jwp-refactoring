@@ -12,10 +12,10 @@
     - [ ] TableGroupRestController
     - [ ] TableRestController
 
-- [ ] 서비스 테스트 구현
+- [x] 서비스 테스트 구현
     - [x] MenuGroupService
     - [x] MenuService
-    - [ ] OrderService
+    - [x] OrderService
     - [x] ProductService
     - [x] TableGroupService
     - [x] TableService
