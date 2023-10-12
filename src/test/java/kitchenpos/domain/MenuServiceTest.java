@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import static kitchenpos.fixture.MenuFixture.REQUEST;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -16,6 +17,7 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.ProductFixture;
 import org.assertj.core.api.Assertions;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
@@ -55,28 +57,38 @@ class MenuServiceTest {
         void 메뉴를_등록한다() {
             // given
             Menu menu = REQUEST.메뉴_등록_요청();
+            MenuProduct menuProduct = MenuFixture.MENU_PRODUCT.후라이드_치킨();
             given(menuDao.save(any(Menu.class)))
                     .willReturn(menu);
             given(menuGroupDao.existsById(any()))
                     .willReturn(true);
             given(productDao.findById(anyLong()))
                     .willReturn(Optional.of(ProductFixture.PRODUCT.후라이드_치킨()));
+            given(menuProductDao.save(any()))
+                    .willReturn(menuProduct);
 
             // when
             Menu result = menuService.create(menu);
 
             // then
+            assertSoftly(softly -> {
+                softly.assertThat(result.getName()).isEqualTo(menu.getName());
+                softly.assertThat(result.getPrice()).isEqualTo(menu.getPrice());
+                softly.assertThat(result.getMenuGroupId()).isEqualTo(menu.getMenuGroupId());
+                softly.assertThat(result.getMenuProducts()).isEqualTo(List.of(menuProduct));
+            });
+
+
             Assertions.assertThat(result)
                     .usingRecursiveComparison()
                     .isEqualTo(menu);
         }
 
         @ParameterizedTest(name = "메뉴의 가격이 {0}이면 예외")
-        @ValueSource(ints = {-1, -100})
-        void 메뉴의_가격이_잘못되면_예외(Integer price) {
+        @ValueSource(longs = {-1, -100})
+        void 메뉴의_가격이_잘못되면_예외(Long price) {
             // given
-            Menu menu = REQUEST.메뉴_등록_요청();
-            menu.setPrice(BigDecimal.valueOf(price));
+            Menu menu = REQUEST.메뉴_등록_요청(price);
 
             // when & then
             Assertions.assertThatThrownBy(() -> menuService.create(menu))
@@ -85,8 +97,7 @@ class MenuServiceTest {
 
         @Test
         void 메뉴의_가격이_Null이면_예외() {
-            Menu menu = REQUEST.메뉴_등록_요청();
-            menu.setPrice(null);
+            Menu menu = REQUEST.메뉴_등록_요청(null);
 
             Assertions.assertThatThrownBy(() -> menuService.create(menu))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -122,8 +133,7 @@ class MenuServiceTest {
         @CsvSource(value = {"17000,16999", "17000,10000", "17000,1000", "17000,1", "17000,0", "17000,-1", "17000,-100"})
         void 메뉴_가격이_상품들의_가격_합보다_크면_예외(Long menuPrice, Long productPrice) {
             // given
-            Menu menu = REQUEST.메뉴_등록_요청();
-            menu.setPrice(BigDecimal.valueOf(menuPrice));
+            Menu menu = REQUEST.메뉴_등록_요청(menuPrice);
             Product product = ProductFixture.PRODUCT.후라이드_치킨(productPrice);
 
             given(menuGroupDao.existsById(anyLong()))

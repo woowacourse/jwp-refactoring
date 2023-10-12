@@ -16,23 +16,23 @@ public class MenuFixture {
     public static class REQUEST {
 
         public static Menu 메뉴_등록_요청() {
-            Menu menu = new Menu();
-            menu.setId(1L);
-            menu.setName("후라이드치킨");
-            menu.setPrice(BigDecimal.valueOf(16000L));
-            menu.setMenuGroupId(1L);
-            menu.setMenuProducts(List.of(후라이드_치킨()));
-            return menu;
+            return Menu.builder()
+                    .id(1L)
+                    .name("후라이드치킨")
+                    .price(BigDecimal.valueOf(16000L))
+                    .menuGroupId(1L)
+                    .menuProducts(List.of(후라이드_치킨()))
+                    .build();
         }
 
         public static Menu 메뉴_등록_요청(Long price) {
-            Menu menu = new Menu();
-            menu.setId(1L);
-            menu.setName("후라이드치킨");
-            menu.setPrice(BigDecimal.valueOf(price));
-            menu.setMenuGroupId(1L);
-            menu.setMenuProducts(List.of(후라이드_치킨()));
-            return menu;
+            return Menu.builder()
+                    .id(1L)
+                    .name("후라이드치킨")
+                    .price(price == null ? null : BigDecimal.valueOf(price))
+                    .menuGroupId(1L)
+                    .menuProducts(List.of(후라이드_치킨()))
+                    .build();
         }
     }
 

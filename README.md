@@ -98,8 +98,8 @@
 
 ## 리팩터링 요구사항
 
-- [ ] 도메인의 setter를 제거한다.
-    - [ ] Menu
+- [x] 도메인의 setter를 제거한다.
+    - [x] Menu
     - [x] Order
     - [x] Product
     - [x] OrderTable

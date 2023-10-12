@@ -38,11 +38,12 @@ class MenuRestControllerTest {
 
     @BeforeEach
     void setUp() {
-        menu = new Menu();
-        menu.setId(1L);
-        menu.setName("후라이드치킨");
-        menu.setPrice(BigDecimal.valueOf(16000L));
-        menu.setMenuGroupId(1L);
+        menu = Menu.builder()
+                .id(1L)
+                .name("후라이드치킨")
+                .price(BigDecimal.valueOf(16000L))
+                .menuGroupId(1L)
+                .build();
     }
 
     @Nested
