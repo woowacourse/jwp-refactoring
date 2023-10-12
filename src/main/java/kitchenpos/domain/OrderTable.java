@@ -12,6 +12,10 @@ public class OrderTable {
     public OrderTable() {
     }
 
+    public OrderTable(final Long id) {
+        this.id = id;
+    }
+
     public OrderTable(final boolean empty) {
         this.empty = empty;
     }
