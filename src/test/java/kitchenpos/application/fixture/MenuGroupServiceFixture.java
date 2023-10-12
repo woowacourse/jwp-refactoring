@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.application.fixture;
 
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.BeforeEach;
