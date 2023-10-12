@@ -5,6 +5,7 @@ import kitchenpos.application.test.ServiceUnitTest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.fixture.OrderTableFixture;
@@ -17,6 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -61,10 +63,10 @@ class TableGroupServiceTest extends ServiceUnitTest {
     }
 
     @Nested
-    class TableGroups를_생성한다 {
+    class 통합_계산을_생성한다 {
 
         @Test
-        void TableGroups를_생성한다() {
+        void 통합_계산을_생성한다() {
             // given
             when(orderTableDao.findAllByIdIn(List.of(orderTable1.getId(), orderTable2.getId()))).thenReturn(List.of(orderTable1, orderTable2));
             when(tableGroupDao.save(tableGroup)).thenReturn(tableGroup);
@@ -121,6 +123,38 @@ class TableGroupServiceTest extends ServiceUnitTest {
 
             // when, then
             assertThrows(IllegalArgumentException.class, () -> tableGroupService.create(tableGroup));
+        }
+
+    }
+
+    @Nested
+    class 통합_계산을_취소한다 {
+
+        @Test
+        void 통합_계산을_취소한다() {
+            // given
+            when(orderTableDao.findAllByTableGroupId(tableGroup.getId())).thenReturn(List.of(orderTable1, orderTable2));
+            when(orderDao.existsByOrderTableIdInAndOrderStatusIn(
+                    List.of(orderTable1.getId(), orderTable2.getId()),
+                    Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
+                    .thenReturn(false);
+
+            // when, then
+            assertDoesNotThrow(() -> tableGroupService.ungroup(tableGroup.getId()));
+        }
+
+        @Test
+        void 통합_계산_주문들_중_하나라도_COOKING_또는_MEAL이면_예외가_발생한다() {
+            // given
+            when(orderTableDao.findAllByTableGroupId(tableGroup.getId())).thenReturn(List.of(orderTable1, orderTable2));
+            when(orderDao.existsByOrderTableIdInAndOrderStatusIn(
+                    List.of(orderTable1.getId(), orderTable2.getId()),
+                    Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
+                    .thenReturn(true);
+
+            // when, then
+            assertThrows(IllegalArgumentException.class,
+                    () -> tableGroupService.ungroup(tableGroup.getId()));
         }
 
     }

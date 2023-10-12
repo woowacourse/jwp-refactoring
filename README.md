@@ -52,10 +52,10 @@
   - [x] TableGroups를 저장하고
     - [x] tableGroupId를 설정한다.
     - [x] empty를 false로 설정한다.
-- [ ] 통합 계산을 취소한다.
-  - [ ] 만약 통합 계산 주문들 중 하나라도 COOKING 또는 MEAL이면 예외가 발생한다.
-  - [ ] 주문의 tableGrouId를 null로 설정한다.
-  - [ ] 주문의 setEmpty를 false로 설정한다.
+- [x] 통합 계산을 취소한다.
+  - [x] 통합 계산 주문들 중 하나라도 COOKING 또는 MEAL이면 예외가 발생한다.
+  - [x] 주문의 tableGrouId를 null로 설정한다.
+  - [x] 주문의 setEmpty를 false로 설정한다.
 
 ### Table
 - [ ] 주문(Order)과 주문 테이블(OrderTable)을 저장한다.
