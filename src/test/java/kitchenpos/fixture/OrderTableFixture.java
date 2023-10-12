@@ -25,4 +25,12 @@ public class OrderTableFixture {
         orderTable.setEmpty(false);
         return orderTable;
     }
+
+    public static OrderTable 주문테이블_2명_id_1() {
+        final var orderTable = new OrderTable();
+        orderTable.setId(1L);
+        orderTable.setNumberOfGuests(2);
+        orderTable.setEmpty(false);
+        return orderTable;
+    }
 }
