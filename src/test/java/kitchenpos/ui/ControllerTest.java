@@ -14,6 +14,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -81,5 +82,12 @@ public class ControllerTest {
         order.setOrderLineItems(List.of(orderLineItem));
 
         return order;
+    }
+
+    protected Product 상품() {
+        Product product = new Product();
+        product.setName("강정치킨");
+        product.setPrice(BigDecimal.valueOf(17000));
+        return product;
     }
 }
