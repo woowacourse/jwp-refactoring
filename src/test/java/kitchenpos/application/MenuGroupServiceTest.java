@@ -43,12 +43,12 @@ class MenuGroupServiceTest extends IntegrationTest {
     }
 
     @Test
-    @DisplayName("메뉴 그룹 등록 시 전달받은 정보를 새 id로 저장한다.")
+    @DisplayName("메뉴 그룹 등록 시 이름이 있어야 한다.")
     void 메뉴_그룹_등록_실패_이름_없음() {
         // given
+        // when
         final MenuGroup menuGroup = new MenuGroup();
 
-        // when
         // then
         /// TODO: 2023/10/12 DB 가기 전에 예외처리하기
         assertThatThrownBy(() -> menuGroupService.create(menuGroup))
