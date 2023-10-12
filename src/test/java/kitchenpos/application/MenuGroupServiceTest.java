@@ -61,7 +61,7 @@ class MenuGroupServiceTest extends ServiceTest {
         }
 
         @Test
-        void 메뉴_그룹이_하나_이상_존재하면_메뉴_그룹_리스트를_반환한다() {
+        void 메뉴_그룹이_하나_이상_존재하면_메뉴_그룹_목록을_반환한다() {
             // given
             final var menuGroup = new MenuGroup("test");
             given(menuGroupDao.findAll()).willReturn(List.of(menuGroup));

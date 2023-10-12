@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
@@ -16,9 +16,6 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -163,16 +160,16 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void 메뉴가_하나_이상_존재하면_메뉴_목록을_반환한다() {
             // given
-            final var menu = new Menu("test_mane", BigDecimal.valueOf(1000), 1L, Collections.emptyList());
+            final var menu = new Menu("test_menu", BigDecimal.valueOf(1000), 1L, Collections.emptyList());
             given(menuService.list()).willReturn(List.of(menu));
 
             final var expected = List.of(menu);
 
             // when
-            final var acutal = menuService.list();
+            final var actual = menuService.list();
 
             // then
-            assertThat(acutal).usingRecursiveComparison()
+            assertThat(actual).usingRecursiveComparison()
                     .isEqualTo(expected);
         }
     }
