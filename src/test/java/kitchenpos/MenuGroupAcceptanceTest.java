@@ -3,6 +3,7 @@ package kitchenpos;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.step.MenuGroupStep;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -30,12 +31,8 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
 
     @Test
     void 메뉴_그룹을_조회한다() {
-        final MenuGroup japaneseMenuGroup = 일식();
-        final MenuGroup koreanMenuGroup = 한식();
-        final List<MenuGroup> menuGroups = List.of(japaneseMenuGroup, koreanMenuGroup);
-        for (final MenuGroup menuGroup : menuGroups) {
-            메뉴_그룹_생성_요청(menuGroup);
-        }
+        final List<MenuGroup> menuGroups = List.of(일식(), 한식());
+        menuGroups.forEach(MenuGroupStep::메뉴_그룹_생성_요청);
 
         final ExtractableResponse<Response> response = 메뉴_그룹_조회_요청();
         final List<MenuGroup> result = response.jsonPath().getList("", MenuGroup.class);
