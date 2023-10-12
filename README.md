@@ -1,5 +1,6 @@
 # 키친포스
 
+식별자값도 객체로 가정하고 관계를 봤습니다.
 
 ```mermaid
 flowchart LR
@@ -7,18 +8,20 @@ flowchart LR
     MenuGroup
     MenuProduct
     OrderLineItem
-    Orders
     OrderTable
     MenuProduct
     TableGroup
     
     Menu ---> MenuGroup
+    Menu ---> MenuProduct
     MenuProduct ---> Menu
     MenuProduct ---> Product
     OrderLineItem ---> Menu
-    OrderLineItem ---> Orders
-    Orders ---> OrderTable
+    OrderLineItem ---> Order
+    Order ---> OrderLineItem
+    Order ---> OrderTable
     OrderTable ---> TableGroup
+    TableGroup ---> OrderTable
 ```
 
 ## 요구 사항
@@ -34,15 +37,23 @@ flowchart LR
 
 - 모든 상품 목록을 조회한다.
 
+<br>
+<br>
+<br>
+
 ## 메뉴 그룹 (MenuGroup)
 
 ### 메뉴 그룹 등록
 
 - 메뉴 그룹을 등록한다.
-- 
+
 ### 메뉴 그룹 조회
 
 - 전체 메뉴 그룹 목록을 조회한다.
+
+<br>
+<br>
+<br>
 
 ## 메뉴 (Menu)
 
@@ -54,38 +65,47 @@ flowchart LR
 - 메뉴는 가격이 음이 아닌 정수로 존재해야 한다.
 
 
-#### 메뉴 - 메뉴 그룹
+#### 메뉴 그룹
 
 - 메뉴는 속할 메뉴 그룹이 존재해야 한다.
 
 
-#### 메뉴 - 메뉴 상품
+#### 메뉴 상품
 
 - 메뉴는 등록할 메뉴 상품이 비어있을 수 있다.
 - 메뉴에 등록할 메뉴 상품이 존재할 경우 상품은 등록되어 있어야 한다.
 
+<br>
+<br>
+<br>
 
 ## 주문 (Order) 
 
-- 주문을 등록한다.
+### 주문 등록
+
   - 주문 항목 목록이 비어있는 경우 주문할 수 없다.
   - 주문 항목 목록 수량이 메뉴에서 찾을 수 있는 메뉴의 수량과 다를 경우 주문할 수 없다.
   - 주문 테이블이 존재하지 않을 경우 주문할 수 없다.
 
 
-- 주문 상태를 변경한다.
+### 주문 수정
+
   - 주문이 존재하지 않을 경우 주문 상태를 변경할 수 없다. 
   - 주문이 완료 상태인 경우 주문 상태를 변경할 수 없다. 
 
+<br>
+<br>
+<br>
 
 ## 주문 테이블 (OrderTable)
 
 ### 주문 테이블 등록
 
+- 주문 테이블을 등록한다.
 
 ### 주문 테이블 조회
 
-- 모든 주문 테이블을 조회한다.
+- 전체 주문 테이블을 조회한다.
 
 ### 주문 테이블 수정
 
@@ -98,6 +118,9 @@ flowchart LR
   - 손님 수가 0 미만일 수 없다.
   - 주문 테이블이 비어있는 상태일 경우 손님 수를 변경할 수 없다.
 
+<br>
+<br>
+<br>
 
 ## 용어 사전
 
