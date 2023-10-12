@@ -97,22 +97,46 @@ public abstract class IntegrationTest {
     }
 
     protected Order generateOrder(final OrderStatus orderStatus) {
+        return generateOrder(orderStatus, generateOrderTable(3));
+    }
+
+    protected Order generateOrder(final OrderStatus orderStatus, final OrderTable orderTable) {
         final Order order = new Order();
         order.setOrderStatus(orderStatus.name());
         order.setOrderedTime(LocalDateTime.now());
-        order.setOrderTableId(generateOrderTable(3).getId());
+        order.setOrderTableId(orderTable.getId());
         return orderDao.save(order);
     }
 
     protected OrderTable generateOrderTable(final int numberOfGuests) {
-        return generateOrderTable(numberOfGuests, false);
+        return generateOrderTable(numberOfGuests, false, generateTableGroup());
     }
 
     protected OrderTable generateOrderTable(final int numberOfGuests, final boolean empty) {
         final OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(numberOfGuests);
         orderTable.setEmpty(empty);
-        orderTable.setTableGroupId(generateTableGroup().getId());
+        orderTable.setTableGroupId(null);
+        return orderTableDao.save(orderTable);
+    }
+
+    protected OrderTable generateOrderTable(
+            final int numberOfGuests,
+            final boolean empty,
+            final TableGroup tableGroup
+    ) {
+        final OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(numberOfGuests);
+        orderTable.setEmpty(empty);
+        orderTable.setTableGroupId(tableGroup.getId());
+        return orderTableDao.save(orderTable);
+    }
+
+    protected OrderTable generateOrderTableWithOutTableGroup(final int numberOfGuests, final boolean empty) {
+        final OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(numberOfGuests);
+        orderTable.setEmpty(empty);
+        orderTable.setTableGroupId(null);
         return orderTableDao.save(orderTable);
     }
 

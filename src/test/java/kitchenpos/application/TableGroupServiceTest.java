@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Nested;
@@ -101,6 +102,24 @@ class TableGroupServiceTest extends IntegrationTest {
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+    }
+
+    @Nested
+    class ungroup_table_group_failure {
+
+        @Test
+        void any_order_status_is_not_completion() {
+            // given
+            final TableGroup tableGroup = generateTableGroup();
+            OrderTable orderTable = generateOrderTable(1, true, tableGroup);
+            tableGroup.setOrderTables(List.of(orderTable));
+            generateOrder(OrderStatus.COOKING, orderTable);
+            generateOrder(OrderStatus.COMPLETION, orderTable);
+
+            // when & then
+            assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
