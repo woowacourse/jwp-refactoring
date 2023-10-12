@@ -56,14 +56,14 @@ class MenuGroupServiceTest {
         // then
         List<MenuGroup> results = menuGroupService.list()
                 .stream()
-                .filter(menu -> containsMenuGroup(menuGroups, menu))
+                .filter(menu -> containsMenuGroups(menuGroups, menu))
                 .collect(Collectors.toList());
         assertThat(results).usingRecursiveComparison()
                 .ignoringFields("id")
                 .isEqualTo(menuGroups);
     }
 
-    private boolean containsMenuGroup(final List<MenuGroup> menuGroups, final MenuGroup menu) {
+    private boolean containsMenuGroups(List<MenuGroup> menuGroups, MenuGroup menu) {
         for (MenuGroup menuGroup : menuGroups) {
             if (menuGroup.getName().equals(menu.getName())) {
                 return true;
