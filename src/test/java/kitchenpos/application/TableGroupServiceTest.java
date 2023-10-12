@@ -51,6 +51,7 @@ class TableGroupServiceTest {
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(orderTableDao).should(times(0)).findAllByIdIn(anyList());
     }
 
     @Test
@@ -65,6 +66,7 @@ class TableGroupServiceTest {
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(tableGroupDao).should(times(0)).save(any());
     }
 
     @Test
@@ -85,6 +87,7 @@ class TableGroupServiceTest {
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(tableGroupDao).should(times(0)).save(any());
     }
 
     @Test
@@ -104,6 +107,7 @@ class TableGroupServiceTest {
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(tableGroupDao).should(times(0)).save(any());
     }
 
     @Test
@@ -146,6 +150,7 @@ class TableGroupServiceTest {
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(1L))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(orderTableDao).should(times(0)).save(any());
     }
 
     @Test

@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -59,6 +61,7 @@ class TableServiceTest {
     void 상태를_바꾸려는_테이블은_반드시_존재해야_한다() {
         assertThatThrownBy(() -> tableService.changeEmpty(1L, new OrderTable()))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(orderDao).should(times(0)).existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList());
     }
 
     @Test
@@ -72,6 +75,7 @@ class TableServiceTest {
         // when, then
         assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(orderTableDao).should(times(0)).save(any());
     }
 
     @Test
@@ -86,17 +90,19 @@ class TableServiceTest {
         // when, then
         assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(orderTableDao).should(times(0)).save(any());
     }
 
     @Test
-    void 테이블에_방문한_손님_수가_0이하면_예외발생() {
+    void 테이블에_방문한_손님_수가_음수면_예외발생() {
         // given
         OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(0);
+        orderTable.setNumberOfGuests(-1);
 
         // when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(orderTableDao).should(times(0)).findById(anyLong());
     }
 
     @Test
@@ -111,6 +117,7 @@ class TableServiceTest {
         // when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(orderTableDao).should(times(0)).save(any());
     }
 
     @Test
@@ -126,6 +133,7 @@ class TableServiceTest {
         // when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(orderTableDao).should(times(0)).save(any());
     }
 
     @Test

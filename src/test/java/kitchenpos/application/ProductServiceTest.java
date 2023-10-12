@@ -47,5 +47,6 @@ class ProductServiceTest {
         // when, then
         assertThatThrownBy(() -> productService.create(product))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(productDao).should(times(0)).save(any());
     }
 }

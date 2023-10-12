@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
@@ -82,6 +84,7 @@ class MenuServiceTest {
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(menuGroupDao).should(times(0)).existsById(anyLong());
     }
 
     @Test
@@ -97,6 +100,7 @@ class MenuServiceTest {
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(productDao).should(times(0)).findById(anyLong());
     }
 
     @Test
@@ -123,6 +127,7 @@ class MenuServiceTest {
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(menuDao).should(times(0)).save(any());
     }
 
     @Test
@@ -150,5 +155,6 @@ class MenuServiceTest {
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(menuDao).should(times(0)).save(any());
     }
 }
