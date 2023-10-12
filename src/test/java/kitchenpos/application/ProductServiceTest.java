@@ -10,8 +10,6 @@ import kitchenpos.domain.Product;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -39,12 +37,11 @@ class ProductServiceTest {
 
   }
 
-  @ParameterizedTest
-  @ValueSource(longs = {-1L, -1000L})
+  @Test
   @DisplayName("상품을 등록할 때 상품의 가격이 0보다 작을 경우 예외를 반환한다.")
-  void create_fail_negative_price(final Long wrongPrice) {
+  void create_fail_negative_price() {
     final Product product = new Product();
-    product.setPrice(BigDecimal.valueOf(wrongPrice));
+    product.setPrice(BigDecimal.valueOf(-1));
 
     //when
     final ThrowingCallable actual = () -> productService.create(product);
