@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
@@ -15,7 +16,18 @@ class ProductServiceTest extends IntegrationTest {
 
     @Test
     void create_product_success() {
+        // given
+        final Product product = new Product();
+        final BigDecimal price = BigDecimal.valueOf(10000);
+        product.setName("chicken");
+        product.setPrice(price);
 
+        // when
+        final Product savedProduct = productService.create(product);
+
+        // then
+        assertThat(savedProduct.getId()).isNotNull();
+        assertThat(savedProduct.getName()).isEqualTo("chicken");
     }
 
     @Nested
