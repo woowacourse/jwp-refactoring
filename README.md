@@ -2,10 +2,70 @@
 
 ## 요구 사항
 - 1단계
-  - [ ] 컨트롤러 테스트 코드 작성
   - [ ] 서비스 테스트 코드 작성
   - [ ] 리포지토리 테스트 코드 작성
   - [ ] 도메인 테스트 코드 작성
+
+
+## 기능 목록
+
+### Controller
+
+1. MenuGroupRestController
+   - 메뉴 그룹을 생성할 수 있다. (`POST` - `/api/menu-groups`)
+   - 모든 메뉴 그룹 목록을 확인할 수 있다. (`GET` - `/api/menu-groups`)
+
+2. MenuRestController
+   - 특정 메뉴 그룹에 대한 메뉴를 생성할 수 있다. (`POST` - `/api/menus`)
+   - 모든 메뉴 목록을 확인할 수 있다. (`GET` - `/api/menus`)
+
+3. OrderRestController
+   - 주문을 생성할 수 있다. (`POST` - `/api/orders`)
+   - 모든 주문 목록을 확인할 수 있다. (`GET` - `/api/orders`)
+   - 특정 주문의 주문 상태를 변경할 수 있다. (`PUT` - `/api/orders/{orderId}/order-status`) 
+
+4. ProductRestController
+   - 상품을 생성할 수 있다. (`POST` - `/api/products`)
+   - 모든 상품 목록을 확인할 수 있다. (`GET` - `/api/products`)
+
+5. TableGroupRestController
+   - 단체 지정 주문을 생성할 수 있다. (`POST` - `/api/table-groups`)
+   - 단체 지정 주문을 삭제할 수 있다. (`DELETE` - `/api/table-groups/{tableGroupId}`)
+
+6. TableRestController
+   - 주문 테이블을 생성할 수 있다. (`POST`- `/api/tables`)
+   - 주문 테이블 목록을 확인할 수 있다. (`GET` - `/api/tables`)
+   - 주문 테이블이 주문을 등록할 수 없도록 변경할 수 있다. (`PATCH` - `/api/tables/{orderTableId}/empty`)
+   - 주문 테이블에 손님의 수를 변경할 수 있다. (`PUT` - `api/tables/{orderTableId}/number-of-guests`)
+
+### Service
+
+1. MenuGroupService
+   - `create` 메뉴 그룹을 생성할 수 있다.
+   - `list` 메뉴 그룹 목록을 확인할 수 있다.
+
+2. MenuService
+   - `create` 메뉴를 생성할 수 있다.
+   - `list` 메뉴 목록을 확인할 수 있다.
+
+3. OrderService
+   - `create` 주문을 생성할 수 있다.
+   - `list` 주문 목록을 확인할 수 있다.
+   - `changeOrderStatus` 주문의 상태를 변경할 수 있다.
+
+4. ProductService
+   - `create` 상품을 생성할 수 있다.
+   - `list` 상품 목록을 확인할 수 있다.
+
+5. TableGroupService
+   - `create` 단체 지정 주문을 생성할 수 있다.
+   - `ungroup` 단체 지정 주문을 soft delete 할 수 있다
+
+6. TableService
+   - `create` 주문 테이블을 생성할 수 있다.
+   - `list` 주문 테이블 목록을 확인할 수 있다.
+   - `changeEmpty` 주문을 더이상 등록할 수 없는 상태로 변경한다. (이미 계산이 끝난 주문을 수정할 수 없도록 만든 것 같음)
+   - `changeNumberOfGuests` 주문 테이블의 손님의 수를 변경할 수 있다.
 
 ## 용어 사전
 
