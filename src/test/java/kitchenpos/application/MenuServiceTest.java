@@ -49,7 +49,7 @@ class MenuServiceTest {
     @DisplayName("메뉴를 생성할 수 있다")
     @Test
     void createMenu() {
-        //given
+        // given
         final Menu menu = setUp();
 
         // when

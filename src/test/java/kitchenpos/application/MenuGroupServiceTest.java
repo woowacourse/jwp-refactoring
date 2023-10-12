@@ -20,11 +20,14 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹을 생성할 수 있다")
     @Test
     void createMenuGroup() {
+        // given
         final MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName("주인장 최애 메뉴");
 
+        // when
         final MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
 
+        // then
         assertSoftly(softly -> {
             assertThat(savedMenuGroup.getId()).isNotNull();
             assertThat(savedMenuGroup.getName()).isEqualTo(menuGroup.getName());
@@ -34,11 +37,14 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹 목록을 조회할 수 있다")
     @Test
     void findAllMenuGroups() {
+        // given
         menuGroupService.create(MenuGroupFixture.create());
         menuGroupService.create(MenuGroupFixture.create());
 
+        // when
         final List<MenuGroup> list = menuGroupService.list();
 
+        // then
         assertThat(list).hasSize(2);
     }
 }

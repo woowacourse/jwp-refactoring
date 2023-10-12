@@ -48,22 +48,27 @@ class TableGroupServiceTest {
         @DisplayName("정상적으로 단체 지정된다")
         @Test
         void success() {
+            // given
             final OrderTable orderTable1 = tableService.create(OrderTableFixture.createEmpty());
             final OrderTable orderTable2 = tableService.create(OrderTableFixture.createEmpty());
 
             final TableGroup tableGroup = new TableGroup();
             tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
 
+            // when
             final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
+            // then
             assertThat(savedTableGroup.getId()).isNotNull();
         }
 
         @DisplayName("주문 테이블 목록이 비어있으면 예외처리 한다")
         @Test
         void throwExceptionWhenOrderTableEmpty() {
+            // given
             final TableGroup tableGroup = new TableGroup();
 
+            // then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                     .isInstanceOf(IllegalArgumentException.class);
         }
@@ -71,11 +76,13 @@ class TableGroupServiceTest {
         @DisplayName("주문 테이블 목록의 사이즈가 2 미만이면 예외처리 한다")
         @Test
         void throwExceptionWhenOrderTableListSizeIsLowerThanTwo() {
+            // given
             final OrderTable orderTable = tableService.create(OrderTableFixture.createEmpty());
 
             final TableGroup tableGroup = new TableGroup();
             tableGroup.setOrderTables(List.of(orderTable));
 
+            // then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                     .isInstanceOf(IllegalArgumentException.class);
         }
@@ -83,6 +90,7 @@ class TableGroupServiceTest {
         @DisplayName("존재하지 않는 주문 테이블이 들어있으면 예외처리 한다")
         @Test
         void throwExceptionWhenContainsInvalidOrderTable() {
+            // given
             final OrderTable orderTable1 = tableService.create(OrderTableFixture.createEmpty());
             final OrderTable orderTable2 = new OrderTable();
             orderTable2.setId(-1L);
@@ -90,6 +98,7 @@ class TableGroupServiceTest {
             final TableGroup tableGroup = new TableGroup();
             tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
 
+            // then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                     .isInstanceOf(IllegalArgumentException.class);
         }
@@ -97,6 +106,7 @@ class TableGroupServiceTest {
         @DisplayName("비어있지 않은 테이블이 포함되어 있으면 예외처리 한다")
         @Test
         void throwExceptionWhenContainsNotEmptyOrderTable() {
+            // given
             final OrderTable orderTable1 = tableService.create(OrderTableFixture.createEmpty());
             final OrderTable orderTable2 = tableService.create(OrderTableFixture.createEmpty());
             orderTable1.setEmpty(false);
@@ -105,6 +115,7 @@ class TableGroupServiceTest {
             final TableGroup tableGroup = new TableGroup();
             tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
 
+            // then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                     .isInstanceOf(IllegalArgumentException.class);
         }
@@ -112,6 +123,7 @@ class TableGroupServiceTest {
         @DisplayName("이미 단체 지정이 된 테이블이 포함되어 있으면 예외처리 한다")
         @Test
         void throwExceptionWhenContainsAlreadyTableGroupingOrderTable() {
+            // given
             final OrderTable orderTable1 = tableService.create(OrderTableFixture.createEmpty());
             final OrderTable orderTable2 = tableService.create(OrderTableFixture.createEmpty());
             final TableGroup tableGroup1 = new TableGroup();
@@ -122,6 +134,7 @@ class TableGroupServiceTest {
             final TableGroup tableGroup2 = new TableGroup();
             tableGroup2.setOrderTables(List.of(orderTable1, orderTable3));
 
+            // then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup2))
                     .isInstanceOf(IllegalArgumentException.class);
         }
@@ -134,11 +147,13 @@ class TableGroupServiceTest {
         @DisplayName("정상적으로 해제할 수 있다")
         @Test
         void success() {
+            // given
             final OrderTable orderTable1 = tableService.create(OrderTableFixture.createEmpty());
             final OrderTable orderTable2 = tableService.create(OrderTableFixture.createEmpty());
             final TableGroup tableGroup1 = new TableGroup();
             tableGroup1.setOrderTables(List.of(orderTable1, orderTable2));
 
+            // then
             assertThatCode(() -> tableGroupService.ungroup(tableGroup1.getId()))
                     .doesNotThrowAnyException();
         }
@@ -189,8 +204,10 @@ class TableGroupServiceTest {
             final Order change2 = new Order();
             change2.setOrderStatus("COMPLETION");
 
+            // when
             orderService.changeOrderStatus(savedOrder2.getId(), change2);
 
+            // then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                     .isInstanceOf(IllegalArgumentException.class);
         }

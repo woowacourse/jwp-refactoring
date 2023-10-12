@@ -25,12 +25,15 @@ class ProductServiceTest {
     @ParameterizedTest
     @ValueSource(ints = {0, 10000})
     void createProduct(int price) {
+        // given
         final Product product = new Product();
         product.setName("알리오 올리오");
         product.setPrice(BigDecimal.valueOf(price));
 
+        // when
         final Product savedProduct = productService.create(product);
 
+        // then
         assertSoftly(softly -> {
             assertThat(savedProduct.getId()).isNotNull();
             assertThat(savedProduct.getName()).isEqualTo(product.getName());
@@ -40,9 +43,11 @@ class ProductServiceTest {
     @DisplayName("가격이 없으면 예외처리 한다")
     @Test
     void throwExceptionWhenPriceIsNull() {
+        // given
         final Product product = new Product();
         product.setName("알리오 올리오");
 
+        // then
         assertThatThrownBy(() -> productService.create(product))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -51,10 +56,12 @@ class ProductServiceTest {
     @ParameterizedTest
     @ValueSource(ints = {-10000, -1})
     void throwExceptionWhenPriceIsLowerThanZero(int price) {
+        // given
         final Product product = new Product();
         product.setName("알리오 올리오");
         product.setPrice(BigDecimal.valueOf(price));
 
+        // then
         assertThatThrownBy(() -> productService.create(product))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -62,11 +69,14 @@ class ProductServiceTest {
     @DisplayName("상품 목록을 조회할 수 있다")
     @Test
     void findAllProducts() {
+        // given
         productService.create(ProductFixture.create());
         productService.create(ProductFixture.create());
 
+        // when
         final List<Product> list = productService.list();
 
+        // then
         assertThat(list).hasSize(2);
     }
 }
