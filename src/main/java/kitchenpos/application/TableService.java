@@ -1,15 +1,19 @@
 package kitchenpos.application;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import kitchenpos.application.exception.TableServiceException.EmptyTableException;
+import kitchenpos.application.exception.TableServiceException.ExistsNotCompletionOrderException;
+import kitchenpos.application.exception.TableServiceException.ExistsTableGroupException;
+import kitchenpos.application.exception.TableServiceException.InvalidNumberOfGuestsException;
+import kitchenpos.application.exception.TableServiceException.NotExistsOrderTableException;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
 
 @Service
 public class TableService {
@@ -36,15 +40,15 @@ public class TableService {
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new NotExistsOrderTableException(orderTableId));
 
         if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
+            throw new ExistsTableGroupException();
         }
 
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new ExistsNotCompletionOrderException();
         }
 
         savedOrderTable.setEmpty(orderTable.isEmpty());
@@ -57,14 +61,14 @@ public class TableService {
         final int numberOfGuests = orderTable.getNumberOfGuests();
 
         if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
+            throw new InvalidNumberOfGuestsException(numberOfGuests);
         }
 
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new NotExistsOrderTableException(orderTableId));
 
         if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new EmptyTableException();
         }
 
         savedOrderTable.setNumberOfGuests(numberOfGuests);
