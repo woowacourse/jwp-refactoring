@@ -166,6 +166,7 @@ class OrderServiceTest {
     void 주문을_추가할_때_존재하지_않는_주문테이블이면_예외를_던진다() {
         // given
         Order order = new Order();
+        order.setOrderTableId(1L);
         order.setOrderLineItems(List.of(firstOrderLineItem));
 
         BDDMockito.given(menuDao.countByIdIn(BDDMockito.anyList()))
