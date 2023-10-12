@@ -8,10 +8,10 @@ import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
+import static kitchenpos.fixture.ProductFixture.스키야키;
+import static kitchenpos.fixture.ProductFixture.우동;
 import static kitchenpos.step.ProductStep.상품_생성_요청;
 import static kitchenpos.step.ProductStep.상품_조회_요청;
-import static kitchenpos.step.ProductStep.스키야키;
-import static kitchenpos.step.ProductStep.우동;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.springframework.http.HttpStatus.CREATED;

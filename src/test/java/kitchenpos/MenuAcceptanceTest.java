@@ -10,12 +10,12 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static kitchenpos.fixture.ProductFixture.스키야키;
 import static kitchenpos.step.MenuGroupStep.메뉴_그룹_생성_요청하고_아이디_반환;
 import static kitchenpos.step.MenuStep.메뉴_생성_요청;
 import static kitchenpos.step.MenuStep.메뉴_생성_요청하고_메뉴_반환;
 import static kitchenpos.step.MenuStep.메뉴_조회_요청;
 import static kitchenpos.step.ProductStep.상품_생성_요청하고_아이디_반환;
-import static kitchenpos.step.ProductStep.스키야키;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.springframework.http.HttpStatus.CREATED;
