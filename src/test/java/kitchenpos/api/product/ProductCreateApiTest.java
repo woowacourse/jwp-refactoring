@@ -3,7 +3,6 @@ package kitchenpos.api.product;
 import kitchenpos.api.config.ApiTestConfig;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -15,7 +14,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class ProductCreateApiTest extends ApiTestConfig {
 
-    @Tag("api-test")
     @DisplayName("상품 생성 API 테스트")
     @Test
     void createProduct() throws Exception {

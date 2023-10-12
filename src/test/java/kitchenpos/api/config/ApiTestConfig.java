@@ -12,11 +12,13 @@ import kitchenpos.ui.OrderRestController;
 import kitchenpos.ui.ProductRestController;
 import kitchenpos.ui.TableGroupRestController;
 import kitchenpos.ui.TableRestController;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+@Tag("api-test")
 @WebMvcTest({
         ProductRestController.class,
         MenuRestController.class,
