@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
@@ -104,28 +105,40 @@ class TableGroupServiceTest extends IntegrationTest {
             );
         }
 
-        @Test
-        void 주문_테이블에_이미_지정된_단체가_있으면_예외가_발생한다() {
-            // given
-            orderTable1.setEmpty(true);
-            orderTable2.setEmpty(true);
-            OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
-            OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
-            tableGroup.setOrderTables(List.of(savedOrderTable1, savedOrderTable2));
-            TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        @Nested
+        class 단체가_지정되어_있는경우 {
 
-            OrderTable orderTable3 = new OrderTable();
-            orderTable3.setEmpty(true);
-            orderTable3.setTableGroupId(savedTableGroup.getId());
-            OrderTable savedOrderTable3 = orderTableDao.save(orderTable3);
-            OrderTable orderTable4 = new OrderTable();
-            orderTable4.setEmpty(true);
-            OrderTable savedOrderTable4 = orderTableDao.save(orderTable4);
-            tableGroup.setOrderTables(List.of(savedOrderTable3, savedOrderTable4));
+            @Test
+            void 주문_테이블에_이미_지정된_단체가_있으면_예외가_발생한다() {
+                // given
+                TableGroup 지정된_그룹 = 빈_테이블들을_그룹으로_지정한다();
+                orderTable1.setEmpty(true);
+                orderTable1.setTableGroupId(지정된_그룹.getId());
+                OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
+                orderTable2.setEmpty(true);
+                OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
+                tableGroup.setOrderTables(List.of(savedOrderTable1, savedOrderTable2));
 
-            // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                    .isInstanceOf(IllegalArgumentException.class);
+                // when & then
+                assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+                        .isInstanceOf(IllegalArgumentException.class);
+            }
+
+            @Test
+            void 조리중이거나_식사중인_테이블의_그룹을_해제하면_예외가_발생한다() {
+                // given
+                orderTable1.setEmpty(true);
+                OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
+                주문(savedOrderTable1, OrderStatus.COOKING, 맛있는_메뉴());
+                orderTable2.setEmpty(true);
+                OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
+                tableGroup.setOrderTables(List.of(savedOrderTable1, savedOrderTable2));
+                TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+
+                // when & then
+                assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
+                        .isInstanceOf(IllegalArgumentException.class);
+            }
         }
     }
 }

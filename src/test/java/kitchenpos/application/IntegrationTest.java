@@ -10,6 +10,7 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -18,6 +19,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +45,7 @@ public class IntegrationTest {
 
     @Autowired
     protected TableGroupService tableGroupService;
-    
+
     @Autowired
     protected MenuGroupDao menuGroupDao;
 
@@ -59,6 +61,9 @@ public class IntegrationTest {
     @Autowired
     protected OrderDao orderDao;
 
+    @Autowired
+    protected TableGroupDao tableGroupDao;
+
     protected Order 맛있는_메뉴_주문() {
         OrderTable 주문_테이블 = 주문_테이블(false);
         return 주문(주문_테이블, OrderStatus.COOKING, 맛있는_메뉴());
@@ -72,6 +77,19 @@ public class IntegrationTest {
     protected Order 완료된_주문() {
         OrderTable 주문_테이블 = 주문_테이블(false);
         return 주문(주문_테이블, OrderStatus.COMPLETION, 맛있는_메뉴());
+    }
+
+    protected TableGroup 빈_테이블들을_그룹으로_지정한다() {
+        OrderTable orderTable1 = 주문_테이블(true);
+        OrderTable orderTable2 = 주문_테이블(true);
+        return 테이블_그룹(orderTable1, orderTable2);
+    }
+
+    protected TableGroup 테이블_그룹(OrderTable... 주문_테이블들) {
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setOrderTables(Arrays.asList(주문_테이블들));
+        tableGroup.setCreatedDate(LocalDateTime.now());
+        return tableGroupDao.save(tableGroup);
     }
 
     protected Order 주문(OrderTable orderTable, OrderStatus orderStatus, Menu... 메뉴들) {
