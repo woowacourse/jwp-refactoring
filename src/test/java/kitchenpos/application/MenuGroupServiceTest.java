@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,30 +25,38 @@ class MenuGroupServiceTest {
     @Mock
     private MenuGroupDao menuGroupDao;
 
-    @Test
-    void 메뉴_그룹을_생성할_수_있다() {
-        // given
-        final MenuGroup expected = new MenuGroup("식사");
-        given(menuGroupDao.save(any(MenuGroup.class))).willReturn(expected);
+    @Nested
+    class Create {
 
-        // when
-        final MenuGroup actual = menuGroupService.create(new MenuGroup());
+        @Test
+        void 메뉴_그룹을_생성할_수_있다() {
+            // given
+            final MenuGroup expected = new MenuGroup("식사");
+            given(menuGroupDao.save(any(MenuGroup.class))).willReturn(expected);
 
-        // then
-        assertThat(actual.getName()).isEqualTo(expected.getName());
+            // when
+            final MenuGroup actual = menuGroupService.create(new MenuGroup());
+
+            // then
+            assertThat(actual.getName()).isEqualTo(expected.getName());
+        }
     }
 
-    @Test
-    void 메뉴_그룹을_전체_조회할_수_있다() {
-        // given
-        final MenuGroup siksa = new MenuGroup("식사");
-        final MenuGroup noodles = new MenuGroup("면류");
-        given(menuGroupDao.findAll()).willReturn(List.of(siksa, noodles));
+    @Nested
+    class FindAll {
 
-        // when
-        final List<MenuGroup> actual = menuGroupService.list();
+        @Test
+        void 메뉴_그룹을_전체_조회할_수_있다() {
+            // given
+            final MenuGroup siksa = new MenuGroup("식사");
+            final MenuGroup noodles = new MenuGroup("면류");
+            given(menuGroupDao.findAll()).willReturn(List.of(siksa, noodles));
 
-        // then
-        assertThat(actual).containsExactly(siksa, noodles);
+            // when
+            final List<MenuGroup> actual = menuGroupService.list();
+
+            // then
+            assertThat(actual).containsExactly(siksa, noodles);
+        }
     }
 }

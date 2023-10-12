@@ -5,6 +5,7 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -37,95 +38,102 @@ class TableGroupServiceTest {
     @Mock
     private TableGroupDao tableGroupDao;
 
-    @Test
-    void 단체_지정을_할_수_있다() {
-        // given
-        final OrderTable orderTable1 = new OrderTable(3, true);
-        final OrderTable orderTable2 = new OrderTable(5, true);
-        final TableGroup expected = new TableGroup(List.of(orderTable1, orderTable2));
+    @Nested
+    class Create {
 
-        given(orderTableDao.findAllByIdIn(anyList())).willReturn(List.of(orderTable1, orderTable2));
+        @Test
+        void 단체_지정을_할_수_있다() {
+            // given
+            final OrderTable orderTable1 = new OrderTable(3, true);
+            final OrderTable orderTable2 = new OrderTable(5, true);
+            final TableGroup expected = new TableGroup(List.of(orderTable1, orderTable2));
 
-        given(tableGroupDao.save(any(TableGroup.class))).willReturn(expected);
+            given(orderTableDao.findAllByIdIn(anyList())).willReturn(List.of(orderTable1, orderTable2));
 
-        // when
-        final TableGroup actual = tableGroupService.create(expected);
+            given(tableGroupDao.save(any(TableGroup.class))).willReturn(expected);
 
-        // then
-        assertThat(actual.getOrderTables()).containsExactly(orderTable1, orderTable2);
+            // when
+            final TableGroup actual = tableGroupService.create(expected);
+
+            // then
+            assertThat(actual.getOrderTables()).containsExactly(orderTable1, orderTable2);
+        }
+
+        @Test
+        void 주문_테이블이_null이면_예외가_발생한다() {
+            // given
+            final List<OrderTable> nullOrderTables = null;
+            final TableGroup expected = new TableGroup(nullOrderTables);
+
+            // when, then
+            assertThatThrownBy(() -> tableGroupService.create(expected))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void 주문_테이블이_크기가_2보다_작으면_예외가_발생한다() {
+            // given
+            final OrderTable orderTable = new OrderTable(3, true);
+            final List<OrderTable> oneOrderTable = List.of(orderTable);
+            final TableGroup expected = new TableGroup(oneOrderTable);
+
+            // when, then
+            assertThatThrownBy(() -> tableGroupService.create(expected))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void 주문_테이블_수와_저장된_테이블_수가_일치하지_않으면_실패한다() {
+            // given
+            final OrderTable orderTable1 = new OrderTable(3, true);
+            final OrderTable orderTable2 = new OrderTable(5, true);
+            final TableGroup expected = new TableGroup(List.of(orderTable1, orderTable2));
+
+            given(orderTableDao.findAllByIdIn(anyList())).willReturn(List.of(orderTable1));
+
+            // when, then
+            assertThatThrownBy(() -> tableGroupService.create(expected))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void 저장된_주문_테이블이_비어있다면_실패한다() {
+            // given
+            final OrderTable notEmptyOrderTable = new OrderTable(3, false);
+            final OrderTable emptyOrderTable = new OrderTable(5, true);
+            final TableGroup expected = new TableGroup(List.of(notEmptyOrderTable, emptyOrderTable));
+
+            given(orderTableDao.findAllByIdIn(anyList())).willReturn(List.of(notEmptyOrderTable, emptyOrderTable));
+
+            // when, then
+            assertThatThrownBy(() -> tableGroupService.create(expected))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void 저장된_주문_테이블이_이미_그룹이면_실패한다() {
+            // given
+            final OrderTable alreadyHaveTableGroup = new OrderTable(3, true);
+            alreadyHaveTableGroup.setTableGroupId(1L);
+            final OrderTable notHaveTableGroup = new OrderTable(5, true);
+            final TableGroup expected = new TableGroup(List.of(alreadyHaveTableGroup, notHaveTableGroup));
+
+            given(orderTableDao.findAllByIdIn(anyList())).willReturn(List.of(alreadyHaveTableGroup, notHaveTableGroup));
+
+            // when, then
+            assertThatThrownBy(() -> tableGroupService.create(expected))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
     }
 
-    @Test
-    void 주문_테이블이_null이면_예외가_발생한다() {
-        // given
-        final List<OrderTable> nullOrderTables = null;
-        final TableGroup expected = new TableGroup(nullOrderTables);
+    @Nested
+    class Ungroup {
 
-        // when, then
-        assertThatThrownBy(() -> tableGroupService.create(expected))
-                .isInstanceOf(IllegalArgumentException.class);
     }
-
-    @Test
-    void 주문_테이블이_크기가_2보다_작으면_예외가_발생한다() {
-        // given
-        final OrderTable orderTable = new OrderTable(3, true);
-        final List<OrderTable> oneOrderTable = List.of(orderTable);
-        final TableGroup expected = new TableGroup(oneOrderTable);
-
-        // when, then
-        assertThatThrownBy(() -> tableGroupService.create(expected))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 주문_테이블_수와_저장된_테이블_수가_일치하지_않으면_실패한다() {
-        // given
-        final OrderTable orderTable1 = new OrderTable(3, true);
-        final OrderTable orderTable2 = new OrderTable(5, true);
-        final TableGroup expected = new TableGroup(List.of(orderTable1, orderTable2));
-
-        given(orderTableDao.findAllByIdIn(anyList())).willReturn(List.of(orderTable1));
-
-        // when, then
-        assertThatThrownBy(() -> tableGroupService.create(expected))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 저장된_주문_테이블이_비어있다면_실패한다() {
-        // given
-        final OrderTable notEmptyOrderTable = new OrderTable(3, false);
-        final OrderTable emptyOrderTable = new OrderTable(5, true);
-        final TableGroup expected = new TableGroup(List.of(notEmptyOrderTable, emptyOrderTable));
-
-        given(orderTableDao.findAllByIdIn(anyList())).willReturn(List.of(notEmptyOrderTable, emptyOrderTable));
-
-        // when, then
-        assertThatThrownBy(() -> tableGroupService.create(expected))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 저장된_주문_테이블이_이미_그룹이면_실패한다() {
-        // given
-        final OrderTable alreadyHaveTableGroup = new OrderTable(3, true);
-        alreadyHaveTableGroup.setTableGroupId(1L);
-        final OrderTable notHaveTableGroup = new OrderTable(5, true);
-        final TableGroup expected = new TableGroup(List.of(alreadyHaveTableGroup, notHaveTableGroup));
-
-        given(orderTableDao.findAllByIdIn(anyList())).willReturn(List.of(alreadyHaveTableGroup, notHaveTableGroup));
-
-        // when, then
-        assertThatThrownBy(() -> tableGroupService.create(expected))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @Test
     void 그룹을_해제할_수_있다() {
         // given
         final long tableGroupId = 1L;
-
         final OrderTable spyOrderTable1 = spy(new OrderTable(3, false));
         final OrderTable spyOrderTable2 = spy(new OrderTable(5, false));
 
