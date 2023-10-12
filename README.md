@@ -5,12 +5,13 @@
 - [ ] MenuGroup
     - [ ] menuGroup 생성
     - [ ] menuGroup 목록 조회
-- [ ] Menu
-    - [ ] menu 생성
-        - [ ] 가격이 비어있거나, 0보다 작은 경우 예외처리
-        - [ ] menu의 menuGroup이 존재하지 않는 경우 예외처리
-        - [ ] menu의 menuProduct의 가격합이 price 보다 큰 경우 예외처리
-    - [ ] menu 목록조회
+- [x] Menu
+    - [x] menu 생성
+        - [x] 가격이 비어있거나, 0보다 작은 경우 예외처리
+        - [x] menu의 menuGroup이 존재하지 않는 경우 예외처리
+        - [x] product가 존재하지 않는 경우 예외처리
+        - [x] menu의 menuProduct의 가격합이 price 보다 큰 경우 예외처리
+    - [x] menu 목록조회
 - [ ] Order
     - [ ] order 생성(주문하기)
         - [ ] 주문하려는 상품의 목록이 비어있는 경우 예외처리
