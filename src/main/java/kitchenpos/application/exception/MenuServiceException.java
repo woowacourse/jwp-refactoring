@@ -28,19 +28,19 @@ public class MenuServiceException extends KitchenPosException {
 
     public static class NotExistsMenuGroupException extends MenuServiceException {
 
-        private static final String NOT_EXISTS_MENU_GROUP_EXCEPTION = "전달받은 메뉴 그룹의 id가 없습니다. \nmenu gruop id: ";
+        private static final String NOT_EXISTS_MENU_GROUP_MESSAGE = "전달받은 메뉴 그룹의 id가 없습니다. \nmenu gruop id: ";
 
-        public NotExistsMenuGroupException(Long menuGroupId) {
-            super(NOT_EXISTS_MENU_GROUP_EXCEPTION + menuGroupId);
+        public NotExistsMenuGroupException(final Long menuGroupId) {
+            super(NOT_EXISTS_MENU_GROUP_MESSAGE + menuGroupId);
         }
     }
 
     public static class NotExistsProductException extends MenuServiceException {
 
-        private static final String NOT_EXISTS_PRODUCT_EXCEPTION = "전달받은 상품의 id가 없습니다. \nproduct id: ";
+        private static final String NOT_EXISTS_PRODUCT_MESSAGE = "전달받은 상품의 id가 없습니다. \nproduct id: ";
 
-        public NotExistsProductException(Long productId) {
-            super(NOT_EXISTS_PRODUCT_EXCEPTION + productId);
+        public NotExistsProductException(final Long productId) {
+            super(NOT_EXISTS_PRODUCT_MESSAGE + productId);
         }
     }
 }
