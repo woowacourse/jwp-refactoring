@@ -1,10 +1,9 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.OrderTableFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
 import java.util.List;
@@ -42,8 +41,8 @@ class TableServiceTest {
         @Test
         void 주문_테이블을_생성한다() {
             // given
-            OrderTable orderTable = OrderTableFixture.ORDER_TABLE.주문_테이블_1_비어있음();
-            given(orderTableDao.save(any(OrderTable.class)))
+            OrderTable orderTable = OrderTable.builder().build();
+            given(orderTableDao.save(any()))
                     .willReturn(orderTable);
 
             // when
@@ -62,7 +61,7 @@ class TableServiceTest {
         @Test
         void 주문_테이블_목록을_조회한다() {
             // given
-            OrderTable orderTable = new OrderTable();
+            OrderTable orderTable = ORDER_TABLE.주문_테이블_1();
             given(orderTableDao.findAll())
                     .willReturn(List.of(orderTable));
 
@@ -79,11 +78,10 @@ class TableServiceTest {
         @Test
         void 빈_테이블_상태를_변경한다() {
             // given
-            OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(true);
-            given(orderTableDao.findById(anyLong()))
+            OrderTable orderTable = OrderTable.builder().empty(true).build();
+            given(orderTableDao.findById(any()))
                     .willReturn(Optional.of(orderTable));
-            given(orderTableDao.save(any(OrderTable.class)))
+            given(orderTableDao.save(any()))
                     .willReturn(orderTable);
 
             // when
@@ -98,9 +96,8 @@ class TableServiceTest {
         @Test
         void 테이블이_존재하지_않으면_예외() {
             // given
-            OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(true);
-            given(orderTableDao.findById(anyLong()))
+            OrderTable orderTable = ORDER_TABLE.주문_테이블_1();
+            given(orderTableDao.findById(any()))
                     .willReturn(Optional.empty());
 
             // when & then
@@ -111,10 +108,8 @@ class TableServiceTest {
         @Test
         void 빈_테이블_상태를_변경할_때_테이블_그룹에_속해있으면_예외() {
             // given
-            OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(true);
-            orderTable.setTableGroupId(1L);
-            given(orderTableDao.findById(anyLong()))
+            OrderTable orderTable = OrderTable.builder().empty(true).tableGroupId(1L).build();
+            given(orderTableDao.findById(any()))
                     .willReturn(Optional.of(orderTable));
 
             // when & then
@@ -125,11 +120,10 @@ class TableServiceTest {
         @Test
         void 빈_테이블_상태를_변경할_때_주문_상태가_조리중_또는_식사중이면_예외() {
             // given
-            OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(true);
-            given(orderTableDao.findById(anyLong()))
+            OrderTable orderTable = OrderTable.builder().empty(true).build();
+            given(orderTableDao.findById(any()))
                     .willReturn(Optional.of(orderTable));
-            given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList()))
+            given(orderDao.existsByOrderTableIdAndOrderStatusIn(any(), any()))
                     .willReturn(true);
 
             // when & then
@@ -144,31 +138,25 @@ class TableServiceTest {
         @Test
         void 방문한_손님_수를_변경한다() {
             // given
-            OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(false);
-            orderTable.setNumberOfGuests(0);
-            OrderTable expectTable = new OrderTable();
-            expectTable.setEmpty(false);
-            expectTable.setNumberOfGuests(5);
-            given(orderTableDao.findById(anyLong()))
+            OrderTable orderTable = ORDER_TABLE.주문_테이블_1(false);
+            given(orderTableDao.findById(any()))
                     .willReturn(Optional.of(orderTable));
-            given(orderTableDao.save(any(OrderTable.class)))
-                    .willReturn(expectTable);
+            given(orderTableDao.save(any()))
+                    .willReturn(orderTable);
 
             // when
-            OrderTable result = tableService.changeNumberOfGuests(1L, expectTable);
+            OrderTable result = tableService.changeNumberOfGuests(1L, orderTable);
 
             // then
-            assertThat(result.getNumberOfGuests())
-                    .isEqualTo(expectTable.getNumberOfGuests());
+            assertThat(result)
+                    .usingRecursiveComparison()
+                    .isEqualTo(orderTable);
         }
 
         @Test
         void 방문한_손님_수를_변경할_때_손님_수가_음수이면_예외() {
             // given
-            OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(false);
-            orderTable.setNumberOfGuests(-1);
+            OrderTable orderTable = OrderTable.builder().empty(false).numberOfGuests(-1).build();
 
             // when & then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
@@ -178,9 +166,8 @@ class TableServiceTest {
         @Test
         void 방문한_손님_수를_변경할_때_테이블이_비어있으면_예외() {
             // given
-            OrderTable orderTable = OrderTableFixture.ORDER_TABLE.주문_테이블_1_비어있음();
-            orderTable.setEmpty(true);
-            given(orderTableDao.findById(anyLong()))
+            OrderTable orderTable = ORDER_TABLE.주문_테이블_1(true);
+            given(orderTableDao.findById(any()))
                     .willReturn(Optional.of(orderTable));
 
             // when & then

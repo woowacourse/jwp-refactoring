@@ -48,12 +48,12 @@ class TableGroupServiceTest {
         @Test
         void 테이블_그룹을_생성한다() {
             // given
-            TableGroup tableGroup = TableGroupFixture.TABLE_GROUP.테이블_그룹_1();
+            TableGroup tableGroup = TableGroupFixture.TABLE_GROUP.테이블_그룹();
 
             given(tableGroupDao.save(any(TableGroup.class)))
                     .willReturn(tableGroup);
 
-            given(orderTableDao.findAllByIdIn(anyList()))
+            given(orderTableDao.findAllByIdIn(any()))
                     .willReturn(tableGroup.getOrderTables());
 
             // when
@@ -68,8 +68,8 @@ class TableGroupServiceTest {
         @Test
         void 주문_테이블이_2개_미만이면_예외() {
             // given
-            TableGroup tableGroup = TableGroupFixture.TABLE_GROUP.테이블_그룹_1();
-            tableGroup.setOrderTables(List.of(new OrderTable()));
+            TableGroup tableGroup = TableGroupFixture.TABLE_GROUP.테이블_그룹();
+            tableGroup.setOrderTables(List.of(OrderTable.builder().build()));
 
             // when & then
             Assertions.assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -79,7 +79,7 @@ class TableGroupServiceTest {
         @Test
         void 주문_테이블이_비어있으면_예외() {
             // given
-            TableGroup tableGroup = TableGroupFixture.TABLE_GROUP.테이블_그룹_1();
+            TableGroup tableGroup = TableGroupFixture.TABLE_GROUP.테이블_그룹();
             tableGroup.setOrderTables(Collections.emptyList());
 
             // when & then
@@ -90,11 +90,9 @@ class TableGroupServiceTest {
         @Test
         void 주문_테이블_중_비어있지_않은_테이블이_존재하면_예외() {
             // given
-            TableGroup tableGroup = TableGroupFixture.TABLE_GROUP.테이블_그룹_1();
-            OrderTable orderTable = new OrderTable();
-            OrderTable orderTable2 = new OrderTable();
-            orderTable.setEmpty(false);
-            orderTable2.setEmpty(false);
+            TableGroup tableGroup = TableGroupFixture.TABLE_GROUP.테이블_그룹();
+            OrderTable orderTable = OrderTable.builder().empty(false).build();
+            OrderTable orderTable2 = OrderTable.builder().empty(true).build();
             tableGroup.setOrderTables(List.of(orderTable, orderTable2));
 
             given(orderTableDao.findAllByIdIn(anyList()))
@@ -108,7 +106,7 @@ class TableGroupServiceTest {
         @Test
         void 실제_존재하는_주문_테이블과_개수가_맞지_않으면_예외() {
             // given
-            TableGroup tableGroup = TableGroupFixture.TABLE_GROUP.테이블_그룹_1();
+            TableGroup tableGroup = TableGroupFixture.TABLE_GROUP.테이블_그룹();
 
             given(orderTableDao.findAllByIdIn(anyList()))
                     .willReturn(List.of());
@@ -141,7 +139,7 @@ class TableGroupServiceTest {
             // given
             Long tableGroupId = 1L;
             given(orderTableDao.findAllByTableGroupId(anyLong()))
-                    .willReturn(List.of(new OrderTable()));
+                    .willReturn(List.of(OrderTable.builder().build()));
 
             given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
                     .willReturn(true);

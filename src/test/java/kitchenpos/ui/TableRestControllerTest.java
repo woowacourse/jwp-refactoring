@@ -1,7 +1,6 @@
 package kitchenpos.ui;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -39,11 +38,12 @@ class TableRestControllerTest {
 
     @BeforeEach
     void setUp() {
-        orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setTableGroupId(1L);
-        orderTable.setNumberOfGuests(0);
-        orderTable.setEmpty(true);
+        orderTable = OrderTable.builder()
+                .id(1L)
+                .tableGroupId(1L)
+                .numberOfGuests(0)
+                .empty(true)
+                .build();
     }
 
     @Nested
@@ -52,7 +52,7 @@ class TableRestControllerTest {
         @Test
         void 테이블_생성() throws Exception {
             // given
-            given(tableService.create(any(OrderTable.class)))
+            given(tableService.create(any()))
                     .willReturn(orderTable);
 
             // when & then
@@ -94,9 +94,9 @@ class TableRestControllerTest {
         @Test
         void 테이블_상태_변경() throws Exception {
             // given
-            orderTable.setEmpty(false);
-            given(tableService.changeEmpty(anyLong(), any(OrderTable.class)))
-                    .willReturn(orderTable);
+            OrderTable updated = orderTable.updateEmpty(false);
+            given(tableService.changeEmpty(any(), any()))
+                    .willReturn(updated);
 
             // when & then
             mockMvc.perform(put("/api/tables/1/empty")
@@ -107,19 +107,19 @@ class TableRestControllerTest {
                     )
                     .andExpectAll(
                             status().isOk(),
-                            jsonPath("id").value(orderTable.getId()),
-                            jsonPath("tableGroupId").value(orderTable.getTableGroupId()),
-                            jsonPath("numberOfGuests").value(orderTable.getNumberOfGuests()),
-                            jsonPath("empty").value(orderTable.isEmpty())
+                            jsonPath("id").value(updated.getId()),
+                            jsonPath("tableGroupId").value(updated.getTableGroupId()),
+                            jsonPath("numberOfGuests").value(updated.getNumberOfGuests()),
+                            jsonPath("empty").value(updated.isEmpty())
                     );
         }
 
         @Test
         void 테이블_방문_손님_변경() throws Exception {
             // given
-            orderTable.setNumberOfGuests(3);
-            given(tableService.changeNumberOfGuests(anyLong(), any(OrderTable.class)))
-                    .willReturn(orderTable);
+            OrderTable updated = orderTable.updateNumberOfGuests(3);
+            given(tableService.changeNumberOfGuests(any(), any()))
+                    .willReturn(updated);
 
             // when & then
             mockMvc.perform(put("/api/tables/1/number-of-guests")
@@ -130,10 +130,10 @@ class TableRestControllerTest {
                     )
                     .andExpectAll(
                             status().isOk(),
-                            jsonPath("id").value(orderTable.getId()),
-                            jsonPath("tableGroupId").value(orderTable.getTableGroupId()),
-                            jsonPath("numberOfGuests").value(orderTable.getNumberOfGuests()),
-                            jsonPath("empty").value(orderTable.isEmpty())
+                            jsonPath("id").value(updated.getId()),
+                            jsonPath("tableGroupId").value(updated.getTableGroupId()),
+                            jsonPath("numberOfGuests").value(updated.getNumberOfGuests()),
+                            jsonPath("empty").value(updated.isEmpty())
                     );
         }
     }

@@ -43,11 +43,12 @@ class TableGroupRestControllerTest {
 
     @BeforeEach
     void setUp() {
-        orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setTableGroupId(1L);
-        orderTable.setNumberOfGuests(0);
-        orderTable.setEmpty(true);
+        orderTable = OrderTable.builder()
+                .id(1L)
+                .tableGroupId(1L)
+                .numberOfGuests(0)
+                .empty(true)
+                .build();
 
         tableGroup = new TableGroup();
         tableGroup.setId(1L);
