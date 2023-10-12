@@ -129,4 +129,57 @@ class TableServiceTest extends ServiceUnitTest {
 
     }
 
+    @Nested
+    class 손님_수를_변경한다 {
+
+        @Test
+        void 손님_수를_변경한다() {
+            // given
+            orderTable.setId(1L);
+            when(orderTableDao.findById(orderTable.getId()))
+                    .thenReturn(Optional.ofNullable(orderTable));
+            when(orderTableDao.save(orderTable)).thenReturn(orderTable);
+
+            // when
+            OrderTable savedOrderTable = tableService.changeNumberOfGuests(orderTable.getId(), orderTable);
+
+            // then
+            assertThat(savedOrderTable).isEqualTo(orderTable);
+        }
+
+        @Test
+        void 주문_테이블의_손님_수가_0보다_작다면_예외가_발생한다() {
+            // given
+            orderTable.setNumberOfGuests(-1);
+
+            // when
+            assertThrows(IllegalArgumentException.class,
+                    () -> tableService.changeNumberOfGuests(orderTable.getId(), orderTable));
+        }
+
+        @Test
+        void 주문_테이블이_존재하지_않는다면_예외가_발생한다() {
+            // given
+            when(orderTableDao.findById(orderTable.getId()))
+                    .thenReturn(Optional.ofNullable(null));
+
+            // when
+            assertThrows(IllegalArgumentException.class,
+                    () -> tableService.changeNumberOfGuests(orderTable.getId(), orderTable));
+        }
+
+        @Test
+        void 주문_테이블이_비어있다면_예외가_발생한다() {
+            // given
+            orderTable.setEmpty(true);
+            when(orderTableDao.findById(orderTable.getId()))
+                    .thenReturn(Optional.ofNullable(orderTable));
+
+            // when
+            assertThrows(IllegalArgumentException.class,
+                    () -> tableService.changeNumberOfGuests(orderTable.getId(), orderTable));
+        }
+
+    }
+
 }
