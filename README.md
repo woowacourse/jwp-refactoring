@@ -14,7 +14,7 @@
 
 - [ ] 서비스 테스트 구현
     - [x] MenuGroupService
-    - [ ] MenuService
+    - [x] MenuService
     - [ ] OrderService
     - [x] ProductService
     - [ ] TableGroupService
