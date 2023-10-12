@@ -23,4 +23,11 @@ public class AcceptanceSteps {
     ) {
         assertThat(응답.statusCode()).isEqualTo(예상_상태_코드);
     }
+
+    public static Long 생성된_ID를_추출한다(
+            ExtractableResponse<Response> 응답
+    ) {
+        String location = 응답.header("Location");
+        return Long.valueOf(location.substring(location.lastIndexOf("/") + 1));
+    }
 }
