@@ -35,7 +35,7 @@
 - [x] API 테스트 작성
 - [ ] Business Object 테스트 작성
 ### 주문 상태 변경
-- [ ] 통합 테스트 작성
+- [x] API 테스트 작성
 - [ ] Business Object 테스트 작성
 
 ---
