@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -67,6 +68,30 @@ class ProductServiceTest extends ServiceTestConfig {
             // then
             assertThatThrownBy(() -> productService.create(productInput))
                     .isInstanceOf(IllegalArgumentException.class);
+        }
+    }
+
+    @DisplayName("상품 전체 조회")
+    @Nested
+    class ReadAll {
+        @DisplayName("성공한다.")
+        @Test
+        void success() {
+            // given
+            final Product productInput = new Product();
+            productInput.setName("여우곰탕");
+            productInput.setPrice(BigDecimal.valueOf(10000));
+            final Product savedProduct = productDao.save(productInput);
+
+            // when
+            final List<Product> actual = productService.list();
+
+            // then
+            // FIXME: equals&hashcode 적용
+            assertSoftly(softly -> {
+                softly.assertThat(actual.size()).isEqualTo(1);
+//                softly.assertThat(actual).containsExactly(savedProduct);
+            });
         }
     }
 }
