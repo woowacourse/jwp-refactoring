@@ -19,12 +19,8 @@ import kitchenpos.fixtures.Fixtures;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
-@SpringBootTest
-class OrderServiceTest {
+class OrderServiceTest extends ServiceTest {
 
     @Autowired
     MenuDao menuDao;
@@ -193,7 +189,7 @@ class OrderServiceTest {
             fixtures.메뉴_상품_저장(menu.getId(), product.getId(), 1L);
             OrderTable orderTable = fixtures.주문_테이블_저장();
 
-            Order order = fixtures.주문_저장(orderTable.getId(),OrderStatus.COMPLETION);
+            Order order = fixtures.주문_저장(orderTable.getId(), OrderStatus.COMPLETION);
             fixtures.주문_항목_저장(order.getId(), menu.getId(), 1L, 1L);
 
             Order newOrder = new Order();
