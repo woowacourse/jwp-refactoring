@@ -1,6 +1,49 @@
 # 키친포스
 
+
+```mermaid
+flowchart LR
+    Menu
+    MenuGroup
+    MenuProduct
+    OrderLineItem
+    Orders
+    OrderTable
+    MenuProduct
+    TableGroup
+    
+    Menu ---> MenuGroup
+    MenuProduct ---> Menu
+    MenuProduct ---> Product
+    OrderLineItem ---> Menu
+    OrderLineItem ---> Orders
+    Orders ---> OrderTable
+    OrderTable ---> TableGroup
+```
+
 ## 요구 사항
+
+## 상품 (Product)
+
+### 상품 등록
+
+- 상품을 등록한다.
+- 상품 가격은 null 이거나 음수일 경우 예외가 발생한다.
+
+### 상품 조회
+
+- 모든 상품 목록을 조회한다.
+
+## 메뉴 그룹 (MenuGroup)
+
+### 메뉴 그룹 등록
+
+- 메뉴 그룹을 등록한다.
+- 
+### 메뉴 그룹 조회
+
+- 전체 메뉴 그룹 목록을 조회한다.
+ 
 
 ## 용어 사전
 
