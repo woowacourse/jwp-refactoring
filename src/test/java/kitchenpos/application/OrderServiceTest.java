@@ -117,4 +117,39 @@ class OrderServiceTest extends IntegrationTest {
         assertThat(foundOrder.getOrderStatus()).isEqualTo("COOKING");
         assertThat(foundOrder.getOrderLineItems()).hasSize(1);
     }
+
+    @Nested
+    class change_order_status_failure {
+
+        @Test
+        void order_is_not_exist() {
+            // given
+            final Order order = new Order();
+
+            // when & then
+            assertThatThrownBy(() -> orderService.changeOrderStatus(1L, order))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void order_status_is_completion() {
+            // given
+            final Menu savedMenu = generateMenu("chicken");
+            final Menu updateMenu = generateMenu("chicken-2");
+            final OrderTable savedOrderTable = generateOrderTable(3);
+            final Order order = new Order();
+            order.setOrderTableId(1L);
+            order.setOrderLineItems(List.of(generateOrderLineItem(savedMenu)));
+            order.setOrderTableId(savedOrderTable.getTableGroupId());
+            final Order savedOrder = orderService.create(order);
+
+            order.setOrderStatus("COMPLETION");
+
+            // when
+            final Order updatedOrder = orderService.changeOrderStatus(savedOrder.getId(), order);
+
+            // then
+            assertThat(updatedOrder.getOrderStatus()).isEqualTo("COMPLETION");
+        }
+    }
 }
