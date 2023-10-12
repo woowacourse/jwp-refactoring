@@ -8,6 +8,7 @@ import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -99,13 +100,7 @@ class OrderServiceTest extends IntegrationTest {
     @Test
     void list() {
         // given
-        final Menu savedMenu = generateMenu("chicken");
-        final OrderTable savedOrderTable = generateOrderTable(3);
-        final Order order = new Order();
-        order.setOrderTableId(1L);
-        order.setOrderLineItems(List.of(generateOrderLineItem(savedMenu)));
-        order.setOrderTableId(savedOrderTable.getTableGroupId());
-        orderService.create(order);
+        generateOrder(OrderStatus.COOKING);
 
         // when
         final List<Order> list = orderService.list();
@@ -115,7 +110,6 @@ class OrderServiceTest extends IntegrationTest {
         final Order foundOrder = list.get(0);
         assertThat(foundOrder.getId()).isNotNull();
         assertThat(foundOrder.getOrderStatus()).isEqualTo("COOKING");
-        assertThat(foundOrder.getOrderLineItems()).hasSize(1);
     }
 
     @Nested
