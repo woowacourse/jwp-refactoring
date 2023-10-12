@@ -72,20 +72,16 @@ public class Fixtures {
         return menuProductDao.save(menuProduct);
     }
 
-    public Order 주문_저장(Long orderTableId) {
+    public Order 주문_저장(Long orderTableId, OrderStatus orderStatus) {
         Order order = new Order();
         order.setOrderTableId(orderTableId);
-        order.setOrderStatus(OrderStatus.COOKING.name());
+        order.setOrderStatus(orderStatus.name());
         order.setOrderedTime(LocalDateTime.now());
         return orderDao.save(order);
     }
 
-    public Order 주문상태가_식사완료인_주문_저장(Long orderTableId) {
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus(OrderStatus.COMPLETION.name());
-        order.setOrderedTime(LocalDateTime.now());
-        return orderDao.save(order);
+    public Order 주문_저장(Long orderTableId) {
+        return 주문_저장(orderTableId, OrderStatus.COOKING);
     }
 
     public OrderTable 주문_테이블_저장() {
@@ -96,6 +92,13 @@ public class Fixtures {
     public OrderTable 빈_테이블_저장() {
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(true);
+        return orderTableDao.save(orderTable);
+    }
+
+    public OrderTable 주문_테이블_저장(Long tableGroupId, boolean isEmpty) {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setTableGroupId(tableGroupId);
+        orderTable.setEmpty(isEmpty);
         return orderTableDao.save(orderTable);
     }
 
@@ -115,9 +118,8 @@ public class Fixtures {
         return productDao.save(product);
     }
 
-    public TableGroup 단체_지정_저장(List<OrderTable> orderTables) {
+    public TableGroup 단체_지정_저장() {
         TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(orderTables);
         tableGroup.setCreatedDate(LocalDateTime.now());
         return tableGroupDao.save(tableGroup);
     }
