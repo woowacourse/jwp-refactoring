@@ -5,18 +5,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import javax.transaction.Transactional;
 import kitchenpos.domain.Product;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-// TODO: 2023/10/12 helper 클래스 만들기
-@SpringBootTest
-@Transactional
-class ProductServiceTest {
+class ProductServiceTest extends ServiceIntegrateTest {
 
   @Autowired
   private ProductService productService;
