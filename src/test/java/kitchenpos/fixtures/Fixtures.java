@@ -2,7 +2,6 @@ package kitchenpos.fixtures;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -99,6 +98,14 @@ public class Fixtures {
         OrderTable orderTable = new OrderTable();
         orderTable.setTableGroupId(tableGroupId);
         orderTable.setEmpty(isEmpty);
+        return orderTableDao.save(orderTable);
+    }
+
+    public OrderTable 주문_테이블_저장(Long tableGroupId, boolean isEmpty, int numberOfGuests) {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setTableGroupId(tableGroupId);
+        orderTable.setEmpty(isEmpty);
+        orderTable.setNumberOfGuests(numberOfGuests);
         return orderTableDao.save(orderTable);
     }
 
