@@ -97,7 +97,7 @@ class MenuServiceTest {
     }
 
     @Test
-    void 가격이_0이하인_메뉴를_생성하면_예외를_던진다() {
+    void 가격이_0이상인_상품의_메뉴를_생성한다() {
         // given
         menu.setPrice(new BigDecimal("0"));
         product.setPrice(new BigDecimal("0"));
@@ -112,6 +112,17 @@ class MenuServiceTest {
             softly.assertThat(result.getPrice()).isEqualTo(menu.getPrice());
             softly.assertThat(result.getMenuGroupId()).isEqualTo(menu.getMenuGroupId());
         });
+    }
+
+    @Test
+    void 가격이_0보다_작은_메뉴를_생성하면_예외를_던진다() {
+        // given
+        menu.setPrice(new BigDecimal("-1"));
+        product.setPrice(new BigDecimal("-1"));
+
+        // when
+        assertThatThrownBy(() -> menuService.create(menu))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
