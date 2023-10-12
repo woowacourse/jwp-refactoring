@@ -11,6 +11,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.helper.IntegrationTestHelper;
 import kitchenpos.ui.menu.dto.MenuResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +21,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static kitchenpos.fixture.MenuFixture.메뉴_생성_요청;
-import static kitchenpos.fixture.MenuGroupFixture.메뉴그룹_생성;
 import static kitchenpos.fixture.MenuProductFixture.메뉴_상품_10개_생성;
 import static kitchenpos.fixture.ProductFixture.상품_생성_10000원;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -42,7 +42,7 @@ class MenuRestControllerAcceptanceTestFixture extends IntegrationTestHelper {
 
     @BeforeEach
     void initAcceptanceData() {
-        menuGroup = menuGroupDao.save(메뉴그룹_생성());
+        menuGroup = menuGroupDao.save(MenuGroupFixture.메뉴_그룹_생성());
         product = productDao.save(상품_생성_10000원());
         menuProduct = 메뉴_상품_10개_생성(null, product.getId());
     }

@@ -37,6 +37,7 @@ class JdbcTemplateTableGroupDaoTest extends JdbcTestHelper {
 
     @Test
     void id값으로_조회한다() {
+        // given
         TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(List.of());
         tableGroup.setCreatedDate(LocalDateTime.of(2023, 03, 03, 03, 03, 03));
@@ -59,6 +60,6 @@ class JdbcTemplateTableGroupDaoTest extends JdbcTestHelper {
         List<TableGroup> result = jdbcTemplateTableGroupDao.findAll();
 
         // then
-        assertThat(result.size()).isEqualTo(0);
+        assertThat(result.size()).isZero();
     }
 }

@@ -5,6 +5,7 @@ import kitchenpos.application.table.dto.OrderTableChangeNumberOfGuestRequest;
 import kitchenpos.application.table.dto.OrderTableCreateRequest;
 import kitchenpos.domain.OrderTable;
 
+@SuppressWarnings("NonAsciiCharacters")
 public class OrderTableFixture {
 
     public static OrderTable 주문_테이블_생성(final Long tableGroupId,

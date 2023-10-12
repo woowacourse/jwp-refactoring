@@ -1,12 +1,11 @@
 package kitchenpos.ui.menugroup;
 
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.fixture.MenuGroupFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
-
-import static kitchenpos.fixture.MenuGroupFixture.메뉴그룹_생성;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
@@ -16,7 +15,7 @@ class MenuGroupRestControllerAcceptanceTest extends MenuGroupRestControllerAccep
 
     @BeforeEach
     void setup() {
-        메뉴_그룹 = 메뉴그룹_생성();
+        메뉴_그룹 = MenuGroupFixture.메뉴_그룹_생성();
     }
 
     @Test

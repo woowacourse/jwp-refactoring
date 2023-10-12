@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("NonAsciiCharacters")
 public class TableGroupFixture {
 
     public static TableGroup 단체_지정_생성(final List<OrderTable> orderTables) {

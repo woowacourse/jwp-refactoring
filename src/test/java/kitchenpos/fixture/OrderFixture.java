@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("NonAsciiCharacters")
 public class OrderFixture {
 
     public static Order 주문_생성(final Long orderTableId,

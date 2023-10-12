@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static kitchenpos.fixture.MenuFixture.메뉴_생성;
-import static kitchenpos.fixture.MenuGroupFixture.메뉴그룹_생성;
+import static kitchenpos.fixture.MenuGroupFixture.메뉴_그룹_생성;
 import static kitchenpos.fixture.ProductFixture.상품_생성_10000원;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -36,7 +36,7 @@ class JdbcTemplateMenuDaoTest extends JdbcTestHelper {
     void 메뉴를_저장한다() {
         // given
         Product product = productDao.save(상품_생성_10000원());
-        MenuGroup menuGroup = menuGroupDao.save(메뉴그룹_생성("메뉴그룹"));
+        MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("메뉴그룹"));
         Menu menu = 메뉴_생성("메뉴", BigDecimal.valueOf(10000), menuGroup.getId(), List.of());
 
         // when
@@ -52,10 +52,10 @@ class JdbcTemplateMenuDaoTest extends JdbcTestHelper {
 
     @Test
     void 메뉴를_id로_찾는다() {
-        // when
-        Product product = productDao.save(상품_생성_10000원());
-        MenuGroup menuGroup = menuGroupDao.save(메뉴그룹_생성("메뉴그룹"));
-        Menu menu = jdbcTemplateMenuDao.save(메뉴_생성("메뉴", BigDecimal.valueOf(10000), menuGroup.getId(), List.of()));
+        // given
+        productDao.save(상품_생성_10000원());
+        MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("메뉴그룹"));
+        jdbcTemplateMenuDao.save(메뉴_생성("메뉴", BigDecimal.valueOf(10000), menuGroup.getId(), List.of()));
 
         // when
         Optional<Menu> result = jdbcTemplateMenuDao.findById(1L);
@@ -70,9 +70,9 @@ class JdbcTemplateMenuDaoTest extends JdbcTestHelper {
     @Test
     void 모든_메뉴를_찾는다() {
         // given
-        Product product = productDao.save(상품_생성_10000원());
-        MenuGroup menuGroup = menuGroupDao.save(메뉴그룹_생성("메뉴그룹"));
-        Menu menu = jdbcTemplateMenuDao.save(메뉴_생성("메뉴", BigDecimal.valueOf(10000), menuGroup.getId(), List.of()));
+        productDao.save(상품_생성_10000원());
+        MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("메뉴그룹"));
+        jdbcTemplateMenuDao.save(메뉴_생성("메뉴", BigDecimal.valueOf(10000), menuGroup.getId(), List.of()));
 
         // when
         List<Menu> result = jdbcTemplateMenuDao.findAll();
@@ -84,9 +84,9 @@ class JdbcTemplateMenuDaoTest extends JdbcTestHelper {
     @Test
     void id가_들어간_메뉴의_수를_조회한다() {
         // given
-        Product product = productDao.save(상품_생성_10000원());
-        MenuGroup menuGroup = menuGroupDao.save(메뉴그룹_생성("메뉴그룹"));
-        Menu menu = jdbcTemplateMenuDao.save(메뉴_생성("메뉴", BigDecimal.valueOf(10000), menuGroup.getId(), List.of()));
+        productDao.save(상품_생성_10000원());
+        MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("메뉴그룹"));
+        jdbcTemplateMenuDao.save(메뉴_생성("메뉴", BigDecimal.valueOf(10000), menuGroup.getId(), List.of()));
 
         // when
         long size = jdbcTemplateMenuDao.countByIdIn(List.of(1L, 2L));

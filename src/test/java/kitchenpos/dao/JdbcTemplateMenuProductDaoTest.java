@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static kitchenpos.fixture.MenuFixture.메뉴_생성;
-import static kitchenpos.fixture.MenuGroupFixture.메뉴그룹_생성;
+import static kitchenpos.fixture.MenuGroupFixture.메뉴_그룹_생성;
 import static kitchenpos.fixture.MenuProductFixture.메뉴_상품_10개_생성;
 import static kitchenpos.fixture.ProductFixture.상품_생성_10000원;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,7 +40,7 @@ class JdbcTemplateMenuProductDaoTest extends JdbcTestHelper {
     void 저장한다() {
         // given
         Product product = productDao.save(상품_생성_10000원());
-        MenuGroup menuGroup = menuGroupDao.save(메뉴그룹_생성("메뉴그룹"));
+        MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("메뉴그룹"));
         Menu menu = menuDao.save(메뉴_생성("메뉴", BigDecimal.valueOf(10000), menuGroup.getId(), List.of()));
         MenuProduct menuProduct = 메뉴_상품_10개_생성(menu.getId(), product.getId());
 
@@ -59,7 +59,7 @@ class JdbcTemplateMenuProductDaoTest extends JdbcTestHelper {
     void 메뉴_아이디로_상품들을_조회한다() {
         // given
         Product product = productDao.save(상품_생성_10000원());
-        MenuGroup menuGroup = menuGroupDao.save(메뉴그룹_생성("메뉴그룹"));
+        MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("메뉴그룹"));
         Menu menu = menuDao.save(메뉴_생성("메뉴", BigDecimal.valueOf(10000), menuGroup.getId(), List.of()));
         jdbcTemplateMenuProductDao.save(메뉴_상품_10개_생성(menu.getId(), product.getId()));
 
@@ -74,7 +74,7 @@ class JdbcTemplateMenuProductDaoTest extends JdbcTestHelper {
     void 모두_조회한다() {
         // given
         Product product = productDao.save(상품_생성_10000원());
-        MenuGroup menuGroup = menuGroupDao.save(메뉴그룹_생성("메뉴그룹"));
+        MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("메뉴그룹"));
         Menu menu = menuDao.save(메뉴_생성("메뉴", BigDecimal.valueOf(10000), menuGroup.getId(), List.of()));
         jdbcTemplateMenuProductDao.save(메뉴_상품_10개_생성(menu.getId(), product.getId()));
 

@@ -105,6 +105,7 @@ class TableGroupServiceTest extends IntegrationTestHelper {
         orderDao.save(주문_생성(orderTable.getId(), COOKING.name(), LocalDateTime.now(), null));
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()));
+        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }

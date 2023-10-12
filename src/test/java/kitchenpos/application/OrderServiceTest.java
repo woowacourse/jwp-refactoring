@@ -22,7 +22,7 @@ import java.util.List;
 
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.fixture.MenuFixture.메뉴_생성;
-import static kitchenpos.fixture.MenuGroupFixture.메뉴그룹_생성;
+import static kitchenpos.fixture.MenuGroupFixture.메뉴_그룹_생성;
 import static kitchenpos.fixture.OrderFixture.주문_생성;
 import static kitchenpos.fixture.OrderFixture.주문_생성_요청;
 import static kitchenpos.fixture.OrderFixture.주문_업데이트_요청;
@@ -51,7 +51,7 @@ class OrderServiceTest extends IntegrationTestHelper {
     @Test
     void 주문을_생성한다() {
         // given
-        MenuGroup menuGroup = menuGroupDao.save(메뉴그룹_생성("그룹"));
+        MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("그룹"));
         Menu menu = menuDao.save(메뉴_생성("메뉴", new BigDecimal(1000), menuGroup.getId(), null));
         OrderTable orderTable = orderTableDao.save(주문_테이블_생성(null, 1, false));
         OrderLineItem orderLineItem = 주문_품목_생성(null, menu.getId(), 1);
@@ -103,7 +103,7 @@ class OrderServiceTest extends IntegrationTestHelper {
         // given
         Long invalidOrderTableId = -1L;
 
-        MenuGroup menuGroup = menuGroupDao.save(메뉴그룹_생성("그룹"));
+        MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("그룹"));
         Menu menu = menuDao.save(메뉴_생성("메뉴", new BigDecimal(1000), menuGroup.getId(), null));
         OrderLineItem orderLineItem = 주문_품목_생성(null, menu.getId(), 1);
         Order order = 주문_생성(invalidOrderTableId, null, LocalDateTime.now(), List.of(orderLineItem));
@@ -117,7 +117,7 @@ class OrderServiceTest extends IntegrationTestHelper {
     @Test
     void 주문_테이블이_비어있다면_예외를_발생한다() {
         // given
-        MenuGroup menuGroup = menuGroupDao.save(메뉴그룹_생성("그룹"));
+        MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("그룹"));
         Menu menu = menuDao.save(메뉴_생성("메뉴", new BigDecimal(1000), menuGroup.getId(), null));
         OrderTable orderTable = orderTableDao.save(주문_테이블_생성(null, 1, true));
         OrderLineItem orderLineItem = 주문_품목_생성(null, menu.getId(), 1);
@@ -132,7 +132,7 @@ class OrderServiceTest extends IntegrationTestHelper {
     @Test
     void 주문을_모두_조회한다() {
         // given
-        MenuGroup menuGroup = menuGroupDao.save(메뉴그룹_생성("그룹"));
+        MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("그룹"));
         Menu menu = menuDao.save(메뉴_생성("메뉴", new BigDecimal(1000), menuGroup.getId(), null));
         OrderTable orderTable = orderTableDao.save(주문_테이블_생성(null, 1, false));
         OrderLineItem orderLineItem = 주문_품목_생성(null, menu.getId(), 1);
@@ -156,7 +156,7 @@ class OrderServiceTest extends IntegrationTestHelper {
         // given
         String orderStatus = COOKING.name();
 
-        MenuGroup menuGroup = menuGroupDao.save(메뉴그룹_생성("그룹"));
+        MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹_생성("그룹"));
         Menu menu = menuDao.save(메뉴_생성("메뉴", new BigDecimal(1000), menuGroup.getId(), null));
         OrderTable orderTable = orderTableDao.save(주문_테이블_생성(null, 1, false));
         OrderLineItem orderLineItem = 주문_품목_생성(null, menu.getId(), 1);

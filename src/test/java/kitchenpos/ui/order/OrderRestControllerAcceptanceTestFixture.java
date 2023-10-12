@@ -24,7 +24,7 @@ import java.util.List;
 
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.fixture.MenuFixture.메뉴_생성;
-import static kitchenpos.fixture.MenuGroupFixture.메뉴그룹_생성;
+import static kitchenpos.fixture.MenuGroupFixture.메뉴_그룹_생성;
 import static kitchenpos.fixture.OrderFixture.주문_생성;
 import static kitchenpos.fixture.OrderFixture.주문_생성_요청;
 import static kitchenpos.fixture.OrderLineItemFixture.주문_품목_생성;
@@ -52,7 +52,7 @@ class OrderRestControllerAcceptanceTestFixture extends IntegrationTestHelper {
 
     @BeforeEach
     void initAcceptanceData() {
-        menuGroup = menuGroupDao.save(메뉴그룹_생성("그룹"));
+        menuGroup = menuGroupDao.save(메뉴_그룹_생성("그룹"));
         menu = menuDao.save(메뉴_생성("메뉴", new BigDecimal(1000), menuGroup.getId(), null));
         orderTable = orderTableDao.save(주문_테이블_생성(null, 1, false));
         orderLineItem = 주문_품목_생성(null, menu.getId(), 1);

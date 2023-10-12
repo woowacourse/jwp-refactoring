@@ -5,13 +5,13 @@ import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.helper.IntegrationTestHelper;
 import kitchenpos.ui.menugroup.dto.MenuGroupResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static kitchenpos.fixture.MenuGroupFixture.메뉴그룹_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -55,6 +55,6 @@ class MenuGroupRestControllerAcceptanceTestFixture extends IntegrationTestHelper
     }
 
     protected MenuGroup 메뉴_그룹_데이터_생성() {
-        return menuGroupDao.save(메뉴그룹_생성());
+        return menuGroupDao.save(MenuGroupFixture.메뉴_그룹_생성());
     }
 }
