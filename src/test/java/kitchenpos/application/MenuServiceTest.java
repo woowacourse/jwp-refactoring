@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import kitchenpos.application.menu.MenuService;
+import kitchenpos.application.menu.dto.MenuCreateRequest;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static kitchenpos.fixture.MenuFixture.메뉴_생성_요청;
 import static kitchenpos.fixture.MenuGroupFixture.메뉴그룹_생성;
 import static kitchenpos.fixture.MenuProductFixture.메뉴_상품_10개_생성;
 import static kitchenpos.fixture.ProductFixture.상품_생성_10000원;
@@ -50,9 +53,10 @@ class MenuServiceTest extends IntegrationTestHelper {
     void 메뉴를_생성한다() {
         // given
         Menu menu = new Menu("상품", BigDecimal.valueOf(10000), menuGroup.getId(), List.of(menuProduct));
+        MenuCreateRequest req = 메뉴_생성_요청(menu);
 
         // when
-        Menu result = menuService.create(menu);
+        Menu result = menuService.create(req);
 
         // then
         assertSoftly(softly -> {
@@ -66,9 +70,10 @@ class MenuServiceTest extends IntegrationTestHelper {
     void 가격이_0원_이하면_예외를_발생시킨다() {
         // given
         Menu menu = new Menu("상품", BigDecimal.valueOf(-1), menuGroup.getId(), List.of(menuProduct));
+        MenuCreateRequest req = 메뉴_생성_요청(menu);
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(req))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -77,9 +82,10 @@ class MenuServiceTest extends IntegrationTestHelper {
         // given
         Long invalidGroupId = -1L;
         Menu menu = new Menu("상품", BigDecimal.valueOf(1000), invalidGroupId, List.of(menuProduct));
+        MenuCreateRequest req = 메뉴_생성_요청(menu);
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(req))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -90,9 +96,10 @@ class MenuServiceTest extends IntegrationTestHelper {
         menuProduct = 메뉴_상품_10개_생성(null, invalidProductId);
 
         Menu menu = new Menu("상품", BigDecimal.valueOf(100), menuGroup.getId(), List.of(menuProduct));
+        MenuCreateRequest req = 메뉴_생성_요청(menu);
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(req))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -101,16 +108,18 @@ class MenuServiceTest extends IntegrationTestHelper {
         // given
         menuProduct = 메뉴_상품_10개_생성(null, 1L);
         Menu menu = new Menu("상품", BigDecimal.valueOf(1000000000), menuGroup.getId(), List.of(menuProduct));
+        MenuCreateRequest req = 메뉴_생성_요청(menu);
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(req))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 모든_메뉴들을_조회한다() {
         Menu menu = new Menu("상품", BigDecimal.valueOf(10000), menuGroup.getId(), List.of(menuProduct));
-        Menu savedMenu = menuService.create(menu);
+        MenuCreateRequest req = 메뉴_생성_요청(menu);
+        Menu savedMenu = menuService.create(req);
 
         // when
         List<Menu> result = menuService.list();
