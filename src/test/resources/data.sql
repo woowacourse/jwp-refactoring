@@ -87,8 +87,7 @@ values (336, 11, true);
 insert into order_table (id, number_of_guests, empty)
 values (337, 11, true);
 
-insert into orders
-values (1, 'COMPLETION', now(), 1);
-insert into orders
-values (2, 'COOKING', now(), 2);
-
+insert into orders (id,order_status, ordered_time, order_table_id)
+values (3332,'COMPLETION', now(), 1);
+insert into orders (id,order_status, ordered_time, order_table_id)
+values (3333,'COOKING', now(), 2);
