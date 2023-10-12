@@ -50,5 +50,5 @@
 - [x] API 테스트 작성
 - [ ] Business Object 테스트 작성
 ### 방문 손님 수 변경
-- [ ] 통합 테스트 작성
+- [x] API 테스트 작성
 - [ ] Business Object 테스트 작성
