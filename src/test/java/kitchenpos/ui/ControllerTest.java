@@ -102,4 +102,11 @@ public class ControllerTest {
         tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
         return tableGroup;
     }
+
+    protected OrderTable 주문_테이블() {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(0);
+        orderTable.setEmpty(true);
+        return orderTable;
+    }
 }
