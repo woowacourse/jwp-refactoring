@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.ui.dto.MenuGroupRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,11 +27,12 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹을 생성한다.")
     void create() {
         // given
+        final MenuGroupRequest request = new MenuGroupRequest("menuGroup");
         final MenuGroup menuGroup = new MenuGroup(1L, "menuGroup");
         given(menuGroupDao.save(any())).willReturn(menuGroup);
 
         // when
-        final MenuGroup result = menuGroupService.create(menuGroup);
+        final MenuGroup result = menuGroupService.create(request);
 
         // then
         assertThat(result).usingRecursiveComparison().isEqualTo(menuGroup);

@@ -12,6 +12,12 @@ public class Menu {
     private Long menuGroupId;
     private List<MenuProduct> menuProducts;
 
+    public Menu(final String name,
+                final BigDecimal price,
+                final Long menuGroupId) {
+        this(null, name, price, menuGroupId);
+    }
+
     public Menu(final Long id, final String name,
                 final BigDecimal price, final Long menuGroupId) {
         this(id, name, price, menuGroupId, Collections.emptyList());

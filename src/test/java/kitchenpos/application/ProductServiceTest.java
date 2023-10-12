@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.ProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ class ProductServiceTest {
     @InjectMocks
     private ProductService productService;
     @Mock
-    private  ProductDao productDao;
+    private ProductDao productDao;
 
 
     @Nested
@@ -31,16 +32,15 @@ class ProductServiceTest {
         @Test
         @DisplayName("가격이 null이면 예외가 발생한다.")
         void priceIsNull() {
-            final Product product = new Product(1L, "product", null);
-            assertThatThrownBy(() -> productService.create(product))
-                    .isInstanceOf(IllegalArgumentException.class);
+            final ProductRequest request = new ProductRequest("product", null);
+            assertThatThrownBy(() -> productService.create(request)).isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         @DisplayName("가격이 음수이면 예외가 발생한다.")
         void priceIsNegative() {
-            final Product product = new Product(1L, "product", BigDecimal.valueOf(-1));
-            assertThatThrownBy(() -> productService.create(product))
+            final ProductRequest request = new ProductRequest("product", BigDecimal.valueOf(-1));
+            assertThatThrownBy(() -> productService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -48,11 +48,12 @@ class ProductServiceTest {
         @DisplayName("상품을 생성한다.")
         void createProduct() {
             // given
+            final ProductRequest request = new ProductRequest("product", BigDecimal.valueOf(10_000));
             final Product product = new Product(1L, "product", BigDecimal.valueOf(10_000));
             given(productDao.save(any())).willReturn(product);
 
             // when
-            final Product result = productService.create(product);
+            final Product result = productService.create(request);
 
             // then
             assertThat(result).usingRecursiveComparison().isEqualTo(product);
