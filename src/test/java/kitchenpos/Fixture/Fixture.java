@@ -7,6 +7,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -69,5 +70,12 @@ public abstract class Fixture {
         orderTable.setNumberOfGuests(numberOfGuests);
         orderTable.setEmpty(empty);
         return orderTable;
+    }
+
+    public static TableGroup tableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setCreatedDate(createdDate);
+        tableGroup.setOrderTables(orderTables);
+        return tableGroup;
     }
 }
