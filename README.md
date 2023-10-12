@@ -18,7 +18,7 @@
     - [ ] OrderService
     - [x] ProductService
     - [ ] TableGroupService
-    - [ ] TableService
+    - [x] TableService
 
 ## 용어 사전
 
