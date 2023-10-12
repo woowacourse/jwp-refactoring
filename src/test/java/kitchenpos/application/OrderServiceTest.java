@@ -12,11 +12,7 @@ import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 
-@Sql("/truncate.sql")
-@SpringBootTest
 class OrderServiceTest extends IntegrationTest {
 
     private Order order;
@@ -110,6 +106,23 @@ class OrderServiceTest extends IntegrationTest {
                 assertAll(
                         () -> assertThat(result.getId()).isPositive(),
                         () -> assertThat(result.getOrderLineItems().get(0).getOrderId()).isEqualTo(result.getId())
+                );
+            }
+
+            @Test
+            void 주문들을_조회한다() {
+                // given
+                Order order1 = orderService.create(order);
+                Order order2 = 맛잇는_메뉴_주문();
+
+                // when
+                List<Order> result = orderService.list();
+
+                // then
+                assertAll(
+                        () -> assertThat(result).hasSize(2),
+                        () -> assertThat(result.get(0).getId()).isEqualTo(order1.getId()),
+                        () -> assertThat(result.get(1).getId()).isEqualTo(order2.getId())
                 );
             }
         }

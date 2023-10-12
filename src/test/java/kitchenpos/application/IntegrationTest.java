@@ -1,14 +1,22 @@
 package kitchenpos.application;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,6 +43,38 @@ public class IntegrationTest {
 
     @Autowired
     protected OrderTableDao orderTableDao;
+
+    @Autowired
+    protected OrderDao orderDao;
+
+    protected Order 맛잇는_메뉴_주문() {
+        OrderTable 주문_테이블 = 주문_테이블(false);
+        return 주문(주문_테이블, 맛있는_메뉴());
+    }
+
+    protected Order 주문(OrderTable orderTable, Menu... 메뉴들) {
+        Order order = new Order();
+        order.setOrderStatus(OrderStatus.COOKING.name());
+        order.setOrderedTime(LocalDateTime.now());
+        order.setOrderTableId(orderTable.getId());
+        List<OrderLineItem> orderLineItems = Arrays.stream(메뉴들)
+                .map(this::toOrderLineItem)
+                .collect(Collectors.toList());
+        order.setOrderLineItems(orderLineItems);
+        return orderDao.save(order);
+    }
+
+    private OrderLineItem toOrderLineItem(Menu 메뉴) {
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setMenuId(메뉴.getId());
+        return orderLineItem;
+    }
+
+    protected OrderTable 주문_테이블(boolean empty) {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setEmpty(empty);
+        return orderTableDao.save(orderTable);
+    }
 
     protected Menu 맛있는_메뉴() {
         return 메뉴(메뉴_그룹(),
