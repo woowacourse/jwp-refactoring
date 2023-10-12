@@ -26,11 +26,10 @@
         - [x] 가격이 0이하인 경우 예외처리
     - [x] product 목록 조회
 - [ ] TableGroup
-    - [ ] TableGroup 생성
+    - [x] TableGroup 생성
         - [x] tableGroup을 묶는 orderTable이 비어있거나 size가 2이하면 예외처리
         - [x] 입력된 orderTable과 동일한 id로 조회한 orderTable의 size가 다르면 오류가 발생한다 .
-        - [ ] orderTable에 ??? 로직 이해 못함
-        - table의 empty 필드가 무슨 의미인지 이해가 필요
+        - [x] orderTable이 비어있지 않은 경우 예외처리
     - [ ] TableGroup 해제
 - [x] Table
     - [x] table 생성
