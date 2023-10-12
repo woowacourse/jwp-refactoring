@@ -11,7 +11,9 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -19,6 +21,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
@@ -31,24 +34,30 @@ import org.springframework.test.context.jdbc.Sql;
 class TableServiceTest {
 
     private final TableService tableService;
+    private final OrderTableDao orderTableDao;
     private final ProductDao productDao;
     private final MenuProductDao menuProductDao;
     private final MenuGroupDao menuGroupDao;
     private final MenuDao menuDao;
     private final OrderDao orderDao;
+    private final TableGroupDao tableGroupDao;
 
     public TableServiceTest(final TableService tableService,
+                            final OrderTableDao orderTableDao,
                             final ProductDao productDao,
                             final MenuProductDao menuProductDao,
                             final MenuGroupDao menuGroupDao,
                             final MenuDao menuDao,
-                            final OrderDao orderDao) {
+                            final OrderDao orderDao,
+                            final TableGroupDao tableGroupDao) {
         this.tableService = tableService;
+        this.orderTableDao = orderTableDao;
         this.productDao = productDao;
         this.menuProductDao = menuProductDao;
         this.menuGroupDao = menuGroupDao;
         this.menuDao = menuDao;
         this.orderDao = orderDao;
+        this.tableGroupDao = tableGroupDao;
     }
 
     @Test
@@ -102,13 +111,22 @@ class TableServiceTest {
     }
 
     @Test
-    void 주문_테이블을_빈_테이블로_변경시_주문_테이블이_빈_값이_예외가_발생한다() {
+    void 주문_테이블을_빈_테이블로_변경시_주문_테이블이_이미_테이블_그룹에_속해있으면_예외가_발생한다() {
         // given
-        final OrderTable 주문_테이블 = new OrderTable(2);
-        tableService.create(주문_테이블);
+        final OrderTable 저장된_주문_테이블1 = tableService.create(new OrderTable(2));
+        final OrderTable 저장된_주문_테이블2 = tableService.create(new OrderTable(3));
+
+        final TableGroup 테이블_그룹 = new TableGroup(List.of(저장된_주문_테이블1, 저장된_주문_테이블2));
+        테이블_그룹.setCreatedDate(LocalDateTime.now());
+        final TableGroup 저장된_테이블_그룹 = tableGroupDao.save(테이블_그룹);
+        저장된_주문_테이블1.setTableGroupId(저장된_테이블_그룹.getId());
+        저장된_주문_테이블2.setTableGroupId(저장된_테이블_그룹.getId());
+
+        orderTableDao.save(저장된_주문_테이블1);
+        orderTableDao.save(저장된_주문_테이블2);
 
         // expected
-        assertThatThrownBy(() -> tableService.changeEmpty(null, new OrderTable(true)))
+        assertThatThrownBy(() -> tableService.changeEmpty(저장된_주문_테이블1.getId(), new OrderTable(true)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
