@@ -95,7 +95,7 @@ class OrderRestControllerAcceptanceTestFixture extends IntegrationTestHelper {
         });
     }
 
-    protected void 주문들이_성공적으로_생성된다(final ExtractableResponse response, final Order order) {
+    protected void 주문들이_성공적으로_조회된다(final ExtractableResponse response, final Order order) {
         List<OrderResponse> result = response.jsonPath()
                 .getList("", OrderResponse.class);
 

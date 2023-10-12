@@ -43,7 +43,7 @@ class OrderRestControllerAcceptanceTest extends OrderRestControllerAcceptanceTes
         var 조회_결과 = 주문을_전체_조회한다("/api/orders");
 
         // then
-        주문들이_성공적으로_생성된다(조회_결과, 생성된_주문);
+        주문들이_성공적으로_조회된다(조회_결과, 생성된_주문);
     }
 
     @Test
