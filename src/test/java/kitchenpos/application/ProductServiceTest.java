@@ -7,23 +7,11 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 
-@Sql("/truncate.sql")
-@SpringBootTest
-class ProductServiceTest {
-
-    @Autowired
-    private ProductService productService;
-
-    @Autowired
-    private ProductDao productDao;
+class ProductServiceTest extends IntegrationTest {
 
     private Product product1;
     private Product product2;

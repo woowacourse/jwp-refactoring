@@ -18,12 +18,15 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
-@Sql("/truncate.sql")
 @SpringBootTest
+@Sql("/truncate.sql")
+@DisplayNameGeneration(ReplaceUnderscores.class)
 public class IntegrationTest {
 
     @Autowired
@@ -31,6 +34,12 @@ public class IntegrationTest {
 
     @Autowired
     protected OrderService orderService;
+
+    @Autowired
+    protected MenuGroupService menuGroupService;
+
+    @Autowired
+    protected ProductService productService;
 
     @Autowired
     protected MenuGroupDao menuGroupDao;

@@ -5,23 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 
-@Sql("/truncate.sql")
-@SpringBootTest
-class MenuGroupServiceTest {
-
-    @Autowired
-    private MenuGroupService menuGroupService;
-
-    @Autowired
-    private MenuGroupDao menuGroupDao;
+class MenuGroupServiceTest extends IntegrationTest {
 
     private MenuGroup 추천메뉴;
     private MenuGroup 인기메뉴;
