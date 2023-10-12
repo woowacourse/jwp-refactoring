@@ -44,27 +44,32 @@ class TableGroupServiceTest {
     @ParameterizedTest
     @MethodSource("generateInvalidOrderTables")
     void 테이블_그룹을_만드려는_테이블_없으면_예외_발생(List<OrderTable> orderTables) {
+        // given
         TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(orderTables);
 
+        // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 합치려는_테이블과_실제_존재하는_테이블이_다르면_예외발생() {
+        // given
         TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(List.of(new OrderTable(), new OrderTable()));
 
         given(orderTableDao.findAllByIdIn(anyList()))
                 .willReturn(List.of(new OrderTable()));
 
+        // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 합치려는_테이블이_속한_테이블_그룹이_있으면_예외발생() {
+        // given
         TableGroup tableGroup = new TableGroup();
 
         OrderTable orderTable1 = new OrderTable();
@@ -77,12 +82,14 @@ class TableGroupServiceTest {
         given(orderTableDao.findAllByIdIn(anyList()))
                 .willReturn(List.of(orderTable1, orderTable2));
 
+        // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 합치려는_테이블_중_빈_테이블이_아닌_테이블이_있으면_예외발생() {
+        // given
         TableGroup tableGroup = new TableGroup();
 
         OrderTable orderTable1 = new OrderTable();
@@ -94,12 +101,14 @@ class TableGroupServiceTest {
         given(orderTableDao.findAllByIdIn(anyList()))
                 .willReturn(List.of(orderTable1, orderTable2));
 
+        // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 여러_테이블을_하나의_그룹으로_합친다() {
+        // given
         TableGroup tableGroup = new TableGroup();
         tableGroup.setId(1L);
 
@@ -115,13 +124,17 @@ class TableGroupServiceTest {
         given(tableGroupDao.save(any()))
                 .willReturn(tableGroup);
 
+        // when
         tableGroupService.create(tableGroup);
+
+        // then
         then(tableGroupDao).should(times(1)).save(tableGroup);
         then(orderTableDao).should(times(2)).save(any());
     }
 
     @Test
     void 테이블_그룹을_해체할_때_식사_완료가_아닌_테이블이_존재하면_예외발생() {
+        // given
         OrderTable orderTable1 = new OrderTable();
         OrderTable orderTable2 = new OrderTable();
 
@@ -130,12 +143,14 @@ class TableGroupServiceTest {
         given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), eq(List.of("COOKING", "MEAL"))))
                 .willReturn(true);
 
+        // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(1L))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 테이블_그룹을_해체한다() {
+        // given
         OrderTable orderTable1 = new OrderTable();
         OrderTable orderTable2 = new OrderTable();
 
@@ -144,6 +159,7 @@ class TableGroupServiceTest {
         given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), eq(List.of("COOKING", "MEAL"))))
                 .willReturn(false);
 
+        // when, then
         tableGroupService.ungroup(1L);
         then(orderTableDao).should(times(2)).save(any());
     }

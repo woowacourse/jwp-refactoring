@@ -43,6 +43,7 @@ class MenuServiceTest {
 
     @Test
     void 메뉴를_생성한다() {
+        // given
         Menu menu = new Menu();
         menu.setPrice(BigDecimal.TEN);
         menu.setMenuGroupId(1L);
@@ -64,23 +65,28 @@ class MenuServiceTest {
         given(menuDao.save(menu))
                 .willReturn(menu);
 
+        // when
         menuService.create(menu);
 
+        // then
         then(menuDao).should(times(1)).save(menu);
         then(menuProductDao).should(times(1)).save(menuProduct);
     }
 
     @Test
     void 메뉴의_가격은_0원_이상이다() {
+        // given
         Menu menu = new Menu();
         menu.setPrice(BigDecimal.valueOf(-1));
 
+        // when, then
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 주문하려는_메뉴_그룹은_이미_존재하는_그룹이어야_한다() {
+        // given
         Menu menu = new Menu();
         menu.setMenuGroupId(1L);
         menu.setPrice(BigDecimal.valueOf(100));
@@ -88,12 +94,14 @@ class MenuServiceTest {
         given(menuGroupDao.existsById(BDDMockito.anyLong()))
                 .willReturn(false);
 
+        // when, then
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 주문하려는_메뉴에_존재하는_상품은_이미_존재하는_상품이어야_한다() {
+        // given
         Menu menu = new Menu();
         menu.setMenuGroupId(1L);
         menu.setPrice(BigDecimal.valueOf(100));
@@ -112,12 +120,14 @@ class MenuServiceTest {
         given(productDao.findById(BDDMockito.anyLong()))
                 .willReturn(Optional.of(product));
 
+        // when, then
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 주문하려는_메뉴에_가격이_0원_이하면_예외() {
+        // given
         Menu menu = new Menu();
         menu.setMenuGroupId(1L);
         menu.setPrice(BigDecimal.valueOf(100));
@@ -137,6 +147,7 @@ class MenuServiceTest {
         given(productDao.findById(BDDMockito.anyLong()))
                 .willReturn(Optional.of(product));
 
+        // when, then
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
     }

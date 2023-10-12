@@ -33,21 +33,24 @@ class TableServiceTest {
 
     @Test
     void 테이블을_생성한다() {
+        // given
         OrderTable orderTable = new OrderTable();
 
+        // when, then
         tableService.create(orderTable);
-
         then(orderTableDao).should(times(1)).save(orderTable);
     }
 
     @Test
     void 테이블의_상태를_변경한다() {
+        // given
         OrderTable orderTable = new OrderTable();
         given(orderTableDao.findById(anyLong()))
                 .willReturn(Optional.of(orderTable));
         given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), eq(List.of("COOKING", "MEAL"))))
                 .willReturn(false);
 
+        // when, then
         tableService.changeEmpty(1L, orderTable);
         then(orderTableDao).should(times(1)).save(orderTable);
     }
@@ -60,50 +63,59 @@ class TableServiceTest {
 
     @Test
     void 상태를_바꾸려는_테이블의_테이블_그룹이_존재하면_예외발생() {
+        // given
         OrderTable orderTable = new OrderTable();
         orderTable.setTableGroupId(1L);
         given(orderTableDao.findById(anyLong()))
                 .willReturn(Optional.of(orderTable));
 
+        // when, then
         assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 상태를_바꾸려는_테이블의_주문_상태가_식사중이면_예외발생() {
+        // given
         OrderTable orderTable = new OrderTable();
         given(orderTableDao.findById(anyLong()))
                 .willReturn(Optional.of(orderTable));
         given(orderDao.existsByOrderTableIdAndOrderStatusIn(1L, List.of("COOKING", "MEAL")))
                 .willReturn(true);
 
+        // when, then
         assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 테이블에_방문한_손님_수가_0이하면_예외발생() {
+        // given
         OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(0);
 
+        // when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 테이블에_방문한_손님_수가_조절_시_테이블이_존재하지_않으면_예외발생() {
+        // given
         OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(1);
 
         given(orderTableDao.findById(anyLong()))
                 .willReturn(Optional.empty());
 
+        // when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 방문하려는_테이블의_상태가_빈_테이블이면_예외발생() {
+        // given
         OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(1);
         orderTable.setEmpty(true);
@@ -111,18 +123,21 @@ class TableServiceTest {
         given(orderTableDao.findById(anyLong()))
                 .willReturn(Optional.empty());
 
+        // when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 테이블에_방문한_손님_수를_설정한다() {
+        // given
         OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(1);
 
         given(orderTableDao.findById(anyLong()))
                 .willReturn(Optional.of(orderTable));
 
+        // when, then
         tableService.changeNumberOfGuests(1L, orderTable);
         then(orderTableDao).should(times(1)).save(orderTable);
     }
