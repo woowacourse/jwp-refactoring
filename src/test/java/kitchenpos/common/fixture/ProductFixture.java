@@ -20,6 +20,6 @@ public class ProductFixture {
     }
 
     public static Product 상품(String productName, BigDecimal price) {
-        return new Product("productName", price);
+        return new Product(productName, price);
     }
 }

@@ -33,6 +33,10 @@ public class Order {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
+    public Order(Long orderTableId, List<OrderLineItem> orderLineItems) {
+        this(null, orderTableId, null, null, orderLineItems);
+    }
+
     public Order() {
         this(null, null, null, null, List.of());
     }
