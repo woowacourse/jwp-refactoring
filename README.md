@@ -13,7 +13,7 @@
     - [ ] TableRestController
 
 - [ ] 서비스 테스트 구현
-    - [ ] MenuGroupService
+    - [x] MenuGroupService
     - [ ] MenuService
     - [ ] OrderService
     - [x] ProductService
