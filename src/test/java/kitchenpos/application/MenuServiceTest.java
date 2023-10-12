@@ -7,6 +7,7 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -37,6 +38,7 @@ public class MenuServiceTest {
     private MenuService menuService;
 
     @Test
+    @DisplayName("메뉴 생성 테스트")
     public void createMenuTest() {
         // Given
         Menu menu = new Menu();
@@ -66,6 +68,7 @@ public class MenuServiceTest {
     }
 
     @Test
+    @DisplayName("메뉴 목록 조회 테스트")
     public void listMenusTest() {
         // Given
         given(menuDao.findAll()).willReturn(List.of(new Menu()));

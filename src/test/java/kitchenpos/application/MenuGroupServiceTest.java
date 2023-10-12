@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -35,6 +36,7 @@ public class MenuGroupServiceTest {
     }
 
     @Test
+    @DisplayName("메뉴 그룹 생성 테스트")
     public void createMenuGroupTest() {
         //given
         when(menuGroupDao.save(any(MenuGroup.class))).thenReturn(menuGroup);
@@ -48,6 +50,7 @@ public class MenuGroupServiceTest {
     }
 
     @Test
+    @DisplayName("메뉴 그룹 목록 조회 테스트")
     public void listMenuGroupTest() {
         //given
         List<MenuGroup> menuGroups = Collections.singletonList(menuGroup);

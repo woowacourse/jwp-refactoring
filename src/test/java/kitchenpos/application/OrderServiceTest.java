@@ -7,6 +7,7 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -35,6 +36,7 @@ public class OrderServiceTest {
     private OrderService orderService;
 
     @Test
+    @DisplayName("주문 생성 테스트")
     public void createOrderTest() {
         //given
         Order order = new Order();
@@ -54,6 +56,7 @@ public class OrderServiceTest {
     }
 
     @Test
+    @DisplayName("주문 목록 조회 테스트")
     public void listOrdersTest() {
         //given
         final Order order = new Order();
@@ -69,6 +72,7 @@ public class OrderServiceTest {
     }
 
     @Test
+    @DisplayName("주문 상태 변경 테스트")
     public void changeOrderStatusTest() {
         //given
         Order order = new Order();
