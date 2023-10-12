@@ -14,8 +14,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static kitchenpos.Fixture.Fixture.order;
-import static kitchenpos.Fixture.Fixture.orderTable;
+import static kitchenpos.Fixture.Fixture.orderFixtrue;
+import static kitchenpos.Fixture.Fixture.orderTableFixture;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -31,7 +31,7 @@ class TableServiceTest {
 
     @Test
     void 테이블을_등록할_수_있다() {
-        OrderTable orderTable = orderTable(null, 0, false);
+        OrderTable orderTable = orderTableFixture(null, 0, false);
 
         OrderTable savedOrderTable = tableService.create(orderTable);
 
@@ -45,8 +45,8 @@ class TableServiceTest {
 
     @Test
     void 테이블_목록을_조회한다() {
-        OrderTable orderTable1 = tableService.create(orderTable(null, 1, false));
-        OrderTable orderTable2 = tableService.create(orderTable(null, 0, true));
+        OrderTable orderTable1 = tableService.create(orderTableFixture(null, 1, false));
+        OrderTable orderTable2 = tableService.create(orderTableFixture(null, 0, true));
 
         List<OrderTable> tableList = tableService.list();
 
@@ -60,7 +60,7 @@ class TableServiceTest {
     class 테이블_상태_변경 {
         @Test
         void 테이블을_빈_테이블로_변경한다() {
-            OrderTable orderTable = tableService.create(orderTable(null, 0, false));
+            OrderTable orderTable = tableService.create(orderTableFixture(null, 0, false));
             orderTable.setEmpty(true);
             OrderTable changedOrderTable = tableService.changeEmpty(orderTable.getId(), orderTable);
 
@@ -69,7 +69,7 @@ class TableServiceTest {
 
         @Test
         void 테이블이_존재하지_읺으면_상태를_변경할_수_없다() {
-            OrderTable notExistTable = orderTable(null, 10, false);
+            OrderTable notExistTable = orderTableFixture(null, 10, false);
             long notExistTableId = Long.MIN_VALUE;
 
             assertThatThrownBy(() -> tableService.changeEmpty(notExistTableId, notExistTable))
@@ -80,8 +80,8 @@ class TableServiceTest {
         @ParameterizedTest
         @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
         void 테이블의_주문상태가_조리_또는_식사인_주문_테이블은_빈_테이블로_변경할_수_없다(OrderStatus orderStatus) {
-            OrderTable orderTable = tableService.create(orderTable(null, 1, false));
-            Order order = order(orderTable.getId(), orderStatus.name(), LocalDateTime.now(), null);
+            OrderTable orderTable = tableService.create(orderTableFixture(null, 1, false));
+            Order order = orderFixtrue(orderTable.getId(), orderStatus.name(), LocalDateTime.now(), null);
             orderDao.save(order);
 
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), orderTable))
@@ -96,7 +96,7 @@ class TableServiceTest {
     class 방문한_손님_등록 {
         @Test
         void 테이블에_방문한_손님_수를_등록한다() {
-            OrderTable orderTable = tableService.create(orderTable(null, 0, false));
+            OrderTable orderTable = tableService.create(orderTableFixture(null, 0, false));
             orderTable.setNumberOfGuests(1);
 
             tableService.changeNumberOfGuests(orderTable.getId(), orderTable);
@@ -107,7 +107,7 @@ class TableServiceTest {
         @Test
         void 방문한_손님_수가_0명_미만이면_등록할_수_없다() {
             int lowe0NumberOfGuest = -1;
-            OrderTable orderTable = tableService.create(orderTable(null, lowe0NumberOfGuest, false));
+            OrderTable orderTable = tableService.create(orderTableFixture(null, lowe0NumberOfGuest, false));
 
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), orderTable))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -116,7 +116,7 @@ class TableServiceTest {
 
         @Test
         void 테이블이_존재하지_않으면_방문한_손님_수를_등록할_수_없다() {
-            OrderTable notExistTable = orderTable(null, 1, false);
+            OrderTable notExistTable = orderTableFixture(null, 1, false);
 
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(notExistTable.getId(), notExistTable))
                     .isInstanceOf(IllegalArgumentException.class)

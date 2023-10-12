@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public abstract class Fixture {
-    public static Menu menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    public static Menu menuFixture(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
         Menu menu = new Menu();
         menu.setName(name);
         menu.setPrice(price);
@@ -23,13 +23,13 @@ public abstract class Fixture {
         return menu;
     }
 
-    public static MenuGroup menuGroup(String name) {
+    public static MenuGroup menuGroupFixture(String name) {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(name);
         return menuGroup;
     }
 
-    public static MenuProduct menuProduct(Long menuId, Long productId, long quantity) {
+    public static MenuProduct menuProductFixture(Long menuId, Long productId, long quantity) {
         MenuProduct menuProduct = new MenuProduct();
         menuProduct.setMenuId(menuId);
         menuProduct.setProductId(productId);
@@ -37,7 +37,7 @@ public abstract class Fixture {
         return menuProduct;
     }
 
-    public static Product product(Long productId, String name, BigDecimal price) {
+    public static Product productFixture(Long productId, String name, BigDecimal price) {
         Product product = new Product();
         product.setId(productId);
         product.setName(name);
@@ -45,8 +45,8 @@ public abstract class Fixture {
         return product;
     }
 
-    public static Order order(Long orderTableId, String orderStatus,
-                              LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+    public static Order orderFixtrue(Long orderTableId, String orderStatus,
+                                     LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
         Order order = new Order();
         order.setOrderTableId(orderTableId);
         order.setOrderStatus(orderStatus);
@@ -56,7 +56,7 @@ public abstract class Fixture {
     }
 
 
-    public static OrderLineItem orderLineItem(Long orderId, Long menuId, long quantity) {
+    public static OrderLineItem orderLineItemFixture(Long orderId, Long menuId, long quantity) {
         OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setOrderId(orderId);
         orderLineItem.setMenuId(menuId);
@@ -64,7 +64,7 @@ public abstract class Fixture {
         return orderLineItem;
     }
 
-    public static OrderTable orderTable(Long tableGroupId, int numberOfGuests, boolean empty) {
+    public static OrderTable orderTableFixture(Long tableGroupId, int numberOfGuests, boolean empty) {
         OrderTable orderTable = new OrderTable();
         orderTable.setTableGroupId(tableGroupId);
         orderTable.setNumberOfGuests(numberOfGuests);
@@ -72,7 +72,7 @@ public abstract class Fixture {
         return orderTable;
     }
 
-    public static TableGroup tableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
+    public static TableGroup tableGroupFixture(LocalDateTime createdDate, List<OrderTable> orderTables) {
         TableGroup tableGroup = new TableGroup();
         tableGroup.setCreatedDate(createdDate);
         tableGroup.setOrderTables(orderTables);

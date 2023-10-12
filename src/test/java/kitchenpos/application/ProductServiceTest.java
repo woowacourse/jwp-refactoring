@@ -11,6 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static kitchenpos.Fixture.Fixture.productFixture;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -28,7 +29,7 @@ class ProductServiceTest {
 
         @Test
         void 상품을_등록할_수_있다() {
-            Product product = new Product(null, "product", BigDecimal.ZERO);
+            Product product = productFixture(null, "product", BigDecimal.ZERO);
 
             Product saved = productService.create(product);
 
@@ -37,7 +38,7 @@ class ProductServiceTest {
 
         @Test
         void 상품의_가격이_0원_이상이_아니면_등록할_수_없다() {
-            Product product = new Product(null, "product", BigDecimal.valueOf(-1L));
+            Product product = productFixture(null, "product", BigDecimal.valueOf(-1L));
 
             assertThatThrownBy(() -> productService.create(product))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -47,9 +48,9 @@ class ProductServiceTest {
 
     @Test
     void 상품의_목록을_조회할_수_있다() {
-        Product product1 = new Product(null, "product1", BigDecimal.ZERO);
-        Product product2 = new Product(null, "product2", BigDecimal.ONE);
-        Product product3 = new Product(null, "product3", new BigDecimal("1000"));
+        Product product1 = productFixture(null, "product1", BigDecimal.ZERO);
+        Product product2 = productFixture(null, "product2", BigDecimal.ONE);
+        Product product3 = productFixture(null, "product3", new BigDecimal("1000"));
         productService.create(product1);
         productService.create(product2);
         productService.create(product3);

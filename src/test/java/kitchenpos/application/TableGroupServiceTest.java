@@ -14,9 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static kitchenpos.Fixture.Fixture.order;
-import static kitchenpos.Fixture.Fixture.orderTable;
-import static kitchenpos.Fixture.Fixture.tableGroup;
+import static kitchenpos.Fixture.Fixture.orderFixtrue;
+import static kitchenpos.Fixture.Fixture.orderTableFixture;
+import static kitchenpos.Fixture.Fixture.tableGroupFixture;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.assertj.core.groups.Tuple.tuple;
@@ -37,9 +37,9 @@ class TableGroupServiceTest {
     class 테이블_단체지정 {
         @Test
         void 테이블들을_단체_지정한다() {
-            OrderTable orderTable1 = orderTableDao.save(orderTable(null, 1, true));
-            OrderTable orderTable2 = orderTableDao.save(orderTable(null, 2, true));
-            TableGroup tableGroup = tableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2));
+            OrderTable orderTable1 = orderTableDao.save(orderTableFixture(null, 1, true));
+            OrderTable orderTable2 = orderTableDao.save(orderTableFixture(null, 2, true));
+            TableGroup tableGroup = tableGroupFixture(LocalDateTime.now(), List.of(orderTable1, orderTable2));
 
             TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
@@ -61,8 +61,8 @@ class TableGroupServiceTest {
 
         @Test
         void 단체_지정하려는_테이블이_2개_미만이면_지정할_수_없다() {
-            OrderTable orderTable = orderTableDao.save(orderTable(null, 1, true));
-            TableGroup tableGroup = tableGroup(LocalDateTime.now(), List.of(orderTable));
+            OrderTable orderTable = orderTableDao.save(orderTableFixture(null, 1, true));
+            TableGroup tableGroup = tableGroupFixture(LocalDateTime.now(), List.of(orderTable));
 
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -71,9 +71,9 @@ class TableGroupServiceTest {
 
         @Test
         void 존재하지_않는_테이블을_단체로_지정할_수_없다() {
-            OrderTable savedOrderTable = orderTableDao.save(orderTable(null, 1, true));
-            OrderTable notSavedOrderTable = orderTable(null, 2, true);
-            TableGroup tableGroup = tableGroup(LocalDateTime.now(), List.of(savedOrderTable, notSavedOrderTable));
+            OrderTable savedOrderTable = orderTableDao.save(orderTableFixture(null, 1, true));
+            OrderTable notSavedOrderTable = orderTableFixture(null, 2, true);
+            TableGroup tableGroup = tableGroupFixture(LocalDateTime.now(), List.of(savedOrderTable, notSavedOrderTable));
 
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -82,9 +82,9 @@ class TableGroupServiceTest {
 
         @Test
         void 비어있지_않은_테이블을_단체로_지정할_수_없다() {
-            OrderTable emptyTable = orderTableDao.save(orderTable(null, 1, true));
-            OrderTable notEmptyTable = orderTableDao.save(orderTable(null, 2, false));
-            TableGroup tableGroup = tableGroup(LocalDateTime.now(), List.of(emptyTable, notEmptyTable));
+            OrderTable emptyTable = orderTableDao.save(orderTableFixture(null, 1, true));
+            OrderTable notEmptyTable = orderTableDao.save(orderTableFixture(null, 2, false));
+            TableGroup tableGroup = tableGroupFixture(LocalDateTime.now(), List.of(emptyTable, notEmptyTable));
 
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -93,12 +93,12 @@ class TableGroupServiceTest {
 
         @Test
         void 이미_지정된_테이블을_단체_지정할_수_없다() {
-            OrderTable alreadyGrouped1 = orderTableDao.save(orderTable(null, 1, true));
-            OrderTable alreadyGrouped2 = orderTableDao.save(orderTable(null, 2, true));
-            OrderTable orderTable = orderTableDao.save(orderTable(null, 3, true));
-            tableGroupService.create(tableGroup(LocalDateTime.now(), List.of(alreadyGrouped1, alreadyGrouped2)));
+            OrderTable alreadyGrouped1 = orderTableDao.save(orderTableFixture(null, 1, true));
+            OrderTable alreadyGrouped2 = orderTableDao.save(orderTableFixture(null, 2, true));
+            OrderTable orderTable = orderTableDao.save(orderTableFixture(null, 3, true));
+            tableGroupService.create(tableGroupFixture(LocalDateTime.now(), List.of(alreadyGrouped1, alreadyGrouped2)));
 
-            TableGroup tableGroup = tableGroup(LocalDateTime.now(), List.of(alreadyGrouped1, alreadyGrouped2, orderTable));
+            TableGroup tableGroup = tableGroupFixture(LocalDateTime.now(), List.of(alreadyGrouped1, alreadyGrouped2, orderTable));
 
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -109,9 +109,9 @@ class TableGroupServiceTest {
 
     @Test
     void 단체_지정을_삭제한다() {
-        OrderTable orderTable1 = orderTableDao.save(orderTable(null, 1, true));
-        OrderTable orderTable2 = orderTableDao.save(orderTable(null, 2, true));
-        TableGroup tableGroup = tableGroupService.create(tableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
+        OrderTable orderTable1 = orderTableDao.save(orderTableFixture(null, 1, true));
+        OrderTable orderTable2 = orderTableDao.save(orderTableFixture(null, 2, true));
+        TableGroup tableGroup = tableGroupService.create(tableGroupFixture(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
 
         tableGroupService.ungroup(tableGroup.getId());
 
@@ -124,11 +124,11 @@ class TableGroupServiceTest {
     @ParameterizedTest
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     void 단체_지정된_주문_테이블의_주문_상태가_조리_또는_식사인_경우_단체_지정을_삭제할_수_없다(OrderStatus orderStatus) {
-        OrderTable orderTable1 = orderTableDao.save(orderTable(null, 1, true));
-        OrderTable orderTable2 = orderTableDao.save(orderTable(null, 2, true));
-        TableGroup tableGroup = tableGroupService.create(tableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
+        OrderTable orderTable1 = orderTableDao.save(orderTableFixture(null, 1, true));
+        OrderTable orderTable2 = orderTableDao.save(orderTableFixture(null, 2, true));
+        TableGroup tableGroup = tableGroupService.create(tableGroupFixture(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
 
-        orderDao.save(order(orderTable1.getId(), orderStatus.name(), LocalDateTime.now(), null));
+        orderDao.save(orderFixtrue(orderTable1.getId(), orderStatus.name(), LocalDateTime.now(), null));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class)
