@@ -32,7 +32,6 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
     void 메뉴_그룹을_조회한다() {
         final MenuGroup japaneseMenuGroup = 일식();
         final MenuGroup koreanMenuGroup = 한식();
-
         final List<MenuGroup> menuGroups = List.of(japaneseMenuGroup, koreanMenuGroup);
         for (final MenuGroup menuGroup : menuGroups) {
             메뉴_그룹_생성_요청(menuGroup);

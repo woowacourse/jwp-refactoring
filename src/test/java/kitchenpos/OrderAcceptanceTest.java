@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static kitchenpos.fixture.MenuGroupFixture.일식;
+import static kitchenpos.fixture.OrderTableFixture.NOT_EMPTY_테이블;
 import static kitchenpos.fixture.ProductFixture.스키야키;
 import static kitchenpos.step.MenuGroupStep.메뉴_그룹_생성_요청하고_아이디_반환;
 import static kitchenpos.step.MenuStep.메뉴_생성_요청하고_아이디_반환;
@@ -32,9 +33,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
     @Test
     void 주문을_생성한다() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(4);
+        final OrderTable orderTable = NOT_EMPTY_테이블();
         final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(orderTable);
 
         final MenuGroup menuGroup = 일식();
@@ -75,9 +74,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
     @Test
     void 주문을_조회한다() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(4);
+        final OrderTable orderTable = NOT_EMPTY_테이블();
         final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(orderTable);
 
         final MenuGroup menuGroup = 일식();
@@ -120,9 +117,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
     @Test
     void 주문_상태를_변경한다() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(4);
+        final OrderTable orderTable = NOT_EMPTY_테이블();
         final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(orderTable);
 
         final MenuGroup menuGroup = 일식();

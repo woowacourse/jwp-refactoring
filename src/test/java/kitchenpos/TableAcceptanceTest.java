@@ -5,6 +5,7 @@ import io.restassured.response.Response;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Test;
 
+import static kitchenpos.fixture.OrderTableFixture.NOT_EMPTY_테이블;
 import static kitchenpos.step.TableStep.테이블_상태_Empty로_변경_요청;
 import static kitchenpos.step.TableStep.테이블_생성_요청;
 import static kitchenpos.step.TableStep.테이블_생성_요청하고_테이블_반환;
@@ -19,11 +20,7 @@ class TableAcceptanceTest extends AcceptanceTest {
 
     @Test
     void 테이블을_생성한다() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(4);
-
-        final ExtractableResponse<Response> response = 테이블_생성_요청(orderTable);
+        final ExtractableResponse<Response> response = 테이블_생성_요청(NOT_EMPTY_테이블());
         final OrderTable result = response.jsonPath().getObject("", OrderTable.class);
 
         assertAll(
@@ -31,17 +28,13 @@ class TableAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(result)
                         .usingRecursiveComparison()
                         .ignoringFields("id")
-                        .isEqualTo(orderTable)
+                        .isEqualTo(NOT_EMPTY_테이블())
         );
     }
 
     @Test
     void 테이블을_조회한다() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(4);
-
-        final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(orderTable);
+        final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(NOT_EMPTY_테이블());
 
         final ExtractableResponse<Response> response = 테이블_조회_요청();
 
@@ -55,11 +48,7 @@ class TableAcceptanceTest extends AcceptanceTest {
 
     @Test
     void 테이블을_Empty_상태로_변경한다() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(4);
-
-        final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(orderTable);
+        final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(NOT_EMPTY_테이블());
         savedOrderTable.setEmpty(true);
 
         final ExtractableResponse<Response> response = 테이블_상태_Empty로_변경_요청(savedOrderTable);
@@ -75,11 +64,7 @@ class TableAcceptanceTest extends AcceptanceTest {
 
     @Test
     void 테이블의_사람_수를_변경한다() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(4);
-
-        final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(orderTable);
+        final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(NOT_EMPTY_테이블());
 
         final int newNumberOfGuests = 5;
         savedOrderTable.setNumberOfGuests(newNumberOfGuests);

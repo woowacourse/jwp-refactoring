@@ -27,9 +27,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
     @Test
     void 메뉴를_생성한다() {
         final MenuGroup menuGroup = 일식();
-
         final Long menuGroupId = 메뉴_그룹_생성_요청하고_아이디_반환(menuGroup);
-
         final Long productId = 상품_생성_요청하고_아이디_반환(스키야키());
 
         final MenuProduct menuProduct = new MenuProduct();
@@ -54,7 +52,6 @@ class MenuAcceptanceTest extends AcceptanceTest {
     void 메뉴를_조회한다() {
         final MenuGroup menuGroup = 일식();
         final Long menuGroupId = 메뉴_그룹_생성_요청하고_아이디_반환(menuGroup);
-
         final Long productId = 상품_생성_요청하고_아이디_반환(스키야키());
 
         final MenuProduct menuProduct = new MenuProduct();
