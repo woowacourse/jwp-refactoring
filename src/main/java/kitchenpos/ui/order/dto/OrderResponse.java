@@ -37,4 +37,24 @@ public class OrderResponse {
                         .collect(Collectors.toList())
         );
     }
+
+    public long getId() {
+        return id;
+    }
+
+    public long getOrderTableId() {
+        return orderTableId;
+    }
+
+    public String getOrderStatus() {
+        return orderStatus;
+    }
+
+    public LocalDateTime getOrderedTime() {
+        return orderedTime;
+    }
+
+    public List<OrderLineItemResponse> getOrderLineItems() {
+        return orderLineItems;
+    }
 }

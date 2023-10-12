@@ -28,4 +28,19 @@ public class OrderLineItemResponse {
         );
     }
 
+    public long getSeq() {
+        return seq;
+    }
+
+    public long getOrderId() {
+        return orderId;
+    }
+
+    public long getMenuId() {
+        return menuId;
+    }
+
+    public long getQuantity() {
+        return quantity;
+    }
 }

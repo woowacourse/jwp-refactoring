@@ -1,20 +1,27 @@
 package kitchenpos.helper;
 
+import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.support.AbstractTestExecutionListener;
 
 import java.util.List;
 
-@SpringBootTest
-public class IntegrationTestHelper {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+public class IntegrationTestHelper extends AbstractTestExecutionListener {
+
+    @LocalServerPort
+    private int port;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @BeforeEach
     void initDatabase() {
+        RestAssured.port = this.port;
         validateH2Database();
         List<String> truncateQueries = getTruncateQueries();
         truncateAllTables(truncateQueries);

@@ -27,4 +27,12 @@ public class OrderCreateRequest {
 
         return new Order(orderTableId, null, LocalDateTime.now(), orderLineItems);
     }
+
+    public Long getOrderTableId() {
+        return orderTableId;
+    }
+
+    public List<OrderLineItemCreateRequest> getOrderLineItems() {
+        return orderLineItems;
+    }
 }
