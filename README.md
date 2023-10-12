@@ -17,7 +17,7 @@
     - [x] MenuService
     - [ ] OrderService
     - [x] ProductService
-    - [ ] TableGroupService
+    - [x] TableGroupService
     - [x] TableService
 
 ## 용어 사전
