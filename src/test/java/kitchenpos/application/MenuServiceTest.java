@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -79,6 +80,36 @@ class MenuServiceTest extends ServiceTest {
             assertThatThrownBy(() -> menuService.create(메뉴))
                     .isInstanceOf(IllegalArgumentException.class);
         }
+
+        @Test
+        void 가격합이_동일하지_않은경우_예외가_발생한다() {
+            //given
+            MenuGroup 메뉴_그룹 = 메뉴_그룹_생성();
+            Menu 메뉴 = new Menu();
+            메뉴.setMenuGroupId(메뉴_그룹.getId());
+            long 가격_합 = 메뉴_가격_상품가격합이랑_다르게_만들기(메뉴);
+
+            메뉴.setPrice(BigDecimal.valueOf(가격_합 + 1));
+            //expect
+            assertThatThrownBy(() -> menuService.create(메뉴))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        private long 메뉴_가격_상품가격합이랑_다르게_만들기(final Menu 메뉴) {
+            var 존재하는_상품_목록 = productDao.findAll().subList(0, 2);
+            List<MenuProduct> 메뉴상품_목록 = 존재하는_상품_목록.stream()
+                    .map(product -> {
+                        MenuProduct 메뉴_상품 = new MenuProduct();
+                        메뉴_상품.setProductId(product.getId());
+                        return 메뉴_상품;
+                    }).collect(Collectors.toList());
+            메뉴.setMenuProducts(메뉴상품_목록);
+            long 가격_합 = 존재하는_상품_목록.stream()
+                    .mapToLong(product -> product.getPrice().longValue())
+                    .sum();
+            return 가격_합;
+        }
+
     }
 
     private MenuGroup 메뉴_그룹_생성() {
