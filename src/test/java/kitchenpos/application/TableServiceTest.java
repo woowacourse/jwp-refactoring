@@ -237,7 +237,7 @@ class TableServiceTest {
 
         final OrderTable changeOrderTable = new OrderTable();
         changeOrderTable.setId(1L);
-        orderTable.setNumberOfGuests(3);
+        changeOrderTable.setNumberOfGuests(3);
         changeOrderTable.setEmpty(false);
 
         given(orderTableDao.findById(any()))
@@ -260,7 +260,7 @@ class TableServiceTest {
 
         final OrderTable changeOrderTable = new OrderTable();
         changeOrderTable.setId(1L);
-        orderTable.setNumberOfGuests(3);
+        changeOrderTable.setNumberOfGuests(3);
         changeOrderTable.setEmpty(false);
 
         given(orderTableDao.findById(any()))
