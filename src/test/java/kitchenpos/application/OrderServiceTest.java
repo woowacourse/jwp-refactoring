@@ -21,6 +21,7 @@ class OrderServiceTest extends ServiceTest {
 
     @Nested
     class 주문_생성 {
+
         @Test
         void 성공() {
             //given
@@ -40,13 +41,6 @@ class OrderServiceTest extends ServiceTest {
             assertThat(실제주문.getId()).isNotNull();
         }
 
-        private OrderTable 비어있지_않은_테이블_생성() {
-            final var 테이블 = new OrderTable();
-            테이블.setEmpty(false);
-            테이블.setNumberOfGuests(4);
-            return orderTableDao.save(테이블);
-        }
-
         @Test
         void 빈_테이블일_경우_예외가_발생한다() {
             //given
@@ -61,6 +55,7 @@ class OrderServiceTest extends ServiceTest {
             assertThatThrownBy(() -> orderService.create(주문))
                     .isInstanceOf(IllegalArgumentException.class);
         }
+
         @Test
         void 테이블이_존재하지_않는경우_예외가_발생한다() {
             //given
@@ -75,14 +70,6 @@ class OrderServiceTest extends ServiceTest {
             assertThatThrownBy(() -> orderService.create(주문))
                     .isInstanceOf(IllegalArgumentException.class);
 
-        }
-
-        private OrderLineItem 주문_상품_만들기() {
-            final var 메뉴 = menuDao.findAll().get(0);
-            OrderLineItem 주문상품 = new OrderLineItem();
-            주문상품.setMenuId(메뉴.getId());
-            주문상품.setQuantity(1);
-            return 주문상품;
         }
 
         @Test
@@ -116,6 +103,21 @@ class OrderServiceTest extends ServiceTest {
 
     }
 
+    private OrderTable 비어있지_않은_테이블_생성() {
+        final var 테이블 = new OrderTable();
+        테이블.setEmpty(false);
+        테이블.setNumberOfGuests(4);
+        return orderTableDao.save(테이블);
+    }
+
+    private OrderLineItem 주문_상품_만들기() {
+        final var 메뉴 = menuDao.findAll().get(0);
+        OrderLineItem 주문상품 = new OrderLineItem();
+        주문상품.setMenuId(메뉴.getId());
+        주문상품.setQuantity(1);
+        return 주문상품;
+    }
+
     @Test
     void 주문_리스트_조회() {
         //given
@@ -130,4 +132,55 @@ class OrderServiceTest extends ServiceTest {
         assertThat(주문_리스트).extracting(Order::getId)
                 .containsAll(존재하는_주문_아이디);
     }
+
+    @Nested
+    class 주문_상태_변경 {
+
+        private Order 주문_생성() {
+            OrderLineItem 주문상품 = 주문_상품_만들기();
+
+            Order 주문 = new Order();
+            주문.setOrderLineItems(List.of(주문상품));
+            주문.setOrderStatus(OrderStatus.COOKING.name());
+
+            OrderTable 테이블 = 비어있지_않은_테이블_생성();
+            주문.setOrderTableId(테이블.getId());
+
+            return orderService.create(주문);
+        }
+
+        @Test
+        void 성공() {
+            //given
+            Order 주문 = 주문_생성();
+            주문.setOrderStatus(OrderStatus.COOKING.name());
+
+            //when
+            Order 실제주문 = orderService.changeOrderStatus(주문.getId(), 주문);
+
+            //then
+            assertThat(실제주문.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+        }
+
+        @Test
+        void 주문이_존재하지_않으면_예외가_발생한다() {
+            //expect
+            assertThatThrownBy(() -> orderService.changeOrderStatus(1000000L, new Order()))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void 주문_상태가_COMPLETION이면_예외가_발생한다() {
+            //given
+            Order 주문 = 주문_생성();
+            주문.setOrderStatus(OrderStatus.COMPLETION.name());
+            orderDao.save(주문);
+
+            //expect
+            assertThatThrownBy(() -> orderService.changeOrderStatus(주문.getId(), 주문))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+    }
+
 }
