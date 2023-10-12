@@ -33,8 +33,7 @@ class MenuGroupServiceTest extends MenuGroupServiceFixture {
         // given
         given(menuGroupDao.save(any(MenuGroup.class))).willReturn(저장된_메뉴_그룹);
 
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(메뉴_그룹_이름);
+        final MenuGroup menuGroup = new MenuGroup(메뉴_그룹_이름);
 
         // when
         final MenuGroup actual = menuGroupService.create(menuGroup);

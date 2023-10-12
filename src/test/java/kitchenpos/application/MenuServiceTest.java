@@ -58,11 +58,7 @@ class MenuServiceTest extends MenuServiceFixture {
         given(menuProductDao.save(any(MenuProduct.class))).willReturn(메뉴_상품1)
                                                           .willReturn(메뉴_상품2);
 
-        final Menu menu = new Menu();
-        menu.setName(메뉴_이름);
-        menu.setPrice(메뉴_가격);
-        menu.setMenuGroupId(메뉴_그룹_아이디);
-        menu.setMenuProducts(메뉴_상품들);
+        final Menu menu = new Menu(메뉴_이름, 메뉴_가격, 메뉴_그룹_아이디, 메뉴_상품들);
 
         // when
         final Menu actual = menuService.create(menu);
@@ -80,11 +76,7 @@ class MenuServiceTest extends MenuServiceFixture {
     @NullSource
     void 가격이_null이라면_예외를_반환한다(BigDecimal price) {
         // given
-        final Menu menu = new Menu();
-        menu.setName(메뉴_이름);
-        menu.setPrice(price);
-        menu.setMenuGroupId(메뉴_그룹_아이디);
-        menu.setMenuProducts(메뉴_상품들);
+        final Menu menu = new Menu(메뉴_이름, price, 메뉴_그룹_아이디, 메뉴_상품들);
 
         // when & then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -94,11 +86,7 @@ class MenuServiceTest extends MenuServiceFixture {
     @Test
     void 가격이_0이라면_예외를_반환한다() {
         // given
-        final Menu menu = new Menu();
-        menu.setName(메뉴_이름);
-        menu.setPrice(메뉴_가격이_0);
-        menu.setMenuGroupId(메뉴_그룹_아이디);
-        menu.setMenuProducts(메뉴_상품들);
+        final Menu menu = new Menu(메뉴_이름, 메뉴_가격이_0, 메뉴_그룹_아이디, 메뉴_상품들);
 
         // when & then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -110,11 +98,7 @@ class MenuServiceTest extends MenuServiceFixture {
         // given
         given(menuGroupDao.existsById(anyLong())).willReturn(false);
 
-        final Menu menu = new Menu();
-        menu.setName(메뉴_이름);
-        menu.setPrice(메뉴_가격);
-        menu.setMenuGroupId(존재하지_않는_메뉴_그룹_아이디);
-        menu.setMenuProducts(메뉴_상품들);
+        final Menu menu = new Menu(메뉴_이름, 메뉴_가격, 존재하지_않는_메뉴_그룹_아이디, 메뉴_상품들);
 
         // when & then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -127,11 +111,7 @@ class MenuServiceTest extends MenuServiceFixture {
         given(menuGroupDao.existsById(anyLong())).willReturn(true);
         given(productDao.findById(anyLong())).willReturn(Optional.empty());
 
-        final Menu menu = new Menu();
-        menu.setName(메뉴_이름);
-        menu.setPrice(메뉴_가격);
-        menu.setMenuGroupId(메뉴_그룹_아이디);
-        menu.setMenuProducts(존재하지_않는_상품_가진_메뉴_상품들);
+        final Menu menu = new Menu(메뉴_이름, 메뉴_가격, 메뉴_그룹_아이디, 존재하지_않는_상품_가진_메뉴_상품들);
 
         // when & then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -145,11 +125,7 @@ class MenuServiceTest extends MenuServiceFixture {
         given(productDao.findById(anyLong())).willReturn(Optional.ofNullable(상품1))
                                              .willReturn(Optional.ofNullable(상품2));
 
-        final Menu menu = new Menu();
-        menu.setName(메뉴_이름);
-        menu.setPrice(상품_합보다_큰_메뉴_가격);
-        menu.setMenuGroupId(메뉴_그룹_아이디);
-        menu.setMenuProducts(메뉴_상품들);
+        final Menu menu = new Menu(메뉴_이름, 상품_합보다_큰_메뉴_가격, 메뉴_그룹_아이디, 메뉴_상품들);
 
         // when & then
         assertThatThrownBy(() -> menuService.create(menu))

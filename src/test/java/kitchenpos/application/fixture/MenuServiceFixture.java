@@ -28,39 +28,24 @@ public class MenuServiceFixture {
 
     @BeforeEach
     void setUp() {
-        상품1 = new Product();
+        상품1 = new Product("상품1", BigDecimal.valueOf(1_000));
         상품1.setId(1L);
-        상품1.setName("상품1");
-        상품1.setPrice(BigDecimal.valueOf(1_000));
-        상품2 = new Product();
+        상품2 = new Product("상품2", BigDecimal.valueOf(1_000));
         상품2.setId(2L);
-        상품2.setName("상품2");
-        상품2.setPrice(BigDecimal.valueOf(1_000));
 
-        메뉴_상품1 = new MenuProduct();
+        메뉴_상품1 = new MenuProduct(상품1.getId(), 2);
         메뉴_상품1.setSeq(1L);
-        메뉴_상품1.setProductId(상품1.getId());
-        메뉴_상품1.setQuantity(2);
-        메뉴_상품2 = new MenuProduct();
+        메뉴_상품2 = new MenuProduct(상품2.getId(), 2);
         메뉴_상품2.setSeq(2L);
-        메뉴_상품2.setProductId(상품2.getId());
-        메뉴_상품2.setQuantity(2);
 
         메뉴_상품들 = List.of(메뉴_상품1, 메뉴_상품2);
 
-        저장된_메뉴 = new Menu();
-        저장된_메뉴.setId(1L);
-        저장된_메뉴.setName(메뉴_이름);
-        저장된_메뉴.setPrice(메뉴_가격);
-        저장된_메뉴.setMenuGroupId(메뉴_그룹_아이디);
-        저장된_메뉴.setMenuProducts(메뉴_상품들);
+        저장된_메뉴 = new Menu(메뉴_이름, 메뉴_가격, 메뉴_그룹_아이디, 메뉴_상품들);
         메뉴_상품1.setMenuId(저장된_메뉴.getMenuGroupId());
         메뉴_상품2.setMenuId(저장된_메뉴.getMenuGroupId());
 
-        MenuProduct 존재하지_않는_상품을_가진_메뉴_상품 = new MenuProduct();
+        MenuProduct 존재하지_않는_상품을_가진_메뉴_상품 = new MenuProduct(-999L, 2);
         존재하지_않는_상품을_가진_메뉴_상품.setSeq(1L);
-        존재하지_않는_상품을_가진_메뉴_상품.setProductId(-999L);
-        존재하지_않는_상품을_가진_메뉴_상품.setQuantity(2);
         존재하지_않는_상품_가진_메뉴_상품들 = List.of(존재하지_않는_상품을_가진_메뉴_상품);
     }
 }
