@@ -10,17 +10,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(MenuGroupRestController.class)
@@ -49,7 +48,7 @@ public class MenuGroupRestControllerTest {
         menuGroup.setName("menuGroup1");
         given(menuGroupService.create(any(MenuGroup.class))).willReturn(menuGroup);
 
-        // when
+        // when & then
         mockMvc.perform(post("/api/menu-groups")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(menuGroup)))
@@ -57,7 +56,6 @@ public class MenuGroupRestControllerTest {
                 .andExpect(status().isCreated())
         ;
 
-        // then
     }
 
     @Test
@@ -69,14 +67,10 @@ public class MenuGroupRestControllerTest {
         menuGroup.setName("menuGroup1");
         given(menuGroupService.list()).willReturn(List.of(menuGroup));
 
-        // when
-        final MockHttpServletResponse response = mockMvc.perform(get("/api/menu-groups"))
+        // when & then
+        mockMvc.perform(get("/api/menu-groups"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andReturn().getResponse();
-
-        // then
-        assertThat(response.getStatus()).isEqualTo(200);
-        assertThat(response.getContentAsString()).contains("menuGroup1");
+                .andExpect(jsonPath("$[0].name").value("menuGroup1"));
     }
 }
