@@ -95,4 +95,26 @@ class OrderServiceTest extends IntegrationTest {
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
+
+    @Test
+    void list() {
+        // given
+        final Menu savedMenu = generateMenu("chicken");
+        final OrderTable savedOrderTable = generateOrderTable(3);
+        final Order order = new Order();
+        order.setOrderTableId(1L);
+        order.setOrderLineItems(List.of(generateOrderLineItem(savedMenu)));
+        order.setOrderTableId(savedOrderTable.getTableGroupId());
+        orderService.create(order);
+
+        // when
+        final List<Order> list = orderService.list();
+
+        // then
+        assertThat(list).hasSize(1);
+        final Order foundOrder = list.get(0);
+        assertThat(foundOrder.getId()).isNotNull();
+        assertThat(foundOrder.getOrderStatus()).isEqualTo("COOKING");
+        assertThat(foundOrder.getOrderLineItems()).hasSize(1);
+    }
 }
