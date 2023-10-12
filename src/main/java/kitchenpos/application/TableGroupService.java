@@ -1,5 +1,9 @@
 package kitchenpos.application;
 
+import kitchenpos.application.exception.TableGroupServiceException.CannotAssignOrderTableException;
+import kitchenpos.application.exception.TableGroupServiceException.ExistsNotCompletionOrderException;
+import kitchenpos.application.exception.TableGroupServiceException.InsufficientOrderTableSizeException;
+import kitchenpos.application.exception.TableGroupServiceException.NotExistsOrderTableException;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -33,7 +37,7 @@ public class TableGroupService {
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
 
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
+            throw new InsufficientOrderTableSizeException();
         }
 
         final List<Long> orderTableIds = orderTables.stream()
@@ -43,12 +47,12 @@ public class TableGroupService {
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
 
         if (orderTables.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
+            throw new NotExistsOrderTableException();
         }
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
             if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new IllegalArgumentException();
+                throw new CannotAssignOrderTableException(savedOrderTable.getTableGroupId());
             }
         }
 
@@ -77,7 +81,7 @@ public class TableGroupService {
 
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new ExistsNotCompletionOrderException();
         }
 
         for (final OrderTable orderTable : orderTables) {
