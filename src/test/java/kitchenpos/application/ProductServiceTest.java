@@ -15,13 +15,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.ThrowingSupplier;
-import org.mockito.Mock;
 
 @SuppressWarnings("NonAsciiCharacters")
 class ProductServiceTest {
 
-    @Mock
-    private ProductDao mockProductDao;
+    private final ProductDao mockProductDao = mock(ProductDao.class);
 
     @Nested
     class 상품_등록시 {

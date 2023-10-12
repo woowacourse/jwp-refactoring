@@ -30,14 +30,14 @@ class TableServiceTest {
             // given
             final var table = OrderTableFactory.createOrderTableOf(0, true);
             final var tableService = new TableService(orderDao, orderTableDao);
+            when(orderTableDao.save(table)).thenReturn(table);
 
             // when
             final var saved = tableService.create(table);
 
             // then
             assertAll(
-                    () -> assertThat(saved.getId()).isNotNull(),
-                    () -> assertThat(saved.isEmpty()).isFalse(),
+                    () -> assertThat(saved.isEmpty()).isTrue(),
                     () -> assertThat(saved.getNumberOfGuests()).isZero()
             );
         }
@@ -47,13 +47,13 @@ class TableServiceTest {
             // given
             final var table = OrderTableFactory.createOrderTableOf(0, false);
             final var tableService = new TableService(orderDao, orderTableDao);
+            when(orderTableDao.save(table)).thenReturn(table);
 
             // when
             final var saved = tableService.create(table);
 
             // then
             assertAll(
-                    () -> assertThat(saved.getId()).isNotNull(),
                     () -> assertThat(saved.isEmpty()).isFalse(),
                     () -> assertThat(saved.getNumberOfGuests()).isZero()
             );
