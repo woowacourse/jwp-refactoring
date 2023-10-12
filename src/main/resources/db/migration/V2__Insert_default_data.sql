@@ -62,3 +62,14 @@ insert into order_table (number_of_guests, empty)
 values (0, true);
 insert into order_table (number_of_guests, empty)
 values (0, true);
+insert into order_table (number_of_guests, empty)
+values (11, false);
+
+insert into table_group (id, created_date)
+values (1, now());
+
+insert into orders
+values (1, 'COMPLETION', now(), 1);
+insert into orders
+values (2, 'COOKING', now(), 2);
+
