@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
+import java.util.List;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -56,5 +57,18 @@ class ProductServiceTest extends IntegrationTest {
             assertThatThrownBy(() -> productService.create(product))
                     .isInstanceOf(IllegalArgumentException.class);
         }
+    }
+
+    @Test
+    void list() {
+        // given
+        generateProduct("chicken", 10000L);
+        generateProduct("chicken-2", 10000L);
+
+        // when
+        final List<Product> products = productService.list();
+
+        // then
+        assertThat(products).hasSize(2);
     }
 }
