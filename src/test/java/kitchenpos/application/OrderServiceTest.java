@@ -233,7 +233,6 @@ class OrderServiceTest extends ServiceUnitTest {
             order.setId(1L);
             order.setOrderStatus(COMPLETION.name());
             when(orderDao.findById(order.getId())).thenReturn(Optional.ofNullable(order));
-            when(orderLineItemDao.findAllByOrderId(order.getId())).thenReturn(List.of(주문_항목_생성(1L, 1L)));
 
             // when
             assertThrows(IllegalArgumentException.class,
