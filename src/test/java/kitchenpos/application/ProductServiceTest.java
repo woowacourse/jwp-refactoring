@@ -9,6 +9,7 @@ import java.util.List;
 import kitchenpos.domain.Product;
 import kitchenpos.supports.ProductFixture;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -21,49 +22,55 @@ class ProductServiceTest {
     @Autowired
     private ProductService productService;
 
-    @DisplayName("상품을 생성할 수 있다")
-    @ParameterizedTest
-    @ValueSource(ints = {0, 10000})
-    void createProduct(int price) {
-        // given
-        final Product product = new Product();
-        product.setName("알리오 올리오");
-        product.setPrice(BigDecimal.valueOf(price));
+    @Nested
+    @DisplayName("상품을 생성할 때")
+    class Create {
 
-        // when
-        final Product savedProduct = productService.create(product);
+        @DisplayName("정상적으로 생성할 수 있다")
+        @ParameterizedTest
+        @ValueSource(ints = {0, 10000})
+        void createProduct(int price) {
+            // given
+            final Product product = new Product();
+            product.setName("알리오 올리오");
+            product.setPrice(BigDecimal.valueOf(price));
 
-        // then
-        assertSoftly(softly -> {
-            assertThat(savedProduct.getId()).isNotNull();
-            assertThat(savedProduct.getName()).isEqualTo(product.getName());
-        });
-    }
+            // when
+            final Product savedProduct = productService.create(product);
 
-    @DisplayName("가격이 없으면 예외처리 한다")
-    @Test
-    void throwExceptionWhenPriceIsNull() {
-        // given
-        final Product product = new Product();
-        product.setName("알리오 올리오");
+            // then
+            assertSoftly(softly -> {
+                assertThat(savedProduct.getId()).isNotNull();
+                assertThat(savedProduct.getName()).isEqualTo(product.getName());
+            });
+        }
 
-        // then
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
 
-    @DisplayName("가격이 0 미만이면 예외처리 한다")
-    @ParameterizedTest
-    @ValueSource(ints = {-10000, -1})
-    void throwExceptionWhenPriceIsLowerThanZero(int price) {
-        // given
-        final Product product = new Product();
-        product.setName("알리오 올리오");
-        product.setPrice(BigDecimal.valueOf(price));
+        @DisplayName("가격이 없으면 예외처리 한다")
+        @Test
+        void throwExceptionWhenPriceIsNull() {
+            // given
+            final Product product = new Product();
+            product.setName("알리오 올리오");
 
-        // then
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
+            // then
+            assertThatThrownBy(() -> productService.create(product))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @DisplayName("가격이 0 미만이면 예외처리 한다")
+        @ParameterizedTest
+        @ValueSource(ints = {-10000, -1})
+        void throwExceptionWhenPriceIsLowerThanZero(int price) {
+            // given
+            final Product product = new Product();
+            product.setName("알리오 올리오");
+            product.setPrice(BigDecimal.valueOf(price));
+
+            // then
+            assertThatThrownBy(() -> productService.create(product))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
     }
 
     @DisplayName("상품 목록을 조회할 수 있다")

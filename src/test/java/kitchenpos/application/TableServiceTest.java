@@ -3,13 +3,10 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
@@ -50,8 +47,13 @@ class TableServiceTest {
         @DisplayName("정상적으로 생성된다")
         @Test
         void success() {
-            final OrderTable savedOrderTable = tableService.create(OrderTableFixture.createEmpty());
+            //given
+            final OrderTable table = OrderTableFixture.createEmpty();
 
+            //when
+            final OrderTable savedOrderTable = tableService.create(table);
+
+            //then
             assertThat(savedOrderTable.getId()).isNotNull();
         }
     }
@@ -192,5 +194,18 @@ class TableServiceTest {
             assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, empty))
                     .isInstanceOf(IllegalArgumentException.class);
         }
+    }
+
+    @DisplayName("테이블 목록을 조회할 수 있다")
+    @Test
+    void findAllTables() {
+        // given
+        final OrderTable savedOrderTable = tableService.create(OrderTableFixture.createEmpty());
+
+        // when
+        final List<OrderTable> list = tableService.list();
+
+        // then
+        assertThat(list).hasSize(1);
     }
 }
