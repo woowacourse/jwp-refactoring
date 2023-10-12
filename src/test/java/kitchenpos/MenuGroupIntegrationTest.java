@@ -1,6 +1,5 @@
 package kitchenpos;
 
-import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kitchenpos.domain.MenuGroup;
@@ -8,16 +7,16 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static io.restassured.http.ContentType.JSON;
+import static kitchenpos.step.MenuGroupStep.MENU_GROUP_JAPANESE;
+import static kitchenpos.step.MenuGroupStep.MENU_GROUP_KOREAN;
+import static kitchenpos.step.MenuGroupStep.메뉴_그룹_생성_요청;
+import static kitchenpos.step.MenuGroupStep.메뉴_그룹_조회_요청;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 class MenuGroupIntegrationTest extends IntegrationTest {
-
-    private static final MenuGroup MENU_GROUP_JAPANESE = new MenuGroup("일식");
-    private static final MenuGroup MENU_GROUP_KOREAN = new MenuGroup("한식");
 
     @Test
     void 메뉴_그룹을_생성한다() {
@@ -51,32 +50,5 @@ class MenuGroupIntegrationTest extends IntegrationTest {
                         .ignoringFields("id")
                         .isEqualTo(menuGroups.get(1))
         );
-    }
-
-    private static ExtractableResponse<Response> 메뉴_그룹_생성_요청(final MenuGroup menuGroup) {
-        return RestAssured.given()
-                .log().all()
-                .contentType(JSON)
-                .body(menuGroup)
-
-                .when()
-                .post("/api/menu-groups")
-
-                .then()
-                .log().all()
-                .extract();
-    }
-
-    private static ExtractableResponse<Response> 메뉴_그룹_조회_요청() {
-        return RestAssured.given()
-                .log().all()
-                .contentType(JSON)
-
-                .when()
-                .get("/api/menu-groups")
-
-                .then()
-                .log().all()
-                .extract();
     }
 }
