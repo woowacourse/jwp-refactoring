@@ -17,8 +17,6 @@ public class MenuServiceFixture {
     protected Menu 유효하지_않은_메뉴_그룹_아이디를_갖는_메뉴 = new Menu();
     protected Menu 유효하지_않은_메뉴_상품_아이디를_갖는_메뉴 = new Menu();
     protected Menu 유효하지_않은_가격을_갖는_메뉴 = new Menu();
-    protected MenuProduct 저장할_메뉴_상품 = new MenuProduct();
-    protected MenuProduct 메뉴_리스트에_저장된_메뉴_상품 = new MenuProduct();
     protected MenuProduct 첫번째_메뉴_상품 = new MenuProduct();
     protected Product 첫번째_메뉴_상품의_상품 = new Product();
     protected List<Menu> 저장된_메뉴_리스트;
