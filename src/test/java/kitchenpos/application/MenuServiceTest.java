@@ -15,6 +15,7 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuProductFixture;
+import kitchenpos.fixture.ProductFixture;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -90,6 +91,19 @@ class MenuServiceTest extends ServiceIntegrationTest {
         MenuProduct invalidMenuProduct = MenuProductFixture.존재하지_않는_상품을_가진_메뉴_상품();
         MenuGroup savedMenuGroup = menuGroupDao.save(추천메뉴_그룹());
         Menu menu = MenuFixture.메뉴_생성(BigDecimal.valueOf(19000), savedMenuGroup, invalidMenuProduct);
+
+        // when then
+        assertThatThrownBy(() -> menuService.create(menu))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void MenuProduct의_가격_합이_메뉴의_가격보다_낮으면_실패한다() {
+        // given
+        Product savedProduct = productDao.save(ProductFixture.후추_치킨_10000원());
+        MenuProduct menuProduct = MenuProductFixture.메뉴_상품(savedProduct, 2);
+        MenuGroup savedMenuGroup = menuGroupDao.save(추천메뉴_그룹());
+        Menu menu = MenuFixture.메뉴_생성(BigDecimal.valueOf(10000 + 10000 + 1), savedMenuGroup, menuProduct);
 
         // when then
         assertThatThrownBy(() -> menuService.create(menu))
