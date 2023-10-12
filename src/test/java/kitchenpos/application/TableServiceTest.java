@@ -33,7 +33,6 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
 
 @SpringBootTest
 class TableServiceTest {
