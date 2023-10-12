@@ -1,13 +1,13 @@
 package kitchenpos.application;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.stream.Collectors;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
@@ -39,7 +39,7 @@ class ProductServiceTest {
                 .orElseThrow(NoSuchElementException::new);
         assertAll(
                 () -> assertThat(product.getName()).isEqualTo(savedProduct.getName()),
-                () -> assertThat(product.getPrice().compareTo(savedProduct.getPrice())).isZero()
+                () -> assertThat(product.getPrice()).isEqualByComparingTo(savedProduct.getPrice())
         );
     }
 
@@ -63,6 +63,42 @@ class ProductServiceTest {
         // when
         assertThatThrownBy(() -> productService.create(product))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("Product 전체를 조회한다.")
+    void findAllProduct() {
+        // given
+        List<Product> products = List.of(
+                new Product("상품1", BigDecimal.ZERO),
+                new Product("상품2", BigDecimal.ZERO),
+                new Product("상품3", BigDecimal.ZERO)
+        );
+
+        for (Product product : products) {
+            productDao.save(product);
+        }
+
+        // when
+        List<Product> results = productService.list()
+                .stream()
+                .filter(product -> containsProducts(products, product))
+                .collect(Collectors.toList());
+
+        // then
+        assertThat(results).usingRecursiveComparison()
+                .ignoringFields("id", "price")
+                .isEqualTo(products);
+    }
+
+    private boolean containsProducts(List<Product> products, Product product) {
+        for (Product productInProducts : products) {
+            if (productInProducts.getName().equals(product.getName())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }
