@@ -8,13 +8,13 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.support.ServiceIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class ProductServiceTest {
+class ProductServiceTest extends ServiceIntegrationTest {
 
   @Autowired
   private ProductService productService;

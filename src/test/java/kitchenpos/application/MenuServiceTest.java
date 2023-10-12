@@ -8,14 +8,14 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.support.ServiceIntegrationTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class MenuServiceTest {
+class MenuServiceTest extends ServiceIntegrationTest {
 
   @Autowired
   private MenuService menuService;

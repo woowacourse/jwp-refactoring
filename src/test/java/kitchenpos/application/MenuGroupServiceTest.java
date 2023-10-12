@@ -5,14 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.support.ServiceIntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class MenuGroupServiceTest {
+class MenuGroupServiceTest extends ServiceIntegrationTest {
 
   @Autowired
   private MenuGroupService menuGroupService;

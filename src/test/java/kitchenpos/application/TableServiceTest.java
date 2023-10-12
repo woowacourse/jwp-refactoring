@@ -7,14 +7,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.util.List;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.support.ServiceIntegrationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class TableServiceTest {
+class TableServiceTest extends ServiceIntegrationTest {
 
   @Autowired
   private TableService tableService;
