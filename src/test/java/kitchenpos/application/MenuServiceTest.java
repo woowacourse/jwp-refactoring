@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -170,7 +171,7 @@ class MenuServiceTest {
 
         //then
 
-        Assertions.assertAll(
+        assertAll(
                 () -> assertThat(findMenus).extractingResultOf("getId")
                         .containsExactly(savedMenu.getId()),
                 () -> assertThat(findMenus).extractingResultOf("getName")
