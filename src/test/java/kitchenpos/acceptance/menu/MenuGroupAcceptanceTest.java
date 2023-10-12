@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
-@DisplayName("메뉴 인수 테스트")
+@DisplayName("메뉴 그룹 인수 테스트")
 public class MenuGroupAcceptanceTest {
 
     @Nested
