@@ -2,7 +2,7 @@ package kitchenpos.application.exception;
 
 public class OrderServiceException extends KitchenPosException {
 
-    public OrderServiceException(String message) {
+    public OrderServiceException(final String message) {
         super(message);
     }
 
