@@ -5,6 +5,16 @@ import java.math.BigDecimal;
 public class Product {
     private Long id;
     private String name;
+
+    public Product() {
+    }
+
+    public Product(final Long id, final String name, final BigDecimal price) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+    }
+
     private BigDecimal price;
 
     public Long getId() {
