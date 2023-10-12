@@ -45,7 +45,7 @@
 - [x] Business Object 테스트 작성
 ### 전체 조회
 - [x] API 테스트 작성
-- [ ] Business Object 테스트 작성
+- [x] Business Object 테스트 작성
 ### 주문을 등록 가능 여부 변경
 - [x] API 테스트 작성
 - [ ] Business Object 테스트 작성
