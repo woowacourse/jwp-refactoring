@@ -55,7 +55,7 @@ class ProductServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("상품의 가격이 0 이하이면 등록할 수 없다.")
+    @DisplayName("상품의 가격이 0 미만이면 등록할 수 없다.")
     @Test
     void create_FailWhenPriceLessThanZero() {
         // given
