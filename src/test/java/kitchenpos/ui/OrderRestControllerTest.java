@@ -86,7 +86,7 @@ class OrderRestControllerTest {
         request.setOrderStatus(OrderStatus.COMPLETION.name());
 
         // when
-        mockMvc.perform(put("/api/orders/1/order-status")
+        mockMvc.perform(put("/api/orders/{orderId}/order-status", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(request)))
                 .andDo(print())
