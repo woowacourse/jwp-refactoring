@@ -15,4 +15,11 @@ public class ProductFixture {
         product.setPrice(price);
         return persistable.apply(product);
     }
+
+    public static Product 상품_저장(final Function<Product, Product> productPersistable) {
+        final Product product = new Product();
+        product.setName("허니콤보");
+        product.setPrice(new BigDecimal("20000"));
+        return productPersistable.apply(product);
+    }
 }

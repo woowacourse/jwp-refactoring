@@ -23,6 +23,17 @@ public class OrderFixture {
         return order;
     }
 
+    public static Order 주문_생성(
+            final OrderTable orderTable,
+            final List<Menu> menus
+    ) {
+        final Order order = new Order();
+        order.setOrderTableId(orderTable.getId());
+        final List<OrderLineItem> orderLineItems = 주문_항목_목록_생성(menus);
+        order.setOrderLineItems(orderLineItems);
+        return order;
+    }
+
     public static List<OrderLineItem> 주문_항목_목록_생성(final List<Menu> menus) {
         return menus.stream()
                 .map(menu -> {
