@@ -10,6 +10,8 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.CreateTableGroupRequest;
+import kitchenpos.dto.TableGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -28,11 +30,10 @@ class TableGroupServiceTest extends ServiceTestContext {
             orderTables.add(new OrderTable());
         }
 
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(orderTables);
+        CreateTableGroupRequest request = new CreateTableGroupRequest(orderTables);
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -43,11 +44,10 @@ class TableGroupServiceTest extends ServiceTestContext {
         orderTables.add(new OrderTable());
         orderTables.add(new OrderTable());
 
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(orderTables);
+        CreateTableGroupRequest request = new CreateTableGroupRequest(orderTables);
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -57,27 +57,29 @@ class TableGroupServiceTest extends ServiceTestContext {
         List<OrderTable> orderTables = new ArrayList<>();
         orderTables.add(savedOrderTable);
 
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(orderTables);
+        CreateTableGroupRequest request = new CreateTableGroupRequest(orderTables);
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 그룹_지정_대상이_이미_그룹이_존재한다면_예외를_던진다() {
         // given
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        TableGroup createdTableGroup = tableGroupDao.save(tableGroup);
+        OrderTable orderTable1 = new OrderTable();
+        orderTable1.setTableGroupId(savedTableGroup.getId());
+        OrderTable createdOrderTable1 = orderTableDao.save(orderTable1);
 
-        OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(createdTableGroup.getId());
-        orderTableDao.save(orderTable);
+        OrderTable orderTable2 = new OrderTable();
+        orderTable2.setTableGroupId(savedTableGroup.getId());
+        OrderTable createdOrderTable2 = orderTableDao.save(orderTable2);
+
+        CreateTableGroupRequest request = new CreateTableGroupRequest(
+                List.of(createdOrderTable1, createdOrderTable2));
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(createdTableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -92,17 +94,14 @@ class TableGroupServiceTest extends ServiceTestContext {
         orderTable2.setEmpty(true);
         OrderTable createdOrderTable2 = orderTableDao.save(orderTable2);
 
-        TableGroup tableGroupRequest = new TableGroup();
-        tableGroupRequest.setOrderTables(List.of(
-                createdOrderTable1,
-                createdOrderTable2
-        ));
+        CreateTableGroupRequest request = new CreateTableGroupRequest(
+                List.of(createdOrderTable1, createdOrderTable2));
 
         // when
-        TableGroup createdTableGroup = tableGroupService.create(tableGroupRequest);
+        TableGroupResponse response = tableGroupService.create(request);
 
         // then
-        assertThat(createdTableGroup.getId()).isNotNull();
+        assertThat(response.getId()).isNotNull();
     }
 
     @ParameterizedTest

@@ -4,8 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.dto.ChangeOrderStatusRequest;
+import kitchenpos.dto.CreateOrderRequest;
+import kitchenpos.dto.OrderResponse;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 
@@ -15,12 +17,11 @@ class OrderServiceTest extends ServiceTestContext {
     @Test
     void 주문_항목이_없다면_예외를_던진다() {
         // given
-        Order order = new Order();
-        order.setOrderLineItems(List.of());
-        order.setOrderTableId(savedOrderTable.getId());
+        CreateOrderRequest request = new CreateOrderRequest(savedOrderTable.getId(),
+                List.of());
 
         // when, then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -31,83 +32,73 @@ class OrderServiceTest extends ServiceTestContext {
         orderLineItem.setMenuId(Long.MAX_VALUE);
         orderLineItem.setQuantity(1L);
 
-        Order order = new Order();
-        order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderTableId(savedOrderTable.getId());
+        CreateOrderRequest request = new CreateOrderRequest(savedOrderTable.getId(),
+                List.of(orderLineItem));
 
         // when, then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 주문_테이블이_존재하지_않는다면_예외를_던진다() {
         // given
-        Order order = new Order();
-        order.setOrderLineItems(List.of(savedOrderLineItem));
-        order.setOrderTableId(Long.MAX_VALUE);
+        CreateOrderRequest request = new CreateOrderRequest(Long.MAX_VALUE,
+                List.of(savedOrderLineItem));
 
         // when, then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 주문은_생성되면_COOKING_상태로_설정된다() {
         // given
-        Order order = new Order();
-        order.setOrderLineItems(List.of(savedOrderLineItem));
-        order.setOrderTableId(savedOrderTable.getId());
+        CreateOrderRequest request = new CreateOrderRequest(savedOrderTable.getId(),
+                List.of(savedOrderLineItem));
 
         // when
-        Order createdOrder = orderService.create(order);
+        OrderResponse response = orderService.create(request);
 
         // then
-        assertThat(createdOrder.getOrderStatus()).isEqualTo("COOKING");
+        assertThat(response.getOrderStatus()).isEqualTo("COOKING");
     }
 
     @Test
     void 주문을_정상적으로_생성하는_경우_생성한_주문이_반환된다() {
         // given
-        Order order = new Order();
-        order.setOrderLineItems(List.of(savedOrderLineItem));
-        order.setOrderTableId(savedOrderTable.getId());
+        CreateOrderRequest request = new CreateOrderRequest(savedOrderTable.getId(),
+                List.of(savedOrderLineItem));
 
         // when
-        Order createdOrder = orderService.create(order);
+        OrderResponse response = orderService.create(request);
 
         // then
-        assertThat(createdOrder.getId()).isNotNull();
+        assertThat(response.getId()).isNotNull();
     }
 
     @Test
     void 전체_주문을_조회할_수_있다() {
         // given
-        Order order = new Order();
-        order.setOrderLineItems(List.of(savedOrderLineItem));
-        order.setOrderTableId(savedOrderTable.getId());
-
-        orderService.create(order);
+        CreateOrderRequest request = new CreateOrderRequest(savedOrderTable.getId(),
+                List.of(savedOrderLineItem));
+        orderService.create(request);
 
         // when
-        List<Order> orders = orderService.list();
+        List<OrderResponse> response = orderService.findAll();
 
         // then
-        assertThat(orders).hasSize(2);
+        assertThat(response).hasSize(2);
     }
 
     @Test
     void 주문이_존재하지_않으면_상태를_변경하려_할_때_예외를_던진다() {
         // given
         Long orderId = Long.MAX_VALUE;
-
-        Order order = new Order();
-        order.setOrderLineItems(List.of(savedOrderLineItem));
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderStatus("MEAL");
+        ChangeOrderStatusRequest request = new ChangeOrderStatusRequest("MEAL");
 
         // when, then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, order))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -115,16 +106,11 @@ class OrderServiceTest extends ServiceTestContext {
     void 이미_완료된_주문이라면_상태를_변경할_수_없다() {
         // given
         Long orderId = savedOrder.getId();
-
-        Order order = new Order();
-        order.setOrderLineItems(List.of(savedOrderLineItem));
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderStatus("COMPLETION");
-
-        orderService.changeOrderStatus(orderId, order);
+        ChangeOrderStatusRequest request = new ChangeOrderStatusRequest("COMPLETION");
+        orderService.changeOrderStatus(orderId, request);
 
         // when, then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, order))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -132,19 +118,15 @@ class OrderServiceTest extends ServiceTestContext {
     void 주문을_정상적으로_변경하는_경우_변경한_주문이_반환된다() {
         // given
         Long orderId = savedOrder.getId();
-
-        Order order = new Order();
-        order.setOrderLineItems(List.of(savedOrderLineItem));
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderStatus("COMPLETION");
+        ChangeOrderStatusRequest request = new ChangeOrderStatusRequest("COMPLETION");
 
         // when
-        Order changedOrder = orderService.changeOrderStatus(orderId, order);
+        OrderResponse response = orderService.changeOrderStatus(orderId, request);
 
         // then
         SoftAssertions.assertSoftly(softly -> {
-            softly.assertThat(changedOrder.getId()).isNotNull();
-            assertThat(changedOrder.getOrderStatus()).isEqualTo("COMPLETION");
+            softly.assertThat(response.getId()).isNotNull();
+            assertThat(response.getOrderStatus()).isEqualTo("COMPLETION");
         });
     }
 }
