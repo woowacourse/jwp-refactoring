@@ -6,6 +6,15 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 
 public class MenuFixture {
+
+    public static Menu 메뉴(String name, int price, Long menuGroupId) {
+        Menu menu = new Menu();
+        menu.setName(name);
+        menu.setPrice(BigDecimal.valueOf(price));
+        menu.setMenuGroupId(menuGroupId);
+        return menu;
+    }
+
     public static Menu 메뉴(String name, int price, Long menuGroupId, List<MenuProduct> menuProducts) {
         Menu menu = new Menu();
         menu.setName(name);

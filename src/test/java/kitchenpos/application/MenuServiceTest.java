@@ -29,10 +29,13 @@ class MenuServiceTest extends ServiceTest {
     private ProductDao productDao;
 
     @Autowired
-    private MenuService menuService;
+    private MenuDao menuDao;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuProductDao menuProductDao;
+
+    @Autowired
+    private MenuService menuService;
 
     @Test
     void 메뉴를_생성할_수_있다() {
@@ -134,18 +137,19 @@ class MenuServiceTest extends ServiceTest {
         Product 후라이드 = productDao.save(후라이드_16000);
         Product 양념치킨 = productDao.save(양념치킨_16000);
 
-        MenuProduct 후라이드_1개 = 메뉴상품(후라이드.getId(), 1);
-        MenuProduct 양념치킨_1개 = 메뉴상품(양념치킨.getId(), 1);
+        Menu 후라이드메뉴 = menuDao.save(메뉴("싼후라이드", 10000, 두마리메뉴.getId()));
+        MenuProduct 싼후라이드상품 = menuProductDao.save(메뉴상품(후라이드메뉴.getId(), 후라이드.getId(), 1));
+        후라이드메뉴.setMenuProducts(List.of(싼후라이드상품));
 
-        Menu 만원메뉴 = menuService.create(메뉴("만원", 10000, 두마리메뉴.getId(), List.of(후라이드_1개, 양념치킨_1개)));
-        Menu 이만원메뉴 = menuService.create(메뉴("이만원", 20000, 두마리메뉴.getId(), List.of(후라이드_1개, 양념치킨_1개)));
-        Menu 삼만원메뉴 = menuService.create(메뉴("삼만원", 30000, 두마리메뉴.getId(), List.of(후라이드_1개, 양념치킨_1개)));
+        Menu 양념메뉴 = menuDao.save(메뉴("이만원", 20000, 두마리메뉴.getId()));
+        MenuProduct 싼양념치킨상품 = menuProductDao.save(메뉴상품(양념메뉴.getId(), 양념치킨.getId(), 1));
+        양념메뉴.setMenuProducts(List.of(싼양념치킨상품));
 
         // when
         List<Menu> findList = menuService.list();
 
         // then
         assertThat(findList).usingRecursiveComparison()
-                .isEqualTo(List.of(만원메뉴, 이만원메뉴, 삼만원메뉴));
+                .isEqualTo(List.of(후라이드메뉴, 양념메뉴));
     }
 }
