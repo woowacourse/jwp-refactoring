@@ -1,6 +1,7 @@
 package kitchenpos.acceptance.menu;
 
 import static kitchenpos.acceptance.AcceptanceSteps.given;
+import static kitchenpos.acceptance.AcceptanceSteps.생성된_ID를_추출한다;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -11,6 +12,15 @@ import kitchenpos.domain.MenuProduct;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class MenuAcceptanceSteps {
+
+    public static Long 메뉴_등록후_생성된_ID를_받아온다(
+            Long 메뉴_그룹_ID,
+            String 메뉴_이름,
+            int 메뉴_가격,
+            MenuProduct... 상품들
+    ) {
+        return 생성된_ID를_추출한다(메뉴_등록_요청을_보낸다(메뉴_그룹_ID, 메뉴_이름, 메뉴_가격, 상품들));
+    }
 
     public static ExtractableResponse<Response> 메뉴_등록_요청을_보낸다(
             Long 메뉴_그룹_ID,
