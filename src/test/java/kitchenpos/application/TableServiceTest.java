@@ -9,6 +9,7 @@ import static kitchenpos.fixture.Fixture.orderLineItemFixture;
 import static kitchenpos.fixture.Fixture.orderTableFixture;
 import static kitchenpos.fixture.Fixture.productFixture;
 import static kitchenpos.fixture.Fixture.tableGroupFixture;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -25,7 +26,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -50,8 +50,6 @@ class TableServiceTest {
     private MenuDao menuDao;
     @Autowired
     private TableGroupService tableGroupService;
-    @Autowired
-    private OrderTableDao orderTableDao;
 
     private OrderTable orderTable;
 
@@ -88,9 +86,8 @@ class TableServiceTest {
             // When
             OrderTable changedOrderTable = tableService.changeEmpty(savedTable.getId(), savedTable);
 
-            assertSoftly(softly -> {
-                softly.assertThat(changedOrderTable.isEmpty()).isTrue();
-            });
+            // then
+            assertThat(changedOrderTable.isEmpty()).isTrue();
         }
 
         @Test
@@ -98,8 +95,7 @@ class TableServiceTest {
         void changeEmptyWithGroupId() {
             final OrderTable orderTable1 = tableService.create(orderTable);
             final OrderTable orderTable2 = tableService.create(orderTable);
-            final TableGroup tableGroup = tableGroupService.create(
-                    tableGroupFixture(now(), List.of(orderTable1, orderTable2)));
+            tableGroupService.create(tableGroupFixture(now(), List.of(orderTable1, orderTable2)));
 
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable1.getId(), orderTable))
                     .isInstanceOf(IllegalArgumentException.class);
