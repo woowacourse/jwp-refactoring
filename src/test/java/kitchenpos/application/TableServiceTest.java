@@ -193,8 +193,23 @@ class TableServiceTest {
         }
 
         @Test
-        @DisplayName("변경하려는 주문 테이블이 빈 테이블인 경우 예외가 발생한다.")
+        @DisplayName("변경하려는 주문 테이블이 존재하지 않는 경우 예외가 발생한다.")
         void throwsExceptionWhenOrderTableNonExist() {
+            // given
+            final OrderTable orderTable = new OrderTable(null, null, 2, false);
+            orderTableDao.save(orderTable);
+
+            final OrderTable newOrderedTable = new OrderTable(null, null, 3, false);
+            final OrderTable savedNewOrderedTable = orderTableDao.save(newOrderedTable);
+
+            // when, then
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(3L, savedNewOrderedTable))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        @DisplayName("변경하려는 주문 테이블이 빈 테이블인 경우 예외가 발생한다.")
+        void throwsExceptionWhenOrderTableIsEmpty() {
             // given
             final OrderTable orderTable = new OrderTable(null, null, 2, true);
             final OrderTable savedOrderTable = orderTableDao.save(orderTable);
