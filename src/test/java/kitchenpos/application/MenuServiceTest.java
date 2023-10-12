@@ -22,7 +22,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -84,9 +83,9 @@ class MenuServiceTest extends MenuServiceFixture {
     }
 
     @Test
-    void 가격이_0이라면_예외를_반환한다() {
+    void 가격이_음수라면_예외를_반환한다() {
         // given
-        final Menu menu = new Menu(메뉴_이름, 메뉴_가격이_0, 메뉴_그룹_아이디, 메뉴_상품들);
+        final Menu menu = new Menu(메뉴_이름, 메뉴_가격이_음수, 메뉴_그룹_아이디, 메뉴_상품들);
 
         // when & then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -135,13 +134,16 @@ class MenuServiceTest extends MenuServiceFixture {
     @Test
     void 메뉴_목록을_조회한다() {
         // given
-        given(menuService.list()).willReturn(List.of(저장된_메뉴));
+        given(menuService.list()).willReturn(저장된_메뉴들);
 
         // when
         final List<Menu> actual = menuService.list();
 
         // then
-        assertThat(actual.get(0)).usingRecursiveComparison()
-                                 .isEqualTo(저장된_메뉴);
+        SoftAssertions.assertSoftly(softAssertions -> {
+            softAssertions.assertThat(actual).hasSize(2);
+            softAssertions.assertThat(actual.get(0)).usingRecursiveComparison().isEqualTo(저장된_메뉴1);
+            softAssertions.assertThat(actual.get(1)).usingRecursiveComparison().isEqualTo(저장된_메뉴2);
+        });
     }
 }

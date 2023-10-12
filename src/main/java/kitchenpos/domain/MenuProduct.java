@@ -8,8 +8,8 @@ public class MenuProduct {
 
     public MenuProduct() {}
 
-    public MenuProduct(final Long menuId, final long quantity) {
-        this.menuId = menuId;
+    public MenuProduct(final Long productId, final long quantity) {
+        this.productId = productId;
         this.quantity = quantity;
     }
 

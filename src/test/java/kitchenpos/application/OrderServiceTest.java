@@ -63,7 +63,9 @@ class OrderServiceTest extends OrderServiceFixture {
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(actual.getId()).isPositive();
-            softAssertions.assertThat(actual).usingRecursiveComparison().isEqualTo(저장된_주문);
+            softAssertions.assertThat(actual).usingRecursiveComparison()
+                          .ignoringFields("id")
+                          .isEqualTo(저장된_주문);
         });
     }
 
