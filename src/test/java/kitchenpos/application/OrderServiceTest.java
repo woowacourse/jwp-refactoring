@@ -11,7 +11,6 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.annotation.MockTest;
-import kitchenpos.config.TestConfig;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -25,10 +24,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.context.annotation.Import;
 
 @MockTest
-@Import(TestConfig.class)
 class OrderServiceTest {
 
     @Mock
