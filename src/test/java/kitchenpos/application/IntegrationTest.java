@@ -47,6 +47,9 @@ public class IntegrationTest {
     protected TableGroupService tableGroupService;
 
     @Autowired
+    protected TableService tableService;
+
+    @Autowired
     protected MenuGroupDao menuGroupDao;
 
     @Autowired
