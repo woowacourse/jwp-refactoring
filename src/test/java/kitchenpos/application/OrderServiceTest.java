@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import kitchenpos.application.order.OrderService;
+import kitchenpos.application.order.dto.OrderCreateRequest;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderTableDao;
@@ -22,6 +24,8 @@ import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.fixture.MenuFixture.메뉴_생성;
 import static kitchenpos.fixture.MenuGroupFixture.메뉴그룹_생성;
 import static kitchenpos.fixture.OrderFixture.주문_생성;
+import static kitchenpos.fixture.OrderFixture.주문_생성_요청;
+import static kitchenpos.fixture.OrderFixture.주문_업데이트_요청;
 import static kitchenpos.fixture.OrderLineItemFixture.주문_품목_생성;
 import static kitchenpos.fixture.OrderTableFixture.주문_테이블_생성;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -52,9 +56,10 @@ class OrderServiceTest extends IntegrationTestHelper {
         OrderTable orderTable = orderTableDao.save(주문_테이블_생성(null, 1, false));
         OrderLineItem orderLineItem = 주문_품목_생성(null, menu.getId(), 1);
         Order order = 주문_생성(orderTable.getId(), null, LocalDateTime.now(), List.of(orderLineItem));
+        OrderCreateRequest req = 주문_생성_요청(order);
 
         // when
-        Order result = orderService.create(order);
+        Order result = orderService.create(req);
 
         // then
         assertSoftly(softly -> {
@@ -71,9 +76,10 @@ class OrderServiceTest extends IntegrationTestHelper {
         // given
         OrderTable orderTable = orderTableDao.save(주문_테이블_생성(null, 1, false));
         Order order = 주문_생성(orderTable.getId(), null, LocalDateTime.now(), List.of());
+        OrderCreateRequest req = 주문_생성_요청(order);
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(req))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -85,9 +91,10 @@ class OrderServiceTest extends IntegrationTestHelper {
         OrderTable orderTable = orderTableDao.save(주문_테이블_생성(null, 1, false));
         OrderLineItem orderLineItem = 주문_품목_생성(null, invalidMenuId, 1);
         Order order = 주문_생성(orderTable.getId(), null, LocalDateTime.now(), List.of(orderLineItem));
+        OrderCreateRequest req = 주문_생성_요청(order);
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(req))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -100,9 +107,10 @@ class OrderServiceTest extends IntegrationTestHelper {
         Menu menu = menuDao.save(메뉴_생성("메뉴", new BigDecimal(1000), menuGroup.getId(), null));
         OrderLineItem orderLineItem = 주문_품목_생성(null, menu.getId(), 1);
         Order order = 주문_생성(invalidOrderTableId, null, LocalDateTime.now(), List.of(orderLineItem));
+        OrderCreateRequest req = 주문_생성_요청(order);
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(req))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -114,9 +122,10 @@ class OrderServiceTest extends IntegrationTestHelper {
         OrderTable orderTable = orderTableDao.save(주문_테이블_생성(null, 1, true));
         OrderLineItem orderLineItem = 주문_품목_생성(null, menu.getId(), 1);
         Order order = 주문_생성(orderTable.getId(), null, LocalDateTime.now(), List.of(orderLineItem));
+        OrderCreateRequest req = 주문_생성_요청(order);
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(req))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -128,8 +137,9 @@ class OrderServiceTest extends IntegrationTestHelper {
         OrderTable orderTable = orderTableDao.save(주문_테이블_생성(null, 1, false));
         OrderLineItem orderLineItem = 주문_품목_생성(null, menu.getId(), 1);
         Order order = 주문_생성(orderTable.getId(), null, LocalDateTime.now(), List.of(orderLineItem));
+        OrderCreateRequest req = 주문_생성_요청(order);
 
-        Order savedOrder = orderService.create(order);
+        Order savedOrder = orderService.create(req);
 
         // when
         List<Order> result = orderService.list();
@@ -153,10 +163,11 @@ class OrderServiceTest extends IntegrationTestHelper {
 
         Order order = 주문_생성(orderTable.getId(), null, LocalDateTime.now(), List.of(orderLineItem));
         Order changedOrder = 주문_생성(orderTable.getId(), orderStatus, LocalDateTime.now(), List.of(orderLineItem));
-        Order savedOrder = orderService.create(order);
+        OrderCreateRequest req = 주문_생성_요청(order);
+        Order savedOrder = orderService.create(req);
 
         // when
-        Order result = orderService.changeOrderStatus(savedOrder.getId(), changedOrder);
+        Order result = orderService.changeOrderStatus(savedOrder.getId(), 주문_업데이트_요청(changedOrder));
 
         // then
         assertThat(result.getOrderStatus()).isEqualTo(orderStatus);
