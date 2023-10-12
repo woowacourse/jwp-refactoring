@@ -4,6 +4,7 @@ import kitchenpos.domain.OrderTable;
 
 public enum OrderTableFixtures {
     EMPTY(0L, 0, true),
+    NOT_EMPTY(2L, 2, false),
     BASIC(1L, 1, true);
 
     private final long tableGroupId;
