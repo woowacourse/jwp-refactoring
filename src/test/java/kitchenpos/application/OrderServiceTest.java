@@ -1,8 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.MenuFixture.후라이드치킨;
 import static kitchenpos.fixture.OrderFixture.createOrderLineItem;
-import static kitchenpos.fixture.ProductFixture.후라이드;
 import static kitchenpos.fixture.TableFixture.주문_테이블;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -10,14 +8,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.List;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.fixture.MenuFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,16 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 class OrderServiceTest extends ServiceIntegrationTest {
 
-    @Autowired
-    private OrderService orderService;
-    @Autowired
-    private MenuService menuService;
-    @Autowired
-    private TableService tableService;
-    @Autowired
-    private ProductService productService;
-    @Autowired
-    private MenuGroupService menuGroupService;
     @Autowired
     private OrderDao orderDao;
 
@@ -149,31 +133,5 @@ class OrderServiceTest extends ServiceIntegrationTest {
                 () -> orderService.changeOrderStatus(cookingOrder.getId(), cookingOrder)
             ).isInstanceOf(IllegalArgumentException.class);
         }
-    }
-
-    private Order createOrderSuccessfully() {
-        final Menu menu = createMenu();
-        final OrderLineItem orderLineItem = createOrderLineItem(menu.getId(), 1L);
-        final OrderTable savedOrderTable = createOrderTable();
-
-        final Order order = new Order();
-        order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderTableId(savedOrderTable.getId());
-        return orderService.create(order);
-    }
-
-    private Menu createMenu() {
-        final Product savedProduct = productService.create(후라이드());
-        final MenuProduct menuProduct = MenuFixture.createMenuProduct(savedProduct, 1L);
-        final MenuGroup savedMenuGroup = menuGroupService.create(MenuFixture.한마리메뉴());
-        final Menu menu = 후라이드치킨(savedMenuGroup, List.of(menuProduct));
-
-        return menuService.create(menu);
-    }
-
-    private OrderTable createOrderTable() {
-        final OrderTable orderTable = 주문_테이블();
-        orderTable.setEmpty(false);
-        return tableService.create(orderTable);
     }
 }

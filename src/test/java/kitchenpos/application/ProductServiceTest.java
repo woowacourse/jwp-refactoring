@@ -8,16 +8,11 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Product;
-import kitchenpos.fixture.ProductFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 class ProductServiceTest extends ServiceIntegrationTest {
-
-    @Autowired
-    private ProductService productService;
 
     @Nested
     @DisplayName("Product를 추가한다.")
@@ -33,8 +28,8 @@ class ProductServiceTest extends ServiceIntegrationTest {
             final Product savedProduct = productService.create(product);
 
             assertAll(
-                () -> assertThat(savedProduct.getPrice().compareTo(product.getPrice()))
-                    .isEqualTo(0),
+                () -> assertThat(savedProduct.getPrice())
+                    .isEqualByComparingTo(product.getPrice()),
                 () -> assertThat(savedProduct.getName())
                     .isEqualTo(product.getName())
             );
@@ -75,5 +70,4 @@ class ProductServiceTest extends ServiceIntegrationTest {
                 savedProduct
             );
     }
-
 }

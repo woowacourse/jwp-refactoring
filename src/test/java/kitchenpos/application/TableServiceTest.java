@@ -1,8 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.MenuFixture.후라이드치킨;
 import static kitchenpos.fixture.OrderFixture.createOrderLineItem;
-import static kitchenpos.fixture.ProductFixture.후라이드;
 import static kitchenpos.fixture.TableFixture.주문_테이블;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -10,35 +8,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.TableFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 class TableServiceTest extends ServiceIntegrationTest {
-
-    @Autowired
-    private TableService tableService;
-    @Autowired
-    private TableGroupService tableGroupService;
-    @Autowired
-    private OrderService orderService;
-    @Autowired
-    private ProductService productService;
-    @Autowired
-    private MenuService menuService;
-    @Autowired
-    private MenuGroupService menuGroupService;
-
 
     @Test
     @DisplayName("table을 생성한다.")
@@ -94,13 +72,6 @@ class TableServiceTest extends ServiceIntegrationTest {
             ).isInstanceOf(IllegalArgumentException.class);
         }
 
-        private void saveTableGroup(final OrderTable savedOrderTable) {
-            final TableGroup tableGroup = new TableGroup();
-            final OrderTable orderTable = tableService.create(주문_테이블());
-            tableGroup.setOrderTables(List.of(savedOrderTable, orderTable));
-            tableGroupService.create(tableGroup);
-        }
-
         @Test
         @DisplayName("저장된 table에 속한 order가 cooking이나 meal 상태인 경우 예외처리")
         void throwExceptionTableIsEmpty() {
@@ -125,15 +96,6 @@ class TableServiceTest extends ServiceIntegrationTest {
             order.setOrderLineItems(List.of(orderLineItem));
             order.setOrderTableId(orderTable.getId());
             orderService.create(order);
-        }
-
-        private Menu createMenu() {
-            final Product savedProduct = productService.create(후라이드());
-            final MenuProduct menuProduct = MenuFixture.createMenuProduct(savedProduct, 1L);
-            final MenuGroup savedMenuGroup = menuGroupService.create(MenuFixture.한마리메뉴());
-            final Menu menu = 후라이드치킨(savedMenuGroup, List.of(menuProduct));
-
-            return menuService.create(menu);
         }
     }
 

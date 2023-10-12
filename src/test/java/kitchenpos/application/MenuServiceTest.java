@@ -17,16 +17,8 @@ import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 class MenuServiceTest extends ServiceIntegrationTest {
-
-    @Autowired
-    private MenuService menuService;
-    @Autowired
-    private ProductService productService;
-    @Autowired
-    private MenuGroupService menuGroupService;
 
     @Nested
     @DisplayName("Menu를 생성한다.")

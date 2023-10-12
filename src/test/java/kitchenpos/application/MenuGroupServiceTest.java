@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static kitchenpos.fixture.MenuFixture.두마리메뉴;
-import static kitchenpos.fixture.MenuFixture.순살파닭두마리메뉴;
 import static kitchenpos.fixture.MenuFixture.신메뉴;
 import static kitchenpos.fixture.MenuFixture.한마리메뉴;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -10,12 +9,8 @@ import java.util.List;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 class MenuGroupServiceTest extends ServiceIntegrationTest {
-
-    @Autowired
-    private MenuGroupService menuGroupService;
 
     @Test
     @DisplayName("menuGroup을 생성하는 기능")
