@@ -33,4 +33,12 @@ public class OrderTableFixture {
         orderTable.setEmpty(false);
         return orderTable;
     }
+
+    public static OrderTable 빈테이블_1명_단체지정() {
+        final var orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(1);
+        orderTable.setEmpty(true);
+        orderTable.setTableGroupId(1L);
+        return orderTable;
+    }
 }
