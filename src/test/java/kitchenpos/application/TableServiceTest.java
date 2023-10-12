@@ -13,9 +13,12 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.supports.MenuFixture;
 import kitchenpos.supports.MenuGroupFixture;
+import kitchenpos.supports.OrderFixture;
 import kitchenpos.supports.OrderTableFixture;
 import kitchenpos.supports.ProductFixture;
+import kitchenpos.supports.TableGroupFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -154,9 +157,7 @@ class TableServiceTest {
             // given
             final OrderTable orderTable1 = tableService.create(OrderTableFixture.createEmpty());
             final OrderTable orderTable2 = tableService.create(OrderTableFixture.createEmpty());
-
-            final TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
+            final TableGroup tableGroup = TableGroupFixture.from(orderTable1, orderTable2);
             tableGroupService.create(tableGroup);
 
             final OrderTable change = OrderTableFixture.createEmpty();
@@ -169,43 +170,26 @@ class TableServiceTest {
 
         @DisplayName("주문 상태가 계산 완료가 아니면 예외처리 한다")
         @ParameterizedTest
-        @ValueSource(strings = {"MEAL", "COOKING"})
+        @ValueSource(strings = {"COOKING", "MEAL"})
         void throwExceptionWhenIllegalOrderStatus(String orderStatus) {
             // given
             final Product product = productService.create(ProductFixture.create());
             final MenuGroup menuGroup = menuGroupService.create(MenuGroupFixture.create());
-            final MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setQuantity(2);
-            menuProduct.setProductId(product.getId());
-
-            final Menu menu = new Menu();
-            menu.setPrice(product.getPrice().multiply(BigDecimal.valueOf(2)).subtract(BigDecimal.ONE));
-            menu.setName("상품+상품");
-            menu.setMenuGroupId(menuGroup.getId());
-            menu.setMenuProducts(List.of(menuProduct));
-            final Menu savedMenu = menuService.create(menu);
+            final Menu menu = menuService.create(MenuFixture.of(menuGroup.getId(), List.of(product)));
 
             final OrderTable orderTable = tableService.create(OrderTableFixture.createNotEmpty());
+            final Order savedOrder = orderService.create(OrderFixture.of(menu.getId(), orderTable.getId()));
 
-            final OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setMenuId(savedMenu.getId());
-            orderLineItem.setQuantity(1L);
+            // 주문 상태 변경
+            final Order change = new Order();
+            change.setOrderStatus(orderStatus);
+            orderService.changeOrderStatus(savedOrder.getId(), change);
 
-            final Order order = new Order();
-            order.setOrderTableId(orderTable.getId());
-            order.setOrderLineItems(List.of(orderLineItem));
-            final Order savedOrder = orderService.create(order);
-
-            final Order change1 = new Order();
-            change1.setOrderStatus(orderStatus);
-
-            orderService.changeOrderStatus(savedOrder.getId(), change1);
-
-            final OrderTable change = OrderTableFixture.createEmpty();
+            final OrderTable empty = OrderTableFixture.createEmpty();
             final Long orderTableId = orderTable.getId();
 
             // then
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, change))
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, empty))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

@@ -4,16 +4,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.supports.MenuFixture;
 import kitchenpos.supports.MenuGroupFixture;
+import kitchenpos.supports.OrderFixture;
 import kitchenpos.supports.OrderTableFixture;
 import kitchenpos.supports.ProductFixture;
 import org.junit.jupiter.api.DisplayName;
@@ -24,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 @DisplayName("주문 서비스 테스트")
 @ServiceTest
 class OrderServiceTest {
+
+    private static final long INVALID_ID = -1L;
 
     @Autowired
     private OrderService orderService;
@@ -37,19 +38,10 @@ class OrderServiceTest {
     private ProductService productService;
 
     private Menu setUpMenu() {
-        // given
         final Product product = productService.create(ProductFixture.create());
         final MenuGroup menuGroup = menuGroupService.create(MenuGroupFixture.create());
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setQuantity(2);
-        menuProduct.setProductId(product.getId());
 
-        final Menu menu = new Menu();
-        menu.setPrice(product.getPrice().multiply(BigDecimal.valueOf(2)).subtract(BigDecimal.ONE));
-        menu.setName("상품+상품");
-        menu.setMenuGroupId(menuGroup.getId());
-        menu.setMenuProducts(List.of(menuProduct));
-
+        final Menu menu = MenuFixture.of(menuGroup.getId(), List.of(product));
         return menuService.create(menu);
     }
 
@@ -58,14 +50,7 @@ class OrderServiceTest {
     void findAllOrders() {
         // given
         final OrderTable orderTable = tableService.create(OrderTableFixture.createNotEmpty());
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(setUpMenu().getId());
-        orderLineItem.setQuantity(2);
-
-        final Order order = new Order();
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderLineItems(List.of(orderLineItem));
-        orderService.create(order);
+        orderService.create(OrderFixture.of(setUpMenu().getId(), orderTable.getId()));
 
         // when
         final List<Order> list = orderService.list();
@@ -83,13 +68,7 @@ class OrderServiceTest {
         void success() {
             // given
             final OrderTable orderTable = tableService.create(OrderTableFixture.createNotEmpty());
-            final OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setMenuId(setUpMenu().getId());
-            orderLineItem.setQuantity(2);
-
-            final Order order = new Order();
-            order.setOrderTableId(orderTable.getId());
-            order.setOrderLineItems(List.of(orderLineItem));
+            final Order order = OrderFixture.of(setUpMenu().getId(), orderTable.getId());
 
             // when
             final Order savedOrder = orderService.create(order);
@@ -120,13 +99,7 @@ class OrderServiceTest {
         void throwExceptionWhenInvalidMenu() {
             // given
             final OrderTable orderTable = tableService.create(OrderTableFixture.createNotEmpty());
-            final OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setMenuId(-1L);
-            orderLineItem.setQuantity(2);
-
-            final Order order = new Order();
-            order.setOrderTableId(orderTable.getId());
-            order.setOrderLineItems(List.of(orderLineItem));
+            final Order order = OrderFixture.of(INVALID_ID, orderTable.getId());
 
             // then
             assertThatThrownBy(() -> orderService.create(order))
@@ -137,13 +110,7 @@ class OrderServiceTest {
         @Test
         void throwExceptionWhenInvalidOrderTable() {
             // given
-            final OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setMenuId(setUpMenu().getId());
-            orderLineItem.setQuantity(2);
-
-            final Order order = new Order();
-            order.setOrderTableId(-1L);
-            order.setOrderLineItems(List.of(orderLineItem));
+            final Order order = OrderFixture.of(setUpMenu().getId(), INVALID_ID);
 
             // then
             assertThatThrownBy(() -> orderService.create(order))
@@ -155,13 +122,7 @@ class OrderServiceTest {
         void throwExceptionWhenEmptyTable() {
             // given
             final OrderTable orderTable = tableService.create(OrderTableFixture.createEmpty());
-            final OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setMenuId(setUpMenu().getId());
-            orderLineItem.setQuantity(2);
-
-            final Order order = new Order();
-            order.setOrderTableId(orderTable.getId());
-            order.setOrderLineItems(List.of(orderLineItem));
+            final Order order = OrderFixture.of(setUpMenu().getId(), orderTable.getId());
 
             // then
             assertThatThrownBy(() -> orderService.create(order))
@@ -178,28 +139,20 @@ class OrderServiceTest {
         void success() {
             // given
             final OrderTable orderTable = tableService.create(OrderTableFixture.createNotEmpty());
-            final OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setMenuId(setUpMenu().getId());
-            orderLineItem.setQuantity(2);
-
-            final Order order = new Order();
-            order.setOrderTableId(orderTable.getId());
-            order.setOrderLineItems(List.of(orderLineItem));
+            final Order order = OrderFixture.of(setUpMenu().getId(), orderTable.getId());
 
             // when, then (조리)
             final Order savedOrder = orderService.create(order);
             assertThat(savedOrder.getOrderStatus()).isEqualTo("COOKING");
 
             // when, then (식사)
-            final Order change1 = new Order();
-            change1.setOrderStatus("MEAL");
-            final Order savedOrder2 = orderService.changeOrderStatus(savedOrder.getId(), change1);
+            final Order meal = OrderFixture.createMeal();
+            final Order savedOrder2 = orderService.changeOrderStatus(savedOrder.getId(), meal);
             assertThat(savedOrder2.getOrderStatus()).isEqualTo("MEAL");
 
             // when, then (계산완료)
-            final Order change2 = new Order();
-            change2.setOrderStatus("COMPLETION");
-            final Order savedOrder3 = orderService.changeOrderStatus(savedOrder2.getId(), change2);
+            final Order completion = OrderFixture.createCompletion();
+            final Order savedOrder3 = orderService.changeOrderStatus(savedOrder2.getId(), completion);
             assertThat(savedOrder3.getOrderStatus()).isEqualTo("COMPLETION");
         }
 
@@ -207,11 +160,10 @@ class OrderServiceTest {
         @Test
         void throwExceptionWhenInvalidOrder() {
             // given
-            final Order order = new Order();
-            order.setOrderStatus("MEAL");
+            final Order change = OrderFixture.createMeal();
 
             // then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(-1L, order))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(INVALID_ID, change))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -220,24 +172,15 @@ class OrderServiceTest {
         void throwExceptionWhenChangeCompletionStatus() {
             // given
             final OrderTable orderTable = tableService.create(OrderTableFixture.createNotEmpty());
-            final OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setMenuId(setUpMenu().getId());
-            orderLineItem.setQuantity(2);
-
-            final Order order = new Order();
-            order.setOrderTableId(orderTable.getId());
-            order.setOrderLineItems(List.of(orderLineItem));
+            final Order order = OrderFixture.of(setUpMenu().getId(), orderTable.getId());
             final Order savedOrder = orderService.create(order);
-
-            final Order change = new Order();
-            change.setOrderStatus("COMPLETION");
             final Long savedOrderId = savedOrder.getId();
 
-            // when
-            orderService.changeOrderStatus(savedOrderId, change);
+            final Order completion = OrderFixture.createCompletion();
+            orderService.changeOrderStatus(savedOrderId, completion); // 계산 완료 상태로 변경
 
             // then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrderId, change))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrderId, completion))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

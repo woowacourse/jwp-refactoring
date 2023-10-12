@@ -10,6 +10,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.supports.MenuFixture;
 import kitchenpos.supports.MenuGroupFixture;
 import kitchenpos.supports.ProductFixture;
 import org.junit.jupiter.api.DisplayName;
@@ -22,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ServiceTest
 class MenuServiceTest {
 
+    private static final long INVALID_ID = -1L;
+
     @Autowired
     private MenuService menuService;
     @Autowired
@@ -29,28 +32,18 @@ class MenuServiceTest {
     @Autowired
     private ProductService productService;
 
-    private Menu setUp() {
-        // given
+    private Menu setUpMenu() {
         final Product product = productService.create(ProductFixture.create());
         final MenuGroup menuGroup = menuGroupService.create(MenuGroupFixture.create());
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setQuantity(2);
-        menuProduct.setProductId(product.getId());
 
-        final Menu menu = new Menu();
-        menu.setPrice(product.getPrice().multiply(BigDecimal.valueOf(2)).subtract(BigDecimal.ONE));
-        menu.setName("상품+상품");
-        menu.setMenuGroupId(menuGroup.getId());
-        menu.setMenuProducts(List.of(menuProduct));
-
-        return menu;
+        return MenuFixture.of(menuGroup.getId(), List.of(product));
     }
 
     @DisplayName("메뉴를 생성할 수 있다")
     @Test
     void createMenu() {
         // given
-        final Menu menu = setUp();
+        final Menu menu = setUpMenu();
 
         // when
         final Menu savedMenu = menuService.create(menu);
@@ -67,7 +60,7 @@ class MenuServiceTest {
     @Test
     void createMenuWithPriceZero() {
         // given
-        final Menu menu = setUp();
+        final Menu menu = setUpMenu();
         menu.setPrice(BigDecimal.valueOf(0));
 
         // when
@@ -85,7 +78,7 @@ class MenuServiceTest {
     @Test
     void throwExceptionWhenPriceIsNull() {
         // given
-        final Menu menu = setUp();
+        final Menu menu = setUpMenu();
         menu.setPrice(null);
 
         // then
@@ -98,7 +91,7 @@ class MenuServiceTest {
     @ValueSource(ints = {-1, -2})
     void throwExceptionWhenPriceIsLowerThanZero(int price) {
         // given
-        final Menu menu = setUp();
+        final Menu menu = setUpMenu();
         menu.setPrice(BigDecimal.valueOf(price));
 
         // then
@@ -110,8 +103,8 @@ class MenuServiceTest {
     @Test
     void throwExceptionWhenInvalidMenuGroup() {
         // given
-        final Menu menu = setUp();
-        menu.setMenuGroupId(-1L);
+        final Menu menu = setUpMenu();
+        menu.setMenuGroupId(INVALID_ID);
 
         // then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -122,10 +115,10 @@ class MenuServiceTest {
     @Test
     void throwExceptionWhenInvalidProduct() {
         // given
-        final Menu menu = setUp();
+        final Menu menu = setUpMenu();
         final MenuProduct menuProduct = new MenuProduct();
         menuProduct.setQuantity(2);
-        menuProduct.setProductId(-1L);
+        menuProduct.setProductId(INVALID_ID);
         menu.setMenuProducts(List.of(menuProduct));
 
         // then
@@ -139,12 +132,13 @@ class MenuServiceTest {
         // given
         final Product product = productService.create(ProductFixture.create());
         final MenuGroup menuGroup = menuGroupService.create(MenuGroupFixture.create());
+
         final MenuProduct menuProduct = new MenuProduct();
         menuProduct.setQuantity(2);
         menuProduct.setProductId(product.getId());
 
         final Menu menu = new Menu();
-        menu.setPrice(product.getPrice().multiply(BigDecimal.valueOf(2)).add(BigDecimal.ONE));
+        menu.setPrice(product.getPrice().multiply(BigDecimal.valueOf(2)).add(BigDecimal.ONE)); // 상품 단품 가격들의 합보다 크게 설정
         menu.setName("상품+상품");
         menu.setMenuGroupId(menuGroup.getId());
         menu.setMenuProducts(List.of(menuProduct));
@@ -158,7 +152,7 @@ class MenuServiceTest {
     @Test
     void findAllMenus() {
         // given
-        final Menu menu = setUp();
+        final Menu menu = setUpMenu();
         menuService.create(menu);
 
         // when

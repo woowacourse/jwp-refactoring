@@ -4,19 +4,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.supports.MenuFixture;
 import kitchenpos.supports.MenuGroupFixture;
+import kitchenpos.supports.OrderFixture;
 import kitchenpos.supports.OrderTableFixture;
 import kitchenpos.supports.ProductFixture;
+import kitchenpos.supports.TableGroupFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -27,6 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 @DisplayName("단체 지정 서비스 테스트")
 @ServiceTest
 class TableGroupServiceTest {
+
+    private static final long INVALID_ID = -1L;
 
     @Autowired
     private TableGroupService tableGroupService;
@@ -52,8 +54,7 @@ class TableGroupServiceTest {
             final OrderTable orderTable1 = tableService.create(OrderTableFixture.createEmpty());
             final OrderTable orderTable2 = tableService.create(OrderTableFixture.createEmpty());
 
-            final TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
+            final TableGroup tableGroup = TableGroupFixture.from(orderTable1, orderTable2);
 
             // when
             final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
@@ -66,7 +67,7 @@ class TableGroupServiceTest {
         @Test
         void throwExceptionWhenOrderTableEmpty() {
             // given
-            final TableGroup tableGroup = new TableGroup();
+            final TableGroup tableGroup = TableGroupFixture.from();
 
             // then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -78,9 +79,7 @@ class TableGroupServiceTest {
         void throwExceptionWhenOrderTableListSizeIsLowerThanTwo() {
             // given
             final OrderTable orderTable = tableService.create(OrderTableFixture.createEmpty());
-
-            final TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(List.of(orderTable));
+            final TableGroup tableGroup = TableGroupFixture.from(orderTable);
 
             // then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -93,10 +92,8 @@ class TableGroupServiceTest {
             // given
             final OrderTable orderTable1 = tableService.create(OrderTableFixture.createEmpty());
             final OrderTable orderTable2 = new OrderTable();
-            orderTable2.setId(-1L);
-
-            final TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
+            orderTable2.setId(INVALID_ID);
+            final TableGroup tableGroup = TableGroupFixture.from(orderTable1, orderTable2);
 
             // then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -107,13 +104,9 @@ class TableGroupServiceTest {
         @Test
         void throwExceptionWhenContainsNotEmptyOrderTable() {
             // given
-            final OrderTable orderTable1 = tableService.create(OrderTableFixture.createEmpty());
+            final OrderTable orderTable1 = tableService.create(OrderTableFixture.createNotEmpty());
             final OrderTable orderTable2 = tableService.create(OrderTableFixture.createEmpty());
-            orderTable1.setEmpty(false);
-            tableService.changeEmpty(orderTable1.getId(), orderTable1);
-
-            final TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
+            final TableGroup tableGroup = TableGroupFixture.from(orderTable1, orderTable2);
 
             // then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -126,13 +119,11 @@ class TableGroupServiceTest {
             // given
             final OrderTable orderTable1 = tableService.create(OrderTableFixture.createEmpty());
             final OrderTable orderTable2 = tableService.create(OrderTableFixture.createEmpty());
-            final TableGroup tableGroup1 = new TableGroup();
-            tableGroup1.setOrderTables(List.of(orderTable1, orderTable2));
+            final TableGroup tableGroup1 = TableGroupFixture.from(orderTable1, orderTable2);
             tableGroupService.create(tableGroup1);
 
             final OrderTable orderTable3 = tableService.create(OrderTableFixture.createEmpty());
-            final TableGroup tableGroup2 = new TableGroup();
-            tableGroup2.setOrderTables(List.of(orderTable1, orderTable3));
+            final TableGroup tableGroup2 = TableGroupFixture.from(orderTable1, orderTable3);
 
             // then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup2))
@@ -150,61 +141,36 @@ class TableGroupServiceTest {
             // given
             final OrderTable orderTable1 = tableService.create(OrderTableFixture.createEmpty());
             final OrderTable orderTable2 = tableService.create(OrderTableFixture.createEmpty());
-            final TableGroup tableGroup1 = new TableGroup();
-            tableGroup1.setOrderTables(List.of(orderTable1, orderTable2));
+            final TableGroup tableGroup = TableGroupFixture.from(orderTable1, orderTable2);
 
             // then
-            assertThatCode(() -> tableGroupService.ungroup(tableGroup1.getId()))
+            assertThatCode(() -> tableGroupService.ungroup(tableGroup.getId()))
                     .doesNotThrowAnyException();
         }
 
         @DisplayName("주문 상태가 계산 완료가 아닌 테이블이 포함되어 있다면 예외처리 한다")
         @ParameterizedTest
-        @ValueSource(strings = {"MEAL", "COOKING"})
+        @ValueSource(strings = {"COOKING", "MEAL"})
         void throwExceptionWhenContainsAlreadyTableGroupingOrderTable(String orderStatus) {
             // given
             final Product product = productService.create(ProductFixture.create());
             final MenuGroup menuGroup = menuGroupService.create(MenuGroupFixture.create());
-            final MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setQuantity(2);
-            menuProduct.setProductId(product.getId());
-
-            final Menu menu = new Menu();
-            menu.setPrice(product.getPrice().multiply(BigDecimal.valueOf(2)).subtract(BigDecimal.ONE));
-            menu.setName("상품+상품");
-            menu.setMenuGroupId(menuGroup.getId());
-            menu.setMenuProducts(List.of(menuProduct));
-            final Menu savedMenu = menuService.create(menu);
+            final Menu menu = menuService.create(MenuFixture.of(menuGroup.getId(), List.of(product)));
 
             final OrderTable orderTable1 = tableService.create(OrderTableFixture.createEmpty());
             final OrderTable orderTable2 = tableService.create(OrderTableFixture.createEmpty());
-            final TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
-            tableGroupService.create(tableGroup);
+            final TableGroup tableGroup = tableGroupService.create(TableGroupFixture.from(orderTable1, orderTable2));
 
-            final OrderLineItem orderLineItem1 = new OrderLineItem();
-            orderLineItem1.setMenuId(savedMenu.getId());
-            orderLineItem1.setQuantity(1L);
-            final Order order = new Order();
-            order.setOrderTableId(orderTable1.getId());
-            order.setOrderLineItems(List.of(orderLineItem1));
-            final Order savedOrder = orderService.create(order);
+            // orderTable1에 대한 주문 상태 -> 계산 미완료
+            final Order savedOrder1 = orderService.create(OrderFixture.of(menu.getId(), orderTable1.getId()));
             final Order change1 = new Order();
             change1.setOrderStatus(orderStatus);
+            orderService.changeOrderStatus(savedOrder1.getId(), change1);
 
-            orderService.changeOrderStatus(savedOrder.getId(), change1);
-
-            final OrderLineItem orderLineItem2 = new OrderLineItem();
-            orderLineItem2.setMenuId(savedMenu.getId());
-            orderLineItem2.setQuantity(1L);
-            final Order order2 = new Order();
-            order2.setOrderTableId(orderTable2.getId());
-            order2.setOrderLineItems(List.of(orderLineItem2));
-            final Order savedOrder2 = orderService.create(order);
+            // orderTable2에 대한 주문 상태 -> 계산 완료
+            final Order savedOrder2 = orderService.create(OrderFixture.of(menu.getId(), orderTable1.getId()));
             final Order change2 = new Order();
             change2.setOrderStatus("COMPLETION");
-
-            // when
             orderService.changeOrderStatus(savedOrder2.getId(), change2);
 
             // then
