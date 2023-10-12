@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -113,5 +114,20 @@ class OrderServiceTest extends ServiceTest {
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
+    }
+
+    @Test
+    void 주문_리스트_조회() {
+        //given
+        var 존재하는_주문_아이디 = orderDao.findAll().stream()
+                .map(Order::getId)
+                .collect(Collectors.toList());
+
+        //when
+        List<Order> 주문_리스트 = orderService.list();
+
+        //then
+        assertThat(주문_리스트).extracting(Order::getId)
+                .containsAll(존재하는_주문_아이디);
     }
 }
