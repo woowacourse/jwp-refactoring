@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.application.config.ServiceTestConfig;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -136,6 +137,29 @@ class OrderServiceTest extends ServiceTestConfig {
             // then
             assertThatThrownBy(() -> orderService.create(orderInput))
                     .isInstanceOf(IllegalArgumentException.class);
+        }
+    }
+
+    @DisplayName("주문 전체 조회")
+    @Nested
+    class ReadAll {
+        @DisplayName("성공한다.")
+        @Test
+        void success() {
+            // given
+            final TableGroup tableGroup = saveTableGroup();
+            final OrderTable orderTable = saveOrderTable(tableGroup);
+            final Order savedOrder = saveOrder(orderTable);
+
+            // when
+            final List<Order> actual = orderService.list();
+
+            // then
+            // FIXME: equals&hashcode 적용
+            assertSoftly(softly -> {
+                softly.assertThat(actual.size()).isEqualTo(1);
+//                softly.assertThat(actual).containsExactly(savedOrder);
+            });
         }
     }
 }
