@@ -16,5 +16,4 @@ public class OrderTableFixture {
         orderTable.setEmpty(true);
         return orderTable;
     }
-
 }

@@ -53,6 +53,27 @@ class OrderServiceTest {
         return menuService.create(menu);
     }
 
+    @DisplayName("주문 목록을 조회할 수 있다")
+    @Test
+    void findAllOrders() {
+        // given
+        final OrderTable orderTable = tableService.create(OrderTableFixture.createNotEmpty());
+        final OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setMenuId(setUpMenu().getId());
+        orderLineItem.setQuantity(2);
+
+        final Order order = new Order();
+        order.setOrderTableId(orderTable.getId());
+        order.setOrderLineItems(List.of(orderLineItem));
+        orderService.create(order);
+
+        // when
+        final List<Order> list = orderService.list();
+
+        // then
+        assertThat(list).hasSize(1);
+    }
+
     @Nested
     @DisplayName("주문을 생성할 때")
     class Create {
@@ -146,27 +167,6 @@ class OrderServiceTest {
             assertThatThrownBy(() -> orderService.create(order))
                     .isInstanceOf(IllegalArgumentException.class);
         }
-    }
-
-    @DisplayName("주문 목록을 조회할 수 있다")
-    @Test
-    void findAllOrders() {
-        // given
-        final OrderTable orderTable = tableService.create(OrderTableFixture.createNotEmpty());
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(setUpMenu().getId());
-        orderLineItem.setQuantity(2);
-
-        final Order order = new Order();
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderLineItems(List.of(orderLineItem));
-        orderService.create(order);
-
-        // when
-        final List<Order> list = orderService.list();
-
-        // then
-        assertThat(list).hasSize(1);
     }
 
     @Nested
