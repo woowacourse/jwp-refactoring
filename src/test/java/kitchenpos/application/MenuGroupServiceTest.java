@@ -5,23 +5,16 @@ import static org.mockito.BDDMockito.given;
 
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.common.ServiceTest;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.jdbc.Sql;
 
-@ExtendWith(MockitoExtension.class)
 @SuppressWarnings("NonAsciiCharacters")
-@DisplayNameGeneration(ReplaceUnderscores.class)
-@Sql("/db/migration/V1__Initialize_project_tables.sql")
-class MenuGroupServiceTest {
+class MenuGroupServiceTest extends ServiceTest {
 
     @InjectMocks
     private MenuGroupService menuGroupService;
