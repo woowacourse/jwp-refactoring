@@ -12,6 +12,7 @@ import java.util.Optional;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.fixture.OrderTableFixture;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
@@ -41,7 +42,7 @@ class TableServiceTest {
         @Test
         void 주문_테이블을_생성한다() {
             // given
-            OrderTable orderTable = new OrderTable();
+            OrderTable orderTable = OrderTableFixture.ORDER_TABLE.주문_테이블_1();
             given(orderTableDao.save(any(OrderTable.class)))
                     .willReturn(orderTable);
 
