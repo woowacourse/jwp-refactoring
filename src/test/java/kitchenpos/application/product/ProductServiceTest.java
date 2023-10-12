@@ -1,5 +1,6 @@
-package kitchenpos.application;
+package kitchenpos.application.product;
 
+import kitchenpos.application.ProductService;
 import kitchenpos.config.ApplicationTestConfig;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,10 +10,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -66,22 +64,5 @@ class ProductServiceTest extends ApplicationTestConfig {
         // expect
         assertThatThrownBy(() -> productService.create(expected))
                 .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("모든 상품 목록을 조회한다.")
-    @Test
-    void list() {
-        // given
-        final List<Product> expected = new ArrayList<>();
-        for (int productSaveCount = 1; productSaveCount <= 10; productSaveCount++) {
-            final Product savedProduct = productService.create(new Product("테스트용 상품 이름", new BigDecimal("10000")));
-            expected.add(savedProduct);
-        }
-
-        // when
-        final List<Product> actual = productService.list();
-
-        // then
-        assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
     }
 }
