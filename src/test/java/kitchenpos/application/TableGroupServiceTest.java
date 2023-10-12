@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import kitchenpos.application.tablegroup.TableGroupService;
+import kitchenpos.application.tablegroup.dto.TableGroupCreateRequest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
@@ -17,6 +19,7 @@ import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.fixture.OrderFixture.주문_생성;
 import static kitchenpos.fixture.OrderTableFixture.주문_테이블_생성;
 import static kitchenpos.fixture.TableGroupFixture.단체_지정_생성;
+import static kitchenpos.fixture.TableGroupFixture.단체_지정_생성_요청;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -40,9 +43,10 @@ class TableGroupServiceTest extends IntegrationTestHelper {
         OrderTable orderTable = orderTableDao.save(주문_테이블_생성(null, 10, true));
         OrderTable otherTable = orderTableDao.save(주문_테이블_생성(null, 20, true));
         TableGroup tableGroup = 단체_지정_생성(List.of(orderTable, otherTable));
+        TableGroupCreateRequest request = 단체_지정_생성_요청(tableGroup);
 
         // when
-        TableGroup result = tableGroupService.create(tableGroup);
+        TableGroup result = tableGroupService.create(request);
 
         // then
         assertSoftly(softly -> {
@@ -59,9 +63,10 @@ class TableGroupServiceTest extends IntegrationTestHelper {
         // given
         OrderTable orderTable = orderTableDao.save(주문_테이블_생성(null, 10, true));
         TableGroup tableGroup = 단체_지정_생성(List.of(orderTable));
+        TableGroupCreateRequest request = 단체_지정_생성_요청(tableGroup);
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -70,9 +75,10 @@ class TableGroupServiceTest extends IntegrationTestHelper {
         OrderTable orderTable = orderTableDao.save(주문_테이블_생성(null, 10, true));
         OrderTable otherTable = 주문_테이블_생성(null, 20, true);
         TableGroup tableGroup = 단체_지정_생성(List.of(orderTable, otherTable));
+        TableGroupCreateRequest request = 단체_지정_생성_요청(tableGroup);
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -82,8 +88,9 @@ class TableGroupServiceTest extends IntegrationTestHelper {
         OrderTable orderTable = orderTableDao.save(주문_테이블_생성(null, 10, true));
         OrderTable otherTable = orderTableDao.save(주문_테이블_생성(null, 20, true));
         TableGroup tableGroup = 단체_지정_생성(List.of(orderTable, otherTable));
+        TableGroupCreateRequest request = 단체_지정_생성_요청(tableGroup);
 
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        TableGroup savedTableGroup = tableGroupService.create(request);
 
         // when & then
         assertDoesNotThrow(() -> tableGroupService.ungroup(savedTableGroup.getId()));
@@ -94,7 +101,7 @@ class TableGroupServiceTest extends IntegrationTestHelper {
         // given
         OrderTable orderTable = orderTableDao.save(주문_테이블_생성(null, 10, true));
         OrderTable otherTable = orderTableDao.save(주문_테이블_생성(null, 20, true));
-        TableGroup tableGroup = tableGroupService.create(단체_지정_생성(List.of(orderTable, otherTable)));
+        TableGroup tableGroup = tableGroupService.create(단체_지정_생성_요청(단체_지정_생성(List.of(orderTable, otherTable))));
         orderDao.save(주문_생성(orderTable.getId(), COOKING.name(), LocalDateTime.now(), null));
 
         // when & then

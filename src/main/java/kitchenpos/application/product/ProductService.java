@@ -1,5 +1,6 @@
-package kitchenpos.application;
+package kitchenpos.application.product;
 
+import kitchenpos.application.product.dto.ProductCreateRequest;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.springframework.stereotype.Service;
@@ -19,14 +20,15 @@ public class ProductService {
     }
 
     @Transactional
-    public Product create(final Product product) {
-        final BigDecimal price = product.getPrice();
+    public Product create(final ProductCreateRequest req) {
+        final BigDecimal updatePrice = req.getPrice();
 
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+        if (Objects.isNull(updatePrice) || updatePrice.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
 
-        return productDao.save(product);
+        Product updateProduct = req.toDomain();
+        return productDao.save(updateProduct);
     }
 
     public List<Product> list() {

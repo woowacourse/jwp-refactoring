@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import kitchenpos.application.product.ProductService;
+import kitchenpos.application.product.dto.ProductCreateRequest;
 import kitchenpos.domain.Product;
 import kitchenpos.helper.IntegrationTestHelper;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -12,6 +14,7 @@ import java.util.List;
 
 import static kitchenpos.fixture.ProductFixture.상품_생성;
 import static kitchenpos.fixture.ProductFixture.상품_생성_10000원;
+import static kitchenpos.fixture.ProductFixture.상품_생성_요청;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -26,9 +29,10 @@ class ProductServiceTest extends IntegrationTestHelper {
     void 상품을_생성한다() {
         // given
         Product product = 상품_생성_10000원();
+        ProductCreateRequest request = 상품_생성_요청(product);
 
         // when
-        Product result = productService.create(product);
+        Product result = productService.create(request);
 
         // then
         assertSoftly(softly -> {
@@ -41,16 +45,17 @@ class ProductServiceTest extends IntegrationTestHelper {
     void 상품_가격은_0원_이상이어야한다() {
         // given
         Product product = 상품_생성("테스트", new BigDecimal(-1));
+        ProductCreateRequest request = 상품_생성_요청(product);
 
         // when & then
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 상품_목록을_조회할_수_있다() {
         // given
-        Product product = productService.create(상품_생성_10000원());
+        Product product = productService.create(상품_생성_요청(상품_생성_10000원()));
 
         // when
         List<Product> result = productService.list();
