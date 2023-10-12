@@ -1,0 +1,46 @@
+package kitchenpos.application;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+import kitchenpos.domain.MenuGroup;
+import org.junit.jupiter.api.Test;
+
+@IntegrationTest
+class MenuGroupServiceTest {
+
+    private final MenuGroupService menuGroupService;
+
+    public MenuGroupServiceTest(final MenuGroupService menuGroupService) {
+        this.menuGroupService = menuGroupService;
+    }
+
+    @Test
+    void create() {
+        // given
+        final MenuGroup menuGroup = new MenuGroup();
+        menuGroup.setName("Chicken-group");
+
+        // when
+        final MenuGroup createdMenuGroup = menuGroupService.create(menuGroup);
+
+        // then
+        assertThat(createdMenuGroup.getId()).isNotNull();
+    }
+
+    @Test
+    void list() {
+        // given
+        final MenuGroup chickenGroup = new MenuGroup();
+        chickenGroup.setName("Chicken-group");
+        menuGroupService.create(chickenGroup);
+        final MenuGroup pizzaGroup = new MenuGroup();
+        pizzaGroup.setName("Pizza-group");
+        menuGroupService.create(pizzaGroup);
+
+        // when
+        final Iterable<MenuGroup> menuGroups = menuGroupService.list();
+
+        // then
+        assertThat(menuGroups).hasSize(2);
+    }
+}
