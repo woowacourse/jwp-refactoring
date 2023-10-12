@@ -62,3 +62,10 @@ insert into order_table (number_of_guests, empty)
 values (0, true);
 insert into order_table (number_of_guests, empty)
 values (0, true);
+
+insert into orders (order_status, ordered_time, order_table_id)
+values('COOKING', '2023-10-10T19:29:10.000210', 1);
+insert into orders (order_status, ordered_time, order_table_id)
+values('COOKING', '2023-10-10T19:29:10.000210', 2);
+insert into orders (order_status, ordered_time, order_table_id)
+values('COOKING', '2023-10-10T19:29:10.000210', 3);
