@@ -19,6 +19,14 @@ public class MenuFixture {
         return chickenSetMenu;
     }
 
+    public static Menu CHICKEN_SET_MENU_NON_ID = new Menu(
+            null,
+            "치킨+콜라 세트",
+            BigDecimal.valueOf(11000),
+            1L,
+            new ArrayList<>()
+    );
+
     public static Menu CHICKEN_SET_MENU = new Menu(
             1L,
             "치킨+콜라 세트",

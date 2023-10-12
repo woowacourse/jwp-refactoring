@@ -15,6 +15,15 @@ public class OrderFixture {
             LocalDateTime.of(2023, 10, 12, 0, 12, 5),
             new ArrayList<>()
     );
+
+    public static final Order ORDER_NON_ID = new Order(
+            null,
+            1L,
+            OrderStatus.COOKING.name(),
+            LocalDateTime.of(2023, 10, 12, 0, 12, 5),
+            new ArrayList<>()
+    );
+
     public static final OrderLineItem CHICKEN_SET = new OrderLineItem(1L, 1L, 1L, 2);
 
     static {
