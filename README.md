@@ -2,9 +2,9 @@
 
 ## 요구 사항
 
-- [ ] MenuGroup
-    - [ ] menuGroup 생성
-    - [ ] menuGroup 목록 조회
+- [x] MenuGroup
+    - [x] menuGroup 생성
+    - [x] menuGroup 목록 조회
 - [x] Menu
     - [x] menu 생성
         - [x] 가격이 비어있거나, 0보다 작은 경우 예외처리
@@ -12,16 +12,15 @@
         - [x] product가 존재하지 않는 경우 예외처리
         - [x] menu의 menuProduct의 가격합이 price 보다 큰 경우 예외처리
     - [x] menu 목록조회
-- [ ] Order
-    - [ ] order 생성(주문하기)
-        - [ ] 주문하려는 상품의 목록이 비어있는 경우 예외처리
-        - [ ] 주문하려는 상품의 목록의 사이즈와 조호된 menu의 사이즈가 다르면 예외처리
-        - [ ] 주문 테이블을 조회했을 때 비어있으면 예외처리
-        - [ ] 주문의 상태를 cooking으로 변경
-        - [ ] saveOrder에
-    - [ ] order 목록 조회
-    - [ ] order 상태 변경
-        - [ ] order의 상태가 이미 완료된 상태인 경우 예외처리
+- [x] Order
+    - [x] order 생성(주문하기)
+        - [x] 주문하려는 상품의 목록이 비어있는 경우 예외처리
+        - [x] 주문하려는 상품의 목록의 사이즈와 조호된 menu의 사이즈가 다르면 예외처리
+        - [x] 주문 테이블을 조회했을 때 비어있으면 예외처리
+        - [x] 주문의 상태를 cooking으로 변경
+    - [x] order 목록 조회
+    - [x] order 상태 변경
+        - [x] order의 상태가 이미 완료된 상태인 경우 예외처리
 - [x] Product
     - [x] product 생성
         - [x] 가격이 0이하인 경우 예외처리
