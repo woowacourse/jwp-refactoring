@@ -40,13 +40,16 @@
 
 ### 5. tables
 1. `GET {{host}}/api/tables`
-    - 전체 테이블의 정보를 불러온다.
+   > 전체 테이블의 정보를 조회한다.
 2. `POST {{host}}/api/tables`
-    - 새로운 테이블을 추가한다.
+   > 테이블에 대한 새로운 주문을 추가한다.
 3. `PUT {{host}}/api/tables/{tableId}/empty`
-    - 해당 테이블의 empty 여부를 수정한다.
+   > 해당 테이블의 empty 여부를 수정한다.
+   - 이미 테이블이 다른 테이블 그룹에 속해있다면 예외가 발생한다.
+   - 해당 테이블의 상태가 COOKING, MEAL이 아니라면 예외가 발생한다.
 4. `PUT {{host}}/api/tables/{tableId}/number-of-guests`
-    - 해당 테이블에 앉은 손님의 수를 수정한다.
+   > 해당 테이블에 앉은 손님의 수를 수정한다.
+   - 손님 수가 0보다 작으면 예외가 발생한다.
 
 ### 6. table-groups
 1. `POST {{host}}/api/table-groups`
