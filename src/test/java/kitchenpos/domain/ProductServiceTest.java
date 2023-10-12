@@ -39,7 +39,7 @@ class ProductServiceTest {
         void 상품을_등록한다() {
             // given
             Product product = ProductFixture.PRODUCT.후라이드_치킨();
-            given(productDao.save(any()))
+            given(productDao.save(any(Product.class)))
                     .willReturn(product);
 
             // when

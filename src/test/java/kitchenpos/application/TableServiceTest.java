@@ -3,6 +3,8 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
 import java.util.List;
@@ -40,7 +42,7 @@ class TableServiceTest {
         void 주문_테이블을_생성한다() {
             // given
             OrderTable orderTable = new OrderTable();
-            given(orderTableDao.save(any()))
+            given(orderTableDao.save(any(OrderTable.class)))
                     .willReturn(orderTable);
 
             // when
@@ -78,9 +80,9 @@ class TableServiceTest {
             // given
             OrderTable orderTable = new OrderTable();
             orderTable.setEmpty(true);
-            given(orderTableDao.findById(any()))
+            given(orderTableDao.findById(anyLong()))
                     .willReturn(Optional.of(orderTable));
-            given(orderTableDao.save(any()))
+            given(orderTableDao.save(any(OrderTable.class)))
                     .willReturn(orderTable);
 
             // when
@@ -97,7 +99,7 @@ class TableServiceTest {
             // given
             OrderTable orderTable = new OrderTable();
             orderTable.setEmpty(true);
-            given(orderTableDao.findById(any()))
+            given(orderTableDao.findById(anyLong()))
                     .willReturn(Optional.empty());
 
             // when & then
@@ -111,7 +113,7 @@ class TableServiceTest {
             OrderTable orderTable = new OrderTable();
             orderTable.setEmpty(true);
             orderTable.setTableGroupId(1L);
-            given(orderTableDao.findById(any()))
+            given(orderTableDao.findById(anyLong()))
                     .willReturn(Optional.of(orderTable));
 
             // when & then
@@ -124,9 +126,9 @@ class TableServiceTest {
             // given
             OrderTable orderTable = new OrderTable();
             orderTable.setEmpty(true);
-            given(orderTableDao.findById(any()))
+            given(orderTableDao.findById(anyLong()))
                     .willReturn(Optional.of(orderTable));
-            given(orderDao.existsByOrderTableIdAndOrderStatusIn(any(), any()))
+            given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList()))
                     .willReturn(true);
 
             // when & then
@@ -144,9 +146,9 @@ class TableServiceTest {
             OrderTable orderTable = new OrderTable();
             orderTable.setEmpty(false);
             orderTable.setNumberOfGuests(0);
-            given(orderTableDao.findById(any()))
+            given(orderTableDao.findById(anyLong()))
                     .willReturn(Optional.of(orderTable));
-            given(orderTableDao.save(any()))
+            given(orderTableDao.save(any(OrderTable.class)))
                     .willReturn(orderTable);
 
             // when
@@ -175,7 +177,7 @@ class TableServiceTest {
             // given
             OrderTable orderTable = new OrderTable();
             orderTable.setEmpty(true);
-            given(orderTableDao.findById(any()))
+            given(orderTableDao.findById(anyLong()))
                     .willReturn(Optional.of(orderTable));
 
             // when & then

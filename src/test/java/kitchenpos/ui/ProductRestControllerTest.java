@@ -50,7 +50,7 @@ class ProductRestControllerTest {
         @Test
         void 상품_생성() throws Exception {
             // given
-            given(productService.create(any()))
+            given(productService.create(any(Product.class)))
                     .willReturn(product);
 
             // when & then

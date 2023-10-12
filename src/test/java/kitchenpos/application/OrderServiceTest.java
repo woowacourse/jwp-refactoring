@@ -74,7 +74,7 @@ class OrderServiceTest {
         void 주문을_생성한다() {
             // given
             Order order = OrderFixture.ORDER.주문_요청_조리중();
-            given(menuDao.countByIdIn(any()))
+            given(menuDao.countByIdIn(anyList()))
                     .willReturn((long) order.getOrderLineItems().size());
             given(orderTableDao.findById(order.getOrderTableId()))
                     .willReturn(Optional.of(ORDER_TABLE.주문_테이블_1(false)));

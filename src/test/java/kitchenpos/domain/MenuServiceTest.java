@@ -57,7 +57,7 @@ class MenuServiceTest {
             Menu menu = REQUEST.메뉴_등록_요청();
             given(menuDao.save(any(Menu.class)))
                     .willReturn(menu);
-            given(menuGroupDao.existsById(any()))
+            given(menuGroupDao.existsById(anyLong()))
                     .willReturn(true);
             given(productDao.findById(anyLong()))
                     .willReturn(Optional.of(ProductFixture.PRODUCT.후라이드_치킨()));

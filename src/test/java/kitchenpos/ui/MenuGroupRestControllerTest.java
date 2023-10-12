@@ -47,7 +47,7 @@ class MenuGroupRestControllerTest {
         @Test
         void 메뉴_그룹_생성() throws Exception {
             // given
-            given(menuGroupService.create(any()))
+            given(menuGroupService.create(any(MenuGroup.class)))
                     .willReturn(menuGroup);
 
             // when & then

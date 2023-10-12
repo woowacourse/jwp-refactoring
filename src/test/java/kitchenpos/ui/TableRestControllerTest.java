@@ -1,6 +1,7 @@
 package kitchenpos.ui;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -10,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
+import kitchenpos.application.TableGroupService;
 import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,7 +53,7 @@ class TableRestControllerTest {
         @Test
         void 테이블_생성() throws Exception {
             // given
-            given(tableService.create(any()))
+            given(tableService.create(any(OrderTable.class)))
                     .willReturn(orderTable);
 
             // when & then
@@ -94,7 +96,7 @@ class TableRestControllerTest {
         void 테이블_상태_변경() throws Exception {
             // given
             orderTable.setEmpty(false);
-            given(tableService.changeEmpty(any(), any()))
+            given(tableService.changeEmpty(anyLong(), any(OrderTable.class)))
                     .willReturn(orderTable);
 
             // when & then
@@ -117,7 +119,7 @@ class TableRestControllerTest {
         void 테이블_방문_손님_변경() throws Exception {
             // given
             orderTable.setNumberOfGuests(3);
-            given(tableService.changeNumberOfGuests(any(), any()))
+            given(tableService.changeNumberOfGuests(anyLong(), any(OrderTable.class)))
                     .willReturn(orderTable);
 
             // when & then

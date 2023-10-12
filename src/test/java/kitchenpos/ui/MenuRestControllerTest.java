@@ -51,7 +51,7 @@ class MenuRestControllerTest {
         @Test
         void 메뉴_생성() throws Exception {
             // given
-            given(menuService.create(any()))
+            given(menuService.create(any(Menu.class)))
                     .willReturn(menu);
 
             // when & then

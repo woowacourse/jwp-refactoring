@@ -1,6 +1,7 @@
 package kitchenpos.ui;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -61,7 +62,7 @@ class TableGroupRestControllerTest {
         @Test
         void 주문_테이블_그룹_생성() throws Exception {
             // given
-            given(tableGroupService.create(any()))
+            given(tableGroupService.create(any(TableGroup.class)))
                     .willReturn(tableGroup);
 
             // when & then
@@ -95,7 +96,7 @@ class TableGroupRestControllerTest {
             // given
             willDoNothing()
                     .given(tableGroupService)
-                    .ungroup(any());
+                    .ungroup(anyLong());
 
             // when & then
             mockMvc.perform(delete("/api/table-groups/1"))

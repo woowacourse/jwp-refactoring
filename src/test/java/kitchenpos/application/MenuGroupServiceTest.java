@@ -30,7 +30,7 @@ class MenuGroupServiceTest {
     void 메뉴_그룹을_생성한다() {
         // given
         MenuGroup menuGroup = new MenuGroup();
-        given(menuGroupDao.save(any()))
+        given(menuGroupDao.save(any(MenuGroup.class)))
                 .willReturn(menuGroup);
 
         // when & then

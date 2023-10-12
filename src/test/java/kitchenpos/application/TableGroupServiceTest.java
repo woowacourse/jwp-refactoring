@@ -53,7 +53,7 @@ class TableGroupServiceTest {
             given(tableGroupDao.save(any(TableGroup.class)))
                     .willReturn(tableGroup);
 
-            given(orderTableDao.findAllByIdIn(any()))
+            given(orderTableDao.findAllByIdIn(anyList()))
                     .willReturn(tableGroup.getOrderTables());
 
             // when

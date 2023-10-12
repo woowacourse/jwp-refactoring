@@ -4,6 +4,7 @@ import static kitchenpos.fixture.OrderFixture.ORDER.주문_요청_계산_완료;
 import static kitchenpos.fixture.OrderFixture.ORDER.주문_요청_식사중;
 import static kitchenpos.fixture.OrderFixture.ORDER.주문_요청_조리중;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -52,7 +53,7 @@ class OrderRestControllerTest {
         void 주문_생성() throws Exception {
             // given
             Order order = 주문_요청_조리중();
-            given(orderService.create(any()))
+            given(orderService.create(any(Order.class)))
                     .willReturn(order);
 
             // when & then
@@ -103,7 +104,7 @@ class OrderRestControllerTest {
         void 주문_상태_수정() throws Exception {
             // given
             Order order = 주문_요청_계산_완료();
-            given(orderService.changeOrderStatus(any(), any()))
+            given(orderService.changeOrderStatus(anyLong(), any(Order.class)))
                     .willReturn(order);
 
             // when & then
