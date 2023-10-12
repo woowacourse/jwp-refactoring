@@ -6,7 +6,6 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.test.fixtures.MenuFixtures;
@@ -21,9 +20,6 @@ class MenuServiceTest {
     @Autowired
     MenuService menuService;
 
-    @Autowired
-    MenuDao menuDao;
-
     @Nested
     @DisplayName("메뉴를 등록할 때")
     class CreateMenu {
@@ -37,11 +33,10 @@ class MenuServiceTest {
             final Menu saved = menuService.create(menu);
 
             // then
-            final Menu actualMenu = menuDao.findById(saved.getId()).orElse(MenuFixtures.EMPTY.get());
             assertSoftly(softly -> {
-                softly.assertThat(actualMenu.getName()).isEqualTo(menu.getName());
-                softly.assertThat(actualMenu.getPrice().intValue()).isEqualTo(menu.getPrice().intValue());
-                softly.assertThat(actualMenu.getMenuGroupId()).isEqualTo(menu.getMenuGroupId());
+                softly.assertThat(saved.getName()).isEqualTo(menu.getName());
+                softly.assertThat(saved.getPrice().intValue()).isEqualTo(menu.getPrice().intValue());
+                softly.assertThat(saved.getMenuGroupId()).isEqualTo(menu.getMenuGroupId());
             });
         }
 
@@ -111,12 +106,12 @@ class MenuServiceTest {
     @DisplayName("메뉴 목록을 조회한다")
     void getMenus() {
         // given
-        menuDao.save(MenuFixtures.BASIC.get());
+        menuService.create(MenuFixtures.BASIC.get());
 
         // when
         final List<Menu> actualMenus = menuService.list();
 
         // then
-        assertThat(actualMenus).isNotNull();
+        assertThat(actualMenus).isNotEmpty();
     }
 }
