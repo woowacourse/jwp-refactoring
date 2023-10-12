@@ -10,12 +10,14 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -135,14 +137,14 @@ class TableServiceTest {
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"COOKING", "MEAL"})
+        @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
         @DisplayName("주문 테이블이 존재하면서, 주문이 결제완료 상태가 아니면 예외가 발생한다.")
-        void throwsExceptionWhenOrderIsNotCompletion(String orderStatus) {
+        void throwsExceptionWhenOrderIsNotCompletion(OrderStatus orderStatus) {
             // given
             final OrderTable orderTable = new OrderTable(null, null, 2, false);
             orderTableDao.save(orderTable);
 
-            final Order order = new Order(null, 1L, orderStatus, LocalDateTime.now(), null);
+            final Order order = new Order(null, 1L, orderStatus.name(), LocalDateTime.now(), null);
             orderDao.save(order);
 
             final OrderTable newOrderedTable = new OrderTable(null, null, 2, false);
@@ -175,7 +177,7 @@ class TableServiceTest {
         }
 
         @ParameterizedTest
-        @ValueSource(ints = {-1, -300, -100000})
+        @ValueSource(ints = {-1, Integer.MIN_VALUE, -100000})
         @DisplayName("변경하려는 손님 수가 0보다 작은 경우 예외가 발생한다.")
         void throwsExceptionWhenNumberOfGuestsIsUnderZero(int numberOfGuests) {
             // given

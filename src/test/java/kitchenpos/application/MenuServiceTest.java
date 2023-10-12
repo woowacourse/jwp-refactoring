@@ -82,9 +82,9 @@ class MenuServiceTest {
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"-1000", "-1", "-99999"})
+        @ValueSource(ints = {-1, Integer.MIN_VALUE, -300000})
         @DisplayName("가격이 0보다 작다면 예외가 발생한다.")
-        void throwsExceptionWhenPriceIsUnderZero(String price) {
+        void throwsExceptionWhenPriceIsUnderZero(int price) {
             // given
             final Product product = new Product(1L, "후라이드치킨", new BigDecimal("15000.00"));
             productDao.save(product);

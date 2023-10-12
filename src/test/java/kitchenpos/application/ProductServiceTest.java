@@ -62,9 +62,9 @@ class ProductServiceTest {
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"-1000", "-1", "-999999"})
+        @ValueSource(ints = {-1, Integer.MIN_VALUE, -999999})
         @DisplayName("가격이 0보다 작은 경우 예외가 발생한다.")
-        void throwsExceptionWhenPriceIsUnderZero(String price) {
+        void throwsExceptionWhenPriceIsUnderZero(int price) {
             // given
             final Product product = new Product(1L, "떡볶이", new BigDecimal(price));
 

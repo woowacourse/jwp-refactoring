@@ -10,14 +10,15 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
@@ -184,16 +185,16 @@ class TableGroupServiceTest {
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"COOKING", "MEAL"})
+        @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
         @DisplayName("주문 테이블에 해당하는 주문의 상태가 결제완료가 아니라면 예외가 발생한다.")
-        void throwExceptionWhenOrderStatusIsNotCompletion(String orderStatus) {
+        void throwExceptionWhenOrderStatusIsNotCompletion(OrderStatus orderStatus) {
             // given
             final OrderTable orderTableA = new OrderTable(null, null, 2, true);
             final OrderTable orderTableB = new OrderTable(null, null, 3, true);
             final OrderTable savedOrderTableA = orderTableDao.save(orderTableA);
             final OrderTable savedOrderTableB = orderTableDao.save(orderTableB);
 
-            final Order order = new Order(null, 1L, orderStatus, LocalDateTime.now(), null);
+            final Order order = new Order(null, 1L, orderStatus.name(), LocalDateTime.now(), null);
             orderDao.save(order);
 
             final TableGroup tableGroup =
