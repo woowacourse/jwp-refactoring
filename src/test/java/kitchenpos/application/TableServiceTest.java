@@ -50,7 +50,7 @@ class TableServiceTest {
     void changeEmpty() {
         // given
         final OrderTable saved = tableService.create(new OrderTable(0, true));
-        final OrderTable changed = new OrderTable(0, false);
+        final OrderTable changed = new OrderTable(false);
 
         // when
         final OrderTable result = tableService.changeEmpty(saved.getId(), changed);
@@ -62,7 +62,7 @@ class TableServiceTest {
     @Test
     void changeEmpty_tableNullException() {
         // given
-        final OrderTable changed = new OrderTable(0, false);
+        final OrderTable changed = new OrderTable(false);
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(-1L, changed))
@@ -74,7 +74,7 @@ class TableServiceTest {
         // given
         final OrderTable saved = tableService.create(new OrderTable(0, true));
         saved.setTableGroupId(1L);
-        final OrderTable changed = new OrderTable(0, false);
+        final OrderTable changed = new OrderTable(false);
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(saved.getTableGroupId(), changed))
@@ -85,7 +85,7 @@ class TableServiceTest {
     void changeNumberOfGuests() {
         // given
         final OrderTable saved = tableService.create(new OrderTable(0, false));
-        final OrderTable changed = new OrderTable(1, false);
+        final OrderTable changed = new OrderTable(1);
 
         // when
         final OrderTable result = tableService.changeNumberOfGuests(saved.getId(), changed);
@@ -98,7 +98,7 @@ class TableServiceTest {
     void changeNumberOfGuests_numberException() {
         // given
         final OrderTable saved = tableService.create(new OrderTable(0, false));
-        final OrderTable changed = new OrderTable(-1, false);
+        final OrderTable changed = new OrderTable(-1);
 
         // when & then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(saved.getTableGroupId(), changed))
@@ -108,7 +108,7 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuests_tableNullException() {
         // given
-        final OrderTable changed = new OrderTable(1, false);
+        final OrderTable changed = new OrderTable(1);
 
         // when & then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(-1L, changed))
@@ -119,7 +119,7 @@ class TableServiceTest {
     void changeNumberOfGuests_tableEmptyException() {
         // given
         final OrderTable saved = tableService.create(new OrderTable(0, true));
-        final OrderTable changed = new OrderTable(1, true);
+        final OrderTable changed = new OrderTable(1);
 
         // when & then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(saved.getTableGroupId(), changed))
