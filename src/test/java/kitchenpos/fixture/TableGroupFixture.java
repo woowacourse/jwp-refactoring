@@ -14,12 +14,12 @@ public class TableGroupFixture {
 
     public static class TABLE_GROUP {
         public static TableGroup 테이블_그룹() {
-            TableGroup tableGroup = new TableGroup();
-            tableGroup.setId(1L);
+            TableGroup tableGroup = TableGroup.builder()
+                    .id(1L)
+                    .build();
             OrderTable orderTable = ORDER_TABLE.주문_테이블_1();
             OrderTable orderTable2 = ORDER_TABLE.주문_테이블_2();
-            tableGroup.setOrderTables(List.of(orderTable.ungroup(), orderTable2.ungroup()));
-            return tableGroup;
+            return tableGroup.updateOrderTables(List.of(orderTable.ungroup(), orderTable2.ungroup()));
         }
     }
 }

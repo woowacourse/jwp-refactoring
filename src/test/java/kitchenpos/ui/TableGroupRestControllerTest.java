@@ -50,10 +50,11 @@ class TableGroupRestControllerTest {
                 .empty(true)
                 .build();
 
-        tableGroup = new TableGroup();
-        tableGroup.setId(1L);
-        tableGroup.setCreatedDate(LocalDateTime.of(2023, Month.APRIL, 1, 0, 0, 0, 0));
-        tableGroup.setOrderTables(List.of(orderTable));
+        tableGroup = TableGroup.builder()
+                .id(1L)
+                .createdDate(LocalDateTime.of(2023, Month.APRIL, 1, 0, 0, 0, 0))
+                .orderTables(List.of(orderTable))
+                .build();
     }
 
 

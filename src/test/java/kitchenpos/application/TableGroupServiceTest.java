@@ -68,8 +68,9 @@ class TableGroupServiceTest {
         @Test
         void 주문_테이블이_2개_미만이면_예외() {
             // given
-            TableGroup tableGroup = TableGroupFixture.TABLE_GROUP.테이블_그룹();
-            tableGroup.setOrderTables(List.of(OrderTable.builder().build()));
+            TableGroup tableGroup = TableGroup.builder()
+                    .orderTables(List.of(OrderTable.builder().build()))
+                    .build();
 
             // when & then
             Assertions.assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -79,8 +80,9 @@ class TableGroupServiceTest {
         @Test
         void 주문_테이블이_비어있으면_예외() {
             // given
-            TableGroup tableGroup = TableGroupFixture.TABLE_GROUP.테이블_그룹();
-            tableGroup.setOrderTables(Collections.emptyList());
+            TableGroup tableGroup = TableGroup.builder()
+                    .orderTables(Collections.emptyList())
+                    .build();
 
             // when & then
             Assertions.assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -93,13 +95,13 @@ class TableGroupServiceTest {
             TableGroup tableGroup = TableGroupFixture.TABLE_GROUP.테이블_그룹();
             OrderTable orderTable = OrderTable.builder().empty(false).build();
             OrderTable orderTable2 = OrderTable.builder().empty(true).build();
-            tableGroup.setOrderTables(List.of(orderTable, orderTable2));
+            TableGroup updated = tableGroup.updateOrderTables(List.of(orderTable, orderTable2));
 
             given(orderTableDao.findAllByIdIn(anyList()))
-                    .willReturn(tableGroup.getOrderTables());
+                    .willReturn(updated.getOrderTables());
 
             // when & then
-            Assertions.assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            Assertions.assertThatThrownBy(() -> tableGroupService.create(updated))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 

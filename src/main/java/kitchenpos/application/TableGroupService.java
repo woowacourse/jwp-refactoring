@@ -52,18 +52,17 @@ public class TableGroupService {
             }
         }
 
-        tableGroup.setCreatedDate(LocalDateTime.now());
+        TableGroup updatedTableGroup = tableGroup.updateCrateDate(LocalDateTime.now());
 
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        final TableGroup savedTableGroup = tableGroupDao.save(updatedTableGroup);
 
         final Long tableGroupId = savedTableGroup.getId();
         for (final OrderTable savedOrderTable : savedOrderTables) {
             OrderTable updated = savedOrderTable.fillTable(tableGroupId);
             orderTableDao.save(updated);
         }
-        savedTableGroup.setOrderTables(savedOrderTables);
 
-        return savedTableGroup;
+        return savedTableGroup.updateOrderTables(savedOrderTables);
     }
 
     @Transactional
