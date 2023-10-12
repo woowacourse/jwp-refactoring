@@ -53,8 +53,6 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        order.setId(null);
-
         final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -62,11 +60,9 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
+        Order updatedOrder = order.updateOrder(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
 
-        final Order savedOrder = orderDao.save(order);
+        final Order savedOrder = orderDao.save(updatedOrder);
 
         final Long orderId = savedOrder.getId();
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
@@ -74,19 +70,19 @@ public class OrderService {
             OrderLineItem updated = orderLineItem.updateOrderId(orderId);
             savedOrderLineItems.add(orderLineItemDao.save(updated));
         }
-        savedOrder.setOrderLineItems(savedOrderLineItems);
-
-        return savedOrder;
+        return savedOrder.updateOrderLineItems(savedOrderLineItems);
     }
 
     public List<Order> list() {
         final List<Order> orders = orderDao.findAll();
+        final List<Order> result = new ArrayList<>();
 
         for (final Order order : orders) {
-            order.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
+            List<OrderLineItem> orderLineItems = orderLineItemDao.findAllByOrderId(order.getId());
+            result.add(order.updateOrderLineItems(orderLineItems));
         }
 
-        return orders;
+        return result;
     }
 
     @Transactional
@@ -99,12 +95,10 @@ public class OrderService {
         }
 
         final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
+        Order updated = savedOrder.updateStatus(orderStatus);
 
-        orderDao.save(savedOrder);
+        orderDao.save(updated);
 
-        savedOrder.setOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
-
-        return savedOrder;
+        return updated.updateOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
     }
 }

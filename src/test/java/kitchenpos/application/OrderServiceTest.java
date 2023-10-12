@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static kitchenpos.fixture.OrderTableFixture.ORDER_TABLE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.any;
@@ -11,6 +12,8 @@ import static org.mockito.BDDMockito.given;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -51,22 +54,6 @@ class OrderServiceTest {
     @InjectMocks
     private OrderService orderService;
 
-    /**
-     * TODO
-     * - [ ] 주문을 생성한다.
-     * - [ ] 주문 정보가 올바르지 않으면 주문을 생성할 수 없다.
-     * - [ ] 주문 항목의 수량은 0보다 커야한다.
-     * - [ ] 주문 항목 개수와 실제 메뉴의 개수는 일치해야한다.
-     * - [ ] 주문 테이블이 존재해야한다.
-     * - [ ] 빈 테이블이면 주문할 수 없다.
-     * - [ ] 주문 목록을 조회한다.
-     * - [ ] 주문 상태를 변경한다.
-     * - [ ] 주문 상태가 올바르지 않으면 상태를 변경할 수 없다.
-     * - [ ] 주문 상태는 조리 ➜ 식사 ➜ 계산 완료 순서로 진행된다.
-     * - [ ] 주문 상태가 조리 중이면 식사 혹은 계산완료 변경할 수 있다.
-     * - [ ] 주문 상태가 식사 중이면 계산 완료로 변경할 수 있다.
-     */
-
     @Nested
     class 주문_생성 {
 
@@ -74,29 +61,32 @@ class OrderServiceTest {
         void 주문을_생성한다() {
             // given
             Order order = OrderFixture.ORDER.주문_요청_조리중();
-            given(menuDao.countByIdIn(anyList()))
+            OrderLineItem orderLineItem = OrderLineItem.builder().build();
+            given(menuDao.countByIdIn(any()))
                     .willReturn((long) order.getOrderLineItems().size());
             given(orderTableDao.findById(order.getOrderTableId()))
-                    .willReturn(Optional.of(ORDER_TABLE.주문_테이블_1_점유중()));
+                    .willReturn(Optional.of(ORDER_TABLE.주문_테이블_1(false)));
             given(orderDao.save(any(Order.class)))
                     .willReturn(order);
             given(orderLineItemDao.save(any(OrderLineItem.class)))
-                    .willReturn(OrderLineItem.builder().build());
+                    .willReturn(orderLineItem);
 
             // when
             Order result = orderService.create(order);
 
             // then
-            assertThat(result)
+            List<OrderLineItem> expect = IntStream.range(0, order.getOrderLineItems().size())
+                    .mapToObj(i -> orderLineItem).collect(Collectors.toList());
+
+            assertThat(result.getOrderLineItems())
                     .usingRecursiveComparison()
-                    .isEqualTo(order);
+                    .isEqualTo(expect);
         }
 
         @Test
         void 주문_항목이_비어있으면_예외() {
             // given
-            Order order = OrderFixture.ORDER.주문_요청_조리중();
-            order.setOrderLineItems(Collections.emptyList());
+            Order order = OrderFixture.ORDER.주문_요청_조리중().updateOrderLineItems(Collections.emptyList());
 
             // when & then
             assertThatThrownBy(() -> orderService.create(order))
@@ -139,7 +129,7 @@ class OrderServiceTest {
             given(menuDao.countByIdIn(anyList()))
                     .willReturn((long) order.getOrderLineItems().size());
             given(orderTableDao.findById(order.getOrderTableId()))
-                    .willReturn(Optional.of(ORDER_TABLE.주문_테이블_1_비어있음()));
+                    .willReturn(Optional.of(ORDER_TABLE.주문_테이블_1(true)));
 
             // when & then
             assertThatThrownBy(() -> orderService.create(order))
@@ -154,18 +144,24 @@ class OrderServiceTest {
         void 주문_목록을_조회한다() {
             // given
             Order order = OrderFixture.ORDER.주문_요청_조리중();
+            List<OrderLineItem> orderLineItems = List.of(OrderLineItem.builder().build());
             given(orderDao.findAll())
                     .willReturn(List.of(order));
             given(orderLineItemDao.findAllByOrderId(anyLong()))
-                    .willReturn(List.of(OrderLineItem.builder().build()));
+                    .willReturn(orderLineItems);
 
             // when
             List<Order> result = orderService.list();
 
             // then
-            assertThat(result)
-                    .usingRecursiveComparison()
-                    .isEqualTo(List.of(order));
+            assertSoftly(
+                    softly -> {
+                        softly.assertThat(result.get(0).getOrderLineItems()).usingRecursiveComparison().isEqualTo(orderLineItems);
+                        softly.assertThat(result.get(0).getOrderStatus()).isEqualTo(order.getOrderStatus());
+                        softly.assertThat(result.get(0).getOrderedTime()).isEqualTo(order.getOrderedTime());
+                        softly.assertThat(result.get(0).getOrderTableId()).isEqualTo(order.getOrderTableId());
+                    }
+            );
         }
     }
 
@@ -189,7 +185,7 @@ class OrderServiceTest {
 
             // then
             assertThat(result.getOrderStatus())
-                    .isEqualTo(OrderStatus.MEAL.name());
+                    .isEqualTo(orderForChange.getOrderStatus());
         }
 
         @Test
