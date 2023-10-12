@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,6 +14,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static java.util.Collections.emptyList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
@@ -123,6 +125,24 @@ class MenuServiceTest extends ServiceTest {
         MenuProduct 메뉴_상품 = new MenuProduct();
         메뉴_상품.setProductId(상품_아이디);
         return List.of(메뉴_상품);
+    }
+
+    @Nested
+    class 메뉴_목록_조회 {
+        @Test
+        void 메뉴_목록을_조회할_수_있다() {
+            //given
+            List<Long> 모든_메뉴_아이디 = menuDao.findAll().stream()
+                    .map(Menu::getId)
+                    .collect(Collectors.toList());
+
+            //when
+            List<Menu> 메뉴_목록 = menuService.list();
+
+            //then
+            assertThat(메뉴_목록).extracting(Menu::getId)
+                    .containsAll(모든_메뉴_아이디);
+        }
     }
 
 }
