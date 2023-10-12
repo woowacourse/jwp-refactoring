@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.BDDMockito.given;
@@ -126,7 +127,7 @@ class MenuServiceTest {
     }
 
     @Test
-    void 메뉴_상품_가격의_합과_상품_가격의_합이_다르면_예외를_던진다() {
+    void 메뉴_상품_가격의_합이_메뉴_가격보다_크면_예외를_던진다() {
         // given
         List<MenuProduct> menuProducts = menu.getMenuProducts();
         for (MenuProduct menuProduct : menuProducts) {
@@ -140,6 +141,40 @@ class MenuServiceTest {
         // when & then
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 메뉴_상품_가격의_합이_메뉴의_가격과_같으면_예외를_던지지_않는다() {
+        // given
+        List<MenuProduct> menuProducts = menu.getMenuProducts();
+        for (MenuProduct menuProduct : menuProducts) {
+            menuProduct.setQuantity(1L);
+            product.setPrice(BigDecimal.valueOf(1000));
+        }
+        menu.setPrice(BigDecimal.valueOf(1000));
+
+        assert menuProducts.size() == 1;
+
+        // when & then
+        assertThatCode(() -> menuService.create(menu))
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    void 메뉴_상품_가격의_합이_메뉴의_가격보다_작으면_예외를_던지지_않는다() {
+        // given
+        List<MenuProduct> menuProducts = menu.getMenuProducts();
+        for (MenuProduct menuProduct : menuProducts) {
+            menuProduct.setQuantity(1L);
+            product.setPrice(BigDecimal.valueOf(1000));
+        }
+        menu.setPrice(BigDecimal.valueOf(500));
+
+        assert menuProducts.size() == 1;
+
+        // when & then
+        assertThatCode(() -> menuService.create(menu))
+                .doesNotThrowAnyException();
     }
 
     @Test
