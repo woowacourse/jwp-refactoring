@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -12,7 +13,12 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,5 +82,43 @@ public abstract class IntegrationTest {
         product.setName(name);
         product.setPrice(BigDecimal.valueOf(price));
         return productDao.save(product);
+    }
+
+    protected OrderLineItem generateOrderLineItem() {
+        return generateOrderLineItem(generateMenu("chicken"));
+    }
+
+    protected OrderLineItem generateOrderLineItem(final Menu menu) {
+        final OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setMenuId(menu.getId());
+        orderLineItem.setOrderId(generateOrder(OrderStatus.COOKING).getId());
+        orderLineItem.setQuantity(3L);
+        return orderLineItemDao.save(orderLineItem);
+    }
+
+    protected Order generateOrder(final OrderStatus orderStatus) {
+        final Order order = new Order();
+        order.setOrderStatus(orderStatus.name());
+        order.setOrderedTime(LocalDateTime.now());
+        order.setOrderTableId(generateOrderTable(3).getId());
+        return orderDao.save(order);
+    }
+
+    protected OrderTable generateOrderTable(final int numberOfGuests) {
+        return generateOrderTable(numberOfGuests, false);
+    }
+
+    protected OrderTable generateOrderTable(final int numberOfGuests, final boolean empty) {
+        final OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(numberOfGuests);
+        orderTable.setEmpty(empty);
+        orderTable.setTableGroupId(generateTableGroup().getId());
+        return orderTableDao.save(orderTable);
+    }
+
+    protected TableGroup generateTableGroup() {
+        final TableGroup tableGroup = new TableGroup();
+        tableGroup.setCreatedDate(LocalDateTime.now());
+        return tableGroupDao.save(tableGroup);
     }
 }
