@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 
-public class TableGroupIntegrationTest extends IntegrationTest {
+class TableGroupIntegrationTest extends IntegrationTest {
 
     @Autowired
     private OrderTableDao orderTableDao;

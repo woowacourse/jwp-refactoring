@@ -9,6 +9,12 @@ public class OrderTable {
     public OrderTable() {
     }
 
+    public OrderTable(final Long tableGroupId, final int numberOfGuests) {
+        this.tableGroupId = tableGroupId;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = true;
+    }
+
     public OrderTable(final int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
         this.empty = true;
@@ -45,8 +51,6 @@ public class OrderTable {
     public void setEmpty(final boolean empty) {
         this.empty = empty;
     }
-
-
 
     @Override
     public String toString() {
