@@ -14,6 +14,8 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
@@ -125,8 +127,9 @@ class TableGroupServiceTest {
         assertThat(ungroupedOrderTable.getTableGroupId()).isNull();
     }
 
-    @Test
-    void 조리_또는_식사_중인_테이블_그룹을_해제할_때_예외가_발생한다() {
+    @ParameterizedTest
+    @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
+    void 조리_또는_식사_중인_테이블_그룹을_해제할_때_예외가_발생한다(final OrderStatus orderStatus) {
         // given
         final TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(List.of(firstTable, secondTable));
@@ -134,7 +137,7 @@ class TableGroupServiceTest {
 
         // when
         final Order order = new Order();
-        order.setOrderStatus(OrderStatus.COOKING.name());
+        order.setOrderStatus(orderStatus.name());
         order.setOrderTableId(firstTable.getId());
         order.setOrderedTime(LocalDateTime.now());
         orderDao.save(order);
