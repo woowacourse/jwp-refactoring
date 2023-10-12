@@ -18,9 +18,10 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static kitchenpos.domain.fixture.MenuFixture.치킨_피자_세트_메뉴_생성;
-import static kitchenpos.domain.fixture.MenuGroupFixture.*;
-import static kitchenpos.domain.fixture.ProductFixture.*;
-import static org.assertj.core.api.Assertions.*;
+import static kitchenpos.domain.fixture.MenuGroupFixture.인기_메뉴_생성;
+import static kitchenpos.domain.fixture.ProductFixture.치킨_생성;
+import static kitchenpos.domain.fixture.ProductFixture.피자_생성;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
