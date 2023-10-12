@@ -120,7 +120,7 @@ class TableGroupServiceTest extends ServiceTest {
 
         @ParameterizedTest
         @ValueSource(strings = {"COOKING", "MEAL"})
-        void 해당하는_테이블의_주문이_예약중이거나_요리중이면_예외(OrderStatus orderStatus) {
+        void 해당하는_테이블의_주문이_요리중이거나_식사중이면_예외(OrderStatus orderStatus) {
             // given
             OrderTable orderTableA = orderTableDao.save(new OrderTable(3, true));
             OrderTable orderTableB = orderTableDao.save(new OrderTable(2, true));

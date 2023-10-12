@@ -35,7 +35,6 @@ class MenuGroupServiceTest extends ServiceTest {
         assertAll(
             () -> assertThat(actual.getId()).isPositive(),
             () -> assertThat(actual.getName()).isEqualTo("순살")
-
         );
     }
 

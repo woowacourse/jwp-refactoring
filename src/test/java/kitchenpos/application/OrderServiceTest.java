@@ -14,7 +14,6 @@ import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -44,9 +43,6 @@ class OrderServiceTest extends ServiceTest {
 
     @Autowired
     private OrderDao orderDao;
-
-    @Autowired
-    private OrderLineItemDao orderLineItemDao;
 
     @Autowired
     private OrderTableDao orderTableDao;

@@ -9,9 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -29,13 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 class MenuServiceTest extends ServiceTest {
 
     @Autowired
-    private MenuDao menuDao;
-
-    @Autowired
     private MenuGroupDao menuGroupDao;
-
-    @Autowired
-    private MenuProductDao menuProductDao;
 
     @Autowired
     private ProductDao productDao;
