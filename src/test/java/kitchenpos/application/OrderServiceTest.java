@@ -125,7 +125,6 @@ class OrderServiceTest implements ServiceTest {
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(allByOrderId).isNotEmpty();
             softly.assertThat(allByOrderId)
-                    .usingRecursiveFieldByFieldElementComparator()
                     .usingRecursiveComparison()
                     .comparingOnlyFields("orderId")
                     .isEqualTo(Collections.singletonList(orderLineItem));
