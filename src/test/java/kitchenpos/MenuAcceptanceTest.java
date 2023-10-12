@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static kitchenpos.fixture.MenuGroupFixture.일식;
 import static kitchenpos.fixture.ProductFixture.스키야키;
 import static kitchenpos.step.MenuGroupStep.메뉴_그룹_생성_요청하고_아이디_반환;
 import static kitchenpos.step.MenuStep.메뉴_생성_요청;
@@ -25,8 +26,8 @@ class MenuAcceptanceTest extends AcceptanceTest {
 
     @Test
     void 메뉴를_생성한다() {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("일식");
+        final MenuGroup menuGroup = 일식();
+
         final Long menuGroupId = 메뉴_그룹_생성_요청하고_아이디_반환(menuGroup);
 
         final Long productId = 상품_생성_요청하고_아이디_반환(스키야키());
@@ -51,8 +52,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
 
     @Test
     void 메뉴를_조회한다() {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("일식");
+        final MenuGroup menuGroup = 일식();
         final Long menuGroupId = 메뉴_그룹_생성_요청하고_아이디_반환(menuGroup);
 
         final Long productId = 상품_생성_요청하고_아이디_반환(스키야키());
@@ -62,7 +62,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
         menuProduct.setQuantity(1L);
 
         final Menu menu = new Menu();
-        menu.setName("스키야키()()");
+        menu.setName("스키야키");
         menu.setPrice(BigDecimal.valueOf(11_900));
         menu.setMenuGroupId(menuGroupId);
         menu.setMenuProducts(List.of(menuProduct));
