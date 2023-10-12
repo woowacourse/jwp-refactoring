@@ -77,9 +77,6 @@ public class TableGroupService {
 
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            System.out.println("================================================================");
-            System.out.println("================================================================");
-            System.out.println("================================================================");
             throw new IllegalArgumentException();
         }
 
