@@ -1,5 +1,8 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.MenuFixture.메뉴_상품_생성;
+import static kitchenpos.fixture.MenuFixture.메뉴_저장;
+import static kitchenpos.fixture.ProductFixture.상품_저장;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -9,7 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import kitchenpos.IntegrationTest;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,27 +21,21 @@ class MenuServiceTest extends IntegrationTest {
 
     @Autowired
     private MenuService menuService;
+    @Autowired
+    private ProductService productService;
 
     @Test
     @DisplayName("메뉴 등록 시 전달받은 정보를 새 id로 저장한다.")
     void 메뉴_등록_성공_저장() {
         // given
-        final MenuProduct menuProduct1 = new MenuProduct();
-        menuProduct1.setProductId(1L);
-        menuProduct1.setQuantity(1L);
-
         // when
-        final Menu menu = new Menu();
-        menu.setName("할인 이벤트 치킨");
-        menu.setPrice(new BigDecimal("8000"));
-        menu.setMenuProducts(List.of(menuProduct1));
-        menu.setMenuGroupId(4L);
-        final Menu saved = menuService.create(menu);
+        final Product product = 상품_저장(productService::create, new BigDecimal("10000"));
+        final Menu menu = 메뉴_저장(menuService::create, new BigDecimal("5000"), List.of(product));
 
         // then
         assertThat(menuService.list())
                 .map(Menu::getId)
-                .filteredOn(id -> Objects.equals(id, saved.getId()))
+                .filteredOn(id -> Objects.equals(id, menu.getId()))
                 .hasSize(1);
     }
 
@@ -46,14 +43,12 @@ class MenuServiceTest extends IntegrationTest {
     @DisplayName("메뉴 등록 시 이름이 있어야 한다.")
     void 메뉴_등록_실패_이름_없음() {
         // given
-        final MenuProduct menuProduct1 = new MenuProduct();
-        menuProduct1.setProductId(1L);
-        menuProduct1.setQuantity(1L);
+        final Product product = 상품_저장(productService::create, new BigDecimal("10000"));
 
         // when
         final Menu menu = new Menu();
         menu.setPrice(new BigDecimal("10000"));
-        menu.setMenuProducts(List.of(menuProduct1));
+        menu.setMenuProducts(List.of(메뉴_상품_생성(product)));
         menu.setMenuGroupId(4L);
 
         // then
@@ -66,14 +61,12 @@ class MenuServiceTest extends IntegrationTest {
     @DisplayName("메뉴 등록 시 가격이 있어야 한다.")
     void 메뉴_등록_실패_가격_없음() {
         // given
-        final MenuProduct menuProduct1 = new MenuProduct();
-        menuProduct1.setProductId(1L);
-        menuProduct1.setQuantity(1L);
+        final Product product = 상품_저장(productService::create, new BigDecimal("10000"));
 
         // when
         final Menu menu = new Menu();
         menu.setName("할인 치킨");
-        menu.setMenuProducts(List.of(menuProduct1));
+        menu.setMenuProducts(List.of(메뉴_상품_생성(product)));
         menu.setMenuGroupId(4L);
 
         // then
@@ -82,18 +75,16 @@ class MenuServiceTest extends IntegrationTest {
     }
 
     @Test
-    @DisplayName("메뉴 등록 시 가격은 0 이상 이어야 한다.")
+    @DisplayName("메뉴 등록 시 가격은 0 이상이어야 한다.")
     void 메뉴_등록_실패_가격_음수() {
         // given
-        final MenuProduct menuProduct1 = new MenuProduct();
-        menuProduct1.setProductId(1L);
-        menuProduct1.setQuantity(1L);
+        final Product product = 상품_저장(productService::create, new BigDecimal("10000"));
 
         // when
         final Menu menu = new Menu();
         menu.setName("할인 치킨");
         menu.setPrice(new BigDecimal("-1000"));
-        menu.setMenuProducts(List.of(menuProduct1));
+        menu.setMenuProducts(List.of(메뉴_상품_생성(product)));
         menu.setMenuGroupId(4L);
 
         // then
@@ -105,10 +96,6 @@ class MenuServiceTest extends IntegrationTest {
     @DisplayName("메뉴는 1 종류 이상의 메뉴 상품으로 구성되어 있다.")
     void 메뉴_등록_실패_메뉴_상품_없음() {
         // given
-        final MenuProduct menuProduct1 = new MenuProduct();
-        menuProduct1.setProductId(1L);
-        menuProduct1.setQuantity(1L);
-
         // when
         final Menu menu = new Menu();
         menu.setName("할인 치킨");
@@ -125,15 +112,13 @@ class MenuServiceTest extends IntegrationTest {
     @DisplayName("메뉴는 1개의 메뉴 그룹에 속한다.")
     void 메뉴_등록_실패_메뉴_그룹_없음() {
         // given
-        final MenuProduct menuProduct1 = new MenuProduct();
-        menuProduct1.setProductId(1L);
-        menuProduct1.setQuantity(1L);
+        final Product product = 상품_저장(productService::create, new BigDecimal("10000"));
 
         // when
         final Menu menu = new Menu();
         menu.setName("할인 치킨");
         menu.setPrice(new BigDecimal("10000"));
-        menu.setMenuProducts(List.of(menuProduct1));
+        menu.setMenuProducts(List.of(메뉴_상품_생성(product)));
 
         // then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -144,15 +129,13 @@ class MenuServiceTest extends IntegrationTest {
     @DisplayName("메뉴 등록 시 가격은 상품 총액보다 클 수 없다.")
     void 메뉴_등록_실패_상품_총액보다_큰_가격() {
         // given
-        final MenuProduct menuProduct1 = new MenuProduct();
-        menuProduct1.setProductId(1L);
-        menuProduct1.setQuantity(1L);
+        final Product product = 상품_저장(productService::create, new BigDecimal("10000"));
 
         // when
         final Menu menu = new Menu();
         menu.setName("할인 치킨");
         menu.setPrice(new BigDecimal(Long.MAX_VALUE));
-        menu.setMenuProducts(List.of(menuProduct1));
+        menu.setMenuProducts(List.of(메뉴_상품_생성(product)));
         menu.setMenuGroupId(4L);
 
         // then
