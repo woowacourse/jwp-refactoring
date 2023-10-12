@@ -59,4 +59,4 @@
 - [x] Business Object 테스트 작성
 ### 삭제
 - [ ] API 테스트 작성
-- [ ] Business Object 테스트 작성
+- [x] Business Object 테스트 작성

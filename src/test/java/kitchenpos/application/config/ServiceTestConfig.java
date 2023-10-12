@@ -78,6 +78,7 @@ public class ServiceTestConfig {
         return menuDao.save(menu);
     }
 
+    // TODO: 사용하지 않으면 삭제
     protected MenuProduct saveMenuProduct(final Product product, final Menu menu) {
         final MenuProduct menuProduct = new MenuProduct();
         menuProduct.setQuantity(2L);
@@ -116,6 +117,7 @@ public class ServiceTestConfig {
         return tableGroupDao.save(tableGroup);
     }
 
+    // TODO: 사용하지 않으면 삭제
     protected OrderLineItem saveOrderLineItem(final Order order, final Menu menu) {
         final OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setQuantity(1L);
