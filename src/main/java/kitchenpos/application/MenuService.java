@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class MenuService {
@@ -37,11 +36,7 @@ public class MenuService {
 
     @Transactional
     public Menu create(final Menu menu) {
-        final BigDecimal price = menu.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
+        menu.validateInvalidPrice();
 
         if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
             throw new IllegalArgumentException();
@@ -56,9 +51,7 @@ public class MenuService {
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
 
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException("메뉴 가격이 메뉴 상품 가격보다 큼");
-        }
+        menu.validatePriceBiggerThanMenuProductsSum(sum);
 
         final Menu savedMenu = menuDao.save(menu);
 

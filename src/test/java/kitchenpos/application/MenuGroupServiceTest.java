@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import kitchenpos.application.menugroup.MenuGroupService;
+import kitchenpos.application.menugroup.dto.MenuGroupCreateRequest;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.helper.IntegrationTestHelper;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -26,7 +28,7 @@ class MenuGroupServiceTest extends IntegrationTestHelper {
         MenuGroup menuGroup = 메뉴그룹_생성();
 
         // when
-        MenuGroup result = menuGroupService.create(menuGroup);
+        MenuGroup result = menuGroupService.create(new MenuGroupCreateRequest(menuGroup.getName()));
 
         // then
         assertThat(menuGroup.getName()).isEqualTo(result.getName());
@@ -35,7 +37,7 @@ class MenuGroupServiceTest extends IntegrationTestHelper {
     @Test
     void 모두_조회한다() {
         // given
-        MenuGroup menuGroup = menuGroupService.create(메뉴그룹_생성());
+        MenuGroup menuGroup = menuGroupService.create(new MenuGroupCreateRequest(메뉴그룹_생성().getName()));
 
         // when
         List<MenuGroup> result = menuGroupService.list();

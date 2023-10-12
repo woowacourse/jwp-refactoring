@@ -1,5 +1,6 @@
-package kitchenpos.application;
+package kitchenpos.application.menugroup;
 
+import kitchenpos.application.menugroup.dto.MenuGroupCreateRequest;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,9 @@ public class MenuGroupService {
     }
 
     @Transactional
-    public MenuGroup create(final MenuGroup menuGroup) {
+    public MenuGroup create(final MenuGroupCreateRequest menuGroupCreateRequest) {
+        MenuGroup menuGroup = new MenuGroup(menuGroupCreateRequest.getName());
+
         return menuGroupDao.save(menuGroup);
     }
 
