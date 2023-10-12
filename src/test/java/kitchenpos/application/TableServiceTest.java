@@ -30,11 +30,13 @@ class TableServiceTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("table 목록을 조회한다.")
     void list() {
+        final List<OrderTable> orderTables = TableFixture.전체_주문_테이블();
+        orderTables.forEach(tableService::create);
+
         final List<OrderTable> foundedOrderTables = tableService.list();
 
-        final List<OrderTable> expectedOrderTables = TableFixture.전체_주문_테이블();
         assertThat(foundedOrderTables)
             .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id", "tableGroupId")
-            .isEqualTo(expectedOrderTables);
+            .isEqualTo(orderTables);
     }
 }
