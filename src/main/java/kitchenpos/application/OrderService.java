@@ -42,7 +42,7 @@ public class OrderService {
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
 
         if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException("주문 항목이 존재하지 않습니다.");
+            throw new IllegalArgumentException("주문 메뉴가 존재하지 않습니다.");
         }
 
         final List<Long> menuIds = orderLineItems.stream()

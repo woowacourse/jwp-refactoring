@@ -109,10 +109,10 @@ class OrderServiceTest {
         // when & then
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("주문 항목이 존재하지 않습니다.");
+                .hasMessage("주문 메뉴가 존재하지 않습니다.");
     }
 
-    @DisplayName("주문 항목에 존재하는 상품이 존재하지 않는 상품이면 등록할 수 없다.")
+    @DisplayName("주문 항목에 존재하는 메뉴가 존재하지 않는 메뉴이면 등록할 수 없다.")
     @Test
     void create_FailWhenMenuNotExist() {
         // given
