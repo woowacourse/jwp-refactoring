@@ -59,4 +59,18 @@ public class TableStep {
                 .log().all()
                 .extract();
     }
+
+    public static ExtractableResponse<Response> 테이블에_앉은_사람_수_변경(final OrderTable orderTable) {
+        return RestAssured.given()
+                .log().all()
+                .contentType(JSON)
+                .body(orderTable)
+
+                .when()
+                .put("/api/tables/" + orderTable.getId() + "/number-of-guests")
+
+                .then()
+                .log().all()
+                .extract();
+    }
 }
