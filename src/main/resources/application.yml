@@ -11,4 +11,4 @@ logging:
   level:
     org:
       springframework:
-        jdbc=debug:
+        jdbc: debug
