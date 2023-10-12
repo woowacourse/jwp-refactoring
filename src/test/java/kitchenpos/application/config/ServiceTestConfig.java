@@ -1,5 +1,6 @@
 package kitchenpos.application.config;
 
+import kitchenpos.common.DataTestExecutionListener;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -11,9 +12,11 @@ import kitchenpos.dao.TableGroupDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestExecutionListeners;
 
 @JdbcTest
 @Import(DaoConfig.class)
+@TestExecutionListeners(value = DataTestExecutionListener.class, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public class ServiceTestConfig {
 
     @Autowired
