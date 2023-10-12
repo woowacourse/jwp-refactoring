@@ -1,4 +1,4 @@
-package kitchenpos.application.support;
+package kitchenpos.application.support.dao;
 
 import java.util.HashMap;
 import java.util.List;
