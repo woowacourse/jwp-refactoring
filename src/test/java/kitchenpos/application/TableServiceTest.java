@@ -124,4 +124,66 @@ class TableServiceTest extends ServiceTestConfig {
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
+
+    @DisplayName("주문 테이블 방문 손님 수 변경")
+    @Nested
+    class ChangeNumberOfGuests {
+        @DisplayName("성공한다.")
+        @Test
+        void success() {
+            // given
+            final OrderTable savedOrderTable = saveOrderTable();
+            final OrderTable changing = new OrderTable();
+            changing.setNumberOfGuests(4);
+
+            // when
+            final OrderTable actual = tableService.changeNumberOfGuests(savedOrderTable.getId(), changing);
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(actual.getId()).isEqualTo(savedOrderTable.getId());
+                softly.assertThat(actual.getTableGroupId()).isEqualTo(changing.getTableGroupId());
+            });
+        }
+
+        @DisplayName("설정하려는 고객 수가 0명 미만인 경우에 실패한다.")
+        @Test
+        void fail_if_numberOfGuests_are_under_zero() {
+            // given
+            final OrderTable savedOrderTable = saveOrderTable();
+            final OrderTable changing = new OrderTable();
+            changing.setNumberOfGuests(-1);
+
+            // then
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), changing))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @DisplayName("주문 테이블이 존재하지 않으면 실패한다.")
+        @Test
+        void fail_if_invalid_orderTable_id() {
+            // given
+            final OrderTable changing = new OrderTable();
+            changing.setNumberOfGuests(4);
+
+            // then
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(-111L, changing))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @DisplayName("주문 등록이 불가능한 상태면 실패한다.")
+        @Test
+        void fail_if_orderTable_is_empty() {
+            // given
+            final OrderTable orderTable = saveOrderTable();
+            orderTable.setEmpty(true);
+            final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+            final OrderTable changing = new OrderTable();
+            changing.setNumberOfGuests(4);
+
+            // then
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), changing))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+    }
 }

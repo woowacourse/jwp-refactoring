@@ -106,7 +106,7 @@ public class ServiceTestConfig {
     protected OrderTable saveOrderTable() {
         final OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(true);
+        orderTable.setEmpty(false);
         return orderTableDao.save(orderTable);
     }
 

@@ -51,7 +51,7 @@
 - [x] Business Object 테스트 작성
 ### 방문 손님 수 변경
 - [x] API 테스트 작성
-- [ ] Business Object 테스트 작성
+- [x] Business Object 테스트 작성
 
 ## TableGroup
 ### 생성
