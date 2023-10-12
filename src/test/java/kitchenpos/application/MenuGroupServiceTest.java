@@ -5,9 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Objects;
 import kitchenpos.IntegrationTest;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,15 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 class MenuGroupServiceTest extends IntegrationTest {
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
     private MenuGroupService menuGroupService;
 
-    @Override
-    @BeforeEach
-    public void setUp() {
-        super.setUp();
-        this.menuGroupService = new MenuGroupService(menuGroupDao);
-    }
 
     @Test
     @DisplayName("메뉴 그룹 등록 시 전달받은 정보를 새 id로 저장한다.")

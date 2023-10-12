@@ -8,13 +8,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import kitchenpos.IntegrationTest;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,22 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 class MenuServiceTest extends IntegrationTest {
 
     @Autowired
-    private MenuDao menuDao;
-    @Autowired
-    private MenuGroupDao menuGroupDao;
-    @Autowired
-    private MenuProductDao menuProductDao;
-    @Autowired
-    private ProductDao productDao;
     private MenuService menuService;
-
-    @Override
-    @BeforeEach
-    public void setUp() {
-        super.setUp();
-        this.menuService = new MenuService(menuDao, menuGroupDao, menuProductDao, productDao);
-    }
-
 
     @Test
     @DisplayName("메뉴 등록 시 전달받은 정보를 새 id로 저장한다.")

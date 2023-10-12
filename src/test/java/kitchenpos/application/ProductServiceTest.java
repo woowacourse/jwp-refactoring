@@ -6,9 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.Objects;
 import kitchenpos.IntegrationTest;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,15 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 class ProductServiceTest extends IntegrationTest {
 
     @Autowired
-    private ProductDao productDao;
     private ProductService productService;
-
-    @Override
-    @BeforeEach
-    public void setUp() {
-        super.setUp();
-        productService = new ProductService(productDao);
-    }
 
     @Test
     @DisplayName("상품 등록 시 전달받은 정보를 새 id로 저장한다.")
