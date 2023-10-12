@@ -113,7 +113,7 @@ class MenuServiceTest {
         }
 
         @Test
-        void 메뉴_가격은_상품의_가격_총합보다_작아야한다() {
+        void 메뉴_가격이_상품의_가격_총합보다_크면_예외() {
             // given
             int menuPrice = 13000;
             Long menuGroupId = 1L;
@@ -144,7 +144,7 @@ class MenuServiceTest {
         void 이름_가격_메뉴그룹id_메뉴상품들을_입력받아_생성한다() {
             // given
             String name = "치킨 콤보 세트";
-            int menuPrice = 10_000;
+            int menuPrice = 12_000;
             Long menuGroupId = 1L;
             Product product1 = ProductFixture.fixture().id(1L).price(2000).build();
             Product product2 = ProductFixture.fixture().id(2L).price(3000).build();
