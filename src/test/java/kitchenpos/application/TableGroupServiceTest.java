@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import static kitchenpos.common.TableGroupFixtures.TABLE_GROUP1_CREATE_REQUEST;
+import static kitchenpos.common.TableGroupFixtures.TABLE_GROUP1_ORDER_TABLES;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
@@ -19,26 +20,25 @@ import kitchenpos.exception.TableGroupException.CannotCreateTableGroupStateExcep
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.transaction.annotation.Transactional;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@SpringBootTest
-@Transactional
+@ExtendWith(MockitoExtension.class)
 class TableGroupServiceTest {
 
-    @Autowired
+    @InjectMocks
     private TableGroupService tableGroupService;
 
-    @MockBean
+    @Mock
     private TableGroupDao tableGroupDao;
 
-    @MockBean
+    @Mock
     private OrderTableDao orderTableDao;
 
-    @MockBean
+    @Mock
     private OrderDao orderDao;
 
     @Nested
@@ -104,20 +104,21 @@ class TableGroupServiceTest {
             // given
             TableGroup tableGroupRequest = TABLE_GROUP1_CREATE_REQUEST();
 
-            long orderTableId = 1L;
-            List<Long> ids = List.of(orderTableId);
-            OrderTable orderTable = new OrderTable();
-            orderTable.setId(orderTableId);
-            List<OrderTable> orderTables = List.of(orderTable);
+            List<OrderTable> orderTables = TABLE_GROUP1_ORDER_TABLES();
+            List<Long> ids = orderTables.stream()
+                    .map(OrderTable::getId)
+                    .collect(Collectors.toList());
+
+            List<OrderTable> notMatchedOrderTables = List.of(new OrderTable());
             BDDMockito.given(orderTableDao.findAllByIdIn(ids))
-                    .willReturn(orderTables);
+                    .willReturn(notMatchedOrderTables);
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                     .isInstanceOf(TableGroupException.NotFoundOrderTableExistException.class)
                     .hasMessage("[ERROR] 주문 테이블 목록 중 존재하지 않는 주문 테이블이 있습니다.");
         }
-        
+
         @Test
         @DisplayName("찾은 주문 테이블이 비어있지 않은 상태이면 예외가 발생한다.")
         void throws_orderTableIsEmpty() {

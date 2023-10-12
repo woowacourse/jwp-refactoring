@@ -19,25 +19,24 @@ import kitchenpos.exception.OrderTableException.CannotChangeEmptyStateByOrderSta
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.BDDMockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.transaction.annotation.Transactional;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@SpringBootTest
-@Transactional
+@ExtendWith(MockitoExtension.class)
 class TableServiceTest {
 
-    @Autowired
+    @InjectMocks
     private TableService tableService;
 
-    @MockBean
+    @Mock
     private OrderTableDao orderTableDao;
 
-    @MockBean
+    @Mock
     private OrderDao orderDao;
 
     @Test
@@ -118,7 +117,6 @@ class TableServiceTest {
             BDDMockito.given(orderTableDao.findById(any(Long.class)))
                     .willReturn(Optional.of(orderTableRequest));
 
-
             final OrderTable orderTable = new OrderTable();
             orderTable.setEmpty(false);
 
@@ -178,7 +176,7 @@ class TableServiceTest {
                 softly.assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(numberOfGuestsToChange);
             });
         }
-        
+
         @ParameterizedTest
         @ValueSource(ints = {-1, Integer.MIN_VALUE})
         @DisplayName("손님 수가 0 미만이면 예외가 발생한다.")
@@ -197,13 +195,14 @@ class TableServiceTest {
         @DisplayName("주문 테이블이 존재하지 않으면 예외가 발생한다.")
         void throws_orderTableNotExist() {
             // given
+            final Long notExistOrderTableId = -1L;
             OrderTable orderTable = ORDER_TABLE1_CREATE_REQUEST();
 
-            BDDMockito.given(orderTableDao.findById(any(Long.class)))
+            BDDMockito.given(orderTableDao.findById(-1L))
                     .willThrow(new OrderTableException.NotFoundOrderTableException());
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), orderTable))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(notExistOrderTableId, orderTable))
                     .isInstanceOf(OrderTableException.NotFoundOrderTableException.class)
                     .hasMessage("[ERROR] 해당하는 OrderTable이 존재하지 않습니다.");
         }

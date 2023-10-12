@@ -25,29 +25,28 @@ import kitchenpos.exception.OrderTableException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.transaction.annotation.Transactional;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@SpringBootTest
-@Transactional
+@ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
 
-    @Autowired
+    @InjectMocks
     private OrderService orderService;
 
-    @MockBean
+    @Mock
     private MenuDao menuDao;
 
-    @MockBean
+    @Mock
     private OrderTableDao orderTableDao;
 
-    @MockBean
+    @Mock
     private OrderDao orderDao;
 
-    @MockBean
+    @Mock
     private OrderLineItemDao orderLineItemDao;
 
     @Nested
@@ -157,7 +156,7 @@ class OrderServiceTest {
                 .isInstanceOf(OrderTableException.NotFoundOrderTableException.class)
                 .hasMessage("[ERROR] 해당하는 OrderTable이 존재하지 않습니다.");
     }
-    
+
     @Test
     @DisplayName("주문 테이블이 비어있는 상태면 예외가 발생한다")
     void throws_OrderTableIsEmpty() {
@@ -249,7 +248,7 @@ class OrderServiceTest {
                 softly.assertThat(savedOrder.getOrderStatus()).isEqualTo(orderStatusToChange);
             });
         }
-        
+
         @Test
         @DisplayName("주문 ID에 해당하는 주문이 없으면 예외가 발생한다.")
         void throws_NotFoundOrder() {
@@ -259,7 +258,7 @@ class OrderServiceTest {
             order.setOrderStatus(OrderStatus.MEAL.name());
 
             BDDMockito.given(orderDao.findById(notExistOrderId))
-                            .willThrow(new OrderException.NotFoundOrderException());
+                    .willThrow(new OrderException.NotFoundOrderException());
 
             // when & then
             assertThatThrownBy(() -> orderService.changeOrderStatus(notExistOrderId, order))
