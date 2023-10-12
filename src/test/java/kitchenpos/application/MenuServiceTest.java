@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
@@ -15,6 +16,38 @@ class MenuServiceTest extends IntegrationTest {
 
     @Autowired
     private MenuService menuService;
+
+    @Test
+    void create_menu_success() {
+        // given
+        final Menu savedChicken = generateMenu("chicken");
+        final Product chickenProduct = generateProduct("chicken", 10000L);
+        final MenuProduct menuProductA = new MenuProduct();
+        menuProductA.setMenuId(savedChicken.getMenuGroupId());
+        menuProductA.setProductId(chickenProduct.getId());
+        menuProductA.setQuantity(2);
+        menuProductDao.save(menuProductA);
+
+        final Product sauceProduct = generateProduct("sauce", 3000L);
+        final MenuProduct menuProductB = new MenuProduct();
+        menuProductB.setMenuId(savedChicken.getMenuGroupId());
+        menuProductB.setProductId(sauceProduct.getId());
+        menuProductB.setQuantity(5);
+        menuProductDao.save(menuProductB);
+
+        final Menu requestMenu = new Menu();
+        requestMenu.setName("seasoningChicken");
+        requestMenu.setMenuProducts(List.of(menuProductA, menuProductB));
+        requestMenu.setPrice(BigDecimal.valueOf(35000));
+        requestMenu.setMenuGroupId(savedChicken.getMenuGroupId());
+
+        // when
+        final Menu createdMenu = menuService.create(requestMenu);
+
+        // then
+        assertThat(createdMenu.getId()).isNotNull();
+        assertThat(createdMenu.getMenuProducts()).hasSize(2);
+    }
 
     @Nested
     class create_menu_failure {
@@ -94,7 +127,7 @@ class MenuServiceTest extends IntegrationTest {
             final Menu requestMenu = new Menu();
             requestMenu.setName("chicken");
             requestMenu.setMenuProducts(List.of(menuProductA, menuProductB));
-            requestMenu.setPrice(BigDecimal.valueOf(350000L + 1L));
+            requestMenu.setPrice(BigDecimal.valueOf(35000L + 1L));
             requestMenu.setMenuGroupId(savedChicken.getMenuGroupId());
 
             // when & then
