@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static kitchenpos.Fixture.Fixture.orderFixtrue;
+import static kitchenpos.Fixture.Fixture.orderFixture;
 import static kitchenpos.Fixture.Fixture.orderTableFixture;
 import static kitchenpos.Fixture.Fixture.tableGroupFixture;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -128,7 +128,7 @@ class TableGroupServiceTest {
         OrderTable orderTable2 = orderTableDao.save(orderTableFixture(null, 2, true));
         TableGroup tableGroup = tableGroupService.create(tableGroupFixture(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
 
-        orderDao.save(orderFixtrue(orderTable1.getId(), orderStatus.name(), LocalDateTime.now(), null));
+        orderDao.save(orderFixture(orderTable1.getId(), orderStatus.name(), LocalDateTime.now(), null));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class)

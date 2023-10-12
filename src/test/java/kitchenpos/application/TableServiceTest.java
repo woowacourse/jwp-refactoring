@@ -14,7 +14,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static kitchenpos.Fixture.Fixture.orderFixtrue;
+import static kitchenpos.Fixture.Fixture.orderFixture;
 import static kitchenpos.Fixture.Fixture.orderTableFixture;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -81,7 +81,7 @@ class TableServiceTest {
         @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
         void 테이블의_주문상태가_조리_또는_식사인_주문_테이블은_빈_테이블로_변경할_수_없다(OrderStatus orderStatus) {
             OrderTable orderTable = tableService.create(orderTableFixture(null, 1, false));
-            Order order = orderFixtrue(orderTable.getId(), orderStatus.name(), LocalDateTime.now(), null);
+            Order order = orderFixture(orderTable.getId(), orderStatus.name(), LocalDateTime.now(), null);
             orderDao.save(order);
 
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), orderTable))

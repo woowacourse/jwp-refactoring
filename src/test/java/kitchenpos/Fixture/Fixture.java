@@ -45,7 +45,7 @@ public abstract class Fixture {
         return product;
     }
 
-    public static Order orderFixtrue(Long orderTableId, String orderStatus,
+    public static Order orderFixture(Long orderTableId, String orderStatus,
                                      LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
         Order order = new Order();
         order.setOrderTableId(orderTableId);

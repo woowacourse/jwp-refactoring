@@ -20,7 +20,7 @@ import java.util.List;
 
 import static kitchenpos.Fixture.Fixture.menuFixture;
 import static kitchenpos.Fixture.Fixture.menuGroupFixture;
-import static kitchenpos.Fixture.Fixture.orderFixtrue;
+import static kitchenpos.Fixture.Fixture.orderFixture;
 import static kitchenpos.Fixture.Fixture.orderLineItemFixture;
 import static kitchenpos.Fixture.Fixture.orderTableFixture;
 import static kitchenpos.domain.OrderStatus.COMPLETION;
@@ -63,7 +63,7 @@ class OrderServiceTest {
 
         @Test
         void 주문을_등록한다() {
-            Order order = orderFixtrue(orderTable.getId(), null, LocalDateTime.now(), List.of(orderLineItem));
+            Order order = orderFixture(orderTable.getId(), null, LocalDateTime.now(), List.of(orderLineItem));
 
             Order savedOrder = orderService.create(order);
 
@@ -80,7 +80,7 @@ class OrderServiceTest {
 
         @Test
         void 주문_항목이_존재하지_않으면_등록할_수_없다() {
-            Order order = orderFixtrue(orderTable.getId(), null, LocalDateTime.now(), List.of());
+            Order order = orderFixture(orderTable.getId(), null, LocalDateTime.now(), List.of());
 
             assertThatThrownBy(() -> orderService.create(order))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -91,7 +91,7 @@ class OrderServiceTest {
         void 주문_항목에_존재하지_않는_메뉴가_있으면_등록할_수_없다() {
             long notExistMenuId = Long.MIN_VALUE;
             OrderLineItem wrongOrderLineItem = orderLineItemFixture(null, notExistMenuId, 2);
-            Order order = orderFixtrue(orderTable.getId(), null, LocalDateTime.now(), List.of(orderLineItem, wrongOrderLineItem));
+            Order order = orderFixture(orderTable.getId(), null, LocalDateTime.now(), List.of(orderLineItem, wrongOrderLineItem));
 
             assertThatThrownBy(() -> orderService.create(order))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -100,7 +100,7 @@ class OrderServiceTest {
 
         @Test
         void 해당하는_주문_테이블이_존재하지_않으면_등록할_수_없다() {
-            Order order = orderFixtrue(Long.MIN_VALUE, null, LocalDateTime.now(), List.of(orderLineItem));
+            Order order = orderFixture(Long.MIN_VALUE, null, LocalDateTime.now(), List.of(orderLineItem));
 
             assertThatThrownBy(() -> orderService.create(order))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -112,7 +112,7 @@ class OrderServiceTest {
     class 주문상태_변경 {
         @Test
         void 주문_상태를_변경할_수_있다() {
-            Order order = orderService.create(orderFixtrue(orderTable.getId(), null, LocalDateTime.now(), List.of(orderLineItem)));
+            Order order = orderService.create(orderFixture(orderTable.getId(), null, LocalDateTime.now(), List.of(orderLineItem)));
             order.setOrderStatus(MEAL.name());
 
             Order updated = orderService.changeOrderStatus(order.getId(), order);
@@ -131,7 +131,7 @@ class OrderServiceTest {
 
         @Test
         void 주문이_이미_완료된_경우_상태를_변경할_수_없다() {
-            Order completedOrder = orderService.create(orderFixtrue(orderTable.getId(), null, LocalDateTime.now(), List.of(orderLineItem)));
+            Order completedOrder = orderService.create(orderFixture(orderTable.getId(), null, LocalDateTime.now(), List.of(orderLineItem)));
             completedOrder.setOrderStatus(COMPLETION.name());
 
             orderService.changeOrderStatus(completedOrder.getId(), completedOrder);
@@ -144,8 +144,8 @@ class OrderServiceTest {
 
     @Test
     void 주문목록을_조회한다() {
-        Order order1 = orderService.create(orderFixtrue(orderTable.getId(), null, LocalDateTime.now(), List.of(orderLineItem)));
-        Order order2 = orderService.create(orderFixtrue(orderTable.getId(), null, LocalDateTime.now(), List.of(orderLineItem)));
+        Order order1 = orderService.create(orderFixture(orderTable.getId(), null, LocalDateTime.now(), List.of(orderLineItem)));
+        Order order2 = orderService.create(orderFixture(orderTable.getId(), null, LocalDateTime.now(), List.of(orderLineItem)));
 
         List<Order> orderList = orderService.list();
 
