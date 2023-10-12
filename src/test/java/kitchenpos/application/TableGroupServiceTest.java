@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.BDDMockito.given;
@@ -66,6 +67,64 @@ class TableGroupServiceTest {
 
         // then
         assertThat(result.getOrderTables()).containsAll(orderTables);
+    }
+    
+    @Test
+    void 비어있지_않은_테이블을_단체_지정하면_예외를_던진다() {
+        // given
+        TableGroup tableGroup = new TableGroup();
+        OrderTable orderTable1 = new OrderTable();
+        OrderTable orderTable2 = new OrderTable();
+        orderTable1.setId(1L);
+        orderTable2.setId(2L);
+        orderTable1.setEmpty(false);
+        orderTable2.setEmpty(false);
+
+        List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
+        tableGroup.setOrderTables(orderTables);
+
+        List<Long> orderTableIds = orderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
+
+        given(orderTableDao.findAllByIdIn(orderTableIds))
+                .willReturn(orderTables);
+        given(tableGroupDao.save(tableGroup))
+                .willReturn(tableGroup);
+
+        // when & then
+        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 이미_단체_지정된_테이블을_단체_지정하면_예외를_던진다() {
+        // given
+        TableGroup tableGroup = new TableGroup();
+        OrderTable orderTable1 = new OrderTable();
+        OrderTable orderTable2 = new OrderTable();
+        orderTable1.setId(1L);
+        orderTable2.setId(2L);
+        orderTable1.setEmpty(true);
+        orderTable2.setEmpty(true);
+        orderTable1.setTableGroupId(1L);
+        orderTable2.setTableGroupId(1L);
+
+        List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
+        tableGroup.setOrderTables(orderTables);
+
+        List<Long> orderTableIds = orderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
+
+        given(orderTableDao.findAllByIdIn(orderTableIds))
+                .willReturn(orderTables);
+        given(tableGroupDao.save(tableGroup))
+                .willReturn(tableGroup);
+
+        // when & then
+        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
