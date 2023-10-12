@@ -1,0 +1,100 @@
+package kitchenpos.application;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import java.math.BigDecimal;
+import java.util.List;
+import kitchenpos.domain.Product;
+import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
+
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@SuppressWarnings("NonAsciiCharacters")
+@Transactional
+@SpringBootTest
+class ProductServiceTest {
+
+    @Autowired
+    private ProductService productService;
+
+    @Nested
+    class 상품_생성_ {
+
+        @Test
+        void 정상_요청() {
+            // given
+            Product product = createProduct("피움 치킨", 18_000L);
+
+            // when
+            Product savedProduct = productService.create(product);
+
+            // then
+            SoftAssertions.assertSoftly(
+                    softly -> {
+                        softly.assertThat(savedProduct.getPrice()).isEqualByComparingTo(product.getPrice());
+                        softly.assertThat(savedProduct.getName()).isEqualTo(product.getName());
+                    }
+            );
+        }
+
+        @Test
+        void 가격없이_요청하면_예외_발생() {
+            // given
+            Product product = createProduct("조이 치킨", null);
+
+            // when, then
+            assertThatThrownBy(
+                    () -> productService.create(product)
+            ).isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @ParameterizedTest
+        @ValueSource(longs = {-2L, -100L})
+        void 가격이_0미만이면_예외_발생(long price) {
+            // given
+            Product product = createProduct("조이 치킨", price);
+
+            // when, then
+            assertThatThrownBy(
+                    () -> productService.create(product)
+            ).isInstanceOf(IllegalArgumentException.class);
+        }
+    }
+
+    @Nested
+    class 전체_상품_조회_ {
+
+        @Test
+        void 정상_요청() {
+            // given
+            Product product = createProduct("조이 치킨", 18_000L);
+            Product savedProduct = productService.create(product);
+
+            // when
+            List<Product> products = productService.list();
+
+            // then
+            assertThat(products)
+                    .extracting(Product::getId)
+                    .contains(savedProduct.getId());
+        }
+    }
+
+    private static Product createProduct(final String name, final Long price) {
+        Product product = new Product();
+        product.setName(name);
+        if (price != null) {
+            product.setPrice(BigDecimal.valueOf(price));
+        }
+        return product;
+    }
+}
