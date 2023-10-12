@@ -51,4 +51,24 @@ class TableServiceTest extends ServiceUnitTest {
 
     }
 
+    @Nested
+    class 주문_목록을_반환한다 {
+
+        @Test
+        void 주문_목록을_반환한다() {
+            // given
+            Mockito.when(orderTableDao.findAll()).thenReturn(List.of(orderTable));
+
+            // when
+            List<OrderTable> orderTables = tableService.list();
+
+            // then
+            assertAll(
+                    () -> assertThat(orderTables).hasSize(1),
+                    () -> assertThat(orderTables.get(0)).isEqualTo(orderTable)
+            );
+        }
+
+    }
+
 }
