@@ -57,9 +57,9 @@ public class OrderFixture {
             return order;
         }
 
-        private static List<OrderLineItem> getOrderLineItems(Long... orderId) {
+        private static List<OrderLineItem> getOrderLineItems(Long... orderIds) {
             List<OrderLineItem> orderLineItems = new ArrayList<>();
-            for (Long id : orderId) {
+            for (Long id : orderIds) {
                 OrderLineItem orderLineItem = new OrderLineItem();
                 orderLineItem.setSeq(1L);
                 orderLineItem.setOrderId(id);
