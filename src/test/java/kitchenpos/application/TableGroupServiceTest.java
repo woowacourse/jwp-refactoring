@@ -136,7 +136,7 @@ class TableGroupServiceTest {
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                     .isInstanceOf(CannotCreateTableGroupStateException.class)
-                    .hasMessage("[ERROR] 주문 테이블이 빈 상태가 아니거나 테이블 그룹이 존재하지 않습니다.");
+                    .hasMessage("[ERROR] 주문 테이블이 빈 상태가 아니거나 테이블 그룹이 존재하지 않을 때 테이블 그룹을 생성할 수 없습니다.");
         }
 
         @Test
@@ -160,7 +160,7 @@ class TableGroupServiceTest {
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                     .isInstanceOf(CannotCreateTableGroupStateException.class)
-                    .hasMessage("[ERROR] 주문 테이블이 빈 상태가 아니거나 테이블 그룹이 존재하지 않습니다.");
+                    .hasMessage("[ERROR] 주문 테이블이 빈 상태가 아니거나 테이블 그룹이 존재하지 않을 때 테이블 그룹을 생성할 수 없습니다.");
         }
     }
 

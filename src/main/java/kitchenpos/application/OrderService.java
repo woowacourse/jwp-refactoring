@@ -43,7 +43,7 @@ public class OrderService {
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
 
         if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException("[ERROR] 주문 메뉴 정보 목록이 비어있습니다.");
+            throw new IllegalArgumentException("[ERROR] 주문 항목 목록이 비어있습니다.");
         }
 
         final List<Long> menuIds = orderLineItems.stream()
