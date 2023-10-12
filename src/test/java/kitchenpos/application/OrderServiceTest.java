@@ -22,11 +22,15 @@ import org.springframework.util.CollectionUtils;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static kitchenpos.domain.OrderStatus.COMPLETION;
+import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.fixture.OrderFixture.주문_생성;
 import static kitchenpos.domain.fixture.OrderLineItemFixture.*;
 import static kitchenpos.domain.fixture.OrderLineItemFixture.주문_항목_생성;
 import static kitchenpos.domain.fixture.OrderTableFixture.주문_테이블_생성;
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.when;
 
@@ -76,7 +80,7 @@ class OrderServiceTest extends ServiceUnitTest {
             order.setOrderLineItems(Collections.EMPTY_LIST);
 
             // when, then
-            Assertions.assertThrows(IllegalArgumentException.class, () -> orderService.create(order));
+            assertThrows(IllegalArgumentException.class, () -> orderService.create(order));
         }
 
         @Test
@@ -85,7 +89,7 @@ class OrderServiceTest extends ServiceUnitTest {
             order.setOrderLineItems(List.of(주문_항목_생성(99L, 1L)));
 
             // when, then
-            Assertions.assertThrows(IllegalArgumentException.class, () -> orderService.create(order));
+            assertThrows(IllegalArgumentException.class, () -> orderService.create(order));
         }
 
         @Test
@@ -95,7 +99,7 @@ class OrderServiceTest extends ServiceUnitTest {
             when(orderTableDao.findById(1L)).thenReturn(Optional.ofNullable(null));
 
             // when, then
-            Assertions.assertThrows(IllegalArgumentException.class, () -> orderService.create(order));
+            assertThrows(IllegalArgumentException.class, () -> orderService.create(order));
         }
 
         @Test
@@ -107,7 +111,7 @@ class OrderServiceTest extends ServiceUnitTest {
             when(orderTableDao.findById(1L)).thenReturn(Optional.ofNullable(주문_테이블));
 
             // when, then
-            Assertions.assertThrows(IllegalArgumentException.class, () -> orderService.create(order));
+            assertThrows(IllegalArgumentException.class, () -> orderService.create(order));
         }
 
         @Test
@@ -141,7 +145,7 @@ class OrderServiceTest extends ServiceUnitTest {
             Order order = orderService.create(OrderServiceTest.this.order);
 
             // then
-            assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+            assertThat(order.getOrderStatus()).isEqualTo(COOKING.name());
         }
 
         @Test
@@ -192,10 +196,54 @@ class OrderServiceTest extends ServiceUnitTest {
             List<Order> orders = orderService.list();
 
             // then
-            Assertions.assertAll(
+            assertAll(
                     () -> assertThat(orders).hasSize(1),
                     () -> assertThat(orders.get(0)).isEqualTo(order)
             );
+        }
+
+    }
+
+    @Nested
+    class 주문_상태를_변경한다 {
+
+        @Test
+        void 주문_상태를_변경한다() {
+            // given
+            order.setId(1L);
+            order.setOrderStatus(COOKING.name());
+            when(orderDao.findById(order.getId())).thenReturn(Optional.ofNullable(order));
+            when(orderLineItemDao.findAllByOrderId(order.getId())).thenReturn(List.of(주문_항목_생성(1L, 1L)));
+
+            // when
+            Order savedOrder = orderService.changeOrderStatus(order.getId(), OrderServiceTest.this.order);
+
+            // then
+            assertThat(savedOrder).isEqualTo(order);
+        }
+
+        @Test
+        void 입력받은_orderId가_존재하지_않는다면_예외가_발생한다() {
+            // given
+            order.setId(1L);
+            order.setOrderStatus(COOKING.name());
+
+            // when, then
+            assertThrows(IllegalArgumentException.class,
+                    () -> orderService.changeOrderStatus(10L, OrderServiceTest.this.order));
+        }
+
+        @Test
+        void 저장된_주문이_이미_완료되었다면_예외가_발생한다() {
+            // given
+            order.setId(1L);
+            order.setOrderStatus(COMPLETION.name());
+            when(orderDao.findById(order.getId())).thenReturn(Optional.ofNullable(order));
+            when(orderLineItemDao.findAllByOrderId(order.getId())).thenReturn(List.of(주문_항목_생성(1L, 1L)));
+
+            // when
+            assertThrows(IllegalArgumentException.class,
+                    () -> orderService.changeOrderStatus(order.getId(), OrderServiceTest.this.order));
         }
 
     }
