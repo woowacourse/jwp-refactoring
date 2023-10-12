@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
@@ -33,6 +34,9 @@ class MenuServiceTest {
 
     @Autowired
     private ProductDao productDao;
+
+    @Autowired
+    private MenuDao menuDao;
 
     private Menu menu;
 
@@ -134,6 +138,8 @@ class MenuServiceTest {
                 @Nested
                 class 메뉴_상품들이_있는경우 {
 
+                    private Product product1;
+                    private Product product2;
                     private MenuProduct menuProduct1;
                     private MenuProduct menuProduct2;
 
@@ -142,19 +148,19 @@ class MenuServiceTest {
                         Product product1 = new Product();
                         product1.setName("상품1");
                         product1.setPrice(BigDecimal.valueOf(1));
-                        Product savedProduct1 = productDao.save(product1);
+                        this.product1 = productDao.save(product1);
 
                         Product product2 = new Product();
                         product2.setName("상품2");
                         product2.setPrice(BigDecimal.valueOf(3));
-                        Product savedProduct2 = productDao.save(product2);
+                        this.product2 = productDao.save(product2);
 
                         menuProduct1 = new MenuProduct();
-                        menuProduct1.setProductId(savedProduct1.getId());
+                        menuProduct1.setProductId(this.product1.getId());
                         menuProduct1.setQuantity(2);
 
                         menuProduct2 = new MenuProduct();
-                        menuProduct2.setProductId(savedProduct2.getId());
+                        menuProduct2.setProductId(this.product2.getId());
                         menuProduct2.setQuantity(3);
                     }
 
@@ -188,6 +194,36 @@ class MenuServiceTest {
                                 () -> assertThat(result.getMenuProducts().get(0).getMenuId()).isEqualTo(result.getId()),
                                 () -> assertThat(result.getMenuProducts().get(1).getMenuId()).isEqualTo(result.getId())
                         );
+                    }
+
+                    @Test
+                    void 메뉴들을_조회한다() {
+                        // given
+                        menu.setPrice(BigDecimal.valueOf(11));
+                        menu.setMenuProducts(List.of(menuProduct1, menuProduct2));
+
+                        MenuProduct menuProduct1 = new MenuProduct();
+                        menuProduct1.setProductId(product1.getId());
+                        menuProduct1.setQuantity(3);
+
+                        MenuProduct menuProduct2 = new MenuProduct();
+                        menuProduct2.setProductId(product2.getId());
+                        menuProduct1.setQuantity(2);
+
+                        Menu menu2 = new Menu();
+                        menu2.setPrice(BigDecimal.valueOf(9));
+                        menu2.setMenuGroupId(menuGroup.getId());
+                        menu2.setName("메뉴2");
+                        menu2.setMenuProducts(List.of(menuProduct1, menuProduct2));
+
+                        menuDao.save(menu);
+                        menuDao.save(menu2);
+
+                        // when
+                        List<Menu> result = menuService.list();
+
+                        // then
+                        assertThat(result).hasSize(2);
                     }
                 }
             }
