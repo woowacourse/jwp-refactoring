@@ -102,7 +102,7 @@
     - [ ] Menu
     - [ ] Order
     - [ ] Product
-    - [ ] OrderTable
+    - [x] OrderTable
     - [x] OrderLineItem
     - [ ] TableGroup
     - [x] MenuGroup
