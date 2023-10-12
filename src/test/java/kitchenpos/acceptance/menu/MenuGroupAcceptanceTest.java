@@ -2,12 +2,10 @@ package kitchenpos.acceptance.menu;
 
 
 import static kitchenpos.acceptance.AcceptanceSteps.응답_상태를_검증한다;
-import static kitchenpos.acceptance.menu.MenuGroupAcceptanceSteps.메뉴_그룹_정보;
-import static kitchenpos.acceptance.menu.MenuGroupAcceptanceSteps.메뉴_그룹_조회_결과를_검증한다;
+import static kitchenpos.acceptance.AcceptanceSteps.조회_요청_결과를_검증한다;
 import static kitchenpos.acceptance.menu.MenuGroupAcceptanceSteps.메뉴_그룹_조회_요청을_보낸다;
 import static kitchenpos.acceptance.menu.MenuGroupAcceptanceSteps.메뉴_그릅_등록_요청을_보낸다;
 
-import java.util.List;
 import kitchenpos.acceptance.AcceptanceTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -43,8 +41,17 @@ public class MenuGroupAcceptanceTest {
             var 응답 = 메뉴_그룹_조회_요청을_보낸다();
 
             // then
-            메뉴_그룹_조회_결과를_검증한다(응답,
-                    List.of(메뉴_그룹_정보("단일 상품"), 메뉴_그룹_정보("두개 상품"))
+            조회_요청_결과를_검증한다(응답,
+                   "[\n"
+                           + "    {\n"
+                           + "        \"id\": 1,\n"
+                           + "        \"name\": \"단일 상품\"\n"
+                           + "    },\n"
+                           + "    {\n"
+                           + "        \"id\": 2,\n"
+                           + "        \"name\": \"두개 상품\"\n"
+                           + "    }\n"
+                           + "]"
             );
         }
     }

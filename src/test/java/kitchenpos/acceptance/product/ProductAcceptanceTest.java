@@ -1,12 +1,10 @@
 package kitchenpos.acceptance.product;
 
 import static kitchenpos.acceptance.AcceptanceSteps.응답_상태를_검증한다;
-import static kitchenpos.acceptance.product.ProductAcceptanceSteps.상품_목록_조회_결과를_검증한다;
-import static kitchenpos.acceptance.product.ProductAcceptanceSteps.상품_목록_조회_요청을_보낸다;
-import static kitchenpos.acceptance.product.ProductAcceptanceSteps.상품_정보;
+import static kitchenpos.acceptance.AcceptanceSteps.조회_요청_결과를_검증한다;
 import static kitchenpos.acceptance.product.ProductAcceptanceSteps.상품_등록_요청을_보낸다;
+import static kitchenpos.acceptance.product.ProductAcceptanceSteps.상품_목록_조회_요청을_보낸다;
 
-import java.util.List;
 import kitchenpos.acceptance.AcceptanceTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -51,8 +49,19 @@ public class ProductAcceptanceTest {
             var 응답 = 상품_목록_조회_요청을_보낸다();
 
             // then
-            상품_목록_조회_결과를_검증한다(응답,
-                    List.of(상품_정보("말랑치킨", 100_000.00), 상품_정보("강정치킨", 20_000.00))
+            조회_요청_결과를_검증한다(응답,
+                    "[\n"
+                            + "    {\n"
+                            + "        \"id\": 1,\n"
+                            + "        \"name\": \"말랑치킨\",\n"
+                            + "        \"price\": 100000.00\n"
+                            + "    },\n"
+                            + "    {\n"
+                            + "        \"id\": 2,\n"
+                            + "        \"name\": \"강정치킨\",\n"
+                            + "        \"price\": 20000.00\n"
+                            + "    }\n"
+                            + "]"
             );
         }
     }

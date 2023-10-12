@@ -1,15 +1,13 @@
 package kitchenpos.acceptance.menu;
 
 import static kitchenpos.acceptance.AcceptanceSteps.응답_상태를_검증한다;
+import static kitchenpos.acceptance.AcceptanceSteps.조회_요청_결과를_검증한다;
 import static kitchenpos.acceptance.menu.MenuAcceptanceSteps.메뉴_등록_요청을_보낸다;
-import static kitchenpos.acceptance.menu.MenuAcceptanceSteps.메뉴_정보;
-import static kitchenpos.acceptance.menu.MenuAcceptanceSteps.메뉴_조회_요청_결과를_검증한다;
 import static kitchenpos.acceptance.menu.MenuAcceptanceSteps.메뉴_조회_요청을_보낸다;
 import static kitchenpos.acceptance.menu.MenuAcceptanceSteps.메뉴에_속한_상품;
 import static kitchenpos.acceptance.menu.MenuGroupAcceptanceSteps.메뉴_그릅_등록후_생성된_ID를_가져온다;
 import static kitchenpos.acceptance.product.ProductAcceptanceSteps.상품_등록후_생성된_ID를_가져온다;
 
-import java.util.List;
 import kitchenpos.acceptance.AcceptanceTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -108,22 +106,50 @@ public class MenuAcceptanceTest {
             var 응답 = 메뉴_조회_요청을_보낸다();
 
             // then
-            메뉴_조회_요청_결과를_검증한다(응답, List.of(
-                    메뉴_정보(
-                            세트_상품_메뉴_그룹_ID,
-                            "말랑 메뉴",
-                            10_000,
-                            메뉴에_속한_상품(상품1_ID, 1),
-                            메뉴에_속한_상품(상품2_ID, 1)
-                    ),
-                    메뉴_정보(
-                            세트_상품_메뉴_그룹_ID,
-                            "말랑 메뉴 2",
-                            20_000,
-                            메뉴에_속한_상품(상품1_ID, 2),
-                            메뉴에_속한_상품(상품2_ID, 3)
-                    )
-            ));
+            조회_요청_결과를_검증한다(응답,
+                    "[\n"
+                            + "    {\n"
+                            + "        \"id\": 1,\n"
+                            + "        \"name\": \"말랑 메뉴\",\n"
+                            + "        \"price\": 10000.00,\n"
+                            + "        \"menuGroupId\": 1,\n"
+                            + "        \"menuProducts\": [\n"
+                            + "            {\n"
+                            + "                \"seq\": 1,\n"
+                            + "                \"menuId\": 1,\n"
+                            + "                \"productId\": 1,\n"
+                            + "                \"quantity\": 1\n"
+                            + "            },\n"
+                            + "            {\n"
+                            + "                \"seq\": 2,\n"
+                            + "                \"menuId\": 1,\n"
+                            + "                \"productId\": 2,\n"
+                            + "                \"quantity\": 1\n"
+                            + "            }\n"
+                            + "        ]\n"
+                            + "    },\n"
+                            + "    {\n"
+                            + "        \"id\": 2,\n"
+                            + "        \"name\": \"말랑 메뉴 2\",\n"
+                            + "        \"price\": 20000.00,\n"
+                            + "        \"menuGroupId\": 1,\n"
+                            + "        \"menuProducts\": [\n"
+                            + "            {\n"
+                            + "                \"seq\": 3,\n"
+                            + "                \"menuId\": 2,\n"
+                            + "                \"productId\": 1,\n"
+                            + "                \"quantity\": 2\n"
+                            + "            },\n"
+                            + "            {\n"
+                            + "                \"seq\": 4,\n"
+                            + "                \"menuId\": 2,\n"
+                            + "                \"productId\": 2,\n"
+                            + "                \"quantity\": 3\n"
+                            + "            }\n"
+                            + "        ]\n"
+                            + "    }\n"
+                            + "]"
+            );
         }
     }
 }

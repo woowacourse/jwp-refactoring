@@ -30,4 +30,12 @@ public class AcceptanceSteps {
         String location = 응답.header("Location");
         return Long.valueOf(location.substring(location.lastIndexOf("/") + 1));
     }
+
+    public static void 조회_요청_결과를_검증한다(
+            ExtractableResponse<Response> 응답,
+            String 예상
+    ) {
+        assertThat(응답.response().body().prettyPrint())
+                .isEqualTo(예상);
+    }
 }
