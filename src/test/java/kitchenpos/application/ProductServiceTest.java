@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.application.ProductService;
 import kitchenpos.application.config.ServiceTestConfig;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
