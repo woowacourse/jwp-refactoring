@@ -1,13 +1,16 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.MenuGroupFixture.추천_메뉴_그룹;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
-import org.junit.jupiter.api.DisplayName;
+import kitchenpos.domain.Product;
+import kitchenpos.fixture.MenuGroupFixture;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,10 +26,9 @@ class MenuGroupServiceTest {
 
 
     @Test
-    @DisplayName("menu group 생성을 테스트한다.")
-    void create() {
+    void 메뉴_그룹을_생성한다() {
         // given
-        MenuGroup menuGroup = new MenuGroup("추천메뉴");
+        MenuGroup menuGroup = 추천_메뉴_그룹();
 
         // when
         Long id = menuGroupService.create(menuGroup).getId();
@@ -35,28 +37,26 @@ class MenuGroupServiceTest {
         String savedName = menuGroupDao.findById(id)
                 .orElseThrow(NoSuchElementException::new)
                 .getName();
-        assertThat(savedName).isEqualTo("추천메뉴");
+        assertThat(savedName).isEqualTo(menuGroup.getName());
     }
 
     @Test
-    @DisplayName("menu group 전체조회를 테스트한다.")
-    void list() {
+    void 전체_메뉴_그룹을_조회한다() {
         // given
         List<MenuGroup> menuGroups = List.of(
-                new MenuGroup("추천메뉴1"),
-                new MenuGroup("추천메뉴2"),
-                new MenuGroup("추천메뉴3")
+                MenuGroupFixture.추천_메뉴_그룹(),
+                MenuGroupFixture.떠오르는_메뉴_그룹(),
+                MenuGroupFixture.싼_메뉴_그룹()
         );
-
-        // when
+        List<MenuGroup> savedMenuGroups = new ArrayList<>();
         for (MenuGroup menuGroup : menuGroups) {
-            menuGroupService.create(menuGroup);
+            savedMenuGroups.add(menuGroupDao.save(menuGroup));
         }
 
         // then
         List<MenuGroup> results = menuGroupService.list()
                 .stream()
-                .filter(menu -> containsMenuGroups(menuGroups, menu))
+                .filter(menu -> containsMenuGroups(savedMenuGroups, menu))
                 .collect(Collectors.toList());
         assertThat(results).usingRecursiveComparison()
                 .ignoringFields("id")
@@ -65,7 +65,7 @@ class MenuGroupServiceTest {
 
     private boolean containsMenuGroups(List<MenuGroup> menuGroups, MenuGroup menu) {
         for (MenuGroup menuGroup : menuGroups) {
-            if (menuGroup.getName().equals(menu.getName())) {
+            if (menuGroup.getId().equals(menu.getId())) {
                 return true;
             }
         }

@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.MenuGroupFixture.추천메뉴_그룹;
+import static kitchenpos.fixture.MenuGroupFixture.추천_메뉴_그룹;
 import static kitchenpos.fixture.MenuProductFixture.메뉴_상품;
 import static kitchenpos.fixture.ProductFixture.후추_치킨_10000원;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,7 +32,7 @@ class MenuServiceTest extends ServiceIntegrationTest {
         // given
         Product savedProduct = productDao.save(후추_치킨_10000원());
         MenuProduct menuProduct = 메뉴_상품(savedProduct, 2);
-        MenuGroup savedMenuGroup = menuGroupDao.save(추천메뉴_그룹());
+        MenuGroup savedMenuGroup = menuGroupDao.save(추천_메뉴_그룹());
         Menu menu = MenuFixture.메뉴_생성(BigDecimal.valueOf(19000), savedMenuGroup, menuProduct);
 
         // when
@@ -52,7 +52,7 @@ class MenuServiceTest extends ServiceIntegrationTest {
         // given
         Product savedProduct = productDao.save(후추_치킨_10000원());
         MenuProduct menuProduct = 메뉴_상품(savedProduct, 2);
-        MenuGroup savedMenuGroup = menuGroupDao.save(추천메뉴_그룹());
+        MenuGroup savedMenuGroup = menuGroupDao.save(추천_메뉴_그룹());
         Menu menu = MenuFixture.메뉴_생성(null, savedMenuGroup, menuProduct);
 
         // when then
@@ -65,7 +65,7 @@ class MenuServiceTest extends ServiceIntegrationTest {
         // given
         Product savedProduct = productDao.save(후추_치킨_10000원());
         MenuProduct menuProduct = 메뉴_상품(savedProduct, 2);
-        MenuGroup savedMenuGroup = menuGroupDao.save(추천메뉴_그룹());
+        MenuGroup savedMenuGroup = menuGroupDao.save(추천_메뉴_그룹());
         Menu menu = MenuFixture.메뉴_생성(BigDecimal.valueOf(-1), savedMenuGroup, menuProduct);
 
         // when then
@@ -89,7 +89,7 @@ class MenuServiceTest extends ServiceIntegrationTest {
     void MenuProduct에_있는_상품이_존재하지_않는_메뉴이다() {
         // given
         MenuProduct invalidMenuProduct = MenuProductFixture.존재하지_않는_상품을_가진_메뉴_상품();
-        MenuGroup savedMenuGroup = menuGroupDao.save(추천메뉴_그룹());
+        MenuGroup savedMenuGroup = menuGroupDao.save(추천_메뉴_그룹());
         Menu menu = MenuFixture.메뉴_생성(BigDecimal.valueOf(19000), savedMenuGroup, invalidMenuProduct);
 
         // when then
@@ -102,7 +102,7 @@ class MenuServiceTest extends ServiceIntegrationTest {
         // given
         Product savedProduct = productDao.save(ProductFixture.후추_치킨_10000원());
         MenuProduct menuProduct = MenuProductFixture.메뉴_상품(savedProduct, 2);
-        MenuGroup savedMenuGroup = menuGroupDao.save(추천메뉴_그룹());
+        MenuGroup savedMenuGroup = menuGroupDao.save(추천_메뉴_그룹());
         Menu menu = MenuFixture.메뉴_생성(BigDecimal.valueOf(10000 + 10000 + 1), savedMenuGroup, menuProduct);
 
         // when then
