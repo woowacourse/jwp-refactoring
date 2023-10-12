@@ -100,14 +100,13 @@
 
 - [ ] 도메인의 setter를 제거한다.
     - [ ] Menu
-    - [x] MenuGroup
-    - [ ] MenuProduct
     - [ ] Order
-    - [ ] OrderLineItem
-    - [ ] OrderStatus
-    - [ ] OrderTable
     - [ ] Product
+    - [ ] OrderTable
+    - [ ] OrderLineItem
     - [ ] TableGroup
+    - [x] MenuGroup
+    - [x] MenuProduct
 
 - [ ] 도메인이 비즈니스 로직을 가지게 한다.
     - [ ] MenuGroup
@@ -116,3 +115,4 @@
     - [ ] Product
     - [ ] TableGroup
     - [ ] Table
+    - [ ] OrderStatus
