@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.ProductFixtures.CHICKEN_PRICE_18000;
+import static kitchenpos.fixture.ProductFixtures.후라이드치킨_16000원;
+import static kitchenpos.fixture.ProductFixtures.후라이드치킨_16000원_ID1;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
@@ -30,10 +31,8 @@ class ProductServiceTest {
     @Test
     void create() {
         // given
-        Product product = CHICKEN_PRICE_18000;
-
-        Product expected = new Product();
-        CHICKEN_PRICE_18000.setId(1L);
+        Product product = 후라이드치킨_16000원;
+        Product expected = 후라이드치킨_16000원_ID1;
 
         given(productDao.save(product)).willReturn(expected);
 
