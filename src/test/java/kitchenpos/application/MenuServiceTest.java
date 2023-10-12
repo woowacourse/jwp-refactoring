@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.application.config.ServiceTestConfig;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -128,6 +130,28 @@ class MenuServiceTest extends ServiceTestConfig {
             // then
             assertThatThrownBy(() -> menuService.create(spyMenuInput))
                     .isInstanceOf(IllegalArgumentException.class);
+        }
+    }
+
+    @DisplayName("메뉴 전체 조회")
+    @Nested
+    class ReadAll {
+        @DisplayName("성공한다.")
+        @Test
+        void success() {
+            // given
+            final MenuGroup menuGroup = saveMenuGroup();
+            final Menu savedMenu = saveMenu(menuGroup);
+
+            // when
+            final List<Menu> actual = menuService.list();
+
+            // then
+            // FIXME: equals&hashcode 적용
+            assertSoftly(softly -> {
+                softly.assertThat(actual.size()).isEqualTo(1);
+//                softly.assertThat(actual).containsExactly(savedMenu);
+            });
         }
     }
 }

@@ -77,10 +77,7 @@ class ProductServiceTest extends ServiceTestConfig {
         @Test
         void success() {
             // given
-            final Product productInput = new Product();
-            productInput.setName("여우곰탕");
-            productInput.setPrice(BigDecimal.valueOf(10000));
-            final Product savedProduct = productDao.save(productInput);
+            final Product savedProduct = saveProduct();
 
             // when
             final List<Product> actual = productService.list();
