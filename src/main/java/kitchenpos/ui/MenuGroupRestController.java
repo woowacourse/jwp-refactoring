@@ -21,15 +21,15 @@ public class MenuGroupRestController {
 
     @PostMapping("/api/menu-groups")
     public ResponseEntity<MenuGroup> create(@RequestBody final MenuGroup menuGroup) {
-        final MenuGroup created = menuGroupService.create(menuGroup);
-        final URI uri = URI.create("/api/menu-groups/" + created.getId());
+        final MenuGroup created = menuGroupService.create(menuGroup); // 받은 menu group 을 만듦
+        final URI uri = URI.create("/api/menu-groups/" + created.getId()); // 그리고 create 한 것을 기반으로 url 생성
         return ResponseEntity.created(uri)
                 .body(created)
                 ;
     }
 
     @GetMapping("/api/menu-groups")
-    public ResponseEntity<List<MenuGroup>> list() {
+    public ResponseEntity<List<MenuGroup>> list() { // menu group 을 반환, 즉 추천메뉴 등등을 받을 수 있는 것
         return ResponseEntity.ok()
                 .body(menuGroupService.list())
                 ;
