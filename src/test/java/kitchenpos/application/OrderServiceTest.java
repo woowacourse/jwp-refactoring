@@ -19,26 +19,22 @@ import kitchenpos.supports.ProductFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayName("주문 서비스 테스트")
 @ServiceTest
 class OrderServiceTest {
 
-    private final OrderService orderService;
-    private final TableService tableService;
-    private final MenuService menuService;
-    private final MenuGroupService menuGroupService;
-    private final ProductService productService;
-
-    public OrderServiceTest(final OrderService orderService, final TableService tableService,
-                            final MenuService menuService,
-                            final MenuGroupService menuGroupService, final ProductService productService) {
-        this.orderService = orderService;
-        this.tableService = tableService;
-        this.menuService = menuService;
-        this.menuGroupService = menuGroupService;
-        this.productService = productService;
-    }
+    @Autowired
+    private OrderService orderService;
+    @Autowired
+    private TableService tableService;
+    @Autowired
+    private MenuService menuService;
+    @Autowired
+    private MenuGroupService menuGroupService;
+    @Autowired
+    private ProductService productService;
 
     private Menu setUpMenu() {
         // given

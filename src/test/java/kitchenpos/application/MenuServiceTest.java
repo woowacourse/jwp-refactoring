@@ -16,21 +16,18 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayName("메뉴 서비스 테스트")
 @ServiceTest
 class MenuServiceTest {
 
-    private final MenuService menuService;
-    private final MenuGroupService menuGroupService;
-    private final ProductService productService;
-
-    public MenuServiceTest(final MenuService menuService, final MenuGroupService menuGroupService,
-                           final ProductService productService) {
-        this.menuService = menuService;
-        this.menuGroupService = menuGroupService;
-        this.productService = productService;
-    }
+    @Autowired
+    private MenuService menuService;
+    @Autowired
+    private MenuGroupService menuGroupService;
+    @Autowired
+    private ProductService productService;
 
     private Menu setUp() {
         // given

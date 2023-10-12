@@ -12,16 +12,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayName("상품 서비스 테스트")
 @ServiceTest
 class ProductServiceTest {
 
-    private final ProductService productService;
-
-    public ProductServiceTest(final ProductService productService) {
-        this.productService = productService;
-    }
+    @Autowired
+    private ProductService productService;
 
     @DisplayName("상품을 생성할 수 있다")
     @ParameterizedTest

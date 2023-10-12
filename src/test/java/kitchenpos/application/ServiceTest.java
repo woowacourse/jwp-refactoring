@@ -11,7 +11,6 @@ import org.springframework.test.context.jdbc.Sql;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@TestConstructor(autowireMode = AutowireMode.ALL)
 @Sql(value = "/truncate.sql")
 @SpringBootTest
 public @interface ServiceTest {

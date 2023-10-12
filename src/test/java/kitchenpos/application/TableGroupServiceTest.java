@@ -22,29 +22,24 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayName("단체 지정 서비스 테스트")
 @ServiceTest
 class TableGroupServiceTest {
 
-    private final TableGroupService tableGroupService;
-    private final TableService tableService;
-    private final ProductService productService;
-    private final MenuService menuService;
-    private final MenuGroupService menuGroupService;
-    private final OrderService orderService;
-
-    public TableGroupServiceTest(final TableGroupService tableGroupService, final TableService tableService,
-                                 final ProductService productService, final MenuService menuService,
-                                 final MenuGroupService menuGroupService,
-                                 final OrderService orderService) {
-        this.tableGroupService = tableGroupService;
-        this.tableService = tableService;
-        this.productService = productService;
-        this.menuService = menuService;
-        this.menuGroupService = menuGroupService;
-        this.orderService = orderService;
-    }
+    @Autowired
+    private TableGroupService tableGroupService;
+    @Autowired
+    private TableService tableService;
+    @Autowired
+    private ProductService productService;
+    @Autowired
+    private MenuService menuService;
+    @Autowired
+    private MenuGroupService menuGroupService;
+    @Autowired
+    private OrderService orderService;
 
     @Nested
     @DisplayName("단체 지정을 할 때")

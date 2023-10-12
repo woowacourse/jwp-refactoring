@@ -8,16 +8,14 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.supports.MenuGroupFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayName("메뉴 그룹 서비스 테스트")
 @ServiceTest
 class MenuGroupServiceTest {
 
-    private final MenuGroupService menuGroupService;
-
-    public MenuGroupServiceTest(final MenuGroupService menuGroupService) {
-        this.menuGroupService = menuGroupService;
-    }
+    @Autowired
+    private MenuGroupService menuGroupService;
 
     @DisplayName("메뉴 그룹을 생성할 수 있다")
     @Test

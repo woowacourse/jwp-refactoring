@@ -21,29 +21,24 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayName("테이블 서비스 테스트")
 @ServiceTest
 class TableServiceTest {
 
-    private final TableService tableService;
-    private final TableGroupService tableGroupService;
-    private final OrderService orderService;
-    private final ProductService productService;
-    private final MenuService menuService;
-    private final MenuGroupService menuGroupService;
-
-    public TableServiceTest(final TableService tableService, final TableGroupService tableGroupService,
-                            final OrderService orderService,
-                            final ProductService productService, final MenuService menuService,
-                            final MenuGroupService menuGroupService) {
-        this.tableService = tableService;
-        this.tableGroupService = tableGroupService;
-        this.orderService = orderService;
-        this.productService = productService;
-        this.menuService = menuService;
-        this.menuGroupService = menuGroupService;
-    }
+    @Autowired
+    private TableService tableService;
+    @Autowired
+    private TableGroupService tableGroupService;
+    @Autowired
+    private OrderService orderService;
+    @Autowired
+    private ProductService productService;
+    @Autowired
+    private MenuService menuService;
+    @Autowired
+    private MenuGroupService menuGroupService;
 
     @Nested
     @DisplayName("테이블을 생성할 때")
