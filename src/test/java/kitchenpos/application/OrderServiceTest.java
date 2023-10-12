@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Collections;
@@ -16,7 +17,26 @@ class OrderServiceTest extends IntegrationTest {
 
     @Autowired
     private OrderService orderService;
-    
+
+    @Test
+    void create_order_success() {
+        // given
+        final Menu savedMenu = generateMenu("chicken");
+        final OrderTable savedOrderTable = generateOrderTable(3);
+        final Order order = new Order();
+        order.setOrderTableId(1L);
+        order.setOrderLineItems(List.of(generateOrderLineItem(savedMenu)));
+        order.setOrderTableId(savedOrderTable.getTableGroupId());
+
+        // when
+        final Order savedOrder = orderService.create(order);
+
+        // then
+        assertThat(savedOrder.getId()).isNotNull();
+        assertThat(savedOrder.getOrderStatus()).isEqualTo("COOKING");
+        assertThat(savedOrder.getOrderLineItems()).hasSize(1);
+    }
+
     @Nested
     class create_order_failure {
 
