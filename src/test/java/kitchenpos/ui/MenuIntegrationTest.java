@@ -11,6 +11,7 @@ import kitchenpos.domain.MenuFactory;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.ProductFactory;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
@@ -167,6 +168,7 @@ class MenuIntegrationTest extends IntegrationTest {
     @Nested
     class 메뉴_목록_조회시 {
 
+        @Order(Integer.MAX_VALUE)
         @Test
         void 메뉴_목록을_조회한다() {
             // given
