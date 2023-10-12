@@ -13,7 +13,7 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.fixture.MenuProductFixture;
+import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.ProductFixture;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -57,7 +57,7 @@ class MenuServiceTest {
             Menu menu = REQUEST.메뉴_등록_요청();
             given(menuDao.save(any(Menu.class)))
                     .willReturn(menu);
-            given(menuGroupDao.existsById(anyLong()))
+            given(menuGroupDao.existsById(any()))
                     .willReturn(true);
             given(productDao.findById(anyLong()))
                     .willReturn(Optional.of(ProductFixture.PRODUCT.후라이드_치킨()));
@@ -123,9 +123,8 @@ class MenuServiceTest {
         void 메뉴_가격이_상품들의_가격_합보다_크면_예외(Long menuPrice, Long productPrice) {
             // given
             Menu menu = REQUEST.메뉴_등록_요청();
-            Product product = ProductFixture.PRODUCT.후라이드_치킨();
             menu.setPrice(BigDecimal.valueOf(menuPrice));
-            product.setPrice(BigDecimal.valueOf(productPrice));
+            Product product = ProductFixture.PRODUCT.후라이드_치킨(productPrice);
 
             given(menuGroupDao.existsById(anyLong()))
                     .willReturn(true);
@@ -148,7 +147,7 @@ class MenuServiceTest {
             given(menuDao.findAll())
                     .willReturn(List.of(menu));
             given(menuProductDao.findAllByMenuId(anyLong()))
-                    .willReturn(List.of(MenuProductFixture.MENU_PRODUCT.후라이드_치킨()));
+                    .willReturn(List.of(MenuFixture.MENU_PRODUCT.후라이드_치킨()));
 
             // when
             List<Menu> result = menuService.list();

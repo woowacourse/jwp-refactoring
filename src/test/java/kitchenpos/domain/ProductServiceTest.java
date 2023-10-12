@@ -55,8 +55,7 @@ class ProductServiceTest {
         @ValueSource(strings = {"-1", "-9999999"})
         void 상품의_가격이_0원_미만이면_예외(Long price) {
             // given
-            Product product = ProductFixture.PRODUCT.후라이드_치킨();
-            product.setPrice(new BigDecimal(price));
+            Product product = ProductFixture.PRODUCT.후라이드_치킨(price);
 
             // when & then
             Assertions.assertThatThrownBy(() -> productService.create(product))

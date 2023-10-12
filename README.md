@@ -101,7 +101,7 @@
 - [ ] 도메인의 setter를 제거한다.
     - [ ] Menu
     - [ ] Order
-    - [ ] Product
+    - [x] Product
     - [x] OrderTable
     - [x] OrderLineItem
     - [x] TableGroup

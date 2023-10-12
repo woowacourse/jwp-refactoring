@@ -11,11 +11,19 @@ public class ProductFixture {
 
     public static class PRODUCT {
         public static Product 후라이드_치킨() {
-            Product product = new Product();
-            product.setId(1L);
-            product.setName("후라이드치킨");
-            product.setPrice(BigDecimal.valueOf(16000L));
-            return product;
+            return Product.builder()
+                    .id(1L)
+                    .name("후라이드치킨")
+                    .price(BigDecimal.valueOf(16000L))
+                    .build();
+        }
+
+        public static Product 후라이드_치킨(Long price) {
+            return Product.builder()
+                    .id(1L)
+                    .name("후라이드치킨")
+                    .price(BigDecimal.valueOf(price))
+                    .build();
         }
     }
 }

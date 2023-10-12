@@ -38,10 +38,11 @@ class ProductRestControllerTest {
 
     @BeforeEach
     void setUp() {
-        product = new Product();
-        product.setId(1L);
-        product.setName("후라이드");
-        product.setPrice(BigDecimal.valueOf(16000L));
+        product = Product.builder()
+                .id(1L)
+                .name("후라이드")
+                .price(BigDecimal.valueOf(16000L))
+                .build();
     }
 
     @Nested
