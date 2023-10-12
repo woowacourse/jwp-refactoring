@@ -15,7 +15,6 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -32,10 +31,6 @@ class TableGroupServiceTest {
   private OrderDao orderDao;
   @Autowired
   private TableGroupService tableGroupService;
-
-  @BeforeEach
-  void init() {
-  }
 
   @Test
   @DisplayName("단체 테이블을 등록할 수 있다.")
