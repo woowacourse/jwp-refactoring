@@ -6,24 +6,20 @@ import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class MenuGroupServiceTest {
 
+    @InjectMocks
     private MenuGroupService menuGroupService;
     @Mock
     private MenuGroupDao menuGroupDao;
-
-    @BeforeEach
-    void init() {
-        menuGroupService = new MenuGroupService(menuGroupDao);
-    }
 
     @Test
     @DisplayName("메뉴 그룹을 생성할 수 있다.")
