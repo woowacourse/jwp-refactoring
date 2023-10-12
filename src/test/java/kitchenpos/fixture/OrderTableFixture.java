@@ -1,5 +1,8 @@
 package kitchenpos.fixture;
 
+import kitchenpos.application.table.dto.OrderTableChangeEmptyRequest;
+import kitchenpos.application.table.dto.OrderTableChangeNumberOfGuestRequest;
+import kitchenpos.application.table.dto.OrderTableCreateRequest;
 import kitchenpos.domain.OrderTable;
 
 public class OrderTableFixture {
@@ -8,5 +11,20 @@ public class OrderTableFixture {
                                        final int numberOfGuests,
                                        final boolean isEmpty) {
         return new OrderTable(tableGroupId, numberOfGuests, isEmpty);
+    }
+
+    public static OrderTableCreateRequest 주문_테이블_생성_요청(final OrderTable orderTable) {
+        return new OrderTableCreateRequest(
+                orderTable.getNumberOfGuests(),
+                orderTable.isEmpty()
+        );
+    }
+
+    public static OrderTableChangeEmptyRequest 주문_테이블_상태_업데이트_요청(final OrderTable orderTable) {
+        return new OrderTableChangeEmptyRequest(orderTable.isEmpty());
+    }
+
+    public static OrderTableChangeNumberOfGuestRequest 주문_테이블_손님_수_업데이트_요청(final OrderTable orderTable) {
+        return new OrderTableChangeNumberOfGuestRequest(orderTable.getNumberOfGuests());
     }
 }

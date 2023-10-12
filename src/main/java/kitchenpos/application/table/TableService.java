@@ -1,5 +1,8 @@
-package kitchenpos.application;
+package kitchenpos.application.table;
 
+import kitchenpos.application.table.dto.OrderTableChangeEmptyRequest;
+import kitchenpos.application.table.dto.OrderTableChangeNumberOfGuestRequest;
+import kitchenpos.application.table.dto.OrderTableCreateRequest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
@@ -23,10 +26,8 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
-
+    public OrderTable create(final OrderTableCreateRequest req) {
+        OrderTable orderTable = req.toDomain();
         return orderTableDao.save(orderTable);
     }
 
@@ -35,7 +36,7 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
+    public OrderTable changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest req) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -48,16 +49,16 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setEmpty(orderTable.isEmpty());
+        savedOrderTable.setEmpty(req.isEmpty());
 
         return orderTableDao.save(savedOrderTable);
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
+    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTableChangeNumberOfGuestRequest req) {
+        final int numberOfUpdateGuests = req.getNumberOfGuests();
 
-        if (numberOfGuests < 0) {
+        if (numberOfUpdateGuests < 0) {
             throw new IllegalArgumentException();
         }
 
@@ -68,7 +69,7 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
+        savedOrderTable.setNumberOfGuests(numberOfUpdateGuests);
 
         return orderTableDao.save(savedOrderTable);
     }
