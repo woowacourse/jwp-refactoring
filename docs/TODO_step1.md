@@ -23,7 +23,7 @@
 - [x] API 테스트 작성
 - [ ] Business Object 테스트 작성
 ### 전체 조회
-- [ ] 통합 테스트 작성
+- [x] API 테스트 작성
 - [ ] Business Object 테스트 작성
 
 ---
