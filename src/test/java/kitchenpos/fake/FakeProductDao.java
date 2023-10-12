@@ -3,12 +3,16 @@ package kitchenpos.fake;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class FakeProductDao implements ProductDao {
 
-    private static Map<Long, Product> products = new HashMap<>();
-    private static Long id = 0L;
+    private Map<Long, Product> products = new HashMap<>();
+    private Long id = 0L;
 
     @Override
     public Product save(Product entity) {

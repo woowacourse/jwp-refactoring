@@ -12,8 +12,8 @@ import java.util.Optional;
 
 public class FakeOrderDao implements OrderDao {
 
-    private static Map<Long, Order> orders = new HashMap<>();
-    private static Long id = 0L;
+    private Map<Long, Order> orders = new HashMap<>();
+    private Long id = 0L;
 
     @Override
     public Order save(Order entity) {

@@ -3,12 +3,16 @@ package kitchenpos.fake;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class FakeMenuGroupDao implements MenuGroupDao {
 
-    private static Map<Long, MenuGroup> menuGroups = new HashMap<>();
-    private static Long id = 0L;
+    private Map<Long, MenuGroup> menuGroups = new HashMap<>();
+    private Long id = 0L;
 
     @Override
     public MenuGroup save(MenuGroup entity) {

@@ -3,13 +3,17 @@ package kitchenpos.fake;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class FakeOrderTableDao implements OrderTableDao {
 
-    private static Map<Long, OrderTable> orderTables = new HashMap<>();
-    private static Long id = 0L;
+    private Map<Long, OrderTable> orderTables = new HashMap<>();
+    private Long id = 0L;
 
     @Override
     public OrderTable save(OrderTable entity) {
