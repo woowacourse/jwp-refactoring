@@ -27,7 +27,7 @@ class ProductServiceTest {
     @InjectMocks
     private ProductService productService;
 
-    @DisplayName("상품을 생성한다")
+    @DisplayName("상품을 생성한다.")
     @Test
     void create() {
         // given
@@ -43,7 +43,7 @@ class ProductServiceTest {
         assertThat(actual.getId()).isEqualTo(expected.getId());
     }
 
-    @DisplayName("가격이 0원보다 낮은 상품을 생성하면 예외가 발생한다")
+    @DisplayName("가격이 0원보다 낮은 상품을 생성하면 예외가 발생한다.")
     @ValueSource(ints = {-1, -100, -35_000, -100_000})
     @ParameterizedTest
     void create_PriceLowerThanZero_ExceptionThrown(int invalidPrice) {
