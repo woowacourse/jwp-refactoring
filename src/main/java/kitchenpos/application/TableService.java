@@ -48,7 +48,7 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setEmpty(request.isEmpty());
+        savedOrderTable.updateEmpty(request.isEmpty());
 
         return orderTableDao.save(savedOrderTable);
     }
