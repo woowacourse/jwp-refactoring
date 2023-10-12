@@ -71,5 +71,4 @@ class MenuRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(objectMapper.writeValueAsString(List.of(resultA, resultB))));
     }
-
 }
