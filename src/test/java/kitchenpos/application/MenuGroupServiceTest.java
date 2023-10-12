@@ -42,14 +42,14 @@ class MenuGroupServiceTest extends ServiceTest {
     @Test
     void list() {
         // given
-        MenuGroup 두마리메뉴 = new MenuGroup();
-        두마리메뉴.setName("두마리메뉴");
+        MenuGroup menuGroup1 = new MenuGroup();
+        menuGroup1.setName("두마리메뉴");
 
-        MenuGroup 한마리메뉴 = new MenuGroup();
-        한마리메뉴.setName("한마리메뉴");
+        MenuGroup menuGroup2 = new MenuGroup();
+        menuGroup2.setName("한마리메뉴");
 
-        menuGroupDao.save(두마리메뉴);
-        menuGroupDao.save(한마리메뉴);
+        MenuGroup 한마리메뉴 = menuGroupService.create(menuGroup1);
+        MenuGroup 두마리메뉴 = menuGroupService.create(menuGroup2);
 
         // when
         List<MenuGroup> list = menuGroupService.list();
@@ -57,8 +57,8 @@ class MenuGroupServiceTest extends ServiceTest {
         // then
         assertSoftly(softly -> {
             softly.assertThat(list).hasSize(2);
-            softly.assertThat(list).extracting("name")
-                    .contains(두마리메뉴.getName(), 한마리메뉴.getName());
+            softly.assertThat(list).usingRecursiveComparison()
+                    .isEqualTo(List.of(한마리메뉴, 두마리메뉴));
         });
     }
 }

@@ -76,25 +76,25 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void list() {
         // given
-        Product 후라이드 = new Product();
-        후라이드.setName("후라이드");
-        후라이드.setPrice(BigDecimal.valueOf(16000));
+        Product product1 = new Product();
+        product1.setName("후라이드");
+        product1.setPrice(BigDecimal.valueOf(16000));
 
-        Product 양념치킨 = new Product();
-        양념치킨.setName("양념치킨");
-        양념치킨.setPrice(BigDecimal.valueOf(16000));
+        Product product2 = new Product();
+        product2.setName("양념치킨");
+        product2.setPrice(BigDecimal.valueOf(16000));
 
-        productDao.save(후라이드);
-        productDao.save(양념치킨);
-        
+        Product 후라이드 = productService.create(product1);
+        Product 양념치킨 = productService.create(product2);
+
         // when
         List<Product> list = productService.list();
 
         // then
         assertSoftly(softly -> {
             softly.assertThat(list).hasSize(2);
-            softly.assertThat(list).extracting("name")
-                    .contains(후라이드.getName(), 양념치킨.getName());
+            softly.assertThat(list).usingRecursiveComparison()
+                    .isEqualTo(List.of(후라이드, 양념치킨));
         });
     }
 }
