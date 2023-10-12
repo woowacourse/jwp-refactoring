@@ -14,7 +14,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Sql(value = "/truncate.sql")
-public abstract class IntegrationTest {
+public abstract class AcceptanceTest {
 
     @LocalServerPort
     private int port;

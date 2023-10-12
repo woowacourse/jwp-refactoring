@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
-class TableIntegrationTest extends IntegrationTest {
+class TableAcceptanceTest extends AcceptanceTest {
 
     @Test
     void 테이블을_생성한다() {

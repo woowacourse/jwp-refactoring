@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
-class MenuIntegrationTest extends IntegrationTest {
+class MenuAcceptanceTest extends AcceptanceTest {
 
     @Test
     void 메뉴를_생성한다() {
