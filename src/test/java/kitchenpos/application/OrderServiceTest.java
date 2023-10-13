@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static java.lang.Long.MAX_VALUE;
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.fixture.MenuFixture.*;
 import static kitchenpos.fixture.MenuGroupFixture.*;
@@ -16,12 +17,16 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.fixture.MenuFixture;
@@ -130,6 +135,49 @@ class OrderServiceTest extends ServiceIntegrationTest {
         // then
         assertThat(savedOrdersExcludeExistingData).usingRecursiveComparison()
                 .isEqualTo(savedOrder);
+    }
+
+    @Test
+    void 존재하지_않는_Order를_변경할_수_없다() {
+        // given
+        OrderTable savedOrderTable = orderTableDao.save(OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(1, true));
+        Order order = 주문_생성(savedOrderTable, Collections.emptyList());
+
+        // when then
+        assertThatThrownBy(() -> orderService.changeOrderStatus(MAX_VALUE, order))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 이미_식사를_완료한_주문을_변경을_할_수_없다() {
+        // given
+        Order order = 주문을_저장하고_반환받는다();
+        order.setOrderStatus(OrderStatus.COMPLETION.name());
+        orderDao.save(order);
+
+        // when
+        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), order))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 성공적으로_Order를_원하는_상태로_바꾼다() {
+        // given
+        Order savedOrder = 주문을_저장하고_반환받는다();
+        savedOrder.setOrderStatus(OrderStatus.COMPLETION.name());
+
+        // when
+        orderService.changeOrderStatus(savedOrder.getId(), savedOrder);
+
+        // then
+        Order changedOrder = orderService.list()
+                .stream()
+                .filter(order -> order.getId().equals(savedOrder.getId()))
+                .findFirst()
+                .orElseThrow(NoSuchElementException::new);
+
+        assertThat(changedOrder).usingRecursiveComparison()
+                        .isEqualTo(savedOrder);
     }
 
     private Order 주문을_저장하고_반환받는다() {

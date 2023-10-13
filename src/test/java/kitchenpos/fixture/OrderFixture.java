@@ -43,6 +43,18 @@ public class OrderFixture {
         );
     }
 
+    public static Order 식사완료_한_주문_생성(
+            OrderTable savedOrderTable,
+            List<OrderLineItem> orderLineItems
+    ) {
+        return new Order(
+                savedOrderTable.getId(),
+                OrderStatus.COMPLETION.name(),
+                LocalDateTime.now(),
+                orderLineItems
+        );
+    }
+
     public static Order 존재하지_않는_OrderTable을_가진_주문_생성(
             List<OrderLineItem> orderLineItems
     ) {
