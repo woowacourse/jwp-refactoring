@@ -1,5 +1,15 @@
 package kitchenpos.application;
 
+import static kitchenpos.support.TestFixtureFactory.새로운_메뉴;
+import static kitchenpos.support.TestFixtureFactory.새로운_메뉴_그룹;
+import static kitchenpos.support.TestFixtureFactory.새로운_메뉴_상품;
+import static kitchenpos.support.TestFixtureFactory.새로운_상품;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+
+import java.math.BigDecimal;
+import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
@@ -9,14 +19,6 @@ import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.math.BigDecimal;
-import java.util.List;
-
-import static kitchenpos.support.TestFixtureFactory.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @ServiceTest
 class MenuServiceTest {

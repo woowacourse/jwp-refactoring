@@ -1,23 +1,30 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.*;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import static kitchenpos.domain.OrderStatus.COMPLETION;
+import static kitchenpos.domain.OrderStatus.MEAL;
+import static kitchenpos.support.TestFixtureFactory.새로운_메뉴;
+import static kitchenpos.support.TestFixtureFactory.새로운_메뉴_그룹;
+import static kitchenpos.support.TestFixtureFactory.새로운_주문;
+import static kitchenpos.support.TestFixtureFactory.새로운_주문_테이블;
+import static kitchenpos.support.TestFixtureFactory.새로운_주문_항목;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-
-import static kitchenpos.domain.OrderStatus.COMPLETION;
-import static kitchenpos.domain.OrderStatus.MEAL;
-import static kitchenpos.support.TestFixtureFactory.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderTable;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @ServiceTest
 class OrderServiceTest {
@@ -83,9 +90,9 @@ class OrderServiceTest {
     @Test
     void 빈_테이블이_등록될_수_없다() {
         Long 빈_테이블_ID = orderTableDao.save(새로운_주문_테이블(null, 1, true)).getId();
-        Order order = 새로운_주문(빈_테이블_ID, null, LocalDateTime.now(), List.of(주문_항목));
+        Order 빈_테이블이_포함된_주문 = 새로운_주문(빈_테이블_ID, null, LocalDateTime.now(), List.of(주문_항목));
 
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(빈_테이블이_포함된_주문))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -119,11 +126,11 @@ class OrderServiceTest {
 
     @Test
     void 완료된_주문의_상태를_변경할_수_없다() {
-        Order order = orderService.create(새로운_주문(주문_테이블.getId(), null, LocalDateTime.now(), List.of(주문_항목)));
-        order.setOrderStatus(COMPLETION.name());
-        orderService.changeOrderStatus(order.getId(), order);
+        Order 주문 = orderService.create(새로운_주문(주문_테이블.getId(), null, LocalDateTime.now(), List.of(주문_항목)));
+        주문.setOrderStatus(COMPLETION.name());
+        orderService.changeOrderStatus(주문.getId(), 주문);
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), order))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(주문.getId(), 주문))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

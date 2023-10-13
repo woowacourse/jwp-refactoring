@@ -1,22 +1,28 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.*;
-import org.assertj.core.api.SoftAssertions;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.domain.OrderStatus.MEAL;
+import static kitchenpos.support.TestFixtureFactory.새로운_메뉴;
+import static kitchenpos.support.TestFixtureFactory.새로운_메뉴_그룹;
+import static kitchenpos.support.TestFixtureFactory.새로운_주문;
+import static kitchenpos.support.TestFixtureFactory.새로운_주문_테이블;
+import static kitchenpos.support.TestFixtureFactory.새로운_주문_항목;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-
-import static kitchenpos.domain.OrderStatus.COOKING;
-import static kitchenpos.domain.OrderStatus.MEAL;
-import static kitchenpos.support.TestFixtureFactory.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderTable;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @DaoTest
 class OrderLineItemDaoTest {

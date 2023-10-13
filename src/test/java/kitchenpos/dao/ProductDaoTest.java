@@ -1,17 +1,13 @@
 package kitchenpos.dao;
 
-import static kitchenpos.support.TestFixtureFactory.*;
+import static kitchenpos.support.TestFixtureFactory.새로운_상품;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.Product;
-import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

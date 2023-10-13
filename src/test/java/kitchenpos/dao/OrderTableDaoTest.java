@@ -1,9 +1,9 @@
 package kitchenpos.dao;
 
-import static kitchenpos.support.TestFixtureFactory.*;
+import static kitchenpos.support.TestFixtureFactory.새로운_단체_지정;
+import static kitchenpos.support.TestFixtureFactory.새로운_주문_테이블;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.time.LocalDateTime;
