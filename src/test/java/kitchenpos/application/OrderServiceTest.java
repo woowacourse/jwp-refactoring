@@ -10,11 +10,13 @@ import static kitchenpos.fixture.OrderTableFixture.*;
 import static kitchenpos.fixture.ProductFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.contentOf;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -29,6 +31,7 @@ import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.ProductFixture;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -93,17 +96,8 @@ class OrderServiceTest extends ServiceIntegrationTest {
 
     @Test
     void Order를_성공적으로_저장한다() {
-        // given
-        OrderTable savedOrderTable = orderTableDao.save(테이블_그룹이_없는_주문_테이블_생성(1, false));
-        Product savedProduct = productDao.save(후추_치킨_10000원());
-        MenuGroup savedMenuGroup = menuGroupDao.save(추천_메뉴_그룹());
-        MenuProduct menuProduct = 메뉴_상품(savedProduct, 2);
-        Menu savedMenu = menuDao.save(메뉴_생성(BigDecimal.valueOf(20000), savedMenuGroup, menuProduct));
-        OrderLineItem orderLineItem = 메뉴만을_가진_OrderLineItem_생성(savedMenu, 2);
-        Order order = 주문_생성(savedOrderTable, List.of(orderLineItem));
-
         // when
-        Order savedOrder = orderService.create(order);
+        Order savedOrder = 주문을_저장하고_반환받는다();
 
         // then
         assertAll(
@@ -114,6 +108,40 @@ class OrderServiceTest extends ServiceIntegrationTest {
                         .isEqualTo(savedOrder.getId()),
                 () -> assertThat(savedOrder.getOrderLineItems().get(0).getSeq()).isNotNull()
         );
+    }
+
+    @Test
+    void 전체_Order_목록을_반환받는다() {
+        // given
+        List<Order> savedOrder =List.of(
+                주문을_저장하고_반환받는다()
+        );
+
+        // when
+        List<Order> savedOrdersExcludeExistingData = orderService.list()
+                .stream()
+                .filter(order ->
+                        containsObjects(
+                                savedOrder,
+                                orderInSavedOrder -> orderInSavedOrder.getId().equals(order.getId())
+                        )
+                ).collect(Collectors.toList());
+
+        // then
+        assertThat(savedOrdersExcludeExistingData).usingRecursiveComparison()
+                .isEqualTo(savedOrder);
+    }
+
+    private Order 주문을_저장하고_반환받는다() {
+        OrderTable savedOrderTable = orderTableDao.save(테이블_그룹이_없는_주문_테이블_생성(1, false));
+        Product savedProduct = productDao.save(후추_치킨_10000원());
+        MenuGroup savedMenuGroup = menuGroupDao.save(추천_메뉴_그룹());
+        MenuProduct menuProduct = 메뉴_상품(savedProduct, 2);
+        Menu savedMenu = menuDao.save(메뉴_생성(BigDecimal.valueOf(20000), savedMenuGroup, menuProduct));
+        OrderLineItem orderLineItem = 메뉴만을_가진_OrderLineItem_생성(savedMenu, 2);
+        Order order = 주문_생성(savedOrderTable, List.of(orderLineItem));
+
+        return orderService.create(order);
     }
 
 }
