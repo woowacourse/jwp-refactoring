@@ -4,11 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.dto.ChangeOrderStatusRequest;
-import kitchenpos.dto.CreateOrderRequest;
-import kitchenpos.dto.OrderLineItemRequest;
-import kitchenpos.dto.OrderResponse;
+import kitchenpos.dto.request.ChangeOrderStatusRequest;
+import kitchenpos.dto.request.CreateOrderRequest;
+import kitchenpos.dto.request.OrderLineItemRequest;
+import kitchenpos.dto.response.OrderResponse;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 

@@ -5,9 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dto.CreateMenuRequest;
-import kitchenpos.dto.MenuProductRequest;
-import kitchenpos.dto.MenuResponse;
+import kitchenpos.dto.request.CreateMenuRequest;
+import kitchenpos.dto.request.MenuProductRequest;
+import kitchenpos.dto.response.MenuResponse;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 

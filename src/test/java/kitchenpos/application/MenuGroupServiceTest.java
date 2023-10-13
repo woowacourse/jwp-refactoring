@@ -3,8 +3,8 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.dto.CreateMenuGroupRequest;
-import kitchenpos.dto.MenuGroupResponse;
+import kitchenpos.dto.request.CreateMenuGroupRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
