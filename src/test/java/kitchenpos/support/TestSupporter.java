@@ -5,7 +5,9 @@ import static kitchenpos.fixtures.MenuGroupFixture.MENU_GROUP;
 import static kitchenpos.fixtures.MenuProductFixture.MENU_PRODUCT;
 import static kitchenpos.fixtures.OrderFixture.ORDER;
 import static kitchenpos.fixtures.OrderLineItemFixture.ORDER_LINE_ITEM;
+import static kitchenpos.fixtures.OrderTableFixture.ORDER_TABLE;
 import static kitchenpos.fixtures.ProductFixture.PRODUCT;
+import static kitchenpos.fixtures.TableGroupFixture.TABLE_GROUP;
 
 import java.util.List;
 import kitchenpos.application.MenuGroupService;
@@ -21,7 +23,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
-import kitchenpos.fixtures.OrderTableFixture;
+import kitchenpos.domain.TableGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -64,17 +66,22 @@ public class TestSupporter {
         return menuService.create(menu);
     }
 
-    public OrderTable createOrderTable(final boolean empty) {
-        final OrderTable orderTable = OrderTableFixture.ORDER_TABLE();
-        orderTable.setEmpty(empty);
-        return tableService.create(orderTable);
-    }
-
     public Order createOrder() {
         final Menu menu = createMenu();
         final OrderLineItem orderLineItem = ORDER_LINE_ITEM(menu, 10L);
         final OrderTable orderTable = createOrderTable(false);
         final Order order = ORDER(List.of(orderLineItem), orderTable);
         return orderService.create(order);
+    }
+
+    public OrderTable createOrderTable(final boolean empty) {
+        final OrderTable orderTable = ORDER_TABLE();
+        orderTable.setEmpty(empty);
+        return tableService.create(orderTable);
+    }
+
+    public TableGroup createTableGroup(final List<OrderTable> orderTables) {
+        final TableGroup tableGroup = TABLE_GROUP(orderTables);
+        return tableGroupService.create(tableGroup);
     }
 }
