@@ -2,6 +2,45 @@
 
 ## 요구 사항
 
+- [x] MenuGroup
+    - [x] menuGroup 생성
+    - [x] menuGroup 목록 조회
+- [x] Menu
+    - [x] menu 생성
+        - [x] 가격이 비어있거나, 0보다 작은 경우 예외처리
+        - [x] menu의 menuGroup이 존재하지 않는 경우 예외처리
+        - [x] product가 존재하지 않는 경우 예외처리
+        - [x] menu의 menuProduct의 가격합이 price 보다 큰 경우 예외처리
+    - [x] menu 목록조회
+- [x] Order
+    - [x] order 생성(주문하기)
+        - [x] 주문하려는 상품의 목록이 비어있는 경우 예외처리
+        - [x] 주문하려는 상품의 목록의 사이즈와 조호된 menu의 사이즈가 다르면 예외처리
+        - [x] 주문 테이블을 조회했을 때 비어있으면 예외처리
+        - [x] 주문의 상태를 cooking으로 변경
+    - [x] order 목록 조회
+    - [x] order 상태 변경
+        - [x] order의 상태가 이미 완료된 상태인 경우 예외처리
+- [x] Product
+    - [x] product 생성
+        - [x] 가격이 0이하인 경우 예외처리
+    - [x] product 목록 조회
+- [x] TableGroup
+    - [x] TableGroup 생성
+        - [x] tableGroup을 묶는 orderTable이 비어있거나 size가 2이하면 예외처리
+        - [x] 입력된 orderTable과 동일한 id로 조회한 orderTable의 size가 다르면 오류가 발생한다 .
+        - [x] orderTable이 비어있지 않은 경우 예외처리
+    - [x] TableGroup 해제
+        - [x] tableGroup에 속한 orderTable의 주문 상태가 COMPLETION이 아닌 경우 예외처리
+- [x] Table
+    - [x] table 생성
+    - [x] table 목록 조회
+    - [x] table 상태 변경(비우기)
+        - [x] table의 상태가 cooking이거나 meal이면, 예외처리
+    - [x] table 방문 손님 수 변경
+        - [x] 입력된 손님 수가 0미만인 경우 예외처리
+        - [x] ordertable이 비어있으면 예외처리
+
 ## 용어 사전
 
 | 한글명 | 영문명 | 설명 |
