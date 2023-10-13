@@ -42,6 +42,7 @@ class MenuGroupServiceTest {
 
         // then
         assertThat(results).hasSize(1);
-        assertThat(results.get(0).getName()).isEqualTo(menuGroup.getName());
+        assertThat(results).extractingResultOf("getName")
+                .containsExactly(menuGroup.getName());
     }
 }

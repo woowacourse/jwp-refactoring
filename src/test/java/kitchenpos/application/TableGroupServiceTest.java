@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
@@ -59,7 +60,12 @@ class TableGroupServiceTest {
         final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
         // then
-        assertThat(savedTableGroup.getOrderTables()).hasSize(2);
+        final List<OrderTable> updatedOrderTables = savedTableGroup.getOrderTables();
+        final List<Long> updatedOrderTableIds = updatedOrderTables.stream().map(OrderTable::getId)
+                .collect(Collectors.toList());
+
+        assertThat(updatedOrderTables).hasSize(2);
+        assertThat(updatedOrderTableIds).containsExactly(firstTable.getId(), secondTable.getId());
     }
 
     @Test

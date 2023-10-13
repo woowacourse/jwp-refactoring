@@ -112,19 +112,29 @@ class MenuServiceTest {
         final Product savedProduct = createProduct(2000);
         final MenuProduct menuProduct = makeMenuProduct(savedProduct);
         final MenuGroup savedMenuGroup = createMenuGroup("테스트 메뉴 그룹");
+        final List<MenuProduct> menuProducts = List.of(menuProduct);
+        final BigDecimal price = new BigDecimal(2000);
 
         final Menu menu = new Menu();
         menu.setName("테스트 메뉴");
-        menu.setPrice(new BigDecimal(2000));
+        menu.setPrice(price);
         menu.setMenuGroupId(savedMenuGroup.getId());
-        menu.setMenuProducts(List.of(menuProduct));
+        menu.setMenuProducts(menuProducts);
         menuService.create(menu);
 
         // when
         final List<Menu> results = menuService.list();
+        final Menu savedMenuResult = results.get(0);
 
         // then
         assertThat(results).hasSize(1);
+        assertThat(savedMenuResult).usingRecursiveComparison()
+                .ignoringFields("id", "price", "menuProducts")
+                .isEqualTo(menu);
+        assertThat(savedMenuResult.getPrice()).isEqualByComparingTo(price);
+        assertThat(savedMenuResult.getMenuProducts()).usingRecursiveComparison()
+                .ignoringFields("seq")
+                .isEqualTo(menuProducts);
     }
 
     private Product createProduct(final int price) {

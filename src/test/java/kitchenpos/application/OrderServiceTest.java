@@ -6,8 +6,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -38,6 +40,9 @@ class OrderServiceTest {
 
     @Autowired
     private MenuDao menuDao;
+
+    @Autowired
+    private OrderDao orderDao;
 
     private OrderTable mockOrderTable;
     private Menu mockMenu;
@@ -100,9 +105,11 @@ class OrderServiceTest {
 
         // when
         final Long notExistMenuId = 99999L;
+        final Optional<Order> emptyOrder = orderDao.findById(notExistMenuId);
         orderLineItem.setMenuId(notExistMenuId);
 
         // then
+        assertThat(emptyOrder).isEmpty();
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -163,6 +170,46 @@ class OrderServiceTest {
         // when
         final Order updateStatusOrder = new Order();
         updateStatusOrder.setOrderStatus(orderStatus.name());
+
+        // then
+        assertThatThrownBy(() -> orderService.changeOrderStatus(createdOrder.getId(), updateStatusOrder))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 주문_메뉴의_상품들_개수와_기존_메뉴의_상품들_개수가_같지않으면_예외가_발생한다() {
+        // given
+        final Order order = new Order();
+        final OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setMenuId(mockMenu.getId());
+        order.setOrderTableId(mockOrderTable.getId());
+
+        // when
+        final OrderLineItem notSavedMenuOrderItem = new OrderLineItem();
+        order.setOrderLineItems(List.of(orderLineItem, notSavedMenuOrderItem));
+
+        // then
+        assertThatThrownBy(() -> orderService.create(order))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 존재하지_않는_주문_상태를_변경할_경우_예외가_발생한다() {
+        // given
+        final Order order = new Order();
+        final OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setMenuId(mockMenu.getId());
+        order.setOrderLineItems(List.of(orderLineItem));
+        order.setOrderTableId(mockOrderTable.getId());
+
+        final Order createdOrder = orderService.create(order);
+        createdOrder.setOrderStatus(OrderStatus.COMPLETION.name());
+        orderService.create(createdOrder);
+
+        // when
+        final String notExistOrderStatusName = "없는주문상태";
+        final Order updateStatusOrder = new Order();
+        updateStatusOrder.setOrderStatus(notExistOrderStatusName);
 
         // then
         assertThatThrownBy(() -> orderService.changeOrderStatus(createdOrder.getId(), updateStatusOrder))
