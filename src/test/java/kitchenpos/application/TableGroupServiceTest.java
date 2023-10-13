@@ -90,7 +90,8 @@ class TableGroupServiceTest {
         @Test
         void 존재하지_않는_테이블이_포함되어_있으면_예외가_발생한다() {
             // given
-            final OrderTable invalidTable = new OrderTable(99L, 1L, 5, true);
+            final long nonExistTableId = 99L;
+            final OrderTable invalidTable = new OrderTable(nonExistTableId, 1L, 5, true);
             final TableGroup tableGroup = new TableGroup(List.of(dummyTables.get(0), invalidTable));
 
             // when & then

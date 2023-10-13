@@ -78,10 +78,11 @@ class TableServiceTest {
         @Test
         void 테이블이_존재하지_않으면_예외가_발생한다() {
             // given
-            final OrderTable orderTable = createTableById(99L);
+            long nonExistTableId = 99L;
+            final OrderTable orderTable = createTableById(nonExistTableId);
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(99L, orderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(nonExistTableId, orderTable))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 

@@ -72,7 +72,8 @@ class MenuServiceTest {
         @Test
         void 메뉴의_그룹이_존재하지_않으면_예외가_발생한다() {
             // given
-            final Menu invalidMenu = new Menu("메뉴", null, 99L, List.of(CHICKEN_MENU_PRODUCT));
+            final long nonExistMenuGroupId = 99L;
+            final Menu invalidMenu = new Menu("메뉴", null, nonExistMenuGroupId, List.of(CHICKEN_MENU_PRODUCT));
 
             // when & then
             assertThatThrownBy(() -> menuService.create(invalidMenu));
@@ -81,7 +82,8 @@ class MenuServiceTest {
         @Test
         void 메뉴의_상품이_존재하지_않으면_예외가_발생한다() {
             // given
-            final MenuProduct invalidMenuProduct = new MenuProduct(1L, 1L, 99L, 1);
+            final long nonExistProductId = 99L;
+            final MenuProduct invalidMenuProduct = new MenuProduct(1L, 1L, nonExistProductId, 1);
             final Menu invalidMenu = new Menu("메뉴", null, 1L, List.of(invalidMenuProduct));
 
             // when & then

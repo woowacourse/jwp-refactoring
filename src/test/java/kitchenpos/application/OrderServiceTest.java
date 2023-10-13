@@ -109,7 +109,8 @@ class OrderServiceTest {
         @Test
         void 주문_항목에_존재하지_않는_메뉴가_있으면_예외가_발생한다() {
             // given
-            final OrderLineItem orderLineItem = new OrderLineItem(null, 99L, 1);
+            final long nonExistMenuId = 99L;
+            final OrderLineItem orderLineItem = new OrderLineItem(null, nonExistMenuId, 1);
             final Order order = new Order(
                     orderTable.getId(),
                     null,
@@ -140,10 +141,11 @@ class OrderServiceTest {
         @Test
         void 주문_테이블이_존재하지_않으면_예외가_발생한다() {
             // given
+            final long nonExistTableId = 99L;
             final OrderLineItem orderLineItem1 = new OrderLineItem(null, menu.getId(), 1);
             final OrderLineItem orderLineItem2 = new OrderLineItem(null, menu.getId(), 2);
             final Order order = new Order(
-                    99L,
+                    nonExistTableId,
                     null,
                     List.of(orderLineItem1, orderLineItem2)
             );
