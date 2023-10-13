@@ -88,7 +88,7 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void 주문테이블이_비어있지않으면_예외() {
             // given
-            OrderTable orderTable1 = orderTableDao.save(new OrderTable(4, true));
+            OrderTable orderTable1 = orderTableDao.save(new OrderTable(4, false));
             OrderTable orderTable2 = orderTableDao.save(new OrderTable(4, false));
             TableGroup tableGroup = new TableGroup(Arrays.asList(orderTable1, orderTable2));
 
@@ -100,7 +100,6 @@ class TableGroupServiceTest extends ServiceTest {
 
     @Nested
     class 테이블_그룹_해제 {
-
 
         @Test
         void 성공() {

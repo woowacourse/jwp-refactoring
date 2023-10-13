@@ -77,7 +77,7 @@ class TableServiceTest extends ServiceTest {
     class 주문_테이블_상태를_변경 {
 
         @Test
-        void 불가능에서_가능으로_변경() {
+        void 이용가능에서_사용중으로_변경() {
             // given
             Long givenId = orderTableDao.save(new OrderTable(5, false)).getId();
 
@@ -89,7 +89,7 @@ class TableServiceTest extends ServiceTest {
         }
 
         @Test
-        void 가능에서_불가능으로_변경() {
+        void 사용중에서_이용가능으로_변경() {
             // given
             Long givenId = orderTableDao.save(new OrderTable(5, true)).getId();
 
