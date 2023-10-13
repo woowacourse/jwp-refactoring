@@ -45,7 +45,7 @@ class TableGroupServiceTest {
     class create_메서드는 {
 
         @Test
-        void 테이블_그룹을_생성한다() {
+        void 주문_테이블_그룹을_생성한다() {
             // given
             final TableGroup tableGroup = new TableGroup(dummyTables);
 
@@ -68,7 +68,7 @@ class TableGroupServiceTest {
         }
 
         @Test
-        void 테이블_그룹이_비어있으면_예외가_발생한다() {
+        void 주문_테이블_그룹이_비어있으면_예외가_발생한다() {
             // given
             final TableGroup tableGroup = new TableGroup(Collections.emptyList());
 
@@ -78,7 +78,7 @@ class TableGroupServiceTest {
         }
 
         @Test
-        void 포함된_테이블이_2개미만이면_예외가_발생한다() {
+        void 포함된_주문_테이블이_2개미만이면_예외가_발생한다() {
             // given
             final TableGroup tableGroup = new TableGroup(List.of(dummyTables.get(0)));
 
@@ -88,7 +88,7 @@ class TableGroupServiceTest {
         }
 
         @Test
-        void 존재하지_않는_테이블이_포함되어_있으면_예외가_발생한다() {
+        void 존재하지_않는_주문_테이블이_포함되어_있으면_예외가_발생한다() {
             // given
             final long nonExistTableId = 99L;
             final OrderTable invalidTable = new OrderTable(nonExistTableId, 1L, 5, true);
@@ -100,7 +100,7 @@ class TableGroupServiceTest {
         }
 
         @Test
-        void 중복인_테이블이_포함되어_있으면_예외가_발생한다() {
+        void 중복인_주문_테이블이_포함되어_있으면_예외가_발생한다() {
             // given
             final TableGroup tableGroup = new TableGroup(List.of(dummyTables.get(0), dummyTables.get(0)));
 
@@ -110,7 +110,7 @@ class TableGroupServiceTest {
         }
 
         @Test
-        void 주문_가능한_테이블이_포함되어_있으면_예외가_발생한다() {
+        void 주문_가능한_주문_테이블이_포함되어_있으면_예외가_발생한다() {
             // given
             final OrderTable invalidTable = new OrderTable();
             invalidTable.setEmpty(false);
@@ -123,7 +123,7 @@ class TableGroupServiceTest {
         }
 
         @Test
-        void 이미_다른_그룹에_속한_테이블이_포함되어_있으면_예외가_발생한다() {
+        void 이미_다른_그룹에_속한_주문_테이블이_포함되어_있으면_예외가_발생한다() {
             // given
             final TableGroup otherTableGroup = new TableGroup(LocalDateTime.now(), Collections.emptyList());
             final OrderTable invalidTable = new OrderTable();
@@ -140,7 +140,7 @@ class TableGroupServiceTest {
     @Nested
     class ungroup_메서드는 {
         @Test
-        void 테이블_그룹을_해제한다() {
+        void 주문_테이블_그룹을_해제한다() {
             // given
             final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), Collections.emptyList());
             relationTablesWithTableGroup(tableGroup, dummyTables);
@@ -166,7 +166,7 @@ class TableGroupServiceTest {
         }
 
         @Test
-        void 주문_상태가_식사중인_테이블이_포함되어_있으면_예외가_발생한다() {
+        void 주문_상태가_식사중인_주문_테이블이_포함되어_있으면_예외가_발생한다() {
             // given
             final OrderTable invalidTable = orderTableDao.save(new OrderTable(null, 0, false));
             orderDao.save(new Order(invalidTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(),
@@ -180,7 +180,7 @@ class TableGroupServiceTest {
         }
 
         @Test
-        void 주문_상태가_조리중인_테이블이_포함되어_있으면_예외가_발생한다() {
+        void 주문_상태가_조리중인_주문_테이블이_포함되어_있으면_예외가_발생한다() {
             // given
             final OrderTable invalidTable = orderTableDao.save(new OrderTable(null, 0, false));
             orderDao.save(new Order(invalidTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),

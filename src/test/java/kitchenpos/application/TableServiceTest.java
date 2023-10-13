@@ -35,7 +35,7 @@ class TableServiceTest {
     private OrderTableDao orderTableDao;
 
     @Test
-    void create_메서드는_테이블을_생성한다() {
+    void create_메서드는_주문_테이블을_생성한다() {
         // when
         final OrderTable createdOrderTable = tableService.create(EMPTY_TABLE);
 
@@ -46,7 +46,7 @@ class TableServiceTest {
     }
 
     @Test
-    void list_메서드는_모든_테이블을_조회한다() {
+    void list_메서드는_모든_주문_테이블을_조회한다() {
         // given
         final OrderTable orderTable = orderTableDao.save(EMPTY_TABLE);
 
@@ -63,7 +63,7 @@ class TableServiceTest {
     class changeEmpty_메서드는 {
 
         @Test
-        void 테이블의_주문_가능_상태를_바꾼다() {
+        void 주문_테이블의_주문_가능_상태를_바꾼다() {
             // given
             final OrderTable createdOrderTable = tableService.create(createTableByEmpty(true));
 
@@ -76,7 +76,7 @@ class TableServiceTest {
         }
 
         @Test
-        void 테이블이_존재하지_않으면_예외가_발생한다() {
+        void 주문_테이블이_존재하지_않으면_예외가_발생한다() {
             // given
             long nonExistTableId = 99L;
             final OrderTable orderTable = createTableById(nonExistTableId);
@@ -87,7 +87,7 @@ class TableServiceTest {
         }
 
         @Test
-        void 테이블이_그룹에_속해있으면_예외가_발생한다() {
+        void 주문_테이블이_그룹에_속해있으면_예외가_발생한다() {
             // given
             final OrderTable orderTable = orderTableDao.save(EMPTY_TABLE);
             final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable));
@@ -102,7 +102,7 @@ class TableServiceTest {
         }
 
         @Test
-        void 테이블의_주문_상태가_요리중이라면_예외가_발생한다() {
+        void 주문_테이블의_주문_상태가_요리중이라면_예외가_발생한다() {
             // given
             final OrderTable orderTable = orderTableDao.save(EMPTY_TABLE);
             final Order order = new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
@@ -115,7 +115,7 @@ class TableServiceTest {
         }
 
         @Test
-        void 테이블의_주문_상태가_식사중이라면_예외가_발생한다() {
+        void 주문_테이블의_주문_상태가_식사중이라면_예외가_발생한다() {
             // given
             final OrderTable orderTable = orderTableDao.save(EMPTY_TABLE);
             final Order order = new Order(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), List.of());
@@ -131,7 +131,7 @@ class TableServiceTest {
     class changeNumberOfGuests_메서드는 {
 
         @Test
-        void 테이블의_손님수를_변경한다() {
+        void 주문_테이블의_손님수를_변경한다() {
             // given
             final OrderTable orderTable = orderTableDao.save(createTableById(null));
 
@@ -144,7 +144,7 @@ class TableServiceTest {
         }
 
         @Test
-        void 테이블이_존재하지_않으면_예외가_발생한다() {
+        void 주문_테이블이_존재하지_않으면_예외가_발생한다() {
             // given
             final OrderTable orderTable = createTableById(null);
 
@@ -154,7 +154,7 @@ class TableServiceTest {
         }
 
         @Test
-        void 테이블이_주문_불가능한_상태이면_예외가_발생한다() {
+        void 주문_테이블이_주문_불가능한_상태이면_예외가_발생한다() {
             // given
             final OrderTable orderTable = orderTableDao.save(createTableByEmpty(true));
 
