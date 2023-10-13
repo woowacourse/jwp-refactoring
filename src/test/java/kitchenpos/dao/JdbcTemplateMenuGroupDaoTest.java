@@ -1,6 +1,7 @@
 package kitchenpos.dao;
 
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.fixture.MenuGroupFixture;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -28,8 +29,7 @@ class JdbcTemplateMenuGroupDaoTest {
 
     @BeforeEach
     void setUp() {
-        menuGroup = new MenuGroup();
-        menuGroup.setName("음료");
+        menuGroup  = MenuGroupFixture.음료();
     }
 
     @Test
