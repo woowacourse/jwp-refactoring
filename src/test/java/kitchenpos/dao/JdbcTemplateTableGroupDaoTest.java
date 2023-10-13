@@ -1,6 +1,7 @@
 package kitchenpos.dao;
 
 import kitchenpos.domain.TableGroup;
+import kitchenpos.fixture.TableGroupFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -27,8 +28,7 @@ class JdbcTemplateTableGroupDaoTest {
 
     @BeforeEach
     void setUp() {
-        tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
+        tableGroup = TableGroupFixture.테이블그룹_생성(LocalDateTime.now(), null);
     }
 
     @Test
