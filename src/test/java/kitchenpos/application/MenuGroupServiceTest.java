@@ -3,8 +3,8 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
@@ -36,7 +36,7 @@ class MenuGroupServiceTest {
 
         // when & then
         assertThat(menuGroupService.create(menuGroup)).isEqualTo(menuGroup);
-        verify(menuGroupDao, times(1)).save(any());
+        then(menuGroupDao).should(times(1)).save(any());
     }
 
     @DisplayName("메뉴 그룹 목록을 조회할 수 있다.")
@@ -52,6 +52,6 @@ class MenuGroupServiceTest {
 
         // when & then
         assertThat(menuGroupService.list()).isEqualTo(menuGroups);
-        verify(menuGroupDao, times(1)).findAll();
+        then(menuGroupDao).should(times(1)).findAll();
     }
 }

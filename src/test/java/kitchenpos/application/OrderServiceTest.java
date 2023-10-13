@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import java.util.List;
 import java.util.Optional;
@@ -93,10 +93,10 @@ class OrderServiceTest {
 
         // when & then
         assertThat(orderService.create(order)).isEqualTo(order);
-        verify(menuDao, times(1)).countByIdIn(any());
-        verify(orderTableDao, times(1)).findById(anyLong());
-        verify(orderDao, times(1)).save(any());
-        verify(orderLineItemDao, times(2)).save(any());
+        then(menuDao).should(times(1)).countByIdIn(any());
+        then(orderTableDao).should(times(1)).findById(anyLong());
+        then(orderDao).should(times(1)).save(any());
+        then(orderLineItemDao).should(times(2)).save(any());
     }
 
     @DisplayName("주문 항목이 존재하지 않으면 등록할 수 없다.")
@@ -251,8 +251,8 @@ class OrderServiceTest {
 
         // when & then
         assertThat(orderService.list()).isEqualTo(orders);
-        verify(orderDao, times(1)).findAll();
-        verify(orderLineItemDao, times(2)).findAllByOrderId(anyLong());
+        then(orderDao).should(times(1)).findAll();
+        then(orderLineItemDao).should(times(2)).findAllByOrderId(anyLong());
     }
 
     @DisplayName("특정 주문의 상태를 변경할 수 있다.")
@@ -274,9 +274,9 @@ class OrderServiceTest {
         orderService.changeOrderStatus(1L, order);
 
         // then
-        verify(orderDao, times(1)).findById(1L);
-        verify(orderDao, times(1)).save(order);
-        verify(orderLineItemDao, times(1)).findAllByOrderId(1L);
+        then(orderDao).should(times(1)).findById(1L);
+        then(orderDao).should(times(1)).save(order);
+        then(orderLineItemDao).should(times(1)).findAllByOrderId(1L);
     }
 
     @DisplayName("해당 주문이 존재하지 않으면 변경할 수 없다.")

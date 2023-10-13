@@ -6,8 +6,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import java.util.List;
 import java.util.Optional;
@@ -75,8 +75,8 @@ class TableServiceTest {
 
         // when & then
         assertThat(tableService.changeEmpty(1L, orderTable)).isEqualTo(orderTable);
-        verify(orderTableDao, times(1)).findById(anyLong());
-        verify(orderTableDao, times(1)).save(any());
+        then(orderTableDao).should(times(1)).findById(anyLong());
+        then(orderTableDao).should(times(1)).save(any());
     }
 
     @DisplayName("주문 테이블이 존재하지 않으면 변경할 수 없다.")
@@ -153,8 +153,8 @@ class TableServiceTest {
 
         // when & then
         assertThat(tableService.changeNumberOfGuests(1L, beforeTable)).isEqualTo(afterTable);
-        verify(orderTableDao, times(1)).findById(1L);
-        verify(orderTableDao, times(1)).save(any());
+        then(orderTableDao).should(times(1)).findById(1L);
+        then(orderTableDao).should(times(1)).save(any());
     }
 
     @DisplayName("테이블에 할당된 손님의 수가 0 미만이면 조정할 수 없다.")

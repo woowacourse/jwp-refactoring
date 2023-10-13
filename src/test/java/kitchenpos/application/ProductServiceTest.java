@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -40,7 +40,7 @@ class ProductServiceTest {
 
         // when & then
         assertThat(productService.create(product)).isEqualTo(product);
-        verify(productDao, times(1)).save(any());
+        then(productDao).should(times(1)).save(any());
     }
 
     @DisplayName("상품의 가격이 존재하지 않으면 등록할 수 없다.")
@@ -80,6 +80,6 @@ class ProductServiceTest {
 
         // when & then
         assertThat(productService.list()).isEqualTo(products);
-        verify(productDao, times(1)).findAll();
+        then(productDao).should(times(1)).findAll();
     }
 }

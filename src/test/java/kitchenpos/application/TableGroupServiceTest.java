@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
 import java.util.List;
@@ -69,9 +69,10 @@ class TableGroupServiceTest {
 
         // when & then
         assertThat(tableGroupService.create(tableGroup)).isEqualTo(tableGroup);
-        verify(orderTableDao, times(1)).findAllByIdIn(anyList());
-        verify(tableGroupDao, times(1)).save(any());
-        verify(orderTableDao, times(2)).save(any());
+
+        then(orderTableDao).should(times(1)).findAllByIdIn(anyList());
+        then(tableGroupDao).should(times(1)).save(any());
+        then(orderTableDao).should(times(2)).save(any());
     }
 
     @DisplayName("주문 테이블이 존재하지 않으면 등록할 수 없다.")
@@ -217,9 +218,9 @@ class TableGroupServiceTest {
         tableGroupService.ungroup(1L);
 
         // then
-        verify(orderTableDao, times(1)).findAllByTableGroupId(1L);
-        verify(orderDao, times(1)).existsByOrderTableIdInAndOrderStatusIn(anyList(), any());
-        verify(orderTableDao, times(2)).save(any());
+        then(orderTableDao).should(times(1)).findAllByTableGroupId(1L);
+        then(orderDao).should(times(1)).existsByOrderTableIdInAndOrderStatusIn(anyList(), any());
+        then(orderTableDao).should(times(2)).save(any());
     }
 
     @DisplayName("단체가 가진 주문 테이블의 상태가 조리 또는 식사이면 삭제할 수 없다.")

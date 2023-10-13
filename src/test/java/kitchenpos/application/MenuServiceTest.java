@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -99,10 +99,10 @@ class MenuServiceTest {
 
         // when & then
         assertThat(menuService.create(menu)).isEqualTo(menu);
-        verify(menuGroupDao, times(1)).existsById(anyLong());
-        verify(productDao, times(2)).findById(anyLong());
-        verify(menuDao, times(1)).save(any());
-        verify(menuProductDao, times(2)).save(any());
+        then(menuGroupDao).should(times(1)).existsById(anyLong());
+        then(productDao).should(times(2)).findById(anyLong());
+        then(menuDao).should(times(1)).save(any());
+        then(menuProductDao).should(times(2)).save(any());
     }
 
     @DisplayName("메뉴의 가격이 존재하지 않으면 등록할 수 없다.")
