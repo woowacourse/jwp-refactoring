@@ -58,14 +58,16 @@ class TableServiceTest extends ServiceIntegrationTest {
     @Test
     void list() {
         // given
-        tableService.create(Fixture.ORDER_TABLE_EMPTY);
-        tableService.create(Fixture.ORDER_TABLE_EMPTY);
+        final OrderTable orderTable1 = tableService.create(Fixture.ORDER_TABLE_EMPTY);
+        final OrderTable orderTable2 = tableService.create(Fixture.ORDER_TABLE_EMPTY);
 
         // when
         final List<OrderTable> result = tableService.list();
 
         // then
-        assertThat(result).hasSize(2);
+        assertThat(result).hasSize(2)
+                .usingRecursiveFieldByFieldElementComparator()
+                .containsExactly(orderTable1, orderTable2);
     }
 
     @Test
@@ -77,7 +79,12 @@ class TableServiceTest extends ServiceIntegrationTest {
         final OrderTable result = tableService.changeEmpty(saved.getId(), ORDER_TABLE_STATUS_NOT_EMPTY);
 
         // then
-        assertThat(result.isEmpty()).isFalse();
+        assertSoftly(softly -> {
+            softly.assertThat(result.isEmpty()).isFalse();
+            softly.assertThat(result).usingRecursiveComparison()
+                    .ignoringFields("empty")
+                    .isEqualTo(saved);
+        });
     }
 
     @Test
@@ -130,7 +137,12 @@ class TableServiceTest extends ServiceIntegrationTest {
         final OrderTable result = tableService.changeNumberOfGuests(saved.getId(), ORDER_TABLE_GUEST_POSITIVE);
 
         // then
-        assertThat(result.getNumberOfGuests()).isEqualTo(1);
+        assertSoftly(softly -> {
+            softly.assertThat(result.getNumberOfGuests()).isEqualTo(1);
+            softly.assertThat(result).usingRecursiveComparison()
+                    .ignoringFields("numberOfGuests")
+                    .isEqualTo(saved);
+        });
     }
 
     @Test

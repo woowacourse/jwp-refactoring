@@ -27,13 +27,15 @@ class MenuGroupServiceTest extends ServiceIntegrationTest {
     @Test
     void list() {
         // given
-        menuGroupService.create(new MenuGroup("Group1"));
-        menuGroupService.create(new MenuGroup("Group2"));
+        final MenuGroup menuGroup1 = menuGroupService.create(new MenuGroup("Group1"));
+        final MenuGroup menuGroup2 = menuGroupService.create(new MenuGroup("Group2"));
 
         // when
         final List<MenuGroup> result = menuGroupService.list();
 
         // then
-        assertThat(result).hasSize(2);
+        assertThat(result).hasSize(2)
+                .usingRecursiveFieldByFieldElementComparator()
+                .containsExactly(menuGroup1, menuGroup2);
     }
 }

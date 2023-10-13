@@ -113,14 +113,16 @@ class OrderServiceTest extends ServiceIntegrationTest {
         final OrderTable orderTable1 = tableService.create(Fixture.ORDER_TABLE_NOT_EMPTY);
         final OrderTable orderTable2 = tableService.create(Fixture.ORDER_TABLE_NOT_EMPTY);
 
-        orderService.create(new Order(orderTable1.getId(), List.of(orderLineItem)));
-        orderService.create(new Order(orderTable2.getId(), List.of(orderLineItem)));
+        final Order order1 = orderService.create(new Order(orderTable1.getId(), List.of(orderLineItem)));
+        final Order order2 = orderService.create(new Order(orderTable2.getId(), List.of(orderLineItem)));
 
         // when
         final List<Order> result = orderService.list();
 
         // then
-        assertThat(result).hasSize(2);
+        assertThat(result).hasSize(2)
+                .usingRecursiveFieldByFieldElementComparator()
+                .containsExactly(order1, order2);
     }
 
     @ParameterizedTest
@@ -136,7 +138,12 @@ class OrderServiceTest extends ServiceIntegrationTest {
         final Order result = orderService.changeOrderStatus(saved.getId(), changed);
 
         // then
-        assertThat(result.getOrderStatus()).isEqualTo(status);
+        assertSoftly(softly -> {
+            softly.assertThat(result.getOrderStatus()).isEqualTo(status);
+            softly.assertThat(result).usingRecursiveComparison()
+                    .ignoringFields("orderStatus")
+                    .isEqualTo(saved);
+        });
     }
 
     @Test

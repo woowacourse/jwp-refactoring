@@ -73,13 +73,17 @@ class MenuServiceTest extends ServiceIntegrationTest {
     @Test
     void list() {
         // given
-        menuService.create(new Menu("Menu1", BigDecimal.valueOf(1000), menuGroup.getId(), List.of(menuProduct)));
-        menuService.create(new Menu("Menu2", BigDecimal.valueOf(2000), menuGroup.getId(), List.of(menuProduct)));
+        final Menu menu1 = menuService.create(
+                new Menu("Menu1", BigDecimal.valueOf(1000), menuGroup.getId(), List.of(menuProduct)));
+        final Menu menu2 = menuService.create(
+                new Menu("Menu2", BigDecimal.valueOf(2000), menuGroup.getId(), List.of(menuProduct)));
 
         // when
         final List<Menu> result = menuService.list();
 
         // then
-        assertThat(result).hasSize(2);
+        assertThat(result).hasSize(2)
+                .usingRecursiveFieldByFieldElementComparator()
+                .containsExactly(menu1, menu2);
     }
 }

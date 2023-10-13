@@ -39,13 +39,15 @@ class ProductServiceTest extends ServiceIntegrationTest {
     @Test
     void list() {
         // given
-        productService.create(new Product("Product1", BigDecimal.valueOf(1000)));
-        productService.create(new Product("Product2", BigDecimal.valueOf(2000)));
+        final Product product1 = productService.create(new Product("Product1", BigDecimal.valueOf(1000)));
+        final Product product2 = productService.create(new Product("Product2", BigDecimal.valueOf(2000)));
 
         // when
         final List<Product> result = productService.list();
 
         // then
-        assertThat(result).hasSize(2);
+        assertThat(result).hasSize(2)
+                .usingRecursiveFieldByFieldElementComparator()
+                .containsExactly(product1, product2);
     }
 }
