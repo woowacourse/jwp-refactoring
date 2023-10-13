@@ -14,11 +14,13 @@ public class Menu {
     public Menu() {
     }
 
-    public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    public Menu(final String name, final BigDecimal price, final Long menuGroupId,
+                final List<MenuProduct> menuProducts) {
         this(null, name, price, menuGroupId, menuProducts);
     }
 
-    public Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
+                final List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;

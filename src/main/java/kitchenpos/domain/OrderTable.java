@@ -12,7 +12,7 @@ public class OrderTable {
         this(null, null, 0, true);
     }
 
-    public OrderTable(Long tableGroupId, int numberOfGuests, boolean empty) {
+    public OrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         this(null, tableGroupId, numberOfGuests, empty);
     }
 

@@ -5,7 +5,7 @@ import kitchenpos.domain.Product;
 
 public class ProductFixture {
 
-    public static Product createChickenProductById(Long id) {
+    public static Product createChickenProductById(final Long id) {
         return new Product(id, "치킨", BigDecimal.valueOf(10000));
     }
 

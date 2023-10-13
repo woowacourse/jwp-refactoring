@@ -4,11 +4,11 @@ import kitchenpos.domain.OrderTable;
 
 public class TableFixture {
 
-    public static OrderTable createTableById(Long id) {
+    public static OrderTable createTableById(final Long id) {
         return new OrderTable(id, null, 0, false);
     }
 
-    public static OrderTable createTableByEmpty(boolean empty) {
+    public static OrderTable createTableByEmpty(final boolean empty) {
         return new OrderTable(null, null, 0, empty);
     }
 

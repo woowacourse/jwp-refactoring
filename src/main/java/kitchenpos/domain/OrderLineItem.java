@@ -9,7 +9,7 @@ public class OrderLineItem {
     public OrderLineItem() {
     }
 
-    public OrderLineItem(Long orderId, Long menuId, long quantity) {
+    public OrderLineItem(final Long orderId, final Long menuId, final long quantity) {
         this(null, orderId, menuId, quantity);
     }
 

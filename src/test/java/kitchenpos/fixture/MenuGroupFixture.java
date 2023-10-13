@@ -4,7 +4,7 @@ import kitchenpos.domain.MenuGroup;
 
 public class MenuGroupFixture {
 
-    public static MenuGroup createChickenSetMenuGroupById(Long id) {
+    public static MenuGroup createChickenSetMenuGroupById(final Long id) {
         return new MenuGroup(id, "치킨세트");
     }
 

@@ -8,7 +8,7 @@ public class MenuGroup {
     public MenuGroup() {
     }
 
-    public MenuGroup(String name) {
+    public MenuGroup(final String name) {
         this(null, name);
     }
 

@@ -13,15 +13,17 @@ public class Order {
     public Order() {
     }
 
-    public Order(Long orderTableId, String orderStatus, List<OrderLineItem> orderLineItems) {
+    public Order(final Long orderTableId, final String orderStatus, final List<OrderLineItem> orderLineItems) {
         this(null, orderTableId, orderStatus, orderLineItems);
     }
 
-    public Order(Long id, Long orderTableId, String orderStatus, List<OrderLineItem> orderLineItems) {
+    public Order(final Long id, final Long orderTableId, final String orderStatus,
+                 final List<OrderLineItem> orderLineItems) {
         this(id, orderTableId, orderStatus, null, orderLineItems);
     }
 
-    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+    public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+                 final List<OrderLineItem> orderLineItems) {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 

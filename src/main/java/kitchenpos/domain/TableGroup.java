@@ -11,11 +11,11 @@ public class TableGroup {
     public TableGroup() {
     }
 
-    public TableGroup(List<OrderTable> orderTables) {
+    public TableGroup(final List<OrderTable> orderTables) {
         this(null, null, orderTables);
     }
 
-    public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
+    public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         this(null, createdDate, orderTables);
     }
 

@@ -8,8 +8,8 @@ import kitchenpos.domain.MenuProduct;
 
 public class MenuFixture {
 
-    public static Menu createChickenSetMenuById(Long id) {
-        Menu chickenSetMenu = new Menu(
+    public static Menu createChickenSetMenuById(final Long id) {
+        final Menu chickenSetMenu = new Menu(
                 "치킨+콜라 세트",
                 BigDecimal.valueOf(10000),
                 1L,
