@@ -60,7 +60,7 @@ class OrderServiceTest {
     void setUp() {
         MenuGroup menuGroup = menuGroupDao.save(MenuGroupFixture.메뉴그룹_생성("그룹"));
         Menu menu = menuDao.save(MenuFixture.메뉴_생성("아메리카노", new BigDecimal(1000), menuGroup.getId(), null));
-        OrderTable orderTable = orderTableDao.save(OrderTableFixture.주문받을_테이블(null, 0, false));
+        OrderTable orderTable = orderTableDao.save(OrderTableFixture.주문테이블(null, 0, false));
         order = orderDao.save(OrderFixture.주문_상품_없이_생성(orderTable.getId(), "COOKING", now(), null));
         orderLineItem = orderLineItemDao.save(OrderLineItemFixture.메뉴와_수량으로_주문_생성(order.getId(), menu.getId(), 3));
         order.setOrderLineItems(List.of(orderLineItem));

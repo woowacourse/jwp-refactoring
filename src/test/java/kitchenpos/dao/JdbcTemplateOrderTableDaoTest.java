@@ -29,8 +29,8 @@ class JdbcTemplateOrderTableDaoTest {
 
     @BeforeEach
     void setUp() {
-        orderTable = OrderTableFixture.주문받을_테이블(null, 0, true);
-        orderTable2 = OrderTableFixture.주문받을_테이블(null, 0, false);
+        orderTable = OrderTableFixture.주문테이블(null, 0, true);
+        orderTable2 = OrderTableFixture.주문테이블(null, 0, false);
     }
 
     @Test
