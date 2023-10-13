@@ -2,6 +2,7 @@ package kitchenpos.dao;
 
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.fixture.OrderFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -30,11 +31,7 @@ class JdbcTemplateOrderDaoTest {
 
     @BeforeEach
     void setUp() {
-        order = new Order();
-        order.setOrderTableId(1L);
-        order.setOrderStatus("조리");
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderLineItems(List.of(new OrderLineItem()));
+        order = OrderFixture.주문_상품_없음();
     }
 
     @Test
