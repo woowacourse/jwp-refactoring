@@ -11,14 +11,11 @@ public class Product {
         this(null, null, null);
     }
 
-<<<<<<< HEAD
-    public Product(String name, BigDecimal price) {
+    public Product(final String name, final BigDecimal price) {
         this(null, name, price);
     }
 
-=======
->>>>>>> 2444c657 (test: MenuService test code 작)
-    public Product(Long id, String name, BigDecimal price) {
+    public Product(final Long id, final String name, final BigDecimal price) {
         this.id = id;
         this.name = name;
         this.price = price;
