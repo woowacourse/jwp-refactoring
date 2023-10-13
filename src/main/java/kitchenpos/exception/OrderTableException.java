@@ -29,7 +29,6 @@ public class OrderTableException extends RuntimeException {
 
     public static class CannotChangeNumberOfGuestsStateInEmptyException extends OrderTableException {
 
-
         public CannotChangeNumberOfGuestsStateInEmptyException() {
             super("[ERROR] 주문 테이블이 비어있는 상태에서 손님 수를 변경할 수 없습니다.");
         }
