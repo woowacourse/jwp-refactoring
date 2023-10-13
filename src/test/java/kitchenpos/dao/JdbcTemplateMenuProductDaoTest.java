@@ -1,6 +1,7 @@
 package kitchenpos.dao;
 
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.fixture.MenuProductFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -27,10 +28,7 @@ class JdbcTemplateMenuProductDaoTest {
 
     @BeforeEach
     void setUp() {
-        menuProduct = new MenuProduct();
-        menuProduct.setMenuId(1L);
-        menuProduct.setProductId(1L);
-        menuProduct.setQuantity(1L);
+        menuProduct = MenuProductFixture.아메리카노_재고();
     }
 
     @Test
@@ -59,12 +57,12 @@ class JdbcTemplateMenuProductDaoTest {
     }
 
     @Test
-    void 상품이_있는_메뉴의_목록을_조회한다(){
+    void 상품이_있는_메뉴의_목록을_조회한다() {
         // given
         int originSize = menuProductDao.findAll().size();
 
         // when
-        MenuProduct savedProduct = menuProductDao.save(menuProduct);
+        menuProductDao.save(menuProduct);
         List<MenuProduct> menuProducts = menuProductDao.findAll();
 
         // then
