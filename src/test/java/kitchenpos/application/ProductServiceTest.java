@@ -14,7 +14,6 @@ import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -33,10 +32,10 @@ class ProductServiceTest {
             final Product product = new Product(null, "상품", BigDecimal.valueOf(1000));
             final Product savedProduct = productService.create(product);
 
-            assertSoftly(softAssertions -> {
-                assertThat(savedProduct.getId()).isNotNull();
-                assertThat(savedProduct.getName()).isEqualTo("상품");
-                assertThat(savedProduct.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(1000));
+            assertSoftly(softly -> {
+                softly.assertThat(savedProduct.getId()).isNotNull();
+                softly.assertThat(savedProduct.getName()).isEqualTo("상품");
+                softly.assertThat(savedProduct.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(1000));
             });
         }
 
@@ -46,10 +45,10 @@ class ProductServiceTest {
             final Product product = new Product(null, "상".repeat(length), BigDecimal.valueOf(1000));
             final Product savedProduct = productService.create(product);
 
-            assertSoftly(softAssertions -> {
-                assertThat(savedProduct.getId()).isNotNull();
-                assertThat(savedProduct.getName()).isEqualTo("상".repeat(length));
-                assertThat(savedProduct.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(1000));
+            assertSoftly(softly -> {
+                softly.assertThat(savedProduct.getId()).isNotNull();
+                softly.assertThat(savedProduct.getName()).isEqualTo("상".repeat(length));
+                softly.assertThat(savedProduct.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(1000));
             });
         }
 
@@ -59,10 +58,10 @@ class ProductServiceTest {
             final Product product = new Product(null, "상품", BigDecimal.valueOf(price));
             final Product savedProduct = productService.create(product);
 
-            assertSoftly(softAssertions -> {
-                assertThat(savedProduct.getId()).isNotNull();
-                assertThat(savedProduct.getName()).isEqualTo("상품");
-                assertThat(savedProduct.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(price));
+            assertSoftly(softly -> {
+                softly.assertThat(savedProduct.getId()).isNotNull();
+                softly.assertThat(savedProduct.getName()).isEqualTo("상품");
+                softly.assertThat(savedProduct.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(price));
             });
         }
 
@@ -117,9 +116,9 @@ class ProductServiceTest {
 
         final List<Product> result = productService.list();
 
-        assertSoftly(softAssertions -> {
-            assertThat(result).hasSize(expected.size());
-            assertThat(result)
+        assertSoftly(softly -> {
+            softly.assertThat(result).hasSize(expected.size());
+            softly.assertThat(result)
                     .usingRecursiveComparison()
                     .ignoringFields("id")
                     .isEqualTo(expected);
