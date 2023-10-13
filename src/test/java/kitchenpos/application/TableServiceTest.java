@@ -147,18 +147,20 @@ class TableServiceTest {
             OrderTable orderTable = new OrderTable();
             orderTable.setEmpty(false);
             orderTable.setNumberOfGuests(0);
+            OrderTable expectTable = new OrderTable();
+            expectTable.setEmpty(false);
+            expectTable.setNumberOfGuests(5);
             given(orderTableDao.findById(anyLong()))
                     .willReturn(Optional.of(orderTable));
             given(orderTableDao.save(any(OrderTable.class)))
-                    .willReturn(orderTable);
+                    .willReturn(expectTable);
 
             // when
-            OrderTable result = tableService.changeNumberOfGuests(1L, orderTable);
+            OrderTable result = tableService.changeNumberOfGuests(1L, expectTable);
 
             // then
-            assertThat(result)
-                    .usingRecursiveComparison()
-                    .isEqualTo(orderTable);
+            assertThat(result.getNumberOfGuests())
+                    .isEqualTo(expectTable.getNumberOfGuests());
         }
 
         @Test
