@@ -38,18 +38,50 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(CreateMenuRequest request) {
+        validateMenuGroupExists(request.getMenuGroupId());
+
         final BigDecimal price = request.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
-            throw new IllegalArgumentException();
-        }
+        validatePriceIsExistsAndNonNegative(price);
 
         List<MenuProductRequest> menuProductRequests = request.getMenuProducts();
+        validateMenuPriceIsNotBiggerThanActualPrice(menuProductRequests, price);
 
+        Menu menu = createMenuWith(request);
+
+        List<MenuProduct> menuProducts = new ArrayList<>();
+        for (MenuProductRequest menuProductRequest : menuProductRequests) {
+            MenuProduct menuProduct = createMenuProductWith(menuProductRequest, menu);
+            menuProducts.add(menuProduct);
+        }
+
+        menu.setMenuProducts(menuProducts);
+        Menu savedMenu = menuRepository.save(menu);
+        return MenuResponse.from(savedMenu);
+    }
+
+    private MenuProduct createMenuProductWith(MenuProductRequest menuProductRequest, Menu menu) {
+        MenuProduct menuProduct = new MenuProduct();
+
+        Product product = productRepository.findById(menuProductRequest.getProductId())
+                .orElseThrow();
+
+        menuProduct.setProduct(product);
+        menuProduct.setQuantity(menuProductRequest.getQuantity());
+        menuProduct.setMenu(menu);
+        return menuProduct;
+    }
+
+    private Menu createMenuWith(CreateMenuRequest request) {
+        Menu menu = new Menu();
+        menu.setName(request.getName());
+        menu.setPrice(request.getPrice());
+        MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
+                .orElseThrow();
+        menu.setMenuGroup(menuGroup);
+        return menu;
+    }
+
+    private void validateMenuPriceIsNotBiggerThanActualPrice(List<MenuProductRequest> menuProductRequests, BigDecimal price) {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProductRequest menuProductRequest : menuProductRequests) {
             final Product product = productRepository.findById(menuProductRequest.getProductId())
@@ -60,30 +92,18 @@ public class MenuService {
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }
+    }
 
-        Menu menu = new Menu();
-        menu.setName(request.getName());
-        menu.setPrice(request.getPrice());
-        MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
-                .orElseThrow();
-        menu.setMenuGroup(menuGroup);
-
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        for (MenuProductRequest menuProductRequest : menuProductRequests) {
-            MenuProduct menuProduct = new MenuProduct();
-
-            Product product = productRepository.findById(menuProductRequest.getProductId())
-                    .orElseThrow();
-
-            menuProduct.setProduct(product);
-            menuProduct.setQuantity(menuProductRequest.getQuantity());
-            menuProduct.setMenu(menu);
-            menuProducts.add(menuProduct);
+    private void validatePriceIsExistsAndNonNegative(BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
         }
+    }
 
-        menu.setMenuProducts(menuProducts);
-        Menu savedMenu = menuRepository.save(menu);
-        return MenuResponse.from(savedMenu);
+    private void validateMenuGroupExists(Long menuGroupId) {
+        if (!menuGroupRepository.existsById(menuGroupId)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public List<MenuResponse> findAll() {

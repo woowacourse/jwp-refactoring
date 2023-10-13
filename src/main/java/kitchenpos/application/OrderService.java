@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -43,26 +42,32 @@ public class OrderService {
     public OrderResponse create(CreateOrderRequest request) {
         List<OrderLineItemRequest> orderLineItemRequests = request.getOrderLineItems();
 
-        if (CollectionUtils.isEmpty(orderLineItemRequests)) {
-            throw new IllegalArgumentException();
+        validateOrderLineItemIsNotEmpty(orderLineItemRequests);
+        validateOrderLineItemAllExists(orderLineItemRequests);
+        final Order savedOrder = createOrder(request);
+
+        for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
+            OrderLineItem orderLineItem = createOrderLineItem(orderLineItemRequest, savedOrder);
+            orderLineItemRepository.save(orderLineItem);
         }
+        return OrderResponse.from(savedOrder);
+    }
 
-        final List<Long> menuIds = orderLineItemRequests.stream()
-                .map(OrderLineItemRequest::getMenuId)
-                .collect(Collectors.toList());
+    private OrderLineItem createOrderLineItem(OrderLineItemRequest orderLineItemRequest, Order savedOrder) {
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setOrder(savedOrder);
 
-        if (orderLineItemRequests.size() != menuRepository.countByIdIn(menuIds)) {
-            System.out.println(orderLineItemRequests.size());
-            System.out.println(menuRepository.countByIdIn(menuIds));
-            System.out.println(menuIds);
-            throw new IllegalArgumentException();
-        }
+        Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
+                .orElseThrow();
 
+        orderLineItem.setMenu(menu);
+        orderLineItem.setQuantity(orderLineItemRequest.getQuantity());
+        return orderLineItem;
+    }
+
+    private Order createOrder(CreateOrderRequest request) {
         Order order = new Order();
-
-        order.setId(null);
-
-        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
+        OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
         if (orderTable.isEmpty()) {
@@ -73,26 +78,26 @@ public class OrderService {
         order.setOrderStatus(OrderStatus.COOKING.name());
         order.setOrderedTime(LocalDateTime.now());
 
-        final Order savedOrder = orderRepository.save(order);
+        return orderRepository.save(order);
+    }
 
-        final Long orderId = savedOrder.getId();
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
-            OrderLineItem orderLineItem = new OrderLineItem();
-            Order order1 = orderRepository.findById(orderId)
-                    .orElseThrow();
-            orderLineItem.setOrder(order1);
+    private void validateOrderLineItemAllExists(List<OrderLineItemRequest> orderLineItemRequests) {
+        List<Long> menuIds = orderLineItemRequests.stream()
+                .map(OrderLineItemRequest::getMenuId)
+                .collect(Collectors.toList());
 
-            Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
-                    .orElseThrow();
-
-            orderLineItem.setMenu(menu);
-            orderLineItem.setQuantity(orderLineItemRequest.getQuantity());
-            savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
+        if (orderLineItemRequests.size() != menuRepository.countByIdIn(menuIds)) {
+            System.out.println(orderLineItemRequests.size());
+            System.out.println(menuRepository.countByIdIn(menuIds));
+            System.out.println(menuIds);
+            throw new IllegalArgumentException();
         }
-        savedOrder.setOrderLineItems(savedOrderLineItems);
+    }
 
-        return OrderResponse.from(savedOrder);
+    private void validateOrderLineItemIsNotEmpty(List<OrderLineItemRequest> orderLineItemRequests) {
+        if (CollectionUtils.isEmpty(orderLineItemRequests)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public List<OrderResponse> findAll() {
@@ -120,7 +125,6 @@ public class OrderService {
         savedOrder.setOrderStatus(orderStatus.name());
 
         orderRepository.save(savedOrder);
-
         savedOrder.setOrderLineItems(orderLineItemRepository.findAllByOrderId(orderId));
 
         return OrderResponse.from(savedOrder);

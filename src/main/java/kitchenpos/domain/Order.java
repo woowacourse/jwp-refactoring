@@ -18,6 +18,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // TODO:
     private Long orderTableId;
 
     private String orderStatus;
