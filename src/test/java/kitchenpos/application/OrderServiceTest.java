@@ -77,7 +77,7 @@ class OrderServiceTest {
             given(menuDao.countByIdIn(anyList()))
                     .willReturn((long) order.getOrderLineItems().size());
             given(orderTableDao.findById(order.getOrderTableId()))
-                    .willReturn(Optional.of(ORDER_TABLE.주문_테이블_1(false)));
+                    .willReturn(Optional.of(ORDER_TABLE.주문_테이블_1_점유중()));
             given(orderDao.save(any(Order.class)))
                     .willReturn(order);
             given(orderLineItemDao.save(any(OrderLineItem.class)))
@@ -139,7 +139,7 @@ class OrderServiceTest {
             given(menuDao.countByIdIn(anyList()))
                     .willReturn((long) order.getOrderLineItems().size());
             given(orderTableDao.findById(order.getOrderTableId()))
-                    .willReturn(Optional.of(ORDER_TABLE.주문_테이블_1(true)));
+                    .willReturn(Optional.of(ORDER_TABLE.주문_테이블_1_비어있음()));
 
             // when & then
             assertThatThrownBy(() -> orderService.create(order))

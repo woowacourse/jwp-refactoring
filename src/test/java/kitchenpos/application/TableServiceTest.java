@@ -42,7 +42,7 @@ class TableServiceTest {
         @Test
         void 주문_테이블을_생성한다() {
             // given
-            OrderTable orderTable = OrderTableFixture.ORDER_TABLE.주문_테이블_1();
+            OrderTable orderTable = OrderTableFixture.ORDER_TABLE.주문_테이블_1_비어있음();
             given(orderTableDao.save(any(OrderTable.class)))
                     .willReturn(orderTable);
 
@@ -178,7 +178,7 @@ class TableServiceTest {
         @Test
         void 방문한_손님_수를_변경할_때_테이블이_비어있으면_예외() {
             // given
-            OrderTable orderTable = OrderTableFixture.ORDER_TABLE.주문_테이블_1();
+            OrderTable orderTable = OrderTableFixture.ORDER_TABLE.주문_테이블_1_비어있음();
             orderTable.setEmpty(true);
             given(orderTableDao.findById(anyLong()))
                     .willReturn(Optional.of(orderTable));
