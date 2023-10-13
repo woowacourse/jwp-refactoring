@@ -47,12 +47,13 @@ class OrderServiceTest {
     private OrderDao orderDao;
 
     private Menu menu;
+    private MenuGroup menuGroup;
     private TableGroup tableGroup;
     private OrderTable orderTable;
 
     @BeforeEach
     void setUp() {
-        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹"));
+        menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹"));
         menu = menuDao.save(new Menu("치킨 세트 메뉴", new BigDecimal(20000), menuGroup.getId(), null));
         tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
         orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 6, false));
@@ -63,11 +64,13 @@ class OrderServiceTest {
         @Test
         void 주문을_생성한다() {
             // given
-            final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
+            final OrderLineItem orderLineItem1 = new OrderLineItem(null, menu.getId(), 1);
+            final Menu menu2 = menuDao.save(new Menu("치킨 세트 메뉴", new BigDecimal(20000), menuGroup.getId(), null));
+            final OrderLineItem orderLineItem2 = new OrderLineItem(null, menu2.getId(), 1);
             final Order order = new Order(
                     orderTable.getId(),
                     null,
-                    List.of(orderLineItem)
+                    List.of(orderLineItem1)
             );
 
             // when
@@ -78,7 +81,7 @@ class OrderServiceTest {
                     1L,
                     orderTable.getId(),
                     OrderStatus.COOKING.name(),
-                    List.of(orderLineItem)
+                    List.of(orderLineItem1, orderLineItem2)
             );
 
             assertSoftly(
@@ -142,12 +145,28 @@ class OrderServiceTest {
         void 주문_테이블이_존재하지_않으면_예외가_발생한다() {
             // given
             final long nonExistTableId = 99L;
-            final OrderLineItem orderLineItem1 = new OrderLineItem(null, menu.getId(), 1);
-            final OrderLineItem orderLineItem2 = new OrderLineItem(null, menu.getId(), 2);
+            final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
             final Order order = new Order(
                     nonExistTableId,
                     null,
-                    List.of(orderLineItem1, orderLineItem2)
+                    List.of(orderLineItem)
+            );
+
+            // when & then
+            assertThatThrownBy(() -> orderService.create(order))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void 테이블이_주문_불가능_상태인_경우_예외가_발생한다() {
+            // given
+            final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
+            orderTable.setEmpty(true);
+            orderTableDao.save(orderTable);
+            final Order order = new Order(
+                    orderTable.getId(),
+                    null,
+                    List.of(orderLineItem)
             );
 
             // when & then
