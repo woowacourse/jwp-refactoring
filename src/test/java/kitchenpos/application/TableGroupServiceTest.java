@@ -125,9 +125,6 @@ class TableGroupServiceTest {
             when(orderTableDao.findAllByIdIn(orderTableIds)).thenReturn(tableGroup.getOrderTables());
 
             when(tableGroupDao.save(any(TableGroup.class))).thenReturn(tableGroup);
-            when(orderTableDao.save(orderTable1)).thenReturn(orderTable1);
-            when(orderTableDao.save(orderTable2)).thenReturn(orderTable2);
-            when(orderTableDao.save(orderTable3)).thenReturn(orderTable3);
 
             // when
             TableGroup result = tableGroupService.create(tableGroup);
