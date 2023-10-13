@@ -32,28 +32,21 @@ class TableServiceTest {
 
     @Test
     void 테이블_저장() {
-        // given
-        OrderTable orderTable = new OrderTable();
-        when(orderTableDao.save(any(OrderTable.class))).thenReturn(orderTable);
-
         // when
-        OrderTable result = tableService.create(orderTable);
+        OrderTable orderTable = new OrderTable();
+        tableService.create(orderTable);
 
         // then
-        assertThat(result.getId()).isNull();
-        assertThat(result.getTableGroupId()).isNull();
+        verify(orderTableDao).save(any(OrderTable.class));
     }
 
     @Test
     void 모든_테이블_조회() {
-        // given
-        OrderTable orderTable = new OrderTable();
-
         // when
-        tableService.create(orderTable);
+        tableService.list();
 
         // then
-        verify(orderTableDao).save(orderTable);
+        verify(orderTableDao).findAll();
     }
 
     @Nested
@@ -175,18 +168,22 @@ class TableServiceTest {
         void 테이블의_손님_수를_변경한다() {
             // given
             long orderTableId = 1L;
-            OrderTable orderTable = new OrderTable();
-            orderTable.setId(orderTableId);
-            orderTable.setNumberOfGuests(10);
+            OrderTable before = new OrderTable();
+            before.setId(orderTableId);
+            before.setNumberOfGuests(1);
+            when(orderTableDao.findById(orderTableId)).thenReturn(Optional.of(before));
 
-            when(orderTableDao.findById(orderTableId)).thenReturn(Optional.of(orderTable));
-            when(orderTableDao.save(any(OrderTable.class))).thenReturn(orderTable);
+            OrderTable after = new OrderTable();
+            after.setId(orderTableId);
+            after.setNumberOfGuests(10);
+            when(orderTableDao.save(any(OrderTable.class))).thenReturn(after);
 
             // when
-            OrderTable result = tableService.changeNumberOfGuests(orderTableId, orderTable);
+            OrderTable result = tableService.changeNumberOfGuests(orderTableId, before);
 
             // then
-            assertThat(result.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests());
+            assertThat(result.getNumberOfGuests()).isNotEqualTo(before.getNumberOfGuests());
+            assertThat(result.getNumberOfGuests()).isEqualTo(after.getNumberOfGuests());
         }
     }
 }
