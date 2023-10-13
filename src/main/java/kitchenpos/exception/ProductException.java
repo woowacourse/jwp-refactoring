@@ -1,6 +1,6 @@
 package kitchenpos.exception;
 
-public class ProductException extends RuntimeException {
+public class ProductException extends CustomException {
 
     public ProductException(final String message) {
         super(message);
@@ -8,7 +8,7 @@ public class ProductException extends RuntimeException {
 
     public static class NotFoundProductException extends ProductException {
         public NotFoundProductException() {
-            super("[ERROR] 해당하는 PRODUCT를 찾을 수 없습니다.");
+            super("해당하는 PRODUCT를 찾을 수 없습니다.");
         }
     }
 }
