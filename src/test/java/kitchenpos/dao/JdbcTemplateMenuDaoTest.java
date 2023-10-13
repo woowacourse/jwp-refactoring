@@ -1,6 +1,7 @@
 package kitchenpos.dao;
 
 import kitchenpos.domain.Menu;
+import kitchenpos.fixture.MenuFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -28,11 +29,7 @@ public class JdbcTemplateMenuDaoTest {
 
     @BeforeEach
     void setUp() {
-        menu = new Menu();
-        menu.setName("후라이드치킨");
-        menu.setPrice(BigDecimal.valueOf(16000));
-        menu.setMenuGroupId(1L);
-        menu.setMenuProducts(null);
+        menu = MenuFixture.메뉴_아메리카노();
     }
 
     @Test
