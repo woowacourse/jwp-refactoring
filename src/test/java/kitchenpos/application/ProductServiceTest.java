@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
-import kitchenpos.fake.InMemoryProductDao;
+import kitchenpos.domain.ProductRepository;
+import kitchenpos.fake.InMemoryProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -18,12 +18,12 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 class ProductServiceTest {
 
     private ProductService productService;
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @BeforeEach
     void before() {
-        productDao = new InMemoryProductDao();
-        productService = new ProductService(productDao);
+        productRepository = new InMemoryProductRepository();
+        productService = new ProductService(productRepository);
     }
 
     @Test

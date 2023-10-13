@@ -3,15 +3,15 @@ package kitchenpos.application;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductRepository;
 import kitchenpos.fake.InMemoryMenuDao;
 import kitchenpos.fake.InMemoryMenuGroupDao;
 import kitchenpos.fake.InMemoryMenuProductDao;
-import kitchenpos.fake.InMemoryProductDao;
+import kitchenpos.fake.InMemoryProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -30,7 +30,7 @@ class MenuServiceTest {
     private MenuGroupDao menuGroupDao;
     private MenuDao menuDao;
     private MenuProductDao menuProductDao;
-    private ProductDao productDao;
+    private ProductRepository productRepository;
     private MenuService menuService;
     private MenuGroup savedMenuGroup;
     private MenuProduct savedMenuProduct;
@@ -40,8 +40,8 @@ class MenuServiceTest {
         menuGroupDao = new InMemoryMenuGroupDao();
         menuDao = new InMemoryMenuDao();
         menuProductDao = new InMemoryMenuProductDao();
-        productDao = new InMemoryProductDao();
-        menuService = new MenuService(menuDao, menuGroupDao, menuProductDao, productDao);
+        productRepository = new InMemoryProductRepository();
+        menuService = new MenuService(menuDao, menuGroupDao, menuProductDao, productRepository);
         savedMenuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
         savedMenuProduct = menuProductDao.save(new MenuProduct());
     }
@@ -49,7 +49,7 @@ class MenuServiceTest {
     @Test
     void 메뉴를_생성한다() {
         // Given
-        Product product = productDao.save(new Product("chicken", BigDecimal.valueOf(1_000)));
+        Product product = productRepository.save(new Product("chicken", BigDecimal.valueOf(1_000)));
         MenuProduct menuProduct = new MenuProduct(1L, product.getId(), 10);
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
         Menu menu = new Menu("메뉴", BigDecimal.valueOf(10_000), menuGroup.getId(), List.of(menuProduct));
@@ -94,7 +94,7 @@ class MenuServiceTest {
     @Test
     void 전체_메뉴를_조회할_수_있다() {
         // given
-        Product product = productDao.save(new Product("chicken", BigDecimal.valueOf(1_000)));
+        Product product = productRepository.save(new Product("chicken", BigDecimal.valueOf(1_000)));
         MenuProduct menuProduct = new MenuProduct(0L, product.getId(), 10);
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
         Menu menu = new Menu("메뉴", BigDecimal.valueOf(10_000), menuGroup.getId(), List.of(menuProduct));

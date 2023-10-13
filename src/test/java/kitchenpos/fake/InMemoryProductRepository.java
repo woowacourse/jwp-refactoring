@@ -1,7 +1,7 @@
 package kitchenpos.fake;
 
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductRepository;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,16 +10,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class InMemoryProductDao implements ProductDao {
+public class InMemoryProductRepository implements ProductRepository {
     private final Map<Long, Product> map = new HashMap<>();
     private AtomicLong id = new AtomicLong(0);
 
     @Override
     public Product save(Product entity) {
         long id = this.id.getAndIncrement();
-        entity.setId(id);
-        map.put(id, entity);
-        return entity;
+        Product product = new Product(id, entity.getName(), entity.getPrice());
+        map.put(id, product);
+        return product;
     }
 
     @Override
