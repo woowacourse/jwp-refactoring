@@ -1,6 +1,7 @@
 package kitchenpos.dao;
 
 import kitchenpos.domain.OrderTable;
+import kitchenpos.fixture.OrderTableFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -28,13 +29,8 @@ class JdbcTemplateOrderTableDaoTest {
 
     @BeforeEach
     void setUp() {
-        orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(0);
-        orderTable.setEmpty(true);
-
-        orderTable2 = new OrderTable();
-        orderTable2.setNumberOfGuests(0);
-        orderTable2.setEmpty(false);
+        orderTable = OrderTableFixture.주문받을_테이블(null, 0, true);
+        orderTable2 = OrderTableFixture.주문받을_테이블(null, 0, false);
     }
 
     @Test
