@@ -37,12 +37,15 @@ class TableGroupServiceTest {
 
         @Test
         void 요청된_테이블의_수가_2개_미만이면_예외를_발생한다() {
+            // given
             TableGroup tableGroup = new TableGroup();
 
+            // then: size 0
             tableGroup.setOrderTables(List.of());
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                     .isInstanceOf(IllegalArgumentException.class);
 
+            // then: size 1
             tableGroup.setOrderTables(List.of(new OrderTable()));
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                     .isInstanceOf(IllegalArgumentException.class);
