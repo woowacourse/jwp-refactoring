@@ -74,6 +74,13 @@ public class TestSupporter {
         return orderService.create(order);
     }
 
+    public Order createOrder(final OrderTable orderTable) {
+        final Menu menu = createMenu();
+        final OrderLineItem orderLineItem = ORDER_LINE_ITEM(menu, 10L);
+        final Order order = ORDER(List.of(orderLineItem), orderTable);
+        return orderService.create(order);
+    }
+
     public OrderTable createOrderTable(final boolean empty) {
         final OrderTable orderTable = ORDER_TABLE();
         orderTable.setEmpty(empty);
