@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -28,7 +29,7 @@ class MenuGroupServiceTest {
         MenuGroup savedMenuGroup = new MenuGroup();
         when(menuGroupDao.save(menuGroup)).thenReturn(savedMenuGroup);
 
-        Assertions.assertThat(menuGroupService.create(menuGroup)).isEqualTo(savedMenuGroup);
+        assertThat(menuGroupService.create(menuGroup)).isEqualTo(savedMenuGroup);
     }
 
     @Test
@@ -38,6 +39,6 @@ class MenuGroupServiceTest {
         MenuGroup menuGroup2 = new MenuGroup();
         when(menuGroupDao.findAll()).thenReturn(List.of(menuGroup1, menuGroup2));
 
-        Assertions.assertThat(menuGroupService.list()).containsExactlyInAnyOrder(menuGroup1, menuGroup2);
+        assertThat(menuGroupService.list()).containsExactlyInAnyOrder(menuGroup1, menuGroup2);
     }
 }

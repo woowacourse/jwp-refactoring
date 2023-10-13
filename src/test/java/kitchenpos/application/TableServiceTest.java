@@ -18,14 +18,11 @@ import kitchenpos.application.exception.TableServiceException.NotExistsOrderTabl
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -116,8 +113,7 @@ class TableServiceTest {
         OrderTable changeEmptyOrderTable = new OrderTable();
 
         when(orderTableDao.findById(orderTable.getId())).thenReturn(Optional.ofNullable(orderTable));
-        when(orderDao.existsByOrderTableIdAndOrderStatusIn(any(), anyList())).thenReturn(
-                true); // cooking 상태이거나 meal 상태
+        when(orderDao.existsByOrderTableIdAndOrderStatusIn(any(), anyList())).thenReturn(true); // cooking 상태이거나 meal 상태
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), changeEmptyOrderTable))
                 .isInstanceOf(ExistsNotCompletionOrderException.class);

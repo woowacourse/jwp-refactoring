@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -121,7 +122,7 @@ class MenuServiceTest {
     void create_fail_price1() {
         menu.setPrice(null);
 
-        Assertions.assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(NoPriceException.class);
     }
 
@@ -130,7 +131,7 @@ class MenuServiceTest {
     void create_fail_price2() {
         menu.setPrice(BigDecimal.valueOf(-1));
 
-        Assertions.assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(NoPriceException.class);
     }
 
@@ -143,7 +144,7 @@ class MenuServiceTest {
         when(productDao.findById(menuProduct1.getProductId())).thenReturn(Optional.ofNullable(product1));
         when(productDao.findById(menuProduct2.getProductId())).thenReturn(Optional.ofNullable(product2));
 
-        Assertions.assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(PriceMoreThanProductsException.class);
     }
 
@@ -152,7 +153,7 @@ class MenuServiceTest {
     void create_fail_menuGroup() {
         when(menuGroupDao.existsById(menu.getMenuGroupId())).thenReturn(false);
 
-        Assertions.assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(NotExistsMenuGroupException.class);
     }
 
@@ -162,7 +163,7 @@ class MenuServiceTest {
         when(menuGroupDao.existsById(menu.getMenuGroupId())).thenReturn(true);
         when(productDao.findById(menuProduct1.getProductId())).thenReturn(Optional.empty());
 
-        Assertions.assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(NotExistsProductException.class);
     }
 
