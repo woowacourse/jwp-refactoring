@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 @Service
+@Transactional(readOnly = true)
 public class TableGroupService {
 
     private final OrderRepository orderRepository;
