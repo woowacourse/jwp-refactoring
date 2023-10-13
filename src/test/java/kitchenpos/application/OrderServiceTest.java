@@ -149,7 +149,7 @@ class OrderServiceTest {
             orderService.create(order);
 
             // then
-            assertThat(order.getOrderTableId()).isEqualTo(orderTable.getId());
+            verify(orderDao).save(any(Order.class));
         }
     }
 
