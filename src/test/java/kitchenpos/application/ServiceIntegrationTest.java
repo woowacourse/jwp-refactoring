@@ -7,7 +7,10 @@ import java.util.function.Predicate;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
+import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -29,6 +32,9 @@ public abstract class ServiceIntegrationTest {
 
     @Autowired
     protected MenuDao menuDao;
+
+    @Autowired
+    protected OrderTableDao orderTableDao;
 
     protected <T> boolean containsObjects(List<T> objects, Predicate<T> predicate) {
         for (T object : objects) {
