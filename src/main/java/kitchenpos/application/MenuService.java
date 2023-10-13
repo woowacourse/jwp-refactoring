@@ -1,5 +1,13 @@
 package kitchenpos.application;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import kitchenpos.application.exception.MenuServiceException.NoPriceException;
+import kitchenpos.application.exception.MenuServiceException.NotExistsMenuGroupException;
+import kitchenpos.application.exception.MenuServiceException.NotExistsProductException;
+import kitchenpos.application.exception.MenuServiceException.PriceMoreThanProductsException;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -9,11 +17,6 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 @Service
 public class MenuService {
@@ -39,11 +42,11 @@ public class MenuService {
         final BigDecimal price = menu.getPrice();
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+            throw new NoPriceException(price);
         }
 
         if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
-            throw new IllegalArgumentException();
+            throw new NotExistsMenuGroupException(menu.getMenuGroupId());
         }
 
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
@@ -51,12 +54,12 @@ public class MenuService {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
             final Product product = productDao.findById(menuProduct.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
+                    .orElseThrow(() -> new NotExistsProductException(menuProduct.getProductId()));
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
 
         if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
+            throw new PriceMoreThanProductsException(price, sum);
         }
 
         final Menu savedMenu = menuDao.save(menu);

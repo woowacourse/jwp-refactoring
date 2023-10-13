@@ -1,5 +1,11 @@
 package kitchenpos.application;
 
+import kitchenpos.application.exception.OrderServiceException.CompletionOrderException;
+import kitchenpos.application.exception.OrderServiceException.EmptyOrderLineItemsException;
+import kitchenpos.application.exception.OrderServiceException.EmptyOrderTableException;
+import kitchenpos.application.exception.OrderServiceException.NotExistsMenuException;
+import kitchenpos.application.exception.OrderServiceException.NotExistsOrderException;
+import kitchenpos.application.exception.OrderServiceException.NotExistsOrderTableException;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -42,7 +48,7 @@ public class OrderService {
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
 
         if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
+            throw new EmptyOrderLineItemsException();
         }
 
         final List<Long> menuIds = orderLineItems.stream()
@@ -50,16 +56,16 @@ public class OrderService {
                 .collect(Collectors.toList());
 
         if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
+            throw new NotExistsMenuException();
         }
 
         order.setId(null);
 
         final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new NotExistsOrderTableException(order.getOrderTableId()));
 
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new EmptyOrderTableException(orderTable.getId());
         }
 
         order.setOrderTableId(orderTable.getId());
@@ -92,10 +98,10 @@ public class OrderService {
     @Transactional
     public Order changeOrderStatus(final Long orderId, final Order order) {
         final Order savedOrder = orderDao.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new NotExistsOrderException(orderId));
 
         if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
+            throw new CompletionOrderException();
         }
 
         final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
