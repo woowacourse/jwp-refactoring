@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import java.util.ArrayList;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -7,6 +8,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.CreateTableGroupRequest;
+import kitchenpos.dto.OrderTableRequest;
 import kitchenpos.dto.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,19 +34,19 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final CreateTableGroupRequest request) {
-        final List<OrderTable> orderTables = request.getOrderTables();
+        List<OrderTableRequest> orderTableRequests = request.getOrderTables();
 
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+        if (CollectionUtils.isEmpty(orderTableRequests) || orderTableRequests.size() < 2) {
             throw new IllegalArgumentException();
         }
 
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
+        final List<Long> orderTableIds = orderTableRequests.stream()
+                .map(OrderTableRequest::getId)
                 .collect(Collectors.toList());
 
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
 
-        if (orderTables.size() != savedOrderTables.size()) {
+        if (orderTableRequests.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
 
@@ -56,7 +58,15 @@ public class TableGroupService {
 
         TableGroup tableGroup = new TableGroup();
 
-        tableGroup.setOrderTables(request.getOrderTables());
+        List<OrderTable> orderTables = new ArrayList<>();
+        for (OrderTableRequest orderTableRequest : orderTableRequests) {
+            OrderTable orderTable = new OrderTable();
+            Long id = orderTableRequest.getId();
+            orderTable.setId(id);
+            orderTables.add(orderTable);
+        }
+
+        tableGroup.setOrderTables(orderTables);
         tableGroup.setCreatedDate(LocalDateTime.now());
 
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);

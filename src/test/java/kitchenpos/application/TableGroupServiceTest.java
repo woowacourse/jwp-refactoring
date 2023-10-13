@@ -11,6 +11,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.CreateTableGroupRequest;
+import kitchenpos.dto.OrderTableRequest;
 import kitchenpos.dto.TableGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -25,12 +26,12 @@ class TableGroupServiceTest extends ServiceTestContext {
     @ValueSource(ints = {-1, 0, 1})
     void 두개_이상의_테이블을_그룹으로_지정하지_않으면_예외를_던진다(int tableSize) {
         // given
-        List<OrderTable> orderTables = new ArrayList<>();
+        List<OrderTableRequest> orderTableRequests = new ArrayList<>();
         for (int i = 0; i < tableSize; i++) {
-            orderTables.add(new OrderTable());
+            orderTableRequests.add(new OrderTableRequest(savedOrderTable.getId()));
         }
 
-        CreateTableGroupRequest request = new CreateTableGroupRequest(orderTables);
+        CreateTableGroupRequest request = new CreateTableGroupRequest(orderTableRequests);
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(request))
@@ -40,11 +41,12 @@ class TableGroupServiceTest extends ServiceTestContext {
     @Test
     void 존재하지_않는_테이블을_참조하면_예외를_던진다() {
         // given
-        List<OrderTable> orderTables = new ArrayList<>();
-        orderTables.add(new OrderTable());
-        orderTables.add(new OrderTable());
+        List<OrderTableRequest> orderTableRequests = List.of(
+                new OrderTableRequest(Long.MAX_VALUE),
+                new OrderTableRequest(Long.MAX_VALUE - 1L)
+        );
 
-        CreateTableGroupRequest request = new CreateTableGroupRequest(orderTables);
+        CreateTableGroupRequest request = new CreateTableGroupRequest(orderTableRequests);
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(request))
@@ -54,10 +56,11 @@ class TableGroupServiceTest extends ServiceTestContext {
     @Test
     void 그룹_지정_대상이_빈_테이블이_아니라면_예외를_던진다() {
         // given
-        List<OrderTable> orderTables = new ArrayList<>();
-        orderTables.add(savedOrderTable);
+        List<OrderTableRequest> orderTableRequests = List.of(
+                new OrderTableRequest(savedOrderTable.getId())
+        );
 
-        CreateTableGroupRequest request = new CreateTableGroupRequest(orderTables);
+        CreateTableGroupRequest request = new CreateTableGroupRequest(orderTableRequests);
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(request))
@@ -75,8 +78,12 @@ class TableGroupServiceTest extends ServiceTestContext {
         orderTable2.setTableGroupId(savedTableGroup.getId());
         OrderTable createdOrderTable2 = orderTableDao.save(orderTable2);
 
-        CreateTableGroupRequest request = new CreateTableGroupRequest(
-                List.of(createdOrderTable1, createdOrderTable2));
+        List<OrderTableRequest> orderTableRequests = List.of(
+                new OrderTableRequest(createdOrderTable1.getId()),
+                new OrderTableRequest(createdOrderTable2.getId())
+        );
+
+        CreateTableGroupRequest request = new CreateTableGroupRequest(orderTableRequests);
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(request))
@@ -94,8 +101,12 @@ class TableGroupServiceTest extends ServiceTestContext {
         orderTable2.setEmpty(true);
         OrderTable createdOrderTable2 = orderTableDao.save(orderTable2);
 
-        CreateTableGroupRequest request = new CreateTableGroupRequest(
-                List.of(createdOrderTable1, createdOrderTable2));
+        List<OrderTableRequest> orderTableRequests = List.of(
+                new OrderTableRequest(createdOrderTable1.getId()),
+                new OrderTableRequest(createdOrderTable2.getId())
+        );
+
+        CreateTableGroupRequest request = new CreateTableGroupRequest(orderTableRequests);
 
         // when
         TableGroupResponse response = tableGroupService.create(request);
@@ -113,7 +124,6 @@ class TableGroupServiceTest extends ServiceTestContext {
         TableGroup createdTableGroup = tableGroupDao.save(tableGroup);
 
         OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
         orderTable.setTableGroupId(createdTableGroup.getId());
         OrderTable createdOrderTable = orderTableDao.save(orderTable);
 

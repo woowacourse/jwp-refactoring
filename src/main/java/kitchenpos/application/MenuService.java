@@ -9,6 +9,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.CreateMenuRequest;
+import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,24 +50,32 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        final List<MenuProduct> menuProducts = request.getMenuProducts();
+        List<MenuProductRequest> menuProductRequests = request.getMenuProducts();
 
         BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = productDao.findById(menuProduct.getProductId())
+        for (final MenuProductRequest menuProductRequest : menuProductRequests) {
+            final Product product = productDao.findById(menuProductRequest.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProductRequest.getQuantity())));
         }
 
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }
 
+        List<MenuProduct> menuProducts = new ArrayList<>();
+        for (MenuProductRequest menuProductRequest : menuProductRequests) {
+            MenuProduct menuProduct = new MenuProduct();
+            menuProduct.setProductId(menuProductRequest.getProductId());
+            menuProduct.setQuantity(menuProductRequest.getQuantity());
+            menuProducts.add(menuProduct);
+        }
+
         Menu menu = new Menu();
         menu.setName(request.getName());
         menu.setPrice(request.getPrice());
         menu.setMenuGroupId(request.getMenuGroupId());
-        menu.setMenuProducts(request.getMenuProducts());
+        menu.setMenuProducts(menuProducts);
 
         final Menu savedMenu = menuDao.save(menu);
 

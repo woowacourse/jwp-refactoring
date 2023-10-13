@@ -10,6 +10,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.ChangeOrderStatusRequest;
 import kitchenpos.dto.CreateOrderRequest;
+import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,17 +43,20 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(CreateOrderRequest request) {
-        final List<OrderLineItem> orderLineItems = request.getOrderLineItems();
+        List<OrderLineItemRequest> orderLineItemRequests = request.getOrderLineItems();
 
-        if (CollectionUtils.isEmpty(orderLineItems)) {
+        if (CollectionUtils.isEmpty(orderLineItemRequests)) {
             throw new IllegalArgumentException();
         }
 
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
+        final List<Long> menuIds = orderLineItemRequests.stream()
+                .map(OrderLineItemRequest::getMenuId)
                 .collect(Collectors.toList());
 
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
+        if (orderLineItemRequests.size() != menuDao.countByIdIn(menuIds)) {
+            System.out.println(orderLineItemRequests.size());
+            System.out.println(menuDao.countByIdIn(menuIds));
+            System.out.println(menuIds);
             throw new IllegalArgumentException();
         }
 
@@ -75,8 +79,11 @@ public class OrderService {
 
         final Long orderId = savedOrder.getId();
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItem orderLineItem : orderLineItems) {
+        for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
+            OrderLineItem orderLineItem = new OrderLineItem();
             orderLineItem.setOrderId(orderId);
+            orderLineItem.setMenuId(orderLineItemRequest.getMenuId());
+            orderLineItem.setQuantity(orderLineItemRequest.getQuantity());
             savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
         }
         savedOrder.setOrderLineItems(savedOrderLineItems);

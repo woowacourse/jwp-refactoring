@@ -7,6 +7,7 @@ import java.util.List;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.dto.ChangeOrderStatusRequest;
 import kitchenpos.dto.CreateOrderRequest;
+import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderResponse;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
@@ -28,12 +29,8 @@ class OrderServiceTest extends ServiceTestContext {
     @Test
     void 주문_항목의_메뉴가_존재하지_않는다면_예외를_던진다() {
         // given
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(Long.MAX_VALUE);
-        orderLineItem.setQuantity(1L);
-
         CreateOrderRequest request = new CreateOrderRequest(savedOrderTable.getId(),
-                List.of(orderLineItem));
+                List.of(new OrderLineItemRequest(Long.MAX_VALUE, 1L)));
 
         // when, then
         assertThatThrownBy(() -> orderService.create(request))
@@ -44,7 +41,7 @@ class OrderServiceTest extends ServiceTestContext {
     void 주문_테이블이_존재하지_않는다면_예외를_던진다() {
         // given
         CreateOrderRequest request = new CreateOrderRequest(Long.MAX_VALUE,
-                List.of(savedOrderLineItem));
+                List.of(new OrderLineItemRequest(savedOrderLineItem.getMenuId(), savedOrderLineItem.getQuantity())));
 
         // when, then
         assertThatThrownBy(() -> orderService.create(request))
@@ -55,7 +52,8 @@ class OrderServiceTest extends ServiceTestContext {
     void 주문은_생성되면_COOKING_상태로_설정된다() {
         // given
         CreateOrderRequest request = new CreateOrderRequest(savedOrderTable.getId(),
-                List.of(savedOrderLineItem));
+                List.of(new OrderLineItemRequest(savedOrderLineItem.getMenuId(), savedOrderLineItem.getQuantity())));
+
 
         // when
         OrderResponse response = orderService.create(request);
@@ -68,7 +66,8 @@ class OrderServiceTest extends ServiceTestContext {
     void 주문을_정상적으로_생성하는_경우_생성한_주문이_반환된다() {
         // given
         CreateOrderRequest request = new CreateOrderRequest(savedOrderTable.getId(),
-                List.of(savedOrderLineItem));
+                List.of(new OrderLineItemRequest(savedOrderLineItem.getMenuId(), savedOrderLineItem.getQuantity())));
+
 
         // when
         OrderResponse response = orderService.create(request);
@@ -81,7 +80,8 @@ class OrderServiceTest extends ServiceTestContext {
     void 전체_주문을_조회할_수_있다() {
         // given
         CreateOrderRequest request = new CreateOrderRequest(savedOrderTable.getId(),
-                List.of(savedOrderLineItem));
+                List.of(new OrderLineItemRequest(savedOrderLineItem.getMenuId(), savedOrderLineItem.getQuantity())));
+
         orderService.create(request);
 
         // when
