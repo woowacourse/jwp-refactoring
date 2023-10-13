@@ -61,7 +61,7 @@ class TableServiceTest {
         assertThat(tableService.list()).isEqualTo(orderTables);
     }
 
-    @DisplayName("테이블의 상태를 빈 테이블로 만든다.")
+    @DisplayName("테이블의 상태를 변경할 수 있다.")
     @Test
     void changeEmpty() {
         // given
