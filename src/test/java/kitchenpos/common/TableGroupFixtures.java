@@ -7,7 +7,7 @@ import kitchenpos.domain.TableGroup;
 public class TableGroupFixtures {
 
     /**
-     *
+     * ORDER_TABLES
      */
     public static List<OrderTable> TABLE_GROUP1_ORDER_TABLES() {
         OrderTable orderTable1 = new OrderTable();
