@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Product;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -54,7 +53,6 @@ class ProductServiceTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("price 가 음수인 경우 저장에 실패한다.")
     void price가_음수인_경우_상품_저장에_실패한다() {
         // given
         Product product = 후추_칰힌_가격_책정(BigDecimal.valueOf(-1));
@@ -65,7 +63,6 @@ class ProductServiceTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Product 전체를 조회한다.")
     void 상품_전체를_조회한다() {
         // given
         List<Product> products = List.of(
