@@ -1,20 +1,11 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -27,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.transaction.Transactional;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -47,14 +37,6 @@ class TableServiceTest {
     private TableGroupDao tableGroupDao;
     @Autowired
     private OrderDao orderDao;
-    @Autowired
-    private MenuDao menuDao;
-    @Autowired
-    private MenuGroupDao menuGroupDao;
-    @Autowired
-    private ProductDao productDao;
-    @Autowired
-    private OrderLineItemDao orderLineItemDao;
 
     @Test
     void 테이블을_등록한다() {
@@ -123,13 +105,8 @@ class TableServiceTest {
         }
 
         @Test
-        void 테이블이_조리_혹은_식사_주문_상태일때_예외가_발생한다() {
-            final Product savedProduct = productDao.save(new Product(null, "상품", BigDecimal.ONE));
-            final MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup(null, "메뉴 그룹"));
-            final List<MenuProduct> menuProducts = List.of((new MenuProduct(null, null, savedProduct.getId(), 2)));
-            final Menu savedMenu = menuDao.save(new Menu(null, "메뉴", BigDecimal.ONE, savedMenuGroup.getId(), menuProducts));
-            final OrderLineItem orderLineItem = new OrderLineItem(null, null, savedMenu.getId(), 1);
-            orderDao.save(new Order(null, savedOrderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now(), List.of(orderLineItem)));
+        void 테이블이_완료_상태일때_테이블_상태를_변경한다() {
+            orderDao.save(new Order(null, savedOrderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now(), List.of()));
 
             final OrderTable newOrderTable = new OrderTable(null, null, 0, false);
             final OrderTable changeOrderTable = tableService.changeEmpty(savedOrderTable.getId(), newOrderTable);
@@ -140,13 +117,7 @@ class TableServiceTest {
         @ParameterizedTest
         @ValueSource(strings = {"COOKING", "MEAL"})
         void 테이블이_조리_혹은_식사_주문_상태일때_예외가_발생한다(String status) {
-            final Product savedProduct = productDao.save(new Product(null, "상품", BigDecimal.ONE));
-            final MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup(null, "메뉴 그룹"));
-            final List<MenuProduct> menuProducts = List.of((new MenuProduct(null, null, savedProduct.getId(), 2)));
-            final Menu savedMenu = menuDao.save(new Menu(null, "메뉴", BigDecimal.ONE, savedMenuGroup.getId(), menuProducts));
-            final OrderLineItem orderLineItem = new OrderLineItem(null, null, savedMenu.getId(), 1);
-            orderDao.save(new Order(null, savedOrderTable.getId(), status, LocalDateTime.now(), List.of(orderLineItem)));
-
+            orderDao.save(new Order(null, savedOrderTable.getId(), status, LocalDateTime.now(), List.of()));
             final OrderTable newOrderTable = new OrderTable(null, null, 0, false);
 
             assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), newOrderTable))
