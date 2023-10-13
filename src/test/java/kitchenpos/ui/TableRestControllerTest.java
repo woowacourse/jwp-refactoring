@@ -11,7 +11,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
-import kitchenpos.application.TableGroupService;
 import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.BeforeEach;

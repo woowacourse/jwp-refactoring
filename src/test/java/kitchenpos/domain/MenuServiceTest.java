@@ -13,7 +13,7 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.fixture.MenuFixture;
+import kitchenpos.fixture.MenuProductFixture;
 import kitchenpos.fixture.ProductFixture;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -148,7 +148,7 @@ class MenuServiceTest {
             given(menuDao.findAll())
                     .willReturn(List.of(menu));
             given(menuProductDao.findAllByMenuId(anyLong()))
-                    .willReturn(List.of(MenuFixture.MENU_PRODUCT.후라이드_치킨()));
+                    .willReturn(List.of(MenuProductFixture.MENU_PRODUCT.후라이드_치킨()));
 
             // when
             List<Menu> result = menuService.list();

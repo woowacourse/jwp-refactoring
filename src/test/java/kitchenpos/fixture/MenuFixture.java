@@ -1,11 +1,10 @@
 package kitchenpos.fixture;
 
-import static kitchenpos.fixture.MenuFixture.MENU_PRODUCT.후라이드_치킨;
+import static kitchenpos.fixture.MenuProductFixture.MENU_PRODUCT.후라이드_치킨;
 
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class MenuFixture {
@@ -23,16 +22,6 @@ public class MenuFixture {
             menu.setMenuGroupId(1L);
             menu.setMenuProducts(List.of(후라이드_치킨()));
             return menu;
-        }
-    }
-
-    public static class MENU_PRODUCT {
-
-        public static MenuProduct 후라이드_치킨() {
-            MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProductId(1L);
-            menuProduct.setQuantity(1);
-            return menuProduct;
         }
     }
 }
