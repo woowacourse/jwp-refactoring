@@ -36,9 +36,16 @@ public class MenuService {
 
     @Transactional
     public Menu create(final Menu menu) {
+        final String name = menu.getName();
         final BigDecimal price = menu.getPrice();
 
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+        if (Objects.isNull(name) || name.length() > 255) {
+            throw new IllegalArgumentException();
+        }
+
+        if (Objects.isNull(price)
+                || price.compareTo(BigDecimal.ZERO) < 0
+                || price.compareTo(BigDecimal.valueOf(Math.pow(10, 16))) >= 0) {
             throw new IllegalArgumentException();
         }
 
