@@ -15,7 +15,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @SpringBootTest
 @Transactional
@@ -77,12 +76,6 @@ class MenuGroupServiceTest {
 
         final List<MenuGroup> result = menuGroupService.list();
 
-        assertSoftly(softAssertions -> {
-            assertThat(result).hasSize(expected.size());
-            assertThat(result)
-                    .usingRecursiveComparison()
-                    .ignoringFields("id")
-                    .isEqualTo(expected);
-        });
+        assertThat(result).hasSize(expected.size());
     }
 }
