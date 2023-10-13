@@ -67,3 +67,9 @@ values (0, false);
 
 insert into orders (order_table_id, order_status, ordered_time)
 values (1, 'COOKING', now());
+insert into orders (order_table_id, order_status, ordered_time)
+values (9, 'COMPLETION', now());
+insert into orders (order_table_id, order_status, ordered_time)
+values (9, 'COMPLETION', now());
+insert into orders (order_table_id, order_status, ordered_time)
+values (9, 'COMPLETION', now());
