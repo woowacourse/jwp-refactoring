@@ -49,9 +49,11 @@ public class MenuService {
         }
 
         BigDecimal sum = BigDecimal.ZERO;
+
         for (final MenuProduct menuProduct : menu.getMenuProducts()) {
-            final Product product = productDao.findById(menuProduct.getProductId())
+            Product product = productDao.findById(menuProduct.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
+
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
 
@@ -59,14 +61,16 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        final Menu savedMenu = menuDao.save(menu);
+        Menu savedMenu = menuDao.save(menu);
+        Long menuId = savedMenu.getId();
 
-        final Long menuId = savedMenu.getId();
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
+
+        List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProduct menuProduct : menu.getMenuProducts()) {
             menuProduct.setMenuId(menuId);
             savedMenuProducts.add(menuProductDao.save(menuProduct));
         }
+
         savedMenu.addMenuProducts(savedMenuProducts);
 
         return savedMenu;

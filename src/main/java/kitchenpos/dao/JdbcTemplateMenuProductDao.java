@@ -17,6 +17,7 @@ import java.util.Optional;
 
 @Repository
 public class JdbcTemplateMenuProductDao implements MenuProductDao {
+
     private static final String TABLE_NAME = "menu_product";
     private static final String KEY_COLUMN_NAME = "seq";
 
@@ -27,14 +28,13 @@ public class JdbcTemplateMenuProductDao implements MenuProductDao {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName(TABLE_NAME)
-                .usingGeneratedKeyColumns(KEY_COLUMN_NAME)
-        ;
+                .usingGeneratedKeyColumns(KEY_COLUMN_NAME);
     }
 
     @Override
     public MenuProduct save(final MenuProduct entity) {
-        final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
-        final Number key = jdbcInsert.executeAndReturnKey(parameters);
+        SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
+        Number key = jdbcInsert.executeAndReturnKey(parameters);
         return select(key.longValue());
     }
 
@@ -49,31 +49,31 @@ public class JdbcTemplateMenuProductDao implements MenuProductDao {
 
     @Override
     public List<MenuProduct> findAll() {
-        final String sql = "SELECT seq, menu_id, product_id, quantity FROM menu_product";
+        String sql = "SELECT seq, menu_id, product_id, quantity FROM menu_product";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     @Override
     public List<MenuProduct> findAllByMenuId(final Long menuId) {
-        final String sql = "SELECT seq, menu_id, product_id, quantity FROM menu_product WHERE menu_id = (:menuId)";
-        final SqlParameterSource parameters = new MapSqlParameterSource()
+        String sql = "SELECT seq, menu_id, product_id, quantity FROM menu_product WHERE menu_id = (:menuId)";
+        SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("menuId", menuId);
         return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     private MenuProduct select(final Long id) {
-        final String sql = "SELECT seq, menu_id, product_id, quantity FROM menu_product WHERE seq = (:seq)";
-        final SqlParameterSource parameters = new MapSqlParameterSource()
+        String sql = "SELECT seq, menu_id, product_id, quantity FROM menu_product WHERE seq = (:seq)";
+        SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("seq", id);
         return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     private MenuProduct toEntity(final ResultSet resultSet) throws SQLException {
-        final MenuProduct entity = new MenuProduct();
-        entity.setSeq(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setMenuId(resultSet.getLong("menu_id"));
-        entity.setProductId(resultSet.getLong("product_id"));
-        entity.setQuantity(resultSet.getLong("quantity"));
-        return entity;
+        return new MenuProduct(
+                resultSet.getLong(KEY_COLUMN_NAME),
+                resultSet.getLong("menu_id"),
+                resultSet.getLong("product_id"),
+                resultSet.getLong("quantity")
+        );
     }
 }
