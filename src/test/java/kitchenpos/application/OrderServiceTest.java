@@ -289,6 +289,7 @@ class OrderServiceTest {
         // given
         final Order order = new Order();
         order.setId(1L);
+        order.setOrderStatus(OrderStatus.MEAL.name());
 
         // when & then
         assertThatThrownBy(() -> orderService.changeOrderStatus(2L, order))
