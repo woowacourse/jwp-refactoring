@@ -3,6 +3,8 @@ package kitchenpos.dao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.fixture.OrderFixture;
+import kitchenpos.fixture.OrderLineItemFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -32,19 +34,11 @@ class JdbcTemplateOrderLineItemDaoTest {
     private JdbcTemplateOrderDao orderDao;
 
     private OrderLineItem orderLineItem;
-    private Order order;
 
     @BeforeEach
     void setUp() {
-        order = new Order();
-        order.setOrderTableId(1L);
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
-        Order saveOrder = orderDao.save(order);
-        orderLineItem = new OrderLineItem();
-        orderLineItem.setOrderId(saveOrder.getId());
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1L);
+        Order saveOrder = orderDao.save(OrderFixture.주문_상품_없음());
+        orderLineItem = OrderLineItemFixture.주문_1번메뉴_3개(saveOrder.getId(), 1L, 3);
     }
 
     @Test
