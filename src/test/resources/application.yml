@@ -7,3 +7,8 @@ spring:
     url: jdbc:h2:mem:testdb;MODE=MySQL
   flyway:
     enabled: false
+logging:
+  level:
+    org:
+      springframework:
+        jdbc: debug
