@@ -9,6 +9,14 @@ public class OrderFixtures {
 
     public static Order create(
             Long orderTableId,
+            LocalDateTime orderedTime,
+            List<OrderLineItem> orderLineItems
+    ) {
+        return create(orderTableId, null, orderedTime, orderLineItems);
+    }
+
+    public static Order create(
+            Long orderTableId,
             String orderStatus,
             LocalDateTime orderedTime,
             List<OrderLineItem> orderLineItems
