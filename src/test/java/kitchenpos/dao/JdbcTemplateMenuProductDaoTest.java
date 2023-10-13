@@ -28,7 +28,7 @@ class JdbcTemplateMenuProductDaoTest {
 
     @BeforeEach
     void setUp() {
-        menuProduct = MenuProductFixture.아메리카노_재고();
+        menuProduct = MenuProductFixture.메뉴_재고(1L, 1L, 3);
     }
 
     @Test

@@ -30,7 +30,7 @@ class JdbcTemplateProductDaoTest {
 
     @BeforeEach
     void setUp() {
-        product = ProductFixture.아메리카노_5600원();
+        product = ProductFixture.상품_생성("아메리카노", BigDecimal.valueOf(5600));
     }
 
     @Test

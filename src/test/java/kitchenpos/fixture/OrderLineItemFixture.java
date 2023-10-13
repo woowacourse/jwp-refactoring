@@ -4,7 +4,7 @@ import kitchenpos.domain.OrderLineItem;
 
 public class OrderLineItemFixture {
 
-    public static OrderLineItem 주문_1번메뉴_3개(Long orderId, Long menuId, long quantity) {
+    public static OrderLineItem 메뉴와_수량으로_주문_생성(Long orderId, Long menuId, long quantity) {
         return new OrderLineItem(orderId, menuId, quantity);
     }
 }

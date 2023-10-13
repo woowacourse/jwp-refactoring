@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 
 public class MenuFixture {
 
-    public static Menu 메뉴_아메리카노() {
-        return new Menu("아메리카노", BigDecimal.valueOf(10000), 1L);
+    public static Menu 메뉴_생성(String name, BigDecimal price, Long productId) {
+        return new Menu(name, price, productId);
     }
 }

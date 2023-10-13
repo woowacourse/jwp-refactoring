@@ -1,7 +1,6 @@
 package kitchenpos.dao;
 
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.fixture.OrderFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -17,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @JdbcTest(includeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION, classes = Repository.class))
@@ -31,7 +31,7 @@ class JdbcTemplateOrderDaoTest {
 
     @BeforeEach
     void setUp() {
-        order = OrderFixture.주문_상품_없음();
+        order = OrderFixture.주문_상품_없이_생성(1L, "COOKING", now(), null);
     }
 
     @Test

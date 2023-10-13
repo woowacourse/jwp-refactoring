@@ -4,7 +4,7 @@ import kitchenpos.domain.MenuProduct;
 
 public class MenuProductFixture {
 
-    public static MenuProduct 아메리카노_재고() {
-        return new MenuProduct(1L, 1L, 1L);
+    public static MenuProduct 메뉴_재고(Long menuId, Long productId, long quantity) {
+        return new MenuProduct(menuId, productId, quantity);
     }
 }

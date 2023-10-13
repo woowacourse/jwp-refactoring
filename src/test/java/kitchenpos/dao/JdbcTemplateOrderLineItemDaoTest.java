@@ -2,7 +2,6 @@ package kitchenpos.dao;
 
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderLineItemFixture;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,10 +14,10 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -37,8 +36,8 @@ class JdbcTemplateOrderLineItemDaoTest {
 
     @BeforeEach
     void setUp() {
-        Order saveOrder = orderDao.save(OrderFixture.주문_상품_없음());
-        orderLineItem = OrderLineItemFixture.주문_1번메뉴_3개(saveOrder.getId(), 1L, 3);
+        Order saveOrder = orderDao.save(OrderFixture.주문_상품_없이_생성(1L, "COOKING", now(), null));
+        orderLineItem = OrderLineItemFixture.메뉴와_수량으로_주문_생성(saveOrder.getId(), 1L, 3);
     }
 
     @Test
