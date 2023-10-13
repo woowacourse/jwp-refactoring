@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -31,9 +33,9 @@ class MenuServiceTest {
     @Autowired
     private MenuService menuService;
     @Autowired
-    private MenuGroupService menuGroupService;
+    private MenuGroupDao menuGroupDao;
     @Autowired
-    private ProductService productService;
+    private ProductDao productDao;
 
     private Long savedMenuGroupId;
     private List<MenuProduct> menuProducts = new ArrayList<>();
@@ -41,9 +43,9 @@ class MenuServiceTest {
     @BeforeEach
     void setUp() {
         final Product product = new Product(null, "상품", BigDecimal.ONE);
-        final Product savedProduct = productService.create(product);
+        final Product savedProduct = productDao.save(product);
         final MenuGroup menuGroup = new MenuGroup(null, "메뉴 그룹");
-        final MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+        final MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
         savedMenuGroupId = savedMenuGroup.getId();
         menuProducts.add(new MenuProduct(null, null, savedProduct.getId(), 2));
     }
@@ -80,7 +82,7 @@ class MenuServiceTest {
         @ParameterizedTest
         @ValueSource(doubles = {0, 1, 999_999_999_999_999.99})
         void 메뉴_가격은_0원_보다_크고_1000조_보다_작다(double price) {
-            final Product product = productService.create(new Product(null, "상품", BigDecimal.valueOf(999_999_999_999_999.99)));
+            final Product product = productDao.save(new Product(null, "상품", BigDecimal.valueOf(999_999_999_999_999.99)));
             menuProducts.add(new MenuProduct(null, null, product.getId(), 1));
 
             final Menu menu = new Menu(null, "메뉴", BigDecimal.valueOf(price), savedMenuGroupId, menuProducts);
@@ -128,7 +130,7 @@ class MenuServiceTest {
 
         @Test
         void 메뉴_가격이_1000조_이상이면_예외가_발생한다() {
-            final Product product = productService.create(new Product(null, "상품", BigDecimal.valueOf(999_999_999_999_999.99)));
+            final Product product = productDao.save(new Product(null, "상품", BigDecimal.valueOf(999_999_999_999_999.99)));
             menuProducts.add(new MenuProduct(null, null, product.getId(), 1));
 
             final Menu menu = new Menu(null, "메뉴", BigDecimal.valueOf(Math.pow(10, 16)), savedMenuGroupId, menuProducts);
@@ -155,7 +157,7 @@ class MenuServiceTest {
 
         @Test
         void 메뉴_상품이_존재하지_않으면_예외가_발생한다() {
-            final Product product = productService.create(new Product(null, "상품", BigDecimal.ONE));
+            final Product product = productDao.save(new Product(null, "상품", BigDecimal.ONE));
             product.setId(product.getId() + 1);
             menuProducts.add(new MenuProduct(null, null, product.getId(), 1));
 
