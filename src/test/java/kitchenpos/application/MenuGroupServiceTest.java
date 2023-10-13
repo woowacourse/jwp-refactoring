@@ -6,7 +6,6 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +18,7 @@ class MenuGroupServiceTest {
 
     @InjectMocks
     private MenuGroupService menuGroupService;
+
     @Mock
     private MenuGroupDao menuGroupDao;
 
