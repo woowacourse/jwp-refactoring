@@ -7,15 +7,13 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@SpringBootTest
-class OrderServiceTest {
+class OrderServiceTest extends ServiceTest {
 
     @Autowired
     OrderService orderService;
@@ -65,7 +63,7 @@ class OrderServiceTest {
     void 모든_주문을_조회한다() {
         List<Order> all = orderService.list();
 
-        assertThat(all).hasSize(1);
+        assertThat(all).hasSize(4);
     }
 
     @Test

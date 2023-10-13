@@ -1,7 +1,6 @@
 package fixture;
 
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Product;
 
 public class MenuGroupBuilder {
     private Long id;

@@ -2,23 +2,17 @@ package kitchenpos.application;
 
 import fixture.MenuBuilder;
 import fixture.MenuProductBuilder;
-import fixture.ProductBuilder;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-class MenuServiceTest {
+class MenuServiceTest extends ServiceTest {
 
     @Autowired
     MenuService menuService;
@@ -81,6 +75,6 @@ class MenuServiceTest {
     void 모든_메뉴를_조회힌다() {
         List<Menu> all = menuService.list();
 
-        assertThat(all).hasSize(7);
+        assertThat(all).hasSize(6);
     }
 }

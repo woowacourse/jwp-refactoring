@@ -3,26 +3,21 @@ package kitchenpos.application;
 import fixture.OrderBuilder;
 import fixture.OrderTableBuilder;
 import fixture.TableGroupBuilder;
-import kitchenpos.dao.*;
-import kitchenpos.domain.Order;
+import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
-@Transactional
-@SpringBootTest
-class TableServiceTest {
+class TableServiceTest extends ServiceTest {
 
     @Autowired
     TableService tableService;

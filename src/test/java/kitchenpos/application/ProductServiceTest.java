@@ -4,25 +4,23 @@ import fixture.ProductBuilder;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@SpringBootTest
-class ProductServiceTest {
+class ProductServiceTest extends ServiceTest {
 
     @Autowired
-    private ProductService productService;
+    ProductService productService;
 
     @Test
     void 제품을_저장한다() {
-        final Product product = ProductBuilder.init()
+        Product product = ProductBuilder.init()
                 .build();
 
-        final Product createdProduct = productService.create(product);
+        Product createdProduct = productService.create(product);
 
         assertThat(createdProduct.getId()).isNotNull();
     }
