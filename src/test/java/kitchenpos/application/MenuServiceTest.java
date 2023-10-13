@@ -28,13 +28,12 @@ class MenuServiceTest extends ServiceIntegrationTest {
     private MenuGroupService menuGroupService;
 
     private MenuGroup menuGroup;
-    private Product product;
     private MenuProduct menuProduct;
 
     @BeforeEach
     void setUp() {
         menuGroup = menuGroupService.create(Fixture.MENU_GROUP);
-        product = productService.create(Fixture.PRODUCT);
+        final Product product = productService.create(Fixture.PRODUCT);
         menuProduct = new MenuProduct(product.getId(), 2);
     }
 

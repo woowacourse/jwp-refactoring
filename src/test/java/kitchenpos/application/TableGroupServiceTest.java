@@ -133,12 +133,12 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
 
         // then
         final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroup.getId());
-        final OrderTable savedOrderTable1 = orderTableDao.findById(orderTable1.getId()).get();
-        final OrderTable savedOrderTable2 = orderTableDao.findById(orderTable2.getId()).get();
         assertSoftly(softly -> {
             softly.assertThat(orderTables).hasSize(0);
+            final OrderTable savedOrderTable1 = orderTableDao.findById(orderTable1.getId()).get();
             softly.assertThat(savedOrderTable1.getTableGroupId()).isNull();
             softly.assertThat(savedOrderTable1.isEmpty()).isFalse();
+            final OrderTable savedOrderTable2 = orderTableDao.findById(orderTable2.getId()).get();
             softly.assertThat(savedOrderTable2.getTableGroupId()).isNull();
             softly.assertThat(savedOrderTable2.isEmpty()).isFalse();
         });
@@ -152,17 +152,21 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         final OrderTable orderTable2 = tableService.create(Fixture.ORDER_TABLE_EMPTY);
         final TableGroup tableGroup = tableGroupService.create(new TableGroup(List.of(orderTable1, orderTable2)));
 
+        final Order order = orderService.create(generateBasicOrderBy(orderTable1));
+        orderService.changeOrderStatus(order.getId(), new Order(status));
+
+        // when & then
+        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private Order generateBasicOrderBy(final OrderTable orderTable) {
         final MenuGroup menuGroup = menuGroupService.create(Fixture.MENU_GROUP);
         final Product product = productService.create(Fixture.PRODUCT);
         final MenuProduct menuProduct = new MenuProduct(product.getId(), 2);
         final Menu menu = menuService.create(
                 new Menu("Menu1", BigDecimal.valueOf(19000), menuGroup.getId(), List.of(menuProduct)));
         final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1);
-        final Order order = orderService.create(new Order(orderTable1.getId(), List.of(orderLineItem)));
-        orderService.changeOrderStatus(order.getId(), new Order(status));
-
-        // when & then
-        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
-                .isInstanceOf(IllegalArgumentException.class);
+        return new Order(orderTable.getId(), List.of(orderLineItem));
     }
 }

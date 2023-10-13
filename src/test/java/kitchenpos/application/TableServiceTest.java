@@ -102,22 +102,23 @@ class TableServiceTest extends ServiceIntegrationTest {
     @ValueSource(strings = {"COOKING", "MEAL"})
     void changeEmpty_tableStatusException(final String status) {
         // given
-        final MenuGroup menuGroup = menuGroupService.create(Fixture.MENU_GROUP);
-        final Product product = productService.create(Fixture.PRODUCT);
-        final MenuProduct menuProduct = new MenuProduct(product.getId(), 2);
-        final Menu menu = menuService.create(new Menu("후라이드+후라이드",
-                BigDecimal.valueOf(19000),
-                menuGroup.getId(),
-                List.of(menuProduct)));
-        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1);
-
         final OrderTable saved = tableService.create(Fixture.ORDER_TABLE_NOT_EMPTY);
-        final Order order = orderService.create(new Order(saved.getId(), List.of(orderLineItem)));
+        final Order order = orderService.create(generateBasicOrderBy(saved));
         orderService.changeOrderStatus(order.getId(), new Order(status));
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(saved.getTableGroupId(), ORDER_TABLE_STATUS_EMPTY))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private Order generateBasicOrderBy(final OrderTable orderTable) {
+        final MenuGroup menuGroup = menuGroupService.create(Fixture.MENU_GROUP);
+        final Product product = productService.create(Fixture.PRODUCT);
+        final MenuProduct menuProduct = new MenuProduct(product.getId(), 2);
+        final Menu menu = menuService.create(
+                new Menu("Menu1", BigDecimal.valueOf(19000), menuGroup.getId(), List.of(menuProduct)));
+        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1);
+        return new Order(orderTable.getId(), List.of(orderLineItem));
     }
 
     @Test

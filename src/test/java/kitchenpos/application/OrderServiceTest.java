@@ -22,8 +22,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 class OrderServiceTest extends ServiceIntegrationTest {
+    private static final Order ORDER_STATUS_COOKING = new Order("COOKING");
 
-    public static final Order ORDER_STATUS_COOKING = new Order("COOKING");
     @Autowired
     private OrderService orderService;
 
