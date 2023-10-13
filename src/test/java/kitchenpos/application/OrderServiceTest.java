@@ -175,6 +175,10 @@ class OrderServiceTest {
         orderTable.setId(1000L);
         order.setOrderTableId(orderTable.getId());
 
+        given(orderTableDao.findById(order.getOrderTableId()))
+                .willReturn(Optional.of(orderTable));
+
+        // when & then
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문 테이블이 존재하지 않습니다.");
