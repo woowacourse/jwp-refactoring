@@ -1,23 +1,23 @@
 package kitchenpos.application;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.jpa.ProductRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.CreateProductRequest;
 import kitchenpos.dto.response.ProductResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Objects;
-
 @Service
 public class ProductService {
-    private final ProductDao productDao;
 
-    public ProductService(final ProductDao productDao) {
-        this.productDao = productDao;
+    private final ProductRepository productRepository;
+
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     @Transactional
@@ -32,13 +32,13 @@ public class ProductService {
         product.setName(request.getName());
         product.setPrice(request.getPrice());
 
-        Product savedProduct = productDao.save(product);
+        Product savedProduct = productRepository.save(product);
 
         return ProductResponse.from(savedProduct);
     }
 
     public List<ProductResponse> findAll() {
-        List<Product> products = productDao.findAll();
+        List<Product> products = productRepository.findAll();
 
         return products.stream()
                 .map(ProductResponse::from)

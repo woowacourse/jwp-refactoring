@@ -40,7 +40,7 @@ class OrderServiceTest extends ServiceTestContext {
     void 주문_테이블이_존재하지_않는다면_예외를_던진다() {
         // given
         CreateOrderRequest request = new CreateOrderRequest(Long.MAX_VALUE,
-                List.of(new OrderLineItemRequest(savedOrderLineItem.getMenuId(), savedOrderLineItem.getQuantity())));
+                List.of(new OrderLineItemRequest(savedOrderLineItem.getMenu().getId(), savedOrderLineItem.getQuantity())));
 
         // when, then
         assertThatThrownBy(() -> orderService.create(request))
@@ -51,7 +51,7 @@ class OrderServiceTest extends ServiceTestContext {
     void 주문은_생성되면_COOKING_상태로_설정된다() {
         // given
         CreateOrderRequest request = new CreateOrderRequest(savedOrderTable.getId(),
-                List.of(new OrderLineItemRequest(savedOrderLineItem.getMenuId(), savedOrderLineItem.getQuantity())));
+                List.of(new OrderLineItemRequest(savedOrderLineItem.getMenu().getId(), savedOrderLineItem.getQuantity())));
 
 
         // when
@@ -65,7 +65,7 @@ class OrderServiceTest extends ServiceTestContext {
     void 주문을_정상적으로_생성하는_경우_생성한_주문이_반환된다() {
         // given
         CreateOrderRequest request = new CreateOrderRequest(savedOrderTable.getId(),
-                List.of(new OrderLineItemRequest(savedOrderLineItem.getMenuId(), savedOrderLineItem.getQuantity())));
+                List.of(new OrderLineItemRequest(savedOrderLineItem.getMenu().getId(), savedOrderLineItem.getQuantity())));
 
 
         // when
@@ -79,7 +79,7 @@ class OrderServiceTest extends ServiceTestContext {
     void 전체_주문을_조회할_수_있다() {
         // given
         CreateOrderRequest request = new CreateOrderRequest(savedOrderTable.getId(),
-                List.of(new OrderLineItemRequest(savedOrderLineItem.getMenuId(), savedOrderLineItem.getQuantity())));
+                List.of(new OrderLineItemRequest(savedOrderLineItem.getMenu().getId(), savedOrderLineItem.getQuantity())));
 
         orderService.create(request);
 

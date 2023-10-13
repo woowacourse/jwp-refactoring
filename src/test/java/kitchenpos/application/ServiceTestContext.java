@@ -2,14 +2,14 @@ package kitchenpos.application;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import kitchenpos.dao.JdbcTemplateMenuDao;
-import kitchenpos.dao.JdbcTemplateMenuGroupDao;
-import kitchenpos.dao.JdbcTemplateMenuProductDao;
-import kitchenpos.dao.JdbcTemplateOrderDao;
-import kitchenpos.dao.JdbcTemplateOrderLineItemDao;
-import kitchenpos.dao.JdbcTemplateOrderTableDao;
-import kitchenpos.dao.JdbcTemplateProductDao;
-import kitchenpos.dao.JdbcTemplateTableGroupDao;
+import kitchenpos.dao.jpa.MenuGroupRepository;
+import kitchenpos.dao.jpa.MenuProductRepository;
+import kitchenpos.dao.jpa.MenuRepository;
+import kitchenpos.dao.jpa.OrderLineItemRepository;
+import kitchenpos.dao.jpa.OrderRepository;
+import kitchenpos.dao.jpa.OrderTableRepository;
+import kitchenpos.dao.jpa.ProductRepository;
+import kitchenpos.dao.jpa.TableGroupRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -51,21 +51,21 @@ public class ServiceTestContext {
     protected TableGroupService tableGroupService;
 
     @Autowired
-    protected JdbcTemplateProductDao productDao;
+    protected ProductRepository productRepository;
     @Autowired
-    protected JdbcTemplateMenuDao menuDao;
+    protected MenuRepository menuRepository;
     @Autowired
-    protected JdbcTemplateMenuGroupDao menuGroupDao;
+    protected MenuGroupRepository menuGroupRepository;
     @Autowired
-    protected JdbcTemplateMenuProductDao menuProductDao;
+    protected MenuProductRepository menuProductRepository;
     @Autowired
-    protected JdbcTemplateOrderDao orderDao;
+    protected OrderRepository orderDao;
     @Autowired
-    protected JdbcTemplateOrderLineItemDao orderLineItemDao;
+    protected OrderLineItemRepository orderLineItemDao;
     @Autowired
-    protected JdbcTemplateTableGroupDao tableGroupDao;
+    protected TableGroupRepository tableGroupDao;
     @Autowired
-    protected JdbcTemplateOrderTableDao orderTableDao;
+    protected OrderTableRepository orderTableDao;
 
 
     protected Menu savedMenu;
@@ -93,7 +93,7 @@ public class ServiceTestContext {
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(false);
         orderTable.setNumberOfGuests(0);
-        orderTable.setTableGroupId(savedTableGroup.getId());
+        orderTable.setTableGroup(savedTableGroup);
 
         savedOrderTable = orderTableDao.save(orderTable);
     }
@@ -107,8 +107,8 @@ public class ServiceTestContext {
 
     private void setupOrderLineItem() {
         OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(savedMenu.getId());
-        orderLineItem.setOrderId(savedOrder.getId());
+        orderLineItem.setMenu(savedMenu);
+        orderLineItem.setOrder(savedOrder);
         orderLineItem.setQuantity(1L);
 
         savedOrderLineItem = orderLineItemDao.save(orderLineItem);
@@ -128,31 +128,31 @@ public class ServiceTestContext {
         product.setPrice(BigDecimal.valueOf(1000L));
         product.setName("productName");
 
-        savedProduct = productDao.save(product);
+        savedProduct = productRepository.save(product);
     }
 
     private void setupMenuGroup() {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName("menuGroupName");
 
-        savedMenuGroup = menuGroupDao.save(menuGroup);
+        savedMenuGroup = menuGroupRepository.save(menuGroup);
     }
 
     private void setupMenu() {
         Menu menu = new Menu();
         menu.setName("menuName");
         menu.setPrice(BigDecimal.valueOf(2000L));
-        menu.setMenuGroupId(savedMenuGroup.getId());
+        menu.setMenuGroup(savedMenuGroup);
 
-        savedMenu = menuDao.save(menu);
+        savedMenu = menuRepository.save(menu);
     }
 
     private void setupMenuProduct() {
         MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(savedProduct.getId());
+        menuProduct.setProduct(savedProduct);
         menuProduct.setQuantity(2L);
-        menuProduct.setMenuId(savedMenu.getId());
+        menuProduct.setMenu(savedMenu);
 
-        savedMenuProduct = menuProductDao.save(menuProduct);
+        savedMenuProduct = menuProductRepository.save(menuProduct);
     }
 }

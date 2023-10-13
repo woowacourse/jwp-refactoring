@@ -20,7 +20,7 @@ class MenuServiceTest extends ServiceTestContext {
         CreateMenuRequest request = new CreateMenuRequest("menuName",
                 BigDecimal.valueOf(-1),
                 savedMenuGroup.getId(),
-                List.of(new MenuProductRequest(savedMenuProduct.getProductId(), savedMenuProduct.getQuantity())));
+                List.of(new MenuProductRequest(savedMenuProduct.getProduct().getId(), savedMenuProduct.getQuantity())));
 
         // when, then
         assertThatThrownBy(() -> menuService.create(request))
@@ -33,7 +33,7 @@ class MenuServiceTest extends ServiceTestContext {
         CreateMenuRequest request = new CreateMenuRequest("menuName",
                 BigDecimal.valueOf(1000L),
                 Long.MAX_VALUE,
-                List.of(new MenuProductRequest(savedMenuProduct.getProductId(), savedMenuProduct.getQuantity())));
+                List.of(new MenuProductRequest(savedMenuProduct.getProduct().getId(), savedMenuProduct.getQuantity())));
 
         // when, then
         assertThatThrownBy(() -> menuService.create(request))
@@ -46,7 +46,7 @@ class MenuServiceTest extends ServiceTestContext {
         CreateMenuRequest request = new CreateMenuRequest("menuName",
                 BigDecimal.valueOf(2001L),
                 savedMenuGroup.getId(),
-                List.of(new MenuProductRequest(savedMenuProduct.getProductId(), savedMenuProduct.getQuantity())));
+                List.of(new MenuProductRequest(savedMenuProduct.getProduct().getId(), savedMenuProduct.getQuantity())));
 
         // when, then
         assertThatThrownBy(() -> menuService.create(request))
@@ -59,7 +59,7 @@ class MenuServiceTest extends ServiceTestContext {
         CreateMenuRequest request = new CreateMenuRequest("menuName",
                 BigDecimal.valueOf(2000L),
                 savedMenuGroup.getId(),
-                List.of(new MenuProductRequest(savedMenuProduct.getProductId(), savedMenuProduct.getQuantity())));
+                List.of(new MenuProductRequest(savedMenuProduct.getProduct().getId(), savedMenuProduct.getQuantity())));
 
         // when
         MenuResponse response = menuService.create(request);
@@ -77,7 +77,7 @@ class MenuServiceTest extends ServiceTestContext {
         CreateMenuRequest request = new CreateMenuRequest("menuName",
                 BigDecimal.valueOf(2000L),
                 savedMenuGroup.getId(),
-                List.of(new MenuProductRequest(savedMenuProduct.getProductId(), savedMenuProduct.getQuantity())));
+                List.of(new MenuProductRequest(savedMenuProduct.getProduct().getId(), savedMenuProduct.getQuantity())));
 
         menuService.create(request);
 

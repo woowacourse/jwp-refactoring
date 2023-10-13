@@ -71,11 +71,11 @@ class TableGroupServiceTest extends ServiceTestContext {
     void 그룹_지정_대상이_이미_그룹이_존재한다면_예외를_던진다() {
         // given
         OrderTable orderTable1 = new OrderTable();
-        orderTable1.setTableGroupId(savedTableGroup.getId());
+        orderTable1.setTableGroup(savedTableGroup);
         OrderTable createdOrderTable1 = orderTableDao.save(orderTable1);
 
         OrderTable orderTable2 = new OrderTable();
-        orderTable2.setTableGroupId(savedTableGroup.getId());
+        orderTable2.setTableGroup(savedTableGroup);
         OrderTable createdOrderTable2 = orderTableDao.save(orderTable2);
 
         List<OrderTableRequest> orderTableRequests = List.of(
@@ -124,7 +124,7 @@ class TableGroupServiceTest extends ServiceTestContext {
         TableGroup createdTableGroup = tableGroupDao.save(tableGroup);
 
         OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(createdTableGroup.getId());
+        orderTable.setTableGroup(createdTableGroup);
         OrderTable createdOrderTable = orderTableDao.save(orderTable);
 
         Order order = new Order();
