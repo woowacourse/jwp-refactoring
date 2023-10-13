@@ -8,12 +8,8 @@ import java.util.List;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 
-@SpringBootTest
-@Sql(value = "classpath:data/truncate.sql")
-class ProductServiceTest {
+class ProductServiceTest extends ServiceIntegrationTest {
 
     @Autowired
     private ProductService productService;

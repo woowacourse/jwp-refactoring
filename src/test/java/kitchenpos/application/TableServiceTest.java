@@ -18,12 +18,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 
-@SpringBootTest
-@Sql(value = "classpath:data/truncate.sql")
-class TableServiceTest {
+class TableServiceTest extends ServiceIntegrationTest {
     private static final OrderTable ORDER_TABLE_STATUS_EMPTY = new OrderTable(true);
     private static final OrderTable ORDER_TABLE_STATUS_NOT_EMPTY = new OrderTable(false);
     private static final OrderTable ORDER_TABLE_GUEST_POSITIVE = new OrderTable(1);
