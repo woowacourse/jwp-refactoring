@@ -9,7 +9,6 @@ public class MenuGroupFixtures {
 
     private static MenuGroup create(String name) {
         MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(null);
         menuGroup.setName(name);
         return menuGroup;
     }
