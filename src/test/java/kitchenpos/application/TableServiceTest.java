@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.OrderTableFixtures.createEmptyTable;
 import static kitchenpos.fixture.ProductFixtures.양념치킨_17000원;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -104,8 +105,8 @@ class TableServiceTest {
     @Test
     void changeEmpty_InTableGroup_ExceptionThrown() {
         // given
-        OrderTable savedOrderTable1 = tableService.create(createOrderTable(true));
-        OrderTable savedOrderTable2 = tableService.create(createOrderTable(true));
+        OrderTable savedOrderTable1 = tableService.create(createEmptyTable());
+        OrderTable savedOrderTable2 = tableService.create(createEmptyTable());
 
         TableGroup tableGroup = createTableGroup(savedOrderTable1, savedOrderTable2);
         tableGroupService.create(tableGroup);
@@ -177,7 +178,7 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuests_EmptyTable_ExceptionThrown() {
         // given
-        OrderTable savedOrderTable = tableService.create(createOrderTable(true));
+        OrderTable savedOrderTable = tableService.create(createEmptyTable());
 
         savedOrderTable.setNumberOfGuests(5);
 
@@ -214,11 +215,5 @@ class TableServiceTest {
         tableGroup.setOrderTables(List.of(savedOrderTable1, savedOrderTable2));
         tableGroup.setCreatedDate(LocalDateTime.now());
         return tableGroup;
-    }
-
-    private OrderTable createOrderTable(boolean isEmpty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(isEmpty);
-        return orderTable;
     }
 }
