@@ -29,14 +29,8 @@ import kitchenpos.fixture.OrderTableFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 
-@Sql(scripts = {"/truncate.sql"}, executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-class OrderServiceTest {
+class OrderServiceTest extends ServiceTest {
 
     @Autowired
     OrderTableDao orderTableDao;
