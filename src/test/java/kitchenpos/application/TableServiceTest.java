@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static java.lang.Long.MAX_VALUE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -110,56 +111,103 @@ class TableServiceTest extends ServiceIntegrationTest {
 
     @Test
     void OrderTable에_속해_있는_Order중_단_하나라도_식사중이면_안된다() {
-        // given
-
-        // when
-
-        // then
     }
 
     @Test
     void OrderTable_empty를_성공적으로_변경한다() {
         // given
+        OrderTable orderTable = OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(
+                1,
+                true
+        );
+        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable emptyFalseOrderTable = OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(1, false);
 
         // when
+        tableService.changeEmpty(savedOrderTable.getId(), emptyFalseOrderTable);
 
         // then
+        OrderTable changedOrderTable = orderTableDao.findById(savedOrderTable.getId())
+                .orElseThrow(NoSuchElementException::new);
+        assertAll(
+                () -> assertThat(changedOrderTable).usingRecursiveComparison()
+                        .ignoringFields("empty")
+                        .isEqualTo(savedOrderTable),
+                () -> assertThat(changedOrderTable.isEmpty()).isFalse()
+        );
     }
 
     @Test
     void 존재하지_않는_OrderTable은_numberOfGuest를_변경할_수_없다() {
         // given
+        OrderTable orderTable = OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(2, false);
 
-        // when
-
-        // then
+        // when then
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(MAX_VALUE, orderTable))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    void 주문이_불가능한_상태의_OrderTable_은_numberOfGuest_를_변경할_수_없다() {
+    void 주문이_불가능한_상태의_OrderTable은_numberOfGuest_를_변경할_수_없다() {
         // given
+        OrderTable originalOrderTable = OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(
+                1,
+                true
+        );
+        OrderTable savedOrderTable = orderTableDao.save(originalOrderTable);
+        OrderTable orderTable = OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(
+                2,
+                true
+        );
 
-        // when
-
-        // then
+        // when then
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTable))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void OrderTable의_numberOfGuest를_0미만으로_바꿀_수_없다() {
         // given
+        OrderTable originalOrderTable = OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(
+                1,
+                false
+        );
+        OrderTable savedOrderTable = orderTableDao.save(originalOrderTable);
+        OrderTable orderTable = OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(
+                -1,
+                false
+        );
 
-        // when
-
-        // then
+        // when then
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTable))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void OrderTable의_numberOfGuest를_성공적으로_변경한다() {
         // given
+        OrderTable originalOrderTable = OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(
+                1,
+                false
+        );
+        OrderTable savedOrderTable = orderTableDao.save(originalOrderTable);
+        OrderTable orderTable = OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(
+                100,
+                false
+        );
 
         // when
+        tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTable);
 
         // then
+        OrderTable changedOrderTable = orderTableDao.findById(savedOrderTable.getId())
+                .orElseThrow(NoSuchElementException::new);
+        assertAll(
+                () -> assertThat(changedOrderTable).usingRecursiveComparison()
+                        .ignoringFields("numberOfGuests")
+                        .isEqualTo(savedOrderTable),
+                () -> assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests())
+        );
     }
 
 }
