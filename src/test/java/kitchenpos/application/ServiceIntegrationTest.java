@@ -36,6 +36,9 @@ public abstract class ServiceIntegrationTest {
     @Autowired
     protected OrderTableDao orderTableDao;
 
+    @Autowired
+    protected TableGroupDao tableGroupDao;
+
     protected <T> boolean containsObjects(List<T> objects, Predicate<T> predicate) {
         for (T object : objects) {
             if (predicate.test(object)) {
