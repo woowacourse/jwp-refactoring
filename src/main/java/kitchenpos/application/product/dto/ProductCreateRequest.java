@@ -18,7 +18,7 @@ public class ProductCreateRequest {
     }
 
     public Product toDomain() {
-        return new Product(name, price);
+        return new Product(null, name, price);
     }
 
     public String getName() {
