@@ -1,30 +1,20 @@
 package kitchenpos.application;
 
 import static kitchenpos.fixture.ProductFixtures.후라이드치킨_16000원;
-import static kitchenpos.fixture.ProductFixtures.후라이드치킨_16000원_ID1;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@ExtendWith(MockitoExtension.class)
-class ProductServiceTest {
+class ProductServiceTest extends ServiceTest {
 
-    @Mock
-    private ProductDao productDao;
-
-    @InjectMocks
+    @Autowired
     private ProductService productService;
 
     @DisplayName("상품을 생성한다.")
@@ -32,15 +22,12 @@ class ProductServiceTest {
     void create() {
         // given
         Product product = 후라이드치킨_16000원;
-        Product expected = 후라이드치킨_16000원_ID1;
-
-        given(productDao.save(product)).willReturn(expected);
 
         // when
         Product actual = productService.create(product);
 
         // then
-        assertThat(actual.getId()).isEqualTo(expected.getId());
+        assertThat(actual.getId()).isNotNull();
     }
 
     @DisplayName("가격이 0원보다 낮은 상품을 생성하면 예외가 발생한다.")
