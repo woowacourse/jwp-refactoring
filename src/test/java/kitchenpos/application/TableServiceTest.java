@@ -8,6 +8,8 @@ import kitchenpos.fake.FakeOrderDao;
 import kitchenpos.fake.FakeOrderTableDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -18,15 +20,11 @@ class TableServiceTest {
     private OrderTableDao orderTableDao = new FakeOrderTableDao();
     private TableService tableService = new TableService(orderDao, orderTableDao);
 
-    private Order cookingOrder;
     private Order completionOrder;
-    private Order mealOrder;
 
     @BeforeEach
     void setUp() {
-        cookingOrder = orderDao.save(new Order(null, 1L, "COOKING", null, null));
         completionOrder = orderDao.save(new Order(null, 2L, "COMPLETION", null, null));
-        mealOrder = orderDao.save(new Order(null, 3L, "MEAL", null, null));
 
         orderTableDao.save(new OrderTable(1L, null, 3, false));
         orderTableDao.save(new OrderTable(2L, null, 4, false));
@@ -67,17 +65,12 @@ class TableServiceTest {
         assertThat(changeEmpty.isEmpty()).isTrue();
     }
 
-    @Test
-    void 요리중이면_테이블을_빈_상태로_변경할_수_없다() {
-        Long cookingTableId = cookingOrder.getOrderTableId();
-        assertThatThrownBy(() -> tableService.changeEmpty(cookingTableId, new OrderTable(null, null, 3, true)))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 식사중이면_테이블을_빈_상태로_변경할_수_없다() {
-        Long mealTableId = mealOrder.getOrderTableId();
-        assertThatThrownBy(() -> tableService.changeEmpty(mealTableId, new OrderTable(null, null, 3, true)))
+    @CsvSource(value = {"COOKING", "MEAL"})
+    @ParameterizedTest
+    void 완료상태가_아니면_테이블을_빈_상태로_변경할_수_없다(String status) {
+        Order order = orderDao.save(new Order(null, 1L, status, null, null));
+        Long tableId = order.getOrderTableId();
+        assertThatThrownBy(() -> tableService.changeEmpty(tableId, new OrderTable(null, null, 3, true)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -94,6 +87,21 @@ class TableServiceTest {
         OrderTable orderTable = tableService.create(new OrderTable(null, null, 3, true));
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), new OrderTable(null, null, 5, false)))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 존재하지_않는_테이블을_비울_수_없다() {
+        assertThatThrownBy(() -> tableService.changeEmpty(4L, new OrderTable(null, null, 3, false)))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @CsvSource(value = {"0", "-1"})
+    @ParameterizedTest
+    void 손님_수를_0명_이하로_변경할_수_없다(int guestCount) {
+        OrderTable orderTable = tableService.create(new OrderTable(null, null, 3, true));
+
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), new OrderTable(null, null, guestCount, false)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
