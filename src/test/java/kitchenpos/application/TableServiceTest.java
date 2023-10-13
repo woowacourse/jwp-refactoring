@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static kitchenpos.fixture.OrderTableFixtures.createEmptyTable;
 import static kitchenpos.fixture.ProductFixtures.양념치킨_17000원;
+import static kitchenpos.fixture.TableGroupFixtures.createTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -207,13 +208,4 @@ class TableServiceTest {
         );
     }
 
-    private TableGroup createTableGroup(
-            OrderTable savedOrderTable1,
-            OrderTable savedOrderTable2
-    ) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(savedOrderTable1, savedOrderTable2));
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        return tableGroup;
-    }
 }
