@@ -1,6 +1,7 @@
 package kitchenpos.dao;
 
 import kitchenpos.domain.Product;
+import kitchenpos.fixture.ProductFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -29,9 +30,7 @@ class JdbcTemplateProductDaoTest {
 
     @BeforeEach
     void setUp() {
-        product = new Product();
-        product.setName("아메리카노");
-        product.setPrice(BigDecimal.valueOf(5600).setScale(2));
+        product = ProductFixture.아메리카노_5600원();
     }
 
     @Test
@@ -42,8 +41,8 @@ class JdbcTemplateProductDaoTest {
         // then
         assertThat(savedProduct).usingRecursiveComparison()
                 .ignoringFields("id")
+                .withComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                 .isEqualTo(product);
-
     }
 
     @Test
@@ -55,6 +54,7 @@ class JdbcTemplateProductDaoTest {
         // then
         assertThat(foundProduct).usingRecursiveComparison()
                 .ignoringFields("id")
+                .withComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                 .isEqualTo(product);
     }
 
