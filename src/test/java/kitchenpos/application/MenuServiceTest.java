@@ -14,6 +14,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.fixture.MenuFixtures;
 import kitchenpos.fixture.MenuProductFixtures;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -51,7 +52,7 @@ class MenuServiceTest {
                 MenuProductFixtures.create(product2, 1)
         );
 
-        Menu menu = createMenu("후라이드+양념", 33_000, menuGroup, menuProducts);
+        Menu menu = MenuFixtures.create("후라이드+양념", 33_000, menuGroup, menuProducts);
 
         // when
         Menu actual = menuService.create(menu);
@@ -64,20 +65,6 @@ class MenuServiceTest {
                         menuProduct -> menuProduct.getMenuId().equals(actual.getId())
                 )
         );
-    }
-
-    private static Menu createMenu(
-            String name,
-            int price,
-            MenuGroup menuGroup,
-            List<MenuProduct> menuProducts
-    ) {
-        Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(BigDecimal.valueOf(price));
-        menu.setMenuGroupId(menuGroup.getId());
-        menu.setMenuProducts(menuProducts);
-        return menu;
     }
 
     @DisplayName("가격이 0원보다 낮은 메뉴를 생성하면 예외가 발생한다.")
@@ -121,7 +108,7 @@ class MenuServiceTest {
                 MenuProductFixtures.create(nonSavedProduct, 1)
         );
 
-        Menu menu = createMenu("후라이드+양념", 33_000, menuGroup, menuProducts);
+        Menu menu = MenuFixtures.create("후라이드+양념", 33_000, menuGroup, menuProducts);
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -143,7 +130,7 @@ class MenuServiceTest {
                 MenuProductFixtures.create(product2, 1)
         );
 
-        Menu menu = createMenu("후라이드+양념", wrongCalculateResult, menuGroup, menuProducts);
+        Menu menu = MenuFixtures.create("후라이드+양념", wrongCalculateResult, menuGroup, menuProducts);
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -161,13 +148,13 @@ class MenuServiceTest {
                 MenuProductFixtures.create(product1, 1),
                 MenuProductFixtures.create(product2, 1)
         );
-        Menu menu1 = createMenu("후라이드+양념", 33_000, menuGroup, menuProducts1);
+        Menu menu1 = MenuFixtures.create("후라이드+양념", 33_000, menuGroup, menuProducts1);
 
         List<MenuProduct> menuProducts2 = List.of(
                 MenuProductFixtures.create(product1, 1),
                 MenuProductFixtures.create(product1, 1)
         );
-        Menu menu2 = createMenu("후라이드+후라이드", 32_000, menuGroup, menuProducts2);
+        Menu menu2 = MenuFixtures.create("후라이드+후라이드", 32_000, menuGroup, menuProducts2);
 
         menuService.create(menu1);
         menuService.create(menu2);
