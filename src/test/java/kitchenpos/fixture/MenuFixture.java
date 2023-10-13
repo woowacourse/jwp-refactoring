@@ -16,7 +16,7 @@ public class MenuFixture {
                              final BigDecimal price,
                              final Long menuGroupId,
                              final List<MenuProduct> menuProducts) {
-        return new Menu(name, price, menuGroupId, menuProducts);
+        return new Menu(null, name, price, menuGroupId, menuProducts);
     }
 
     public static MenuCreateRequest 메뉴_생성_요청(final Menu menu) {

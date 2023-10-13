@@ -73,7 +73,8 @@ public class JdbcTemplateMenuDao implements MenuDao {
                 resultSet.getLong("id"),
                 resultSet.getString("name"),
                 resultSet.getBigDecimal("price"),
-                resultSet.getLong("menu_group_id")
+                resultSet.getLong("menu_group_id"),
+                null
         );
     }
 }

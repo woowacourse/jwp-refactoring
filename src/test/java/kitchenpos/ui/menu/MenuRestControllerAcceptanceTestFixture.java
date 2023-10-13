@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static kitchenpos.fixture.MenuFixture.메뉴_생성;
 import static kitchenpos.fixture.MenuFixture.메뉴_생성_요청;
 import static kitchenpos.fixture.MenuProductFixture.메뉴_상품_10개_생성;
 import static kitchenpos.fixture.ProductFixture.상품_생성_10000원;
@@ -88,7 +89,7 @@ class MenuRestControllerAcceptanceTestFixture extends IntegrationTestHelper {
     }
 
     protected Menu 메뉴_데이터를_생성한다() {
-        Menu menu = new Menu("상품", BigDecimal.valueOf(10000), menuGroup.getId(), List.of(menuProduct));
+        Menu menu = 메뉴_생성("상품", BigDecimal.valueOf(10000), menuGroup.getId(), List.of(menuProduct));
         MenuCreateRequest req = 메뉴_생성_요청(menu);
 
         return menuService.create(req);

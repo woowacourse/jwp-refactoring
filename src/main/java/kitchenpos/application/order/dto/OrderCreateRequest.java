@@ -25,7 +25,7 @@ public class OrderCreateRequest {
                 .map(OrderLineItemCreateRequest::toDomain)
                 .collect(Collectors.toList());
 
-        return new Order(orderTableId, null, LocalDateTime.now(), orderLineItems);
+        return new Order(null, orderTableId, null, LocalDateTime.now(), orderLineItems);
     }
 
     public Long getOrderTableId() {

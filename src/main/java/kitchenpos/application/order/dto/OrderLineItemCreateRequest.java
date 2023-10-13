@@ -16,7 +16,7 @@ public class OrderLineItemCreateRequest {
     }
 
     public OrderLineItem toDomain() {
-        return new OrderLineItem(menuId, quantity);
+        return new OrderLineItem(null, null, menuId, quantity);
     }
 
     public Long getMenuId() {

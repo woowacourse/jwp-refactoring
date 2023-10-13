@@ -7,10 +7,10 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static kitchenpos.fixture.TableGroupFixture.단체_지정_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -24,9 +24,7 @@ class JdbcTemplateTableGroupDaoTest extends JdbcTestHelper {
     @Test
     void 저장한다() {
         // given
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of());
-        tableGroup.setCreatedDate(LocalDateTime.of(2023, 03, 03, 03, 03, 03));
+        TableGroup tableGroup = 단체_지정_생성(List.of());
 
         // when
         TableGroup result = jdbcTemplateTableGroupDao.save(tableGroup);
@@ -38,9 +36,7 @@ class JdbcTemplateTableGroupDaoTest extends JdbcTestHelper {
     @Test
     void id값으로_조회한다() {
         // given
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of());
-        tableGroup.setCreatedDate(LocalDateTime.of(2023, 03, 03, 03, 03, 03));
+        TableGroup tableGroup = 단체_지정_생성(List.of());
 
         TableGroup saved = jdbcTemplateTableGroupDao.save(tableGroup);
 

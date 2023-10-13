@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static kitchenpos.fixture.MenuFixture.메뉴_생성;
 import static kitchenpos.fixture.MenuFixture.메뉴_생성_요청;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -19,7 +20,7 @@ class MenuRestControllerAcceptanceTest extends MenuRestControllerAcceptanceTestF
 
     @BeforeEach
     void setup() {
-        메뉴 = new Menu("상품", BigDecimal.valueOf(10000), menuGroup.getId(), List.of(menuProduct));
+        메뉴 = 메뉴_생성("상품", BigDecimal.valueOf(10000), menuGroup.getId(), List.of(menuProduct));
     }
 
     @Test

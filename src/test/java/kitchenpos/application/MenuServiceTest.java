@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static kitchenpos.fixture.MenuFixture.메뉴_생성;
 import static kitchenpos.fixture.MenuFixture.메뉴_생성_요청;
 import static kitchenpos.fixture.MenuProductFixture.메뉴_상품_10개_생성;
 import static kitchenpos.fixture.ProductFixture.상품_생성_10000원;
@@ -52,7 +53,7 @@ class MenuServiceTest extends IntegrationTestHelper {
     @Test
     void 메뉴를_생성한다() {
         // given
-        Menu menu = new Menu("상품", BigDecimal.valueOf(10000), menuGroup.getId(), List.of(menuProduct));
+        Menu menu = 메뉴_생성("상품", BigDecimal.valueOf(10000), menuGroup.getId(), List.of(menuProduct));
         MenuCreateRequest req = 메뉴_생성_요청(menu);
 
         // when
@@ -69,7 +70,7 @@ class MenuServiceTest extends IntegrationTestHelper {
     @Test
     void 가격이_0원_이하면_예외를_발생시킨다() {
         // given
-        Menu menu = new Menu("상품", BigDecimal.valueOf(-1), menuGroup.getId(), List.of(menuProduct));
+        Menu menu = 메뉴_생성("상품", BigDecimal.valueOf(-1), menuGroup.getId(), List.of(menuProduct));
         MenuCreateRequest req = 메뉴_생성_요청(menu);
 
         // when & then
@@ -81,7 +82,7 @@ class MenuServiceTest extends IntegrationTestHelper {
     void 메뉴_그룹이_존재하지_않으면_예외를_발생시킨다() {
         // given
         Long invalidGroupId = -1L;
-        Menu menu = new Menu("상품", BigDecimal.valueOf(1000), invalidGroupId, List.of(menuProduct));
+        Menu menu = 메뉴_생성("상품", BigDecimal.valueOf(1000), invalidGroupId, List.of(menuProduct));
         MenuCreateRequest req = 메뉴_생성_요청(menu);
 
         // when & then
@@ -95,7 +96,7 @@ class MenuServiceTest extends IntegrationTestHelper {
         Long invalidProductId = -1L;
         menuProduct = 메뉴_상품_10개_생성(null, invalidProductId);
 
-        Menu menu = new Menu("상품", BigDecimal.valueOf(100), menuGroup.getId(), List.of(menuProduct));
+        Menu menu = 메뉴_생성("상품", BigDecimal.valueOf(100), menuGroup.getId(), List.of(menuProduct));
         MenuCreateRequest req = 메뉴_생성_요청(menu);
 
         // when & then
@@ -107,7 +108,7 @@ class MenuServiceTest extends IntegrationTestHelper {
     void 메뉴_가격이_메뉴_상품_가격의_합보다_크면_예외를_발생시킨다() {
         // given
         menuProduct = 메뉴_상품_10개_생성(null, 1L);
-        Menu menu = new Menu("상품", BigDecimal.valueOf(1000000000), menuGroup.getId(), List.of(menuProduct));
+        Menu menu = 메뉴_생성("상품", BigDecimal.valueOf(1000000000), menuGroup.getId(), List.of(menuProduct));
         MenuCreateRequest req = 메뉴_생성_요청(menu);
 
         // when & then
@@ -117,7 +118,7 @@ class MenuServiceTest extends IntegrationTestHelper {
 
     @Test
     void 모든_메뉴들을_조회한다() {
-        Menu menu = new Menu("상품", BigDecimal.valueOf(10000), menuGroup.getId(), List.of(menuProduct));
+        Menu menu = 메뉴_생성("상품", BigDecimal.valueOf(10000), menuGroup.getId(), List.of(menuProduct));
         MenuCreateRequest req = 메뉴_생성_요청(menu);
         Menu savedMenu = menuService.create(req);
 

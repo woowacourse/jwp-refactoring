@@ -8,6 +8,6 @@ public class OrderLineItemFixture {
     public static OrderLineItem 주문_품목_생성(final Long orderId,
                                          final Long menuId,
                                          int quantity) {
-        return new OrderLineItem(orderId, menuId, quantity);
+        return new OrderLineItem(null, orderId, menuId, quantity);
     }
 }

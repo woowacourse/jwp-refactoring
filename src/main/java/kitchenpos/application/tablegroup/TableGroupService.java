@@ -50,7 +50,7 @@ public class TableGroupService {
             }
         }
 
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), savedOrderTables);
+        TableGroup tableGroup = new TableGroup(null, LocalDateTime.now(), savedOrderTables);
 
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 

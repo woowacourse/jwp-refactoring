@@ -26,10 +26,10 @@ public class MenuCreateRequest {
 
     public Menu toDomain() {
         List<MenuProduct> domainMenuProducts = menuProducts.stream()
-                .map(menuProduct -> new MenuProduct(null, menuProduct.getProductId(), menuProduct.getQuantity()))
+                .map(menuProduct -> new MenuProduct(null, null, menuProduct.getProductId(), menuProduct.getQuantity()))
                 .collect(Collectors.toList());
 
-        return new Menu(name, price, menuGroupId, domainMenuProducts);
+        return new Menu(null, name, price, menuGroupId, domainMenuProducts);
     }
 
     public String getName() {

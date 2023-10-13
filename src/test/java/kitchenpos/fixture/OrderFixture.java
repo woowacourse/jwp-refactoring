@@ -17,7 +17,7 @@ public class OrderFixture {
                               final String orderStatus,
                               final LocalDateTime orderedTime,
                               final List<OrderLineItem> orderLineItems) {
-        return new Order(orderTableId, orderStatus, orderedTime, orderLineItems);
+        return new Order(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
     public static OrderCreateRequest 주문_생성_요청(final Order order) {

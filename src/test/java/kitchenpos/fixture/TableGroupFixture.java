@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class TableGroupFixture {
 
     public static TableGroup 단체_지정_생성(final List<OrderTable> orderTables) {
-        return new TableGroup(LocalDateTime.now(), orderTables);
+        return new TableGroup(null, LocalDateTime.now(), orderTables);
     }
 
     public static TableGroupCreateRequest 단체_지정_생성_요청(final TableGroup tableGroup) {
