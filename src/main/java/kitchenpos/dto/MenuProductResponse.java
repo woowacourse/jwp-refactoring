@@ -17,7 +17,7 @@ public class MenuProductResponse {
         this.quantity = quantity;
     }
 
-    public static MenuProductResponse from(MenuProduct menuProduct, Menu menu) {
+    public static MenuProductResponse of(MenuProduct menuProduct, Menu menu) {
         return new MenuProductResponse(
                 menuProduct.getSeq(),
                 menu.getId(),

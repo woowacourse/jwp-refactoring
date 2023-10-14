@@ -30,7 +30,7 @@ public class MenuResponse {
 
     public static MenuResponse from(Menu menu) {
         List<MenuProductResponse> menuProductResponses = menu.getMenuProducts().getItems().stream()
-                .map(menuProduct -> MenuProductResponse.from(menuProduct, menu))
+                .map(menuProduct -> MenuProductResponse.of(menuProduct, menu))
                 .collect(toList());
         return new MenuResponse(
                 menu.getId(),
