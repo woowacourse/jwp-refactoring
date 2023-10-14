@@ -58,7 +58,6 @@ class OrderServiceTest extends ServiceTest {
                 List.of(orderLineItem)
         );
         // when
-
         Order savedOrder = orderService.create(order);
 
         // then
