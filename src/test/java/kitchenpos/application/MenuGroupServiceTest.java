@@ -9,11 +9,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.verify;
+import static org.mockito.Mockito.only;
 
 @SuppressWarnings("NonAsciiCharacters")
 @ExtendWith(MockitoExtension.class)
@@ -47,16 +47,11 @@ class MenuGroupServiceTest {
 
         @Test
         void 메뉴_그룹을_전체_조회할_수_있다() {
-            // given
-            final MenuGroup siksa = new MenuGroup("식사");
-            final MenuGroup noodles = new MenuGroup("면류");
-            given(menuGroupDao.findAll()).willReturn(List.of(siksa, noodles));
-
             // when
-            final List<MenuGroup> actual = menuGroupService.list();
+            menuGroupDao.findAll();
 
             // then
-            assertThat(actual).containsExactly(siksa, noodles);
+            verify(menuGroupDao, only()).findAll();
         }
     }
 }

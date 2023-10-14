@@ -129,46 +129,46 @@ class TableGroupServiceTest {
     @Nested
     class Ungroup {
 
-    }
-    @Test
-    void 그룹을_해제할_수_있다() {
-        // given
-        final long tableGroupId = 1L;
-        final OrderTable spyOrderTable1 = spy(new OrderTable(3, false));
-        final OrderTable spyOrderTable2 = spy(new OrderTable(5, false));
+        @Test
+        void 그룹을_해제할_수_있다() {
+            // given
+            final long tableGroupId = 1L;
+            final OrderTable spyOrderTable1 = spy(new OrderTable(3, false));
+            final OrderTable spyOrderTable2 = spy(new OrderTable(5, false));
 
-        given(orderTableDao.findAllByTableGroupId(tableGroupId)).willReturn(List.of(spyOrderTable1, spyOrderTable2));
-        given(spyOrderTable1.getId()).willReturn(1L);
-        given(spyOrderTable2.getId()).willReturn(1L);
-        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).willReturn(false);
+            given(orderTableDao.findAllByTableGroupId(tableGroupId)).willReturn(List.of(spyOrderTable1, spyOrderTable2));
+            given(spyOrderTable1.getId()).willReturn(1L);
+            given(spyOrderTable2.getId()).willReturn(1L);
+            given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).willReturn(false);
 
-        // when
-        tableGroupService.ungroup(tableGroupId);
+            // when
+            tableGroupService.ungroup(tableGroupId);
 
-        // then
-        assertAll(
-                () -> assertThat(spyOrderTable1.getTableGroupId()).isEqualTo(null),
-                () -> assertThat(spyOrderTable1.isEmpty()).isFalse(),
-                () -> assertThat(spyOrderTable2.getTableGroupId()).isEqualTo(null),
-                () -> assertThat(spyOrderTable2.isEmpty()).isFalse()
-        );
-    }
+            // then
+            assertAll(
+                    () -> assertThat(spyOrderTable1.getTableGroupId()).isEqualTo(null),
+                    () -> assertThat(spyOrderTable1.isEmpty()).isFalse(),
+                    () -> assertThat(spyOrderTable2.getTableGroupId()).isEqualTo(null),
+                    () -> assertThat(spyOrderTable2.isEmpty()).isFalse()
+            );
+        }
 
-    @Test
-    void 주문상태가_요리와_식사중이면_그룹을_해제할_수_없다() {
-        // given
-        final long tableGroupId = 1L;
+        @Test
+        void 주문상태가_요리와_식사중이면_그룹을_해제할_수_없다() {
+            // given
+            final long tableGroupId = 1L;
 
-        final OrderTable spyOrderTable1 = spy(new OrderTable(3, false));
-        final OrderTable spyOrderTable2 = spy(new OrderTable(5, false));
+            final OrderTable spyOrderTable1 = spy(new OrderTable(3, false));
+            final OrderTable spyOrderTable2 = spy(new OrderTable(5, false));
 
-        given(orderTableDao.findAllByTableGroupId(tableGroupId)).willReturn(List.of(spyOrderTable1, spyOrderTable2));
-        given(spyOrderTable1.getId()).willReturn(1L);
-        given(spyOrderTable2.getId()).willReturn(1L);
-        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).willReturn(true);
+            given(orderTableDao.findAllByTableGroupId(tableGroupId)).willReturn(List.of(spyOrderTable1, spyOrderTable2));
+            given(spyOrderTable1.getId()).willReturn(1L);
+            given(spyOrderTable2.getId()).willReturn(1L);
+            given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).willReturn(true);
 
-        // when, then
-        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
-                .isInstanceOf(IllegalArgumentException.class);
+            // when, then
+            assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
     }
 }

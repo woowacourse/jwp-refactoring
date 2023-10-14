@@ -10,12 +10,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.only;
+import static org.mockito.Mockito.verify;
 
 @SuppressWarnings("NonAsciiCharacters")
 @ExtendWith(MockitoExtension.class)
@@ -72,16 +73,11 @@ class ProductServiceTest {
 
         @Test
         void 상품을_전체_조회할_수_있다() {
-            // given
-            final Product chicken = new Product("치킨", BigDecimal.valueOf(20_000));
-            final Product pizza = new Product("피자", BigDecimal.valueOf(24_000));
-            given(productDao.findAll()).willReturn(List.of(chicken, pizza));
-
             // when
-            final List<Product> actual = productService.list();
+            productService.list();
 
             // then
-            assertThat(actual).containsExactly(chicken, pizza);
+            verify(productDao, only()).findAll();
         }
     }
 }

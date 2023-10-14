@@ -23,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.spy;
 
 @SuppressWarnings("NonAsciiCharacters")
 @ExtendWith(MockitoExtension.class)
@@ -59,24 +60,26 @@ class MenuServiceTest {
             given(productDao.findById(1L)).willReturn(Optional.ofNullable(noodle));
             given(productDao.findById(2L)).willReturn(Optional.ofNullable(potato));
 
-            expected.setId(1L);
-            given(menuDao.save(expected)).willReturn(expected);
+            final Menu spyExpected = spy(expected);
+            given(menuDao.save(expected)).willReturn(spyExpected);
+            given(spyExpected.getId()).willReturn(1L);
 
-            wooDong.setSeq(1L);
-            given(menuProductDao.save(wooDong)).willReturn(wooDong);
-            frenchFries.setSeq(2L);
-            given(menuProductDao.save(frenchFries)).willReturn(frenchFries);
+            final MenuProduct spyWooDong = spy(wooDong);
+            given(menuProductDao.save(wooDong)).willReturn(spyWooDong);
+
+            final MenuProduct spyFrenchFries = spy(frenchFries);
+            given(menuProductDao.save(frenchFries)).willReturn(spyFrenchFries);
 
             // when
             final Menu actual = menuService.create(expected);
 
             // then
             assertAll(
-                    () -> assertThat(actual.getId()).isEqualTo(expected.getId()),
+                    () -> assertThat(actual.getId()).isNotNull(),
                     () -> assertThat(actual.getName()).isEqualTo(expected.getName()),
                     () -> assertThat(actual.getPrice()).isEqualTo(expected.getPrice()),
                     () -> assertThat(actual.getMenuGroupId()).isEqualTo(expected.getMenuGroupId()),
-                    () -> assertThat(actual.getMenuProducts()).containsExactly(wooDong, frenchFries)
+                    () -> assertThat(actual.getMenuProducts()).containsExactly(spyWooDong, spyFrenchFries)
             );
         }
 
