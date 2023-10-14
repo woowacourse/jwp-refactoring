@@ -2,6 +2,7 @@ package kitchenpos.common;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.math.BigDecimal;
 import kitchenpos.vo.Money;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -19,16 +20,16 @@ class MoneyConverterTest {
         Money money = Money.valueOf(1000L);
 
         // when
-        Long result = moneyConverter.convertToDatabaseColumn(money);
+        BigDecimal result = moneyConverter.convertToDatabaseColumn(money);
 
         // then
-        assertThat(result).isEqualTo(1000L);
+        assertThat(result).isEqualTo(BigDecimal.valueOf(1000L));
     }
 
     @Test
     void Money로_변환한다() {
         // given
-        long amount = 1000L;
+        BigDecimal amount = BigDecimal.valueOf(1000L);
 
         // when
         Money result = moneyConverter.convertToEntityAttribute(amount);
