@@ -18,7 +18,7 @@
     - [x] Menu 와 Menu Products 를 저장한다.
 
 - Menu 반환
-  - [x] 전체 Menu 를 반환받는다.
+  - [x] 전체 Menu 를 반환받는다
 
 - Product 생성
   - [x] Product 를 입력 받는다.
@@ -32,7 +32,7 @@
     - [x] OrderTables 에서 ID 들을 꺼내온다.
     - [x] OrderTables 가 null 이거나, 1개 이하이면 안된다.
     - [x] 입력받은 OrderTables 가 존재하지 않으면 안된다.
-    - [x] OrderTables 중 하나라도 주문 등록한 상태이거나, 혹은 table group 에 속하면 안된다.
+    - [x] OrderTables 중 하나라도 주문이 가능한 상태이거나, 혹은 table group 에 속하면 안된다.
     - [x] table group 을 저장한다.
     - [x] 이제 OrderTable 에게 Table Group 을 할당하고 Empty 를 false 로 설정한다.
     - [x] OrderTable 을 업데이트한다.
@@ -52,6 +52,7 @@
     - [x] 해당 Table 에서 주문이 불가능한 상태이면 주문할 수 없다.
     - [x] 현재 상태를 Cooking, 으로 바꾸고 또 주문 시각을 현재로 설정해준다.
     - [x] 주문한 orderLineItem 도 저장해준다.
+
 - 전체 Order 반환
   - [x] 전제 Order 를 반환한다.
 
@@ -61,7 +62,6 @@
     - [x] 이미 식사를 완료한 상태이면 Status 를 변경할 수 없다.
     - [x] Order 를 업데이트한다.
     - [x] Order 를 반환한다.
-
 
 - OrderTable 저장
   - [x] OrderTable 을 입력받는다.
