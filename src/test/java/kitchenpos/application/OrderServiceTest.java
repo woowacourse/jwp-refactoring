@@ -77,7 +77,6 @@ class OrderServiceTest {
                     () -> assertThat(order.getOrderTableId()).isEqualTo(orderTableId),
                     () -> assertThat(order.getOrderStatus()).isEqualTo(COOKING.name())
             );
-
         }
 
         @Test
@@ -112,7 +111,7 @@ class OrderServiceTest {
             final OrderLineItem wooDong = new OrderLineItem(1L, 1L, 1);
             final OrderLineItem frenchFries = new OrderLineItem(1L, 2L, 1);
             final List<OrderLineItem> orderLineItems = List.of(wooDong, frenchFries);
-            Order order = spy(new Order(OrderStatus.COMPLETION.name(), LocalDateTime.now(), orderLineItems));
+            final Order order = spy(new Order(OrderStatus.COMPLETION.name(), LocalDateTime.now(), orderLineItems));
 
             given(menuDao.countByIdIn(anyList())).willReturn((long) orderLineItems.size());
             given(order.getOrderTableId()).willReturn(1L);
