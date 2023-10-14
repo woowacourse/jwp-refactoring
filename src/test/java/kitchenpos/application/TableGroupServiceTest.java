@@ -13,6 +13,9 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.CreateTableGroupRequest;
 import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.response.TableGroupResponse;
+import kitchenpos.exception.OrderIsNotCompletedException;
+import kitchenpos.exception.OrderTableCountNotEnoughException;
+import kitchenpos.exception.OrderTableNotEmptyException;
 import kitchenpos.exception.OrderTableNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -29,14 +32,16 @@ class TableGroupServiceTest extends ServiceTestContext {
         // given
         List<OrderTableRequest> orderTableRequests = new ArrayList<>();
         for (int i = 0; i < tableSize; i++) {
-            orderTableRequests.add(new OrderTableRequest(savedOrderTable.getId()));
+            OrderTable orderTable = new OrderTable(null, 1, true);
+            orderTableDao.save(orderTable);
+            orderTableRequests.add(new OrderTableRequest(orderTable.getId()));
         }
 
         CreateTableGroupRequest request = new CreateTableGroupRequest(orderTableRequests);
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderTableCountNotEnoughException.class);
     }
 
     @Test
@@ -57,15 +62,18 @@ class TableGroupServiceTest extends ServiceTestContext {
     @Test
     void 그룹_지정_대상이_빈_테이블이_아니라면_예외를_던진다() {
         // given
+        OrderTable orderTable = new OrderTable(null, 1, false);
+        orderTableDao.save(orderTable);
+
         List<OrderTableRequest> orderTableRequests = List.of(
-                new OrderTableRequest(savedOrderTable.getId())
+                new OrderTableRequest(orderTable.getId())
         );
 
         CreateTableGroupRequest request = new CreateTableGroupRequest(orderTableRequests);
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderTableNotEmptyException.class);
     }
 
     @Test
@@ -86,7 +94,7 @@ class TableGroupServiceTest extends ServiceTestContext {
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderTableNotEmptyException.class);
     }
 
     @Test
@@ -127,6 +135,6 @@ class TableGroupServiceTest extends ServiceTestContext {
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(createdTableGroup.getId()))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderIsNotCompletedException.class);
     }
 }

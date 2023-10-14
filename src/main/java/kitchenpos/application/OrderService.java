@@ -50,7 +50,7 @@ public class OrderService {
         OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(OrderTableNotFoundException::new);
 
-        orderTable.validateIsNotEmpty();
+        orderTable.validateIsEmpty();
         Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
 
         return orderRepository.save(order);

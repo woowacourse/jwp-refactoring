@@ -14,6 +14,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import kitchenpos.exception.OrderIsCompletedException;
+import kitchenpos.exception.OrderIsNotCompletedException;
+import kitchenpos.exception.OrderLineEmptyException;
 
 @Table(name = "orders")
 @Entity
@@ -54,20 +57,19 @@ public class Order {
 
     public void validateOrderLineNotEmpty() {
         if (orderLineItems.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new OrderLineEmptyException();
         }
     }
 
-
     public void validateOrderIsNotCompleted() {
         if (OrderStatus.COMPLETION == orderStatus) {
-            throw new IllegalArgumentException();
+            throw new OrderIsCompletedException();
         }
     }
 
     public void validateOrderIsCompleted() {
         if (OrderStatus.COMPLETION != orderStatus) {
-            throw new IllegalArgumentException();
+            throw new OrderIsNotCompletedException();
         }
     }
 

@@ -6,6 +6,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import kitchenpos.exception.NumberOfGuestIsNotPositiveException;
+import kitchenpos.exception.OrderTableEmptyException;
+import kitchenpos.exception.OrderTableNotEmptyException;
+import kitchenpos.exception.TableGroupExistsException;
 
 @Entity
 public class OrderTable {
@@ -33,7 +37,7 @@ public class OrderTable {
 
     public void validateTableGroupNotExists() {
         if (tableGroup != null) {
-            throw new IllegalArgumentException();
+            throw new TableGroupExistsException();
         }
     }
 
@@ -53,20 +57,24 @@ public class OrderTable {
 
     public void validateIsEmpty() {
         if (!isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new OrderTableNotEmptyException();
         }
     }
 
     public void validateIsNotEmpty() {
         if (isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new OrderTableEmptyException();
         }
     }
 
     private void validateNumberOfGuestsIsPositive(int numberOfGuests) {
         if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
+            throw new NumberOfGuestIsNotPositiveException();
         }
+    }
+
+    public boolean isEmpty() {
+        return empty;
     }
 
     public Long getId() {
@@ -79,9 +87,5 @@ public class OrderTable {
 
     public int getNumberOfGuests() {
         return numberOfGuests;
-    }
-
-    public boolean isEmpty() {
-        return empty;
     }
 }

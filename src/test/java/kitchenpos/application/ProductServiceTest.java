@@ -7,6 +7,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.dto.request.CreateProductRequest;
 import kitchenpos.dto.response.ProductResponse;
+import kitchenpos.exception.ProductPriceIsNegativeException;
+import kitchenpos.exception.ProductPriceIsNotProvidedException;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +22,7 @@ class ProductServiceTest extends ServiceTestContext {
 
         // when, then
         assertThatThrownBy(() -> productService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(ProductPriceIsNegativeException.class);
     }
 
     @Test
@@ -30,7 +32,7 @@ class ProductServiceTest extends ServiceTestContext {
 
         // when, then
         assertThatThrownBy(() -> productService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(ProductPriceIsNotProvidedException.class);
     }
 
     @Test

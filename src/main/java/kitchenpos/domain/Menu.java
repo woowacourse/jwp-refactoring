@@ -3,7 +3,6 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import kitchenpos.exception.MenuPriceIsBiggerThanActualPriceException;
+import kitchenpos.exception.MenuPriceIsNegativeException;
 
 @Entity
 public class Menu {
@@ -42,8 +43,8 @@ public class Menu {
     }
 
     private void validatePrice(BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+        if (price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new MenuPriceIsNegativeException();
         }
     }
 
@@ -59,7 +60,7 @@ public class Menu {
                 .orElse(BigDecimal.ZERO);
 
         if (price.compareTo(actualPrice) > 0) {
-            throw new IllegalArgumentException();
+            throw new MenuPriceIsBiggerThanActualPriceException();
         }
     }
 

@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import kitchenpos.exception.OrderTableCountNotEnoughException;
 
 @Entity
 public class TableGroup {
@@ -46,7 +47,7 @@ public class TableGroup {
 
     private void validateOrderTableCount() {
         if (orderTables.size() < 2) {
-            throw new IllegalArgumentException();
+            throw new OrderTableCountNotEnoughException();
         }
     }
 

@@ -12,7 +12,11 @@ import kitchenpos.dto.request.ChangeEmptyTableRequest;
 import kitchenpos.dto.request.ChangeTableGuestRequest;
 import kitchenpos.dto.request.CreateOrderTableRequest;
 import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.exception.NumberOfGuestIsNotPositiveException;
+import kitchenpos.exception.OrderIsNotCompletedException;
+import kitchenpos.exception.OrderTableEmptyException;
 import kitchenpos.exception.OrderTableNotFoundException;
+import kitchenpos.exception.TableGroupExistsException;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -70,7 +74,7 @@ class TableServiceTest extends ServiceTestContext {
 
         // when, then
         assertThatThrownBy(() -> tableService.changeEmpty(createdOrderTable.getId(), request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(TableGroupExistsException.class);
     }
 
     @ParameterizedTest
@@ -87,17 +91,20 @@ class TableServiceTest extends ServiceTestContext {
 
         // when, then
         assertThatThrownBy(() -> tableService.changeEmpty(createdOrderTable.getId(), request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderIsNotCompletedException.class);
     }
 
     @Test
     void 손님_수를_0명_미만으로_변경하려고_하면_예외를_던진다() {
         // given
+        OrderTable orderTable = new OrderTable(null, 1, false);
+        orderTableDao.save(orderTable);
+
         ChangeTableGuestRequest request = new ChangeTableGuestRequest(-1);
 
         // when, then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), request))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), request))
+                .isInstanceOf(NumberOfGuestIsNotPositiveException.class);
     }
 
     @Test
@@ -121,16 +128,19 @@ class TableServiceTest extends ServiceTestContext {
 
         // when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderTableEmptyException.class);
     }
 
     @Test
     void 테이블을_정상적으로_변경하면_변경된_테이블을_반환한다() {
         // given
+        OrderTable orderTable = new OrderTable(null, 1, false);
+        orderTableDao.save(orderTable);
+
         ChangeTableGuestRequest request = new ChangeTableGuestRequest(5);
 
         // when
-        OrderTableResponse response = tableService.changeNumberOfGuests(savedOrderTable.getId(), request);
+        OrderTableResponse response = tableService.changeNumberOfGuests(orderTable.getId(), request);
 
         // then
         SoftAssertions.assertSoftly(softly -> {

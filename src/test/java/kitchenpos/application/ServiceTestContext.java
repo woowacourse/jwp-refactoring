@@ -91,7 +91,7 @@ public class ServiceTestContext {
     }
 
     private void setupOrderTable() {
-        OrderTable orderTable = new OrderTable(savedTableGroup, 0, false);
+        OrderTable orderTable = new OrderTable(savedTableGroup, 0, true);
 
         savedOrderTable = orderTableDao.save(orderTable);
     }
