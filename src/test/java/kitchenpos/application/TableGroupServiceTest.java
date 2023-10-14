@@ -62,7 +62,6 @@ class TableGroupServiceTest {
             // given
             final TableGroup tableGroup = TableGroupFixtures.BASIC.get();
             initOrderTables(tableGroup);
-
             tableGroup.setOrderTables(Collections.emptyList());
 
             // when, then
