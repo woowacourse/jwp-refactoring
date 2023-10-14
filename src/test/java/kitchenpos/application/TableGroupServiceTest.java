@@ -22,7 +22,7 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
     private TableGroupService tableGroupService;
 
     @Test
-    void OrderTables가_null_이면_안된다() {
+    void OrderTables가_null_이면_저장에_실패한다() {
         // given
         TableGroup tableGroup = TableGroupFixture.빈_테이블_그룹_생성();
 
@@ -32,7 +32,7 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
     }
 
     @Test
-    void OrderTables가_1개_이하이면_안된다() {
+    void OrderTables가_1개_이하이면_저장에_실패한다() {
         // given
         OrderTable savedOrderTable = orderTableDao.save(OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(1, true));
         TableGroup tableGroup = TableGroupFixture.오더_테이블이_있는_테이블_그룹_생성(List.of(savedOrderTable));
@@ -43,7 +43,7 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
     }
 
     @Test
-    void 존재하지_않는_OrderTables이며_안된다() {
+    void 존재하지_않는_OrderTables이며_저장에_실패한다() {
         // given
         List<OrderTable> savedOrderTables = List.of(
                 OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(1, true),
@@ -57,7 +57,7 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
     }
 
     @Test
-    void OrderTables중_하나라도_주문이_가능한_상태이면_안된다() {
+    void OrderTables중_하나라도_주문이_가능한_상태이면_저장에_실패한다() {
         // given
         List<OrderTable> savedOrderTables = List.of(
                 orderTableDao.save(OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(1, false)),
@@ -71,7 +71,7 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
     }
 
     @Test
-    void OrderTables중_하나라도_이미_TableGroup에_속해있으면_안된다() {
+    void OrderTables중_하나라도_이미_TableGroup에_속해있으면_저장에_실패한다() {
         // given
         TableGroup savedTableGroup = tableGroupDao.save(TableGroupFixture.빈_테이블_그룹_생성());
         List<OrderTable> savedOrderTables = List.of(

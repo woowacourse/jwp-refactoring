@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
 class OrderServiceTest extends ServiceIntegrationTest {
 
     @Test
-    void 주문한_메뉴가_1개_미만인_경우_실패한다() {
+    void 주문한_메뉴가_1개_미만인_경우_저장에_실패한다() {
         // given
         OrderTable savedOrderTable = 테이블_그룹이_없는_주문_테이블_생성(1, false);
         Order order = 주문_생성(savedOrderTable, Collections.emptyList());
@@ -45,7 +45,7 @@ class OrderServiceTest extends ServiceIntegrationTest {
     }
 
     @Test
-    void 주문한_메뉴_중_존재하지_않는_메뉴가_있으면_안된다() {
+    void 주문한_메뉴_중_존재하지_않는_메뉴가_있으면_저장에_실패한다() {
         // given
         OrderTable savedOrderTable = 테이블_그룹이_없는_주문_테이블_생성(1, false);
         OrderLineItem orderLineItem = 존재하지_않는_메뉴를_가진_OrderLineItem_생성();
@@ -57,7 +57,7 @@ class OrderServiceTest extends ServiceIntegrationTest {
     }
 
     @Test
-    void OrderTable이_존재하지_않으면_안된다() {
+    void OrderTable이_존재하지_않으면_저장에_실패한다() {
         // given
         Product savedProduct = productDao.save(후추_치킨_10000원());
         MenuGroup savedMenuGroup = menuGroupDao.save(추천_메뉴_그룹());

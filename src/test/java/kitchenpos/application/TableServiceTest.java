@@ -24,7 +24,7 @@ class TableServiceTest extends ServiceIntegrationTest {
     private TableService tableService;
 
     @Test
-    void Order_Table_생성() {
+    void Order_Table_생성에_성공한다() {
         // given
         OrderTable orderTable = OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(1, false);
 
