@@ -1,6 +1,8 @@
 package kitchenpos.application;
 
 import static java.lang.Long.MAX_VALUE;
+import static kitchenpos.fixture.OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성;
+import static kitchenpos.fixture.OrderTableFixture.테이블_그룹이_있는_주문_테이블_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -13,7 +15,6 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.TableGroupFixture;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ class TableServiceTest extends ServiceIntegrationTest {
     @Test
     void Order_Table_생성에_성공한다() {
         // given
-        OrderTable orderTable = OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(1, false);
+        OrderTable orderTable = 테이블_그룹이_없는_주문_테이블_생성(1, false);
 
         // when
         Long orderTableId = tableService.create(orderTable)
@@ -44,9 +45,9 @@ class TableServiceTest extends ServiceIntegrationTest {
     void Order_Table_목록을_반환한다() {
         // given
         List<OrderTable> orderTables = List.of(
-                OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(1, false),
-                OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(1, false),
-                OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(1, false)
+                테이블_그룹이_없는_주문_테이블_생성(1, false),
+                테이블_그룹이_없는_주문_테이블_생성(1, false),
+                테이블_그룹이_없는_주문_테이블_생성(1, false)
         );
         List<OrderTable> savedOrderTables = new ArrayList<>();
         for (OrderTable orderTable : orderTables) {
@@ -74,7 +75,7 @@ class TableServiceTest extends ServiceIntegrationTest {
     @Test
     void 저장되어_있지_않은_OrderTable의_empty를_변경하는_경우_실패한다() {
         // given
-        OrderTable orderTable = OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(1, true);
+        OrderTable orderTable = 테이블_그룹이_없는_주문_테이블_생성(1, true);
 
         // when then
         assertThatThrownBy(() -> tableService.changeEmpty(MAX_VALUE, orderTable))
@@ -85,13 +86,13 @@ class TableServiceTest extends ServiceIntegrationTest {
     void OrderTable이_이미_TableGroup에_속해_있으면_empty_변경이_안된다() {
         // given
         TableGroup savedTableGroup = tableGroupDao.save(TableGroupFixture.빈_테이블_그룹_생성());
-        OrderTable orderTable = OrderTableFixture.테이블_그룹이_있는_주문_테이블_생성(
+        OrderTable orderTable = 테이블_그룹이_있는_주문_테이블_생성(
                 savedTableGroup,
                 1,
                 true
         );
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
-        OrderTable emptyFalseOrderTable = OrderTableFixture.테이블_그룹이_있는_주문_테이블_생성(
+        OrderTable emptyFalseOrderTable = 테이블_그룹이_있는_주문_테이블_생성(
                 savedTableGroup,
                 1,
                 false
@@ -105,10 +106,10 @@ class TableServiceTest extends ServiceIntegrationTest {
     @Test
     void OrderTable에_속해_있는_Order중_단_하나라도_요리중이면_empty_변경이_안된다() {
         // given
-        OrderTable savedOrderTable = orderTableDao.save(OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(1, false));
+        OrderTable savedOrderTable = orderTableDao.save(테이블_그룹이_없는_주문_테이블_생성(1, false));
         Order order = 주문을_저장하고_반환받는다(savedOrderTable);
         주문의_상태를_변환한다(order, OrderStatus.COOKING);
-        OrderTable emptyTrueOrderTable = OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(
+        OrderTable emptyTrueOrderTable = 테이블_그룹이_없는_주문_테이블_생성(
                 1,
                 true
         );
@@ -121,10 +122,10 @@ class TableServiceTest extends ServiceIntegrationTest {
     @Test
     void OrderTable에_속해_있는_Order중_단_하나라도_식사중이면_empty_변경이_안된다() {
         // given
-        OrderTable savedOrderTable = orderTableDao.save(OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(1, false));
+        OrderTable savedOrderTable = orderTableDao.save(테이블_그룹이_없는_주문_테이블_생성(1, false));
         Order order = 주문을_저장하고_반환받는다(savedOrderTable);
         주문의_상태를_변환한다(order, OrderStatus.MEAL);
-        OrderTable emptyTrueOrderTable = OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(
+        OrderTable emptyTrueOrderTable = 테이블_그룹이_없는_주문_테이블_생성(
                 1,
                 true
         );
@@ -137,14 +138,14 @@ class TableServiceTest extends ServiceIntegrationTest {
     @Test
     void OrderTable_empty를_성공적으로_변경한다() {
         // given
-        OrderTable orderTable = OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(
+        OrderTable orderTable = 테이블_그룹이_없는_주문_테이블_생성(
                 1,
                 false
         );
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
         Order order = 주문을_저장하고_반환받는다(savedOrderTable);
         주문의_상태를_변환한다(order, OrderStatus.COMPLETION);
-        OrderTable emptyTrueOrderTable = OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(1, true);
+        OrderTable emptyTrueOrderTable = 테이블_그룹이_없는_주문_테이블_생성(1, true);
 
         // when
         tableService.changeEmpty(savedOrderTable.getId(), emptyTrueOrderTable);
@@ -163,7 +164,7 @@ class TableServiceTest extends ServiceIntegrationTest {
     @Test
     void 존재하지_않는_OrderTable은_numberOfGuest를_변경할_수_없다() {
         // given
-        OrderTable orderTable = OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(2, false);
+        OrderTable orderTable = 테이블_그룹이_없는_주문_테이블_생성(2, false);
 
         // when then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(MAX_VALUE, orderTable))
@@ -173,12 +174,12 @@ class TableServiceTest extends ServiceIntegrationTest {
     @Test
     void 주문이_불가능한_상태의_OrderTable은_numberOfGuest_를_변경할_수_없다() {
         // given
-        OrderTable originalOrderTable = OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(
+        OrderTable originalOrderTable = 테이블_그룹이_없는_주문_테이블_생성(
                 1,
                 true
         );
         OrderTable savedOrderTable = orderTableDao.save(originalOrderTable);
-        OrderTable orderTable = OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(
+        OrderTable orderTable = 테이블_그룹이_없는_주문_테이블_생성(
                 2,
                 true
         );
@@ -191,12 +192,12 @@ class TableServiceTest extends ServiceIntegrationTest {
     @Test
     void OrderTable의_numberOfGuest를_0미만으로_바꿀_수_없다() {
         // given
-        OrderTable originalOrderTable = OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(
+        OrderTable originalOrderTable = 테이블_그룹이_없는_주문_테이블_생성(
                 1,
                 false
         );
         OrderTable savedOrderTable = orderTableDao.save(originalOrderTable);
-        OrderTable orderTable = OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(
+        OrderTable orderTable = 테이블_그룹이_없는_주문_테이블_생성(
                 -1,
                 false
         );
@@ -209,12 +210,12 @@ class TableServiceTest extends ServiceIntegrationTest {
     @Test
     void OrderTable의_numberOfGuest를_성공적으로_변경한다() {
         // given
-        OrderTable originalOrderTable = OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(
+        OrderTable originalOrderTable = 테이블_그룹이_없는_주문_테이블_생성(
                 1,
                 false
         );
         OrderTable savedOrderTable = orderTableDao.save(originalOrderTable);
-        OrderTable orderTable = OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(
+        OrderTable orderTable = 테이블_그룹이_없는_주문_테이블_생성(
                 100,
                 false
         );

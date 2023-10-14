@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.MenuGroupFixture.떠오르는_메뉴_그룹;
+import static kitchenpos.fixture.MenuGroupFixture.싼_메뉴_그룹;
 import static kitchenpos.fixture.MenuGroupFixture.추천_메뉴_그룹;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -8,7 +10,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.fixture.MenuGroupFixture;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -39,9 +40,9 @@ class MenuGroupServiceTest extends ServiceIntegrationTest {
     void 전체_메뉴_그룹을_조회한다() {
         // given
         List<MenuGroup> menuGroups = List.of(
-                MenuGroupFixture.추천_메뉴_그룹(),
-                MenuGroupFixture.떠오르는_메뉴_그룹(),
-                MenuGroupFixture.싼_메뉴_그룹()
+                추천_메뉴_그룹(),
+                떠오르는_메뉴_그룹(),
+                싼_메뉴_그룹()
         );
         List<MenuGroup> savedMenuGroups = new ArrayList<>();
         for (MenuGroup menuGroup : menuGroups) {

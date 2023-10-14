@@ -28,7 +28,6 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
-import kitchenpos.fixture.OrderTableFixture;
 import org.junit.jupiter.api.Test;
 
 class OrderServiceTest extends ServiceIntegrationTest {
@@ -130,7 +129,7 @@ class OrderServiceTest extends ServiceIntegrationTest {
     @Test
     void 존재하지_않는_Order를_변경할_수_없다() {
         // given
-        OrderTable savedOrderTable = orderTableDao.save(OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(1, true));
+        OrderTable savedOrderTable = orderTableDao.save(테이블_그룹이_없는_주문_테이블_생성(1, true));
         Order order = 주문_생성(savedOrderTable, Collections.emptyList());
 
         // when then
