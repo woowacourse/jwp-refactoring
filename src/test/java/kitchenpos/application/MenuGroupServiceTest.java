@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.MenuGroupRequest;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.fake.InMemoryMenuGroupService;
@@ -29,7 +30,7 @@ class MenuGroupServiceTest {
     @Test
     void 주문_그룹을_생성한다() {
         // given
-        MenuGroup menuGroup = new MenuGroup("korean");
+        MenuGroupRequest menuGroup = new MenuGroupRequest("korean");
 
         // when
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);

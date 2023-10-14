@@ -2,6 +2,7 @@ package kitchenpos.ui;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.MenuGroupService;
+import kitchenpos.application.dto.MenuGroupRequest;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -43,12 +44,12 @@ class MenuGroupRestControllerTest {
         createdMenuGroup.setName("Test Menu Group");
 
         // when
-        when(menuGroupService.create(any(MenuGroup.class))).thenReturn(createdMenuGroup);
+        when(menuGroupService.create(any(MenuGroupRequest.class))).thenReturn(createdMenuGroup);
 
         // then
         mockMvc.perform(post("/api/menu-groups")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(createdMenuGroup)))
+                        .content(objectMapper.writeValueAsBytes(new MenuGroupRequest("Test Menu Group"))))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/menu-groups/" + createdMenuGroup.getId()))
                 .andExpect(content().string(objectMapper.writeValueAsString(createdMenuGroup)));

@@ -2,6 +2,7 @@ package kitchenpos.ui;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.MenuService;
+import kitchenpos.application.dto.MenuRequest;
 import kitchenpos.domain.Menu;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ class MenuRestControllerTest {
         createdMenu.setName("Test Menu");
 
         // when
-        when(menuService.create(any(Menu.class))).thenReturn(createdMenu);
+        when(menuService.create(any(MenuRequest.class))).thenReturn(createdMenu);
 
         // then
         mockMvc.perform(post("/api/menus")
