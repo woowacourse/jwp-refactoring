@@ -142,7 +142,8 @@ class TableServiceTest {
 
             // when
             // then
-            Assertions.assertThatThrownBy(() -> tableService.changeEmpty(notEmptyTable.getId(), changeRequest))
+            final Long tableId = notEmptyTable.getId();
+            Assertions.assertThatThrownBy(() -> tableService.changeEmpty(tableId, changeRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -158,7 +159,8 @@ class TableServiceTest {
 
             // when
             // then
-            Assertions.assertThatThrownBy(() -> tableService.changeEmpty(notEmptyTable.getId(), changeRequest))
+            final Long tableId = notEmptyTable.getId();
+            Assertions.assertThatThrownBy(() -> tableService.changeEmpty(tableId, changeRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -201,7 +203,8 @@ class TableServiceTest {
 
             // when
             // then
-            Assertions.assertThatThrownBy(() -> tableService.changeNumberOfGuests(notEmptyTable.getId(), orderTableRequest))
+            final Long tableId = notEmptyTable.getId();
+            Assertions.assertThatThrownBy(() -> tableService.changeNumberOfGuests(tableId, orderTableRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -214,7 +217,8 @@ class TableServiceTest {
 
             // when
             // then
-            Assertions.assertThatThrownBy(() -> tableService.changeNumberOfGuests(emptyTable.getId(), orderTableRequest))
+            final Long tableId = notEmptyTable.getId();
+            Assertions.assertThatThrownBy(() -> tableService.changeNumberOfGuests(tableId, orderTableRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

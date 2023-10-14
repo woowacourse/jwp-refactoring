@@ -54,7 +54,8 @@ class ProductServiceTest {
 
             // when
             // then
-            Assertions.assertThatThrownBy(() -> productService.create(productRequest)).isInstanceOf(IllegalArgumentException.class);
+            Assertions.assertThatThrownBy(() -> productService.create(productRequest))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 

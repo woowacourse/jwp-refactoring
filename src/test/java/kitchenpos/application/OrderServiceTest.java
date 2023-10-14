@@ -172,7 +172,8 @@ class OrderServiceTest {
 
             // when
             // then
-            Assertions.assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), changeRequest))
+            final Long orderId = savedOrder.getId();
+            Assertions.assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, changeRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
