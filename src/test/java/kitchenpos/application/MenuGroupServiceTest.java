@@ -6,6 +6,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.MenuGroupRequest;
+import kitchenpos.dto.MenuGroupResponse;
 import kitchenpos.test.ServiceTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +25,13 @@ class MenuGroupServiceTest {
     @Test
     void 메뉴_그룹을_등록한다() {
         // given
-        MenuGroup menuGroup = 메뉴_그룹("피자");
+        MenuGroupRequest request = new MenuGroupRequest("피자");
 
         // when
-        MenuGroup savedMenuGroup = sut.create(menuGroup);
+        MenuGroupResponse result = sut.create(request);
 
         // then
-        assertThat(menuGroupDao.findById(savedMenuGroup.getId())).isPresent();
+        assertThat(menuGroupDao.findById(result.getId())).isPresent();
     }
 
     @Test
@@ -39,11 +41,11 @@ class MenuGroupServiceTest {
         MenuGroup chickenGroup = menuGroupDao.save(메뉴_그룹("치킨"));
 
         // when
-        List<MenuGroup> result = sut.list();
+        List<MenuGroupResponse> result = sut.list();
 
         // then
         assertThat(result)
                 .usingRecursiveComparison()
-                .isEqualTo(List.of(pizzaGroup, chickenGroup));
+                .isEqualTo(List.of(MenuGroupResponse.from(pizzaGroup), MenuGroupResponse.from(chickenGroup)));
     }
 }
