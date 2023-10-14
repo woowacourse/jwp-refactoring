@@ -48,8 +48,8 @@ public class Menu {
         }
     }
 
-    public void addMenuProduct(MenuProduct menuProduct) {
-        menuProducts.add(menuProduct);
+    public void setupMenuProduct(List<MenuProduct> menuProducts) {
+        this.menuProducts = menuProducts;
         validateMenuPriceIsNotBiggerThanActualPrice();
     }
 
