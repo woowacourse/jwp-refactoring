@@ -4,7 +4,6 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
@@ -82,16 +81,7 @@ public class OrderService {
     public OrderResponse changeOrderStatus(Long orderId, OrderStatusUpdateRequest request) {
         Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다."));
-
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException("완료된 주문의 상태는 변경할 수 없습니다.");
-        }
-
-        OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
-        savedOrder.changeOrderStatus(orderStatus.name());
-
-        orderRepository.save(savedOrder);
-
+        savedOrder.changeOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
         return OrderResponse.from(savedOrder);
     }
 }

@@ -135,7 +135,7 @@ public class OrderServiceTest {
             Order findOrder = orderRepository.findById(result.getId()).get();
             assertSoftly(softly -> {
                 softly.assertThat(result.getOrderStatus()).isEqualTo(COOKING.name());
-                softly.assertThat(findOrder.getOrderStatus()).isEqualTo(COOKING.name());
+                softly.assertThat(findOrder.getOrderStatus()).isEqualTo(COOKING);
             });
         }
     }
@@ -198,7 +198,7 @@ public class OrderServiceTest {
             Order savedOrder = orderRepository.findById(result.getId()).get();
             assertSoftly(softly -> {
                 softly.assertThat(result.getOrderStatus()).isEqualTo(MEAL.name());
-                softly.assertThat(savedOrder.getOrderStatus()).isEqualTo(MEAL.name());
+                softly.assertThat(savedOrder.getOrderStatus()).isEqualTo(MEAL);
             });
         }
     }
