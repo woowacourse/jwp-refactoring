@@ -132,10 +132,10 @@ class OrderServiceTest {
         void changeOrderStatus() {
             // given
             final OrderTable savedOrderTable = tableService.create(OrderTableFixtures.NOT_EMPTY.get());
-            final Order orderToSave = OrderFixtures.BASIC.get();
-            orderToSave.setOrderTableId(savedOrderTable.getId());
-            orderToSave.setOrderStatus(OrderStatus.MEAL.name());
-            final Order savedOrder = orderService.create(orderToSave);
+            final Order order = OrderFixtures.BASIC.get();
+            order.setOrderTableId(savedOrderTable.getId());
+            order.setOrderStatus(OrderStatus.MEAL.name());
+            final Order savedOrder = orderService.create(order);
 
             final Order newOrder = OrderFixtures.EMPTY.get();
 
