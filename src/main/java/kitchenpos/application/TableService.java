@@ -9,6 +9,7 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderTableRequest;
 import kitchenpos.dto.OrderTableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,10 +25,8 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTableResponse create(final OrderTable orderTable) {
-        orderTable.changeId(null);
-        orderTable.changeTableGroupId(null);
-
+    public OrderTableResponse create(OrderTableRequest request) {
+        OrderTable orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
         return OrderTableResponse.from(orderTableDao.save(orderTable));
     }
 
@@ -38,7 +37,7 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTable orderTable) {
+    public OrderTableResponse changeEmpty(Long orderTableId, OrderTableRequest request) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
 
@@ -51,14 +50,13 @@ public class TableService {
             throw new IllegalArgumentException("테이블의 주문 상태가 조리중이거나 식사중인 경우 테이블의 상태를 변경할 수 없습니다.");
         }
 
-        savedOrderTable.changeEmpty(orderTable.isEmpty());
-
+        savedOrderTable.changeEmpty(request.isEmpty());
         return OrderTableResponse.from(orderTableDao.save(savedOrderTable));
     }
 
     @Transactional
-    public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
+    public OrderTableResponse changeNumberOfGuests(Long orderTableId, OrderTableRequest request) {
+        final int numberOfGuests = request.getNumberOfGuests();
 
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException("방문한 손님 수는 음수가 될 수 없습니다.");
