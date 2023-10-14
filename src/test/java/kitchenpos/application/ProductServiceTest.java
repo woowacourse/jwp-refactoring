@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.ProductRequest;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
 import kitchenpos.fake.InMemoryProductRepository;
@@ -29,7 +30,7 @@ class ProductServiceTest {
     @Test
     void 상품을_생성한다() {
         // given
-        Product chicken = new Product("chicken", BigDecimal.valueOf(10_000));
+        ProductRequest chicken = new ProductRequest("chicken", BigDecimal.valueOf(10_000));
 
         // when
         Product savedProduct = productService.create(chicken);
@@ -46,7 +47,7 @@ class ProductServiceTest {
     @Test
     void 상품을_생성할_때_상품_가격이_없으면_예외가_발생한다() {
         // given
-        Product invalidProduct = new Product();
+        ProductRequest invalidProduct = new ProductRequest("name", null);
 
         // expect
         assertThatThrownBy(() -> productService.create(invalidProduct))
@@ -56,7 +57,7 @@ class ProductServiceTest {
     @Test
     void 상품을_생성할_때_상품_가격이_음수면_예외가_발생한다() {
         // given
-        Product invalidProduct = new Product("chicken", BigDecimal.valueOf(-1));
+        ProductRequest invalidProduct = new ProductRequest("chicken", BigDecimal.valueOf(-1));
 
         // expect
         assertThatThrownBy(() -> productService.create(invalidProduct))

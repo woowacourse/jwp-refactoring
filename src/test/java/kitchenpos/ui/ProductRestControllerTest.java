@@ -2,6 +2,7 @@ package kitchenpos.ui;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.ProductService;
+import kitchenpos.application.dto.ProductRequest;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,12 +40,12 @@ class ProductRestControllerTest {
         Product createdProduct = new Product(1L, "test product", BigDecimal.valueOf(1000));
 
         // when
-        when(productService.create(any(Product.class))).thenReturn(createdProduct);
+        when(productService.create(any(ProductRequest.class))).thenReturn(createdProduct);
 
         // then
         mockMvc.perform(post("/api/products")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(createdProduct)))
+                        .content(objectMapper.writeValueAsBytes(new ProductRequest("test product", BigDecimal.valueOf(1000)))))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/products/" + createdProduct.getId()))
                 .andExpect(content().string(objectMapper.writeValueAsString(createdProduct)));
