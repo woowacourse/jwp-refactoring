@@ -39,9 +39,7 @@ class TableGroupRestControllerTest {
     @Test
     void 단체_지정을_생성한다() throws Exception {
         // given
-        TableGroup createdTableGroup = new TableGroup();
-        createdTableGroup.setId(1L);
-        createdTableGroup.setCreatedDate(LocalDateTime.now());
+        TableGroup createdTableGroup = new TableGroup(1L, LocalDateTime.now(), List.of());
 
         // when
         when(tableGroupService.create(any(TableGroupRequest.class))).thenReturn(createdTableGroup);

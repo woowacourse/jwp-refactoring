@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -17,9 +18,13 @@ public class InMemoryTableGroupDao implements TableGroupDao {
 
     @Override
     public TableGroup save(TableGroup entity) {
-        long id = this.id.getAndIncrement();
-        entity.setId(id);
-        map.put(id, entity);
+        if (Objects.isNull(entity.getId())) {
+            long id = this.id.getAndIncrement();
+            TableGroup tableGroup = new TableGroup(id, entity.getCreatedDate(), entity.getOrderTables());
+            map.put(id, tableGroup);
+            return tableGroup;
+        }
+        map.put(entity.getId(), entity);
         return entity;
     }
 

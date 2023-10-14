@@ -24,9 +24,6 @@ public class Product {
         this(null, name, price);
     }
 
-    public Product() {
-    }
-
     public Long getId() {
         return id;
     }
