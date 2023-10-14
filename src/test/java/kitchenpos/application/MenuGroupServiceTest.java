@@ -4,7 +4,7 @@ import static kitchenpos.fixture.MenuGroupFixture.메뉴_그룹;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.dto.MenuGroupResponse;
@@ -20,7 +20,7 @@ class MenuGroupServiceTest {
     private MenuGroupService sut;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Test
     void 메뉴_그룹을_등록한다() {
@@ -31,14 +31,14 @@ class MenuGroupServiceTest {
         MenuGroupResponse result = sut.create(request);
 
         // then
-        assertThat(menuGroupDao.findById(result.getId())).isPresent();
+        assertThat(menuGroupRepository.findById(result.getId())).isPresent();
     }
 
     @Test
     void 메뉴_그룹_목록을_조회한다() {
         // given
-        MenuGroup pizzaGroup = menuGroupDao.save(메뉴_그룹("피자"));
-        MenuGroup chickenGroup = menuGroupDao.save(메뉴_그룹("치킨"));
+        MenuGroup pizzaGroup = menuGroupRepository.save(메뉴_그룹("피자"));
+        MenuGroup chickenGroup = menuGroupRepository.save(메뉴_그룹("치킨"));
 
         // when
         List<MenuGroupResponse> result = sut.list();

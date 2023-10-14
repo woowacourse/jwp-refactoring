@@ -11,7 +11,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
@@ -36,7 +36,7 @@ public class MenuServiceTest {
     private MenuDao menuDao;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private MenuProductDao menuProductDao;
@@ -72,7 +72,7 @@ public class MenuServiceTest {
         @Test
         void 존재하지_않는_메뉴_상품을_입력하는_경우_예외를_던진다() {
             // given
-            MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("피자"));
+            MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("피자"));
             MenuRequest request = 메뉴_생성_요청("치즈피자", 0L, menuGroup.getId(), List.of(메뉴_상품(1L, 1L, 1L)));
 
             // expect
@@ -84,7 +84,7 @@ public class MenuServiceTest {
         @Test
         void 메뉴의_가격이_메뉴_상품들의_금액의_합보다_큰_경우_예외를_던진다() {
             // given
-            MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("피자"));
+            MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("피자"));
             Product product = productRepository.save(상품("치즈 피자", 8900L));
             MenuProduct menuProduct = 메뉴_상품(null, product.getId(), 1L);
             MenuRequest request = 메뉴_생성_요청("치즈피자", 8901L, menuGroup.getId(), List.of(menuProduct));
@@ -98,7 +98,7 @@ public class MenuServiceTest {
         @Test
         void 메뉴가_정상적으로_등록된다() {
             // given
-            MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("피자"));
+            MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("피자"));
             Product product = productRepository.save(상품("치즈 피자", 8900L));
             MenuProduct menuProduct = 메뉴_상품(null, product.getId(), 1L);
             MenuRequest request = 메뉴_생성_요청("치즈피자", 8900L, menuGroup.getId(), List.of(menuProduct));
@@ -119,7 +119,7 @@ public class MenuServiceTest {
     @Test
     void 메뉴_목록을_조회한다() {
         // given
-        MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("피자"));
+        MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("피자"));
         Product product = productRepository.save(상품("치즈 피자", 8900L));
 
         Menu menu1 = menuDao.save(메뉴("치즈피자", 8900L, menuGroup.getId()));

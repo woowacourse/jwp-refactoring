@@ -16,7 +16,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableRepository;
@@ -45,7 +45,7 @@ public class OrderServiceTest {
     private MenuDao menuDao;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private OrderDao orderDao;
@@ -60,7 +60,7 @@ public class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("피자"));
+        MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("피자"));
         menu = menuDao.save(메뉴("피자", 8900L, menuGroup.getId()));
     }
 
