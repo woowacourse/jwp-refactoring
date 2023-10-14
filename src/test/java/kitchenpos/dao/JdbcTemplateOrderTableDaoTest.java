@@ -14,23 +14,20 @@ class JdbcTemplateOrderTableDaoTest extends JdbcTemplateTest {
 
     private OrderTableDao orderTableDao;
     private TableGroupDao tableGroupDao;
+    private TableGroup tableGroup;
 
     @BeforeEach
     void setUp() {
         orderTableDao = new JdbcTemplateOrderTableDao(dataSource);
         tableGroupDao = new JdbcTemplateTableGroupDao(dataSource);
+        tableGroup = makeTableGroup();
     }
 
     @Test
     void 주문_테이블을_저장한다() {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
         TableGroup savedTG = tableGroupDao.save(tableGroup);
 
-        OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(savedTG.getId());
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(3);
+        OrderTable orderTable = makeOrderTable(savedTG);
         OrderTable saved = orderTableDao.save(orderTable);
 
         assertThat(saved.getTableGroupId()).isEqualTo(orderTable.getTableGroupId());
@@ -40,14 +37,9 @@ class JdbcTemplateOrderTableDaoTest extends JdbcTemplateTest {
 
     @Test
     void 식별자로_주문_테이블을_조회한다() {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
         TableGroup savedTG = tableGroupDao.save(tableGroup);
 
-        OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(savedTG.getId());
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(3);
+        OrderTable orderTable = makeOrderTable(savedTG);
         OrderTable saved = orderTableDao.save(orderTable);
 
         OrderTable expected = orderTableDao.findById(saved.getId()).get();
@@ -68,17 +60,26 @@ class JdbcTemplateOrderTableDaoTest extends JdbcTemplateTest {
 
     @Test
     void 테이블_그룹_아이디에_해당하는_주문_테이블들을_조회한다() {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
         TableGroup savedTG = tableGroupDao.save(tableGroup);
 
-        OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(savedTG.getId());
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(3);
+        OrderTable orderTable = makeOrderTable(savedTG);
         orderTableDao.save(orderTable);
 
         List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(savedTG.getId());
         assertThat(orderTables.size()).isEqualTo(1);
+    }
+
+    private TableGroup makeTableGroup() {
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setCreatedDate(LocalDateTime.now());
+        return tableGroup;
+    }
+
+    private OrderTable makeOrderTable(TableGroup savedTG) {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setTableGroupId(savedTG.getId());
+        orderTable.setEmpty(false);
+        orderTable.setNumberOfGuests(3);
+        return orderTable;
     }
 }

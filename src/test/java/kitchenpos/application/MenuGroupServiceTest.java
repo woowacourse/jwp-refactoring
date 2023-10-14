@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +23,15 @@ class MenuGroupServiceTest {
     @MockBean
     private MenuGroupDao menuGroupDao;
 
+    private MenuGroup menuGroup;
+
+    @BeforeEach
+    void setUp(){
+        menuGroup = makeMenuGroup();
+    }
+
     @Test
     void 메뉴그룹을_생성한다() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(1L);
-        menuGroup.setName("한마리통닭");
-
         Mockito.when(menuGroupDao.save(any(MenuGroup.class)))
                 .thenReturn(menuGroup);
 
@@ -45,5 +49,12 @@ class MenuGroupServiceTest {
         List<MenuGroup> menuGroups = menuGroupService.list();
 
         assertThat(menuGroups.size()).isEqualTo(2);
+    }
+
+    private MenuGroup makeMenuGroup() {
+        MenuGroup menuGroup = new MenuGroup();
+        menuGroup.setId(1L);
+        menuGroup.setName("한마리통닭");
+        return menuGroup;
     }
 }

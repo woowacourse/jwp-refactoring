@@ -11,18 +11,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 class JdbcTemplateMenuProductDaoTest extends JdbcTemplateTest {
 
     private MenuProductDao menuProductDao;
+    private MenuProduct menuProduct;
 
     @BeforeEach
     void setUp() {
         menuProductDao = new JdbcTemplateMenuProductDao(dataSource);
+        menuProduct = makeMenuProduct();
     }
 
     @Test
     void 메뉴_상품_관계를_저장한다() {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(1L);
-        menuProduct.setProductId(1L);
-        menuProduct.setQuantity(1L);
         MenuProduct saved = menuProductDao.save(menuProduct);
 
         assertThat(saved.getMenuId()).isEqualTo(1L);
@@ -46,14 +44,18 @@ class JdbcTemplateMenuProductDaoTest extends JdbcTemplateTest {
 
     @Test
     void 메뉴_식별자를_기반으로_모든_메뉴_상품_관계를_찾는다() {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(1L);
-        menuProduct.setProductId(1L);
-        menuProduct.setQuantity(1L);
         menuProductDao.save(menuProduct);
 
         List<MenuProduct> menuProducts = menuProductDao.findAllByMenuId(1L);
 
         assertThat(menuProducts.size()).isEqualTo(2);
+    }
+
+    private MenuProduct makeMenuProduct() {
+        MenuProduct menuProduct = new MenuProduct();
+        menuProduct.setMenuId(1L);
+        menuProduct.setProductId(1L);
+        menuProduct.setQuantity(1L);
+        return menuProduct;
     }
 }

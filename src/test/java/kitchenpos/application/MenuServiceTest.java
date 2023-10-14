@@ -7,6 +7,7 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,17 +37,25 @@ class MenuServiceTest {
     @MockBean
     private ProductDao productDao;
 
+    private Menu menu;
+    private MenuProduct menuProduct;
+    private Product product;
+
+    @BeforeEach
+    void setUp() {
+        product = makeProduct();
+        menuProduct = makeMenuProduct();
+        menu = makeMenu(menuProduct);
+    }
+
     @Test
     void 메뉴를_생성한다() {
         Mockito.when(menuGroupDao.existsById(anyLong()))
                 .thenReturn(true);
 
-        Product product = makeProduct();
         Mockito.when(productDao.findById(anyLong()))
                 .thenReturn(Optional.ofNullable(product));
 
-        MenuProduct menuProduct = makeMenuProduct();
-        Menu menu = makeMenu(menuProduct);
         Mockito.when(menuDao.save(any(Menu.class)))
                 .thenReturn(menu);
         Mockito.when(menuProductDao.save(any(MenuProduct.class)))
@@ -58,23 +67,11 @@ class MenuServiceTest {
 
     }
 
-    private Menu makeMenu(MenuProduct menuProduct) {
-        Menu menu = new Menu();
-        menu.setId(1L);
-        menu.setName("메뉴");
-        menu.setPrice(BigDecimal.ONE);
-        menu.setMenuGroupId(1L);
-        menu.setMenuProducts(List.of(menuProduct));
-        return menu;
-    }
-
     @Test
     void 전체_메뉴를_조회한다() {
-        MenuProduct menuProduct = makeMenuProduct();
-        Menu menu = makeMenu(menuProduct);
 
         Mockito.when(menuDao.findAll())
-                .thenReturn(List.of(menu,menu));
+                .thenReturn(List.of(menu, menu));
         Mockito.when(menuProductDao.findAllByMenuId(anyLong()))
                 .thenReturn(List.of(menuProduct));
 
@@ -99,4 +96,13 @@ class MenuServiceTest {
         return product;
     }
 
+    private Menu makeMenu(MenuProduct menuProduct) {
+        Menu menu = new Menu();
+        menu.setId(1L);
+        menu.setName("메뉴");
+        menu.setPrice(BigDecimal.ONE);
+        menu.setMenuGroupId(1L);
+        menu.setMenuProducts(List.of(menuProduct));
+        return menu;
+    }
 }

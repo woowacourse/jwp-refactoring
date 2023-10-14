@@ -12,27 +12,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 class JdbcTemplateTableGroupDaoTest extends JdbcTemplateTest {
 
     private TableGroupDao tableGroupDao;
+    private TableGroup tableGroup;
 
     @BeforeEach
     void setUp() {
         tableGroupDao = new JdbcTemplateTableGroupDao(dataSource);
+        tableGroup = makeTableGroup();
     }
 
     @Test
     void 테이블_그룹을_저장한다_() {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
-
         TableGroup saved = tableGroupDao.save(tableGroup);
 
         assertThat(saved.getCreatedDate()).isEqualTo(tableGroup.getCreatedDate());
-
     }
 
     @Test
     void 식별자로_테이블_그룹을_조회한() {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
         TableGroup saved = tableGroupDao.save(tableGroup);
 
         TableGroup expected = tableGroupDao.findById(saved.getId()).get();
@@ -41,12 +37,16 @@ class JdbcTemplateTableGroupDaoTest extends JdbcTemplateTest {
 
     @Test
     void 모든_테이블그룹을_조회한다() {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
         tableGroupDao.save(tableGroup);
         tableGroupDao.save(tableGroup);
 
         List<TableGroup> tableGroups = tableGroupDao.findAll();
         assertThat(tableGroups.size()).isEqualTo(2);
+    }
+
+    private TableGroup makeTableGroup() {
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setCreatedDate(LocalDateTime.now());
+        return tableGroup;
     }
 }

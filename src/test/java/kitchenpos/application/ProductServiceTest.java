@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +24,14 @@ class ProductServiceTest {
     @MockBean
     private ProductDao productDao;
 
+    private Product product;
+
+    @BeforeEach
+    void setUp(){
+        product = makeProduct();
+    }
     @Test
     void 상품을_생성한다() {
-        Product product = makeProduct();
         Mockito.when(productDao.save(any(Product.class)))
                 .thenReturn(product);
 

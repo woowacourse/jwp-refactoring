@@ -8,6 +8,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,11 +39,19 @@ class OrderServiceTest {
     @MockBean
     private OrderTableDao orderTableDao;
 
+    private OrderLineItem orderLineItem;
+    private Order order;
+    private OrderTable orderTable;
+
+    @BeforeEach
+    void setUp() {
+        orderLineItem = makeOrderLineItem();
+        order = makeOrder(orderLineItem);
+        orderTable = makeOrderTable();
+    }
+
     @Test
     void 주문을_생성한다() {
-        OrderLineItem orderLineItem = makeOrderLineItem();
-        Order order = makeOrder(orderLineItem);
-        OrderTable orderTable = makeOrderTable();
         Mockito.when(menuDao.countByIdIn(anyList()))
                 .thenReturn(1L);
         Mockito.when(orderTableDao.findById(anyLong()))
@@ -59,8 +68,6 @@ class OrderServiceTest {
 
     @Test
     void 전체_주문을_조회한다() {
-        OrderLineItem orderLineItem = makeOrderLineItem();
-        Order order = makeOrder(orderLineItem);
         Mockito.when(orderDao.findAll())
                 .thenReturn(List.of(order, order));
         Mockito.when(orderLineItemDao.findAllByOrderId(anyLong()))
@@ -73,8 +80,6 @@ class OrderServiceTest {
 
     @Test
     void 주문_상태를_변경한다() {
-        OrderLineItem orderLineItem = makeOrderLineItem();
-        Order order = makeOrder(orderLineItem);
         Order newOrder = makeOrder(orderLineItem);
         newOrder.setOrderStatus(OrderStatus.MEAL.toString());
 

@@ -12,21 +12,27 @@ import static org.assertj.core.api.Assertions.assertThat;
 class JdbcTemplateProductDaoTest extends JdbcTemplateTest {
 
     private ProductDao productDao;
+    private Product product;
 
     @BeforeEach
     void setUp() {
         productDao = new JdbcTemplateProductDao(dataSource);
+        product = makeProduct();
     }
 
     @Test
     void 상품을_저장한다() {
-        Product product = new Product();
-        product.setName("상품1");
-        product.setPrice(BigDecimal.ONE);
         Product saved = productDao.save(product);
 
         assertThat(saved.getName()).isEqualTo(product.getName());
         assertThat(saved.getPrice().longValue()).isEqualTo(product.getPrice().longValue());
+    }
+
+    private Product makeProduct() {
+        Product product = new Product();
+        product.setName("상품1");
+        product.setPrice(BigDecimal.ONE);
+        return product;
     }
 
     @Test

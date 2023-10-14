@@ -23,16 +23,10 @@ class JdbcTemplateOrderLineItemDaoTest extends JdbcTemplateTest {
 
     @Test
     void 주문_항목을_저장한다() {
-        Order order = new Order();
-        order.setOrderStatus("진행중");
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderTableId(1L);
+        Order order = makeOrder();
         Order savedOrder = orderDao.save(order);
 
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setOrderId(savedOrder.getId());
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1L);
+        OrderLineItem orderLineItem = makeOrderLineItem(savedOrder);
 
         OrderLineItem saved = orderLineItemDao.save(orderLineItem);
 
@@ -44,16 +38,10 @@ class JdbcTemplateOrderLineItemDaoTest extends JdbcTemplateTest {
 
     @Test
     void 식별자로_주문항목을_조회한다() {
-        Order order = new Order();
-        order.setOrderStatus("진행중");
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderTableId(1L);
+        Order order = makeOrder();
         Order savedOrder = orderDao.save(order);
 
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setOrderId(savedOrder.getId());
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1L);
+        OrderLineItem orderLineItem = makeOrderLineItem(savedOrder);
         OrderLineItem saved = orderLineItemDao.save(orderLineItem);
 
         OrderLineItem expected = orderLineItemDao.findById(saved.getSeq()).get();
@@ -62,16 +50,10 @@ class JdbcTemplateOrderLineItemDaoTest extends JdbcTemplateTest {
 
     @Test
     void 모든_주문항목을_조회한다() {
-        Order order = new Order();
-        order.setOrderStatus("진행중");
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderTableId(1L);
+        Order order = makeOrder();
         Order savedOrder = orderDao.save(order);
 
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setOrderId(savedOrder.getId());
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1L);
+        OrderLineItem orderLineItem = makeOrderLineItem(savedOrder);
         orderLineItemDao.save(orderLineItem);
         orderLineItemDao.save(orderLineItem);
 
@@ -81,21 +63,31 @@ class JdbcTemplateOrderLineItemDaoTest extends JdbcTemplateTest {
 
     @Test
     void 주문_식별자로_주문항목들을_조회한다() {
-        Order order = new Order();
-        order.setOrderStatus("진행중");
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderTableId(1L);
+        Order order = makeOrder();
         Order savedOrder = orderDao.save(order);
 
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setOrderId(savedOrder.getId());
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1L);
+        OrderLineItem orderLineItem = makeOrderLineItem(savedOrder);
         orderLineItemDao.save(orderLineItem);
         orderLineItemDao.save(orderLineItem);
 
         List<OrderLineItem> itemsById = orderLineItemDao.findAllByOrderId(savedOrder.getId());
         assertThat(itemsById.size()).isEqualTo(2);
 
+    }
+
+    private OrderLineItem makeOrderLineItem(Order savedOrder) {
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setOrderId(savedOrder.getId());
+        orderLineItem.setMenuId(1L);
+        orderLineItem.setQuantity(1L);
+        return orderLineItem;
+    }
+
+    private Order makeOrder() {
+        Order order = new Order();
+        order.setOrderStatus("진행중");
+        order.setOrderedTime(LocalDateTime.now());
+        order.setOrderTableId(1L);
+        return order;
     }
 }

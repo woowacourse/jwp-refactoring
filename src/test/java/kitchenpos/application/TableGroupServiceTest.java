@@ -5,6 +5,7 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +34,15 @@ class TableGroupServiceTest {
     @MockBean
     private TableGroupDao tableGroupDao;
 
+    private TableGroup tableGroup;
+
+    @BeforeEach
+    void setUp() {
+        tableGroup = makeTableGroup();
+    }
+
     @Test
     void 테이블_그룹을_생성한다() {
-        TableGroup tableGroup = makeTableGroup();
         Mockito.when(orderTableDao.findAllByIdIn(anyList()))
                 .thenReturn(List.of(makeEmptyOrderTableById(1L), makeEmptyOrderTableById(2L)));
         Mockito.when(tableGroupDao.save(any(TableGroup.class)))
@@ -51,7 +58,7 @@ class TableGroupServiceTest {
     void ungroup() {
         Mockito.when(orderTableDao.findAllByTableGroupId(anyLong()))
                 .thenReturn(List.of(makeOrderTableById(1L)));
-        Mockito.when(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(),anyList()))
+        Mockito.when(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
                 .thenReturn(false);
         Mockito.when(orderTableDao.save(any(OrderTable.class)))
                 .thenReturn(makeEmptyOrderTableById(1L));
