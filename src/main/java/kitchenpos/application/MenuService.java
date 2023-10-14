@@ -43,7 +43,7 @@ public class MenuService {
         }
 
         if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
-            throw new IllegalArgumentException("zzz");
+            throw new IllegalArgumentException();
         }
 
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
