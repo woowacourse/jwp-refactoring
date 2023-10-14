@@ -51,6 +51,12 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
+    public void validateIsEmpty() {
+        if (!isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     private void validateIsNotEmpty() {
         if (isEmpty()) {
             throw new IllegalArgumentException();
