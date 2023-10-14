@@ -13,7 +13,7 @@ class ProductTest {
 
     @Test
     void 상품의_가격이_음수인_경우_예외를_던진다() {
-        // given
+        // expect
         assertThatThrownBy(() -> new Product("피자", Money.valueOf(-1)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("상품의 가격은 0원 이상이어야 합니다.");

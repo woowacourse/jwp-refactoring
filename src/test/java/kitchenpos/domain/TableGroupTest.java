@@ -25,7 +25,7 @@ class TableGroupTest {
         TableGroup tableGroup = TableGroup.create();
         OrderTable orderTable = new OrderTable(0, true);
 
-        // when
+        // expect
         assertThatThrownBy(() -> tableGroup.changeOrderTables(List.of(orderTable)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("단체 지정하려는 테이블은 2개 이상이어야 합니다.");

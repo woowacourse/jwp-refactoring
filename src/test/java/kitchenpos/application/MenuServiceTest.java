@@ -121,12 +121,10 @@ public class MenuServiceTest {
         MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("피자"));
         Product product = productRepository.save(상품("치즈 피자", 8900L));
 
-        Menu menu1 = menuRepository.save(메뉴("치즈피자", 8900L, menuGroup.getId(), List.of(
-                메뉴_상품(product, 1L)
-        )));
-        Menu menu2 = menuRepository.save(메뉴("오픈기념 치즈피자", 5000L, menuGroup.getId(), List.of(
-                메뉴_상품(product, 1L)
-        )));
+        MenuProduct menuProduct1 = 메뉴_상품(product, 1L);
+        Menu menu1 = menuRepository.save(메뉴("치즈피자", 8900L, menuGroup.getId(), List.of(menuProduct1)));
+        MenuProduct menuProduct2 = 메뉴_상품(product, 2L);
+        Menu menu2 = menuRepository.save(메뉴("오픈기념 치즈피자", 5000L, menuGroup.getId(), List.of(menuProduct2)));
 
         // when
         List<MenuResponse> result = sut.list();
