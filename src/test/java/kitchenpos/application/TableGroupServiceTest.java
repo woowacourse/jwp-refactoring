@@ -21,18 +21,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 
-@SpringBootTest
-class TableGroupServiceTest {
+class TableGroupServiceTest extends ServiceTest{
 
     @Autowired
     private TableGroupService tableGroupService;
-
-    @MockBean
-    private OrderDao orderDao;
-    @MockBean
-    private OrderTableDao orderTableDao;
-    @MockBean
-    private TableGroupDao tableGroupDao;
 
     private TableGroup tableGroup;
 

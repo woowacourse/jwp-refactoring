@@ -1,9 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -12,8 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,20 +18,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 
-@SpringBootTest
-class OrderServiceTest {
+class OrderServiceTest extends ServiceTest{
 
     @Autowired
     private OrderService orderService;
-
-    @MockBean
-    private MenuDao menuDao;
-    @MockBean
-    private OrderDao orderDao;
-    @MockBean
-    private OrderLineItemDao orderLineItemDao;
-    @MockBean
-    private OrderTableDao orderTableDao;
 
     private OrderLineItem orderLineItem;
     private Order order;

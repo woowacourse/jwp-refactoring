@@ -1,9 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
@@ -11,8 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -22,20 +16,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 
-@SpringBootTest
-class MenuServiceTest {
+class MenuServiceTest extends ServiceTest{
 
     @Autowired
     private MenuService menuService;
-
-    @MockBean
-    private MenuDao menuDao;
-    @MockBean
-    private MenuGroupDao menuGroupDao;
-    @MockBean
-    private MenuProductDao menuProductDao;
-    @MockBean
-    private ProductDao productDao;
 
     private Menu menu;
     private MenuProduct menuProduct;

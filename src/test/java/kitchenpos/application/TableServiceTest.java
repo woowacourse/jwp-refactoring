@@ -17,16 +17,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 
-@SpringBootTest
-class TableServiceTest {
+class TableServiceTest extends ServiceTest{
 
     @Autowired
     private TableService tableService;
-
-    @MockBean
-    private OrderDao orderDao;
-    @MockBean
-    private OrderTableDao orderTableDao;
 
     @Test
     void 주문_테이블을_생성한다() {
