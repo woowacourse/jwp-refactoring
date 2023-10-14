@@ -12,4 +12,7 @@ public class MenuFixture {
     public static Menu MENU_4 = new Menu("통구이", new BigDecimal("16000.00"), 2L, null);
     public static Menu MENU_5 = new Menu("간장치킨", new BigDecimal("17000.00"), 2L, null);
     public static Menu MENU_6 = new Menu("순살치킨", new BigDecimal("17000.00"), 2L, null);
+
+    private MenuFixture() {
+    }
 }
