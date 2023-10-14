@@ -8,7 +8,8 @@ import static kitchenpos.fixture.TableGroupFixture.단체_지정;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import kitchenpos.dao.OrderDao;
+import java.util.List;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.OrderStatus;
@@ -31,7 +32,7 @@ class TableServiceTest {
     private TableService sut;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
     private OrderTableRepository orderTableRepository;
@@ -81,7 +82,7 @@ class TableServiceTest {
         void 테이블의_주문_상태가_조리중이거나_식사중인_경우_예외를_던진다(OrderStatus orderStatus) {
             // given
             OrderTable orderTable = orderTableRepository.save(테이블(false));
-            orderDao.save(주문(orderTable.getId(), orderStatus));
+            orderRepository.save(주문(orderTable.getId(), orderStatus, List.of()));
 
             // expect
             assertThatThrownBy(() -> sut.changeEmpty(orderTable.getId(), request))
@@ -93,7 +94,7 @@ class TableServiceTest {
         void 테이블의_주문_상태가_완료인_경우_테이블의_상태를_변경한다() {
             // given
             OrderTable orderTable = orderTableRepository.save(테이블(false));
-            orderDao.save(주문(orderTable.getId(), COMPLETION));
+            orderRepository.save(주문(orderTable.getId(), COMPLETION, List.of()));
 
             // when
             OrderTableResponse result = sut.changeEmpty(orderTable.getId(), request);

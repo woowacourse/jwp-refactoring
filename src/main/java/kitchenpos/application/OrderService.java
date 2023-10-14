@@ -6,8 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -24,19 +23,16 @@ import org.springframework.util.CollectionUtils;
 @Service
 public class OrderService {
     private final MenuRepository menuRepository;
-    private final OrderDao orderDao;
-    private final OrderLineItemDao orderLineItemDao;
+    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(
             final MenuRepository menuRepository,
-            final OrderDao orderDao,
-            final OrderLineItemDao orderLineItemDao,
+            final OrderRepository orderRepository,
             final OrderTableRepository orderTableRepository
     ) {
         this.menuRepository = menuRepository;
-        this.orderDao = orderDao;
-        this.orderLineItemDao = orderLineItemDao;
+        this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -63,30 +59,20 @@ public class OrderService {
             throw new IllegalArgumentException("빈 테이블인 경우 주문을 할 수 없습니다.");
         }
 
-        Order order = new Order(orderTable.getId());
-        final Order savedOrder = orderDao.save(order);
-
-        final Long orderId = savedOrder.getId();
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
+        final List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
             OrderLineItem orderLineItem = new OrderLineItem(
-                    orderId,
                     orderLineItemRequest.getMenuId(),
                     orderLineItemRequest.getQuantity()
             );
-            savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
+            orderLineItems.add(orderLineItem);
         }
-        savedOrder.changeOrderLineItems(savedOrderLineItems);
-        return OrderResponse.from(savedOrder);
+        Order order = new Order(orderTable.getId(), orderLineItems);
+        return OrderResponse.from(orderRepository.save(order));
     }
 
     public List<OrderResponse> list() {
-        final List<Order> orders = orderDao.findAll();
-
-        for (final Order order : orders) {
-            order.changeOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
-        }
-
+        final List<Order> orders = orderRepository.findAll();
         return orders.stream()
                 .map(OrderResponse::from)
                 .collect(toList());
@@ -94,7 +80,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse changeOrderStatus(Long orderId, OrderStatusUpdateRequest request) {
-        Order savedOrder = orderDao.findById(orderId)
+        Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다."));
 
         if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
@@ -104,9 +90,7 @@ public class OrderService {
         OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
         savedOrder.changeOrderStatus(orderStatus.name());
 
-        orderDao.save(savedOrder);
-
-        savedOrder.changeOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
+        orderRepository.save(savedOrder);
 
         return OrderResponse.from(savedOrder);
     }

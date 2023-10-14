@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.OrderStatus;
@@ -31,7 +31,7 @@ class TableGroupServiceTest {
     private TableGroupService sut;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
     private OrderTableRepository orderTableRepository;
@@ -110,7 +110,7 @@ class TableGroupServiceTest {
             TableGroup tableGroup = tableGroupRepository.save(단체_지정());
             OrderTable orderTable1 = orderTableRepository.save(테이블(true, 0, tableGroup));
             OrderTable orderTable2 = orderTableRepository.save(테이블(true, 0, tableGroup));
-            orderDao.save(주문(orderTable1.getId(), orderStatus));
+            orderRepository.save(주문(orderTable1.getId(), orderStatus, List.of()));
 
             // expect
             assertThatThrownBy(() -> sut.ungroup(tableGroup.getId()))

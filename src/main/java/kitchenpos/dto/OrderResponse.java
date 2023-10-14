@@ -30,7 +30,7 @@ public class OrderResponse {
 
     public static OrderResponse from(Order order) {
         List<OrderLineItemResponse> orderLineItemResponses = order.getOrderLineItems().stream()
-                .map(OrderLineItemResponse::from)
+                .map(orderLineItem -> OrderLineItemResponse.of(orderLineItem, order))
                 .collect(toList());
         return new OrderResponse(
                 order.getId(),

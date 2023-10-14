@@ -12,8 +12,10 @@ import kitchenpos.dto.OrderLineItemRequest;
 
 public class OrderFixture {
 
-    public static Order 주문(Long orderTableId, OrderStatus orderStatus) {
-        return new Order(orderTableId, orderStatus.name(), LocalDateTime.now());
+    public static Order 주문(Long orderTableId, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
+        Order order = new Order(orderTableId, orderStatus.name(), LocalDateTime.now());
+        order.changeOrderLineItems(orderLineItems);
+        return order;
     }
 
     public static Order 주문(Long orderTableId, List<OrderLineItem> orderLineItems) {

@@ -19,8 +19,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import java.util.List;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
@@ -53,10 +52,7 @@ public class OrderServiceTest {
     private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private OrderDao orderDao;
-
-    @Autowired
-    private OrderLineItemDao orderLineItemDao;
+    private OrderRepository orderRepository;
 
     @Autowired
     private OrderTableRepository orderTableRepository;
@@ -91,7 +87,7 @@ public class OrderServiceTest {
         @Test
         void 등록되지_않은_메뉴를_주문하면_예외를_던진다() {
             // given
-            OrderLineItem orderLineItem = 주문_항목(null, MAX_VALUE, 2L);
+            OrderLineItem orderLineItem = 주문_항목(MAX_VALUE, 2L);
             OrderCreateRequest request = 주문_생성_요청(1L, List.of(orderLineItem));
 
             // expect
@@ -103,7 +99,7 @@ public class OrderServiceTest {
         @Test
         void 등록되지_않은_테이블에서_주문을_하는_경우_예외를_던진다() {
             // given
-            OrderLineItem orderLineItem = 주문_항목(null, menu.getId(), 2L);
+            OrderLineItem orderLineItem = 주문_항목(menu.getId(), 2L);
             OrderCreateRequest request = 주문_생성_요청(MAX_VALUE, List.of(orderLineItem));
 
             // expect
@@ -116,7 +112,7 @@ public class OrderServiceTest {
         void 빈_테이블에서_주문을_하는_경우_예외를_던진다() {
             // given
             OrderTable orderTable = orderTableRepository.save(테이블(true));
-            OrderLineItem orderLineItem = 주문_항목(null, menu.getId(), 2L);
+            OrderLineItem orderLineItem = 주문_항목(menu.getId(), 2L);
             OrderCreateRequest request = 주문_생성_요청(orderTable.getId(), List.of(orderLineItem));
 
             // expect
@@ -129,14 +125,14 @@ public class OrderServiceTest {
         void 주문에_성공하는_경우_주문의_상태가_조리중으로_변경된다() {
             // given
             OrderTable orderTable = orderTableRepository.save(테이블(false));
-            OrderLineItem orderLineItem = 주문_항목(null, menu.getId(), 2L);
+            OrderLineItem orderLineItem = 주문_항목(menu.getId(), 2L);
             OrderCreateRequest request = 주문_생성_요청(orderTable.getId(), List.of(orderLineItem));
 
             // when
             OrderResponse result = sut.create(request);
 
             // then
-            Order findOrder = orderDao.findById(result.getId()).get();
+            Order findOrder = orderRepository.findById(result.getId()).get();
             assertSoftly(softly -> {
                 softly.assertThat(result.getOrderStatus()).isEqualTo(COOKING.name());
                 softly.assertThat(findOrder.getOrderStatus()).isEqualTo(COOKING.name());
@@ -148,12 +144,9 @@ public class OrderServiceTest {
     void 주문_목록을_조회한다() {
         // given
         OrderTable orderTable = orderTableRepository.save(테이블(false));
-        Order order1 = orderDao.save(주문(orderTable.getId(), COOKING));
-        OrderLineItem orderLineItem1 = orderLineItemDao.save(주문_항목(order1.getId(), menu.getId(), 2L));
-        order1.changeOrderLineItems(List.of(orderLineItem1));
-        Order order2 = orderDao.save(주문(orderTable.getId(), COOKING));
-        OrderLineItem orderLineItem2 = orderLineItemDao.save(주문_항목(order2.getId(), menu.getId(), 2L));
-        order2.changeOrderLineItems(List.of(orderLineItem2));
+        Order order1 = orderRepository.save(
+                주문(orderTable.getId(), COOKING, List.of(주문_항목(menu.getId(), 2L))));
+        Order order2 = orderRepository.save(주문(orderTable.getId(), COOKING, List.of(주문_항목(menu.getId(), 2L))));
 
         // when
         List<OrderResponse> result = sut.list();
@@ -182,7 +175,7 @@ public class OrderServiceTest {
         void 완료된_주문이라면_예외가_발생한다() {
             // given
             OrderTable orderTable = orderTableRepository.save(테이블(false));
-            Order order = orderDao.save(주문(orderTable.getId(), COMPLETION));
+            Order order = orderRepository.save(주문(orderTable.getId(), COMPLETION, List.of()));
             OrderStatusUpdateRequest request = new OrderStatusUpdateRequest(COOKING.name());
 
             // expect
@@ -195,14 +188,14 @@ public class OrderServiceTest {
         void 주문의_상태가_정상적으로_변경한다() {
             // given
             OrderTable orderTable = orderTableRepository.save(테이블(false));
-            Order order = orderDao.save(주문(orderTable.getId(), COOKING));
+            Order order = orderRepository.save(주문(orderTable.getId(), COOKING, List.of()));
             OrderStatusUpdateRequest request = new OrderStatusUpdateRequest(MEAL.name());
 
             // when
             OrderResponse result = sut.changeOrderStatus(order.getId(), request);
 
             // then
-            Order savedOrder = orderDao.findById(result.getId()).get();
+            Order savedOrder = orderRepository.findById(result.getId()).get();
             assertSoftly(softly -> {
                 softly.assertThat(result.getOrderStatus()).isEqualTo(MEAL.name());
                 softly.assertThat(savedOrder.getOrderStatus()).isEqualTo(MEAL.name());
