@@ -71,14 +71,10 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹 생성 시 주문테이블이 2개 미만일 경우 예외가 발생한다.")
     void failToRegisterTableGroupWithWrongNumberOfOrderTable() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setOrderTables(List.of(savedOrderTableA));
 
         // when & then
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(savedOrderTable));
-
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
     }
