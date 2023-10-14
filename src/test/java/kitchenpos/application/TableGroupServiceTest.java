@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static kitchenpos.fixture.OrderFixture.주문;
 import static kitchenpos.fixture.OrderTableFixture.테이블;
 import static kitchenpos.fixture.TableGroupFixture.단체_지정;
+import static kitchenpos.fixture.TableGroupFixture.단체_지정_요청;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -13,6 +14,7 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.TableGroupRequest;
 import kitchenpos.test.ServiceTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -43,10 +45,10 @@ class TableGroupServiceTest {
         void 단체_지정하는_테이블이_2개_미만인_경우_예외를_던진다() {
             // given
             OrderTable orderTable = orderTableDao.save(테이블(true));
-            TableGroup tableGroup = 단체_지정(List.of(orderTable));
+            TableGroupRequest request = 단체_지정_요청(orderTable);
 
             // expect
-            assertThatThrownBy(() -> sut.create(tableGroup))
+            assertThatThrownBy(() -> sut.create(request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("단체 지정하려는 테이블은 2개 이상이어야 합니다.");
         }
@@ -56,10 +58,10 @@ class TableGroupServiceTest {
             // given
             OrderTable orderTable = orderTableDao.save(테이블(true));
             OrderTable unsavedOrderTable = 테이블(true);
-            TableGroup tableGroup = 단체_지정(List.of(orderTable, unsavedOrderTable));
+            TableGroupRequest request = 단체_지정_요청(orderTable, unsavedOrderTable);
 
             // expect
-            assertThatThrownBy(() -> sut.create(tableGroup))
+            assertThatThrownBy(() -> sut.create(request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("올바른 테이블을 입력해주세요.");
         }
@@ -69,10 +71,10 @@ class TableGroupServiceTest {
             // given
             OrderTable orderTable1 = orderTableDao.save(테이블(true));
             OrderTable orderTable2 = orderTableDao.save(테이블(false));
-            TableGroup tableGroup = 단체_지정(List.of(orderTable1, orderTable2));
+            TableGroupRequest request = 단체_지정_요청(orderTable1, orderTable2);
 
             // expect
-            assertThatThrownBy(() -> sut.create(tableGroup))
+            assertThatThrownBy(() -> sut.create(request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("비어있지 않거나, 이미 단체 지정이 된 테이블은 단체 지정을 할 수 없습니다.");
         }
@@ -84,10 +86,10 @@ class TableGroupServiceTest {
             OrderTable orderTable1 = orderTableDao.save(테이블(true, 0, tableGroup.getId()));
             OrderTable orderTable2 = orderTableDao.save(테이블(true, 0, tableGroup.getId()));
             OrderTable orderTable3 = orderTableDao.save(테이블(true));
-            TableGroup newTableGroup = 단체_지정(List.of(orderTable2, orderTable3));
+            TableGroupRequest request = 단체_지정_요청(orderTable2, orderTable3);
 
             // expect
-            assertThatThrownBy(() -> sut.create(newTableGroup))
+            assertThatThrownBy(() -> sut.create(request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("비어있지 않거나, 이미 단체 지정이 된 테이블은 단체 지정을 할 수 없습니다.");
         }
@@ -97,10 +99,10 @@ class TableGroupServiceTest {
             // given
             OrderTable orderTable1 = orderTableDao.save(테이블(true));
             OrderTable orderTable2 = orderTableDao.save(테이블(true));
-            TableGroup tableGroup = 단체_지정(List.of(orderTable1, orderTable2));
+            TableGroupRequest request = 단체_지정_요청(orderTable1, orderTable2);
 
             // when
-            TableGroup savedTableGroup = sut.create(tableGroup);
+            TableGroup savedTableGroup = sut.create(request);
 
             // then
             List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(savedTableGroup.getId());
