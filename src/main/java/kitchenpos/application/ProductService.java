@@ -3,7 +3,7 @@ package kitchenpos.application;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductRequest;
 import kitchenpos.dto.ProductResponse;
@@ -12,9 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProductService {
-    private final ProductDao productDao;
+    private final ProductRepository productDao;
 
-    public ProductService(final ProductDao productDao) {
+    public ProductService(final ProductRepository productDao) {
         this.productDao = productDao;
     }
 

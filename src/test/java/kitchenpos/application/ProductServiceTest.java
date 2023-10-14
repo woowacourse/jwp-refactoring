@@ -6,11 +6,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductRequest;
 import kitchenpos.dto.ProductResponse;
 import kitchenpos.test.ServiceTest;
+import org.assertj.core.util.BigDecimalComparator;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ class ProductServiceTest {
     private ProductService sut;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Nested
     class 상품을_추가할_때 {
@@ -48,15 +49,15 @@ class ProductServiceTest {
             ProductResponse productResponse = sut.create(productRequest);
 
             // then
-            assertThat(productDao.findById(productResponse.getId())).isPresent();
+            assertThat(productRepository.findById(productResponse.getId())).isPresent();
         }
     }
 
     @Test
     void 상품_목록을_조회한다() {
         // given
-        Product pizza = productDao.save(상품("피자", 8900L));
-        Product chicken = productDao.save(상품("치킨", 18000L));
+        Product pizza = productRepository.save(상품("피자", 8900L));
+        Product chicken = productRepository.save(상품("치킨", 18000L));
 
         // when
         List<ProductResponse> result = sut.list();
@@ -64,6 +65,7 @@ class ProductServiceTest {
         // then
         assertThat(result)
                 .usingRecursiveComparison()
+                .withComparatorForType(BigDecimalComparator.BIG_DECIMAL_COMPARATOR, BigDecimal.class)
                 .isEqualTo(List.of(ProductResponse.from(pizza), ProductResponse.from(chicken)));
     }
 }

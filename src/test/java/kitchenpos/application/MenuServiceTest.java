@@ -13,7 +13,7 @@ import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -42,7 +42,7 @@ public class MenuServiceTest {
     private MenuProductDao menuProductDao;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Nested
     class 메뉴를_등록할_때 {
@@ -85,7 +85,7 @@ public class MenuServiceTest {
         void 메뉴의_가격이_메뉴_상품들의_금액의_합보다_큰_경우_예외를_던진다() {
             // given
             MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("피자"));
-            Product product = productDao.save(상품("치즈 피자", 8900L));
+            Product product = productRepository.save(상품("치즈 피자", 8900L));
             MenuProduct menuProduct = 메뉴_상품(null, product.getId(), 1L);
             MenuRequest request = 메뉴_생성_요청("치즈피자", 8901L, menuGroup.getId(), List.of(menuProduct));
 
@@ -99,7 +99,7 @@ public class MenuServiceTest {
         void 메뉴가_정상적으로_등록된다() {
             // given
             MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("피자"));
-            Product product = productDao.save(상품("치즈 피자", 8900L));
+            Product product = productRepository.save(상품("치즈 피자", 8900L));
             MenuProduct menuProduct = 메뉴_상품(null, product.getId(), 1L);
             MenuRequest request = 메뉴_생성_요청("치즈피자", 8900L, menuGroup.getId(), List.of(menuProduct));
 
@@ -120,7 +120,7 @@ public class MenuServiceTest {
     void 메뉴_목록을_조회한다() {
         // given
         MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("피자"));
-        Product product = productDao.save(상품("치즈 피자", 8900L));
+        Product product = productRepository.save(상품("치즈 피자", 8900L));
 
         Menu menu1 = menuDao.save(메뉴("치즈피자", 8900L, menuGroup.getId()));
         MenuProduct menuProduct1 = menuProductDao.save(메뉴_상품(menu1.getId(), product.getId(), 1L));
