@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -30,9 +31,16 @@ public class MenuProduct extends BaseEntity {
     }
 
     public MenuProduct(Long seq, Product product, long quantity) {
+        validate(product);
         this.seq = seq;
         this.product = product;
         this.quantity = quantity;
+    }
+
+    private void validate(Product product) {
+        if (Objects.isNull(product)) {
+            throw new IllegalArgumentException("상품이 존재하지 않습니다.");
+        }
     }
 
     public Money calculateAmount() {

@@ -1,10 +1,12 @@
 package kitchenpos.dto;
 
+import static java.util.stream.Collectors.toList;
+
 import java.math.BigDecimal;
 import java.util.List;
 
 public class MenuRequest {
-    
+
     private Long id;
     private String name;
     private BigDecimal price;
@@ -43,5 +45,11 @@ public class MenuRequest {
 
     public List<MenuProductRequest> getMenuProducts() {
         return menuProducts;
+    }
+
+    public List<Long> getMenuProductIds() {
+        return menuProducts.stream()
+                .map(MenuProductRequest::getProductId)
+                .collect(toList());
     }
 }
