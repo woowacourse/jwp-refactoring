@@ -110,7 +110,11 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 특정_테이블그룹에_속한다면_예외() {
             // given
-            tableGroupDao.save(new TableGroup(1L, LocalDateTime.now(), null));
+            tableGroupDao.save(new TableGroup(1L, LocalDateTime.now(),
+                List.of(
+                    new OrderTable(1L, null, 3, true),
+                new OrderTable(2L, null, 2, true)
+            )));
             Long givenId = orderTableDao.save(new OrderTable(1L, 5, true)).getId();
 
             // when && then

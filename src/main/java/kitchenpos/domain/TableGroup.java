@@ -2,8 +2,11 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 public class TableGroup {
+
+    private static final int MIN_ORDER_TABLE_SIZE = 2;
     private Long id;
     private LocalDateTime createdDate;
     private List<OrderTable> orderTables;
@@ -12,7 +15,7 @@ public class TableGroup {
     }
 
     public TableGroup(List<OrderTable> orderTables) {
-        this(null, null, orderTables);
+        this(null, LocalDateTime.now(), orderTables);
     }
 
     public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
@@ -20,9 +23,24 @@ public class TableGroup {
     }
 
     public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
+        validate(orderTables);
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
+    }
+
+    private void validate(List<OrderTable> orderTables) {
+        if (orderTables.size() < MIN_ORDER_TABLE_SIZE) {
+            throw new IllegalArgumentException(String.format("테이블 그룹은 최소 %s개 이상의 테이블이 필요합니다.", MIN_ORDER_TABLE_SIZE));
+        }
+
+        if (orderTables.stream().anyMatch(OrderTable::isNotEmpty)) {
+            throw new IllegalArgumentException("비어있는 테이블만 주문그룹이 될 수 있습니다.");
+        }
+
+        if (orderTables.stream().anyMatch(it -> Objects.nonNull(it.getTableGroupId()))) {
+            throw new IllegalArgumentException("비어있는 테이블만 주문그룹이 될 수 있습니다.");
+        }
     }
 
     public Long getId() {

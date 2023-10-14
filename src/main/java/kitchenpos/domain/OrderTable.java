@@ -73,6 +73,10 @@ public class OrderTable {
         return empty;
     }
 
+    public boolean isNotEmpty() {
+        return !empty;
+    }
+
     public void setEmpty(final boolean empty) {
         this.empty = empty;
     }
