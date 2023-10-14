@@ -37,4 +37,5 @@ class MenuGroupServiceTest {
                 .usingRecursiveComparison()
                 .isEqualTo(findMenuGroup);
     }
+
 }

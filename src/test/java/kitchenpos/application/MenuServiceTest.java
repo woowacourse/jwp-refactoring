@@ -35,9 +35,6 @@ class MenuServiceTest {
     private MenuGroupDao menuGroupDao;
 
     @Autowired
-    private MenuDao menuDao;
-
-    @Autowired
     private ProductDao productDao;
 
     private Menu menu;
@@ -65,7 +62,6 @@ class MenuServiceTest {
         //when then
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
-
     }
 
     @DisplayName("메뉴 그룹이 존재하지 않으면, 생성할 수 없다.")
@@ -75,10 +71,9 @@ class MenuServiceTest {
         menu.setPrice(BigDecimal.ONE);
         menu.setMenuGroupId(99L);
 
-        //when
         assertThat(menuGroupDao.existsById(99L)).isFalse();
 
-        //then
+        //when then
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -98,11 +93,10 @@ class MenuServiceTest {
         menu.setMenuGroupId(savedMenuGroup.getId());
         menu.setMenuProducts(List.of(menuProduct));
 
-        //when
         assertThat(menuGroupDao.existsById(savedMenuGroup.getId())).isTrue();
         assertThat(productDao.findById(99L)).isEmpty();
 
-        //then
+        //when then
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -130,11 +124,10 @@ class MenuServiceTest {
         menu.setMenuGroupId(savedMenuGroup.getId());
         menu.setMenuProducts(List.of(menuProduct));
 
-        //when
         assertThat(menuGroupDao.existsById(savedMenuGroup.getId())).isTrue();
         assertThat(productDao.findById(savedProduct.getId())).isPresent();
 
-        //then
+        //when then
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -164,12 +157,12 @@ class MenuServiceTest {
 
         //when
         Menu savedMenu = menuService.create(menu);
+
+        //then
         List<Menu> findMenus = menuService.list()
                 .stream()
                 .filter(menu -> menu.getId().equals(savedMenu.getId()))
                 .collect(Collectors.toList());
-
-        //then
 
         assertAll(
                 () -> assertThat(findMenus).extractingResultOf("getId")
@@ -180,14 +173,12 @@ class MenuServiceTest {
                         .containsExactly(savedMenu.getPrice()),
                 () -> assertThat(findMenus).extractingResultOf("getMenuGroupId")
                         .containsExactly(savedMenu.getMenuGroupId()),
-
                 () -> assertThat(findMenus).hasSize(1),
                 () -> assertThat(findMenus.get(0).getMenuProducts())
                         .usingRecursiveComparison()
                         .ignoringFields("menuId", "seq")
                         .isEqualTo(List.of(menuProduct))
         );
-
     }
 
 }

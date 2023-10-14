@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -57,11 +58,10 @@ class TableGroupServiceTest {
         OrderTable orderTable2 = new OrderTable();
         orderTable2.setId(100L);
 
-        //when
         assertThat(orderTableDao.findById(99L)).isEmpty();
         assertThat(orderTableDao.findById(100L)).isEmpty();
 
-        //then
+        //when then
         TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
 
@@ -79,11 +79,10 @@ class TableGroupServiceTest {
         OrderTable orderTable2 = new OrderTable();
         orderTable2.setEmpty(true);
 
-        //when
         OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
         OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
 
-        //then
+        //when then
         TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(List.of(savedOrderTable1, savedOrderTable2));
 
@@ -106,7 +105,6 @@ class TableGroupServiceTest {
         TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(List.of(savedOrderTable1, savedOrderTable2));
 
-        //when
         tableGroupService.create(tableGroup);
 
         OrderTable newOrderTable = new OrderTable();
@@ -114,10 +112,10 @@ class TableGroupServiceTest {
 
         OrderTable savedNewOrderTable = orderTableDao.save(newOrderTable);
 
+        //when then
         TableGroup newTableGroup = new TableGroup();
         newTableGroup.setOrderTables(List.of(savedOrderTable1, savedNewOrderTable));
 
-        //then
         assertThatThrownBy(() -> tableGroupService.create(newTableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -134,10 +132,10 @@ class TableGroupServiceTest {
         OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
         OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
 
-        //when
         TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(List.of(savedOrderTable1, savedOrderTable2));
 
+        //when
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
         //then
@@ -171,13 +169,12 @@ class TableGroupServiceTest {
 
         orderDao.save(order);
 
-        //when
         TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(List.of(savedOrderTable1, savedOrderTable2));
 
         Long savedTableGroupId = tableGroupService.create(tableGroup).getId();
 
-        //then
+        //when then
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroupId))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -200,12 +197,12 @@ class TableGroupServiceTest {
 
         orderDao.save(order);
 
-        //when
         TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(List.of(savedOrderTable1, savedOrderTable2));
 
         Long savedTableGroupId = tableGroupService.create(tableGroup).getId();
 
+        //when
         tableGroupService.ungroup(savedTableGroupId);
 
         //then

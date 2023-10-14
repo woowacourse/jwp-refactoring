@@ -43,10 +43,10 @@ class TableServiceTest {
         orderTable.setId(99L);
         orderTable.setTableGroupId(99L);
 
-        //when
         assertThat(orderTableDao.findById(99L)).isEmpty();
         assertThat(orderTableDao.findAllByTableGroupId(99L)).isEmpty();
 
+        //when
         OrderTable savedOrderTable = tableService.create(orderTable);
 
         //then
@@ -66,10 +66,9 @@ class TableServiceTest {
         //given
         OrderTable orderTable = new OrderTable();
 
-        //when
         assertThat(orderTableDao.findById(99L)).isEmpty();
 
-        //then
+        //when then
         assertThatThrownBy(() -> tableService.changeEmpty(99L, orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -85,13 +84,12 @@ class TableServiceTest {
         tableGroup.setOrderTables(List.of(orderTable, otherOrderTable));
         tableGroup.setCreatedDate(LocalDateTime.now());
 
-        //when
         TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
+        //when then
         orderTable.setTableGroupId(savedTableGroup.getId());
         Long savedOrderTableId = orderTableDao.save(orderTable).getId();
 
-        //then
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTableId, otherOrderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -110,13 +108,12 @@ class TableServiceTest {
         order.setOrderTableId(savedOrderTableId);
         orderDao.save(order);
 
-        //when
         assertThat(order.getOrderStatus()).isNotEqualTo("COMPLETION");
 
-        //then
-        OrderTable otherOrderTable = new OrderTable();
+        //when then
+        OrderTable newOrderTable = new OrderTable();
 
-        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTableId, otherOrderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTableId, newOrderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -134,7 +131,6 @@ class TableServiceTest {
         order.setOrderTableId(savedOrderTableId);
         orderDao.save(order);
 
-        //when
         OrderTable findOrderTable = tableService.list()
                 .stream()
                 .filter(table -> table.getId().equals(savedOrderTableId))
@@ -142,6 +138,7 @@ class TableServiceTest {
                 .get();
         assertThat(findOrderTable.isEmpty()).isTrue();
 
+        //when
         OrderTable otherOrderTable = new OrderTable();
         otherOrderTable.setEmpty(false);
 
@@ -158,11 +155,10 @@ class TableServiceTest {
         OrderTable orderTable = new OrderTable();
         Long savedOrderTableId = orderTableDao.save(orderTable).getId();
 
-        //when
+        //when //then
         OrderTable otherOrderTable = new OrderTable();
         otherOrderTable.setNumberOfGuests(numberOfGuests);
 
-        //then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTableId, otherOrderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -173,10 +169,9 @@ class TableServiceTest {
         //given
         OrderTable orderTable = new OrderTable();
 
-        //when
         assertThat(orderTableDao.findById(99L)).isEmpty();
 
-        //then
+        //when then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(99L, orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -190,11 +185,10 @@ class TableServiceTest {
 
         Long savedOrderTableId = orderTableDao.save(orderTable).getId();
 
-        //when
+        //when then
         OrderTable otherOrderTable = new OrderTable();
         otherOrderTable.setNumberOfGuests(99);
 
-        //then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTableId, otherOrderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -204,12 +198,11 @@ class TableServiceTest {
     void changeNumberOfGuestsSuccessTest(int numberOfGuests) {
         //given
         OrderTable orderTable = new OrderTable();
-
         OrderTable savedOrderTable = tableService.create(orderTable);
 
-        //when
         assertThat(savedOrderTable.getNumberOfGuests()).isZero();
 
+        //when
         OrderTable otherOrderTable = new OrderTable();
         otherOrderTable.setNumberOfGuests(numberOfGuests);
 

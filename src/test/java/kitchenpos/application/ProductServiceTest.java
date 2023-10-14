@@ -56,16 +56,16 @@ class ProductServiceTest {
 
         //when
         Product savedProduct = productService.create(product);
+
+        //then
         Product findProduct = productService.list()
                 .stream()
                 .filter(p -> p.getId().equals(savedProduct.getId()))
                 .findAny()
                 .get();
 
-        //then
         assertThat(findProduct).usingRecursiveComparison()
                 .isEqualTo(savedProduct);
     }
-
 
 }

@@ -75,10 +75,9 @@ class OrderServiceTest {
 
         order.setOrderLineItems(List.of(orderLineItem));
 
-        //when
         assertThat(menuDao.findById(99L)).isEmpty();
 
-        //then
+        //when then
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -95,11 +94,10 @@ class OrderServiceTest {
         order.setOrderLineItems(List.of(orderLineItem));
         order.setOrderTableId(99L);
 
-        //when
         assertThat(menuDao.findById(menuId)).isPresent();
         assertThat(orderTableDao.findById(99L)).isEmpty();
 
-        //then
+        //when then
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -117,12 +115,11 @@ class OrderServiceTest {
         order.setOrderLineItems(List.of(orderLineItem));
         order.setOrderTableId(orderTableId);
 
-        //when
         assertThat(menuDao.findById(menuId)).isPresent();
         assertThat(orderTableDao.findById(orderTableId)).isPresent();
         assertThat(orderTableDao.findById(orderTableId).get().isEmpty()).isTrue();
 
-        //then
+        //when then
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -140,14 +137,14 @@ class OrderServiceTest {
         order.setOrderLineItems(List.of(orderLineItem));
         order.setOrderTableId(orderTableId);
 
-        //when
         assertThat(order.getOrderStatus()).isNull();
         assertThat(order.getOrderedTime()).isNull();
 
-        orderService.create(order);
+        //when
+        Order savedOrder = orderService.create(order);
 
         //then
-        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+        assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
         assertThat(order.getOrderedTime()).isNotNull();
     }
 
@@ -164,7 +161,6 @@ class OrderServiceTest {
         order.setOrderLineItems(List.of(orderLineItem));
         order.setOrderTableId(orderTableId);
 
-        //when
         Optional<OrderLineItem> findOrderLineItemBeforeCreatingOrder = orderLineItemDao.findAll()
                 .stream()
                 .filter(item -> item.getMenuId().equals(menuId))
@@ -172,6 +168,7 @@ class OrderServiceTest {
 
         assertThat(findOrderLineItemBeforeCreatingOrder).isEmpty();
 
+        //when
         orderService.create(order);
 
         //then
@@ -216,10 +213,10 @@ class OrderServiceTest {
     @DisplayName("변경하려는 주문이 존재하지 않으면 변경할 수 없다.")
     @Test
     void changeOrderStatusFailTest_ByOrderIsNotExists() {
-        //when
+        //given
         assertThat(orderDao.findById(99L)).isEmpty();
 
-        //then
+        //when then
         assertThatThrownBy(() -> orderService.changeOrderStatus(99L, order))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -239,12 +236,10 @@ class OrderServiceTest {
         order.setOrderStatus("COMPLETION");
         order.setOrderedTime(LocalDateTime.now());
 
+        //when then
         Order otherOrder = new Order();
-
-        //when
         Long savedOrderId = orderDao.save(order).getId();
 
-        //then
         assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrderId, otherOrder))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -264,13 +259,12 @@ class OrderServiceTest {
         order.setOrderStatus("COOKING");
         order.setOrderedTime(LocalDateTime.now());
 
+        Long savedOrderId = orderDao.save(order).getId();
+
+        //when then
         Order otherOrder = new Order();
         otherOrder.setOrderStatus("sadfasdf");
 
-        //when
-        Long savedOrderId = orderDao.save(order).getId();
-
-        //then
         assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrderId, otherOrder))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -296,9 +290,10 @@ class OrderServiceTest {
         order.setOrderStatus("COMPLETION");
 
         orderService.changeOrderStatus(savedOrderId, order);
-        Order findOrder = orderDao.findById(savedOrderId).get();
 
         //then
+        Order findOrder = orderDao.findById(savedOrderId).get();
+
         assertThat(findOrder.getOrderStatus()).isEqualTo("COMPLETION");
     }
 
