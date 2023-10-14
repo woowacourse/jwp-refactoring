@@ -8,17 +8,12 @@ import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.fixture.MenuGroupFixture;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
-@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
-@ExtendWith(MockitoExtension.class)
+@ServiceMockTest
 class MenuGroupServiceTest {
 
     @InjectMocks
@@ -30,7 +25,6 @@ class MenuGroupServiceTest {
     @Test
     void 메뉴_그룹을_생성한다() {
         MenuGroup menuGroup = MenuGroupFixture.메뉴_그룹_엔티티_A;
-
         given(menuGroupDao.save(any(MenuGroup.class)))
                 .willReturn(menuGroup);
 
