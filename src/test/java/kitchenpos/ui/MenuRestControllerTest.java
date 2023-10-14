@@ -11,6 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.mockito.Mockito.any;
@@ -36,9 +37,7 @@ class MenuRestControllerTest {
     @Test
     void 메뉴를_생성한다() throws Exception {
         // given
-        Menu createdMenu = new Menu();
-        createdMenu.setId(1L);
-        createdMenu.setName("Test Menu");
+        Menu createdMenu = new Menu(1L, "Test Menu", BigDecimal.valueOf(1000), 1L);
 
         // when
         when(menuService.create(any(MenuRequest.class))).thenReturn(createdMenu);
@@ -55,12 +54,8 @@ class MenuRestControllerTest {
     @Test
     void 메뉴를_전체_조회한다() throws Exception {
         // given
-        Menu menu1 = new Menu();
-        menu1.setId(1L);
-        menu1.setName("Menu 1");
-        Menu menu2 = new Menu();
-        menu2.setId(2L);
-        menu2.setName("Menu 2");
+        Menu menu1 = new Menu(1L, "Menu1", BigDecimal.valueOf(1000), 1L);
+        Menu menu2 = new Menu(2L, "Menu2", BigDecimal.valueOf(1000), 1L);
 
         // when
         when(menuService.list()).thenReturn(List.of(menu1, menu2));
