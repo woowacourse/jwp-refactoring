@@ -7,6 +7,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.List;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductCreateRequest;
+import kitchenpos.dto.ProductResponse;
 import kitchenpos.test.ServiceTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -28,10 +30,10 @@ class ProductServiceTest {
         @Test
         void 상품의_가격이_0원_미만인_경우_예외를_던진다() {
             // given
-            Product product = 상품("피자", -1L);
+            ProductCreateRequest productCreateRequest = new ProductCreateRequest("피자", -1L);
 
             // expect
-            assertThatThrownBy(() -> sut.create(product))
+            assertThatThrownBy(() -> sut.create(productCreateRequest))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("상품의 가격은 0원 이상이어야 합니다.");
         }
@@ -39,13 +41,13 @@ class ProductServiceTest {
         @Test
         void 상품의_가격이_0원_이상인_경우_정상적으로_등록된다() {
             // given
-            Product product = 상품("무료 피자", 0L);
+            ProductCreateRequest productCreateRequest = new ProductCreateRequest("무료 피자", 0L);
 
             // when
-            Product savedProduct = sut.create(product);
+            ProductResponse productResponse = sut.create(productCreateRequest);
 
             // then
-            assertThat(productDao.findById(savedProduct.getId())).isPresent();
+            assertThat(productDao.findById(productResponse.getId())).isPresent();
         }
     }
 
