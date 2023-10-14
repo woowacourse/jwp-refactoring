@@ -61,7 +61,7 @@ class TableServiceTest {
     void 주문_테이블을_빈_테이블로_변경한다() {
         // given
         OrderTable orderTable = orderTableDao.save(new OrderTable(null, 10, false));
-        Order order = new Order(orderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.of(2002, 3, 3, 3, 3));
+        Order order = new Order(orderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.of(2002, 3, 3, 3, 3));
         orderDao.save(order);
 
         // when
@@ -86,7 +86,7 @@ class TableServiceTest {
     void 주문_테이블을_빈_테이블로_변경할_때_주문_상태가_완료가_아니면_예외가_발생한다(OrderStatus orderStatus) {
         // given
         OrderTable orderTable = orderTableDao.save(new OrderTable(null, 10, false));
-        Order order = new Order(orderTable.getId(), orderStatus.name(), LocalDateTime.of(2002, 3, 3, 3, 3));
+        Order order = new Order(orderTable.getId(), orderStatus, LocalDateTime.of(2002, 3, 3, 3, 3));
         orderDao.save(order);
 
         // expect

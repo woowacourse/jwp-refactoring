@@ -2,6 +2,7 @@ package kitchenpos.fake;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,17 +21,12 @@ public class InMemoryOrderDao implements OrderDao {
     public Order save(Order entity) {
         if (Objects.isNull(entity.getId())) {
             long id = this.id.getAndIncrement();
-            entity.setId(id);
-            database.put(id, entity);
-            return entity;
+            Order order = new Order(id, entity.getOrderTableId(), entity.getOrderStatus(), entity.getOrderedTime(), entity.getOrderLineItems());
+            database.put(id, order);
+            return order;
         }
-        update(entity);
+        database.put(entity.getId(), entity);
         return entity;
-    }
-
-    private void update(Order entity) {
-        Order order = database.get(entity.getId());
-        order.setOrderStatus(entity.getOrderStatus());
     }
 
     @Override
@@ -44,14 +40,14 @@ public class InMemoryOrderDao implements OrderDao {
     }
 
     @Override
-    public boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<String> orderStatuses) {
+    public boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<OrderStatus> orderStatuses) {
         return database.values().stream()
                 .anyMatch(it -> it.getOrderTableId().equals(orderTableId) &&
                         orderStatuses.contains(it.getOrderStatus()));
     }
 
     @Override
-    public boolean existsByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds, List<String> orderStatuses) {
+    public boolean existsByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds, List<OrderStatus> orderStatuses) {
         return database.values().stream()
                 .anyMatch(it -> orderTableIds.contains(it.getOrderTableId()) &&
                         orderStatuses.contains(it.getOrderStatus()));

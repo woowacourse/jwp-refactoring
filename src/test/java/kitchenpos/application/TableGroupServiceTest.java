@@ -131,7 +131,7 @@ class TableGroupServiceTest {
         // given
         OrderTable orderTable = orderTableDao.save(new OrderTable(0L, 10, false));
         OrderTable orderTable2 = orderTableDao.save(new OrderTable(0L, 3, false));
-        orderDao.save(new Order(orderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.of(2002, 3, 3, 3, 3)));
+        orderDao.save(new Order(orderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.of(2002, 3, 3, 3, 3)));
         TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.of(2002, 3, 3, 3, 3), List.of(orderTable, orderTable2)));
 
         // when
@@ -154,7 +154,7 @@ class TableGroupServiceTest {
         // given
         OrderTable orderTable = orderTableDao.save(new OrderTable(0L, 10, false));
         OrderTable orderTable2 = orderTableDao.save(new OrderTable(0L, 3, false));
-        orderDao.save(new Order(orderTable.getId(), orderStatus.name(), LocalDateTime.of(2002, 3, 3, 3, 3)));
+        orderDao.save(new Order(orderTable.getId(), orderStatus, LocalDateTime.of(2002, 3, 3, 3, 3)));
         TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.of(2002, 3, 3, 3, 3), List.of(orderTable, orderTable2)));
 
         // when

@@ -2,6 +2,7 @@ package kitchenpos.ui;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.OrderService;
+import kitchenpos.application.dto.OrderChangeStatusRequest;
 import kitchenpos.application.dto.OrderRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
@@ -12,6 +13,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -39,9 +42,7 @@ class OrderRestControllerTest {
     @Test
     void 주문을_생성한다() throws Exception {
         // given
-        Order createdOrder = new Order();
-        createdOrder.setId(1L);
-        createdOrder.setOrderStatus(OrderStatus.MEAL.name());
+        Order createdOrder = new Order(1L, 1L, OrderStatus.MEAL, LocalDateTime.now(), new ArrayList<>());
 
         // when
         when(orderService.create(any(OrderRequest.class))).thenReturn(createdOrder);
@@ -58,12 +59,8 @@ class OrderRestControllerTest {
     @Test
     void 주문_목록을_조회한다() throws Exception {
         // given
-        Order order1 = new Order();
-        order1.setId(1L);
-        order1.setOrderStatus(OrderStatus.MEAL.name());
-        Order order2 = new Order();
-        order2.setId(2L);
-        order2.setOrderStatus(OrderStatus.COOKING.name());
+        Order order1 = new Order(1L, 1L, OrderStatus.MEAL, LocalDateTime.now(), new ArrayList<>());
+        Order order2 = new Order(2L, 2L, OrderStatus.COOKING, LocalDateTime.now(), new ArrayList<>());
 
         // when
         when(orderService.list()).thenReturn(List.of(order1, order2));
@@ -79,11 +76,11 @@ class OrderRestControllerTest {
     void 주문_상태를_변경한다() throws Exception {
         // given
         Long orderId = 1L;
-        Order request = new Order();
-        Order response = new Order();
+        OrderChangeStatusRequest request = new OrderChangeStatusRequest(OrderStatus.COMPLETION);
+        Order response = new Order(1L, 1L, OrderStatus.COMPLETION, LocalDateTime.now(), List.of());
 
         // when
-        when(orderService.changeOrderStatus(anyLong(), any(Order.class)))
+        when(orderService.changeOrderStatus(anyLong(), any(OrderChangeStatusRequest.class)))
                 .thenReturn(response);
 
         // when

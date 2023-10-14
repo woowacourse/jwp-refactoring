@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.OrderChangeStatusRequest;
 import kitchenpos.application.dto.OrderRequest;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static java.lang.Long.MAX_VALUE;
@@ -106,7 +108,7 @@ class OrderServiceTest {
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+            softly.assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
             softly.assertThat(savedOrder.getOrderTableId()).isEqualTo(order.getOrderTableId());
             softly.assertThat(savedOrder.getOrderedTime()).isNotNull();
             softly.assertThat(savedOrder.getOrderLineItems()).map(OrderLineItem::getOrderId)
@@ -131,37 +133,35 @@ class OrderServiceTest {
     @Test
     void 주문의_상태를_변경할_때_주문이_존재하지_않으면_예외가_발생한다() {
         // expect
-        assertThatThrownBy(() -> orderService.changeOrderStatus(MAX_VALUE, new Order()))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(MAX_VALUE, new OrderChangeStatusRequest(OrderStatus.COOKING)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 주문의_상태를_변경할_때_상태가_완료면_예외가_발생한다() {
         // given
-        Order order = new Order();
-        order.setOrderStatus(OrderStatus.COMPLETION.name());
+        Order order = new Order(1L, OrderStatus.COMPLETION, LocalDateTime.now());
         Order savedOrder = orderDao.save(order);
+        OrderChangeStatusRequest request = new OrderChangeStatusRequest(OrderStatus.COOKING);
 
         // expect
-        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), order))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 주문의_상태를_변경한다() {
         // given
-        Order order = new Order();
-        order.setOrderStatus(OrderStatus.COOKING.name());
+        Order order = new Order(1L, OrderStatus.COOKING, LocalDateTime.now());
         Order savedOrder = orderDao.save(order);
-        Order newOrder = new Order();
-        newOrder.setOrderStatus(OrderStatus.MEAL.name());
+        OrderChangeStatusRequest newOrder = new OrderChangeStatusRequest(OrderStatus.MEAL);
 
         // when
         Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), newOrder);
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
+            softly.assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL);
             softly.assertThat(changedOrder.getId()).isEqualTo(savedOrder.getId());
         });
     }
