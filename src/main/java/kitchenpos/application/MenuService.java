@@ -6,9 +6,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupRepository;
-import kitchenpos.dao.MenuProductDao;
+import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
@@ -21,20 +20,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MenuService {
-    private final MenuDao menuDao;
+    private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
-    private final MenuProductDao menuProductDao;
     private final ProductRepository productRepository;
 
     public MenuService(
-            final MenuDao menuDao,
+            final MenuRepository menuRepository,
             final MenuGroupRepository menuGroupRepository,
-            final MenuProductDao menuProductDao,
             final ProductRepository productRepository
     ) {
-        this.menuDao = menuDao;
+        this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
-        this.menuProductDao = menuProductDao;
         this.productRepository = productRepository;
     }
 
@@ -63,29 +59,22 @@ public class MenuService {
             throw new IllegalArgumentException("메뉴의 가격은 메뉴 상품들의 금액의 합보다 클 수 없습니다.");
         }
 
-        final Menu savedMenu = menuDao.save(new Menu(request.getName(), request.getPrice(), request.getMenuGroupId()));
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (MenuProductRequest menuProductRequest : menuProductRequests) {
             MenuProduct menuProduct = new MenuProduct(
-                    savedMenu.getId(),
                     menuProductRequest.getProductId(),
                     menuProductRequest.getQuantity()
             );
-            savedMenuProducts.add(menuProductDao.save(menuProduct));
+            savedMenuProducts.add(menuProduct);
         }
-        savedMenu.changeMenuProducts(savedMenuProducts);
+        final Menu savedMenu = menuRepository.save(
+                new Menu(null, request.getName(), request.getPrice(), request.getMenuGroupId(), savedMenuProducts));
 
         return MenuResponse.from(savedMenu);
     }
 
     public List<MenuResponse> list() {
-        final List<Menu> menus = menuDao.findAll();
-
-        for (final Menu menu : menus) {
-            menu.changeMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
-        }
-
-        return menus.stream()
+        return menuRepository.findAll().stream()
                 .map(MenuResponse::from)
                 .collect(toList());
     }

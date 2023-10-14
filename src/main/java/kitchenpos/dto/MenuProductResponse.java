@@ -1,5 +1,6 @@
 package kitchenpos.dto;
 
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 
 public class MenuProductResponse {
@@ -16,10 +17,10 @@ public class MenuProductResponse {
         this.quantity = quantity;
     }
 
-    public static MenuProductResponse from(MenuProduct menuProduct) {
+    public static MenuProductResponse from(MenuProduct menuProduct, Menu menu) {
         return new MenuProductResponse(
                 menuProduct.getSeq(),
-                menuProduct.getMenuId(),
+                menu.getId(),
                 menuProduct.getProductId(),
                 menuProduct.getQuantity()
         );

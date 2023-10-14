@@ -7,12 +7,11 @@ import static kitchenpos.fixture.MenuProductFixture.메뉴_상품;
 import static kitchenpos.fixture.ProductFixture.상품;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupRepository;
-import kitchenpos.dao.MenuProductDao;
+import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -21,6 +20,7 @@ import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
 import kitchenpos.test.ServiceTest;
+import org.assertj.core.util.BigDecimalComparator;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,13 +33,10 @@ public class MenuServiceTest {
     private MenuService sut;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
     private MenuGroupRepository menuGroupRepository;
-
-    @Autowired
-    private MenuProductDao menuProductDao;
 
     @Autowired
     private ProductRepository productRepository;
@@ -73,7 +70,7 @@ public class MenuServiceTest {
         void 존재하지_않는_메뉴_상품을_입력하는_경우_예외를_던진다() {
             // given
             MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("피자"));
-            MenuRequest request = 메뉴_생성_요청("치즈피자", 0L, menuGroup.getId(), List.of(메뉴_상품(1L, 1L, 1L)));
+            MenuRequest request = 메뉴_생성_요청("치즈피자", 0L, menuGroup.getId(), List.of(메뉴_상품(1L, 1L)));
 
             // expect
             assertThatThrownBy(() -> sut.create(request))
@@ -86,7 +83,7 @@ public class MenuServiceTest {
             // given
             MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("피자"));
             Product product = productRepository.save(상품("치즈 피자", 8900L));
-            MenuProduct menuProduct = 메뉴_상품(null, product.getId(), 1L);
+            MenuProduct menuProduct = 메뉴_상품(product.getId(), 1L);
             MenuRequest request = 메뉴_생성_요청("치즈피자", 8901L, menuGroup.getId(), List.of(menuProduct));
 
             // expect
@@ -100,19 +97,18 @@ public class MenuServiceTest {
             // given
             MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("피자"));
             Product product = productRepository.save(상품("치즈 피자", 8900L));
-            MenuProduct menuProduct = 메뉴_상품(null, product.getId(), 1L);
+            MenuProduct menuProduct = 메뉴_상품(product.getId(), 1L);
             MenuRequest request = 메뉴_생성_요청("치즈피자", 8900L, menuGroup.getId(), List.of(menuProduct));
 
             // when
             MenuResponse result = sut.create(request);
 
             // then
-            assertSoftly(softly -> {
-                softly.assertThat(menuDao.findById(result.getId())).isPresent();
-                softly.assertThat(menuProductDao.findAllByMenuId(result.getId()))
-                        .usingRecursiveComparison()
-                        .isEqualTo(result.getMenuProducts());
-            });
+            Menu menu = menuRepository.findById(result.getId()).get();
+            assertThat(result)
+                    .usingRecursiveComparison()
+                    .withComparatorForType(BigDecimalComparator.BIG_DECIMAL_COMPARATOR, BigDecimal.class)
+                    .isEqualTo(MenuResponse.from(menu));
         }
     }
 
@@ -122,13 +118,12 @@ public class MenuServiceTest {
         MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("피자"));
         Product product = productRepository.save(상품("치즈 피자", 8900L));
 
-        Menu menu1 = menuDao.save(메뉴("치즈피자", 8900L, menuGroup.getId()));
-        MenuProduct menuProduct1 = menuProductDao.save(메뉴_상품(menu1.getId(), product.getId(), 1L));
-        menu1.changeMenuProducts(List.of(menuProduct1));
-
-        Menu menu2 = menuDao.save(메뉴("오픈기념 치즈피자", 5000L, menuGroup.getId()));
-        MenuProduct menuProduct2 = menuProductDao.save(메뉴_상품(menu2.getId(), product.getId(), 1L));
-        menu2.changeMenuProducts(List.of(menuProduct2));
+        Menu menu1 = menuRepository.save(메뉴("치즈피자", 8900L, menuGroup.getId(), List.of(
+                메뉴_상품(product.getId(), 1L)
+        )));
+        Menu menu2 = menuRepository.save(메뉴("오픈기념 치즈피자", 5000L, menuGroup.getId(), List.of(
+                메뉴_상품(product.getId(), 1L)
+        )));
 
         // when
         List<MenuResponse> result = sut.list();
@@ -136,6 +131,7 @@ public class MenuServiceTest {
         // then
         assertThat(result)
                 .usingRecursiveComparison()
+                .withComparatorForType(BigDecimalComparator.BIG_DECIMAL_COMPARATOR, BigDecimal.class)
                 .isEqualTo(List.of(MenuResponse.from(menu1), MenuResponse.from(menu2)));
     }
 }
