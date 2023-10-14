@@ -7,5 +7,5 @@
 - [ ] 경계값 외의 값에 대한 테스트도 필수일까?
 - [x] Menu 목록 조회 테스트 DisplayName 빠졌음
 - [x] Order 테스트 불필요한 개행 제거
-- [ ] Product 조회 테스트 추가
+- [x] Product 조회 테스트 추가
 - [ ] orderTable.tableGroupId 초기화 문제 확인
