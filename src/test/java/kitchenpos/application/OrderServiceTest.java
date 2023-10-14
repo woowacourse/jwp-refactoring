@@ -70,12 +70,14 @@ class OrderServiceTest {
     @Test
     void createFailTest_ByOrderLineItemIsNotExists() {
         //given
+        Long invalidId = 99L;
+
         OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(99L);
+        orderLineItem.setMenuId(invalidId);
 
         order.setOrderLineItems(List.of(orderLineItem));
 
-        assertThat(menuDao.findById(99L)).isEmpty();
+        assertThat(menuDao.findById(invalidId)).isEmpty();
 
         //when then
         assertThatThrownBy(() -> orderService.create(order))

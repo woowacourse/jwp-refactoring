@@ -39,12 +39,14 @@ class TableServiceTest {
     @Test
     void createSuccessTest_InitializeOrderTableAndTableGroupId() {
         //given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(99L);
-        orderTable.setTableGroupId(99L);
+        Long invalidId = 99L;
 
-        assertThat(orderTableDao.findById(99L)).isEmpty();
-        assertThat(orderTableDao.findAllByTableGroupId(99L)).isEmpty();
+        OrderTable orderTable = new OrderTable();
+        orderTable.setId(invalidId);
+        orderTable.setTableGroupId(invalidId);
+
+        assertThat(orderTableDao.findById(invalidId)).isEmpty();
+        assertThat(orderTableDao.findAllByTableGroupId(invalidId)).isEmpty();
 
         //when
         OrderTable savedOrderTable = tableService.create(orderTable);
@@ -53,19 +55,20 @@ class TableServiceTest {
         OrderTable findOrderTable = orderTableDao.findById(savedOrderTable.getId()).get();
 
         assertThat(findOrderTable.getTableGroupId()).isNull();
-        assertThat(findOrderTable.getId()).isNotEqualTo(99L);
+        assertThat(findOrderTable.getId()).isNotEqualTo(invalidId);
     }
 
     @DisplayName("기존에 주문이 없었던 테이블인 경우, 주문 상태를 변경할 수 없다.")
     @Test
     void changeEmptyFailTest_ByOrderTableIsNotExists() {
         //given
+        Long invalidId = 99L;
         OrderTable orderTable = new OrderTable();
 
-        assertThat(orderTableDao.findById(99L)).isEmpty();
+        assertThat(orderTableDao.findById(invalidId)).isEmpty();
 
         //when then
-        assertThatThrownBy(() -> tableService.changeEmpty(99L, orderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(invalidId, orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -159,12 +162,13 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuestsFailTest_ByOrderTableIsNotExists() {
         //given
+        Long invalidId = 99L;
         OrderTable orderTable = new OrderTable();
 
-        assertThat(orderTableDao.findById(99L)).isEmpty();
+        assertThat(orderTableDao.findById(invalidId)).isEmpty();
 
         //when then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(99L, orderTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(invalidId, orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

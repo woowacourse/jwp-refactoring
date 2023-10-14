@@ -55,14 +55,17 @@ class TableGroupServiceTest {
     @Test
     void createFailTest_ByOrderTableIsNotExists() {
         //given
+        Long invalidId1 = 99L;
+        Long invalidId2 = 100L;
+
         OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(99L);
+        orderTable1.setId(invalidId1);
 
         OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(100L);
+        orderTable2.setId(invalidId2);
 
-        assertThat(orderTableDao.findById(99L)).isEmpty();
-        assertThat(orderTableDao.findById(100L)).isEmpty();
+        assertThat(orderTableDao.findById(invalidId1)).isEmpty();
+        assertThat(orderTableDao.findById(invalidId2)).isEmpty();
 
         //when then
         TableGroup tableGroup = new TableGroup();

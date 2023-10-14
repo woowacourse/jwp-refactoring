@@ -73,10 +73,12 @@ class MenuServiceTest {
     @Test
     void createFailTest_ByMenuGroupIsNotExists() {
         //given
-        menu.setPrice(BigDecimal.ONE);
-        menu.setMenuGroupId(99L);
+        Long invalidId = 99L;
 
-        assertThat(menuGroupDao.existsById(99L)).isFalse();
+        menu.setPrice(BigDecimal.ONE);
+        menu.setMenuGroupId(invalidId);
+
+        assertThat(menuGroupDao.existsById(invalidId)).isFalse();
 
         //when then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -87,19 +89,21 @@ class MenuServiceTest {
     @Test
     void createFailTest_ByMenuProductIsNotExists() {
         //given
+        Long invalidId = 99L;
+
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName("TestMenuGroup");
         MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
 
         MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(99L);
+        menuProduct.setProductId(invalidId);
 
         menu.setPrice(BigDecimal.ONE);
         menu.setMenuGroupId(savedMenuGroup.getId());
         menu.setMenuProducts(List.of(menuProduct));
 
         assertThat(menuGroupDao.existsById(savedMenuGroup.getId())).isTrue();
-        assertThat(productDao.findById(99L)).isEmpty();
+        assertThat(productDao.findById(invalidId)).isEmpty();
 
         //when then
         assertThatThrownBy(() -> menuService.create(menu))
