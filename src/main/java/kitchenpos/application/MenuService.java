@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -46,39 +45,28 @@ public class MenuService {
         List<MenuProductRequest> menuProductRequests = request.getMenuProducts();
         validateMenuPriceIsNotBiggerThanActualPrice(menuProductRequests, price);
 
-        Menu menu = createMenuWith(request);
+        MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
+                .orElseThrow();
 
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        for (MenuProductRequest menuProductRequest : menuProductRequests) {
-            MenuProduct menuProduct = createMenuProductWith(menuProductRequest, menu);
-            menuProducts.add(menuProduct);
-        }
-
-        menu.setMenuProducts(menuProducts);
+        Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup);
         Menu savedMenu = menuRepository.save(menu);
+
+        for (MenuProductRequest menuProductRequest : menuProductRequests) {
+            createMenuProductWith(menuProductRequest, menu);
+        }
         return MenuResponse.from(savedMenu);
     }
 
-    private MenuProduct createMenuProductWith(MenuProductRequest menuProductRequest, Menu menu) {
+    private void createMenuProductWith(MenuProductRequest menuProductRequest, Menu menu) {
         MenuProduct menuProduct = new MenuProduct();
 
         Product product = productRepository.findById(menuProductRequest.getProductId())
                 .orElseThrow();
-
         menuProduct.setProduct(product);
         menuProduct.setQuantity(menuProductRequest.getQuantity());
         menuProduct.setMenu(menu);
-        return menuProduct;
-    }
 
-    private Menu createMenuWith(CreateMenuRequest request) {
-        Menu menu = new Menu();
-        menu.setName(request.getName());
-        menu.setPrice(request.getPrice());
-        MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
-                .orElseThrow();
-        menu.setMenuGroup(menuGroup);
-        return menu;
+        menuProductRepository.save(menuProduct);
     }
 
     private void validateMenuPriceIsNotBiggerThanActualPrice(List<MenuProductRequest> menuProductRequests, BigDecimal price) {
@@ -108,10 +96,6 @@ public class MenuService {
 
     public List<MenuResponse> findAll() {
         final List<Menu> menus = menuRepository.findAll();
-
-        for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductRepository.findAllByMenuId(menu.getId()));
-        }
 
         return menus.stream()
                 .map(MenuResponse::from)

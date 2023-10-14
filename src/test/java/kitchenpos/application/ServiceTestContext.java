@@ -139,10 +139,7 @@ public class ServiceTestContext {
     }
 
     private void setupMenu() {
-        Menu menu = new Menu();
-        menu.setName("menuName");
-        menu.setPrice(BigDecimal.valueOf(2000L));
-        menu.setMenuGroup(savedMenuGroup);
+        Menu menu = new Menu("menuName", BigDecimal.valueOf(2000L), savedMenuGroup);
 
         savedMenu = menuRepository.save(menu);
     }
