@@ -1,13 +1,26 @@
 package kitchenpos.domain;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import kitchenpos.common.BaseEntity;
 
-public class OrderTable {
+@Entity
+public class OrderTable extends BaseEntity {
 
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
+    
     private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
+
+    protected OrderTable() {
+    }
 
     public OrderTable(int numberOfGuests, boolean empty) {
         this(null, numberOfGuests, empty);

@@ -5,7 +5,7 @@ import static java.util.stream.Collectors.toList;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderTableRequest;
@@ -16,28 +16,28 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableService {
     private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
+    private final OrderTableRepository orderTableRepository;
 
-    public TableService(OrderDao orderDao, OrderTableDao orderTableDao) {
+    public TableService(OrderDao orderDao, OrderTableRepository orderTableRepository) {
         this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
     public OrderTableResponse create(OrderTableRequest request) {
         OrderTable orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
-        return OrderTableResponse.from(orderTableDao.save(orderTable));
+        return OrderTableResponse.from(orderTableRepository.save(orderTable));
     }
 
     public List<OrderTableResponse> list() {
-        return orderTableDao.findAll().stream()
+        return orderTableRepository.findAll().stream()
                 .map(OrderTableResponse::from)
                 .collect(toList());
     }
 
     @Transactional
     public OrderTableResponse changeEmpty(Long orderTableId, OrderTableRequest request) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
 
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
@@ -46,14 +46,14 @@ public class TableService {
         }
 
         savedOrderTable.changeEmpty(request.isEmpty());
-        return OrderTableResponse.from(orderTableDao.save(savedOrderTable));
+        return OrderTableResponse.from(orderTableRepository.save(savedOrderTable));
     }
 
     @Transactional
     public OrderTableResponse changeNumberOfGuests(Long orderTableId, OrderTableRequest request) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("주문 테이블을 찾을 수 없습니다."));
         savedOrderTable.changeNumberOfGuests(request.getNumberOfGuests());
-        return OrderTableResponse.from(orderTableDao.save(savedOrderTable));
+        return OrderTableResponse.from(orderTableRepository.save(savedOrderTable));
     }
 }

@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -34,7 +34,7 @@ class TableServiceTest {
     private OrderDao orderDao;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private TableGroupDao tableGroupDao;
@@ -48,7 +48,7 @@ class TableServiceTest {
         OrderTableResponse result = sut.create(request);
 
         // then
-        assertThat(orderTableDao.findById(result.getId())).isPresent();
+        assertThat(orderTableRepository.findById(result.getId())).isPresent();
     }
 
     @Nested
@@ -68,7 +68,7 @@ class TableServiceTest {
         void 단체_지정이_되어있는_테이블인_경우_예외를_던진다() {
             // given
             TableGroup tableGroup = tableGroupDao.save(단체_지정());
-            OrderTable orderTable = orderTableDao.save(테이블(false, 0, tableGroup.getId()));
+            OrderTable orderTable = orderTableRepository.save(테이블(false, 0, tableGroup.getId()));
 
             // expect
             assertThatThrownBy(() -> sut.changeEmpty(orderTable.getId(), request))
@@ -80,7 +80,7 @@ class TableServiceTest {
         @ParameterizedTest(name = "주문 상태가 {0}인 경우 예외를 던진다")
         void 테이블의_주문_상태가_조리중이거나_식사중인_경우_예외를_던진다(OrderStatus orderStatus) {
             // given
-            OrderTable orderTable = orderTableDao.save(테이블(false));
+            OrderTable orderTable = orderTableRepository.save(테이블(false));
             orderDao.save(주문(orderTable.getId(), orderStatus));
 
             // expect
@@ -92,7 +92,7 @@ class TableServiceTest {
         @Test
         void 테이블의_주문_상태가_완료인_경우_테이블의_상태를_변경한다() {
             // given
-            OrderTable orderTable = orderTableDao.save(테이블(false));
+            OrderTable orderTable = orderTableRepository.save(테이블(false));
             orderDao.save(주문(orderTable.getId(), COMPLETION));
 
             // when
@@ -112,7 +112,7 @@ class TableServiceTest {
         void 손님수가_0명보다_적으면_예외를_던진다() {
             // given
             OrderTableRequest request = new OrderTableRequest(null, 0L, -1, false);
-            OrderTable orderTable = orderTableDao.save(테이블(false));
+            OrderTable orderTable = orderTableRepository.save(테이블(false));
 
             // expect
             assertThatThrownBy(() -> sut.changeNumberOfGuests(orderTable.getId(), request))
@@ -131,7 +131,7 @@ class TableServiceTest {
         @Test
         void 빈_테이블_경우_예외를_던진다() {
             // given
-            OrderTable orderTable = orderTableDao.save(테이블(true));
+            OrderTable orderTable = orderTableRepository.save(테이블(true));
 
             // expect
             assertThatThrownBy(() -> sut.changeNumberOfGuests(orderTable.getId(), request))
@@ -143,7 +143,7 @@ class TableServiceTest {
         void 빈_테이블이_아닌_경우_인원이_정상적으로_변경된다() {
             // given
             OrderTableRequest request = new OrderTableRequest(null, 0L, 0, false);
-            OrderTable orderTable = orderTableDao.save(테이블(false, 1));
+            OrderTable orderTable = orderTableRepository.save(테이블(false, 1));
 
             // when
             OrderTableResponse result = sut.changeNumberOfGuests(orderTable.getId(), request);

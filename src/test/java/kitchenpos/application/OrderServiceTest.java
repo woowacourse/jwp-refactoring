@@ -19,7 +19,7 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
@@ -54,7 +54,7 @@ public class OrderServiceTest {
     private OrderLineItemDao orderLineItemDao;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     private Menu menu;
 
@@ -105,7 +105,7 @@ public class OrderServiceTest {
         @Test
         void 빈_테이블에서_주문을_하는_경우_예외를_던진다() {
             // given
-            OrderTable orderTable = orderTableDao.save(테이블(true));
+            OrderTable orderTable = orderTableRepository.save(테이블(true));
             OrderLineItem orderLineItem = 주문_항목(null, menu.getId(), 2L);
             OrderCreateRequest request = 주문_생성_요청(orderTable.getId(), List.of(orderLineItem));
 
@@ -118,7 +118,7 @@ public class OrderServiceTest {
         @Test
         void 주문에_성공하는_경우_주문의_상태가_조리중으로_변경된다() {
             // given
-            OrderTable orderTable = orderTableDao.save(테이블(false));
+            OrderTable orderTable = orderTableRepository.save(테이블(false));
             OrderLineItem orderLineItem = 주문_항목(null, menu.getId(), 2L);
             OrderCreateRequest request = 주문_생성_요청(orderTable.getId(), List.of(orderLineItem));
 
@@ -137,7 +137,7 @@ public class OrderServiceTest {
     @Test
     void 주문_목록을_조회한다() {
         // given
-        OrderTable orderTable = orderTableDao.save(테이블(false));
+        OrderTable orderTable = orderTableRepository.save(테이블(false));
         Order order1 = orderDao.save(주문(orderTable.getId(), COOKING));
         OrderLineItem orderLineItem1 = orderLineItemDao.save(주문_항목(order1.getId(), menu.getId(), 2L));
         order1.changeOrderLineItems(List.of(orderLineItem1));
@@ -171,7 +171,7 @@ public class OrderServiceTest {
         @Test
         void 완료된_주문이라면_예외가_발생한다() {
             // given
-            OrderTable orderTable = orderTableDao.save(테이블(false));
+            OrderTable orderTable = orderTableRepository.save(테이블(false));
             Order order = orderDao.save(주문(orderTable.getId(), COMPLETION));
             OrderStatusUpdateRequest request = new OrderStatusUpdateRequest(COOKING.name());
 
@@ -184,7 +184,7 @@ public class OrderServiceTest {
         @Test
         void 주문의_상태가_정상적으로_변경한다() {
             // given
-            OrderTable orderTable = orderTableDao.save(테이블(false));
+            OrderTable orderTable = orderTableRepository.save(테이블(false));
             Order order = orderDao.save(주문(orderTable.getId(), COOKING));
             OrderStatusUpdateRequest request = new OrderStatusUpdateRequest(MEAL.name());
 

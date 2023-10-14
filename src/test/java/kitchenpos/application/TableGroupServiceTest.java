@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -34,7 +34,7 @@ class TableGroupServiceTest {
     private OrderDao orderDao;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private TableGroupDao tableGroupDao;
@@ -45,7 +45,7 @@ class TableGroupServiceTest {
         @Test
         void 단체_지정하는_테이블이_2개_미만인_경우_예외를_던진다() {
             // given
-            OrderTable orderTable = orderTableDao.save(테이블(true));
+            OrderTable orderTable = orderTableRepository.save(테이블(true));
             TableGroupRequest request = 단체_지정_요청(orderTable);
 
             // expect
@@ -57,7 +57,7 @@ class TableGroupServiceTest {
         @Test
         void 올바른_테이블을_입력하지_않은_경우_예외를_던진다() {
             // given
-            OrderTable orderTable = orderTableDao.save(테이블(true));
+            OrderTable orderTable = orderTableRepository.save(테이블(true));
             OrderTable unsavedOrderTable = 테이블(true);
             TableGroupRequest request = 단체_지정_요청(orderTable, unsavedOrderTable);
 
@@ -70,8 +70,8 @@ class TableGroupServiceTest {
         @Test
         void 단체_지정하려는_테이블이_비어있지_않은_경우_예외를_던진다() {
             // given
-            OrderTable orderTable1 = orderTableDao.save(테이블(true));
-            OrderTable orderTable2 = orderTableDao.save(테이블(false));
+            OrderTable orderTable1 = orderTableRepository.save(테이블(true));
+            OrderTable orderTable2 = orderTableRepository.save(테이블(false));
             TableGroupRequest request = 단체_지정_요청(orderTable1, orderTable2);
 
             // expect
@@ -84,9 +84,9 @@ class TableGroupServiceTest {
         void 이미_단체_지정이_되어있는_테이블을_단체_지정하려는_경우_예외를_던진다() {
             // given
             TableGroup tableGroup = tableGroupDao.save(단체_지정());
-            OrderTable orderTable1 = orderTableDao.save(테이블(true, 0, tableGroup.getId()));
-            OrderTable orderTable2 = orderTableDao.save(테이블(true, 0, tableGroup.getId()));
-            OrderTable orderTable3 = orderTableDao.save(테이블(true));
+            OrderTable orderTable1 = orderTableRepository.save(테이블(true, 0, tableGroup.getId()));
+            OrderTable orderTable2 = orderTableRepository.save(테이블(true, 0, tableGroup.getId()));
+            OrderTable orderTable3 = orderTableRepository.save(테이블(true));
             TableGroupRequest request = 단체_지정_요청(orderTable2, orderTable3);
 
             // expect
@@ -98,15 +98,15 @@ class TableGroupServiceTest {
         @Test
         void 단체_지정이_성공하는_경우_테이블의_상태가_주문_테이블로_변경된다() {
             // given
-            OrderTable orderTable1 = orderTableDao.save(테이블(true));
-            OrderTable orderTable2 = orderTableDao.save(테이블(true));
+            OrderTable orderTable1 = orderTableRepository.save(테이블(true));
+            OrderTable orderTable2 = orderTableRepository.save(테이블(true));
             TableGroupRequest request = 단체_지정_요청(orderTable1, orderTable2);
 
             // when
             TableGroupResponse result = sut.create(request);
 
             // then
-            List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(result.getId());
+            List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(result.getId());
             assertThat(orderTables)
                     .extracting(OrderTable::isEmpty)
                     .containsExactly(false, false);
@@ -121,8 +121,8 @@ class TableGroupServiceTest {
         void 테이블에_해당하는_주문_상태가_조리중이거나_식사중인_경우_예외를_던진다(OrderStatus orderStatus) {
             // given
             TableGroup tableGroup = tableGroupDao.save(단체_지정());
-            OrderTable orderTable1 = orderTableDao.save(테이블(true, 0, tableGroup.getId()));
-            OrderTable orderTable2 = orderTableDao.save(테이블(true, 0, tableGroup.getId()));
+            OrderTable orderTable1 = orderTableRepository.save(테이블(true, 0, tableGroup.getId()));
+            OrderTable orderTable2 = orderTableRepository.save(테이블(true, 0, tableGroup.getId()));
             orderDao.save(주문(orderTable1.getId(), orderStatus));
 
             // expect
@@ -135,14 +135,14 @@ class TableGroupServiceTest {
         void 단체_지정_해제를_성공하는_경우_테이블의_단체_지정_번호가_제거된다() {
             // given
             TableGroup tableGroup = tableGroupDao.save(단체_지정());
-            orderTableDao.save(테이블(true, 0, tableGroup.getId()));
-            orderTableDao.save(테이블(true, 0, tableGroup.getId()));
+            orderTableRepository.save(테이블(true, 0, tableGroup.getId()));
+            orderTableRepository.save(테이블(true, 0, tableGroup.getId()));
 
             // when
             sut.ungroup(tableGroup.getId());
 
             // then
-            assertThat(orderTableDao.findAllByTableGroupId(tableGroup.getId())).isEmpty();
+            assertThat(orderTableRepository.findAllByTableGroupId(tableGroup.getId())).isEmpty();
         }
     }
 }
