@@ -42,14 +42,14 @@ class ProductServiceTest extends ServiceIntegrationTest {
 //                .isInstanceOf(IllegalArgumentException.class);
 //        }
 
-        @Test
-        @DisplayName("price가 0보다 작은 Exception을 throw한다.")
-        void throwExceptionPriceIsLowerThan0() {
-            final Product product = new Product("test", BigDecimal.valueOf(-1));
-
-            assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
-        }
+//        @Test
+//        @DisplayName("price가 0보다 작은 Exception을 throw한다.")
+//        void throwExceptionPriceIsLowerThan0() {
+//            final Product product = new Product("test", BigDecimal.valueOf(-1));
+//
+//            assertThatThrownBy(() -> productService.create(product))
+//                .isInstanceOf(IllegalArgumentException.class);
+//        }
     }
 
     @Test

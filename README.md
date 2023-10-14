@@ -46,7 +46,7 @@
     - [ ] OrderTable
     - [ ] TableGroup
     - [ ] OrderLineItem
-    - [ ] Product
+    - [x] Product
     - [ ] MenuProduct
 - [ ] dao에 의존적인 로직을 도메인 로직으로 변경
     - [x] MenuGroupService
@@ -54,7 +54,7 @@
     - [ ] OrderTableService
     - [ ] TableGroupService
     - [ ] OrderLineItemService
-    - [ ] ProductService
+    - [x] ProductService
     - [ ] MenuProductService
 
 ## 용어 사전
