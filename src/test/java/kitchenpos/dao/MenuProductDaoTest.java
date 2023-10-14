@@ -54,43 +54,43 @@ class MenuProductDaoTest {
     void 메뉴_제품_엔티티를_저장한다() {
         MenuProduct menuProductEntity = createMenuProduct();
 
-        MenuProduct saveMenuProduct = menuProductDao.save(menuProductEntity);
+        MenuProduct savedMenuProduct = menuProductDao.save(menuProductEntity);
 
-        assertThat(saveMenuProduct.getSeq()).isPositive();
+        assertThat(savedMenuProduct.getSeq()).isPositive();
     }
 
     @Test
     void 메뉴_제품_엔티티를_조회한다() {
         MenuProduct menuProductEntity = createMenuProduct();
-        MenuProduct saveMenuProduct = menuProductDao.save(menuProductEntity);
+        MenuProduct savedMenuProduct = menuProductDao.save(menuProductEntity);
 
-        assertThat(menuProductDao.findById(saveMenuProduct.getSeq())).isPresent();
+        assertThat(menuProductDao.findById(savedMenuProduct.getSeq())).isPresent();
     }
 
     @Test
     void 모든_메뉴_제품_엔티티를_조회한다() {
         MenuProduct menuProductEntityA = createMenuProduct();
         MenuProduct menuProductEntityB = createMenuProduct();
-        MenuProduct saveMenuProductA = menuProductDao.save(menuProductEntityA);
-        MenuProduct saveMenuProductB = menuProductDao.save(menuProductEntityB);
+        MenuProduct savedMenuProductA = menuProductDao.save(menuProductEntityA);
+        MenuProduct savedMenuProductB = menuProductDao.save(menuProductEntityB);
 
         List<MenuProduct> menuProducts = menuProductDao.findAll();
 
         assertThat(menuProducts).usingRecursiveFieldByFieldElementComparatorOnFields("seq")
-                .contains(saveMenuProductA, saveMenuProductB);
+                .contains(savedMenuProductA, savedMenuProductB);
     }
 
     @Test
     void 메뉴와_일치하는_모든_메뉴_제품_엔티티를_조회한다() {
         MenuProduct menuProductEntityA = createMenuProduct();
         MenuProduct menuProductEntityB = createMenuProduct();
-        MenuProduct saveMenuProductA = menuProductDao.save(menuProductEntityA);
-        MenuProduct saveMenuProductB = menuProductDao.save(menuProductEntityB);
+        MenuProduct savedMenuProductA = menuProductDao.save(menuProductEntityA);
+        MenuProduct savedMenuProductB = menuProductDao.save(menuProductEntityB);
 
         List<MenuProduct> menuProducts = menuProductDao.findAllByMenuId(menu.getId());
 
         assertThat(menuProducts).usingRecursiveFieldByFieldElementComparatorOnFields("seq")
-                .contains(saveMenuProductA, saveMenuProductB);
+                .contains(savedMenuProductA, savedMenuProductB);
     }
 
     private MenuProduct createMenuProduct() {

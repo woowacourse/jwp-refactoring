@@ -18,38 +18,38 @@ class MenuGroupDaoTest {
     void 메뉴_그룹_엔티티를_저장한다() {
         MenuGroup menuGroupEntity = createMenuGroupEntity();
 
-        MenuGroup saveMenuGroup = menuGroupDao.save(menuGroupEntity);
+        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroupEntity);
 
-        assertThat(saveMenuGroup.getId()).isPositive();
+        assertThat(savedMenuGroup.getId()).isPositive();
     }
 
     @Test
     void 메뉴_그룹_엔티티를_조회한다() {
         MenuGroup menuGroupEntity = createMenuGroupEntity();
-        MenuGroup saveMenuGroup = menuGroupDao.save(menuGroupEntity);
+        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroupEntity);
 
-        assertThat(menuGroupDao.findById(saveMenuGroup.getId())).isPresent();
+        assertThat(menuGroupDao.findById(savedMenuGroup.getId())).isPresent();
     }
 
     @Test
     void 모든_메뉴_그룹_엔티티를_조회한다() {
         MenuGroup menuGroupEntityA = createMenuGroupEntity();
         MenuGroup menuGroupEntityB = createMenuGroupEntity();
-        MenuGroup saveMenuGroupA = menuGroupDao.save(menuGroupEntityA);
-        MenuGroup saveMenuGroupB = menuGroupDao.save(menuGroupEntityB);
+        MenuGroup savedMenuGroupA = menuGroupDao.save(menuGroupEntityA);
+        MenuGroup savedMenuGroupB = menuGroupDao.save(menuGroupEntityB);
 
         List<MenuGroup> menuGroups = menuGroupDao.findAll();
 
         assertThat(menuGroups).usingRecursiveFieldByFieldElementComparatorOnFields("id")
-                .contains(saveMenuGroupA, saveMenuGroupB);
+                .contains(savedMenuGroupA, savedMenuGroupB);
     }
 
     @Test
     void 메뉴_그룹_엔티티가_존재하면_TRUE_반환한다() {
         MenuGroup menuGroupEntity = createMenuGroupEntity();
-        MenuGroup saveMenuGroup = menuGroupDao.save(menuGroupEntity);
+        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroupEntity);
 
-        assertThat(menuGroupDao.existsById(saveMenuGroup.getId())).isTrue();
+        assertThat(menuGroupDao.existsById(savedMenuGroup.getId())).isTrue();
     }
 
     @Test

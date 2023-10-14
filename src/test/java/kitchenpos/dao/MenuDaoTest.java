@@ -33,30 +33,30 @@ class MenuDaoTest {
     void 메뉴_엔티티를_저장한다() {
         Menu menuEntity = createMenu();
 
-        Menu saveMenu = menuDao.save(menuEntity);
+        Menu savedMenu = menuDao.save(menuEntity);
 
-        assertThat(saveMenu.getId()).isPositive();
+        assertThat(savedMenu.getId()).isPositive();
     }
 
     @Test
     void 메뉴_엔티티를_조회한다() {
         Menu menuEntity = createMenu();
-        Menu saveMenu = menuDao.save(menuEntity);
+        Menu savedMenu = menuDao.save(menuEntity);
 
-        assertThat(menuDao.findById(saveMenu.getId())).isPresent();
+        assertThat(menuDao.findById(savedMenu.getId())).isPresent();
     }
 
     @Test
     void 모든_메뉴_엔티티를_조회한다() {
         Menu menuEntityA = createMenu();
         Menu menuEntityB = createMenu();
-        Menu saveMenuA = menuDao.save(menuEntityA);
-        Menu saveMenuB = menuDao.save(menuEntityB);
+        Menu savedMenuA = menuDao.save(menuEntityA);
+        Menu savedMenuB = menuDao.save(menuEntityB);
 
         List<Menu> menus = menuDao.findAll();
 
         assertThat(menus).usingRecursiveFieldByFieldElementComparatorOnFields("id")
-                .contains(saveMenuA, saveMenuB);
+                .contains(savedMenuA, savedMenuB);
     }
 
     @Test

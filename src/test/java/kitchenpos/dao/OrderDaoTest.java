@@ -43,30 +43,30 @@ class OrderDaoTest {
     void 주문_엔티티를_저장한다() {
         Order orderEntity = createOrderEntity();
 
-        Order saveOrder = orderDao.save(orderEntity);
+        Order savedOrder = orderDao.save(orderEntity);
 
-        assertThat(saveOrder.getId()).isPositive();
+        assertThat(savedOrder.getId()).isPositive();
     }
 
     @Test
     void 주문_엔티티를_조회한다() {
         Order orderEntity = createOrderEntity();
-        Order saveOrder = orderDao.save(orderEntity);
+        Order savedOrder = orderDao.save(orderEntity);
 
-        assertThat(orderDao.findById(saveOrder.getId())).isPresent();
+        assertThat(orderDao.findById(savedOrder.getId())).isPresent();
     }
 
     @Test
     void 모든_주문_엔티티를_조회한다() {
         Order orderEntityA = createOrderEntity();
         Order orderEntityB = createOrderEntity();
-        Order saveOrderA = orderDao.save(orderEntityA);
-        Order saveOrderB = orderDao.save(orderEntityB);
+        Order savedOrderA = orderDao.save(orderEntityA);
+        Order savedOrderB = orderDao.save(orderEntityB);
 
         List<Order> orders = orderDao.findAll();
 
         assertThat(orders).usingRecursiveFieldByFieldElementComparatorOnFields("id")
-                .contains(saveOrderA, saveOrderB);
+                .contains(savedOrderA, savedOrderB);
     }
 
     @Test

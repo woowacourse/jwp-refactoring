@@ -134,9 +134,9 @@ class OrderServiceTest {
             given(orderLineItemDao.findAllByOrderId(anyLong()))
                     .willReturn(List.of(주문_아이템_엔티티_A));
 
-            Order changeOrder = orderService.changeOrderStatus(주문_엔티티_A.getId(), 주문_엔티티_B_식사_완료);
+            Order changedOrder = orderService.changeOrderStatus(주문_엔티티_A.getId(), 주문_엔티티_B_식사_완료);
 
-            assertThat(changeOrder.getOrderStatus()).isEqualTo(주문_엔티티_B_식사_완료.getOrderStatus());
+            assertThat(changedOrder.getOrderStatus()).isEqualTo(주문_엔티티_B_식사_완료.getOrderStatus());
         }
 
         @Test

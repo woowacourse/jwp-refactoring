@@ -34,44 +34,44 @@ class OrderTableDaoTest {
     void 주문_테이블_엔티티를_저장한다() {
         OrderTable orderTableEntity = createOrderTableEntity();
 
-        OrderTable saveOrderTable = orderTableDao.save(orderTableEntity);
+        OrderTable savedOrderTable = orderTableDao.save(orderTableEntity);
 
-        assertThat(saveOrderTable.getId()).isPositive();
+        assertThat(savedOrderTable.getId()).isPositive();
     }
 
     @Test
     void 주문_테이블_엔티티를_조회한다() {
         OrderTable orderTableEntity = createOrderTableEntity();
-        OrderTable saveOrderTable = orderTableDao.save(orderTableEntity);
+        OrderTable savedOrderTable = orderTableDao.save(orderTableEntity);
 
-        assertThat(orderTableDao.findById(saveOrderTable.getId())).isPresent();
+        assertThat(orderTableDao.findById(savedOrderTable.getId())).isPresent();
     }
 
     @Test
     void 모든_주문_테이블_엔티티를_조회한다() {
         OrderTable orderTableEntityA = createOrderTableEntity();
         OrderTable orderTableEntityB = createOrderTableEntity();
-        OrderTable saveOrderTableA = orderTableDao.save(orderTableEntityA);
-        OrderTable saveOrderTableB = orderTableDao.save(orderTableEntityB);
+        OrderTable savedOrderTableA = orderTableDao.save(orderTableEntityA);
+        OrderTable savedOrderTableB = orderTableDao.save(orderTableEntityB);
 
         List<OrderTable> orderTables = orderTableDao.findAll();
 
         assertThat(orderTables).usingRecursiveFieldByFieldElementComparatorOnFields("id")
-                .contains(saveOrderTableA, saveOrderTableB);
+                .contains(savedOrderTableA, savedOrderTableB);
     }
 
     @Test
     void ID에_해당하는_주문_테이블_엔티티를_조회한다() {
         OrderTable orderTableEntityA = createOrderTableEntity();
         OrderTable orderTableEntityB = createOrderTableEntity();
-        OrderTable saveOrderTableA = orderTableDao.save(orderTableEntityA);
-        OrderTable saveOrderTableB = orderTableDao.save(orderTableEntityB);
+        OrderTable savedOrderTableA = orderTableDao.save(orderTableEntityA);
+        OrderTable savedOrderTableB = orderTableDao.save(orderTableEntityB);
 
-        List<OrderTable> orderTables = orderTableDao.findAllByIdIn(List.of(saveOrderTableA.getId()));
+        List<OrderTable> orderTables = orderTableDao.findAllByIdIn(List.of(savedOrderTableA.getId()));
 
         assertThat(orderTables).usingRecursiveFieldByFieldElementComparatorOnFields("id")
-                .contains(saveOrderTableA)
-                .doesNotContain(saveOrderTableB);
+                .contains(savedOrderTableA)
+                .doesNotContain(savedOrderTableB);
     }
 
     @Test

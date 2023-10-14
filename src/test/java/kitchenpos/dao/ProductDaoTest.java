@@ -19,36 +19,36 @@ class ProductDaoTest {
     void 상품_엔티티를_저장한다() {
         Product productEntity = createProductEntity();
 
-        Product saveProduct = productDao.save(productEntity);
+        Product savedProduct = productDao.save(productEntity);
 
-        assertThat(saveProduct.getId()).isPositive();
+        assertThat(savedProduct.getId()).isPositive();
     }
 
     @Test
     void 상품_엔티티를_조회한다() {
         Product productEntity = createProductEntity();
-        Product saveProduct = productDao.save(productEntity);
+        Product savedProduct = productDao.save(productEntity);
 
-        assertThat(productDao.findById(saveProduct.getId())).isPresent();
+        assertThat(productDao.findById(savedProduct.getId())).isPresent();
     }
 
     @Test
     void 모든_상품_엔티티를_조회한다() {
         Product productEntityA = createProductEntity();
         Product productEntityB = createProductEntity();
-        Product saveProductA = productDao.save(productEntityA);
-        Product saveProductB = productDao.save(productEntityB);
+        Product savedProductA = productDao.save(productEntityA);
+        Product savedProductB = productDao.save(productEntityB);
 
         List<Product> products = productDao.findAll();
 
         assertThat(products)
                 .usingRecursiveFieldByFieldElementComparatorOnFields("id")
-                .contains(saveProductA, saveProductB);
+                .contains(savedProductA, savedProductB);
     }
 
     private Product createProductEntity() {
         Product product = new Product();
-        product.setName("gray");
+        product.setName("juice");
         product.setPrice(BigDecimal.valueOf(1_000_000_000));
         return product;
     }

@@ -72,30 +72,30 @@ class OrderLineItemDaoTest {
     void 주문_아이템_엔티티를_저장한다() {
         OrderLineItem orderLineItemEntity = createOrderLineItem();
 
-        OrderLineItem saveOrderLineItem = orderLineItemDao.save(orderLineItemEntity);
+        OrderLineItem savedOrderLineItem = orderLineItemDao.save(orderLineItemEntity);
 
-        assertThat(saveOrderLineItem.getSeq()).isPositive();
+        assertThat(savedOrderLineItem.getSeq()).isPositive();
     }
 
     @Test
     void 주문_아이템_엔티티를_조회한다() {
         OrderLineItem orderLineItemEntity = createOrderLineItem();
-        OrderLineItem saveOrderLineItem = orderLineItemDao.save(orderLineItemEntity);
+        OrderLineItem savedOrderLineItem = orderLineItemDao.save(orderLineItemEntity);
 
-        assertThat(orderLineItemDao.findById(saveOrderLineItem.getSeq())).isPresent();
+        assertThat(orderLineItemDao.findById(savedOrderLineItem.getSeq())).isPresent();
     }
 
     @Test
     void 모든_주문_아이템_엔티티를_조회한다() {
         OrderLineItem orderLineItemEntityA = createOrderLineItem();
         OrderLineItem orderLineItemEntityB = createOrderLineItem();
-        OrderLineItem saveOrderLineItemA = orderLineItemDao.save(orderLineItemEntityA);
-        OrderLineItem saveOrderLineItemB = orderLineItemDao.save(orderLineItemEntityB);
+        OrderLineItem savedOrderLineItemA = orderLineItemDao.save(orderLineItemEntityA);
+        OrderLineItem savedOrderLineItemB = orderLineItemDao.save(orderLineItemEntityB);
 
         List<OrderLineItem> orderLineItems = orderLineItemDao.findAll();
 
         assertThat(orderLineItems).usingRecursiveFieldByFieldElementComparatorOnFields("seq")
-                .contains(saveOrderLineItemA, saveOrderLineItemB);
+                .contains(savedOrderLineItemA, savedOrderLineItemB);
     }
 
     @Test
