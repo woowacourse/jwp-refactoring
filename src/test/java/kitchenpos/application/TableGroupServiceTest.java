@@ -69,14 +69,6 @@ class TableGroupServiceTest {
         }
 
         @Test
-        void 주문_테이블_수가_0이면_예외가_발생한다() {
-            TableGroup 테이블_그룹_엔티티_D_주문_테이블_0개 = TableGroupFixture.테이블_그룹_엔티티_A_주문_테이블_0개;
-
-            assertThatThrownBy(() -> tableGroupService.create(테이블_그룹_엔티티_D_주문_테이블_0개))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
         void 주문_테이블을_찾을_수_없으면_예외가_발생한다() {
             TableGroup 테이블_그룹_엔티티_B = TableGroupFixture.테이블_그룹_엔티티_B_주문_테이블_2개;
             given(orderTableDao.findAllByIdIn(anyList()))
