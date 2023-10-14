@@ -56,7 +56,9 @@ class JdbcTemplateMenuProductDaoTest {
 
         // then
         assertThat(menuProductById).isPresent();
-        assertThat(menuProductById.get().getSeq()).isEqualTo(savedMenuProductSeq);
+        assertThat(menuProductById.get())
+                .usingRecursiveComparison()
+                .isEqualTo(savedMenuProduct);
     }
 
     @Test
@@ -96,7 +98,9 @@ class JdbcTemplateMenuProductDaoTest {
 
         // then
         assertThat(findAll).hasSize(1);
-        assertThat(findAll.get(0).getSeq()).isEqualTo(savedMenuProduct2.getSeq());
+        assertThat(findAll.get(0))
+                .usingRecursiveComparison()
+                .isEqualTo(savedMenuProduct2);
     }
 
 

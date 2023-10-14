@@ -42,7 +42,9 @@ class JdbcTemplateProductDaoTest {
 
         // then
         assertThat(productById).isPresent();
-        assertThat(productById.get().getId()).isEqualTo(savedProductId);
+        assertThat(productById.get())
+                .usingRecursiveComparison()
+                .isEqualTo(savedProduct);
     }
 
     @Test

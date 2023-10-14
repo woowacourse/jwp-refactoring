@@ -65,7 +65,9 @@ class JdbcTemplateOrderLineItemDaoTest {
 
         // then
         assertThat(findBySeq).isPresent();
-        assertThat(findBySeq.get().getSeq()).isEqualTo(findSeq);
+        assertThat(findBySeq.get())
+                .usingRecursiveComparison()
+                .isEqualTo(savedOrderLineItemGroup);
     }
 
     @Test

@@ -41,7 +41,9 @@ class JdbcTemplateTableGroupDaoTest {
 
         // then
         assertThat(tableGroupById).isPresent();
-        assertThat(tableGroupById.get().getId()).isEqualTo(findId);
+        assertThat(tableGroupById.get())
+                .usingRecursiveComparison()
+                .isEqualTo(savedTableGroup);
     }
 
     @Test

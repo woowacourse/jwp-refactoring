@@ -40,7 +40,9 @@ class JdbcTemplateMenuGroupDaoTest {
 
         // then
         assertThat(menuGroupDaoById).isPresent();
-        assertThat(menuGroupDaoById.get().getId()).isEqualTo(savedMenuGroupId);
+        assertThat(menuGroupDaoById.get())
+                .usingRecursiveComparison()
+                .isEqualTo(savedMenuGroup);
     }
 
     @Test

@@ -49,7 +49,9 @@ class JdbcTemplateMenuDaoTest {
 
         // then
         assertThat(findByIdMenu).isPresent();
-        assertThat(findByIdMenu.get().getId()).isEqualTo(findId);
+        assertThat(findByIdMenu.get())
+                .usingRecursiveComparison()
+                .isEqualTo(savedMenu);
     }
 
     @Test

@@ -51,7 +51,8 @@ class JdbcTemplateOrderDaoTest {
         final Order updatedOrder = jdbcTemplateOrderDao.save(savedOrder);
 
         // then
-        assertThat(updatedOrder.getOrderStatus()).isEqualTo(String.valueOf(OrderStatus.MEAL));
+        assertThat(updatedOrder.getOrderStatus())
+                .isEqualTo(OrderStatus.MEAL.name());
     }
 
     @Test
@@ -66,7 +67,9 @@ class JdbcTemplateOrderDaoTest {
 
         // then
         assertThat(orderById).isPresent();
-        assertThat(orderById.get().getId()).isEqualTo(savedOrderId);
+        assertThat(orderById.get())
+                .usingRecursiveComparison()
+                .isEqualTo(savedOrder);
     }
 
     @Test

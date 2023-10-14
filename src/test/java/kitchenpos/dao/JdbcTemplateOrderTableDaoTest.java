@@ -61,7 +61,9 @@ class JdbcTemplateOrderTableDaoTest {
 
         // then
         assertThat(menuGroupDaoById).isPresent();
-        assertThat(menuGroupDaoById.get().getId()).isEqualTo(savedOrderTableId);
+        assertThat(menuGroupDaoById.get())
+                .usingRecursiveComparison()
+                .isEqualTo(savedOrderTable);
     }
 
     @Test
