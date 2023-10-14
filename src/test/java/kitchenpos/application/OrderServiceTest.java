@@ -6,10 +6,12 @@ import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
 import static kitchenpos.fixture.MenuFixture.메뉴;
 import static kitchenpos.fixture.MenuGroupFixture.메뉴_그룹;
+import static kitchenpos.fixture.MenuProductFixture.메뉴_상품;
 import static kitchenpos.fixture.OrderFixture.주문;
 import static kitchenpos.fixture.OrderFixture.주문_생성_요청;
 import static kitchenpos.fixture.OrderLineItemFixture.주문_항목;
 import static kitchenpos.fixture.OrderTableFixture.테이블;
+import static kitchenpos.fixture.ProductFixture.상품;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -20,11 +22,14 @@ import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderResponse;
 import kitchenpos.dto.OrderStatusUpdateRequest;
@@ -56,12 +61,17 @@ public class OrderServiceTest {
     @Autowired
     private OrderTableRepository orderTableRepository;
 
+    @Autowired
+    private ProductRepository productRepository;
+
     private Menu menu;
 
     @BeforeEach
     void setUp() {
         MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("피자"));
-        menu = menuRepository.save(메뉴("피자", 8900L, menuGroup.getId()));
+        Product product = productRepository.save(상품("치즈 피자", 8900L));
+        MenuProduct menuProduct = 메뉴_상품(product, 1L);
+        menu = menuRepository.save(메뉴("피자", 8900L, menuGroup.getId(), List.of(menuProduct)));
     }
 
     @Nested

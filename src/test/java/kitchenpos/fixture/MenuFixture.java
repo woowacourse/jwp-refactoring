@@ -14,13 +14,9 @@ public class MenuFixture {
         return new Menu(null, name, BigDecimal.valueOf(price), menuGroupId, menuProducts);
     }
 
-    public static Menu 메뉴(String name, Long price, Long menuGroupId) {
-        return new Menu(name, BigDecimal.valueOf(price), menuGroupId);
-    }
-
     public static MenuRequest 메뉴_생성_요청(String name, Long price, Long menuGroupId, List<MenuProduct> menuProducts) {
         List<MenuProductRequest> menuProductRequests = menuProducts.stream()
-                .map(menuProduct -> new MenuProductRequest(menuProduct.getProductId(), menuProduct.getQuantity()))
+                .map(menuProduct -> new MenuProductRequest(menuProduct.getProduct().getId(), menuProduct.getQuantity()))
                 .collect(Collectors.toList());
         return new MenuRequest(null, name, BigDecimal.valueOf(price), menuGroupId, menuProductRequests);
     }

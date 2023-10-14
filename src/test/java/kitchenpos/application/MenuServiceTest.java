@@ -47,7 +47,8 @@ public class MenuServiceTest {
         @Test
         void 메뉴의_가격이_0원_미만인_경우_예외를_던진다() {
             // given
-            MenuRequest request = 메뉴_생성_요청("치즈피자", -1L, 1L, List.of());
+            MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("피자"));
+            MenuRequest request = 메뉴_생성_요청("치즈피자", -1L, menuGroup.getId(), List.of());
 
             // expect
             assertThatThrownBy(() -> sut.create(request))
@@ -70,7 +71,9 @@ public class MenuServiceTest {
         void 존재하지_않는_메뉴_상품을_입력하는_경우_예외를_던진다() {
             // given
             MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("피자"));
-            MenuRequest request = 메뉴_생성_요청("치즈피자", 0L, menuGroup.getId(), List.of(메뉴_상품(1L, 1L)));
+            Product invalidProduct = 상품(Long.MAX_VALUE, "치즈 피자", 8900L);
+            MenuProduct menuProduct = 메뉴_상품(invalidProduct, 1L);
+            MenuRequest request = 메뉴_생성_요청("치즈피자", 0L, menuGroup.getId(), List.of(menuProduct));
 
             // expect
             assertThatThrownBy(() -> sut.create(request))
@@ -83,7 +86,7 @@ public class MenuServiceTest {
             // given
             MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("피자"));
             Product product = productRepository.save(상품("치즈 피자", 8900L));
-            MenuProduct menuProduct = 메뉴_상품(product.getId(), 1L);
+            MenuProduct menuProduct = 메뉴_상품(product, 1L);
             MenuRequest request = 메뉴_생성_요청("치즈피자", 8901L, menuGroup.getId(), List.of(menuProduct));
 
             // expect
@@ -97,7 +100,7 @@ public class MenuServiceTest {
             // given
             MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("피자"));
             Product product = productRepository.save(상품("치즈 피자", 8900L));
-            MenuProduct menuProduct = 메뉴_상품(product.getId(), 1L);
+            MenuProduct menuProduct = 메뉴_상품(product, 1L);
             MenuRequest request = 메뉴_생성_요청("치즈피자", 8900L, menuGroup.getId(), List.of(menuProduct));
 
             // when
@@ -119,10 +122,10 @@ public class MenuServiceTest {
         Product product = productRepository.save(상품("치즈 피자", 8900L));
 
         Menu menu1 = menuRepository.save(메뉴("치즈피자", 8900L, menuGroup.getId(), List.of(
-                메뉴_상품(product.getId(), 1L)
+                메뉴_상품(product, 1L)
         )));
         Menu menu2 = menuRepository.save(메뉴("오픈기념 치즈피자", 5000L, menuGroup.getId(), List.of(
-                메뉴_상품(product.getId(), 1L)
+                메뉴_상품(product, 1L)
         )));
 
         // when

@@ -2,10 +2,8 @@ package kitchenpos.application;
 
 import static java.util.stream.Collectors.toList;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.ProductRepository;
@@ -36,41 +34,17 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(MenuRequest request) {
-        final BigDecimal price = request.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("메뉴의 가격은 0원 이상이어야 합니다.");
-        }
-
         if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException("존재하지 않는 메뉴 그룹 아이디입니다.");
         }
-
-        List<MenuProductRequest> menuProductRequests = request.getMenuProducts();
-
-        BigDecimal sum = BigDecimal.ZERO;
-        for (MenuProductRequest menuProductRequest : menuProductRequests) {
+        List<MenuProduct> menuProducts = new ArrayList<>();
+        for (MenuProductRequest menuProductRequest : request.getMenuProducts()) {
             final Product product = productRepository.findById(menuProductRequest.getProductId())
                     .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProductRequest.getQuantity())));
+            menuProducts.add(new MenuProduct(product, menuProductRequest.getQuantity()));
         }
-
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException("메뉴의 가격은 메뉴 상품들의 금액의 합보다 클 수 없습니다.");
-        }
-
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (MenuProductRequest menuProductRequest : menuProductRequests) {
-            MenuProduct menuProduct = new MenuProduct(
-                    menuProductRequest.getProductId(),
-                    menuProductRequest.getQuantity()
-            );
-            savedMenuProducts.add(menuProduct);
-        }
-        final Menu savedMenu = menuRepository.save(
-                new Menu(null, request.getName(), request.getPrice(), request.getMenuGroupId(), savedMenuProducts));
-
-        return MenuResponse.from(savedMenu);
+        Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(), menuProducts);
+        return MenuResponse.from(menuRepository.save(menu));
     }
 
     public List<MenuResponse> list() {
