@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProductRestController {
     private final ProductService productService;
 
-    public ProductRestController(final ProductService productService) {
+    public ProductRestController(ProductService productService) {
         this.productService = productService;
     }
 

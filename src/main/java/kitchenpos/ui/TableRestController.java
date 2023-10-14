@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TableRestController {
     private final TableService tableService;
 
-    public TableRestController(final TableService tableService) {
+    public TableRestController(TableService tableService) {
         this.tableService = tableService;
     }
 

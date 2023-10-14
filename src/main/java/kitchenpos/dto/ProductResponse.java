@@ -30,13 +30,4 @@ public class ProductResponse {
     public BigDecimal getPrice() {
         return price;
     }
-
-    @Override
-    public String toString() {
-        return "ProductResponse{" +
-               "id=" + id +
-               ", name='" + name + '\'' +
-               ", price=" + price +
-               '}';
-    }
 }
