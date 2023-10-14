@@ -130,8 +130,6 @@ class MenuServiceTest {
         @Test
         void 상품이_저장되어_있지_않으면_메뉴를_생성할_수_없다() {
             // given
-            final Product noodle = new Product("국수", BigDecimal.valueOf(6000));
-
             long noneExistedMenuProductId = -1;
             final MenuProduct wooDong = new MenuProduct(noneExistedMenuProductId, 1);
             final MenuProduct frenchFries = new MenuProduct(2L, 1);
@@ -172,8 +170,6 @@ class MenuServiceTest {
         @Test
         void 메뉴를_전체_조회할_수_있다() {
             // given
-            final Product noodle = new Product("국수", BigDecimal.valueOf(6000));
-            final Product potato = new Product("감자", BigDecimal.valueOf(3000));
             final MenuProduct wooDong = new MenuProduct(1L, 1);
             final MenuProduct frenchFries = new MenuProduct(2L, 1);
 
