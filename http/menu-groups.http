@@ -1,5 +1,5 @@
 ###
-POST {{host}}/api/v1/menu-groups
+POST {{host}}/api/menu-groups
 Content-Type: application/json
 
 {
@@ -7,6 +7,6 @@ Content-Type: application/json
 }
 
 ###
-GET {{host}}/api/v1/menu-groups
+GET {{host}}/api/menu-groups
 
 ###

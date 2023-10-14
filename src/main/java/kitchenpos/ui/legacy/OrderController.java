@@ -1,4 +1,4 @@
-package kitchenpos.ui.v1;
+package kitchenpos.ui.legacy;
 
 import java.net.URI;
 import java.util.List;
@@ -14,19 +14,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/orders")
-public class OrderControllerV1 {
+@RequestMapping("/api/orders")
+public class OrderController {
 
     private final OrderService orderService;
 
-    public OrderControllerV1(OrderService orderService) {
+    public OrderController(OrderService orderService) {
         this.orderService = orderService;
     }
 
     @PostMapping
     public ResponseEntity<Order> create(@RequestBody Order order) {
         Order created = orderService.create(order);
-        URI uri = URI.create("/api/v1/orders/" + created.getId());
+        URI uri = URI.create("/api/orders/" + created.getId());
         return ResponseEntity.created(uri)
             .body(created);
     }

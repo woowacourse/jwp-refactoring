@@ -1,6 +1,6 @@
-package kitchenpos.ui.v1;
+package kitchenpos.ui.legacy;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -10,8 +10,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
-import kitchenpos.application.MenuService;
-import kitchenpos.domain.Menu;
+import kitchenpos.application.ProductService;
+import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -23,8 +23,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@WebMvcTest(MenuControllerV1.class)
-class MenuControllerV1Test {
+@WebMvcTest(ProductController.class)
+class ProductControllerTest {
 
     @Autowired
     MockMvc mockMvc;
@@ -33,36 +33,35 @@ class MenuControllerV1Test {
     ObjectMapper objectMapper;
 
     @MockBean
-    MenuService menuService;
+    ProductService productService;
 
     @Test
-    @DisplayName("/api/v1/menus로 POST 요청을 보내면 201 응답이 반환된다.")
+    @DisplayName("/api/products로 POST 요청을 보내면 201 응답이 반환된다.")
     void create_with_201() throws Exception {
         // given
-        Menu request = new Menu();
-        Menu response = new Menu();
+        Product request = new Product();
+        Product response = new Product();
         response.setId(1L);
-        given(menuService.create(any(Menu.class)))
+        given(productService.create(any(Product.class)))
             .willReturn(response);
 
         // when & then
-        mockMvc.perform(post("/api/v1/menus")
+        mockMvc.perform(post("/api/products")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isCreated())
-            .andExpect(redirectedUrl("/api/v1/menus/1"));
+            .andExpect(redirectedUrl("/api/products/1"));
     }
 
     @Test
-    @DisplayName("/api/v1/menus로 GET 요청을 보내면 200 응답과 결과가 조회된다.")
+    @DisplayName("/api/products로 GET 요청을 보내면 200 응답과 결과가 반환된다.")
     void findAll_with_200() throws Exception {
         // given
-        List<Menu> response = List.of(new Menu(), new Menu());
-        given(menuService.findAll())
-            .willReturn(response);
+        given(productService.findAll())
+            .willReturn(List.of(new Product(), new Product()));
 
         // when & then
-        mockMvc.perform(get("/api/v1/menus")
+        mockMvc.perform(get("/api/products")
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.size()").value(2));

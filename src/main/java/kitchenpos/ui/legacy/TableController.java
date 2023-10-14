@@ -1,4 +1,4 @@
-package kitchenpos.ui.v1;
+package kitchenpos.ui.legacy;
 
 import java.net.URI;
 import java.util.List;
@@ -14,19 +14,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/tables")
-public class TableControllerV1 {
+@RequestMapping("/api/tables")
+public class TableController {
 
     private final TableService tableService;
 
-    public TableControllerV1(final TableService tableService) {
+    public TableController(final TableService tableService) {
         this.tableService = tableService;
     }
 
     @PostMapping
     public ResponseEntity<OrderTable> create(@RequestBody OrderTable orderTable) {
         OrderTable created = tableService.create(orderTable);
-        URI uri = URI.create("/api/v1/tables/" + created.getId());
+        URI uri = URI.create("/api/tables/" + created.getId());
         return ResponseEntity.created(uri)
             .body(created);
     }

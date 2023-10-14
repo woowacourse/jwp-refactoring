@@ -1,4 +1,4 @@
-package kitchenpos.ui.v1;
+package kitchenpos.ui.legacy;
 
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
@@ -21,8 +21,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@WebMvcTest(TableGroupControllerV1.class)
-class TableGroupControllerV1Test {
+@WebMvcTest(TableGroupController.class)
+class TableGroupControllerTest {
 
     @Autowired
     MockMvc mockMvc;
@@ -34,7 +34,7 @@ class TableGroupControllerV1Test {
     TableGroupService tableGroupService;
 
     @Test
-    @DisplayName("/api/v1/table-groups로 POST 요청을 보내면 201 응답이 반환된다.")
+    @DisplayName("/api/table-groups로 POST 요청을 보내면 201 응답이 반환된다.")
     void create_with_201() throws Exception {
         // given
         TableGroup request = new TableGroup();
@@ -44,21 +44,21 @@ class TableGroupControllerV1Test {
             .willReturn(response);
 
         // when & then
-        mockMvc.perform(post("/api/v1/table-groups")
+        mockMvc.perform(post("/api/table-groups")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isCreated())
-            .andExpect(redirectedUrl("/api/v1/table-groups/1"));
+            .andExpect(redirectedUrl("/api/table-groups/1"));
     }
 
     @Test
-    @DisplayName("/api/v1/table-groups/{id}로 DELETE 요청을 보내면 204 응답이 반환된다.")
+    @DisplayName("/api/table-groups/{id}로 DELETE 요청을 보내면 204 응답이 반환된다.")
     void ungroup_with_204() throws Exception {
         // given
         Long tableGroupId = 1L;
 
         // when & then
-        mockMvc.perform(delete("/api/v1/table-groups/{id}", tableGroupId)
+        mockMvc.perform(delete("/api/table-groups/{id}", tableGroupId)
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
     }

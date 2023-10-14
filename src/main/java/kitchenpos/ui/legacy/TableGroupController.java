@@ -1,4 +1,4 @@
-package kitchenpos.ui.v1;
+package kitchenpos.ui.legacy;
 
 import java.net.URI;
 import kitchenpos.application.TableGroupService;
@@ -12,19 +12,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/table-groups")
-public class TableGroupControllerV1 {
+@RequestMapping("/api/table-groups")
+public class TableGroupController {
 
     private final TableGroupService tableGroupService;
 
-    public TableGroupControllerV1(TableGroupService tableGroupService) {
+    public TableGroupController(TableGroupService tableGroupService) {
         this.tableGroupService = tableGroupService;
     }
 
     @PostMapping
     public ResponseEntity<TableGroup> create(@RequestBody TableGroup tableGroup) {
         TableGroup created = tableGroupService.create(tableGroup);
-        URI uri = URI.create("/api/v1/table-groups/" + created.getId());
+        URI uri = URI.create("/api/table-groups/" + created.getId());
         return ResponseEntity.created(uri)
             .body(created);
     }
