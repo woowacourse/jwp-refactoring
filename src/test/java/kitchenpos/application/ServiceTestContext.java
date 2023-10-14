@@ -91,10 +91,7 @@ public class ServiceTestContext {
     }
 
     private void setupOrderTable() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(0);
-        orderTable.setTableGroup(savedTableGroup);
+        OrderTable orderTable = new OrderTable(savedTableGroup, 0, false);
 
         savedOrderTable = orderTableDao.save(orderTable);
     }
@@ -107,10 +104,7 @@ public class ServiceTestContext {
     }
 
     private void setupOrderLineItem() {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenu(savedMenu);
-        orderLineItem.setOrder(savedOrder);
-        orderLineItem.setQuantity(1L);
+        OrderLineItem orderLineItem = new OrderLineItem(savedOrder, savedMenu, 1L);
 
         savedOrderLineItem = orderLineItemDao.save(orderLineItem);
     }

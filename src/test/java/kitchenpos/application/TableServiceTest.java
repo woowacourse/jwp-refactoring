@@ -62,10 +62,7 @@ class TableServiceTest extends ServiceTestContext {
     @Test
     void 테이블_그룹이_있는_경우_빈_테이블로_변경하려_할_때_예외를_던진다() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(2);
-        orderTable.setTableGroup(savedTableGroup);
+        OrderTable orderTable = new OrderTable(savedTableGroup, 2, false);
         OrderTable createdOrderTable = orderTableDao.save(orderTable);
 
         ChangeEmptyTableRequest request = new ChangeEmptyTableRequest(false);
@@ -79,9 +76,7 @@ class TableServiceTest extends ServiceTestContext {
     @EnumSource(mode = Mode.INCLUDE, names = {"COOKING", "MEAL"})
     void 빈_테이블로_변경하려_할_때_주문_상태가_COOKING이거나_MEAL이면_예외를_던진다(OrderStatus orderStatus) {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(2);
+        OrderTable orderTable = new OrderTable(null, 2, false);
         OrderTable createdOrderTable = orderTableDao.save(orderTable);
 
         Order order = new Order(createdOrderTable, orderStatus, LocalDateTime.now());
@@ -118,9 +113,7 @@ class TableServiceTest extends ServiceTestContext {
     @Test
     void 빈_테이블에_대해_손님_수를_변경하려_하면_예외를_던진다() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
-        orderTable.setNumberOfGuests(-1);
+        OrderTable orderTable = new OrderTable(null, -1, true);
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         ChangeTableGuestRequest request = new ChangeTableGuestRequest(2);

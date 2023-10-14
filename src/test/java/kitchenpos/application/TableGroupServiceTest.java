@@ -70,12 +70,10 @@ class TableGroupServiceTest extends ServiceTestContext {
     @Test
     void 그룹_지정_대상이_이미_그룹이_존재한다면_예외를_던진다() {
         // given
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setTableGroup(savedTableGroup);
+        OrderTable orderTable1 = new OrderTable(savedTableGroup, 0, false);
         OrderTable createdOrderTable1 = orderTableDao.save(orderTable1);
 
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setTableGroup(savedTableGroup);
+        OrderTable orderTable2 = new OrderTable(savedTableGroup, 0, false);
         OrderTable createdOrderTable2 = orderTableDao.save(orderTable2);
 
         List<OrderTableRequest> orderTableRequests = List.of(
@@ -93,12 +91,10 @@ class TableGroupServiceTest extends ServiceTestContext {
     @Test
     void 정상적으로_그룹을_생성하면_생성한_그룹을_반환한다() {
         // given
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setEmpty(true);
+        OrderTable orderTable1 = new OrderTable(null, 0, true);
         OrderTable createdOrderTable1 = orderTableDao.save(orderTable1);
 
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setEmpty(true);
+        OrderTable orderTable2 = new OrderTable(null, 0, true);
         OrderTable createdOrderTable2 = orderTableDao.save(orderTable2);
 
         List<OrderTableRequest> orderTableRequests = List.of(
@@ -123,8 +119,7 @@ class TableGroupServiceTest extends ServiceTestContext {
         tableGroup.setCreatedDate(LocalDateTime.now());
         TableGroup createdTableGroup = tableGroupDao.save(tableGroup);
 
-        OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroup(createdTableGroup);
+        OrderTable orderTable = new OrderTable(createdTableGroup, 0, false);
         OrderTable createdOrderTable = orderTableDao.save(orderTable);
 
         Order order = new Order(createdOrderTable, orderStatus, LocalDateTime.now());

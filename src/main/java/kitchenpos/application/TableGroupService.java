@@ -51,20 +51,20 @@ public class TableGroupService {
         tableGroupRepository.save(tableGroup);
 
         for (OrderTable orderTable : orderTables) {
-            orderTable.setTableGroup(tableGroup);
-            orderTable.setEmpty(false);
+            orderTable.changeTableGroup(tableGroup);
+            orderTable.changeEmpty(false);
         }
 
         return TableGroupResponse.from(tableGroup);
     }
 
-    private static void validateOrderTableIsEmptyAndTableGroupIsNull(OrderTable savedOrderTable) {
+    private void validateOrderTableIsEmptyAndTableGroupIsNull(OrderTable savedOrderTable) {
         if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
             throw new IllegalArgumentException();
         }
     }
 
-    private static void validateOrderTableAllExists(List<OrderTableRequest> orderTableRequests, List<OrderTable> orderTables) {
+    private void validateOrderTableAllExists(List<OrderTableRequest> orderTableRequests, List<OrderTable> orderTables) {
         if (orderTableRequests.size() != orderTables.size()) {
             throw new IllegalArgumentException();
         }
@@ -75,11 +75,10 @@ public class TableGroupService {
                 .map(OrderTableRequest::getId)
                 .collect(Collectors.toList());
 
-        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-        return savedOrderTables;
+        return orderTableRepository.findAllByIdIn(orderTableIds);
     }
 
-    private static void validateOrderTableSize(List<OrderTableRequest> orderTableRequests) {
+    private void validateOrderTableSize(List<OrderTableRequest> orderTableRequests) {
         if (CollectionUtils.isEmpty(orderTableRequests) || orderTableRequests.size() < 2) {
             throw new IllegalArgumentException();
         }
@@ -99,8 +98,8 @@ public class TableGroupService {
         }
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroup(null);
-            orderTable.setEmpty(false);
+            orderTable.changeTableGroup(null);
+            orderTable.changeEmpty(false); // TODO: ?
             orderTableRepository.save(orderTable);
         }
     }

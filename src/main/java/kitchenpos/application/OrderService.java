@@ -46,22 +46,17 @@ public class OrderService {
         final Order savedOrder = createOrder(request);
 
         for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
-            OrderLineItem orderLineItem = createOrderLineItem(orderLineItemRequest, savedOrder);
-            orderLineItemRepository.save(orderLineItem);
+            createOrderLineItem(orderLineItemRequest, savedOrder);
         }
         return OrderResponse.from(savedOrder);
     }
 
-    private OrderLineItem createOrderLineItem(OrderLineItemRequest orderLineItemRequest, Order savedOrder) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setOrder(savedOrder);
-
+    private void createOrderLineItem(OrderLineItemRequest orderLineItemRequest, Order savedOrder) {
         Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
                 .orElseThrow();
 
-        orderLineItem.setMenu(menu);
-        orderLineItem.setQuantity(orderLineItemRequest.getQuantity());
-        return orderLineItem;
+        OrderLineItem orderLineItem = new OrderLineItem(savedOrder, menu, orderLineItemRequest.getQuantity());
+        orderLineItemRepository.save(orderLineItem);
     }
 
     private Order createOrder(CreateOrderRequest request) {
