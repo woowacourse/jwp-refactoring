@@ -17,9 +17,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static kitchenpos.fixture.MenuFixture.*;
 import static kitchenpos.fixture.MenuGroupFixture.MENU_GROUP1;
 import static kitchenpos.fixture.ProductFixture.PRODUCT_1;
-import static kitchenpos.fixture.ProductFixture.PRODUCT_2;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -40,6 +40,13 @@ class MenuServiceTest {
 
     @Autowired
     private ProductDao productDao;
+
+    private static Stream<BigDecimal> menuPriceSource() {
+        return Stream.of(
+                new BigDecimal(-3),
+                null
+        );
+    }
 
     @Test
     void 메뉴를_생성한다() {
@@ -71,13 +78,6 @@ class MenuServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    private static Stream<BigDecimal> menuPriceSource() {
-        return Stream.of(
-                new BigDecimal(-3),
-                null
-        );
-    }
-
     @Test
     void 메뉴_프로덕트들의_가격의_합이_메뉴_가격과_같지_않으면_예외_발생한다() {
         // given
@@ -94,25 +94,11 @@ class MenuServiceTest {
 
     @Test
     void 메뉴_리스트를_조회한다() {
-        // given
-        MenuGroup menuGroup1 = menuGroupDao.save(MENU_GROUP1);
-        Product product1 = productDao.save(PRODUCT_1);
-
-        MenuProduct menuProduct1 = new MenuProduct(null, null, product1.getId(), 3);
-        Menu menu1 = new Menu("치킨메뉴", new BigDecimal("30000.00"), menuGroup1.getId(), List.of(menuProduct1));
-
-        Product product2 = productDao.save(PRODUCT_2);
-        MenuProduct menuProduct2 = new MenuProduct(null, null, product2.getId(), 2);
-        Menu menu2 = new Menu("치킨메뉴", new BigDecimal("32000.00"), menuGroup1.getId(), List.of(menuProduct2));
-
-        Menu createdMenu1 = menuService.create(menu1);
-        Menu createdMenu2 = menuService.create(menu2);
-
         // given, when
         List<Menu> menus = menuService.list();
 
         // then
-        assertThat(menus).usingRecursiveComparison().ignoringFields("id", "menuProducts")
-                .isEqualTo(List.of(createdMenu1, createdMenu2));
+        assertThat(menus).usingRecursiveComparison().ignoringFields("id", "menuProducts.seq", "menuProducts.menuId")
+                .isEqualTo(List.of(MENU_1, MENU_2, MENU_3, MENU_4, MENU_5, MENU_6));
     }
 }

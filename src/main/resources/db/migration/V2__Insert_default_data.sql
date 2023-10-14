@@ -48,17 +48,3 @@ values (6, 6, 1);
 
 insert into order_table (number_of_guests, empty)
 values (0, true);
-insert into order_table (number_of_guests, empty)
-values (0, true);
-insert into order_table (number_of_guests, empty)
-values (0, true);
-insert into order_table (number_of_guests, empty)
-values (0, true);
-insert into order_table (number_of_guests, empty)
-values (0, true);
-insert into order_table (number_of_guests, empty)
-values (0, true);
-insert into order_table (number_of_guests, empty)
-values (0, true);
-insert into order_table (number_of_guests, empty)
-values (0, true);

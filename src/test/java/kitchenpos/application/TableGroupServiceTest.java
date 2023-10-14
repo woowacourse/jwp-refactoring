@@ -3,13 +3,17 @@ package kitchenpos.application;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.*;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -60,7 +64,8 @@ class TableGroupServiceTest {
     @Test
     void 테이블_하나라도_비어있지_않으면_그룹화할_수_없다() {
         // given
-        OrderTable orderTable1 = orderTableDao.save(new OrderTable(null, 1L, 3, true));
+        TableGroup tableGroup = tableGroupDao.save(new TableGroup(null, LocalDateTime.now(), Collections.emptyList()));
+        OrderTable orderTable1 = orderTableDao.save(new OrderTable(null, tableGroup.getId(), 3, true));
         OrderTable orderTable2 = orderTableDao.save(new OrderTable(3, true));
 
 

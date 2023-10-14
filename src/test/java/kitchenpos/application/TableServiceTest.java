@@ -45,10 +45,8 @@ class TableServiceTest {
     @Test
     void 주문_테이블_리스트를_조회한다() {
         // given
-        OrderTable orderTable1 = new OrderTable(3, true);
-        tableService.create(orderTable1);
-        OrderTable orderTable2 = new OrderTable(2, true);
-        tableService.create(orderTable2);
+        OrderTable orderTable = new OrderTable(3, true);
+        tableService.create(orderTable);
 
         // when
         List<OrderTable> orderTables = tableService.list();
@@ -56,7 +54,7 @@ class TableServiceTest {
         // then
         assertThat(orderTables).usingRecursiveComparison()
                 .ignoringFields("id", "tableGroupId")
-                .isEqualTo(List.of(orderTable1, orderTable2));
+                .isEqualTo(List.of(new OrderTable(0, true), orderTable));
     }
 
     @Test
