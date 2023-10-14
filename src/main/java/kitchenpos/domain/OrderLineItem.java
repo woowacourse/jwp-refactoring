@@ -22,7 +22,6 @@ public class OrderLineItem {
     }
 
     public OrderLineItem() {
-        this(null, null, null, 0L);
     }
 
     public Long getSeq() {

@@ -38,7 +38,6 @@ public class Order {
     }
 
     public Order() {
-        this(null, null, null, null, List.of());
     }
 
     public Long getId() {

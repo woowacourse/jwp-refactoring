@@ -19,7 +19,6 @@ public class TableGroup {
     }
 
     public TableGroup() {
-        this(null, null, List.of());
     }
 
     public Long getId() {

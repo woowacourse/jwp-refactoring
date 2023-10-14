@@ -18,7 +18,6 @@ public class Product {
     }
 
     public Product() {
-        this(null, null, null);
     }
 
     public Long getId() {

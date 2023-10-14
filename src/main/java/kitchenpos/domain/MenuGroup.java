@@ -10,7 +10,6 @@ public class MenuGroup {
     }
 
     public MenuGroup() {
-        this(null, null);
     }
 
     public MenuGroup(String name) {

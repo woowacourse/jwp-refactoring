@@ -22,7 +22,6 @@ public class MenuProduct {
     }
 
     public MenuProduct() {
-        this(null, null, null, 0L);
     }
 
     public Long getSeq() {

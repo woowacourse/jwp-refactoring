@@ -22,7 +22,6 @@ public class OrderTable {
     }
 
     public OrderTable() {
-        this(null, null, 0, true);
     }
 
     public Long getId() {

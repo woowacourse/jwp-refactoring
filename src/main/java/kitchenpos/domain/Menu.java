@@ -19,7 +19,6 @@ public class Menu {
     }
 
     public Menu() {
-        this(null, null, null, null, null);
     }
 
     public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
