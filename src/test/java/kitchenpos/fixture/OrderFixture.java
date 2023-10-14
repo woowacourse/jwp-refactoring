@@ -24,10 +24,10 @@ public class OrderFixture {
         return order;
     }
 
-    public static Order ORDER_COOKING(Long orderTableId, List<OrderLineItem> orderLineItems) {
+    public static Order ORDER(Long orderTableId, List<OrderLineItem> orderLineItems, OrderStatus orderStatus) {
         Order order = new Order();
         order.setOrderTableId(orderTableId);
-        order.setOrderStatus(OrderStatus.COOKING.name());
+        order.setOrderStatus(orderStatus.name());
         order.setOrderedTime(LocalDateTime.now());
         order.setOrderLineItems(orderLineItems);
         return order;
