@@ -52,9 +52,9 @@ public class OrderService {
 
     @Transactional
     public OrderResponse changeOrderStatus(Long orderId, OrderStatusUpdateRequest request) {
-        Order savedOrder = orderRepository.findById(orderId)
+        Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다."));
-        savedOrder.changeOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
-        return OrderResponse.from(savedOrder);
+        order.changeOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
+        return OrderResponse.from(order);
     }
 }
