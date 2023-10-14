@@ -10,8 +10,10 @@ import java.util.List;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.test.fixtures.OrderFixtures;
 import kitchenpos.test.fixtures.OrderLineItemFixtures;
+import kitchenpos.test.fixtures.OrderTableFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -24,6 +26,9 @@ class OrderServiceTest {
     OrderService orderService;
 
     @Autowired
+    TableService tableService;
+
+    @Autowired
     OrderDao orderDao;
 
     @Nested
@@ -34,6 +39,8 @@ class OrderServiceTest {
         void create() {
             // given
             final Order order = OrderFixtures.BASIC.get();
+            final OrderTable savedOrderTable = tableService.create(OrderTableFixtures.NOT_EMPTY.get());
+            order.setOrderTableId(savedOrderTable.getId());
 
             // when
             final Order saved = orderService.create(order);
@@ -88,8 +95,10 @@ class OrderServiceTest {
         @DisplayName("주문 테이블이 비어있을 시 예외 발생")
         void orderTableEmptyException() {
             // given
+            final OrderTable savedOrderTable = tableService.create(OrderTableFixtures.EMPTY.get());
+
             final Order order = OrderFixtures.BASIC.get();
-            order.setOrderTableId(2L);
+            order.setOrderTableId(savedOrderTable.getId());
 
             // when, then
             assertThatIllegalArgumentException()
@@ -101,7 +110,12 @@ class OrderServiceTest {
     @DisplayName("주문 목록을 조회할 수 있다")
     void getOrders() {
         // given
-        orderService.create(OrderFixtures.BASIC.get());
+        final OrderTable savedOrderTable = tableService.create(OrderTableFixtures.NOT_EMPTY.get());
+
+        final Order order = OrderFixtures.BASIC.get();
+        order.setOrderTableId(savedOrderTable.getId());
+
+        orderService.create(order);
 
         // when
         final List<Order> list = orderService.list();
@@ -117,17 +131,23 @@ class OrderServiceTest {
         @DisplayName("정상 변경된다")
         void changeOrderStatus() {
             // given
-            final Order order = orderService.create(OrderFixtures.BASIC.get());
-
+            final OrderTable savedOrderTable = tableService.create(OrderTableFixtures.NOT_EMPTY.get());
             final Order orderToSave = OrderFixtures.BASIC.get();
+            orderToSave.setOrderTableId(savedOrderTable.getId());
             orderToSave.setOrderStatus(OrderStatus.MEAL.name());
             final Order savedOrder = orderService.create(orderToSave);
 
+            final OrderTable savedNewOrderTable = tableService.create(OrderTableFixtures.NOT_EMPTY.get());
+            final Order newOrder = OrderFixtures.BASIC.get();
+            newOrder.setOrderTableId(savedNewOrderTable.getId());
+            final Order savedNewOrder = orderService.create(newOrder);
+
+
             // when
-            final Order changed = orderService.changeOrderStatus(savedOrder.getId(), order);
+            final Order changed = orderService.changeOrderStatus(savedOrder.getId(), savedNewOrder);
 
             // then
-            assertThat(changed.getOrderStatus()).isEqualTo(order.getOrderStatus());
+            assertThat(changed.getOrderStatus()).isEqualTo(savedNewOrder.getOrderStatus());
         }
 
         @Test
@@ -145,7 +165,11 @@ class OrderServiceTest {
         @DisplayName("현재 주문 상태가 완료 상태일 시 예외 처리")
         void orderStatusCompletionException() {
             // given
-            final Order savedOrder = orderService.create(OrderFixtures.BASIC.get());
+            final OrderTable savedOrderTable = tableService.create(OrderTableFixtures.NOT_EMPTY.get());
+            final Order order = OrderFixtures.BASIC.get();
+            order.setOrderTableId(savedOrderTable.getId());
+
+            final Order savedOrder = orderService.create(order);
             savedOrder.setOrderStatus(OrderStatus.COMPLETION.name());
             orderDao.save(savedOrder);
 
