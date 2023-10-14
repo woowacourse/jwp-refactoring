@@ -3,13 +3,10 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.test.fixtures.OrderFixtures;
@@ -113,6 +110,83 @@ class TableServiceTest {
             // when, then
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), savedOrderTable));
+        }
+
+        @Test
+        @DisplayName("주문 테이블의 상태가 요리 또는 식사중일 시 예외 발생")
+        void orderStatusNotCompletionException() {
+            // given
+            final OrderTable savedOrderTable = tableService.create(OrderTableFixtures.NOT_EMPTY.get());
+
+            final Order order = OrderFixtures.BASIC.get();
+            order.setOrderTableId(savedOrderTable.getId());
+            orderService.create(order);
+
+            // when, then
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), savedOrderTable));
+        }
+    }
+
+    @Nested
+    @DisplayName("주문 테이블의 손님 수를 수정할 때, ")
+    class UpdateGuestCount {
+        @Test
+        @DisplayName("정상적으로 수정할 수 있다")
+        void updateGuestCount() {
+            // given
+            final OrderTable orderTable = OrderTableFixtures.BASIC.get();
+            orderTable.setEmpty(false);
+            final OrderTable savedOrderTable = tableService.create(orderTable);
+
+            final OrderTable newOrderTable = OrderTableFixtures.BASIC.get();
+            newOrderTable.setNumberOfGuests(3);
+
+            // when
+            tableService.changeNumberOfGuests(savedOrderTable.getId(), newOrderTable);
+
+            // then
+            final int numberOfGuests = orderTableDao.findById(savedOrderTable.getId())
+                    .orElse(OrderTableFixtures.EMPTY.get())
+                    .getNumberOfGuests();
+            assertThat(numberOfGuests).isEqualTo(newOrderTable.getNumberOfGuests());
+        }
+
+        @Test
+        @DisplayName("주문 테이블의 손님 수가 0 미만일 시 예외 발생")
+        void guestCountLessThanZeroException() {
+            // given
+            final OrderTable orderTable = OrderTableFixtures.BASIC.get();
+            final OrderTable newOrderTable = OrderTableFixtures.BASIC.get();
+            newOrderTable.setNumberOfGuests(-1);
+
+            // when, then
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), newOrderTable));
+        }
+
+        @Test
+        @DisplayName("주문 테이블이 존재하지 않을 시 예외 발생")
+        void orderTableNotExistException() {
+            // given
+            final OrderTable orderTable = OrderTableFixtures.BASIC.get();
+            final OrderTable newOrderTable = OrderTableFixtures.BASIC.get();
+
+            // when, then
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), newOrderTable));
+        }
+
+        @Test
+        @DisplayName("주문 테이블이 비어있을 시 예외 발생")
+        void orderTableEmptyException() {
+            // given
+            final OrderTable savedOrderTable = tableService.create(OrderTableFixtures.EMPTY.get());
+            final OrderTable newOrderTable = OrderTableFixtures.BASIC.get();
+
+            // when, then
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), newOrderTable));
         }
     }
 }

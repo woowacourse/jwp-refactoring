@@ -89,11 +89,13 @@ class TableGroupServiceTest {
             // given
             final TableGroup tableGroup = TableGroupFixtures.BASIC.get();
             initOrderTables(tableGroup);
-            tableGroup.getOrderTables().add(OrderTableFixtures.BASIC.get());
+            final List<OrderTable> orderTables = tableGroup.getOrderTables();
+            orderTables.add(OrderTableFixtures.BASIC.get());
 
             // when, then
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> tableGroupService.create(tableGroup));
+            orderTables.remove(orderTables.size() - 1);
         }
 
         @Test
