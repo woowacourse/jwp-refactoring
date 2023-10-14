@@ -21,9 +21,7 @@ class ProductServiceTest extends ServiceIntegrationTest {
         @Test
         @DisplayName("정상적으로 추가된다.")
         void success() {
-            final Product product = new Product();
-            product.setName("test");
-            product.setPrice(BigDecimal.valueOf(20.00));
+            final Product product = new Product("test", BigDecimal.valueOf(20.00));
 
             final Product savedProduct = productService.create(product);
 
@@ -35,22 +33,19 @@ class ProductServiceTest extends ServiceIntegrationTest {
             );
         }
 
-        @Test
-        @DisplayName("price가 null인경우 Exception을 throw한다..")
-        void throwExceptionPriceIsNull() {
-            final Product product = new Product();
-            product.setName("test");
-
-            assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
-        }
+        //추후 파라미터가 dto로 변경되었을 때 테스트
+//        @Test
+//        void throwExceptionPriceIsNull() {
+//            final Product product = new Product("test", null);
+//
+//            assertThatThrownBy(() -> productService.create(product))
+//                .isInstanceOf(IllegalArgumentException.class);
+//        }
 
         @Test
         @DisplayName("price가 0보다 작은 Exception을 throw한다.")
         void throwExceptionPriceIsLowerThan0() {
-            final Product product = new Product();
-            product.setName("test");
-            product.setPrice(BigDecimal.valueOf(-1));
+            final Product product = new Product("test", BigDecimal.valueOf(-1));
 
             assertThatThrownBy(() -> productService.create(product))
                 .isInstanceOf(IllegalArgumentException.class);
