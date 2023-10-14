@@ -1,12 +1,15 @@
 package kitchenpos.application;
 
 import static kitchenpos.fixture.MenuFixture.두마리메뉴;
+import static kitchenpos.fixture.MenuFixture.순살파닭두마리메뉴;
 import static kitchenpos.fixture.MenuFixture.신메뉴;
 import static kitchenpos.fixture.MenuFixture.한마리메뉴;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.fixture.MenuFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -15,12 +18,8 @@ class MenuGroupServiceTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("menuGroup을 생성하는 기능")
     void create() {
-        //given
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("test");
-
         //when
-        final MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+        final MenuGroup savedMenuGroup = menuGroupService.create(순살파닭두마리메뉴());
 
         //then
         assertThat(menuGroupService.list())
