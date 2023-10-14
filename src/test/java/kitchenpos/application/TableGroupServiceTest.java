@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -39,6 +40,8 @@ class TableGroupServiceTest extends ServiceTest {
     ProductDao productDao;
     @Autowired
     OrderDao orderDao;
+    @Autowired
+    OrderTableDao orderTableDao;
 
     @Autowired
     TableGroupService tableGroupService;
@@ -99,11 +102,13 @@ class TableGroupServiceTest extends ServiceTest {
 
         // when
         tableGroupService.ungroup(savedTableGroup.getId());
+        OrderTable findOrderTable1 = orderTableDao.findById(orderTable1.getId()).get();
+        OrderTable findOrderTable2 = orderTableDao.findById(orderTable2.getId()).get();
 
         // then
         assertAll(
-                () -> assertThat(orderTable1.getTableGroupId()).isNull(),
-                () -> assertThat(orderTable2.getTableGroupId()).isNull()
+                () -> assertThat(findOrderTable1.getTableGroupId()).isNull(),
+                () -> assertThat(findOrderTable2.getTableGroupId()).isNull()
         );
     }
 
