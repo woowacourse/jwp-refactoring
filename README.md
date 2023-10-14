@@ -40,6 +40,22 @@
     - [x] table 방문 손님 수 변경
         - [x] 입력된 손님 수가 0미만인 경우 예외처리
         - [x] ordertable이 비어있으면 예외처리
+- [ ] setter 메서드 제거
+    - [ ] MenuGroup
+    - [ ] Menu
+    - [ ] OrderTable
+    - [ ] TableGroup
+    - [ ] OrderLineItem
+    - [ ] Product
+    - [ ] MenuProduct
+- [ ] dao에 의존적인 로직을 도메인 로직으로 변경
+    - [ ] MenuGroup
+    - [ ] Menu
+    - [ ] OrderTable
+    - [ ] TableGroup
+    - [ ] OrderLineItem
+    - [ ] Product
+    - [ ] MenuProduct
 
 ## 용어 사전
 
