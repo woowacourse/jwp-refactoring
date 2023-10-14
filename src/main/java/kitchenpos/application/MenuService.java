@@ -1,8 +1,6 @@
 package kitchenpos.application;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -12,7 +10,6 @@ import kitchenpos.dto.request.CreateMenuRequest;
 import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.persistence.MenuGroupRepository;
-import kitchenpos.persistence.MenuProductRepository;
 import kitchenpos.persistence.MenuRepository;
 import kitchenpos.persistence.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -24,69 +21,33 @@ public class MenuService {
 
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
-    private final MenuProductRepository menuProductRepository;
     private final ProductRepository productRepository;
 
     public MenuService(MenuRepository menuRepository, MenuGroupRepository menuGroupRepository,
-            MenuProductRepository menuProductRepository, ProductRepository productRepository) {
+            ProductRepository productRepository) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
-        this.menuProductRepository = menuProductRepository;
         this.productRepository = productRepository;
     }
 
     @Transactional
     public MenuResponse create(CreateMenuRequest request) {
-        validateMenuGroupExists(request.getMenuGroupId());
-
-        final BigDecimal price = request.getPrice();
-        validatePriceIsExistsAndNonNegative(price);
-
-        List<MenuProductRequest> menuProductRequests = request.getMenuProducts();
-        validateMenuPriceIsNotBiggerThanActualPrice(menuProductRequests, price);
-
         MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
-                .orElseThrow();
-
+                .orElseThrow(IllegalArgumentException::new);
         Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup);
-        Menu savedMenu = menuRepository.save(menu);
 
-        for (MenuProductRequest menuProductRequest : menuProductRequests) {
-            createMenuProductWith(menuProductRequest, menu);
-        }
-        return MenuResponse.from(savedMenu);
+        addMenuProducts(request, menu);
+        menuRepository.save(menu);
+
+        return MenuResponse.from(menu);
     }
 
-    private void createMenuProductWith(MenuProductRequest menuProductRequest, Menu menu) {
-        Product product = productRepository.findById(menuProductRequest.getProductId())
-                .orElseThrow();
-        MenuProduct menuProduct = new MenuProduct(menu, product, menuProductRequest.getQuantity());
+    private void addMenuProducts(CreateMenuRequest request, Menu menu) {
+        for (MenuProductRequest menuProductRequest : request.getMenuProducts()) {
+            Product product = productRepository.findById(menuProductRequest.getProductId())
+                    .orElseThrow();
 
-        menuProductRepository.save(menuProduct);
-    }
-
-    private void validateMenuPriceIsNotBiggerThanActualPrice(List<MenuProductRequest> menuProductRequests, BigDecimal price) {
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProductRequest menuProductRequest : menuProductRequests) {
-            final Product product = productRepository.findById(menuProductRequest.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProductRequest.getQuantity())));
-        }
-
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validatePriceIsExistsAndNonNegative(BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateMenuGroupExists(Long menuGroupId) {
-        if (!menuGroupRepository.existsById(menuGroupId)) {
-            throw new IllegalArgumentException();
+            menu.addMenuProduct(new MenuProduct(menu, product, menuProductRequest.getQuantity()));
         }
     }
 

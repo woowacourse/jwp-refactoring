@@ -48,6 +48,29 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
+    public void addOrderLineItem(OrderLineItem orderLineItem) {
+        orderLineItems.add(orderLineItem);
+    }
+
+    public void validateOrderLineNotEmpty() {
+        if (orderLineItems.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+
+    public void validateOrderIsNotCompleted() {
+        if (OrderStatus.COMPLETION == orderStatus) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void validateOrderIsCompleted() {
+        if (OrderStatus.COMPLETION != orderStatus) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public Long getId() {
         return id;
     }

@@ -1,10 +1,9 @@
 package kitchenpos.application;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.CreateTableGroupRequest;
@@ -15,7 +14,6 @@ import kitchenpos.persistence.OrderTableRepository;
 import kitchenpos.persistence.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 @Transactional(readOnly = true)
@@ -34,71 +32,31 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(CreateTableGroupRequest request) {
-        List<OrderTableRequest> orderTableRequests = request.getOrderTables();
-        validateOrderTableCount(orderTableRequests);
-
-        List<OrderTable> orderTables = findOrderTables(orderTableRequests);
-        validateOrderTableAllExists(orderTableRequests, orderTables);
+        List<OrderTable> orderTables = findOrderTables(request.getOrderTables());
 
         TableGroup tableGroup = new TableGroup(LocalDateTime.now());
+        tableGroup.groupOrderTables(orderTables);
         tableGroupRepository.save(tableGroup);
-
-        changeOrderTables(orderTables, tableGroup);
 
         return TableGroupResponse.from(tableGroup);
     }
 
-    private void validateOrderTableCount(List<OrderTableRequest> orderTableRequests) {
-        if (CollectionUtils.isEmpty(orderTableRequests) || orderTableRequests.size() < 2) {
-            throw new IllegalArgumentException();
-        }
-    }
-
     private List<OrderTable> findOrderTables(List<OrderTableRequest> orderTableRequests) {
-        final List<Long> orderTableIds = orderTableRequests.stream()
-                .map(OrderTableRequest::getId)
+        return orderTableRequests.stream()
+                .map(each -> orderTableRepository.findById(each.getId())
+                        .orElseThrow(IllegalArgumentException::new))
                 .collect(Collectors.toList());
-
-        return orderTableRepository.findAllByIdIn(orderTableIds);
-    }
-
-    private void validateOrderTableAllExists(List<OrderTableRequest> orderTableRequests, List<OrderTable> orderTables) {
-        if (orderTableRequests.size() != orderTables.size()) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void changeOrderTables(List<OrderTable> orderTables, TableGroup tableGroup) {
-        for (OrderTable orderTable : orderTables) {
-            orderTable.validateIsEmpty();
-            orderTable.validateTableGroupNotExists();
-
-            orderTable.changeTableGroup(tableGroup);
-            orderTable.changeEmpty(false);
-        }
     }
 
     @Transactional
-    public void ungroup(final Long tableGroupId) {
-        List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
+    public void ungroup(Long tableGroupId) {
+        TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
+                .orElseThrow(IllegalArgumentException::new);
 
-        validateOngoingOrderNotExists(orderTables);
-
-        for (OrderTable orderTable : orderTables) {
-            orderTable.changeTableGroup(null);
-            orderTable.changeEmpty(false); // TODO: ?
-            orderTableRepository.save(orderTable);
+        List<Order> orders = orderRepository.findByOrderTableIn(tableGroup.getOrderTables());
+        for (Order order : orders) {
+            order.validateOrderIsCompleted();
         }
-    }
-
-    private void validateOngoingOrderNotExists(List<OrderTable> orderTables) {
-        List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
+        tableGroup.unGroupOrderTables();
     }
 }

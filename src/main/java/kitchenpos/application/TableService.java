@@ -1,9 +1,8 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.ChangeEmptyTableRequest;
 import kitchenpos.dto.request.ChangeTableGuestRequest;
@@ -48,16 +47,16 @@ public class TableService {
                 .orElseThrow(IllegalArgumentException::new);
 
         orderTable.validateTableGroupNotExists();
-        validateOngoingOrderNotExists(orderTableId);
+        validateOrdersCompleted(orderTable);
         orderTable.changeEmpty(request.getEmpty());
 
         return OrderTableResponse.from(orderTable);
     }
 
-    private void validateOngoingOrderNotExists(Long orderTableId) {
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
+    private void validateOrdersCompleted(OrderTable orderTable) {
+        List<Order> orders = orderRepository.findByOrderTable(orderTable);
+        for (Order order : orders) {
+            order.validateOrderIsCompleted();
         }
     }
 

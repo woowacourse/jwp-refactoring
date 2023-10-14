@@ -57,7 +57,7 @@ public class OrderTable {
         }
     }
 
-    private void validateIsNotEmpty() {
+    public void validateIsNotEmpty() {
         if (isEmpty()) {
             throw new IllegalArgumentException();
         }

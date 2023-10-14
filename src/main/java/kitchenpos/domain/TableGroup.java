@@ -29,9 +29,25 @@ public class TableGroup {
         this.createdDate = createdDate;
     }
 
-    public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
-        this.createdDate = createdDate;
+    public void unGroupOrderTables() {
+        for (OrderTable orderTable : orderTables) {
+            orderTable.changeTableGroup(null);
+        }
+    }
+
+    public void groupOrderTables(List<OrderTable> orderTables) {
+        for (OrderTable orderTable : orderTables) {
+            orderTable.validateIsEmpty();
+            orderTable.validateTableGroupNotExists();
+        }
         this.orderTables = orderTables;
+        validateOrderTableCount();
+    }
+
+    private void validateOrderTableCount() {
+        if (orderTables.size() < 2) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
