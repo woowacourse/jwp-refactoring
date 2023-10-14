@@ -1,9 +1,10 @@
 package kitchenpos.application;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -14,6 +15,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderLineItemRequest;
+import kitchenpos.dto.OrderResponse;
 import kitchenpos.dto.OrderStatusUpdateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +41,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(OrderCreateRequest request) {
+    public OrderResponse create(OrderCreateRequest request) {
         List<OrderLineItemRequest> orderLineItemRequests = request.getOrderLineItems();
 
         if (CollectionUtils.isEmpty(orderLineItemRequests)) {
@@ -48,7 +50,7 @@ public class OrderService {
 
         final List<Long> menuIds = orderLineItemRequests.stream()
                 .map(OrderLineItemRequest::getMenuId)
-                .collect(Collectors.toList());
+                .collect(toList());
 
         if (orderLineItemRequests.size() != menuDao.countByIdIn(menuIds)) {
             throw new IllegalArgumentException("등록되지 않은 메뉴를 주문할 수 없습니다.");
@@ -75,21 +77,23 @@ public class OrderService {
             savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
         }
         savedOrder.changeOrderLineItems(savedOrderLineItems);
-        return savedOrder;
+        return OrderResponse.from(savedOrder);
     }
 
-    public List<Order> list() {
+    public List<OrderResponse> list() {
         final List<Order> orders = orderDao.findAll();
 
         for (final Order order : orders) {
             order.changeOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
         }
 
-        return orders;
+        return orders.stream()
+                .map(OrderResponse::from)
+                .collect(toList());
     }
 
     @Transactional
-    public Order changeOrderStatus(Long orderId, OrderStatusUpdateRequest request) {
+    public OrderResponse changeOrderStatus(Long orderId, OrderStatusUpdateRequest request) {
         Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다."));
 
@@ -104,6 +108,6 @@ public class OrderService {
 
         savedOrder.changeOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
 
-        return savedOrder;
+        return OrderResponse.from(savedOrder);
     }
 }

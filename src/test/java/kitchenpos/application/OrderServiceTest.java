@@ -26,6 +26,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderCreateRequest;
+import kitchenpos.dto.OrderResponse;
 import kitchenpos.dto.OrderStatusUpdateRequest;
 import kitchenpos.test.ServiceTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -122,12 +123,12 @@ public class OrderServiceTest {
             OrderCreateRequest request = 주문_생성_요청(orderTable.getId(), List.of(orderLineItem));
 
             // when
-            Order savedOrder = sut.create(request);
+            OrderResponse result = sut.create(request);
 
             // then
-            Order findOrder = orderDao.findById(savedOrder.getId()).get();
+            Order findOrder = orderDao.findById(result.getId()).get();
             assertSoftly(softly -> {
-                softly.assertThat(savedOrder.getOrderStatus()).isEqualTo(COOKING.name());
+                softly.assertThat(result.getOrderStatus()).isEqualTo(COOKING.name());
                 softly.assertThat(findOrder.getOrderStatus()).isEqualTo(COOKING.name());
             });
         }
@@ -145,12 +146,12 @@ public class OrderServiceTest {
         order2.changeOrderLineItems(List.of(orderLineItem2));
 
         // when
-        List<Order> orders = sut.list();
+        List<OrderResponse> result = sut.list();
 
         // then
-        assertThat(orders)
+        assertThat(result)
                 .usingRecursiveComparison()
-                .isEqualTo(List.of(order1, order2));
+                .isEqualTo(List.of(OrderResponse.from(order1), OrderResponse.from(order2)));
     }
 
     @Nested
@@ -188,12 +189,12 @@ public class OrderServiceTest {
             OrderStatusUpdateRequest request = new OrderStatusUpdateRequest(MEAL.name());
 
             // when
-            Order changedOrder = sut.changeOrderStatus(order.getId(), request);
+            OrderResponse result = sut.changeOrderStatus(order.getId(), request);
 
             // then
-            Order savedOrder = orderDao.findById(order.getId()).get();
+            Order savedOrder = orderDao.findById(result.getId()).get();
             assertSoftly(softly -> {
-                softly.assertThat(changedOrder.getOrderStatus()).isEqualTo(MEAL.name());
+                softly.assertThat(result.getOrderStatus()).isEqualTo(MEAL.name());
                 softly.assertThat(savedOrder.getOrderStatus()).isEqualTo(MEAL.name());
             });
         }
