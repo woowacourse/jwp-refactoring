@@ -14,6 +14,7 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.test.ServiceTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -43,10 +44,10 @@ class TableServiceTest {
         OrderTable orderTable = 테이블(true);
 
         // when
-        OrderTable savedOrderTable = sut.create(orderTable);
+        OrderTableResponse result = sut.create(orderTable);
 
         // then
-        assertThat(orderTableDao.findById(savedOrderTable.getId())).isPresent();
+        assertThat(orderTableDao.findById(result.getId())).isPresent();
     }
 
     @Nested
@@ -92,10 +93,10 @@ class TableServiceTest {
             orderDao.save(주문(orderTable.getId(), COMPLETION));
 
             // when
-            OrderTable changedOrderTable = sut.changeEmpty(orderTable.getId(), 테이블(true));
+            OrderTableResponse result = sut.changeEmpty(orderTable.getId(), 테이블(true));
 
             // then
-            assertThat(changedOrderTable.isEmpty()).isTrue();
+            assertThat(result.isEmpty()).isTrue();
         }
     }
 
@@ -138,10 +139,10 @@ class TableServiceTest {
             OrderTable orderTable = orderTableDao.save(테이블(false, 1));
 
             // when
-            OrderTable changedOrderTable = sut.changeNumberOfGuests(orderTable.getId(), 테이블(false, 0));
+            OrderTableResponse result = sut.changeNumberOfGuests(orderTable.getId(), 테이블(false, 0));
 
             // then
-            assertThat(changedOrderTable.getNumberOfGuests()).isZero();
+            assertThat(result.getNumberOfGuests()).isZero();
         }
     }
 }
