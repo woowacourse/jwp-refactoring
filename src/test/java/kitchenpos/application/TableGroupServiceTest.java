@@ -1,15 +1,21 @@
 package kitchenpos.application;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.support.ServiceIntegrationTest;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +33,16 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
   void test_create() throws Exception {
     //given
     final List<OrderTable> orderTables = orderTableDao.findAllByIdIn(List.of(336L, 337L));
+    final List<Long> tableGroupIds = orderTables
+        .stream()
+        .map(OrderTable::getTableGroupId)
+        .collect(Collectors.toList());
+
+    assertTrue(tableGroupIds
+        .stream()
+        .allMatch(Objects::isNull)
+    );
+
     final TableGroup tableGroup = new TableGroup();
     tableGroup.setOrderTables(orderTables);
 
@@ -34,9 +50,19 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
     final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
     //then
+    final List<OrderTable> updatedOrderTables = orderTableDao.findAllByIdIn(List.of(336L, 337L));
+    final List<Long> updatedTableGroupIds = updatedOrderTables
+        .stream()
+        .map(OrderTable::getTableGroupId)
+        .collect(Collectors.toList());
+
     assertAll(
         () -> assertNotNull(savedTableGroup.getId()),
-        () -> assertNotNull(savedTableGroup.getCreatedDate())
+        () -> assertNotNull(savedTableGroup.getCreatedDate()),
+        () -> assertTrue(updatedTableGroupIds
+            .stream()
+            .allMatch(it -> it.equals(savedTableGroup.getId()))
+        )
     );
   }
 
