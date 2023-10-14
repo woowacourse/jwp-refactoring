@@ -29,7 +29,7 @@ public class OrderResponse {
     }
 
     public static OrderResponse from(Order order) {
-        List<OrderLineItemResponse> orderLineItemResponses = order.getOrderLineItems().stream()
+        List<OrderLineItemResponse> orderLineItemResponses = order.getOrderLineItems().getItems().stream()
                 .map(orderLineItem -> OrderLineItemResponse.of(orderLineItem, order))
                 .collect(toList());
         return new OrderResponse(
