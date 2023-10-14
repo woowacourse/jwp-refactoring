@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.NullSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -123,7 +125,8 @@ class MenuServiceTest {
         }
 
         @ParameterizedTest(name = "입력값 : {0}")
-        @CsvSource(value = {"-1", "null"}, nullValues = {"null"})
+        @CsvSource(value = {"-1"})
+        @NullSource
         @DisplayName("잘못된 가격으로 메뉴생성시 예외를 발생시킨다.")
         void throwExceptionWithWrongPriceValue(final BigDecimal price) {
             // given
