@@ -72,9 +72,7 @@ class OrderServiceTest {
         //given
         Long invalidId = 99L;
 
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(invalidId);
-
+        OrderLineItem orderLineItem = createOrderLineItem(invalidId);
         order.setOrderLineItems(List.of(orderLineItem));
 
         assertThat(menuDao.findById(invalidId)).isEmpty();
@@ -88,16 +86,16 @@ class OrderServiceTest {
     @Test
     void createFailTest_ByOrderTableIsNotExists() {
         //given
-        Long menuId = saveMenu();
+        Long invalidId = 99L;
 
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menuId);
+        Long menuId = saveMenu().getId();
+        OrderLineItem orderLineItem = createOrderLineItem(menuId);
 
         order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderTableId(99L);
+        order.setOrderTableId(invalidId);
 
         assertThat(menuDao.findById(menuId)).isPresent();
-        assertThat(orderTableDao.findById(99L)).isEmpty();
+        assertThat(orderTableDao.findById(invalidId)).isEmpty();
 
         //when then
         assertThatThrownBy(() -> orderService.create(order))
@@ -108,11 +106,10 @@ class OrderServiceTest {
     @Test
     void createFailTest_ByOrderTableIsEmpty() {
         //given
-        Long menuId = saveMenu();
-        Long orderTableId = saveOrderTableForEmpty(true);
+        Long menuId = saveMenu().getId();
+        Long orderTableId = saveOrderTableForEmpty(true).getId();
 
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menuId);
+        OrderLineItem orderLineItem = createOrderLineItem(menuId);
 
         order.setOrderLineItems(List.of(orderLineItem));
         order.setOrderTableId(orderTableId);
@@ -130,11 +127,10 @@ class OrderServiceTest {
     @Test
     void createSuccessTest_ChangeOrderInformation() {
         //given
-        Long menuId = saveMenu();
-        Long orderTableId = saveOrderTableForEmpty(false);
+        Long menuId = saveMenu().getId();
+        Long orderTableId = saveOrderTableForEmpty(false).getId();
 
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menuId);
+        OrderLineItem orderLineItem = createOrderLineItem(menuId);
 
         order.setOrderLineItems(List.of(orderLineItem));
         order.setOrderTableId(orderTableId);
@@ -154,11 +150,10 @@ class OrderServiceTest {
     @Test
     void createSuccessTest_SaveWithOrderLineItems() {
         //given
-        Long menuId = saveMenu();
-        Long orderTableId = saveOrderTableForEmpty(false);
+        Long menuId = saveMenu().getId();
+        Long orderTableId = saveOrderTableForEmpty(false).getId();
 
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menuId);
+        OrderLineItem orderLineItem = createOrderLineItem(menuId);
 
         order.setOrderLineItems(List.of(orderLineItem));
         order.setOrderTableId(orderTableId);
@@ -186,11 +181,9 @@ class OrderServiceTest {
     @Test
     void listSuccessTest() {
         //given
-        Long menuId = saveMenu();
-        Long orderTableId = saveOrderTableForEmpty(false);
-
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menuId);
+        Long menuId = saveMenu().getId();
+        Long orderTableId = saveOrderTableForEmpty(false).getId();
+        OrderLineItem orderLineItem = createOrderLineItem(menuId);
 
         order.setOrderLineItems(List.of(orderLineItem));
         order.setOrderTableId(orderTableId);
@@ -213,10 +206,11 @@ class OrderServiceTest {
     @Test
     void changeOrderStatusFailTest_ByOrderIsNotExists() {
         //given
-        assertThat(orderDao.findById(99L)).isEmpty();
+        Long invalidId = 99L;
+        assertThat(orderDao.findById(invalidId)).isEmpty();
 
         //when then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(99L, order))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(invalidId, order))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -224,11 +218,9 @@ class OrderServiceTest {
     @Test
     void changeOrderStatusFailTest_ByOrderStatusIsCompletion() {
         //given
-        Long menuId = saveMenu();
-        Long orderTableId = saveOrderTableForEmpty(false);
-
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menuId);
+        Long menuId = saveMenu().getId();
+        Long orderTableId = saveOrderTableForEmpty(false).getId();
+        OrderLineItem orderLineItem = createOrderLineItem(menuId);
 
         order.setOrderLineItems(List.of(orderLineItem));
         order.setOrderTableId(orderTableId);
@@ -247,11 +239,9 @@ class OrderServiceTest {
     @Test
     void changeOrderStatusFailTest_ByOrderStatusIsNotAvailable() {
         //given
-        Long menuId = saveMenu();
-        Long orderTableId = saveOrderTableForEmpty(false);
-
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menuId);
+        Long menuId = saveMenu().getId();
+        Long orderTableId = saveOrderTableForEmpty(false).getId();
+        OrderLineItem orderLineItem = createOrderLineItem(menuId);
 
         order.setOrderLineItems(List.of(orderLineItem));
         order.setOrderTableId(orderTableId);
@@ -272,11 +262,9 @@ class OrderServiceTest {
     @Test
     void changeOrderStatusSuccessTest() {
         //given
-        Long menuId = saveMenu();
-        Long orderTableId = saveOrderTableForEmpty(false);
-
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menuId);
+        Long menuId = saveMenu().getId();
+        Long orderTableId = saveOrderTableForEmpty(false).getId();
+        OrderLineItem orderLineItem = createOrderLineItem(menuId);
 
         order.setOrderLineItems(List.of(orderLineItem));
         order.setOrderTableId(orderTableId);
@@ -296,29 +284,36 @@ class OrderServiceTest {
         assertThat(findOrder.getOrderStatus()).isEqualTo("COMPLETION");
     }
 
-    private Long saveMenu() {
-        Long menuGroupId = saveMenuGroup();
+    private Menu saveMenu() {
+        MenuGroup savedMenuGroup = saveMenuGroup();
 
         Menu menu = new Menu();
         menu.setName("TestMenu");
         menu.setPrice(BigDecimal.valueOf(10000));
-        menu.setMenuGroupId(menuGroupId);
+        menu.setMenuGroupId(savedMenuGroup.getId());
 
-        return menuDao.save(menu).getId();
+        return menuDao.save(menu);
     }
 
-    private Long saveMenuGroup() {
+    private MenuGroup saveMenuGroup() {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName("TestMenuGroup");
 
-        return menuGroupDao.save(menuGroup).getId();
+        return menuGroupDao.save(menuGroup);
     }
 
-    private Long saveOrderTableForEmpty(boolean empty) {
+    private OrderTable saveOrderTableForEmpty(boolean empty) {
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(empty);
 
-        return orderTableDao.save(orderTable).getId();
+        return orderTableDao.save(orderTable);
+    }
+
+    private OrderLineItem createOrderLineItem(Long menuId) {
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setMenuId(menuId);
+
+        return orderLineItem;
     }
 
 }

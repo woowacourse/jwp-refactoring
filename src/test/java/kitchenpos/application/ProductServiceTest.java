@@ -28,8 +28,7 @@ class ProductServiceTest {
     @Test
     void createFailTest_ByProductPriceIsNull() {
         //given
-        Product product = new Product();
-        product.setName("TestProduct");
+        Product product = createProduct();
         product.setPrice(null);
 
         //when then
@@ -41,8 +40,7 @@ class ProductServiceTest {
     @ValueSource(ints = {-1000, -1})
     void createFailTest_ByProductPriceIsLessThanZero(int price) {
         //given
-        Product product = new Product();
-        product.setName("TestProduct");
+        Product product = createProduct();
         product.setPrice(BigDecimal.valueOf(price));
 
         //when then
@@ -54,8 +52,7 @@ class ProductServiceTest {
     @Test
     void createSuccessTest() {
         //given
-        Product product = new Product();
-        product.setName("TestProduct");
+        Product product = createProduct();
         product.setPrice(BigDecimal.ZERO);
 
         //when
@@ -66,6 +63,12 @@ class ProductServiceTest {
 
         assertThat(findProduct).usingRecursiveComparison()
                 .isEqualTo(savedProduct);
+    }
+
+    private Product createProduct() {
+        Product product = new Product();
+        product.setName("TestProduct");
+        return product;
     }
 
 }

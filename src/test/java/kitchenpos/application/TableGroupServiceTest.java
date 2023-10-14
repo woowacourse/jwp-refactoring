@@ -40,8 +40,7 @@ class TableGroupServiceTest {
     @Test
     void createFailTest_ByOrderTableCountIsLessThanTwo() {
         //given
-        OrderTable orderTable = new OrderTable();
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable savedOrderTable = saveOrderTableForEmpty(false);
 
         TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(List.of(savedOrderTable));
@@ -79,14 +78,8 @@ class TableGroupServiceTest {
     @Test
     void createFailTest_ByTableGroupContainsNotEmptyOrderTable() {
         //given
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setEmpty(false);
-
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setEmpty(true);
-
-        OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
-        OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
+        OrderTable savedOrderTable1 = saveOrderTableForEmpty(false);
+        OrderTable savedOrderTable2 = saveOrderTableForEmpty(true);
 
         //when then
         TableGroup tableGroup = new TableGroup();
@@ -100,13 +93,8 @@ class TableGroupServiceTest {
     @Test
     void createFailTest_ByOrderTableIsAlreadyGrouped() {
         //given
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setEmpty(true);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setEmpty(true);
-
-        OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
-        OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
+        OrderTable savedOrderTable1 = saveOrderTableForEmpty(true);
+        OrderTable savedOrderTable2 = saveOrderTableForEmpty(true);
 
         TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(List.of(savedOrderTable1, savedOrderTable2));
@@ -130,13 +118,8 @@ class TableGroupServiceTest {
     @Test
     void createSuccessTest_InitializeRelatedData() {
         //given
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setEmpty(true);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setEmpty(true);
-
-        OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
-        OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
+        OrderTable savedOrderTable1 = saveOrderTableForEmpty(true);
+        OrderTable savedOrderTable2 = saveOrderTableForEmpty(true);
 
         TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(List.of(savedOrderTable1, savedOrderTable2));
@@ -163,13 +146,8 @@ class TableGroupServiceTest {
     @ParameterizedTest(name = "완료(COMPLETION)되지 않은 상태의 테이블이 존재할 경우, 삭제할 수 없다.")
     @ValueSource(strings = {"COOKING", "MEAL"})
     void ungroupFailTest_ByTableOrderStatusIsNotCompletion(String status) {
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setEmpty(true);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setEmpty(true);
-
-        OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
-        OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
+        OrderTable savedOrderTable1 = saveOrderTableForEmpty(true);
+        OrderTable savedOrderTable2 = saveOrderTableForEmpty(true);
 
         Order order = new Order();
         order.setOrderStatus(status);
@@ -191,13 +169,8 @@ class TableGroupServiceTest {
     @DisplayName("그룹을 해제하면, 각 주문 테이블은 해당 그룹에 속하지 않고, 주문이 가능한 상태(Not Empty)로 변한다.")
     @Test
     void ungroupSuccessTest_InitializeRelatedData() {
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setEmpty(true);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setEmpty(true);
-
-        OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
-        OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
+        OrderTable savedOrderTable1 = saveOrderTableForEmpty(true);
+        OrderTable savedOrderTable2 = saveOrderTableForEmpty(true);
 
         Order order = new Order();
         order.setOrderStatus("COMPLETION");
@@ -219,6 +192,13 @@ class TableGroupServiceTest {
         assertThat(orderTableDao.findAllByIdIn(List.of(savedOrderTable1.getId(), savedOrderTable2.getId())))
                 .extractingResultOf("isEmpty")
                 .containsExactly(false, false);
+    }
+
+    private OrderTable saveOrderTableForEmpty(boolean empty) {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setEmpty(empty);
+
+        return orderTableDao.save(orderTable);
     }
 
 }

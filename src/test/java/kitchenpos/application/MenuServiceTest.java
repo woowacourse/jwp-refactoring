@@ -91,10 +91,7 @@ class MenuServiceTest {
         //given
         Long invalidId = 99L;
 
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("TestMenuGroup");
-        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
-
+        MenuGroup savedMenuGroup = saveMenuGroup();
         MenuProduct menuProduct = new MenuProduct();
         menuProduct.setProductId(invalidId);
 
@@ -116,18 +113,9 @@ class MenuServiceTest {
         //given
         int price = 10000;
 
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("TestMenuGroup");
-        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
-
-        Product product = new Product();
-        product.setName("TestName");
-        product.setPrice(BigDecimal.valueOf(price));
-        Product savedProduct = productDao.save(product);
-
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(savedProduct.getId());
-        menuProduct.setQuantity(1);
+        MenuGroup savedMenuGroup = saveMenuGroup();
+        Product savedProduct = saveProductAmountOf(price);
+        MenuProduct menuProduct = createMenuProduct(savedProduct);
 
         menu.setPrice(BigDecimal.valueOf(price + 1));
         menu.setMenuGroupId(savedMenuGroup.getId());
@@ -147,18 +135,9 @@ class MenuServiceTest {
         //given
         int price = 10000;
 
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("TestMenuGroup");
-        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
-
-        Product product = new Product();
-        product.setName("TestName");
-        product.setPrice(BigDecimal.valueOf(price));
-        Product savedProduct = productDao.save(product);
-
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(savedProduct.getId());
-        menuProduct.setQuantity(1);
+        MenuGroup savedMenuGroup = saveMenuGroup();
+        Product savedProduct = saveProductAmountOf(price);
+        MenuProduct menuProduct = createMenuProduct(savedProduct);
 
         menu.setPrice(BigDecimal.valueOf(price));
         menu.setMenuGroupId(savedMenuGroup.getId());
@@ -179,6 +158,29 @@ class MenuServiceTest {
                         .ignoringFields("menuId", "seq")
                         .isEqualTo(List.of(menuProduct))
         );
+    }
+
+    private MenuGroup saveMenuGroup() {
+        MenuGroup menuGroup = new MenuGroup();
+        menuGroup.setName("TestMenuGroup");
+
+        return menuGroupDao.save(menuGroup);
+    }
+
+    private Product saveProductAmountOf(int price) {
+        Product product = new Product();
+        product.setName("TestName");
+        product.setPrice(BigDecimal.valueOf(price));
+
+        return productDao.save(product);
+    }
+
+    private MenuProduct createMenuProduct(Product savedProduct) {
+        MenuProduct menuProduct = new MenuProduct();
+        menuProduct.setProductId(savedProduct.getId());
+        menuProduct.setQuantity(1);
+
+        return menuProduct;
     }
 
 }
