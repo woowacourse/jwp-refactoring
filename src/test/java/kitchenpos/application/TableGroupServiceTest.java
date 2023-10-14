@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.List;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableRepository;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -37,7 +37,7 @@ class TableGroupServiceTest {
     private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Nested
     class 단체_지정을_할_때 {
@@ -52,19 +52,6 @@ class TableGroupServiceTest {
             assertThatThrownBy(() -> sut.create(request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("단체 지정하려는 테이블은 2개 이상이어야 합니다.");
-        }
-
-        @Test
-        void 올바른_테이블을_입력하지_않은_경우_예외를_던진다() {
-            // given
-            OrderTable orderTable = orderTableRepository.save(테이블(true));
-            OrderTable unsavedOrderTable = 테이블(true);
-            TableGroupRequest request = 단체_지정_요청(orderTable, unsavedOrderTable);
-
-            // expect
-            assertThatThrownBy(() -> sut.create(request))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("올바른 테이블을 입력해주세요.");
         }
 
         @Test
@@ -83,9 +70,9 @@ class TableGroupServiceTest {
         @Test
         void 이미_단체_지정이_되어있는_테이블을_단체_지정하려는_경우_예외를_던진다() {
             // given
-            TableGroup tableGroup = tableGroupDao.save(단체_지정());
-            OrderTable orderTable1 = orderTableRepository.save(테이블(true, 0, tableGroup.getId()));
-            OrderTable orderTable2 = orderTableRepository.save(테이블(true, 0, tableGroup.getId()));
+            TableGroup tableGroup = tableGroupRepository.save(단체_지정());
+            OrderTable orderTable1 = orderTableRepository.save(테이블(true, 0, tableGroup));
+            OrderTable orderTable2 = orderTableRepository.save(테이블(true, 0, tableGroup));
             OrderTable orderTable3 = orderTableRepository.save(테이블(true));
             TableGroupRequest request = 단체_지정_요청(orderTable2, orderTable3);
 
@@ -120,9 +107,9 @@ class TableGroupServiceTest {
         @ParameterizedTest(name = "테이블에 해당하는 주문 상태가 {0}인 경우 예외를 던진다")
         void 테이블에_해당하는_주문_상태가_조리중이거나_식사중인_경우_예외를_던진다(OrderStatus orderStatus) {
             // given
-            TableGroup tableGroup = tableGroupDao.save(단체_지정());
-            OrderTable orderTable1 = orderTableRepository.save(테이블(true, 0, tableGroup.getId()));
-            OrderTable orderTable2 = orderTableRepository.save(테이블(true, 0, tableGroup.getId()));
+            TableGroup tableGroup = tableGroupRepository.save(단체_지정());
+            OrderTable orderTable1 = orderTableRepository.save(테이블(true, 0, tableGroup));
+            OrderTable orderTable2 = orderTableRepository.save(테이블(true, 0, tableGroup));
             orderDao.save(주문(orderTable1.getId(), orderStatus));
 
             // expect
@@ -134,9 +121,9 @@ class TableGroupServiceTest {
         @Test
         void 단체_지정_해제를_성공하는_경우_테이블의_단체_지정_번호가_제거된다() {
             // given
-            TableGroup tableGroup = tableGroupDao.save(단체_지정());
-            orderTableRepository.save(테이블(true, 0, tableGroup.getId()));
-            orderTableRepository.save(테이블(true, 0, tableGroup.getId()));
+            TableGroup tableGroup = tableGroupRepository.save(단체_지정());
+            orderTableRepository.save(테이블(true, 0, tableGroup));
+            orderTableRepository.save(테이블(true, 0, tableGroup));
 
             // when
             sut.ungroup(tableGroup.getId());

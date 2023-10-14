@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableRepository;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -37,7 +37,7 @@ class TableServiceTest {
     private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Test
     void 테이블을_생성한다() {
@@ -67,8 +67,8 @@ class TableServiceTest {
         @Test
         void 단체_지정이_되어있는_테이블인_경우_예외를_던진다() {
             // given
-            TableGroup tableGroup = tableGroupDao.save(단체_지정());
-            OrderTable orderTable = orderTableRepository.save(테이블(false, 0, tableGroup.getId()));
+            TableGroup tableGroup = tableGroupRepository.save(단체_지정());
+            OrderTable orderTable = orderTableRepository.save(테이블(false, 0, tableGroup));
 
             // expect
             assertThatThrownBy(() -> sut.changeEmpty(orderTable.getId(), request))

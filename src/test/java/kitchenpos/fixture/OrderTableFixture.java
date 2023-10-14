@@ -1,6 +1,7 @@
 package kitchenpos.fixture;
 
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 
 public class OrderTableFixture {
 
@@ -12,7 +13,7 @@ public class OrderTableFixture {
         return new OrderTable(null, numberOfGuests, empty);
     }
 
-    public static OrderTable 테이블(boolean empty, int numberOfGuests, long tableGroupId) {
-        return new OrderTable(tableGroupId, numberOfGuests, empty);
+    public static OrderTable 테이블(boolean empty, int numberOfGuests, TableGroup tableGroup) {
+        return new OrderTable(tableGroup, numberOfGuests, empty);
     }
 }

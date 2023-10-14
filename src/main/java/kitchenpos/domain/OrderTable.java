@@ -1,11 +1,14 @@
 package kitchenpos.domain;
 
+import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import kitchenpos.common.BaseEntity;
 
 @Entity
@@ -14,8 +17,11 @@ public class OrderTable extends BaseEntity {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    
-    private Long tableGroupId;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "table_group_id")
+    private TableGroup tableGroup;
+
     private int numberOfGuests;
     private boolean empty;
 
@@ -26,23 +32,27 @@ public class OrderTable extends BaseEntity {
         this(null, numberOfGuests, empty);
     }
 
-    public OrderTable(Long tableGroupId, int numberOfGuests, boolean empty) {
-        this(null, tableGroupId, numberOfGuests, empty);
+    public OrderTable(TableGroup tableGroup, int numberOfGuests, boolean empty) {
+        this(null, tableGroup, numberOfGuests, empty);
     }
 
-    public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
+    public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
         this.id = id;
-        this.tableGroupId = tableGroupId;
+        this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
-    public void changeId(Long id) {
-        this.id = id;
+    public void changeTableGroup(TableGroup tableGroup) {
+        if (!empty || Objects.nonNull(this.tableGroup)) {
+            throw new IllegalArgumentException("비어있지 않거나, 이미 단체 지정이 된 테이블은 단체 지정을 할 수 없습니다.");
+        }
+        this.empty = false;
+        this.tableGroup = tableGroup;
     }
 
-    public void changeTableGroupId(Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
+    public void clearTableGroup() {
+        this.tableGroup = null;
     }
 
     public void changeNumberOfGuests(int numberOfGuests) {
@@ -56,7 +66,7 @@ public class OrderTable extends BaseEntity {
     }
 
     public void changeEmpty(boolean empty) {
-        if (Objects.nonNull(tableGroupId)) {
+        if (Objects.nonNull(tableGroup)) {
             throw new IllegalArgumentException("단체 지정이 되어있는 경우 테이블의 상태를 변경할 수 없습니다.");
         }
         this.empty = empty;
@@ -66,8 +76,8 @@ public class OrderTable extends BaseEntity {
         return id;
     }
 
-    public Long getTableGroupId() {
-        return tableGroupId;
+    public TableGroup getTableGroup() {
+        return tableGroup;
     }
 
     public int getNumberOfGuests() {
