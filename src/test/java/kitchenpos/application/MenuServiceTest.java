@@ -4,7 +4,8 @@ import com.sun.tools.javac.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.vo.product.ProductRequest;
+import kitchenpos.vo.product.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,16 +32,14 @@ class MenuServiceTest {
     @Autowired
     private MenuGroupService menuGroupService;
 
-    private Product savedProduct;
+    private ProductResponse savedProduct;
     private MenuGroup savedMenuGroup;
     private MenuProduct savedMenuProduct;
 
     @BeforeEach
     void setup() {
-        Product product = new Product();
-        product.setName("치킨");
-        product.setPrice(BigDecimal.valueOf(10000L));
-        savedProduct = productService.create(product);
+        ProductRequest productRequest = new ProductRequest("치킨", BigDecimal.valueOf(10000L));
+        savedProduct = productService.create(productRequest);
 
         savedMenuProduct = new MenuProduct();
         savedMenuProduct.setProductId(savedProduct.getId());
@@ -154,7 +153,7 @@ class MenuServiceTest {
         menuB.setMenuProducts(List.of(savedMenuProduct));
 
         // when
-        Menu savedMenuA = menuService.create(menuA);
+        Menu 0savedMenuA = menuService.create(menuA);
         Menu savedMenuB = menuService.create(menuB);
 
         // then

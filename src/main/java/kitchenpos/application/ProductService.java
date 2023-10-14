@@ -2,12 +2,11 @@ package kitchenpos.application;
 
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.vo.product.ProductRequest;
+import kitchenpos.vo.product.ProductResponse;
+import kitchenpos.vo.product.ProductsResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Objects;
 
 @Service
 public class ProductService {
@@ -18,17 +17,19 @@ public class ProductService {
     }
 
     @Transactional
-    public Product create(final Product product) {
-        final BigDecimal price = product.getPrice();
+    public ProductResponse create(final ProductRequest productRequest) {
 
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
+        Product product = new Product.Builder()
+                .name(productRequest.getName())
+                .price(productRequest.getPrice())
+                .build();
 
-        return productDao.save(product);
+        Product savedProduct = productDao.save(product);
+
+        return ProductResponse.of(savedProduct);
     }
 
-    public List<Product> list() {
-        return productDao.findAll();
+    public ProductsResponse list() {
+        return ProductsResponse.of(productDao.findAll());
     }
 }
