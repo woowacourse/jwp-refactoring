@@ -12,7 +12,10 @@ import kitchenpos.test.fixtures.MenuFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
@@ -40,12 +43,13 @@ class MenuServiceTest {
             });
         }
 
-        @Test
-        @DisplayName("메뉴의 가격이 0원 미만일 시 예외 발생")
-        void menuPriceLessThanZeroWonException() {
+        @ParameterizedTest(name = "price = {0}")
+        @ValueSource(ints = {-1, 999999})
+        @DisplayName("메뉴의 가격이 올바르지 않을 시 예외 발생")
+        void menuPriceLessThanZeroWonException(final int price) {
             // given
             final Menu menu = MenuFixtures.BASIC.get();
-            menu.setPrice(new BigDecimal(-1));
+            menu.setPrice(new BigDecimal(price));
 
             // when, then
             assertThatIllegalArgumentException()
@@ -83,18 +87,6 @@ class MenuServiceTest {
             final Menu menu = MenuFixtures.BASIC.get();
             final List<MenuProduct> menuProducts = menu.getMenuProducts();
             menuProducts.get(0).setProductId(-1L);
-
-            // when, then
-            assertThatIllegalArgumentException()
-                    .isThrownBy(() -> menuService.create(menu));
-        }
-
-        @Test
-        @DisplayName("메뉴 가격이 메뉴 상품의 가격 합보다 클 시 예외 발생")
-        void menuPriceWrongException() {
-            // given
-            final Menu menu = MenuFixtures.BASIC.get();
-            menu.setPrice(new BigDecimal("999999"));
 
             // when, then
             assertThatIllegalArgumentException()
