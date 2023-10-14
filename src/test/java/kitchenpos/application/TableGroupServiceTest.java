@@ -100,7 +100,7 @@ class TableGroupServiceTest {
             //when & then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("유효한 OrderTable을 포함하고 있습니다.");
+                    .hasMessage("유효하지 않은 OrderTable을 포함하고 있습니다.");
         }
 
         @Test

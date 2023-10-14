@@ -44,7 +44,7 @@ public class TableGroupService {
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
 
         if (orderTables.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException("유효한 OrderTable을 포함하고 있습니다.");
+            throw new IllegalArgumentException("유효하지 않은 OrderTable을 포함하고 있습니다.");
         }
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
