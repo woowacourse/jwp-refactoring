@@ -32,8 +32,10 @@ class TableGroupServiceTest {
 
     @Autowired
     private TableGroupService tableGroupService;
+
     @Autowired
     private OrderTableDao orderTableDao;
+
     @Autowired
     private OrderDao orderDao;
 
@@ -147,7 +149,7 @@ class TableGroupServiceTest {
             final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
             final List<OrderTable> orderTables = savedTableGroup.getOrderTables();
             final Long id1 = orderTables.get(0).getId();
-            final Long id2 = orderTables.get(0).getId();
+            final Long id2 = orderTables.get(1).getId();
 
             //when
             tableGroupService.ungroup(savedTableGroup.getId());
@@ -164,6 +166,7 @@ class TableGroupServiceTest {
             });
         }
 
+        @DisplayName("테이블의 상태가 MEAL 또는 COOKING 이면 예외가 발생한다.")
         @ParameterizedTest(name = "status = {0}")
         @ValueSource(strings = {"MEAL", "COOKING"})
         void unGroupWithInvalidStatusTable(final String status) {

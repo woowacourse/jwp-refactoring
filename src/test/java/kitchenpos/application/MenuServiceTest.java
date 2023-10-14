@@ -100,7 +100,7 @@ class MenuServiceTest {
             // given
             menu.setMenuGroupId(999999L);
 
-            // when * then
+            // when & then
             assertThatThrownBy(() -> menuService.create(menu))
                     .isInstanceOf(IllegalArgumentException.class);
         }

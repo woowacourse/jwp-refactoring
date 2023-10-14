@@ -39,6 +39,7 @@ class OrderServiceTest {
 
     @Autowired
     private OrderService orderService;
+
     @Autowired
     private TableService tableService;
 
