@@ -137,17 +137,14 @@ class OrderServiceTest {
             orderToSave.setOrderStatus(OrderStatus.MEAL.name());
             final Order savedOrder = orderService.create(orderToSave);
 
-            final OrderTable savedNewOrderTable = tableService.create(OrderTableFixtures.NOT_EMPTY.get());
             final Order newOrder = OrderFixtures.EMPTY.get();
-            newOrder.setOrderTableId(savedNewOrderTable.getId());
-            final Order savedNewOrder = orderService.create(newOrder);
 
 
             // when
-            final Order changed = orderService.changeOrderStatus(savedOrder.getId(), savedNewOrder);
+            final Order changed = orderService.changeOrderStatus(savedOrder.getId(), newOrder);
 
             // then
-            assertThat(changed.getOrderStatus()).isEqualTo(savedNewOrder.getOrderStatus());
+            assertThat(changed.getOrderStatus()).isEqualTo(newOrder.getOrderStatus());
         }
 
         @Test
