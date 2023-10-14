@@ -131,6 +131,17 @@ class OrderServiceTest {
         }
 
         @Test
+        @DisplayName("현재 주문이 존재하지 않을 시 예외 처리")
+        void orderNotExistException() {
+            // given
+            final Order order = OrderFixtures.BASIC.get();
+
+            // when, then
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> orderService.changeOrderStatus(order.getId(), order));
+        }
+
+        @Test
         @DisplayName("현재 주문 상태가 완료 상태일 시 예외 처리")
         void orderStatusCompletionException() {
             // given
