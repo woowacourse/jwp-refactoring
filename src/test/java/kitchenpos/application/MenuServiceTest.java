@@ -27,11 +27,7 @@ class MenuServiceTest extends ServiceIntegrationTest {
   @DisplayName("create() : 메뉴를 생성할 수 있다.")
   void test_create() throws Exception {
     //given
-    final Menu menu = new Menu();
-    menu.setMenuGroupId(3L);
-    menu.setName("menu1MenuGroup3");
-    menu.setPrice(BigDecimal.valueOf(13000));
-    menu.setMenuProducts(menuProductDao.findAll());
+    final Menu menu = createMenu(13000);
 
     //when
     final Menu savedMenu = menuService.create(menu);
@@ -45,15 +41,20 @@ class MenuServiceTest extends ServiceIntegrationTest {
     );
   }
 
+  private Menu createMenu(final int price) {
+    final Menu menu = new Menu();
+    menu.setMenuGroupId(3L);
+    menu.setName("menu1MenuGroup3");
+    menu.setPrice(BigDecimal.valueOf(price));
+    menu.setMenuProducts(menuProductDao.findAll());
+    return menu;
+  }
+
   @Test
   @DisplayName("create() : 메뉴 가격은 메뉴 상품들의 합보다 크거나 같으면 IllegalArgumentException이 발생할 수 있다.")
   void test_create_IllegalArgumentException() throws Exception {
     //given
-    final Menu menu = new Menu();
-    menu.setMenuGroupId(3L);
-    menu.setName("menu1MenuGroup3");
-    menu.setPrice(BigDecimal.valueOf(100000000));
-    menu.setMenuProducts(menuProductDao.findAll());
+    final Menu menu = createMenu(100000000);
 
     //when & then
     Assertions.assertThatThrownBy(() -> menuService.create(menu))

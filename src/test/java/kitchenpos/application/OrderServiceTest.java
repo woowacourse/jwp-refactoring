@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -56,6 +57,27 @@ class OrderServiceTest extends ServiceIntegrationTest {
     order.setOrderTableId(orderTableId);
     order.setOrderLineItems(List.of(orderLineItem1, orderLineItem2));
     return order;
+  }
+
+  @Test
+  @DisplayName("create() : 이미 비어있는 주문 테이블에서는 주문을 생성한다면 IllegalArgumentException가 발생할 수 있다..")
+  void test_create_IllegalArgumentException() throws Exception {
+    //given
+    final OrderLineItem orderLineItem1 = new OrderLineItem();
+    orderLineItem1.setQuantity(13);
+    orderLineItem1.setMenuId(1L);
+    final OrderLineItem orderLineItem2 = new OrderLineItem();
+    orderLineItem2.setQuantity(3);
+    orderLineItem2.setMenuId(2L);
+
+    final Order order = new Order();
+    final long orderTableId = 337L;
+    order.setOrderTableId(orderTableId);
+    order.setOrderLineItems(List.of(orderLineItem1, orderLineItem2));
+
+    //when & then
+    assertThatThrownBy(() -> orderService.create(order))
+        .isInstanceOf(IllegalArgumentException.class);
   }
 
   @Test
