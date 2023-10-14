@@ -151,7 +151,9 @@ class MenuServiceTest {
             final MenuProduct wooDong = new MenuProduct(1L, 1);
             final MenuProduct frenchFries = new MenuProduct(2L, 1);
 
-            BigDecimal overSumOfProductPrice = noodle.getPrice().add(potato.getPrice()).add(BigDecimal.valueOf(1000));
+            BigDecimal overSumOfProductPrice = noodle.getPrice()
+                    .add(potato.getPrice())
+                    .add(BigDecimal.valueOf(1000));
             final Menu expected = new Menu("우동세트", overSumOfProductPrice, 1L, List.of(wooDong, frenchFries));
 
             given(menuGroupDao.existsById(anyLong())).willReturn(true);
