@@ -7,6 +7,7 @@ import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductRequest;
 import kitchenpos.dto.ProductResponse;
+import kitchenpos.vo.Money;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +21,7 @@ public class ProductService {
 
     @Transactional
     public ProductResponse create(ProductRequest request) {
-        Product product = new Product(request.getName(), request.getPrice());
+        Product product = new Product(request.getName(), Money.valueOf(request.getPrice()));
         return ProductResponse.from(productRepository.save(product));
     }
 

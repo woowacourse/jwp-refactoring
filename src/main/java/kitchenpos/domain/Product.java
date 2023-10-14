@@ -2,12 +2,12 @@ package kitchenpos.domain;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import kitchenpos.common.BaseEntity;
+import kitchenpos.vo.Money;
 
 @Entity
 public class Product extends BaseEntity {
@@ -16,24 +16,25 @@ public class Product extends BaseEntity {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
     private String name;
-    private BigDecimal price;
+
+    private Money price;
 
     protected Product() {
     }
 
-    public Product(String name, BigDecimal price) {
+    public Product(String name, Money price) {
         this(null, name, price);
     }
 
-    public Product(Long id, String name, BigDecimal price) {
+    public Product(Long id, String name, Money price) {
         validate(price);
         this.id = id;
         this.name = name;
         this.price = price;
     }
 
-    private void validate(BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+    private void validate(Money price) {
+        if (Objects.isNull(price) || price.isLessThan(Money.ZERO)) {
             throw new IllegalArgumentException("상품의 가격은 0원 이상이어야 합니다.");
         }
     }
@@ -46,7 +47,7 @@ public class Product extends BaseEntity {
         return name;
     }
 
-    public BigDecimal getPrice() {
+    public Money getPrice() {
         return price;
     }
 }

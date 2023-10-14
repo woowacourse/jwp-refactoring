@@ -4,8 +4,8 @@ import static kitchenpos.fixture.MenuProductFixture.메뉴_상품;
 import static kitchenpos.fixture.ProductFixture.상품;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.vo.Money;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -22,6 +22,6 @@ class MenuProductsTest {
         MenuProducts menuProducts = new MenuProducts(List.of(menuProduct1, menuProduct2));
 
         // expect
-        assertThat(menuProducts.calculateAmount()).isEqualTo(BigDecimal.valueOf(56500L));
+        assertThat(menuProducts.calculateAmount()).isEqualTo(Money.valueOf(56500L));
     }
 }

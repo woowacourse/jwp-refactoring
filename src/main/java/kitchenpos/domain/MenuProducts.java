@@ -2,18 +2,18 @@ package kitchenpos.domain;
 
 import static javax.persistence.CascadeType.PERSIST;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import kitchenpos.vo.Money;
 
 @Embeddable
 public class MenuProducts {
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = {PERSIST})
+    @OneToMany(fetch = FetchType.EAGER, cascade = PERSIST)
     @JoinColumn(name = "menu_id", nullable = false, updatable = false)
     private List<MenuProduct> items = new ArrayList<>();
 
@@ -24,10 +24,8 @@ public class MenuProducts {
         this.items = items;
     }
 
-    public BigDecimal calculateAmount() {
-        return items.stream()
-                .map(MenuProduct::calculateAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    public Money calculateAmount() {
+        return Money.sum(items, MenuProduct::calculateAmount);
     }
 
     public List<MenuProduct> getItems() {

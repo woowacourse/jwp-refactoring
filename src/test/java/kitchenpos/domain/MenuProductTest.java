@@ -3,7 +3,7 @@ package kitchenpos.domain;
 import static kitchenpos.fixture.ProductFixture.상품;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.math.BigDecimal;
+import kitchenpos.vo.Money;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -19,9 +19,9 @@ class MenuProductTest {
         MenuProduct menuProduct = new MenuProduct(product, 2L);
 
         // when
-        BigDecimal result = menuProduct.calculateAmount();
+        Money result = menuProduct.calculateAmount();
 
         // then
-        assertThat(result).isEqualTo(BigDecimal.valueOf(17800L));
+        assertThat(result).isEqualTo(Money.valueOf(17800L));
     }
 }

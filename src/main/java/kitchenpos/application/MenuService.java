@@ -13,6 +13,7 @@ import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
+import kitchenpos.vo.Money;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +44,12 @@ public class MenuService {
                     .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
             menuProducts.add(new MenuProduct(product, menuProductRequest.getQuantity()));
         }
-        Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(), menuProducts);
+        Menu menu = new Menu(
+                request.getName(),
+                Money.valueOf(request.getPrice()),
+                request.getMenuGroupId(),
+                menuProducts
+        );
         return MenuResponse.from(menuRepository.save(menu));
     }
 

@@ -1,6 +1,5 @@
 package kitchenpos.domain;
 
-import java.math.BigDecimal;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -8,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import kitchenpos.common.BaseEntity;
+import kitchenpos.vo.Money;
 
 @Entity
 public class MenuProduct extends BaseEntity {
@@ -35,8 +35,8 @@ public class MenuProduct extends BaseEntity {
         this.quantity = quantity;
     }
 
-    public BigDecimal calculateAmount() {
-        return product.getPrice().multiply(BigDecimal.valueOf(quantity));
+    public Money calculateAmount() {
+        return product.getPrice().times(quantity);
     }
 
     public Long getSeq() {
