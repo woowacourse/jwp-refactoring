@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import static kitchenpos.domain.exception.OrderTableExceptionType.NUMBER_OF_GUEST_LOWER_THAN_ZERO;
 import static kitchenpos.domain.exception.OrderTableExceptionType.TABLE_CANT_CHANGE_EMPTY_ALREADY_IN_GROUP;
+import static kitchenpos.domain.exception.OrderTableExceptionType.TABLE_CANT_CHANGE_NUMBER_OF_GUESTS_EMPTY;
 
 import kitchenpos.domain.exception.OrderTableException;
 
@@ -52,6 +53,9 @@ public class OrderTable {
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
+        if (empty) {
+            throw new OrderTableException(TABLE_CANT_CHANGE_NUMBER_OF_GUESTS_EMPTY);
+        }
         this.numberOfGuests = numberOfGuests;
     }
 

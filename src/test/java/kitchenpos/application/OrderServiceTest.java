@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import static kitchenpos.fixture.OrderFixture.createOrderLineItem;
-import static kitchenpos.fixture.TableFixture.주문_테이블;
+import static kitchenpos.fixture.TableFixture.비어있는_주문_테이블;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -71,7 +71,7 @@ class OrderServiceTest extends ServiceIntegrationTest {
             //given
             final Menu menu = createMenu();
             final OrderLineItem orderLineItem = createOrderLineItem(menu.getId(), 1L);
-            final OrderTable savedOrderTable = tableService.create(주문_테이블());
+            final OrderTable savedOrderTable = tableService.create(비어있는_주문_테이블());
 
             final Order order = new Order();
             order.setOrderLineItems(List.of(orderLineItem));

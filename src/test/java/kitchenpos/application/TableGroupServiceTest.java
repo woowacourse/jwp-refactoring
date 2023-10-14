@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import static kitchenpos.fixture.TableFixture.전체_주문_테이블;
-import static kitchenpos.fixture.TableFixture.주문_테이블;
+import static kitchenpos.fixture.TableFixture.비어있는_주문_테이블;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
@@ -123,8 +123,8 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         void throwExceptionIfOrderIsNotCompletion() {
             //given
             final TableGroup tableGroup = new TableGroup();
-            final OrderTable savedOrderTable = orderTableDao.save(주문_테이블());
-            final OrderTable savedOrderTable2 = orderTableDao.save(주문_테이블());
+            final OrderTable savedOrderTable = orderTableDao.save(비어있는_주문_테이블());
+            final OrderTable savedOrderTable2 = orderTableDao.save(비어있는_주문_테이블());
             saveOrderMeal(savedOrderTable);
             tableGroup.setOrderTables(List.of(savedOrderTable, savedOrderTable2));
             final TableGroup savedTableGroup = tableGroupService.create(tableGroup);

@@ -3,7 +3,7 @@ package kitchenpos.application;
 import static kitchenpos.fixture.MenuFixture.후라이드치킨;
 import static kitchenpos.fixture.OrderFixture.createOrderLineItem;
 import static kitchenpos.fixture.ProductFixture.후라이드;
-import static kitchenpos.fixture.TableFixture.주문_테이블;
+import static kitchenpos.fixture.TableFixture.비어있는_주문_테이블;
 
 import java.util.List;
 import kitchenpos.domain.Menu;
@@ -57,14 +57,14 @@ public abstract class ServiceIntegrationTest {
     }
 
     protected OrderTable createOrderTable() {
-        final OrderTable orderTable = 주문_테이블();
+        final OrderTable orderTable = 비어있는_주문_테이블();
         orderTable.setEmpty(false);
         return tableService.create(orderTable);
     }
 
     protected void saveTableGroup(final OrderTable savedOrderTable) {
         final TableGroup tableGroup = new TableGroup();
-        final OrderTable orderTable = tableService.create(주문_테이블());
+        final OrderTable orderTable = tableService.create(비어있는_주문_테이블());
         tableGroup.setOrderTables(List.of(savedOrderTable, orderTable));
         tableGroupService.create(tableGroup);
     }
