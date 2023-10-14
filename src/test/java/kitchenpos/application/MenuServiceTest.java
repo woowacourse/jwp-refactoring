@@ -33,7 +33,7 @@ class MenuServiceTest extends ServiceTest {
     @Autowired
     private MenuService menuService;
 
-    @DisplayName("메뉴를 생성한다. 메뉴의 가격은 모든 메뉴 상품에 대해 (상품의 가격 * 상품의 양)을 합한 것이다.")
+    @DisplayName("메뉴를 생성한다. 메뉴의 가격은 모든 상품의 금액(가격 * 수량)을 합한 것보다 클 수 없다.")
     @Test
     void create() {
         // given
@@ -54,7 +54,7 @@ class MenuServiceTest extends ServiceTest {
         // then
         Assertions.assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getPrice().intValue()).isEqualTo(33_000),
+                () -> assertThat(actual.getPrice().intValue()).isLessThanOrEqualTo(33_000),
                 () -> assertThat(actual.getMenuProducts()).allMatch(
                         menuProduct -> menuProduct.getMenuId().equals(actual.getId())
                 )
