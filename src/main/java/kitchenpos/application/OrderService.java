@@ -2,8 +2,8 @@ package kitchenpos.application;
 
 import static java.util.stream.Collectors.toList;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
@@ -12,12 +12,10 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderCreateRequest;
-import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderResponse;
 import kitchenpos.dto.OrderStatusUpdateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
@@ -37,36 +35,17 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(OrderCreateRequest request) {
-        List<OrderLineItemRequest> orderLineItemRequests = request.getOrderLineItems();
-
-        if (CollectionUtils.isEmpty(orderLineItemRequests)) {
-            throw new IllegalArgumentException("주문 항목 목록이 있어야 합니다.");
-        }
-
-        final List<Long> menuIds = orderLineItemRequests.stream()
-                .map(OrderLineItemRequest::getMenuId)
-                .collect(toList());
-
-        if (orderLineItemRequests.size() != menuRepository.countByIdIn(menuIds)) {
+        List<Long> menuIds = request.getMenuIds();
+        if (menuIds.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException("등록되지 않은 메뉴를 주문할 수 없습니다.");
         }
 
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 테이블에서 주문을 할 수 없습니다."));
-
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("빈 테이블인 경우 주문을 할 수 없습니다.");
-        }
-
-        final List<OrderLineItem> orderLineItems = new ArrayList<>();
-        for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
-            OrderLineItem orderLineItem = new OrderLineItem(
-                    orderLineItemRequest.getMenuId(),
-                    orderLineItemRequest.getQuantity()
-            );
-            orderLineItems.add(orderLineItem);
-        }
-        Order order = new Order(orderTable.getId(), orderLineItems);
+        
+        Order order = request.getOrderLineItems().stream()
+                .map(itemRequest -> new OrderLineItem(itemRequest.getMenuId(), itemRequest.getQuantity()))
+                .collect(Collectors.collectingAndThen(toList(), items -> new Order(orderTable, items)));
         return OrderResponse.from(orderRepository.save(order));
     }
 

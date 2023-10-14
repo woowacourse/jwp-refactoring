@@ -5,7 +5,6 @@ import static javax.persistence.GenerationType.IDENTITY;
 import static kitchenpos.domain.OrderStatus.COMPLETION;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -15,8 +14,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import kitchenpos.common.BaseEntity;
+import org.springframework.util.CollectionUtils;
 
 @Table(name = "orders")
 @Entity
@@ -25,38 +26,43 @@ public class Order extends BaseEntity {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    private Long orderTableId;
+
+    @OneToOne
+    private OrderTable orderTable;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
+    
     private LocalDateTime orderedTime;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = {PERSIST})
     @JoinColumn(name = "order_id", nullable = false, updatable = false)
     private List<OrderLineItem> orderLineItems;
 
-    public Order(Long orderTableId) {
-        this(orderTableId, OrderStatus.COOKING, LocalDateTime.now());
+    protected Order() {
     }
 
-    public Order(Long orderTableId, List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+    public Order(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+        this(null, orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
     }
 
-    public Order(Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
-        this(null, orderTableId, orderStatus, orderedTime, new ArrayList<>());
-    }
-
-    public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
+    public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime,
                  List<OrderLineItem> orderLineItems) {
+        validate(orderTable, orderLineItems);
         this.id = id;
-        this.orderTableId = orderTableId;
+        this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
     }
 
-    protected Order() {
+    private void validate(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("빈 테이블인 경우 주문을 할 수 없습니다.");
+        }
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException("주문 항목 목록이 있어야 합니다.");
+        }
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {
@@ -66,16 +72,12 @@ public class Order extends BaseEntity {
         this.orderStatus = orderStatus;
     }
 
-    public void changeOrderLineItems(List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
-    }
-
     public Long getId() {
         return id;
     }
 
-    public Long getOrderTableId() {
-        return orderTableId;
+    public OrderTable getOrderTable() {
+        return orderTable;
     }
 
     public OrderStatus getOrderStatus() {

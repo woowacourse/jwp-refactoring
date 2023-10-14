@@ -2,9 +2,10 @@ package kitchenpos.domain;
 
 import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.fixture.OrderLineItemFixture.주문_항목;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,9 @@ class OrderTest {
     @Test
     void 주문의_상태를_변경할_때_이미_완료된_주문이라면_예외를_던진다() {
         // given
-        Order order = new Order(1L, COMPLETION, LocalDateTime.now());
+        OrderLineItem orderLineItem = 주문_항목(1L, 2);
+        Order order = new Order(new OrderTable(0, false), List.of(orderLineItem));
+        order.changeOrderStatus(COMPLETION);
 
         // expect
         assertThatThrownBy(() -> order.changeOrderStatus(COOKING))

@@ -61,6 +61,7 @@ public class OrderServiceTest {
     private ProductRepository productRepository;
 
     private Menu menu;
+    private OrderTable orderTable;
 
     @BeforeEach
     void setUp() {
@@ -68,6 +69,7 @@ public class OrderServiceTest {
         Product product = productRepository.save(상품("치즈 피자", 8900L));
         MenuProduct menuProduct = 메뉴_상품(product, 1L);
         menu = menuRepository.save(메뉴("피자", 8900L, menuGroup.getId(), List.of(menuProduct)));
+        orderTable = orderTableRepository.save(테이블(false));
     }
 
     @Nested
@@ -76,7 +78,7 @@ public class OrderServiceTest {
         @Test
         void 주문_항목_목록이_없다면_예외를_던진다() {
             // given
-            OrderCreateRequest request = 주문_생성_요청(1L, List.of());
+            OrderCreateRequest request = 주문_생성_요청(orderTable.getId(), List.of());
 
             // expect
             assertThatThrownBy(() -> sut.create(request))
@@ -145,8 +147,8 @@ public class OrderServiceTest {
         // given
         OrderTable orderTable = orderTableRepository.save(테이블(false));
         Order order1 = orderRepository.save(
-                주문(orderTable.getId(), COOKING, List.of(주문_항목(menu.getId(), 2L))));
-        Order order2 = orderRepository.save(주문(orderTable.getId(), COOKING, List.of(주문_항목(menu.getId(), 2L))));
+                주문(orderTable, COOKING, List.of(주문_항목(menu.getId(), 2L))));
+        Order order2 = orderRepository.save(주문(orderTable, COOKING, List.of(주문_항목(menu.getId(), 2L))));
 
         // when
         List<OrderResponse> result = sut.list();
@@ -175,7 +177,8 @@ public class OrderServiceTest {
         void 완료된_주문이라면_예외가_발생한다() {
             // given
             OrderTable orderTable = orderTableRepository.save(테이블(false));
-            Order order = orderRepository.save(주문(orderTable.getId(), COMPLETION, List.of()));
+            OrderLineItem orderLineItem = 주문_항목(menu.getId(), 2L);
+            Order order = orderRepository.save(주문(orderTable, COMPLETION, List.of(orderLineItem)));
             OrderStatusUpdateRequest request = new OrderStatusUpdateRequest(COOKING.name());
 
             // expect
@@ -188,7 +191,8 @@ public class OrderServiceTest {
         void 주문의_상태가_정상적으로_변경한다() {
             // given
             OrderTable orderTable = orderTableRepository.save(테이블(false));
-            Order order = orderRepository.save(주문(orderTable.getId(), COOKING, List.of()));
+            OrderLineItem orderLineItem = 주문_항목(menu.getId(), 2L);
+            Order order = orderRepository.save(주문(orderTable, COOKING, List.of(orderLineItem)));
             OrderStatusUpdateRequest request = new OrderStatusUpdateRequest(MEAL.name());
 
             // when

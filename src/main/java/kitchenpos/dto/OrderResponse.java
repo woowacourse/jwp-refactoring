@@ -34,7 +34,7 @@ public class OrderResponse {
                 .collect(toList());
         return new OrderResponse(
                 order.getId(),
-                order.getOrderTableId(),
+                order.getOrderTable().getId(),
                 order.getOrderStatus().name(),
                 order.getOrderedTime(),
                 orderLineItemResponses
