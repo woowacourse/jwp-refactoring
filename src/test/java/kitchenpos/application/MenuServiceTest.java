@@ -25,7 +25,6 @@ class MenuServiceTest {
 
     private static final BigDecimal PRICE = BigDecimal.valueOf(1).setScale(2, RoundingMode.HALF_UP);
 
-
     @Autowired
     private MenuService menuService;
 
