@@ -26,6 +26,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderCreateRequest;
+import kitchenpos.dto.OrderStatusUpdateRequest;
 import kitchenpos.test.ServiceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -157,8 +158,11 @@ public class OrderServiceTest {
 
         @Test
         void 존재하지_않는_주문이라면_예외가_발생한다() {
+            // given
+            OrderStatusUpdateRequest request = new OrderStatusUpdateRequest(COMPLETION.name());
+
             // expect
-            assertThatThrownBy(() -> sut.changeOrderStatus(MAX_VALUE, 주문(1L, COMPLETION)))
+            assertThatThrownBy(() -> sut.changeOrderStatus(MAX_VALUE, request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("주문을 찾을 수 없습니다.");
         }
@@ -168,10 +172,10 @@ public class OrderServiceTest {
             // given
             OrderTable orderTable = orderTableDao.save(테이블(false));
             Order order = orderDao.save(주문(orderTable.getId(), COMPLETION));
-            order.changeOrderStatus(COOKING.name());
+            OrderStatusUpdateRequest request = new OrderStatusUpdateRequest(COOKING.name());
 
             // expect
-            assertThatThrownBy(() -> sut.changeOrderStatus(order.getId(), order))
+            assertThatThrownBy(() -> sut.changeOrderStatus(order.getId(), request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("완료된 주문의 상태는 변경할 수 없습니다.");
         }
@@ -181,10 +185,10 @@ public class OrderServiceTest {
             // given
             OrderTable orderTable = orderTableDao.save(테이블(false));
             Order order = orderDao.save(주문(orderTable.getId(), COOKING));
-            order.changeOrderStatus(MEAL.name());
+            OrderStatusUpdateRequest request = new OrderStatusUpdateRequest(MEAL.name());
 
             // when
-            Order changedOrder = sut.changeOrderStatus(order.getId(), order);
+            Order changedOrder = sut.changeOrderStatus(order.getId(), request);
 
             // then
             Order savedOrder = orderDao.findById(order.getId()).get();
