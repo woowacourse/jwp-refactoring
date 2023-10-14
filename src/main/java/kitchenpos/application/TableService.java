@@ -25,8 +25,8 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse create(final OrderTable orderTable) {
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
+        orderTable.changeId(null);
+        orderTable.changeTableGroupId(null);
 
         return OrderTableResponse.from(orderTableDao.save(orderTable));
     }
@@ -51,7 +51,7 @@ public class TableService {
             throw new IllegalArgumentException("테이블의 주문 상태가 조리중이거나 식사중인 경우 테이블의 상태를 변경할 수 없습니다.");
         }
 
-        savedOrderTable.setEmpty(orderTable.isEmpty());
+        savedOrderTable.changeEmpty(orderTable.isEmpty());
 
         return OrderTableResponse.from(orderTableDao.save(savedOrderTable));
     }
@@ -71,7 +71,7 @@ public class TableService {
             throw new IllegalArgumentException("빈 테이블에는 손님을 지정할 수 없습니다.");
         }
 
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
+        savedOrderTable.changeNumberOfGuests(numberOfGuests);
 
         return OrderTableResponse.from(orderTableDao.save(savedOrderTable));
     }
