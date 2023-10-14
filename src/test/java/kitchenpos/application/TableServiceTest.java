@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.OrderTableEmptyRequest;
 import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
@@ -62,7 +63,7 @@ class TableServiceTest {
         orderDao.save(order);
 
         // when
-        OrderTable emptyTable = tableService.changeEmpty(orderTable.getId(), new OrderTable(orderTable.getTableGroupId(), orderTable.getNumberOfGuests(), true));
+        OrderTable emptyTable = tableService.changeEmpty(orderTable.getId(), new OrderTableEmptyRequest(true));
 
         // then
         assertThat(emptyTable.isEmpty()).isTrue();
@@ -74,7 +75,7 @@ class TableServiceTest {
         OrderTable orderTable = orderTableDao.save(new OrderTable(1L, 10, false));
 
         // expect
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), new OrderTable(orderTable.getTableGroupId(), orderTable.getNumberOfGuests(), true)))
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), new OrderTableEmptyRequest(true)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -87,7 +88,7 @@ class TableServiceTest {
         orderDao.save(order);
 
         // expect
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), new OrderTable(orderTable.getTableGroupId(), orderTable.getNumberOfGuests(), true)))
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), new OrderTableEmptyRequest(true)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

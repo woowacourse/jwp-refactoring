@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.OrderTableEmptyRequest;
 import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
@@ -32,7 +33,7 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
+    public OrderTable changeEmpty(final Long orderTableId, final OrderTableEmptyRequest request) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -45,7 +46,7 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.changeEmpty(orderTable.isEmpty());
+        savedOrderTable.changeEmpty(request.isEmpty());
 
         return orderTableDao.save(savedOrderTable);
     }

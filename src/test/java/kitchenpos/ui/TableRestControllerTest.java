@@ -2,6 +2,7 @@ package kitchenpos.ui;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.TableService;
+import kitchenpos.application.dto.OrderTableEmptyRequest;
 import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Test;
@@ -72,16 +73,16 @@ class TableRestControllerTest {
     void 빈_테이블로_변경한다() throws Exception {
         // given
         Long tableId = 1L;
-        OrderTable updatedTable = new OrderTable();
-        updatedTable.changeEmpty(true);
+        OrderTableEmptyRequest orderTableEmptyRequest = new OrderTableEmptyRequest(true);
+        OrderTable orderTable = new OrderTable(1L, 1L, 10, true);
 
         // when
-        when(tableService.changeEmpty(tableId, updatedTable)).thenReturn(updatedTable);
+        when(tableService.changeEmpty(tableId, orderTableEmptyRequest)).thenReturn(orderTable);
 
         // then
         mockMvc.perform(put("/api/tables/1/empty")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(updatedTable)))
+                        .content(objectMapper.writeValueAsBytes(orderTableEmptyRequest)))
                 .andExpect(status().isOk());
     }
 
