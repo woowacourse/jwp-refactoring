@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import static kitchenpos.fixture.MenuFixture.메뉴;
+import static kitchenpos.fixture.MenuFixture.메뉴_생성_요청;
 import static kitchenpos.fixture.MenuGroupFixture.메뉴_그룹;
 import static kitchenpos.fixture.MenuProductFixture.메뉴_상품;
 import static kitchenpos.fixture.ProductFixture.상품;
@@ -17,6 +18,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuRequest;
 import kitchenpos.test.ServiceTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -47,10 +49,10 @@ public class MenuServiceTest {
         @Test
         void 메뉴의_가격이_0원_미만인_경우_예외를_던진다() {
             // given
-            Menu menu = 메뉴("치즈피자", -1L, 1L, List.of());
+            MenuRequest request = 메뉴_생성_요청("치즈피자", -1L, 1L, List.of());
 
             // expect
-            assertThatThrownBy(() -> sut.create(menu))
+            assertThatThrownBy(() -> sut.create(request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("메뉴의 가격은 0원 이상이어야 합니다.");
         }
@@ -58,10 +60,10 @@ public class MenuServiceTest {
         @Test
         void 메뉴_그룹_아이디가_존재하지_않는_경우_예외를_던진다() {
             // given
-            Menu menu = 메뉴("치즈피자", 0L, 1L, List.of());
+            MenuRequest request = 메뉴_생성_요청("치즈피자", 0L, 1L, List.of());
 
             // expect
-            assertThatThrownBy(() -> sut.create(menu))
+            assertThatThrownBy(() -> sut.create(request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("존재하지 않는 메뉴 그룹 아이디입니다.");
         }
@@ -70,10 +72,10 @@ public class MenuServiceTest {
         void 존재하지_않는_메뉴_상품을_입력하는_경우_예외를_던진다() {
             // given
             MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("피자"));
-            Menu menu = 메뉴("치즈피자", 0L, menuGroup.getId(), List.of(메뉴_상품(1L, 1L, 1L)));
+            MenuRequest request = 메뉴_생성_요청("치즈피자", 0L, menuGroup.getId(), List.of(메뉴_상품(1L, 1L, 1L)));
 
             // expect
-            assertThatThrownBy(() -> sut.create(menu))
+            assertThatThrownBy(() -> sut.create(request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("상품이 존재하지 않습니다.");
         }
@@ -84,10 +86,10 @@ public class MenuServiceTest {
             MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("피자"));
             Product product = productDao.save(상품("치즈 피자", 8900L));
             MenuProduct menuProduct = 메뉴_상품(null, product.getId(), 1L);
-            Menu menu = 메뉴("치즈피자", 8901L, menuGroup.getId(), List.of(menuProduct));
+            MenuRequest request = 메뉴_생성_요청("치즈피자", 8901L, menuGroup.getId(), List.of(menuProduct));
 
             // expect
-            assertThatThrownBy(() -> sut.create(menu))
+            assertThatThrownBy(() -> sut.create(request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("메뉴의 가격은 메뉴 상품들의 금액의 합보다 클 수 없습니다.");
         }
@@ -98,10 +100,10 @@ public class MenuServiceTest {
             MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("피자"));
             Product product = productDao.save(상품("치즈 피자", 8900L));
             MenuProduct menuProduct = 메뉴_상품(null, product.getId(), 1L);
-            Menu menu = 메뉴("치즈피자", 8900L, menuGroup.getId(), List.of(menuProduct));
+            MenuRequest request = 메뉴_생성_요청("치즈피자", 8900L, menuGroup.getId(), List.of(menuProduct));
 
             // when
-            Menu savedMenu = sut.create(menu);
+            Menu savedMenu = sut.create(request);
 
             // then
             assertSoftly(softly -> {
@@ -121,11 +123,11 @@ public class MenuServiceTest {
 
         Menu menu1 = menuDao.save(메뉴("치즈피자", 8900L, menuGroup.getId()));
         MenuProduct menuProduct1 = menuProductDao.save(메뉴_상품(menu1.getId(), product.getId(), 1L));
-        menu1.setMenuProducts(List.of(menuProduct1));
+        menu1.changeMenuProducts(List.of(menuProduct1));
 
         Menu menu2 = menuDao.save(메뉴("오픈기념 치즈피자", 5000L, menuGroup.getId()));
         MenuProduct menuProduct2 = menuProductDao.save(메뉴_상품(menu2.getId(), product.getId(), 1L));
-        menu2.setMenuProducts(List.of(menuProduct2));
+        menu2.changeMenuProducts(List.of(menuProduct2));
 
         // when
         List<Menu> result = sut.list();
