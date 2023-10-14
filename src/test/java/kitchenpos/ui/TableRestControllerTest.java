@@ -3,6 +3,7 @@ package kitchenpos.ui;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.TableService;
 import kitchenpos.application.dto.OrderTableEmptyRequest;
+import kitchenpos.application.dto.OrderTableNumberOfGuestRequest;
 import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Test;
@@ -91,9 +92,10 @@ class TableRestControllerTest {
         // given
         Long tableId = 1L;
         OrderTable updatedTable = new OrderTable(1L, 1L, 10, false);
+        OrderTableNumberOfGuestRequest request = new OrderTableNumberOfGuestRequest(10);
 
         // when
-        when(tableService.changeNumberOfGuests(tableId, updatedTable)).thenReturn(updatedTable);
+        when(tableService.changeNumberOfGuests(tableId, request)).thenReturn(updatedTable);
 
         // then
         mockMvc.perform(put("/api/tables/1/number-of-guests")

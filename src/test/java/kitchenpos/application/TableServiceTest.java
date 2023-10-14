@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.OrderTableEmptyRequest;
+import kitchenpos.application.dto.OrderTableNumberOfGuestRequest;
 import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.LocalDateTime;
 
@@ -90,5 +92,52 @@ class TableServiceTest {
         // expect
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), new OrderTableEmptyRequest(true)))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @ValueSource(ints = {-1, -2})
+    @ParameterizedTest
+    void 주문_테이블의_손님_수를_변경할_때_0보다_작으면_예외가_발생한다(int numberOfGuests) {
+        // given
+        OrderTableNumberOfGuestRequest request = new OrderTableNumberOfGuestRequest(numberOfGuests);
+        OrderTable orderTable = orderTableDao.save(new OrderTable(null, 10, false));
+
+        // expect
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), request))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 주문_테이블의_손님_수를_변경할_때_저장되어있는_주문_테이블이_없으면_예외가_발생한다() {
+        // given
+        OrderTableNumberOfGuestRequest request = new OrderTableNumberOfGuestRequest(10);
+        Long invalidOrderTableId = Long.MAX_VALUE;
+
+        // expect
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(invalidOrderTableId, request))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 주문_테이블의_손님_수를_변경할_때_주문_테이블이_빈_테이블이면_예외가_발생한다() {
+        // given
+        OrderTableNumberOfGuestRequest request = new OrderTableNumberOfGuestRequest(11);
+        OrderTable orderTable = orderTableDao.save(new OrderTable(null, 10, true));
+
+        // expect
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), request))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 주문_테이블의_손님_수를_변경한다() {
+        // given
+        OrderTableNumberOfGuestRequest request = new OrderTableNumberOfGuestRequest(11);
+        OrderTable orderTable = orderTableDao.save(new OrderTable(null, 10, false));
+
+        // when
+        OrderTable updatedOrderTable = tableService.changeNumberOfGuests(orderTable.getId(), request);
+
+        // then
+        assertThat(updatedOrderTable.getNumberOfGuests()).isEqualTo(11);
     }
 }
