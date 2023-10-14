@@ -54,8 +54,7 @@ class ProductServiceTest {
 
             // when
             // then
-            Assertions.assertThatThrownBy(() -> productService.create(productRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+            Assertions.assertThatThrownBy(() -> productService.create(productRequest)).isInstanceOf(IllegalArgumentException.class);
         }
     }
 
@@ -77,7 +76,5 @@ class ProductServiceTest {
             final Product createdProduct = products.get(products.size() - 1);
             softly.assertThat(createdProduct.getId()).isEqualTo(testProduct.getId());
         });
-
     }
-
 }
