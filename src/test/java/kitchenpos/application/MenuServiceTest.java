@@ -120,7 +120,7 @@ class MenuServiceTest extends ServiceTest {
         }
 
         @Test
-        void 요청_가격과_메뉴_상품들_가격의_합이_다르면_예외_발생() {
+        void 요청_가격이_메뉴_상품들_가격의_합보다_크면_예외_발생() {
             // given
             Long wrongPrice = product.getPrice().longValue() + 10_000L;
             MenuProduct menuProduct = createMenuProduct(product.getId(), 1);
