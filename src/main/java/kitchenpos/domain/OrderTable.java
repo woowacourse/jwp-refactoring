@@ -31,6 +31,12 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public void validateTableGroupNotExists() {
+        if (tableGroup != null) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public void changeTableGroup(TableGroup tableGroup) {
         this.tableGroup = tableGroup;
     }
@@ -40,7 +46,21 @@ public class OrderTable {
     }
 
     public void changeNumberOfGuests(int numberOfGuests) {
+        validateIsNotEmpty();
+        validateNumberOfGuestsIsPositive(numberOfGuests);
         this.numberOfGuests = numberOfGuests;
+    }
+
+    private void validateIsNotEmpty() {
+        if (isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateNumberOfGuestsIsPositive(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
