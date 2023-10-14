@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -27,8 +28,10 @@ class ProductServiceTest extends IntegrationTest {
         final Product savedProduct = productService.create(product);
 
         // then
-        assertThat(savedProduct.getId()).isNotNull();
-        assertThat(savedProduct.getName()).isEqualTo("chicken");
+        assertSoftly(softly -> {
+            softly.assertThat(savedProduct.getId()).isNotNull();
+            softly.assertThat(savedProduct.getName()).isEqualTo("chicken");
+        });
     }
 
     @Nested

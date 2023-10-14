@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -32,10 +33,12 @@ class TableGroupServiceTest extends IntegrationTest {
         final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
         // then
-        assertThat(savedTableGroup.getId()).isNotNull();
-        assertThat(savedTableGroup.getOrderTables())
-                .extracting(OrderTable::isEmpty)
-                .containsOnly(false);
+        assertSoftly(softly -> {
+            softly.assertThat(savedTableGroup.getId()).isNotNull();
+            softly.assertThat(savedTableGroup.getOrderTables())
+                    .extracting(OrderTable::isEmpty)
+                    .containsOnly(false);
+        });
     }
 
     @Nested

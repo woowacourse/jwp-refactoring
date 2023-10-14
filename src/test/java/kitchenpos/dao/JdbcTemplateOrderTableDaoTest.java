@@ -1,6 +1,7 @@
 package kitchenpos.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -60,10 +61,12 @@ class JdbcTemplateOrderTableDaoTest {
         final Optional<OrderTable> menuGroupDaoById = jdbcTemplateOrderTableDao.findById(savedOrderTableId);
 
         // then
-        assertThat(menuGroupDaoById).isPresent();
-        assertThat(menuGroupDaoById.get())
-                .usingRecursiveComparison()
-                .isEqualTo(savedOrderTable);
+        assertSoftly(softly -> {
+            softly.assertThat(menuGroupDaoById).isPresent();
+            softly.assertThat(menuGroupDaoById.get())
+                    .usingRecursiveComparison()
+                    .isEqualTo(savedOrderTable);
+        });
     }
 
     @Test

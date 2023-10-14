@@ -1,6 +1,7 @@
 package kitchenpos.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -64,10 +65,12 @@ class JdbcTemplateOrderLineItemDaoTest {
         final Optional<OrderLineItem> findBySeq = jdbcTemplateOrderLineItemDao.findById(findSeq);
 
         // then
-        assertThat(findBySeq).isPresent();
-        assertThat(findBySeq.get())
-                .usingRecursiveComparison()
-                .isEqualTo(savedOrderLineItemGroup);
+        assertSoftly(softly -> {
+            softly.assertThat(findBySeq).isPresent();
+            softly.assertThat(findBySeq.get())
+                    .usingRecursiveComparison()
+                    .isEqualTo(savedOrderLineItemGroup);
+        });
     }
 
     @Test

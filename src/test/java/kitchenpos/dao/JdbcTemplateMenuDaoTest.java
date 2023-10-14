@@ -1,6 +1,7 @@
 package kitchenpos.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -48,10 +49,12 @@ class JdbcTemplateMenuDaoTest {
         final Optional<Menu> findByIdMenu = jdbcTemplateMenuDao.findById(findId);
 
         // then
-        assertThat(findByIdMenu).isPresent();
-        assertThat(findByIdMenu.get())
-                .usingRecursiveComparison()
-                .isEqualTo(savedMenu);
+        assertSoftly(softly -> {
+            softly.assertThat(findByIdMenu).isPresent();
+            softly.assertThat(findByIdMenu.get())
+                    .usingRecursiveComparison()
+                    .isEqualTo(savedMenu);
+        });
     }
 
     @Test

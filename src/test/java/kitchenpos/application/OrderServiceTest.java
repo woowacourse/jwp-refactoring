@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.Collections;
 import java.util.List;
@@ -33,9 +34,11 @@ class OrderServiceTest extends IntegrationTest {
         final Order savedOrder = orderService.create(order);
 
         // then
-        assertThat(savedOrder.getId()).isNotNull();
-        assertThat(savedOrder.getOrderStatus()).isEqualTo("COOKING");
-        assertThat(savedOrder.getOrderLineItems()).hasSize(1);
+        assertSoftly(softly -> {
+            softly.assertThat(savedOrder.getId()).isNotNull();
+            softly.assertThat(savedOrder.getOrderStatus()).isEqualTo("COOKING");
+            softly.assertThat(savedOrder.getOrderLineItems()).hasSize(1);
+        });
     }
 
     @Nested
@@ -108,8 +111,10 @@ class OrderServiceTest extends IntegrationTest {
         // then
         assertThat(list).hasSize(1);
         final Order foundOrder = list.get(0);
-        assertThat(foundOrder.getId()).isNotNull();
-        assertThat(foundOrder.getOrderStatus()).isEqualTo("COOKING");
+        assertSoftly(softly -> {
+            softly.assertThat(foundOrder.getId()).isNotNull();
+            softly.assertThat(foundOrder.getOrderStatus()).isEqualTo("COOKING");
+        });
     }
 
     @Nested

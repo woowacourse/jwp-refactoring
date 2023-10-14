@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -164,7 +165,9 @@ class MenuServiceTest extends IntegrationTest {
         final Menu createdMenu = menuService.create(requestMenu);
 
         // then
-        assertThat(createdMenu.getId()).isNotNull();
-        assertThat(createdMenu.getMenuProducts()).hasSize(2);
+        assertSoftly(softly -> {
+            softly.assertThat(createdMenu.getId()).isNotNull();
+            softly.assertThat(createdMenu.getMenuProducts()).hasSize(2);
+        });
     }
 }

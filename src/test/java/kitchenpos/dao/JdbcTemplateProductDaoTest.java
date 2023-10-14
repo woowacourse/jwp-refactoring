@@ -1,6 +1,7 @@
 package kitchenpos.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -41,10 +42,12 @@ class JdbcTemplateProductDaoTest {
         final Optional<Product> productById = jdbcTemplateProductDao.findById(savedProductId);
 
         // then
-        assertThat(productById).isPresent();
-        assertThat(productById.get())
-                .usingRecursiveComparison()
-                .isEqualTo(savedProduct);
+        assertSoftly(softly -> {
+            softly.assertThat(productById).isPresent();
+            softly.assertThat(productById.get())
+                    .usingRecursiveComparison()
+                    .isEqualTo(savedProduct);
+        });
     }
 
     @Test
