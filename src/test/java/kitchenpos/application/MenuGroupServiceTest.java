@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.MenuGroupFixtures.두마리_메뉴;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.fixture.MenuGroupFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ class MenuGroupServiceTest extends ServiceTest {
     @Test
     void createAndList() {
         // given
-        MenuGroup menuGroup = MenuGroupFixtures.두마리_메뉴;
+        MenuGroup menuGroup = 두마리_메뉴;
 
         // when
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
