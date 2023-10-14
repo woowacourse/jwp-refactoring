@@ -127,7 +127,7 @@ class TableGroupServiceTest extends ServiceTestContext {
         TableGroup tableGroup = new TableGroup(LocalDateTime.now());
         TableGroup createdTableGroup = tableGroupDao.save(tableGroup);
 
-        OrderTable orderTable = new OrderTable(createdTableGroup, 0, false);
+        OrderTable orderTable = new OrderTable(createdTableGroup, 0, true);
         OrderTable createdOrderTable = orderTableDao.save(orderTable);
 
         Order order = new Order(createdOrderTable, orderStatus, LocalDateTime.now());

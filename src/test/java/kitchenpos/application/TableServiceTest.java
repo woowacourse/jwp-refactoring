@@ -81,7 +81,7 @@ class TableServiceTest extends ServiceTestContext {
     @EnumSource(mode = Mode.INCLUDE, names = {"COOKING", "MEAL"})
     void 빈_테이블로_변경하려_할_때_주문_상태가_COOKING이거나_MEAL이면_예외를_던진다(OrderStatus orderStatus) {
         // given
-        OrderTable orderTable = new OrderTable(null, 2, false);
+        OrderTable orderTable = new OrderTable(null, 2, true);
         OrderTable createdOrderTable = orderTableDao.save(orderTable);
 
         Order order = new Order(createdOrderTable, orderStatus, LocalDateTime.now());
