@@ -1,8 +1,6 @@
 package kitchenpos.application;
 
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.*;
 import org.junit.jupiter.api.Test;
@@ -24,12 +22,6 @@ class OrderServiceTest {
 
     @Autowired
     private MenuDao menuDao;
-
-    @Autowired
-    private OrderDao orderDao;
-
-    @Autowired
-    private OrderLineItemDao orderLineItemDao;
 
     @Autowired
     private OrderTableDao orderTableDao;

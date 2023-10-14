@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -25,9 +24,6 @@ class TableServiceTest {
 
     @Autowired
     private OrderDao orderDao;
-
-    @Autowired
-    private OrderTableDao orderTableDao;
 
     @Test
     void 주문_테이블을_생성한다() {
