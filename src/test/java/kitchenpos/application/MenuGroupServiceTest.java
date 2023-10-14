@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ class MenuGroupServiceTest extends IntegrationTest {
         menuGroupService.create(pizzaGroup);
 
         // when
-        final Iterable<MenuGroup> menuGroups = menuGroupService.list();
+        final List<MenuGroup> menuGroups = menuGroupService.list();
 
         // then
         assertThat(menuGroups).hasSize(2);
