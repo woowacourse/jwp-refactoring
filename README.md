@@ -17,6 +17,8 @@
     - [x] MenuService
     - [x] OrderService
     - [x] ProductService
+        - [x] 상품의 가격이 `null`이 아니고 0 이상일 경우 저장할 수 있다.
+        - [x] 모든 상품의 목록을 반환할 수 있다.
     - [x] TableGroupService
     - [x] TableService
 

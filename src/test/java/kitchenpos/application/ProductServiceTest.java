@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -28,8 +27,6 @@ class ProductServiceTest {
     @Autowired
     private ProductService productService;
 
-    private List<Product> preSavedProducts;
-
     private static Stream<List<Product>> should_return_product_list_when_request_list() {
         final Product product1 = new Product();
         product1.setName("상품1");
@@ -46,20 +43,15 @@ class ProductServiceTest {
         );
     }
 
-    @BeforeEach
-    void setUp() {
-        preSavedProducts = productDao.findAll();
-    }
-
     @ParameterizedTest
     @MethodSource
     @DisplayName("모든 상품 목록을 조회할 수 있다.")
     void should_return_product_list_when_request_list(final List<Product> products) {
         // given
-        products.forEach(product -> productDao.save(product));
-
-        final List<Product> expect = preSavedProducts;
+        final List<Product> expect = productDao.findAll();
         expect.addAll(products);
+
+        products.forEach(product -> productDao.save(product));
 
         // when
         final List<Product> actual = productService.list();
@@ -72,7 +64,7 @@ class ProductServiceTest {
             final Product expectProduct = expect.get(i);
 
             assertEquals(expectProduct.getName(), actualProduct.getName());
-            assertEquals(0, expectProduct.getPrice().compareTo(actualProduct.getPrice()));
+            assertThat(expectProduct.getPrice()).isEqualByComparingTo(actualProduct.getPrice());
         }
     }
 
@@ -82,8 +74,8 @@ class ProductServiceTest {
 
         @ParameterizedTest
         @CsvSource(value = {"0", "1", "100000000000"})
-        @DisplayName("상품 가격이 0 이상일 경우 상품이 정상적으로 저장된다.")
-        void should_save_when_price_is_greater_or_equal_then_zero(final BigDecimal price) {
+        @DisplayName("상품 가격이 null이 아니고 0 이상일 경우 상품이 정상적으로 저장된다.")
+        void should_create_when_price_is_not_null_and_greater_or_equal_then_zero(final BigDecimal price) {
             // given
             final Product product = new Product();
             product.setName("상품");
@@ -109,8 +101,7 @@ class ProductServiceTest {
             product.setPrice(null);
 
             // when & then
-            assertThrowsExactly(IllegalArgumentException.class,
-                    () -> productService.create(product));
+            assertThrowsExactly(IllegalArgumentException.class, () -> productService.create(product));
         }
 
         @ParameterizedTest
@@ -123,8 +114,7 @@ class ProductServiceTest {
             product.setPrice(price);
 
             // when & then
-            assertThrowsExactly(IllegalArgumentException.class,
-                    () -> productService.create(product));
+            assertThrowsExactly(IllegalArgumentException.class, () -> productService.create(product));
         }
     }
 }
