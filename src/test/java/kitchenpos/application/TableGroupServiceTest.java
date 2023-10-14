@@ -144,7 +144,7 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
     }
 
     private TableGroup saveTableGroupSuccessfully(final TableGroup tableGroup,
-                                                  final List<OrderTable> orderTables) {
+        final List<OrderTable> orderTables) {
         final List<OrderTable> savedOrderTables = orderTables.stream()
             .map(tableService::create)
             .collect(Collectors.toList());
