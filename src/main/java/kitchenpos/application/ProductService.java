@@ -12,20 +12,20 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProductService {
-    private final ProductRepository productDao;
+    private final ProductRepository productRepository;
 
-    public ProductService(final ProductRepository productDao) {
-        this.productDao = productDao;
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     @Transactional
     public ProductResponse create(ProductRequest request) {
         Product product = new Product(request.getName(), request.getPrice());
-        return ProductResponse.from(productDao.save(product));
+        return ProductResponse.from(productRepository.save(product));
     }
 
     public List<ProductResponse> list() {
-        return productDao.findAll().stream()
+        return productRepository.findAll().stream()
                 .map(ProductResponse::from)
                 .collect(toList());
     }
