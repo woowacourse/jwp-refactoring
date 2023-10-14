@@ -28,6 +28,17 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public void changeNumberOfGuests(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("테이블 인원은 양수여야합니다.");
+        }
+
+        if (empty) {
+            throw new IllegalArgumentException("비어있는 테이블의 인원을 변경할 수 없습니다.");
+        }
+        this.numberOfGuests = numberOfGuests;
+    }
+
     public Long getId() {
         return id;
     }
@@ -48,15 +59,15 @@ public class OrderTable {
         return numberOfGuests;
     }
 
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
-
     public boolean isEmpty() {
         return empty;
     }
 
     public void setEmpty(final boolean empty) {
         this.empty = empty;
+    }
+
+    public void setNumberOfGuests(int numberOfGuests) {
+        this.numberOfGuests = numberOfGuests;
     }
 }

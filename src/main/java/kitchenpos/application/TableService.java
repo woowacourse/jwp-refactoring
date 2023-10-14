@@ -1,15 +1,14 @@
 package kitchenpos.application;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
 
 @Service
 public class TableService {
@@ -55,20 +54,9 @@ public class TableService {
 
     @Transactional
     public OrderTable changeNumberOfGuests(Long orderTableId, int numberOfGuests) {
-
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-
         OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-            .orElseThrow(IllegalArgumentException::new);
-
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
-
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문테이블입니다."));
+        savedOrderTable.changeNumberOfGuests(numberOfGuests);
         return orderTableDao.save(savedOrderTable);
     }
 }

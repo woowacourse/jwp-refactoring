@@ -165,7 +165,8 @@ class TableServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(givenId, wrongValue))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("테이블 인원은 양수여야합니다.");
         }
 
         @Test
@@ -174,7 +175,8 @@ class TableServiceTest extends ServiceTest {
             System.out.println("list = " + list);
             // when & then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, 1))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("존재하지 않는 주문테이블입니다.");
         }
 
         @Test
@@ -184,7 +186,8 @@ class TableServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(givenId, 4))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("비어있는 테이블의 인원을 변경할 수 없습니다.");
         }
     }
 }
