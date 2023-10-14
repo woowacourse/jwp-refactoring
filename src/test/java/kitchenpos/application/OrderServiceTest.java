@@ -51,8 +51,7 @@ class OrderServiceTest {
         orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
         Menu menu = menuDao.save(new Menu("메뉴", BigDecimal.valueOf(10000), null, List.of()));
         savedOrderTable = orderTableDao.save(new OrderTable(null, 10, false));
-        savedOrderLineItem = orderLineItemDao.save(new OrderLineItem());
-        savedOrderLineItem.setMenuId(menu.getId());
+        savedOrderLineItem = orderLineItemDao.save(new OrderLineItem(1L, menu.getId(), 10));
     }
 
     @Test

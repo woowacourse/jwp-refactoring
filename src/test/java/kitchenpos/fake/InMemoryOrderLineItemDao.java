@@ -14,13 +14,17 @@ import java.util.stream.Collectors;
 
 public class InMemoryOrderLineItemDao implements OrderLineItemDao {
     private final Map<Long, OrderLineItem> map = new HashMap<>();
-    private final AtomicLong id = new AtomicLong();
+    private final AtomicLong seq = new AtomicLong();
 
     @Override
     public OrderLineItem save(OrderLineItem entity) {
-        long id = this.id.getAndIncrement();
-        entity.setSeq(id);
-        map.put(id, entity);
+        if (Objects.isNull(entity.getSeq())) {
+            long seq = this.seq.getAndIncrement();
+            OrderLineItem orderLineItem = new OrderLineItem(seq, entity.getOrderId(), entity.getMenuId(), entity.getQuantity());
+            map.put(seq, orderLineItem);
+            return orderLineItem;
+        }
+        map.put(entity.getSeq(), entity);
         return entity;
     }
 
