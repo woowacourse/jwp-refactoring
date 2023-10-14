@@ -98,7 +98,7 @@ public class TableGroupService {
 
         for (final OrderTable orderTable : orderTables) {
             orderTable.changeTableGroup(null);
-            orderTable.changeEmpty(false); // TODO: ?
+//            orderTable.changeEmpty(false); // TODO: ?
             orderTableRepository.save(orderTable);
         }
     }

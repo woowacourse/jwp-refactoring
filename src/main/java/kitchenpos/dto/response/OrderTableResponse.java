@@ -6,10 +6,10 @@ public class OrderTableResponse {
 
     private final Long id;
     private final Long tableGroupId;
-    private final int numberOfGuests;
-    private final boolean empty;
+    private final Integer numberOfGuests;
+    private final Boolean empty;
 
-    private OrderTableResponse(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
+    private OrderTableResponse(Long id, Long tableGroupId, Integer numberOfGuests, Boolean empty) {
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
@@ -33,11 +33,11 @@ public class OrderTableResponse {
         return tableGroupId;
     }
 
-    public int getNumberOfGuests() {
+    public Integer getNumberOfGuests() {
         return numberOfGuests;
     }
 
-    public boolean isEmpty() {
+    public Boolean isEmpty() {
         return empty;
     }
 }
