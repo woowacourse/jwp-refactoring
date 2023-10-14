@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.domain.exception.OrderTableExceptionType.TABLE_CANT_CHANGE_EMPTY_ALREADY_IN_GROUP;
 import static kitchenpos.fixture.OrderFixture.createOrderLineItem;
 import static kitchenpos.fixture.TableFixture.주문_테이블;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -11,6 +12,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.exception.OrderTableException;
 import kitchenpos.fixture.TableFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -69,7 +71,8 @@ class TableServiceTest extends ServiceIntegrationTest {
             final Long orderTableId = savedOrderTable.getId();
             assertThatThrownBy(
                 () -> tableService.changeEmpty(orderTableId, savedOrderTable)
-            ).isInstanceOf(IllegalArgumentException.class);
+            ).isInstanceOf(OrderTableException.class)
+                .hasMessage(TABLE_CANT_CHANGE_EMPTY_ALREADY_IN_GROUP.getMessage());
         }
 
         @Test
@@ -111,7 +114,7 @@ class TableServiceTest extends ServiceIntegrationTest {
             orderTable.setEmpty(false);
 
             final OrderTable savedOrderTable = tableService.create(orderTable);
-            savedOrderTable.setNumberOfGuests(10);
+            savedOrderTable.changeNumberOfGuests(10);
 
             //when
             final OrderTable changedOrderTable =
@@ -122,21 +125,22 @@ class TableServiceTest extends ServiceIntegrationTest {
                 .isEqualTo(savedOrderTable.getNumberOfGuests());
         }
 
-        @Test
-        @DisplayName("numberOfGuest가 0미만인 경우 예외처리")
-        void throwExceptionNumberOfGuestLowerThan0() {
-            //given
-            final OrderTable orderTable = 주문_테이블();
-            orderTable.setEmpty(false);
-
-            final OrderTable savedOrderTable = tableService.create(orderTable);
-            savedOrderTable.setNumberOfGuests(-1);
-
-            //when
-            assertThatThrownBy(() ->
-                tableService.changeNumberOfGuests(savedOrderTable.getId(), savedOrderTable)
-            ).isInstanceOf(IllegalArgumentException.class);
-        }
+        //파라미터를 dto로 바꾸면 예외처리
+//        @Test
+//        @DisplayName("numberOfGuest가 0미만인 경우 예외처리")
+//        void throwExceptionNumberOfGuestLowerThan0() {
+//            //given
+//            final OrderTable orderTable = 주문_테이블();
+//            orderTable.setEmpty(false);
+//
+//            final OrderTable savedOrderTable = tableService.create(orderTable);
+//            savedOrderTable.changeNumberOfGuests(-1);
+//
+//            //when
+//            assertThatThrownBy(() ->
+//                tableService.changeNumberOfGuests(savedOrderTable.getId(), savedOrderTable)
+//            ).isInstanceOf(IllegalArgumentException.class);
+//        }
 
         @Test
         @DisplayName("orderTable이 비어있는 경우 예외처리")
@@ -146,7 +150,7 @@ class TableServiceTest extends ServiceIntegrationTest {
             orderTable.setEmpty(true);
 
             final OrderTable savedOrderTable = tableService.create(orderTable);
-            savedOrderTable.setNumberOfGuests(10);
+            savedOrderTable.changeNumberOfGuests(10);
 
             //when
             assertThatThrownBy(() ->

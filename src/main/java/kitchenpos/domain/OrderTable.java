@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import static kitchenpos.domain.exception.OrderTableExceptionType.NUMBER_OF_GUEST_LOWER_THAN_ZERO;
+import static kitchenpos.domain.exception.OrderTableExceptionType.TABLE_CANT_CHANGE_EMPTY_ALREADY_IN_GROUP;
 
 import kitchenpos.domain.exception.OrderTableException;
 
@@ -50,7 +51,7 @@ public class OrderTable {
         return numberOfGuests;
     }
 
-    public void setNumberOfGuests(final int numberOfGuests) {
+    public void changeNumberOfGuests(final int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
     }
 
@@ -58,7 +59,15 @@ public class OrderTable {
         return empty;
     }
 
+    //TODO : 추후 제거
     public void setEmpty(final boolean empty) {
+        this.empty = empty;
+    }
+
+    public void changeEmpty(final boolean empty) {
+        if (tableGroupId != null) {
+            throw new OrderTableException(TABLE_CANT_CHANGE_EMPTY_ALREADY_IN_GROUP);
+        }
         this.empty = empty;
     }
 }
