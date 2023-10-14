@@ -18,7 +18,7 @@ public class TableGroup {
         this.createdDate = createdDate;
     }
 
-    public void changeOrderTables(final List<OrderTable> orderTables) {
+    public void changeOrderTables(List<OrderTable> orderTables) {
         this.orderTables = orderTables;
     }
 

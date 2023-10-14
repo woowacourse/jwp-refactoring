@@ -15,6 +15,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableGroupRequest;
+import kitchenpos.dto.TableGroupResponse;
 import kitchenpos.test.ServiceTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -102,10 +103,10 @@ class TableGroupServiceTest {
             TableGroupRequest request = 단체_지정_요청(orderTable1, orderTable2);
 
             // when
-            TableGroup savedTableGroup = sut.create(request);
+            TableGroupResponse result = sut.create(request);
 
             // then
-            List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(savedTableGroup.getId());
+            List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(result.getId());
             assertThat(orderTables)
                     .extracting(OrderTable::isEmpty)
                     .containsExactly(false, false);

@@ -13,6 +13,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableGroupRequest;
 import kitchenpos.dto.TableGroupRequest.OrderTableIdRequest;
+import kitchenpos.dto.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -34,7 +35,7 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroupRequest request) {
+    public TableGroupResponse create(TableGroupRequest request) {
         List<OrderTableIdRequest> orderTableIdRequests = request.getOrderTables();
 
         if (CollectionUtils.isEmpty(orderTableIdRequests) || orderTableIdRequests.size() < 2) {
@@ -56,7 +57,7 @@ public class TableGroupService {
                 throw new IllegalArgumentException("비어있지 않거나, 이미 단체 지정이 된 테이블은 단체 지정을 할 수 없습니다.");
             }
         }
-        
+
         final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
 
         final Long tableGroupId = savedTableGroup.getId();
@@ -67,11 +68,11 @@ public class TableGroupService {
         }
         savedTableGroup.changeOrderTables(savedOrderTables);
 
-        return savedTableGroup;
+        return TableGroupResponse.from(savedTableGroup);
     }
 
     @Transactional
-    public void ungroup(final Long tableGroupId) {
+    public void ungroup(Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
 
         final List<Long> orderTableIds = orderTables.stream()
