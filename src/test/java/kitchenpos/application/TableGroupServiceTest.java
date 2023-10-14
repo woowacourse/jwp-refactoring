@@ -54,6 +54,8 @@ class TableGroupServiceTest extends ServiceTest {
 
             // then
             assertAll(
+                () -> assertThat(actual.getOrderTables()).allMatch(it -> !it.isEmpty()),
+                () -> assertThat(actual.getOrderTables()).allMatch(it -> it.getTableGroupId() != null),
                 () -> assertThat(actual.getId()).isPositive(),
                 () -> assertThat(actual.getOrderTables()).hasSize(2)
             );

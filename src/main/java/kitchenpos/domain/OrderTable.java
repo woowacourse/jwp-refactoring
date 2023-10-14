@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.util.Objects;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,6 +13,8 @@ public class OrderTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "table_group_id")
     private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
@@ -55,6 +58,11 @@ public class OrderTable {
             throw new IllegalArgumentException("비어있는 테이블의 인원을 변경할 수 없습니다.");
         }
         this.numberOfGuests = numberOfGuests;
+    }
+
+    public void group(TableGroup tableGroup) {
+        this.empty = false;
+        this.tableGroupId = tableGroup.getId();
     }
 
     public Long getId() {

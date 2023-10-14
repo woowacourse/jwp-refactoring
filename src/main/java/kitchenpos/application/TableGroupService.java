@@ -34,27 +34,9 @@ public class TableGroupService {
         List<Long> orderTableIds = request.getOrderTableRequests().stream()
             .map(OrderTableRequest::getId)
             .collect(Collectors.toList());
-
-        if (CollectionUtils.isEmpty(orderTableIds)) {
-            throw new IllegalArgumentException();
-        }
-
-        final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
-
-        if (orderTableIds.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
-
+        List<OrderTable> savedOrderTables = getOrderTables(orderTableIds);
         TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(savedOrderTables));
-
-        Long tableGroupId = savedTableGroup.getId();
-        for (OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroupId(tableGroupId);
-            savedOrderTable.setEmpty(false);
-            orderTableDao.save(savedOrderTable);
-        }
-        savedTableGroup.setOrderTables(savedOrderTables);
-
+        savedOrderTables.forEach(it -> it.group(savedTableGroup));
         return savedTableGroup;
     }
 
@@ -76,5 +58,18 @@ public class TableGroupService {
             orderTable.setEmpty(false);
             orderTableDao.save(orderTable);
         }
+    }
+
+    private List<OrderTable> getOrderTables(List<Long> orderTableIds) {
+        if (CollectionUtils.isEmpty(orderTableIds)) {
+            throw new IllegalArgumentException();
+        }
+
+        List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
+
+        if (orderTableIds.size() != savedOrderTables.size()) {
+            throw new IllegalArgumentException();
+        }
+        return savedOrderTables;
     }
 }
