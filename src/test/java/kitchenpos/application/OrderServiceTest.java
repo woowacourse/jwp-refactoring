@@ -138,7 +138,7 @@ class OrderServiceTest {
             final Order savedOrder = orderService.create(orderToSave);
 
             final OrderTable savedNewOrderTable = tableService.create(OrderTableFixtures.NOT_EMPTY.get());
-            final Order newOrder = OrderFixtures.BASIC.get();
+            final Order newOrder = OrderFixtures.EMPTY.get();
             newOrder.setOrderTableId(savedNewOrderTable.getId());
             final Order savedNewOrder = orderService.create(newOrder);
 
