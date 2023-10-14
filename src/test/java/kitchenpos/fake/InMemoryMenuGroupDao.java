@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -14,12 +15,16 @@ public class InMemoryMenuGroupDao implements MenuGroupDao {
 
     private final Map<Long, MenuGroup> map = new HashMap<>();
     private final AtomicLong id = new AtomicLong();
-
+    
     @Override
     public MenuGroup save(MenuGroup entity) {
-        long id = this.id.getAndIncrement();
-        entity.setId(id);
-        map.put(id, entity);
+        if (Objects.isNull(entity.getId())) {
+            long id = this.id.getAndIncrement();
+            MenuGroup menuGroup = new MenuGroup(id, entity.getName());
+            map.put(id, menuGroup);
+            return menuGroup;
+        }
+        map.put(entity.getId(), entity);
         return entity;
     }
 
@@ -35,7 +40,7 @@ public class InMemoryMenuGroupDao implements MenuGroupDao {
 
     @Override
     public boolean existsById(Long id) {
-        return map.values().stream()
-                .anyMatch(it -> it.getId().equals(id));
+        return map.containsKey(id);
     }
+
 }

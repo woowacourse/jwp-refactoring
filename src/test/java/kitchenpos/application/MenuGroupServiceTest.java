@@ -3,7 +3,7 @@ package kitchenpos.application;
 import kitchenpos.application.dto.MenuGroupRequest;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.fake.InMemoryMenuGroupService;
+import kitchenpos.fake.InMemoryMenuGroupDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -23,7 +23,7 @@ class MenuGroupServiceTest {
 
     @BeforeEach
     void before() {
-        menuGroupDao = new InMemoryMenuGroupService();
+        menuGroupDao = new InMemoryMenuGroupDao();
         menuGroupService = new MenuGroupService(menuGroupDao);
     }
 
