@@ -67,6 +67,7 @@ class MenuServiceTest {
         menu.setMenuProducts(List.of(menuProduct));
         return menu;
     }
+
     @Test
     void 전체_메뉴를_조회한다() {
         MenuProduct menuProduct = makeMenuProduct();
