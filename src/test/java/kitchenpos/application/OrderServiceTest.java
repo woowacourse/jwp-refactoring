@@ -24,10 +24,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.jdbc.Sql;
 
-@Transactional
 @SpringBootTest
+@Sql(value = "/initialization.sql")
 class OrderServiceTest {
 
     @Autowired
@@ -196,15 +196,12 @@ class OrderServiceTest {
         Order savedOrder = orderService.create(order);
 
         //when
-        Order findOrder = orderService.list()
-                .stream()
-                .filter(it -> it.getId().equals(savedOrder.getId()))
-                .findAny()
-                .get();
+        Order findOrder = orderDao.findById(savedOrder.getId()).get();
+        List<OrderLineItem> orderLineItems = orderLineItemDao.findAllByOrderId(findOrder.getId());
 
         //then
-        assertThat(findOrder.getOrderLineItems()).hasSize(1);
-        assertThat(findOrder.getOrderLineItems().get(0))
+        assertThat(orderLineItems).hasSize(1);
+        assertThat(orderLineItems.get(0))
                 .usingRecursiveComparison()
                 .ignoringFields("seq")
                 .isEqualTo(orderLineItem);

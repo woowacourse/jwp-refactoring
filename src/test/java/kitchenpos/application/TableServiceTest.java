@@ -17,10 +17,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.jdbc.Sql;
 
-@Transactional
 @SpringBootTest
+@Sql(value = "/initialization.sql")
 class TableServiceTest {
 
     @Autowired
@@ -50,11 +50,7 @@ class TableServiceTest {
         OrderTable savedOrderTable = tableService.create(orderTable);
 
         //then
-        OrderTable findOrderTable = tableService.list()
-                .stream()
-                .filter(table -> table.getId().equals(savedOrderTable.getId()))
-                .findAny()
-                .get();
+        OrderTable findOrderTable = orderTableDao.findById(savedOrderTable.getId()).get();
 
         assertThat(findOrderTable.getTableGroupId()).isNull();
         assertThat(findOrderTable.getId()).isNotEqualTo(99L);
@@ -131,11 +127,7 @@ class TableServiceTest {
         order.setOrderTableId(savedOrderTableId);
         orderDao.save(order);
 
-        OrderTable findOrderTable = tableService.list()
-                .stream()
-                .filter(table -> table.getId().equals(savedOrderTableId))
-                .findAny()
-                .get();
+        OrderTable findOrderTable = orderTableDao.findById(savedOrderTableId).get();
         assertThat(findOrderTable.isEmpty()).isTrue();
 
         //when
@@ -209,11 +201,7 @@ class TableServiceTest {
         tableService.changeNumberOfGuests(savedOrderTable.getId(), otherOrderTable);
 
         //then
-        OrderTable findOrderTable = tableService.list()
-                .stream()
-                .filter(table -> table.getId().equals(savedOrderTable.getId()))
-                .findAny()
-                .get();
+        OrderTable findOrderTable = orderTableDao.findById(savedOrderTable.getId()).get();
 
         assertThat(findOrderTable.getNumberOfGuests()).isEqualTo(numberOfGuests);
     }

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,14 +12,17 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.jdbc.Sql;
 
-@Transactional
 @SpringBootTest
+@Sql(value = "/initialization.sql")
 class ProductServiceTest {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ProductDao productDao;
 
     @DisplayName("상품 금액이 null이면, 저장할 수 없다.")
     @Test
@@ -58,11 +62,7 @@ class ProductServiceTest {
         Product savedProduct = productService.create(product);
 
         //then
-        Product findProduct = productService.list()
-                .stream()
-                .filter(p -> p.getId().equals(savedProduct.getId()))
-                .findAny()
-                .get();
+        Product findProduct = productDao.findById(savedProduct.getId()).get();
 
         assertThat(findProduct).usingRecursiveComparison()
                 .isEqualTo(savedProduct);

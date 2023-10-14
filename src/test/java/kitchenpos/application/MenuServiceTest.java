@@ -6,15 +6,14 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,10 +21,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.jdbc.Sql;
 
-@Transactional
 @SpringBootTest
+@Sql(value = "/initialization.sql")
 class MenuServiceTest {
 
     @Autowired
@@ -36,6 +35,12 @@ class MenuServiceTest {
 
     @Autowired
     private ProductDao productDao;
+
+    @Autowired
+    private MenuDao menuDao;
+
+    @Autowired
+    private MenuProductDao menuProductDao;
 
     private Menu menu;
 
@@ -159,23 +164,14 @@ class MenuServiceTest {
         Menu savedMenu = menuService.create(menu);
 
         //then
-        List<Menu> findMenus = menuService.list()
-                .stream()
-                .filter(menu -> menu.getId().equals(savedMenu.getId()))
-                .collect(Collectors.toList());
+        Menu findMenu = menuDao.findById(savedMenu.getId()).get();
+        List<MenuProduct> findMenuProducts = menuProductDao.findAllByMenuId(findMenu.getId());
 
         assertAll(
-                () -> assertThat(findMenus).extractingResultOf("getId")
-                        .containsExactly(savedMenu.getId()),
-                () -> assertThat(findMenus).extractingResultOf("getName")
-                        .containsExactly(savedMenu.getName()),
-                () -> assertThat(findMenus).extractingResultOf("getPrice")
-                        .containsExactly(savedMenu.getPrice()),
-                () -> assertThat(findMenus).extractingResultOf("getMenuGroupId")
-                        .containsExactly(savedMenu.getMenuGroupId()),
-                () -> assertThat(findMenus).hasSize(1),
-                () -> assertThat(findMenus.get(0).getMenuProducts())
-                        .usingRecursiveComparison()
+                () -> assertThat(findMenu).usingRecursiveComparison()
+                        .ignoringFields("price", "menuProducts")
+                        .isEqualTo(savedMenu),
+                () -> assertThat(findMenuProducts).usingRecursiveComparison()
                         .ignoringFields("menuId", "seq")
                         .isEqualTo(List.of(menuProduct))
         );

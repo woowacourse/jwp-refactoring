@@ -2,19 +2,23 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.jdbc.Sql;
 
-@Transactional
 @SpringBootTest
+@Sql(value = "/initialization.sql")
 class MenuGroupServiceTest {
 
     @Autowired
     private MenuGroupService menuGroupService;
+
+    @Autowired
+    private MenuGroupDao menuGroupDao;
 
     @DisplayName("메뉴 그룹을 저장할 수 있다.")
     @Test
@@ -27,11 +31,7 @@ class MenuGroupServiceTest {
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
 
         //then
-        MenuGroup findMenuGroup = menuGroupService.list()
-                .stream()
-                .filter(group -> group.getId().equals(savedMenuGroup.getId()))
-                .findAny()
-                .get();
+        MenuGroup findMenuGroup = menuGroupDao.findById(savedMenuGroup.getId()).get();
 
         assertThat(savedMenuGroup)
                 .usingRecursiveComparison()

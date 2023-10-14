@@ -18,10 +18,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.jdbc.Sql;
 
-@Transactional
 @SpringBootTest
+@Sql(value = "/initialization.sql")
 class TableGroupServiceTest {
 
     @Autowired
@@ -32,6 +32,9 @@ class TableGroupServiceTest {
 
     @Autowired
     private OrderDao orderDao;
+
+    @Autowired
+    private TableGroupDao tableGroupDao;
 
     @DisplayName("주문 테이블이 2개 미만이면, 주문 테이블 그룹을 생성할 수 없다.")
     @Test
@@ -139,13 +142,16 @@ class TableGroupServiceTest {
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
         //then
+        TableGroup findTableGroup = tableGroupDao.findById(savedTableGroup.getId()).get();
+        List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(findTableGroup.getId());
+
         assertAll(
-                () -> assertThat(savedTableGroup.getId()).isNotNull(),
-                () -> assertThat(savedTableGroup.getCreatedDate()).isNotNull(),
-                () -> assertThat(savedTableGroup.getOrderTables())
+                () -> assertThat(findTableGroup.getId()).isNotNull(),
+                () -> assertThat(findTableGroup.getCreatedDate()).isNotNull(),
+                () -> assertThat(orderTables)
                         .extractingResultOf("getTableGroupId")
-                        .containsExactly(savedTableGroup.getId(), savedTableGroup.getId()),
-                () -> assertThat(savedTableGroup.getOrderTables())
+                        .containsExactly(findTableGroup.getId(), findTableGroup.getId()),
+                () -> assertThat(orderTables)
                         .extractingResultOf("isEmpty")
                         .containsExactly(false, false)
         );
