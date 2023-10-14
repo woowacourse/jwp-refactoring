@@ -2,6 +2,7 @@ package kitchenpos.ui;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.OrderService;
+import kitchenpos.application.dto.OrderRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import org.junit.jupiter.api.Test;
@@ -43,7 +44,7 @@ class OrderRestControllerTest {
         createdOrder.setOrderStatus(OrderStatus.MEAL.name());
 
         // when
-        when(orderService.create(any(Order.class))).thenReturn(createdOrder);
+        when(orderService.create(any(OrderRequest.class))).thenReturn(createdOrder);
 
         // then
         mockMvc.perform(post("/api/orders")

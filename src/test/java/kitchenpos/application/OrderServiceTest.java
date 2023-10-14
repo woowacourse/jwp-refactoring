@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.OrderRequest;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -22,6 +23,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static java.lang.Long.MAX_VALUE;
+import static kitchenpos.application.dto.OrderRequest.OrderLineItemRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -54,25 +56,18 @@ class OrderServiceTest {
     @Test
     void 주문_항목이_없다면_예외가_발생한다() {
         // given
-        Order order = new Order();
-        order.setOrderLineItems(List.of());
-        order.setOrderTableId(savedOrderTable.getId());
+        OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), List.of());
 
         // expect
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 주문_항목의_메뉴가_존재하지_않는다면_예외가_발생한다() {
         // given
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(MAX_VALUE);
-        orderLineItem.setQuantity(1L);
-
-        Order order = new Order();
-        order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderTableId(savedOrderTable.getId());
+        OrderLineItemRequest orderLineItem = new OrderLineItemRequest(MAX_VALUE, 1L);
+        OrderRequest order = new OrderRequest(savedOrderTable.getId(), List.of(orderLineItem));
 
         // expect
         assertThatThrownBy(() -> orderService.create(order))
@@ -82,9 +77,8 @@ class OrderServiceTest {
     @Test
     void 주문_테이블이_존재하지_않는다면_예외가_발생한다() {
         // given
-        Order order = new Order();
-        order.setOrderLineItems(List.of(savedOrderLineItem));
-        order.setOrderTableId(MAX_VALUE);
+        OrderLineItemRequest orderLineItem = new OrderLineItemRequest(MAX_VALUE, 1L);
+        OrderRequest order = new OrderRequest(savedOrderTable.getId(), List.of(orderLineItem));
 
         // expect
         assertThatThrownBy(() -> orderService.create(order))
@@ -94,22 +88,18 @@ class OrderServiceTest {
     @Test
     void 주문_테이블이_빈_테이블이면_예외가_발생한다() {
         // given
-        Order order = new Order();
         OrderTable orderTable = orderTableDao.save(new OrderTable(null, 10, true));
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderLineItems(List.of(savedOrderLineItem));
+        OrderRequest orderRequest = new OrderRequest(orderTable.getId(), List.of(new OrderLineItemRequest(savedOrderLineItem.getMenuId(), savedOrderLineItem.getQuantity())));
 
         // expect
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 주문을_생성한다() {
         // given
-        Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderLineItems(List.of(savedOrderLineItem));
+        OrderRequest order = new OrderRequest(savedOrderTable.getId(), List.of(new OrderLineItemRequest(savedOrderLineItem.getMenuId(), savedOrderLineItem.getQuantity())));
 
         // when
         Order savedOrder = orderService.create(order);
@@ -127,9 +117,7 @@ class OrderServiceTest {
     @Test
     void 주문을_조회한다() {
         // given
-        Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderLineItems(List.of(savedOrderLineItem));
+        OrderRequest order = new OrderRequest(savedOrderTable.getId(), List.of(new OrderLineItemRequest(savedOrderLineItem.getMenuId(), savedOrderLineItem.getQuantity())));
         Order savedOrder = orderService.create(order);
 
         // when
