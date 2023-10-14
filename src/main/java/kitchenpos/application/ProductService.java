@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.dao.jpa.ProductRepository;
+import kitchenpos.persistence.ProductRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.CreateProductRequest;
 import kitchenpos.dto.response.ProductResponse;

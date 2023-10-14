@@ -1,4 +1,4 @@
-package kitchenpos.dao.jpa;
+package kitchenpos.persistence;
 
 import kitchenpos.domain.TableGroup;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.dao.jpa.OrderRepository;
-import kitchenpos.dao.jpa.OrderTableRepository;
+import kitchenpos.persistence.OrderRepository;
+import kitchenpos.persistence.OrderTableRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.ChangeEmptyTableRequest;
@@ -45,7 +45,7 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeEmpty(Long orderTableId, ChangeEmptyTableRequest request) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
+        OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
         if (Objects.nonNull(savedOrderTable.getTableGroup())) {

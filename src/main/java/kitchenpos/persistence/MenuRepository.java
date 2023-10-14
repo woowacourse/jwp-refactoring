@@ -1,4 +1,4 @@
-package kitchenpos.dao.jpa;
+package kitchenpos.persistence;
 
 import java.util.List;
 import kitchenpos.domain.Menu;
