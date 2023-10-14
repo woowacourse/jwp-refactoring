@@ -110,12 +110,8 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 특정_테이블그룹에_속한다면_예외() {
             // given
-            tableGroupDao.save(new TableGroup(1L, LocalDateTime.now(),
-                List.of(
-                    new OrderTable(1L, null, 3, true),
-                new OrderTable(2L, null, 2, true)
-            )));
-            Long givenId = orderTableDao.save(new OrderTable(1L, 5, true)).getId();
+            Long tableGroupId = tableGroupDao.save(new TableGroup()).getId();
+            Long givenId = orderTableDao.save(new OrderTable(tableGroupId,3, true)).getId();
 
             // when && then
             assertThatThrownBy(() -> tableService.changeEmpty(givenId, false))
@@ -151,7 +147,7 @@ class TableServiceTest extends ServiceTest {
     class 방문자수를_변경 {
 
         @ParameterizedTest
-        @ValueSource(ints = {1,2,3})
+        @ValueSource(ints = {1, 2, 3})
         void 성공(int changedNumberOfGuests) {
             // given
             Long givenId = orderTableDao.save(new OrderTable(5, false)).getId();
@@ -164,7 +160,7 @@ class TableServiceTest extends ServiceTest {
         }
 
         @ParameterizedTest
-        @ValueSource(ints = {-100,-1})
+        @ValueSource(ints = {-100, -1})
         void 변경할려는_방문자수가_음수면_예외(int wrongValue) {
             // given
             Long givenId = orderTableDao.save(new OrderTable(5, false)).getId();
