@@ -19,6 +19,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuRequest;
+import kitchenpos.dto.MenuResponse;
 import kitchenpos.test.ServiceTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -103,14 +104,14 @@ public class MenuServiceTest {
             MenuRequest request = 메뉴_생성_요청("치즈피자", 8900L, menuGroup.getId(), List.of(menuProduct));
 
             // when
-            Menu savedMenu = sut.create(request);
+            MenuResponse result = sut.create(request);
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(menuDao.findById(savedMenu.getId())).isPresent();
-                softly.assertThat(menuProductDao.findAllByMenuId(savedMenu.getId()))
+                softly.assertThat(menuDao.findById(result.getId())).isPresent();
+                softly.assertThat(menuProductDao.findAllByMenuId(result.getId()))
                         .usingRecursiveComparison()
-                        .isEqualTo(savedMenu.getMenuProducts());
+                        .isEqualTo(result.getMenuProducts());
             });
         }
     }
@@ -130,11 +131,11 @@ public class MenuServiceTest {
         menu2.changeMenuProducts(List.of(menuProduct2));
 
         // when
-        List<Menu> result = sut.list();
+        List<MenuResponse> result = sut.list();
 
         // then
         assertThat(result)
                 .usingRecursiveComparison()
-                .isEqualTo(List.of(menu1, menu2));
+                .isEqualTo(List.of(MenuResponse.from(menu1), MenuResponse.from(menu2)));
     }
 }
