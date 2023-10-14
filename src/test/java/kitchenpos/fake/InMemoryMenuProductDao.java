@@ -19,9 +19,13 @@ public class InMemoryMenuProductDao implements MenuProductDao {
 
     @Override
     public MenuProduct save(MenuProduct entity) {
-        long seq = this.seq.getAndIncrement();
-        entity.setSeq(seq);
-        map.put(seq, entity);
+        if (Objects.isNull(entity.getSeq())) {
+            long seq = this.seq.getAndIncrement();
+            MenuProduct menuProduct = new MenuProduct(seq, entity.getMenuId(), entity.getProductId(), entity.getQuantity());
+            map.put(seq, menuProduct);
+            return menuProduct;
+        }
+        map.put(entity.getSeq(), entity);
         return entity;
     }
 
