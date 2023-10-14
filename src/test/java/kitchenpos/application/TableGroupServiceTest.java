@@ -33,8 +33,6 @@ class TableGroupServiceTest {
     private TableGroupDao tableGroupDao;
 
     @Autowired
-    private TableService tableService;
-    @Autowired
     private OrderTableDao orderTableDao;
 
     @Autowired

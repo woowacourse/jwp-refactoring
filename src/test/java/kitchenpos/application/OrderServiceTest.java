@@ -3,9 +3,7 @@ package kitchenpos.application;
 import com.sun.tools.javac.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
@@ -47,13 +45,7 @@ class OrderServiceTest {
     private MenuDao menuDao;
 
     @Autowired
-    private MenuProductDao menuProductDao;
-
-    @Autowired
     private ProductDao productDao;
-
-    @Autowired
-    private OrderLineItemDao orderLineItemDao;
 
     @Autowired
     private MenuGroupDao menuGroupDao;
@@ -61,7 +53,6 @@ class OrderServiceTest {
     private Menu savedMenu;
     private MenuProduct savedMenuProduct;
     private Product savedProduct;
-    private OrderLineItem savedOrderLineItem;
     private MenuGroup savedMenuGroup;
 
     @BeforeEach

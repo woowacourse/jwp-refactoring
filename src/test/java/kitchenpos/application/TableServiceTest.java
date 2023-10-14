@@ -67,8 +67,8 @@ class TableServiceTest {
         orderTableB.setEmpty(true);
 
         // when
-        OrderTable savedTableA = tableService.create(orderTableA);
-        OrderTable savedTableB = tableService.create(orderTableB);
+        tableService.create(orderTableA);
+        tableService.create(orderTableB);
 
         // then
         assertThat(tableService.list()).hasSize(2);
