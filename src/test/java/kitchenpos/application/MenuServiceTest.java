@@ -76,10 +76,9 @@ class MenuServiceTest extends IntegrationTest {
 
             @BeforeEach
             void setUp() {
-                MenuGroup menuGroup = new MenuGroup();
-                menuGroup.setName("추천메뉴");
+                MenuGroup menuGroup = new MenuGroup("추천메뉴");
                 this.menuGroup = menuGroupDao.save(menuGroup);
-                menu.setMenuGroupId(this.menuGroup.getId());
+                menu.setMenuGroupId(this.menuGroup.id());
             }
 
             @Test
@@ -166,7 +165,7 @@ class MenuServiceTest extends IntegrationTest {
                                 () -> assertThat(result.getId()).isPositive(),
                                 () -> assertThat(result.getName()).isEqualTo("메뉴"),
                                 () -> assertThat(result.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(11)),
-                                () -> assertThat(result.getMenuGroupId()).isEqualByComparingTo(menuGroup.getId()),
+                                () -> assertThat(result.getMenuGroupId()).isEqualByComparingTo(menuGroup.id()),
                                 () -> assertThat(result.getMenuProducts()).hasSize(2),
                                 () -> assertThat(result.getMenuProducts().get(0).getMenuId()).isEqualTo(result.getId()),
                                 () -> assertThat(result.getMenuProducts().get(1).getMenuId()).isEqualTo(result.getId())
@@ -189,7 +188,7 @@ class MenuServiceTest extends IntegrationTest {
 
                         Menu menu2 = new Menu();
                         menu2.setPrice(BigDecimal.valueOf(9));
-                        menu2.setMenuGroupId(menuGroup.getId());
+                        menu2.setMenuGroupId(menuGroup.id());
                         menu2.setName("메뉴2");
                         menu2.setMenuProducts(List.of(menuProduct1, menuProduct2));
 

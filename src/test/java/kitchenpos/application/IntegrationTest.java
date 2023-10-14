@@ -132,16 +132,14 @@ public class IntegrationTest {
     protected Menu 메뉴(MenuGroup 메뉴_그룹, BigDecimal 가격, String 이름, MenuProduct... 메뉴_상품들) {
         Menu menu = new Menu();
         menu.setPrice(가격);
-        menu.setMenuGroupId(메뉴_그룹.getId());
+        menu.setMenuGroupId(메뉴_그룹.id());
         menu.setName(이름);
         menu.setMenuProducts(Arrays.asList(메뉴_상품들));
         return menuDao.save(menu);
     }
 
     protected MenuGroup 메뉴_그룹() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("추천메뉴");
-        return menuGroupDao.save(menuGroup);
+        return menuGroupDao.save(new MenuGroup("추천메뉴"));
     }
 
     protected Product 상품(String 이름, BigDecimal 가격) {
