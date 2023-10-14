@@ -10,6 +10,7 @@ import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -125,22 +126,18 @@ class MenuServiceTest extends IntegrationTest {
 
                     @BeforeEach
                     void setUp() {
-                        Product product1 = new Product();
-                        product1.setName("상품1");
-                        product1.setPrice(BigDecimal.valueOf(1));
+                        Product product1 = new Product("상품1", new Price(BigDecimal.valueOf(1)));
                         this.product1 = productDao.save(product1);
 
-                        Product product2 = new Product();
-                        product2.setName("상품2");
-                        product2.setPrice(BigDecimal.valueOf(3));
+                        Product product2 = new Product("상품2", new Price(BigDecimal.valueOf(3)));
                         this.product2 = productDao.save(product2);
 
                         menuProduct1 = new MenuProduct();
-                        menuProduct1.setProductId(this.product1.getId());
+                        menuProduct1.setProductId(this.product1.id());
                         menuProduct1.setQuantity(2);
 
                         menuProduct2 = new MenuProduct();
-                        menuProduct2.setProductId(this.product2.getId());
+                        menuProduct2.setProductId(this.product2.id());
                         menuProduct2.setQuantity(3);
                     }
 
@@ -183,11 +180,11 @@ class MenuServiceTest extends IntegrationTest {
                         menu.setMenuProducts(List.of(menuProduct1, menuProduct2));
 
                         MenuProduct menuProduct1 = new MenuProduct();
-                        menuProduct1.setProductId(product1.getId());
+                        menuProduct1.setProductId(product1.id());
                         menuProduct1.setQuantity(3);
 
                         MenuProduct menuProduct2 = new MenuProduct();
-                        menuProduct2.setProductId(product2.getId());
+                        menuProduct2.setProductId(product2.id());
                         menuProduct1.setQuantity(2);
 
                         Menu menu2 = new Menu();

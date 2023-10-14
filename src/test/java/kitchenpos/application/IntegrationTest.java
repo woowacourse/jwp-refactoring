@@ -18,6 +18,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -144,15 +145,13 @@ public class IntegrationTest {
     }
 
     protected Product 상품(String 이름, BigDecimal 가격) {
-        Product product = new Product();
-        product.setName(이름);
-        product.setPrice(가격);
+        Product product = new Product(이름, new Price(가격));
         return productDao.save(product);
     }
 
     protected MenuProduct 메뉴_상품(Product 상품, long 수량) {
         MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(상품.getId());
+        menuProduct.setProductId(상품.id());
         menuProduct.setQuantity(수량);
         return menuProduct;
     }

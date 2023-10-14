@@ -3,31 +3,30 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 
 public class Product {
-    private Long id;
-    private String name;
-    private BigDecimal price;
 
-    public Long getId() {
+    private final Long id;
+    private final String name;
+    private final Price price;
+
+    public Product(String name, Price price) {
+        this(null, name, price);
+    }
+
+    public Product(Long id, String name, Price price) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+    }
+
+    public Long id() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
+    public String name() {
         return name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
+    public BigDecimal price() {
+        return price.value();
     }
 }
