@@ -69,7 +69,7 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
   }
 
   @Test
-  @DisplayName("ungroup() : 주문 테이블을 주문 그룹으로 분리할 수 있다.")
+  @DisplayName("ungroup() : 주문 테이블을 주문 그룹으로부터 분리할 수 있다.")
   void test_ungroup() throws Exception {
     //given
     final long tableGroupId = 333L;
