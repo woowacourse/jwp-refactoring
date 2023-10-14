@@ -3,9 +3,9 @@
 ## 1단계 요구 사항
 
 - [x] kitchenpos 패키지의 코드를 보고 키친포스의 요구 사항을 README.md에 작성
-- [ ] 정리한 키친포스의 요구 사항을 토대로 테스트 코드를 작성
-    - [ ] 모든 Business Object에 대한 테스트 코드를 작성
-    - [ ] @SpringBootTest를 이용한 통합 테스트 코드 또는 @ExtendWith(MockitoExtension.class)를 이용한 단위 테스트 코드를 작성
+- [x] 정리한 키친포스의 요구 사항을 토대로 테스트 코드를 작성
+    - [x] 모든 Business Object에 대한 테스트 코드를 작성
+    - [x] @SpringBootTest를 이용한 통합 테스트 코드 또는 @ExtendWith(MockitoExtension.class)를 이용한 단위 테스트 코드를 작성
 
 ## 키친포스 요구사항
 
