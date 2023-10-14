@@ -6,22 +6,22 @@ import kitchenpos.domain.Product;
 public class ProductCreateRequest {
 
     private String name;
-    private Long price;
+    private BigDecimal price;
 
-    public ProductCreateRequest(String name, Long price) {
+    public ProductCreateRequest(String name, BigDecimal price) {
         this.name = name;
         this.price = price;
     }
 
     public Product toProduct() {
-        return new Product(name, BigDecimal.valueOf(price));
+        return new Product(name, price);
     }
 
     public String getName() {
         return name;
     }
 
-    public Long getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 

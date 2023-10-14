@@ -4,6 +4,7 @@ import static kitchenpos.fixture.ProductFixture.상품;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
@@ -30,7 +31,7 @@ class ProductServiceTest {
         @Test
         void 상품의_가격이_0원_미만인_경우_예외를_던진다() {
             // given
-            ProductCreateRequest productCreateRequest = new ProductCreateRequest("피자", -1L);
+            ProductCreateRequest productCreateRequest = new ProductCreateRequest("피자", BigDecimal.valueOf(-1L));
 
             // expect
             assertThatThrownBy(() -> sut.create(productCreateRequest))
@@ -41,7 +42,7 @@ class ProductServiceTest {
         @Test
         void 상품의_가격이_0원_이상인_경우_정상적으로_등록된다() {
             // given
-            ProductCreateRequest productCreateRequest = new ProductCreateRequest("무료 피자", 0L);
+            ProductCreateRequest productCreateRequest = new ProductCreateRequest("무료 피자", BigDecimal.valueOf(0L));
 
             // when
             ProductResponse productResponse = sut.create(productCreateRequest);
@@ -58,11 +59,11 @@ class ProductServiceTest {
         Product chicken = productDao.save(상품("치킨", 18000L));
 
         // when
-        List<Product> result = sut.list();
+        List<ProductResponse> result = sut.list();
 
         // then
         assertThat(result)
                 .usingRecursiveComparison()
-                .isEqualTo(List.of(pizza, chicken));
+                .isEqualTo(List.of(ProductResponse.from(pizza), ProductResponse.from(chicken)));
     }
 }

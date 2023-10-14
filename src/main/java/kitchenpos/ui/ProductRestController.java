@@ -3,7 +3,6 @@ package kitchenpos.ui;
 import java.net.URI;
 import java.util.List;
 import kitchenpos.application.ProductService;
-import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductCreateRequest;
 import kitchenpos.dto.ProductResponse;
 import org.springframework.http.ResponseEntity;
@@ -22,16 +21,15 @@ public class ProductRestController {
 
     @PostMapping("/api/products")
     public ResponseEntity<ProductResponse> create(@RequestBody ProductCreateRequest request) {
-        ProductResponse created = productService.create(request);
-        URI uri = URI.create("/api/products/" + created.getId());
+        ProductResponse response = productService.create(request);
+        URI uri = URI.create("/api/products/" + response.getId());
         return ResponseEntity.created(uri)
-                .body(created);
+                .body(response);
     }
 
     @GetMapping("/api/products")
-    public ResponseEntity<List<Product>> list() {
+    public ResponseEntity<List<ProductResponse>> list() {
         return ResponseEntity.ok()
-                .body(productService.list())
-                ;
+                .body(productService.list());
     }
 }
