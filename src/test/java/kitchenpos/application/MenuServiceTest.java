@@ -25,8 +25,8 @@ import java.util.List;
 @SpringBootTest
 class MenuServiceTest {
 
-    private final String MENU_NAME = "테스트 메뉴";
-    private final Long WRONG_ID = -1L;
+    private static final String MENU_NAME = "테스트 메뉴";
+    private static final Long WRONG_ID = -1L;
 
     @Autowired
     private MenuService menuService;
