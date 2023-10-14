@@ -95,7 +95,7 @@ class TableServiceTest extends ServiceIntegrationTest {
   }
 
   @Test
-  @DisplayName("changeNumberOfGuests() : 주문 테이블의 인원 수를 수정할 수 있다.")
+  @DisplayName("changeNumberOfGuests() : 특정 주문 테이블이 비어있으면 인원 수를 수정할 수 없다.")
   void test_changeNumberOfGuests_IllegalArgumentException() throws Exception {
     //given
     final long orderTableId = 1L;

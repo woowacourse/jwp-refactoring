@@ -13,7 +13,6 @@ import kitchenpos.support.ServiceIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 class TableGroupServiceTest extends ServiceIntegrationTest {
 
@@ -81,5 +80,16 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
 
     //then
     assertThat(orderTableDao.findAllByTableGroupId(tableGroupId)).isEmpty();
+  }
+
+  @Test
+  @DisplayName("ungroup() : 주문 그룹으로부터 주문 테이블들을 분리할 때 상태가 COOKING이거나 MEAL일 경우에는 주문 테이블을 분리할 수 없다.")
+  void test_ungroup_IllegalArgumentException() throws Exception {
+    //given
+    final long tableGroupId = 334L;
+
+    //when & then
+    assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
+        .isInstanceOf(IllegalArgumentException.class);
   }
 }
