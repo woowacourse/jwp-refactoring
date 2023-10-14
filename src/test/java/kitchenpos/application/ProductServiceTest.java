@@ -61,7 +61,7 @@ class ProductServiceTest {
 
     @Test
     @DisplayName("모든 상품을 조회한다.")
-    void test() {
+    void getProductList() {
         // given
         final Product productRequest = new Product();
         productRequest.setName("테스트 상품");

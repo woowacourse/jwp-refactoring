@@ -159,7 +159,7 @@ class MenuServiceTest {
 
     @Test
     @DisplayName("등록됨 상품들 목록을 가져온다.")
-    void test() {
+    void getMenuList() {
         // given
         final MenuProduct requestMenuProduct = getMenuProductForRequest();
         final Menu reqeustMenu = getMenuForRequest(requestMenuProduct);

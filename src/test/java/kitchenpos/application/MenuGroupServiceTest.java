@@ -37,7 +37,7 @@ class MenuGroupServiceTest {
 
     @Test
     @DisplayName("등록된 메뉴그룹들의 리스트를 조회한다.")
-    void test() {
+    void getListOfMenuGroup() {
         // given
         final MenuGroup requestMenuGroup = new MenuGroup();
         final String testGroupName = "조회 테스트 그룹";

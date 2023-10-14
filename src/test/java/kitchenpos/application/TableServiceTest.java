@@ -73,7 +73,7 @@ class TableServiceTest {
 
     @Test
     @DisplayName("생성된 테이블 정보들을 가져온다.")
-    void test() {
+    void getTableList() {
         // given
 
         // when
