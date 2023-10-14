@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static kitchenpos.application.dto.TableGroupRequest.OrderTableRequest;
+import static kitchenpos.application.dto.TableGroupRequest.OrderTableIdRequest;
 
 @Service
 public class TableGroupService {
@@ -33,14 +33,14 @@ public class TableGroupService {
 
     @Transactional
     public TableGroup create(final TableGroupRequest request) {
-        final List<OrderTableRequest> orderTableRequests = request.getOrderTables();
+        final List<OrderTableIdRequest> orderTableRequests = request.getOrderTables();
 
         if (CollectionUtils.isEmpty(orderTableRequests) || orderTableRequests.size() < 2) {
             throw new IllegalArgumentException();
         }
 
         final List<Long> orderTableIds = orderTableRequests.stream()
-                .map(OrderTableRequest::getId)
+                .map(OrderTableIdRequest::getId)
                 .collect(Collectors.toList());
 
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);

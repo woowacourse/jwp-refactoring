@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static kitchenpos.application.dto.TableGroupRequest.OrderTableRequest;
+import static kitchenpos.application.dto.TableGroupRequest.OrderTableIdRequest;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -49,7 +49,7 @@ class TableGroupRestControllerTest {
         // then
         mockMvc.perform(post("/api/table-groups")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new TableGroupRequest(List.of(new OrderTableRequest(1L))))))
+                        .content(objectMapper.writeValueAsBytes(new TableGroupRequest(List.of(new OrderTableIdRequest(1L))))))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/table-groups/" + createdTableGroup.getId()))
                 .andExpect(content().string(objectMapper.writeValueAsString(createdTableGroup)));
