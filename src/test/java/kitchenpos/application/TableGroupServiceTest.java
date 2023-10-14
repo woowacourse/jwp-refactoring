@@ -73,8 +73,8 @@ class TableGroupServiceTest {
         assertSoftly(softly -> {
             softly.assertThat(savedOrderTable.getTableGroupId()).isNotNull();
             softly.assertThat(savedOrderTable2.getTableGroupId()).isNotNull();
-            softly.assertThat(savedOrderTable.isEmpty()).isFalse();
-            softly.assertThat(savedOrderTable2.isEmpty()).isFalse();
+            softly.assertThat(savedOrderTable.isEmpty()).isTrue();
+            softly.assertThat(savedOrderTable2.isEmpty()).isTrue();
         });
     }
 

@@ -21,19 +21,16 @@ public class InMemoryOrderTableDao implements OrderTableDao {
     public OrderTable save(OrderTable entity) {
         if (Objects.isNull(entity.getId())) {
             long id = this.id.getAndIncrement();
-            entity.setId(id);
-            map.put(id, entity);
-            return entity;
+            OrderTable orderTable = new OrderTable(id, entity.getTableGroupId(), entity.getNumberOfGuests(), entity.isEmpty());
+            map.put(id, orderTable);
+            return orderTable;
         }
         update(entity);
         return entity;
     }
 
     private void update(OrderTable entity) {
-        OrderTable orderTable = map.get(entity.getId());
-        orderTable.setTableGroupId(entity.getTableGroupId());
-        orderTable.setEmpty(entity.isEmpty());
-        orderTable.setNumberOfGuests(entity.getNumberOfGuests());
+        map.put(entity.getId(), entity);
     }
 
     @Override
