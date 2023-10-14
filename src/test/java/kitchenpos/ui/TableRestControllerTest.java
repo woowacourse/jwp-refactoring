@@ -2,6 +2,7 @@ package kitchenpos.ui;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.TableService;
+import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,14 +38,15 @@ class TableRestControllerTest {
     void 테이블을_생성한다() throws Exception {
         // given
         OrderTable createdTable = new OrderTable(1L, 1L, 10, false);
+        OrderTableRequest request = new OrderTableRequest(10, false);
 
         // when
-        when(tableService.create(any(OrderTable.class))).thenReturn(createdTable);
+        when(tableService.create(any(OrderTableRequest.class))).thenReturn(createdTable);
 
         // then
         mockMvc.perform(post("/api/tables")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(createdTable)))
+                        .content(objectMapper.writeValueAsBytes(request)))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/tables/" + createdTable.getId()))
                 .andExpect(content().string(objectMapper.writeValueAsString(createdTable)));

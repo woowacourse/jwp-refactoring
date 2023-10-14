@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
@@ -22,8 +23,8 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        return orderTableDao.save(new OrderTable(orderTable.getNumberOfGuests(), orderTable.isEmpty()));
+    public OrderTable create(final OrderTableRequest request) {
+        return orderTableDao.save(new OrderTable(request.getNumberOfGuests(), request.isEmpty()));
     }
 
     public List<OrderTable> list() {

@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
@@ -38,7 +39,7 @@ class TableServiceTest {
     @Test
     void 주문_테이블을_생성한다() {
         // given
-        OrderTable orderTable = new OrderTable(null, 10, false);
+        OrderTableRequest orderTable = new OrderTableRequest(10, false);
 
         // when
         OrderTable savedOrderTable = tableService.create(orderTable);
