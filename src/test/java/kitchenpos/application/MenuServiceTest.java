@@ -131,6 +131,7 @@ class MenuServiceTest extends ServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    @DisplayName("메뉴 목록을 조회한다.")
     @Test
     void list() {
         // given
