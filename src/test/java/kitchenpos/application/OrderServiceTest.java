@@ -155,7 +155,7 @@ class OrderServiceTest {
 
             // when, then
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> orderService.changeOrderStatus(order.getId(), order));
+                    .isThrownBy(() -> orderService.changeOrderStatus(null, order));
         }
 
         @Test
