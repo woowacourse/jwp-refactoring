@@ -8,15 +8,10 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -28,10 +23,7 @@ import static kitchenpos.fixture.ProductFixture.PRODUCT_2;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@SuppressWarnings("NonAsciiCharacters")
-@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-@Sql(scripts = {"classpath:truncate.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-@SpringBootTest
+@ServiceTest
 class MenuServiceTest {
 
     @Autowired
@@ -44,10 +36,10 @@ class MenuServiceTest {
     private MenuGroupDao menuGroupDao;
 
     @Autowired
-    MenuProductDao menuProductDao;
+    private MenuProductDao menuProductDao;
 
     @Autowired
-    ProductDao productDao;
+    private ProductDao productDao;
 
     @Test
     void 메뉴를_생성한다() {
