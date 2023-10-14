@@ -7,10 +7,13 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.TableGroupFixture;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -112,6 +115,81 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
                 () -> assertThat(savedOrderTable1.isEmpty()).isFalse(),
                 () -> assertThat(savedOrderTable2.getTableGroupId()).isEqualTo(savedTableGroup.getId()),
                 () -> assertThat(savedOrderTable1.isEmpty()).isFalse()
+        );
+    }
+
+    @Test
+    void TableGroup을_삭제할_때_연관된_Order중_현재_요리_중인_것이_있으면_안된다() {
+        // given
+        OrderTable orderTable1 = orderTableDao.save(OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(1, true));
+        OrderTable에_원하는_상태의_주문을_추가한다(orderTable1, OrderStatus.COOKING);
+        OrderTable orderTable2 = orderTableDao.save(OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(1, true));
+        List<OrderTable> savedOrderTables = List.of(
+                orderTable1,
+                orderTable2
+        );
+        TableGroup tableGroup = TableGroupFixture.오더_테이블이_있는_테이블_그룹_생성(savedOrderTables);
+        Long savedTableGroupId = tableGroupService.create(tableGroup).getId();
+
+        // when then
+        assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroupId))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void TableGroup을_삭제할_때_연관된_Order중_현재_식사_중인_것이_있으면_안된다() {
+        // given
+        OrderTable orderTable1 = orderTableDao.save(OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(1, true));
+        OrderTable에_원하는_상태의_주문을_추가한다(orderTable1, OrderStatus.MEAL);
+        OrderTable orderTable2 = orderTableDao.save(OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(1, true));
+        List<OrderTable> savedOrderTables = List.of(
+                orderTable1,
+                orderTable2
+        );
+        TableGroup tableGroup = TableGroupFixture.오더_테이블이_있는_테이블_그룹_생성(savedOrderTables);
+        Long savedTableGroupId = tableGroupService.create(tableGroup).getId();
+
+        // when then
+        assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroupId))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private void OrderTable에_원하는_상태의_주문을_추가한다(OrderTable orderTable, OrderStatus orderStatus) {
+        orderTable.setEmpty(false);
+        orderTableDao.save(orderTable);
+
+        Order savedOrder = 주문을_저장하고_반환받는다(orderTable);
+        주문의_상태를_변환한다(savedOrder, orderStatus);
+
+        orderTable.setEmpty(true);
+        orderTableDao.save(orderTable);
+    }
+
+    @Test
+    void TableGroup을_성공적으로_삭제해준다() {
+        // given
+        OrderTable orderTable1 = orderTableDao.save(OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(1, true));
+        OrderTable orderTable2 = orderTableDao.save(OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(1, true));
+        List<OrderTable> savedOrderTables = List.of(
+                orderTable1,
+                orderTable2
+        );
+        TableGroup tableGroup = TableGroupFixture.오더_테이블이_있는_테이블_그룹_생성(savedOrderTables);
+        Long savedTableGroupId = tableGroupService.create(tableGroup).getId();
+
+        // when
+        tableGroupService.ungroup(savedTableGroupId);
+        OrderTable savedOrderTable1 = orderTableDao.findById(orderTable1.getId())
+                .orElseThrow(NoSuchElementException::new);
+        OrderTable savedOrderTable2 = orderTableDao.findById(orderTable2.getId())
+                .orElseThrow(NoSuchElementException::new);
+
+        // then
+        assertAll(
+                () -> assertThat(savedOrderTable1.getTableGroupId()).isNull(),
+                () -> assertThat(savedOrderTable1.isEmpty()).isFalse(),
+                () -> assertThat(savedOrderTable2.getTableGroupId()).isNull(),
+                () -> assertThat(savedOrderTable2.isEmpty()).isFalse()
         );
     }
 
