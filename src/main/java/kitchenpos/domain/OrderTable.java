@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
+
 public class OrderTable {
 
     private Long id;
@@ -31,10 +33,19 @@ public class OrderTable {
     }
 
     public void changeNumberOfGuests(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("방문한 손님 수는 음수가 될 수 없습니다.");
+        }
+        if (empty) {
+            throw new IllegalArgumentException("빈 테이블에는 손님을 지정할 수 없습니다.");
+        }
         this.numberOfGuests = numberOfGuests;
     }
 
     public void changeEmpty(boolean empty) {
+        if (Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException("단체 지정이 되어있는 경우 테이블의 상태를 변경할 수 없습니다.");
+        }
         this.empty = empty;
     }
 
