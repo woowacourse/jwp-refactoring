@@ -47,7 +47,8 @@ public class MenuService {
             Product product = productRepository.findById(menuProductRequest.getProductId())
                     .orElseThrow();
 
-            menu.addMenuProduct(new MenuProduct(menu, product, menuProductRequest.getQuantity()));
+            MenuProduct menuProduct = new MenuProduct(menu, product, menuProductRequest.getQuantity());
+            menu.addMenuProduct(menuProduct);
         }
     }
 
