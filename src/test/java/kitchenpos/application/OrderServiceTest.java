@@ -8,10 +8,11 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -134,11 +135,11 @@ class OrderServiceTest {
 
             given(menuDao.countByIdIn(anyList())).willReturn((long) orderLineItems.size());
 
-            final OrderTable emptyOrderTable = new OrderTable(6, true);
             final long orderTableId = 1L;
             given(order.getOrderTableId()).willReturn(orderTableId);
 
             // when
+            final OrderTable emptyOrderTable = new OrderTable(6, true);
             when(orderTableDao.findById(anyLong())).thenReturn(Optional.ofNullable(emptyOrderTable));
 
             // then
@@ -147,26 +148,76 @@ class OrderServiceTest {
         }
     }
 
-    // TODO: 10/12/23 list
-    @Disabled
     @Nested
     class FindAll {
 
         @Test
-        void list() {
+        void 주문을_전체_조회_할_수_있다() {
             // given
-            final OrderLineItem wooDong = new OrderLineItem(1L, 1L, 1);
-            final OrderLineItem frenchFries = new OrderLineItem(1L, 2L, 1);
+            final long orderId = 1L;
+            final OrderLineItem wooDong = new OrderLineItem(orderId, 1L, 1);
+            final OrderLineItem frenchFries = new OrderLineItem(orderId, 2L, 1);
             final List<OrderLineItem> orderLineItems = List.of(wooDong, frenchFries);
-            final Order order = spy(new Order(OrderStatus.COMPLETION.name(), LocalDateTime.now(), null));
+
+            given(orderLineItemDao.findAllByOrderId(orderId)).willReturn(orderLineItems);
+
+            final Order spyOrder = spy(new Order(OrderStatus.COMPLETION.name(), LocalDateTime.now(), null));
+            given(spyOrder.getId()).willReturn(orderId);
+            given(orderDao.findAll()).willReturn(List.of(spyOrder));
+
+            // when
+            final List<Order> actual = orderService.list();
+
+            // then
+            assertAll(
+                    () -> assertThat(actual).hasSize(1)
+                            .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id", "orderLineItems")
+                            .containsExactly(spyOrder),
+                    () -> assertThat(actual.get(0).getOrderLineItems())
+                            .usingRecursiveFieldByFieldElementComparatorIgnoringFields("seq")
+                            .containsExactly(wooDong, frenchFries)
+            );
+
         }
     }
 
-    // TODO: 10/12/23 changeOrderStatus
-    @Disabled
     @Nested
     class ChangeOrderStatus {
-        
-        
+
+        @ParameterizedTest
+        @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
+        void 주문_상태를_변경할_수_있다(final OrderStatus validedOrderStatus) {
+            // given
+            final long orderId = 1;
+            final OrderLineItem wooDong = new OrderLineItem(orderId, 1L, 1);
+            final OrderLineItem frenchFries = new OrderLineItem(orderId, 2L, 1);
+            final List<OrderLineItem> orderLineItems = List.of(wooDong, frenchFries);
+
+            final Order order = new Order(validedOrderStatus.name(), LocalDateTime.now(), orderLineItems);
+            given(orderDao.findById(orderId)).willReturn(Optional.ofNullable(order));
+
+            // when
+            final Order expected = new Order(OrderStatus.COMPLETION.name(), LocalDateTime.now(), orderLineItems);
+            final Order actual = orderService.changeOrderStatus(orderId, expected);
+
+            // then
+            assertThat(actual.getOrderStatus()).isEqualTo(expected.getOrderStatus());
+        }
+
+        @Test
+        void 주문_상태가_완료_상태라면_상태를_변경할_수_없다() {
+            // given
+            final long orderId = 1;
+            final OrderLineItem wooDong = new OrderLineItem(orderId, 1L, 1);
+            final OrderLineItem frenchFries = new OrderLineItem(orderId, 2L, 1);
+            final List<OrderLineItem> orderLineItems = List.of(wooDong, frenchFries);
+
+            final Order order = new Order(OrderStatus.COMPLETION.name(), LocalDateTime.now(), orderLineItems);
+            given(orderDao.findById(orderId)).willReturn(Optional.ofNullable(order));
+
+            // when, then
+            assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, order))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
     }
 }
