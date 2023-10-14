@@ -7,6 +7,7 @@ import static kitchenpos.common.fixture.OrderLineItemFixture.주문_항목;
 import static kitchenpos.common.fixture.OrderTableFixture.주문_테이블;
 import static kitchenpos.common.fixture.TableGroupFixture.단체_지정;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
 import javax.sql.DataSource;
@@ -56,9 +57,12 @@ class JdbcTemplateOrderLineItemDaoTest {
         OrderLineItem savedOrderLineItem = jdbcTemplateOrderLineItemDao.save(orderLineItem);
 
         // then
-        assertThat(savedOrderLineItem).usingRecursiveComparison()
-                .ignoringFields("seq")
-                .isEqualTo(주문_항목(menuId, orderId));
+        assertSoftly(softly -> {
+            softly.assertThat(savedOrderLineItem.getSeq()).isNotNull();
+            softly.assertThat(savedOrderLineItem).usingRecursiveComparison()
+                    .ignoringFields("seq")
+                    .isEqualTo(주문_항목(menuId, orderId));
+        });
     }
 
     @Test

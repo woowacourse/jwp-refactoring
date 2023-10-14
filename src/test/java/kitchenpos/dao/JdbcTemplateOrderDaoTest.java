@@ -6,6 +6,7 @@ import static kitchenpos.common.fixture.TableGroupFixture.단체_지정;
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
 import javax.sql.DataSource;
@@ -46,9 +47,12 @@ class JdbcTemplateOrderDaoTest {
         Order savedOrder = jdbcTemplateOrderDao.save(order);
 
         // then
-        assertThat(savedOrder).usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(주문(orderTableId));
+        assertSoftly(softly -> {
+            softly.assertThat(savedOrder.getId()).isNotNull();
+            softly.assertThat(savedOrder).usingRecursiveComparison()
+                    .ignoringFields("id")
+                    .isEqualTo(주문(orderTableId));
+        });
     }
 
     @Test

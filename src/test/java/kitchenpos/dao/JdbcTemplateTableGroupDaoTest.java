@@ -2,6 +2,7 @@ package kitchenpos.dao;
 
 import static kitchenpos.common.fixture.TableGroupFixture.단체_지정;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
 import javax.sql.DataSource;
@@ -34,9 +35,12 @@ class JdbcTemplateTableGroupDaoTest {
         TableGroup savedTableGroup = jdbcTemplateTableGroupDao.save(tableGroup);
 
         // then
-        assertThat(savedTableGroup).usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(단체_지정());
+        assertSoftly(softly -> {
+            softly.assertThat(savedTableGroup.getId()).isNotNull();
+            softly.assertThat(savedTableGroup).usingRecursiveComparison()
+                    .ignoringFields("id")
+                    .isEqualTo(단체_지정());
+        });
     }
 
     @Test

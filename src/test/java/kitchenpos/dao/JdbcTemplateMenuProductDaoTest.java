@@ -5,6 +5,7 @@ import static kitchenpos.common.fixture.MenuGroupFixture.메뉴_그룹;
 import static kitchenpos.common.fixture.MenuProductFixture.메뉴_상품;
 import static kitchenpos.common.fixture.ProductFixture.상품;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
 import javax.sql.DataSource;
@@ -48,9 +49,12 @@ class JdbcTemplateMenuProductDaoTest {
         MenuProduct savedMenuProduct = jdbcTemplateMenuProductDao.save(menuProduct);
 
         // then
-        assertThat(savedMenuProduct).usingRecursiveComparison()
-                .ignoringFields("seq")
-                .isEqualTo(메뉴_상품(menuId, productId));
+        assertSoftly(softly -> {
+            softly.assertThat(savedMenuProduct.getSeq()).isNotNull();
+            softly.assertThat(savedMenuProduct).usingRecursiveComparison()
+                    .ignoringFields("seq")
+                    .isEqualTo(메뉴_상품(menuId, productId));
+        });
     }
 
     @Test

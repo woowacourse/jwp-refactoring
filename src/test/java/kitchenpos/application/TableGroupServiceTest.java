@@ -7,6 +7,7 @@ import static kitchenpos.common.fixture.TableGroupFixture.단체_지정;
 import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -69,11 +70,13 @@ class TableGroupServiceTest {
             TableGroup createdTableGroup = tableGroupService.create(tableGroup);
 
             // then
-            assertThat(createdTableGroup).usingRecursiveComparison()
-                    .ignoringFields("id")
-                    .ignoringExpectedNullFields()
-                    .ignoringFieldsOfTypes(LocalDateTime.class)
-                    .isEqualTo(단체_지정(List.of(주문_테이블(), 주문_테이블())));
+            assertSoftly(softly -> {
+                softly.assertThat(createdTableGroup.getId()).isNotNull();
+                softly.assertThat(createdTableGroup).usingRecursiveComparison()
+                        .ignoringFields("id", "orderTables.id", "orderTables.tableGroupId")
+                        .ignoringFieldsOfTypes(LocalDateTime.class)
+                        .isEqualTo(단체_지정(List.of(주문_테이블(), 주문_테이블())));
+            });
         }
 
         @Test
@@ -166,7 +169,7 @@ class TableGroupServiceTest {
             TableGroup tableGroup = tableGroupService.create(단체_지정(List.of(emptyOrderTable_A, emptyOrderTable_B)));
 
             saveOrder(emptyOrderTable_A.getId(), orderStatus);
-            
+
             // expect
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                     .isInstanceOf(IllegalArgumentException.class);

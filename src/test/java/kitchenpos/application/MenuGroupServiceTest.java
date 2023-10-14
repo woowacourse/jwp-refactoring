@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static kitchenpos.common.fixture.MenuGroupFixture.메뉴_그룹;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
 import kitchenpos.common.ServiceTest;
@@ -29,9 +30,12 @@ class MenuGroupServiceTest {
         MenuGroup createdMenuGroup = menuGroupService.create(menuGroup);
 
         // then
-        assertThat(createdMenuGroup).usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(메뉴_그룹());
+        assertSoftly(softly -> {
+            softly.assertThat(createdMenuGroup.getId()).isNotNull();
+            softly.assertThat(createdMenuGroup).usingRecursiveComparison()
+                    .ignoringFields("id")
+                    .isEqualTo(메뉴_그룹());
+        });
     }
 
     @Test

@@ -6,6 +6,7 @@ import static kitchenpos.common.fixture.MenuProductFixture.메뉴_상품;
 import static kitchenpos.common.fixture.ProductFixture.상품;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -53,10 +54,12 @@ class MenuServiceTest {
         Menu createdMenu = menuService.create(menu);
 
         // then
-        assertThat(createdMenu).usingRecursiveComparison()
-                .ignoringFields("id")
-                .ignoringExpectedNullFields()
-                .isEqualTo(메뉴(menuGroupId, List.of(menuProduct)));
+        assertSoftly(softly -> {
+            softly.assertThat(createdMenu.getId()).isNotNull();
+            softly.assertThat(createdMenu).usingRecursiveComparison()
+                    .ignoringFields("id", "menuProducts.seq")
+                    .isEqualTo(메뉴(menuGroupId, List.of(menuProduct)));
+        });
     }
 
     @Test
@@ -119,7 +122,7 @@ class MenuServiceTest {
 
         // then
         assertThat(menus).usingRecursiveComparison()
-                .ignoringExpectedNullFields()
+                .ignoringFields("menuProducts.seq")
                 .isEqualTo(List.of(메뉴(menuId, menuGroupId, PRICE, List.of(menuProduct))));
     }
 }

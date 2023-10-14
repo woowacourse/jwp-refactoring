@@ -2,6 +2,7 @@ package kitchenpos.dao;
 
 import static kitchenpos.common.fixture.ProductFixture.상품;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
 import javax.sql.DataSource;
@@ -34,9 +35,12 @@ class JdbcTemplateProductDaoTest {
         Product savedProduct = jdbcTemplateProductDao.save(product);
 
         // then
-        assertThat(savedProduct).usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(상품());
+        assertSoftly(softly -> {
+            softly.assertThat(savedProduct.getId()).isNotNull();
+            softly.assertThat(savedProduct).usingRecursiveComparison()
+                    .ignoringFields("id")
+                    .isEqualTo(상품());
+        });
     }
 
     @Test

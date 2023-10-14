@@ -9,8 +9,8 @@ import static kitchenpos.common.fixture.OrderTableFixture.빈_주문_테이블;
 import static kitchenpos.common.fixture.OrderTableFixture.주문_테이블;
 import static kitchenpos.common.fixture.ProductFixture.상품;
 import static kitchenpos.domain.OrderStatus.COOKING;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -81,11 +81,13 @@ class OrderServiceTest {
         Order createdOrder = orderService.create(order);
 
         // then
-        assertThat(createdOrder).usingRecursiveComparison()
-                .ignoringFields("id")
-                .ignoringFieldsOfTypes(LocalDateTime.class)
-                .ignoringExpectedNullFields()
-                .isEqualTo(주문(orderTableId, COOKING.name(), List.of(orderLineItem)));
+        assertSoftly(softly -> {
+            softly.assertThat(createdOrder.getId()).isNotNull();
+            softly.assertThat(createdOrder).usingRecursiveComparison()
+                    .ignoringFields("id", "orderLineItems.seq")
+                    .ignoringFieldsOfTypes(LocalDateTime.class)
+                    .isEqualTo(주문(orderTableId, COOKING.name(), List.of(orderLineItem)));
+        });
     }
 
     @Test

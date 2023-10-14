@@ -3,6 +3,7 @@ package kitchenpos.dao;
 import static kitchenpos.common.fixture.OrderTableFixture.주문_테이블;
 import static kitchenpos.common.fixture.TableGroupFixture.단체_지정;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
 import javax.sql.DataSource;
@@ -39,9 +40,12 @@ class JdbcTemplateOrderTableDaoTest {
         OrderTable savedOrderTable = jdbcTemplateOrderTableDao.save(orderTable);
 
         // then
-        assertThat(savedOrderTable).usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(주문_테이블(tableGroupId));
+        assertSoftly(softly -> {
+            softly.assertThat(savedOrderTable.getId()).isNotNull();
+            softly.assertThat(savedOrderTable).usingRecursiveComparison()
+                    .ignoringFields("id")
+                    .isEqualTo(주문_테이블(tableGroupId));
+        });
     }
 
     @Test

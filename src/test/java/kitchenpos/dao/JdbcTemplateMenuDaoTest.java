@@ -2,6 +2,7 @@ package kitchenpos.dao;
 
 import static kitchenpos.common.fixture.MenuFixture.메뉴;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
 import javax.sql.DataSource;
@@ -39,10 +40,12 @@ class JdbcTemplateMenuDaoTest {
         Menu savedMenu = jdbcTemplateMenuDao.save(menu);
 
         // then
-        assertThat(savedMenu).usingRecursiveComparison()
-                .ignoringFields("id")
-                .ignoringActualNullFields()
-                .isEqualTo(메뉴(menuGroupId));
+        assertSoftly(softly -> {
+            softly.assertThat(savedMenu).isNotNull();
+            softly.assertThat(savedMenu).usingRecursiveComparison()
+                    .ignoringFields("id")
+                    .isEqualTo(메뉴(menuGroupId));
+        });
     }
 
     @Test
@@ -55,7 +58,6 @@ class JdbcTemplateMenuDaoTest {
 
         // then
         assertThat(menu).usingRecursiveComparison()
-                .ignoringActualNullFields()
                 .isEqualTo(메뉴(menuId, menuGroupId));
     }
 
@@ -70,7 +72,6 @@ class JdbcTemplateMenuDaoTest {
 
         // then
         assertThat(menus).usingRecursiveComparison()
-                .ignoringActualNullFields()
                 .isEqualTo(List.of(메뉴(menuId_A, menuGroupId), 메뉴(menuId_B, menuGroupId)));
     }
 

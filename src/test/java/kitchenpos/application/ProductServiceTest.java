@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static kitchenpos.common.fixture.ProductFixture.상품;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -31,9 +32,12 @@ class ProductServiceTest {
         Product createdProduct = productService.create(product);
 
         // then
-        assertThat(createdProduct).usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(상품());
+        assertSoftly(softly -> {
+            softly.assertThat(createdProduct.getId()).isNotNull();
+            softly.assertThat(createdProduct).usingRecursiveComparison()
+                    .ignoringFields("id")
+                    .isEqualTo(상품());
+        });
     }
 
     @Test

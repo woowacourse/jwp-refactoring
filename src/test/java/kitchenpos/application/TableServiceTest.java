@@ -6,6 +6,7 @@ import static kitchenpos.common.fixture.OrderTableFixture.주문_테이블;
 import static kitchenpos.common.fixture.TableGroupFixture.단체_지정;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
 import kitchenpos.common.ServiceTest;
@@ -45,9 +46,12 @@ class TableServiceTest {
         OrderTable createdOrderTable = tableService.create(orderTable);
 
         // then
-        assertThat(createdOrderTable).usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(주문_테이블());
+        assertSoftly(softly -> {
+            softly.assertThat(createdOrderTable.getId()).isNotNull();
+            softly.assertThat(createdOrderTable).usingRecursiveComparison()
+                    .ignoringFields("id")
+                    .isEqualTo(주문_테이블());
+        });
     }
 
     @Test
@@ -60,7 +64,6 @@ class TableServiceTest {
 
         // then
         assertThat(orderTables).usingRecursiveComparison()
-                .ignoringFields()
                 .isEqualTo(List.of(주문_테이블(orderTableId, null)));
     }
 

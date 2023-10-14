@@ -15,7 +15,7 @@ public class MenuFixture {
                 "menuName",
                 BigDecimal.valueOf(1).setScale(2, RoundingMode.HALF_UP),
                 menuGroupId,
-                List.of()
+                null
         );
     }
 
@@ -24,7 +24,7 @@ public class MenuFixture {
                 "menuName",
                 BigDecimal.valueOf(1).setScale(2, RoundingMode.HALF_UP),
                 menuGroupId,
-                List.of()
+                null
         );
     }
 
