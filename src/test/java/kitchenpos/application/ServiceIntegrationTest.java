@@ -9,7 +9,6 @@ import static kitchenpos.fixture.ProductFixture.후추_치킨_10000원;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
@@ -26,7 +25,6 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
-import kitchenpos.fixture.OrderFixture;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 

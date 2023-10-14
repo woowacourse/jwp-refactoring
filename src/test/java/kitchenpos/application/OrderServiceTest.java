@@ -30,7 +30,6 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.fixture.OrderTableFixture;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 class OrderServiceTest extends ServiceIntegrationTest {
 
@@ -91,7 +90,8 @@ class OrderServiceTest extends ServiceIntegrationTest {
     @Test
     void Order를_성공적으로_저장한다() {
         // when
-        Order savedOrder = 주문을_저장하고_반환받는다(OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(1, false));
+        OrderTable savedOrderTable = orderTableDao.save(테이블_그룹이_없는_주문_테이블_생성(1, false));
+        Order savedOrder = 주문을_저장하고_반환받는다(savedOrderTable);
 
         // then
         assertAll(
@@ -107,8 +107,9 @@ class OrderServiceTest extends ServiceIntegrationTest {
     @Test
     void 전체_Order_목록을_반환받는다() {
         // given
+        OrderTable savedOrderTable = orderTableDao.save(테이블_그룹이_없는_주문_테이블_생성(1, false));
         List<Order> savedOrder =List.of(
-                주문을_저장하고_반환받는다(OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(1, false))
+                주문을_저장하고_반환받는다(savedOrderTable)
         );
 
         // when
@@ -140,7 +141,8 @@ class OrderServiceTest extends ServiceIntegrationTest {
     @Test
     void 이미_식사를_완료한_주문을_변경을_할_수_없다() {
         // given
-        Order order = 주문을_저장하고_반환받는다(OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(1, false));
+        OrderTable savedOrderTable = orderTableDao.save(테이블_그룹이_없는_주문_테이블_생성(1, false));
+        Order order = 주문을_저장하고_반환받는다(savedOrderTable);
         order.setOrderStatus(OrderStatus.COMPLETION.name());
         orderDao.save(order);
 
@@ -152,7 +154,8 @@ class OrderServiceTest extends ServiceIntegrationTest {
     @Test
     void 성공적으로_Order를_원하는_상태로_바꾼다() {
         // given
-        Order savedOrder = 주문을_저장하고_반환받는다(OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(1, false));
+        OrderTable savedOrderTable = orderTableDao.save(테이블_그룹이_없는_주문_테이블_생성(1, false));
+        Order savedOrder = 주문을_저장하고_반환받는다(savedOrderTable);
         savedOrder.setOrderStatus(OrderStatus.COMPLETION.name());
 
         // when

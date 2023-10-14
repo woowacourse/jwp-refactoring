@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.fixture.OrderTableFixture;
@@ -101,16 +103,35 @@ class TableServiceTest extends ServiceIntegrationTest {
     }
 
     @Test
-    void OrderTable에_속해_있는_Order중_단_하나라도_요리중이면_안된다() {
+    void OrderTable에_속해_있는_Order중_단_하나라도_요리중이면_empty_변경이_안된다() {
         // given
+        OrderTable savedOrderTable = orderTableDao.save(OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(1, false));
+        Order order = 주문을_저장하고_반환받는다(savedOrderTable);
+        주문의_상태를_변환한다(order, OrderStatus.COOKING);
+        OrderTable emptyTrueOrderTable = OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(
+                1,
+                true
+        );
 
-        // when
-
-        // then
+        // when then
+        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), emptyTrueOrderTable))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    void OrderTable에_속해_있는_Order중_단_하나라도_식사중이면_안된다() {
+    void OrderTable에_속해_있는_Order중_단_하나라도_식사중이면_empty_변경이_안된다() {
+        // given
+        OrderTable savedOrderTable = orderTableDao.save(OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(1, false));
+        Order order = 주문을_저장하고_반환받는다(savedOrderTable);
+        주문의_상태를_변환한다(order, OrderStatus.MEAL);
+        OrderTable emptyTrueOrderTable = OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(
+                1,
+                true
+        );
+
+        // when then
+        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), emptyTrueOrderTable))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -118,13 +139,15 @@ class TableServiceTest extends ServiceIntegrationTest {
         // given
         OrderTable orderTable = OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(
                 1,
-                true
+                false
         );
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
-        OrderTable emptyFalseOrderTable = OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(1, false);
+        Order order = 주문을_저장하고_반환받는다(savedOrderTable);
+        주문의_상태를_변환한다(order, OrderStatus.COMPLETION);
+        OrderTable emptyTrueOrderTable = OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성(1, true);
 
         // when
-        tableService.changeEmpty(savedOrderTable.getId(), emptyFalseOrderTable);
+        tableService.changeEmpty(savedOrderTable.getId(), emptyTrueOrderTable);
 
         // then
         OrderTable changedOrderTable = orderTableDao.findById(savedOrderTable.getId())
@@ -133,7 +156,7 @@ class TableServiceTest extends ServiceIntegrationTest {
                 () -> assertThat(changedOrderTable).usingRecursiveComparison()
                         .ignoringFields("empty")
                         .isEqualTo(savedOrderTable),
-                () -> assertThat(changedOrderTable.isEmpty()).isFalse()
+                () -> assertThat(changedOrderTable.isEmpty()).isTrue()
         );
     }
 
