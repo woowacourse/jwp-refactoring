@@ -45,7 +45,7 @@ class MenuServiceTest {
         productRepository = new InMemoryProductRepository();
         menuService = new MenuService(menuDao, menuGroupDao, menuProductDao, productRepository);
         savedMenuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
-        savedMenuProduct = menuProductDao.save(new MenuProduct());
+        savedMenuProduct = menuProductDao.save(new MenuProduct(1L, 1L, 10));
     }
 
     @Test
