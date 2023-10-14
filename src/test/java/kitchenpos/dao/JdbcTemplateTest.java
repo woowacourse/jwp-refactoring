@@ -6,7 +6,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import javax.sql.DataSource;
 
 @JdbcTest
-public class JdbcTemplateTest {
+public abstract class JdbcTemplateTest {
 
     @Autowired
     protected DataSource dataSource;
