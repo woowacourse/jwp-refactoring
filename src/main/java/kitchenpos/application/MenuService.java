@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
-import static kitchenpos.vo.Money.valueOf;
 
 import java.util.List;
 import java.util.Map;
@@ -11,7 +10,6 @@ import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
@@ -41,13 +39,7 @@ public class MenuService {
         }
         Map<Long, Product> products = productRepository.findAllByIdIn(request.getMenuProductIds()).stream()
                 .collect(toMap(Product::getId, identity()));
-        List<MenuProduct> menuProducts = request.getMenuProducts().stream()
-                .map(menuProduct -> new MenuProduct(
-                        products.get(menuProduct.getProductId()),
-                        menuProduct.getQuantity())
-                )
-                .collect(toList());
-        Menu menu = new Menu(request.getName(), valueOf(request.getPrice()), request.getMenuGroupId(), menuProducts);
+        Menu menu = request.toMenu(products);
         return MenuResponse.from(menuRepository.save(menu));
     }
 
