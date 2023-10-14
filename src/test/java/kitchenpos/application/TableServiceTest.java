@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
@@ -26,6 +27,9 @@ class TableServiceTest {
 
     @Autowired
     private TableService tableService;
+
+    @Autowired
+    private OrderTableDao orderTableDao;
 
     @Autowired
     private TableGroupDao tableGroupDao;
@@ -117,24 +121,18 @@ class TableServiceTest {
         tableGroup.setCreatedDate(LocalDateTime.now());
         TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
-        OrderTable orderTableA = new OrderTable();
-        orderTableA.setNumberOfGuests(4);
-        orderTableA.setEmpty(false);
-        orderTableA.setTableGroupId(savedTableGroup.getId());
-        OrderTable savedOrderTableA = tableService.create(orderTableA);
-
-        Order order = new Order();
-        order.setOrderStatus(OrderStatus.MEAL.name());
-        order.setOrderTableId(savedOrderTableA.getId());
-        order.setOrderedTime(LocalDateTime.now());
-        orderDao.save(order);
+        OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(4);
+        orderTable.setEmpty(false);
+        orderTable.setTableGroupId(savedTableGroup.getId());
+        OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         // when
         OrderTable newOrderTable = new OrderTable();
         newOrderTable.setEmpty(true);
 
         // then
-        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTableA.getId(), newOrderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), newOrderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
