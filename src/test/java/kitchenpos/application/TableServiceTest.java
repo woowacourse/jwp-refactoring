@@ -84,10 +84,7 @@ class TableServiceTest extends ServiceTestContext {
         orderTable.setNumberOfGuests(2);
         OrderTable createdOrderTable = orderTableDao.save(orderTable);
 
-        Order order = new Order();
-        order.setOrderStatus(orderStatus.name());
-        order.setOrderTableId(createdOrderTable.getId());
-        order.setOrderedTime(LocalDateTime.now());
+        Order order = new Order(createdOrderTable.getId(), orderStatus, LocalDateTime.now());
         orderDao.save(order);
 
         ChangeEmptyTableRequest request = new ChangeEmptyTableRequest(false);

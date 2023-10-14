@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.dao.jpa.MenuRepository;
 import kitchenpos.dao.jpa.OrderLineItemRepository;
@@ -66,7 +65,6 @@ public class OrderService {
     }
 
     private Order createOrder(CreateOrderRequest request) {
-        Order order = new Order();
         OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -74,9 +72,7 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
+        Order order = new Order(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now());
 
         return orderRepository.save(order);
     }
@@ -103,10 +99,6 @@ public class OrderService {
     public List<OrderResponse> findAll() {
         final List<Order> orders = orderRepository.findAll();
 
-        for (final Order order : orders) {
-            order.setOrderLineItems(orderLineItemRepository.findAllByOrderId(order.getId()));
-        }
-
         return orders.stream()
                 .map(OrderResponse::from)
                 .collect(Collectors.toList());
@@ -114,19 +106,15 @@ public class OrderService {
 
     @Transactional
     public OrderResponse changeOrderStatus(Long orderId, ChangeOrderStatusRequest request) {
-        final Order savedOrder = orderRepository.findById(orderId)
+        final Order order = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
+        if (OrderStatus.COMPLETION == order.getOrderStatus()) {
             throw new IllegalArgumentException();
         }
 
-        final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
+        order.changeOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
 
-        orderRepository.save(savedOrder);
-        savedOrder.setOrderLineItems(orderLineItemRepository.findAllByOrderId(orderId));
-
-        return OrderResponse.from(savedOrder);
+        return OrderResponse.from(order);
     }
 }

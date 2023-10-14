@@ -58,13 +58,9 @@ public class MenuService {
     }
 
     private void createMenuProductWith(MenuProductRequest menuProductRequest, Menu menu) {
-        MenuProduct menuProduct = new MenuProduct();
-
         Product product = productRepository.findById(menuProductRequest.getProductId())
                 .orElseThrow();
-        menuProduct.setProduct(product);
-        menuProduct.setQuantity(menuProductRequest.getQuantity());
-        menuProduct.setMenu(menu);
+        MenuProduct menuProduct = new MenuProduct(menu, product, menuProductRequest.getQuantity());
 
         menuProductRepository.save(menuProduct);
     }

@@ -15,6 +15,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
@@ -115,10 +116,7 @@ public class ServiceTestContext {
     }
 
     private void setupOrder() {
-        Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderStatus("COOKING");
+        Order order = new Order(savedOrderTable.getId(), OrderStatus.COOKING, LocalDateTime.now());
 
         savedOrder = orderDao.save(order);
     }
@@ -132,8 +130,7 @@ public class ServiceTestContext {
     }
 
     private void setupMenuGroup() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("menuGroupName");
+        MenuGroup menuGroup = new MenuGroup("menuGroupName");
 
         savedMenuGroup = menuGroupRepository.save(menuGroup);
     }
@@ -145,10 +142,7 @@ public class ServiceTestContext {
     }
 
     private void setupMenuProduct() {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProduct(savedProduct);
-        menuProduct.setQuantity(2L);
-        menuProduct.setMenu(savedMenu);
+        MenuProduct menuProduct = new MenuProduct(savedMenu, savedProduct, 2L);
 
         savedMenuProduct = menuProductRepository.save(menuProduct);
     }
