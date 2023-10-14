@@ -72,7 +72,7 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        Order order = new Order(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now());
+        Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
 
         return orderRepository.save(order);
     }

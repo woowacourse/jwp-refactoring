@@ -10,6 +10,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -21,8 +23,9 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // TODO:
-    private Long orderTableId;
+    @ManyToOne
+    @JoinColumn(name = "order_table_id")
+    private OrderTable orderTable;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
@@ -35,8 +38,8 @@ public class Order {
     protected Order() {
     }
 
-    public Order(Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
-        this.orderTableId = orderTableId;
+    public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
+        this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
     }
@@ -49,8 +52,8 @@ public class Order {
         return id;
     }
 
-    public Long getOrderTableId() {
-        return orderTableId;
+    public OrderTable getOrderTable() {
+        return orderTable;
     }
 
     public OrderStatus getOrderStatus() {

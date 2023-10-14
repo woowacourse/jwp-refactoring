@@ -116,7 +116,7 @@ public class ServiceTestContext {
     }
 
     private void setupOrder() {
-        Order order = new Order(savedOrderTable.getId(), OrderStatus.COOKING, LocalDateTime.now());
+        Order order = new Order(savedOrderTable, OrderStatus.COOKING, LocalDateTime.now());
 
         savedOrder = orderDao.save(order);
     }

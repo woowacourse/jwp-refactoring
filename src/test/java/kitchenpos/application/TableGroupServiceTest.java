@@ -127,7 +127,7 @@ class TableGroupServiceTest extends ServiceTestContext {
         orderTable.setTableGroup(createdTableGroup);
         OrderTable createdOrderTable = orderTableDao.save(orderTable);
 
-        Order order = new Order(createdOrderTable.getId(), orderStatus, LocalDateTime.now());
+        Order order = new Order(createdOrderTable, orderStatus, LocalDateTime.now());
         orderDao.save(order);
 
         // when, then
