@@ -76,7 +76,7 @@ class JdbcTemplateMenuGroupDaoTest {
     }
 
     @Test
-    void exists_by_id() {
+    void exists_by_id_when_exist() {
         // given
         final MenuGroup chickenGroup = menuGroupFixtureFrom("Chicken-group");
         final Long savedId = jdbcTemplateMenuGroupDao.save(chickenGroup).getId();
@@ -86,6 +86,15 @@ class JdbcTemplateMenuGroupDaoTest {
 
         // then
         assertThat(existsById).isTrue();
+    }
+
+    @Test
+    void exists_by_id_when_doesnt_exist() {
+        // when
+        final boolean existsById = jdbcTemplateMenuGroupDao.existsById(1L);
+
+        // then
+        assertThat(existsById).isFalse();
     }
 
     private MenuGroup menuGroupFixtureFrom(final String name) {

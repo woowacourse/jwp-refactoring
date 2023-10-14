@@ -120,6 +120,25 @@ class JdbcTemplateOrderDaoTest {
     }
 
     @Test
+    void exists_by_order_table_id_and_order_status_in_when_status_doesnt_match() {
+        // given
+        final Order cookingOrder = orderFixtureOf(OrderStatus.COOKING);
+        final Order mealOrder = orderFixtureOf(OrderStatus.MEAL);
+        jdbcTemplateOrderDao.save(cookingOrder);
+        jdbcTemplateOrderDao.save(mealOrder);
+        final Long mealOrderTableId = mealOrder.getOrderTableId();
+
+        // when
+        final boolean existsByOrderTableIdAndOrderStatusIn = jdbcTemplateOrderDao.existsByOrderTableIdAndOrderStatusIn(
+                mealOrderTableId,
+                List.of(OrderStatus.COMPLETION.name())
+        );
+
+        // then
+        assertThat(existsByOrderTableIdAndOrderStatusIn).isFalse();
+    }
+
+    @Test
     void exists_by_order_table_ids_and_order_status_in() {
         // given
         final Order cookingOrder = orderFixtureOf(OrderStatus.COOKING);
