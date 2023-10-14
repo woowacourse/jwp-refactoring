@@ -24,9 +24,9 @@ public class OrderService {
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(
-            final MenuRepository menuRepository,
-            final OrderRepository orderRepository,
-            final OrderTableRepository orderTableRepository
+            MenuRepository menuRepository,
+            OrderRepository orderRepository,
+            OrderTableRepository orderTableRepository
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
@@ -42,7 +42,7 @@ public class OrderService {
 
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 테이블에서 주문을 할 수 없습니다."));
-        
+
         Order order = request.getOrderLineItems().stream()
                 .map(itemRequest -> new OrderLineItem(itemRequest.getMenuId(), itemRequest.getQuantity()))
                 .collect(Collectors.collectingAndThen(toList(), items -> new Order(orderTable, items)));
