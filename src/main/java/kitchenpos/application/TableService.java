@@ -8,6 +8,7 @@ import kitchenpos.dto.request.ChangeEmptyTableRequest;
 import kitchenpos.dto.request.ChangeTableGuestRequest;
 import kitchenpos.dto.request.CreateOrderTableRequest;
 import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.exception.OrderTableNotFoundException;
 import kitchenpos.persistence.OrderRepository;
 import kitchenpos.persistence.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -44,7 +45,7 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeEmpty(Long orderTableId, ChangeEmptyTableRequest request) {
         OrderTable orderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(OrderTableNotFoundException::new);
 
         orderTable.validateTableGroupNotExists();
         validateOrdersCompleted(orderTable);
@@ -65,7 +66,7 @@ public class TableService {
         int numberOfGuests = request.getNumberOfGuests();
 
         OrderTable orderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(OrderTableNotFoundException::new);
         orderTable.changeNumberOfGuests(numberOfGuests);
 
         return OrderTableResponse.from(orderTable);

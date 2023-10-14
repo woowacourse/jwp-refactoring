@@ -12,6 +12,7 @@ import kitchenpos.dto.request.ChangeEmptyTableRequest;
 import kitchenpos.dto.request.ChangeTableGuestRequest;
 import kitchenpos.dto.request.CreateOrderTableRequest;
 import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.exception.OrderTableNotFoundException;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -56,7 +57,7 @@ class TableServiceTest extends ServiceTestContext {
 
         // when, then
         assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderTableNotFoundException.class);
     }
 
     @Test
@@ -107,7 +108,7 @@ class TableServiceTest extends ServiceTestContext {
 
         // when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderTableNotFoundException.class);
     }
 
     @Test

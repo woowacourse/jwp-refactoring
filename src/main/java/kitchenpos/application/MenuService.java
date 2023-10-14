@@ -9,6 +9,8 @@ import kitchenpos.domain.Product;
 import kitchenpos.dto.request.CreateMenuRequest;
 import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.exception.MenuGroupNotFoundException;
+import kitchenpos.exception.ProductNotFoundException;
 import kitchenpos.persistence.MenuGroupRepository;
 import kitchenpos.persistence.MenuRepository;
 import kitchenpos.persistence.ProductRepository;
@@ -33,7 +35,7 @@ public class MenuService {
     @Transactional
     public MenuResponse create(CreateMenuRequest request) {
         MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(MenuGroupNotFoundException::new);
         Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup);
 
         addMenuProducts(request, menu);
@@ -45,7 +47,7 @@ public class MenuService {
     private void addMenuProducts(CreateMenuRequest request, Menu menu) {
         for (MenuProductRequest menuProductRequest : request.getMenuProducts()) {
             Product product = productRepository.findById(menuProductRequest.getProductId())
-                    .orElseThrow();
+                    .orElseThrow(ProductNotFoundException::new);
 
             MenuProduct menuProduct = new MenuProduct(menu, product, menuProductRequest.getQuantity());
             menu.addMenuProduct(menuProduct);

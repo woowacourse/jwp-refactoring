@@ -8,6 +8,9 @@ import kitchenpos.dto.request.ChangeOrderStatusRequest;
 import kitchenpos.dto.request.CreateOrderRequest;
 import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.exception.MenuNotFoundException;
+import kitchenpos.exception.OrderNotFoundException;
+import kitchenpos.exception.OrderTableNotFoundException;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +36,7 @@ class OrderServiceTest extends ServiceTestContext {
 
         // when, then
         assertThatThrownBy(() -> orderService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(MenuNotFoundException.class);
     }
 
     @Test
@@ -44,7 +47,7 @@ class OrderServiceTest extends ServiceTestContext {
 
         // when, then
         assertThatThrownBy(() -> orderService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderTableNotFoundException.class);
     }
 
     @Test
@@ -98,7 +101,7 @@ class OrderServiceTest extends ServiceTestContext {
 
         // when, then
         assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderNotFoundException.class);
     }
 
     @Test

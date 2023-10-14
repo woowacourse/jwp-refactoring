@@ -9,6 +9,8 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.CreateTableGroupRequest;
 import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.response.TableGroupResponse;
+import kitchenpos.exception.OrderTableNotFoundException;
+import kitchenpos.exception.TableGroupNotFoundException;
 import kitchenpos.persistence.OrderRepository;
 import kitchenpos.persistence.OrderTableRepository;
 import kitchenpos.persistence.TableGroupRepository;
@@ -44,14 +46,14 @@ public class TableGroupService {
     private List<OrderTable> findOrderTables(List<OrderTableRequest> orderTableRequests) {
         return orderTableRequests.stream()
                 .map(each -> orderTableRepository.findById(each.getId())
-                        .orElseThrow(IllegalArgumentException::new))
+                        .orElseThrow(OrderTableNotFoundException::new))
                 .collect(Collectors.toList());
     }
 
     @Transactional
     public void ungroup(Long tableGroupId) {
         TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(TableGroupNotFoundException::new);
 
         List<Order> orders = orderRepository.findByOrderTableIn(tableGroup.getOrderTables());
         for (Order order : orders) {

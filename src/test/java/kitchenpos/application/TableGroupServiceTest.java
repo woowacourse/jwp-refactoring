@@ -13,6 +13,7 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.CreateTableGroupRequest;
 import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.response.TableGroupResponse;
+import kitchenpos.exception.OrderTableNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -50,7 +51,7 @@ class TableGroupServiceTest extends ServiceTestContext {
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderTableNotFoundException.class);
     }
 
     @Test

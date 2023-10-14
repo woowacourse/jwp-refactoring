@@ -12,6 +12,9 @@ import kitchenpos.dto.request.ChangeOrderStatusRequest;
 import kitchenpos.dto.request.CreateOrderRequest;
 import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.exception.MenuNotFoundException;
+import kitchenpos.exception.OrderNotFoundException;
+import kitchenpos.exception.OrderTableNotFoundException;
 import kitchenpos.persistence.MenuRepository;
 import kitchenpos.persistence.OrderRepository;
 import kitchenpos.persistence.OrderTableRepository;
@@ -45,7 +48,7 @@ public class OrderService {
 
     private Order createOrder(CreateOrderRequest request) {
         OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(OrderTableNotFoundException::new);
 
         orderTable.validateIsNotEmpty();
         Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
@@ -56,7 +59,7 @@ public class OrderService {
     private void addOrderLineItems(CreateOrderRequest request, Order order) {
         for (OrderLineItemRequest orderLineItemRequest : request.getOrderLineItems()) {
             Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
-                    .orElseThrow(IllegalArgumentException::new);
+                    .orElseThrow(MenuNotFoundException::new);
 
             OrderLineItem orderLineItem = new OrderLineItem(order, menu, orderLineItemRequest.getQuantity());
             order.addOrderLineItem(orderLineItem);
@@ -74,7 +77,7 @@ public class OrderService {
     @Transactional
     public OrderResponse changeOrderStatus(Long orderId, ChangeOrderStatusRequest request) {
         final Order order = orderRepository.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(OrderNotFoundException::new);
 
         order.validateOrderIsNotCompleted();
         order.changeOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));

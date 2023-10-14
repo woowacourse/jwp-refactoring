@@ -8,6 +8,7 @@ import java.util.List;
 import kitchenpos.dto.request.CreateMenuRequest;
 import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.exception.MenuGroupNotFoundException;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +38,7 @@ class MenuServiceTest extends ServiceTestContext {
 
         // when, then
         assertThatThrownBy(() -> menuService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(MenuGroupNotFoundException.class);
     }
 
     @Test
