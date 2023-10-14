@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
@@ -38,17 +37,12 @@ public class TableService {
         OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
-        }
-
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
             orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setEmpty(changedStatus);
-
+        savedOrderTable.changeEmpty(changedStatus);
         return orderTableDao.save(savedOrderTable);
     }
 

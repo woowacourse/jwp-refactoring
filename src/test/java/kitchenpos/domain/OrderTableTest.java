@@ -48,4 +48,28 @@ class OrderTableTest {
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessageContaining("비어있는 테이블의 인원을 변경할 수 없습니다.");
     }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void 테이블_상태를_변경한다(boolean empty) {
+        // given
+        OrderTable orderTable = new OrderTable(1L, null, 5, !empty);
+
+        // when
+        orderTable.changeEmpty(empty);
+
+        // then
+        assertThat(orderTable.isEmpty()).isEqualTo(empty);
+    }
+
+    @Test
+    void 연관된_테이블_그룹이_존재하면_테이블_상태를_변경할_수_없다() {
+        // given
+        OrderTable orderTable = new OrderTable(1L, 1L, 5, true);
+
+        // when && then
+        assertThatThrownBy(() -> orderTable.changeEmpty(false))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("테이블그룹에 속한 테이블의 상태를 변경할 수 없습니다.");
+    }
 }

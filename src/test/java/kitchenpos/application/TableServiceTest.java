@@ -108,14 +108,16 @@ class TableServiceTest extends ServiceTest {
         }
 
         @Test
-        void 테이블그룹_아이디가_존재하면_예외() {
+        void 특정_테이블그룹에_속한다면_예외() {
             // given
             tableGroupDao.save(new TableGroup(1L, LocalDateTime.now(), null));
             Long givenId = orderTableDao.save(new OrderTable(1L, 5, true)).getId();
 
             // when && then
             assertThatThrownBy(() -> tableService.changeEmpty(givenId, false))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("테이블그룹에 속한 테이블의 상태를 변경할 수 없습니다.");
+
         }
 
         @Test
