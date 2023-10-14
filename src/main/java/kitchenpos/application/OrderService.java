@@ -3,12 +3,10 @@ package kitchenpos.application;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderCreateRequest;
@@ -39,13 +37,9 @@ public class OrderService {
         if (menuIds.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException("등록되지 않은 메뉴를 주문할 수 없습니다.");
         }
-
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 테이블에서 주문을 할 수 없습니다."));
-
-        Order order = request.getOrderLineItems().stream()
-                .map(itemRequest -> new OrderLineItem(itemRequest.getMenuId(), itemRequest.getQuantity()))
-                .collect(Collectors.collectingAndThen(toList(), items -> new Order(orderTable, items)));
+        Order order = request.toOrder(orderTable);
         return OrderResponse.from(orderRepository.save(order));
     }
 
