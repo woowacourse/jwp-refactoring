@@ -2,6 +2,7 @@ package kitchenpos.ui;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.TableGroupService;
+import kitchenpos.application.dto.TableGroupRequest;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import static kitchenpos.application.dto.TableGroupRequest.OrderTableRequest;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -41,12 +44,12 @@ class TableGroupRestControllerTest {
         createdTableGroup.setCreatedDate(LocalDateTime.now());
 
         // when
-        when(tableGroupService.create(any(TableGroup.class))).thenReturn(createdTableGroup);
+        when(tableGroupService.create(any(TableGroupRequest.class))).thenReturn(createdTableGroup);
 
         // then
         mockMvc.perform(post("/api/table-groups")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(createdTableGroup)))
+                        .content(objectMapper.writeValueAsBytes(new TableGroupRequest(List.of(new OrderTableRequest(1L))))))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/table-groups/" + createdTableGroup.getId()))
                 .andExpect(content().string(objectMapper.writeValueAsString(createdTableGroup)));

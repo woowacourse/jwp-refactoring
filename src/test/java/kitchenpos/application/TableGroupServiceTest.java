@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.TableGroupRequest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -20,6 +21,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static kitchenpos.application.dto.TableGroupRequest.OrderTableRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -46,15 +48,15 @@ class TableGroupServiceTest {
         // given
         OrderTable orderTable = orderTableDao.save(new OrderTable(null, 10, true));
         OrderTable orderTable2 = orderTableDao.save(new OrderTable(null, 3, true));
-        TableGroup tableGroup = new TableGroup(LocalDateTime.of(2002, 3, 3, 3, 3), List.of(orderTable, orderTable2));
+        TableGroupRequest tableGroup = new TableGroupRequest(List.of(new OrderTableRequest(orderTable.getId()), new OrderTableRequest(orderTable2.getId())));
 
         // when
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
         // then
         assertThat(savedTableGroup).usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(tableGroup);
+                .ignoringFields("id", "createdDate")
+                .isEqualTo(new TableGroup(LocalDateTime.now(), List.of(orderTable, orderTable2)));
     }
 
     @Test
@@ -62,7 +64,7 @@ class TableGroupServiceTest {
         // given
         OrderTable orderTable = orderTableDao.save(new OrderTable(null, 10, true));
         OrderTable orderTable2 = orderTableDao.save(new OrderTable(null, 3, true));
-        TableGroup tableGroup = new TableGroup(LocalDateTime.of(2002, 3, 3, 3, 3), List.of(orderTable, orderTable2));
+        TableGroupRequest tableGroup = new TableGroupRequest(List.of(new OrderTableRequest(orderTable.getId()), new OrderTableRequest(orderTable2.getId())));
 
         // when
         tableGroupService.create(tableGroup);
@@ -81,7 +83,7 @@ class TableGroupServiceTest {
     @Test
     void 단체_지정을_생성할_때_주문_테이블이_1개_이하면_예외가_발생한다() {
         // given
-        TableGroup tableGroup = new TableGroup(LocalDateTime.of(2002, 3, 3, 3, 3), List.of());
+        TableGroupRequest tableGroup = new TableGroupRequest(List.of());
 
         // expect
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -93,7 +95,7 @@ class TableGroupServiceTest {
         // given
         OrderTable orderTable = orderTableDao.save(new OrderTable(null, 10, true));
         OrderTable orderTable2 = new OrderTable(null, 3, true);
-        TableGroup tableGroup = new TableGroup(LocalDateTime.of(2002, 3, 3, 3, 3), List.of(orderTable, orderTable2));
+        TableGroupRequest tableGroup = new TableGroupRequest(List.of(new OrderTableRequest(orderTable.getId()), new OrderTableRequest(orderTable2.getId())));
 
         // expect
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -105,7 +107,7 @@ class TableGroupServiceTest {
         // given
         OrderTable orderTable = orderTableDao.save(new OrderTable(null, 10, false));
         OrderTable orderTable2 = orderTableDao.save(new OrderTable(null, 3, false));
-        TableGroup tableGroup = new TableGroup(LocalDateTime.of(2002, 3, 3, 3, 3), List.of(orderTable, orderTable2));
+        TableGroupRequest tableGroup = new TableGroupRequest(List.of(new OrderTableRequest(orderTable.getId()), new OrderTableRequest(orderTable2.getId())));
 
         // expect
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -117,7 +119,7 @@ class TableGroupServiceTest {
         // given
         OrderTable orderTable = orderTableDao.save(new OrderTable(1L, 10, true));
         OrderTable orderTable2 = orderTableDao.save(new OrderTable(1L, 3, true));
-        TableGroup tableGroup = new TableGroup(LocalDateTime.of(2002, 3, 3, 3, 3), List.of(orderTable, orderTable2));
+        TableGroupRequest tableGroup = new TableGroupRequest(List.of(new OrderTableRequest(orderTable.getId()), new OrderTableRequest(orderTable2.getId())));
 
         // expect
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
