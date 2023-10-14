@@ -38,7 +38,6 @@ public class MenuService {
         MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                 .orElseThrow(MenuGroupNotFoundException::new);
         Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup);
-
         addMenuProducts(request, menu);
         menuRepository.save(menu);
 
@@ -51,8 +50,7 @@ public class MenuService {
             Product product = productRepository.findById(menuProductRequest.getProductId())
                     .orElseThrow(ProductNotFoundException::new);
 
-            MenuProduct menuProduct = new MenuProduct(menu, product, menuProductRequest.getQuantity());
-            menuProducts.add(menuProduct);
+            menuProducts.add(new MenuProduct(menu, product, menuProductRequest.getQuantity()));
         }
         menu.setupMenuProduct(menuProducts);
     }
