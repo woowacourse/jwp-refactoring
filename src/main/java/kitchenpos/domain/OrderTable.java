@@ -55,13 +55,7 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public void validateIsEmpty() {
-        if (!isEmpty()) {
-            throw new OrderTableNotEmptyException();
-        }
-    }
-
-    public void validateIsNotEmpty() {
+    private void validateIsNotEmpty() {
         if (isEmpty()) {
             throw new OrderTableEmptyException();
         }
@@ -70,6 +64,12 @@ public class OrderTable {
     private void validateNumberOfGuestsIsPositive(int numberOfGuests) {
         if (numberOfGuests < 0) {
             throw new NumberOfGuestIsNotPositiveException();
+        }
+    }
+
+    public void validateIsEmpty() {
+        if (!isEmpty()) {
+            throw new OrderTableNotEmptyException();
         }
     }
 

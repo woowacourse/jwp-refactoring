@@ -42,26 +42,29 @@ public class Order {
     }
 
     public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
+        orderTable.validateIsEmpty();
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {
+        validateOrderIsNotCompleted();
         this.orderStatus = orderStatus;
     }
 
-    public void addOrderLineItem(OrderLineItem orderLineItem) {
-        orderLineItems.add(orderLineItem);
+    public void setupOrderLineItem(List<OrderLineItem> orderLineItems) {
+        this.orderLineItems = orderLineItems;
+        validateOrderLineNotEmpty();
     }
 
-    public void validateOrderLineNotEmpty() {
+    private void validateOrderLineNotEmpty() {
         if (orderLineItems.isEmpty()) {
             throw new OrderLineEmptyException();
         }
     }
 
-    public void validateOrderIsNotCompleted() {
+    private void validateOrderIsNotCompleted() {
         if (OrderStatus.COMPLETION == orderStatus) {
             throw new OrderIsCompletedException();
         }

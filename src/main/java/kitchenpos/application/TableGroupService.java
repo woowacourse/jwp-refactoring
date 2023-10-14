@@ -54,11 +54,15 @@ public class TableGroupService {
     public void ungroup(Long tableGroupId) {
         TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(TableGroupNotFoundException::new);
+        validateAllOrderCompleted(tableGroup);
 
+        tableGroup.unGroupOrderTables();
+    }
+
+    private void validateAllOrderCompleted(TableGroup tableGroup) {
         List<Order> orders = orderRepository.findByOrderTableIn(tableGroup.getOrderTables());
         for (Order order : orders) {
             order.validateOrderIsCompleted();
         }
-        tableGroup.unGroupOrderTables();
     }
 }
