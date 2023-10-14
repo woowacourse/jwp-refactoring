@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -13,6 +12,8 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderCreateRequest;
+import kitchenpos.dto.OrderLineItemRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -37,44 +38,42 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final Order order) {
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
+    public Order create(OrderCreateRequest request) {
+        List<OrderLineItemRequest> orderLineItemRequests = request.getOrderLineItems();
 
-        if (CollectionUtils.isEmpty(orderLineItems)) {
+        if (CollectionUtils.isEmpty(orderLineItemRequests)) {
             throw new IllegalArgumentException("주문 항목 목록이 있어야 합니다.");
         }
 
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
+        final List<Long> menuIds = orderLineItemRequests.stream()
+                .map(OrderLineItemRequest::getMenuId)
                 .collect(Collectors.toList());
 
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
+        if (orderLineItemRequests.size() != menuDao.countByIdIn(menuIds)) {
             throw new IllegalArgumentException("등록되지 않은 메뉴를 주문할 수 없습니다.");
         }
 
-        order.setId(null);
-
-        final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
+        final OrderTable orderTable = orderTableDao.findById(request.getOrderTableId())
                 .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 테이블에서 주문을 할 수 없습니다."));
 
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException("빈 테이블인 경우 주문을 할 수 없습니다.");
         }
 
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
-
+        Order order = new Order(orderTable.getId());
         final Order savedOrder = orderDao.save(order);
 
         final Long orderId = savedOrder.getId();
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.setOrderId(orderId);
+        for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
+            OrderLineItem orderLineItem = new OrderLineItem(
+                    orderId,
+                    orderLineItemRequest.getMenuId(),
+                    orderLineItemRequest.getQuantity()
+            );
             savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
         }
-        savedOrder.setOrderLineItems(savedOrderLineItems);
-
+        savedOrder.changeOrderLineItems(savedOrderLineItems);
         return savedOrder;
     }
 
@@ -82,7 +81,7 @@ public class OrderService {
         final List<Order> orders = orderDao.findAll();
 
         for (final Order order : orders) {
-            order.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
+            order.changeOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
         }
 
         return orders;
@@ -98,11 +97,11 @@ public class OrderService {
         }
 
         final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
+        savedOrder.changeOrderStatus(orderStatus.name());
 
         orderDao.save(savedOrder);
 
-        savedOrder.setOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
+        savedOrder.changeOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
 
         return savedOrder;
     }

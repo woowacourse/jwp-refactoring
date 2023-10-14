@@ -7,6 +7,7 @@ import static kitchenpos.domain.OrderStatus.MEAL;
 import static kitchenpos.fixture.MenuFixture.메뉴;
 import static kitchenpos.fixture.MenuGroupFixture.메뉴_그룹;
 import static kitchenpos.fixture.OrderFixture.주문;
+import static kitchenpos.fixture.OrderFixture.주문_생성_요청;
 import static kitchenpos.fixture.OrderLineItemFixture.주문_항목;
 import static kitchenpos.fixture.OrderTableFixture.테이블;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,6 +25,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.test.ServiceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -66,10 +68,10 @@ public class OrderServiceTest {
         @Test
         void 주문_항목_목록이_없다면_예외를_던진다() {
             // given
-            Order order = 주문(1L, List.of());
+            OrderCreateRequest request = 주문_생성_요청(1L, List.of());
 
             // expect
-            assertThatThrownBy(() -> sut.create(order))
+            assertThatThrownBy(() -> sut.create(request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("주문 항목 목록이 있어야 합니다.");
         }
@@ -78,10 +80,10 @@ public class OrderServiceTest {
         void 등록되지_않은_메뉴를_주문하면_예외를_던진다() {
             // given
             OrderLineItem orderLineItem = 주문_항목(null, MAX_VALUE, 2L);
-            Order order = 주문(1L, List.of(orderLineItem));
+            OrderCreateRequest request = 주문_생성_요청(1L, List.of(orderLineItem));
 
             // expect
-            assertThatThrownBy(() -> sut.create(order))
+            assertThatThrownBy(() -> sut.create(request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("등록되지 않은 메뉴를 주문할 수 없습니다.");
         }
@@ -90,10 +92,10 @@ public class OrderServiceTest {
         void 등록되지_않은_테이블에서_주문을_하는_경우_예외를_던진다() {
             // given
             OrderLineItem orderLineItem = 주문_항목(null, menu.getId(), 2L);
-            Order order = 주문(MAX_VALUE, List.of(orderLineItem));
+            OrderCreateRequest request = 주문_생성_요청(MAX_VALUE, List.of(orderLineItem));
 
             // expect
-            assertThatThrownBy(() -> sut.create(order))
+            assertThatThrownBy(() -> sut.create(request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("등록되지 않은 테이블에서 주문을 할 수 없습니다.");
         }
@@ -103,10 +105,10 @@ public class OrderServiceTest {
             // given
             OrderTable orderTable = orderTableDao.save(테이블(true));
             OrderLineItem orderLineItem = 주문_항목(null, menu.getId(), 2L);
-            Order order = 주문(orderTable.getId(), List.of(orderLineItem));
+            OrderCreateRequest request = 주문_생성_요청(orderTable.getId(), List.of(orderLineItem));
 
             // expect
-            assertThatThrownBy(() -> sut.create(order))
+            assertThatThrownBy(() -> sut.create(request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("빈 테이블인 경우 주문을 할 수 없습니다.");
         }
@@ -116,10 +118,10 @@ public class OrderServiceTest {
             // given
             OrderTable orderTable = orderTableDao.save(테이블(false));
             OrderLineItem orderLineItem = 주문_항목(null, menu.getId(), 2L);
-            Order order = 주문(orderTable.getId(), List.of(orderLineItem));
+            OrderCreateRequest request = 주문_생성_요청(orderTable.getId(), List.of(orderLineItem));
 
             // when
-            Order savedOrder = sut.create(order);
+            Order savedOrder = sut.create(request);
 
             // then
             Order findOrder = orderDao.findById(savedOrder.getId()).get();
@@ -136,10 +138,10 @@ public class OrderServiceTest {
         OrderTable orderTable = orderTableDao.save(테이블(false));
         Order order1 = orderDao.save(주문(orderTable.getId(), COOKING));
         OrderLineItem orderLineItem1 = orderLineItemDao.save(주문_항목(order1.getId(), menu.getId(), 2L));
-        order1.setOrderLineItems(List.of(orderLineItem1));
+        order1.changeOrderLineItems(List.of(orderLineItem1));
         Order order2 = orderDao.save(주문(orderTable.getId(), COOKING));
         OrderLineItem orderLineItem2 = orderLineItemDao.save(주문_항목(order2.getId(), menu.getId(), 2L));
-        order2.setOrderLineItems(List.of(orderLineItem2));
+        order2.changeOrderLineItems(List.of(orderLineItem2));
 
         // when
         List<Order> orders = sut.list();
@@ -166,7 +168,7 @@ public class OrderServiceTest {
             // given
             OrderTable orderTable = orderTableDao.save(테이블(false));
             Order order = orderDao.save(주문(orderTable.getId(), COMPLETION));
-            order.setOrderStatus(COOKING.name());
+            order.changeOrderStatus(COOKING.name());
 
             // expect
             assertThatThrownBy(() -> sut.changeOrderStatus(order.getId(), order))
@@ -179,7 +181,7 @@ public class OrderServiceTest {
             // given
             OrderTable orderTable = orderTableDao.save(테이블(false));
             Order order = orderDao.save(주문(orderTable.getId(), COOKING));
-            order.setOrderStatus(MEAL.name());
+            order.changeOrderStatus(MEAL.name());
 
             // when
             Order changedOrder = sut.changeOrderStatus(order.getId(), order);
