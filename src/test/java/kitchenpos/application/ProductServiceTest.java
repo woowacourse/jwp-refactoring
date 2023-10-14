@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
-import kitchenpos.dto.ProductCreateRequest;
+import kitchenpos.dto.ProductRequest;
 import kitchenpos.dto.ProductResponse;
 import kitchenpos.test.ServiceTest;
 import org.junit.jupiter.api.Nested;
@@ -31,10 +31,10 @@ class ProductServiceTest {
         @Test
         void 상품의_가격이_0원_미만인_경우_예외를_던진다() {
             // given
-            ProductCreateRequest productCreateRequest = new ProductCreateRequest("피자", BigDecimal.valueOf(-1L));
+            ProductRequest productRequest = new ProductRequest(null, "피자", BigDecimal.valueOf(-1L));
 
             // expect
-            assertThatThrownBy(() -> sut.create(productCreateRequest))
+            assertThatThrownBy(() -> sut.create(productRequest))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("상품의 가격은 0원 이상이어야 합니다.");
         }
@@ -42,10 +42,10 @@ class ProductServiceTest {
         @Test
         void 상품의_가격이_0원_이상인_경우_정상적으로_등록된다() {
             // given
-            ProductCreateRequest productCreateRequest = new ProductCreateRequest("무료 피자", BigDecimal.valueOf(0L));
+            ProductRequest productRequest = new ProductRequest(null, "무료 피자", BigDecimal.valueOf(0L));
 
             // when
-            ProductResponse productResponse = sut.create(productCreateRequest);
+            ProductResponse productResponse = sut.create(productRequest);
 
             // then
             assertThat(productDao.findById(productResponse.getId())).isPresent();
