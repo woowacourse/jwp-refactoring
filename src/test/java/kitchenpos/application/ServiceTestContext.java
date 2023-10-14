@@ -97,8 +97,7 @@ public class ServiceTestContext {
     }
 
     private void setupTableGroup() {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
 
         savedTableGroup = tableGroupDao.save(tableGroup);
     }
@@ -116,9 +115,7 @@ public class ServiceTestContext {
     }
 
     private void setupProduct() {
-        Product product = new Product();
-        product.setPrice(BigDecimal.valueOf(1000L));
-        product.setName("productName");
+        Product product = new Product("productName", BigDecimal.valueOf(1000L));
 
         savedProduct = productRepository.save(product);
     }

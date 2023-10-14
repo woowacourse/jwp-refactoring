@@ -29,9 +29,7 @@ public class ProductService {
             throw new IllegalArgumentException();
         }
 
-        Product product = new Product();
-        product.setName(request.getName());
-        product.setPrice(request.getPrice());
+        Product product = new Product(request.getName(), request.getPrice());
 
         Product savedProduct = productRepository.save(product);
 

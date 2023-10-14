@@ -115,8 +115,7 @@ class TableGroupServiceTest extends ServiceTestContext {
     @EnumSource(mode = Mode.INCLUDE, names = {"COOKING", "MEAL"})
     void 주문_상태가_COOKING이거나_MEAL인_경우_그룹을_해체할_수_없다(OrderStatus orderStatus) {
         // given
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
         TableGroup createdTableGroup = tableGroupDao.save(tableGroup);
 
         OrderTable orderTable = new OrderTable(createdTableGroup, 0, false);

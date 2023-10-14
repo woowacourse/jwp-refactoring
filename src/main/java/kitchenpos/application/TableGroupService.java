@@ -46,8 +46,7 @@ public class TableGroupService {
             validateOrderTableIsEmptyAndTableGroupIsNull(savedOrderTable);
         }
 
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
         tableGroupRepository.save(tableGroup);
 
         for (OrderTable orderTable : orderTables) {
