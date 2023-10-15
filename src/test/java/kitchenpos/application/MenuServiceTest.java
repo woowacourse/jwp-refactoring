@@ -89,7 +89,7 @@ class MenuServiceTest {
         });
     }
 
-    @DisplayName("메뉴 금액이 음수이이면 메뉴를 생성할 수 없습니다.")
+    @DisplayName("메뉴 금액이 음수이면 메뉴를 생성할 수 없습니다.")
     @Test
     void create_fail_menu_price_under_0() {
         // given
@@ -124,7 +124,7 @@ class MenuServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("메뉴 그룹에 포함되어 있지 않은 메뉴이면 메뉴를 생성할 수 없다.")
+    @DisplayName("메뉴 상품이 존재하지 않는 상품이면 메뉴를 생성할 수 없다.")
     @Test
     void create_fail_menu_contain_notExistProduct() {
         // given
@@ -157,7 +157,7 @@ class MenuServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("메뉴 상품들의 가격 총합보다 메뉴 가격이 크면 메뉴를 만들 수 없.")
+    @DisplayName("메뉴 상품들의 가격 총합보다 메뉴 가격이 크면 메뉴를 만들 수 없다.")
     @Test
     void create_fail_menuPrice_expensive_than_all_product_price() {
         // given

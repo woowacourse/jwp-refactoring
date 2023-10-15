@@ -46,7 +46,7 @@ class OrderServiceTest {
 
     @DisplayName("주문을 생성한다.")
     @Test
-    void create_menu() {
+    void create_order() {
         // given
         final Order forSaveOrder = new Order();
         forSaveOrder.setOrderTableId(1L);
@@ -149,7 +149,7 @@ class OrderServiceTest {
 
     @DisplayName("주문 테이블이 존재하지 않으면 주문을 생성할 수 없다.")
     @Test
-    void create_order_fail_with_not_found_orderTable_() {
+    void create_order_fail_with_not_found_orderTable() {
         // given
         final Order wrongOrder = new Order();
         wrongOrder.setOrderTableId(1L);
@@ -180,7 +180,7 @@ class OrderServiceTest {
 
     @DisplayName("주문 테이블이 비어있으면 주문을 생성할 수 없다.")
     @Test
-    void create_order_fail_with_empty_orderTable_() {
+    void create_order_fail_with_empty_orderTable() {
         // given
         final Order wrongOrder = new Order();
         wrongOrder.setOrderTableId(1L);
