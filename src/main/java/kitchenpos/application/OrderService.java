@@ -59,7 +59,7 @@ public class OrderService {
                 .orElseThrow(IllegalArgumentException::new);
 
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("해당 테이블은 비어있습니다.");
         }
 
         order.setOrderTableId(orderTable.getId());

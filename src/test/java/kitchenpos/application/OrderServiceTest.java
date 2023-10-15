@@ -135,9 +135,9 @@ class OrderServiceTest {
                 .withMenuId(2L)
                 .build();
 
-            long notExistenceOrderTable = 1L;
+            long emptyOrderTable = 1L;
             Order order = OrderFixture.builder()
-                .withOrderTableId(notExistenceOrderTable)
+                .withOrderTableId(emptyOrderTable)
                 .withOrderLineItems(List.of(firstOderLineItem, secondOrderLineItem))
                 .build();
 
@@ -153,7 +153,8 @@ class OrderServiceTest {
 
             // when && then
             assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("해당 테이블은 비어있습니다.");
         }
     }
 
