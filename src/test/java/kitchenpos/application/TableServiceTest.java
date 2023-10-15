@@ -3,13 +3,13 @@ package kitchenpos.application;
 import kitchenpos.application.dto.OrderTableEmptyRequest;
 import kitchenpos.application.dto.OrderTableNumberOfGuestRequest;
 import kitchenpos.application.dto.OrderTableRequest;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.fake.InMemoryOrderDao;
-import kitchenpos.fake.InMemoryOrderTableDao;
+import kitchenpos.domain.OrderTableRepository;
+import kitchenpos.fake.InMemoryOrderRepository;
+import kitchenpos.fake.InMemoryOrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -31,14 +31,14 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 class TableServiceTest {
 
     private TableService tableService;
-    private OrderDao orderDao;
-    private OrderTableDao orderTableDao;
+    private OrderRepository orderRepository;
+    private OrderTableRepository orderTableRepository;
 
     @BeforeEach
     void before() {
-        orderDao = new InMemoryOrderDao();
-        orderTableDao = new InMemoryOrderTableDao();
-        tableService = new TableService(orderDao, orderTableDao);
+        orderRepository = new InMemoryOrderRepository();
+        orderTableRepository = new InMemoryOrderTableRepository();
+        tableService = new TableService(orderRepository, orderTableRepository);
     }
 
     @Test
@@ -62,9 +62,9 @@ class TableServiceTest {
     @Test
     void 주문_테이블을_빈_테이블로_변경한다() {
         // given
-        OrderTable orderTable = orderTableDao.save(orderTable(10, false));
+        OrderTable orderTable = orderTableRepository.save(orderTable(10, false));
         Order order = order(orderTable.getId(), OrderStatus.COMPLETION);
-        orderDao.save(order);
+        orderRepository.save(order);
 
         // when
         OrderTable emptyTable = tableService.changeEmpty(orderTable.getId(), new OrderTableEmptyRequest(true));
@@ -76,7 +76,7 @@ class TableServiceTest {
     @Test
     void 주문_테이블을_빈_테이블로_변경할_때_단체_지정이_있으면_예외가_발생한다() {
         // given
-        OrderTable orderTable = orderTableDao.save(orderTable(1L, 10, false));
+        OrderTable orderTable = orderTableRepository.save(orderTable(1L, 10, false));
 
         // expect
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), new OrderTableEmptyRequest(true)))
@@ -87,9 +87,9 @@ class TableServiceTest {
     @ParameterizedTest
     void 주문_테이블을_빈_테이블로_변경할_때_주문_상태가_완료가_아니면_예외가_발생한다(OrderStatus orderStatus) {
         // given
-        OrderTable orderTable = orderTableDao.save(orderTable(10, false));
+        OrderTable orderTable = orderTableRepository.save(orderTable(10, false));
         Order order = order(orderTable.getId(), orderStatus);
-        orderDao.save(order);
+        orderRepository.save(order);
 
         // expect
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), new OrderTableEmptyRequest(true)))
@@ -101,7 +101,7 @@ class TableServiceTest {
     void 주문_테이블의_손님_수를_변경할_때_0보다_작으면_예외가_발생한다(int numberOfGuests) {
         // given
         OrderTableNumberOfGuestRequest request = orderTableNumberOfGuestsRequest(numberOfGuests);
-        OrderTable orderTable = orderTableDao.save(orderTable(10, false));
+        OrderTable orderTable = orderTableRepository.save(orderTable(10, false));
 
         // expect
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), request))
@@ -123,7 +123,7 @@ class TableServiceTest {
     void 주문_테이블의_손님_수를_변경할_때_주문_테이블이_빈_테이블이면_예외가_발생한다() {
         // given
         OrderTableNumberOfGuestRequest request = orderTableNumberOfGuestsRequest(11);
-        OrderTable orderTable = orderTableDao.save(orderTable(10, true));
+        OrderTable orderTable = orderTableRepository.save(orderTable(10, true));
 
         // expect
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), request))
@@ -134,7 +134,7 @@ class TableServiceTest {
     void 주문_테이블의_손님_수를_변경한다() {
         // given
         OrderTableNumberOfGuestRequest request = orderTableNumberOfGuestsRequest(11);
-        OrderTable orderTable = orderTableDao.save(orderTable(10, false));
+        OrderTable orderTable = orderTableRepository.save(orderTable(10, false));
 
         // when
         OrderTable updatedOrderTable = tableService.changeNumberOfGuests(orderTable.getId(), request);

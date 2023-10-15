@@ -1,7 +1,7 @@
 package kitchenpos.fake;
 
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class InMemoryOrderDao implements OrderDao {
+public class InMemoryOrderRepository implements OrderRepository {
 
     private final Map<Long, Order> database = new HashMap<>();
     private final AtomicLong id = new AtomicLong(0);

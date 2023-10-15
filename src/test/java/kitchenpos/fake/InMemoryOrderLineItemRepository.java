@@ -1,7 +1,7 @@
 package kitchenpos.fake;
 
-import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderLineItemRepository;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
-public class InMemoryOrderLineItemDao implements OrderLineItemDao {
+public class InMemoryOrderLineItemRepository implements OrderLineItemRepository {
     private final Map<Long, OrderLineItem> map = new HashMap<>();
     private final AtomicLong seq = new AtomicLong();
 
@@ -20,7 +20,7 @@ public class InMemoryOrderLineItemDao implements OrderLineItemDao {
     public OrderLineItem save(OrderLineItem entity) {
         if (Objects.isNull(entity.getSeq())) {
             long seq = this.seq.getAndIncrement();
-            OrderLineItem orderLineItem = new OrderLineItem(seq, entity.getOrderId(), entity.getMenuId(), entity.getQuantity());
+            OrderLineItem orderLineItem = new OrderLineItem(seq, entity.getOrder(), entity.getMenuId(), entity.getQuantity());
             map.put(seq, orderLineItem);
             return orderLineItem;
         }
@@ -41,8 +41,8 @@ public class InMemoryOrderLineItemDao implements OrderLineItemDao {
     @Override
     public List<OrderLineItem> findAllByOrderId(Long orderId) {
         return map.values().stream()
-                .filter(it -> Objects.nonNull(it.getOrderId()))
-                .filter(it -> it.getOrderId().equals(orderId))
+                .filter(it -> Objects.nonNull(it.getOrder()))
+                .filter(it -> it.getOrder().equals(orderId))
                 .collect(Collectors.toList());
     }
 }
