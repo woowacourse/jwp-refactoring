@@ -167,7 +167,6 @@ class OrderServiceTest {
         final long invalidOrderTableId = -999L;
         final Order order = order(invalidOrderTableId, List.of(주문항목));
 
-
         // when & then
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -233,7 +232,6 @@ class OrderServiceTest {
     @Test
     @DisplayName("주문 상태를 변경한다")
     void changeOrderStatus() {
-
         // given
         final OrderTable 세명_테이블 = orderTableDao.save(orderTable(3, true));
         final OrderTable 네명_테이블 = orderTableDao.save(orderTable(4, true));
@@ -264,7 +262,6 @@ class OrderServiceTest {
     @Test
     @DisplayName("주문 상태를 변경할 때 주문 상태가 이미 COMPLETION이면 예외가 발생한다")
     void changeOrderStatus_orderStatusCompletion() {
-
         // given
         final OrderTable 세명_테이블 = orderTableDao.save(orderTable(3, true));
         final OrderTable 네명_테이블 = orderTableDao.save(orderTable(4, true));

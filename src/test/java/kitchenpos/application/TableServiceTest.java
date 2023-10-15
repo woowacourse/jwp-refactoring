@@ -94,7 +94,6 @@ class TableServiceTest {
         final OrderTable tableEmptyChange = 두명_테이블;
 
         // when & then
-
         assertThatThrownBy(() -> tableService.changeEmpty(invalidOrderTableId, tableEmptyChange))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -112,7 +111,6 @@ class TableServiceTest {
         final OrderTable tableEmptyChange = 두명_테이블;
 
         // when & then
-
         assertThatThrownBy(() -> tableService.changeEmpty(두명_테이블.getId(), tableEmptyChange))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -162,7 +160,6 @@ class TableServiceTest {
         final OrderTable tableNumberOfGuestsChange = 두명_테이블;
 
         // when & then
-
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(invalidOrderTableId, tableNumberOfGuestsChange))
                 .isInstanceOf(IllegalArgumentException.class);
     }

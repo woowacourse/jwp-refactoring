@@ -131,6 +131,7 @@ class MenuServiceTest {
     @Test
     @DisplayName("메뉴 목록을 조회한다")
     void list() {
+        // given
         final Product 후라이드 = productDao.save(product("후라이드", BigDecimal.valueOf(16000)));
         final Product 양념치킨 = productDao.save(product("양념치킨", BigDecimal.valueOf(20000)));
 
@@ -149,7 +150,7 @@ class MenuServiceTest {
         final Menu expect1 = 후라이드_후라이드;
         final Menu expect2 = 후라이드_양념치킨;
 
-        // then
+        // when
         final List<Menu> actual = menuService.list();
 
         // then
