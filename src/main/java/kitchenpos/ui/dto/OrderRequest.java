@@ -1,5 +1,7 @@
 package kitchenpos.ui.dto;
 
+import org.springframework.util.CollectionUtils;
+
 import java.util.List;
 
 public class OrderRequest {
@@ -7,8 +9,15 @@ public class OrderRequest {
     private final List<OrderLineItemDto> orderLineItems;
 
     public OrderRequest(final Long orderTableId, final List<OrderLineItemDto> orderLineItems) {
+        validate(orderLineItems);
         this.orderTableId = orderTableId;
         this.orderLineItems = orderLineItems;
+    }
+
+    private void validate(final List<OrderLineItemDto> orderLineItemDtos) {
+        if (CollectionUtils.isEmpty(orderLineItemDtos)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getOrderTableId() {

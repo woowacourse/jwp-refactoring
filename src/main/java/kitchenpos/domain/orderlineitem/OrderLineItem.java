@@ -10,6 +10,12 @@ public class OrderLineItem {
     private Long menuId;
     private Quantity quantity;
 
+    public OrderLineItem(final Long orderId,
+                         final Long menuId,
+                         final Quantity quantity) {
+        this(null, orderId, menuId, quantity);
+    }
+
     public OrderLineItem(final Long seq,
                          final Long orderId,
                          final Long menuId,
