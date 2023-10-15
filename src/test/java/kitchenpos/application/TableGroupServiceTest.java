@@ -119,11 +119,12 @@ class TableGroupServiceTest extends ServiceTest {
 
             TableGroup newTableGroup = new TableGroup();
             OrderTable orderTableC = fixtures.빈_테이블_저장();
-            tableGroup.setOrderTables(List.of(orderTableA, orderTableC));
+            newTableGroup.setOrderTables(List.of(orderTableA, orderTableC));
 
             // when, then
             assertThatThrownBy(() -> tableGroupService.create(newTableGroup))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("1234");
         }
     }
 
