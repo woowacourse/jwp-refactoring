@@ -119,7 +119,7 @@ class OrderServiceTest extends ServiceTest {
         final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("마라탕그룹"));
         final Menu menu = menuDao.save(new Menu("디노 마라탕", new BigDecimal(20000), menuGroup.getId(), null));
         final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
-        final Order order = orderService.create(new Order(orderTable.getId(), null, LocalDateTime.now(),
+        final Order order = orderDao.save(new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
                 List.of(orderLineItem)));
 
         //when
