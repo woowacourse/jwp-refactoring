@@ -13,7 +13,8 @@ import kitchenpos.fixtures.Fixtures;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.EnumSource.Mode;
 import org.springframework.beans.factory.annotation.Autowired;
 
 class TableServiceTest extends ServiceTest {
@@ -106,11 +107,11 @@ class TableServiceTest extends ServiceTest {
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"COOKING", "MEAL"})
-        void 주문_테이블의_상태가_계산완료_상태가_아닌_경우_예외가_발생한다(String orderStatus) {
+        @EnumSource(value = OrderStatus.class, names = {"COMPLETION"}, mode = Mode.EXCLUDE)
+        void 주문_테이블의_상태가_계산완료_상태가_아닌_경우_예외가_발생한다(OrderStatus orderStatus) {
             // given
             OrderTable orderTable = fixtures.주문_테이블_저장();
-            fixtures.주문_저장(orderTable.getId(), OrderStatus.valueOf(orderStatus));
+            fixtures.주문_저장(orderTable.getId(), orderStatus);
 
             OrderTable newOrderTable = new OrderTable();
             newOrderTable.setEmpty(true);

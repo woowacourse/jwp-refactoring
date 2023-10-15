@@ -10,6 +10,8 @@ import kitchenpos.domain.Product;
 import kitchenpos.fixtures.Fixtures;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 class ProductServiceTest extends ServiceTest {
@@ -53,12 +55,13 @@ class ProductServiceTest extends ServiceTest {
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
-        @Test
-        void 가격이_음수인_경우_예외가_발생한다() {
+        @ParameterizedTest
+        @ValueSource(ints = {-1, 100, -1231123})
+        void 가격이_음수인_경우_예외가_발생한다(int value) {
             // given
             Product product = new Product();
             product.setName("햄버거");
-            product.setPrice(BigDecimal.valueOf(-1));
+            product.setPrice(BigDecimal.valueOf(value));
 
             // when, then
             assertThatThrownBy(() -> productService.create(product))
