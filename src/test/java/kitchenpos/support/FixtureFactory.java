@@ -105,4 +105,18 @@ public class FixtureFactory {
         orderTable.setEmpty(empty);
         return orderTable;
     }
+
+    public static TableGroup forSaveTableGroup(final List<OrderTable> orderTables) {
+        final TableGroup tableGroup = new TableGroup();
+        tableGroup.setOrderTables(orderTables);
+        return tableGroup;
+    }
+
+    public static TableGroup savedTableGroup(final Long id, final LocalDateTime localDateTime, final List<OrderTable> orderTables) {
+        final TableGroup tableGroup = new TableGroup();
+        tableGroup.setId(id);
+        tableGroup.setCreatedDate(localDateTime);
+        tableGroup.setOrderTables(orderTables);
+        return tableGroup;
+    }
 }

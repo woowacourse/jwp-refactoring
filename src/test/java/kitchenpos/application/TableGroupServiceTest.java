@@ -5,6 +5,7 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.support.FixtureFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,23 +46,14 @@ class TableGroupServiceTest {
     @Test
     void create_tableGroup() {
         // given
-        final OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setEmpty(true);
-
-        final OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-        orderTable2.setEmpty(true);
+        final OrderTable orderTable1 = FixtureFactory.saveOrderTable(1L, null, 0, true);
+        final OrderTable orderTable2 = FixtureFactory.saveOrderTable(2L, null, 0, true);
 
         final List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
 
-        final TableGroup forSaveTableGroup = new TableGroup();
-        forSaveTableGroup.setOrderTables(orderTables);
+        final TableGroup forSaveTableGroup = FixtureFactory.forSaveTableGroup(orderTables);
 
-        final TableGroup savedTableGroup = new TableGroup();
-        savedTableGroup.setId(1L);
-        savedTableGroup.setOrderTables(orderTables);
-        savedTableGroup.setCreatedDate(LocalDateTime.now());
+        final TableGroup savedTableGroup = FixtureFactory.savedTableGroup(1L, LocalDateTime.now(), orderTables);
 
         given(orderTableDao.findAllByIdIn(any()))
                 .willReturn(orderTables);
@@ -85,9 +77,7 @@ class TableGroupServiceTest {
     @ParameterizedTest
     void create_tableGroup_fail_with_table_cont_0_or_1(List<OrderTable> orderTables) {
         // given
-        final TableGroup forSaveTableGroup = new TableGroup();
-        forSaveTableGroup.setOrderTables(orderTables);
-
+        final TableGroup forSaveTableGroup = FixtureFactory.forSaveTableGroup(orderTables);
 
         // when
         // then
@@ -111,18 +101,12 @@ class TableGroupServiceTest {
     @Test
     void create_tableGroup_fail_with_different_count_of_orderTable() {
         // given
-        final OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setEmpty(true);
-
-        final OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-        orderTable2.setEmpty(true);
+        final OrderTable orderTable1 = FixtureFactory.saveOrderTable(1L, null, 0, true);
+        final OrderTable orderTable2 = FixtureFactory.saveOrderTable(2L, null, 0, true);
 
         final List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
 
-        final TableGroup forSaveTableGroup = new TableGroup();
-        forSaveTableGroup.setOrderTables(orderTables);
+        final TableGroup forSaveTableGroup = FixtureFactory.forSaveTableGroup(orderTables);
 
         given(orderTableDao.findAllByIdIn(any()))
                 .willReturn(Collections.emptyList());
@@ -138,8 +122,7 @@ class TableGroupServiceTest {
     @ParameterizedTest
     void create_tableGroup_fail_with_not_empty_table_or_already_grouped_table(List<OrderTable> orderTables) {
         // given
-        final TableGroup forSaveTableGroup = new TableGroup();
-        forSaveTableGroup.setOrderTables(orderTables);
+        final TableGroup forSaveTableGroup = FixtureFactory.forSaveTableGroup(orderTables);
 
         given(orderTableDao.findAllByIdIn(any()))
                 .willReturn(orderTables);
@@ -182,15 +165,9 @@ class TableGroupServiceTest {
         // given
         final Long tableGroupId = 1L;
 
-        final OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setTableGroupId(1L);
-        orderTable1.setEmpty(true);
+        final OrderTable orderTable1 = FixtureFactory.saveOrderTable(1L, 1L, 10, true);
 
-        final OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-        orderTable2.setTableGroupId(2L);
-        orderTable2.setEmpty(true);
+        final OrderTable orderTable2 = FixtureFactory.saveOrderTable(2L, 2L, 10, true);
 
         final List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
 
@@ -217,15 +194,12 @@ class TableGroupServiceTest {
         // given
         final Long tableGroupId = 1L;
 
-        final OrderTable orderTable1 = new OrderTable();
+        final OrderTable orderTable1 = FixtureFactory.saveOrderTable(1L, 1L, 10, true);
         orderTable1.setId(1L);
         orderTable1.setTableGroupId(1L);
         orderTable1.setEmpty(true);
 
-        final OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-        orderTable2.setTableGroupId(2L);
-        orderTable2.setEmpty(true);
+        final OrderTable orderTable2 = FixtureFactory.saveOrderTable(2L, 2L, 10, true);
 
         final List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
 
