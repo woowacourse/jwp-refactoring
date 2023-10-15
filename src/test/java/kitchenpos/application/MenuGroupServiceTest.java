@@ -3,8 +3,8 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import kitchenpos.application.dto.MenuGroupCreationRequest;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.ui.dto.MenuGroupCreationRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

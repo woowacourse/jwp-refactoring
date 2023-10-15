@@ -1,4 +1,4 @@
-package kitchenpos.ui.dto;
+package kitchenpos.application.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import java.math.BigDecimal;
