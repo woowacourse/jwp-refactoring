@@ -5,6 +5,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 public class OrderBuilder {
@@ -15,6 +16,7 @@ public class OrderBuilder {
         this.order = new Order();
         order.setOrderedTime(LocalDateTime.now());
         order.setOrderStatus(OrderStatus.COOKING.name());
+        order.setOrderLineItems(Collections.emptyList());
     }
 
     public OrderBuilder setOrderedTime(final LocalDateTime orderTime) {

@@ -24,6 +24,17 @@
         - [x] Menu를 저장하고 MenuProduct에 속하는 모든 상품을 Menu와 연결하여 저장하고 반환한다.
         - [x] 모든 Menu의 MenuProduct와 Menu를 반환한다.
     - [x] OrderService
+        - [x] Order를 저장할 수 있다.
+            - [x] OrderLineItem은 비어있을 수 없다.
+            - [x] 모든 OrderLineItem의 메뉴는 저장되어 있어야 한다.
+            - [x] Order의 OrderTable은 저장되어 있어야 한다.
+            - [x] Order의 OrderTable은 비어있지 않아야 한다.
+            - [x] 생성한 Order의 상태는 COOKING이다.
+            - [x] OrderLineItem의 OrderId를 생성한 Order의 id로 설정하고 저장한다.
+        - [x] 모든 주문 목록을 조회할 수 있다.
+        - [x] 주문의 상태를 변경할 수 있다.
+            - [x] 주문이 존재해야 한다.
+            - [x] 완료된 주문의 상태는 변경할 수 없다.
     - [x] ProductService
         - [x] 상품의 가격이 `null`이 아니고 0 이상일 경우 저장할 수 있다.
         - [x] 모든 상품의 목록을 반환할 수 있다.
