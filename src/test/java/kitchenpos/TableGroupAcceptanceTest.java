@@ -91,15 +91,17 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class TableGroupQueryTest {
+    class TableGroupDeleteTest {
 
         @Test
-        void 테이블_그룹을_조회한다() {
+        void 테이블_그룹을_해제한다() {
             final TableGroup tableGroup = new TableGroup();
+            final OrderTable orderTable1 = 테이블_생성_요청하고_테이블_반환(EMPTY_테이블());
+            final OrderTable orderTable2 = 테이블_생성_요청하고_테이블_반환(EMPTY_테이블());
             tableGroup.setOrderTables(
                     List.of(
-                            테이블_생성_요청하고_테이블_반환(EMPTY_테이블()),
-                            테이블_생성_요청하고_테이블_반환(EMPTY_테이블())
+                            orderTable1,
+                            orderTable2
                     )
             );
 
