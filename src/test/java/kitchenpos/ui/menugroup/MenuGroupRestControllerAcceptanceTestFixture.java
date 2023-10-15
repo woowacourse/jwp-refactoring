@@ -3,10 +3,10 @@ package kitchenpos.ui.menugroup;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.helper.IntegrationTestHelper;
+import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.ui.menugroup.dto.MenuGroupResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -18,7 +18,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 class MenuGroupRestControllerAcceptanceTestFixture extends IntegrationTestHelper {
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     protected <T> ExtractableResponse 메뉴_그룹을_생성한다(final String url, final T request) {
         return RestAssured.given().log().all()
@@ -55,6 +55,6 @@ class MenuGroupRestControllerAcceptanceTestFixture extends IntegrationTestHelper
     }
 
     protected MenuGroup 메뉴_그룹_데이터_생성() {
-        return menuGroupDao.save(MenuGroupFixture.메뉴_그룹_생성());
+        return menuGroupRepository.save(MenuGroupFixture.메뉴_그룹_생성());
     }
 }
