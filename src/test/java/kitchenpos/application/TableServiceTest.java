@@ -164,7 +164,7 @@ class TableServiceTest extends ServiceTest {
             OrderTable changeRequest = 주문테이블(3);
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(wrongTableId, changeRequest))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(wrongTableId, changeRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
