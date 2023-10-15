@@ -27,7 +27,6 @@ class MenuServiceTest extends ServiceIntegrateTest {
 
     //then
     assertThat(actual).isNotNull();
-
   }
 
   @Test
