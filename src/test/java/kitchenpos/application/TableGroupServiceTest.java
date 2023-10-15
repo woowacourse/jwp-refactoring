@@ -17,8 +17,8 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.support.ServiceTest;
-import kitchenpos.ui.dto.TableGroupCreateRequest;
-import kitchenpos.ui.dto.TableGroupUngroupRequest;
+import kitchenpos.ui.dto.tablegroup.TableGroupCreateRequest;
+import kitchenpos.ui.dto.tablegroup.TableGroupUngroupRequest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -122,7 +122,7 @@ class TableGroupServiceTest {
 
             //then
             final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(savedTableGroup.getId());
-            
+
             assertThat(orderTables)
                     .extracting(OrderTable::getEmpty)
                     .containsExactly(false, false);

@@ -8,7 +8,7 @@ import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.support.ServiceTest;
-import kitchenpos.ui.dto.MenuGroupCreateRequest;
+import kitchenpos.ui.dto.menu.MenuGroupCreateRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

@@ -1,6 +1,7 @@
-package kitchenpos.ui.dto;
+package kitchenpos.ui.dto.tablegroup;
 
 import java.util.List;
+import kitchenpos.ui.dto.ordertable.OrderTableIdDto;
 
 public class TableGroupCreateRequest {
 
@@ -16,22 +17,5 @@ public class TableGroupCreateRequest {
 
     public List<OrderTableIdDto> getOrderTables() {
         return orderTables;
-    }
-
-    public static class OrderTableIdDto {
-
-        private Long id;
-
-        OrderTableIdDto() {
-
-        }
-
-        public OrderTableIdDto(final Long id) {
-            this.id = id;
-        }
-
-        public Long getId() {
-            return id;
-        }
     }
 }
