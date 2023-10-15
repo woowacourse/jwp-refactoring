@@ -3,7 +3,14 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.ChangeOrderStatusRequest;
 import kitchenpos.dto.request.CreateOrderRequest;
 import kitchenpos.dto.request.OrderLineItemRequest;
@@ -22,7 +29,10 @@ class OrderServiceTest extends ServiceTestContext {
     @Test
     void 주문_항목이_없다면_예외를_던진다() {
         // given
-        CreateOrderRequest request = new CreateOrderRequest(savedOrderTable.getId(),
+        OrderTable orderTable = new OrderTable(null, 1, true);
+        orderTableRepository.save(orderTable);
+
+        CreateOrderRequest request = new CreateOrderRequest(orderTable.getId(),
                 List.of());
 
         // when, then
@@ -33,7 +43,10 @@ class OrderServiceTest extends ServiceTestContext {
     @Test
     void 주문_항목의_메뉴가_존재하지_않는다면_예외를_던진다() {
         // given
-        CreateOrderRequest request = new CreateOrderRequest(savedOrderTable.getId(),
+        OrderTable orderTable = new OrderTable(null, 1, true);
+        orderTableRepository.save(orderTable);
+
+        CreateOrderRequest request = new CreateOrderRequest(orderTable.getId(),
                 List.of(new OrderLineItemRequest(Long.MAX_VALUE, 1L)));
 
         // when, then
@@ -44,8 +57,14 @@ class OrderServiceTest extends ServiceTestContext {
     @Test
     void 주문_테이블이_존재하지_않는다면_예외를_던진다() {
         // given
+        MenuGroup menuGroup = new MenuGroup("name");
+        Menu menu = new Menu("name", BigDecimal.valueOf(1000L), menuGroup);
+
+        menuGroupRepository.save(menuGroup);
+        menuRepository.save(menu);
+
         CreateOrderRequest request = new CreateOrderRequest(Long.MAX_VALUE,
-                List.of(new OrderLineItemRequest(savedOrderLineItem.getMenu().getId(), savedOrderLineItem.getQuantity())));
+                List.of(new OrderLineItemRequest(menu.getId(), 1L)));
 
         // when, then
         assertThatThrownBy(() -> orderService.create(request))
@@ -55,9 +74,16 @@ class OrderServiceTest extends ServiceTestContext {
     @Test
     void 주문은_생성되면_COOKING_상태로_설정된다() {
         // given
-        CreateOrderRequest request = new CreateOrderRequest(savedOrderTable.getId(),
-                List.of(new OrderLineItemRequest(savedOrderLineItem.getMenu().getId(), savedOrderLineItem.getQuantity())));
+        MenuGroup menuGroup = new MenuGroup("name");
+        Menu menu = new Menu("name", BigDecimal.valueOf(1000L), menuGroup);
+        OrderTable orderTable = new OrderTable(null, 1, true);
 
+        menuGroupRepository.save(menuGroup);
+        menuRepository.save(menu);
+        orderTableRepository.save(orderTable);
+
+        CreateOrderRequest request = new CreateOrderRequest(orderTable.getId(),
+                List.of(new OrderLineItemRequest(menu.getId(), 1L)));
 
         // when
         OrderResponse response = orderService.create(request);
@@ -69,9 +95,16 @@ class OrderServiceTest extends ServiceTestContext {
     @Test
     void 주문을_정상적으로_생성하는_경우_생성한_주문이_반환된다() {
         // given
-        CreateOrderRequest request = new CreateOrderRequest(savedOrderTable.getId(),
-                List.of(new OrderLineItemRequest(savedOrderLineItem.getMenu().getId(), savedOrderLineItem.getQuantity())));
+        MenuGroup menuGroup = new MenuGroup("name");
+        Menu menu = new Menu("name", BigDecimal.valueOf(1000L), menuGroup);
+        OrderTable orderTable = new OrderTable(null, 1, true);
 
+        menuGroupRepository.save(menuGroup);
+        menuRepository.save(menu);
+        orderTableRepository.save(orderTable);
+
+        CreateOrderRequest request = new CreateOrderRequest(orderTable.getId(),
+                List.of(new OrderLineItemRequest(menu.getId(), 1L)));
 
         // when
         OrderResponse response = orderService.create(request);
@@ -83,8 +116,16 @@ class OrderServiceTest extends ServiceTestContext {
     @Test
     void 전체_주문을_조회할_수_있다() {
         // given
-        CreateOrderRequest request = new CreateOrderRequest(savedOrderTable.getId(),
-                List.of(new OrderLineItemRequest(savedOrderLineItem.getMenu().getId(), savedOrderLineItem.getQuantity())));
+        MenuGroup menuGroup = new MenuGroup("name");
+        Menu menu = new Menu("name", BigDecimal.valueOf(1000L), menuGroup);
+        OrderTable orderTable = new OrderTable(null, 1, true);
+
+        menuGroupRepository.save(menuGroup);
+        menuRepository.save(menu);
+        orderTableRepository.save(orderTable);
+
+        CreateOrderRequest request = new CreateOrderRequest(orderTable.getId(),
+                List.of(new OrderLineItemRequest(menu.getId(), 1L)));
 
         orderService.create(request);
 
@@ -92,7 +133,7 @@ class OrderServiceTest extends ServiceTestContext {
         List<OrderResponse> response = orderService.findAll();
 
         // then
-        assertThat(response).hasSize(2);
+        assertThat(response).hasSize(1);
     }
 
     @Test
@@ -109,23 +150,33 @@ class OrderServiceTest extends ServiceTestContext {
     @Test
     void 이미_완료된_주문이라면_상태를_변경할_수_없다() {
         // given
-        Long orderId = savedOrder.getId();
+        OrderTable orderTable = new OrderTable(null, 1, true);
+        Order order = new Order(orderTable, OrderStatus.MEAL, LocalDateTime.now());
+
+        orderTableRepository.save(orderTable);
+        orderRepository.save(order);
+
         ChangeOrderStatusRequest request = new ChangeOrderStatusRequest("COMPLETION");
-        orderService.changeOrderStatus(orderId, request);
+        orderService.changeOrderStatus(order.getId(), request);
 
         // when, then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, request))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), request))
                 .isInstanceOf(OrderIsCompletedException.class);
     }
 
     @Test
     void 주문을_정상적으로_변경하는_경우_변경한_주문이_반환된다() {
         // given
-        Long orderId = savedOrder.getId();
+        OrderTable orderTable = new OrderTable(null, 1, true);
+        Order order = new Order(orderTable, OrderStatus.MEAL, LocalDateTime.now());
+
+        orderTableRepository.save(orderTable);
+        orderRepository.save(order);
+
         ChangeOrderStatusRequest request = new ChangeOrderStatusRequest("COMPLETION");
 
         // when
-        OrderResponse response = orderService.changeOrderStatus(orderId, request);
+        OrderResponse response = orderService.changeOrderStatus(order.getId(), request);
 
         // then
         SoftAssertions.assertSoftly(softly -> {

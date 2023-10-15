@@ -8,6 +8,7 @@ import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.ChangeEmptyTableRequest;
 import kitchenpos.dto.request.ChangeTableGuestRequest;
 import kitchenpos.dto.request.CreateOrderTableRequest;
@@ -42,14 +43,13 @@ class TableServiceTest extends ServiceTestContext {
     void 모든_테이블을_조회할_수_있다() {
         // given
         CreateOrderTableRequest request = new CreateOrderTableRequest(2, false);
-
         tableService.create(request);
 
         // when
         List<OrderTableResponse> response = tableService.findAll();
 
         // then
-        assertThat(response).hasSize(2);
+        assertThat(response).hasSize(1);
     }
 
     @Test
@@ -67,13 +67,16 @@ class TableServiceTest extends ServiceTestContext {
     @Test
     void 테이블_그룹이_있는_경우_빈_테이블로_변경하려_할_때_예외를_던진다() {
         // given
-        OrderTable orderTable = new OrderTable(savedTableGroup, 2, false);
-        OrderTable createdOrderTable = orderTableDao.save(orderTable);
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
+        tableGroupRepository.save(tableGroup);
+
+        OrderTable orderTable = new OrderTable(tableGroup, 2, false);
+        orderTableRepository.save(orderTable);
 
         ChangeEmptyTableRequest request = new ChangeEmptyTableRequest(false);
 
         // when, then
-        assertThatThrownBy(() -> tableService.changeEmpty(createdOrderTable.getId(), request))
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), request))
                 .isInstanceOf(TableGroupExistsException.class);
     }
 
@@ -82,15 +85,15 @@ class TableServiceTest extends ServiceTestContext {
     void 빈_테이블로_변경하려_할_때_주문_상태가_COOKING이거나_MEAL이면_예외를_던진다(OrderStatus orderStatus) {
         // given
         OrderTable orderTable = new OrderTable(null, 2, true);
-        OrderTable createdOrderTable = orderTableDao.save(orderTable);
+        orderTableRepository.save(orderTable);
 
-        Order order = new Order(createdOrderTable, orderStatus, LocalDateTime.now());
-        orderDao.save(order);
+        Order order = new Order(orderTable, orderStatus, LocalDateTime.now());
+        orderRepository.save(order);
 
         ChangeEmptyTableRequest request = new ChangeEmptyTableRequest(false);
 
         // when, then
-        assertThatThrownBy(() -> tableService.changeEmpty(createdOrderTable.getId(), request))
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), request))
                 .isInstanceOf(OrderIsNotCompletedException.class);
     }
 
@@ -98,7 +101,7 @@ class TableServiceTest extends ServiceTestContext {
     void 손님_수를_0명_미만으로_변경하려고_하면_예외를_던진다() {
         // given
         OrderTable orderTable = new OrderTable(null, 1, false);
-        orderTableDao.save(orderTable);
+        orderTableRepository.save(orderTable);
 
         ChangeTableGuestRequest request = new ChangeTableGuestRequest(-1);
 
@@ -122,12 +125,12 @@ class TableServiceTest extends ServiceTestContext {
     void 빈_테이블에_대해_손님_수를_변경하려_하면_예외를_던진다() {
         // given
         OrderTable orderTable = new OrderTable(null, -1, true);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        orderTableRepository.save(orderTable);
 
         ChangeTableGuestRequest request = new ChangeTableGuestRequest(2);
 
         // when, then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), request))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), request))
                 .isInstanceOf(OrderTableEmptyException.class);
     }
 
@@ -135,7 +138,7 @@ class TableServiceTest extends ServiceTestContext {
     void 테이블을_정상적으로_변경하면_변경된_테이블을_반환한다() {
         // given
         OrderTable orderTable = new OrderTable(null, 1, false);
-        orderTableDao.save(orderTable);
+        orderTableRepository.save(orderTable);
 
         ChangeTableGuestRequest request = new ChangeTableGuestRequest(5);
 

@@ -1,7 +1,5 @@
 package kitchenpos.application;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import kitchenpos.persistence.MenuGroupRepository;
 import kitchenpos.persistence.MenuProductRepository;
 import kitchenpos.persistence.MenuRepository;
@@ -10,17 +8,7 @@ import kitchenpos.persistence.OrderRepository;
 import kitchenpos.persistence.OrderTableRepository;
 import kitchenpos.persistence.ProductRepository;
 import kitchenpos.persistence.TableGroupRepository;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.supports.DatabaseCleaner;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,81 +48,11 @@ public class ServiceTestContext {
     @Autowired
     protected MenuProductRepository menuProductRepository;
     @Autowired
-    protected OrderRepository orderDao;
+    protected OrderRepository orderRepository;
     @Autowired
-    protected OrderLineItemRepository orderLineItemDao;
+    protected OrderLineItemRepository orderLineItemRepository;
     @Autowired
-    protected TableGroupRepository tableGroupDao;
+    protected TableGroupRepository tableGroupRepository;
     @Autowired
-    protected OrderTableRepository orderTableDao;
-
-
-    protected Menu savedMenu;
-    protected Product savedProduct;
-    protected MenuGroup savedMenuGroup;
-    protected MenuProduct savedMenuProduct;
-    protected Order savedOrder;
-    protected OrderTable savedOrderTable;
-    protected OrderLineItem savedOrderLineItem;
-    protected TableGroup savedTableGroup;
-
-    @BeforeEach
-    void setup() {
-        setupProduct();
-        setupMenuGroup();
-        setupMenu();
-        setupMenuProduct();
-        setupTableGroup();
-        setupOrderTable();
-        setupOrder();
-        setupOrderLineItem();
-    }
-
-    private void setupOrderTable() {
-        OrderTable orderTable = new OrderTable(savedTableGroup, 0, true);
-
-        savedOrderTable = orderTableDao.save(orderTable);
-    }
-
-    private void setupTableGroup() {
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
-
-        savedTableGroup = tableGroupDao.save(tableGroup);
-    }
-
-    private void setupOrderLineItem() {
-        OrderLineItem orderLineItem = new OrderLineItem(savedOrder, savedMenu, 1L);
-
-        savedOrderLineItem = orderLineItemDao.save(orderLineItem);
-    }
-
-    private void setupOrder() {
-        Order order = new Order(savedOrderTable, OrderStatus.COOKING, LocalDateTime.now());
-
-        savedOrder = orderDao.save(order);
-    }
-
-    private void setupProduct() {
-        Product product = new Product("productName", BigDecimal.valueOf(1000L));
-
-        savedProduct = productRepository.save(product);
-    }
-
-    private void setupMenuGroup() {
-        MenuGroup menuGroup = new MenuGroup("menuGroupName");
-
-        savedMenuGroup = menuGroupRepository.save(menuGroup);
-    }
-
-    private void setupMenu() {
-        Menu menu = new Menu("menuName", BigDecimal.valueOf(2000L), savedMenuGroup);
-
-        savedMenu = menuRepository.save(menu);
-    }
-
-    private void setupMenuProduct() {
-        MenuProduct menuProduct = new MenuProduct(savedMenu, savedProduct, 2L);
-
-        savedMenuProduct = menuProductRepository.save(menuProduct);
-    }
+    protected OrderTableRepository orderTableRepository;
 }

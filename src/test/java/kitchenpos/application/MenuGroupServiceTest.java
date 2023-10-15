@@ -32,6 +32,6 @@ class MenuGroupServiceTest extends ServiceTestContext {
         List<MenuGroupResponse> response = menuGroupService.findAll();
 
         // then
-        assertThat(response).hasSize(2);
+        assertThat(response).hasSize(1);
     }
 }

@@ -60,6 +60,6 @@ class ProductServiceTest extends ServiceTestContext {
         List<ProductResponse> response = productService.findAll();
 
         // then
-        assertThat(response).hasSize(2);
+        assertThat(response).hasSize(1);
     }
 }

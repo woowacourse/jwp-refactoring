@@ -33,7 +33,8 @@ class TableGroupServiceTest extends ServiceTestContext {
         List<OrderTableRequest> orderTableRequests = new ArrayList<>();
         for (int i = 0; i < tableSize; i++) {
             OrderTable orderTable = new OrderTable(null, 1, true);
-            orderTableDao.save(orderTable);
+            orderTableRepository.save(orderTable);
+
             orderTableRequests.add(new OrderTableRequest(orderTable.getId()));
         }
 
@@ -62,11 +63,15 @@ class TableGroupServiceTest extends ServiceTestContext {
     @Test
     void 그룹_지정_대상이_빈_테이블이_아니라면_예외를_던진다() {
         // given
-        OrderTable orderTable = new OrderTable(null, 1, false);
-        orderTableDao.save(orderTable);
+        OrderTable orderTable1 = new OrderTable(null, 1, false);
+        OrderTable orderTable2 = new OrderTable(null, 1, false);
+
+        orderTableRepository.save(orderTable1);
+        orderTableRepository.save(orderTable2);
 
         List<OrderTableRequest> orderTableRequests = List.of(
-                new OrderTableRequest(orderTable.getId())
+                new OrderTableRequest(orderTable1.getId()),
+                new OrderTableRequest(orderTable2.getId())
         );
 
         CreateTableGroupRequest request = new CreateTableGroupRequest(orderTableRequests);
@@ -79,15 +84,18 @@ class TableGroupServiceTest extends ServiceTestContext {
     @Test
     void 그룹_지정_대상이_이미_그룹이_존재한다면_예외를_던진다() {
         // given
-        OrderTable orderTable1 = new OrderTable(savedTableGroup, 0, false);
-        OrderTable createdOrderTable1 = orderTableDao.save(orderTable1);
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
+        tableGroupRepository.save(tableGroup);
 
-        OrderTable orderTable2 = new OrderTable(savedTableGroup, 0, false);
-        OrderTable createdOrderTable2 = orderTableDao.save(orderTable2);
+        OrderTable orderTable1 = new OrderTable(tableGroup, 1, false);
+        OrderTable orderTable2 = new OrderTable(tableGroup, 1, false);
+
+        orderTableRepository.save(orderTable1);
+        orderTableRepository.save(orderTable2);
 
         List<OrderTableRequest> orderTableRequests = List.of(
-                new OrderTableRequest(createdOrderTable1.getId()),
-                new OrderTableRequest(createdOrderTable2.getId())
+                new OrderTableRequest(orderTable1.getId()),
+                new OrderTableRequest(orderTable2.getId())
         );
 
         CreateTableGroupRequest request = new CreateTableGroupRequest(orderTableRequests);
@@ -101,14 +109,14 @@ class TableGroupServiceTest extends ServiceTestContext {
     void 정상적으로_그룹을_생성하면_생성한_그룹을_반환한다() {
         // given
         OrderTable orderTable1 = new OrderTable(null, 0, true);
-        OrderTable createdOrderTable1 = orderTableDao.save(orderTable1);
-
         OrderTable orderTable2 = new OrderTable(null, 0, true);
-        OrderTable createdOrderTable2 = orderTableDao.save(orderTable2);
+
+        orderTableRepository.save(orderTable1);
+        orderTableRepository.save(orderTable2);
 
         List<OrderTableRequest> orderTableRequests = List.of(
-                new OrderTableRequest(createdOrderTable1.getId()),
-                new OrderTableRequest(createdOrderTable2.getId())
+                new OrderTableRequest(orderTable1.getId()),
+                new OrderTableRequest(orderTable2.getId())
         );
 
         CreateTableGroupRequest request = new CreateTableGroupRequest(orderTableRequests);
@@ -125,16 +133,16 @@ class TableGroupServiceTest extends ServiceTestContext {
     void 주문_상태가_COOKING이거나_MEAL인_경우_그룹을_해체할_수_없다(OrderStatus orderStatus) {
         // given
         TableGroup tableGroup = new TableGroup(LocalDateTime.now());
-        TableGroup createdTableGroup = tableGroupDao.save(tableGroup);
+        tableGroupRepository.save(tableGroup);
 
-        OrderTable orderTable = new OrderTable(createdTableGroup, 0, true);
-        OrderTable createdOrderTable = orderTableDao.save(orderTable);
+        OrderTable orderTable = new OrderTable(tableGroup, 0, true);
+        orderTableRepository.save(orderTable);
 
-        Order order = new Order(createdOrderTable, orderStatus, LocalDateTime.now());
-        orderDao.save(order);
+        Order order = new Order(orderTable, orderStatus, LocalDateTime.now());
+        orderRepository.save(order);
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.ungroup(createdTableGroup.getId()))
+        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                 .isInstanceOf(OrderIsNotCompletedException.class);
     }
 }
