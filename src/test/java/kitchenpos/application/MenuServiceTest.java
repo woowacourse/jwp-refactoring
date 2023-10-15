@@ -108,14 +108,12 @@ public class MenuServiceTest {
         class 메뉴_가격 {
 
             @ParameterizedTest
-            @ValueSource(longs = {-1, 0})
-            void 잘못된_메뉴_가격인_경우_에러가_발생한다(Long value) {
+            @ValueSource(longs = {-1, -12312, -999})
+            void 메뉴_가격이_음수인_경우_에러가_발생한다(Long value) {
                 // given
                 Menu menu = new Menu();
                 menu.setName("한마리 메뉴");
-                if (value != null) {
-                    menu.setPrice(BigDecimal.valueOf(value));
-                }
+                menu.setPrice(BigDecimal.valueOf(value));
                 menu.setMenuGroupId(1L);
 
                 MenuProduct menuProduct = new MenuProduct();
