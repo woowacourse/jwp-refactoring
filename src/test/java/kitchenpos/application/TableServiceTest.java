@@ -3,35 +3,37 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.List;
 import java.util.stream.Stream;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayName("테이블 테스트")
 class TableServiceTest extends ServiceTest {
+
+    @Autowired
+    private TableService tableService;
 
     @DisplayName("테이블을 생성한다")
     @Test
     void create() {
         // given & when
+        final int newTableId = tableService.list().size() + 1;
         final OrderTable actual = tableService.create(createOrderTable(null, 2, null));
 
         // then
-        assertThat(actual.getNumberOfGuests()).isEqualTo(2);
+        assertThat(actual.getId()).isEqualTo(newTableId);
     }
 
     @DisplayName("테이블 목록을 가져온다")
     @Test
     void list() {
         // then
-        assertThat(tableService.list()).isNotNull();
+        assertThat(tableService.list()).hasSize(5);
     }
 
     @DisplayName("테이블의 상태를 변경한다")
@@ -55,25 +57,19 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("없는 테이블 상태 변경시 실패한다")
     @Test
     void changeEmpty_FailWithNonExistTable() {
-        assertThatThrownBy(() -> tableService.changeEmpty(-1L, createOrderTable(-1L, null, true)))
+        assertThatThrownBy(() -> tableService.changeEmpty(-1L, tableService.create(createOrderTable(null, 1, null))))
                 .isInstanceOf(IllegalArgumentException.class);
 
     }
 
-    @DisplayName("조리중 혹은 먹는 중의 테이블 상태 변경시 실패한다")
-    @ParameterizedTest
-    @ValueSource(strings = {"COOKING", "MEAL"})
-    void changeEmpty_FailWithCookingOrEating(final String state) {
-        // given
-        final OrderTable orderTable = createOrderTable(null, 1, false);
-        final Order order = orderService.create(createOrder(orderTable, List.of(1L, 2L)));
-        order.setOrderStatus(state);
-        orderService.changeOrderStatus(order.getId(), order);
-
+    @DisplayName("식사가 완료된 테이블이 아닌 테이블 상태 변경시 실패한다")
+    @ParameterizedTest(name = "{0} 중인 테이블 상태 변경시 실패한다")
+    @MethodSource("statusAndIdProvider")
+    void changeEmpty_FailWithCookingOrEating(final String name, final Long id, final Class exception) {
         // when & then
         assertThatThrownBy(
-                () -> tableService.changeEmpty(order.getOrderTableId(), createOrderTable(1L, null, true)))
-                .isInstanceOf(IllegalArgumentException.class);
+                () -> tableService.changeEmpty(id, createOrderTable(null, null, true)))
+                .isInstanceOf(exception);
 
     }
 

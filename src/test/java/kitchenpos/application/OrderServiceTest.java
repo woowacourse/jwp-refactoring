@@ -3,26 +3,36 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 class OrderServiceTest extends ServiceTest {
+
+    @Autowired
+    private OrderService orderService;
 
     @DisplayName("주문을 생성한다")
     @Test
     void create() {
+        // given
+        final int newOrderId = orderService.list().size() + 1;
+        final Order order = createOrder(null, createOrderTable(5L, 1, null), List.of(1L, 2L));
+
         // when
-        final Order actual = createOrder(createOrderTable(null, 1, false), List.of(1L, 2L));
+        final Order actual = orderService.create(order);
 
         // then
-        assertThat(actual.getOrderLineItems()).hasSize(2);
+        assertThat(actual.getId()).isEqualTo(newOrderId);
     }
 
     @DisplayName("주문 생성에 실패한다")
@@ -30,52 +40,40 @@ class OrderServiceTest extends ServiceTest {
     @MethodSource("orderTableProvider")
     void create_Fail(
             final String name,
-            final boolean empty,
+            final Long id,
             final List<Long> products
     ) {
+        // given
+        final Order order = createOrder(null, createOrderTable(id, null, null), products);
+
         // when
-        assertThatThrownBy(() -> createOrder(createOrderTable(null, 1, empty), products));
+        assertThatThrownBy(() -> orderService.create(order));
     }
 
     private static Stream<Arguments> orderTableProvider() {
         return Stream.of(
-                Arguments.of("상품이 없는", false, List.of()),
-                Arguments.of("메뉴에 없는 상품", false, List.of(-1L)),
-                Arguments.of("빈 테이블", true, List.of(1L))
+                Arguments.of("상품이 없는", 5L, List.of()),
+                Arguments.of("메뉴에 없는 상품", 5L, List.of(-1L)),
+                Arguments.of("빈 테이블", 1L, List.of(1L, 2L)),
+                Arguments.of("존재하지 않는", -1L, List.of(1L, 2L))
         );
-    }
-
-    @DisplayName("존재하지 않는 테이블 주문 시 실패한다")
-    @Test
-    void create_FailNoExistTable() {
-        // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(-1L);
-        orderTable.setEmpty(false);
-
-        // when & then
-        assertThatThrownBy(() -> createOrder(orderTable, List.of(1L)));
     }
 
     @DisplayName("주문 목록을 조회한다")
     @Test
     void list() {
-        // given
-        orderService.create(createOrder(createOrderTable(null, 1, false), List.of(1L, 2L)));
-        orderService.create(createOrder(createOrderTable(null, 1, false), List.of(3L, 4L)));
-
         // then
         final List<Order> actual = orderService.list();
 
         // then
-        assertThat(actual).isNotNull();
+        assertThat(actual).hasSize(2);
     }
 
     @DisplayName("주문 상태를 변경한다")
     @Test
     void changeOrderStatus() {
         // given
-        final Order order = orderService.create(createOrder(createOrderTable(null, 1, false), List.of(1L, 2L)));
+        final Order order = createOrder(1L, createOrderTable(3L, null, null), List.of());
         order.setOrderStatus("COMPLETION");
 
         // when
@@ -83,5 +81,35 @@ class OrderServiceTest extends ServiceTest {
 
         // then
         assertThat(actual.getOrderStatus()).isEqualTo(order.getOrderStatus());
+    }
+
+    private Order createOrder(
+            final Long id,
+            final OrderTable orderTable,
+            final List<Long> products
+    ) {
+        orderTable.setEmpty(false);
+
+        final List<OrderLineItem> orderLineItems = new ArrayList<>();
+        for (Long product : products) {
+            orderLineItems.add(createOrderLineItem(product));
+        }
+
+        final Order order = new Order();
+
+        order.setId(id);
+        order.setOrderTableId(orderTable.getId());
+        order.setOrderLineItems(orderLineItems);
+
+        return order;
+    }
+
+    private static OrderLineItem createOrderLineItem(final Long value) {
+        final OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setOrderId(value);
+        orderLineItem.setQuantity(value);
+        orderLineItem.setSeq(value);
+        orderLineItem.setMenuId(value);
+        return orderLineItem;
     }
 }

@@ -20,6 +20,7 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void create() {
         // given
+        final int newProductId = productService.list().size() + 1;
         final Product product = new Product();
         product.setName("test");
         product.setPrice(BigDecimal.valueOf(100));
@@ -28,7 +29,7 @@ class ProductServiceTest extends ServiceTest {
         final Product actual = productService.create(product);
 
         // then
-        assertThat(actual.getName()).isEqualTo(product.getName());
+        assertThat(actual.getId()).isEqualTo(newProductId);
     }
 
     @DisplayName("상품 가격이 음수일 시 실패한다")
@@ -51,6 +52,6 @@ class ProductServiceTest extends ServiceTest {
         final List<Product> actual = productService.list();
 
         // then
-        assertThat(actual).isNotNull();
+        assertThat(actual).hasSize(2);
     }
 }

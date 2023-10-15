@@ -7,10 +7,8 @@ import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class MenuGroupServiceTest {
+class MenuGroupServiceTest extends ServiceTest {
 
     @Autowired
     private MenuGroupService menuGroupService;
@@ -19,6 +17,7 @@ class MenuGroupServiceTest {
     @Test
     void create() {
         // given
+        final int newMenuGroupId = menuGroupService.list().size() + 1;
         final MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName("test");
 
@@ -26,7 +25,7 @@ class MenuGroupServiceTest {
         final MenuGroup actual = menuGroupService.create(menuGroup);
 
         // then
-        assertThat(actual.getName()).isEqualTo(menuGroup.getName());
+        assertThat(actual.getId()).isEqualTo(newMenuGroupId);
     }
 
     @DisplayName("메뉴 그룹 목록을 조회한다")
@@ -36,6 +35,6 @@ class MenuGroupServiceTest {
         final List<MenuGroup> menuGroups = menuGroupService.list();
 
         // then
-        assertThat(menuGroups).isNotNull();
+        assertThat(menuGroups).hasSize(2);
     }
 }

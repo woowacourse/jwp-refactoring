@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,28 +15,24 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class MenuServiceTest {
+class MenuServiceTest extends ServiceTest {
 
     @Autowired
     private MenuService menuService;
-
-    @Autowired
-    private MenuGroupService menuGroupService;
 
     @DisplayName("단일 메뉴를 생성한다")
     @Test
     void create() {
         // given
-        final Menu menu = createMenu(List.of(1L, 2L));
+        final int newMenuId = menuService.list().size() + 1;
+        final Menu menu = createMenu(1L, BigDecimal.valueOf(29), List.of(1L, 2L));
 
         // when
         final Menu actual = menuService.create(menu);
 
         // then
-        assertThat(actual.getName()).isEqualTo(menu.getName());
+        assertThat(actual.getId()).isEqualTo(newMenuId);
     }
 
     @DisplayName("메뉴 생성에 실패한다")
@@ -45,29 +40,31 @@ class MenuServiceTest {
     @MethodSource("menuParameterProvider")
     void create_Fail(
             final String testName,
-            final String name,
             final Long menuGroupId,
             final BigDecimal price,
-            final List<Long> products
+            final List<Long> products,
+            final Class exception,
+            final String message
     ) {
         // given
-        final Menu menu = new Menu();
-        menu.setName(name);
-        menu.setMenuProducts(createMenuProductList(products));
-        menu.setMenuGroupId(menuGroupId);
-        menu.setPrice(price);
+        final Menu menu = createMenu(menuGroupId, price, products);
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(menu));
+        assertThatThrownBy(() -> menuService.create(menu))
+                .isInstanceOf(exception)
+                .hasMessage(message);
     }
 
     private static Stream<Arguments> menuParameterProvider() {
         return Stream.of(
-                Arguments.of("음수의 가격을 가진", "test", 1L, BigDecimal.valueOf(-1), List.of(1L, 2L)),
-                Arguments.of("이름이 없는", null, 1L, BigDecimal.valueOf(100), List.of(1L, 2L)),
-                Arguments.of("메뉴 그룹에 속하지 않은", "test", -1L, BigDecimal.valueOf(100), List.of(1L, 2L)),
-                Arguments.of("없는 상품을 가진", "test", 1L, BigDecimal.valueOf(100), List.of(-1L)),
-                Arguments.of("없는 상품을 가진", "test", 1L, BigDecimal.valueOf(100000000), List.of(1L))
+                Arguments.of("음수의 가격을 가진", 1L, BigDecimal.valueOf(-1), List.of(1L, 2L),
+                        IllegalArgumentException.class, null),
+                Arguments.of("메뉴 그룹에 속하지 않은", -1L, BigDecimal.valueOf(100), List.of(1L, 2L),
+                        IllegalArgumentException.class, null),
+                Arguments.of("없는 상품을 가진", 1L, BigDecimal.valueOf(100), List.of(-1L),
+                        IllegalArgumentException.class, null),
+                Arguments.of("없는 상품을 가진", 1L, BigDecimal.valueOf(100000000), List.of(1L),
+                        IllegalArgumentException.class, null)
         );
     }
 
@@ -78,15 +75,18 @@ class MenuServiceTest {
         final List<Menu> actual = menuService.list();
 
         // then
-        assertThat(actual).isNotNull();
+        assertThat(actual).hasSize(2);
     }
 
-    private Menu createMenu(final List<Long> products) {
-        final MenuGroup menuGroup = menuGroupService.list().get(0);
+    private Menu createMenu(
+            final Long menuGroupId,
+            final BigDecimal price,
+            final List<Long> products
+    ) {
         final Menu menu = new Menu();
-        menu.setPrice(BigDecimal.valueOf(100));
+        menu.setPrice(price);
         menu.setMenuProducts(createMenuProductList(products));
-        menu.setMenuGroupId(menuGroup.getId());
+        menu.setMenuGroupId(menuGroupId);
         menu.setName("test");
 
         return menu;
