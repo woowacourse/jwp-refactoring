@@ -201,7 +201,7 @@ class OrderServiceTest extends ServiceTest {
         }
 
         @Test
-        void 주문이_존재하지_않을_경우_변경할_수_있다() {
+        void 주문이_존재하지_않을_경우_변경할_수_없다() {
             // given
             MenuGroup 두마리메뉴 = menuGroupDao.save(메뉴그룹_두마리메뉴);
 
@@ -220,7 +220,7 @@ class OrderServiceTest extends ServiceTest {
         }
 
         @Test
-        void 해당_주문이_이미_완료_상태일_경우_변경할_수_있다() {
+        void 해당_주문이_이미_완료_상태일_경우_변경할_수_없다() {
             // given
             MenuGroup 두마리메뉴 = menuGroupDao.save(메뉴그룹_두마리메뉴);
 
