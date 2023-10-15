@@ -1,17 +1,15 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.MenuRequest;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
-import kitchenpos.fake.InMemoryMenuDao;
 import kitchenpos.fake.InMemoryMenuGroupRepository;
-import kitchenpos.fake.InMemoryMenuProductDao;
+import kitchenpos.fake.InMemoryMenuRepository;
 import kitchenpos.fake.InMemoryProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -35,8 +33,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class MenuServiceTest {
 
     private MenuGroupRepository menuGroupRepository;
-    private MenuDao menuDao;
-    private MenuProductDao menuProductDao;
+    private MenuRepository menuRepository;
     private ProductRepository productRepository;
     private MenuService menuService;
     private MenuGroup savedMenuGroup;
@@ -45,12 +42,10 @@ class MenuServiceTest {
     @BeforeEach
     void before() {
         menuGroupRepository = new InMemoryMenuGroupRepository();
-        menuDao = new InMemoryMenuDao();
-        menuProductDao = new InMemoryMenuProductDao();
+        menuRepository = new InMemoryMenuRepository();
         productRepository = new InMemoryProductRepository();
-        menuService = new MenuService(menuDao, menuGroupRepository, menuProductDao, productRepository);
-        savedMenuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        savedMenuProduct = menuProductDao.save(new MenuProduct(1L, 1L, 10));
+        menuService = new MenuService(menuRepository, menuGroupRepository, productRepository);
+        savedMenuGroup = menuGroupRepository.save(menuGroup("메뉴 그룹"));
     }
 
     @Test
@@ -103,13 +98,11 @@ class MenuServiceTest {
         MenuGroup menuGroup = menuGroupRepository.save(menuGroup("chicken"));
         Product product = productRepository.save(product("fried chicken", 10000L));
 
-        Menu menu1 = menuDao.save(menu("fried chicken", 10000L, menuGroup.getId(), List.of()));
-        MenuProduct menuProduct1 = menuProductDao.save(menuProduct(menu1.getId(), product.getId(), 1L));
-        menu1.changeMenuProducts(List.of(menuProduct1));
+        Menu menu1 = menuRepository.save(menu("fried chicken", 10000L, menuGroup.getId(), List.of()));
+        menu1.changeMenuProducts(List.of(menuProduct(product.getId(), 1L)));
 
-        Menu menu2 = menuDao.save(menu("spicy chicken", 20000L, menuGroup.getId(), List.of()));
-        MenuProduct menuProduct2 = menuProductDao.save(menuProduct(menu2.getId(), product.getId(), 1L));
-        menu2.changeMenuProducts(List.of(menuProduct2));
+        Menu menu2 = menuRepository.save(menu("spicy chicken", 20000L, menuGroup.getId(), List.of()));
+        menu2.changeMenuProducts(List.of(menuProduct(product.getId(), 1L)));
 
         // when
         List<Menu> result = menuService.list();

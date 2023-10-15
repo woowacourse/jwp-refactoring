@@ -2,16 +2,16 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.OrderChangeStatusRequest;
 import kitchenpos.application.dto.OrderRequest;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.fake.InMemoryMenuDao;
+import kitchenpos.fake.InMemoryMenuRepository;
 import kitchenpos.fake.InMemoryOrderDao;
 import kitchenpos.fake.InMemoryOrderLineItemDao;
 import kitchenpos.fake.InMemoryOrderTableDao;
@@ -40,7 +40,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 @SuppressWarnings("NonAsciiCharacters")
 class OrderServiceTest {
 
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
     private OrderDao orderDao;
     private OrderLineItemDao orderLineItemDao;
     private OrderTableDao orderTableDao;
@@ -51,12 +51,12 @@ class OrderServiceTest {
 
     @BeforeEach
     void before() {
-        menuDao = new InMemoryMenuDao();
+        menuRepository = new InMemoryMenuRepository();
         orderDao = new InMemoryOrderDao();
         orderLineItemDao = new InMemoryOrderLineItemDao();
         orderTableDao = new InMemoryOrderTableDao();
-        orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
-        menu = menuDao.save(menu("메뉴", 10000L, null, List.of()));
+        orderService = new OrderService(menuRepository, orderDao, orderLineItemDao, orderTableDao);
+        menu = menuRepository.save(menu("메뉴", 10000L, null, List.of()));
         savedOrderTable = orderTableDao.save(new OrderTable(null, 10, false));
         savedOrderLineItem = orderLineItemDao.save(new OrderLineItem(1L, menu.getId(), 10));
     }

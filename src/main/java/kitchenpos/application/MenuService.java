@@ -1,11 +1,9 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.MenuRequest;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroupRepository;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -14,26 +12,22 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static kitchenpos.application.dto.MenuRequest.MenuProductRequest;
 
 @Service
 public class MenuService {
-    private final MenuDao menuDao;
+    private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
-    private final MenuProductDao menuProductDao;
     private final ProductRepository productRepository;
 
     public MenuService(
-            final MenuDao menuDao,
+            final MenuRepository menuRepository,
             final MenuGroupRepository menuGroupRepository,
-            final MenuProductDao menuProductDao,
             final ProductRepository productRepository
     ) {
-        this.menuDao = menuDao;
+        this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
-        this.menuProductDao = menuProductDao;
         this.productRepository = productRepository;
     }
 
@@ -49,7 +43,7 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        final List<MenuProductRequest> menuProducts = request.getMenuProducts();
+        final List<MenuProductRequest> menuProducts = request.getMenuProductRequests();
 
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProductRequest menuProduct : menuProducts) {
@@ -62,23 +56,10 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        final Menu savedMenu = menuDao.save(request.toMenu());
-
-        final Long menuId = savedMenu.getId();
-        List<MenuProduct> savedMenuProducts = menuProducts.stream()
-                .map(it -> menuProductDao.save(new MenuProduct(menuId, it.getProductId(), it.getQuantity())))
-                .collect(Collectors.toList());
-        savedMenu.changeMenuProducts(savedMenuProducts);
-
-        return savedMenu;
+        return menuRepository.save(request.toMenu());
     }
 
     public List<Menu> list() {
-        final List<Menu> menus = menuDao.findAll();
-
-        for (final Menu menu : menus) {
-            menu.changeMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
-        }
-        return menus;
+        return menuRepository.findAll();
     }
 }

@@ -1,7 +1,7 @@
 package kitchenpos.fake;
 
-import kitchenpos.dao.MenuDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuRepository;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,7 +11,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class InMemoryMenuDao implements MenuDao {
+public class InMemoryMenuRepository implements MenuRepository {
 
     private final Map<Long, Menu> map = new HashMap<>();
     private final AtomicLong id = new AtomicLong();
