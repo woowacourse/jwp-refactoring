@@ -24,7 +24,7 @@ public class Product {
 
     public Product(String name, BigDecimal price) {
         validatePriceIsNonNull(price);
-        validatePriceIsPositive(price);
+        validatePriceIsNotNegative(price);
         this.name = name;
         this.price = price;
     }
@@ -35,7 +35,7 @@ public class Product {
         }
     }
 
-    private void validatePriceIsPositive(BigDecimal price) {
+    private void validatePriceIsNotNegative(BigDecimal price) {
         if (price.compareTo(BigDecimal.ZERO) < 0) {
             throw new ProductPriceIsNegativeException();
         }

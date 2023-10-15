@@ -53,20 +53,20 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
-    public void setupOrderLineItem(List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
-        validateOrderLineNotEmpty();
-    }
-
-    private void validateOrderLineNotEmpty() {
-        if (orderLineItems.isEmpty()) {
-            throw new OrderLineEmptyException();
-        }
-    }
-
     private void validateOrderIsNotCompleted() {
         if (OrderStatus.COMPLETION == orderStatus) {
             throw new OrderIsCompletedException();
+        }
+    }
+
+    public void setupOrderLineItem(List<OrderLineItem> orderLineItems) {
+        validateOrderLineNotEmpty(orderLineItems);
+        this.orderLineItems = orderLineItems;
+    }
+
+    private void validateOrderLineNotEmpty(List<OrderLineItem> orderLineItems) {
+        if (orderLineItems.isEmpty()) {
+            throw new OrderLineEmptyException();
         }
     }
 

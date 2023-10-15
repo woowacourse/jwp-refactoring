@@ -30,12 +30,6 @@ public class TableGroup {
         this.createdDate = createdDate;
     }
 
-    public void unGroupOrderTables() {
-        for (OrderTable orderTable : orderTables) {
-            orderTable.changeTableGroup(null);
-        }
-    }
-
     public void groupOrderTables(List<OrderTable> orderTables) {
         for (OrderTable orderTable : orderTables) {
             orderTable.validateIsEmpty();
@@ -48,6 +42,12 @@ public class TableGroup {
     private void validateOrderTableCount() {
         if (orderTables.size() < 2) {
             throw new OrderTableCountNotEnoughException();
+        }
+    }
+
+    public void unGroupOrderTables() {
+        for (OrderTable orderTable : orderTables) {
+            orderTable.changeTableGroup(null);
         }
     }
 
