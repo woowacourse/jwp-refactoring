@@ -45,7 +45,7 @@ public class OrderService {
         final List<OrderLineItemRequest> orderLineItems = request.getOrderLineItems();
 
         if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 항목은 하나 이상이여야 합니다");
         }
 
         final List<Long> menuIds = orderLineItems.stream()
@@ -53,14 +53,14 @@ public class OrderService {
                 .collect(Collectors.toList());
 
         if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("존재하지 않는 주문 항목이 있습니다");
         }
 
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다"));
 
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 테이블이 빈 테이블입니다");
         }
 
         final Order savedOrder = orderRepository.save(new Order(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now()));
@@ -86,10 +86,10 @@ public class OrderService {
     @Transactional
     public Order changeOrderStatus(final Long orderId, final OrderChangeStatusRequest request) {
         final Order savedOrder = orderRepository.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다"));
 
         if (Objects.equals(OrderStatus.COMPLETION, savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("완료 상태의 주문은 변경할 수 없습니다");
         }
 
         savedOrder.changeOrderStatus(request.getOrderStatus());

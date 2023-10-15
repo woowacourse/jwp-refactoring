@@ -85,7 +85,8 @@ class TableServiceTest {
 
         // expect
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), new OrderTableEmptyRequest(true)))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("단체 지정된 테이블은 변경할 수 없습니다");
     }
 
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
@@ -98,7 +99,8 @@ class TableServiceTest {
 
         // expect
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), new OrderTableEmptyRequest(true)))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 상태가 완료가 아닙니다");
     }
 
     @ValueSource(ints = {-1, -2})
@@ -110,7 +112,8 @@ class TableServiceTest {
 
         // expect
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 테이블의 손님 수가 0보다 커야합니다");
     }
 
     @Test
@@ -121,7 +124,8 @@ class TableServiceTest {
 
         // expect
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(invalidOrderTableId, request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 테이블이 없습니다");
     }
 
     @Test
@@ -132,7 +136,8 @@ class TableServiceTest {
 
         // expect
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 테이블은 빈 테이블일 수 없습니다");
     }
 
     @Test

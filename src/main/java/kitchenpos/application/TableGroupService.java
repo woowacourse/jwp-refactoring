@@ -36,7 +36,7 @@ public class TableGroupService {
         final List<OrderTableIdRequest> orderTableRequests = request.getOrderTables();
 
         if (CollectionUtils.isEmpty(orderTableRequests) || orderTableRequests.size() < 2) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 테이블은 1개 이상이여야 합니다");
         }
 
         final List<Long> orderTableIds = orderTableRequests.stream()
@@ -46,12 +46,12 @@ public class TableGroupService {
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
         if (orderTableIds.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 테이블의 개수와 맞지 않습니다");
         }
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
             if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("단체 지정은 빈 테이블만 가능합니다");
             }
         }
 
@@ -75,7 +75,7 @@ public class TableGroupService {
 
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("완료 상태가 아니면 단체 지정을 해제할 수 없습니다");
         }
 
         for (final OrderTable orderTable : orderTables) {

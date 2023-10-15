@@ -44,7 +44,7 @@ class ProductServiceTest {
             softly.assertThat(savedProduct.getId()).isNotNull();
         });
     }
-    
+
     @Test
     void 상품을_생성할_때_상품_가격이_음수면_예외가_발생한다() {
         // given
@@ -52,6 +52,7 @@ class ProductServiceTest {
 
         // expect
         assertThatThrownBy(() -> productService.create(invalidProduct))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("상품 가격은 0보다 커야합니다");
     }
 }

@@ -63,7 +63,8 @@ class OrderServiceTest {
 
         // expect
         assertThatThrownBy(() -> orderService.create(orderRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 항목은 하나 이상이여야 합니다");
     }
 
     @Test
@@ -74,7 +75,8 @@ class OrderServiceTest {
 
         // expect
         assertThatThrownBy(() -> orderService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("존재하지 않는 주문 항목이 있습니다");
     }
 
     @Test
@@ -85,7 +87,8 @@ class OrderServiceTest {
 
         // expect
         assertThatThrownBy(() -> orderService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 테이블이 존재하지 않습니다");
     }
 
     @Test
@@ -100,7 +103,8 @@ class OrderServiceTest {
 
         // expect
         assertThatThrownBy(() -> orderService.create(orderRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 테이블이 빈 테이블입니다");
     }
 
     @Test
@@ -151,7 +155,8 @@ class OrderServiceTest {
     void 주문의_상태를_변경할_때_주문이_존재하지_않으면_예외가_발생한다() {
         // expect
         assertThatThrownBy(() -> orderService.changeOrderStatus(MAX_VALUE, new OrderChangeStatusRequest(COOKING)))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문이 존재하지 않습니다");
     }
 
     @Test
@@ -163,7 +168,8 @@ class OrderServiceTest {
 
         // expect
         assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("완료 상태의 주문은 변경할 수 없습니다");
     }
 
     @Test

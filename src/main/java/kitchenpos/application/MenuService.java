@@ -36,11 +36,11 @@ public class MenuService {
         final BigDecimal price = request.getPrice();
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("가격은 0원 이상이여야합니다");
         }
 
         if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("메뉴 그룹이 존재 해야합니다");
         }
 
         final List<MenuProductRequest> menuProducts = request.getMenuProductRequests();
@@ -53,7 +53,7 @@ public class MenuService {
         }
 
         if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("가격의 합이 맞지 않습니다");
         }
 
         return menuRepository.save(request.toMenu());

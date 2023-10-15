@@ -69,7 +69,8 @@ class MenuServiceTest {
 
         // expect
         assertThatThrownBy(() -> menuService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("가격은 0원 이상이여야합니다");
     }
 
     @Test
@@ -79,7 +80,8 @@ class MenuServiceTest {
 
         // expect
         assertThatThrownBy(() -> menuService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("메뉴 그룹이 존재 해야합니다");
     }
 
     @Test
@@ -89,7 +91,8 @@ class MenuServiceTest {
 
         // expect
         assertThatThrownBy(() -> menuService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("가격의 합이 맞지 않습니다");
     }
 
     @Test

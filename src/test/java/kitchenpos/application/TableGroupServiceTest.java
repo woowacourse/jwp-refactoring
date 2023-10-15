@@ -91,7 +91,8 @@ class TableGroupServiceTest {
 
         // expect
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 테이블은 1개 이상이여야 합니다");
     }
 
     @Test
@@ -103,7 +104,8 @@ class TableGroupServiceTest {
 
         // expect
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 테이블의 개수와 맞지 않습니다");
     }
 
     @Test
@@ -115,7 +117,8 @@ class TableGroupServiceTest {
 
         // expect
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("단체 지정은 빈 테이블만 가능합니다");
     }
 
     @Test
@@ -127,7 +130,8 @@ class TableGroupServiceTest {
 
         // expect
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("단체 지정은 빈 테이블만 가능합니다");
     }
 
     @Test
@@ -163,6 +167,7 @@ class TableGroupServiceTest {
 
         // when
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("완료 상태가 아니면 단체 지정을 해제할 수 없습니다");
     }
 }
