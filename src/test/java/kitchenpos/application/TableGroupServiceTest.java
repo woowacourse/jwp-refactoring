@@ -26,7 +26,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
@@ -135,14 +135,14 @@ class TableGroupServiceTest {
 
             // then
             verify(orderTableDao, times(3)).save(any());
-            assertAll(
-                    () -> assertThat(orderTables.get(0).getTableGroupId()).isEqualTo(result.getId()),
-                    () -> assertThat(orderTables.get(1).getTableGroupId()).isEqualTo(result.getId()),
-                    () -> assertThat(orderTables.get(2).getTableGroupId()).isEqualTo(result.getId()),
-                    () -> assertThat(orderTables.get(0).isEmpty()).isFalse(),
-                    () -> assertThat(orderTables.get(1).isEmpty()).isFalse(),
-                    () -> assertThat(orderTables.get(2).isEmpty()).isFalse()
-            );
+            assertSoftly(softly -> {
+                assertThat(orderTables.get(0).getTableGroupId()).isEqualTo(result.getId());
+                assertThat(orderTables.get(1).getTableGroupId()).isEqualTo(result.getId());
+                assertThat(orderTables.get(2).getTableGroupId()).isEqualTo(result.getId());
+                assertThat(orderTables.get(0).isEmpty()).isFalse();
+                assertThat(orderTables.get(1).isEmpty()).isFalse();
+                assertThat(orderTables.get(2).isEmpty()).isFalse();
+            });
         }
     }
 

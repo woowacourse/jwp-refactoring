@@ -25,7 +25,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -126,10 +126,10 @@ class OrderServiceTest {
             final Order result = orderService.create(request);
 
             // then
-            assertAll(
-                    () -> verify(orderDao, times(1)).save(any()),
-                    () -> verify(orderLineItemDao, times(3)).save(any())
-            );
+            assertSoftly(softly -> {
+                verify(orderDao, times(1)).save(any());
+                verify(orderLineItemDao, times(3)).save(any());
+            });
         }
     }
 
@@ -181,10 +181,10 @@ class OrderServiceTest {
             final Order result = orderService.changeOrderStatus(1L, new OrderStatusRequest("COMPLETION"));
 
             // then
-            assertAll(
-                    () -> verify(orderDao, times(1)).save(any()),
-                    () -> verify(orderLineItemDao, times(1)).findAllByOrderId(anyLong())
-            );
+            assertSoftly(softly -> {
+                verify(orderDao, times(1)).save(any());
+                verify(orderLineItemDao, times(1)).findAllByOrderId(anyLong());
+            });
         }
     }
 }

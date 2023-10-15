@@ -24,7 +24,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -107,10 +107,11 @@ class MenuServiceTest {
             final Menu savedMenu = menuService.create(request);
 
             // then
-            assertAll(
-                    () -> verify(menuDao, times(1)).save(any()),
-                    () -> verify(menuProductDao, times(3)).save(any())
-            );
+            assertSoftly(softly -> {
+                verify(menuDao, times(1)).save(any());
+                verify(menuProductDao, times(3)).save(any());
+                assertThat(savedMenu).usingRecursiveComparison().isEqualTo(menu);
+            });
         }
     }
 
@@ -126,11 +127,11 @@ class MenuServiceTest {
         final List<Menu> menus = menuService.list();
 
         // then
-        assertAll(
-                () -> assertThat(menus).hasSize(1),
-                () -> assertThat(menus.get(0)).isEqualTo(menu),
-                () -> assertThat(menus.get(0).getMenuProducts()).hasSize(1),
-                () -> assertThat(menus.get(0).getMenuProducts().get(0)).isEqualTo(menuProduct)
-        );
+        assertSoftly(softly -> {
+            assertThat(menus).hasSize(1);
+            assertThat(menus.get(0)).isEqualTo(menu);
+            assertThat(menus.get(0).getMenuProducts()).hasSize(1);
+            assertThat(menus.get(0).getMenuProducts().get(0)).isEqualTo(menuProduct);
+        });
     }
 }
