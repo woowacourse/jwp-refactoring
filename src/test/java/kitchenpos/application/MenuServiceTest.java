@@ -8,6 +8,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -23,6 +24,7 @@ import java.util.Optional;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -59,32 +61,30 @@ class MenuServiceTest {
         menuProduct.setQuantity(2);
         menuProduct.setSeq(1L);
 
-        menu = new Menu();
-        menu.setId(1L);
-        menu.setName("menu");
-        menu.setPrice(new BigDecimal("2000"));
-        menu.setMenuGroupId(menuGroup.getId());
-        menu.setMenuProducts(List.of(menuProduct));
+        menu = new Menu(1L, "menu", BigDecimal.valueOf(2000), menuGroup.getId(), List.of(menuProduct));
 
         product = new Product();
         product.setId(1L);
         product.setName("후라이드");
         product.setPrice(new BigDecimal("1000"));
 
-        given(menuGroupDao.existsById(menu.getMenuGroupId()))
+        given(menuGroupDao.existsById(any()))
                 .willReturn(true);
-        given(productDao.findById(menuProduct.getProductId()))
+        given(productDao.findById(any()))
                 .willReturn(Optional.of(product));
-        given(menuDao.save(menu))
+        given(menuDao.save(any()))
                 .willReturn(menu);
-        given(menuProductDao.save(menuProduct))
+        given(menuProductDao.save(any()))
                 .willReturn(menuProduct);
     }
 
     @Test
     void 메뉴를_생성한다() {
-        // given & when
-        Menu result = menuService.create(menu);
+        // given
+        MenuDto menuDto = MenuDto.from(menu);
+
+        // when
+        MenuDto result = menuService.create(menuDto);
 
         // then
         assertSoftly(softly -> {
@@ -98,11 +98,11 @@ class MenuServiceTest {
     @Test
     void 가격이_0이상인_상품의_메뉴를_생성한다() {
         // given
-        menu.setPrice(new BigDecimal("0"));
+        MenuDto menuDto = new MenuDto(menu.getId(), menu.getName(), BigDecimal.ZERO, menu.getMenuGroupId(), menu.getMenuProducts());
         product.setPrice(new BigDecimal("0"));
 
         // when
-        Menu result = menuService.create(menu);
+        MenuDto result = menuService.create(menuDto);
 
         // then
         assertSoftly(softly -> {
@@ -116,11 +116,11 @@ class MenuServiceTest {
     @Test
     void 가격이_0보다_작은_메뉴를_생성하면_예외를_던진다() {
         // given
-        menu.setPrice(new BigDecimal("-1"));
+        MenuDto menuDto = new MenuDto(menu.getId(), menu.getName(), BigDecimal.valueOf(-1), menu.getMenuGroupId(), menu.getMenuProducts());
         product.setPrice(new BigDecimal("-1"));
 
         // when
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuDto))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -132,12 +132,12 @@ class MenuServiceTest {
             menuProduct.setQuantity(1L);
             product.setPrice(BigDecimal.valueOf(1000));
         }
-        menu.setPrice(BigDecimal.valueOf(10000));
+        MenuDto menuDto = new MenuDto(menu.getId(), menu.getName(), BigDecimal.valueOf(10000), menu.getMenuGroupId(), menu.getMenuProducts());
 
         assert menuProducts.size() != 10;
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuDto))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -149,12 +149,12 @@ class MenuServiceTest {
             menuProduct.setQuantity(1L);
             product.setPrice(BigDecimal.valueOf(1000));
         }
-        menu.setPrice(BigDecimal.valueOf(1000));
+        MenuDto menuDto = new MenuDto(menu.getId(), menu.getName(), BigDecimal.valueOf(1000), menu.getMenuGroupId(), menu.getMenuProducts());
 
         assert menuProducts.size() == 1;
 
         // when & then
-        assertThatCode(() -> menuService.create(menu))
+        assertThatCode(() -> menuService.create(menuDto))
                 .doesNotThrowAnyException();
     }
 
@@ -166,21 +166,18 @@ class MenuServiceTest {
             menuProduct.setQuantity(1L);
             product.setPrice(BigDecimal.valueOf(1000));
         }
-        menu.setPrice(BigDecimal.valueOf(500));
+        MenuDto menuDto = new MenuDto(menu.getId(), menu.getName(), BigDecimal.valueOf(500), menu.getMenuGroupId(), menu.getMenuProducts());
 
         assert menuProducts.size() == 1;
 
         // when & then
-        assertThatCode(() -> menuService.create(menu))
+        assertThatCode(() -> menuService.create(menuDto))
                 .doesNotThrowAnyException();
     }
 
     @Test
     void 메뉴를_전체_조회한다() {
-        Menu menu2 = new Menu();
-        menu2.setId(2L);
-        menu2.setName("menu2");
-        menu2.setPrice(new BigDecimal("4000"));
+        Menu menu2 = new Menu(2L, "menu2", BigDecimal.valueOf(4000), null, null);
 
         MenuProduct menuProduct2 = new MenuProduct();
         menuProduct2.setSeq(1L);
@@ -194,7 +191,7 @@ class MenuServiceTest {
                 .willReturn(List.of(menuProduct2));
 
         // when
-        List<Menu> result = menuService.list();
+        List<MenuDto> result = menuService.list();
 
         // then
         assertSoftly(softly -> {
