@@ -35,6 +35,7 @@ class MenuGroupQueryServiceTest extends ApplicationTestConfig {
         final List<MenuGroup> actual = menuGroupService.list();
 
         // then
-        assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
+        assertThat(actual).usingRecursiveComparison()
+                .isEqualTo(expected);
     }
 }
