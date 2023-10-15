@@ -2,7 +2,6 @@ package kitchenpos.ui;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.TableGroupService;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,9 +33,7 @@ public class TableGroupRestControllerTest {
     @DisplayName("POST /api/table-groups - TableGroup 생성")
     public void create() throws Exception {
         //given
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setId(1L);
-        tableGroup.setOrderTables(List.of(new OrderTable()));
+        final TableGroup tableGroup = new TableGroup(1L, null, List.of());
         given(tableGroupService.create(any(TableGroup.class))).willReturn(tableGroup);
 
         //when & then

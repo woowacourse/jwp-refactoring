@@ -29,12 +29,11 @@ public class MenuGroupRestControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private MenuGroupService menuGroupService;
+    private MenuGroup menuGroup;
 
     @BeforeEach
     public void setUp() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(1L);
-        menuGroup.setName("menuGroup1");
+        menuGroup = new MenuGroup(1L, "menuGroup1");
         given(menuGroupService.create(menuGroup)).willReturn(menuGroup);
     }
 
@@ -43,9 +42,6 @@ public class MenuGroupRestControllerTest {
     public void create() throws Exception {
         // given
         final ObjectMapper objectMapper = new ObjectMapper();
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(1L);
-        menuGroup.setName("menuGroup1");
         given(menuGroupService.create(any(MenuGroup.class))).willReturn(menuGroup);
 
         // when & then
@@ -62,9 +58,6 @@ public class MenuGroupRestControllerTest {
     @DisplayName("GET: /api/menu-groups 요청시 목록 요청이 정상적으로 수행되는지 테스트")
     public void list() throws Exception {
         //given
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(1L);
-        menuGroup.setName("menuGroup1");
         given(menuGroupService.list()).willReturn(List.of(menuGroup));
 
         // when & then

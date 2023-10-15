@@ -36,10 +36,7 @@ public class TableRestControllerTest {
     @DisplayName("POST /api/tables - Table 생성")
     public void create() throws Exception {
         //given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(1L);
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(true);
+        final OrderTable orderTable = new OrderTable(1L, 1L, 2, false);
         given(tableService.create(any(OrderTable.class))).willReturn(orderTable);
 
         //when & then
@@ -50,7 +47,7 @@ public class TableRestControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("tableGroupId").value(1L))
                 .andExpect(jsonPath("numberOfGuests").value(2))
-                .andExpect(jsonPath("empty").value(true));
+                .andExpect(jsonPath("empty").value(false));
     }
 
     @Test
@@ -58,17 +55,10 @@ public class TableRestControllerTest {
     public void list() throws Exception {
         //given
         final List<OrderTable> orderTables = new ArrayList<>();
-        final OrderTable orderTable1 = new OrderTable();
+        final OrderTable orderTable1 = new OrderTable(1L, 1L, 2, false);
+        final OrderTable orderTable2 = new OrderTable(1L, 1L, 4, false);
         orderTables.add(orderTable1);
-        orderTable1.setTableGroupId(1L);
-        orderTable1.setNumberOfGuests(2);
-        orderTable1.setEmpty(false);
-
-        final OrderTable orderTable2 = new OrderTable();
         orderTables.add(orderTable2);
-        orderTable2.setTableGroupId(1L);
-        orderTable2.setNumberOfGuests(4);
-        orderTable2.setEmpty(false);
         given(tableService.list()).willReturn(orderTables);
 
         //when & then
@@ -87,8 +77,7 @@ public class TableRestControllerTest {
     @DisplayName("PUT /api/tables/{orderTableId}/empty - Table Empty 상태 변경")
     public void changeEmpty() throws Exception {
         //given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
+        final OrderTable orderTable = new OrderTable(1L, 1L, 0, true);
         given(tableService.changeEmpty(anyLong(), any(OrderTable.class))).willReturn(orderTable);
 
         //when & then
@@ -104,8 +93,7 @@ public class TableRestControllerTest {
     @DisplayName("PUT /api/tables/{orderTableId}/number-of-guests - Table 인원 수 변경")
     public void changeNumberOfGuests() throws Exception {
         //given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(4);
+        final OrderTable orderTable = new OrderTable(1L, 1L, 4, false);
         given(tableService.changeNumberOfGuests(anyLong(), any(OrderTable.class))).willReturn(orderTable);
 
         //when & then

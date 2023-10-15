@@ -3,6 +3,7 @@ package kitchenpos.ui;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.ProductService;
 import kitchenpos.domain.Product;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,14 +30,17 @@ public class ProductRestControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private ProductService productService;
+    private Product product;
+
+    @BeforeEach
+    void setUp() {
+        product = new Product(1L, "치킨", BigDecimal.valueOf(10000));
+    }
 
     @Test
     @DisplayName("POST /api/products - Product 생성")
     public void create() throws Exception {
         //given
-        final Product product = new Product();
-        product.setName("치킨");
-        product.setPrice(BigDecimal.valueOf(10000));
         given(productService.create(any(Product.class))).willReturn(product);
 
         //when & then
@@ -53,9 +57,6 @@ public class ProductRestControllerTest {
     @DisplayName("GET /api/products - Product 목록 조회")
     public void list() throws Exception {
         //given
-        final Product product = new Product();
-        product.setName("치킨");
-        product.setPrice(BigDecimal.valueOf(10000));
         given(productService.list()).willReturn(List.of(product));
 
         //when & then

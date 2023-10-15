@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.OrderService;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -30,14 +32,17 @@ public class OrderRestControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private OrderService orderService;
+    private Order order;
+
+    @BeforeEach
+    void setUp() {
+        order = new Order(1L, 1L, OrderStatus.COOKING.name(), null, null);
+    }
 
     @Test
     @DisplayName("POST /api/orders - 주문 생성")
     public void create() throws Exception {
         //given
-        final Order order = new Order();
-        order.setOrderTableId(1L);
-        order.setOrderStatus(OrderStatus.COOKING.name());
         given(orderService.create(any(Order.class))).willReturn(order);
 
         //when & then
@@ -54,10 +59,6 @@ public class OrderRestControllerTest {
     @DisplayName("GET /api/orders - 주문 목록 조회")
     public void list() throws Exception {
         //given
-        final Order order = new Order();
-        order.setId(1L);
-        order.setOrderTableId(1L);
-        order.setOrderStatus(OrderStatus.COOKING.name());
         given(orderService.list()).willReturn(List.of(order));
 
         //when & then
@@ -75,16 +76,13 @@ public class OrderRestControllerTest {
     @DisplayName("PUT /api/orders/{orderId}/order-status - 주문 상태 변경")
     public void changeOrderStatus() throws Exception {
         //given
-        final Order order = new Order();
-        order.setId(1L);
-        order.setOrderTableId(1L);
-        order.setOrderStatus(OrderStatus.MEAL.name());
-        given(orderService.changeOrderStatus(1L, order)).willReturn(order);
+        final Order mealOrder = new Order(1L, 1L, OrderStatus.MEAL.name(), null, null);
+        given(orderService.changeOrderStatus(anyLong(), any(Order.class))).willReturn(mealOrder);
 
         //when & then
         mockMvc.perform(put("/api/orders/{orderId}/order-status", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(order)))
+                        .content(objectMapper.writeValueAsString(mealOrder)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(1L))
