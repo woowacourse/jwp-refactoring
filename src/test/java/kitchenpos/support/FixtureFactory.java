@@ -1,11 +1,9 @@
 package kitchenpos.support;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class FixtureFactory {
@@ -64,5 +62,31 @@ public class FixtureFactory {
         menuProduct.setProductId(productId);
         menuProduct.setQuantity(quantity);
         return menuProduct;
+    }
+
+    public static OrderLineItem savedOrderLineItem(final Long id, final Long orderId, final Long menuId, final long quantity) {
+        final OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setSeq(id);
+        orderLineItem.setOrderId(orderId);
+        orderLineItem.setMenuId(menuId);
+        orderLineItem.setQuantity(quantity);
+        return orderLineItem;
+    }
+
+    public static Order forSaveOrder(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+        final Order order = new Order();
+        order.setOrderTableId(orderTableId);
+        order.setOrderLineItems(orderLineItems);
+        return order;
+    }
+
+    public static Order savedOrder(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime localDateTime, final List<OrderLineItem> orderLineItems) {
+        final Order order = new Order();
+        order.setId(id);
+        order.setOrderTableId(orderTableId);
+        order.setOrderStatus(orderStatus);
+        order.setOrderedTime(localDateTime);
+        order.setOrderLineItems(orderLineItems);
+        return order;
     }
 }

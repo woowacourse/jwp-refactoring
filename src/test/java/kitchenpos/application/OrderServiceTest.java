@@ -8,6 +8,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.support.FixtureFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -48,40 +49,15 @@ class OrderServiceTest {
     @Test
     void create_order() {
         // given
-        final Order forSaveOrder = new Order();
-        forSaveOrder.setOrderTableId(1L);
-        forSaveOrder.setOrderLineItems(List.of(
-                new OrderLineItem() {{
-                    setMenuId(1L);
-                    setQuantity(1);
-                    setSeq(1L);
-                }},
-                new OrderLineItem() {{
-                    setMenuId(2L);
-                    setQuantity(1);
-                    setSeq(2L);
-                }})
-        );
+        final List<OrderLineItem> orderLineItems = List.of(
+                FixtureFactory.savedOrderLineItem(1L, null, 1L, 1),
+                FixtureFactory.savedOrderLineItem(2L, null, 2L, 2));
+        final Order forSaveOrder = FixtureFactory.forSaveOrder(1L, orderLineItems);
+        final List<OrderLineItem> savedorderLineItems = List.of(
+                FixtureFactory.savedOrderLineItem(1L, 1L, 1L, 1),
+                FixtureFactory.savedOrderLineItem(2L, 1L, 2L, 2));
+        final Order savedOrder = FixtureFactory.savedOrder(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(), savedorderLineItems);
 
-        final Order savedOrder = new Order();
-        savedOrder.setId(1L);
-        savedOrder.setOrderStatus(OrderStatus.COOKING.name());
-        savedOrder.setOrderTableId(1L);
-        savedOrder.setOrderedTime(LocalDateTime.now());
-        savedOrder.setOrderLineItems(List.of(
-                new OrderLineItem() {{
-                    setOrderId(1L);
-                    setMenuId(1L);
-                    setQuantity(1);
-                    setSeq(1L);
-                }},
-                new OrderLineItem() {{
-                    setOrderId(1L);
-                    setMenuId(2L);
-                    setQuantity(1);
-                    setSeq(2L);
-                }})
-        );
 
         given(menuDao.countByIdIn(any()))
                 .willReturn(2L);
@@ -110,8 +86,7 @@ class OrderServiceTest {
     @Test
     void create_order_fail_with_orderLineItem_empty() {
         // given
-        final Order wrongOrder = new Order();
-        wrongOrder.setOrderLineItems(Collections.emptyList());
+        final Order wrongOrder = FixtureFactory.forSaveOrder(1L, Collections.emptyList());
 
         // when
         // then
@@ -123,20 +98,10 @@ class OrderServiceTest {
     @Test
     void create_order_fail_with_wrong_orderLineItem_count() {
         // given
-        final Order wrongOrder = new Order();
-        wrongOrder.setOrderTableId(1L);
-        wrongOrder.setOrderLineItems(List.of(
-                new OrderLineItem() {{
-                    setMenuId(1L);
-                    setQuantity(1);
-                    setSeq(1L);
-                }},
-                new OrderLineItem() {{
-                    setMenuId(2L);
-                    setQuantity(1);
-                    setSeq(2L);
-                }})
-        );
+        final List<OrderLineItem> orderLineItems = List.of(
+                FixtureFactory.savedOrderLineItem(1L, null, 1L, 1),
+                FixtureFactory.savedOrderLineItem(2L, null, 2L, 2));
+        final Order wrongOrder = FixtureFactory.forSaveOrder(1L, orderLineItems);
 
         given(menuDao.countByIdIn(any()))
                 .willReturn(1L);
@@ -151,20 +116,10 @@ class OrderServiceTest {
     @Test
     void create_order_fail_with_not_found_orderTable() {
         // given
-        final Order wrongOrder = new Order();
-        wrongOrder.setOrderTableId(1L);
-        wrongOrder.setOrderLineItems(List.of(
-                new OrderLineItem() {{
-                    setMenuId(1L);
-                    setQuantity(1);
-                    setSeq(1L);
-                }},
-                new OrderLineItem() {{
-                    setMenuId(2L);
-                    setQuantity(1);
-                    setSeq(2L);
-                }})
-        );
+        final List<OrderLineItem> orderLineItems = List.of(
+                FixtureFactory.savedOrderLineItem(1L, null, 1L, 1),
+                FixtureFactory.savedOrderLineItem(2L, null, 2L, 2));
+        final Order wrongOrder = FixtureFactory.forSaveOrder(1L, orderLineItems);
 
         given(menuDao.countByIdIn(any()))
                 .willReturn(2L);
@@ -182,20 +137,10 @@ class OrderServiceTest {
     @Test
     void create_order_fail_with_empty_orderTable() {
         // given
-        final Order wrongOrder = new Order();
-        wrongOrder.setOrderTableId(1L);
-        wrongOrder.setOrderLineItems(List.of(
-                new OrderLineItem() {{
-                    setMenuId(1L);
-                    setQuantity(1);
-                    setSeq(1L);
-                }},
-                new OrderLineItem() {{
-                    setMenuId(2L);
-                    setQuantity(1);
-                    setSeq(2L);
-                }})
-        );
+        final List<OrderLineItem> orderLineItems = List.of(
+                FixtureFactory.savedOrderLineItem(1L, null, 1L, 1),
+                FixtureFactory.savedOrderLineItem(2L, null, 2L, 2));
+        final Order wrongOrder = FixtureFactory.forSaveOrder(1L, orderLineItems);
 
         given(menuDao.countByIdIn(any()))
                 .willReturn(2L);
@@ -215,31 +160,15 @@ class OrderServiceTest {
     @Test
     void find_all_order() {
         // given
-        final Order order1 = new Order();
-        order1.setId(1L);
-        order1.setOrderStatus(OrderStatus.COOKING.name());
-        order1.setOrderTableId(1L);
-        order1.setOrderedTime(LocalDateTime.now());
-        order1.setOrderLineItems(List.of(
-                new OrderLineItem() {{
-                    setOrderId(1L);
-                    setMenuId(1L);
-                    setQuantity(1);
-                    setSeq(1L);
-                }}));
+        final List<OrderLineItem> savedorderLineItems1 = List.of(
+                FixtureFactory.savedOrderLineItem(1L, 1L, 1L, 1),
+                FixtureFactory.savedOrderLineItem(2L, 1L, 2L, 2));
+        final Order order1 = FixtureFactory.savedOrder(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(), savedorderLineItems1);
 
-        final Order order2 = new Order();
-        order2.setId(2L);
-        order2.setOrderStatus(OrderStatus.COOKING.name());
-        order2.setOrderTableId(2L);
-        order2.setOrderedTime(LocalDateTime.now());
-        order2.setOrderLineItems(List.of(
-                new OrderLineItem() {{
-                    setOrderId(2L);
-                    setMenuId(2L);
-                    setQuantity(4);
-                    setSeq(2L);
-                }}));
+        final List<OrderLineItem> savedorderLineItems2 = List.of(
+                FixtureFactory.savedOrderLineItem(3L, 2L, 3L, 1),
+                FixtureFactory.savedOrderLineItem(4L, 2L, 4L, 2));
+        final Order order2 = FixtureFactory.savedOrder(2L, 2L, OrderStatus.COOKING.name(), LocalDateTime.now(), savedorderLineItems2);
 
         final List<Order> orders = List.of(order1, order2);
 
@@ -258,37 +187,18 @@ class OrderServiceTest {
     @Test
     void change_order_status() {
         // given
-        final Order order = new Order();
-        order.setId(1L);
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderTableId(1L);
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderLineItems(List.of(
-                new OrderLineItem() {{
-                    setOrderId(1L);
-                    setMenuId(1L);
-                    setQuantity(1);
-                    setSeq(1L);
-                }}));
+        final List<OrderLineItem> savedOrderLineItems = List.of(
+                FixtureFactory.savedOrderLineItem(1L, 1L, 1L, 1),
+                FixtureFactory.savedOrderLineItem(2L, 1L, 2L, 2));
+        final Order order = FixtureFactory.savedOrder(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(), savedOrderLineItems);
 
-        final Order chagedOrder = new Order();
-        chagedOrder.setId(1L);
-        chagedOrder.setOrderStatus(OrderStatus.COMPLETION.name());
-        chagedOrder.setOrderTableId(1L);
-        chagedOrder.setOrderedTime(LocalDateTime.now());
-        chagedOrder.setOrderLineItems(List.of(
-                new OrderLineItem() {{
-                    setOrderId(1L);
-                    setMenuId(1L);
-                    setQuantity(1);
-                    setSeq(1L);
-                }}));
+        final Order changeOrder = FixtureFactory.savedOrder(1L, 1L, OrderStatus.COMPLETION.name(), LocalDateTime.now(), savedOrderLineItems);
 
         given(orderDao.findById(any()))
                 .willReturn(Optional.of(order));
 
         // when
-        final Order result = orderService.changeOrderStatus(order.getId(), chagedOrder);
+        final Order result = orderService.changeOrderStatus(order.getId(), changeOrder);
 
         // then
         assertSoftly(softly -> {
@@ -304,38 +214,18 @@ class OrderServiceTest {
     @Test
     void change_order_fail_with_not_found_order() {
         // given
-        final Order order = new Order();
-        order.setId(1L);
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderTableId(1L);
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderLineItems(List.of(
-                new OrderLineItem() {{
-                    setOrderId(1L);
-                    setMenuId(1L);
-                    setQuantity(1);
-                    setSeq(1L);
-                }}));
-
-        final Order chagedOrder = new Order();
-        chagedOrder.setId(1L);
-        chagedOrder.setOrderStatus(OrderStatus.COMPLETION.name());
-        chagedOrder.setOrderTableId(1L);
-        chagedOrder.setOrderedTime(LocalDateTime.now());
-        chagedOrder.setOrderLineItems(List.of(
-                new OrderLineItem() {{
-                    setOrderId(1L);
-                    setMenuId(1L);
-                    setQuantity(1);
-                    setSeq(1L);
-                }}));
+        final Long wrongOrderId = 0L;
+        final List<OrderLineItem> savedOrderLineItems = List.of(
+                FixtureFactory.savedOrderLineItem(1L, 1L, 1L, 1),
+                FixtureFactory.savedOrderLineItem(2L, 1L, 2L, 2));
+        final Order changeOrder = FixtureFactory.savedOrder(1L, 1L, OrderStatus.COMPLETION.name(), LocalDateTime.now(), savedOrderLineItems);
 
         given(orderDao.findById(any()))
                 .willReturn(Optional.empty());
 
         // when
         // then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), chagedOrder))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(wrongOrderId, changeOrder))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -343,38 +233,19 @@ class OrderServiceTest {
     @Test
     void change_order_fail_with_completion_order() {
         // given
-        final Order order = new Order();
-        order.setId(1L);
-        order.setOrderStatus(OrderStatus.COMPLETION.name());
-        order.setOrderTableId(1L);
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderLineItems(List.of(
-                new OrderLineItem() {{
-                    setOrderId(1L);
-                    setMenuId(1L);
-                    setQuantity(1);
-                    setSeq(1L);
-                }}));
+        final List<OrderLineItem> savedOrderLineItems = List.of(
+                FixtureFactory.savedOrderLineItem(1L, 1L, 1L, 1),
+                FixtureFactory.savedOrderLineItem(2L, 1L, 2L, 2));
+        final Order complitedOrder = FixtureFactory.savedOrder(1L, 1L, OrderStatus.COMPLETION.name(), LocalDateTime.now(), savedOrderLineItems);
 
-        final Order chagedOrder = new Order();
-        chagedOrder.setId(1L);
-        chagedOrder.setOrderStatus(OrderStatus.COMPLETION.name());
-        chagedOrder.setOrderTableId(1L);
-        chagedOrder.setOrderedTime(LocalDateTime.now());
-        chagedOrder.setOrderLineItems(List.of(
-                new OrderLineItem() {{
-                    setOrderId(1L);
-                    setMenuId(1L);
-                    setQuantity(1);
-                    setSeq(1L);
-                }}));
+        final Order changeOrder = FixtureFactory.savedOrder(1L, 1L, OrderStatus.COMPLETION.name(), LocalDateTime.now(), savedOrderLineItems);
 
         given(orderDao.findById(any()))
-                .willReturn(Optional.of(order));
+                .willReturn(Optional.of(complitedOrder));
 
         // when
         // then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), chagedOrder))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(complitedOrder.getId(), changeOrder))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
