@@ -80,7 +80,7 @@ class TableServiceTest extends ServiceTest {
         }
 
         @Test
-        void 주문_테이블이_존재하지_않는_경우_예외가_발생한다() {
+        void 존재하지_않는_주문_테이블을_설정하는_경우_예외가_발생한다() {
             // given
             OrderTable orderTable = new OrderTable();
 
@@ -156,7 +156,7 @@ class TableServiceTest extends ServiceTest {
         }
 
         @Test
-        void 주문_테이블이_존재하지_않는_경우_예외가_발생한다() {
+        void 존재하지_않는_주문_테이블을_설정하는_경우_예외가_발생한다() {
             // given
             OrderTable orderTable = new OrderTable();
 
