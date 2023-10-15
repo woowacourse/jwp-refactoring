@@ -5,6 +5,7 @@ import io.restassured.response.Response;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -20,32 +21,94 @@ import static kitchenpos.step.ProductStep.상품_생성_요청하고_아이디_�
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.OK;
 
 class MenuAcceptanceTest extends AcceptanceTest {
 
-    @Test
-    void 메뉴를_생성한다() {
-        final MenuGroup menuGroup = 일식();
-        final Long menuGroupId = 메뉴_그룹_생성_요청하고_아이디_반환(menuGroup);
-        final Long productId = 상품_생성_요청하고_아이디_반환(스키야키());
+    @Nested
+    class MenuCreateTest {
 
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(1L);
+        @Test
+        void 메뉴를_생성한다() {
+            final MenuGroup menuGroup = 일식();
+            final Long menuGroupId = 메뉴_그룹_생성_요청하고_아이디_반환(menuGroup);
+            final Long productId = 상품_생성_요청하고_아이디_반환(스키야키());
 
-        final Menu menu = new Menu();
-        menu.setName("스키야키");
-        menu.setPrice(BigDecimal.valueOf(11_900));
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(List.of(menuProduct));
+            final MenuProduct menuProduct = new MenuProduct();
+            menuProduct.setProductId(productId);
+            menuProduct.setQuantity(1L);
 
-        final ExtractableResponse<Response> response = 메뉴_생성_요청(menu);
+            final Menu menu = new Menu();
+            menu.setName("스키야키");
+            menu.setPrice(BigDecimal.valueOf(11_900));
+            menu.setMenuGroupId(menuGroupId);
+            menu.setMenuProducts(List.of(menuProduct));
 
-        assertAll(
-                () -> assertThat(response.statusCode()).isEqualTo(CREATED.value()),
-                () -> assertThat(response.jsonPath().getString("name")).isEqualTo(menu.getName())
-        );
+            final ExtractableResponse<Response> response = 메뉴_생성_요청(menu);
+
+            assertAll(
+                    () -> assertThat(response.statusCode()).isEqualTo(CREATED.value()),
+                    () -> assertThat(response.jsonPath().getString("name")).isEqualTo(menu.getName())
+            );
+        }
+
+        @Test
+        void 메뉴는_0_이상의_가격을_가진다() {
+            final MenuGroup menuGroup = 일식();
+            final Long menuGroupId = 메뉴_그룹_생성_요청하고_아이디_반환(menuGroup);
+            final Long productId = 상품_생성_요청하고_아이디_반환(스키야키());
+
+            final MenuProduct menuProduct = new MenuProduct();
+            menuProduct.setProductId(productId);
+            menuProduct.setQuantity(1L);
+
+            final Menu menu = new Menu();
+            menu.setName("스키야키");
+            menu.setPrice(BigDecimal.valueOf(-1));
+            menu.setMenuGroupId(menuGroupId);
+            menu.setMenuProducts(List.of(menuProduct));
+
+            final ExtractableResponse<Response> response = 메뉴_생성_요청(menu);
+
+            assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
+        }
+
+        @Test
+        void 메뉴는_반드시_메뉴_그룹에_속해야_한다() {
+            final Long productId = 상품_생성_요청하고_아이디_반환(스키야키());
+
+            final MenuProduct menuProduct = new MenuProduct();
+            menuProduct.setProductId(productId);
+            menuProduct.setQuantity(1L);
+
+            final Menu menu = new Menu();
+            menu.setName("스키야키");
+            menu.setPrice(BigDecimal.valueOf(-1));
+            menu.setMenuProducts(List.of(menuProduct));
+
+            final ExtractableResponse<Response> response = 메뉴_생성_요청(menu);
+
+            assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
+        }
+
+        @Test
+        void 메뉴의_가격은_메뉴에_속하는_상품_곱하기_수량의_합_이하여야_한다() {
+            final Long productId = 상품_생성_요청하고_아이디_반환(스키야키());
+
+            final MenuProduct menuProduct = new MenuProduct();
+            menuProduct.setProductId(productId);
+            menuProduct.setQuantity(2L);
+
+            final Menu menu = new Menu();
+            menu.setName("스키야키");
+            menu.setPrice(BigDecimal.valueOf(100_000));
+            menu.setMenuProducts(List.of(menuProduct));
+
+            final ExtractableResponse<Response> response = 메뉴_생성_요청(menu);
+
+            assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
+        }
     }
 
     @Test
