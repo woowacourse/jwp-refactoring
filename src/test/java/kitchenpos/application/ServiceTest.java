@@ -9,7 +9,6 @@ import org.springframework.test.context.jdbc.Sql;
 @Sql("/truncate.sql")
 @Transactional
 @SpringBootTest
-@SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 public class ServiceTest {
 }

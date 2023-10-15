@@ -11,6 +11,7 @@ import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@SuppressWarnings("NonAsciiCharacters")
 class MenuGroupServiceTest extends ServiceTest {
 
     @Autowired
