@@ -19,6 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,26 +44,26 @@ class TableGroupServiceTest {
         final OrderTable orderTable1 = new OrderTable(1L, null, 1, true);
         final OrderTable orderTable2 = new OrderTable(2L, null, 1, true);
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2));
-        final TableGroup expected = new TableGroup(1L, LocalDateTime.now(), List.of(orderTable1, orderTable2));
+        final TableGroup savedTableGroup = new TableGroup(1L, LocalDateTime.now(), List.of(orderTable1, orderTable2));
 
         when(orderTableDao.findAllByIdIn(any()))
                 .thenReturn(List.of(orderTable1, orderTable2));
         when(tableGroupDao.save(tableGroup))
-                .thenReturn(expected);
+                .thenReturn(savedTableGroup);
 
 
         //when
         final TableGroup result = tableGroupService.create(tableGroup);
 
         //then
-        assertThat(result).isEqualTo(expected);
+        assertThat(result).isEqualTo(new TableGroup(1L, LocalDateTime.now(), List.of(orderTable1, orderTable2)));
     }
 
     @Test
     @DisplayName("테이블 그룹 생성 시 테이블이 비어있을 경우 예외가 발생한다")
     void testCreateWhenOrderTablesEmptyFailure() {
         //given
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of());
+        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), Collections.emptyList());
 
         //when
         //then

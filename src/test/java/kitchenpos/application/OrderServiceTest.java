@@ -67,7 +67,7 @@ class OrderServiceTest {
         final Order result = orderService.create(order);
 
         //then
-        assertThat(result).isEqualTo(expected);
+        assertThat(result).isEqualTo(new Order(1L, order.getOrderStatus(), order.getOrderedTime(), order.getOrderLineItems()));
     }
 
     @Test
@@ -141,9 +141,9 @@ class OrderServiceTest {
     @DisplayName("주문 리스트를 성공적으로 조회한다")
     void testListSuccess() {
         //given
-        final Order order1 = new Order(1L, "status", LocalDateTime.now(), null);
-        final Order order2 = new Order(2L, "status", LocalDateTime.now(), null);
-        final Order order3 = new Order(3L, "status", LocalDateTime.now(), null);
+        final Order order1 = new Order(1L, 1L, "status", LocalDateTime.now(), null);
+        final Order order2 = new Order(2L, 2L, "status", LocalDateTime.now(), null);
+        final Order order3 = new Order(3L, 3L, "status", LocalDateTime.now(), null);
 
         final OrderLineItem orderLineItem1 = new OrderLineItem(1L, 1L, 1L, 1L);
         final OrderLineItem orderLineItem2 = new OrderLineItem(2L, 2L, 2L, 2L);
@@ -162,10 +162,8 @@ class OrderServiceTest {
         final List<Order> result = orderService.list();
 
         //then
-        order1.setOrderLineItems(List.of(orderLineItem1));
-        order2.setOrderLineItems(List.of(orderLineItem2));
-        order3.setOrderLineItems(List.of(orderLineItem3));
         assertThat(result).isEqualTo(List.of(order1, order2, order3));
+        assertThat(result.get(0).getOrderLineItems().get(0)).isEqualTo(orderLineItem1);
     }
 
     @Test
@@ -192,11 +190,28 @@ class OrderServiceTest {
 
     @Test
     @DisplayName("주문 상태 변경 시 주문을 찾지 못할 경우 예외가 발생한다")
-    void testChangeOrderStatusOrderNotFoundFailure() {
+    void testChangeOrderStatusWhenOrderNotFoundFailure() {
         //given
-        final Order order = new Order(1L, "status", LocalDateTime.now(), List.of());
+        final Order order = new Order(1L, "status", LocalDateTime.now(), Collections.emptyList());
         when(orderDao.findById(anyLong()))
-                .thenThrow(new IllegalArgumentException());
+                .thenReturn(Optional.empty());
+
+        //when
+        //then
+        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, order))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("주문 상태 변경 시 주문이 이미 완료된 상태라면 예외가 발생한다")
+    void testChangeOrderStatusWhenOrderStatusCompletionFailure() {
+        //given
+        final Order order = new Order(1L, OrderStatus.COMPLETION.name(), LocalDateTime.now(), Collections.emptyList());
+        final Order savedOrder = new Order();
+        savedOrder.setOrderStatus(OrderStatus.COMPLETION.name());
+
+        when(orderDao.findById(anyLong()))
+                .thenReturn(Optional.of(savedOrder));
 
         //when
         //then

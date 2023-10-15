@@ -103,7 +103,7 @@ class TableServiceTest {
 
     @Test
     @DisplayName("테이블을 빈 상태로 변경 시 요리 중이거나 식사 중일 경우 예외가 발생한다")
-    void testChangeEmptyWhenOrderAlreadyCookOrMeal() {
+    void testChangeEmptyWhenOrderAlreadyCookOrMealFailure() {
         // given
         final Long orderTableId = 1L;
         final OrderTable inputOrderTable = new OrderTable(1L, 1, true);

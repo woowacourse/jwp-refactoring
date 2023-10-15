@@ -17,7 +17,6 @@ import java.util.List;
 @ExtendWith(MockitoExtension.class)
 class MenuGroupServiceTest {
 
-
     @Mock
     private MenuGroupDao menuGroupDao;
 

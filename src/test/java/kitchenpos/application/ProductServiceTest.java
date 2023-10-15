@@ -42,7 +42,7 @@ class ProductServiceTest {
 
     @Test
     @DisplayName("제품 생성 시 가격이 null일 경우 예외가 발생한다")
-    void testCreateWhenPriceNull() {
+    void testCreateWhenPriceNullFailure() {
         //given
         final Product product = new Product("test", null);
 
@@ -54,7 +54,7 @@ class ProductServiceTest {
 
     @Test
     @DisplayName("제품 생성 시 가격이 0보다 작을 경우 예외가 발생한다")
-    void testCreateWhenPriceLowerThanZero() {
+    void testCreateWhenPriceLowerThanZeroFailure() {
         //given
         final Product product = new Product("test", BigDecimal.valueOf(-1));
 
