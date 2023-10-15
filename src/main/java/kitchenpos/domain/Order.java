@@ -44,8 +44,13 @@ public class Order extends BaseEntity {
         this(null, orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
     }
 
-    public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime,
-                 List<OrderLineItem> orderLineItems) {
+    public Order(
+            Long id,
+            OrderTable orderTable,
+            OrderStatus orderStatus,
+            LocalDateTime orderedTime,
+            List<OrderLineItem> orderLineItems
+    ) {
         validate(orderTable);
         this.id = id;
         this.orderTable = orderTable;
@@ -57,6 +62,18 @@ public class Order extends BaseEntity {
     private void validate(OrderTable orderTable) {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException("빈 테이블인 경우 주문을 할 수 없습니다.");
+        }
+    }
+
+    public void validateUngroupTableAllowed() {
+        if (orderStatus != COMPLETION) {
+            throw new IllegalArgumentException("테이블의 주문 상태가 조리중이거나 식사중인 경우 단체 지정 해제를 할 수 없습니다.");
+        }
+    }
+
+    public void validateChangeTableStatusAllowed() {
+        if (orderStatus != COMPLETION) {
+            throw new IllegalArgumentException("테이블의 주문 상태가 조리중이거나 식사중인 경우 테이블의 상태를 변경할 수 없습니다.");
         }
     }
 

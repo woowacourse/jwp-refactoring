@@ -5,7 +5,7 @@ import static java.util.stream.Collectors.toList;
 import java.util.List;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderTableRequest;
 import kitchenpos.dto.OrderTableResponse;
@@ -38,10 +38,9 @@ public class TableService {
     public OrderTableResponse changeEmpty(Long orderTableId, OrderTableRequest request) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
-
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, OrderStatus.notCompletion())) {
-            throw new IllegalArgumentException("테이블의 주문 상태가 조리중이거나 식사중인 경우 테이블의 상태를 변경할 수 없습니다.");
-        }
+        
+        orderRepository.findByOrderTableId(orderTableId)
+                .ifPresent(Order::validateChangeTableStatusAllowed);
 
         orderTable.changeEmpty(request.isEmpty());
         return OrderTableResponse.from(orderTableRepository.save(orderTable));
