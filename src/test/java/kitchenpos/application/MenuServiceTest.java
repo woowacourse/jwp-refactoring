@@ -8,6 +8,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.support.FixtureFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,45 +48,30 @@ class MenuServiceTest {
     @Test
     void create_newMenu() {
         // given
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(1L);
-        menuGroup.setName("메뉴 그룹");
-
-        final Product product = new Product();
-        product.setId(1L);
-        product.setName("상품1");
-        product.setPrice(new BigDecimal(10000));
-
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(1L);
-        menuProduct.setProductId(1L);
-        menuProduct.setQuantity(2);
-        menuProduct.setSeq(1L);
+        final MenuGroup menuGroup = FixtureFactory.savedMenuGroup(1L, "메뉴 그룹");
+        final Product product = FixtureFactory.savedProduct(1L, "상품1", new BigDecimal(10000));
+        final MenuProduct menuProduct = FixtureFactory.savedMenuProduct(1L, 1L, 1L, 2);
         final List<MenuProduct> menuProducts = List.of(menuProduct);
 
-        final Menu newMenu = new Menu();
-        newMenu.setId(1L);
-        newMenu.setName("새 메뉴");
-        newMenu.setPrice(new BigDecimal(20000));
-        newMenu.setMenuGroupId(menuGroup.getId());
-        newMenu.setMenuProducts(menuProducts);
+        final Menu newMenu = FixtureFactory.forSaveMenu("새 메뉴", new BigDecimal(20000), menuGroup.getId(), menuProducts);
+        final Menu savedMenu = FixtureFactory.savedMenu(1L, "새 메뉴", new BigDecimal(20000), menuGroup.getId(), null);
 
         given(menuGroupDao.existsById(menuGroup.getId()))
                 .willReturn(true);
         given(productDao.findById(any()))
                 .willReturn(Optional.of(product));
         given(menuDao.save(newMenu))
-                .willReturn(newMenu);
+                .willReturn(savedMenu);
         // when
         final Menu result = menuService.create(newMenu);
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(result.getId()).isEqualTo(newMenu.getId());
-            softly.assertThat(result.getName()).isEqualTo(newMenu.getName());
-            softly.assertThat(result.getPrice()).isEqualTo(newMenu.getPrice());
-            softly.assertThat(result.getMenuGroupId()).isEqualTo(newMenu.getMenuGroupId());
-            softly.assertThat(result.getMenuProducts()).isEqualTo(newMenu.getMenuProducts());
+            softly.assertThat(result.getId()).isEqualTo(savedMenu.getId());
+            softly.assertThat(result.getName()).isEqualTo(savedMenu.getName());
+            softly.assertThat(result.getPrice()).isEqualTo(savedMenu.getPrice());
+            softly.assertThat(result.getMenuGroupId()).isEqualTo(savedMenu.getMenuGroupId());
+            softly.assertThat(result.getMenuProducts()).isEqualTo(savedMenu.getMenuProducts());
         });
     }
 
@@ -93,10 +79,7 @@ class MenuServiceTest {
     @Test
     void create_fail_menu_price_under_0() {
         // given
-        final Menu wrongMenu = new Menu();
-        wrongMenu.setId(1L);
-        wrongMenu.setName("새 메뉴");
-        wrongMenu.setPrice(new BigDecimal(-1000));
+        final Menu wrongMenu = FixtureFactory.forSaveMenu("새 메뉴", new BigDecimal(-1000), 1L, null);
 
         // when
         // then
@@ -108,10 +91,8 @@ class MenuServiceTest {
     @Test
     void create_fail_with_menu_price_null() {
         // given
-        final Menu wrongMenu = new Menu();
-        wrongMenu.setId(1L);
-        wrongMenu.setName("새 메뉴");
-        wrongMenu.setPrice(null);
+        final Menu wrongMenu = FixtureFactory.forSaveMenu("새 메뉴", null, 1L, null);
+
 
         // when
         // then
@@ -123,11 +104,7 @@ class MenuServiceTest {
     @Test
     void create_fail_menu_not_contained_menuGroup() {
         // given
-        final Menu wrongMenu = new Menu();
-        wrongMenu.setId(1L);
-        wrongMenu.setName("새 메뉴");
-        wrongMenu.setPrice(new BigDecimal(1000));
-        wrongMenu.setMenuGroupId(null);
+        final Menu wrongMenu = FixtureFactory.forSaveMenu("새 메뉴", new BigDecimal(1000), null, null);
 
         given(menuGroupDao.existsById(any()))
                 .willReturn(false);
@@ -142,23 +119,12 @@ class MenuServiceTest {
     @Test
     void create_fail_menu_contain_notExistProduct() {
         // given
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(1L);
-        menuGroup.setName("메뉴 그룹");
+        final MenuGroup menuGroup = FixtureFactory.savedMenuGroup(1L, "메뉴 그룹");
 
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(1L);
-        menuProduct.setProductId(2L);
-        menuProduct.setQuantity(2);
-        menuProduct.setSeq(1L);
+        final MenuProduct menuProduct = FixtureFactory.savedMenuProduct(1L, null, null, 2);
         final List<MenuProduct> menuProducts = List.of(menuProduct);
 
-        final Menu wrongMenu = new Menu();
-        wrongMenu.setId(1L);
-        wrongMenu.setName("새 메뉴");
-        wrongMenu.setPrice(new BigDecimal(1000));
-        wrongMenu.setMenuGroupId(menuGroup.getId());
-        wrongMenu.setMenuProducts(menuProducts);
+        final Menu wrongMenu = FixtureFactory.forSaveMenu("새 메뉴", new BigDecimal(20000), menuGroup.getId(), menuProducts);
 
         given(menuGroupDao.existsById(menuGroup.getId()))
                 .willReturn(true);
@@ -175,28 +141,13 @@ class MenuServiceTest {
     @Test
     void create_fail_menuPrice_expensive_than_all_product_price() {
         // given
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(1L);
-        menuGroup.setName("메뉴 그룹");
+        final MenuGroup menuGroup = FixtureFactory.savedMenuGroup(1L, "메뉴 그룹");
+        final Product product = FixtureFactory.savedProduct(1L, "상품1", new BigDecimal(10000));
 
-        final Product product = new Product();
-        product.setId(1L);
-        product.setName("상품1");
-        product.setPrice(new BigDecimal(10000));
-
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(1L);
-        menuProduct.setProductId(1L);
-        menuProduct.setQuantity(2);
-        menuProduct.setSeq(1L);
+        final MenuProduct menuProduct = FixtureFactory.savedMenuProduct(null, null, product.getId(), 2);
         final List<MenuProduct> menuProducts = List.of(menuProduct);
 
-        final Menu wrongMenu = new Menu();
-        wrongMenu.setId(1L);
-        wrongMenu.setName("새 메뉴");
-        wrongMenu.setPrice(new BigDecimal(50000));
-        wrongMenu.setMenuGroupId(menuGroup.getId());
-        wrongMenu.setMenuProducts(menuProducts);
+        final Menu wrongMenu = FixtureFactory.forSaveMenu("새 메뉴", new BigDecimal(50000), menuGroup.getId(), menuProducts);
 
         given(menuGroupDao.existsById(menuGroup.getId()))
                 .willReturn(true);
@@ -213,29 +164,10 @@ class MenuServiceTest {
     @Test
     void find_all_menus() {
         // given
-        final MenuProduct menuProduct1 = new MenuProduct();
-        menuProduct1.setProductId(1L);
-        menuProduct1.setQuantity(2);
-        menuProduct1.setSeq(1L);
-
-        final MenuProduct menuProduct2 = new MenuProduct();
-        menuProduct2.setProductId(2L);
-        menuProduct2.setQuantity(1);
-        menuProduct2.setSeq(2L);
-
-        final Menu menu1 = new Menu();
-        menu1.setId(1L);
-        menu1.setName("메뉴1");
-        menu1.setPrice(new BigDecimal(10000));
-        menu1.setMenuGroupId(1L);
-        menu1.setMenuProducts(List.of(menuProduct1));
-
-        final Menu menu2 = new Menu();
-        menu2.setId(1L);
-        menu2.setName("메뉴2");
-        menu2.setPrice(new BigDecimal(50000));
-        menu2.setMenuGroupId(2L);
-        menu2.setMenuProducts(List.of(menuProduct2));
+        final MenuProduct menuProduct1 = FixtureFactory.savedMenuProduct(1L, 1L, 1L, 2);
+        final MenuProduct menuProduct2 = FixtureFactory.savedMenuProduct(2L, 2L, 1L, 2);
+        final Menu menu1 = FixtureFactory.savedMenu(1L, "메뉴 1", new BigDecimal(10000), 1L, List.of());
+        final Menu menu2 = FixtureFactory.savedMenu(2L, "메뉴 2", new BigDecimal(20000), 1L, List.of());
 
         final List<Menu> menus = List.of(menu1, menu2);
 
