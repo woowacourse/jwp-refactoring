@@ -17,8 +17,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class ProductServiceTest {
@@ -60,8 +59,10 @@ class ProductServiceTest {
             final Product actualProduct = actual.get(i);
             final Product expectProduct = expect.get(i);
 
-            assertEquals(expectProduct.getName(), actualProduct.getName());
-            assertThat(expectProduct.getPrice()).isEqualByComparingTo(actualProduct.getPrice());
+            assertAll(
+                    () -> assertEquals(expectProduct.getName(), actualProduct.getName()),
+                    () -> assertThat(expectProduct.getPrice()).isEqualByComparingTo(actualProduct.getPrice())
+            );
         }
     }
 

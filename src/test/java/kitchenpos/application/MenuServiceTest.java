@@ -26,8 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class MenuServiceTest {
@@ -90,12 +89,14 @@ class MenuServiceTest {
                         menuProductDao.findAllByMenuId(expectMenu.getId())
                 );
 
-                assertEquals(expectMenu.getName(), actualMenu.getName());
-                assertThat(expectMenu.getPrice()).isEqualByComparingTo(actualMenu.getPrice());
-                assertEquals(expectMenu.getMenuGroupId(), actualMenu.getMenuGroupId());
-                assertThat(actualMenu.getMenuProducts())
-                        .usingRecursiveComparison()
-                        .isEqualTo(expectMenu.getMenuProducts());
+                assertAll(
+                        () -> assertEquals(expectMenu.getName(), actualMenu.getName()),
+                        () -> assertThat(expectMenu.getPrice()).isEqualByComparingTo(actualMenu.getPrice()),
+                        () -> assertEquals(expectMenu.getMenuGroupId(), actualMenu.getMenuGroupId()),
+                        () -> assertThat(actualMenu.getMenuProducts())
+                                .usingRecursiveComparison()
+                                .isEqualTo(expectMenu.getMenuProducts())
+                );
             }
         }
     }
@@ -127,9 +128,11 @@ class MenuServiceTest {
             final Menu actual = menuService.create(menu);
 
             // then
-            assertEquals(menu.getName(), actual.getName());
-            assertThat(menu.getPrice()).isEqualByComparingTo(actual.getPrice());
-            assertEquals(menu.getMenuGroupId(), actual.getMenuGroupId());
+            assertAll(
+                    () -> assertEquals(menu.getName(), actual.getName()),
+                    () -> assertThat(menu.getPrice()).isEqualByComparingTo(actual.getPrice()),
+                    () -> assertEquals(menu.getMenuGroupId(), actual.getMenuGroupId())
+            );
         }
 
         @ParameterizedTest
