@@ -7,26 +7,33 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.dao.MenuDao;
 import kitchenpos.domain.Menu;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 class MenuServiceTest extends ServiceIntegrateTest {
 
-
   @Autowired
   private MenuService menuService;
+  @Autowired
+  private MenuDao menuDao;
 
   @Test
   @DisplayName("메뉴를 등록할 수 있다.")
   void create_success() {
     //given, when
-    final Menu actual = menuService.create(만냥치킨_만냥치킨());
+    final Menu savedMenu = menuService.create(만냥치킨_만냥치킨());
+    final Menu actual = menuDao.findById(savedMenu.getId()).get();
 
     //then
-    assertThat(actual).isNotNull();
+    Assertions.assertAll(
+        () -> assertThat(actual).isNotNull(),
+        () -> assertThat(actual.getName()).isEqualTo(만냥치킨_만냥치킨().getName())
+    );
   }
 
   @Test

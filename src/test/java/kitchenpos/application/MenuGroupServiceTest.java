@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -15,15 +16,21 @@ class MenuGroupServiceTest extends ServiceIntegrateTest {
 
   @Autowired
   private MenuGroupService menuGroupService;
+  @Autowired
+  private MenuGroupDao menuGroupDao;
 
   @Test
   @DisplayName("메뉴 그룹을 등록할 수 있다.")
   void create_success() {
     //given, when
-    final MenuGroup actual = menuGroupService.create(추천_메뉴());
+    final MenuGroup savedManuGroup = menuGroupService.create(추천_메뉴());
+    final MenuGroup actual = menuGroupDao.findById(savedManuGroup.getId()).get();
 
     //then
-    assertThat(actual).isNotNull();
+    Assertions.assertAll(
+        () -> assertThat(actual).isNotNull(),
+        () -> assertThat(actual.getName()).isEqualTo(추천_메뉴().getName())
+    );
 
   }
 
