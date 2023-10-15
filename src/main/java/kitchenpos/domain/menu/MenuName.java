@@ -6,7 +6,14 @@ public class MenuName {
     private final String name;
 
     public MenuName(final String name) {
+        validate(name);
         this.name = name;
+    }
+
+    private void validate(final String name) {
+        if (Objects.isNull(name) || name.isBlank()) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public String getName() {
