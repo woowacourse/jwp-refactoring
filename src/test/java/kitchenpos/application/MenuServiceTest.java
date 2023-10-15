@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.common.service.ServiceTest;
+import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
@@ -26,6 +27,9 @@ class MenuServiceTest extends ServiceTest {
 
     @Autowired
     private MenuGroupDao menuGroupDao;
+
+    @Autowired
+    private MenuDao menuDao;
 
     @Test
     void Menu를_생성할_수_있다() {
@@ -91,10 +95,18 @@ class MenuServiceTest extends ServiceTest {
 
     @Test
     void Menu를_조회할_수_있다() {
+        //given
+        final Product product = productDao.save(new Product("디노 탕후루", new BigDecimal(4000)));
+        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("탕후루"));
+        final MenuProduct menuProduct = new MenuProduct(null, product.getId(), 2);
+        final Menu menu = new Menu("디노 세트", new BigDecimal(8000),
+                menuGroup.getId(), List.of(menuProduct));
+        menuDao.save(menu);
+
         //when
         final List<Menu> list = menuService.list();
 
         //then
-        assertThat(list).hasSize(6);
+        assertThat(list).hasSize(1);
     }
 }

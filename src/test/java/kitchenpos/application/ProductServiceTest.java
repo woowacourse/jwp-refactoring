@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.common.service.ServiceTest;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,9 @@ class ProductServiceTest extends ServiceTest {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ProductDao productDao;
 
 
     @Test
@@ -42,10 +46,16 @@ class ProductServiceTest extends ServiceTest {
 
     @Test
     void Product_를_조회할_수_있다() {
+        //given
+        final Product chicken = new Product("치킨", new BigDecimal(20000));
+        final Product pizza = new Product("피자", new BigDecimal(20000));
+        productDao.save(chicken);
+        productDao.save(pizza);
+
         //when
         final List<Product> list = productService.list();
 
         //then
-        assertThat(list).hasSize(6);
+        assertThat(list).hasSize(2);
     }
 }

@@ -44,11 +44,17 @@ class TableServiceTest extends ServiceTest {
 
     @Test
     void OrderTable을_조회할_수_있다() {
+        //given
+        final OrderTable orderTableWithZero = new OrderTable(null, 0, true);
+        final OrderTable orderTableWithOne = new OrderTable(null, 1, true);
+        orderTableDao.save(orderTableWithZero);
+        orderTableDao.save(orderTableWithOne);
+
         //when
         final List<OrderTable> list = tableService.list();
 
         //then
-        assertThat(list).hasSize(8);
+        assertThat(list).hasSize(2);
     }
 
     @Test
