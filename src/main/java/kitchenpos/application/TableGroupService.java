@@ -6,9 +6,9 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.TableGroupDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -29,12 +29,8 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
-
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
-        }
+    public TableGroupDto create(final TableGroupDto tableGroupDto) {
+        final List<OrderTable> orderTables = tableGroupDto.getOrderTables();
 
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
@@ -52,7 +48,7 @@ public class TableGroupService {
             }
         }
 
-        tableGroup.setCreatedDate(LocalDateTime.now());
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
 
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
@@ -62,9 +58,9 @@ public class TableGroupService {
             savedOrderTable.setEmpty(false);
             orderTableDao.save(savedOrderTable);
         }
-        savedTableGroup.setOrderTables(savedOrderTables);
+        TableGroup saved = new TableGroup(savedTableGroup.getId(), LocalDateTime.now(), orderTables);
 
-        return savedTableGroup;
+        return TableGroupDto.from(saved);
     }
 
     @Transactional
