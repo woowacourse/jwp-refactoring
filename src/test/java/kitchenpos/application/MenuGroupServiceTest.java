@@ -5,8 +5,8 @@ import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
 
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.repository.MenuGroupRepository;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
@@ -25,7 +25,7 @@ class MenuGroupServiceTest {
     MenuGroupService menuGroupService;
 
     @Mock
-    MenuGroupDao menuGroupDao;
+    MenuGroupRepository menuGroupRepository;
 
     @Nested
     class create {
@@ -35,7 +35,7 @@ class MenuGroupServiceTest {
             // given
             MenuGroup expect = new MenuGroup();
             expect.setId(1L);
-            given(menuGroupDao.save(any(MenuGroup.class)))
+            given(menuGroupRepository.save(any(MenuGroup.class)))
                 .willReturn(expect);
 
             // when
@@ -52,7 +52,7 @@ class MenuGroupServiceTest {
         @Test
         void 성공() {
             // given
-            given(menuGroupDao.findAll())
+            given(menuGroupRepository.findAll())
                 .willReturn(List.of(new MenuGroup(), new MenuGroup()));
 
             // when

@@ -8,8 +8,8 @@ import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
@@ -28,7 +28,7 @@ class ProductServiceTest {
     ProductService productService;
 
     @Mock
-    ProductDao productDao;
+    ProductRepository productRepository;
 
     @Nested
     class create {
@@ -62,7 +62,7 @@ class ProductServiceTest {
             product.setPrice(BigDecimal.ZERO);
             Product savedProduct = new Product();
             savedProduct.setId(1L);
-            given(productDao.save(any(Product.class)))
+            given(productRepository.save(any(Product.class)))
                 .willReturn(savedProduct);
 
             // when & then
@@ -77,7 +77,7 @@ class ProductServiceTest {
             product.setPrice(BigDecimal.valueOf(1000));
             Product savedProduct = new Product();
             savedProduct.setId(1L);
-            given(productDao.save(any(Product.class)))
+            given(productRepository.save(any(Product.class)))
                 .willReturn(savedProduct);
 
             // when
@@ -94,7 +94,7 @@ class ProductServiceTest {
         @Test
         void 성공() {
             // given
-            given(productDao.findAll())
+            given(productRepository.findAll())
                 .willReturn(List.of(new Product(), new Product()));
 
             // when

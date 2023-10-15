@@ -10,13 +10,13 @@ import static org.mockito.BDDMockito.given;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
@@ -37,16 +37,16 @@ class MenuServiceTest {
     MenuService menuService;
 
     @Mock
-    MenuDao menuDao;
+    MenuRepository menuRepository;
 
     @Mock
-    MenuGroupDao menuGroupDao;
+    MenuGroupRepository menuGroupRepository;
 
     @Mock
-    MenuProductDao menuProductDao;
+    MenuProductRepository menuProductRepository;
 
     @Mock
-    ProductDao productDao;
+    ProductRepository productRepository;
 
     @Nested
     class create {
@@ -86,7 +86,7 @@ class MenuServiceTest {
             menu.setMenuGroupId(1L);
 
             // when
-            given(menuGroupDao.existsById(anyLong()))
+            given(menuGroupRepository.existsById(anyLong()))
                 .willReturn(false);
 
             // then
@@ -103,11 +103,11 @@ class MenuServiceTest {
             MenuProduct menuProduct = new MenuProduct();
             menuProduct.setProductId(1L);
             menu.setMenuProducts(List.of(menuProduct));
-            given(menuGroupDao.existsById(anyLong()))
+            given(menuGroupRepository.existsById(anyLong()))
                 .willReturn(true);
 
             // when
-            given(productDao.findById(anyLong()))
+            given(productRepository.findById(anyLong()))
                 .willReturn(Optional.empty());
 
             // then
@@ -130,9 +130,9 @@ class MenuServiceTest {
             Product product = new Product();
             product.setId(1L);
 
-            given(menuGroupDao.existsById(anyLong()))
+            given(menuGroupRepository.existsById(anyLong()))
                 .willReturn(true);
-            given(productDao.findById(1L))
+            given(productRepository.findById(1L))
                 .willReturn(Optional.of(product));
 
             // when
@@ -159,13 +159,13 @@ class MenuServiceTest {
             Product product = new Product();
             product.setId(1L);
 
-            given(menuGroupDao.existsById(anyLong()))
+            given(menuGroupRepository.existsById(anyLong()))
                 .willReturn(true);
-            given(productDao.findById(1L))
+            given(productRepository.findById(1L))
                 .willReturn(Optional.of(product));
             Menu savedMenu = new Menu();
             savedMenu.setId(1L);
-            given(menuDao.save(any(Menu.class)))
+            given(menuRepository.save(any(Menu.class)))
                 .willReturn(savedMenu);
 
             // when
@@ -198,17 +198,17 @@ class MenuServiceTest {
             product2.setId(2L);
             product2.setPrice(BigDecimal.valueOf(100));
 
-            given(menuGroupDao.existsById(anyLong()))
+            given(menuGroupRepository.existsById(anyLong()))
                 .willReturn(true);
-            given(productDao.findById(1L))
+            given(productRepository.findById(1L))
                 .willReturn(Optional.of(product1));
-            given(productDao.findById(2L))
+            given(productRepository.findById(2L))
                 .willReturn(Optional.of(product2));
             Menu savedMenu = new Menu();
             savedMenu.setId(1L);
-            given(menuDao.save(any(Menu.class)))
+            given(menuRepository.save(any(Menu.class)))
                 .willReturn(savedMenu);
-            given(menuProductDao.save(any(MenuProduct.class)))
+            given(menuProductRepository.save(any(MenuProduct.class)))
                 .willReturn(menuProduct1, menuProduct2);
 
             // when
@@ -232,11 +232,11 @@ class MenuServiceTest {
             menu1.setId(1L);
             Menu menu2 = new Menu();
             menu2.setId(2L);
-            given(menuDao.findAll())
+            given(menuRepository.findAll())
                 .willReturn(List.of(menu1, menu2));
-            given(menuProductDao.findAllByMenuId(1L))
+            given(menuProductRepository.findAllByMenuId(1L))
                 .willReturn(List.of(new MenuProduct()));
-            given(menuProductDao.findAllByMenuId(2L))
+            given(menuProductRepository.findAllByMenuId(2L))
                 .willReturn(List.of(new MenuProduct(), new MenuProduct()));
 
             // when

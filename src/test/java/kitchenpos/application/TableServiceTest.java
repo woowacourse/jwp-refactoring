@@ -11,9 +11,9 @@ import static org.mockito.BDDMockito.given;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
@@ -32,10 +32,10 @@ class TableServiceTest {
     TableService tableService;
 
     @Mock
-    OrderDao orderDao;
+    OrderRepository orderRepository;
 
     @Mock
-    OrderTableDao orderTableDao;
+    OrderTableRepository orderTableRepository;
 
     @Nested
     class create {
@@ -46,7 +46,7 @@ class TableServiceTest {
             OrderTable orderTable = new OrderTable();
             OrderTable savedOrderTable = new OrderTable();
             savedOrderTable.setId(1L);
-            given(orderTableDao.save(any(OrderTable.class)))
+            given(orderTableRepository.save(any(OrderTable.class)))
                 .willReturn(savedOrderTable);
 
             // when
@@ -63,7 +63,7 @@ class TableServiceTest {
         @Test
         void 성공() {
             // given
-            given(orderTableDao.findAll())
+            given(orderTableRepository.findAll())
                 .willReturn(List.of(new OrderTable(), new OrderTable()));
 
             // when
@@ -87,7 +87,7 @@ class TableServiceTest {
             orderTable.setEmpty(true);
 
             // when
-            given(orderTableDao.findById(anyLong()))
+            given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.empty());
 
             // then
@@ -102,7 +102,7 @@ class TableServiceTest {
             OrderTable orderTable = new OrderTable();
             orderTable.setEmpty(true);
             OrderTable savedOrderTable = new OrderTable();
-            given(orderTableDao.findById(1L))
+            given(orderTableRepository.findById(1L))
                 .willReturn(Optional.of(savedOrderTable));
 
             // when
@@ -120,11 +120,11 @@ class TableServiceTest {
             OrderTable orderTable = new OrderTable();
             orderTable.setEmpty(true);
             OrderTable savedOrderTable = new OrderTable();
-            given(orderTableDao.findById(1L))
+            given(orderTableRepository.findById(1L))
                 .willReturn(Optional.of(savedOrderTable));
 
             // when
-            given(orderDao.existsByOrderTableIdAndOrderStatusIn(eq(1L), anyList()))
+            given(orderRepository.existsByOrderTableIdAndOrderStatusIn(eq(1L), anyList()))
                 .willReturn(true);
 
             // then
@@ -140,11 +140,11 @@ class TableServiceTest {
             orderTable.setEmpty(true);
             OrderTable savedOrderTable = new OrderTable();
             savedOrderTable.setEmpty(false);
-            given(orderTableDao.findById(1L))
+            given(orderTableRepository.findById(1L))
                 .willReturn(Optional.of(savedOrderTable));
-            given(orderDao.existsByOrderTableIdAndOrderStatusIn(eq(1L), anyList()))
+            given(orderRepository.existsByOrderTableIdAndOrderStatusIn(eq(1L), anyList()))
                 .willReturn(false);
-            given(orderTableDao.save(any(OrderTable.class)))
+            given(orderTableRepository.save(any(OrderTable.class)))
                 .willReturn(savedOrderTable);
 
             // when
@@ -179,7 +179,7 @@ class TableServiceTest {
             OrderTable orderTable = new OrderTable();
             orderTable.setNumberOfGuests(1);
             OrderTable savedOrderTable = new OrderTable();
-            given(orderTableDao.findById(1L))
+            given(orderTableRepository.findById(1L))
                 .willReturn(Optional.of(savedOrderTable));
 
             // when
@@ -195,7 +195,7 @@ class TableServiceTest {
             Long orderTableId = 1L;
             OrderTable orderTable = new OrderTable();
             OrderTable savedOrderTable = new OrderTable();
-            given(orderTableDao.findById(1L))
+            given(orderTableRepository.findById(1L))
                 .willReturn(Optional.of(savedOrderTable));
 
             // when
@@ -213,9 +213,9 @@ class TableServiceTest {
             orderTable.setNumberOfGuests(5);
             OrderTable savedOrderTable = new OrderTable();
             savedOrderTable.setEmpty(false);
-            given(orderTableDao.findById(1L))
+            given(orderTableRepository.findById(1L))
                 .willReturn(Optional.of(savedOrderTable));
-            given(orderTableDao.save(any(OrderTable.class)))
+            given(orderTableRepository.save(any(OrderTable.class)))
                 .willReturn(savedOrderTable);
 
             // when

@@ -10,11 +10,11 @@ import static org.mockito.BDDMockito.given;
 
 import java.util.List;
 import java.util.stream.IntStream;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
@@ -35,13 +35,13 @@ class TableGroupServiceTest {
     TableGroupService tableGroupService;
 
     @Mock
-    OrderDao orderDao;
+    OrderRepository orderRepository;
 
     @Mock
-    OrderTableDao orderTableDao;
+    OrderTableRepository orderTableRepository;
 
     @Mock
-    TableGroupDao tableGroupDao;
+    TableGroupRepository tableGroupRepository;
 
     @Nested
     class create {
@@ -72,7 +72,7 @@ class TableGroupServiceTest {
             tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
 
             // when
-            given(orderTableDao.findAllByIdIn(anyList()))
+            given(orderTableRepository.findAllByIdIn(anyList()))
                 .willReturn(List.of(new OrderTable()));
 
             // then
@@ -90,7 +90,7 @@ class TableGroupServiceTest {
             orderTable2.setId(2L);
             orderTable2.setEmpty(true);
             tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
-            given(orderTableDao.findAllByIdIn(anyList()))
+            given(orderTableRepository.findAllByIdIn(anyList()))
                 .willReturn(tableGroup.getOrderTables());
 
             // when
@@ -112,7 +112,7 @@ class TableGroupServiceTest {
             orderTable2.setId(2L);
             orderTable2.setEmpty(true);
             tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
-            given(orderTableDao.findAllByIdIn(anyList()))
+            given(orderTableRepository.findAllByIdIn(anyList()))
                 .willReturn(tableGroup.getOrderTables());
 
             // when
@@ -134,12 +134,12 @@ class TableGroupServiceTest {
             orderTable2.setId(2L);
             orderTable2.setEmpty(true);
             tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
-            given(orderTableDao.findAllByIdIn(anyList()))
+            given(orderTableRepository.findAllByIdIn(anyList()))
                 .willReturn(tableGroup.getOrderTables());
             TableGroup savedTableGroup = new TableGroup();
             savedTableGroup.setId(1L);
             savedTableGroup.setOrderTables(tableGroup.getOrderTables());
-            given(tableGroupDao.save(any(TableGroup.class)))
+            given(tableGroupRepository.save(any(TableGroup.class)))
                 .willReturn(savedTableGroup);
 
             // when
@@ -164,7 +164,7 @@ class TableGroupServiceTest {
             Long tableGroupId = 1L;
 
             // when
-            given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
+            given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
                 .willReturn(true);
 
             // then
@@ -176,7 +176,7 @@ class TableGroupServiceTest {
         void 성공() {
             // given
             Long tableGroupId = 1L;
-            given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
+            given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
                 .willReturn(false);
 
             // when
