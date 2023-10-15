@@ -5,10 +5,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
@@ -18,7 +19,9 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @SpringBootTest
 @Sql(value = "/initialization.sql")
 class TableServiceTest {
@@ -27,13 +30,13 @@ class TableServiceTest {
     private TableService tableService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @DisplayName("주문 테이블과 테이블 그룹의 id를 null로 초기화 한다.")
     @Test
@@ -41,20 +44,23 @@ class TableServiceTest {
         //given
         Long invalidId = 99L;
 
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setId(invalidId);
+
         OrderTable orderTable = new OrderTable();
         orderTable.setId(invalidId);
-        orderTable.setTableGroupId(invalidId);
+        orderTable.setTableGroup(tableGroup);
 
-        assertThat(orderTableDao.findById(invalidId)).isEmpty();
-        assertThat(orderTableDao.findAllByTableGroupId(invalidId)).isEmpty();
+        assertThat(orderTableRepository.findById(invalidId)).isEmpty();
+        assertThat(orderTableRepository.findAllByTableGroupId(invalidId)).isEmpty();
 
         //when
         OrderTable savedOrderTable = tableService.create(orderTable);
 
         //then
-        OrderTable findOrderTable = orderTableDao.findById(savedOrderTable.getId()).get();
+        OrderTable findOrderTable = orderTableRepository.findById(savedOrderTable.getId()).get();
 
-        assertThat(findOrderTable.getTableGroupId()).isNull();
+        assertThat(findOrderTable.getTableGroup()).isNull();
         assertThat(findOrderTable.getId()).isNotEqualTo(invalidId);
     }
 
@@ -65,7 +71,7 @@ class TableServiceTest {
         Long invalidId = 99L;
         OrderTable orderTable = new OrderTable();
 
-        assertThat(orderTableDao.findById(invalidId)).isEmpty();
+        assertThat(orderTableRepository.findById(invalidId)).isEmpty();
 
         //when then
         assertThatThrownBy(() -> tableService.changeEmpty(invalidId, orderTable))
@@ -83,11 +89,11 @@ class TableServiceTest {
         tableGroup.setOrderTables(List.of(orderTable, otherOrderTable));
         tableGroup.setCreatedDate(LocalDateTime.now());
 
-        TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         //when then
-        orderTable.setTableGroupId(savedTableGroup.getId());
-        Long savedOrderTableId = orderTableDao.save(orderTable).getId();
+        orderTable.setTableGroup(savedTableGroup);
+        Long savedOrderTableId = orderTableRepository.save(orderTable).getId();
 
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTableId, otherOrderTable))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -99,20 +105,20 @@ class TableServiceTest {
     void changeEmptyFailTest_ByOrderStatusIsNotCompletion(String orderStatus) {
         //given
         OrderTable orderTable = new OrderTable();
-        Long savedOrderTableId = orderTableDao.save(orderTable).getId();
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         Order order = new Order();
         order.setOrderedTime(LocalDateTime.now());
-        order.setOrderStatus(orderStatus);
-        order.setOrderTableId(savedOrderTableId);
-        orderDao.save(order);
+        order.setOrderStatus(OrderStatus.valueOf(orderStatus));
+        order.setOrderTable(savedOrderTable);
+        orderRepository.save(order);
 
-        assertThat(order.getOrderStatus()).isNotEqualTo("COMPLETION");
+        assertThat(order.getOrderStatus()).isNotEqualTo(OrderStatus.COMPLETION);
 
         //when then
         OrderTable newOrderTable = new OrderTable();
 
-        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTableId, newOrderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), newOrderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -122,22 +128,22 @@ class TableServiceTest {
         //given
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(true);
-        Long savedOrderTableId = orderTableDao.save(orderTable).getId();
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         Order order = new Order();
         order.setOrderedTime(LocalDateTime.now());
-        order.setOrderStatus("COMPLETION");
-        order.setOrderTableId(savedOrderTableId);
-        orderDao.save(order);
+        order.setOrderStatus(OrderStatus.COMPLETION);
+        order.setOrderTable(savedOrderTable);
+        orderRepository.save(order);
 
-        OrderTable findOrderTable = orderTableDao.findById(savedOrderTableId).get();
+        OrderTable findOrderTable = orderTableRepository.findById(savedOrderTable.getId()).get();
         assertThat(findOrderTable.isEmpty()).isTrue();
 
         //when
         OrderTable otherOrderTable = new OrderTable();
         otherOrderTable.setEmpty(false);
 
-        OrderTable changedEmptyOrderTable = tableService.changeEmpty(savedOrderTableId, otherOrderTable);
+        OrderTable changedEmptyOrderTable = tableService.changeEmpty(savedOrderTable.getId(), otherOrderTable);
 
         //then
         assertThat(changedEmptyOrderTable.isEmpty()).isFalse();
@@ -148,7 +154,7 @@ class TableServiceTest {
     void changeNumberOfGuestsFailTest_ByNumberOfGuestsIsLessThanZero(int numberOfGuests) {
         //given
         OrderTable orderTable = new OrderTable();
-        Long savedOrderTableId = orderTableDao.save(orderTable).getId();
+        Long savedOrderTableId = orderTableRepository.save(orderTable).getId();
 
         //when //then
         OrderTable otherOrderTable = new OrderTable();
@@ -165,7 +171,7 @@ class TableServiceTest {
         Long invalidId = 99L;
         OrderTable orderTable = new OrderTable();
 
-        assertThat(orderTableDao.findById(invalidId)).isEmpty();
+        assertThat(orderTableRepository.findById(invalidId)).isEmpty();
 
         //when then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(invalidId, orderTable))
@@ -179,7 +185,7 @@ class TableServiceTest {
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(true);
 
-        Long savedOrderTableId = orderTableDao.save(orderTable).getId();
+        Long savedOrderTableId = orderTableRepository.save(orderTable).getId();
 
         //when then
         OrderTable otherOrderTable = new OrderTable();
@@ -205,7 +211,7 @@ class TableServiceTest {
         tableService.changeNumberOfGuests(savedOrderTable.getId(), otherOrderTable);
 
         //then
-        OrderTable findOrderTable = orderTableDao.findById(savedOrderTable.getId()).get();
+        OrderTable findOrderTable = orderTableRepository.findById(savedOrderTable.getId()).get();
 
         assertThat(findOrderTable.getNumberOfGuests()).isEqualTo(numberOfGuests);
     }
@@ -218,7 +224,7 @@ class TableServiceTest {
         orderTable.setNumberOfGuests(10);
         orderTable.setEmpty(true);
 
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         //when
         List<OrderTable> findOrderTables = tableService.list();

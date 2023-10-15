@@ -6,10 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuProductRepository;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -22,7 +22,9 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @SpringBootTest
 @Sql(value = "/initialization.sql")
 class MenuServiceTest {
@@ -31,16 +33,16 @@ class MenuServiceTest {
     private MenuService menuService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private MenuProductDao menuProductDao;
+    private MenuProductRepository menuProductRepository;
 
     private Menu menu;
 
@@ -74,11 +76,13 @@ class MenuServiceTest {
     void createFailTest_ByMenuGroupIsNotExists() {
         //given
         Long invalidId = 99L;
+        MenuGroup menuGroup = new MenuGroup();
+        menuGroup.setId(invalidId);
 
         menu.setPrice(BigDecimal.ONE);
-        menu.setMenuGroupId(invalidId);
+        menu.setMenuGroup(menuGroup);
 
-        assertThat(menuGroupDao.existsById(invalidId)).isFalse();
+        assertThat(menuGroupRepository.existsById(invalidId)).isFalse();
 
         //when then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -90,17 +94,19 @@ class MenuServiceTest {
     void createFailTest_ByMenuProductIsNotExists() {
         //given
         Long invalidId = 99L;
+        Product product = new Product();
+        product.setId(invalidId);
 
         MenuGroup savedMenuGroup = saveMenuGroup();
         MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(invalidId);
+        menuProduct.setProduct(product);
 
         menu.setPrice(BigDecimal.ONE);
-        menu.setMenuGroupId(savedMenuGroup.getId());
+        menu.setMenuGroup(savedMenuGroup);
         menu.setMenuProducts(List.of(menuProduct));
 
-        assertThat(menuGroupDao.existsById(savedMenuGroup.getId())).isTrue();
-        assertThat(productDao.findById(invalidId)).isEmpty();
+        assertThat(menuGroupRepository.existsById(savedMenuGroup.getId())).isTrue();
+        assertThat(productRepository.findById(invalidId)).isEmpty();
 
         //when then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -118,11 +124,11 @@ class MenuServiceTest {
         MenuProduct menuProduct = createMenuProduct(savedProduct);
 
         menu.setPrice(BigDecimal.valueOf(price + 1));
-        menu.setMenuGroupId(savedMenuGroup.getId());
+        menu.setMenuGroup(savedMenuGroup);
         menu.setMenuProducts(List.of(menuProduct));
 
-        assertThat(menuGroupDao.existsById(savedMenuGroup.getId())).isTrue();
-        assertThat(productDao.findById(savedProduct.getId())).isPresent();
+        assertThat(menuGroupRepository.existsById(savedMenuGroup.getId())).isTrue();
+        assertThat(productRepository.findById(savedProduct.getId())).isPresent();
 
         //when then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -140,15 +146,15 @@ class MenuServiceTest {
         MenuProduct menuProduct = createMenuProduct(savedProduct);
 
         menu.setPrice(BigDecimal.valueOf(price));
-        menu.setMenuGroupId(savedMenuGroup.getId());
+        menu.setMenuGroup(savedMenuGroup);
         menu.setMenuProducts(List.of(menuProduct));
 
         //when
         Menu savedMenu = menuService.create(menu);
 
         //then
-        Menu findMenu = menuDao.findById(savedMenu.getId()).get();
-        List<MenuProduct> findMenuProducts = menuProductDao.findAllByMenuId(findMenu.getId());
+        Menu findMenu = menuRepository.findById(savedMenu.getId()).get();
+        List<MenuProduct> findMenuProducts = menuProductRepository.findAllByMenuId(findMenu.getId());
 
         assertAll(
                 () -> assertThat(findMenu).usingRecursiveComparison()
@@ -172,12 +178,12 @@ class MenuServiceTest {
         Product savedProduct = saveProductAmountOf(price);
 
         menu.setPrice(BigDecimal.valueOf(price));
-        menu.setMenuGroupId(savedMenuGroup.getId());
-        Menu savedMenu = menuDao.save(menu);
+        menu.setMenuGroup(savedMenuGroup);
+        Menu savedMenu = menuRepository.save(menu);
 
         MenuProduct menuProduct = createMenuProduct(savedProduct);
-        menuProduct.setMenuId(savedMenu.getId());
-        MenuProduct savedMenuProduct = menuProductDao.save(menuProduct);
+        menuProduct.setMenu(savedMenu);
+        MenuProduct savedMenuProduct = menuProductRepository.save(menuProduct);
 
         //when
         List<Menu> findMenus = menuService.list();
@@ -198,7 +204,7 @@ class MenuServiceTest {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName("TestMenuGroup");
 
-        return menuGroupDao.save(menuGroup);
+        return menuGroupRepository.save(menuGroup);
     }
 
     private Product saveProductAmountOf(int price) {
@@ -206,12 +212,12 @@ class MenuServiceTest {
         product.setName("TestName");
         product.setPrice(BigDecimal.valueOf(price));
 
-        return productDao.save(product);
+        return productRepository.save(product);
     }
 
     private MenuProduct createMenuProduct(Product savedProduct) {
         MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(savedProduct.getId());
+        menuProduct.setProduct(savedProduct);
         menuProduct.setQuantity(1);
 
         return menuProduct;

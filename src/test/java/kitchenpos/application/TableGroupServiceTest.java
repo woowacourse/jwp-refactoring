@@ -6,10 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
@@ -19,7 +20,9 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @SpringBootTest
 @Sql(value = "/initialization.sql")
 class TableGroupServiceTest {
@@ -28,13 +31,13 @@ class TableGroupServiceTest {
     private TableGroupService tableGroupService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @DisplayName("주문 테이블이 2개 미만이면, 주문 테이블 그룹을 생성할 수 없다.")
     @Test
@@ -63,8 +66,8 @@ class TableGroupServiceTest {
         OrderTable orderTable2 = new OrderTable();
         orderTable2.setId(invalidId2);
 
-        assertThat(orderTableDao.findById(invalidId1)).isEmpty();
-        assertThat(orderTableDao.findById(invalidId2)).isEmpty();
+        assertThat(orderTableRepository.findById(invalidId1)).isEmpty();
+        assertThat(orderTableRepository.findById(invalidId2)).isEmpty();
 
         //when then
         TableGroup tableGroup = new TableGroup();
@@ -104,7 +107,7 @@ class TableGroupServiceTest {
         OrderTable newOrderTable = new OrderTable();
         newOrderTable.setEmpty(true);
 
-        OrderTable savedNewOrderTable = orderTableDao.save(newOrderTable);
+        OrderTable savedNewOrderTable = orderTableRepository.save(newOrderTable);
 
         //when then
         TableGroup newTableGroup = new TableGroup();
@@ -128,14 +131,15 @@ class TableGroupServiceTest {
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
         //then
-        TableGroup findTableGroup = tableGroupDao.findById(savedTableGroup.getId()).get();
-        List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(findTableGroup.getId());
+        TableGroup findTableGroup = tableGroupRepository.findById(savedTableGroup.getId()).get();
+        List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(findTableGroup.getId());
 
         assertAll(
                 () -> assertThat(findTableGroup.getId()).isNotNull(),
                 () -> assertThat(findTableGroup.getCreatedDate()).isNotNull(),
                 () -> assertThat(orderTables)
-                        .extractingResultOf("getTableGroupId")
+                        .extractingResultOf("getTableGroup")
+                        .extractingResultOf("getId")
                         .containsExactly(findTableGroup.getId(), findTableGroup.getId()),
                 () -> assertThat(orderTables)
                         .extractingResultOf("isEmpty")
@@ -150,11 +154,11 @@ class TableGroupServiceTest {
         OrderTable savedOrderTable2 = saveOrderTableForEmpty(true);
 
         Order order = new Order();
-        order.setOrderStatus(status);
+        order.setOrderStatus(OrderStatus.valueOf(status));
         order.setOrderedTime(LocalDateTime.now());
-        order.setOrderTableId(savedOrderTable1.getId());
+        order.setOrderTable(savedOrderTable1);
 
-        orderDao.save(order);
+        orderRepository.save(order);
 
         TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(List.of(savedOrderTable1, savedOrderTable2));
@@ -173,11 +177,11 @@ class TableGroupServiceTest {
         OrderTable savedOrderTable2 = saveOrderTableForEmpty(true);
 
         Order order = new Order();
-        order.setOrderStatus("COMPLETION");
+        order.setOrderStatus(OrderStatus.COMPLETION);
         order.setOrderedTime(LocalDateTime.now());
-        order.setOrderTableId(savedOrderTable1.getId());
+        order.setOrderTable(savedOrderTable1);
 
-        orderDao.save(order);
+        orderRepository.save(order);
 
         TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(List.of(savedOrderTable1, savedOrderTable2));
@@ -188,8 +192,8 @@ class TableGroupServiceTest {
         tableGroupService.ungroup(savedTableGroupId);
 
         //then
-        assertThat(orderTableDao.findAllByTableGroupId(savedTableGroupId)).isEmpty();
-        assertThat(orderTableDao.findAllByIdIn(List.of(savedOrderTable1.getId(), savedOrderTable2.getId())))
+        assertThat(orderTableRepository.findAllByTableGroupId(savedTableGroupId)).isEmpty();
+        assertThat(orderTableRepository.findAllByIdIn(List.of(savedOrderTable1.getId(), savedOrderTable2.getId())))
                 .extractingResultOf("isEmpty")
                 .containsExactly(false, false);
     }
@@ -198,7 +202,7 @@ class TableGroupServiceTest {
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(empty);
 
-        return orderTableDao.save(orderTable);
+        return orderTableRepository.save(orderTable);
     }
 
 }

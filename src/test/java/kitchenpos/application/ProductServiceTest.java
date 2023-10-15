@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,9 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @SpringBootTest
 @Sql(value = "/initialization.sql")
 class ProductServiceTest {
@@ -24,7 +26,7 @@ class ProductServiceTest {
     private ProductService productService;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @DisplayName("상품 금액이 null이면, 저장할 수 없다.")
     @Test
@@ -61,7 +63,7 @@ class ProductServiceTest {
         Product savedProduct = productService.create(product);
 
         //then
-        Product findProduct = productDao.findById(savedProduct.getId()).get();
+        Product findProduct = productRepository.findById(savedProduct.getId()).get();
 
         assertThat(findProduct).usingRecursiveComparison()
                 .isEqualTo(savedProduct);
@@ -74,7 +76,7 @@ class ProductServiceTest {
         Product product = createProduct();
         product.setPrice(BigDecimal.ZERO);
 
-        Product savedProduct = productDao.save(product);
+        Product savedProduct = productRepository.save(product);
 
         //when
         List<Product> findProducts = productService.list();

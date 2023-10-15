@@ -3,14 +3,16 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @SpringBootTest
 @Sql(value = "/initialization.sql")
 class MenuGroupServiceTest {
@@ -19,7 +21,7 @@ class MenuGroupServiceTest {
     private MenuGroupService menuGroupService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @DisplayName("메뉴 그룹을 저장할 수 있다.")
     @Test
@@ -32,7 +34,7 @@ class MenuGroupServiceTest {
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
 
         //then
-        MenuGroup findMenuGroup = menuGroupDao.findById(savedMenuGroup.getId()).get();
+        MenuGroup findMenuGroup = menuGroupRepository.findById(savedMenuGroup.getId()).get();
 
         assertThat(savedMenuGroup)
                 .usingRecursiveComparison()
@@ -48,8 +50,8 @@ class MenuGroupServiceTest {
         MenuGroup menuGroup2 = new MenuGroup();
         menuGroup2.setName("TestMenuGroup2");
 
-        menuGroupDao.save(menuGroup1);
-        menuGroupDao.save(menuGroup2);
+        menuGroupRepository.save(menuGroup1);
+        menuGroupRepository.save(menuGroup2);
 
         //when
         List<MenuGroup> findMenuGroups = menuGroupService.list();

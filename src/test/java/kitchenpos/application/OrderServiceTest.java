@@ -8,11 +8,11 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.OrderLineItemRepository;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
@@ -25,7 +25,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @SpringBootTest
 @Sql(value = "/initialization.sql")
 class OrderServiceTest {
@@ -34,19 +36,19 @@ class OrderServiceTest {
     private OrderService orderService;
 
     @Autowired
-    private OrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     private Order order;
 
@@ -72,10 +74,13 @@ class OrderServiceTest {
         //given
         Long invalidId = 99L;
 
-        OrderLineItem orderLineItem = createOrderLineItem(invalidId);
+        Menu menu = new Menu();
+        menu.setId(invalidId);
+
+        OrderLineItem orderLineItem = createOrderLineItem(menu);
         order.setOrderLineItems(List.of(orderLineItem));
 
-        assertThat(menuDao.findById(invalidId)).isEmpty();
+        assertThat(menuRepository.findById(invalidId)).isEmpty();
 
         //when then
         assertThatThrownBy(() -> orderService.create(order))
@@ -88,14 +93,17 @@ class OrderServiceTest {
         //given
         Long invalidId = 99L;
 
-        Long menuId = saveMenu().getId();
-        OrderLineItem orderLineItem = createOrderLineItem(menuId);
+        Menu menu = saveMenu();
+        OrderLineItem orderLineItem = createOrderLineItem(menu);
+
+        OrderTable orderTable = new OrderTable();
+        orderTable.setId(invalidId);
 
         order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderTableId(invalidId);
+        order.setOrderTable(orderTable);
 
-        assertThat(menuDao.findById(menuId)).isPresent();
-        assertThat(orderTableDao.findById(invalidId)).isEmpty();
+        assertThat(menuRepository.findById(menu.getId())).isPresent();
+        assertThat(orderTableRepository.findById(invalidId)).isEmpty();
 
         //when then
         assertThatThrownBy(() -> orderService.create(order))
@@ -106,17 +114,17 @@ class OrderServiceTest {
     @Test
     void createFailTest_ByOrderTableIsEmpty() {
         //given
-        Long menuId = saveMenu().getId();
-        Long orderTableId = saveOrderTableForEmpty(true).getId();
+        Menu menu = saveMenu();
+        OrderTable savedOrderTable = saveOrderTableForEmpty(true);
 
-        OrderLineItem orderLineItem = createOrderLineItem(menuId);
+        OrderLineItem orderLineItem = createOrderLineItem(menu);
 
         order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderTableId(orderTableId);
+        order.setOrderTable(savedOrderTable);
 
-        assertThat(menuDao.findById(menuId)).isPresent();
-        assertThat(orderTableDao.findById(orderTableId)).isPresent();
-        assertThat(orderTableDao.findById(orderTableId).get().isEmpty()).isTrue();
+        assertThat(menuRepository.findById(menu.getId())).isPresent();
+        assertThat(orderTableRepository.findById(savedOrderTable.getId())).isPresent();
+        assertThat(orderTableRepository.findById(savedOrderTable.getId()).get().isEmpty()).isTrue();
 
         //when then
         assertThatThrownBy(() -> orderService.create(order))
@@ -127,13 +135,13 @@ class OrderServiceTest {
     @Test
     void createSuccessTest_ChangeOrderInformation() {
         //given
-        Long menuId = saveMenu().getId();
-        Long orderTableId = saveOrderTableForEmpty(false).getId();
+        Menu menu = saveMenu();
+        OrderTable savedOrderTable = saveOrderTableForEmpty(false);
 
-        OrderLineItem orderLineItem = createOrderLineItem(menuId);
+        OrderLineItem orderLineItem = createOrderLineItem(menu);
 
         order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderTableId(orderTableId);
+        order.setOrderTable(savedOrderTable);
 
         assertThat(order.getOrderStatus()).isNull();
         assertThat(order.getOrderedTime()).isNull();
@@ -142,7 +150,7 @@ class OrderServiceTest {
         Order savedOrder = orderService.create(order);
 
         //then
-        assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+        assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
         assertThat(order.getOrderedTime()).isNotNull();
     }
 
@@ -150,17 +158,17 @@ class OrderServiceTest {
     @Test
     void createSuccessTest_SaveWithOrderLineItems() {
         //given
-        Long menuId = saveMenu().getId();
-        Long orderTableId = saveOrderTableForEmpty(false).getId();
+        Menu menu = saveMenu();
+        OrderTable savedOrderTable = saveOrderTableForEmpty(false);
 
-        OrderLineItem orderLineItem = createOrderLineItem(menuId);
+        OrderLineItem orderLineItem = createOrderLineItem(menu);
 
         order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderTableId(orderTableId);
+        order.setOrderTable(savedOrderTable);
 
-        Optional<OrderLineItem> findOrderLineItemBeforeCreatingOrder = orderLineItemDao.findAll()
+        Optional<OrderLineItem> findOrderLineItemBeforeCreatingOrder = orderLineItemRepository.findAll()
                 .stream()
-                .filter(item -> item.getMenuId().equals(menuId))
+                .filter(item -> item.getMenu().getId().equals(menu.getId()))
                 .findAny();
 
         assertThat(findOrderLineItemBeforeCreatingOrder).isEmpty();
@@ -169,9 +177,9 @@ class OrderServiceTest {
         orderService.create(order);
 
         //then
-        Optional<OrderLineItem> findOrderLineItemAfterCreatingOrder = orderLineItemDao.findAll()
+        Optional<OrderLineItem> findOrderLineItemAfterCreatingOrder = orderLineItemRepository.findAll()
                 .stream()
-                .filter(item -> item.getMenuId().equals(menuId))
+                .filter(item -> item.getMenu().getId().equals(menu.getId()))
                 .findAny();
 
         assertThat(findOrderLineItemAfterCreatingOrder).isPresent();
@@ -181,18 +189,18 @@ class OrderServiceTest {
     @Test
     void listSuccessTest() {
         //given
-        Long menuId = saveMenu().getId();
-        Long orderTableId = saveOrderTableForEmpty(false).getId();
-        OrderLineItem orderLineItem = createOrderLineItem(menuId);
+        Menu menu = saveMenu();
+        OrderTable savedOrderTable = saveOrderTableForEmpty(false);
+        OrderLineItem orderLineItem = createOrderLineItem(menu);
 
         order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderTableId(orderTableId);
+        order.setOrderTable(savedOrderTable);
 
         Order savedOrder = orderService.create(order);
 
         //when
-        Order findOrder = orderDao.findById(savedOrder.getId()).get();
-        List<OrderLineItem> orderLineItems = orderLineItemDao.findAllByOrderId(findOrder.getId());
+        Order findOrder = orderRepository.findById(savedOrder.getId()).get();
+        List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(findOrder.getId());
 
         //then
         assertThat(orderLineItems).hasSize(1);
@@ -207,10 +215,10 @@ class OrderServiceTest {
     void changeOrderStatusFailTest_ByOrderIsNotExists() {
         //given
         Long invalidId = 99L;
-        assertThat(orderDao.findById(invalidId)).isEmpty();
+        assertThat(orderRepository.findById(invalidId)).isEmpty();
 
         //when then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(invalidId, order))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(invalidId, OrderStatus.COMPLETION))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -218,43 +226,20 @@ class OrderServiceTest {
     @Test
     void changeOrderStatusFailTest_ByOrderStatusIsCompletion() {
         //given
-        Long menuId = saveMenu().getId();
-        Long orderTableId = saveOrderTableForEmpty(false).getId();
-        OrderLineItem orderLineItem = createOrderLineItem(menuId);
+        Menu menu = saveMenu();
+        OrderTable savedOrderTable = saveOrderTableForEmpty(false);
+        OrderLineItem orderLineItem = createOrderLineItem(menu);
 
         order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus("COMPLETION");
+        order.setOrderTable(savedOrderTable);
+        order.setOrderStatus(OrderStatus.COMPLETION);
         order.setOrderedTime(LocalDateTime.now());
 
         //when then
         Order otherOrder = new Order();
-        Long savedOrderId = orderDao.save(order).getId();
+        Long savedOrderId = orderRepository.save(order).getId();
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrderId, otherOrder))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("올바르지 않은 주문 상태인 경우, 변경할 수 없다.")
-    @Test
-    void changeOrderStatusFailTest_ByOrderStatusIsNotAvailable() {
-        //given
-        Long menuId = saveMenu().getId();
-        Long orderTableId = saveOrderTableForEmpty(false).getId();
-        OrderLineItem orderLineItem = createOrderLineItem(menuId);
-
-        order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus("COOKING");
-        order.setOrderedTime(LocalDateTime.now());
-
-        Long savedOrderId = orderDao.save(order).getId();
-
-        //when then
-        Order otherOrder = new Order();
-        otherOrder.setOrderStatus("sadfasdf");
-
-        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrderId, otherOrder))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrderId, OrderStatus.COMPLETION))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -262,26 +247,24 @@ class OrderServiceTest {
     @Test
     void changeOrderStatusSuccessTest() {
         //given
-        Long menuId = saveMenu().getId();
-        Long orderTableId = saveOrderTableForEmpty(false).getId();
-        OrderLineItem orderLineItem = createOrderLineItem(menuId);
+        Menu menu = saveMenu();
+        OrderTable savedOrderTable = saveOrderTableForEmpty(false);
+        OrderLineItem orderLineItem = createOrderLineItem(menu);
 
         order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus("COOKING");
+        order.setOrderTable(savedOrderTable);
+        order.setOrderStatus(OrderStatus.COOKING);
         order.setOrderedTime(LocalDateTime.now());
 
-        Long savedOrderId = orderDao.save(order).getId();
+        Long savedOrderId = orderRepository.save(order).getId();
 
         //when
-        order.setOrderStatus("COMPLETION");
-
-        orderService.changeOrderStatus(savedOrderId, order);
+        orderService.changeOrderStatus(savedOrderId, OrderStatus.COMPLETION);
 
         //then
-        Order findOrder = orderDao.findById(savedOrderId).get();
+        Order findOrder = orderRepository.findById(savedOrderId).get();
 
-        assertThat(findOrder.getOrderStatus()).isEqualTo("COMPLETION");
+        assertThat(findOrder.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION);
     }
 
     private Menu saveMenu() {
@@ -290,28 +273,28 @@ class OrderServiceTest {
         Menu menu = new Menu();
         menu.setName("TestMenu");
         menu.setPrice(BigDecimal.valueOf(10000));
-        menu.setMenuGroupId(savedMenuGroup.getId());
+        menu.setMenuGroup(savedMenuGroup);
 
-        return menuDao.save(menu);
+        return menuRepository.save(menu);
     }
 
     private MenuGroup saveMenuGroup() {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName("TestMenuGroup");
 
-        return menuGroupDao.save(menuGroup);
+        return menuGroupRepository.save(menuGroup);
     }
 
     private OrderTable saveOrderTableForEmpty(boolean empty) {
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(empty);
 
-        return orderTableDao.save(orderTable);
+        return orderTableRepository.save(orderTable);
     }
 
-    private OrderLineItem createOrderLineItem(Long menuId) {
+    private OrderLineItem createOrderLineItem(Menu menu) {
         OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menuId);
+        orderLineItem.setMenu(menu);
 
         return orderLineItem;
     }
