@@ -110,7 +110,7 @@ class MenuServiceTest extends IntegrationTest {
         }
 
         @Test
-        void menu_price_is_not_equal_total_sum_of_menu_products() {
+        void menu_price_is_over_than_total_sum_of_menu_products() {
             // given
             final Menu savedChicken = generateMenu("chicken");
             final Product chickenProduct = generateProduct("chicken", 10000L);
