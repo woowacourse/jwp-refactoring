@@ -1,6 +1,143 @@
 # 키친포스
 
+식별자값도 객체로 가정하고 관계를 봤습니다.
+
+```mermaid
+flowchart LR
+    Menu
+    MenuGroup
+    MenuProduct
+    OrderLineItem
+    OrderTable
+    MenuProduct
+    TableGroup
+    
+    Menu ---> MenuGroup
+    Menu ---> MenuProduct
+    MenuProduct ---> Menu
+    MenuProduct ---> Product
+    OrderLineItem ---> Menu
+    OrderLineItem ---> Order
+    Order ---> OrderLineItem
+    Order ---> OrderTable
+    OrderTable ---> TableGroup
+    TableGroup ---> OrderTable
+```
+
 ## 요구 사항
+
+## 상품 (Product)
+
+### 상품 등록
+
+- 상품을 등록한다.
+- `EXCEPTION` 상품 가격은 null 이거나 음수일 수 없다.
+
+### 상품 조회
+
+- 모든 상품 목록을 조회한다.
+
+<br>
+<br>
+<br>
+
+## 메뉴 그룹 (MenuGroup)
+
+### 메뉴 그룹 등록
+
+- 메뉴 그룹을 등록한다.
+
+### 메뉴 그룹 조회
+
+- 전체 메뉴 그룹 목록을 조회한다.
+
+<br>
+<br>
+<br>
+
+## 메뉴 (Menu)
+
+### 메뉴 등록
+
+#### 메뉴 가격
+
+- `EXCEPTION` 메뉴는 메뉴 상품 목록의 가격 총합보다 가격이 적어야 한다.
+- `EXCEPTION` 메뉴는 가격이 음이 아닌 정수로 존재해야 한다.
+
+
+#### 메뉴 그룹
+
+- `EXCEPTION` 메뉴는 속할 메뉴 그룹이 존재해야 한다.
+
+
+#### 메뉴 상품
+
+- 메뉴는 등록할 메뉴 상품이 비어있을 수 있다.
+- `EXCEPTION` 메뉴에 등록할 메뉴 상품이 존재할 경우 상품은 등록되어 있어야 한다.
+
+<br>
+<br>
+<br>
+
+## 주문 (Order) 
+
+### 주문 등록
+
+- 주문시 주문 상태는 COOKING 이어야 한다.
+- `EXCEPTION` 주문 항목 목록이 비어있는 경우 주문할 수 없다.
+- `EXCEPTION` 주문 항목 목록 수량이 메뉴에서 찾을 수 있는 메뉴의 수량과 다를 경우 주문할 수 없다.
+- `EXCEPTION` 주문 테이블이 존재하지 않을 경우 주문할 수 없다.
+
+
+### 주문 수정
+
+  - `EXCEPTION` 주문이 존재하지 않을 경우 주문 상태를 변경할 수 없다. 
+  - `EXCEPTION` 주문이 완료 상태인 경우 주문 상태를 변경할 수 없다. 
+
+<br>
+<br>
+<br>
+
+## 주문 테이블 (OrderTable)
+
+### 주문 테이블 등록
+
+- 주문 테이블을 등록한다.
+
+### 주문 테이블 조회
+
+- 전체 주문 테이블을 조회한다.
+
+### 주문 테이블 수정
+
+- 주문 테이블을 비어있는 상태로 변경한다.
+  - `EXCEPTION` 단체 지정이 등록되어 있을 경우 상태를 변경할 수 없다.
+  - `EXCEPTION` 음식이 준비 중이거나 식사 중일 경우 상태를 변경할 수 없다.
+
+
+- 주문 테이블의 손님 수를 변경한다.
+  - `EXCEPTION` 손님 수가 0 미만일 수 없다.
+  - `EXCEPTION` 주문 테이블이 비어있는 상태일 경우 손님 수를 변경할 수 없다.
+
+<br>
+<br>
+<br>
+
+## 단체 지정(TableGroup)
+
+### 단체 지정 등록
+
+- `EXCEPTION` 주문 테이블 수가 2 미만일 경우 단체 지정으로 등록할 수 없다.
+- `EXCEPTION` 주문 테이블이 비어있지 않은 상태여도 단체 지정이 할당되어 있으면 새로운 단체 지정으로 등록할 수 없다. 
+- `EXCEPTION` 주문 테이블 수가 실제 테이블 수와 같지 않은 경우 단체 지정으로 등록할 수 없다.
+
+### 단제 지정 해제
+
+- `EXCEPTION` 단체 지정된 주문 테이블 목록의 각 주문이 단 하나라도 COMPLETION 상태가 아니라면 단체 지정을 해제할 수 없다.
+
+<br>
+<br>
+<br>
 
 ## 용어 사전
 
