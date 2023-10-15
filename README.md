@@ -14,6 +14,8 @@
 
 - [x] 서비스 테스트 구현
     - [x] MenuGroupService
+        - [x] MenuGroup을 저장할 수 있다.
+        - [x] MenuGroup의 목록을 조회할 수 있다.
     - [x] MenuService
         - [x] Menu의 가격은 `null`이 아니어야 한다.
         - [x] Menu의 가격은 0 이상이어야 한다.

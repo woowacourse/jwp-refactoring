@@ -2,13 +2,13 @@ package kitchenpos.application;
 
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import support.fixture.MenuGroupBuilder;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -23,14 +23,10 @@ class MenuGroupServiceTest {
     @Autowired
     private MenuGroupDao menuGroupDao;
 
-    private List<MenuGroup> preSavedMenuGroups;
-
     private static Stream<List<MenuGroup>> should_return_menuGroup_list_when_request_list() {
-        final MenuGroup menuGroup1 = new MenuGroup();
-        menuGroup1.setName("메뉴그룹1");
+        final MenuGroup menuGroup1 = new MenuGroupBuilder().build();
 
-        final MenuGroup menuGroup2 = new MenuGroup();
-        menuGroup2.setName("메뉴그룹2");
+        final MenuGroup menuGroup2 = new MenuGroupBuilder().build();
 
         return Stream.of(
                 List.of(),
@@ -39,20 +35,15 @@ class MenuGroupServiceTest {
         );
     }
 
-    @BeforeEach
-    void setUp() {
-        preSavedMenuGroups = menuGroupDao.findAll();
-    }
-
     @ParameterizedTest
     @MethodSource
     @DisplayName("모든 메뉴 그룹 목록을 조회할 수 있다.")
     void should_return_menuGroup_list_when_request_list(final List<MenuGroup> menuGroups) {
         // given
-        menuGroups.forEach(menuGroup -> menuGroupDao.save(menuGroup));
-
-        final List<MenuGroup> expect = preSavedMenuGroups;
+        final List<MenuGroup> expect = menuGroupDao.findAll();
         expect.addAll(menuGroups);
+
+        menuGroups.forEach(menuGroup -> menuGroupDao.save(menuGroup));
 
         // when
         final List<MenuGroup> actual = menuGroupService.list();
@@ -65,10 +56,10 @@ class MenuGroupServiceTest {
     }
 
     @Test
+    @DisplayName("MenuGroup을 생성한다.")
     void should_save_new_menuGroup_when_create() {
         // given
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("메뉴그룹");
+        final MenuGroup menuGroup = new MenuGroupBuilder().build();
 
         // when
         final MenuGroup expect = menuGroupService.create(menuGroup);
