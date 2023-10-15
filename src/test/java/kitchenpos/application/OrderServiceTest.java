@@ -8,7 +8,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.List;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
@@ -20,17 +19,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 class OrderServiceTest extends ServiceIntegrateTest {
 
+
   @Autowired
   private OrderTableDao orderTableDao;
   @Autowired
   private OrderService orderService;
 
-  private Long orderTableId;
+  private Long notEmptyOrderTableId;
+  private Long emptyOrderTableId;
 
   @BeforeEach
   void init() {
-    orderTableId = 1L;
-    final OrderTable orderTable = orderTableDao.findById(orderTableId).get();
+    notEmptyOrderTableId = 1L;
+    emptyOrderTableId = 2L;
+    final OrderTable orderTable = orderTableDao.findById(notEmptyOrderTableId).get();
     orderTable.setEmpty(false);
     orderTableDao.save(orderTable);
   }
@@ -39,7 +41,7 @@ class OrderServiceTest extends ServiceIntegrateTest {
   @DisplayName("주문을 등록할 수 있다.")
   void create_success() {
     //given, when
-    final Order actual = orderService.create(주문());
+    final Order actual = orderService.create(주문(notEmptyOrderTableId));
 
     //then
     Assertions.assertAll(
@@ -53,7 +55,7 @@ class OrderServiceTest extends ServiceIntegrateTest {
   @DisplayName("주문을 등록할 때 메뉴가 1개도 포함되어 있지 않다면 예외를 반환한다.")
   void create_fail_empty_orderLineItem() {
     //given
-    final Order order = 주문();
+    final Order order = 주문(notEmptyOrderTableId);
     order.setOrderLineItems(List.of());
 
     //when
@@ -77,8 +79,7 @@ class OrderServiceTest extends ServiceIntegrateTest {
   @DisplayName("주문을 등록할 때 존재하지 않는 테이블의 주문이면 예외를 반환한다.")
   void create_fail_not_exist_table() {
     //given
-    final Order order = 주문();
-    order.setOrderTableId(999L);
+    final Order order = 주문(999L);
 
     //when
     final ThrowingCallable actual = () -> orderService.create(order);
@@ -91,8 +92,7 @@ class OrderServiceTest extends ServiceIntegrateTest {
   @DisplayName("주문을 등록할 때 주문한 테이블이 비어있으면 예외를 반환한다.")
   void create_fail_empty_table() {
     //given
-    final Order order = 주문();
-    order.setOrderTableId(2L);
+    final Order order = 주문(emptyOrderTableId);
 
     //when
     final ThrowingCallable actual = () -> orderService.create(order);
@@ -105,14 +105,7 @@ class OrderServiceTest extends ServiceIntegrateTest {
   @DisplayName("등록된 주문 목록을 조회할 수 있다.")
   void list_success() {
     //given
-    final OrderLineItem orderLineItem = new OrderLineItem();
-    orderLineItem.setMenuId(1L);
-    orderLineItem.setQuantity(1);
-
-    final Order order = new Order();
-    order.setOrderTableId(1L);
-    order.setOrderLineItems(List.of(orderLineItem));
-    orderService.create(order);
+    orderService.create(주문(notEmptyOrderTableId));
 
     // when
     final List<Order> actual = orderService.list();
@@ -126,7 +119,7 @@ class OrderServiceTest extends ServiceIntegrateTest {
   void changeOrderStatus_success() {
     //given
     final String newStatus = OrderStatus.MEAL.name();
-    final Order order = 주문();
+    final Order order = 주문(notEmptyOrderTableId);
     final Long savedOrderId = orderService.create(order).getId();
     order.setOrderStatus(newStatus);
 
@@ -142,7 +135,7 @@ class OrderServiceTest extends ServiceIntegrateTest {
   void changeOrderStatus_fail_not_exist_order() {
     //given
     final String newStatus = OrderStatus.MEAL.name();
-    final Order order = 주문();
+    final Order order = 주문(notEmptyOrderTableId);
     order.setOrderStatus(newStatus);
 
     // when
@@ -157,7 +150,7 @@ class OrderServiceTest extends ServiceIntegrateTest {
   void changeOrderStatus_fail_already_COMPLETEION() {
     //given
     final String newStatus = OrderStatus.COMPLETION.name();
-    final Order order = 주문();
+    final Order order = 주문(notEmptyOrderTableId);
     final Long savedOrderId = orderService.create(order).getId();
 
     order.setOrderStatus(newStatus);

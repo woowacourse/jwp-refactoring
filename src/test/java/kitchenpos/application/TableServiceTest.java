@@ -117,7 +117,7 @@ class TableServiceTest extends ServiceIntegrateTest {
     table1.setEmpty(false);
     orderTableDao.save(table1);
 
-    orderService.create(주문());
+    orderService.create(주문(table1.getId()));
     final OrderTable changedTable = new OrderTable();
     changedTable.setEmpty(true);
 

@@ -154,7 +154,7 @@ class TableGroupServiceTest extends ServiceIntegrateTest {
     savedTable.setEmpty(false);
     orderTableDao.save(savedTable);
 
-    orderService.create(주문());
+    orderService.create(주문(table1.getId()));
 
     //when
     final ThrowingCallable actual = () -> tableGroupService.ungroup(savedTableGroupId);
