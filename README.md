@@ -29,6 +29,17 @@
         - [x] 모든 상품의 목록을 반환할 수 있다.
     - [x] TableGroupService
     - [x] TableService
+        - [x] Table을 저장할 수 있다.
+        - [x] Table의 목록을 조회할 수 있다.
+        - [x] Table의 empty 상태를 변경할 수 있다.
+            - [x] Table이 존재해야 한다.
+            - [x] Table의 TableGroupId 값이 `null`이어야 한다.
+            - [x] Table의 주문 상태가 COOKING이나 MEAL이 아니어야 한다.
+            - [x] Table의 empty 여부를 orderTable의 상태로 변경한다.
+        - [x] Table의 손님 수를 변경한다.
+            - [x] 손님의 수는 0 이상이어야 한다.
+            - [x] 손님 수를 변경할 테이블이 존재해야 한다.
+            - [x] 테이블이 비어있는 경우 손님의 수를 변경할 수 없다.
 
 ## 용어 사전
 
