@@ -115,7 +115,7 @@ class TableServiceTest {
         }
 
         @Test
-        @DisplayName("테이블의 비어 있는 상태를 수정한다.")
+        @DisplayName("테이블의 상태를 수정한다.")
         void create() {
             // given
             final OrderTable orderTable = new OrderTable(3, false);
@@ -163,7 +163,7 @@ class TableServiceTest {
         }
 
         @Test
-        @DisplayName("주문 테이블이 이미 비어있다면 예외가 발생한다.")
+        @DisplayName("주문 테이블이 비어있다면 예외가 발생한다.")
         void orderTableAlreadyEmpty() {
             // given
             final NumberOfGuestsRequest request = mock(NumberOfGuestsRequest.class);
