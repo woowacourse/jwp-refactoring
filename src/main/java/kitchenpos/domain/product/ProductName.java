@@ -6,7 +6,14 @@ public class ProductName {
     private final String name;
 
     public ProductName(final String name) {
+        validate(name);
         this.name = name;
+    }
+
+    private void validate(final String name) {
+        if (Objects.isNull(name) || name.isBlank()) {
+            throw new IllegalArgumentException();
+        }
     }
 
     @Override
