@@ -43,8 +43,8 @@ public class Order {
         return orderLineItems;
     }
 
-    public void addOrderLineItems(List<OrderLineItem> orderLineItems) {
-        this.orderLineItems.addAll(orderLineItems);
+    public void changeOrderLineItems(List<OrderLineItem> orderLineItems) {
+        this.orderLineItems = new ArrayList<>(orderLineItems);
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {

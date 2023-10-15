@@ -4,13 +4,14 @@ import kitchenpos.application.dto.ProductRequest;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
 import kitchenpos.fake.InMemoryProductRepository;
+import kitchenpos.fixture.ProductFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
-
+import static kitchenpos.fixture.ProductFixture.product;
+import static kitchenpos.fixture.ProductFixture.productRequest;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -30,34 +31,24 @@ class ProductServiceTest {
     @Test
     void 상품을_생성한다() {
         // given
-        ProductRequest chicken = new ProductRequest("chicken", BigDecimal.valueOf(10_000));
+        ProductRequest request = productRequest("chicken", 10_000L);
 
         // when
-        Product savedProduct = productService.create(chicken);
+        Product savedProduct = productService.create(request);
 
         // then
         assertSoftly(softly -> {
             softly.assertThat(savedProduct).usingRecursiveComparison()
                     .ignoringFields("id")
-                    .isEqualTo(chicken);
+                    .isEqualTo(product("chicken", 10_000L));
             softly.assertThat(savedProduct.getId()).isNotNull();
         });
     }
-
-    @Test
-    void 상품을_생성할_때_상품_가격이_없으면_예외가_발생한다() {
-        // given
-        ProductRequest invalidProduct = new ProductRequest("name", null);
-
-        // expect
-        assertThatThrownBy(() -> productService.create(invalidProduct))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
+    
     @Test
     void 상품을_생성할_때_상품_가격이_음수면_예외가_발생한다() {
         // given
-        ProductRequest invalidProduct = new ProductRequest("chicken", BigDecimal.valueOf(-1));
+        ProductRequest invalidProduct = ProductFixture.productRequest("chicken", -1L);
 
         // expect
         assertThatThrownBy(() -> productService.create(invalidProduct))

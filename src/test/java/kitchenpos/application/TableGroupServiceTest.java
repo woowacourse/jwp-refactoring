@@ -4,7 +4,6 @@ import kitchenpos.application.dto.TableGroupRequest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -22,6 +21,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static kitchenpos.application.dto.TableGroupRequest.OrderTableIdRequest;
+import static kitchenpos.fixture.OrderFixture.order;
+import static kitchenpos.fixture.OrderTableFixtrue.orderTable;
+import static kitchenpos.fixture.TableGroupFixture.tableGroup;
+import static kitchenpos.fixture.TableGroupFixture.tableGroupRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -83,7 +86,7 @@ class TableGroupServiceTest {
     @Test
     void 단체_지정을_생성할_때_주문_테이블이_1개_이하면_예외가_발생한다() {
         // given
-        TableGroupRequest tableGroup = new TableGroupRequest(List.of());
+        TableGroupRequest tableGroup = tableGroupRequest(List.of());
 
         // expect
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -93,9 +96,9 @@ class TableGroupServiceTest {
     @Test
     void 단체_지정을_생성할_때_저장되어있는_주문_테이블의_개수와_다르면_예외가_발생한다() {
         // given
-        OrderTable orderTable = orderTableDao.save(new OrderTable(null, 10, true));
-        OrderTable orderTable2 = new OrderTable(null, 3, true);
-        TableGroupRequest tableGroup = new TableGroupRequest(List.of(new OrderTableIdRequest(orderTable.getId()), new OrderTableIdRequest(orderTable2.getId())));
+        OrderTable orderTable = orderTableDao.save(orderTable(10, true));
+        OrderTable orderTable2 = orderTable(3, true);
+        TableGroupRequest tableGroup = tableGroupRequest(List.of(new OrderTableIdRequest(orderTable.getId()), new OrderTableIdRequest(orderTable2.getId())));
 
         // expect
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -105,9 +108,9 @@ class TableGroupServiceTest {
     @Test
     void 단체_지정을_생성할_때_빈_테이블이지_않으면_예외가_발생한다() {
         // given
-        OrderTable orderTable = orderTableDao.save(new OrderTable(null, 10, false));
-        OrderTable orderTable2 = orderTableDao.save(new OrderTable(null, 3, false));
-        TableGroupRequest tableGroup = new TableGroupRequest(List.of(new OrderTableIdRequest(orderTable.getId()), new OrderTableIdRequest(orderTable2.getId())));
+        OrderTable orderTable = orderTableDao.save(orderTable(10, false));
+        OrderTable orderTable2 = orderTableDao.save(orderTable(3, false));
+        TableGroupRequest tableGroup = tableGroupRequest(List.of(new OrderTableIdRequest(orderTable.getId()), new OrderTableIdRequest(orderTable2.getId())));
 
         // expect
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -117,9 +120,9 @@ class TableGroupServiceTest {
     @Test
     void 단체_지정을_생성할_때_이미_단체_지정이_되어있으면_예외가_발생한다() {
         // given
-        OrderTable orderTable = orderTableDao.save(new OrderTable(1L, 10, true));
-        OrderTable orderTable2 = orderTableDao.save(new OrderTable(1L, 3, true));
-        TableGroupRequest tableGroup = new TableGroupRequest(List.of(new OrderTableIdRequest(orderTable.getId()), new OrderTableIdRequest(orderTable2.getId())));
+        OrderTable orderTable = orderTableDao.save(orderTable(1L, 10, true));
+        OrderTable orderTable2 = orderTableDao.save(orderTable(1L, 3, true));
+        TableGroupRequest tableGroup = tableGroupRequest(List.of(new OrderTableIdRequest(orderTable.getId()), new OrderTableIdRequest(orderTable2.getId())));
 
         // expect
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -129,10 +132,10 @@ class TableGroupServiceTest {
     @Test
     void 단체_지정을_해제한다() {
         // given
-        OrderTable orderTable = orderTableDao.save(new OrderTable(0L, 10, false));
-        OrderTable orderTable2 = orderTableDao.save(new OrderTable(0L, 3, false));
-        orderDao.save(new Order(orderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.of(2002, 3, 3, 3, 3)));
-        TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.of(2002, 3, 3, 3, 3), List.of(orderTable, orderTable2)));
+        OrderTable orderTable = orderTableDao.save(orderTable(0L, 10, false));
+        OrderTable orderTable2 = orderTableDao.save(orderTable(0L, 3, false));
+        orderDao.save(order(orderTable.getId(), OrderStatus.COMPLETION));
+        TableGroup tableGroup = tableGroupDao.save(tableGroup(List.of(orderTable, orderTable2)));
 
         // when
         tableGroupService.ungroup(tableGroup.getId());
@@ -152,10 +155,10 @@ class TableGroupServiceTest {
     @ParameterizedTest
     void 단체_지정을_해제할_때_주문의_상태가_조리_혹은_식사_이면_예외가_발생한다(OrderStatus orderStatus) {
         // given
-        OrderTable orderTable = orderTableDao.save(new OrderTable(0L, 10, false));
-        OrderTable orderTable2 = orderTableDao.save(new OrderTable(0L, 3, false));
-        orderDao.save(new Order(orderTable.getId(), orderStatus, LocalDateTime.of(2002, 3, 3, 3, 3)));
-        TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.of(2002, 3, 3, 3, 3), List.of(orderTable, orderTable2)));
+        OrderTable orderTable = orderTableDao.save(orderTable(0L, 10, false));
+        OrderTable orderTable2 = orderTableDao.save(orderTable(0L, 3, false));
+        orderDao.save(order(orderTable.getId(), orderStatus));
+        TableGroup tableGroup = tableGroupDao.save(tableGroup(List.of(orderTable, orderTable2)));
 
         // when
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))

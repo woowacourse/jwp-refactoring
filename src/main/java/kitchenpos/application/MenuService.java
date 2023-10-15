@@ -68,7 +68,7 @@ public class MenuService {
         List<MenuProduct> savedMenuProducts = menuProducts.stream()
                 .map(it -> menuProductDao.save(new MenuProduct(menuId, it.getProductId(), it.getQuantity())))
                 .collect(Collectors.toList());
-        savedMenu.addMenuProducts(savedMenuProducts);
+        savedMenu.changeMenuProducts(savedMenuProducts);
 
         return savedMenu;
     }
@@ -77,7 +77,7 @@ public class MenuService {
         final List<Menu> menus = menuDao.findAll();
 
         for (final Menu menu : menus) {
-            menu.addMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
+            menu.changeMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
         }
         return menus;
     }

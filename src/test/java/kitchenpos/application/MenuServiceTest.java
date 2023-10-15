@@ -22,6 +22,11 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static kitchenpos.application.dto.MenuRequest.MenuProductRequest;
+import static kitchenpos.fixture.MenuFixture.menu;
+import static kitchenpos.fixture.MenuFixture.menuRequest;
+import static kitchenpos.fixture.MenuGroupFixture.menuGroup;
+import static kitchenpos.fixture.MenuProductFixture.menuProduct;
+import static kitchenpos.fixture.ProductFixture.product;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -52,12 +57,11 @@ class MenuServiceTest {
     void 메뉴를_생성한다() {
         // Given
         Product product = productRepository.save(new Product("chicken", BigDecimal.valueOf(1_000)));
-        MenuProductRequest menuProduct = new MenuProductRequest(product.getId(), 10L);
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
-        MenuRequest menu = new MenuRequest("메뉴", BigDecimal.valueOf(10_000), menuGroup.getId(), List.of(menuProduct));
+        MenuRequest request = menuRequest("메뉴", 10_000L, menuGroup.getId(), List.of(new MenuProductRequest(product.getId(), 10L)));
 
         // When
-        Menu createdMenu = menuService.create(menu);
+        Menu createdMenu = menuService.create(request);
 
         // Then
         assertThat(createdMenu.getId()).isNotNull();
@@ -66,47 +70,53 @@ class MenuServiceTest {
     @Test
     void 메뉴_가격이_0보다_작으면_예외를_던진다() {
         // given
-        MenuRequest menu = new MenuRequest("메뉴 이름", BigDecimal.valueOf(-1), savedMenuGroup.getId(), List.of());
+        MenuRequest request = menuRequest("메뉴 이름", -1L, savedMenuGroup.getId(), List.of());
 
         // expect
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 메뉴_그룹_아이디에_해당하는_메뉴_그룹이_없는_경우_예외를_던진다() {
         // given
-        MenuRequest menu = new MenuRequest("메뉴 이름", BigDecimal.valueOf(1000), Long.MAX_VALUE, List.of());
+        MenuRequest request = menuRequest("메뉴 이름", 1000L, Long.MAX_VALUE, List.of());
 
         // expect
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 가격이_실제_메뉴_상품들의_총_가격보다_크면_예외를_던진다() {
         // given
-        MenuRequest menu = new MenuRequest("메뉴 이름", BigDecimal.valueOf(2001), savedMenuGroup.getId(), List.of());
+        MenuRequest request = menuRequest("메뉴 이름", 2001L, savedMenuGroup.getId(), List.of());
 
         // expect
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 전체_메뉴를_조회할_수_있다() {
         // given
-        Product product = productRepository.save(new Product("chicken", BigDecimal.valueOf(1_000)));
-        MenuProductRequest menuProduct = new MenuProductRequest(product.getId(), 10L);
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
-        MenuRequest menu = new MenuRequest("메뉴", BigDecimal.valueOf(10_000), menuGroup.getId(), List.of(menuProduct));
+        MenuGroup menuGroup = menuGroupDao.save(menuGroup("chicken"));
+        Product product = productRepository.save(product("fried chicken", 10000L));
 
-        menuService.create(menu);
+        Menu menu1 = menuDao.save(menu("fried chicken", 10000L, menuGroup.getId(), List.of()));
+        MenuProduct menuProduct1 = menuProductDao.save(menuProduct(menu1.getId(), product.getId(), 1L));
+        menu1.changeMenuProducts(List.of(menuProduct1));
+
+        Menu menu2 = menuDao.save(menu("spicy chicken", 20000L, menuGroup.getId(), List.of()));
+        MenuProduct menuProduct2 = menuProductDao.save(menuProduct(menu2.getId(), product.getId(), 1L));
+        menu2.changeMenuProducts(List.of(menuProduct2));
 
         // when
-        List<Menu> menus = menuService.list();
+        List<Menu> result = menuService.list();
 
         // then
-        assertThat(menus).hasSize(1);
+        assertThat(result)
+                .usingRecursiveComparison()
+                .isEqualTo(List.of(menu1, menu2));
     }
 }

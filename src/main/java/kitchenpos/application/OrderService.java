@@ -69,7 +69,7 @@ public class OrderService {
         List<OrderLineItem> savedOrderLineItems = orderLineItems.stream()
                 .map(it -> orderLineItemDao.save(new OrderLineItem(orderId, it.getMenuId(), it.getQuantity())))
                 .collect(Collectors.toList());
-        savedOrder.addOrderLineItems(savedOrderLineItems);
+        savedOrder.changeOrderLineItems(savedOrderLineItems);
 
         return savedOrder;
     }
@@ -78,7 +78,7 @@ public class OrderService {
         final List<Order> orders = orderDao.findAll();
 
         for (final Order order : orders) {
-            order.addOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
+            order.changeOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
         }
 
         return orders;
@@ -97,7 +97,7 @@ public class OrderService {
 
         orderDao.save(savedOrder);
 
-        savedOrder.addOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
+        savedOrder.changeOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
 
         return savedOrder;
     }

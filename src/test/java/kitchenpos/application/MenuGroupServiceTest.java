@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static kitchenpos.fixture.MenuGroupFixture.menuGroup;
+import static kitchenpos.fixture.MenuGroupFixture.menuGroupRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -30,7 +32,7 @@ class MenuGroupServiceTest {
     @Test
     void 주문_그룹을_생성한다() {
         // given
-        MenuGroupRequest menuGroup = new MenuGroupRequest("korean");
+        MenuGroupRequest menuGroup = menuGroupRequest("korean");
 
         // when
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
@@ -45,8 +47,8 @@ class MenuGroupServiceTest {
     @Test
     void 주문을_전체_조회한다() {
         // given
-        menuGroupDao.save(new MenuGroup("korean"));
-        menuGroupDao.save(new MenuGroup("french"));
+        menuGroupDao.save(menuGroup("korean"));
+        menuGroupDao.save(menuGroup("french"));
 
         // when
         List<MenuGroup> savedMenuGroups = menuGroupService.list();

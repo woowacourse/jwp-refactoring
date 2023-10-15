@@ -54,7 +54,7 @@ public class Menu {
         return menuProducts;
     }
 
-    public void addMenuProducts(List<MenuProduct> menuProducts) {
-        this.menuProducts.addAll(menuProducts);
+    public void changeMenuProducts(List<MenuProduct> menuProducts) {
+        this.menuProducts = new ArrayList<>(menuProducts);
     }
 }
