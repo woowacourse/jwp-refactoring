@@ -37,7 +37,6 @@ public class Menu {
             final MenuGroup menuGroup,
             final List<MenuProduct> menuProducts
     ) {
-        validateMenuProductsPrice(menuProducts);
         this.id = id;
         this.name = name;
         this.price = price;
@@ -53,17 +52,18 @@ public class Menu {
         this(null, name, Price.from(price), menuGroup, new ArrayList<>());
     }
 
+    public void applyMenuProducts(final List<MenuProduct> menuProducts) {
+        validateMenuProductsPrice(menuProducts);
+        this.menuProducts = menuProducts;
+    }
+
     private void validateMenuProductsPrice(final List<MenuProduct> menuProducts) {
         final Price totalPrice = menuProducts.stream()
                 .map(MenuProduct::calculateProductsPrice)
-                .reduce(Price.from(BigDecimal.ZERO), Price::add);
+                .reduce(Price.getDefault(), Price::add);
         if (this.price.isGreaterThan(totalPrice)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Sum of menu products price must be greater than menu price.");
         }
-    }
-
-    public void addMenuProduct(final MenuProduct menuProduct) {
-        menuProducts.add(menuProduct);
     }
 
     public Long getId() {

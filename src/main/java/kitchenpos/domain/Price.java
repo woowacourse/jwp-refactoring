@@ -7,13 +7,15 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class Price {
 
-    private final BigDecimal price;
+    private static final Price DEFAULT_PRICE = new Price();
+
+    private BigDecimal price;
 
     protected Price() {
-        this(BigDecimal.ZERO);
+        this.price = BigDecimal.ZERO;
     }
 
-    Price(final BigDecimal price) {
+    private Price(final BigDecimal price) {
         validate(price);
         this.price = price;
     }
@@ -27,9 +29,16 @@ public class Price {
     }
 
     private static void validate(final BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+        if (Objects.isNull(price)) {
+            throw new IllegalArgumentException("Price must not be null.");
         }
+        if (price.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Price must be greater than zero.");
+        }
+    }
+
+    public static Price getDefault() {
+        return DEFAULT_PRICE;
     }
 
     public Price multiply(final long quantity) {
@@ -41,7 +50,7 @@ public class Price {
     }
 
     public boolean isGreaterThan(final Price other) {
-        return price.compareTo(other.price) > 0;
+        return this.price.compareTo(other.price) > 0;
     }
 
     @Override
