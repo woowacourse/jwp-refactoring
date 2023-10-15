@@ -71,7 +71,7 @@ class TableServiceTest extends ServiceIntegrateTest {
     changedTable.setEmpty(expected);
 
     //when
-    final boolean actual = tableService.changeEmpty(1L, changedTable).isEmpty();
+    final boolean actual = tableService.changeEmpty(table1.getId(), changedTable).isEmpty();
 
     //then
     assertThat(actual).isEqualTo(expected);
@@ -103,7 +103,7 @@ class TableServiceTest extends ServiceIntegrateTest {
     changedTable.setEmpty(false);
 
     //when
-    final ThrowingCallable actual = () -> tableService.changeEmpty(1L, changedTable);
+    final ThrowingCallable actual = () -> tableService.changeEmpty(table1.getId(), changedTable);
 
     //then
     assertThatThrownBy(actual).isInstanceOf(IllegalArgumentException.class);
@@ -113,16 +113,16 @@ class TableServiceTest extends ServiceIntegrateTest {
   @DisplayName("테이블이 비었는지 여부를 변경할 때 대상 테이블의 주문 중 계산이 완료되지 않은 주문이 있으면 예외를 반환한다.")
   void changeEmpty_fail_not_COMPLETION_order() {
     //given
-    final OrderTable changedTable = orderTableDao.findById(1L).get();
-    changedTable.setNumberOfGuests(4);
-    changedTable.setEmpty(false);
-    orderTableDao.save(changedTable);
+    table1.setNumberOfGuests(4);
+    table1.setEmpty(false);
+    orderTableDao.save(table1);
 
     orderService.create(주문());
+    final OrderTable changedTable = new OrderTable();
     changedTable.setEmpty(true);
 
     //when
-    final ThrowingCallable actual = () -> tableService.changeEmpty(1L, changedTable);
+    final ThrowingCallable actual = () -> tableService.changeEmpty(table1.getId(), changedTable);
 
     //then
     assertThatThrownBy(actual).isInstanceOf(IllegalArgumentException.class);
@@ -134,13 +134,14 @@ class TableServiceTest extends ServiceIntegrateTest {
     //given
     final OrderTable changedTable = new OrderTable();
     changedTable.setEmpty(false);
-    tableService.changeEmpty(1L, changedTable);
+    tableService.changeEmpty(table1.getId(), changedTable);
 
     final int expected = 4;
     changedTable.setNumberOfGuests(expected);
 
     //when
-    final int actual = tableService.changeNumberOfGuests(1L, changedTable).getNumberOfGuests();
+    final int actual = tableService.changeNumberOfGuests(table1.getId(), changedTable)
+        .getNumberOfGuests();
 
     //then
     assertThat(actual).isEqualTo(expected);
@@ -152,12 +153,13 @@ class TableServiceTest extends ServiceIntegrateTest {
     //given
     final OrderTable changedTable = new OrderTable();
     changedTable.setEmpty(false);
-    tableService.changeEmpty(1L, changedTable);
+    tableService.changeEmpty(table1.getId(), changedTable);
 
     changedTable.setNumberOfGuests(-1);
 
     //when
-    final ThrowingCallable actual = () -> tableService.changeNumberOfGuests(1L, changedTable);
+    final ThrowingCallable actual = () -> tableService.changeNumberOfGuests(table1.getId(),
+        changedTable);
 
     //then
     assertThatThrownBy(actual).isInstanceOf(IllegalArgumentException.class);
@@ -169,7 +171,7 @@ class TableServiceTest extends ServiceIntegrateTest {
     //given
     final OrderTable changedTable = new OrderTable();
     changedTable.setEmpty(false);
-    tableService.changeEmpty(1L, changedTable);
+    tableService.changeEmpty(table1.getId(), changedTable);
 
     changedTable.setNumberOfGuests(4);
 
@@ -188,7 +190,8 @@ class TableServiceTest extends ServiceIntegrateTest {
     changedTable.setNumberOfGuests(4);
 
     //when
-    final ThrowingCallable actual = () -> tableService.changeNumberOfGuests(1L, changedTable);
+    final ThrowingCallable actual = () -> tableService.changeNumberOfGuests(table1.getId(),
+        changedTable);
 
     //then
     assertThatThrownBy(actual).isInstanceOf(IllegalArgumentException.class);
