@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.MenuFixture.후라이드_후라이드;
-import static kitchenpos.fixture.MenuFixture.후라이드_후라이드_잘못된_상품;
+import static kitchenpos.fixture.MenuFixture.만냥치킨_만냥치킨;
+import static kitchenpos.fixture.MenuFixture.만냥치킨_만냥치킨_잘못된_상품;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -23,7 +23,7 @@ class MenuServiceTest extends ServiceIntegrateTest {
   @DisplayName("메뉴를 등록할 수 있다.")
   void create_success() {
     //given, when
-    final Menu actual = menuService.create(후라이드_후라이드());
+    final Menu actual = menuService.create(만냥치킨_만냥치킨());
 
     //then
     assertThat(actual).isNotNull();
@@ -33,7 +33,7 @@ class MenuServiceTest extends ServiceIntegrateTest {
   @DisplayName("메뉴를 등록할 때 메뉴의 가격이 0보다 작으면 예외를 반환한다.")
   void create_fail_negative_price() {
     //given
-    final Menu menu = 후라이드_후라이드();
+    final Menu menu = 만냥치킨_만냥치킨();
     menu.setPrice(BigDecimal.valueOf(-1));
 
     //when
@@ -47,7 +47,7 @@ class MenuServiceTest extends ServiceIntegrateTest {
   @DisplayName("메뉴를 등록할 때 메뉴그룹이 존재하지 않으면 예외를 반환한다.")
   void create_fail_not_exist_menuGroup() {
     //given
-    final Menu menu = 후라이드_후라이드();
+    final Menu menu = 만냥치킨_만냥치킨();
     menu.setMenuGroupId(999L);
 
     //when
@@ -61,7 +61,7 @@ class MenuServiceTest extends ServiceIntegrateTest {
   @DisplayName("메뉴를 등록할 때 존재하지 않는 상품이 포함되어 있으면 예외를 반환한다.")
   void create_fail_not_exist_product() {
     //given
-    final Menu menu = 후라이드_후라이드_잘못된_상품();
+    final Menu menu = 만냥치킨_만냥치킨_잘못된_상품();
 
     //when
     final ThrowingCallable actual = () -> menuService.create(menu);
@@ -74,7 +74,7 @@ class MenuServiceTest extends ServiceIntegrateTest {
   @DisplayName("메뉴를 등록할 때 메뉴의 가격이 메뉴를 구성하는 상품들의 총 가격보다 크면 예외를 반환한다.")
   void create_fail_over_price() {
     //given
-    final Menu menu = 후라이드_후라이드();
+    final Menu menu = 만냥치킨_만냥치킨();
     menu.setPrice(BigDecimal.valueOf(40000));
 
     //when

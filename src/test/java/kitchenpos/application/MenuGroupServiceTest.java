@@ -4,7 +4,9 @@ import static kitchenpos.fixture.MenuGroupFixture.추천_메뉴;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.domain.MenuGroup;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +32,14 @@ class MenuGroupServiceTest extends ServiceIntegrateTest {
   void list_success() {
     // given, when
     final List<MenuGroup> actual = menuGroupService.list();
+    final List<String> actualNames = actual.stream()
+        .map(MenuGroup::getName)
+        .collect(Collectors.toList());
 
     //then
-    assertThat(actual).hasSize(4);
+    Assertions.assertAll(
+        () -> assertThat(actual).hasSize(4),
+        () -> assertThat(actualNames).containsExactly("두마리메뉴", "한마리메뉴", "순살파닭두마리메뉴", "신메뉴")
+    );
   }
 }
