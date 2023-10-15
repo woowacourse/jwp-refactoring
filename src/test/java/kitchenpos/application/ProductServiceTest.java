@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.support.FixtureFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,22 +31,20 @@ class ProductServiceTest {
     @Test
     void create_new_product() {
         // given
-        final Product newProduct = new Product();
-        newProduct.setId(1L);
-        newProduct.setName("새 상품");
-        newProduct.setPrice(new BigDecimal(500));
+        final Product newProduct = FixtureFactory.forSaveProduct("새 상품", new BigDecimal(1000));
+        final Product savedProduct = FixtureFactory.savedProduct(1L, "새 상품", new BigDecimal(1000));
 
         given(productDao.save(newProduct))
-                .willReturn(newProduct);
+                .willReturn(savedProduct);
 
         // when
         final Product result = productService.create(newProduct);
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(result.getId()).isEqualTo(newProduct.getId());
-            softly.assertThat(result.getName()).isEqualTo(newProduct.getName());
-            softly.assertThat(result.getPrice()).isEqualTo(newProduct.getPrice());
+            softly.assertThat(result.getId()).isEqualTo(savedProduct.getId());
+            softly.assertThat(result.getName()).isEqualTo(savedProduct.getName());
+            softly.assertThat(result.getPrice()).isEqualTo(savedProduct.getPrice());
         });
     }
 
@@ -53,10 +52,7 @@ class ProductServiceTest {
     @Test
     void create_fail_new_product() {
         // given
-        final Product wrongProduct = new Product();
-        wrongProduct.setId(1L);
-        wrongProduct.setName("잘못된 상품");
-        wrongProduct.setPrice(new BigDecimal(-500));
+        final Product wrongProduct = FixtureFactory.forSaveProduct("새 상품", new BigDecimal(-100));
 
         // when
         // then
@@ -68,10 +64,7 @@ class ProductServiceTest {
     @Test
     void create_fail_with_product_price_null() {
         // given
-        final Product wrongProduct = new Product();
-        wrongProduct.setId(1L);
-        wrongProduct.setName("잘못된 상품");
-        wrongProduct.setPrice(null);
+        final Product wrongProduct = FixtureFactory.forSaveProduct("새 상품", null);
 
         // when
         // then
@@ -83,17 +76,10 @@ class ProductServiceTest {
     @Test
     void find_all_products() {
         // given
-        final Product newProduct1 = new Product();
-        newProduct1.setId(1L);
-        newProduct1.setName("새 상품1");
-        newProduct1.setPrice(new BigDecimal(500));
+        final Product product1 = FixtureFactory.savedProduct(1L, "새 상품1", new BigDecimal(500));
+        final Product product2 = FixtureFactory.savedProduct(2L, "새 상품2", new BigDecimal(1000));
 
-        final Product newProduct2 = new Product();
-        newProduct2.setId(2L);
-        newProduct2.setName("새 상품2");
-        newProduct2.setPrice(new BigDecimal(1000));
-
-        final List<Product> products = List.of(newProduct1, newProduct2);
+        final List<Product> products = List.of(product1, product2);
 
         given(productDao.findAll())
                 .willReturn(products);
