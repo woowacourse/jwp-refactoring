@@ -1,7 +1,7 @@
 package kitchenpos.fake;
 
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.TableGroupRepository;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,7 +11,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class InMemoryTableGroupDao implements TableGroupDao {
+public class InMemoryTableGroupDao implements TableGroupRepository {
 
     private final Map<Long, TableGroup> map = new HashMap<>();
     private final AtomicLong id = new AtomicLong(0);

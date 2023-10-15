@@ -21,7 +21,7 @@ public class InMemoryOrderTableRepository implements OrderTableRepository {
     public OrderTable save(OrderTable entity) {
         if (Objects.isNull(entity.getId())) {
             long id = this.id.getAndIncrement();
-            OrderTable orderTable = new OrderTable(id, entity.getTableGroupId(), entity.getNumberOfGuests(), entity.isEmpty());
+            OrderTable orderTable = new OrderTable(id, entity.getTableGroup(), entity.getNumberOfGuests(), entity.isEmpty());
             map.put(id, orderTable);
             return orderTable;
         }
@@ -54,7 +54,7 @@ public class InMemoryOrderTableRepository implements OrderTableRepository {
     @Override
     public List<OrderTable> findAllByTableGroupId(Long tableGroupId) {
         return map.values().stream()
-                .filter(it -> it.getTableGroupId().equals(tableGroupId))
+                .filter(it -> it.getTableGroup().getId().equals(tableGroupId))
                 .collect(Collectors.toList());
     }
 }

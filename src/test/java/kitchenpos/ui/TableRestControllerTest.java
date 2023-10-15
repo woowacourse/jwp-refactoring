@@ -6,6 +6,7 @@ import kitchenpos.application.dto.OrderTableEmptyRequest;
 import kitchenpos.application.dto.OrderTableNumberOfGuestRequest;
 import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.fixture.OrderTableFixtrue;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -39,7 +40,7 @@ class TableRestControllerTest {
     @Test
     void 테이블을_생성한다() throws Exception {
         // given
-        OrderTable createdTable = new OrderTable(1L, 1L, 10, false);
+        OrderTable createdTable = OrderTableFixtrue.orderTable(10, false);
         OrderTableRequest request = new OrderTableRequest(10, false);
 
         // when
@@ -57,8 +58,8 @@ class TableRestControllerTest {
     @Test
     void 테이블을_전체_조회한다() throws Exception {
         // given
-        OrderTable table1 = new OrderTable(1L, 1L, 10, false);
-        OrderTable table2 = new OrderTable(2L, 2L, 12, false);
+        OrderTable table1 = OrderTableFixtrue.orderTable(10, false);
+        OrderTable table2 = OrderTableFixtrue.orderTable(12, false);
 
         // when
         when(tableService.list()).thenReturn(List.of(table1, table2));
@@ -75,7 +76,7 @@ class TableRestControllerTest {
         // given
         Long tableId = 1L;
         OrderTableEmptyRequest orderTableEmptyRequest = new OrderTableEmptyRequest(true);
-        OrderTable orderTable = new OrderTable(1L, 1L, 10, true);
+        OrderTable orderTable = OrderTableFixtrue.orderTable(10, true);
 
         // when
         when(tableService.changeEmpty(tableId, orderTableEmptyRequest)).thenReturn(orderTable);
@@ -91,7 +92,7 @@ class TableRestControllerTest {
     void 테이블의_손님_수를_변경한다() throws Exception {
         // given
         Long tableId = 1L;
-        OrderTable updatedTable = new OrderTable(1L, 1L, 10, false);
+        OrderTable updatedTable = OrderTableFixtrue.orderTable(10, false);
         OrderTableNumberOfGuestRequest request = new OrderTableNumberOfGuestRequest(10);
 
         // when

@@ -8,6 +8,7 @@ import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.fake.InMemoryOrderRepository;
 import kitchenpos.fake.InMemoryOrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,10 +19,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.time.LocalDateTime;
+
 import static kitchenpos.fixture.OrderFixture.order;
 import static kitchenpos.fixture.OrderTableFixtrue.orderTable;
 import static kitchenpos.fixture.OrderTableFixtrue.orderTableNumberOfGuestsRequest;
 import static kitchenpos.fixture.OrderTableFixtrue.orderTableRequest;
+import static kitchenpos.fixture.TableGroupFixture.tableGroupWithoutOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -55,7 +59,7 @@ class TableServiceTest {
                     .ignoringFields("id", "tableGroupId")
                     .isEqualTo(orderTable(10, false));
             softly.assertThat(savedOrderTable.getId()).isNotNull();
-            softly.assertThat(savedOrderTable.getTableGroupId()).isNull();
+            softly.assertThat(savedOrderTable.getTableGroup()).isNull();
         });
     }
 
@@ -76,7 +80,8 @@ class TableServiceTest {
     @Test
     void 주문_테이블을_빈_테이블로_변경할_때_단체_지정이_있으면_예외가_발생한다() {
         // given
-        OrderTable orderTable = orderTableRepository.save(orderTable(1L, 10, false));
+        TableGroup tableGroup = tableGroupWithoutOrderTable(LocalDateTime.now());
+        OrderTable orderTable = orderTableRepository.save(orderTable(tableGroup, 10, false));
 
         // expect
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), new OrderTableEmptyRequest(true)))

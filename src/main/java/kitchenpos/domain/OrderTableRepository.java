@@ -15,6 +15,6 @@ public interface OrderTableRepository extends Repository<OrderTable, Long> {
 
     List<OrderTable> findAllByIdIn(List<Long> ids);
 
-    @Query("select o from OrderTable o where o.tableGroupId = :tableGroupId")
+    @Query("select o from OrderTable o where o.tableGroup.id = :tableGroupId")
     List<OrderTable> findAllByTableGroupId(Long tableGroupId);
 }

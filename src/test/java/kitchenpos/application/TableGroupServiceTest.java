@@ -1,12 +1,12 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.TableGroupRequest;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.TableGroupRepository;
 import kitchenpos.fake.InMemoryOrderRepository;
 import kitchenpos.fake.InMemoryOrderTableRepository;
 import kitchenpos.fake.InMemoryTableGroupDao;
@@ -25,6 +25,7 @@ import static kitchenpos.fixture.OrderFixture.order;
 import static kitchenpos.fixture.OrderTableFixtrue.orderTable;
 import static kitchenpos.fixture.TableGroupFixture.tableGroup;
 import static kitchenpos.fixture.TableGroupFixture.tableGroupRequest;
+import static kitchenpos.fixture.TableGroupFixture.tableGroupWithoutOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -36,7 +37,7 @@ class TableGroupServiceTest {
     private TableGroupService tableGroupService;
     private OrderRepository orderRepository;
     private OrderTableRepository orderTableRepository;
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupDao;
 
     @BeforeEach
     void before() {
@@ -76,8 +77,8 @@ class TableGroupServiceTest {
         OrderTable savedOrderTable = orderTableRepository.findById(orderTable.getId()).get();
         OrderTable savedOrderTable2 = orderTableRepository.findById(orderTable2.getId()).get();
         assertSoftly(softly -> {
-            softly.assertThat(savedOrderTable.getTableGroupId()).isNotNull();
-            softly.assertThat(savedOrderTable2.getTableGroupId()).isNotNull();
+            softly.assertThat(savedOrderTable.getTableGroup()).isNotNull();
+            softly.assertThat(savedOrderTable2.getTableGroup()).isNotNull();
             softly.assertThat(savedOrderTable.isEmpty()).isTrue();
             softly.assertThat(savedOrderTable2.isEmpty()).isTrue();
         });
@@ -120,8 +121,8 @@ class TableGroupServiceTest {
     @Test
     void 단체_지정을_생성할_때_이미_단체_지정이_되어있으면_예외가_발생한다() {
         // given
-        OrderTable orderTable = orderTableRepository.save(orderTable(1L, 10, true));
-        OrderTable orderTable2 = orderTableRepository.save(orderTable(1L, 3, true));
+        OrderTable orderTable = orderTableRepository.save(orderTable(10, true));
+        OrderTable orderTable2 = orderTableRepository.save(orderTable(tableGroup(List.of(orderTable)), 3, true));
         TableGroupRequest tableGroup = tableGroupRequest(List.of(new OrderTableIdRequest(orderTable.getId()), new OrderTableIdRequest(orderTable2.getId())));
 
         // expect
@@ -132,10 +133,10 @@ class TableGroupServiceTest {
     @Test
     void 단체_지정을_해제한다() {
         // given
-        OrderTable orderTable = orderTableRepository.save(orderTable(0L, 10, false));
-        OrderTable orderTable2 = orderTableRepository.save(orderTable(0L, 3, false));
+        TableGroup tableGroup = tableGroupDao.save(tableGroupWithoutOrderTable(LocalDateTime.now()));
+        OrderTable orderTable = orderTableRepository.save(orderTable(tableGroup, 10, false));
+        OrderTable orderTable2 = orderTableRepository.save(orderTable(tableGroup, 3, false));
         orderRepository.save(order(orderTable.getId(), OrderStatus.COMPLETION));
-        TableGroup tableGroup = tableGroupDao.save(tableGroup(List.of(orderTable, orderTable2)));
 
         // when
         tableGroupService.ungroup(tableGroup.getId());
@@ -143,10 +144,10 @@ class TableGroupServiceTest {
         // then
         assertSoftly(softly -> {
             softly.assertThat(orderTableRepository.findById(orderTable.getId())).isPresent();
-            softly.assertThat(orderTableRepository.findById(orderTable.getId()).get().getTableGroupId()).isNull();
+            softly.assertThat(orderTableRepository.findById(orderTable.getId()).get().getTableGroup()).isNull();
             softly.assertThat(orderTableRepository.findById(orderTable.getId()).get().isEmpty()).isFalse();
             softly.assertThat(orderTableRepository.findById(orderTable2.getId())).isPresent();
-            softly.assertThat(orderTableRepository.findById(orderTable2.getId()).get().getTableGroupId()).isNull();
+            softly.assertThat(orderTableRepository.findById(orderTable2.getId()).get().getTableGroup()).isNull();
             softly.assertThat(orderTableRepository.findById(orderTable2.getId()).get().isEmpty()).isFalse();
         });
     }
@@ -155,10 +156,10 @@ class TableGroupServiceTest {
     @ParameterizedTest
     void 단체_지정을_해제할_때_주문의_상태가_조리_혹은_식사_이면_예외가_발생한다(OrderStatus orderStatus) {
         // given
-        OrderTable orderTable = orderTableRepository.save(orderTable(0L, 10, false));
-        OrderTable orderTable2 = orderTableRepository.save(orderTable(0L, 3, false));
+        TableGroup tableGroup = tableGroupDao.save(tableGroupWithoutOrderTable(LocalDateTime.now()));
+        OrderTable orderTable = orderTableRepository.save(orderTable(tableGroup, 10, false));
+        OrderTable orderTable2 = orderTableRepository.save(orderTable(tableGroup, 3, false));
         orderRepository.save(order(orderTable.getId(), orderStatus));
-        TableGroup tableGroup = tableGroupDao.save(tableGroup(List.of(orderTable, orderTable2)));
 
         // when
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))

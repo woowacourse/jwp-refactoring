@@ -1,12 +1,12 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.TableGroupRequest;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -23,9 +23,9 @@ import static kitchenpos.application.dto.TableGroupRequest.OrderTableIdRequest;
 public class TableGroupService {
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
-    private final TableGroupDao tableGroupDao;
+    private final TableGroupRepository tableGroupDao;
 
-    public TableGroupService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository, final TableGroupDao tableGroupDao) {
+    public TableGroupService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository, final TableGroupRepository tableGroupDao) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupDao = tableGroupDao;
@@ -50,16 +50,15 @@ public class TableGroupService {
         }
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
+            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
                 throw new IllegalArgumentException();
             }
         }
 
         final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), savedOrderTables));
 
-        final Long tableGroupId = savedTableGroup.getId();
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            orderTableRepository.save(new OrderTable(savedOrderTable.getId(), tableGroupId, savedOrderTable.getNumberOfGuests(), savedOrderTable.isEmpty()));
+            orderTableRepository.save(new OrderTable(savedOrderTable.getId(), savedTableGroup, savedOrderTable.getNumberOfGuests(), savedOrderTable.isEmpty()));
         }
         savedTableGroup.changeOrderTables(savedOrderTables);
 

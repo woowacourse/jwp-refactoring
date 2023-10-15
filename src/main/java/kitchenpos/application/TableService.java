@@ -38,7 +38,7 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
+        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
             throw new IllegalArgumentException();
         }
 
@@ -67,6 +67,6 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        return orderTableRepository.save(new OrderTable(savedOrderTable.getId(), savedOrderTable.getTableGroupId(), numberOfGuests, savedOrderTable.isEmpty()));
+        return orderTableRepository.save(new OrderTable(savedOrderTable.getId(), savedOrderTable.getTableGroup(), numberOfGuests, savedOrderTable.isEmpty()));
     }
 }
