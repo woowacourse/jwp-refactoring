@@ -149,7 +149,6 @@ class OrderServiceTest extends ServiceTest {
             .isEqualTo(expected);
     }
 
-
     @Nested
     class 주문_상태_변경 {
 

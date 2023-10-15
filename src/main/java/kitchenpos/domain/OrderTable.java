@@ -61,8 +61,20 @@ public class OrderTable {
     }
 
     public void group(TableGroup tableGroup) {
+        if (!empty) {
+            throw new IllegalArgumentException("비어있는 테이블만 주문그룹이 될 수 있습니다.");
+        }
+
+        if (Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException("그룹에 속하지 않은 테이블만 주문그룹이 될 수 있습니다.");
+        }
         this.empty = false;
         this.tableGroupId = tableGroup.getId();
+    }
+
+    public void unGroup() {
+        this.empty = true;
+        this.tableGroupId = null;
     }
 
     public Long getId() {
@@ -87,10 +99,6 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public boolean isNotEmpty() {
-        return !empty;
     }
 
     public void setEmpty(final boolean empty) {

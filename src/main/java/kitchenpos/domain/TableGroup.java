@@ -1,8 +1,8 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,37 +22,29 @@ public class TableGroup {
 
     @OneToMany
     @JoinColumn(name = "table_group_id")
-    private List<OrderTable> orderTables;
+    private final List<OrderTable> orderTables = new ArrayList<>();
 
     public TableGroup() {
     }
 
-    public TableGroup(List<OrderTable> orderTables) {
-        this(null, LocalDateTime.now(), orderTables);
-    }
-
-    public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
-        this(null, createdDate, orderTables);
-    }
-
-    public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
-        validate(orderTables);
+    public TableGroup(Long id) {
         this.id = id;
-        this.createdDate = createdDate;
-        this.orderTables = orderTables;
+        this.createdDate = LocalDateTime.now();
+    }
+
+    public static TableGroup createEmpty() {
+        return new TableGroup(null);
+    }
+
+    public void group(List<OrderTable> orderTables) {
+        validate(orderTables);
+        orderTables.forEach(it -> it.group(this));
+        this.orderTables.addAll(orderTables);
     }
 
     private void validate(List<OrderTable> orderTables) {
         if (orderTables.size() < MIN_ORDER_TABLE_SIZE) {
             throw new IllegalArgumentException(String.format("테이블 그룹은 최소 %s개 이상의 테이블이 필요합니다.", MIN_ORDER_TABLE_SIZE));
-        }
-
-        if (orderTables.stream().anyMatch(OrderTable::isNotEmpty)) {
-            throw new IllegalArgumentException("비어있는 테이블만 주문그룹이 될 수 있습니다.");
-        }
-
-        if (orderTables.stream().anyMatch(it -> Objects.nonNull(it.getTableGroupId()))) {
-            throw new IllegalArgumentException("비어있는 테이블만 주문그룹이 될 수 있습니다.");
         }
     }
 
@@ -74,9 +66,5 @@ public class TableGroup {
 
     public List<OrderTable> getOrderTables() {
         return orderTables;
-    }
-
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
     }
 }

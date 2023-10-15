@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
+import static java.util.stream.Collectors.toList;
+
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.application.request.OrderTableRequest;
 import kitchenpos.application.request.TableGroupCreateRequest;
 import kitchenpos.dao.OrderDao;
@@ -33,31 +33,16 @@ public class TableGroupService {
     public TableGroup create(TableGroupCreateRequest request) {
         List<Long> orderTableIds = request.getOrderTableRequests().stream()
             .map(OrderTableRequest::getId)
-            .collect(Collectors.toList());
+            .collect(toList());
         List<OrderTable> savedOrderTables = getOrderTables(orderTableIds);
-        TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(savedOrderTables));
-        savedOrderTables.forEach(it -> it.group(savedTableGroup));
-        return savedTableGroup;
+        return getTableGroup(savedOrderTables);
     }
 
     @Transactional
     public void ungroup(Long tableGroupId) {
         List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
-
-        List<Long> orderTableIds = orderTables.stream()
-            .map(OrderTable::getId)
-            .collect(Collectors.toList());
-
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
-            orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
-
-        for (OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(null);
-            orderTable.setEmpty(false);
-            orderTableDao.save(orderTable);
-        }
+        validateUngroupable(orderTables);
+        orderTables.forEach(OrderTable::unGroup);
     }
 
     private List<OrderTable> getOrderTables(List<Long> orderTableIds) {
@@ -71,5 +56,22 @@ public class TableGroupService {
             throw new IllegalArgumentException();
         }
         return savedOrderTables;
+    }
+
+    private TableGroup getTableGroup(List<OrderTable> savedOrderTables) {
+        TableGroup tableGroup = tableGroupDao.save(TableGroup.createEmpty());
+        tableGroup.group(savedOrderTables);
+        return tableGroup;
+    }
+
+    private void validateUngroupable(List<OrderTable> orderTables) {
+        List<Long> orderTableIds = orderTables.stream()
+            .map(OrderTable::getId)
+            .collect(toList());
+
+        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
+            orderTableIds, List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+            throw new IllegalArgumentException();
+        }
     }
 }

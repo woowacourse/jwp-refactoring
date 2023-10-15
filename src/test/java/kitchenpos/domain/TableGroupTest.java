@@ -17,7 +17,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 class TableGroupTest {
 
     @Nested
-    class 테이블그룹_생성시 {
+    class 테이블을_그룹화_할떄 {
 
         @Test
         void 성공() {
@@ -26,9 +26,10 @@ class TableGroupTest {
                 new OrderTable(1L, null, 3, true),
                 new OrderTable(2L, null, 2, true)
             );
+            TableGroup tableGroup = new TableGroup();
 
             // when && then
-            assertThatNoException().isThrownBy(() -> new TableGroup(orderTables));
+            assertThatNoException().isThrownBy(() -> tableGroup.group(orderTables));
         }
 
         @ParameterizedTest
@@ -38,10 +39,12 @@ class TableGroupTest {
             List<OrderTable> orderTables = new ArrayList<>();
             for (long i = 1; i <= size; i++) {
                 orderTables.add(new OrderTable(i, null, 2, false));
-            };
+            }
+            ;
+            TableGroup tableGroup = new TableGroup();
 
             // when && then
-            assertThatThrownBy(() -> new TableGroup(orderTables))
+            assertThatThrownBy(() -> tableGroup.group(orderTables))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("테이블 그룹은 최소 2개 이상의 테이블이 필요합니다.");
         }
@@ -53,9 +56,10 @@ class TableGroupTest {
                 new OrderTable(1L, null, 3, true),
                 new OrderTable(2L, null, 2, false)
             );
+            TableGroup tableGroup = new TableGroup();
 
             // when && then
-            assertThatThrownBy(() -> new TableGroup(orderTables))
+            assertThatThrownBy(() -> tableGroup.group(orderTables))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("비어있는 테이블만 주문그룹이 될 수 있습니다.");
         }
@@ -67,9 +71,10 @@ class TableGroupTest {
                 new OrderTable(1L, null, 3, true),
                 new OrderTable(2L, 1L, 2, false)
             );
+            TableGroup tableGroup = new TableGroup();
 
             // when && then
-            assertThatThrownBy(() -> new TableGroup(orderTables))
+            assertThatThrownBy(() -> tableGroup.group(orderTables))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("비어있는 테이블만 주문그룹이 될 수 있습니다.");
         }
