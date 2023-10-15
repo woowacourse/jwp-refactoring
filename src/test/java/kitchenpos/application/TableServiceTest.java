@@ -30,6 +30,9 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.EnumSource.Mode;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -103,8 +106,9 @@ class TableServiceTest extends ServiceTest {
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
-        @Test
-        void 주문상태가_COOKING이거나_MEAL이면_변경할_수_없다() {
+        @ParameterizedTest
+        @EnumSource(mode = Mode.INCLUDE, names = {"COOKING", "MEAL"})
+        void 주문상태가_COOKING이거나_MEAL이면_변경할_수_없다(OrderStatus orderStatus) {
             // given
             MenuGroup 두마리메뉴 = menuGroupDao.save(메뉴그룹_두마리메뉴);
 
@@ -117,7 +121,7 @@ class TableServiceTest extends ServiceTest {
             OrderTable 테이블 = orderTableDao.save(비지않은_테이블());
             OrderLineItem 주문상품 = 주문상품(후라이드메뉴.getId(), 3);
 
-            Order order = orderDao.save(주문(테이블.getId(), OrderStatus.COOKING.name()));
+            Order order = orderDao.save(주문(테이블.getId(), orderStatus.name()));
             orderLineItemDao.save(주문상품(order.getId(), 후라이드메뉴.getId(), 1));
 
             OrderTable changeRequest = 빈테이블();

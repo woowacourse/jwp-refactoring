@@ -33,6 +33,9 @@ import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.EnumSource.Mode;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -155,8 +158,9 @@ class TableGroupServiceTest extends ServiceTest {
             assertThat(orderTableDao.findAllByTableGroupId(테이블그룹.getId())).isEmpty();
         }
 
-        @Test
-        void 주문상태가_COMPLETION이_아니면_삭제할_수_없다() {
+        @ParameterizedTest
+        @EnumSource(mode = Mode.EXCLUDE, names = "COMPLETION")
+        void 주문상태가_COMPLETION이_아니면_삭제할_수_없다(OrderStatus orderStatus) {
             // given
             MenuGroup 두마리메뉴 = menuGroupDao.save(메뉴그룹_두마리메뉴);
 
@@ -171,7 +175,7 @@ class TableGroupServiceTest extends ServiceTest {
 
             TableGroup 테이블그룹 = tableGroupService.create(테이블그룹(List.of(테이블1, 테이블2)));
 
-            Order order1 = orderDao.save(주문(테이블1.getId(), OrderStatus.COOKING.name()));
+            Order order1 = orderDao.save(주문(테이블1.getId(), orderStatus.name()));
             OrderLineItem 주문상품 = orderLineItemDao.save(주문상품(order1.getId(), 후라이드메뉴.getId(), 1));
             order1.setOrderLineItems(List.of(주문상품));
 
