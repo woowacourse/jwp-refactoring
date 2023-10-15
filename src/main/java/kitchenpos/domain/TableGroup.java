@@ -15,10 +15,14 @@ public class TableGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDateTime createdDate;
-    @OneToMany(mappedBy = "tableGroupId")
+    @OneToMany(mappedBy = "tableGroup")
     private List<OrderTable> orderTables;
 
     protected TableGroup() {
+    }
+
+    public TableGroup(final LocalDateTime createdDate) {
+        this.createdDate = createdDate;
     }
 
     public Long getId() {

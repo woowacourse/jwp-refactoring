@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -18,14 +19,11 @@ public class Menu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-
     @Embedded
     private Price price;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
-
     @OneToMany(mappedBy = "menu", fetch = FetchType.LAZY)
     private List<MenuProduct> menuProducts;
 
@@ -50,10 +48,9 @@ public class Menu {
     public Menu(
             final String name,
             final BigDecimal price,
-            final MenuGroup menuGroupId,
-            final List<MenuProduct> menuProducts
+            final MenuGroup menuGroup
     ) {
-        this(null, name, Price.from(price), menuGroupId, menuProducts);
+        this(null, name, Price.from(price), menuGroup, new ArrayList<>());
     }
 
     private void validateMenuProductsPrice(final List<MenuProduct> menuProducts) {
@@ -63,6 +60,10 @@ public class Menu {
         if (this.price.isGreaterThan(totalPrice)) {
             throw new IllegalArgumentException();
         }
+    }
+
+    public void addMenuProduct(final MenuProduct menuProduct) {
+        menuProducts.add(menuProduct);
     }
 
     public Long getId() {

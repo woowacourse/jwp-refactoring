@@ -22,6 +22,10 @@ public class Price {
         return new Price(price);
     }
 
+    public static Price from(final Long price) {
+        return new Price(BigDecimal.valueOf(price));
+    }
+
     private static void validate(final BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();

@@ -15,20 +15,30 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroupId;
+    @JoinColumn(name = "table_group_id", nullable = true)
+    private TableGroup tableGroup;
     private int numberOfGuests;
     private boolean empty;
 
     protected OrderTable() {
     }
 
+    public OrderTable(
+            final TableGroup tableGroup,
+            final int numberOfGuests,
+            final boolean empty
+    ) {
+        this.tableGroup = tableGroup;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
     public Long getId() {
         return id;
     }
 
-    public TableGroup getTableGroupId() {
-        return tableGroupId;
+    public TableGroup getTableGroup() {
+        return tableGroup;
     }
 
     public int getNumberOfGuests() {

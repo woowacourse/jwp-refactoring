@@ -3,9 +3,14 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -16,25 +21,37 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long orderTableId;
-    private String orderStatus;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_table_id")
+    private OrderTable orderTable;
+    @Enumerated(value = EnumType.STRING)
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
-
     @OneToMany(mappedBy = "order")
     private List<OrderLineItem> orderLineItems;
 
     protected Order() {
     }
 
+    public Order(
+            final OrderTable orderTable,
+            final OrderStatus orderStatus,
+            final LocalDateTime orderedTime
+    ) {
+        this.orderTable = orderTable;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+    }
+
     public Long getId() {
         return id;
     }
 
-    public Long getOrderTableId() {
-        return orderTableId;
+    public OrderTable getOrderTable() {
+        return orderTable;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 

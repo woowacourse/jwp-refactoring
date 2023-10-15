@@ -17,6 +17,11 @@ public class Product {
     protected Product() {
     }
 
+    public Product(final String name, final Price price) {
+        this.name = name;
+        this.price = price;
+    }
+
     public Long getId() {
         return id;
     }
