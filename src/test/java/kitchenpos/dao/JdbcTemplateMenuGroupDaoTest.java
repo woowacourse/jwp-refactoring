@@ -45,6 +45,6 @@ class JdbcTemplateMenuGroupDaoTest extends RepositoryTest {
         final boolean expect = jdbcTemplateMenuGroupDao.existsById(menuGroup.getId());
 
         //then
-        assertThat(expect).isEqualTo(true);
+        assertThat(expect).isTrue();
     }
 }

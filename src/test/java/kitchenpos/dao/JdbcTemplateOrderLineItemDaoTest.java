@@ -31,7 +31,7 @@ class JdbcTemplateOrderLineItemDaoTest extends RepositoryTest {
         final var result = jdbcTemplateOrderLineItemDao.findAll();
 
         //then
-        assertThat(result).hasSize(0);
+        assertThat(result).isEmpty();
     }
 
     @Test
