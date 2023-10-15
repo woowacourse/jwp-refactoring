@@ -105,7 +105,7 @@ class MenuServiceTest extends ApplicationTestConfig {
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
-        @DisplayName("[EXCEPTION] 등록할 신규 메뉴에 메뉴 상품 목록들의 가격 합보다 메뉴 상품의 가격이 높을 경우 예외가 발생한다.")
+        @DisplayName("[EXCEPTION] 등록할 신규 메뉴에 메뉴 상품 목록들의 가격 합보다 메뉴의 가격이 높을 경우 예외가 발생한다.")
         @Test
         void throwException_when_create_Menu_IfMenuProductsPriceSum_IsGreaterThanMenuPrice() {
             // given
