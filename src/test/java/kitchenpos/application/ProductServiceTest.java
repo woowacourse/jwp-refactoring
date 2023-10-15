@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.support.fixture.ProductFixture.getProduct;
+import static kitchenpos.support.fixture.domain.ProductFixture.getProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -32,7 +32,7 @@ class ProductServiceTest {
             //when
             //then
             assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -59,7 +59,7 @@ class ProductServiceTest {
 
         //then
         assertThat(products)
-            .usingRecursiveComparison()
-            .isEqualTo(List.of(pizza, chicken));
+                .usingRecursiveComparison()
+                .isEqualTo(List.of(pizza, chicken));
     }
 }

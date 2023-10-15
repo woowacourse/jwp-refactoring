@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
 import static kitchenpos.domain.OrderStatus.COMPLETION;
-import static kitchenpos.support.fixture.OrderFixture.getOrder;
-import static kitchenpos.support.fixture.OrderTableFixture.getOrderTable;
-import static kitchenpos.support.fixture.TableGroupFixture.getTableGroup;
+import static kitchenpos.support.fixture.domain.OrderFixture.getOrder;
+import static kitchenpos.support.fixture.domain.OrderTableFixture.getOrderTable;
+import static kitchenpos.support.fixture.domain.TableGroupFixture.getTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 class TableServiceTest {
 
     private static final long NOT_EXIST_ORDER_TABLE_ID = -1L;
-    
+
     @Autowired
     private TableService tableService;
 
@@ -58,7 +58,7 @@ class TableServiceTest {
             //when
             //then
             assertThatThrownBy(() -> tableService.changeEmpty(NOT_EXIST_ORDER_TABLE_ID, getOrderTable(true)))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -70,7 +70,7 @@ class TableServiceTest {
             //when
             //then
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), orderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @CsvSource(value = {"COOKING", "MEAL"})
@@ -83,7 +83,7 @@ class TableServiceTest {
             //when
             //then
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), getOrderTable(true)))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -111,7 +111,7 @@ class TableServiceTest {
             //when
             //then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), getOrderTable(-1, false)))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -119,7 +119,7 @@ class TableServiceTest {
             //when
             //then
             assertThatThrownBy(
-                () -> tableService.changeNumberOfGuests(NOT_EXIST_ORDER_TABLE_ID, getOrderTable(1, false))
+                    () -> tableService.changeNumberOfGuests(NOT_EXIST_ORDER_TABLE_ID, getOrderTable(1, false))
             ).isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -131,7 +131,7 @@ class TableServiceTest {
             //when
             //then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), getOrderTable(0, true)))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -141,7 +141,7 @@ class TableServiceTest {
 
             //when
             final OrderTable updatedOrderTable =
-                tableService.changeNumberOfGuests(orderTable.getId(), getOrderTable(2, false));
+                    tableService.changeNumberOfGuests(orderTable.getId(), getOrderTable(2, false));
 
             //then
             assertThat(updatedOrderTable.getNumberOfGuests()).isEqualTo(2);

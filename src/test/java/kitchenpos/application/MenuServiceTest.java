@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
-import static kitchenpos.support.fixture.MenuCreateRequestFixture.menuCreateRequest;
-import static kitchenpos.support.fixture.MenuFixture.getMenu;
-import static kitchenpos.support.fixture.MenuGroupFixture.getMenuGroup;
-import static kitchenpos.support.fixture.MenuProductFixture.getMenuProduct;
-import static kitchenpos.support.fixture.ProductFixture.getProduct;
+import static kitchenpos.support.fixture.domain.MenuFixture.getMenu;
+import static kitchenpos.support.fixture.domain.MenuGroupFixture.getMenuGroup;
+import static kitchenpos.support.fixture.domain.MenuProductFixture.getMenuProduct;
+import static kitchenpos.support.fixture.domain.ProductFixture.getProduct;
+import static kitchenpos.support.fixture.dto.MenuCreateRequestFixture.menuCreateRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;

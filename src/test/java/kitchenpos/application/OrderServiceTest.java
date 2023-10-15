@@ -2,11 +2,11 @@ package kitchenpos.application;
 
 import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.domain.OrderStatus.COOKING;
-import static kitchenpos.support.fixture.MenuFixture.getMenu;
-import static kitchenpos.support.fixture.MenuGroupFixture.getMenuGroup;
-import static kitchenpos.support.fixture.OrderFixture.getOrder;
-import static kitchenpos.support.fixture.OrderLineItemFixture.getOrderLineItem;
-import static kitchenpos.support.fixture.OrderTableFixture.getOrderTable;
+import static kitchenpos.support.fixture.domain.MenuFixture.getMenu;
+import static kitchenpos.support.fixture.domain.MenuGroupFixture.getMenuGroup;
+import static kitchenpos.support.fixture.domain.OrderFixture.getOrder;
+import static kitchenpos.support.fixture.domain.OrderLineItemFixture.getOrderLineItem;
+import static kitchenpos.support.fixture.domain.OrderTableFixture.getOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -68,7 +68,7 @@ public class OrderServiceTest {
             //when
             //then
             assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -80,7 +80,7 @@ public class OrderServiceTest {
             //when
             //then
             assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -92,7 +92,7 @@ public class OrderServiceTest {
             //when
             //then
             assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -105,7 +105,7 @@ public class OrderServiceTest {
             //when
             //then
             assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -139,8 +139,8 @@ public class OrderServiceTest {
 
         //then
         assertThat(orders)
-            .usingRecursiveComparison()
-            .isEqualTo(List.of(order1, order2));
+                .usingRecursiveComparison()
+                .isEqualTo(List.of(order1, order2));
     }
 
     @Nested
@@ -152,7 +152,7 @@ public class OrderServiceTest {
             //when
             //then
             assertThatThrownBy(() -> orderService.changeOrderStatus(NOT_EXIST_ORDER_ID, getOrder(1L, COOKING)))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -165,7 +165,7 @@ public class OrderServiceTest {
             //when
             //then
             assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), updatedOrder))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test

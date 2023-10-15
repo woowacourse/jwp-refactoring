@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import static kitchenpos.support.fixture.MenuGroupCreateRequestFixture.menuGroupCreateRequest;
-import static kitchenpos.support.fixture.MenuGroupFixture.getMenuGroup;
+import static kitchenpos.support.fixture.domain.MenuGroupFixture.getMenuGroup;
+import static kitchenpos.support.fixture.dto.MenuGroupCreateRequestFixture.menuGroupCreateRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;

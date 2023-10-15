@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import static kitchenpos.support.fixture.OrderFixture.getOrder;
-import static kitchenpos.support.fixture.OrderTableFixture.getOrderTable;
-import static kitchenpos.support.fixture.TableGroupFixture.getTableGroup;
+import static kitchenpos.support.fixture.domain.OrderFixture.getOrder;
+import static kitchenpos.support.fixture.domain.OrderTableFixture.getOrderTable;
+import static kitchenpos.support.fixture.domain.TableGroupFixture.getTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -47,7 +47,7 @@ class TableGroupServiceTest {
             //when
             //then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -59,7 +59,7 @@ class TableGroupServiceTest {
             //when
             //then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -72,7 +72,7 @@ class TableGroupServiceTest {
             //when
             //then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -85,7 +85,7 @@ class TableGroupServiceTest {
             //when
             //then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -101,7 +101,7 @@ class TableGroupServiceTest {
             //when
             //then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup2))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -116,12 +116,12 @@ class TableGroupServiceTest {
 
             //then
             assertThat(savedTableGroup.getOrderTables())
-                .extracting(OrderTable::isEmpty)
-                .containsExactly(false, false);
+                    .extracting(OrderTable::isEmpty)
+                    .containsExactly(false, false);
             final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(savedTableGroup.getId());
             assertThat(orderTables)
-                .extracting(OrderTable::isEmpty)
-                .containsExactly(false, false);
+                    .extracting(OrderTable::isEmpty)
+                    .containsExactly(false, false);
         }
     }
 
@@ -144,7 +144,7 @@ class TableGroupServiceTest {
             //when
             //then
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -160,8 +160,8 @@ class TableGroupServiceTest {
 
             //then
             assertThat(orderTableDao.findAllByIdIn(List.of(orderTable1.getId(), orderTable2.getId())))
-                .extracting(OrderTable::getTableGroupId)
-                .containsExactly(null, null);
+                    .extracting(OrderTable::getTableGroupId)
+                    .containsExactly(null, null);
         }
     }
 }
