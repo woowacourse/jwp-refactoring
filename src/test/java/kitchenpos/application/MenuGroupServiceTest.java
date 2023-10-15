@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.support.FixtureFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,20 +29,19 @@ class MenuGroupServiceTest {
     @Test
     void create_menuGroup() {
         // given
-        final MenuGroup newMenuGroup = new MenuGroup();
-        newMenuGroup.setId(1L);
-        newMenuGroup.setName("메뉴 그룹");
+        final MenuGroup newMenuGroup = FixtureFactory.forSaveMenuGroup("메뉴 그룹");
+        final MenuGroup savedMenuGroup = FixtureFactory.savedMenuGroup(1L, "메뉴 그룹");
 
         given(menuGroupDao.save(newMenuGroup))
-                .willReturn(newMenuGroup);
+                .willReturn(savedMenuGroup);
 
         // when
         final MenuGroup result = menuGroupService.create(newMenuGroup);
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(result.getId()).isEqualTo(newMenuGroup.getId());
-            softly.assertThat(result.getName()).isEqualTo(newMenuGroup.getName());
+            softly.assertThat(result.getId()).isEqualTo(savedMenuGroup.getId());
+            softly.assertThat(result.getName()).isEqualTo(savedMenuGroup.getName());
         });
     }
 
@@ -49,13 +49,8 @@ class MenuGroupServiceTest {
     @Test
     void find_all_menuGroup() {
         // given
-        final MenuGroup menuGroup1 = new MenuGroup();
-        menuGroup1.setId(1L);
-        menuGroup1.setName("메뉴 그룹1");
-
-        final MenuGroup menuGroup2 = new MenuGroup();
-        menuGroup2.setId(2L);
-        menuGroup2.setName("메뉴 그룹2");
+        final MenuGroup menuGroup1 = FixtureFactory.savedMenuGroup(1L, "메뉴 그룹1");
+        final MenuGroup menuGroup2 = FixtureFactory.savedMenuGroup(2L, "메뉴 그룹2");
 
         final List<MenuGroup> menuGroups = List.of(menuGroup1, menuGroup2);
 
