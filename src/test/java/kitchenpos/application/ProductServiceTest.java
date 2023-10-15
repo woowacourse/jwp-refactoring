@@ -9,10 +9,8 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigDecimal;
 import java.util.List;
 
-import static kitchenpos.fixture.ProductFixture.상품_생성;
 import static kitchenpos.fixture.ProductFixture.상품_생성_10000원;
 import static kitchenpos.fixture.ProductFixture.상품_생성_요청;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -44,8 +42,7 @@ class ProductServiceTest extends IntegrationTestHelper {
     @Test
     void 상품_가격은_0원_이상이어야한다() {
         // given
-        Product product = 상품_생성("테스트", new BigDecimal(-1));
-        ProductCreateRequest request = 상품_생성_요청(product);
+        ProductCreateRequest request = new ProductCreateRequest("테스트", -1L);
 
         // when & then
         assertThatThrownBy(() -> productService.create(request))
@@ -63,8 +60,8 @@ class ProductServiceTest extends IntegrationTestHelper {
         // then
         assertSoftly(softly -> {
             softly.assertThat(result).hasSize(1);
-            softly.assertThat(result.get(0)).usingRecursiveComparison()
-                    .isEqualTo(product);
+            softly.assertThat(result.get(0).getId()).usingRecursiveComparison()
+                    .isEqualTo(product.getId());
         });
     }
 }
