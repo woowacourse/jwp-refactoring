@@ -1,7 +1,7 @@
 package kitchenpos.fake;
 
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuGroupRepository;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,11 +11,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class InMemoryMenuGroupDao implements MenuGroupDao {
+public class InMemoryMenuGroupRepository implements MenuGroupRepository {
 
     private final Map<Long, MenuGroup> map = new HashMap<>();
     private final AtomicLong id = new AtomicLong();
-    
+
     @Override
     public MenuGroup save(MenuGroup entity) {
         if (Objects.isNull(entity.getId())) {

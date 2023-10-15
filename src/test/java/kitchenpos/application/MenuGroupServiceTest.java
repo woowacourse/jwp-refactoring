@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.MenuGroupRequest;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.fake.InMemoryMenuGroupDao;
+import kitchenpos.domain.MenuGroupRepository;
+import kitchenpos.fake.InMemoryMenuGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -21,12 +21,12 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 class MenuGroupServiceTest {
 
     private MenuGroupService menuGroupService;
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @BeforeEach
     void before() {
-        menuGroupDao = new InMemoryMenuGroupDao();
-        menuGroupService = new MenuGroupService(menuGroupDao);
+        menuGroupRepository = new InMemoryMenuGroupRepository();
+        menuGroupService = new MenuGroupService(menuGroupRepository);
     }
 
     @Test
@@ -47,8 +47,8 @@ class MenuGroupServiceTest {
     @Test
     void 주문을_전체_조회한다() {
         // given
-        menuGroupDao.save(menuGroup("korean"));
-        menuGroupDao.save(menuGroup("french"));
+        menuGroupRepository.save(menuGroup("korean"));
+        menuGroupRepository.save(menuGroup("french"));
 
         // when
         List<MenuGroup> savedMenuGroups = menuGroupService.list();

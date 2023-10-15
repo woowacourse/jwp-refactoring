@@ -2,15 +2,15 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.MenuRequest;
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
 import kitchenpos.fake.InMemoryMenuDao;
-import kitchenpos.fake.InMemoryMenuGroupDao;
+import kitchenpos.fake.InMemoryMenuGroupRepository;
 import kitchenpos.fake.InMemoryMenuProductDao;
 import kitchenpos.fake.InMemoryProductRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @SuppressWarnings("NonAsciiCharacters")
 class MenuServiceTest {
 
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
     private MenuDao menuDao;
     private MenuProductDao menuProductDao;
     private ProductRepository productRepository;
@@ -44,12 +44,12 @@ class MenuServiceTest {
 
     @BeforeEach
     void before() {
-        menuGroupDao = new InMemoryMenuGroupDao();
+        menuGroupRepository = new InMemoryMenuGroupRepository();
         menuDao = new InMemoryMenuDao();
         menuProductDao = new InMemoryMenuProductDao();
         productRepository = new InMemoryProductRepository();
-        menuService = new MenuService(menuDao, menuGroupDao, menuProductDao, productRepository);
-        savedMenuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
+        menuService = new MenuService(menuDao, menuGroupRepository, menuProductDao, productRepository);
+        savedMenuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
         savedMenuProduct = menuProductDao.save(new MenuProduct(1L, 1L, 10));
     }
 
@@ -57,7 +57,7 @@ class MenuServiceTest {
     void 메뉴를_생성한다() {
         // Given
         Product product = productRepository.save(new Product("chicken", BigDecimal.valueOf(1_000)));
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
         MenuRequest request = menuRequest("메뉴", 10_000L, menuGroup.getId(), List.of(new MenuProductRequest(product.getId(), 10L)));
 
         // When
@@ -100,7 +100,7 @@ class MenuServiceTest {
     @Test
     void 전체_메뉴를_조회할_수_있다() {
         // given
-        MenuGroup menuGroup = menuGroupDao.save(menuGroup("chicken"));
+        MenuGroup menuGroup = menuGroupRepository.save(menuGroup("chicken"));
         Product product = productRepository.save(product("fried chicken", 10000L));
 
         Menu menu1 = menuDao.save(menu("fried chicken", 10000L, menuGroup.getId(), List.of()));
