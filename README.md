@@ -28,6 +28,17 @@
         - [x] 상품의 가격이 `null`이 아니고 0 이상일 경우 저장할 수 있다.
         - [x] 모든 상품의 목록을 반환할 수 있다.
     - [x] TableGroupService
+        - [x] TableGroup을 저장할 수 있다.
+            - [x] TableGroup의 OrderTable의 크기는 2 이상이어야 한다.
+            - [x] TableGroup의 모든 OrderTable은 저장되어 있어야 한다.
+            - [x] TableGroup의 모든 OrderTable은 비어있어야 한다.
+            - [x] TableGroup의 모든 OrderTable의 TableGroup은 `null`이어야 한다.
+            - [x] TableGroup의 모든 OrderTable의 TableGroupId를 현재 TableGroup의 id로 업데이트한다.
+            - [x] TableGroup의 모든 OrderTable의 empty를 `false`로 업데이트한다.
+        - [x] TableGroup을 해제한다.
+            - [x] 해제하려는 모든 TableGroup의 OrderTable의 주문 상태는 COOKING이나 MEAL이 아니어야 한다.
+            - [x] 해제하려는 모든 TableGroup의 OrderTable의 TableGroupId를 `null`로 업데이트한다.
+            - [x] 해제하려는 모든 TableGroup의 OrderTable의 empty를 `false`로 업데이트한다.
     - [x] TableService
         - [x] Table을 저장할 수 있다.
         - [x] Table의 목록을 조회할 수 있다.
