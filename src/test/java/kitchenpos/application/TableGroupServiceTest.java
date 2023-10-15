@@ -5,6 +5,8 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,18 +37,18 @@ public class TableGroupServiceTest {
 
     @InjectMocks
     private TableGroupService tableGroupService;
+    private OrderTable orderTable;
+
+    @BeforeEach
+    void setUp() {
+        orderTable = new OrderTable(1L, null, 0, true);
+    }
 
     @Test
     @DisplayName("테이블 그룹 생성 테스트")
     public void createTableGroupTest() {
         //given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setEmpty(true);
-        orderTable.setTableGroupId(null);
-
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList(orderTable, orderTable));
+        TableGroup tableGroup = new TableGroup(1L, null, List.of(orderTable, orderTable));
 
         given(orderTableDao.findAllByIdIn(any())).willReturn(Arrays.asList(orderTable, orderTable));
         given(tableGroupDao.save(any(TableGroup.class))).willReturn(tableGroup);
@@ -55,19 +57,22 @@ public class TableGroupServiceTest {
         TableGroup result = tableGroupService.create(tableGroup);
 
         //then
-        assertThat(result).isNotNull();
-        assertThat(result.getOrderTables().size()).isEqualTo(2);
+        SoftAssertions.assertSoftly(softAssertions -> {
+            assertThat(result).usingRecursiveComparison()
+                    .ignoringFields("id")
+                    .isEqualTo(tableGroup);
+            result.getOrderTables().forEach(table -> {
+                softAssertions.assertThat(table.getTableGroupId()).isEqualTo(1L);
+                softAssertions.assertThat(table.isEmpty()).isFalse();
+            });
+        });
+
     }
 
     @Test
     @DisplayName("테이블 그룹 해제 테스트")
     public void ungroupTableTest() {
         //given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setEmpty(true);
-        orderTable.setTableGroupId(1L);
-
         given(orderTableDao.findAllByTableGroupId(anyLong())).willReturn(List.of(orderTable));
         given(orderDao.existsByOrderTableIdInAndOrderStatusIn(any(), any())).willReturn(false);
 
@@ -75,21 +80,28 @@ public class TableGroupServiceTest {
         tableGroupService.ungroup(1L);
 
         //then
-        assertThat(orderTable.getTableGroupId()).isNull();
-        assertThat(orderTable.isEmpty()).isFalse();
+        SoftAssertions.assertSoftly(softAssertions -> {
+            softAssertions.assertThat(orderTable.getTableGroupId()).isNull();
+            softAssertions.assertThat(orderTable.isEmpty()).isFalse();
+        });
     }
 
     @Test
-    @DisplayName("테이블 그룹 생성 실패 테스트")
-    public void createTableGroupFailTest() {
+    @DisplayName("테이블 그룹 생성 실패 테스트 - 주문 테이블이 2개 미만인 경우")
+    public void createTableGroupFailTest1() {
         //given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setEmpty(false);
-        orderTable.setTableGroupId(1L);
+        TableGroup tableGroup = new TableGroup(1L, null, List.of(orderTable));
 
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(orderTable));
+        //when & then
+        assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("테이블 그룹 생성 실패 테스트 - 주문 테이블 중 하나라도 비어있지 않은 경우")
+    public void createTableGroupFailTest2() {
+        //given
+        final OrderTable orderTable2 = new OrderTable(2L, null, 0, false);
+        TableGroup tableGroup = new TableGroup(1L, null, List.of(orderTable, orderTable2));
 
         //when & then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);

@@ -41,17 +41,10 @@ public class MenuServiceTest {
     @DisplayName("메뉴 생성 테스트")
     public void createMenuTest() {
         // Given
-        Menu menu = new Menu();
-        menu.setPrice(BigDecimal.valueOf(100));
-        menu.setMenuGroupId(1L);
-
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(1L);
-        menuProduct.setQuantity(1);
+        final Menu menu = new Menu(1L, "후라이드+후라이드", BigDecimal.valueOf(10000), 1L, null);
+        final Product product = new Product(1L, "후라이드", BigDecimal.valueOf(16000));
+        final MenuProduct menuProduct = new MenuProduct(1L, 1L, 1L, 1);
         menu.setMenuProducts(List.of(menuProduct));
-
-        Product product = new Product();
-        product.setPrice(BigDecimal.valueOf(100));
 
         given(menuGroupDao.existsById(anyLong())).willReturn(true);
         given(productDao.findById(anyLong())).willReturn(Optional.of(product));
@@ -64,7 +57,7 @@ public class MenuServiceTest {
         // Then
         verify(menuDao).save(any(Menu.class));
         verify(menuProductDao).save(any(MenuProduct.class));
-        assertThat(menu.getPrice()).isEqualTo(BigDecimal.valueOf(100));
+        assertThat(menu.getPrice()).isEqualTo(BigDecimal.valueOf(10000));
     }
 
     @Test

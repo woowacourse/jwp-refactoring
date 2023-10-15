@@ -6,7 +6,9 @@ import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,17 +36,18 @@ public class OrderServiceTest {
     private OrderTableDao orderTableDao;
     @InjectMocks
     private OrderService orderService;
+    private Order order;
+
+    @BeforeEach
+    void setUp() {
+        order = new Order(1L, 1L, OrderStatus.COOKING.name(), null, List.of(new OrderLineItem()));
+    }
 
     @Test
     @DisplayName("주문 생성 테스트")
     public void createOrderTest() {
         //given
-        Order order = new Order();
-        order.setId(1L);
-        order.setOrderTableId(1L);
-        order.setOrderLineItems(List.of(new OrderLineItem()));
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
+        final OrderTable orderTable = new OrderTable(1L, 1L, 3, false);
 
         given(menuDao.countByIdIn(any())).willReturn(1L);
         given(orderTableDao.findById(anyLong())).willReturn(Optional.of(orderTable));
@@ -55,16 +58,15 @@ public class OrderServiceTest {
         Order createdOrder = orderService.create(order);
 
         //then
-        assertThat(createdOrder.getOrderTableId()).isEqualTo(1L);
-        assertThat(createdOrder.getOrderLineItems()).hasSize(1);
+        assertThat(createdOrder).usingRecursiveComparison()
+                .ignoringFields("id", "orderedTime")
+                .isEqualTo(order);
     }
 
     @Test
     @DisplayName("주문 목록 조회 테스트")
     public void listOrdersTest() {
         //given
-        final Order order = new Order();
-        order.setId(1L);
         given(orderDao.findAll()).willReturn(List.of(order));
         given(orderLineItemDao.findAllByOrderId(anyLong())).willReturn(List.of(new OrderLineItem()));
 
@@ -79,10 +81,6 @@ public class OrderServiceTest {
     @DisplayName("주문 상태 변경 테스트")
     public void changeOrderStatusTest() {
         //given
-        Order order = new Order();
-        order.setId(1L);
-        order.setOrderStatus("COOKING");
-
         given(orderDao.findById(anyLong())).willReturn(Optional.of(order));
         given(orderDao.save(any(Order.class))).willReturn(order);
         given(orderLineItemDao.findAllByOrderId(anyLong())).willReturn(List.of(new OrderLineItem()));

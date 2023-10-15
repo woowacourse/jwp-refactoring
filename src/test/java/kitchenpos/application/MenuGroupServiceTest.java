@@ -10,7 +10,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,23 +44,23 @@ public class MenuGroupServiceTest {
         MenuGroup createdMenuGroup = menuGroupService.create(menuGroup);
 
         //then
-        assertThat(menuGroup.getId()).isEqualTo(createdMenuGroup.getId());
-        assertThat(menuGroup.getName()).isEqualTo(createdMenuGroup.getName());
+        assertThat(createdMenuGroup).usingRecursiveComparison()
+                .ignoringFields("id")
+                .isEqualTo(menuGroup);
     }
 
     @Test
     @DisplayName("메뉴 그룹 목록 조회 테스트")
     public void listMenuGroupTest() {
         //given
-        List<MenuGroup> menuGroups = Collections.singletonList(menuGroup);
+        List<MenuGroup> menuGroups = List.of(menuGroup);
         when(menuGroupDao.findAll()).thenReturn(menuGroups);
 
         //when
         List<MenuGroup> returnedMenuGroups = menuGroupService.list();
 
         //then
-        assertThat(menuGroups.size()).isEqualTo(returnedMenuGroups.size());
-        assertThat(menuGroups.get(0).getId()).isEqualTo(returnedMenuGroups.get(0).getId());
-        assertThat(menuGroups.get(0).getName()).isEqualTo(returnedMenuGroups.get(0).getName());
+        assertThat(returnedMenuGroups).usingRecursiveFieldByFieldElementComparator()
+                .isEqualTo(menuGroups);
     }
 }
