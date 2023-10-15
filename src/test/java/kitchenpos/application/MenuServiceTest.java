@@ -104,6 +104,21 @@ class MenuServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    @DisplayName("메뉴 금액이 null이면 메뉴를 생성할 수 없습니다.")
+    @Test
+    void create_fail_with_menu_price_null() {
+        // given
+        final Menu wrongMenu = new Menu();
+        wrongMenu.setId(1L);
+        wrongMenu.setName("새 메뉴");
+        wrongMenu.setPrice(null);
+
+        // when
+        // then
+        assertThatThrownBy(() -> menuService.create(wrongMenu))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
     @DisplayName("메뉴 그룹에 포함되어 있지 않은 메뉴이면 메뉴를 생성할 수 없다.")
     @Test
     void create_fail_menu_not_contained_menuGroup() {

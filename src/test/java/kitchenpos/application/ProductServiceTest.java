@@ -64,6 +64,21 @@ class ProductServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    @DisplayName("새 상품의 값이 null이면 예외를 발생한다.")
+    @Test
+    void create_fail_with_product_price_null() {
+        // given
+        final Product wrongProduct = new Product();
+        wrongProduct.setId(1L);
+        wrongProduct.setName("잘못된 상품");
+        wrongProduct.setPrice(null);
+
+        // when
+        // then
+        assertThatThrownBy(() -> productService.create(wrongProduct))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
     @DisplayName("상품 전제 정보를 불러온다.")
     @Test
     void find_all_products() {
