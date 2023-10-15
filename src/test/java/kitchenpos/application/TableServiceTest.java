@@ -82,10 +82,10 @@ class TableServiceTest extends ServiceTest {
     }
 
     @Nested
-    class 테이블_수정_시 {
+    class 테이블을_빈_테이블로_수정_시 {
 
         @Test
-        void 정상적인_테이블이라면_테이블을_수정한다() {
+        void 정상적인_테이블이라면_테이블을_빈_테이블로_수정한다() {
             //given
             OrderTable orderTable = tableService.create(테이블(null, 5, false));
             OrderTable updateTable = 테이블(null, 10, false);
