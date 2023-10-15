@@ -8,6 +8,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -73,14 +74,23 @@ class TableServiceTest extends ApplicationTestConfig {
             });
         }
 
-        @DisplayName("[EXCEPTION] 테이블 그룹이 등록되어 있지 않을 경우 예외가 발생한다.")
+        @DisplayName("[EXCEPTION] 주문 테이블이 단체 지정되어 있는 경우 예외가 발생한다.")
         @Test
-        void throwException_when_changeEmpty_orderTable_cannotFind_tableGroup() {
+        void throwException_when_changeEmpty_orderTable_isIn_tableGroup() {
             // given
-            final OrderTable unsavedOrderTable = new OrderTable(null, 5, false);
+            final OrderTable savedOrderTableWithFiveGuests = orderTableDao.save(new OrderTable(null, 5, true));
+            final List<OrderTable> savedOrderTables = List.of(
+                    savedOrderTableWithFiveGuests,
+                    orderTableDao.save(new OrderTable(null, 10, true))
+            );
+            final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), savedOrderTables));
+            for (final OrderTable savedOrderTable : savedOrderTables) {
+                savedOrderTable.setTableGroupId(savedTableGroup.getId());
+                orderTableDao.save(savedOrderTable);
+            }
 
             // expect
-            assertThatThrownBy(() -> tableService.changeEmpty(unsavedOrderTable.getId(), unsavedOrderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTableWithFiveGuests.getId(), savedOrderTableWithFiveGuests))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
