@@ -1,11 +1,13 @@
 package kitchenpos.application;
 
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
+import java.util.List;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
@@ -72,5 +74,34 @@ class ProductServiceTest {
         // then
         assertThatThrownBy(() -> productService.create(product))
             .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("상품 리스트를 조회한다.")
+    @Test
+    void list() {
+        // given
+        given(productDao.findAll())
+            .willReturn(List.of(
+                new Product() {{
+                    setId(1L);
+                    setPrice(BigDecimal.TEN);
+                    setName("상품1");
+                }},
+                new Product() {{
+                    setId(2L);
+                    setPrice(BigDecimal.valueOf(1000L));
+                    setName("상품2");
+                }}
+            ));
+
+        // when
+        final List<Product> products = productService.list();
+
+        // then
+        assertThat(products).hasSize(2);
+        assertThat(products.stream()
+                       .map(Product::getId)
+                       .collect(toList())).usingRecursiveComparison()
+            .isEqualTo(List.of(1L, 2L));
     }
 }
