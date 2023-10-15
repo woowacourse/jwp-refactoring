@@ -36,7 +36,7 @@ class ProductServiceTest extends ServiceTest {
             //then
             assertSoftly(softly -> {
                 softly.assertThat(actual.getId()).isNotNull();
-                softly.assertThat(actual.getPrice()).isEqualTo(product.getPrice());
+                softly.assertThat(actual.getPrice()).isEqualByComparingTo(product.getPrice());
                 softly.assertThat(actual.getName()).isEqualTo(product.getName());
             });
         }
