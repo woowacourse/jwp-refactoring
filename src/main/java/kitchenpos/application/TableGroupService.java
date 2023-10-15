@@ -13,6 +13,7 @@ import kitchenpos.dto.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Service
 public class TableGroupService {
     private final OrderRepository orderRepository;
@@ -29,14 +30,12 @@ public class TableGroupService {
         this.tableGroupRepository = tableGroupRepository;
     }
 
-    @Transactional
     public TableGroupResponse create(TableGroupRequest request) {
         TableGroup tableGroup = TableGroup.create();
         tableGroup.changeOrderTables(orderTableRepository.findAllByIdIn(request.getOrderTableIds()));
         return TableGroupResponse.from(tableGroupRepository.save(tableGroup));
     }
 
-    @Transactional
     public void ungroup(Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
 
@@ -46,7 +45,7 @@ public class TableGroupService {
 
         orderRepository.findAllByOrderTableIds(orderTableIds)
                 .forEach(Order::validateUngroupTableAllowed);
-        
+
         orderTables.forEach(OrderTable::clearTableGroup);
     }
 }

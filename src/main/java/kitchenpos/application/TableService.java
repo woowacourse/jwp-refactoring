@@ -12,6 +12,7 @@ import kitchenpos.dto.OrderTableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Service
 public class TableService {
     private final OrderRepository orderRepository;
@@ -22,23 +23,22 @@ public class TableService {
         this.orderTableRepository = orderTableRepository;
     }
 
-    @Transactional
     public OrderTableResponse create(OrderTableRequest request) {
         OrderTable orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
         return OrderTableResponse.from(orderTableRepository.save(orderTable));
     }
 
+    @Transactional(readOnly = true)
     public List<OrderTableResponse> list() {
         return orderTableRepository.findAll().stream()
                 .map(OrderTableResponse::from)
                 .collect(toList());
     }
 
-    @Transactional
     public OrderTableResponse changeEmpty(Long orderTableId, OrderTableRequest request) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
-        
+
         orderRepository.findByOrderTableId(orderTableId)
                 .ifPresent(Order::validateChangeTableStatusAllowed);
 
@@ -46,7 +46,6 @@ public class TableService {
         return OrderTableResponse.from(orderTableRepository.save(orderTable));
     }
 
-    @Transactional
     public OrderTableResponse changeNumberOfGuests(Long orderTableId, OrderTableRequest request) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("주문 테이블을 찾을 수 없습니다."));

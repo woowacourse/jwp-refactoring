@@ -15,6 +15,7 @@ import kitchenpos.dto.OrderStatusUpdateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Service
 public class OrderService {
     private final MenuRepository menuRepository;
@@ -31,7 +32,6 @@ public class OrderService {
         this.orderTableRepository = orderTableRepository;
     }
 
-    @Transactional
     public OrderResponse create(OrderCreateRequest request) {
         List<Long> menuIds = request.getMenuIds();
         if (menuIds.size() != menuRepository.countByIdIn(menuIds)) {
@@ -43,14 +43,14 @@ public class OrderService {
         return OrderResponse.from(orderRepository.save(order));
     }
 
+    @Transactional(readOnly = true)
     public List<OrderResponse> list() {
         final List<Order> orders = orderRepository.findAll();
         return orders.stream()
                 .map(OrderResponse::from)
                 .collect(toList());
     }
-
-    @Transactional
+    
     public OrderResponse changeOrderStatus(Long orderId, OrderStatusUpdateRequest request) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다."));
