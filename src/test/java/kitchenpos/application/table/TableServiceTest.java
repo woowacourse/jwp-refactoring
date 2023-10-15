@@ -13,13 +13,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -51,6 +56,7 @@ class TableServiceTest extends ApplicationTestConfig {
         });
     }
 
+    @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("비어있는 상태로 변경")
     @Nested
     class ChangeEmptyNestedTest {
@@ -95,8 +101,9 @@ class TableServiceTest extends ApplicationTestConfig {
         }
 
         @DisplayName("[EXCEPTION] 음식이 준비 중이거나 식사 중일 경우 예외가 발생한다.")
-        @Test
-        void throwException_when_changeEmpty_orderStatus_isCookieOrMeal() {
+        @ParameterizedTest
+        @MethodSource("getOrderStatusWithoutCompletion")
+        void throwException_when_changeEmpty_orderStatus_isCookieOrMeal(final OrderStatus orderStatus) {
             // given
             final MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup("테스트용 메뉴 그룹명"));
             final Menu savedMenu = menuDao.save(new Menu(
@@ -109,7 +116,7 @@ class TableServiceTest extends ApplicationTestConfig {
             final OrderTable savedOrderTable = orderTableDao.save(new OrderTable(null, 5, false));
             orderDao.save(new Order(
                     savedOrderTable.getId(),
-                    OrderStatus.COOKING.name(),
+                    orderStatus.name(),
                     LocalDateTime.now(),
                     orderLineItems
             ));
@@ -117,7 +124,12 @@ class TableServiceTest extends ApplicationTestConfig {
             // expect
             assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), savedOrderTable))
                     .isInstanceOf(IllegalArgumentException.class);
+        }
 
+        private Stream<Arguments> getOrderStatusWithoutCompletion() {
+            return Arrays.stream(OrderStatus.values())
+                    .filter(orderStatus -> orderStatus != OrderStatus.COMPLETION)
+                    .map(Arguments::arguments);
         }
     }
 

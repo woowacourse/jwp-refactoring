@@ -90,7 +90,7 @@ class TableGroupServiceTest extends ApplicationTestConfig {
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
-        Stream<Arguments> getWrongOrderTables() {
+        private Stream<Arguments> getWrongOrderTables() {
             return Stream.of(
                     Arguments.arguments(List.of()),
                     Arguments.arguments(List.of(
