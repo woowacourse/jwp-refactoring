@@ -1,6 +1,6 @@
 package kitchenpos.domain.orderlineitem;
 
-import kitchenpos.domain.menuproduct.Quantity;
+import kitchenpos.domain.Quantity;
 
 import java.util.Objects;
 

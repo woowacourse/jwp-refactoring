@@ -1,5 +1,7 @@
 package kitchenpos.domain.menuproduct;
 
+import kitchenpos.domain.Quantity;
+
 import java.util.Objects;
 
 public class MenuProduct {

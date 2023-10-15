@@ -6,7 +6,14 @@ public class NumberOfGuests {
     private final int value;
 
     public NumberOfGuests(final int value) {
+        validate(value);
         this.value = value;
+    }
+
+    private void validate(final int value) {
+        if (value <= 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public int getValue() {
