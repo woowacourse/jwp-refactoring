@@ -16,7 +16,7 @@ public class TableGroupRestController {
 
     private final TableGroupService tableGroupService;
 
-    public TableGroupRestController(final TableGroupService tableGroupService) {
+    public TableGroupRestController(TableGroupService tableGroupService) {
         this.tableGroupService = tableGroupService;
     }
 
@@ -30,7 +30,7 @@ public class TableGroupRestController {
     }
 
     @DeleteMapping("/api/table-groups/{tableGroupId}")
-    public ResponseEntity<Void> ungroup(@PathVariable final Long tableGroupId) {
+    public ResponseEntity<Void> ungroup(@PathVariable Long tableGroupId) {
         tableGroupService.ungroup(tableGroupId);
 
         return ResponseEntity.noContent()
