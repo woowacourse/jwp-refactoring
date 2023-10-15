@@ -31,16 +31,21 @@ class OrderServiceTest {
 
     @Mock
     private MenuDao menuDao;
+
     @Mock
     private OrderDao orderDao;
+
     @Mock
     private OrderLineItemDao orderLineItemDao;
+
     @Mock
     private OrderTableDao orderTableDao;
+
     @InjectMocks
     private OrderService orderService;
 
     @Test
+    @DisplayName("주문을 성공적으로 생성한다")
     void testCreateSuccess() {
         //given
         final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1);
@@ -66,7 +71,8 @@ class OrderServiceTest {
     }
 
     @Test
-    void testtCreateWhenOrderLineItemsEmptyFailure() {
+    @DisplayName("주문을 생성 시 아이템 목록이 비어있으면 예외가 발생한다")
+    void testCreateWhenOrderLineItemsEmptyFailure() {
         //given
         final Order order = new Order(1L, "status", LocalDateTime.now(), Collections.emptyList());
 
@@ -77,6 +83,7 @@ class OrderServiceTest {
     }
 
     @Test
+    @DisplayName("주문을 생성 시 아이템 목록과 메뉴 수가 일치하지 않으면 예외가 발생한다")
     void testCreateWhenOrderLineItemNotEqualMenuCountFailure() {
         //given
         final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1);
@@ -93,6 +100,7 @@ class OrderServiceTest {
     }
 
     @Test
+    @DisplayName("주문을 생성 시 주문 테이블을 찾지 못할 경우 예외가 발생한다")
     void testCreateWhenOrderTableNotFoundFailure() {
         //given
         final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1);
@@ -111,6 +119,7 @@ class OrderServiceTest {
     }
 
     @Test
+    @DisplayName("주문을 생성 시 주문 테이블이 비어있을 경우 예외가 발생한다")
     void testCreateWhenOrderTableEmptyFailure() {
         //given
         final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1);
@@ -129,6 +138,7 @@ class OrderServiceTest {
     }
 
     @Test
+    @DisplayName("주문 리스트를 성공적으로 조회한다")
     void testListSuccess() {
         //given
         final Order order1 = new Order(1L, "status", LocalDateTime.now(), null);
@@ -159,13 +169,14 @@ class OrderServiceTest {
     }
 
     @Test
+    @DisplayName("주문 상태를 성공적으로 수정한다")
     void testChangeOrderStatusSuccess() {
         // given
-        Long orderId = 1L;
-        Order order = new Order();
+        final Long orderId = 1L;
+        final Order order = new Order();
         order.setOrderStatus(OrderStatus.COOKING.name());
 
-        Order savedOrder = new Order();
+        final Order savedOrder = new Order();
         savedOrder.setOrderStatus(OrderStatus.MEAL.name());
 
         when(orderDao.findById(orderId)).thenReturn(Optional.of(savedOrder));
@@ -173,13 +184,14 @@ class OrderServiceTest {
         when(orderLineItemDao.findAllByOrderId(orderId)).thenReturn(new ArrayList<>());
 
         // When
-        Order result = orderService.changeOrderStatus(orderId, order);
+        final Order result = orderService.changeOrderStatus(orderId, order);
 
         // Then
         assertThat(OrderStatus.COOKING.name()).isEqualTo(result.getOrderStatus());
     }
 
     @Test
+    @DisplayName("주문 상태 변경 시 주문을 찾지 못할 경우 예외가 발생한다")
     void testChangeOrderStatusOrderNotFoundFailure() {
         //given
         final Order order = new Order(1L, "status", LocalDateTime.now(), List.of());

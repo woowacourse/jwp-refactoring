@@ -1,12 +1,12 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,6 +25,7 @@ class MenuGroupServiceTest {
     private MenuGroupService menuGroupService;
 
     @Test
+    @DisplayName("메뉴 그룹을 성공적으로 생성한다")
     void testCreateSuccess() {
         //given
         final MenuGroup expected = new MenuGroup(1L, "test");
@@ -39,6 +40,7 @@ class MenuGroupServiceTest {
     }
 
     @Test
+    @DisplayName("메뉴 그룹 리스트 조회한다")
     void testListSuccess() {
         //given
         final List<MenuGroup> expected = List.of(new MenuGroup(1L, "test"));

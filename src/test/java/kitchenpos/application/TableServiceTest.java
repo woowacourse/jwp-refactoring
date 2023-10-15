@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,12 +23,15 @@ class TableServiceTest {
 
     @Mock
     private OrderDao orderDao;
+
     @Mock
     private OrderTableDao orderTableDao;
+
     @InjectMocks
     private TableService tableService;
 
     @Test
+    @DisplayName("테이블을 성공적으로 생성한다")
     void testCreateSuccess() {
         //given
         final OrderTable orderTable = new OrderTable(1L, 1L, 1, false);
@@ -42,6 +46,7 @@ class TableServiceTest {
     }
 
     @Test
+    @DisplayName("테이블을 성공적으로 조회한다")
     void testListSuccess() {
         //given
         final OrderTable orderTable1 = new OrderTable(1L, 1L, 1, false);
@@ -58,12 +63,13 @@ class TableServiceTest {
     }
 
     @Test
+    @DisplayName("테이블을 빈 테이블로 성공적으로 수정한다")
     void testChangeEmptySuccess() {
         // given
-        Long orderTableId = 1L;
-        OrderTable inputOrderTable = new OrderTable(1L, 1, true);
+        final Long orderTableId = 1L;
+        final OrderTable inputOrderTable = new OrderTable(1L, 1, true);
 
-        OrderTable savedOrderTable = new OrderTable(1L, null, 1, false);
+        final OrderTable savedOrderTable = new OrderTable(1L, null, 1, false);
 
         when(orderTableDao.findById(orderTableId)).thenReturn(Optional.of(savedOrderTable));
         when(orderDao.existsByOrderTableIdAndOrderStatusIn(any(Long.class), anyList()))
@@ -72,19 +78,20 @@ class TableServiceTest {
                 .thenReturn(savedOrderTable);
 
         // when
-        OrderTable resultOrderTable = tableService.changeEmpty(orderTableId, inputOrderTable);
+        final OrderTable resultOrderTable = tableService.changeEmpty(orderTableId, inputOrderTable);
 
         // then
         assertThat(resultOrderTable).isEqualTo(savedOrderTable);
     }
 
     @Test
-    void testChangeEmptyWhenTableGroupIdNotNull() {
+    @DisplayName("테이블을 빈 상태로 변경 시 테이블 그룹이 있으면 예외가 발생한다")
+    void testChangeEmptyWhenTableGroupIdNotNullFailure() {
         // given
-        Long orderTableId = 1L;
-        OrderTable inputOrderTable = new OrderTable(1L, 1, true);
+        final Long orderTableId = 1L;
+        final OrderTable inputOrderTable = new OrderTable(1L, 1, true);
 
-        OrderTable savedOrderTable = new OrderTable(1L, 1L, 1, false);
+        final OrderTable savedOrderTable = new OrderTable(1L, 1L, 1, false);
 
         when(orderTableDao.findById(orderTableId)).thenReturn(Optional.of(savedOrderTable));
 
@@ -95,12 +102,13 @@ class TableServiceTest {
     }
 
     @Test
+    @DisplayName("테이블을 빈 상태로 변경 시 요리 중이거나 식사 중일 경우 예외가 발생한다")
     void testChangeEmptyWhenOrderAlreadyCookOrMeal() {
         // given
-        Long orderTableId = 1L;
-        OrderTable inputOrderTable = new OrderTable(1L, 1, true);
+        final Long orderTableId = 1L;
+        final OrderTable inputOrderTable = new OrderTable(1L, 1, true);
 
-        OrderTable savedOrderTable = new OrderTable(1L, null, 1, false);
+        final OrderTable savedOrderTable = new OrderTable(1L, null, 1, false);
 
         when(orderTableDao.findById(orderTableId)).thenReturn(Optional.of(savedOrderTable));
         when(orderDao.existsByOrderTableIdAndOrderStatusIn(any(Long.class), anyList()))
@@ -114,13 +122,14 @@ class TableServiceTest {
     }
 
     @Test
+    @DisplayName("테이블의 손님 수를 성공적으로 변경한다")
     void testChangeNumberOfGuestsSuccess() {
         // given
-        Long orderTableId = 1L;
-        int numberOfGuests = 5;
+        final Long orderTableId = 1L;
+        final int numberOfGuests = 5;
 
-        OrderTable orderTable = new OrderTable(1L, numberOfGuests, false);
-        OrderTable savedOrderTable = new OrderTable(1L, numberOfGuests, false);
+        final OrderTable orderTable = new OrderTable(1L, numberOfGuests, false);
+        final OrderTable savedOrderTable = new OrderTable(1L, numberOfGuests, false);
 
         when(orderTableDao.findById(orderTableId))
                 .thenReturn(Optional.of(savedOrderTable));
@@ -128,7 +137,7 @@ class TableServiceTest {
                 .thenReturn(savedOrderTable);
 
         // when
-        OrderTable resultOrderTable = tableService.changeNumberOfGuests(orderTableId, orderTable);
+        final OrderTable resultOrderTable = tableService.changeNumberOfGuests(orderTableId, orderTable);
 
         // then
         assertThat(resultOrderTable).isNotNull();
@@ -136,12 +145,13 @@ class TableServiceTest {
     }
 
     @Test
+    @DisplayName("테이블의 손님 수 변경 시 0보다 작은 수로 변경할 경우 예외가 발생한다")
     void testChangeNumberOfGuestsWhenNumberOfGuestsLowerThanZeroFailure() {
         // given
-        Long orderTableId = 1L;
-        int numberOfGuests = -5;
+        final Long orderTableId = 1L;
+        final int numberOfGuests = -5;
 
-        OrderTable orderTable = new OrderTable(1L, numberOfGuests, false);
+        final OrderTable orderTable = new OrderTable(1L, numberOfGuests, false);
 
         // when
         // then
@@ -150,13 +160,14 @@ class TableServiceTest {
     }
 
     @Test
+    @DisplayName("테이블의 손님 수 변경 시 테이블이 비어있을 경우 예외가 발생한다")
     void testChangeNumberOfGuestsWhenOrderTableIsEmptyFailure() {
         // given
-        Long orderTableId = 1L;
-        int numberOfGuests = 5;
+        final Long orderTableId = 1L;
+        final int numberOfGuests = 5;
 
-        OrderTable orderTable = new OrderTable(1L, numberOfGuests, true);
-        OrderTable savedOrderTable = new OrderTable(1L, numberOfGuests, true);
+        final OrderTable orderTable = new OrderTable(1L, numberOfGuests, true);
+        final OrderTable savedOrderTable = new OrderTable(1L, numberOfGuests, true);
 
         when(orderTableDao.findById(orderTableId))
                 .thenReturn(Optional.of(savedOrderTable));
@@ -168,12 +179,13 @@ class TableServiceTest {
     }
 
     @Test
+    @DisplayName("테이블의 손님 수 변경 시 존재하지 않는 테이블일 경우 예외가 발생한다")
     void testChangeNumberOfGuestsWhenOrderTableNotFoundFailure() {
         // given
-        Long orderTableId = 1L;
-        int numberOfGuests = 5;
+        final Long orderTableId = 1L;
+        final int numberOfGuests = 5;
 
-        OrderTable orderTable = new OrderTable(1L, numberOfGuests, false);
+        final OrderTable orderTable = new OrderTable(1L, numberOfGuests, false);
 
         when(orderTableDao.findById(orderTableId))
                 .thenReturn(Optional.empty());

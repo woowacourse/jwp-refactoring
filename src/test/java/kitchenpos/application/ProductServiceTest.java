@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,10 +20,12 @@ class ProductServiceTest {
 
     @Mock
     private ProductDao productDao;
+
     @InjectMocks
     private ProductService productService;
 
     @Test
+    @DisplayName("제품을 성공적으로 생성한다")
     void testCreateSuccess() {
         //given
         final Product product = new Product("test", BigDecimal.valueOf(1000));
@@ -38,6 +41,7 @@ class ProductServiceTest {
     }
 
     @Test
+    @DisplayName("제품 생성 시 가격이 null일 경우 예외가 발생한다")
     void testCreateWhenPriceNull() {
         //given
         final Product product = new Product("test", null);
@@ -49,6 +53,7 @@ class ProductServiceTest {
     }
 
     @Test
+    @DisplayName("제품 생성 시 가격이 0보다 작을 경우 예외가 발생한다")
     void testCreateWhenPriceLowerThanZero() {
         //given
         final Product product = new Product("test", BigDecimal.valueOf(-1));
@@ -60,6 +65,7 @@ class ProductServiceTest {
     }
 
     @Test
+    @DisplayName("제품 리스트를 성공적으로 조회한다")
     void testListSuccess() {
         //given
         final Product product1 = new Product(1L, "test1", BigDecimal.valueOf(1000));

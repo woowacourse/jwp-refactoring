@@ -29,16 +29,21 @@ class MenuServiceTest {
 
     @Mock
     private MenuDao menuDao;
+
     @Mock
     private MenuGroupDao menuGroupDao;
+
     @Mock
     private MenuProductDao menuProductDao;
+
     @Mock
     private ProductDao productDao;
+
     @InjectMocks
     private MenuService menuService;
 
     @Test
+    @DisplayName("메뉴를 성공적으로 생성한다")
     void testCreateSuccess() {
         //given
         final Product product = new Product(1L, "testProduct", BigDecimal.valueOf(1000));
@@ -56,7 +61,6 @@ class MenuServiceTest {
         when(menuProductDao.save(menuProduct))
                 .thenReturn(menuProduct);
 
-
         //when
         final Menu result = menuService.create(menu);
 
@@ -67,7 +71,8 @@ class MenuServiceTest {
     }
 
     @Test
-    void testWhenMenuPriceIsNullFailure() {
+    @DisplayName("메뉴 생성 시 가격이 null일 경우 예외가 발생한다")
+    void testCreateWhenMenuPriceIsNullFailure() {
         //given
         final Menu menu = new Menu("testMenu", null, null, null);
 
@@ -78,7 +83,8 @@ class MenuServiceTest {
     }
 
     @Test
-    void testWhenMenuPriceIsLowerThanZeroFailure() {
+    @DisplayName("메뉴 생성 시 가격이 0보다 작을 경우 예외가 발생한다")
+    void testCreateWhenMenuPriceIsLowerThanZeroFailure() {
         //given
         final Menu menu = new Menu("testMenu", BigDecimal.valueOf(-1), null, null);
 
@@ -89,11 +95,12 @@ class MenuServiceTest {
     }
 
     @Test
-    void testWhenMenuGroupNotExistFailure() {
+    @DisplayName("메뉴 생성 시 메뉴 그룹이 존재하지 않을 경우 예외가 발생한다")
+    void testCreateWhenMenuGroupNotExistFailure() {
         //given
         final Menu menu = new Menu("testMenu", BigDecimal.valueOf(2000), 1L, null);
         when(menuGroupDao.existsById(menu.getMenuGroupId()))
-                .thenThrow(new IllegalArgumentException());
+                .thenReturn(false);
 
         //when
         //then
@@ -102,7 +109,8 @@ class MenuServiceTest {
     }
 
     @Test
-    void testWhenProductNotFoundFailure() {
+    @DisplayName("메뉴 생성 시 제품이 존재하지 않을 경우 예외가 발생한다")
+    void testCreateWhenProductNotFoundFailure() {
         //given
         final Product product = new Product(1L, "testProduct", BigDecimal.valueOf(1000));
         final MenuProduct menuProduct = new MenuProduct(1L, 1L, 1L, 2);
@@ -113,7 +121,7 @@ class MenuServiceTest {
         when(menuGroupDao.existsById(menuGroup.getId()))
                 .thenReturn(true);
         when(productDao.findById(product.getId()))
-                .thenThrow(new IllegalArgumentException());
+                .thenReturn(Optional.empty());
 
         //when
         //then
@@ -143,7 +151,8 @@ class MenuServiceTest {
     }
 
     @Test
-    void testList() {
+    @DisplayName("리스트를 성공적으로 조회한다")
+    void testListSuccess() {
         //given
         final Menu menu1 = new Menu(1L, "testMenu1", BigDecimal.valueOf(2000),
                 1L, null);

@@ -12,6 +12,7 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,14 +26,18 @@ class TableGroupServiceTest {
 
     @Mock
     private OrderDao orderDao;
+
     @Mock
     private OrderTableDao orderTableDao;
+
     @Mock
     private TableGroupDao tableGroupDao;
+
     @InjectMocks
     private TableGroupService tableGroupService;
 
     @Test
+    @DisplayName("테이블 그룹을 성공적으로 생성한다")
     void testCreateSuccess() {
         //given
         final OrderTable orderTable1 = new OrderTable(1L, null, 1, true);
@@ -54,6 +59,7 @@ class TableGroupServiceTest {
     }
 
     @Test
+    @DisplayName("테이블 그룹 생성 시 테이블이 비어있을 경우 예외가 발생한다")
     void testCreateWhenOrderTablesEmptyFailure() {
         //given
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of());
@@ -65,6 +71,7 @@ class TableGroupServiceTest {
     }
 
     @Test
+    @DisplayName("테이블 그룹 생성 시 주문 테이블들의 개수가 2미만일 경우 예외가 발생한다")
     void testCreateWhenOrderTablesSizeLowerThanTwoFailure() {
         //given
         final OrderTable orderTable1 = new OrderTable(1L, null, 1, true);
@@ -77,6 +84,7 @@ class TableGroupServiceTest {
     }
 
     @Test
+    @DisplayName("테이블 그룹 생성 시 저장된 테이블 수와 요청 테이블 수가 일치하지 않을 경우 예외가 발생한다")
     void testCreateWhenSavedOrderTablesAndOrderTableSizeNotMatchFailure() {
         //given
         final OrderTable orderTable1 = new OrderTable(1L, null, 1, true);
@@ -93,7 +101,8 @@ class TableGroupServiceTest {
     }
 
     @Test
-    void testCreateWhenSavedOrderTableIsNotEmpty() {
+    @DisplayName("테이블 그룹 생성 시 빈 테이블이 아닐 경우 예외가 발생한다")
+    void testCreateWhenSavedOrderTableIsNotEmptyFailure() {
         //given
         final OrderTable orderTable1 = new OrderTable(1L, null, 1, true);
         final OrderTable orderTable2 = new OrderTable(2L, null, 1, false);
@@ -109,7 +118,8 @@ class TableGroupServiceTest {
     }
 
     @Test
-    void testCreateWhenSavedOrderTableHasTableGroupId() {
+    @DisplayName("테이블 그룹 생성 시 저장된 테이블이 테이블 그룹을 가지고 있을 경우 예외가 발생한다")
+    void testCreateWhenSavedOrderTableHasTableGroupIdFailure() {
         //given
         final OrderTable orderTable1 = new OrderTable(1L, 1L, 1, true);
         final OrderTable orderTable2 = new OrderTable(2L, 1L, 1, true);
@@ -125,12 +135,13 @@ class TableGroupServiceTest {
     }
 
     @Test
-    void testUngroup() {
+    @DisplayName("테이블 그룹을 성공적으로 해제한다")
+    void testUngroupSuccess() {
         // given
-        Long tableGroupId = 1L;
-        OrderTable orderTable = new OrderTable(1L, 1L, 1, false);
+        final Long tableGroupId = 1L;
+        final OrderTable orderTable = new OrderTable(1L, 1L, 1, false);
 
-        List<OrderTable> mockOrderTables = List.of(orderTable);
+        final List<OrderTable> mockOrderTables = List.of(orderTable);
 
         when(orderTableDao.findAllByTableGroupId(any(Long.class))).thenReturn(mockOrderTables);
         when(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).thenReturn(false);
@@ -146,12 +157,13 @@ class TableGroupServiceTest {
     }
 
     @Test
+    @DisplayName("테이블 그룹 해제 시 이미 요리 중이거나 식사중일 경우 예외가 발생한다")
     void testUngroupWhenOrderTableAlreadyCookOrMealFailure() {
         //given
-        Long tableGroupId = 1L;
-        OrderTable orderTable = new OrderTable(1L, 1L, 1, false);
+        final Long tableGroupId = 1L;
+        final OrderTable orderTable = new OrderTable(1L, 1L, 1, false);
 
-        List<OrderTable> mockOrderTables = List.of(orderTable);
+        final List<OrderTable> mockOrderTables = List.of(orderTable);
 
         when(orderTableDao.findAllByTableGroupId(tableGroupId))
                 .thenReturn(mockOrderTables);
