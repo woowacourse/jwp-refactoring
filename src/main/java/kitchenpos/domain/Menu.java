@@ -1,9 +1,11 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Menu {
+
     private Long id;
     private String name;
     private BigDecimal price;
@@ -18,7 +20,20 @@ public class Menu {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
+        this.menuProducts = new ArrayList<>(menuProducts);
+    }
+
+    public void addMenuProduct(MenuProduct menuProduct) {
+        if (menuProduct.getMenuId() != id) {
+            throw new IllegalArgumentException("해당 메뉴의 상품이 아닙니다.");
+        }
+        this.menuProducts.add(menuProduct);
+    }
+
+    public void addMenuProducts(List<MenuProduct> menuProducts) {
+        for (MenuProduct menuProduct : menuProducts) {
+            addMenuProduct(menuProduct);
+        }
     }
 
     public Long getId() {

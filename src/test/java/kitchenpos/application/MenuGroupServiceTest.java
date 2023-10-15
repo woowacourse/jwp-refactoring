@@ -10,6 +10,8 @@ import static org.mockito.Mockito.verify;
 import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.request.MenuGroupCreateRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
@@ -32,17 +34,18 @@ class MenuGroupServiceTest {
     @Test
     void 메뉴_그룹_생성() {
         // given
-        MenuGroup menuGroup = new MenuGroup(null, "menuGroup");
+        MenuGroupCreateRequest request = new MenuGroupCreateRequest("menuGroup");
         MenuGroup savedMenuGroup = new MenuGroup(1L, "menuGroup");
         given(menuGroupDao.save(any()))
             .willReturn(savedMenuGroup);
 
         // when
-        MenuGroup actual = menuGroupService.create(menuGroup);
+        MenuGroupResponse response = menuGroupService.create(request);
 
         // then
         assertSoftly(softly -> {
-            assertThat(actual).isEqualTo(savedMenuGroup);
+            assertThat(response.getMenuId()).isEqualTo(savedMenuGroup.getId());
+            assertThat(response.getMenuName()).isEqualTo(savedMenuGroup.getName());
             verify(menuGroupDao, times(1)).save(any());
         });
     }
@@ -56,11 +59,11 @@ class MenuGroupServiceTest {
             .willReturn(menuGroups);
 
         // when
-        List<MenuGroup> actual = menuGroupService.list();
+        List<MenuGroupResponse> acutal = menuGroupService.list();
 
         // then
         assertSoftly(softly -> {
-            assertThat(actual).isEqualTo(menuGroups);
+            assertThat(acutal).hasSize(2);
             verify(menuGroupDao, times(1)).findAll();
         });
     }
