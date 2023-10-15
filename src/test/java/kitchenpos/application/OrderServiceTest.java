@@ -84,10 +84,10 @@ class OrderServiceTest {
 
         final OrderLineItem 주문항목 = orderLineItem(메뉴.getId(), 1l);
 
-        final Order 주문 = order(그룹화된_세명_테이블.getId(), List.of(주문항목));
+        final Order order = order(그룹화된_세명_테이블.getId(), List.of(주문항목));
 
         // when
-        final Order actual = orderService.create(주문);
+        final Order actual = orderService.create(order);
 
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
@@ -113,10 +113,10 @@ class OrderServiceTest {
 
         menuDao.save(menu("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴.getId(), List.of(후라이드_2개)));
 
-        final Order 주문 = order(그룹화된_세명_테이블.getId(), Collections.emptyList());
+        final Order order = order(그룹화된_세명_테이블.getId(), Collections.emptyList());
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(주문))
+        assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -139,10 +139,10 @@ class OrderServiceTest {
         final OrderLineItem 주문항목1 = orderLineItem(메뉴.getId(), 1l);
         final OrderLineItem 주문항목2 = orderLineItem(메뉴.getId(), 2l);
 
-        final Order 주문 = order(그룹화된_세명_테이블.getId(), List.of(주문항목1, 주문항목2));
+        final Order order = order(그룹화된_세명_테이블.getId(), List.of(주문항목1, 주문항목2));
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(주문))
+        assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -165,11 +165,11 @@ class OrderServiceTest {
         final OrderLineItem 주문항목 = orderLineItem(메뉴.getId(), 1l);
 
         final long invalidOrderTableId = -999L;
-        final Order 주문 = order(invalidOrderTableId, List.of(주문항목));
+        final Order order = order(invalidOrderTableId, List.of(주문항목));
 
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(주문))
+        assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -191,10 +191,10 @@ class OrderServiceTest {
 
         final OrderLineItem 주문항목 = orderLineItem(메뉴.getId(), 1l);
 
-        final Order 주문 = order(그룹화된_세명_테이블.getId(), List.of(주문항목));
+        final Order order = order(그룹화된_세명_테이블.getId(), List.of(주문항목));
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(주문))
+        assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
