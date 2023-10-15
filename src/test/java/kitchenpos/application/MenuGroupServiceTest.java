@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.dto.MenuGroupDto;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -13,6 +14,7 @@ import java.util.List;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -29,18 +31,15 @@ class MenuGroupServiceTest {
     @Test
     void 메뉴_그룹을_생성한다() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("menuGroup");
+        MenuGroupDto menuGroupRequest = new MenuGroupDto("menuGroup");
 
-        MenuGroup expected = new MenuGroup();
-        menuGroup.setId(1L);
-        menuGroup.setName(menuGroup.getName());
+        MenuGroup expected = new MenuGroup(1L, menuGroupRequest.getName());
 
-        given(menuGroupDao.save(menuGroup))
+        given(menuGroupDao.save(any()))
                 .willReturn(expected);
 
         // when
-        MenuGroup result = menuGroupService.create(menuGroup);
+        MenuGroupDto result = menuGroupService.create(menuGroupRequest);
 
         // then
         assertSoftly(softly -> {
@@ -52,15 +51,15 @@ class MenuGroupServiceTest {
     @Test
     void 메뉴_그룹을_전체_조회한다() {
         // given
-        MenuGroup menuGroup1 = new MenuGroup();
-        MenuGroup menuGroup2 = new MenuGroup();
+        MenuGroup menuGroup1 = new MenuGroup("menuGroup1");
+        MenuGroup menuGroup2 = new MenuGroup("menuGroup2");
         List<MenuGroup> expected = List.of(menuGroup1, menuGroup2);
 
         given(menuGroupDao.findAll())
                 .willReturn(expected);
 
         // when
-        List<MenuGroup> result = menuGroupService.list();
+        List<MenuGroupDto> result = menuGroupService.list();
 
         // then
         assertThat(result).hasSize(2);

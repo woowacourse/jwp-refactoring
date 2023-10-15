@@ -52,9 +52,7 @@ class MenuServiceTest {
 
     @BeforeEach
     void setUp() {
-        menuGroup = new MenuGroup();
-        menuGroup.setId(2L);
-        menuGroup.setName("한마리메뉴");
+        menuGroup = new MenuGroup(2L, "한마리메뉴");
 
         menuProduct = new MenuProduct();
         menuProduct.setProductId(1L);
