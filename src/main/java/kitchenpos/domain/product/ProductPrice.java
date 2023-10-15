@@ -7,7 +7,14 @@ public class ProductPrice {
     private final BigDecimal value;
 
     public ProductPrice(final BigDecimal value) {
+        validate(value);
         this.value = value;
+    }
+
+    private void validate(final BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public BigDecimal getValue() {

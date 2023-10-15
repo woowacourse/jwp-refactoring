@@ -60,6 +60,7 @@ class ProductServiceTest {
             final Product product = new Product(1L, new ProductName("product"), new ProductPrice(BigDecimal.valueOf(10_000)));
 
             given(request.getPrice()).willReturn(product.getPrice());
+            given(request.getName()).willReturn("productName");
             given(productDao.save(any())).willReturn(product);
 
             // when

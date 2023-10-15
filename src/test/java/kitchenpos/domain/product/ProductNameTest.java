@@ -11,14 +11,14 @@ class ProductNameTest {
     @DisplayName("상품 이름이 비어 있거나 공백이면 예외가 발생한다.")
     @ParameterizedTest
     @ValueSource(strings = {"", " ", "   "})
-    void validateMenuNameBlank(String value) {
+    void validateProductNameBlank(String value) {
         assertThatThrownBy(() -> new ProductName(value))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     @DisplayName("상품 이름이 null이면 예외가 발생한다.")
-    void validateMenuNameNull() {
+    void validateProductNameNull() {
         assertThatThrownBy(() -> new ProductName(null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
