@@ -95,7 +95,7 @@ class MenuServiceTest extends ServiceTest {
         // given
         MenuGroup menuGroup = menuGroupDao.save(두마리_메뉴);
         Product product = productDao.save(후라이드치킨_16000원);
-        Product nonSavedProduct = new Product();
+        Product nonSavedProduct = 양념치킨_17000원;
 
         List<MenuProduct> menuProducts = List.of(
                 MenuProductFixtures.create(product, 1),
