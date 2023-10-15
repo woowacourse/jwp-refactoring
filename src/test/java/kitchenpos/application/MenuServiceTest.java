@@ -54,7 +54,7 @@ class MenuServiceTest {
 
     @Test
     @DisplayName("모든 메뉴를 조회한다.")
-    void list() {
+    void list_size_1() {
         //given
         final MenuProduct menuProduct = new MenuProduct(1L, 1L, 1L, 2L);
         final Menu menu = new Menu(1L, "치킨+치킨", new BigDecimal(10000), 1L, List.of(menuProduct));
@@ -67,5 +67,31 @@ class MenuServiceTest {
         //then
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getMenuProducts()).hasSize(1);
+        assertThat(result.get(0).getName()).isEqualTo("치킨+치킨");
+    }
+
+    @Test
+    @DisplayName("모든 메뉴를 조회한다.")
+    void list_size_2() {
+        //given
+        final MenuProduct menuProduct1 = new MenuProduct(1L, 1L, 1L, 2L);
+        final MenuProduct menuProduct2 = new MenuProduct(2L, 2L, 2L, 3L);
+
+        final Menu menu1 = new Menu(1L, "치킨+치킨", new BigDecimal(10000), 1L, List.of(menuProduct1));
+        final Menu menu2 = new Menu(2L, "피자+피자", new BigDecimal(15000), 2L, List.of(menuProduct2));
+
+        given(menuDao.findAll()).willReturn(List.of(menu1, menu2));
+        given(menuProductDao.findAllByMenuId(1L)).willReturn(List.of(menuProduct1));
+        given(menuProductDao.findAllByMenuId(2L)).willReturn(List.of(menuProduct2));
+
+        //when
+        final List<Menu> result = menuService.list();
+
+        //then
+        assertThat(result).hasSize(2);
+        assertThat(result.get(0).getName()).isEqualTo("치킨+치킨");
+        assertThat(result.get(1).getName()).isEqualTo("피자+피자");
+        assertThat(result.get(0).getMenuProducts()).hasSize(1);
+        assertThat(result.get(1).getMenuProducts()).hasSize(1);
     }
 }

@@ -58,7 +58,7 @@ class OrderServiceTest {
 
     @Test
     @DisplayName("모든 주문 조회")
-    void list() {
+    void list_size_1() {
         //given
         final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1);
         final Order order = new Order(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(), List.of(orderLineItem));
@@ -71,7 +71,34 @@ class OrderServiceTest {
 
         //then
         assertThat(result).hasSize(1);
+        assertThat(result.get(0).getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
     }
+
+    @Test
+    @DisplayName("모든 주문 조회")
+    void list_size_2() {
+        //given
+        final OrderLineItem orderLineItem1 = new OrderLineItem(1L, 1L, 1L, 1);
+        final OrderLineItem orderLineItem2 = new OrderLineItem(2L, 2L, 2L, 2);
+
+        final Order order1 = new Order(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(), List.of(orderLineItem1));
+        final Order order2 = new Order(2L, 2L, OrderStatus.MEAL.name(), LocalDateTime.now().minusHours(1), List.of(orderLineItem2));
+
+        given(orderDao.findAll()).willReturn(List.of(order1, order2));
+        given(orderLineItemDao.findAllByOrderId(1L)).willReturn(List.of(orderLineItem1));
+        given(orderLineItemDao.findAllByOrderId(2L)).willReturn(List.of(orderLineItem2));
+
+        //when
+        final List<Order> result = orderService.list();
+
+        //then
+        assertThat(result).hasSize(2);
+        assertThat(result.get(0).getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+        assertThat(result.get(1).getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
+        assertThat(result.get(0).getOrderLineItems()).hasSize(1);
+        assertThat(result.get(1).getOrderLineItems()).hasSize(1);
+    }
+
 
     @Test
     @DisplayName("주문 상태 변경")
