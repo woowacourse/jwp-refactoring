@@ -42,7 +42,7 @@ public class Order {
     }
 
     public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
-        orderTable.validateIsEmpty();
+        orderTable.validateIsNotEmpty();
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;

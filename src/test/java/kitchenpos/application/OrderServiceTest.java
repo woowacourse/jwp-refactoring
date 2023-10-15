@@ -29,7 +29,7 @@ class OrderServiceTest extends ServiceTestContext {
     @Test
     void 주문_항목이_없다면_예외를_던진다() {
         // given
-        OrderTable orderTable = new OrderTable(null, 1, true);
+        OrderTable orderTable = new OrderTable(null, 1, false);
         orderTableRepository.save(orderTable);
 
         CreateOrderRequest request = new CreateOrderRequest(orderTable.getId(),
@@ -43,7 +43,7 @@ class OrderServiceTest extends ServiceTestContext {
     @Test
     void 주문_항목의_메뉴가_존재하지_않는다면_예외를_던진다() {
         // given
-        OrderTable orderTable = new OrderTable(null, 1, true);
+        OrderTable orderTable = new OrderTable(null, 1, false);
         orderTableRepository.save(orderTable);
 
         CreateOrderRequest request = new CreateOrderRequest(orderTable.getId(),
@@ -76,7 +76,7 @@ class OrderServiceTest extends ServiceTestContext {
         // given
         MenuGroup menuGroup = new MenuGroup("name");
         Menu menu = new Menu("name", BigDecimal.valueOf(1000L), menuGroup);
-        OrderTable orderTable = new OrderTable(null, 1, true);
+        OrderTable orderTable = new OrderTable(null, 1, false);
 
         menuGroupRepository.save(menuGroup);
         menuRepository.save(menu);
@@ -97,7 +97,7 @@ class OrderServiceTest extends ServiceTestContext {
         // given
         MenuGroup menuGroup = new MenuGroup("name");
         Menu menu = new Menu("name", BigDecimal.valueOf(1000L), menuGroup);
-        OrderTable orderTable = new OrderTable(null, 1, true);
+        OrderTable orderTable = new OrderTable(null, 1, false);
 
         menuGroupRepository.save(menuGroup);
         menuRepository.save(menu);
@@ -118,7 +118,7 @@ class OrderServiceTest extends ServiceTestContext {
         // given
         MenuGroup menuGroup = new MenuGroup("name");
         Menu menu = new Menu("name", BigDecimal.valueOf(1000L), menuGroup);
-        OrderTable orderTable = new OrderTable(null, 1, true);
+        OrderTable orderTable = new OrderTable(null, 1, false);
 
         menuGroupRepository.save(menuGroup);
         menuRepository.save(menu);
@@ -150,7 +150,7 @@ class OrderServiceTest extends ServiceTestContext {
     @Test
     void 이미_완료된_주문이라면_상태를_변경할_수_없다() {
         // given
-        OrderTable orderTable = new OrderTable(null, 1, true);
+        OrderTable orderTable = new OrderTable(null, 1, false);
         Order order = new Order(orderTable, OrderStatus.MEAL, LocalDateTime.now());
 
         orderTableRepository.save(orderTable);
@@ -167,7 +167,7 @@ class OrderServiceTest extends ServiceTestContext {
     @Test
     void 주문을_정상적으로_변경하는_경우_변경한_주문이_반환된다() {
         // given
-        OrderTable orderTable = new OrderTable(null, 1, true);
+        OrderTable orderTable = new OrderTable(null, 1, false);
         Order order = new Order(orderTable, OrderStatus.MEAL, LocalDateTime.now());
 
         orderTableRepository.save(orderTable);

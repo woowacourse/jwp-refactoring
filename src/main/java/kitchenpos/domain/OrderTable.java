@@ -56,7 +56,7 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
-    private void validateIsNotEmpty() {
+    public void validateIsNotEmpty() {
         if (isEmpty()) {
             throw new OrderTableEmptyException();
         }
