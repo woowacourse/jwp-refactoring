@@ -31,7 +31,7 @@ public class TableGroupService {
 
     @Transactional
     public TableGroup create(TableGroupCreateRequest request) {
-        List<Long> orderTableIds = request.getOrderTableRequests().stream()
+        List<Long> orderTableIds = request.getOrderTables().stream()
             .map(OrderTableDto::getId)
             .collect(toList());
         List<OrderTable> savedOrderTables = getOrderTables(orderTableIds);
