@@ -26,6 +26,22 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
+    public Long getSeq() {
+        return seq;
+    }
+
+    public Long getMenuId() {
+        return menuId;
+    }
+
+    public Long getProductId() {
+        return productId;
+    }
+
+    public long getQuantity() {
+        return quantity.getValue();
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {

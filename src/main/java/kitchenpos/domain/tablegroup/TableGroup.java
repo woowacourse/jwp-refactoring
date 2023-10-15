@@ -21,6 +21,14 @@ public class TableGroup {
         return id;
     }
 
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public OrderTables getOrderTables() {
+        return orderTables;
+    }
+
     public void updateOrderTables(final OrderTables orderTables) {
         this.orderTables = orderTables;
     }

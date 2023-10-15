@@ -37,6 +37,18 @@ public class Order {
         return orderStatus;
     }
 
+    public Long getOrderTableId() {
+        return orderTableId;
+    }
+
+    public LocalDateTime getOrderedTime() {
+        return orderedTime;
+    }
+
+    public List<OrderLineItem> getOrderLineItems() {
+        return orderLineItems.getOrderLineItems();
+    }
+
     public void updateOrderStatus(final OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }

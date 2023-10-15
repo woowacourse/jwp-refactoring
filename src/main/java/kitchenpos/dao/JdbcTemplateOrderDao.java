@@ -61,7 +61,7 @@ public class JdbcTemplateOrderDao implements OrderDao {
     }
 
     @Override
-    public boolean existsByOrderTableIdAndOrderStatusIn(final Long orderTableId, final List<String> orderStatuses) {
+    public boolean existsByOrderTableIdAndOrderStatusIn(final Long orderTableId, final List<OrderStatus> orderStatuses) {
         final String sql = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END" +
                 " FROM orders WHERE order_table_id = (:orderTableId) AND order_status IN (:orderStatuses)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
@@ -71,7 +71,7 @@ public class JdbcTemplateOrderDao implements OrderDao {
     }
 
     @Override
-    public boolean existsByOrderTableIdsAndOrderStatuses(final List<Long> orderTableIds, final List<String> orderStatuses) {
+    public boolean existsByOrderTableIdsAndOrderStatuses(final List<Long> orderTableIds, final List<OrderStatus> orderStatuses) {
         final String sql = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END" +
                 " FROM orders WHERE order_table_id IN (:orderTableIds) AND order_status IN (:orderStatuses)";
         final SqlParameterSource parameters = new MapSqlParameterSource()

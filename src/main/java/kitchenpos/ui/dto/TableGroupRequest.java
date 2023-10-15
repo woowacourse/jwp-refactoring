@@ -5,7 +5,10 @@ import org.springframework.util.CollectionUtils;
 import java.util.List;
 
 public class TableGroupRequest {
-    private final List<OrderTableIdDto> orderTables;
+    private List<OrderTableIdDto> orderTables;
+
+    public TableGroupRequest() {
+    }
 
     public TableGroupRequest(List<OrderTableIdDto> orderTables) {
         validate(orderTables);
@@ -20,5 +23,9 @@ public class TableGroupRequest {
 
     public List<OrderTableIdDto> getOrderTables() {
         return orderTables;
+    }
+
+    public void setOrderTables(final List<OrderTableIdDto> orderTables) {
+        this.orderTables = orderTables;
     }
 }

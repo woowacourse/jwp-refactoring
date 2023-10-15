@@ -16,6 +16,10 @@ public class Quantity {
         }
     }
 
+    public long getValue() {
+        return value;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {

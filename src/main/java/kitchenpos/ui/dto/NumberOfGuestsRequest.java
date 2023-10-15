@@ -1,7 +1,10 @@
 package kitchenpos.ui.dto;
 
 public class NumberOfGuestsRequest {
-    private final int numberOfGuests;
+    private int numberOfGuests;
+
+    public NumberOfGuestsRequest() {
+    }
 
     public NumberOfGuestsRequest(int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;

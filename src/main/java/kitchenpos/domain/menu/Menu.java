@@ -2,6 +2,7 @@ package kitchenpos.domain.menu;
 
 import kitchenpos.domain.menuproduct.MenuProduct;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,6 +31,22 @@ public class Menu {
 
     public Long getId() {
         return id;
+    }
+
+    public String getName() {
+        return name.getValue();
+    }
+
+    public BigDecimal getPrice() {
+        return price.getValue();
+    }
+
+    public Long getMenuGroupId() {
+        return menuGroupId;
+    }
+
+    public List<MenuProduct> getMenuProducts() {
+        return menuProducts.getMenuProducts();
     }
 
     public void updateMenuProducts(final List<MenuProduct> menuProducts) {

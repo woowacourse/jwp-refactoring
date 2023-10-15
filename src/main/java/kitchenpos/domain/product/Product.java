@@ -26,6 +26,10 @@ public class Product {
         return price.getValue();
     }
 
+    public String getName() {
+        return name.getValue();
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {

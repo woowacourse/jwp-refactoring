@@ -12,6 +12,10 @@ public class MenuProducts {
         this.menuProducts = menuProducts;
     }
 
+    public List<MenuProduct> getMenuProducts() {
+        return menuProducts;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {

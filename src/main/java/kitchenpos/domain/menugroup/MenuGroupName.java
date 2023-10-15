@@ -3,17 +3,21 @@ package kitchenpos.domain.menugroup;
 import java.util.Objects;
 
 public class MenuGroupName {
-    private final String name;
+    private final String value;
 
-    public MenuGroupName(final String name) {
-        validate(name);
-        this.name = name;
+    public MenuGroupName(final String value) {
+        validate(value);
+        this.value = value;
     }
 
     private void validate(final String name) {
         if (Objects.isNull(name) || name.isBlank()) {
             throw new IllegalArgumentException();
         }
+    }
+
+    public String getValue() {
+        return value;
     }
 
     @Override
@@ -25,11 +29,11 @@ public class MenuGroupName {
             return false;
         }
         final MenuGroupName that = (MenuGroupName) o;
-        return Objects.equals(name, that.name);
+        return Objects.equals(value, that.value);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name);
+        return Objects.hash(value);
     }
 }

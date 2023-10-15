@@ -4,10 +4,10 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class MenuRequest {
-    private final String name;
-    private final BigDecimal price;
-    private final Long menuGroupId;
-    private final List<MenuProductRequest> menuProducts;
+    private String name;
+    private BigDecimal price;
+    private Long menuGroupId;
+    private List<MenuProductRequest> menuProducts;
 
     public MenuRequest(final String name,
                        final BigDecimal price,

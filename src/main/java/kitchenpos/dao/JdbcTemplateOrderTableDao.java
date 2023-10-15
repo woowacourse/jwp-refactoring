@@ -1,6 +1,6 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.ordertable.Emptiness;
+import kitchenpos.domain.ordertable.Empty;
 import kitchenpos.domain.ordertable.NumberOfGuests;
 import kitchenpos.domain.ordertable.OrderTable;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -89,7 +89,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
                 " number_of_guests = (:numberOfGuests), empty = (:empty) WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("tableGroupId", entity.getTableGroupId())
-                .addValue("numberOfGuests", entity.getCount())
+                .addValue("numberOfGuests", entity.getNumberOfGuests())
                 .addValue("empty", entity.isEmpty())
                 .addValue("id", entity.getId());
         jdbcTemplate.update(sql, parameters);
@@ -100,7 +100,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
                 resultSet.getLong(KEY_COLUMN_NAME),
                 resultSet.getObject("table_group_id", Long.class),
                 new NumberOfGuests(resultSet.getInt("number_of_guests")),
-                Emptiness.from(resultSet.getBoolean("empty"))
+                Empty.from(resultSet.getBoolean("empty"))
         );
     }
 }

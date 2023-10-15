@@ -4,17 +4,21 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 public class MenuPrice {
-    private final BigDecimal price;
+    private final BigDecimal value;
     
-    public MenuPrice(final BigDecimal price) {
-        validate(price);
-        this.price = price;
+    public MenuPrice(final BigDecimal value) {
+        validate(value);
+        this.value = value;
     }
 
     private void validate(final BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
+    }
+
+    public BigDecimal getValue() {
+        return value;
     }
 
     @Override
@@ -26,11 +30,11 @@ public class MenuPrice {
             return false;
         }
         final MenuPrice menuPrice = (MenuPrice) o;
-        return Objects.equals(price, menuPrice.price);
+        return Objects.equals(value, menuPrice.value);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(price);
+        return Objects.hash(value);
     }
 }

@@ -6,7 +6,6 @@ import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Quantity;
 import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItems;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.orderlineitem.OrderLineItem;
 import kitchenpos.domain.ordertable.OrderTable;
@@ -123,7 +122,6 @@ class OrderServiceTest {
             final Order order = new Order(1L, OrderStatus.COOKING, LocalDateTime.now());
             given(menuDao.countByIdIn(any())).willReturn(3L);
             given(orderTableDao.findById(anyLong())).willReturn(Optional.of(orderTable));
-            given(orderTable.isEmpty()).willReturn(false);
             given(orderDao.save(any())).willReturn(order);
 
             final List<OrderLineItem> savedOrderLineItems = List.of(
@@ -149,7 +147,7 @@ class OrderServiceTest {
                         .isEqualTo(order);
                 assertThat(result).extracting("orderLineItems")
                         .usingRecursiveComparison()
-                        .isEqualTo(new OrderLineItems(savedOrderLineItems));
+                        .isEqualTo(savedOrderLineItems);
             });
         }
     }

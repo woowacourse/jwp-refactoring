@@ -26,6 +26,22 @@ public class OrderLineItem {
         this.quantity = quantity;
     }
 
+    public Long getSeq() {
+        return seq;
+    }
+
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public Long getMenuId() {
+        return menuId;
+    }
+
+    public long getQuantity() {
+        return quantity.getValue();
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {

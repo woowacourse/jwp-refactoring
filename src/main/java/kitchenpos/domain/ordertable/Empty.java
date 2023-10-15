@@ -2,17 +2,17 @@ package kitchenpos.domain.ordertable;
 
 import java.util.Objects;
 
-public class Emptiness {
-    public static final Emptiness EMPTY = new Emptiness(true);
-    public static final Emptiness NOT_EMPTY = new Emptiness(false);
+public class Empty {
+    public static final Empty EMPTY = new Empty(true);
+    public static final Empty NOT_EMPTY = new Empty(false);
 
     private final boolean value;
 
-    private Emptiness(final boolean isEmpty) {
+    private Empty(final boolean isEmpty) {
         this.value = isEmpty;
     }
 
-    public static Emptiness from(final boolean empty) {
+    public static Empty from(final boolean empty) {
         if (empty) {
             return EMPTY;
         }
@@ -31,8 +31,8 @@ public class Emptiness {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final Emptiness emptiness = (Emptiness) o;
-        return value == emptiness.value;
+        final Empty empty = (Empty) o;
+        return value == empty.value;
     }
 
     @Override

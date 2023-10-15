@@ -12,6 +12,10 @@ public class OrderLineItems {
         this.orderLineItems = orderLineItems;
     }
 
+    public List<OrderLineItem> getOrderLineItems() {
+        return orderLineItems;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {

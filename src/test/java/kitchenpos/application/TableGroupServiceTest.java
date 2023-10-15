@@ -4,7 +4,7 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.ordertable.Emptiness;
+import kitchenpos.domain.ordertable.Empty;
 import kitchenpos.domain.ordertable.NumberOfGuests;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.tablegroup.OrderTables;
@@ -127,8 +127,8 @@ class TableGroupServiceTest {
                 given(request.getOrderTables()).willReturn(dtos);
 
                 final List<OrderTable> orderTables = List.of(
-                        new OrderTable(new NumberOfGuests(2), Emptiness.EMPTY),
-                        new OrderTable(new NumberOfGuests(3), Emptiness.EMPTY)
+                        new OrderTable(new NumberOfGuests(2), Empty.EMPTY),
+                        new OrderTable(new NumberOfGuests(3), Empty.EMPTY)
                 );
                 final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
                 given(orderTableDao.findAllByIdIn(any())).willReturn(orderTables);
@@ -154,11 +154,11 @@ class TableGroupServiceTest {
         void existsByOrderTableIdInAndOrderStatusIn() {
             // given
             final List<OrderTable> orderTables = List.of(
-                    new OrderTable(1L, 1L, new NumberOfGuests(2), Emptiness.NOT_EMPTY),
-                    new OrderTable(2L, 1L, new NumberOfGuests(3), Emptiness.NOT_EMPTY)
+                    new OrderTable(1L, 1L, new NumberOfGuests(2), Empty.NOT_EMPTY),
+                    new OrderTable(2L, 1L, new NumberOfGuests(3), Empty.NOT_EMPTY)
             );
             given(orderTableDao.findAllByTableGroupId(any())).willReturn(orderTables);
-            given(orderDao.existsByOrderTableIdsAndOrderStatuses(List.of(1L, 2L), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
+            given(orderDao.existsByOrderTableIdsAndOrderStatuses(List.of(1L, 2L), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL)))
                     .willReturn(true);
 
             // when, then
@@ -170,11 +170,11 @@ class TableGroupServiceTest {
         void ungroup() {
             // given
             final List<OrderTable> orderTables = List.of(
-                    new OrderTable(1L, 1L, new NumberOfGuests(2), Emptiness.EMPTY),
-                    new OrderTable(2L, 1L, new NumberOfGuests(3), Emptiness.EMPTY)
+                    new OrderTable(1L, 1L, new NumberOfGuests(2), Empty.EMPTY),
+                    new OrderTable(2L, 1L, new NumberOfGuests(3), Empty.EMPTY)
             );
             given(orderTableDao.findAllByTableGroupId(any())).willReturn(orderTables);
-            given(orderDao.existsByOrderTableIdsAndOrderStatuses(List.of(1L, 2L), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
+            given(orderDao.existsByOrderTableIdsAndOrderStatuses(List.of(1L, 2L), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL)))
                     .willReturn(false);
 
             // when

@@ -5,17 +5,20 @@ import java.util.Objects;
 public class OrderTable {
     private Long id;
     private Long tableGroupId;
-    private NumberOfGuests count;
-    private Emptiness empty;
+    private NumberOfGuests numberOfGuests;
+    private Empty empty;
 
-    public OrderTable(final NumberOfGuests count, final Emptiness empty) {
-        this(null, null, count, empty);
+    public OrderTable(final NumberOfGuests numberOfGuests, final Empty empty) {
+        this(null, null, numberOfGuests, empty);
     }
 
-    public OrderTable(Long id, Long tableGroupId, NumberOfGuests count, Emptiness empty) {
+    public OrderTable(final Long id,
+                      final Long tableGroupId,
+                      final NumberOfGuests numberOfGuests,
+                      final Empty empty) {
         this.id = id;
         this.tableGroupId = tableGroupId;
-        this.count = count;
+        this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
@@ -23,12 +26,12 @@ public class OrderTable {
         return id;
     }
 
-    public int getCount() {
-        return count.getValue();
-    }
-
     public Long getTableGroupId() {
         return tableGroupId;
+    }
+
+    public int getNumberOfGuests() {
+        return numberOfGuests.getValue();
     }
 
     public boolean isEmpty() {
@@ -40,10 +43,10 @@ public class OrderTable {
     }
 
     public void updateNumberOfGuests(final NumberOfGuests count) {
-        this.count = count;
+        this.numberOfGuests = count;
     }
 
-    public void updateEmpty(final Emptiness empty) {
+    public void updateEmpty(final Empty empty) {
         this.empty = empty;
     }
 

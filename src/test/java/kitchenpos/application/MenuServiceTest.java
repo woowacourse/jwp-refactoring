@@ -8,7 +8,6 @@ import kitchenpos.domain.Quantity;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuName;
 import kitchenpos.domain.menu.MenuPrice;
-import kitchenpos.domain.menu.MenuProducts;
 import kitchenpos.domain.menuproduct.MenuProduct;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductName;
@@ -145,7 +144,7 @@ class MenuServiceTest {
                 assertThat(savedMenu).usingRecursiveComparison().isEqualTo(menu);
                 assertThat(savedMenu).extracting("menuProducts")
                         .usingRecursiveComparison()
-                        .isEqualTo(new MenuProducts(List.of(menuProduct1, menuProduct2, menuProduct3)));
+                        .isEqualTo(List.of(menuProduct1, menuProduct2, menuProduct3));
             });
         }
     }
@@ -167,7 +166,7 @@ class MenuServiceTest {
             assertThat(menus).hasSize(1);
             assertThat(menus.get(0)).usingRecursiveComparison().isEqualTo(menu);
             assertThat(menus.get(0)).extracting("menuProducts")
-                    .usingRecursiveComparison().isEqualTo(new MenuProducts(List.of(menuProduct)));
+                    .usingRecursiveComparison().isEqualTo(List.of(menuProduct));
         });
     }
 }

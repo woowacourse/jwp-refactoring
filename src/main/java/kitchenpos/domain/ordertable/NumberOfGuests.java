@@ -11,7 +11,7 @@ public class NumberOfGuests {
     }
 
     private void validate(final int value) {
-        if (value <= 0) {
+        if (value < 0) {
             throw new IllegalArgumentException();
         }
     }

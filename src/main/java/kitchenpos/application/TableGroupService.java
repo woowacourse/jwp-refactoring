@@ -4,7 +4,7 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.ordertable.Emptiness;
+import kitchenpos.domain.ordertable.Empty;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.tablegroup.OrderTables;
 import kitchenpos.domain.tablegroup.TableGroup;
@@ -46,7 +46,7 @@ public class TableGroupService {
     }
 
     private void saveOrderTable(final OrderTables orderTables, final TableGroup savedTableGroup) {
-        orderTables.updateAll(savedTableGroup.getId(), Emptiness.NOT_EMPTY);
+        orderTables.updateAll(savedTableGroup.getId(), Empty.NOT_EMPTY);
         orderTables.getOrderTables().forEach(orderTableDao::save);
         savedTableGroup.updateOrderTables(orderTables);
     }
@@ -77,7 +77,7 @@ public class TableGroupService {
 
         for (final OrderTable orderTable : orderTables) {
             orderTable.updateTableGroupId(null);
-            orderTable.updateEmpty(Emptiness.NOT_EMPTY);
+            orderTable.updateEmpty(Empty.NOT_EMPTY);
             orderTableDao.save(orderTable);
         }
     }
@@ -88,7 +88,7 @@ public class TableGroupService {
                 .collect(Collectors.toList());
 
         if (orderDao.existsByOrderTableIdsAndOrderStatuses(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+                orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
     }

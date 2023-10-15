@@ -3,17 +3,21 @@ package kitchenpos.domain.product;
 import java.util.Objects;
 
 public class ProductName {
-    private final String name;
+    private final String value;
 
-    public ProductName(final String name) {
-        validate(name);
-        this.name = name;
+    public ProductName(final String value) {
+        validate(value);
+        this.value = value;
     }
 
     private void validate(final String name) {
         if (Objects.isNull(name) || name.isBlank()) {
             throw new IllegalArgumentException();
         }
+    }
+
+    public String getValue() {
+        return value;
     }
 
     @Override
@@ -25,11 +29,11 @@ public class ProductName {
             return false;
         }
         final ProductName that = (ProductName) o;
-        return Objects.equals(name, that.name);
+        return Objects.equals(value, that.value);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name);
+        return Objects.hash(value);
     }
 }
