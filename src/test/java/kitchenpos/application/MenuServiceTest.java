@@ -127,9 +127,9 @@ class MenuServiceTest {
             given(productDao.findById(3L)).willReturn(Optional.of(product3));
             given(menuDao.save(any())).willReturn(menu);
 
-            final MenuProduct menuProduct1 = new MenuProduct(1L, 1L, 1L, new Quantity(1));
-            final MenuProduct menuProduct2 = new MenuProduct(2L, 1L, 2L, new Quantity(1));
-            final MenuProduct menuProduct3 = new MenuProduct(3L, 1L, 3L, new Quantity(1));
+            final MenuProduct menuProduct1 = new MenuProduct(1L, 1L, new Quantity(1));
+            final MenuProduct menuProduct2 = new MenuProduct(1L, 2L, new Quantity(1));
+            final MenuProduct menuProduct3 = new MenuProduct(1L, 3L, new Quantity(1));
             when(menuProductDao.save(any()))
                     .thenReturn(menuProduct1)
                     .thenReturn(menuProduct2)
@@ -155,7 +155,7 @@ class MenuServiceTest {
     void list() {
         // given
         final Menu menu = new Menu(1L, new MenuName("productName"), new MenuPrice(BigDecimal.valueOf(35_000)), 1L);
-        final MenuProduct menuProduct = new MenuProduct(1L, 1L, 3L, new Quantity(1L));
+        final MenuProduct menuProduct = new MenuProduct(1L, 3L, new Quantity(1L));
         given(menuDao.findAll()).willReturn(List.of(menu));
         given(menuProductDao.findAllByMenuId(anyLong())).willReturn(List.of(menuProduct));
 

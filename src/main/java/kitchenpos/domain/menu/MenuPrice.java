@@ -7,11 +7,14 @@ public class MenuPrice {
     private final BigDecimal price;
     
     public MenuPrice(final BigDecimal price) {
+        validate(price);
         this.price = price;
     }
 
-    public BigDecimal getPrice() {
-        return price;
+    private void validate(final BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     @Override
