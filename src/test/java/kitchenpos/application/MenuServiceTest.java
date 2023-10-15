@@ -39,7 +39,6 @@ class MenuServiceTest extends ServiceTest {
         //when
         final Menu saveMenu = menuService.create(menu);
 
-
         //then
         assertThat(saveMenu.getId()).isNotNull();
     }
