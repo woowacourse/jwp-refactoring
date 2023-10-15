@@ -41,7 +41,8 @@ public class MenuProduct {
 
     private void addMenuProduct(final Menu menu) {
         if (menu != null) {
-            menu.getMenuProducts().add(this);
+            menu.getMenuProducts()
+                    .add(this);
         }
     }
 

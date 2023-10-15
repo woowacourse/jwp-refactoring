@@ -3,13 +3,12 @@ package kitchenpos.ui.table;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
-import kitchenpos.application.product.ProductService;
 import kitchenpos.application.table.TableService;
 import kitchenpos.application.table.dto.OrderTableChangeNumberOfGuestRequest;
 import kitchenpos.application.table.dto.OrderTableCreateRequest;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.helper.IntegrationTestHelper;
+import kitchenpos.ui.table.dto.OrderTableResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -18,16 +17,11 @@ import static kitchenpos.fixture.OrderTableFixture.주문_테이블_생성;
 import static kitchenpos.fixture.OrderTableFixture.주문_테이블_생성_요청;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+@SuppressWarnings("NonAsciiCharacters")
 class TableRestControllerAcceptanceTestFixture extends IntegrationTestHelper {
 
     @Autowired
     private TableService tableService;
-
-    @Autowired
-    private OrderDao orderDao;
-
-    @Autowired
-    private ProductService productService;
 
     protected <T> ExtractableResponse 주문_테이블을_생성한다(final String url, final T request) {
         return RestAssured.given().log().all()
@@ -40,7 +34,7 @@ class TableRestControllerAcceptanceTestFixture extends IntegrationTestHelper {
     }
 
     protected void 주문_테이블이_성공적으로_생성된다(final ExtractableResponse response, final OrderTable orderTable) {
-        OrderTable result = response.as(OrderTable.class);
+        OrderTableResponse result = response.as(OrderTableResponse.class);
 
         assertSoftly(softly -> {
             softly.assertThat(result.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests());
@@ -57,8 +51,8 @@ class TableRestControllerAcceptanceTestFixture extends IntegrationTestHelper {
     }
 
     protected void 주문_테이블들이_성공적으로_조회된다(final ExtractableResponse response, final OrderTable orderTable) {
-        List<OrderTable> result = response.jsonPath()
-                .getList("", OrderTable.class);
+        List<OrderTableResponse> result = response.jsonPath()
+                .getList("", OrderTableResponse.class);
 
         assertSoftly(softly -> {
             softly.assertThat(result).hasSize(1);
@@ -85,7 +79,7 @@ class TableRestControllerAcceptanceTestFixture extends IntegrationTestHelper {
     }
 
     protected void 주문_테이블의_상태가_성공적으로_변경된다(final ExtractableResponse response, final OrderTable orderTable) {
-        OrderTable result = response.as(OrderTable.class);
+        OrderTableResponse result = response.as(OrderTableResponse.class);
 
         assertSoftly(softly -> {
             softly.assertThat(result.getId()).isEqualTo(orderTable.getId());
@@ -104,7 +98,7 @@ class TableRestControllerAcceptanceTestFixture extends IntegrationTestHelper {
     }
 
     protected void 주문_테이블의_손님_수가_성공적으로_변경된다(final ExtractableResponse response, final OrderTable orderTable, OrderTableChangeNumberOfGuestRequest req) {
-        OrderTable result = response.as(OrderTable.class);
+        OrderTableResponse result = response.as(OrderTableResponse.class);
 
         assertSoftly(softly -> {
             softly.assertThat(result.getId()).isEqualTo(orderTable.getId());

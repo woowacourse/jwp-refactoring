@@ -22,13 +22,13 @@ class OrderRestControllerAcceptanceTest extends OrderRestControllerAcceptanceTes
 
     @BeforeEach
     void setup() {
-        주문 = 주문_생성(orderTable.getId(), null, LocalDateTime.now(), List.of(orderLineItem));
+        주문 = 주문_생성(orderTable, null, LocalDateTime.now(), List.of(orderLineItem));
     }
 
     @Test
     void 주문을_생성한다() {
         // when
-        var 주문_생성_결과 = 주문_생성한다("/api/orders", 주문_생성_요청(주문));
+        var 주문_생성_결과 = 주문_생성한다("/api/orders", 주문_생성_요청(orderTable, List.of(orderLineItem)));
 
         // then
         주문이_성공적으로_생성된다(주문_생성_결과, 주문);

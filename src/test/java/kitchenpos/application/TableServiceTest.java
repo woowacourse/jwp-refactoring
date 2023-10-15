@@ -4,9 +4,14 @@ import kitchenpos.application.table.TableService;
 import kitchenpos.application.table.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.application.table.dto.OrderTableChangeNumberOfGuestRequest;
 import kitchenpos.application.table.dto.OrderTableCreateRequest;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.exception.CannotChangeNumberOfGuestBecauseOfEmptyTableException;
+import kitchenpos.exception.CannotUnGroupBecauseOfStatusException;
+import kitchenpos.exception.NumberOfGuestsInvalidException;
+import kitchenpos.exception.OrderTableNotFoundException;
+import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.helper.IntegrationTestHelper;
+import kitchenpos.repository.OrderRepository;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -33,7 +38,7 @@ class TableServiceTest extends IntegrationTestHelper {
     private TableService tableService;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Test
     void 주문_테이블을_생성한다() {
@@ -94,7 +99,7 @@ class TableServiceTest extends IntegrationTestHelper {
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(invalidOrderTableId, changedTableRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderTableNotFoundException.class);
     }
 
     @Test
@@ -102,11 +107,13 @@ class TableServiceTest extends IntegrationTestHelper {
         // given
         OrderTable orderTable = tableService.create(주문_테이블_생성_요청(주문_테이블_생성(null, 1, false)));
         OrderTableChangeEmptyRequest changedTableRequest = 주문_테이블_상태_업데이트_요청(주문_테이블_생성(null, 1, true));
-        orderDao.save(주문_생성(orderTable.getId(), COOKING.name(), LocalDateTime.now(), null));
+        orderRepository.save(주문_생성(orderTable, COOKING.name(), LocalDateTime.now(), List.of(
+                OrderLineItemFixture.주문_품목_생성(null, 10L)
+        )));
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), changedTableRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(CannotUnGroupBecauseOfStatusException.class);
     }
 
     @Test
@@ -127,11 +134,10 @@ class TableServiceTest extends IntegrationTestHelper {
     void 변경하려는_주문_테이블의_손님_수가_0보다_작다면_예외를_발생시킨다() {
         // given
         OrderTable orderTable = tableService.create(주문_테이블_생성_요청(주문_테이블_생성(null, 1, false)));
-        OrderTableChangeNumberOfGuestRequest changeTableRequest = 주문_테이블_손님_수_업데이트_요청(주문_테이블_생성(null, -1, true));
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), changeTableRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), 주문_테이블_손님_수_업데이트_요청(주문_테이블_생성(null, -1, true))))
+                .isInstanceOf(NumberOfGuestsInvalidException.class);
     }
 
     @Test
@@ -142,6 +148,6 @@ class TableServiceTest extends IntegrationTestHelper {
 
         // when & then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), changeTableRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(CannotChangeNumberOfGuestBecauseOfEmptyTableException.class);
     }
 }

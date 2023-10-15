@@ -16,6 +16,7 @@ import static kitchenpos.fixture.ProductFixture.상품_생성_10000원;
 import static kitchenpos.fixture.ProductFixture.상품_생성_요청;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+@SuppressWarnings("NonAsciiCharacters")
 class ProductRestControllerAcceptanceTestFixture extends IntegrationTestHelper {
 
     @Autowired

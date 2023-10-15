@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.application.product.ProductService;
 import kitchenpos.application.product.dto.ProductCreateRequest;
 import kitchenpos.domain.Product;
+import kitchenpos.exception.PriceEmptyException;
 import kitchenpos.helper.IntegrationTestHelper;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -46,7 +47,7 @@ class ProductServiceTest extends IntegrationTestHelper {
 
         // when & then
         assertThatThrownBy(() -> productService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(PriceEmptyException.class);
     }
 
     @Test

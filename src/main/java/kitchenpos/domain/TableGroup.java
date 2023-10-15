@@ -1,22 +1,42 @@
 package kitchenpos.domain;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Entity
+@Table(name = "TABLE_GROUP")
+@EntityListeners(AuditingEntityListener.class)
 public class TableGroup {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @CreatedDate
+    @Column(nullable = false)
     private LocalDateTime createdDate;
-    private List<OrderTable> orderTables;
+
+    @OneToMany(mappedBy = "tableGroup")
+    private List<OrderTable> orderTables = new ArrayList<>();
 
     protected TableGroup() {
     }
 
-    public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
-        this.id = id;
-        this.createdDate = createdDate;
-        this.orderTables = orderTables;
+    public static TableGroup createDefault() {
+        return new TableGroup();
     }
 
     public Long getId() {
@@ -31,7 +51,7 @@ public class TableGroup {
         return orderTables;
     }
 
-    public void setOrderTables(final List<OrderTable> orderTables) {
+    public void initOrderTables(final List<OrderTable> orderTables) {
         this.orderTables = orderTables;
     }
 

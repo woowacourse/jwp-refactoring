@@ -4,14 +4,15 @@ import kitchenpos.application.table.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.application.table.dto.OrderTableChangeNumberOfGuestRequest;
 import kitchenpos.application.table.dto.OrderTableCreateRequest;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class OrderTableFixture {
 
-    public static OrderTable 주문_테이블_생성(final Long tableGroupId,
+    public static OrderTable 주문_테이블_생성(final TableGroup tableGroup,
                                        final int numberOfGuests,
                                        final boolean isEmpty) {
-        return new OrderTable(null, tableGroupId, numberOfGuests, isEmpty);
+        return new OrderTable(null, tableGroup, numberOfGuests, isEmpty);
     }
 
     public static OrderTableCreateRequest 주문_테이블_생성_요청(final OrderTable orderTable) {
