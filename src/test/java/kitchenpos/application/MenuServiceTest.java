@@ -97,6 +97,7 @@ class MenuServiceTest extends IntegrationTest {
     void 메뉴_등록_실패_메뉴_상품_없음() {
         // given
         // when
+        /// TODO: 2023/10/15 메뉴 상품 개수 검증 로직 추가하기
         final Menu menu = new Menu();
         menu.setName("할인 치킨");
         menu.setPrice(new BigDecimal("10000"));
