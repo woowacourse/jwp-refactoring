@@ -1,5 +1,6 @@
 package kitchenpos.domain.tablegroup;
 
+import kitchenpos.domain.ordertable.Emptiness;
 import kitchenpos.domain.ordertable.OrderTable;
 
 import java.util.List;
@@ -10,6 +11,21 @@ public class OrderTables {
 
     public OrderTables(final List<OrderTable> orderTables) {
         this.orderTables = orderTables;
+    }
+
+    public List<OrderTable> getOrderTables() {
+        return orderTables;
+    }
+
+    public int size() {
+        return orderTables.size();
+    }
+
+    public void updateAll(final Long tableGroupId, final Emptiness empty) {
+        orderTables.forEach(orderTable -> {
+            orderTable.updateTableGroupId(tableGroupId);
+            orderTable.updateEmpty(empty);
+        });
     }
 
     @Override

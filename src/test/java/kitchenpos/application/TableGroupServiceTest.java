@@ -25,7 +25,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,17 +49,6 @@ class TableGroupServiceTest {
 
     @Nested
     class CreateTest {
-        @Test
-        @DisplayName("orderTableId가 비어있으면 예외가 발생한다.")
-        void orderTableIdsIsEmpty() {
-            // given
-            final TableGroupRequest request = mock(TableGroupRequest.class);
-            given(request.getOrderTables()).willReturn(Collections.emptyList());
-
-            // when, then
-            assertThatThrownBy(() -> tableGroupService.create(request)).isInstanceOf(IllegalArgumentException.class);
-        }
-
         @ParameterizedTest
         @ValueSource(ints = {0, 1})
         @DisplayName("하나의 그룹으로 묶을 테이블의 수가 2보다 작으면 예외가 발생한다.")
@@ -170,7 +158,7 @@ class TableGroupServiceTest {
                     new OrderTable(2L, 1L, new NumberOfGuests(3), Emptiness.NOT_EMPTY)
             );
             given(orderTableDao.findAllByTableGroupId(any())).willReturn(orderTables);
-            given(orderDao.existsByOrderTableIdInAndOrderStatusIn(List.of(1L, 2L), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
+            given(orderDao.existsByOrderTableIdsAndOrderStatuses(List.of(1L, 2L), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
                     .willReturn(true);
 
             // when, then
@@ -186,7 +174,7 @@ class TableGroupServiceTest {
                     new OrderTable(2L, 1L, new NumberOfGuests(3), Emptiness.EMPTY)
             );
             given(orderTableDao.findAllByTableGroupId(any())).willReturn(orderTables);
-            given(orderDao.existsByOrderTableIdInAndOrderStatusIn(List.of(1L, 2L), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
+            given(orderDao.existsByOrderTableIdsAndOrderStatuses(List.of(1L, 2L), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
                     .willReturn(false);
 
             // when
