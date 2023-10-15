@@ -129,8 +129,13 @@ class TableGroupServiceTest extends ServiceTest {
             OrderTable 테이블2 = orderTableDao.save(빈테이블());
             OrderTable 테이블3 = orderTableDao.save(빈테이블());
 
-            TableGroup 테이블그룹1 = 테이블그룹(List.of(테이블1, 테이블2));
-            tableGroupService.create(테이블그룹1);
+            TableGroup 테이블그룹1 = tableGroupDao.save(테이블그룹(List.of(테이블1, 테이블2)));
+            테이블1.setTableGroupId(테이블그룹1.getId());
+            테이블1.setEmpty(false);
+            orderTableDao.save(테이블1);
+            테이블2.setTableGroupId(테이블그룹1.getId());
+            테이블2.setEmpty(false);
+            orderTableDao.save(테이블2);
 
             TableGroup 테이블그룹2 = 테이블그룹(List.of(테이블1, 테이블3));
 
@@ -149,7 +154,13 @@ class TableGroupServiceTest extends ServiceTest {
             OrderTable 테이블1 = orderTableDao.save(빈테이블());
             OrderTable 테이블2 = orderTableDao.save(빈테이블());
 
-            TableGroup 테이블그룹 = tableGroupService.create(테이블그룹(List.of(테이블1, 테이블2)));
+            TableGroup 테이블그룹 = tableGroupDao.save(테이블그룹(List.of(테이블1, 테이블2)));
+            테이블1.setTableGroupId(테이블그룹.getId());
+            테이블1.setEmpty(false);
+            orderTableDao.save(테이블1);
+            테이블2.setTableGroupId(테이블그룹.getId());
+            테이블2.setEmpty(false);
+            orderTableDao.save(테이블2);
 
             // when
             tableGroupService.ungroup(테이블그룹.getId());
@@ -173,7 +184,13 @@ class TableGroupServiceTest extends ServiceTest {
             OrderTable 테이블1 = orderTableDao.save(빈테이블());
             OrderTable 테이블2 = orderTableDao.save(빈테이블());
 
-            TableGroup 테이블그룹 = tableGroupService.create(테이블그룹(List.of(테이블1, 테이블2)));
+            TableGroup 테이블그룹 = tableGroupDao.save(테이블그룹(List.of(테이블1, 테이블2)));
+            테이블1.setTableGroupId(테이블그룹.getId());
+            테이블1.setEmpty(false);
+            orderTableDao.save(테이블1);
+            테이블2.setTableGroupId(테이블그룹.getId());
+            테이블2.setEmpty(false);
+            orderTableDao.save(테이블2);
 
             Order order1 = orderDao.save(주문(테이블1.getId(), orderStatus.name()));
             OrderLineItem 주문상품 = orderLineItemDao.save(주문상품(order1.getId(), 후라이드메뉴.getId(), 1));
