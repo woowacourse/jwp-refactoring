@@ -13,11 +13,11 @@ class MenuPriceTest {
     @Test
     @DisplayName("가격이 null이거나 음수이면 예외가 발생한다.")
     void validateMenuPrice() {
-        //given
+        // given
         final BigDecimal price1 = null;
         final BigDecimal price2 = BigDecimal.valueOf(-1);
 
-        //when, then
+        // when, then
         assertSoftly(softly -> {
             assertThatThrownBy(() -> new MenuPrice(price1)).isInstanceOf(IllegalArgumentException.class);
             assertThatThrownBy(() -> new MenuPrice(price2)).isInstanceOf(IllegalArgumentException.class);

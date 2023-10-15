@@ -6,7 +6,14 @@ public class Quantity {
     private final long value;
 
     public Quantity(final long value) {
+        validate(value);
         this.value = value;
+    }
+
+    private void validate(final long value) {
+        if (value < 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     @Override
