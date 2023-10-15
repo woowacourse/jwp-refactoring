@@ -15,6 +15,12 @@
 - [x] 서비스 테스트 구현
     - [x] MenuGroupService
     - [x] MenuService
+        - [x] Menu의 가격은 `null`이 아니어야 한다.
+        - [x] Menu의 가격은 0 이상이어야 한다.
+        - [x] 저장된 MenuGroup이 존재해야 한다.
+        - [x] Menu의 가격이 MenuProduct에 속하는 모든 상품의 가격 * 수량의 합보다 작거나 같아야 한다.
+        - [x] Menu를 저장하고 MenuProduct에 속하는 모든 상품을 Menu와 연결하여 저장하고 반환한다.
+        - [x] 모든 Menu의 MenuProduct와 Menu를 반환한다.
     - [x] OrderService
     - [x] ProductService
         - [x] 상품의 가격이 `null`이 아니고 0 이상일 경우 저장할 수 있다.
