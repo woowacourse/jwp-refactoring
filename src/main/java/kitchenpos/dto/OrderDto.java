@@ -1,24 +1,24 @@
-package kitchenpos.domain;
+package kitchenpos.dto;
+
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class Order {
+public class OrderDto {
+
     private Long id;
     private Long orderTableId;
     private String orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
 
-    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
-        this(id, orderTableId, orderStatus, orderedTime, null);
+    public static OrderDto from(Order order) {
+        return new OrderDto(order.getId(), order.getOrderTableId(), order.getOrderStatus(), order.getOrderedTime(), order.getOrderLineItems());
     }
 
-    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
-    }
-
-    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+    public OrderDto(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -26,8 +26,8 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public void changeStatus(String orderStatus) {
-        this.orderStatus = orderStatus;
+    public Order toDomain() {
+        return new Order(id, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
     public Long getId() {
