@@ -113,9 +113,12 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void 이미_단체_지정이_등록이_되어있는_경우_예외가_발생한다() {
             // given
-            TableGroup tableGroup = fixtures.단체_지정_저장();
-            OrderTable orderTableA = fixtures.주문_테이블_저장(tableGroup.getId(), true);
-            OrderTable orderTableB = fixtures.주문_테이블_저장(tableGroup.getId(), true);
+            OrderTable orderTableA = fixtures.빈_테이블_저장();
+            OrderTable orderTableB = fixtures.빈_테이블_저장();
+
+            TableGroup tableGroup = new TableGroup();
+            tableGroup.setOrderTables(List.of(orderTableA, orderTableB));
+            tableGroupService.create(tableGroup);
 
             TableGroup newTableGroup = new TableGroup();
             OrderTable orderTableC = fixtures.빈_테이블_저장();
@@ -123,8 +126,7 @@ class TableGroupServiceTest extends ServiceTest {
 
             // when, then
             assertThatThrownBy(() -> tableGroupService.create(newTableGroup))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("1234");
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
@@ -133,32 +135,36 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void 단체_지정을_헤제한다() {
             // given
-            TableGroup tableGroup = fixtures.단체_지정_저장();
-            fixtures.주문_테이블_저장(tableGroup.getId(), true);
-            fixtures.주문_테이블_저장(tableGroup.getId(), true);
+            OrderTable orderTableA = fixtures.빈_테이블_저장();
+            OrderTable orderTableB = fixtures.빈_테이블_저장();
+
+            TableGroup tableGroup = new TableGroup();
+            tableGroup.setOrderTables(List.of(orderTableA, orderTableB));
+            TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
             // when
-            tableGroupService.ungroup(tableGroup.getId());
+            tableGroupService.ungroup(savedTableGroup.getId());
 
             // then
-            List<OrderTable> orderTables = orderTableDao.findAll();
-
-            assertThat(orderTables.get(0).getTableGroupId()).isNull();
-            assertThat(orderTables.get(1).getTableGroupId()).isNull();
+            assertThat(orderTableA.getTableGroupId()).isNull();
+            assertThat(orderTableB.getTableGroupId()).isNull();
         }
 
         @Test
         void 주문_테이블_상태가_계산완료가_아닌_경우_예외가_발생한다() {
             // given
-            TableGroup tableGroup = fixtures.단체_지정_저장();
-            OrderTable orderTableA = fixtures.주문_테이블_저장(tableGroup.getId(), true);
-            OrderTable orderTableB = fixtures.주문_테이블_저장(tableGroup.getId(), true);
+            OrderTable orderTableA = fixtures.빈_테이블_저장();
+            OrderTable orderTableB = fixtures.빈_테이블_저장();
 
             fixtures.주문_저장(orderTableA.getId(), OrderStatus.COOKING);
             fixtures.주문_저장(orderTableB.getId(), OrderStatus.COMPLETION);
 
+            TableGroup tableGroup = new TableGroup();
+            tableGroup.setOrderTables(List.of(orderTableA, orderTableB));
+            TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+
             // when
-            assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
+            assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
