@@ -2,8 +2,10 @@ package kitchenpos.application;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.ordertable.Emptiness;
+import kitchenpos.domain.ordertable.NumberOfGuests;
+import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.ui.dto.ChangeEmptyRequest;
 import kitchenpos.ui.dto.NumberOfGuestsRequest;
 import kitchenpos.ui.dto.OrderTableRequest;
@@ -26,7 +28,7 @@ public class TableService {
     }
 
     public OrderTable create(final OrderTableRequest request) {
-        final OrderTable orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
+        final OrderTable orderTable = new OrderTable(new NumberOfGuests(request.getNumberOfGuests()), Emptiness.from(request.isEmpty()));
         return orderTableDao.save(orderTable);
     }
 
@@ -48,7 +50,7 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.updateEmpty(request.isEmpty());
+        savedOrderTable.updateEmpty(Emptiness.from(request.isEmpty()));
 
         return orderTableDao.save(savedOrderTable);
     }
@@ -66,7 +68,7 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
+        savedOrderTable.updateNumberOfGuests(new NumberOfGuests(numberOfGuests));
 
         return orderTableDao.save(savedOrderTable);
     }

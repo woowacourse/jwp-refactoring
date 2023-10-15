@@ -4,10 +4,12 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.menuproduct.Quantity;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItems;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.orderlineitem.OrderLineItem;
+import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.ui.dto.OrderLineItemDto;
 import kitchenpos.ui.dto.OrderRequest;
 import kitchenpos.ui.dto.OrderStatusRequest;
@@ -31,7 +33,10 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
@@ -115,16 +120,16 @@ class OrderServiceTest {
             // given
             final OrderRequest request = new OrderRequest(1L, orderLineItemDtos);
             final OrderTable orderTable = mock(OrderTable.class);
-            final Order order = new Order(1L, OrderStatus.COOKING.name(), LocalDateTime.now());
+            final Order order = new Order(1L, OrderStatus.COOKING, LocalDateTime.now());
             given(menuDao.countByIdIn(any())).willReturn(3L);
             given(orderTableDao.findById(anyLong())).willReturn(Optional.of(orderTable));
             given(orderTable.isEmpty()).willReturn(false);
             given(orderDao.save(any())).willReturn(order);
 
             final List<OrderLineItem> savedOrderLineItems = List.of(
-                    new OrderLineItem(1L, 1L, 1L, 2L),
-                    new OrderLineItem(2L, 1L, 2L, 3L),
-                    new OrderLineItem(3L, 1L, 3L, 4L)
+                    new OrderLineItem(1L, 1L, 1L, new Quantity(2L)),
+                    new OrderLineItem(2L, 1L, 2L, new Quantity(3L)),
+                    new OrderLineItem(3L, 1L, 3L, new Quantity(4L))
             );
             when(orderLineItemDao.save(any()))
                     .thenReturn(savedOrderLineItems.get(0))
@@ -144,7 +149,7 @@ class OrderServiceTest {
                         .isEqualTo(order);
                 assertThat(result).extracting("orderLineItems")
                         .usingRecursiveComparison()
-                        .isEqualTo(savedOrderLineItems);
+                        .isEqualTo(new OrderLineItems(savedOrderLineItems));
             });
         }
     }
@@ -154,11 +159,11 @@ class OrderServiceTest {
     void list() {
         // given
         final List<OrderLineItem> orderLineItems = List.of(
-                new OrderLineItem(1L, 1L, 1L, 2),
-                new OrderLineItem(2L, 1L, 2L, 3),
-                new OrderLineItem(3L, 1L, 3L, 4)
+                new OrderLineItem(1L, 1L, 1L, new Quantity(2)),
+                new OrderLineItem(2L, 1L, 2L, new Quantity(3)),
+                new OrderLineItem(3L, 1L, 3L, new Quantity(4))
         );
-        final Order order = new Order(1L, "orderStatus", LocalDateTime.now());
+        final Order order = new Order(1L, OrderStatus.COOKING, LocalDateTime.now());
         order.updateOrderLineItems(orderLineItems);
         given(orderDao.findAll()).willReturn(List.of(order));
 
@@ -188,7 +193,7 @@ class OrderServiceTest {
             // given
             final Order order = mock(Order.class);
             given(orderDao.findById(anyLong())).willReturn(Optional.of(order));
-            given(order.getOrderStatus()).willReturn("COMPLETION");
+            given(order.getOrderStatus()).willReturn(OrderStatus.COMPLETION);
 
             // when, then
             assertThatThrownBy(() -> orderService.changeOrderStatus(1L, new OrderStatusRequest("MEAL")))
@@ -199,7 +204,7 @@ class OrderServiceTest {
         @DisplayName("주문의 상태를 변경한다.")
         void changeOrderStatus() {
             // given
-            final Order order = new Order(1L, OrderStatus.COOKING.name(), LocalDateTime.now());
+            final Order order = new Order(1L, OrderStatus.COOKING, LocalDateTime.now());
             given(orderDao.findById(anyLong())).willReturn(Optional.of(order));
 
             // when
@@ -212,7 +217,7 @@ class OrderServiceTest {
                 assertThat(result).usingRecursiveComparison()
                         .ignoringFields("orderStatus", "orderedTime")
                         .isEqualTo(order);
-                assertThat(result.getOrderStatus()).isEqualTo("COMPLETION");
+                assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION);
             });
         }
     }

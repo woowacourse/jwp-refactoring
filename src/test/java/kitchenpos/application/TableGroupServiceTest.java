@@ -3,9 +3,12 @@ package kitchenpos.application;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.ordertable.Emptiness;
+import kitchenpos.domain.ordertable.NumberOfGuests;
+import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.tablegroup.OrderTables;
+import kitchenpos.domain.tablegroup.TableGroup;
 import kitchenpos.ui.dto.OrderTableIdDto;
 import kitchenpos.ui.dto.TableGroupRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -136,8 +139,8 @@ class TableGroupServiceTest {
                 given(request.getOrderTables()).willReturn(dtos);
 
                 final List<OrderTable> orderTables = List.of(
-                        new OrderTable(null, 2, true),
-                        new OrderTable(null, 3, true)
+                        new OrderTable(new NumberOfGuests(2), Emptiness.EMPTY),
+                        new OrderTable(new NumberOfGuests(3), Emptiness.EMPTY)
                 );
                 final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
                 given(orderTableDao.findAllByIdIn(any())).willReturn(orderTables);
@@ -150,7 +153,7 @@ class TableGroupServiceTest {
                 assertSoftly(softly -> {
                     assertThat(result).usingRecursiveComparison().isEqualTo(tableGroup);
                     assertThat(result).extracting("orderTables")
-                            .usingRecursiveComparison().isEqualTo(orderTables);
+                            .usingRecursiveComparison().isEqualTo(new OrderTables(orderTables));
                 });
             }
         }
@@ -163,8 +166,8 @@ class TableGroupServiceTest {
         void existsByOrderTableIdInAndOrderStatusIn() {
             // given
             final List<OrderTable> orderTables = List.of(
-                    new OrderTable(1L, 1L, 3, false),
-                    new OrderTable(2L, 1L, 4, false)
+                    new OrderTable(1L, 1L, new NumberOfGuests(2), Emptiness.NOT_EMPTY),
+                    new OrderTable(2L, 1L, new NumberOfGuests(3), Emptiness.NOT_EMPTY)
             );
             given(orderTableDao.findAllByTableGroupId(any())).willReturn(orderTables);
             given(orderDao.existsByOrderTableIdInAndOrderStatusIn(List.of(1L, 2L), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
@@ -179,8 +182,8 @@ class TableGroupServiceTest {
         void ungroup() {
             // given
             final List<OrderTable> orderTables = List.of(
-                    new OrderTable(1L, 1L, 3, true),
-                    new OrderTable(2L, 1L, 4, true)
+                    new OrderTable(1L, 1L, new NumberOfGuests(2), Emptiness.EMPTY),
+                    new OrderTable(2L, 1L, new NumberOfGuests(3), Emptiness.EMPTY)
             );
             given(orderTableDao.findAllByTableGroupId(any())).willReturn(orderTables);
             given(orderDao.existsByOrderTableIdInAndOrderStatusIn(List.of(1L, 2L), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))

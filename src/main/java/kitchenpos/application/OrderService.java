@@ -4,10 +4,11 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.menuproduct.Quantity;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.orderlineitem.OrderLineItem;
+import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.ui.dto.OrderLineItemDto;
 import kitchenpos.ui.dto.OrderRequest;
 import kitchenpos.ui.dto.OrderStatusRequest;
@@ -63,12 +64,17 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final Order savedOrder = orderDao.save(new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now()));
+        final Order savedOrder = orderDao.save(new Order(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now()));
 
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         Long sequence = 1L;
         for (final OrderLineItemDto orderLineItemDto : orderLineItemsDtos) {
-            final OrderLineItem orderLineItem = new OrderLineItem(sequence++, savedOrder.getId(), orderLineItemDto.getMenuId(), orderLineItemDto.getQuantity());
+            final OrderLineItem orderLineItem = new OrderLineItem(
+                    sequence++,
+                    savedOrder.getId(),
+                    orderLineItemDto.getMenuId(),
+                    new Quantity(orderLineItemDto.getQuantity())
+            );
             savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
         }
         savedOrder.updateOrderLineItems(savedOrderLineItems);
@@ -91,12 +97,12 @@ public class OrderService {
         final Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
+        if (Objects.equals(OrderStatus.COMPLETION, savedOrder.getOrderStatus())) {
             throw new IllegalArgumentException();
         }
 
         final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
-        savedOrder.updateOrderStatus(orderStatus.name());
+        savedOrder.updateOrderStatus(orderStatus);
 
         orderDao.save(savedOrder);
 

@@ -1,7 +1,9 @@
 package kitchenpos.application;
 
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductName;
+import kitchenpos.domain.product.ProductPrice;
 import kitchenpos.ui.dto.ProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -55,7 +57,7 @@ class ProductServiceTest {
         @DisplayName("상품을 생성한다.")
         void createProduct() {
             // given
-            final Product product = new Product(1L, "product", BigDecimal.valueOf(10_000));
+            final Product product = new Product(1L, new ProductName("product"), new ProductPrice(BigDecimal.valueOf(10_000)));
 
             given(request.getPrice()).willReturn(product.getPrice());
             given(productDao.save(any())).willReturn(product);
@@ -73,9 +75,9 @@ class ProductServiceTest {
     void list() {
         // given
         final List<Product> products = List.of(
-                new Product("product1", BigDecimal.valueOf(10_000)),
-                new Product("product2", BigDecimal.valueOf(20_000)),
-                new Product("product3", BigDecimal.valueOf(30_000))
+                new Product(new ProductName("product1"), new ProductPrice(BigDecimal.valueOf(10_000))),
+                new Product(new ProductName("product2"), new ProductPrice(BigDecimal.valueOf(20_000))),
+                new Product(new ProductName("product3"), new ProductPrice(BigDecimal.valueOf(30_000)))
         );
         given(productDao.findAll()).willReturn(products);
 

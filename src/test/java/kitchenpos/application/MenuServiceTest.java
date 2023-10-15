@@ -4,9 +4,15 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuName;
+import kitchenpos.domain.menu.MenuPrice;
+import kitchenpos.domain.menu.MenuProducts;
+import kitchenpos.domain.menuproduct.MenuProduct;
+import kitchenpos.domain.menuproduct.Quantity;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductName;
+import kitchenpos.domain.product.ProductPrice;
 import kitchenpos.ui.dto.MenuProductRequest;
 import kitchenpos.ui.dto.MenuRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +35,10 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class MenuServiceTest {
@@ -56,9 +65,9 @@ class MenuServiceTest {
                     new MenuProductRequest(2L, 1),
                     new MenuProductRequest(3L, 1)
             );
-            product1 = new Product("product1", BigDecimal.valueOf(100));
-            product2 = new Product("product2", BigDecimal.valueOf(200));
-            product3 = new Product("product3", BigDecimal.valueOf(300));
+            product1 = new Product(new ProductName("product1"), new ProductPrice(BigDecimal.valueOf(100)));
+            product2 = new Product(new ProductName("product2"), new ProductPrice(BigDecimal.valueOf(200)));
+            product3 = new Product(new ProductName("product3"), new ProductPrice(BigDecimal.valueOf(300)));
         }
 
         @Test
@@ -110,7 +119,7 @@ class MenuServiceTest {
             // given
             final MenuRequest request = new MenuRequest("productName", BigDecimal.valueOf(600), 1L, menuProductRequests);
 
-            final Menu menu = new Menu(1L, request.getName(), request.getPrice(), request.getMenuGroupId());
+            final Menu menu = new Menu(1L, new MenuName(request.getName()), new MenuPrice(request.getPrice()), request.getMenuGroupId());
 
             given(menuGroupDao.existsById(anyLong())).willReturn(true);
             given(productDao.findById(1L)).willReturn(Optional.of(product1));
@@ -118,9 +127,9 @@ class MenuServiceTest {
             given(productDao.findById(3L)).willReturn(Optional.of(product3));
             given(menuDao.save(any())).willReturn(menu);
 
-            final MenuProduct menuProduct1 = new MenuProduct(1L, 1L, 1L, 1);
-            final MenuProduct menuProduct2 = new MenuProduct(2L, 1L, 2L, 1);
-            final MenuProduct menuProduct3 = new MenuProduct(3L, 1L, 3L, 1);
+            final MenuProduct menuProduct1 = new MenuProduct(1L, 1L, 1L, new Quantity(1));
+            final MenuProduct menuProduct2 = new MenuProduct(2L, 1L, 2L, new Quantity(1));
+            final MenuProduct menuProduct3 = new MenuProduct(3L, 1L, 3L, new Quantity(1));
             when(menuProductDao.save(any()))
                     .thenReturn(menuProduct1)
                     .thenReturn(menuProduct2)
@@ -135,7 +144,8 @@ class MenuServiceTest {
                 verify(menuProductDao, times(3)).save(any());
                 assertThat(savedMenu).usingRecursiveComparison().isEqualTo(menu);
                 assertThat(savedMenu).extracting("menuProducts")
-                        .usingRecursiveComparison().isEqualTo(List.of(menuProduct1, menuProduct2, menuProduct3));
+                        .usingRecursiveComparison()
+                        .isEqualTo(new MenuProducts(List.of(menuProduct1, menuProduct2, menuProduct3)));
             });
         }
     }
@@ -144,8 +154,8 @@ class MenuServiceTest {
     @DisplayName("전체 메뉴를 조회한다.")
     void list() {
         // given
-        final Menu menu = new Menu(1L, "productName", new BigDecimal("35000"), 1L);
-        final MenuProduct menuProduct = new MenuProduct(1L, 1L, 3L, 1L);
+        final Menu menu = new Menu(1L, new MenuName("productName"), new MenuPrice(BigDecimal.valueOf(35_000)), 1L);
+        final MenuProduct menuProduct = new MenuProduct(1L, 1L, 3L, new Quantity(1L));
         given(menuDao.findAll()).willReturn(List.of(menu));
         given(menuProductDao.findAllByMenuId(anyLong())).willReturn(List.of(menuProduct));
 
@@ -157,7 +167,7 @@ class MenuServiceTest {
             assertThat(menus).hasSize(1);
             assertThat(menus.get(0)).usingRecursiveComparison().isEqualTo(menu);
             assertThat(menus.get(0)).extracting("menuProducts")
-                    .usingRecursiveComparison().isEqualTo(List.of(menuProduct));
+                    .usingRecursiveComparison().isEqualTo(new MenuProducts(List.of(menuProduct)));
         });
     }
 }

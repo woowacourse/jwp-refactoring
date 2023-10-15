@@ -2,7 +2,9 @@ package kitchenpos.application;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.ordertable.Emptiness;
+import kitchenpos.domain.ordertable.NumberOfGuests;
+import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.ui.dto.ChangeEmptyRequest;
 import kitchenpos.ui.dto.NumberOfGuestsRequest;
 import kitchenpos.ui.dto.OrderTableRequest;
@@ -25,7 +27,9 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class TableServiceTest {
@@ -41,7 +45,7 @@ class TableServiceTest {
     void create() {
         // given
         final OrderTableRequest request = new OrderTableRequest(3, false);
-        final OrderTable orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
+        final OrderTable orderTable = new OrderTable(new NumberOfGuests(request.getNumberOfGuests()), Emptiness.from(request.isEmpty()));
         given(orderTableDao.save(any())).willReturn(orderTable);
 
         // when
@@ -59,8 +63,8 @@ class TableServiceTest {
     void list() {
         // given
         final List<OrderTable> orderTables = List.of(
-                new OrderTable(2, false),
-                new OrderTable(3, false)
+                new OrderTable(new NumberOfGuests(2), Emptiness.NOT_EMPTY),
+                new OrderTable(new NumberOfGuests(3), Emptiness.NOT_EMPTY)
         );
         given(orderTableDao.findAll()).willReturn(orderTables);
 
@@ -118,7 +122,7 @@ class TableServiceTest {
         @DisplayName("테이블의 상태를 수정한다.")
         void create() {
             // given
-            final OrderTable orderTable = new OrderTable(3, false);
+            final OrderTable orderTable = new OrderTable(new NumberOfGuests(3), Emptiness.NOT_EMPTY);
 
             given(orderTableDao.findById(anyLong())).willReturn(Optional.of(orderTable));
             given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), any())).willReturn(false);
@@ -182,8 +186,8 @@ class TableServiceTest {
         void changeNumberOfGuests() {
             // given
             final NumberOfGuestsRequest request = new NumberOfGuestsRequest(10);
-            final OrderTable orderTable = new OrderTable(5, false);
-            final OrderTable savedOrderTable = new OrderTable(10, false);
+            final OrderTable orderTable = new OrderTable(new NumberOfGuests(5), Emptiness.NOT_EMPTY);
+            final OrderTable savedOrderTable = new OrderTable(new NumberOfGuests(10), Emptiness.NOT_EMPTY);
             given(orderTableDao.findById(anyLong())).willReturn(Optional.of(orderTable));
             given(orderTableDao.save(any())).willReturn(savedOrderTable);
 
@@ -193,7 +197,7 @@ class TableServiceTest {
             // then
             assertSoftly(softly -> {
                 verify(orderTableDao, times(1)).save(any());
-                assertThat(result.getNumberOfGuests()).isEqualTo(savedOrderTable.getNumberOfGuests());
+                assertThat(result.getCount()).isEqualTo(savedOrderTable.getCount());
             });
         }
     }

@@ -3,9 +3,11 @@ package kitchenpos.application;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.ordertable.Emptiness;
+import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.tablegroup.OrderTables;
+import kitchenpos.domain.tablegroup.TableGroup;
 import kitchenpos.ui.dto.OrderTableIdDto;
 import kitchenpos.ui.dto.TableGroupRequest;
 import org.springframework.stereotype.Service;
@@ -58,10 +60,10 @@ public class TableGroupService {
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
             savedOrderTable.updateTableGroupId(savedTableGroup.getId());
-            savedOrderTable.updateEmpty(false);
+            savedOrderTable.updateEmpty(Emptiness.NOT_EMPTY);
             orderTableDao.save(savedOrderTable);
         }
-        savedTableGroup.updateOrderTables(savedOrderTables);
+        savedTableGroup.updateOrderTables(new OrderTables(savedOrderTables));
 
         return savedTableGroup;
     }
@@ -80,7 +82,7 @@ public class TableGroupService {
 
         for (final OrderTable orderTable : orderTables) {
             orderTable.updateTableGroupId(null);
-            orderTable.updateEmpty(false);
+            orderTable.updateEmpty(Emptiness.NOT_EMPTY);
             orderTableDao.save(orderTable);
         }
     }

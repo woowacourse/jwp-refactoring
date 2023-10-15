@@ -1,24 +1,27 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
+
+import kitchenpos.domain.orderlineitem.OrderLineItem;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class Order {
     private Long id;
     private Long orderTableId;
-    private String orderStatus;
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+    private OrderLineItems orderLineItems;
 
-    public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
+    public Order(final Long orderTableId,
+                 final OrderStatus orderStatus,
+                 final LocalDateTime orderedTime) {
         this(null, orderTableId, orderStatus, orderedTime);
     }
 
     public Order(final Long id,
                  final Long orderTableId,
-                 final String orderStatus,
+                 final OrderStatus orderStatus,
                  final LocalDateTime orderedTime) {
         this.id = id;
         this.orderTableId = orderTableId;
@@ -30,28 +33,16 @@ public class Order {
         return id;
     }
 
-    public Long getOrderTableId() {
-        return orderTableId;
-    }
-
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public void updateOrderStatus(final String orderStatus) {
+    public void updateOrderStatus(final OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
 
-    public LocalDateTime getOrderedTime() {
-        return orderedTime;
-    }
-
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
-    }
-
     public void updateOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
+        this.orderLineItems = new OrderLineItems(orderLineItems);
     }
 
     @Override

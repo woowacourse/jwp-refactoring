@@ -4,9 +4,12 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuName;
+import kitchenpos.domain.menu.MenuPrice;
+import kitchenpos.domain.menuproduct.MenuProduct;
+import kitchenpos.domain.menuproduct.Quantity;
+import kitchenpos.domain.product.Product;
 import kitchenpos.ui.dto.MenuProductRequest;
 import kitchenpos.ui.dto.MenuRequest;
 import org.springframework.stereotype.Service;
@@ -60,13 +63,13 @@ public class MenuService {
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }
-        final Menu savedMenu = menuDao.save(new Menu(request.getName(), request.getPrice(), request.getMenuGroupId()));
+        final Menu savedMenu = menuDao.save(new Menu(new MenuName(request.getName()), new MenuPrice(request.getPrice()), request.getMenuGroupId()));
 
         final Long menuId = savedMenu.getId();
         Long sequence = 1L;
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProductRequest menuProductRequest : menuProductRequests) {
-            final MenuProduct menuProduct = new MenuProduct(sequence++, menuId, menuProductRequest.getProductId(), menuProductRequest.getQuantity());
+            final MenuProduct menuProduct = new MenuProduct(sequence++, menuId, menuProductRequest.getProductId(), new Quantity(menuProductRequest.getQuantity()));
             savedMenuProducts.add(menuProductDao.save(menuProduct));
         }
         savedMenu.updateMenuProducts(savedMenuProducts);
