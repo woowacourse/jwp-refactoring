@@ -53,7 +53,7 @@ class TableGroupServiceTest {
         @Test
         void 지정하려는_테이블의_수가_1개_이하일_떄_예외를_던진다() {
             //given
-            final OrderTable orderTable = orderTableDao.save(getOrderTable(true));
+            final OrderTable orderTable = orderTableDao.save(getOrderTable(OrderTable.EMPTY));
             final TableGroup tableGroup = getTableGroup(List.of(orderTable));
 
             //when
@@ -65,8 +65,8 @@ class TableGroupServiceTest {
         @Test
         void 존재하지_않는_테이블이_있으면_예외를_던진다() {
             //given
-            final OrderTable savedOrderTable = orderTableDao.save(getOrderTable(true));
-            final OrderTable unsavedOrderTable = getOrderTable(true);
+            final OrderTable savedOrderTable = orderTableDao.save(getOrderTable(OrderTable.EMPTY));
+            final OrderTable unsavedOrderTable = getOrderTable(OrderTable.EMPTY);
             final TableGroup tableGroup = getTableGroup(List.of(savedOrderTable, unsavedOrderTable));
 
             //when
@@ -79,7 +79,7 @@ class TableGroupServiceTest {
         void 지정하려는_테이블_중에_비어있지_않은_테이블이_존재하면_예외를_던진다() {
             //given
             final OrderTable orderTable1 = orderTableDao.save(getOrderTable(false));
-            final OrderTable orderTable2 = orderTableDao.save(getOrderTable(true));
+            final OrderTable orderTable2 = orderTableDao.save(getOrderTable(OrderTable.EMPTY));
             final TableGroup tableGroup = getTableGroup(List.of(orderTable1, orderTable2));
 
             //when
@@ -92,9 +92,9 @@ class TableGroupServiceTest {
         void 지정하려는_테이블_중에_이미_단체가_지정된_테이블이_존재하면_예외를_던진다() {
             //given
             final TableGroup tableGroup1 = tableGroupDao.save(getTableGroup());
-            final OrderTable orderTable1 = orderTableDao.save(getOrderTable(1, true));
-            final OrderTable orderTable2 = orderTableDao.save(getOrderTable(tableGroup1.getId(), 1, true));
-            final OrderTable orderTable3 = orderTableDao.save(getOrderTable(1, true));
+            final OrderTable orderTable1 = orderTableDao.save(getOrderTable(1, OrderTable.EMPTY));
+            final OrderTable orderTable2 = orderTableDao.save(getOrderTable(tableGroup1.getId(), 1, OrderTable.EMPTY));
+            final OrderTable orderTable3 = orderTableDao.save(getOrderTable(1, OrderTable.EMPTY));
 
             final TableGroup tableGroup2 = getTableGroup(List.of(orderTable1, orderTable2, orderTable3));
 
@@ -107,8 +107,8 @@ class TableGroupServiceTest {
         @Test
         void 성공시_테이블의_상태가_비어있지_않음으로_변경된다() {
             //given
-            final OrderTable orderTable1 = orderTableDao.save(getOrderTable(true));
-            final OrderTable orderTable2 = orderTableDao.save(getOrderTable(true));
+            final OrderTable orderTable1 = orderTableDao.save(getOrderTable(OrderTable.EMPTY));
+            final OrderTable orderTable2 = orderTableDao.save(getOrderTable(OrderTable.EMPTY));
             final TableGroup tableGroup = getTableGroup(List.of(orderTable1, orderTable2));
 
             //when
@@ -116,11 +116,11 @@ class TableGroupServiceTest {
 
             //then
             assertThat(savedTableGroup.getOrderTables())
-                    .extracting(OrderTable::isEmpty)
+                    .extracting(OrderTable::getEmpty)
                     .containsExactly(false, false);
             final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(savedTableGroup.getId());
             assertThat(orderTables)
-                    .extracting(OrderTable::isEmpty)
+                    .extracting(OrderTable::getEmpty)
                     .containsExactly(false, false);
         }
     }
@@ -134,8 +134,8 @@ class TableGroupServiceTest {
             //given
             final TableGroup tableGroup = tableGroupDao.save(getTableGroup());
 
-            final OrderTable orderTable1 = orderTableDao.save(getOrderTable(tableGroup.getId(), 0, true));
-            final OrderTable orderTable2 = orderTableDao.save(getOrderTable(tableGroup.getId(), 0, true));
+            final OrderTable orderTable1 = orderTableDao.save(getOrderTable(tableGroup.getId(), 0, OrderTable.EMPTY));
+            final OrderTable orderTable2 = orderTableDao.save(getOrderTable(tableGroup.getId(), 0, OrderTable.EMPTY));
             orderDao.save(getOrder(orderTable1.getId(), orderStatus));
             orderDao.save(getOrder(orderTable2.getId(), orderStatus));
 
@@ -152,8 +152,8 @@ class TableGroupServiceTest {
             //given
             final TableGroup tableGroup = tableGroupDao.save(getTableGroup());
 
-            final OrderTable orderTable1 = orderTableDao.save(getOrderTable(tableGroup.getId(), 0, true));
-            final OrderTable orderTable2 = orderTableDao.save(getOrderTable(tableGroup.getId(), 0, true));
+            final OrderTable orderTable1 = orderTableDao.save(getOrderTable(tableGroup.getId(), 0, OrderTable.EMPTY));
+            final OrderTable orderTable2 = orderTableDao.save(getOrderTable(tableGroup.getId(), 0, OrderTable.EMPTY));
 
             //when
             tableGroupService.ungroup(tableGroup.getId());

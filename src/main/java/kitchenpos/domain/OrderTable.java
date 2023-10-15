@@ -1,40 +1,88 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
+
 public class OrderTable {
+
+    public static final boolean EMPTY = true;
+    public static final boolean NOT_EMPTY = false;
+
     private Long id;
     private Long tableGroupId;
-    private int numberOfGuests;
+    private OrderTableGuestCount numberOfGuests;
     private boolean empty;
+
+    private OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        this.id = id;
+        this.tableGroupId = tableGroupId;
+        this.numberOfGuests = new OrderTableGuestCount(numberOfGuests);
+        this.empty = empty;
+    }
+
+    public OrderTable(final int numberOfGuests, final boolean empty) {
+        this(null, null, numberOfGuests, empty);
+    }
+
+    public static Builder builder(final int numberOfGuests, final boolean empty) {
+        return new Builder(numberOfGuests, empty);
+    }
+
+    public boolean hasTableGroupId() {
+        return Objects.nonNull(tableGroupId);
+    }
+
+    public void changeEmpty(final boolean empty) {
+        this.empty = empty;
+    }
+
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        this.numberOfGuests = new OrderTableGuestCount(numberOfGuests);
+    }
+
+    public void belongsToTableGroupId(final Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
+    }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public Long getTableGroupId() {
         return tableGroupId;
     }
 
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-    }
-
     public int getNumberOfGuests() {
-        return numberOfGuests;
+        return numberOfGuests.getCount();
     }
 
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
-
-    public boolean isEmpty() {
+    public boolean getEmpty() {
         return empty;
     }
 
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
+    public static class Builder {
+
+        private Long id;
+        private Long tableGroupId;
+        private final int numberOfGuests;
+        private final boolean empty;
+
+        public Builder(final int numberOfGuests, final boolean empty) {
+            this.numberOfGuests = numberOfGuests;
+            this.empty = empty;
+        }
+
+        public Builder id(final Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder tableGroupId(final Long tableGroupId) {
+            this.tableGroupId = tableGroupId;
+            return this;
+        }
+
+        public OrderTable build() {
+            return new OrderTable(id, tableGroupId, numberOfGuests, empty);
+        }
     }
 }

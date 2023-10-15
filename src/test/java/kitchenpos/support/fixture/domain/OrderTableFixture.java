@@ -4,31 +4,23 @@ import kitchenpos.domain.OrderTable;
 
 public class OrderTableFixture {
 
+    private static final int EMPTY_GUEST_COUNT = 0;
+
     public static OrderTable getOrderTable(final boolean isEmpty) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(isEmpty);
-        return orderTable;
+        return getOrderTable(null, EMPTY_GUEST_COUNT, isEmpty);
     }
 
     public static OrderTable getOrderTable(final Long tableGroupId, final boolean isEmpty) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setEmpty(isEmpty);
-        return orderTable;
+        return getOrderTable(tableGroupId, EMPTY_GUEST_COUNT, isEmpty);
     }
 
     public static OrderTable getOrderTable(final int numberOfGuests, final boolean isEmpty) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(isEmpty);
-        return orderTable;
+        return getOrderTable(null, numberOfGuests, isEmpty);
     }
 
     public static OrderTable getOrderTable(final Long tableGroupId, final int numberOfGuests, final boolean isEmpty) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(isEmpty);
-        return orderTable;
+        return OrderTable.builder(numberOfGuests, isEmpty)
+                .tableGroupId(tableGroupId)
+                .build();
     }
 }
