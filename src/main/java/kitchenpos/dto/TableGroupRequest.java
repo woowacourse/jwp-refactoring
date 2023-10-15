@@ -8,6 +8,9 @@ public class TableGroupRequest {
 
     private List<OrderTableIdRequest> orderTables;
 
+    protected TableGroupRequest() {
+    }
+
     public TableGroupRequest(List<OrderTableIdRequest> orderTables) {
         this.orderTables = orderTables;
     }
@@ -24,6 +27,9 @@ public class TableGroupRequest {
 
     public static class OrderTableIdRequest {
         private Long id;
+
+        protected OrderTableIdRequest() {
+        }
 
         public OrderTableIdRequest(Long id) {
             this.id = id;
