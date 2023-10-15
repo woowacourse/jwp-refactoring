@@ -17,7 +17,9 @@ import java.util.Collections;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -39,6 +41,12 @@ class OrderServiceTest extends ServiceTest {
     private OrderService orderService;
 
     @Autowired
+    private ProductDao productDao;
+
+    @Autowired
+    private MenuProductDao menuProductDao;
+
+    @Autowired
     private MenuDao menuDao;
 
     @Autowired
@@ -53,8 +61,8 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 정상적인_주문이라면_주문을_추가한다() {
             //given
-            Product product = 상품("텐동", BigDecimal.valueOf(11000));
-            MenuProduct menuProduct = 메뉴_상품(null, product.getId(), 1);
+            Product product = productDao.save(상품("텐동", BigDecimal.valueOf(11000)));
+            MenuProduct menuProduct = menuProductDao.save(메뉴_상품(null, product.getId(), 1));
             MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("일식"));
             Menu menu = menuDao.save(메뉴("텐동", BigDecimal.valueOf(11000), menuGroup.getId(), List.of(menuProduct)));
 
