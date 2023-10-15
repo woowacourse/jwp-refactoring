@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.application.request.OrderTableRequest;
+import kitchenpos.application.request.OrderTableDto;
 import kitchenpos.application.request.TableGroupCreateRequest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
@@ -88,7 +88,7 @@ class TableGroupServiceTest extends ServiceTest {
             // given
             TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(
                 getPersistOrderTableRequest(2, true),
-                new OrderTableRequest(2L)
+                new OrderTableDto(2L)
             ));
 
             // when && then
@@ -124,7 +124,7 @@ class TableGroupServiceTest extends ServiceTest {
             orderDao.save(
                 new Order(orderTableB.getId(), OrderStatus.COMPLETION, LocalDateTime.now(), Collections.emptyList()));
             TableGroup tableGroup = tableGroupService.create(new TableGroupCreateRequest(
-                List.of(new OrderTableRequest(orderTableA.getId()),new OrderTableRequest(orderTableB.getId()))));
+                List.of(new OrderTableDto(orderTableA.getId()),new OrderTableDto(orderTableB.getId()))));
 
             // when
             assertDoesNotThrow(() -> tableGroupService.ungroup(tableGroup.getId()));
@@ -141,7 +141,7 @@ class TableGroupServiceTest extends ServiceTest {
             orderDao.save(
                 new Order(orderTableB.getId(), orderStatus, LocalDateTime.now(), Collections.emptyList()));
             TableGroup tableGroup = tableGroupService.create(new TableGroupCreateRequest(
-                List.of(new OrderTableRequest(orderTableA.getId()),new OrderTableRequest(orderTableB.getId()))));
+                List.of(new OrderTableDto(orderTableA.getId()),new OrderTableDto(orderTableB.getId()))));
 
             // when && then
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
@@ -150,8 +150,8 @@ class TableGroupServiceTest extends ServiceTest {
 
     }
 
-    private OrderTableRequest getPersistOrderTableRequest(int numberOfGuests, boolean empty) {
+    private OrderTableDto getPersistOrderTableRequest(int numberOfGuests, boolean empty) {
         OrderTable orderTable = orderTableDao.save(new OrderTable(numberOfGuests, empty));
-        return new OrderTableRequest(orderTable.getId());
+        return new OrderTableDto(orderTable.getId());
     }
 }

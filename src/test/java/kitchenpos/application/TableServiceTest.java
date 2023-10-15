@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.application.request.OrderTableCreateRequest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -42,16 +43,15 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 주문테이블을_저장() {
         // given
-        OrderTable expected = new OrderTable(4, true);
+        OrderTableCreateRequest request = new OrderTableCreateRequest(4, true);
 
         // when
-        OrderTable actual = tableService.create(expected);
+        OrderTable actual = tableService.create(request);
 
         // then
         assertAll(
-            () -> assertThat(actual).usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(expected),
+            () -> assertThat(actual.getNumberOfGuests()).isEqualTo(4),
+            () -> assertThat(actual.isEmpty()).isEqualTo(true),
             () -> assertThat(actual.getId()).isPositive()
         );
     }

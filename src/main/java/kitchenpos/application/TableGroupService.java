@@ -3,7 +3,7 @@ package kitchenpos.application;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
-import kitchenpos.application.request.OrderTableRequest;
+import kitchenpos.application.request.OrderTableDto;
 import kitchenpos.application.request.TableGroupCreateRequest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
@@ -32,7 +32,7 @@ public class TableGroupService {
     @Transactional
     public TableGroup create(TableGroupCreateRequest request) {
         List<Long> orderTableIds = request.getOrderTableRequests().stream()
-            .map(OrderTableRequest::getId)
+            .map(OrderTableDto::getId)
             .collect(toList());
         List<OrderTable> savedOrderTables = getOrderTables(orderTableIds);
         return getTableGroup(savedOrderTables);

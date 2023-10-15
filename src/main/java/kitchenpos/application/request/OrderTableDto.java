@@ -1,10 +1,10 @@
 package kitchenpos.application.request;
 
-public class OrderTableRequest {
+public class OrderTableDto {
 
     private final Long id;
 
-    public OrderTableRequest(Long id) {
+    public OrderTableDto(Long id) {
         this.id = id;
     }
 
