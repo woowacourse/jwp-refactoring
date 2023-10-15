@@ -19,9 +19,9 @@ class MenuRestControllerTest extends ControllerTest {
         // given
         Menu menu = 메뉴();
         String request = objectMapper.writeValueAsString(menu);
-        menu.setId(1L);
-        given(menuService.create(any())).willReturn(menu);
-        String response = objectMapper.writeValueAsString(menu);
+        Menu savedMenu = 메뉴(1L);
+        given(menuService.create(any())).willReturn(savedMenu);
+        String response = objectMapper.writeValueAsString(savedMenu);
 
         // when & then
         mockMvc.perform(post("/api/menus")
@@ -34,10 +34,8 @@ class MenuRestControllerTest extends ControllerTest {
     @Test
     void 메뉴_조회() throws Exception {
         // given
-        Menu 메뉴1 = 메뉴();
-        메뉴1.setId(1L);
-        Menu 메뉴2 = 메뉴();
-        메뉴2.setId(2L);
+        Menu 메뉴1 = 메뉴(1L);
+        Menu 메뉴2 = 메뉴(2L);
         List<Menu> menus = List.of(메뉴1, 메뉴2);
         given(menuService.list()).willReturn(menus);
         String response = objectMapper.writeValueAsString(menus);

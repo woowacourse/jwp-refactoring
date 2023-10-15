@@ -2,10 +2,15 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import javax.persistence.Embeddable;
 
+@Embeddable
 public class Price {
 
     private BigDecimal value;
+
+    protected Price() {
+    }
 
     public Price(BigDecimal value) {
         validate(value);

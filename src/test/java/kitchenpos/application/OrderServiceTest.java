@@ -61,7 +61,7 @@ class OrderServiceTest extends IntegrationTest {
         void setUp() {
             Menu menu = 맛있는_메뉴();
             OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setMenuId(menu.getId());
+            orderLineItem.setMenuId(menu.id());
             order.setOrderLineItems(List.of(orderLineItem));
         }
 

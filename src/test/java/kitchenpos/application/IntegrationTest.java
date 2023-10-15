@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
@@ -14,6 +13,7 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -57,9 +57,6 @@ public class IntegrationTest {
     protected ProductDao productDao;
 
     @Autowired
-    protected MenuDao menuDao;
-
-    @Autowired
     protected OrderTableDao orderTableDao;
 
     @Autowired
@@ -67,6 +64,9 @@ public class IntegrationTest {
 
     @Autowired
     protected TableGroupDao tableGroupDao;
+
+    @Autowired
+    protected MenuRepository menuRepository;
 
     protected Order 맛있는_메뉴_주문() {
         OrderTable 주문_테이블 = 주문_테이블(false);
@@ -110,7 +110,7 @@ public class IntegrationTest {
 
     private OrderLineItem toOrderLineItem(Menu 메뉴) {
         OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(메뉴.getId());
+        orderLineItem.setMenuId(메뉴.id());
         return orderLineItem;
     }
 
@@ -121,21 +121,21 @@ public class IntegrationTest {
     }
 
     protected Menu 맛있는_메뉴() {
-        return 메뉴(메뉴_그룹(),
+        Menu menu = 메뉴(메뉴_그룹(),
                 BigDecimal.valueOf(5),
                 "맛있는 메뉴",
-                메뉴_상품(상품("상품1", BigDecimal.valueOf(1)), 3),
-                메뉴_상품(상품("상품2", BigDecimal.valueOf(2)), 2)
+                new MenuProduct(상품("상품1", BigDecimal.valueOf(1)), 3),
+                new MenuProduct(상품("상품2", BigDecimal.valueOf(2)), 2)
         );
+        menu.addMenuProduct(new MenuProduct(상품("상품1", BigDecimal.valueOf(1)), 3));
+        menu.addMenuProduct(new MenuProduct(상품("상품2", BigDecimal.valueOf(2)), 2));
+        return menu;
     }
 
     protected Menu 메뉴(MenuGroup 메뉴_그룹, BigDecimal 가격, String 이름, MenuProduct... 메뉴_상품들) {
-        Menu menu = new Menu();
-        menu.setPrice(가격);
-        menu.setMenuGroupId(메뉴_그룹.id());
-        menu.setName(이름);
-        menu.setMenuProducts(Arrays.asList(메뉴_상품들));
-        return menuDao.save(menu);
+        Menu menu = new Menu(이름, 가격, 메뉴_그룹);
+        Arrays.stream(메뉴_상품들).forEach(menu::addMenuProduct);
+        return menuRepository.save(menu);
     }
 
     protected MenuGroup 메뉴_그룹() {
@@ -145,12 +145,5 @@ public class IntegrationTest {
     protected Product 상품(String 이름, BigDecimal 가격) {
         Product product = new Product(이름, new Price(가격));
         return productDao.save(product);
-    }
-
-    protected MenuProduct 메뉴_상품(Product 상품, long 수량) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(상품.id());
-        menuProduct.setQuantity(수량);
-        return menuProduct;
     }
 }

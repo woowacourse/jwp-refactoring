@@ -10,10 +10,13 @@ import kitchenpos.application.ProductService;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.application.TableService;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Price;
+import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -48,17 +51,32 @@ public class ControllerTest {
     protected ObjectMapper objectMapper;
 
     protected Menu 메뉴() {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(1L);
-        menuProduct.setQuantity(2);
+        MenuProduct menuProduct = new MenuProduct(
+                new Product(1L, "상품", new Price(BigDecimal.ONE)),
+                2
+        );
 
-        Menu menu = new Menu();
-        menu.setName("후라이드+후라이드");
-        menu.setPrice(BigDecimal.valueOf(19000));
-        menu.setMenuGroupId(1L);
-        menu.setMenuProducts(List.of(menuProduct));
+        return new Menu(
+                "후라이드+후라이드",
+                BigDecimal.valueOf(19000),
+                new MenuGroup(1L, "추천메뉴"),
+                List.of(menuProduct)
+        );
+    }
 
-        return menu;
+    protected Menu 메뉴(Long id) {
+        MenuProduct menuProduct = new MenuProduct(
+                new Product(1L, "상품", new Price(BigDecimal.ONE)),
+                2
+        );
+
+        return new Menu(
+                id,
+                "후라이드+후라이드",
+                BigDecimal.valueOf(19000),
+                new MenuGroup(1L, "추천메뉴"),
+                List.of(menuProduct)
+        );
     }
 
     protected Order 주문() {
