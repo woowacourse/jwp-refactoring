@@ -56,7 +56,7 @@ class ProductServiceTest extends ServiceTest {
         }
 
         @ParameterizedTest
-        @ValueSource(ints = {-1, 100, -1231123})
+        @ValueSource(ints = {-1, -100, -1231123})
         void 가격이_음수인_경우_예외가_발생한다(int value) {
             // given
             Product product = new Product();
