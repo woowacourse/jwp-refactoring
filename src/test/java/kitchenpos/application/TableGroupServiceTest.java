@@ -4,8 +4,12 @@ import static kitchenpos.fixture.OrderFixture.주문;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
@@ -21,7 +25,7 @@ class TableGroupServiceTest extends ServiceIntegrateTest {
   @Autowired
   private OrderTableDao orderTableDao;
   @Autowired
-  private OrderService orderService;
+  private OrderDao orderDao;
   @Autowired
   private TableGroupService tableGroupService;
 
@@ -136,7 +140,9 @@ class TableGroupServiceTest extends ServiceIntegrateTest {
     Assertions.assertDoesNotThrow(actual);
     Assertions.assertAll(
         () -> assertThat(orderTableDao.findById(1L).get().isEmpty()).isFalse(),
-        () -> assertThat(orderTableDao.findById(2L).get().isEmpty()).isFalse()
+        () -> assertThat(orderTableDao.findById(2L).get().isEmpty()).isFalse(),
+        () -> assertThat(orderTableDao.findById(1L).get().getTableGroupId()).isNull(),
+        () -> assertThat(orderTableDao.findById(2L).get().getTableGroupId()).isNull()
     );
   }
 
@@ -147,14 +153,12 @@ class TableGroupServiceTest extends ServiceIntegrateTest {
     final TableGroup tableGroup = new TableGroup();
     tableGroup.setOrderTables(List.of(table1, table2));
 
-    final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
-    final Long savedTableGroupId = savedTableGroup.getId();
+    final Long savedTableGroupId = tableGroupService.create(tableGroup).getId();
 
-    final OrderTable savedTable = savedTableGroup.getOrderTables().get(0);
-    savedTable.setEmpty(false);
-    orderTableDao.save(savedTable);
-
-    orderService.create(주문(table1.getId()));
+    final Order order = 주문(table1.getId());
+    order.setOrderStatus(OrderStatus.COOKING.name());
+    order.setOrderedTime(LocalDateTime.now());
+    orderDao.save(order);
 
     //when
     final ThrowingCallable actual = () -> tableGroupService.ungroup(savedTableGroupId);
