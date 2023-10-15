@@ -38,11 +38,10 @@ class ProductServiceTest extends ServiceTest {
     @ParameterizedTest
     void create_PriceLowerThanZero_ExceptionThrown(int invalidPrice) {
         // given
-        Product product = new Product();
-        product.setPrice(BigDecimal.valueOf(invalidPrice));
+        BigDecimal price = BigDecimal.valueOf(invalidPrice);
 
         // when, then
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(new Product("상품", price)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
