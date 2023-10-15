@@ -2,8 +2,10 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
+import java.util.List;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
@@ -63,6 +65,28 @@ class ProductServiceTest {
 
         assertThat(findProduct).usingRecursiveComparison()
                 .isEqualTo(savedProduct);
+    }
+
+    @DisplayName("상품 목록을 조회할 수 있다.")
+    @Test
+    void listSuccessTest() {
+        //given
+        Product product = createProduct();
+        product.setPrice(BigDecimal.ZERO);
+
+        Product savedProduct = productDao.save(product);
+
+        //when
+        List<Product> findProducts = productService.list();
+
+        //then
+        assertAll(
+                () -> assertThat(findProducts).usingRecursiveComparison()
+                        .ignoringFields("price")
+                        .isEqualTo(List.of(savedProduct)),
+                () -> assertThat(findProducts).hasSize(1),
+                () -> assertThat(findProducts.get(0).getPrice()).isEqualByComparingTo(savedProduct.getPrice())
+        );
     }
 
     private Product createProduct() {

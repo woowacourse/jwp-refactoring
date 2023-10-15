@@ -210,4 +210,22 @@ class TableServiceTest {
         assertThat(findOrderTable.getNumberOfGuests()).isEqualTo(numberOfGuests);
     }
 
+    @DisplayName("테이블 목록을 조회할 수 있다.")
+    @Test
+    void listSuccessTest() {
+        //given
+        OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(10);
+        orderTable.setEmpty(true);
+
+        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+
+        //when
+        List<OrderTable> findOrderTables = tableService.list();
+
+        //then
+        assertThat(findOrderTables).usingRecursiveComparison()
+                .isEqualTo(List.of(savedOrderTable));
+    }
+
 }

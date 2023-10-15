@@ -154,9 +154,43 @@ class MenuServiceTest {
                 () -> assertThat(findMenu).usingRecursiveComparison()
                         .ignoringFields("price", "menuProducts")
                         .isEqualTo(savedMenu),
+                () -> assertThat(findMenu.getPrice())
+                        .isEqualByComparingTo(savedMenu.getPrice()),
                 () -> assertThat(findMenuProducts).usingRecursiveComparison()
                         .ignoringFields("menuId", "seq")
                         .isEqualTo(List.of(menuProduct))
+        );
+    }
+
+    @DisplayName("메뉴 목록을 조회할 수 있다.")
+    @Test
+    void listSuccessTest() {
+        //given
+        int price = 10000;
+
+        MenuGroup savedMenuGroup = saveMenuGroup();
+        Product savedProduct = saveProductAmountOf(price);
+
+        menu.setPrice(BigDecimal.valueOf(price));
+        menu.setMenuGroupId(savedMenuGroup.getId());
+        Menu savedMenu = menuDao.save(menu);
+
+        MenuProduct menuProduct = createMenuProduct(savedProduct);
+        menuProduct.setMenuId(savedMenu.getId());
+        MenuProduct savedMenuProduct = menuProductDao.save(menuProduct);
+
+        //when
+        List<Menu> findMenus = menuService.list();
+
+        //then
+        assertAll(
+                () -> assertThat(findMenus).usingRecursiveComparison()
+                        .ignoringFields("price", "menuProducts")
+                        .isEqualTo(List.of(savedMenu)),
+                () -> assertThat(findMenus).hasSize(1),
+                () -> assertThat(findMenus.get(0).getPrice()).isEqualByComparingTo(savedMenu.getPrice()),
+                () -> assertThat(findMenus.get(0).getMenuProducts()).usingRecursiveComparison()
+                        .isEqualTo(List.of(savedMenuProduct))
         );
     }
 
