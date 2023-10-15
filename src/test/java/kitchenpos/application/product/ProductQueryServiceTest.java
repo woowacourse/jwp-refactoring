@@ -22,7 +22,7 @@ class ProductQueryServiceTest extends ApplicationTestConfig {
         productService = new ProductService(productDao);
     }
 
-    @DisplayName("[SUCCESS]모든 상품 목록을 조회한다.")
+    @DisplayName("[SUCCESS] 모든 상품 목록을 조회한다.")
     @Test
     void success_findAll() {
         // given
@@ -36,6 +36,7 @@ class ProductQueryServiceTest extends ApplicationTestConfig {
         final List<Product> actual = productService.list();
 
         // then
-        assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
+        assertThat(actual).usingRecursiveComparison()
+                .isEqualTo(expected);
     }
 }
