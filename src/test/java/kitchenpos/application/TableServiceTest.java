@@ -59,7 +59,6 @@ class TableServiceTest extends ServiceTest {
     @Autowired
     private TableService tableService;
 
-
     @Nested
     class 테이블_등록 {
 

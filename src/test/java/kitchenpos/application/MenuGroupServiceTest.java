@@ -15,10 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 class MenuGroupServiceTest extends ServiceTest {
 
     @Autowired
-    MenuGroupDao menuGroupDao;
+    private MenuGroupDao menuGroupDao;
 
     @Autowired
-    MenuGroupService menuGroupService;
+    private MenuGroupService menuGroupService;
 
 
     @Test
