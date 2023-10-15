@@ -38,13 +38,13 @@ public class MenuService {
         MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                 .orElseThrow(MenuGroupNotFoundException::new);
         Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup);
-        addMenuProducts(request, menu);
+        setupMenuProducts(request, menu);
         menuRepository.save(menu);
 
         return MenuResponse.from(menu);
     }
 
-    private void addMenuProducts(CreateMenuRequest request, Menu menu) {
+    private void setupMenuProducts(CreateMenuRequest request, Menu menu) {
         List<MenuProduct> menuProducts = new ArrayList<>();
         for (MenuProductRequest menuProductRequest : request.getMenuProducts()) {
             Product product = productRepository.findById(menuProductRequest.getProductId())

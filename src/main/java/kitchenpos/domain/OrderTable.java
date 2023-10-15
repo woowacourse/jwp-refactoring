@@ -35,18 +35,19 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public void validateTableGroupNotExists() {
-        if (tableGroup != null) {
-            throw new TableGroupExistsException();
-        }
-    }
-
     public void changeTableGroup(TableGroup tableGroup) {
         this.tableGroup = tableGroup;
     }
 
     public void changeEmpty(boolean empty) {
+        validateTableGroupNotExists();
         this.empty = empty;
+    }
+
+    public void validateTableGroupNotExists() {
+        if (tableGroup != null) {
+            throw new TableGroupExistsException();
+        }
     }
 
     public void changeNumberOfGuests(int numberOfGuests) {

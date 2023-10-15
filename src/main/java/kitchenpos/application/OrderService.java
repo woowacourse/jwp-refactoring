@@ -40,7 +40,7 @@ public class OrderService {
     @Transactional
     public OrderResponse create(CreateOrderRequest request) {
         Order order = createOrder(request);
-        addOrderLineItems(request, order);
+        setupOrderLineItems(request, order);
 
         return OrderResponse.from(order);
     }
@@ -53,7 +53,7 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    private void addOrderLineItems(CreateOrderRequest request, Order order) {
+    private void setupOrderLineItems(CreateOrderRequest request, Order order) {
         List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (OrderLineItemRequest orderLineItemRequest : request.getOrderLineItems()) {
             Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())

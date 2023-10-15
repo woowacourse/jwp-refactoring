@@ -47,7 +47,6 @@ public class TableService {
         OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(OrderTableNotFoundException::new);
 
-        orderTable.validateTableGroupNotExists();
         validateOrdersCompleted(orderTable);
         orderTable.changeEmpty(request.getEmpty());
 
