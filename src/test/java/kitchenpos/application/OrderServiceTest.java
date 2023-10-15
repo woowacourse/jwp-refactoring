@@ -68,8 +68,8 @@ class OrderServiceTest extends ServiceTest {
 
             OrderTable orderTable = orderTableDao.save(테이블(null, 10, false));
             OrderLineItem orderLineItem = 주문_메뉴_목록(orderTable.getId(), menu.getId(), 1);
-            LocalDateTime cookingTime = LocalDateTime.now();
-            Order order = 주문(orderTable.getId(), null, cookingTime, List.of(orderLineItem));
+            LocalDateTime orderedTime = LocalDateTime.now();
+            Order order = 주문(orderTable.getId(), null, orderedTime, List.of(orderLineItem));
 
             //when
             Order savedOrder = orderService.create(order);
@@ -79,7 +79,7 @@ class OrderServiceTest extends ServiceTest {
                 softly.assertThat(savedOrder.getId()).isNotNull();
                 softly.assertThat(savedOrder.getOrderTableId()).isEqualTo(orderTable.getId());
                 softly.assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
-                softly.assertThat(savedOrder.getOrderedTime()).isAfter(cookingTime);
+                softly.assertThat(savedOrder.getOrderedTime()).isAfter(orderedTime);
                 softly.assertThat(savedOrder.getOrderLineItems()).usingRecursiveComparison()
                         .ignoringFields("seq")
                         .isEqualTo(List.of(orderLineItem));
