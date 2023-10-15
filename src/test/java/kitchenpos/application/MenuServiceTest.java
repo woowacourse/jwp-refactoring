@@ -40,13 +40,16 @@ class MenuServiceTest extends ServiceTest {
 
         @Test
         void 정상적인_메뉴라면_메뉴를_추가한다() {
+            //given
             MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("일식"));
             Product product = productDao.save(상품("텐동", BigDecimal.valueOf(11000)));
             MenuProduct menuProduct = 메뉴_상품(null, product.getId(), 1);
             Menu menu = 메뉴("텐동", BigDecimal.valueOf(11000), menuGroup.getId(), List.of(menuProduct));
 
+            //when
             Menu savedMenu = menuService.create(menu);
 
+            //then
             assertSoftly(softly -> {
                 softly.assertThat(savedMenu.getId()).isNotNull();
                 softly.assertThat(savedMenu.getName()).isEqualTo("텐동");
@@ -62,11 +65,13 @@ class MenuServiceTest extends ServiceTest {
 
         @Test
         void 가격이_NULL이면_예외를_던진다() {
+            //given
             MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("일식"));
             Product product = productDao.save(상품("텐동", BigDecimal.valueOf(11000)));
             MenuProduct menuProduct = 메뉴_상품(null, product.getId(), 1);
             Menu menu = 메뉴("텐동", null, menuGroup.getId(), List.of(menuProduct));
 
+            //when, then
             assertThatThrownBy(() -> menuService.create(menu))
                     .isInstanceOf(IllegalArgumentException.class);
         }
@@ -74,42 +79,50 @@ class MenuServiceTest extends ServiceTest {
         @ParameterizedTest
         @ValueSource(longs = {Integer.MIN_VALUE, -1})
         void 가격이_0보다_작으면_예외를_던진다(long price) {
+            //given
             MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("일식"));
             Product product = productDao.save(상품("텐동", BigDecimal.valueOf(11000)));
             MenuProduct menuProduct = 메뉴_상품(null, product.getId(), 1);
             Menu menu = 메뉴("텐동", BigDecimal.valueOf(price), menuGroup.getId(), List.of(menuProduct));
 
+            //when, then
             assertThatThrownBy(() -> menuService.create(menu))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 존재하지_않는_메뉴_그룹이라면_예외를_던진다() {
+            //given
             Product product = productDao.save(상품("텐동", BigDecimal.valueOf(11000)));
             MenuProduct menuProduct = 메뉴_상품(null, product.getId(), 1);
             Menu menu = 메뉴("텐동", BigDecimal.valueOf(11000), -1L, List.of(menuProduct));
 
+            //when, then
             assertThatThrownBy(() -> menuService.create(menu))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 존재하지_않은_상품이라면_예외를_던진다() {
+            //given
             MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("일식"));
             MenuProduct menuProduct = 메뉴_상품(null, -1L, 1);
             Menu menu = 메뉴("텐동", BigDecimal.valueOf(11000), menuGroup.getId(), List.of(menuProduct));
 
+            //when, then
             assertThatThrownBy(() -> menuService.create(menu))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 총_상품_가격보다_메뉴_가격이_크다면_예외를_던진다() {
+            //given
             MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("일식"));
             Product product = productDao.save(상품("텐동", BigDecimal.valueOf(11000)));
             MenuProduct menuProduct = 메뉴_상품(null, product.getId(), 1);
             Menu menu = 메뉴("텐동", BigDecimal.valueOf(12000), menuGroup.getId(), List.of(menuProduct));
 
+            //when, then
             assertThatThrownBy(() -> menuService.create(menu))
                     .isInstanceOf(IllegalArgumentException.class);
         }
@@ -120,6 +133,7 @@ class MenuServiceTest extends ServiceTest {
 
         @Test
         void 모든_메뉴_목록을_조회한다() {
+            //given
             MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("일식"));
             Product product = productDao.save(상품("텐동", BigDecimal.valueOf(11000)));
             MenuProduct menuProduct = 메뉴_상품(null, product.getId(), 1);
@@ -128,15 +142,19 @@ class MenuServiceTest extends ServiceTest {
             Menu savedMenuA = menuService.create(menuA);
             Menu savedMenuB = menuService.create(menuB);
 
+            //when
             List<Menu> menus = menuService.list();
 
+            //then
             assertThat(menus).usingRecursiveComparison().isEqualTo(List.of(savedMenuA, savedMenuB));
         }
 
         @Test
         void 메뉴가_존재하지_않으면_목록이_비어있다() {
+            //given, when
             List<Menu> menus = menuService.list();
 
+            //then
             assertThat(menus).isEmpty();
         }
     }

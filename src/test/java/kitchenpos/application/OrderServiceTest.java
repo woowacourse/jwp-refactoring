@@ -52,6 +52,7 @@ class OrderServiceTest extends ServiceTest {
 
         @Test
         void 정상적인_주문이라면_주문을_추가한다() {
+            //given
             Product product = 상품("텐동", BigDecimal.valueOf(11000));
             MenuProduct menuProduct = 메뉴_상품(null, product.getId(), 1);
             MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("일식"));
@@ -62,8 +63,10 @@ class OrderServiceTest extends ServiceTest {
             LocalDateTime cookingTime = LocalDateTime.now();
             Order order = 주문(orderTable.getId(), null, cookingTime, List.of(orderLineItem));
 
+            //when
             Order savedOrder = orderService.create(order);
 
+            //then
             assertSoftly(softly -> {
                 softly.assertThat(savedOrder.getId()).isNotNull();
                 softly.assertThat(savedOrder.getOrderTableId()).isEqualTo(orderTable.getId());
@@ -77,6 +80,7 @@ class OrderServiceTest extends ServiceTest {
 
         @Test
         void 주문_메뉴_목록이_비어있으면_예외를_던진다() {
+            //given
             Product product = 상품("텐동", BigDecimal.valueOf(11000));
             MenuProduct menuProduct = 메뉴_상품(null, product.getId(), 1);
             MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("일식"));
@@ -85,12 +89,14 @@ class OrderServiceTest extends ServiceTest {
             OrderTable orderTable = orderTableDao.save(테이블(null, 10, false));
             Order order = 주문(orderTable.getId(), null, LocalDateTime.now(), Collections.emptyList());
 
+            //when, then
             assertThatThrownBy(() -> orderService.create(order))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 주문_메뉴_목록에_메뉴가_존재하지_않으면_예외를_던진다() {
+            //given
             Product product = 상품("텐동", BigDecimal.valueOf(11000));
             MenuProduct menuProduct = 메뉴_상품(null, product.getId(), 1);
             MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("일식"));
@@ -101,12 +107,14 @@ class OrderServiceTest extends ServiceTest {
             LocalDateTime cookingTime = LocalDateTime.now();
             Order order = 주문(orderTable.getId(), null, cookingTime, List.of(orderLineItem));
 
+            //when, then
             assertThatThrownBy(() -> orderService.create(order))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 존재하지_않는_테이블이라면_예외를_던진다() {
+            //given
             Product product = 상품("텐동", BigDecimal.valueOf(11000));
             MenuProduct menuProduct = 메뉴_상품(null, product.getId(), 1);
             MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("일식"));
@@ -117,12 +125,14 @@ class OrderServiceTest extends ServiceTest {
             LocalDateTime cookingTime = LocalDateTime.now();
             Order order = 주문(-1L, null, cookingTime, List.of(orderLineItem));
 
+            //when, then
             assertThatThrownBy(() -> orderService.create(order))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 테이블이_비어있으면_예외를_던진다() {
+            //given
             Product product = 상품("텐동", BigDecimal.valueOf(11000));
             MenuProduct menuProduct = 메뉴_상품(null, product.getId(), 1);
             MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("일식"));
@@ -133,6 +143,7 @@ class OrderServiceTest extends ServiceTest {
             LocalDateTime cookingTime = LocalDateTime.now();
             Order order = 주문(orderTable.getId(), null, cookingTime, List.of(orderLineItem));
 
+            //when, then
             assertThatThrownBy(() -> orderService.create(order))
                     .isInstanceOf(IllegalArgumentException.class);
         }
@@ -143,6 +154,7 @@ class OrderServiceTest extends ServiceTest {
 
         @Test
         void 모든_주문_목록을_조회한다() {
+            //given
             Product product = 상품("텐동", BigDecimal.valueOf(11000));
             MenuProduct menuProduct = 메뉴_상품(null, product.getId(), 1);
             MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("일식"));
@@ -156,15 +168,19 @@ class OrderServiceTest extends ServiceTest {
             Order savedOrderA = orderService.create(orderA);
             Order savedOrderB = orderService.create(orderB);
 
+            //when
             List<Order> orders = orderService.list();
 
+            //then
             assertThat(orders).usingRecursiveComparison().isEqualTo(List.of(savedOrderA, savedOrderB));
         }
 
         @Test
         void 주문이_존재하지_않으면_목록이_비어있다() {
+            //given, when
             List<Order> orders = orderService.list();
 
+            //then
             assertThat(orders).isEmpty();
         }
     }
@@ -189,10 +205,13 @@ class OrderServiceTest extends ServiceTest {
 
         @Test
         void 정상적인_주문이라면_주문_상태를_수정한다() {
+            //given
             Order updateOrder = 주문(null, OrderStatus.MEAL.name(), null, Collections.emptyList());
 
+            //when
             Order updatedOrder = orderService.changeOrderStatus(order.getId(), updateOrder);
 
+            //then
             assertSoftly(softly -> {
                 softly.assertThat(updatedOrder).usingRecursiveComparison()
                         .ignoringFields("orderStatus")
@@ -203,18 +222,22 @@ class OrderServiceTest extends ServiceTest {
 
         @Test
         void 존재하지_않는_주문이라면_예외를_던진다() {
+            //given
             Order updateOrder = 주문(null, OrderStatus.MEAL.name(), null, Collections.emptyList());
 
+            //when, then
             assertThatThrownBy(() -> orderService.changeOrderStatus(-1L, updateOrder))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 완료된_주문이라면_예외를_던진다() {
+            //given
             Order completeUpdate = 주문(null, OrderStatus.COMPLETION.name(), null, Collections.emptyList());
             orderService.changeOrderStatus(order.getId(), completeUpdate);
             Order updateOrder = 주문(null, OrderStatus.MEAL.name(), null, Collections.emptyList());
 
+            //when, then
             assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), updateOrder))
                     .isInstanceOf(IllegalArgumentException.class);
         }

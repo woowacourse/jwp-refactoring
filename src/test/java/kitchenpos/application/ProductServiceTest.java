@@ -26,10 +26,13 @@ class ProductServiceTest extends ServiceTest {
 
         @Test
         void 정상적인_상품이라면_상품을_추가한다() {
+            //given
             Product product = 상품("텐동", BigDecimal.valueOf(11000));
 
+            //when
             Product savedProduct = productService.create(product);
 
+            //then
             assertSoftly(softly -> {
                 softly.assertThat(savedProduct.getId()).isNotNull();
                 softly.assertThat(savedProduct.getName()).isEqualTo("텐동");
@@ -39,8 +42,10 @@ class ProductServiceTest extends ServiceTest {
 
         @Test
         void 가격이_NULL이라면_예외를_던진다() {
+            //given
             Product product = 상품("텐동", null);
 
+            //when, then
             assertThatThrownBy(() -> productService.create(product))
                     .isInstanceOf(IllegalArgumentException.class);
         }
@@ -48,8 +53,10 @@ class ProductServiceTest extends ServiceTest {
         @ParameterizedTest
         @ValueSource(longs = {Integer.MIN_VALUE, -1})
         void 가격이_0보다_작으면_예외를_던진다(long price) {
+            //given
             Product product = 상품("텐동", BigDecimal.valueOf(price));
 
+            //when, then
             assertThatThrownBy(() -> productService.create(product))
                     .isInstanceOf(IllegalArgumentException.class);
         }
@@ -60,20 +67,25 @@ class ProductServiceTest extends ServiceTest {
 
         @Test
         void 모든_상품_목록을_조회한다() {
+            //given
             Product productA = 상품("텐동", BigDecimal.valueOf(11000));
             Product productB = 상품("사케동", BigDecimal.valueOf(12000));
             Product savedProductA = productService.create(productA);
             Product savedProductB = productService.create(productB);
 
+            //when
             List<Product> products = productService.list();
 
+            //then
             assertThat(products).usingRecursiveComparison().isEqualTo(List.of(savedProductA, savedProductB));
         }
 
         @Test
         void 상품이_존재하지_않으면_목록이_비어있다() {
+            //given, when
             List<Product> products = productService.list();
 
+            //then
             assertThat(products).isEmpty();
         }
     }

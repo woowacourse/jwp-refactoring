@@ -19,10 +19,13 @@ class MenuGroupServiceTest extends ServiceTest {
 
     @Test
     void 메뉴_그룹을_추가한다() {
+        //given
         MenuGroup menuGroup = 메뉴_그룹("일식");
 
+        //when
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
 
+        //then
         assertSoftly(softly -> {
             softly.assertThat(savedMenuGroup.getId()).isNotNull();
             softly.assertThat(savedMenuGroup.getName()).isEqualTo(menuGroup.getName());
@@ -34,20 +37,25 @@ class MenuGroupServiceTest extends ServiceTest {
 
         @Test
         void 모든_메뉴_그룹_목록을_조회한다() {
+            //given
             MenuGroup menuGroupA = 메뉴_그룹("일식");
             MenuGroup menuGroupB = 메뉴_그룹("중식");
             MenuGroup savedMenuGroupA = menuGroupService.create(menuGroupA);
             MenuGroup savedMenuGroupB = menuGroupService.create(menuGroupB);
 
+            //when
             List<MenuGroup> menuGroups = menuGroupService.list();
 
+            //then
             assertThat(menuGroups).usingRecursiveComparison().isEqualTo(List.of(savedMenuGroupA, savedMenuGroupB));
         }
 
         @Test
         void 메뉴_그룹이_존재하지_않으면_목록이_비어있다() {
+            //given, when
             List<MenuGroup> menuGroups = menuGroupService.list();
 
+            //then
             assertThat(menuGroups).isEmpty();
         }
     }
