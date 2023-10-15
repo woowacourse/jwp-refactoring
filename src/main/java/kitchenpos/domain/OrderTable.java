@@ -43,6 +43,15 @@ public class OrderTable {
         this.tableGroupId = tableGroupId;
     }
 
+    public boolean hasNoGroupAndEmpty() {
+        return Objects.isNull(tableGroupId) && empty;
+    }
+
+    public void unGroup() {
+        this.tableGroupId = null;
+        this.empty = OrderTable.NOT_EMPTY;
+    }
+
     public Long getId() {
         return id;
     }
