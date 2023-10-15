@@ -1,73 +1,71 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.ServiceTest;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.mockito.BDDMockito.given;
 
-@ExtendWith(MockitoExtension.class)
-class MenuGroupServiceTest {
+class MenuGroupServiceTest extends ServiceTest {
 
-    @Mock
-    private MenuGroupDao menuGroupDao;
-
-    @InjectMocks
+    @Autowired
     private MenuGroupService menuGroupService;
 
-    @DisplayName("메뉴 그룹을 생성한다.")
-    @Test
-    void 메뉴_그룹을_생성() {
-        //given
-        final MenuGroup expected = new MenuGroup();
-        expected.setId(1L);
-        expected.setName("name");
+    @DisplayName("메뉴 그룹 생성 테스트")
+    @Nested
+    class MenuGroupCreateTest {
 
-        given(menuGroupDao.save(expected))
-                .willReturn(expected);
+        @DisplayName("메뉴 그룹을 생성한다.")
+        @Test
+        void createMenuGroup() {
+            //given
+            final MenuGroup expected = new MenuGroup();
+            expected.setName("name");
 
-        //when
-        final MenuGroup actual = menuGroupService.create(expected);
+            //when
+            final MenuGroup actual = menuGroupService.create(expected);
 
-        //then
-        assertThat(actual.getId()).isEqualTo(expected.getId());
-        assertThat(actual.getName()).isEqualTo(expected.getName());
+            //then
+            assertSoftly(softly -> {
+                assertThat(actual.getId()).isNotNull();
+                assertThat(actual.getName()).isEqualTo(expected.getName());
+            });
+        }
     }
 
-    @DisplayName("메뉴 그룹을 전체 조회한다.")
-    @Test
-    void 메뉴_그룹_전체_조회() {
-        //given
-        final MenuGroup expected1 = new MenuGroup();
-        expected1.setId(1L);
-        expected1.setName("name1");
+    @DisplayName("메뉴 그룹 조회 테스트")
+    @Nested
+    class MenuGroupFindTest {
 
-        final MenuGroup expected2 = new MenuGroup();
-        expected2.setId(2L);
-        expected2.setName("name2");
+        @DisplayName("메뉴 그룹을 전체 조회한다.")
+        @Test
+        void findAllMenuGroup() {
+            //given
+            final MenuGroup menuGroup1 = new MenuGroup();
+            menuGroup1.setName("name1");
+            final MenuGroup expected1 = testFixtureBuilder.buildMenuGroup(menuGroup1);
 
-        final List<MenuGroup> expectedMenuGroups = List.of(expected1, expected2);
+            final MenuGroup menuGroup2 = new MenuGroup();
+            menuGroup2.setName("name2");
+            final MenuGroup expected2 = testFixtureBuilder.buildMenuGroup(menuGroup2);
 
-        given(menuGroupDao.findAll())
-                .willReturn(expectedMenuGroups);
+            //when
+            final List<MenuGroup> actual = menuGroupService.list();
 
-        //when
-        final List<MenuGroup> actual = menuGroupService.list();
-
-        //then
-        assertSoftly(softly -> {
-            softly.assertThat(actual.size()).isEqualTo(expectedMenuGroups.size());
-            softly.assertThat(actual.get(0)).isEqualTo(expectedMenuGroups.get(0));
-            softly.assertThat(actual.get(1)).isEqualTo(expectedMenuGroups.get(1));
-        });
+            //then
+            assertSoftly(softly -> {
+                softly.assertThat(actual.size()).isEqualTo(2);
+                softly.assertThat(actual.get(0).getId()).isEqualTo(expected1.getId());
+                softly.assertThat(actual.get(0).getName()).isEqualTo(expected1.getName());
+                softly.assertThat(actual.get(1).getId()).isEqualTo(expected2.getId());
+                softly.assertThat(actual.get(1).getName()).isEqualTo(expected2.getName());
+            });
+        }
     }
 }
