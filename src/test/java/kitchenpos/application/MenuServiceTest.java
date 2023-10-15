@@ -47,7 +47,7 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void price가_null이면_예외가_발생한다() {
         //given
-        final Menu menu = new Menu("디노 찜구이", new BigDecimal(-1), 1L, null);
+        final Menu menu = new Menu("디노 찜구이", null, 1L, null);
 
         //when, then
         assertThatThrownBy(() -> menuService.create(menu))
