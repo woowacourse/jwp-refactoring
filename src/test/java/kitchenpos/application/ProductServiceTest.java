@@ -46,7 +46,7 @@ class ProductServiceTest extends ServiceTest {
             // given
             Product product = new Product();
             product.setName("햄버거");
-//            product.setPrice(BigDecimal.valueOf(10_000));
+            product.setPrice(null);
 
             // when, then
             assertThatThrownBy(() -> productService.create(product))

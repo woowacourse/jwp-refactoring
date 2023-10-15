@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.Collections;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
@@ -81,7 +82,7 @@ class OrderServiceTest extends ServiceTest {
 
             Order order = new Order();
             order.setOrderTableId(orderTable.getId());
-//            order.setOrderLineItems(List.of(orderLineItem));
+            order.setOrderLineItems(Collections.emptyList());
 
             // when, then
             assertThatThrownBy(() -> orderService.create(order))
@@ -98,7 +99,7 @@ class OrderServiceTest extends ServiceTest {
             OrderTable orderTable = fixtures.주문_테이블_저장();
 
             OrderLineItem orderLineItem = new OrderLineItem();
-//            orderLineItem.setMenuId(menu.getId());
+            orderLineItem.setMenuId(null);
             orderLineItem.setQuantity(1L);
 
             Order order = new Order();
@@ -139,14 +140,13 @@ class OrderServiceTest extends ServiceTest {
             Menu menu = fixtures.메뉴_저장(menuGroup.getId(), "햄버거세트", 10_000L);
             Product product = fixtures.상품_저장("왕햄버거", 10_000L);
             fixtures.메뉴_상품_저장(menu.getId(), product.getId(), 1L);
-            OrderTable orderTable = fixtures.주문_테이블_저장();
 
             OrderLineItem orderLineItem = new OrderLineItem();
             orderLineItem.setMenuId(menu.getId());
             orderLineItem.setQuantity(1L);
 
             Order order = new Order();
-//            order.setOrderTableId(orderTable.getId());
+            order.setOrderTableId(null);
             order.setOrderLineItems(List.of(orderLineItem));
 
             // when, then

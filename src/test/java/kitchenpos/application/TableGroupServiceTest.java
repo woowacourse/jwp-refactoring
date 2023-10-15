@@ -61,7 +61,6 @@ class TableGroupServiceTest extends ServiceTest {
         void 주문_테이블이_1개_인경우_예외가_발생한다() {
             // given
             OrderTable orderTableA = fixtures.빈_테이블_저장();
-//            OrderTable orderTableB = fixtures.빈_테이블_저장();
 
             TableGroup tableGroup = new TableGroup();
             tableGroup.setOrderTables(List.of(orderTableA));
