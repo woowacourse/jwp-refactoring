@@ -2,7 +2,6 @@ package kitchenpos.ui;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -37,9 +36,8 @@ class MenuGroupRestControllerTest {
     @Test
     void create() throws Exception {
         // given
-        final MenuGroup result = mock(MenuGroup.class);
+        final MenuGroup result = new MenuGroup(1L, "chicken-group");
         given(menuGroupService.create(any())).willReturn(result);
-        given(result.getId()).willReturn(1L);
         final MenuGroupCreationRequest request = new MenuGroupCreationRequest("chicken-group");
 
         // when
