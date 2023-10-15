@@ -7,6 +7,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.dao.MenuDao;
@@ -80,51 +83,21 @@ class MenuServiceTest {
             @Test
             void 메뉴_상품_가격의_총합이_메뉴의_가격보다_높으면_예외() {
                 // given
-                long firstProductId = 1L;
-                int firstProductQuantity = 5;
-                long firstProductPrice = 1000L;
-                Product firstProduct = ProductFixture.builder()
-                    .withPrice(firstProductPrice)
-                    .build();
-
-                long secondProductId = 2L;
-                int secondProductQuantity = 10;
-                long secondProductPrice = 2000L;
-                Product secondProduct = ProductFixture.builder()
-                    .withPrice(secondProductPrice)
-                    .build();
-
-                long firstProductMenuPrice = firstProductPrice * firstProductQuantity;
-                long secondProductMenuPrice = secondProductPrice * secondProductQuantity;
-                int plusPrice = 100;
-                long lowerThanMenuPrice = firstProductMenuPrice + secondProductMenuPrice + plusPrice;
-
-                Menu menu = MenuFixture.builder()
-                    .withPrice(lowerThanMenuPrice)
-                    .withMenuGroupId(1L)
-                    .withMenuProducts(
-                        List.of(
-                            MenuProductFixture.builder()
-                                .withProductId(firstProductId)
-                                .withQuantity(firstProductQuantity)
-                                .build(),
-                            MenuProductFixture.builder()
-                                .withProductId(secondProductId)
-                                .withQuantity(secondProductQuantity)
-                                .build())
-                    )
-                    .build();
+                MenuCreateHelper menuCreateHelper = new MenuCreateHelper(1L, "menu", 1L);
+                menuCreateHelper.withMenuProduct(1L, "상품1", 1000L, 5L);
+                menuCreateHelper.withMenuProduct(1L, "상품2", 100L, 3L);
+                menuCreateHelper.price(5400L);
 
                 given(menuGroupDao.existsById(anyLong()))
                     .willReturn(true);
                 given(productDao.findById(anyLong()))
                     .willReturn(
-                        Optional.of(firstProduct),
-                        Optional.of(secondProduct)
+                        Optional.of(menuCreateHelper.products.get(0)),
+                        Optional.of(menuCreateHelper.products.get(1))
                     );
 
                 // when && then
-                assertThatThrownBy(() -> menuService.create(menu))
+                assertThatThrownBy(() -> menuService.create(menuCreateHelper.menu))
                     .isInstanceOf(IllegalArgumentException.class);
             }
         }
@@ -173,57 +146,27 @@ class MenuServiceTest {
         @Test
         void 생성_완료() {
             // given
-            long firstProductId = 1L;
-            int firstProductQuantity = 5;
-            long firstProductPrice = 1000L;
-            Product firstProduct = ProductFixture.builder()
-                .withPrice(firstProductPrice)
-                .build();
-
-            long secondProductId = 2L;
-            int secondProductQuantity = 10;
-            long secondProductPrice = 2000L;
-            Product secondProduct = ProductFixture.builder()
-                .withPrice(secondProductPrice)
-                .build();
-
-            long firstProductMenuPrice = firstProductPrice * firstProductQuantity;
-            long secondProductMenuPrice = secondProductPrice * secondProductQuantity;
-            long menuPrice = firstProductMenuPrice + secondProductMenuPrice;
-
-            MenuProduct firstMenuProduct = MenuProductFixture.builder()
-                .withProductId(firstProductId)
-                .withQuantity(firstProductQuantity)
-                .build();
-            MenuProduct secondMenuProduct = MenuProductFixture.builder()
-                .withProductId(secondProductId)
-                .withQuantity(secondProductQuantity)
-                .build();
-
-            long menuId = 1L;
             long menuGroupId = 1L;
-            Menu menu = MenuFixture.builder()
-                .withId(menuId)
-                .withPrice(menuPrice)
-                .withMenuGroupId(menuGroupId)
-                .withMenuProducts(
-                    List.of(
-                        firstMenuProduct,
-                        secondMenuProduct)
-                )
-                .build();
+            long menuId = 1L;
+            MenuCreateHelper menuCreateHelper = new MenuCreateHelper(menuId, "menu", menuGroupId);
+            menuCreateHelper.withMenuProduct(1L, "상품1", 1000L, 5L);
+            menuCreateHelper.withMenuProduct(1L, "상품2", 100L, 3L);
+            menuCreateHelper.price(5300L);
 
             given(menuGroupDao.existsById(anyLong()))
                 .willReturn(true);
+            List<Product> products = menuCreateHelper.products;
             given(productDao.findById(anyLong()))
                 .willReturn(
-                    Optional.of(firstProduct),
-                    Optional.of(secondProduct)
+                    Optional.of(products.get(0)),
+                    Optional.of(products.get(1))
                 );
+            Menu menu = menuCreateHelper.menu;
+            List<MenuProduct> menuProducts = menu.getMenuProducts();
             given(menuDao.save(any()))
                 .willReturn(menu);
             given(menuProductDao.save(any()))
-                .willReturn(firstMenuProduct, secondMenuProduct);
+                .willReturn(menuProducts.get(0), menuProducts.get(1));
 
             // when
             Menu actual = menuService.create(menu);
@@ -235,6 +178,31 @@ class MenuServiceTest {
                 assertThat(actual.getMenuProducts())
                     .allMatch(menuProduct -> menuProduct.getMenuId().equals(menuId));
             });
+        }
+
+        private class MenuCreateHelper {
+
+            private Menu menu;
+            private List<Product> products = new ArrayList<>();
+
+            public MenuCreateHelper(Long menuId, String name, Long menuGroupId) {
+                this.menu = new Menu(menuId, name, null, menuGroupId, new ArrayList<>());
+            }
+
+            public MenuProduct withMenuProduct(Long productId, String name, Long price, Long quantity) {
+                Product product = new Product(productId, name, BigDecimal.valueOf(price));
+                products.add(product);
+                List<MenuProduct> menuProducts = menu.getMenuProducts();
+                MenuProduct newMenuProduct = new MenuProduct(menuProducts.size() + 1L, menu.getId(), productId, quantity);
+                menuProducts.add(newMenuProduct);
+                menu.setMenuProducts(menuProducts);
+                return newMenuProduct;
+            }
+
+            public Menu price(Long price){
+                this.menu.setPrice(BigDecimal.valueOf(price));
+                return menu;
+            }
         }
     }
 
