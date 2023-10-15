@@ -123,15 +123,14 @@ class MenuServiceTest {
     @Test
     void create_fail_menu_not_contained_menuGroup() {
         // given
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(1L);
-        menuGroup.setName("메뉴 그룹");
-
         final Menu wrongMenu = new Menu();
         wrongMenu.setId(1L);
         wrongMenu.setName("새 메뉴");
         wrongMenu.setPrice(new BigDecimal(1000));
-        wrongMenu.setMenuGroupId(menuGroup.getId());
+        wrongMenu.setMenuGroupId(null);
+
+        given(menuGroupDao.existsById(any()))
+                .willReturn(false);
 
         // when
         // then

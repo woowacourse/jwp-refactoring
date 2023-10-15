@@ -185,12 +185,12 @@ class TableGroupServiceTest {
         final OrderTable orderTable1 = new OrderTable();
         orderTable1.setId(1L);
         orderTable1.setTableGroupId(1L);
-        orderTable1.setEmpty(false);
+        orderTable1.setEmpty(true);
 
         final OrderTable orderTable2 = new OrderTable();
         orderTable2.setId(2L);
         orderTable2.setTableGroupId(2L);
-        orderTable2.setEmpty(false);
+        orderTable2.setEmpty(true);
 
         final List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
 
@@ -203,6 +203,12 @@ class TableGroupServiceTest {
         // when
         // then
         assertDoesNotThrow(() -> tableGroupService.ungroup(tableGroupId));
+        assertSoftly(softly -> {
+            softly.assertThat(orderTable1.getTableGroupId()).isNull();
+            softly.assertThat(orderTable1.isEmpty()).isFalse();
+            softly.assertThat(orderTable2.getTableGroupId()).isNull();
+            softly.assertThat(orderTable2.isEmpty()).isFalse();
+        });
     }
 
     @DisplayName("주문 정보의 상태가 COOKING 혹은 MEAL이면 주문 테이블 그룹에서 주문 테이블을 분리할 수 없다.")
@@ -214,17 +220,17 @@ class TableGroupServiceTest {
         final OrderTable orderTable1 = new OrderTable();
         orderTable1.setId(1L);
         orderTable1.setTableGroupId(1L);
-        orderTable1.setEmpty(false);
+        orderTable1.setEmpty(true);
 
         final OrderTable orderTable2 = new OrderTable();
         orderTable2.setId(2L);
         orderTable2.setTableGroupId(2L);
-        orderTable2.setEmpty(false);
+        orderTable2.setEmpty(true);
 
         final List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
 
         given(orderTableDao.findAllByTableGroupId(any()))
-                .willReturn(orderTables);
+                .willReturn(Collections.emptyList());
 
         given(orderDao.existsByOrderTableIdInAndOrderStatusIn(any(), any()))
                 .willReturn(true);
