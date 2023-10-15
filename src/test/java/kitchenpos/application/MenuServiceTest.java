@@ -63,10 +63,7 @@ class MenuServiceTest {
 
         menu = new Menu(1L, "menu", BigDecimal.valueOf(2000), menuGroup.getId(), List.of(menuProduct));
 
-        product = new Product();
-        product.setId(1L);
-        product.setName("후라이드");
-        product.setPrice(new BigDecimal("1000"));
+        product = new Product(1L, "후라이드", BigDecimal.valueOf(1000));
 
         given(menuGroupDao.existsById(any()))
                 .willReturn(true);
@@ -99,7 +96,7 @@ class MenuServiceTest {
     void 가격이_0이상인_상품의_메뉴를_생성한다() {
         // given
         MenuDto menuDto = new MenuDto(menu.getId(), menu.getName(), BigDecimal.ZERO, menu.getMenuGroupId(), menu.getMenuProducts());
-        product.setPrice(new BigDecimal("0"));
+        product = new Product(product.getId(), product.getName(), BigDecimal.ZERO);
 
         // when
         MenuDto result = menuService.create(menuDto);
@@ -117,7 +114,7 @@ class MenuServiceTest {
     void 가격이_0보다_작은_메뉴를_생성하면_예외를_던진다() {
         // given
         MenuDto menuDto = new MenuDto(menu.getId(), menu.getName(), BigDecimal.valueOf(-1), menu.getMenuGroupId(), menu.getMenuProducts());
-        product.setPrice(new BigDecimal("-1"));
+        product = new Product(product.getId(), product.getName(), BigDecimal.valueOf(-1));
 
         // when
         assertThatThrownBy(() -> menuService.create(menuDto))
@@ -130,7 +127,7 @@ class MenuServiceTest {
         List<MenuProduct> menuProducts = menu.getMenuProducts();
         for (MenuProduct menuProduct : menuProducts) {
             menuProduct.setQuantity(1L);
-            product.setPrice(BigDecimal.valueOf(1000));
+            product = new Product(product.getId(), product.getName(), BigDecimal.valueOf(1000));
         }
         MenuDto menuDto = new MenuDto(menu.getId(), menu.getName(), BigDecimal.valueOf(10000), menu.getMenuGroupId(), menu.getMenuProducts());
 
@@ -147,7 +144,7 @@ class MenuServiceTest {
         List<MenuProduct> menuProducts = menu.getMenuProducts();
         for (MenuProduct menuProduct : menuProducts) {
             menuProduct.setQuantity(1L);
-            product.setPrice(BigDecimal.valueOf(1000));
+            product = new Product(product.getId(), product.getName(), BigDecimal.valueOf(1000));
         }
         MenuDto menuDto = new MenuDto(menu.getId(), menu.getName(), BigDecimal.valueOf(1000), menu.getMenuGroupId(), menu.getMenuProducts());
 
@@ -164,7 +161,7 @@ class MenuServiceTest {
         List<MenuProduct> menuProducts = menu.getMenuProducts();
         for (MenuProduct menuProduct : menuProducts) {
             menuProduct.setQuantity(1L);
-            product.setPrice(BigDecimal.valueOf(1000));
+            product = new Product(product.getId(), product.getName(), BigDecimal.valueOf(1000));
         }
         MenuDto menuDto = new MenuDto(menu.getId(), menu.getName(), BigDecimal.valueOf(500), menu.getMenuGroupId(), menu.getMenuProducts());
 
