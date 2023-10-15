@@ -1,35 +1,25 @@
 package kitchenpos.ui.menu;
 
-import kitchenpos.domain.Menu;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
 import java.util.List;
 
-import static kitchenpos.fixture.MenuFixture.메뉴_생성;
 import static kitchenpos.fixture.MenuFixture.메뉴_생성_요청;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
 class MenuRestControllerAcceptanceTest extends MenuRestControllerAcceptanceTestFixture {
 
-    private Menu 메뉴;
-
-    @BeforeEach
-    void setup() {
-        메뉴 = 메뉴_생성("상품", BigDecimal.valueOf(10000), menuGroup.getId(), List.of(menuProduct));
-    }
-
     @Test
     void 메뉴를_생성한다() {
         // when
-        var 생성_결과 = 메뉴를_생성한다("/api/menus", 메뉴_생성_요청(메뉴));
+        var 메뉴_생성_요청 = 메뉴_생성_요청("상품", 10000L, menuGroup, List.of(menuProduct));
+        var 생성_결과 = 메뉴를_생성한다("/api/menus", 메뉴_생성_요청);
 
         // then
-        메뉴가_성공적으로_생성된다(생성_결과, 메뉴);
+        메뉴가_성공적으로_생성된다(생성_결과, 메뉴_생성_요청);
     }
 
     @Test

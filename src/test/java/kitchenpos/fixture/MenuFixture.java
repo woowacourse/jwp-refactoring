@@ -3,9 +3,9 @@ package kitchenpos.fixture;
 import kitchenpos.application.menu.dto.MenuCreateRequest;
 import kitchenpos.application.menu.dto.MenuProductCreateRequest;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,21 +13,36 @@ import java.util.stream.Collectors;
 public class MenuFixture {
 
     public static Menu 메뉴_생성(final String name,
-                             final BigDecimal price,
-                             final Long menuGroupId,
-                             final List<MenuProduct> menuProducts) {
-        return new Menu(null, name, price, menuGroupId, menuProducts);
+                             final Long price,
+                             final MenuGroup menuGroup) {
+        return new Menu(null, name, price, menuGroup);
     }
 
-    public static MenuCreateRequest 메뉴_생성_요청(final Menu menu) {
-        List<MenuProductCreateRequest> menuProductCreateRequests = menu.getMenuProducts()
-                .stream()
-                .map(it -> new MenuProductCreateRequest(it.getProductId(), it.getQuantity()))
+    public static MenuCreateRequest 메뉴_생성_요청(
+            final String name,
+            final Long price,
+            final Long menuGroupId,
+            final List<MenuProductCreateRequest> menuProductCreateRequests
+    ) {
+        return new MenuCreateRequest(name,
+                price,
+                menuGroupId,
+                menuProductCreateRequests
+        );
+    }
+
+    public static MenuCreateRequest 메뉴_생성_요청(final String name,
+                                             final Long price,
+                                             final MenuGroup menuGroup,
+                                             final List<MenuProduct> menuProducts) {
+        List<MenuProductCreateRequest> menuProductCreateRequests = menuProducts.stream()
+                .map(it -> new MenuProductCreateRequest(it.getProduct().getId(), it.getQuantity()))
                 .collect(Collectors.toList());
 
-        return new MenuCreateRequest(menu.getName(),
-                menu.getPrice(),
-                menu.getMenuGroupId(),
+        return new MenuCreateRequest(
+                name,
+                price,
+                menuGroup.getId(),
                 menuProductCreateRequests
         );
     }
