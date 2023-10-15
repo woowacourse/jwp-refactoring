@@ -29,11 +29,12 @@ class ProductServiceTest {
 
     @Nested
     class CreateTest {
+        final ProductRequest request = mock(ProductRequest.class);
+
         @Test
         @DisplayName("가격을 입력하지 않으면 예외가 발생한다.")
         void priceIsNull() {
             // given
-            final ProductRequest request = mock(ProductRequest.class);
             given(request.getPrice()).willReturn(null);
 
             // when, then
@@ -44,7 +45,6 @@ class ProductServiceTest {
         @DisplayName("가격이 음수이면 예외가 발생한다.")
         void priceIsNegative() {
             // given
-            final ProductRequest request = mock(ProductRequest.class);
             given(request.getPrice()).willReturn(BigDecimal.valueOf(-1));
 
             // when, then
@@ -55,7 +55,6 @@ class ProductServiceTest {
         @DisplayName("상품을 생성한다.")
         void createProduct() {
             // given
-            final ProductRequest request = mock(ProductRequest.class);
             final Product product = new Product(1L, "product", BigDecimal.valueOf(10_000));
 
             given(request.getPrice()).willReturn(product.getPrice());

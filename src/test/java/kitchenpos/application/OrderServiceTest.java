@@ -11,6 +11,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.dto.OrderLineItemDto;
 import kitchenpos.ui.dto.OrderRequest;
 import kitchenpos.ui.dto.OrderStatusRequest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -47,6 +48,19 @@ class OrderServiceTest {
 
     @Nested
     class CreateTest {
+        private OrderRequest request;
+        private List<OrderLineItemDto> orderLineItemDtos;
+
+        @BeforeEach
+        void setUp() {
+            request = mock(OrderRequest.class);
+            orderLineItemDtos = List.of(
+                    new OrderLineItemDto(1L, 2L),
+                    new OrderLineItemDto(2L, 3L),
+                    new OrderLineItemDto(3L, 4L)
+            );
+        }
+
         @Test
         @DisplayName("주문에 해당하는 주문항목(orderLineItem)이 비어있으면 예외가 발생한다.")
         void emptyOrderLineItems() {
@@ -62,12 +76,6 @@ class OrderServiceTest {
         @DisplayName("주문항목의 갯수와 저장된 메뉴의 갯수가 다른면 예외가 발생한다.")
         void differentSizeOfOrderLineItemAndMenu() {
             // given
-            final OrderRequest request = mock(OrderRequest.class);
-            final List<OrderLineItemDto> orderLineItemDtos = List.of(
-                    new OrderLineItemDto(1L, 2L),
-                    new OrderLineItemDto(2L, 3L),
-                    new OrderLineItemDto(3L, 4L)
-            );
             given(request.getOrderLineItems()).willReturn(orderLineItemDtos);
             given(menuDao.countByIdIn(any())).willReturn(2L);
 
@@ -79,12 +87,6 @@ class OrderServiceTest {
         @DisplayName("주문 테이블(orderTable)을 찾지 못하면 예외가 발생한다.")
         void cannotFindOrderTableDao() {
             // given
-            final OrderRequest request = mock(OrderRequest.class);
-            final List<OrderLineItemDto> orderLineItemDtos = List.of(
-                    new OrderLineItemDto(1L, 2L),
-                    new OrderLineItemDto(2L, 3L),
-                    new OrderLineItemDto(3L, 4L)
-            );
             given(request.getOrderLineItems()).willReturn(orderLineItemDtos);
             given(menuDao.countByIdIn(any())).willReturn(3L);
             given(orderTableDao.findById(anyLong())).willReturn(Optional.empty());
@@ -97,11 +99,6 @@ class OrderServiceTest {
         @DisplayName("요청에 해당하는 orderTable이 비어있으면 예외가 발생한다.")
         void emptyOrderTable() {
             // given
-            final List<OrderLineItemDto> orderLineItemDtos = List.of(
-                    new OrderLineItemDto(1L, 2L),
-                    new OrderLineItemDto(2L, 3L),
-                    new OrderLineItemDto(3L, 4L)
-            );
             final OrderRequest request = new OrderRequest(1L, orderLineItemDtos);
             final OrderTable orderTable = mock(OrderTable.class);
             given(menuDao.countByIdIn(any())).willReturn(3L);
@@ -116,11 +113,6 @@ class OrderServiceTest {
         @DisplayName("주문을 생성한다.")
         void createOrder() {
             // given
-            final List<OrderLineItemDto> orderLineItemDtos = List.of(
-                    new OrderLineItemDto(1L, 2L),
-                    new OrderLineItemDto(2L, 3L),
-                    new OrderLineItemDto(3L, 4L)
-            );
             final OrderRequest request = new OrderRequest(1L, orderLineItemDtos);
             final OrderTable orderTable = mock(OrderTable.class);
             final Order order = new Order(1L, OrderStatus.COOKING.name(), LocalDateTime.now());

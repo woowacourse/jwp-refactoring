@@ -8,6 +8,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.dto.OrderTableIdDto;
 import kitchenpos.ui.dto.TableGroupRequest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class TableGroupServiceTest {
@@ -71,89 +74,85 @@ class TableGroupServiceTest {
             assertThatThrownBy(() -> tableGroupService.create(request)).isInstanceOf(IllegalArgumentException.class);
         }
 
-        @Test
-        @DisplayName("요청한 테이블이 데이터베이스에 모두 존재하지 않으면 예외가 발생한다.")
-        void notMatchOrderTable() {
-            // given
-            final TableGroupRequest request = mock(TableGroupRequest.class);
-            final List<OrderTableIdDto> dtos = List.of(
-                    new OrderTableIdDto(1L), new OrderTableIdDto(2L)
-            );
-            given(request.getOrderTables()).willReturn(dtos);
+        @Nested
+        class SameRequestTest {
+            private TableGroupRequest request;
+            private List<OrderTableIdDto> dtos;
 
-            final List<OrderTable> orderTables = List.of(mock(OrderTable.class));
-            given(orderTableDao.findAllByIdIn(any())).willReturn(orderTables);
+            @BeforeEach
+            void setUp() {
+                request = mock(TableGroupRequest.class);
+                dtos = List.of(new OrderTableIdDto(1L), new OrderTableIdDto(2L));
+            }
 
-            // when, then
-            assertThatThrownBy(() -> tableGroupService.create(request)).isInstanceOf(IllegalArgumentException.class);
-        }
+            @Test
+            @DisplayName("요청한 테이블이 데이터베이스에 모두 존재하지 않으면 예외가 발생한다.")
+            void notMatchOrderTable() {
+                // given
+                given(request.getOrderTables()).willReturn(dtos);
 
-        @Test
-        @DisplayName("요청한 테이블이 이미 다른 테이블 그룹에 속해있다면 예외가 발생한다.")
-        void alreadyHasGroup() {
-            // given
-            final TableGroupRequest request = mock(TableGroupRequest.class);
-            final List<OrderTableIdDto> dtos = List.of(
-                    new OrderTableIdDto(1L), new OrderTableIdDto(2L)
-            );
-            given(request.getOrderTables()).willReturn(dtos);
+                final List<OrderTable> orderTables = List.of(mock(OrderTable.class));
+                given(orderTableDao.findAllByIdIn(any())).willReturn(orderTables);
 
-            final OrderTable orderTable = mock(OrderTable.class);
-            final List<OrderTable> orderTables = List.of(orderTable, mock(OrderTable.class));
-            given(orderTableDao.findAllByIdIn(any())).willReturn(orderTables);
-            given(orderTable.isEmpty()).willReturn(false);
+                // when, then
+                assertThatThrownBy(() -> tableGroupService.create(request)).isInstanceOf(IllegalArgumentException.class);
+            }
 
-            // when. then
-            assertThatThrownBy(() -> tableGroupService.create(request)).isInstanceOf(IllegalArgumentException.class);
-        }
+            @Test
+            @DisplayName("요청한 테이블이 이미 다른 테이블 그룹에 속해있다면 예외가 발생한다.")
+            void alreadyHasGroup() {
+                // given
+                given(request.getOrderTables()).willReturn(dtos);
 
-        @Test
-        @DisplayName("요청한 테이블이 이미 다른 테이블 그룹 ID를 가지고 있다면 예외가 발생한다.")
-        void alreadyHasAnotherTableGroupId() {
-            // given
-            final TableGroupRequest request = mock(TableGroupRequest.class);
-            final List<OrderTableIdDto> dtos = List.of(
-                    new OrderTableIdDto(1L), new OrderTableIdDto(2L)
-            );
-            given(request.getOrderTables()).willReturn(dtos);
+                final OrderTable orderTable = mock(OrderTable.class);
+                final List<OrderTable> orderTables = List.of(orderTable, mock(OrderTable.class));
+                given(orderTableDao.findAllByIdIn(any())).willReturn(orderTables);
+                given(orderTable.isEmpty()).willReturn(false);
 
-            final OrderTable orderTable = mock(OrderTable.class);
-            final List<OrderTable> orderTables = List.of(orderTable, mock(OrderTable.class));
-            given(orderTableDao.findAllByIdIn(any())).willReturn(orderTables);
-            given(orderTable.isEmpty()).willReturn(true);
-            given(orderTable.getTableGroupId()).willReturn(10L);
+                // when. then
+                assertThatThrownBy(() -> tableGroupService.create(request)).isInstanceOf(IllegalArgumentException.class);
+            }
 
-            // when. then
-            assertThatThrownBy(() -> tableGroupService.create(request)).isInstanceOf(IllegalArgumentException.class);
-        }
+            @Test
+            @DisplayName("요청한 테이블이 이미 다른 테이블 그룹 ID를 가지고 있다면 예외가 발생한다.")
+            void alreadyHasAnotherTableGroupId() {
+                // given
+                given(request.getOrderTables()).willReturn(dtos);
 
-        @Test
-        @DisplayName("테이블을 그룹을 생성한다.")
-        void create() {
-            // given
-            final TableGroupRequest request = mock(TableGroupRequest.class);
-            final List<OrderTableIdDto> dtos = List.of(
-                    new OrderTableIdDto(1L), new OrderTableIdDto(2L)
-            );
-            final List<OrderTable> orderTables = List.of(
-                    new OrderTable(null, 2, true),
-                    new OrderTable(null, 3, true)
-            );
-            final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
+                final OrderTable orderTable = mock(OrderTable.class);
+                final List<OrderTable> orderTables = List.of(orderTable, mock(OrderTable.class));
+                given(orderTableDao.findAllByIdIn(any())).willReturn(orderTables);
+                given(orderTable.isEmpty()).willReturn(true);
+                given(orderTable.getTableGroupId()).willReturn(10L);
 
-            given(request.getOrderTables()).willReturn(dtos);
-            given(orderTableDao.findAllByIdIn(any())).willReturn(orderTables);
-            given(tableGroupDao.save(any())).willReturn(tableGroup);
+                // when. then
+                assertThatThrownBy(() -> tableGroupService.create(request)).isInstanceOf(IllegalArgumentException.class);
+            }
 
-            // when
-            final TableGroup result = tableGroupService.create(request);
+            @Test
+            @DisplayName("테이블을 그룹을 생성한다.")
+            void create() {
+                // given
+                given(request.getOrderTables()).willReturn(dtos);
 
-            // then
-            assertSoftly(softly -> {
-                assertThat(result).usingRecursiveComparison().isEqualTo(tableGroup);
-                assertThat(result).extracting("orderTables")
-                        .usingRecursiveComparison().isEqualTo(orderTables);
-            });
+                final List<OrderTable> orderTables = List.of(
+                        new OrderTable(null, 2, true),
+                        new OrderTable(null, 3, true)
+                );
+                final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
+                given(orderTableDao.findAllByIdIn(any())).willReturn(orderTables);
+                given(tableGroupDao.save(any())).willReturn(tableGroup);
+
+                // when
+                final TableGroup result = tableGroupService.create(request);
+
+                // then
+                assertSoftly(softly -> {
+                    assertThat(result).usingRecursiveComparison().isEqualTo(tableGroup);
+                    assertThat(result).extracting("orderTables")
+                            .usingRecursiveComparison().isEqualTo(orderTables);
+                });
+            }
         }
     }
 

@@ -9,6 +9,7 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.MenuProductRequest;
 import kitchenpos.ui.dto.MenuRequest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -45,6 +46,21 @@ class MenuServiceTest {
 
     @Nested
     class CreateTest {
+        private List<MenuProductRequest> menuProductRequests;
+        private Product product1, product2, product3;
+
+        @BeforeEach
+        void setUp() {
+            menuProductRequests = List.of(
+                    new MenuProductRequest(1L, 1),
+                    new MenuProductRequest(2L, 1),
+                    new MenuProductRequest(3L, 1)
+            );
+            product1 = new Product("product1", BigDecimal.valueOf(100));
+            product2 = new Product("product2", BigDecimal.valueOf(200));
+            product3 = new Product("product3", BigDecimal.valueOf(300));
+        }
+
         @Test
         @DisplayName("가격이 null 혹은 음수값이면 예외가 발생한다.")
         void priceNullOrNegative() {
@@ -76,15 +92,6 @@ class MenuServiceTest {
         @DisplayName("사용자가 요청한 가격이 서버에서 측정한 상품의 총 합계 가격보다 크다면 예외가 발생한다.")
         void comparePriceAndSum() {
             // given
-            final List<MenuProductRequest> menuProductRequests = List.of(
-                    new MenuProductRequest(1L, 1),
-                    new MenuProductRequest(2L, 1),
-                    new MenuProductRequest(3L, 1)
-            );
-            final Product product1 = new Product("product1", BigDecimal.valueOf(100));
-            final Product product2 = new Product("product2", BigDecimal.valueOf(200));
-            final Product product3 = new Product("product3", BigDecimal.valueOf(300));
-
             final MenuRequest request = mock(MenuRequest.class);
             given(request.getPrice()).willReturn(BigDecimal.valueOf(700));
             given(request.getMenuProducts()).willReturn(menuProductRequests);
@@ -101,14 +108,6 @@ class MenuServiceTest {
         @DisplayName("메뉴를 생성한다.")
         void createMenu() {
             // given
-            final List<MenuProductRequest> menuProductRequests = List.of(
-                    new MenuProductRequest(1L, 1),
-                    new MenuProductRequest(2L, 1),
-                    new MenuProductRequest(3L, 1)
-            );
-            final Product product1 = new Product("product1", BigDecimal.valueOf(100));
-            final Product product2 = new Product("product2", BigDecimal.valueOf(200));
-            final Product product3 = new Product("product3", BigDecimal.valueOf(300));
             final MenuRequest request = new MenuRequest("productName", BigDecimal.valueOf(600), 1L, menuProductRequests);
 
             final Menu menu = new Menu(1L, request.getName(), request.getPrice(), request.getMenuGroupId());
