@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.support.fixture.MenuGroupCreateRequestFixture.menuGroupCreateRequest;
 import static kitchenpos.support.fixture.MenuGroupFixture.getMenuGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -7,6 +8,7 @@ import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.support.ServiceTest;
+import kitchenpos.ui.dto.MenuGroupCreateRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,7 +24,7 @@ class MenuGroupServiceTest {
     @Test
     void 메뉴_그룹을_등록한다() {
         //given
-        final MenuGroup menuGroup = getMenuGroup("menuGroup1");
+        final MenuGroupCreateRequest menuGroup = menuGroupCreateRequest("menuGroup1");
 
         //when
         final MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
@@ -42,7 +44,7 @@ class MenuGroupServiceTest {
 
         //then
         assertThat(result)
-            .usingRecursiveComparison()
-            .isEqualTo(List.of(menuGroup1, menuGroup2));
+                .usingRecursiveComparison()
+                .isEqualTo(List.of(menuGroup1, menuGroup2));
     }
 }
