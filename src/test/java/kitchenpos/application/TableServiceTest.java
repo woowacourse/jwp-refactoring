@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -40,47 +41,76 @@ class TableServiceTest {
     void create() {
         // given
         final OrderTableRequest request = new OrderTableRequest(3, false);
+        final OrderTable orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
+        given(orderTableDao.save(any())).willReturn(orderTable);
 
         // when
         final OrderTable result = tableService.create(request);
 
         // then
-        verify(orderTableDao, times(1)).save(any());
+        assertSoftly(softly -> {
+            verify(orderTableDao, times(1)).save(any());
+            assertThat(result).usingRecursiveComparison().isEqualTo(orderTable);
+        });
     }
 
     @Test
     @DisplayName("테이블에 대한 주문을 조회한다.")
     void list() {
+        // given
+        final List<OrderTable> orderTables = List.of(
+                new OrderTable(2, false),
+                new OrderTable(3, false)
+        );
+        given(orderTableDao.findAll()).willReturn(orderTables);
+
+        // when
         final List<OrderTable> result = tableService.list();
-        verify(orderTableDao, times(1)).findAll();
+
+        // then
+        assertSoftly(softly -> {
+            verify(orderTableDao, times(1)).findAll();
+            assertThat(result).usingRecursiveComparison().isEqualTo(orderTables);
+        });
     }
 
     @Nested
     class ChangeEmptyTest {
         @Test
-        @DisplayName("이미 테이블이 다른 테이블 그룹에 속해있다면 예외가 발생한다.")
-        void emptyTableGroupId() {
+        @DisplayName("요청한 주문 테이블을 찾지 못하면 예외가 발생한다.")
+        void cannotFindOrderTable() {
             // given
-            final OrderTable orderTable = mock(OrderTable.class);
-            given(orderTable.getTableGroupId()).willReturn(3L);
-            given(orderTableDao.findById(anyLong())).willReturn(Optional.of(orderTable));
+            given(orderTableDao.findById(anyLong())).willReturn(Optional.empty());
 
             // when, then
-            assertThatThrownBy(() -> tableService.changeEmpty(1L, new ChangeEmptyRequest(false)))
+            assertThatThrownBy(() -> tableService.changeEmpty(1L, null))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
-        @DisplayName("해당 테이블이 COOKING, MEAL 상태가 아니라면 예외가 발생한다.")
+        @DisplayName("이미 테이블이 다른 테이블 그룹에 속해있다면 예외가 발생한다.")
+        void emptyTableGroupId() {
+            // given
+            final OrderTable orderTable = mock(OrderTable.class);
+            given(orderTableDao.findById(anyLong())).willReturn(Optional.of(orderTable));
+            given(orderTable.getTableGroupId()).willReturn(3L);
+
+            // when, then
+            assertThatThrownBy(() -> tableService.changeEmpty(1L, null))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        @DisplayName("해당 테이블이 COOKING, MEAL 상태인데, 테이블의 상태를 변경하려고 하면 예외가 발생한다.")
         void existsByOrderTableIdAndOrderStatusIn() {
             // given
             final OrderTable orderTable = mock(OrderTable.class);
-            given(orderTable.getTableGroupId()).willReturn(null);
             given(orderTableDao.findById(anyLong())).willReturn(Optional.of(orderTable));
+            given(orderTable.getTableGroupId()).willReturn(null);
             given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), any())).willReturn(true);
 
             // when, then
-            assertThatThrownBy(() -> tableService.changeEmpty(1L, new ChangeEmptyRequest(false)))
+            assertThatThrownBy(() -> tableService.changeEmpty(1L, null))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -88,16 +118,19 @@ class TableServiceTest {
         @DisplayName("테이블의 비어 있는 상태를 수정한다.")
         void create() {
             // given
-            final OrderTable orderTable = mock(OrderTable.class);
-            given(orderTable.getTableGroupId()).willReturn(null);
+            final OrderTable orderTable = new OrderTable(3, false);
+
             given(orderTableDao.findById(anyLong())).willReturn(Optional.of(orderTable));
             given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), any())).willReturn(false);
 
             // when
-            tableService.changeEmpty(1L, new ChangeEmptyRequest(false));
+            tableService.changeEmpty(anyLong(), new ChangeEmptyRequest(true));
 
             // then
-            verify(orderTableDao, times(1)).save(any());
+            assertSoftly(softly -> {
+                verify(orderTableDao, times(1)).save(any());
+                assertThat(orderTable.isEmpty()).isTrue();
+            });
         }
     }
 
@@ -116,12 +149,41 @@ class TableServiceTest {
         }
 
         @Test
+        @DisplayName("주문 테이블을 찾지 못하면 예외가 발생한다.")
+        void cannotFindOrderTable() {
+            // given
+            final NumberOfGuestsRequest request = mock(NumberOfGuestsRequest.class);
+            given(request.getNumberOfGuests()).willReturn(3);
+            given(orderTableDao.findById(anyLong())).willReturn(Optional.empty());
+
+            // when, then
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, request))
+                    .isInstanceOf(IllegalArgumentException.class);
+
+        }
+
+        @Test
+        @DisplayName("주문 테이블이 이미 비어있다면 예외가 발생한다.")
+        void orderTableAlreadyEmpty() {
+            // given
+            final NumberOfGuestsRequest request = mock(NumberOfGuestsRequest.class);
+            final OrderTable orderTable = mock(OrderTable.class);
+            given(request.getNumberOfGuests()).willReturn(3);
+            given(orderTableDao.findById(anyLong())).willReturn(Optional.of(orderTable));
+            given(orderTable.isEmpty()).willReturn(true);
+
+            // when, then
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, request))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
         @DisplayName("테이블의 손님 숫자를 변경한다.")
         void changeNumberOfGuests() {
             // given
-            final NumberOfGuestsRequest request = new NumberOfGuestsRequest(3);
-            final OrderTable orderTable = new OrderTable(4, false);
-            final OrderTable savedOrderTable = new OrderTable(3, false);
+            final NumberOfGuestsRequest request = new NumberOfGuestsRequest(10);
+            final OrderTable orderTable = new OrderTable(5, false);
+            final OrderTable savedOrderTable = new OrderTable(10, false);
             given(orderTableDao.findById(anyLong())).willReturn(Optional.of(orderTable));
             given(orderTableDao.save(any())).willReturn(savedOrderTable);
 
@@ -129,7 +191,10 @@ class TableServiceTest {
             final OrderTable result = tableService.changeNumberOfGuests(1L, request);
 
             // then
-            assertThat(result.getNumberOfGuests()).isEqualTo(request.getNumberOfGuests());
+            assertSoftly(softly -> {
+                verify(orderTableDao, times(1)).save(any());
+                assertThat(result.getNumberOfGuests()).isEqualTo(savedOrderTable.getNumberOfGuests());
+            });
         }
     }
 }

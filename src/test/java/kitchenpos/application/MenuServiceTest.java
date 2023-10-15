@@ -28,8 +28,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class MenuServiceTest {
@@ -49,59 +48,84 @@ class MenuServiceTest {
         @Test
         @DisplayName("가격이 null 혹은 음수값이면 예외가 발생한다.")
         void priceNullOrNegative() {
+            // given
             final MenuRequest request1 = new MenuRequest("productName", null, 1L, Collections.emptyList());
-            assertThatThrownBy(() -> menuService.create(request1)).isInstanceOf(IllegalArgumentException.class);
-
             final MenuRequest request2 = new MenuRequest("productName", new BigDecimal("-1"), 1L, Collections.emptyList());
-            assertThatThrownBy(() -> menuService.create(request2)).isInstanceOf(IllegalArgumentException.class);
-        }
 
+            // when, then
+            assertSoftly(softly -> {
+                assertThatThrownBy(() -> menuService.create(request1)).isInstanceOf(IllegalArgumentException.class);
+                assertThatThrownBy(() -> menuService.create(request2)).isInstanceOf(IllegalArgumentException.class);
+            });
+        }
 
         @Test
         @DisplayName("menuProduct가 존재하지 않으면 예외가 발생한다.")
         void menuProductNotExist() {
-            final MenuRequest request = new MenuRequest("productName", new BigDecimal("1000"), 999L, Collections.emptyList());
-
-            assertThatThrownBy(() -> menuService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        @DisplayName("총 가격이 MenuProducts의 총 합계 금액보다 크면 예외가 발생한다.")
-        void comparePriceAndSum() {
             // given
-            final Product product = new Product(1L, "product", BigDecimal.TEN);
-
-            given(menuGroupDao.existsById(anyLong())).willReturn(true);
-            given(productDao.findById(anyLong())).willReturn(Optional.of(product));
-
-            final List<MenuProductRequest> menuProductRequests = List.of(
-                    new MenuProductRequest(1L, 1),
-                    new MenuProductRequest(2L, 2),
-                    new MenuProductRequest(3L, 1)
-            );
-            final MenuRequest request = new MenuRequest("productName", new BigDecimal("1000"), 1L, menuProductRequests);
+            final MenuRequest request = mock(MenuRequest.class);
+            given(request.getPrice()).willReturn(BigDecimal.valueOf(10000));
+            given(request.getMenuGroupId()).willReturn(1L);
+            given(menuGroupDao.existsById(anyLong())).willReturn(false);
 
             // when, then
             assertThatThrownBy(() -> menuService.create(request)).isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
-        @DisplayName("정상적인 메뉴 등록을 진행한다.")
-        void createMenu() {
+        @DisplayName("사용자가 요청한 가격이 서버에서 측정한 상품의 총 합계 가격보다 크다면 예외가 발생한다.")
+        void comparePriceAndSum() {
             // given
-            final Product product = new Product(1L, "product", BigDecimal.valueOf(10_000));
-            final Menu menu = new Menu("menu", BigDecimal.TEN, 1L);
             final List<MenuProductRequest> menuProductRequests = List.of(
                     new MenuProductRequest(1L, 1),
-                    new MenuProductRequest(2L, 2),
+                    new MenuProductRequest(2L, 1),
                     new MenuProductRequest(3L, 1)
             );
-            final MenuRequest request = new MenuRequest("productName", new BigDecimal("35000"), 1L, menuProductRequests);
+            final Product product1 = new Product("product1", BigDecimal.valueOf(100));
+            final Product product2 = new Product("product2", BigDecimal.valueOf(200));
+            final Product product3 = new Product("product3", BigDecimal.valueOf(300));
+
+            final MenuRequest request = mock(MenuRequest.class);
+            given(request.getPrice()).willReturn(BigDecimal.valueOf(700));
+            given(request.getMenuProducts()).willReturn(menuProductRequests);
+            given(menuGroupDao.existsById(anyLong())).willReturn(true);
+            given(productDao.findById(1L)).willReturn(Optional.of(product1));
+            given(productDao.findById(2L)).willReturn(Optional.of(product2));
+            given(productDao.findById(3L)).willReturn(Optional.of(product3));
+
+            // when, then
+            assertThatThrownBy(() -> menuService.create(request)).isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        @DisplayName("메뉴를 생성한다.")
+        void createMenu() {
+            // given
+            final List<MenuProductRequest> menuProductRequests = List.of(
+                    new MenuProductRequest(1L, 1),
+                    new MenuProductRequest(2L, 1),
+                    new MenuProductRequest(3L, 1)
+            );
+            final Product product1 = new Product("product1", BigDecimal.valueOf(100));
+            final Product product2 = new Product("product2", BigDecimal.valueOf(200));
+            final Product product3 = new Product("product3", BigDecimal.valueOf(300));
+            final MenuRequest request = new MenuRequest("productName", BigDecimal.valueOf(600), 1L, menuProductRequests);
+
+            final Menu menu = new Menu(1L, request.getName(), request.getPrice(), request.getMenuGroupId());
 
             given(menuGroupDao.existsById(anyLong())).willReturn(true);
-            given(productDao.findById(anyLong())).willReturn(Optional.of(product));
+            given(productDao.findById(1L)).willReturn(Optional.of(product1));
+            given(productDao.findById(2L)).willReturn(Optional.of(product2));
+            given(productDao.findById(3L)).willReturn(Optional.of(product3));
             given(menuDao.save(any())).willReturn(menu);
+
+            final MenuProduct menuProduct1 = new MenuProduct(1L, 1L, 1L, 1);
+            final MenuProduct menuProduct2 = new MenuProduct(2L, 1L, 2L, 1);
+            final MenuProduct menuProduct3 = new MenuProduct(3L, 1L, 3L, 1);
+            when(menuProductDao.save(any()))
+                    .thenReturn(menuProduct1)
+                    .thenReturn(menuProduct2)
+                    .thenReturn(menuProduct3);
 
             // when
             final Menu savedMenu = menuService.create(request);
@@ -111,11 +135,14 @@ class MenuServiceTest {
                 verify(menuDao, times(1)).save(any());
                 verify(menuProductDao, times(3)).save(any());
                 assertThat(savedMenu).usingRecursiveComparison().isEqualTo(menu);
+                assertThat(savedMenu).extracting("menuProducts")
+                        .usingRecursiveComparison().isEqualTo(List.of(menuProduct1, menuProduct2, menuProduct3));
             });
         }
     }
 
     @Test
+    @DisplayName("전체 메뉴를 조회한다.")
     void list() {
         // given
         final Menu menu = new Menu(1L, "productName", new BigDecimal("35000"), 1L);
@@ -129,9 +156,9 @@ class MenuServiceTest {
         // then
         assertSoftly(softly -> {
             assertThat(menus).hasSize(1);
-            assertThat(menus.get(0)).isEqualTo(menu);
-            assertThat(menus.get(0).getMenuProducts()).hasSize(1);
-            assertThat(menus.get(0).getMenuProducts().get(0)).isEqualTo(menuProduct);
+            assertThat(menus.get(0)).usingRecursiveComparison().isEqualTo(menu);
+            assertThat(menus.get(0)).extracting("menuProducts")
+                    .usingRecursiveComparison().isEqualTo(List.of(menuProduct));
         });
     }
 }

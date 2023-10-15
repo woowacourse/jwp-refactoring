@@ -63,7 +63,7 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final Order savedOrder = orderDao.save(new Order(null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now()));
+        final Order savedOrder = orderDao.save(new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now()));
 
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         Long sequence = 1L;

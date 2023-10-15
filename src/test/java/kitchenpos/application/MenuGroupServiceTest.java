@@ -28,7 +28,7 @@ class MenuGroupServiceTest {
     void create() {
         // given
         final MenuGroupRequest request = new MenuGroupRequest("menuGroup");
-        final MenuGroup menuGroup = new MenuGroup(1L, "menuGroup");
+        final MenuGroup menuGroup = new MenuGroup("menuGroup");
         given(menuGroupDao.save(any())).willReturn(menuGroup);
 
         // when
@@ -42,10 +42,7 @@ class MenuGroupServiceTest {
     @DisplayName("전체 메뉴를 조회한다.")
     void list() {
         // given
-        final List<MenuGroup> menuGroups = List.of(
-                new MenuGroup(1L, "group1"),
-                new MenuGroup(2L, "group2")
-        );
+        final List<MenuGroup> menuGroups = List.of(new MenuGroup("group1"), new MenuGroup("group2"));
         given(menuGroupDao.findAll()).willReturn(menuGroups);
 
         // when
