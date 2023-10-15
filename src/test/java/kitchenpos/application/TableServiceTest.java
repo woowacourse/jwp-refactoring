@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.support.FixtureFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,10 +36,9 @@ class TableServiceTest {
     @Test
     void create_orderTable() {
         // given
-        final OrderTable forSaveOrderTable = new OrderTable();
+        final OrderTable forSaveOrderTable = FixtureFactory.forSaveOrderTable(10, false);
 
-        final OrderTable savedOrderTable = new OrderTable();
-        savedOrderTable.setId(1L);
+        final OrderTable savedOrderTable = FixtureFactory.saveOrderTable(1L, null, 10, false);
 
         given(orderTableDao.save(any()))
                 .willReturn(savedOrderTable);
@@ -58,15 +58,9 @@ class TableServiceTest {
     @Test
     void find_all_orderTable() {
         // given
-        final OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setTableGroupId(1L);
-        orderTable1.setEmpty(false);
+        final OrderTable orderTable1 = FixtureFactory.saveOrderTable(1L, 1L, 10, false);
 
-        final OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-        orderTable2.setTableGroupId(2L);
-        orderTable2.setEmpty(false);
+        final OrderTable orderTable2 = FixtureFactory.saveOrderTable(2L, 2L, 10, false);
 
         final List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
 
@@ -85,13 +79,9 @@ class TableServiceTest {
     @Test
     void change_orderTable_empty() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setEmpty(false);
+        final OrderTable orderTable = FixtureFactory.saveOrderTable(1L, null, 10, false);
 
-        final OrderTable changeOrderTable = new OrderTable();
-        changeOrderTable.setId(1L);
-        changeOrderTable.setEmpty(true);
+        final OrderTable changeOrderTable = FixtureFactory.saveOrderTable(1L, 1L, 10, true);
 
         given(orderTableDao.findById(any()))
                 .willReturn(Optional.of(orderTable));
@@ -117,20 +107,16 @@ class TableServiceTest {
     @Test
     void change_orderTable_empty_fail_with_not_exist_orderTable() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setEmpty(false);
+        final Long wrongOrderTableId = 0L;
 
-        final OrderTable changeOrderTable = new OrderTable();
-        changeOrderTable.setId(1L);
-        changeOrderTable.setEmpty(true);
+        final OrderTable changeOrderTable = FixtureFactory.saveOrderTable(1L, 1L, 10, true);
 
         given(orderTableDao.findById(any()))
                 .willReturn(Optional.empty());
 
         // when
         // then
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), changeOrderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(wrongOrderTableId, changeOrderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -138,14 +124,9 @@ class TableServiceTest {
     @Test
     void change_orderTable_empty_fail_with_not_null_group() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setTableGroupId(1L);
-        orderTable.setEmpty(false);
+        final OrderTable orderTable = FixtureFactory.saveOrderTable(1L, 1L, 10, false);
 
-        final OrderTable changeOrderTable = new OrderTable();
-        changeOrderTable.setId(1L);
-        changeOrderTable.setEmpty(true);
+        final OrderTable changeOrderTable = FixtureFactory.saveOrderTable(1L, 1L, 10, true);
 
         given(orderTableDao.findById(any()))
                 .willReturn(Optional.of(orderTable));
@@ -156,17 +137,13 @@ class TableServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("주문 테이블의 상태가 COOKIE이거나 MEAL인 경우 주문 테이블의 상태를 변경할 수 없다.")
+    @DisplayName("주문 테이블의 상태가 COOKING이거나 MEAL인 경우 주문 테이블의 상태를 변경할 수 없다.")
     @Test
     void change_orderTable_empty_fail_with_invalid_orderStatus() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setEmpty(false);
+        final OrderTable orderTable = FixtureFactory.saveOrderTable(1L, null, 10, false);
 
-        final OrderTable changeOrderTable = new OrderTable();
-        changeOrderTable.setId(1L);
-        changeOrderTable.setEmpty(false);
+        final OrderTable changeOrderTable = FixtureFactory.saveOrderTable(1L, 1L, 10, true);
 
         given(orderTableDao.findById(any()))
                 .willReturn(Optional.of(orderTable));
@@ -184,15 +161,9 @@ class TableServiceTest {
     @Test
     void change_number_of_guests() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setNumberOfGuests(1);
-        orderTable.setEmpty(false);
+        final OrderTable orderTable = FixtureFactory.saveOrderTable(1L, 1L, 1, false);
 
-        final OrderTable changeOrderTable = new OrderTable();
-        changeOrderTable.setId(1L);
-        changeOrderTable.setNumberOfGuests(3);
-        changeOrderTable.setEmpty(false);
+        final OrderTable changeOrderTable = FixtureFactory.saveOrderTable(1L, 1L, 10, false);
 
         given(orderTableDao.findById(any()))
                 .willReturn(Optional.of(orderTable));
@@ -217,8 +188,7 @@ class TableServiceTest {
         // given
         final Long orderTableId = 1L;
 
-        final OrderTable changeOrderTable = new OrderTable();
-        changeOrderTable.setNumberOfGuests(-1);
+        final OrderTable changeOrderTable = FixtureFactory.saveOrderTable(1L, 1L, -1, false);
 
         // when
         // then
@@ -230,22 +200,16 @@ class TableServiceTest {
     @Test
     void change_number_of_guests_fail_with_not_found_orderTable() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setNumberOfGuests(1);
-        orderTable.setEmpty(false);
+        final Long wrongOrderTableId = 0L;
 
-        final OrderTable changeOrderTable = new OrderTable();
-        changeOrderTable.setId(1L);
-        changeOrderTable.setNumberOfGuests(3);
-        changeOrderTable.setEmpty(false);
+        final OrderTable changeOrderTable = FixtureFactory.saveOrderTable(1L, 1L, 10, false);
 
         given(orderTableDao.findById(any()))
                 .willReturn(Optional.empty());
 
         // when
         // then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), changeOrderTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(wrongOrderTableId, changeOrderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -253,15 +217,9 @@ class TableServiceTest {
     @Test
     void change_number_of_guests_fail_with_empty_orderTable() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setNumberOfGuests(1);
-        orderTable.setEmpty(true);
+        final OrderTable orderTable = FixtureFactory.saveOrderTable(1L, 1L, 1, true);
 
-        final OrderTable changeOrderTable = new OrderTable();
-        changeOrderTable.setId(1L);
-        changeOrderTable.setNumberOfGuests(3);
-        changeOrderTable.setEmpty(false);
+        final OrderTable changeOrderTable = FixtureFactory.saveOrderTable(1L, 1L, 3, false);
 
         given(orderTableDao.findById(any()))
                 .willReturn(Optional.of(orderTable));

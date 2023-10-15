@@ -89,4 +89,20 @@ public class FixtureFactory {
         order.setOrderLineItems(orderLineItems);
         return order;
     }
+
+    public static OrderTable forSaveOrderTable(final int numberOfGuests, final boolean empty) {
+        final OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(numberOfGuests);
+        orderTable.setEmpty(empty);
+        return orderTable;
+    }
+
+    public static OrderTable saveOrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        final OrderTable orderTable = new OrderTable();
+        orderTable.setId(id);
+        orderTable.setTableGroupId(tableGroupId);
+        orderTable.setNumberOfGuests(numberOfGuests);
+        orderTable.setEmpty(empty);
+        return orderTable;
+    }
 }
