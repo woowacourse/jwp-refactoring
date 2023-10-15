@@ -62,9 +62,11 @@ class OrderServiceTest extends ServiceTest {
         void 정상적인_주문이라면_주문을_추가한다() {
             //given
             Product product = productDao.save(상품("텐동", BigDecimal.valueOf(11000)));
-            MenuProduct menuProduct = menuProductDao.save(메뉴_상품(null, product.getId(), 1));
+            MenuProduct menuProduct = 메뉴_상품(null, product.getId(), 1);
             MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("일식"));
             Menu menu = menuDao.save(메뉴("텐동", BigDecimal.valueOf(11000), menuGroup.getId(), List.of(menuProduct)));
+            menuProduct.setMenuId(menu.getId());
+            menuProductDao.save(menuProduct);
 
             OrderTable orderTable = orderTableDao.save(테이블(null, 10, false));
             OrderLineItem orderLineItem = 주문_메뉴_목록(orderTable.getId(), menu.getId(), 1);
