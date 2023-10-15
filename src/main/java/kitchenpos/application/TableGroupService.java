@@ -55,13 +55,13 @@ public class TableGroupService {
             }
         }
 
-        final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), List.of()));
+        final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), savedOrderTables));
 
         final Long tableGroupId = savedTableGroup.getId();
         for (final OrderTable savedOrderTable : savedOrderTables) {
             orderTableDao.save(new OrderTable(savedOrderTable.getId(), tableGroupId, savedOrderTable.getNumberOfGuests(), savedOrderTable.isEmpty()));
         }
-        savedTableGroup.addOrderTables(savedOrderTables);
+        savedTableGroup.changeOrderTables(savedOrderTables);
 
         return savedTableGroup;
     }

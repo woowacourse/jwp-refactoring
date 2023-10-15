@@ -31,7 +31,7 @@ public class TableGroup {
         return orderTables;
     }
 
-    public void addOrderTables(List<OrderTable> orderTables) {
-        this.orderTables.addAll(orderTables);
+    public void changeOrderTables(List<OrderTable> orderTables) {
+        this.orderTables = new ArrayList<>(orderTables);
     }
 }
