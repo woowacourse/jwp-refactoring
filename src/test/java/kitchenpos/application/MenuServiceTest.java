@@ -41,7 +41,7 @@ class MenuServiceTest {
     @BeforeEach
     void setUp() {
         this.menuGroup = menuGroupDao.save(menuGroupFixture("메뉴 그룹1"));
-        this.product = productDao.save(productFixture(null, "상품1", new BigDecimal(10000)));
+        this.product = productDao.save(productFixture("상품1", new BigDecimal(10000)));
         this.menuProduct = menuProductFixture(null, product.getId(), 4);
     }
 
@@ -50,7 +50,7 @@ class MenuServiceTest {
         @Test
         void 메뉴를_등록한다() {
             MenuGroup menuGroup = menuGroupDao.save(menuGroupFixture("메뉴 그룹1"));
-            Product product = productDao.save(productFixture(null, "productName", BigDecimal.valueOf(10000L)));
+            Product product = productDao.save(productFixture("productName", BigDecimal.valueOf(10000L)));
             MenuProduct menuProduct = menuProductFixture(null, product.getId(), 4);
 
             Menu menu = menuFixture("메뉴", new BigDecimal("30000.00"), menuGroup.getId(), List.of(menuProduct));
@@ -99,7 +99,7 @@ class MenuServiceTest {
 
         @Test
         void 메뉴의_가격이_메뉴_상품들의_가격_합보다_비싸면_등록할_수_없다() {
-            Product product1 = productFixture(null, "상품2", new BigDecimal(10001));
+            Product product1 = productFixture("상품2", new BigDecimal(10001));
             MenuProduct menuProduct1 = menuProductFixture(null, product1.getId(), 1);
             Menu menu = menuFixture("메뉴", new BigDecimal("50000.00"), menuGroup.getId(), List.of(menuProduct, menuProduct1));
 

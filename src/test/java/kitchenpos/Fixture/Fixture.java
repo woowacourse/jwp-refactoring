@@ -37,12 +37,8 @@ public abstract class Fixture {
         return menuProduct;
     }
 
-    public static Product productFixture(Long productId, String name, BigDecimal price) {
-        Product product = new Product();
-        product.setId(productId);
-        product.setName(name);
-        product.setPrice(price);
-        return product;
+    public static Product productFixture(String name, BigDecimal price) {
+        return new Product(null, name, price);
     }
 
     public static Order orderFixture(Long orderTableId, String orderStatus,

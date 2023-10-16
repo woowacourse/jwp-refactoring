@@ -2,12 +2,13 @@ package kitchenpos.application;
 
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.ProductRequest;
+import kitchenpos.ui.dto.ProductResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -18,19 +19,18 @@ public class ProductService {
     }
 
     @Transactional
-    public Product create(final Product product) {
-        final BigDecimal price = product.getPrice();
+    public ProductResponse create(final ProductRequest productRequest) {
+        final Product product = new Product(productRequest.getName(), productRequest.getPrice());
+        final Product saved = productDao.save(product);
 
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("상품의 가격은 0원 이상이어야 합니다.");
-        }
-
-        return productDao.save(product);
+        return ProductResponse.of(saved);
     }
 
-
     @Transactional(readOnly = true)
-    public List<Product> list() {
-        return productDao.findAll();
+    public List<ProductResponse> list() {
+        List<Product> products = productDao.findAll();
+
+        return products.stream().map(ProductResponse::of)
+                .collect(Collectors.toList());
     }
 }
