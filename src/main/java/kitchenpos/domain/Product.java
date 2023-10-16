@@ -1,33 +1,53 @@
 package kitchenpos.domain;
 
-import java.math.BigDecimal;
+import static javax.persistence.GenerationType.IDENTITY;
 
-public class Product {
+import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import kitchenpos.common.BaseEntity;
+import kitchenpos.vo.Money;
+
+@Entity
+public class Product extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
     private String name;
-    private BigDecimal price;
+
+    private Money price;
+
+    protected Product() {
+    }
+
+    public Product(String name, Money price) {
+        this(null, name, price);
+    }
+
+    public Product(Long id, String name, Money price) {
+        validate(price);
+        this.id = id;
+        this.name = name;
+        this.price = price;
+    }
+
+    private void validate(Money price) {
+        if (Objects.isNull(price) || price.isLessThan(Money.ZERO)) {
+            throw new IllegalArgumentException("상품의 가격은 0원 이상이어야 합니다.");
+        }
+    }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public BigDecimal getPrice() {
+    public Money getPrice() {
         return price;
-    }
-
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
     }
 }

@@ -1,14 +1,15 @@
 package kitchenpos.fixture;
 
-import java.math.BigDecimal;
 import kitchenpos.domain.Product;
+import kitchenpos.vo.Money;
 
 public class ProductFixture {
 
     public static Product 상품(String name, Long price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(BigDecimal.valueOf(price));
-        return product;
+        return new Product(name, Money.valueOf(price));
+    }
+
+    public static Product 상품(Long id, String name, Long price) {
+        return new Product(id, name, Money.valueOf(price));
     }
 }

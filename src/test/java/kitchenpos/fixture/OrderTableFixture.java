@@ -1,27 +1,19 @@
 package kitchenpos.fixture;
 
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 
 public class OrderTableFixture {
 
     public static OrderTable 테이블(boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(empty);
-        return orderTable;
+        return new OrderTable(null, 0, empty);
     }
 
     public static OrderTable 테이블(boolean empty, int numberOfGuests) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(empty);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        return orderTable;
+        return new OrderTable(null, numberOfGuests, empty);
     }
 
-    public static OrderTable 테이블(boolean empty, int numberOfGuests, long tableGroupId) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(empty);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setTableGroupId(tableGroupId);
-        return orderTable;
+    public static OrderTable 테이블(boolean empty, int numberOfGuests, TableGroup tableGroup) {
+        return new OrderTable(tableGroup, numberOfGuests, empty);
     }
 }
