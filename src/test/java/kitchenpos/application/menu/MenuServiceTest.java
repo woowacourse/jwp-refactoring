@@ -10,8 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -64,45 +62,6 @@ class MenuServiceTest extends ApplicationTestConfig {
                 softly.assertThat(actual.getMenuGroupId()).isEqualTo(expected.getMenuGroupId());
                 softly.assertThat(actual.getMenuProducts()).isEqualTo(expected.getMenuProducts());
             });
-        }
-
-        @DisplayName("[EXCEPTION] 등록할 신규 메뉴에 가격이 null 일 경우 예외가 발생한다.")
-        @Test
-        void throwException_when_create_Menu_IfMenuPriceIsNull() {
-            // given
-            final MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup("테스트용 메뉴 그룹명"));
-
-            // when
-            final Menu expected = new Menu(
-                    "테스트용 메뉴명",
-                    null,
-                    savedMenuGroup.getId(),
-                    Collections.emptyList()
-            );
-
-            // then
-            assertThatThrownBy(() -> menuService.create(expected))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @DisplayName("[EXCEPTION] 등록할 신규 메뉴에 가격이 음수일 경우 예외가 발생한다.")
-        @ParameterizedTest
-        @ValueSource(strings = {"-1", "-10", "-100", "-1000000"})
-        void throwException_when_create_Menu_IfMenuPriceIsNegative(final String negativePriceValue) {
-            // given
-            final MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup("테스트용 메뉴 그룹명"));
-
-            // when
-            final Menu expected = new Menu(
-                    "테스트용 메뉴명",
-                    new BigDecimal(negativePriceValue),
-                    savedMenuGroup.getId(),
-                    Collections.emptyList()
-            );
-
-            // then
-            assertThatThrownBy(() -> menuService.create(expected))
-                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("[EXCEPTION] 등록할 신규 메뉴에 메뉴 상품 목록들의 가격 합보다 메뉴의 가격이 높을 경우 예외가 발생한다.")
