@@ -50,20 +50,7 @@ public class OrderService {
 
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다"));
-
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("주문 테이블이 빈 테이블입니다");
-        }
-
-        Order entity = getOrder(orderTable, request);
-        final Order savedOrder = orderRepository.save(entity);
-
-        List<OrderLineItem> savedOrderLineItems = orderLineItems.stream()
-                .map(it -> orderLineItemRepository.save(new OrderLineItem(it.getMenuId(), it.getQuantity())))
-                .collect(Collectors.toList());
-        savedOrder.changeOrderLineItems(savedOrderLineItems);
-
-        return savedOrder;
+        return orderRepository.save(getOrder(orderTable, request));
     }
 
     private Order getOrder(OrderTable orderTable, OrderRequest request) {

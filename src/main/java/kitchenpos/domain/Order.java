@@ -50,11 +50,18 @@ public class Order {
 
     public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
         validateOrderLineItems(orderLineItems);
+        validateOrderTable(orderTable);
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = new ArrayList<>(orderLineItems);
+    }
+
+    private void validateOrderTable(OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("주문 테이블이 빈 테이블입니다");
+        }
     }
 
     private void validateOrderLineItems(List<OrderLineItem> orderLineItems) {
