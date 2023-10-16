@@ -1,8 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
@@ -12,10 +9,6 @@ import kitchenpos.fixture.Fixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -86,7 +79,8 @@ class OrderServiceTest extends ServiceBaseTest {
     @DisplayName("주문 시 주문 테이블이 존재해야한다.")
     void createValidOrderTable() {
         //given
-        final Order order = Fixture.order(null, null, LocalDateTime.now(), List.of(orderLineItem));
+        orderTable = orderTableDao.save(Fixture.orderTable(null, 0, true));
+        final Order order = Fixture.order(null, orderTable.getId(), LocalDateTime.now(), List.of(orderLineItem));
 
         //when&then
         assertThatThrownBy(() -> orderService.create(order))
