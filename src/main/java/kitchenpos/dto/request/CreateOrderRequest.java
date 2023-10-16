@@ -1,10 +1,13 @@
 package kitchenpos.dto.request;
 
+import com.sun.istack.NotNull;
 import java.util.List;
 
 public class CreateOrderRequest {
 
+    @NotNull
     private Long orderTableId;
+    @NotNull
     private List<OrderLineItemRequest> orderLineItems;
 
     public CreateOrderRequest(Long orderTableId, List<OrderLineItemRequest> orderLineItems) {

@@ -1,8 +1,12 @@
 package kitchenpos.dto.request;
 
+import com.sun.istack.NotNull;
+
 public class OrderLineItemRequest {
 
+    @NotNull
     private Long menuId;
+    @NotNull
     private Long quantity;
 
     public OrderLineItemRequest(Long menuId, Long quantity) {

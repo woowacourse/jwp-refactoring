@@ -2,6 +2,7 @@ package kitchenpos.ui;
 
 import java.net.URI;
 import java.util.List;
+import javax.validation.Valid;
 import kitchenpos.application.MenuService;
 import kitchenpos.dto.request.CreateMenuRequest;
 import kitchenpos.dto.response.MenuResponse;
@@ -21,7 +22,7 @@ public class MenuRestController {
     }
 
     @PostMapping("/api/menus")
-    public ResponseEntity<MenuResponse> create(@RequestBody CreateMenuRequest request) {
+    public ResponseEntity<MenuResponse> create(@Valid @RequestBody CreateMenuRequest request) {
         MenuResponse response = menuService.create(request);
         URI uri = URI.create("/api/menus/" + response.getId());
 
