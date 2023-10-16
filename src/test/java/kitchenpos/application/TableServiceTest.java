@@ -19,7 +19,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static kitchenpos.fixture.OrderFixture.order;
@@ -27,7 +26,7 @@ import static kitchenpos.fixture.OrderLineItemFixture.orderLineItem;
 import static kitchenpos.fixture.OrderTableFixtrue.orderTable;
 import static kitchenpos.fixture.OrderTableFixtrue.orderTableNumberOfGuestsRequest;
 import static kitchenpos.fixture.OrderTableFixtrue.orderTableRequest;
-import static kitchenpos.fixture.TableGroupFixture.tableGroupWithoutOrderTable;
+import static kitchenpos.fixture.TableGroupFixture.tableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -82,7 +81,7 @@ class TableServiceTest {
     @Test
     void 주문_테이블을_빈_테이블로_변경할_때_단체_지정이_있으면_예외가_발생한다() {
         // given
-        TableGroup tableGroup = tableGroupWithoutOrderTable(LocalDateTime.now());
+        TableGroup tableGroup = tableGroup(List.of(orderTable(10, true), orderTable(11, true)));
         OrderTable orderTable = orderTableRepository.save(orderTable(tableGroup, 10, false));
 
         // expect

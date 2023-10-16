@@ -72,4 +72,12 @@ public class OrderTable {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    public void changeTableGroup(TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+    }
+
+    public void ungroup() {
+        this.tableGroup = null;
+    }
 }

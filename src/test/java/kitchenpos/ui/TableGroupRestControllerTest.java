@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static kitchenpos.application.dto.TableGroupRequest.OrderTableIdRequest;
+import static kitchenpos.fixture.OrderTableFixtrue.orderTable;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -39,7 +40,7 @@ class TableGroupRestControllerTest {
     @Test
     void 단체_지정을_생성한다() throws Exception {
         // given
-        TableGroup createdTableGroup = new TableGroup(1L, LocalDateTime.now(), List.of());
+        TableGroup createdTableGroup = new TableGroup(1L, LocalDateTime.now(), List.of(orderTable(10, true), orderTable(11, true)));
 
         // when
         when(tableGroupService.create(any(TableGroupRequest.class))).thenReturn(createdTableGroup);

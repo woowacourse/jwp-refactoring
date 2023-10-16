@@ -9,13 +9,14 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupRepository;
 import kitchenpos.fake.InMemoryOrderRepository;
 import kitchenpos.fake.InMemoryOrderTableRepository;
-import kitchenpos.fake.InMemoryTableGroupDao;
+import kitchenpos.fake.InMemoryTableGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,11 +27,11 @@ import static kitchenpos.fixture.OrderLineItemFixture.orderLineItem;
 import static kitchenpos.fixture.OrderTableFixtrue.orderTable;
 import static kitchenpos.fixture.TableGroupFixture.tableGroup;
 import static kitchenpos.fixture.TableGroupFixture.tableGroupRequest;
-import static kitchenpos.fixture.TableGroupFixture.tableGroupWithoutOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+@SpringBootTest
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
 class TableGroupServiceTest {
@@ -44,7 +45,7 @@ class TableGroupServiceTest {
     void before() {
         orderRepository = new InMemoryOrderRepository();
         orderTableRepository = new InMemoryOrderTableRepository();
-        tableGroupDao = new InMemoryTableGroupDao();
+        tableGroupDao = new InMemoryTableGroupRepository();
         tableGroupService = new TableGroupService(orderRepository, orderTableRepository, tableGroupDao);
     }
 
@@ -72,11 +73,11 @@ class TableGroupServiceTest {
         TableGroupRequest tableGroup = new TableGroupRequest(List.of(new OrderTableIdRequest(orderTable.getId()), new OrderTableIdRequest(orderTable2.getId())));
 
         // when
-        tableGroupService.create(tableGroup);
+        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
         // then
-        OrderTable savedOrderTable = orderTableRepository.findById(orderTable.getId()).get();
-        OrderTable savedOrderTable2 = orderTableRepository.findById(orderTable2.getId()).get();
+        OrderTable savedOrderTable = savedTableGroup.getOrderTables().get(0);
+        OrderTable savedOrderTable2 = savedTableGroup.getOrderTables().get(1);
         assertSoftly(softly -> {
             softly.assertThat(savedOrderTable.getTableGroup()).isNotNull();
             softly.assertThat(savedOrderTable2.getTableGroup()).isNotNull();
@@ -93,7 +94,7 @@ class TableGroupServiceTest {
         // expect
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("주문 테이블은 1개 이상이여야 합니다");
+                .hasMessage("주문 테이블은 2개 이상이여야 합니다");
     }
 
     @Test
@@ -126,7 +127,7 @@ class TableGroupServiceTest {
     void 단체_지정을_생성할_때_이미_단체_지정이_되어있으면_예외가_발생한다() {
         // given
         OrderTable orderTable = orderTableRepository.save(orderTable(10, true));
-        OrderTable orderTable2 = orderTableRepository.save(orderTable(tableGroup(List.of(orderTable)), 3, true));
+        OrderTable orderTable2 = orderTableRepository.save(orderTable(tableGroup(List.of(orderTable, orderTable(10, true))), 3, true));
         TableGroupRequest tableGroup = tableGroupRequest(List.of(new OrderTableIdRequest(orderTable.getId()), new OrderTableIdRequest(orderTable2.getId())));
 
         // expect
@@ -138,7 +139,7 @@ class TableGroupServiceTest {
     @Test
     void 단체_지정을_해제한다() {
         // given
-        TableGroup tableGroup = tableGroupDao.save(tableGroupWithoutOrderTable(LocalDateTime.now()));
+        TableGroup tableGroup = tableGroupDao.save(tableGroup(List.of(orderTable(10, true), orderTable(11, true))));
         OrderTable orderTable = orderTableRepository.save(orderTable(tableGroup, 10, false));
         OrderTable orderTable2 = orderTableRepository.save(orderTable(tableGroup, 3, false));
         orderRepository.save(order(orderTable, OrderStatus.COMPLETION, List.of(orderLineItem(1L, 10))));
@@ -161,9 +162,8 @@ class TableGroupServiceTest {
     @ParameterizedTest
     void 단체_지정을_해제할_때_주문의_상태가_조리_혹은_식사_이면_예외가_발생한다(OrderStatus orderStatus) {
         // given
-        TableGroup tableGroup = tableGroupDao.save(tableGroupWithoutOrderTable(LocalDateTime.now()));
+        TableGroup tableGroup = tableGroupDao.save(tableGroup(List.of(orderTable(10, true), orderTable(11, true))));
         OrderTable orderTable = orderTableRepository.save(orderTable(tableGroup, 10, false));
-        OrderTable orderTable2 = orderTableRepository.save(orderTable(tableGroup, 3, false));
         orderRepository.save(order(orderTable, orderStatus, List.of(orderLineItem(1L, 10))));
 
         // when
