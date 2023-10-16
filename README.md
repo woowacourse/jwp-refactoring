@@ -43,7 +43,7 @@
 - [ ] setter 메서드 제거
     - [x] MenuGroup
     - [ ] Menu
-    - [ ] OrderTable
+    - [x] OrderTable
     - [ ] TableGroup
     - [ ] OrderLineItem
     - [x] Product
@@ -51,7 +51,7 @@
 - [ ] dao에 의존적인 로직을 도메인 로직으로 변경
     - [x] MenuGroupService
     - [ ] MenuService
-    - [ ] OrderTableService
+    - [x] OrderTableService
     - [ ] TableGroupService
     - [ ] OrderLineItemService
     - [x] ProductService

@@ -4,13 +4,23 @@ import static kitchenpos.domain.exception.OrderTableExceptionType.NUMBER_OF_GUES
 import static kitchenpos.domain.exception.OrderTableExceptionType.TABLE_CANT_CHANGE_EMPTY_ALREADY_IN_GROUP;
 import static kitchenpos.domain.exception.OrderTableExceptionType.TABLE_CANT_CHANGE_NUMBER_OF_GUESTS_EMPTY;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import kitchenpos.domain.exception.OrderTableException;
 
+@Entity
 public class OrderTable {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private Long tableGroupId;
+
     private int numberOfGuests;
+
     private boolean empty;
 
     public OrderTable(
@@ -28,6 +38,10 @@ public class OrderTable {
 
     public OrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         this(null, tableGroupId, numberOfGuests, empty);
+    }
+
+    protected OrderTable() {
+
     }
 
     private void validateNumberOfGuest(final int numberOfGuests) {

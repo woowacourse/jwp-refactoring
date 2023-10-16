@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.TableFixture.전체_주문_테이블;
 import static kitchenpos.fixture.TableFixture.비어있는_주문_테이블;
+import static kitchenpos.fixture.TableFixture.전체_주문_테이블;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
@@ -11,11 +11,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
     @Autowired
     private TableService tableService;
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
     @Autowired
     private OrderDao orderDao;
 
@@ -107,7 +107,7 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
             final List<Long> savedOrderTableIds = savedTableGroup.getOrderTables().stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
-            final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(
+            final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(
                 savedOrderTableIds);
 
             assertThat(savedOrderTables)
@@ -123,8 +123,8 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         void throwExceptionIfOrderIsNotCompletion() {
             //given
             final TableGroup tableGroup = new TableGroup();
-            final OrderTable savedOrderTable = orderTableDao.save(비어있는_주문_테이블());
-            final OrderTable savedOrderTable2 = orderTableDao.save(비어있는_주문_테이블());
+            final OrderTable savedOrderTable = orderTableRepository.save(비어있는_주문_테이블());
+            final OrderTable savedOrderTable2 = orderTableRepository.save(비어있는_주문_테이블());
             saveOrderMeal(savedOrderTable);
             tableGroup.setOrderTables(List.of(savedOrderTable, savedOrderTable2));
             final TableGroup savedTableGroup = tableGroupService.create(tableGroup);

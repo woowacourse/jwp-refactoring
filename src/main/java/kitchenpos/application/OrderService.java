@@ -8,11 +8,11 @@ import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -23,18 +23,15 @@ public class OrderService {
     private final MenuDao menuDao;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
-    private final OrderTableDao orderTableDao;
+    private final OrderTableRepository orderTableRepository;
 
-    public OrderService(
-        final MenuDao menuDao,
-        final OrderDao orderDao,
+    public OrderService(final MenuDao menuDao, final OrderDao orderDao,
         final OrderLineItemDao orderLineItemDao,
-        final OrderTableDao orderTableDao
-    ) {
+        final OrderTableRepository orderTableRepository) {
         this.menuDao = menuDao;
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
-        this.orderTableDao = orderTableDao;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
@@ -55,7 +52,7 @@ public class OrderService {
 
         order.setId(null);
 
-        final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
+        final OrderTable orderTable = orderTableRepository.findById(order.getOrderTableId())
             .orElseThrow(IllegalArgumentException::new);
 
         if (orderTable.isEmpty()) {
