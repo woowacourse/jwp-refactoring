@@ -1,7 +1,5 @@
 package kitchenpos.domain;
 
-import java.util.Objects;
-
 public class MenuGroup {
     private Long id;
     private String name;
