@@ -15,7 +15,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import kitchenpos.exception.MenuPriceIsBiggerThanActualPriceException;
-import kitchenpos.exception.MenuPriceIsNegativeException;
 
 @Entity
 public class Menu {
@@ -41,16 +40,9 @@ public class Menu {
     }
 
     public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
-        validatePrice(price);
         this.name = name;
         this.price = new Money(price);
         this.menuGroup = menuGroup;
-    }
-
-    private void validatePrice(BigDecimal price) {
-        if (price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new MenuPriceIsNegativeException();
-        }
     }
 
     public void setupMenuProduct(List<MenuProduct> menuProducts) {

@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.exception.MenuPriceIsBiggerThanActualPriceException;
-import kitchenpos.exception.MenuPriceIsNegativeException;
+import kitchenpos.exception.PriceIsNegativeException;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ class MenuTest {
 
         // when, then
         assertThatThrownBy(() -> new Menu("name", price, null))
-                .isInstanceOf(MenuPriceIsNegativeException.class);
+                .isInstanceOf(PriceIsNegativeException.class);
     }
 
     @Test

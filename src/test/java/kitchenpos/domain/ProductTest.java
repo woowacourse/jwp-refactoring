@@ -2,11 +2,10 @@ package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
-import kitchenpos.exception.ProductPriceIsNegativeException;
-import kitchenpos.exception.ProductPriceIsNotProvidedException;
+import kitchenpos.exception.PriceIsNegativeException;
+import kitchenpos.exception.PriceIsNotProvidedException;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
@@ -19,14 +18,14 @@ class ProductTest {
     void 상품_가격이_제공되지_않으면_예외를_던진다() {
         // given, when, then
         assertThatThrownBy(() -> new Product(null, null))
-                .isInstanceOf(ProductPriceIsNotProvidedException.class);
+                .isInstanceOf(PriceIsNotProvidedException.class);
     }
 
     @Test
     void 상품_가격이_음수라면_예외를_던진다() {
         // given, when, then
         assertThatThrownBy(() -> new Product(null, BigDecimal.valueOf(-1L)))
-                .isInstanceOf(ProductPriceIsNegativeException.class);
+                .isInstanceOf(PriceIsNegativeException.class);
     }
 
     @Test

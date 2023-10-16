@@ -3,6 +3,8 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Embeddable;
+import kitchenpos.exception.PriceIsNegativeException;
+import kitchenpos.exception.PriceIsNotProvidedException;
 
 @Embeddable
 public class Money {
@@ -15,7 +17,21 @@ public class Money {
     }
 
     public Money(BigDecimal value) {
+        validatePriceIsNonNull(value);
+        validatePriceIsNotNegative(value);
         this.value = value;
+    }
+
+    private void validatePriceIsNonNull(BigDecimal price) {
+        if (price == null) {
+            throw new PriceIsNotProvidedException();
+        }
+    }
+
+    private void validatePriceIsNotNegative(BigDecimal price) {
+        if (price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new PriceIsNegativeException();
+        }
     }
 
     public Money add(Money other) {

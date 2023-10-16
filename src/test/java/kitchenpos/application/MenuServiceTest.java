@@ -12,7 +12,7 @@ import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.exception.MenuGroupNotFoundException;
 import kitchenpos.exception.MenuPriceIsBiggerThanActualPriceException;
-import kitchenpos.exception.MenuPriceIsNegativeException;
+import kitchenpos.exception.PriceIsNegativeException;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +35,7 @@ class MenuServiceTest extends ServiceTestContext {
 
         // when, then
         assertThatThrownBy(() -> menuService.create(request))
-                .isInstanceOf(MenuPriceIsNegativeException.class);
+                .isInstanceOf(PriceIsNegativeException.class);
     }
 
     @Test
