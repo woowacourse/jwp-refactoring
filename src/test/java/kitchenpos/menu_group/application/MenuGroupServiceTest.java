@@ -1,11 +1,11 @@
-package kitchenpos.application;
+package kitchenpos.menu_group.application;
 
 import static kitchenpos.fixture.MenuGroupFixture.추천_메뉴;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.menu_group.application.MenuGroupService;
+import kitchenpos.helper.ServiceIntegrateTest;
 import kitchenpos.menu_group.domain.MenuGroup;
 import kitchenpos.menu_group.persistence.MenuGroupDao;
 import org.junit.jupiter.api.Assertions;

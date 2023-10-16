@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.menu.application;
 
 import static kitchenpos.fixture.MenuFixture.만냥치킨_2마리;
 import static kitchenpos.fixture.MenuFixture.만냥치킨_2마리_잘못된_상품;
@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.menu.application.MenuService;
+import kitchenpos.helper.ServiceIntegrateTest;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.persistence.MenuDao;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;

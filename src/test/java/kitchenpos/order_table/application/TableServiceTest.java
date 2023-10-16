@@ -1,12 +1,12 @@
-package kitchenpos.application;
+package kitchenpos.order_table.application;
 
 import static kitchenpos.fixture.OrderFixture.주문;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import kitchenpos.helper.ServiceIntegrateTest;
 import kitchenpos.order.application.OrderService;
-import kitchenpos.order_table.application.TableService;
 import kitchenpos.order_table.domain.OrderTable;
 import kitchenpos.order_table.persistence.OrderTableDao;
 import kitchenpos.table_group.application.TableGroupService;

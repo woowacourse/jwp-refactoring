@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.product.application;
 
 import static kitchenpos.fixture.ProductFixture.깐풍치킨;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.product.application.ProductService;
+import kitchenpos.helper.ServiceIntegrateTest;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.persistence.ProductDao;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;

@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.order.application;
 
 import static kitchenpos.fixture.OrderFixture.주문;
 import static kitchenpos.fixture.OrderFixture.주문_잘못된_메뉴;
@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import kitchenpos.order.application.OrderService;
+import kitchenpos.helper.ServiceIntegrateTest;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order_table.domain.OrderTable;
