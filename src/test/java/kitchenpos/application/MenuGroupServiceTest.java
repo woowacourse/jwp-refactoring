@@ -7,10 +7,10 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.support.ServiceTest;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@SuppressWarnings("NonAsciiCharacters")
 class MenuGroupServiceTest extends ServiceTest {
 
     @Autowired
@@ -20,8 +20,7 @@ class MenuGroupServiceTest extends ServiceTest {
     private MenuGroupDao menuGroupDao;
 
     @Test
-    @DisplayName("메뉴 그룹 등록")
-    void create() {
+    void 메뉴_그룹_등록() {
         // given
         MenuGroup menuGroup = MenuGroupFixture.create("제이슨 추천 메뉴");
 
@@ -33,10 +32,9 @@ class MenuGroupServiceTest extends ServiceTest {
     }
 
     @Test
-    @DisplayName("메뉴 그룹 목록 조회")
-    void list() {
+    void 메뉴_그룹_목록_조회() {
         // given
-        MenuGroup leoGroup = menuGroupDao.save(MenuGroupFixture.create("레오 추천 메뉴") );
+        MenuGroup leoGroup = menuGroupDao.save(MenuGroupFixture.create("레오 추천 메뉴"));
         MenuGroup junpakGroup = menuGroupDao.save(MenuGroupFixture.create("준팍 추천 메뉴"));
 
         // when

@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@SuppressWarnings("NonAsciiCharacters")
 class ProductServiceTest extends ServiceTest {
 
     @Autowired
@@ -22,12 +23,10 @@ class ProductServiceTest extends ServiceTest {
     private ProductDao productDao;
 
     @Nested
-    @DisplayName("상품을 추가할 때, 상품의 가격이")
-    class Create {
+    class 상품을_추가할_때_상품의 {
 
         @Test
-        @DisplayName("0원 이상인 경우 정상 등록")
-        void success() {
+        void 가격이_0원_이상인_경우_정상_등록() {
             // given
             Product product = ProductFixture.create("제이슨의 무료 나눔 마우스", 0);
 
@@ -40,8 +39,7 @@ class ProductServiceTest extends ServiceTest {
         }
 
         @Test
-        @DisplayName("0원 미만인 경우, 예외 발생")
-        void fail() {
+        void 가격이_0원_미만인_경우_예외_발생() {
             // given
             Product product = ProductFixture.create("준팍의 고장난 맥북", -30_000);
 
@@ -53,8 +51,7 @@ class ProductServiceTest extends ServiceTest {
     }
 
     @Test
-    @DisplayName("상품 목록 조회")
-    void list() {
+    void 상품_목록_조회() {
         // given
         Product pasta = productDao.save(ProductFixture.create("파스타", 28_000));
         Product steak = productDao.save(ProductFixture.create("스테이크", 60_000));
