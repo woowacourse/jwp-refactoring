@@ -42,7 +42,7 @@ public class OrderService {
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
 
         if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 항목이 비었어요");
         }
 
         final List<Long> menuIds = orderLineItems.stream()
@@ -50,7 +50,7 @@ public class OrderService {
                 .collect(Collectors.toList());
 
         if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("없는 메뉴에요");
         }
 
         order.setId(null);
@@ -59,7 +59,7 @@ public class OrderService {
                 .orElseThrow(IllegalArgumentException::new);
 
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("테이블이 비었어요");
         }
 
         order.setOrderTableId(orderTable.getId());
@@ -95,7 +95,7 @@ public class OrderService {
                 .orElseThrow(IllegalArgumentException::new);
 
         if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("더 이상 상태를 변경할 수 없습니다");
         }
 
         final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
