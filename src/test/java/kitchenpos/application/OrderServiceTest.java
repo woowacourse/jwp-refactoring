@@ -12,13 +12,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.persistence.MenuGroupRepository;
 import kitchenpos.persistence.OrderRepository;
 import kitchenpos.persistence.OrderTableRepository;
 import kitchenpos.support.ServiceTest;
@@ -36,7 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 class OrderServiceTest extends ServiceTest {
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private MenuDao menuDao;
@@ -54,7 +54,7 @@ class OrderServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        Long menuGroupId = menuGroupDao.save(new MenuGroup("세트")).getId();
+        Long menuGroupId = menuGroupRepository.save(new MenuGroup("세트")).getId();
         menu = menuDao.save(new Menu("족발", BigDecimal.valueOf(1000.00), menuGroupId, null));
     }
 
