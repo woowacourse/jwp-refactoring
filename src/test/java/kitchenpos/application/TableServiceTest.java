@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import support.fixture.OrderBuilder;
 import support.fixture.TableBuilder;
+import support.fixture.TableGroupBuilder;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -33,7 +34,7 @@ class TableServiceTest {
     @Autowired
     private OrderTableRepository orderTableRepository;
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
     @Autowired
     private TableGroupRepository tableGroupRepository;
 
@@ -105,10 +106,10 @@ class TableServiceTest {
         @DisplayName("Table의 그룹 id가 존재할 경우 IllegalArgumentException이 발생한다.")
         void should_throw_when_tableGroupId_is_exists() {
             // given
-            final TableGroup savedTableGroup = tableGroupRepository.findById(1L).get();
+            final TableGroup tableGroup = tableGroupRepository.save(new TableGroupBuilder(List.of()).build());
 
             final OrderTable table = orderTableRepository.save(new TableBuilder()
-                    .setTableGroup(savedTableGroup)
+                    .setTableGroup(tableGroup)
                     .build());
 
             // when & then
@@ -123,7 +124,7 @@ class TableServiceTest {
             // given
             final OrderTable table = orderTableRepository.save(new TableBuilder().build());
 
-            orderDao.save(new OrderBuilder()
+            orderRepository.save(new OrderBuilder()
                     .setOrderTableId(table.getId())
                     .setOrderStatus(orderStatus)
                     .build());
@@ -142,7 +143,7 @@ class TableServiceTest {
                     .setEmpty(!emptyStatus)
                     .build());
 
-            orderDao.save(new OrderBuilder()
+            orderRepository.save(new OrderBuilder()
                     .setOrderTableId(table.getId())
                     .setOrderStatus(OrderStatus.COMPLETION)
                     .build());

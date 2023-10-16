@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -35,7 +35,7 @@ class TableGroupServiceTest {
     @Autowired
     private OrderTableRepository orderTableRepository;
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Nested
     @DisplayName("테이블 그룹 생성 테스트")
@@ -209,7 +209,7 @@ class TableGroupServiceTest {
                     .setTableGroup(tableGroup)
                     .build());
 
-            orderDao.save(new OrderBuilder()
+            orderRepository.save(new OrderBuilder()
                     .setOrderTableId(table.getId())
                     .setOrderStatus(orderStatus)
                     .build());

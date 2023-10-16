@@ -1,11 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.*;
-import kitchenpos.domain.repository.MenuGroupRepository;
-import kitchenpos.domain.repository.MenuRepository;
-import kitchenpos.domain.repository.OrderLineItemRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -27,7 +23,7 @@ class OrderServiceTest {
     @Autowired
     private OrderService orderService;
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
     @Autowired
     private MenuRepository menuRepository;
     @Autowired
@@ -51,7 +47,7 @@ class OrderServiceTest {
                 .setEmpty(false)
                 .build());
 
-        final List<Order> expect = List.of(orderDao
+        final List<Order> expect = List.of(orderRepository
                 .save(new OrderBuilder()
                         .setOrderLineItems(List.of(orderLineItem))
                         .setOrderTableId(table.getId())
@@ -213,7 +209,7 @@ class OrderServiceTest {
                     .setEmpty(false)
                     .build());
 
-            final Order order = orderDao.save(new OrderBuilder()
+            final Order order = orderRepository.save(new OrderBuilder()
                     .setOrderLineItems(List.of(orderLineItem))
                     .setOrderTableId(table.getId())
                     .build());
@@ -223,7 +219,7 @@ class OrderServiceTest {
             orderService.changeOrderStatus(order.getId(), order);
 
             // then
-            orderDao.findById(order.getId())
+            orderRepository.findById(order.getId())
                     .ifPresentOrElse(
                             actual -> assertEquals(orderStatus.name(), actual.getOrderStatus()),
                             () -> fail("Order가 존재하지 않습니다.")
@@ -244,7 +240,7 @@ class OrderServiceTest {
                     .setEmpty(false)
                     .build());
 
-            final Order order = orderDao.save(new OrderBuilder()
+            final Order order = orderRepository.save(new OrderBuilder()
                     .setOrderLineItems(List.of(orderLineItem))
                     .setOrderTableId(table.getId())
                     .setOrderStatus(OrderStatus.COMPLETION)
