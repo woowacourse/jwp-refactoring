@@ -3,12 +3,14 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.request.order.ChangeOrderRequest;
+import kitchenpos.dto.request.order.CreateOrderRequest;
+import kitchenpos.dto.request.order.OrderLineItemsDto;
+import kitchenpos.dto.response.OrderResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,13 +25,17 @@ class OrderServiceTest extends ServiceTest {
 
     @DisplayName("주문을 생성한다")
     @Test
-    void create() {
+    void create()
+            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         // given
         final int newOrderId = orderService.list().size() + 1;
-        final Order order = createOrder(null, createOrderTable(5L, 1, null), List.of(1L, 2L));
-
+        final List<OrderLineItemsDto> dto = List.of(
+                getRequest(OrderLineItemsDto.class, 1L, 1L, 1L, 1L),
+                getRequest(OrderLineItemsDto.class, 2L, 2L, 2L, 2L)
+        );
+        final CreateOrderRequest request = getRequest(CreateOrderRequest.class, 5L, dto);
         // when
-        final Order actual = orderService.create(order);
+        final OrderResponse actual = orderService.create(request);
 
         // then
         assertThat(actual.getId()).isEqualTo(newOrderId);
@@ -42,12 +48,16 @@ class OrderServiceTest extends ServiceTest {
             final String name,
             final Long id,
             final List<Long> products
-    ) {
+    ) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         // given
-        final Order order = createOrder(null, createOrderTable(id, null, null), products);
+        final List<OrderLineItemsDto> dto = new ArrayList<>();
+        for (Long productId : products) {
+            dto.add(getRequest(OrderLineItemsDto.class, productId, productId, productId, productId));
+        }
+        final CreateOrderRequest request = getRequest(CreateOrderRequest.class, id, dto);
 
         // when
-        assertThatThrownBy(() -> orderService.create(order));
+        assertThatThrownBy(() -> orderService.create(request));
     }
 
     private static Stream<Arguments> orderTableProvider() {
@@ -63,7 +73,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void list() {
         // then
-        final List<Order> actual = orderService.list();
+        final List<OrderResponse> actual = orderService.list();
 
         // then
         assertThat(actual).hasSize(2);
@@ -71,45 +81,15 @@ class OrderServiceTest extends ServiceTest {
 
     @DisplayName("주문 상태를 변경한다")
     @Test
-    void changeOrderStatus() {
+    void changeOrderStatus()
+            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         // given
-        final Order order = createOrder(1L, createOrderTable(3L, null, null), List.of());
-        order.setOrderStatus("COMPLETION");
+        final ChangeOrderRequest request = getRequest(ChangeOrderRequest.class, "COMPLETION");
 
         // when
-        final Order actual = orderService.changeOrderStatus(order.getId(), order);
+        final OrderResponse actual = orderService.changeOrderStatus(1L, request);
 
         // then
-        assertThat(actual.getOrderStatus()).isEqualTo(order.getOrderStatus());
-    }
-
-    private Order createOrder(
-            final Long id,
-            final OrderTable orderTable,
-            final List<Long> products
-    ) {
-        orderTable.setEmpty(false);
-
-        final List<OrderLineItem> orderLineItems = new ArrayList<>();
-        for (Long product : products) {
-            orderLineItems.add(createOrderLineItem(product));
-        }
-
-        final Order order = new Order();
-
-        order.setId(id);
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderLineItems(orderLineItems);
-
-        return order;
-    }
-
-    private static OrderLineItem createOrderLineItem(final Long value) {
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setOrderId(value);
-        orderLineItem.setQuantity(value);
-        orderLineItem.setSeq(value);
-        orderLineItem.setMenuId(value);
-        return orderLineItem;
+        assertThat(actual.getOrderStatus()).isEqualTo(request.getOrderStatus());
     }
 }

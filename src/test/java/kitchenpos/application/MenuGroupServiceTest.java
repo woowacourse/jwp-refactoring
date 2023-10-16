@@ -2,8 +2,10 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.request.menugroup.CreateMenuGroupRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +17,13 @@ class MenuGroupServiceTest extends ServiceTest {
 
     @DisplayName("메뉴 그룹을 생성한다")
     @Test
-    void create() {
+    void create()
+            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         // given
         final int newMenuGroupId = menuGroupService.list().size() + 1;
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("test");
-
+        final CreateMenuGroupRequest request = getRequest(CreateMenuGroupRequest.class, "test");
         // when
-        final MenuGroup actual = menuGroupService.create(menuGroup);
+        final MenuGroupResponse actual = menuGroupService.create(request);
 
         // then
         assertThat(actual.getId()).isEqualTo(newMenuGroupId);
@@ -32,7 +33,7 @@ class MenuGroupServiceTest extends ServiceTest {
     @Test
     void list() {
         // given & when
-        final List<MenuGroup> menuGroups = menuGroupService.list();
+        final List<MenuGroupResponse> menuGroups = menuGroupService.list();
 
         // then
         assertThat(menuGroups).hasSize(2);

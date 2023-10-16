@@ -3,8 +3,12 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.stream.Stream;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.request.table.ChangeEmptyRequest;
+import kitchenpos.dto.request.table.ChangeNumberOfGuestsRequest;
+import kitchenpos.dto.request.table.CreateOrderTableRequest;
+import kitchenpos.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -20,10 +24,13 @@ class TableServiceTest extends ServiceTest {
 
     @DisplayName("테이블을 생성한다")
     @Test
-    void create() {
+    void create()
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
         // given & when
         final int newTableId = tableService.list().size() + 1;
-        final OrderTable actual = tableService.create(createOrderTable(null, 2, null));
+        final CreateOrderTableRequest request = getRequest(CreateOrderTableRequest.class, 2);
+
+        final OrderTableResponse actual = tableService.create(request);
 
         // then
         assertThat(actual.getId()).isEqualTo(newTableId);
@@ -39,12 +46,16 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("테이블의 상태를 변경한다")
     @ParameterizedTest(name = "테이블을 {0} 상태로 변경한다")
     @MethodSource("tableProvider")
-    void changeEmpty(String name, boolean empty) {
+    void changeEmpty(String name, Boolean empty)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
+        // given
+        final ChangeEmptyRequest request = getRequest(ChangeEmptyRequest.class, empty);
+
         // when
-        final OrderTable actual = tableService.changeEmpty(1L, createOrderTable(null, null, empty));
+        final OrderTableResponse actual = tableService.changeEmpty(1L, request);
 
         // then
-        assertThat(actual.isEmpty()).isEqualTo(empty);
+        assertThat(actual.getEmpty()).isEqualTo(empty);
     }
 
     private static Stream<Arguments> tableProvider() {
@@ -56,8 +67,13 @@ class TableServiceTest extends ServiceTest {
 
     @DisplayName("없는 테이블 상태 변경시 실패한다")
     @Test
-    void changeEmpty_FailWithNonExistTable() {
-        assertThatThrownBy(() -> tableService.changeEmpty(-1L, tableService.create(createOrderTable(null, 1, null))))
+    void changeEmpty_FailWithNonExistTable()
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
+        // given
+        final ChangeEmptyRequest request = getRequest(ChangeEmptyRequest.class, true);
+
+        // when & then
+        assertThatThrownBy(() -> tableService.changeEmpty(-1L, request))
                 .isInstanceOf(IllegalArgumentException.class);
 
     }
@@ -65,26 +81,30 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("식사가 완료된 테이블이 아닌 테이블 상태 변경시 실패한다")
     @ParameterizedTest(name = "{0} 중인 테이블 상태 변경시 실패한다")
     @MethodSource("statusAndIdProvider")
-    void changeEmpty_FailWithCookingOrEating(final String name, final Long id, final Class exception) {
+    void changeEmpty_FailWithCookingOrEating(final String name, final Long id, final Class exception)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
+        // given
+        final ChangeEmptyRequest request = getRequest(ChangeEmptyRequest.class, true);
+
         // when & then
         assertThatThrownBy(
-                () -> tableService.changeEmpty(id, createOrderTable(null, null, true)))
+                () -> tableService.changeEmpty(id, request))
                 .isInstanceOf(exception);
 
     }
 
     @DisplayName("테이블의 손님 수를 변경한다")
     @Test
-    void changeNumberOfGuests() {
+    void changeNumberOfGuests()
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
         // given
-        final OrderTable orderTable = createOrderTable(null, 3, false);
+        final ChangeNumberOfGuestsRequest request = getRequest(ChangeNumberOfGuestsRequest.class, 3);
 
         // when
-        tableService.changeEmpty(1L, orderTable);
-        final OrderTable actual = tableService.changeNumberOfGuests(1L, orderTable);
+        final OrderTableResponse actual = tableService.changeNumberOfGuests(5L, request);
 
         // then
-        assertThat(actual.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests());
+        assertThat(actual.getNumberOfGuests()).isEqualTo(request.getNumberOfGuests());
     }
 
     @DisplayName("테이블의 손님 수 변경 실패한다")
@@ -94,13 +114,13 @@ class TableServiceTest extends ServiceTest {
             final String name,
             final long orderTableId,
             final int numberOfGuests
-    ) {
+    ) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
         // given
-        final OrderTable orderTable = createOrderTable(null, numberOfGuests, null);
+        final ChangeNumberOfGuestsRequest request = getRequest(ChangeNumberOfGuestsRequest.class, numberOfGuests);
 
         // when & then
         assertThatThrownBy(
-                () -> tableService.changeNumberOfGuests(orderTableId, orderTable)
+                () -> tableService.changeNumberOfGuests(orderTableId, request)
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -113,14 +133,15 @@ class TableServiceTest extends ServiceTest {
 
     @DisplayName("빈 상태의 테이블의 손님 변경은 실패한다")
     @Test
-    void changeNumberOfGuests_FailedEmpty() {
+    void changeNumberOfGuests_FailedEmpty()
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
         // given
-        final OrderTable orderTable = createOrderTable(null, 3, true);
-        tableService.changeEmpty(1L, orderTable);
+        final ChangeNumberOfGuestsRequest request = getRequest(ChangeNumberOfGuestsRequest.class
+                , 0);
 
         // when & then
         assertThatThrownBy(
-                () -> tableService.changeNumberOfGuests(1L, orderTable)
+                () -> tableService.changeNumberOfGuests(1L, request)
         ).isInstanceOf(IllegalArgumentException.class);
     }
 }

@@ -3,12 +3,14 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.dto.request.menu.CreateMenuRequest;
+import kitchenpos.dto.request.menu.MenuProductDto;
+import kitchenpos.dto.response.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,13 +25,17 @@ class MenuServiceTest extends ServiceTest {
 
     @DisplayName("단일 메뉴를 생성한다")
     @Test
-    void create() {
+    void create()
+            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         // given
         final int newMenuId = menuService.list().size() + 1;
-        final Menu menu = createMenu(1L, BigDecimal.valueOf(29), List.of(1L, 2L));
-
+        final List<MenuProductDto> dto = List.of(
+                getRequest(MenuProductDto.class, 1L, 1L, 1L, 1L),
+                getRequest(MenuProductDto.class, 2L, 2L, 2L, 2L)
+        );
+        final CreateMenuRequest request = getRequest(CreateMenuRequest.class, "test", BigDecimal.valueOf(29), 1L, dto);
         // when
-        final Menu actual = menuService.create(menu);
+        final MenuResponse actual = menuService.create(request);
 
         // then
         assertThat(actual.getId()).isEqualTo(newMenuId);
@@ -45,12 +51,15 @@ class MenuServiceTest extends ServiceTest {
             final List<Long> products,
             final Class exception,
             final String message
-    ) {
+    ) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         // given
-        final Menu menu = createMenu(menuGroupId, price, products);
-
+        final List<MenuProductDto> dto = new ArrayList<>();
+        for (Long productId : products) {
+            dto.add(getRequest(MenuProductDto.class, productId, productId, productId, productId));
+        }
+        final CreateMenuRequest request = getRequest(CreateMenuRequest.class, "test", price, menuGroupId, dto);
         // when & then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(exception)
                 .hasMessage(message);
     }
@@ -72,40 +81,9 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void list() {
         // given & when
-        final List<Menu> actual = menuService.list();
+        final List<MenuResponse> actual = menuService.list();
 
         // then
         assertThat(actual).hasSize(2);
-    }
-
-    private Menu createMenu(
-            final Long menuGroupId,
-            final BigDecimal price,
-            final List<Long> products
-    ) {
-        final Menu menu = new Menu();
-        menu.setPrice(price);
-        menu.setMenuProducts(createMenuProductList(products));
-        menu.setMenuGroupId(menuGroupId);
-        menu.setName("test");
-
-        return menu;
-    }
-
-    private List<MenuProduct> createMenuProductList(final List<Long> products) {
-        final List<MenuProduct> menuProducts = new ArrayList<>();
-        for (Long product : products) {
-            menuProducts.add(setMenuProduct(product));
-        }
-        return menuProducts;
-    }
-
-    private MenuProduct setMenuProduct(final Long value) {
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(value);
-        menuProduct.setProductId(value);
-        menuProduct.setQuantity(value);
-        menuProduct.setSeq(value);
-        return menuProduct;
     }
 }
