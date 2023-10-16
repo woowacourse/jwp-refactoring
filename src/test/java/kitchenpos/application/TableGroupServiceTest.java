@@ -26,6 +26,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
@@ -51,7 +52,7 @@ class TableGroupServiceTest {
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
-        then(orderTableDao).should(times(0)).findAllByIdIn(anyList());
+        then(orderTableDao).should(never()).findAllByIdIn(anyList());
     }
 
     @Test
@@ -66,7 +67,7 @@ class TableGroupServiceTest {
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
-        then(tableGroupDao).should(times(0)).save(any());
+        then(tableGroupDao).should(never()).save(any());
     }
 
     @Test
@@ -87,7 +88,7 @@ class TableGroupServiceTest {
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
-        then(tableGroupDao).should(times(0)).save(any());
+        then(tableGroupDao).should(never()).save(any());
     }
 
     @Test
@@ -107,7 +108,7 @@ class TableGroupServiceTest {
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
-        then(tableGroupDao).should(times(0)).save(any());
+        then(tableGroupDao).should(never()).save(any());
     }
 
     @Test
@@ -150,7 +151,7 @@ class TableGroupServiceTest {
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(1L))
                 .isInstanceOf(IllegalArgumentException.class);
-        then(orderTableDao).should(times(0)).save(any());
+        then(orderTableDao).should(never()).save(any());
     }
 
     @Test

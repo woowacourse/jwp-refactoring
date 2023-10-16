@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,6 +48,6 @@ class ProductServiceTest {
         // when, then
         assertThatThrownBy(() -> productService.create(product))
                 .isInstanceOf(IllegalArgumentException.class);
-        then(productDao).should(times(0)).save(any());
+        then(productDao).should(never()).save(any());
     }
 }

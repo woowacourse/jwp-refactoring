@@ -23,6 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
@@ -84,7 +85,7 @@ class MenuServiceTest {
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
-        then(menuGroupDao).should(times(0)).existsById(anyLong());
+        then(menuGroupDao).should(never()).existsById(anyLong());
     }
 
     @Test
@@ -100,7 +101,7 @@ class MenuServiceTest {
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
-        then(productDao).should(times(0)).findById(anyLong());
+        then(productDao).should(never()).findById(anyLong());
     }
 
     @Test
@@ -127,7 +128,7 @@ class MenuServiceTest {
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
-        then(menuDao).should(times(0)).save(any());
+        then(menuDao).should(never()).save(any());
     }
 
     @Test
@@ -155,6 +156,6 @@ class MenuServiceTest {
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
-        then(menuDao).should(times(0)).save(any());
+        then(menuDao).should(never()).save(any());
     }
 }

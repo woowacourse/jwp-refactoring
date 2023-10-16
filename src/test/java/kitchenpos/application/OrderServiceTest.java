@@ -23,6 +23,7 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
@@ -51,7 +52,7 @@ class OrderServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
 
         // then
-        then(menuDao).should(times(0)).countByIdIn(anyList());
+        then(menuDao).should(never()).countByIdIn(anyList());
     }
 
     @Test
@@ -68,7 +69,7 @@ class OrderServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
 
         // then
-        then(orderTableDao).should(times(0)).findById(anyLong());
+        then(orderTableDao).should(never()).findById(anyLong());
     }
 
     @Test
@@ -90,7 +91,7 @@ class OrderServiceTest {
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
 
-        then(orderDao).should(times(0)).save(any());
+        then(orderDao).should(never()).save(any());
     }
 
     @Test
@@ -125,7 +126,7 @@ class OrderServiceTest {
         // when, then
         assertThatThrownBy(() -> orderService.changeOrderStatus(1L, new Order()))
                 .isInstanceOf(IllegalArgumentException.class);
-        then(orderDao).should(times(0)).save(any());
+        then(orderDao).should(never()).save(any());
     }
 
     @Test
@@ -139,7 +140,7 @@ class OrderServiceTest {
         // when, then
         assertThatThrownBy(() -> orderService.changeOrderStatus(1L, order))
                 .isInstanceOf(IllegalArgumentException.class);
-        then(orderDao).should(times(0)).save(any());
+        then(orderDao).should(never()).save(any());
     }
 
     @Test
