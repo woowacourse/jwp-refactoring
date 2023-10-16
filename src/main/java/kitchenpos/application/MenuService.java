@@ -60,7 +60,7 @@ public class MenuService {
             final MenuProduct newMenuProduct = new MenuProduct(menuId, menuProduct.getProductId(), menuProduct.getQuantity());
             savedMenuProducts.add(menuProductDao.save(newMenuProduct));
         }
-        savedMenu.setMenuProducts(savedMenuProducts);
+        savedMenu.addMenuProduct(savedMenuProducts);
 
         return savedMenu;
     }
@@ -69,7 +69,7 @@ public class MenuService {
         final List<Menu> menus = menuDao.findAll();
 
         for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
+            menu.addMenuProduct(menuProductDao.findAllByMenuId(menu.getId()));
         }
 
         return menus;
