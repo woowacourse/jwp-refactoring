@@ -10,6 +10,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroupUngroupedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class TableGroupUngroupedEventHandler {
@@ -22,12 +23,13 @@ public class TableGroupUngroupedEventHandler {
         this.orderTableRepository = orderTableRepository;
     }
 
+    @Transactional
     @EventListener(TableGroupUngroupedEvent.class)
     public void handle(TableGroupUngroupedEvent event) {
         List<Long> tableIds = orderTableRepository.findAllByTableGroupId(event.getTableGroupId()).stream()
                 .map(OrderTable::getId)
                 .collect(toList());
-        
+
         orderRepository.findAllByOrderTableIds(tableIds)
                 .forEach(Order::validateUngroupTableAllowed);
     }

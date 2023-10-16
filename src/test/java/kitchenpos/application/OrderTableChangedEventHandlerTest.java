@@ -31,13 +31,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 
 @SuppressWarnings("NonAsciiCharacters")
 @ServiceTest
 class OrderTableChangedEventHandlerTest {
-
-    @Autowired
-    private OrderTableChangedEventHandler sut;
 
     @Autowired
     private OrderRepository orderRepository;
@@ -53,6 +51,9 @@ class OrderTableChangedEventHandlerTest {
 
     @Autowired
     private MenuRepository menuRepository;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     private Menu menu;
 
@@ -73,7 +74,7 @@ class OrderTableChangedEventHandlerTest {
         orderRepository.save(주문(orderTable, orderStatus, List.of(orderLineItem)));
 
         // expect
-        assertThatThrownBy(() -> sut.handle(new OrderTableChangedEvent(orderTable.getId())))
+        assertThatThrownBy(() -> eventPublisher.publishEvent(new OrderTableChangedEvent(orderTable.getId())))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("테이블의 주문 상태가 조리중이거나 식사중인 경우 테이블의 상태를 변경할 수 없습니다.");
     }
@@ -84,7 +85,8 @@ class OrderTableChangedEventHandlerTest {
         OrderTable orderTable = orderTableRepository.save(테이블(false));
 
         // expect
-        assertThatNoException().isThrownBy(() -> sut.handle(new OrderTableChangedEvent(orderTable.getId())));
+        assertThatNoException()
+                .isThrownBy(() -> eventPublisher.publishEvent(new OrderTableChangedEvent(orderTable.getId())));
     }
 
     @Test
@@ -95,6 +97,7 @@ class OrderTableChangedEventHandlerTest {
         orderRepository.save(주문(orderTable, COMPLETION, List.of(orderLineItem)));
 
         // expect
-        assertThatNoException().isThrownBy(() -> sut.handle(new OrderTableChangedEvent(orderTable.getId())));
+        assertThatNoException()
+                .isThrownBy(() -> eventPublisher.publishEvent(new OrderTableChangedEvent(orderTable.getId())));
     }
 }

@@ -34,14 +34,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 
 @SuppressWarnings("NonAsciiCharacters")
 @ServiceTest
 public class TableGroupUngroupedEventHandlerTest {
-
-    @Autowired
-    private TableGroupUngroupedEventHandler sut;
-
+    
     @Autowired
     private OrderRepository orderRepository;
 
@@ -59,6 +57,9 @@ public class TableGroupUngroupedEventHandlerTest {
 
     @Autowired
     private MenuRepository menuRepository;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     private Menu menu;
 
@@ -83,7 +84,7 @@ public class TableGroupUngroupedEventHandlerTest {
         orderRepository.save(주문(orderTable2, orderStatus, List.of(orderLineItem2)));
 
         // expect
-        assertThatThrownBy(() -> sut.handle(new TableGroupUngroupedEvent(tableGroup.getId())))
+        assertThatThrownBy(() -> eventPublisher.publishEvent(new TableGroupUngroupedEvent(tableGroup.getId())))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("테이블의 주문 상태가 조리중이거나 식사중인 경우 단체 지정 해제를 할 수 없습니다.");
     }
@@ -94,7 +95,8 @@ public class TableGroupUngroupedEventHandlerTest {
         TableGroup tableGroup = tableGroupRepository.save(단체_지정());
 
         // expect
-        assertThatNoException().isThrownBy(() -> sut.handle(new TableGroupUngroupedEvent(tableGroup.getId())));
+        assertThatNoException()
+                .isThrownBy(() -> eventPublisher.publishEvent(new TableGroupUngroupedEvent(tableGroup.getId())));
     }
 
     @Test
@@ -109,6 +111,7 @@ public class TableGroupUngroupedEventHandlerTest {
         orderRepository.save(주문(orderTable2, COMPLETION, List.of(orderLineItem2)));
 
         // expect
-        assertThatNoException().isThrownBy(() -> sut.handle(new TableGroupUngroupedEvent(tableGroup.getId())));
+        assertThatNoException()
+                .isThrownBy(() -> eventPublisher.publishEvent(new TableGroupUngroupedEvent(tableGroup.getId())));
     }
 }
