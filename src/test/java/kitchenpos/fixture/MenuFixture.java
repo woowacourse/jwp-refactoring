@@ -7,7 +7,7 @@ import kitchenpos.domain.MenuProduct;
 
 public class MenuFixture {
 
-  public static Menu 만냥치킨_만냥치킨() {
+  public static Menu 만냥치킨_2마리() {
     final MenuProduct menuProduct = new MenuProduct();
     menuProduct.setProductId(1L);
     menuProduct.setQuantity(2L);
@@ -20,7 +20,7 @@ public class MenuFixture {
     return menu;
   }
 
-  public static Menu 만냥치킨_만냥치킨_잘못된_상품() {
+  public static Menu 만냥치킨_2마리_잘못된_상품() {
     final MenuProduct menuProduct = new MenuProduct();
     menuProduct.setProductId(999L);
     menuProduct.setQuantity(2L);
