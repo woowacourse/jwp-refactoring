@@ -64,23 +64,18 @@ class MenuServiceTest {
             given(menuDao.save(expected)).willReturn(spyExpected);
             given(spyExpected.getId()).willReturn(1L);
 
-            final MenuProduct spyWooDong = spy(wooDong);
-            given(menuProductDao.save(wooDong)).willReturn(spyWooDong);
+            given(menuProductDao.save(wooDong)).willReturn(wooDong);
 
-            final MenuProduct spyFrenchFries = spy(frenchFries);
-            given(menuProductDao.save(frenchFries)).willReturn(spyFrenchFries);
+            given(menuProductDao.save(frenchFries)).willReturn(frenchFries);
 
             // when
             final Menu actual = menuService.create(expected);
 
             // then
-            assertAll(
-                    () -> assertThat(actual.getId()).isNotNull(),
-                    () -> assertThat(actual.getName()).isEqualTo(expected.getName()),
-                    () -> assertThat(actual.getPrice()).isEqualTo(expected.getPrice()),
-                    () -> assertThat(actual.getMenuGroupId()).isEqualTo(expected.getMenuGroupId()),
-                    () -> assertThat(actual.getMenuProducts()).containsExactly(spyWooDong, spyFrenchFries)
-            );
+            assertThat(actual)
+                    .usingRecursiveComparison()
+                    .ignoringFields("id")
+                    .isEqualTo(spyExpected);
         }
 
         @Test
