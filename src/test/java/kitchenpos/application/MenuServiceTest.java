@@ -53,7 +53,7 @@ class MenuServiceTest extends ServiceTest {
 
             given(productDao.findById(1L)).willReturn(Optional.of(product1));
             given(productDao.findById(2L)).willReturn(Optional.of(product2));
-            given(menuGroupDao.existsById(1L)).willReturn(Boolean.TRUE);
+            given(menuGroupDao.existsById(1L)).willReturn(true);
             given(menuDao.save(menu)).willReturn(menu);
             given(menuProductDao.save(menuProduct1)).willReturn(menuProduct1);
             given(menuProductDao.save(menuProduct2)).willReturn(menuProduct2);
@@ -109,7 +109,7 @@ class MenuServiceTest extends ServiceTest {
             final var menuProduct1 = new MenuProduct(1L, 1L, 10);
             final var menu = new Menu("test_menu", BigDecimal.valueOf(1000), 1L, List.of(menuProduct1));
 
-            given(menuGroupDao.existsById(1L)).willReturn(Boolean.TRUE);
+            given(menuGroupDao.existsById(1L)).willReturn(true);
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menu))
@@ -122,7 +122,7 @@ class MenuServiceTest extends ServiceTest {
             // given
             final var menu = new Menu("test_menu", BigDecimal.valueOf(1000), 1L, Collections.emptyList());
 
-            given(menuGroupDao.existsById(1L)).willReturn(Boolean.TRUE);
+            given(menuGroupDao.existsById(1L)).willReturn(true);
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menu))

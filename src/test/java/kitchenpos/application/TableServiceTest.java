@@ -150,7 +150,7 @@ class TableServiceTest extends ServiceTest {
             orderTable.setId(1L);
 
             given(orderTableDao.findById(1L)).willReturn(Optional.of(orderTable));
-            given(orderDao.existsByOrderTableIdAndOrderStatusIn(1L, EXCLUDE_STATUS)).willReturn(Boolean.TRUE);
+            given(orderDao.existsByOrderTableIdAndOrderStatusIn(1L, EXCLUDE_STATUS)).willReturn(true);
 
             // when & then
             assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable))

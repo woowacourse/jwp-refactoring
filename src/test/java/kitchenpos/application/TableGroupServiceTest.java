@@ -184,8 +184,7 @@ class TableGroupServiceTest extends ServiceTest {
             orderTable.setId(1L);
 
             given(orderTableDao.findAllByTableGroupId(1L)).willReturn(List.of(orderTable));
-            given(orderDao.existsByOrderTableIdInAndOrderStatusIn(List.of(1L), EXCLUDE_STATUS)).willReturn(
-                    Boolean.TRUE);
+            given(orderDao.existsByOrderTableIdInAndOrderStatusIn(List.of(1L), EXCLUDE_STATUS)).willReturn(true);
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.ungroup(1L))
