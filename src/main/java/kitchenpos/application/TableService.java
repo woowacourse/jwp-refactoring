@@ -3,24 +3,27 @@ package kitchenpos.application;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
-import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTableChangedEvent;
 import kitchenpos.dto.OrderTableRequest;
 import kitchenpos.dto.OrderTableResponse;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @Service
 public class TableService {
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
-    public TableService(OrderRepository orderRepository, OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(
+            OrderTableRepository orderTableRepository,
+            ApplicationEventPublisher applicationEventPublisher
+    ) {
         this.orderTableRepository = orderTableRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     public OrderTableResponse create(OrderTableRequest request) {
@@ -39,10 +42,9 @@ public class TableService {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
 
-        orderRepository.findByOrderTableId(orderTableId)
-                .ifPresent(Order::validateChangeTableStatusAllowed);
-
         orderTable.changeEmpty(request.isEmpty());
+        applicationEventPublisher.publishEvent(new OrderTableChangedEvent(orderTableId));
+
         return OrderTableResponse.from(orderTableRepository.save(orderTable));
     }
 
