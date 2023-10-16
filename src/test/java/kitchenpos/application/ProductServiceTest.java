@@ -1,7 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.ProductFixtures.양념치킨_17000원;
-import static kitchenpos.fixture.ProductFixtures.후라이드치킨_16000원;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -24,10 +22,11 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void create() {
         // given
-        Product product = 후라이드치킨_16000원;
+        String name = "후라이드치킨";
+        BigDecimal price = BigDecimal.valueOf(16_000);
 
         // when
-        Product actual = productService.create(product);
+        Product actual = productService.create(name, price);
 
         // then
         assertThat(actual.getId()).isNotNull();
@@ -38,10 +37,11 @@ class ProductServiceTest extends ServiceTest {
     @ParameterizedTest
     void create_PriceLowerThanZero_ExceptionThrown(int invalidPrice) {
         // given
+        String name = "후라이드치킨";
         BigDecimal price = BigDecimal.valueOf(invalidPrice);
 
         // when, then
-        assertThatThrownBy(() -> productService.create(new Product("상품", price)))
+        assertThatThrownBy(() -> productService.create(name, price))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -49,8 +49,8 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void list() {
         // given
-        productService.create(후라이드치킨_16000원);
-        productService.create(양념치킨_17000원);
+        productService.create("후라이드치킨", BigDecimal.valueOf(16_000));
+        productService.create("양념치킨", BigDecimal.valueOf(17_000));
 
         // when
         List<Product> products = productService.list();
