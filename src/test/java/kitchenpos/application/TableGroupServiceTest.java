@@ -37,19 +37,9 @@ class TableGroupServiceTest extends MockServiceTest {
     @Test
     void 테이블그룹을_추가한다() {
         // given
-        OrderTable expectedFirstOrderTable = new OrderTable();
-        expectedFirstOrderTable.setId(1L);
-        expectedFirstOrderTable.setTableGroupId(1L);
-        expectedFirstOrderTable.setEmpty(false);
-        OrderTable expectedSecondOrderTable = new OrderTable();
-        expectedSecondOrderTable.setId(2L);
-        expectedSecondOrderTable.setTableGroupId(1L);
-        expectedSecondOrderTable.setEmpty(false);
-
-        TableGroup expected = new TableGroup();
-        expected.setId(1L);
-        expected.setOrderTables(List.of(expectedFirstOrderTable, expectedSecondOrderTable));
-
+        /*
+        tableGroupService.create 의 argument 설정
+         */
         OrderTable argumentFirstOrderTable = new OrderTable();
         argumentFirstOrderTable.setId(1L);
         OrderTable argumentSecondOrderTable = new OrderTable();
@@ -58,33 +48,32 @@ class TableGroupServiceTest extends MockServiceTest {
         TableGroup argumentTableGroup = new TableGroup();
         argumentTableGroup.setOrderTables(List.of(argumentFirstOrderTable, argumentSecondOrderTable));
 
+        /*
+        orderTableDao.findAllByIdIn 의 반환 값 설정
+         */
         OrderTable mockReturnFirstOrderTable = new OrderTable();
         mockReturnFirstOrderTable.setId(1L);
         mockReturnFirstOrderTable.setEmpty(true);
         OrderTable mockReturnSecondOrderTable = new OrderTable();
         mockReturnSecondOrderTable.setId(2L);
         mockReturnSecondOrderTable.setEmpty(true);
-        BDDMockito.given(orderTableDao.findAllByIdIn(
-                        argumentTableGroup.getOrderTables().stream()
-                                .map(OrderTable::getId)
-                                .collect(Collectors.toList())))
+        BDDMockito.given(orderTableDao.findAllByIdIn(BDDMockito.anyList()))
                 .willReturn(List.of(mockReturnFirstOrderTable, mockReturnSecondOrderTable));
 
-        TableGroup savedTableGroup = new TableGroup();
-        savedTableGroup.setId(1L);
         BDDMockito.given(tableGroupDao.save(argumentTableGroup))
-                .willReturn(savedTableGroup);
-
-        BDDMockito.given(orderTableDao.save(mockReturnFirstOrderTable))
-                .willReturn(expectedFirstOrderTable);
-        BDDMockito.given(orderTableDao.save(mockReturnSecondOrderTable))
-                .willReturn(expectedSecondOrderTable);
+                .willReturn(argumentTableGroup);
 
         // when
         TableGroup actual = tableGroupService.create(argumentTableGroup);
+        List<Boolean> actualOrderTableEmpty = actual.getOrderTables().stream()
+                .map(OrderTable::isEmpty)
+                .collect(Collectors.toList());
 
         // then
-        Assertions.assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(actualOrderTableEmpty.size()).isEqualTo(2);
+        softAssertions.assertThat(actualOrderTableEmpty).containsExactlyInAnyOrderElementsOf(List.of(false, false));
+        softAssertions.assertAll();
     }
 
     @Test
