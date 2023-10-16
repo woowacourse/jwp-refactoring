@@ -14,13 +14,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@Sql("/data.sql")
-class MenuGroupServiceTest {
-
-    @Autowired
-    private MenuGroupService menuGroupService;
+class MenuGroupServiceTest extends ServiceBaseTest {
 
     @Test
     @DisplayName("메뉴 그룹을 생성할 수 있다.")

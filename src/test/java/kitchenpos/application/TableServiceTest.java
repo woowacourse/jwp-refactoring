@@ -23,16 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@Sql("/data.sql")
-class TableServiceTest {
-
-    @Autowired
-    private OrderDao orderDao;
-
-    @Autowired
-    private TableService tableService;
+class TableServiceTest extends ServiceBaseTest {
 
     private OrderTable orderTable;
 

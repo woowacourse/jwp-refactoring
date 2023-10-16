@@ -24,19 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@Sql("/data.sql")
-class MenuServiceTest {
-
-    @Autowired
-    private ProductDao productDao;
-
-    @Autowired
-    private MenuGroupDao menuGroupDao;
-
-    @Autowired
-    private MenuService menuService;
+class MenuServiceTest extends ServiceBaseTest {
 
     private MenuGroup menuGroup;
     private Product product;

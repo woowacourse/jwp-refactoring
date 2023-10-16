@@ -26,22 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@Sql("/data.sql")
-class OrderServiceTest {
-
-    @Autowired
-    private MenuGroupDao menuGroupDao;
-
-    @Autowired
-    private MenuDao menuDao;
-
-    @Autowired
-    private OrderTableDao orderTableDao;
-
-    @Autowired
-    private OrderService orderService;
+class OrderServiceTest extends ServiceBaseTest {
 
     private MenuGroup menuGroup;
     private Menu menu;

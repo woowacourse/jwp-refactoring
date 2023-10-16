@@ -15,13 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@Sql("/data.sql")
-class ProductServiceTest {
-
-    @Autowired
-    private ProductService productService;
+class ProductServiceTest extends ServiceBaseTest {
 
     @Test
     @DisplayName("상품을 생성할 수 있다.")

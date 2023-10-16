@@ -24,19 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@Sql("/data.sql")
-class TableGroupServiceTest {
-
-    @Autowired
-    private OrderTableDao orderTableDao;
-
-    @Autowired
-    private OrderDao orderDao;
-
-    @Autowired
-    private TableGroupService tableGroupService;
+class TableGroupServiceTest extends ServiceBaseTest {
 
     private OrderTable orderTable1;
     private OrderTable orderTable2;
