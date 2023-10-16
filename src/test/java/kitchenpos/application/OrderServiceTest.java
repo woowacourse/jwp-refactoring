@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.domain.*;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.OrderLineItemRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -35,7 +35,7 @@ class OrderServiceTest {
     @Autowired
     private OrderTableRepository orderTableRepository;
     @Autowired
-    private OrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Test
     @DisplayName("모든 주문 목록을 조회한다.")
@@ -45,7 +45,7 @@ class OrderServiceTest {
 
         final Menu menu = menuRepository.save(new MenuBuilder(menuGroup).build());
 
-        final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu.getId(), 1).build();
+        final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu, 1).build();
 
         final OrderTable table = orderTableRepository.save(new TableBuilder()
                 .setEmpty(false)
@@ -81,7 +81,7 @@ class OrderServiceTest {
 
             final Menu menu = menuRepository.save(new MenuBuilder(menuGroup).build());
 
-            final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu.getId(), 1).build();
+            final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu, 1).build();
 
             final OrderTable table = orderTableRepository.save(new TableBuilder()
                     .setEmpty(false)
@@ -99,7 +99,7 @@ class OrderServiceTest {
             assertEquals(OrderStatus.COOKING.name(), savedOrder.getOrderStatus());
 
             final Long orderLineItemId = savedOrder.getOrderLineItems().get(0).getSeq();
-            orderLineItemDao.findById(orderLineItemId)
+            orderLineItemRepository.findById(orderLineItemId)
                     .ifPresentOrElse(
                             actual -> assertEquals(savedOrder.getId(), actual.getOrderId()),
                             () -> fail("OrderLineItem이 존재하지 않습니다.")
@@ -128,8 +128,11 @@ class OrderServiceTest {
         @DisplayName("저장되지 않은 OrderLineItem이 존재할 경우 IllegalArgumentException이 발생한다.")
         void should_throw_when_OrderLineItem_is_not_saved() {
             // given
-            final long notExistsMenuId = -1L;
-            final OrderLineItem orderLineItem = new OrderLineItemBuilder(notExistsMenuId, 1).build();
+            final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroupBuilder().build());
+
+            final Menu menu = new MenuBuilder(menuGroup).build();
+
+            final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu, 1).build();
 
             final OrderTable table = orderTableRepository.save(new TableBuilder()
                     .setEmpty(false)
@@ -153,7 +156,7 @@ class OrderServiceTest {
 
             final Menu menu = menuRepository.save(new MenuBuilder(menuGroup).build());
 
-            final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu.getId(), 1).build();
+            final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu, 1).build();
 
             final long notExistsOrderTableId = -1L;
             final Order order = new OrderBuilder()
@@ -174,7 +177,7 @@ class OrderServiceTest {
 
             final Menu menu = menuRepository.save(new MenuBuilder(menuGroup).build());
 
-            final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu.getId(), 1).build();
+            final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu, 1).build();
 
             final OrderTable table = orderTableRepository.save(new TableBuilder()
                     .setEmpty(true)
@@ -204,7 +207,7 @@ class OrderServiceTest {
 
             final Menu menu = menuRepository.save(new MenuBuilder(menuGroup).build());
 
-            final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu.getId(), 1).build();
+            final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu, 1).build();
 
             final OrderTable table = orderTableRepository.save(new TableBuilder()
                     .setEmpty(false)
@@ -235,7 +238,7 @@ class OrderServiceTest {
 
             final Menu menu = menuRepository.save(new MenuBuilder(menuGroup).build());
 
-            final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu.getId(), 1).build();
+            final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu, 1).build();
 
             final OrderTable table = orderTableRepository.save(new TableBuilder()
                     .setEmpty(false)
