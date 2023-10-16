@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
@@ -148,6 +149,8 @@ public class MenuServiceTest {
         menuRequest.setPrice(BigDecimal.valueOf(19000));
         menuRequest.setMenuGroupId(-1L);
         menuRequest.setMenuProducts(List.of(menuProductRequest));
+
+        given(menuGroupDao.existsById(anyLong())).willReturn(false);
 
         //when, then
         assertThatThrownBy(() -> menuService.create(menuRequest))
