@@ -1,27 +1,23 @@
 package kitchenpos.ui;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.List;
 import kitchenpos.application.TableService;
+import kitchenpos.application.dto.request.CreateOrderTableRequest;
+import kitchenpos.application.dto.response.CreateOrderTableResponse;
 import kitchenpos.domain.OrderTable;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import kitchenpos.fixture.OrderTableFixture;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
@@ -52,14 +48,15 @@ class TableRestControllerTest {
         @Test
         void 테이블_생성() throws Exception {
             // given
-            given(tableService.create(any()))
-                    .willReturn(orderTable);
+            CreateOrderTableResponse response = OrderTableFixture.RESPONSE.주문_테이블_생성_3명_응답();
+            given(tableService.create(any(CreateOrderTableRequest.class)))
+                    .willReturn(response);
 
             // when & then
             mockMvc.perform(post("/api/tables")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("{" +
-                                    "\"numberOfGuests\": 0," +
+                                    "\"numberOfGuests\": 3," +
                                     "\"empty\": true" +
                                     "}")
                     )
@@ -67,9 +64,9 @@ class TableRestControllerTest {
                             status().isCreated(),
                             header().exists("Location"),
                             jsonPath("id").exists(),
-                            jsonPath("tableGroupId").value(orderTable.getTableGroupId()),
-                            jsonPath("numberOfGuests").value(orderTable.getNumberOfGuests()),
-                            jsonPath("empty").value(orderTable.isEmpty())
+                            jsonPath("tableGroupId").value(response.getTableGroupId()),
+                            jsonPath("numberOfGuests").value(response.getNumberOfGuests()),
+                            jsonPath("empty").value(response.isEmpty())
                     );
         }
 

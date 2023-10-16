@@ -1,17 +1,10 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.OrderTableFixture.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-
-import java.util.List;
-import java.util.Optional;
+import kitchenpos.application.dto.request.CreateOrderTableRequest;
+import kitchenpos.application.dto.response.CreateOrderTableResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.fixture.OrderTableFixture;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
@@ -20,6 +13,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
+import java.util.Optional;
+
+import static kitchenpos.fixture.OrderTableFixture.ORDER_TABLE;
+import static kitchenpos.fixture.OrderTableFixture.REQUEST;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
@@ -41,17 +45,21 @@ class TableServiceTest {
         @Test
         void 주문_테이블을_생성한다() {
             // given
-            OrderTable orderTable = OrderTable.builder().build();
-            given(orderTableDao.save(any()))
+            CreateOrderTableRequest request = REQUEST.주문_테이블_생성_요청_3명();
+            OrderTable orderTable = ORDER_TABLE.주문_테이블_1();
+            given(orderTableDao.save(any(OrderTable.class)))
                     .willReturn(orderTable);
 
             // when
-            OrderTable result = tableService.create(orderTable);
+            CreateOrderTableResponse result = tableService.create(request);
 
             // then
-            assertThat(result)
-                    .usingRecursiveComparison()
-                    .isEqualTo(orderTable);
+            assertSoftly(softly -> {
+                softly.assertThat(result.getId()).isEqualTo(orderTable.getId());
+                softly.assertThat(result.getTableGroupId()).isEqualTo(orderTable.getTableGroupId());
+                softly.assertThat(result.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests());
+                softly.assertThat(result.isEmpty()).isEqualTo(orderTable.isEmpty());
+            });
         }
     }
 

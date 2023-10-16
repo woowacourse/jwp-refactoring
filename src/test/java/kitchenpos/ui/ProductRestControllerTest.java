@@ -3,6 +3,7 @@ package kitchenpos.ui;
 import kitchenpos.application.ProductService;
 import kitchenpos.application.dto.request.CreateProductRequest;
 import kitchenpos.application.dto.response.CreateProductResponse;
+import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.domain.Product;
 import kitchenpos.fixture.ProductFixture;
 import org.junit.jupiter.api.*;
@@ -73,17 +74,18 @@ class ProductRestControllerTest {
         @Test
         void 상품_목록_조회() throws Exception {
             // given
+            ProductResponse response = ProductFixture.RESPONSE.후라이드_치킨_16000원_응답();
             given(productService.list())
-                    .willReturn(List.of(ProductFixture.RESPONSE.후라이드_치킨_16000원_응답()));
+                    .willReturn(List.of(response));
 
             // when & then
             mockMvc.perform(get("/api/products"))
                     .andExpectAll(
                             status().isOk(),
                             jsonPath("$").isArray(),
-                            jsonPath("$[0].id").value(product.getId()),
-                            jsonPath("$[0].name").value(product.getName()),
-                            jsonPath("$[0].price").value(product.getPrice().intValue())
+                            jsonPath("$[0].id").value(response.getId()),
+                            jsonPath("$[0].name").value(response.getName()),
+                            jsonPath("$[0].price").value(response.getPrice())
                     );
         }
     }

@@ -1,9 +1,12 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.request.CreateOrderTableRequest;
+import kitchenpos.application.dto.response.CreateOrderTableResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.mapper.OrderTableMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,13 +25,12 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        OrderTable entity = OrderTable.builder()
-                .empty(orderTable.isEmpty())
-                .numberOfGuests(orderTable.getNumberOfGuests())
-                .build();
+    public CreateOrderTableResponse create(final CreateOrderTableRequest request) {
 
-        return orderTableDao.save(entity);
+        OrderTable entity = OrderTableMapper.toOrderTable(request);
+        OrderTable saved = orderTableDao.save(entity);
+
+        return CreateOrderTableResponse.from(saved);
     }
 
     public List<OrderTable> list() {
