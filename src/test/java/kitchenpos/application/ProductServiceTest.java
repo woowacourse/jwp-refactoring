@@ -2,12 +2,12 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.ServiceTest;
 import kitchenpos.domain.Product;
-import org.assertj.core.api.SoftAssertions;
+import kitchenpos.dto.ProductCreateRequest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,16 +26,16 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void 정상_요청() {
             // given
-            Product product = createProduct("피움 치킨", 18_000L);
+            ProductCreateRequest request = new ProductCreateRequest("피움 치킨", 18_000L);
 
             // when
-            Product savedProduct = productService.create(product);
+            Product savedProduct = productService.create(request);
 
             // then
-            SoftAssertions.assertSoftly(
+            assertSoftly(
                     softly -> {
-                        softly.assertThat(savedProduct.getPrice()).isEqualByComparingTo(product.getPrice());
-                        softly.assertThat(savedProduct.getName()).isEqualTo(product.getName());
+                        softly.assertThat(savedProduct.getPrice().longValue()).isEqualTo(request.getPrice());
+                        softly.assertThat(savedProduct.getName()).isEqualTo(request.getName());
                     }
             );
         }
@@ -43,11 +43,11 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void 가격없이_요청하면_예외_발생() {
             // given
-            Product product = createProduct("조이 치킨", null);
+            ProductCreateRequest request = new ProductCreateRequest("조이 치킨", null);
 
             // when, then
             assertThatThrownBy(
-                    () -> productService.create(product)
+                    () -> productService.create(request)
             ).isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -55,11 +55,11 @@ class ProductServiceTest extends ServiceTest {
         @ValueSource(longs = {-2L, -100L})
         void 가격이_0미만이면_예외_발생(long price) {
             // given
-            Product product = createProduct("조이 치킨", price);
+            ProductCreateRequest request = new ProductCreateRequest("조이 치킨", price);
 
             // when, then
             assertThatThrownBy(
-                    () -> productService.create(product)
+                    () -> productService.create(request)
             ).isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -70,8 +70,8 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void 정상_요청() {
             // given
-            Product product = createProduct("조이 치킨", 18_000L);
-            Product savedProduct = productService.create(product);
+            ProductCreateRequest request = new ProductCreateRequest("조이 치킨", 18_000L);
+            Product savedProduct = productService.create(request);
 
             // when
             List<Product> products = productService.readAll();
@@ -81,12 +81,5 @@ class ProductServiceTest extends ServiceTest {
                     .extracting(Product::getId)
                     .contains(savedProduct.getId());
         }
-    }
-
-    private Product createProduct(final String name, final Long price) {
-        if (price == null) {
-            return new Product(name, null);
-        }
-        return new Product(name, BigDecimal.valueOf(price));
     }
 }
