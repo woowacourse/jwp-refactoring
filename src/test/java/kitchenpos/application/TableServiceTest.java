@@ -9,6 +9,7 @@ import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,6 +21,9 @@ class TableServiceTest extends ServiceTest {
 
     @Autowired
     private TableService tableService;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
 
     @Test
@@ -85,11 +89,18 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 테이블이_존재하지_않으면_예외가_발생한다() {
             //given
-            OrderTable 테이블 = new OrderTable();
+            OrderTable 테이블_엔티티 = new OrderTable();
+            OrderTable 테이블 = orderTableDao.save(테이블_엔티티);
+            Long 삭제된_테이블_아이디 = 테이블.getId();
+            테이블_삭제(테이블);
 
             //expect
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(10000000L, 테이블))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(삭제된_테이블_아이디, 테이블_엔티티))
                     .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        private void 테이블_삭제(OrderTable 테이블) {
+            jdbcTemplate.execute("delete from order_table where id = " + 테이블.getId());
         }
 
         @Test
