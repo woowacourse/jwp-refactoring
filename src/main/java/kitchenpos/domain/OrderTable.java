@@ -20,6 +20,14 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public void changeOrderTableEmpty() {
+        this.empty = true;
+    }
+
+    public void changeOrderTableFull() {
+        this.empty = false;
+    }
+
     public Long getId() {
         return id;
     }
@@ -46,9 +54,5 @@ public class OrderTable {
 
     public void setNumberOfGuests(final int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
-    }
-
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
     }
 }
