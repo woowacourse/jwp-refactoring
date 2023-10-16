@@ -49,6 +49,10 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
+    public boolean isGreaterThan(final BigDecimal otherPrice) {
+        return price.compareTo(otherPrice) > 0;
+    }
+
     public Long getId() {
         return id;
     }

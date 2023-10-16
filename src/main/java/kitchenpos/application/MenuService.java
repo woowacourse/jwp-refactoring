@@ -48,7 +48,7 @@ public class MenuService {
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
 
-        if (menu.getPrice().compareTo(sum) > 0) {
+        if (menu.isGreaterThan(sum)) {
             throw new IllegalArgumentException();
         }
 
