@@ -21,6 +21,10 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
 
+    public void addOrderTables(final List<OrderTable> orderTables) {
+        this.orderTables = orderTables;
+    }
+
     public Long getId() {
         return id;
     }
@@ -39,9 +43,5 @@ public class TableGroup {
 
     public void setCreatedDate(final LocalDateTime createdDate) {
         this.createdDate = createdDate;
-    }
-
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
     }
 }
