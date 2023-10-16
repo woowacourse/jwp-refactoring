@@ -2,6 +2,9 @@ package kitchenpos.application.dto.response;
 
 import kitchenpos.domain.MenuProduct;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class MenuProductResponse {
     private final Long seq;
     private final Long menuId;
@@ -19,6 +22,50 @@ public class MenuProductResponse {
         return new MenuProductResponse(menuProduct.getSeq(), menuProduct.getMenuId(), menuProduct.getProductId(), menuProduct.getQuantity());
     }
 
+    public static List<MenuProductResponse> from(List<MenuProduct> menuProduct) {
+        return menuProduct.stream()
+                .map(MenuProductResponse::from)
+                .collect(Collectors.toList());
+    }
+
+    public static MenuProductResponseBuilder builder() {
+        return new MenuProductResponseBuilder();
+    }
+
+    public static final class MenuProductResponseBuilder {
+        private Long seq;
+        private Long menuId;
+        private Long productId;
+        private long quantity;
+
+        private MenuProductResponseBuilder() {
+        }
+
+        public MenuProductResponseBuilder seq(Long seq) {
+            this.seq = seq;
+            return this;
+        }
+
+        public MenuProductResponseBuilder menuId(Long menuId) {
+            this.menuId = menuId;
+            return this;
+        }
+
+        public MenuProductResponseBuilder productId(Long productId) {
+            this.productId = productId;
+            return this;
+        }
+
+        public MenuProductResponseBuilder quantity(long quantity) {
+            this.quantity = quantity;
+            return this;
+        }
+
+        public MenuProductResponse build() {
+            return new MenuProductResponse(seq, menuId, productId, quantity);
+        }
+    }
+
     public Long getSeq() {
         return seq;
     }
@@ -34,4 +81,5 @@ public class MenuProductResponse {
     public long getQuantity() {
         return quantity;
     }
+
 }

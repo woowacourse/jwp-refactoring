@@ -1,5 +1,6 @@
 package kitchenpos.fixture;
 
+import kitchenpos.application.dto.MenuResponse;
 import kitchenpos.application.dto.request.CreateMenuRequest;
 import kitchenpos.application.dto.response.CreateMenuResponse;
 import kitchenpos.domain.Menu;
@@ -17,7 +18,7 @@ public class MenuFixture {
 
     public static class REQUEST {
 
-        public static CreateMenuRequest 후라이드_치킨_16000원_등록_요청() {
+        public static CreateMenuRequest 후라이드_치킨_16000원_1마리_등록_요청() {
             return CreateMenuRequest.builder()
                     .id(1L)
                     .name("후라이드치킨")
@@ -27,7 +28,7 @@ public class MenuFixture {
                     .build();
         }
 
-        public static CreateMenuRequest 후라이드_치킨_16000원_등록_요청(Long price) {
+        public static CreateMenuRequest 후라이드_치킨_16000원_1마리_등록_요청(Long price) {
             return CreateMenuRequest.builder()
                     .id(1L)
                     .name("후라이드치킨")
@@ -40,13 +41,23 @@ public class MenuFixture {
 
     public static class RESPONSE {
 
-        public static CreateMenuResponse 후라이드_치킨() {
+        public static CreateMenuResponse 후라이드_치킨_생성_응답() {
             return CreateMenuResponse.builder()
                     .id(1L)
                     .name("후라이드치킨")
                     .price(BigDecimal.valueOf(16000L))
                     .menuGroupId(1L)
                     .menuProducts(List.of())
+                    .build();
+        }
+
+        public static MenuResponse 후라이드_치킨() {
+            return MenuResponse.builder()
+                    .id(1L)
+                    .name("후라이드치킨")
+                    .price(BigDecimal.valueOf(16000L))
+                    .menuGroupId(1L)
+                    .menuProducts(List.of(MenuProductFixture.RESPONSE.후라이드_치킨_1마리_응답()))
                     .build();
         }
     }

@@ -46,7 +46,7 @@ public class OrderTable {
     }
 
     public OrderTable updateNumberOfGuests(int numberOfGuests) {
-        return new  OrderTable(id, tableGroupId, numberOfGuests, empty);
+        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
     }
 
     public static final class OrderTableBuilder {

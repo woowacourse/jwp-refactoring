@@ -108,6 +108,23 @@
     - [x] MenuGroup
     - [x] MenuProduct
 
+- [ ] 요청, 응답을 도메인이 아닌 Dto를 활용한다.
+    - [ ] GET /api/products
+    - [ ] POST /api/products
+    - [x] GET /api/menus
+    - [x] POST /api/menus
+    - [ ] GET /api/tables
+    - [ ] POST /api/tables
+    - [ ] PUT /api/tables/{orderTableId}/empty
+    - [ ] PUT /api/tables/{orderTableId}/number-of-guests
+    - [ ] GET /api/menu-groups
+    - [ ] POST /api/menu-groups
+    - [ ] POST /api/table-groups
+    - [ ] DELETE /api/table-groups/{tableGroupId}
+    - [ ] GET /api/orders
+    - [ ] POST /api/orders
+    - [ ] PUT /api/orders/{orderId}/order-status
+
 - [ ] 도메인이 비즈니스 로직을 가지게 한다.
     - [ ] MenuGroup
     - [ ] Menu

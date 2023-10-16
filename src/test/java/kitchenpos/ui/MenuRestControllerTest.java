@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.MenuService;
 import kitchenpos.application.dto.request.CreateMenuRequest;
-import kitchenpos.application.dto.response.CreateMenuResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.fixture.MenuFixture;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,7 +56,7 @@ class MenuRestControllerTest {
         void 메뉴_생성() throws Exception {
             // given
             given(menuService.create(any(CreateMenuRequest.class)))
-                    .willReturn(RESPONSE.후라이드_치킨());
+                    .willReturn(RESPONSE.후라이드_치킨_생성_응답());
 
             // when & then
             mockMvc.perform(post("/api/menus")
@@ -82,7 +81,7 @@ class MenuRestControllerTest {
         void 메뉴_목록_조회() throws Exception {
             // given
             given(menuService.list())
-                    .willReturn(List.of(menu));
+                    .willReturn(List.of(RESPONSE.후라이드_치킨()));
 
             // when & then
             mockMvc.perform(get("/api/menus"))

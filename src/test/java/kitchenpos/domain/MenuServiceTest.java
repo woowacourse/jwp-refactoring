@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import kitchenpos.application.MenuService;
+import kitchenpos.application.dto.MenuResponse;
 import kitchenpos.application.dto.request.CreateMenuRequest;
 import kitchenpos.application.dto.response.CreateMenuResponse;
 import kitchenpos.application.dto.response.MenuProductResponse;
@@ -8,9 +9,11 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
+import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuProductFixture.MENU_PRODUCT;
 import kitchenpos.fixture.ProductFixture;
 import org.assertj.core.api.Assertions;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
@@ -28,6 +31,7 @@ import java.util.Optional;
 
 import static kitchenpos.fixture.MenuFixture.MENU;
 import static kitchenpos.fixture.MenuFixture.REQUEST;
+import static org.assertj.core.api.SoftAssertions.*;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.anyLong;
@@ -59,7 +63,7 @@ class MenuServiceTest {
         @Test
         void 메뉴를_등록한다() {
             // given
-            CreateMenuRequest request = REQUEST.후라이드_치킨_16000원_등록_요청();
+            CreateMenuRequest request = REQUEST.후라이드_치킨_16000원_1마리_등록_요청();
             MenuProduct menuProduct = MENU_PRODUCT.후라이드_치킨_1마리();
             given(menuDao.save(any(Menu.class)))
                     .willReturn(MENU.후라이드_치킨_16000원_1마리());
@@ -89,7 +93,7 @@ class MenuServiceTest {
         @ValueSource(longs = {-1, -100})
         void 메뉴의_가격이_잘못되면_예외(Long price) {
             // given
-            CreateMenuRequest menu = REQUEST.후라이드_치킨_16000원_등록_요청(price);
+            CreateMenuRequest menu = REQUEST.후라이드_치킨_16000원_1마리_등록_요청(price);
 
             // when & then
             Assertions.assertThatThrownBy(() -> menuService.create(menu))
@@ -98,7 +102,7 @@ class MenuServiceTest {
 
         @Test
         void 메뉴의_가격이_Null이면_예외() {
-            CreateMenuRequest menu = REQUEST.후라이드_치킨_16000원_등록_요청(null);
+            CreateMenuRequest menu = REQUEST.후라이드_치킨_16000원_1마리_등록_요청(null);
 
             Assertions.assertThatThrownBy(() -> menuService.create(menu))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -109,7 +113,7 @@ class MenuServiceTest {
             // given
             given(menuGroupDao.existsById(anyLong()))
                     .willReturn(false);
-            CreateMenuRequest menu = REQUEST.후라이드_치킨_16000원_등록_요청();
+            CreateMenuRequest menu = REQUEST.후라이드_치킨_16000원_1마리_등록_요청();
 
             // when & then
             Assertions.assertThatThrownBy(() -> menuService.create(menu))
@@ -123,7 +127,7 @@ class MenuServiceTest {
                     .willReturn(true);
             given(productDao.findById(anyLong()))
                     .willReturn(Optional.empty());
-            CreateMenuRequest menu = REQUEST.후라이드_치킨_16000원_등록_요청();
+            CreateMenuRequest menu = REQUEST.후라이드_치킨_16000원_1마리_등록_요청();
 
             // when & then
             Assertions.assertThatThrownBy(() -> menuService.create(menu))
@@ -134,7 +138,7 @@ class MenuServiceTest {
         @CsvSource(value = {"17000,16999", "17000,10000", "17000,1000", "17000,1", "17000,0", "17000,-1", "17000,-100"})
         void 메뉴_가격이_상품들의_가격_합보다_크면_예외(Long menuPrice, Long productPrice) {
             // given
-            CreateMenuRequest menu = REQUEST.후라이드_치킨_16000원_등록_요청(menuPrice);
+            CreateMenuRequest menu = REQUEST.후라이드_치킨_16000원_1마리_등록_요청(menuPrice);
             Product product = ProductFixture.PRODUCT.후라이드_치킨(productPrice);
 
             given(menuGroupDao.existsById(anyLong()))
@@ -154,19 +158,27 @@ class MenuServiceTest {
         @Test
         void 메뉴_목록을_조회한다() {
             // given
-            CreateMenuRequest menu = REQUEST.후라이드_치킨_16000원_등록_요청();
+            Menu menu = MENU.후라이드_치킨_16000원_1마리();
+            MenuProduct menuProduct = MENU_PRODUCT.후라이드_치킨_1마리();
             given(menuDao.findAll())
-                    .willReturn(List.of(MENU.후라이드_치킨_16000원_1마리()));
+                    .willReturn(List.of(menu));
             given(menuProductDao.findAllByMenuId(anyLong()))
-                    .willReturn(List.of(MENU_PRODUCT.후라이드_치킨_1마리()));
+                    .willReturn(List.of(menuProduct));
 
             // when
-            List<Menu> result = menuService.list();
+            List<MenuResponse> result = menuService.list();
 
             // then
-            Assertions.assertThat(result)
-                    .usingRecursiveComparison()
-                    .isEqualTo(List.of(MENU.후라이드_치킨_16000원_1마리()));
+            assertSoftly(softly -> {
+                MenuResponse menuResponse = result.get(0);
+                softly.assertThat(menuResponse.getId()).isEqualTo(menu.getId());
+                softly.assertThat(menuResponse.getName()).isEqualTo(menu.getName());
+                softly.assertThat(menuResponse.getPrice()).isEqualTo(menu.getPrice());
+                softly.assertThat(menuResponse.getMenuGroupId()).isEqualTo(menu.getMenuGroupId());
+                softly.assertThat(menuResponse.getMenuProducts().size()).isEqualTo(1);
+                softly.assertThat(menuResponse.getMenuProducts().get(0).getProductId()).isEqualTo(menuProduct.getProductId());
+                softly.assertThat(menuResponse.getMenuProducts().get(0).getQuantity()).isEqualTo(menuProduct.getQuantity());
+            });
         }
     }
 }

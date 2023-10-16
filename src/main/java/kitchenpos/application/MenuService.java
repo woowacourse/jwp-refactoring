@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.MenuResponse;
 import kitchenpos.application.dto.request.CreateMenuRequest;
 import kitchenpos.application.dto.response.CreateMenuResponse;
 import kitchenpos.dao.MenuDao;
@@ -79,7 +80,7 @@ public class MenuService {
         return CreateMenuResponse.from(menu);
     }
 
-    public List<Menu> list() {
+    public List<MenuResponse> list() {
         final List<Menu> menus = menuDao.findAll();
         final List<Menu> result = new ArrayList<>();
 
@@ -88,6 +89,8 @@ public class MenuService {
             result.add(menu.updateMenuProducts(allByMenuId));
         }
 
-        return result;
+        return result.stream()
+                .map(MenuResponse::from)
+                .collect(Collectors.toList());
     }
 }
