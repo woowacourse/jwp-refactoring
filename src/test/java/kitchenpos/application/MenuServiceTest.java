@@ -148,7 +148,7 @@ class MenuServiceTest extends ServiceTest {
             Menu savedMenu = menuService.create(menu);
 
             // when
-            List<Menu> menus = menuService.list();
+            List<Menu> menus = menuService.readAll();
 
             // then
             assertThat(menus)

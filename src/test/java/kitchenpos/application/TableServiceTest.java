@@ -52,7 +52,7 @@ class TableServiceTest extends ServiceTest {
             OrderTable savedOrderTable = tableService.create(orderTable);
 
             // when
-            List<OrderTable> orderTables = tableService.list();
+            List<OrderTable> orderTables = tableService.readAll();
 
             // then
             assertThat(orderTables)

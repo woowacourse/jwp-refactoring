@@ -13,6 +13,7 @@ import java.util.List;
 
 @RestController
 public class MenuGroupRestController {
+
     private final MenuGroupService menuGroupService;
 
     public MenuGroupRestController(final MenuGroupService menuGroupService) {
@@ -29,9 +30,9 @@ public class MenuGroupRestController {
     }
 
     @GetMapping("/api/menu-groups")
-    public ResponseEntity<List<MenuGroup>> list() {
+    public ResponseEntity<List<MenuGroup>> readAll() {
         return ResponseEntity.ok()
-                .body(menuGroupService.list())
+                .body(menuGroupService.readAll())
                 ;
     }
 }

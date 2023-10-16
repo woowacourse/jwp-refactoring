@@ -81,7 +81,7 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public List<Order> list() {
+    public List<Order> readAll() {
         final List<Order> orders = orderDao.findAll();
 
         for (final Order order : orders) {

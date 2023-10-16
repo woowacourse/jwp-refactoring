@@ -45,7 +45,7 @@ class MenuGroupServiceTest extends ServiceTest {
             MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
 
             // when
-            List<MenuGroup> menuGroups = menuGroupService.list();
+            List<MenuGroup> menuGroups = menuGroupService.readAll();
 
             // then
             assertThat(menuGroups)

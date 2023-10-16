@@ -74,7 +74,7 @@ class ProductServiceTest extends ServiceTest {
             Product savedProduct = productService.create(product);
 
             // when
-            List<Product> products = productService.list();
+            List<Product> products = productService.readAll();
 
             // then
             assertThat(products)

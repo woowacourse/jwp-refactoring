@@ -31,7 +31,7 @@ public class TableService {
     }
 
     @Transactional(readOnly = true)
-    public List<OrderTable> list() {
+    public List<OrderTable> readAll() {
         return orderTableDao.findAll();
     }
 

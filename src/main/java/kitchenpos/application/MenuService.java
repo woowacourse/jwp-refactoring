@@ -74,7 +74,7 @@ public class MenuService {
     }
 
     @Transactional(readOnly = true)
-    public List<Menu> list() {
+    public List<Menu> readAll() {
         final List<Menu> menus = menuDao.findAll();
 
         for (final Menu menu : menus) {

@@ -30,7 +30,7 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public List<Product> list() {
+    public List<Product> readAll() {
         return productDao.findAll();
     }
 }

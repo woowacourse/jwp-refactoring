@@ -22,7 +22,7 @@ public class MenuGroupService {
     }
 
     @Transactional(readOnly = true)
-    public List<MenuGroup> list() {
+    public List<MenuGroup> readAll() {
         return menuGroupDao.findAll();
     }
 }

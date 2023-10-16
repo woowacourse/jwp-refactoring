@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 public class OrderRestController {
+
     private final OrderService orderService;
 
     public OrderRestController(final OrderService orderService) {
@@ -26,9 +27,9 @@ public class OrderRestController {
     }
 
     @GetMapping("/api/orders")
-    public ResponseEntity<List<Order>> list() {
+    public ResponseEntity<List<Order>> readAll() {
         return ResponseEntity.ok()
-                .body(orderService.list())
+                .body(orderService.readAll())
                 ;
     }
 
@@ -37,6 +38,8 @@ public class OrderRestController {
             @PathVariable final Long orderId,
             @RequestBody final Order order
     ) {
-        return ResponseEntity.ok(orderService.changeOrderStatus(orderId, order));
+        return ResponseEntity
+                .ok(orderService.changeOrderStatus(orderId, order))
+                ;
     }
 }

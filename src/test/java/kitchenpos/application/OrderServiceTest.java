@@ -133,7 +133,7 @@ class OrderServiceTest extends ServiceTest {
             Order savedOrder = orderService.create(order);
 
             // when
-            List<Order> orders = orderService.list();
+            List<Order> orders = orderService.readAll();
 
             // then
             assertThat(orders)
