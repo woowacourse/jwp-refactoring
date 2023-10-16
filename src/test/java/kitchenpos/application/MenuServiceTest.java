@@ -112,6 +112,9 @@ class MenuServiceTest {
         List<Menu> menus = menuService.list();
 
         // then
-        assertThat(menus).contains(savedMenu);
+        assertThat(menus.get(menus.size()-1))
+                .usingRecursiveComparison()
+                .ignoringFields("id", "menuProducts.seq")
+                .isEqualTo(savedMenu);
     }
 }

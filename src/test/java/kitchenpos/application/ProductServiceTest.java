@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -68,9 +69,12 @@ class ProductServiceTest {
         Product savedProduct = productService.create(product);
 
         // when
-        Iterable<Product> products = productService.list();
+        List<Product> products = productService.list();
 
         // then
-        assertThat(products).contains(savedProduct);
+        assertThat(products.get(products.size() - 1))
+                .usingRecursiveComparison()
+                .ignoringFields("id")
+                .isEqualTo(savedProduct);
     }
 }

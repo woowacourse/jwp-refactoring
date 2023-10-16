@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -61,10 +62,13 @@ class TableServiceTest {
         OrderTable savedOrderTable = tableService.create(orderTable);
 
         // when
-        Iterable<OrderTable> orderTables = tableService.list();
+        List<OrderTable> orderTables = tableService.list();
 
         // then
-        assertThat(orderTables).contains(savedOrderTable);
+        assertThat(orderTables.get(orderTables.size() - 1))
+                .usingRecursiveComparison()
+                .ignoringFields("id")
+                .isEqualTo(savedOrderTable);
     }
 
     @Test
@@ -81,7 +85,7 @@ class TableServiceTest {
     }
 
     @Test
-    void 주문_테이블_비움상태_변경시_존재하지_않는_주문_테이블id로_조회할_경우_예외가_발생한다(){
+    void 주문_테이블_비움상태_변경시_존재하지_않는_주문_테이블id로_조회할_경우_예외가_발생한다() {
         // given
         OrderTable savedOrderTable = tableService.create(orderTable);
         OrderTable newOrderTable = OrderTableFixture.주문테이블_비움상태_변경(savedOrderTable, false);
@@ -93,7 +97,7 @@ class TableServiceTest {
     }
 
     @Test
-    void 주문_테이블_비움상태_변경시_그룹화되어있으면_예외가_발생한다(){
+    void 주문_테이블_비움상태_변경시_그룹화되어있으면_예외가_발생한다() {
         // given
         TableGroup tableGroup = tableGroupDao.save(TableGroupFixture.테이블그룹_생성(LocalDateTime.now(), null));
         OrderTable savedOrderTable = tableService.create(orderTable);
@@ -109,7 +113,7 @@ class TableServiceTest {
     }
 
     @Test
-    void 주문_테이블_비움상태_변경시_주문_상태가_조리중_또는_식사중이면_예외가_발생한다(){
+    void 주문_테이블_비움상태_변경시_주문_상태가_조리중_또는_식사중이면_예외가_발생한다() {
         // given
         OrderTable savedOrderTable = tableService.create(orderTable);
         OrderTable newOrderTable = OrderTableFixture.주문테이블_비움상태_변경(savedOrderTable, false);
@@ -121,7 +125,7 @@ class TableServiceTest {
     }
 
     @Test
-    void 주문_테이블의_손님수를_변경한다(){
+    void 주문_테이블의_손님수를_변경한다() {
         // given
         orderTable.setEmpty(false);
         OrderTable savedOrderTable = tableService.create(orderTable);
@@ -135,7 +139,7 @@ class TableServiceTest {
     }
 
     @Test
-    void 주문_테이블의_손님수를_음수로_지정하면_예외가_발생한다(){
+    void 주문_테이블의_손님수를_음수로_지정하면_예외가_발생한다() {
         // given
         orderTable.setEmpty(false);
         OrderTable savedOrderTable = tableService.create(orderTable);
@@ -149,7 +153,7 @@ class TableServiceTest {
     }
 
     @Test
-    void 주문_테이블의_손님수_변경시_존재하지않는_주문테이블id로_조회하면_예외가_발생한다(){
+    void 주문_테이블의_손님수_변경시_존재하지않는_주문테이블id로_조회하면_예외가_발생한다() {
         // given
         orderTable.setEmpty(false);
         OrderTable savedOrderTable = tableService.create(orderTable);
@@ -164,7 +168,7 @@ class TableServiceTest {
     }
 
     @Test
-    void 주문_테이블의_손님수_변경시_테이블이_비어있으면_예외가_발생한다(){
+    void 주문_테이블의_손님수_변경시_테이블이_비어있으면_예외가_발생한다() {
         // given
         OrderTable savedOrderTable = tableService.create(orderTable);
 

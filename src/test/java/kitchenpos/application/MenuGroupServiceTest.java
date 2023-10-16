@@ -24,12 +24,12 @@ class MenuGroupServiceTest {
     private MenuGroup menuGroup;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         menuGroup = MenuGroupFixture.메뉴그룹_생성("음료");
     }
 
     @Test
-    void 메뉴그룹을_등록한다(){
+    void 메뉴그룹을_등록한다() {
         // when
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
 
@@ -40,7 +40,7 @@ class MenuGroupServiceTest {
     }
 
     @Test
-    void 전체_메뉴그룹을_조회한다(){
+    void 전체_메뉴그룹을_조회한다() {
         // given
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
 
@@ -48,7 +48,10 @@ class MenuGroupServiceTest {
         List<MenuGroup> menuGroups = menuGroupService.list();
 
         // then
-        assertThat(menuGroups).contains(savedMenuGroup);
+        assertThat(menuGroups.get(menuGroups.size() - 1))
+                .usingRecursiveComparison()
+                .ignoringFields("id")
+                .isEqualTo(savedMenuGroup);
     }
 
 }
