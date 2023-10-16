@@ -2,8 +2,10 @@ package kitchenpos.ui;
 
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.application.dto.request.CreateMenuGroupRequest;
-import kitchenpos.domain.MenuGroup;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -27,16 +29,6 @@ class MenuGroupRestControllerTest {
 
     @MockBean
     private MenuGroupService menuGroupService;
-
-    private MenuGroup menuGroup;
-
-    @BeforeEach
-    void setUp() {
-        menuGroup = MenuGroup.builder()
-                .id(1L)
-                .name("한식")
-                .build();
-    }
 
     @Nested
     class 정상_요청_테스트 {

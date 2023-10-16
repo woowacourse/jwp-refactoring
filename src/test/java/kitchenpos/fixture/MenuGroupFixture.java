@@ -4,6 +4,7 @@ import kitchenpos.application.dto.request.CreateMenuGroupRequest;
 import kitchenpos.application.dto.response.CreateMenuGroupResponse;
 import kitchenpos.domain.MenuGroup;
 
+@SuppressWarnings("NonAsciiCharacters")
 public class MenuGroupFixture {
 
     private MenuGroupFixture() {
