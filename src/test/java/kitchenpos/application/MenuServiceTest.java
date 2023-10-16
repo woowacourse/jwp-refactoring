@@ -55,9 +55,9 @@ class MenuServiceTest {
 
             // then
             assertSoftly(softly -> {
-                assertThat(savedMenu.getId()).isNotNull();
+                assertThat(savedMenu.getId()).isPositive();
                 assertThat(savedMenu.getName()).isEqualTo(menu.getName());
-                assertThat(savedMenu.getMenuProducts().get(0).getMenuId()).isNotNull();
+                assertThat(savedMenu.getMenuProducts().get(0).getMenuId()).isPositive();
             });
         }
 
@@ -73,9 +73,9 @@ class MenuServiceTest {
 
             // then
             assertSoftly(softly -> {
-                assertThat(savedMenu.getId()).isNotNull();
+                assertThat(savedMenu.getId()).isPositive();
                 assertThat(savedMenu.getName()).isEqualTo(menu.getName());
-                assertThat(savedMenu.getMenuProducts().get(0).getMenuId()).isNotNull();
+                assertThat(savedMenu.getMenuProducts().get(0).getMenuId()).isPositive();
             });
         }
 

@@ -40,7 +40,7 @@ class ProductServiceTest {
 
             // then
             assertSoftly(softly -> {
-                assertThat(savedProduct.getId()).isNotNull();
+                assertThat(savedProduct.getId()).isPositive();
                 assertThat(savedProduct.getName()).isEqualTo(product.getName());
             });
         }

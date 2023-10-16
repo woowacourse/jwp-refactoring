@@ -54,7 +54,7 @@ class TableServiceTest {
             final OrderTable savedOrderTable = tableService.create(table);
 
             //then
-            assertThat(savedOrderTable.getId()).isNotNull();
+            assertThat(savedOrderTable.getId()).isPositive();
         }
     }
 

@@ -29,7 +29,7 @@ class MenuGroupServiceTest {
 
         // then
         assertSoftly(softly -> {
-            assertThat(savedMenuGroup.getId()).isNotNull();
+            assertThat(savedMenuGroup.getId()).isPositive();
             assertThat(savedMenuGroup.getName()).isEqualTo(menuGroup.getName());
         });
     }

@@ -75,7 +75,7 @@ class OrderServiceTest {
 
             // then
             assertSoftly(softly -> {
-                assertThat(savedOrder.getId()).isNotNull();
+                assertThat(savedOrder.getId()).isPositive();
                 assertThat(savedOrder.getOrderStatus()).isEqualTo("COOKING");
             });
         }

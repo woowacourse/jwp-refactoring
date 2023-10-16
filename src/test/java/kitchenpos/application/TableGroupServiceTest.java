@@ -60,7 +60,7 @@ class TableGroupServiceTest {
             final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
             // then
-            assertThat(savedTableGroup.getId()).isNotNull();
+            assertThat(savedTableGroup.getId()).isPositive();
         }
 
         @DisplayName("주문 테이블 목록이 비어있으면 예외처리 한다")
