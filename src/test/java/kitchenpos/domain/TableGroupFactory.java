@@ -1,18 +1,17 @@
 package kitchenpos.domain;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public final class TableGroupFactory {
 
     private TableGroupFactory() {
     }
 
-    public static TableGroup createTableGroupTableOf(boolean isTableEmpty, final Long... orderTableIds) {
+    public static TableGroup createTableGroupTableOf(final List<OrderTable> orderTables) {
         final var tableGroup = new TableGroup();
         tableGroup.setOrderTables(new ArrayList<>());
-        for (final var orderTableId : orderTableIds) {
-            final var orderTable = OrderTableFactory.createOrderTableFrom(orderTableId);
-            orderTable.setEmpty(isTableEmpty);
+        for (final var orderTable : orderTables) {
             tableGroup.getOrderTables().add(orderTable);
         }
         return tableGroup;

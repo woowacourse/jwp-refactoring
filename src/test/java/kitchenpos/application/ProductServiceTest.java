@@ -6,8 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.math.BigDecimal;
 import kitchenpos.application.fakedao.InMemoryProductDao;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.ThrowingSupplier;
@@ -15,13 +17,19 @@ import org.junit.jupiter.api.function.ThrowingSupplier;
 @SuppressWarnings("NonAsciiCharacters")
 class ProductServiceTest {
 
+    private ProductDao fakeProductDao;
+
+    @BeforeEach
+    void setUp() {
+        fakeProductDao = new InMemoryProductDao();
+    }
+
     @Nested
     class 상품_등록시 {
 
         @Test
         void 정상적인_이름과_가격을_가진다면_상품이_등록된다() {
             // given
-            final var fakeProductDao = new InMemoryProductDao();
             final var productService = new ProductService(fakeProductDao);
             final var validName = "validName";
             final var validPrice = BigDecimal.valueOf(1000);
@@ -41,7 +49,6 @@ class ProductServiceTest {
         @Test
         void 정상적으로_조회한다() {
             // given
-            final var fakeProductDao = new InMemoryProductDao();
             fakeProductDao.save(ProductFactory.createProductOf("validName", BigDecimal.valueOf(1000)));
             fakeProductDao.save(ProductFactory.createProductOf("validName2", BigDecimal.valueOf(1000)));
             final var productService = new ProductService(fakeProductDao);

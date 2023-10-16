@@ -22,14 +22,13 @@ import org.junit.jupiter.params.provider.EnumSource;
 @SuppressWarnings("NonAsciiCharacters")
 class TableServiceTest {
 
-    private OrderDao orderDao;
-    private OrderTableDao orderTableDao;
-
+    private OrderDao fakeOrderDao;
+    private OrderTableDao fakeOrderTableDao;
 
     @BeforeEach
     void setUp() {
-        orderDao = new InMemoryOrderDao();
-        orderTableDao = new InMemoryOrderTableDao();
+        fakeOrderDao = new InMemoryOrderDao();
+        fakeOrderTableDao = new InMemoryOrderTableDao();
     }
 
     @Nested
@@ -39,7 +38,7 @@ class TableServiceTest {
         void 손님이_0명이고_비어있는_테이블은_정상_등록된다() {
             // given
             final var table = OrderTableFactory.createOrderTableOf(0, true);
-            final var tableService = new TableService(orderDao, orderTableDao);
+            final var tableService = new TableService(fakeOrderDao, fakeOrderTableDao);
 
             // when
             final var saved = tableService.create(table);
@@ -55,7 +54,7 @@ class TableServiceTest {
         void 손님이_0명이고_비어있지_않은_테이블은_정상_등록된다() {
             // given
             final var table = OrderTableFactory.createOrderTableOf(0, false);
-            final var tableService = new TableService(orderDao, orderTableDao);
+            final var tableService = new TableService(fakeOrderDao, fakeOrderTableDao);
 
             // when
             final var saved = tableService.create(table);
@@ -71,7 +70,7 @@ class TableServiceTest {
         void 손님이_0명이_아니지만_비어있다면_예외가_발생한다() {
             // given
             final var table = OrderTableFactory.createOrderTableOf(1, true);
-            final var tableService = new TableService(orderDao, orderTableDao);
+            final var tableService = new TableService(fakeOrderDao, fakeOrderTableDao);
 
             // when
             final ThrowingCallable throwingCallable = () -> tableService.create(table);
@@ -89,11 +88,11 @@ class TableServiceTest {
         void 주문_상태가_조리중_또는_식사중인_테이블은_비어있는지_여부를_수정할_수_없다(final OrderStatus orderStatus) {
             // given
             final var table = OrderTableFactory.createOrderTableOf(0, false);
-            final var savedTable = orderTableDao.save(table);
-            final var savedOrder = orderDao.save(OrderFactory.createOrderOf(savedTable.getId(), 1L, OrderLineItemFactory.createOrderLineItemOf(1L, 1L, 1L, 1L)));
+            final var savedTable = fakeOrderTableDao.save(table);
+            final var savedOrder = fakeOrderDao.save(OrderFactory.createOrderOf(savedTable.getId(), 1L, OrderLineItemFactory.createOrderLineItemOf(1L, 1L, 1L, 1L)));
             savedOrder.setOrderStatus(orderStatus.name());
 
-            final var tableService = new TableService(orderDao, orderTableDao);
+            final var tableService = new TableService(fakeOrderDao, fakeOrderTableDao);
 
             // when
             final ThrowingCallable throwingCallable = () -> tableService.changeEmpty(savedTable.getId(), table);
@@ -106,8 +105,8 @@ class TableServiceTest {
         void 테이블_그룹이_지정되어있다면_비어있는_상태로_변경할_수_없다() {
             // given
             final var table = OrderTableFactory.createOrderTableOf(0, false);
-            final var savedTable = orderTableDao.save(table);
-            final var tableService = new TableService(orderDao, orderTableDao);
+            final var savedTable = fakeOrderTableDao.save(table);
+            final var tableService = new TableService(fakeOrderDao, fakeOrderTableDao);
 
             table.setTableGroupId(1L);
 
@@ -122,8 +121,8 @@ class TableServiceTest {
         void 비어있는_테이블은_비어있지_않은_상태로_변경할_수_있다() {
             // given
             final var table = OrderTableFactory.createOrderTableOf(0, false);
-            final var savedTable = orderTableDao.save(table);
-            final var tableService = new TableService(orderDao, orderTableDao);
+            final var savedTable = fakeOrderTableDao.save(table);
+            final var tableService = new TableService(fakeOrderDao, fakeOrderTableDao);
 
             final var previousState = savedTable.isEmpty();
             table.setEmpty(true);
@@ -139,8 +138,8 @@ class TableServiceTest {
         void 비어있지_않은_테이블은_비어있는_상태로_변경할_수_있다() {
             // given
             final var table = OrderTableFactory.createOrderTableOf(0, false);
-            final var savedTable = orderTableDao.save(table);
-            final var tableService = new TableService(orderDao, orderTableDao);
+            final var savedTable = fakeOrderTableDao.save(table);
+            final var tableService = new TableService(fakeOrderDao, fakeOrderTableDao);
 
             final var previousState = table.isEmpty();
             table.setEmpty(true);
@@ -160,8 +159,8 @@ class TableServiceTest {
         void 손님의_수가_음수라면_예외가_발생한다() {
             // given
             final var table = OrderTableFactory.createOrderTableOf(0, false);
-            final var savedTable = orderTableDao.save(table);
-            final var tableService = new TableService(orderDao, orderTableDao);
+            final var savedTable = fakeOrderTableDao.save(table);
+            final var tableService = new TableService(fakeOrderDao, fakeOrderTableDao);
             table.setNumberOfGuests(-1);
 
             // when
@@ -175,8 +174,8 @@ class TableServiceTest {
         void 비어있는_테이블의_손님의_수를_변경할_수_없다() {
             // given
             final var table = OrderTableFactory.createOrderTableOf(0, true);
-            final var savedTable = orderTableDao.save(table);
-            final var tableService = new TableService(orderDao, orderTableDao);
+            final var savedTable = fakeOrderTableDao.save(table);
+            final var tableService = new TableService(fakeOrderDao, fakeOrderTableDao);
 
             // when
             final ThrowingCallable throwingCallable = () -> tableService.changeNumberOfGuests(savedTable.getId(), table);
@@ -189,8 +188,8 @@ class TableServiceTest {
         void 비어있지_않고_손님의_수가_올바르면_정상적으로_변경된다() {
             // given
             final var table = OrderTableFactory.createOrderTableOf(0, false);
-            final var savedTable = orderTableDao.save(table);
-            final var tableService = new TableService(orderDao, orderTableDao);
+            final var savedTable = fakeOrderTableDao.save(table);
+            final var tableService = new TableService(fakeOrderDao, fakeOrderTableDao);
             table.setNumberOfGuests(2);
 
             // when
