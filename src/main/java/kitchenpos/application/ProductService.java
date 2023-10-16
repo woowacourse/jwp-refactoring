@@ -28,7 +28,7 @@ public class ProductService {
 
         if (Objects.isNull(price)
                 || price.compareTo(BigDecimal.ZERO) < 0
-                || price.compareTo(BigDecimal.valueOf(Math.pow(10, 16))) >= 0) {
+                || price.compareTo(BigDecimal.valueOf(Math.pow(10, 17))) >= 0) {
             throw new IllegalArgumentException();
         }
 

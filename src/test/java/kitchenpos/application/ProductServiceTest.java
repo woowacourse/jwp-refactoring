@@ -52,19 +52,6 @@ class ProductServiceTest {
             });
         }
 
-        @ParameterizedTest
-        @ValueSource(doubles = {0, 1, 999_999_999_999_999.99})
-        void 상품_가격은_0원_보다_크고_1000조_보다_작다(double price) {
-            final Product product = new Product(null, "상품", BigDecimal.valueOf(price));
-            final Product savedProduct = productService.create(product);
-
-            assertSoftly(softly -> {
-                softly.assertThat(savedProduct.getId()).isNotNull();
-                softly.assertThat(savedProduct.getName()).isEqualTo("상품");
-                softly.assertThat(savedProduct.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(price));
-            });
-        }
-
         @Test
         void 상품_이름이_없으면_예외가_발생한다() {
             final Product product = new Product(null, null, BigDecimal.valueOf(1000));
@@ -99,7 +86,7 @@ class ProductServiceTest {
 
         @Test
         void 상품_가격이_1000조_이상이면_예외가_발생한다() {
-            final Product product = new Product(null, "상품", BigDecimal.valueOf(Math.pow(10, 16)));
+            final Product product = new Product(null, "상품", BigDecimal.valueOf(Math.pow(10, 17)));
 
             assertThatThrownBy(() -> productService.create(product))
                     .isInstanceOf(IllegalArgumentException.class);

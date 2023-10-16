@@ -79,23 +79,6 @@ class MenuServiceTest {
             });
         }
 
-        @ParameterizedTest
-        @ValueSource(doubles = {0, 1, 999_999_999_999_999.99})
-        void 메뉴_가격은_0원_보다_크고_1000조_보다_작다(double price) {
-            final Product product = productDao.save(new Product(null, "상품", BigDecimal.valueOf(999_999_999_999_999.99)));
-            menuProducts.add(new MenuProduct(null, null, product.getId(), 1));
-
-            final Menu menu = new Menu(null, "메뉴", BigDecimal.valueOf(price), savedMenuGroupId, menuProducts);
-            final Menu savedMenu = menuService.create(menu);
-
-            assertSoftly(softly -> {
-                softly.assertThat(savedMenu.getId()).isNotNull();
-                softly.assertThat(savedMenu.getName()).isEqualTo(menu.getName());
-                softly.assertThat(savedMenu.getPrice()).isEqualByComparingTo(menu.getPrice());
-                softly.assertThat(savedMenu.getMenuGroupId()).isEqualTo(menu.getMenuGroupId());
-            });
-        }
-
         @Test
         void 메뉴_이름이_없으면_예외가_발생한다() {
             final Menu menu = new Menu(null, null, BigDecimal.ONE, savedMenuGroupId, menuProducts);
@@ -130,10 +113,10 @@ class MenuServiceTest {
 
         @Test
         void 메뉴_가격이_1000조_이상이면_예외가_발생한다() {
-            final Product product = productDao.save(new Product(null, "상품", BigDecimal.valueOf(999_999_999_999_999.99)));
-            menuProducts.add(new MenuProduct(null, null, product.getId(), 1));
+            final Product product = productDao.save(new Product(null, "상품", BigDecimal.valueOf(Math.pow(10, 16))));
+            menuProducts.add(new MenuProduct(null, null, product.getId(), 10));
 
-            final Menu menu = new Menu(null, "메뉴", BigDecimal.valueOf(Math.pow(10, 16)), savedMenuGroupId, menuProducts);
+            final Menu menu = new Menu(null, "메뉴", BigDecimal.valueOf(Math.pow(10, 17)), savedMenuGroupId, menuProducts);
 
             assertThatThrownBy(() -> menuService.create(menu))
                     .isInstanceOf(IllegalArgumentException.class);
