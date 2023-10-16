@@ -82,6 +82,22 @@ class TableServiceTest {
         assertThat(savedOrderTable.getId()).isEqualTo(orderTableId);
     }
 
+    @DisplayName("주문 테이블이 존재하지 않으면 예외가 발생한다.")
+    @Test
+    void changeEmpty_failNotExistOrderTable() {
+        // given
+        final Long notExistedTableId = 0L;
+        final OrderTable orderTable = new OrderTable() {{
+            setId(notExistedTableId);
+            setEmpty(true);
+        }};
+
+        // when
+        // then
+        assertThatThrownBy(() -> tableService.changeEmpty(notExistedTableId, orderTable))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
     @DisplayName("주문 테이블의 tableGroupId 가 존재하면 예외가 발생한다.")
     @Test
     void changeEmpty_failExistTableGroupId() {

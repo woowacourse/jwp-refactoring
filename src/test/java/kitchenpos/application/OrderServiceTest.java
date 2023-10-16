@@ -78,7 +78,7 @@ class OrderServiceTest {
         final Order created = orderService.create(order);
 
         // then
-        assertThat(created.getId()).isEqualTo(order.getId());
+        assertThat(created.getId()).isEqualTo(1L);
         assertThat(created.getOrderTableId()).isEqualTo(order.getOrderTableId());
         assertThat(created.getOrderStatus()).isEqualTo(order.getOrderStatus());
         assertThat(created.getOrderedTime()).isNotNull();
@@ -176,6 +176,72 @@ class OrderServiceTest {
         // when
         // then
         assertThatThrownBy(() -> orderService.create(order))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("주문 테이블의 상태를 변경한다.")
+    @Test
+    void changeOrderStatus() {
+        // given
+        final Long orderTableId = 1L;
+        final Order order = new Order() {{
+            setId(1L);
+            setOrderTableId(orderTableId);
+            setOrderStatus(OrderStatus.COOKING.name());
+            setOrderedTime(LocalDateTime.now());
+        }};
+
+        given(orderDao.findById(order.getId()))
+            .willReturn(Optional.of(order));
+
+        // when
+        final Order changed = orderService.changeOrderStatus(orderTableId, order);
+
+        // then
+        assertThat(changed.getId()).isEqualTo(order.getId());
+        assertThat(changed.getOrderTableId()).isEqualTo(order.getOrderTableId());
+        assertThat(changed.getOrderStatus()).isEqualTo(order.getOrderStatus());
+    }
+
+    @DisplayName("주문이 존재하지 않으면 예외가 발생한다.")
+    @Test
+    void changeOrderStatus_failNotExistOrder() {
+        // given
+        final Long orderTableId = 1L;
+        final Order order = new Order() {{
+            setId(1L);
+            setOrderTableId(orderTableId);
+            setOrderStatus(OrderStatus.COOKING.name());
+            setOrderedTime(LocalDateTime.now());
+        }};
+
+        given(orderDao.findById(order.getId()))
+            .willReturn(Optional.empty());
+
+        // when
+        // then
+        assertThatThrownBy(() -> orderService.changeOrderStatus(orderTableId, order))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("주문 상태가 COMPLETION 이면 예외가 발생한다.")
+    @Test
+    void changeOrderStatus_failStatusIsCompletion() {
+        // given
+        final Long orderTableId = 1L;
+        final Order order = new Order() {{
+            setId(1L);
+            setOrderTableId(orderTableId);
+            setOrderStatus(OrderStatus.COMPLETION.name());
+            setOrderedTime(LocalDateTime.now());
+        }};
+
+        given(orderDao.findById(order.getId()))
+            .willReturn(Optional.of(order));
+
+        // when
+        // then
+        assertThatThrownBy(() -> orderService.changeOrderStatus(orderTableId, order))
             .isInstanceOf(IllegalArgumentException.class);
     }
 }

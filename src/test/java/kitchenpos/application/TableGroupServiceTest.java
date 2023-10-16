@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
+import java.util.Collections;
 import java.util.List;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
@@ -94,7 +95,7 @@ class TableGroupServiceTest {
     void create_failEmptyTables() {
         // given
         final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of());
+        tableGroup.setOrderTables(Collections.emptyList());
 
         // when
         // then
@@ -221,7 +222,6 @@ class TableGroupServiceTest {
                 new OrderTable() {{
                     setId(1L);
                     setEmpty(false);
-
                     setTableGroupId(tableGroupId);
                 }},
                 new OrderTable() {{
