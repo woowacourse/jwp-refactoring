@@ -1,24 +1,40 @@
 package kitchenpos.domain.order;
 
+import kitchenpos.domain.table.OrderTable;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class Order {
     private Long id;
-    private Long orderTableId;
-    private String orderStatus;
+    private OrderTable orderTable;
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+    private OrderLineItems orderLineItems;
 
     public Order() {
     }
 
-    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+    public Order(Long id, OrderTable orderTable, List<OrderLineItem> orderLineItems) {
         this.id = id;
-        this.orderTableId = orderTableId;
-        this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
+        this.orderTable = orderTable;
+        this.orderStatus = OrderStatus.COOKING;
+        this.orderedTime = LocalDateTime.now();
+        this.orderLineItems = new OrderLineItems(orderLineItems);
+        validateOrderTable(orderTable);
+        validateOrderLineItems(this.orderLineItems);
+    }
+
+    private void validateOrderTable(OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateOrderLineItems(OrderLineItems orderLineItems) {
+        if (orderLineItems.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
@@ -29,20 +45,20 @@ public class Order {
         this.id = id;
     }
 
-    public Long getOrderTableId() {
-        return orderTableId;
+    public OrderTable getOrderTable() {
+        return orderTable;
     }
 
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
+    public void setOrderTable(OrderTable orderTable) {
+        this.orderTable = orderTable;
     }
 
     public String getOrderStatus() {
-        return orderStatus;
+        return orderStatus.name();
     }
 
     public void setOrderStatus(final String orderStatus) {
-        this.orderStatus = orderStatus;
+        this.orderStatus = OrderStatus.of(orderStatus);
     }
 
     public LocalDateTime getOrderedTime() {
@@ -54,10 +70,10 @@ public class Order {
     }
 
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+        return orderLineItems.getCollection();
     }
 
     public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
+        this.orderLineItems = new OrderLineItems(orderLineItems);
     }
 }

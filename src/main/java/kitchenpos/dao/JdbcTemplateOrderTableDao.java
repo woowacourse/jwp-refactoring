@@ -44,7 +44,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
     }
 
     @Override
-    public Optional<OrderTable> findById(final Long id) {
+    public Optional<OrderTable> findById(final OrderTable id) {
         try {
             return Optional.of(select(id));
         } catch (final EmptyResultDataAccessException e) {
@@ -75,7 +75,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
         return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    private OrderTable select(final Long id) {
+    private OrderTable select(final OrderTable id) {
         final String sql = "SELECT id, table_group_id, number_of_guests, empty FROM order_table WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("id", id);

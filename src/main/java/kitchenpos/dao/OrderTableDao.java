@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface OrderTableDao {
     OrderTable save(OrderTable entity);
 
-    Optional<OrderTable> findById(Long id);
+    Optional<OrderTable> findById(OrderTable id);
 
     List<OrderTable> findAll();
 

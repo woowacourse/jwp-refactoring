@@ -59,7 +59,7 @@ class TableServiceTest {
 
     @Test
     void 테이블을_빈_상태로_변경한다() {
-        Long completionTableId = completionOrder.getOrderTableId();
+        OrderTable completionTableId = completionOrder.getOrderTable();
         OrderTable changeEmpty = tableService.changeEmpty(completionTableId, new OrderTable(null, null, 3, true));
 
         assertThat(changeEmpty.isEmpty()).isTrue();
@@ -69,14 +69,14 @@ class TableServiceTest {
     @ParameterizedTest
     void 완료상태가_아니면_테이블을_빈_상태로_변경할_수_없다(String status) {
         Order order = orderDao.save(new Order(null, 1L, status, null, null));
-        Long tableId = order.getOrderTableId();
+        OrderTable tableId = order.getOrderTable();
         assertThatThrownBy(() -> tableService.changeEmpty(tableId, new OrderTable(null, null, 3, true)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 테이블의_손님_수를_변경한다() {
-        Long completionTableId = completionOrder.getOrderTableId();
+        OrderTable completionTableId = completionOrder.getOrderTable();
         OrderTable changeNumberOfGuests = tableService.changeNumberOfGuests(completionTableId, new OrderTable(null, null, 5, false));
 
         assertThat(changeNumberOfGuests.getNumberOfGuests()).isEqualTo(5);

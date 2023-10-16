@@ -2,6 +2,7 @@ package kitchenpos.fake;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.order.Order;
+import kitchenpos.domain.table.OrderTable;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -38,16 +39,16 @@ public class FakeOrderDao implements OrderDao {
     }
 
     @Override
-    public boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<String> orderStatuses) {
+    public boolean existsByOrderTableIdAndOrderStatusIn(OrderTable orderTableId, List<String> orderStatuses) {
         return orders.values().stream()
-                .filter(order -> order.getOrderTableId().equals(orderTableId))
+                .filter(order -> order.getOrderTable().equals(orderTableId))
                 .anyMatch(order -> orderStatuses.contains(order.getOrderStatus()));
     }
 
     @Override
     public boolean existsByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds, List<String> orderStatuses) {
         return orders.values().stream()
-                .filter(order -> orderTableIds.contains(order.getOrderTableId()))
+                .filter(order -> orderTableIds.contains(order.getOrderTable()))
                 .anyMatch(order -> orderStatuses.contains(order.getOrderStatus()));
     }
 }

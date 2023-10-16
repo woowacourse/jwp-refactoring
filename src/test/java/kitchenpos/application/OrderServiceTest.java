@@ -83,7 +83,7 @@ class OrderServiceTest {
 
         @Test
         void 빈_테이블에서_주문할_수_없다() {
-            long emptyTableId = 2L;
+            OrderTable emptyTableId = 2L;
             assertThatThrownBy(() -> orderService.create(new Order(null, emptyTableId, "COOKING", null, List.of(orderLineItem))))
                     .isInstanceOf(IllegalArgumentException.class);
         }
@@ -113,7 +113,7 @@ class OrderServiceTest {
 
         @Test
         void 존재하지_않는_테이블에서_주문할_수_없다() {
-            long notExistTableId = 3L;
+            OrderTable notExistTableId = 3L;
             assertThatThrownBy(() -> orderService.create(new Order(null, notExistTableId, "COOKING", null, List.of(orderLineItem))))
                     .isInstanceOf(IllegalArgumentException.class);
         }

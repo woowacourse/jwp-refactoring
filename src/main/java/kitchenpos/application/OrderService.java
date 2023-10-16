@@ -7,12 +7,9 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.table.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -41,10 +38,6 @@ public class OrderService {
     public Order create(final Order order) {
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
 
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
-        }
-
         final List<Long> menuIds = orderLineItems.stream()
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
@@ -54,17 +47,6 @@ public class OrderService {
         }
 
         order.setId(null);
-
-        final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
 
         final Order savedOrder = orderDao.save(order);
 
