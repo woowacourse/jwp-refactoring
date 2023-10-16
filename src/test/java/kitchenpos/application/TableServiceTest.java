@@ -13,7 +13,7 @@ import kitchenpos.dto.request.ChangeEmptyTableRequest;
 import kitchenpos.dto.request.ChangeTableGuestRequest;
 import kitchenpos.dto.request.CreateOrderTableRequest;
 import kitchenpos.dto.response.OrderTableResponse;
-import kitchenpos.exception.NumberOfGuestIsNotPositiveException;
+import kitchenpos.exception.NotEnoughGuestsException;
 import kitchenpos.exception.OrderIsNotCompletedException;
 import kitchenpos.exception.OrderTableEmptyException;
 import kitchenpos.exception.OrderTableNotFoundException;
@@ -107,7 +107,7 @@ class TableServiceTest extends ServiceTestContext {
 
         // when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), request))
-                .isInstanceOf(NumberOfGuestIsNotPositiveException.class);
+                .isInstanceOf(NotEnoughGuestsException.class);
     }
 
     @Test

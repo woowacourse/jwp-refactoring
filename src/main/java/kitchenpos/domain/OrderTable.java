@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import kitchenpos.exception.NumberOfGuestIsNotPositiveException;
+import kitchenpos.exception.NotEnoughGuestsException;
 import kitchenpos.exception.OrderTableEmptyException;
 import kitchenpos.exception.OrderTableNotEmptyException;
 import kitchenpos.exception.TableGroupExistsException;
@@ -15,6 +15,8 @@ import kitchenpos.exception.TableGroupExistsException;
 @Table(name = "order_table")
 @Entity
 public class OrderTable {
+
+    private static final int NUMBER_OF_GUESTS_LOWER_LIMIT = 0;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,7 +56,7 @@ public class OrderTable {
 
     public void changeNumberOfGuests(int numberOfGuests) {
         validateIsNotEmpty();
-        validateNumberOfGuestsIsPositive(numberOfGuests);
+        validateNumberOfGuests(numberOfGuests);
         this.numberOfGuests = numberOfGuests;
     }
 
@@ -64,9 +66,9 @@ public class OrderTable {
         }
     }
 
-    private void validateNumberOfGuestsIsPositive(int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new NumberOfGuestIsNotPositiveException();
+    private void validateNumberOfGuests(int numberOfGuests) {
+        if (numberOfGuests < NUMBER_OF_GUESTS_LOWER_LIMIT) {
+            throw new NotEnoughGuestsException();
         }
     }
 

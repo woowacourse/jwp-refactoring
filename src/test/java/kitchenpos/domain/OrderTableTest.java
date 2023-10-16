@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
-import kitchenpos.exception.NumberOfGuestIsNotPositiveException;
+import kitchenpos.exception.NotEnoughGuestsException;
 import kitchenpos.exception.OrderTableEmptyException;
 import kitchenpos.exception.OrderTableNotEmptyException;
 import kitchenpos.exception.TableGroupExistsException;
@@ -55,7 +55,7 @@ class OrderTableTest {
 
         // when, then
         assertThatThrownBy(() -> orderTable.changeNumberOfGuests(-1))
-                .isInstanceOf(NumberOfGuestIsNotPositiveException.class);
+                .isInstanceOf(NotEnoughGuestsException.class);
     }
 
     @Test
