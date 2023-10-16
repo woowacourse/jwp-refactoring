@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
@@ -55,7 +54,7 @@ class OrderServiceTest {
         for (OrderLineItem orderLineItem : orderLineItems) {
             given(orderLineItemDao.save(orderLineItem)).willReturn(orderLineItem);
         }
-        
+
         //when
         final Order result = target.create(order);
 
@@ -69,9 +68,8 @@ class OrderServiceTest {
         //given
         final Order order = OrderTestSupport.builder().orderLineItems(Collections.emptyList()).build();
 
-        
         //when
-        
+
         //then
         assertThatThrownBy(() -> target.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -83,9 +81,9 @@ class OrderServiceTest {
         //given
         final Order order = OrderTestSupport.builder().build();
         given(menuDao.countByIdIn(any())).willReturn(0L);
-        
+
         //when
-        
+
         //then
         assertThatThrownBy(() -> target.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -100,9 +98,9 @@ class OrderServiceTest {
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
         given(menuDao.countByIdIn(any())).willReturn((long) orderLineItems.size());
         given(orderTableDao.findById(any())).willReturn(Optional.empty());
-        
+
         //when
-        
+
         //then
         assertThatThrownBy(() -> target.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -116,9 +114,9 @@ class OrderServiceTest {
         final Order order2 = OrderTestSupport.builder().build();
         final Order order3 = OrderTestSupport.builder().build();
         given(orderDao.findAll()).willReturn(List.of(order1, order2, order3));
-        
+
         //when
-        
+
         //then
         assertThat(target.list()).contains(order1, order2, order3);
     }
@@ -136,7 +134,7 @@ class OrderServiceTest {
 
         final Order input = new Order();
         input.setOrderStatus(MEAL.name());
-        
+
         //when
         final Order result = target.changeOrderStatus(order.getId(), input);
 
@@ -152,9 +150,9 @@ class OrderServiceTest {
         final Order order = OrderTestSupport.builder().orderStatus(beforeStatus.name()).build();
 
         given(orderDao.findById(any())).willReturn(Optional.of(order));
-        
+
         //when
-        
+
         //then
         assertThatThrownBy(() -> target.changeOrderStatus(order.getId(), order))
                 .isInstanceOf(IllegalArgumentException.class);

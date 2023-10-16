@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.application.support.domain.MenuTestSupport;
 import kitchenpos.domain.Menu;
 import org.junit.jupiter.api.Assertions;
@@ -27,9 +26,9 @@ class MenuServiceTest {
     void create() {
         //given
         final Menu menu = MenuTestSupport.builder().build();
-        
+
         //when
-        
+
         //then
         Assertions.assertDoesNotThrow(() -> target.create(menu));
     }
@@ -41,9 +40,8 @@ class MenuServiceTest {
         final BigDecimal price = new BigDecimal("-1");
         final Menu menu = MenuTestSupport.builder().price(price).build();
 
-        
         //when
-        
+
         //then
         assertThatThrownBy(() -> target.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -54,9 +52,9 @@ class MenuServiceTest {
     void create_fail_not_in_menuGroup() {
         //given
         final Menu menu = MenuTestSupport.builder().menuGroupId(null).build();
-        
+
         //when
-        
+
         //then
         assertThatThrownBy(() -> target.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -68,9 +66,9 @@ class MenuServiceTest {
         //given
         final BigDecimal price = new BigDecimal(Long.MAX_VALUE);
         final Menu menu = MenuTestSupport.builder().price(price).build();
-        
+
         //when
-        
+
         //then
         assertThatThrownBy(() -> target.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -82,7 +80,7 @@ class MenuServiceTest {
         //given
         final Menu menu1 = target.create(MenuTestSupport.builder().build());
         final Menu menu2 = target.create(MenuTestSupport.builder().build());
-        
+
         //when
         final List<Menu> result = target.list();
 

@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
 
 import java.util.List;
 import kitchenpos.application.support.dao.MockMenuGroupDao;
@@ -35,9 +34,9 @@ class MenuGroupServiceTest {
         expectedResult.setId(1L);
         expectedResult.setName(origin.getName());
         given(menuGroupDao.save(any())).willReturn(expectedResult);
-        
+
         //when
-        
+
         final MenuGroup result = target.create(origin);
         //then
         SoftAssertions.assertSoftly(
@@ -56,7 +55,7 @@ class MenuGroupServiceTest {
         final MenuGroupService menuGroupService = new MenuGroupService(new MockMenuGroupDao());
         final MenuGroup value = new MenuGroup();
         menuGroupService.create(value);
-        
+
         //when
         final List<MenuGroup> result = menuGroupService.list();
 
