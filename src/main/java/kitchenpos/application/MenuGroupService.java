@@ -20,6 +20,7 @@ public class MenuGroupService {
         return menuGroupDao.save(menuGroup);
     }
 
+    @Transactional(readOnly = true)
     public List<MenuGroup> list() {
         return menuGroupDao.findAll();
     }
