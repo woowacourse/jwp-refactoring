@@ -51,12 +51,12 @@ class ProductServiceTest {
         final BigDecimal price1 = new BigDecimal("1000");
         final Product product1 = ProductTestSupport.builder().price(price1).build();
         final Product product2 = ProductTestSupport.builder().build();
-        //when
         target.create(product1);
         target.create(product2);
-        final List<String> productNames = target.list().stream()
-                .map(Product::getName).collect(Collectors.toList());
+        //when
+        final List<Product> result = target.list();
         //then
-        assertThat(productNames).contains(product1.getName(), product2.getName());
+        assertThat(result).extracting(Product::getName)
+                .contains(product1.getName(), product2.getName());
     }
 }

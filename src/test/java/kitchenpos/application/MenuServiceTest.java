@@ -75,8 +75,10 @@ class MenuServiceTest {
         final Menu menu1 = target.create(MenuTestSupport.builder().build());
         final Menu menu2 = target.create(MenuTestSupport.builder().build());
         //when
-        final List<String> menuNames = target.list().stream().map(Menu::getName).collect(Collectors.toList());
+        final List<Menu> result = target.list();
         //then
-        assertThat(menuNames).contains(menu1.getName(), menu2.getName());
+        assertThat(result)
+                .extracting(Menu::getName)
+                .contains(menu1.getName(), menu2.getName());
     }
 }
