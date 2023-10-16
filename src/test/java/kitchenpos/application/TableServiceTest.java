@@ -217,7 +217,7 @@ class TableServiceTest {
 
             // when
             // then
-            final Long tableId = notEmptyTable.getId();
+            final Long tableId = emptyTable.getId();
             Assertions.assertThatThrownBy(() -> tableService.changeNumberOfGuests(tableId, orderTableRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
