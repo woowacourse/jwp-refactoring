@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
 
 public class InMemoryOrderLineItemRepository implements OrderLineItemRepository {
     private final Map<Long, OrderLineItem> map = new HashMap<>();
@@ -20,7 +19,7 @@ public class InMemoryOrderLineItemRepository implements OrderLineItemRepository 
     public OrderLineItem save(OrderLineItem entity) {
         if (Objects.isNull(entity.getSeq())) {
             long seq = this.seq.getAndIncrement();
-            OrderLineItem orderLineItem = new OrderLineItem(seq, entity.getOrder(), entity.getMenuId(), entity.getQuantity());
+            OrderLineItem orderLineItem = new OrderLineItem(seq, entity.getMenuId(), entity.getQuantity());
             map.put(seq, orderLineItem);
             return orderLineItem;
         }
@@ -36,13 +35,5 @@ public class InMemoryOrderLineItemRepository implements OrderLineItemRepository 
     @Override
     public List<OrderLineItem> findAll() {
         return new ArrayList<>(map.values());
-    }
-
-    @Override
-    public List<OrderLineItem> findAllByOrderId(Long orderId) {
-        return map.values().stream()
-                .filter(it -> Objects.nonNull(it.getOrder()))
-                .filter(it -> it.getOrder().equals(orderId))
-                .collect(Collectors.toList());
     }
 }

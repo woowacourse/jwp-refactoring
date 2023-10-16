@@ -16,7 +16,6 @@ import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static kitchenpos.application.dto.OrderRequest.OrderLineItemRequest;
@@ -66,7 +65,7 @@ public class OrderService {
         final Order savedOrder = orderRepository.save(new Order(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now()));
 
         List<OrderLineItem> savedOrderLineItems = orderLineItems.stream()
-                .map(it -> orderLineItemRepository.save(new OrderLineItem(savedOrder, it.getMenuId(), it.getQuantity())))
+                .map(it -> orderLineItemRepository.save(new OrderLineItem(it.getMenuId(), it.getQuantity())))
                 .collect(Collectors.toList());
         savedOrder.changeOrderLineItems(savedOrderLineItems);
 
@@ -74,30 +73,14 @@ public class OrderService {
     }
 
     public List<Order> list() {
-        final List<Order> orders = orderRepository.findAll();
-
-        for (final Order order : orders) {
-            order.changeOrderLineItems(orderLineItemRepository.findAllByOrderId(order.getId()));
-        }
-
-        return orders;
+        return orderRepository.findAll();
     }
 
     @Transactional
     public Order changeOrderStatus(final Long orderId, final OrderChangeStatusRequest request) {
-        final Order savedOrder = orderRepository.findById(orderId)
+        Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다"));
-
-        if (Objects.equals(OrderStatus.COMPLETION, savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException("완료 상태의 주문은 변경할 수 없습니다");
-        }
-
-        savedOrder.changeOrderStatus(request.getOrderStatus());
-
-        orderRepository.save(savedOrder);
-
-        savedOrder.changeOrderLineItems(orderLineItemRepository.findAllByOrderId(orderId));
-
-        return savedOrder;
+        order.changeOrderStatus(request.getOrderStatus());
+        return order;
     }
 }

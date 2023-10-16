@@ -100,7 +100,7 @@ class OrderServiceTest {
         OrderTable savedOrderTable = orderTableRepository.save(orderTable(10, false));
         Order savedOrder = orderRepository.save(order(savedOrderTable.getId(), COOKING));
         Menu menu = menuRepository.save(menu("메뉴", 10000L, null, List.of(menuProduct(product("chicken", 1000L), 10L))));
-        OrderLineItem savedOrderLineItem = orderLineItemRepository.save(new OrderLineItem(savedOrder, menu.getId(), 10));
+        OrderLineItem savedOrderLineItem = orderLineItemRepository.save(new OrderLineItem(menu.getId(), 10));
         OrderRequest orderRequest = orderRequest(orderTable.getId(), List.of(new OrderLineItemRequest(savedOrderLineItem.getMenuId(), savedOrderLineItem.getQuantity())));
 
         // expect
@@ -115,7 +115,7 @@ class OrderServiceTest {
         OrderTable savedOrderTable = orderTableRepository.save(orderTable(10, false));
         Order order = orderRepository.save(order(savedOrderTable.getId(), COOKING));
         Menu menu = menuRepository.save(menu("메뉴", 10000L, null, List.of(menuProduct(product("chicken", 1000L), 10L))));
-        OrderLineItem savedOrderLineItem = orderLineItemRepository.save(new OrderLineItem(order, menu.getId(), 10));
+        OrderLineItem savedOrderLineItem = orderLineItemRepository.save(new OrderLineItem(menu.getId(), 10));
         OrderRequest request = orderRequest(savedOrderTable.getId(), List.of(new OrderLineItemRequest(savedOrderLineItem.getMenuId(), savedOrderLineItem.getQuantity())));
 
         // when
@@ -126,7 +126,7 @@ class OrderServiceTest {
             softly.assertThat(savedOrder.getOrderStatus()).isEqualTo(COOKING);
             softly.assertThat(savedOrder.getOrderTableId()).isEqualTo(request.getOrderTableId());
             softly.assertThat(savedOrder.getOrderedTime()).isNotNull();
-            softly.assertThat(savedOrder.getOrderLineItems()).map(OrderLineItem::getOrder)
+            softly.assertThat(savedOrder.getOrderLineItems()).map(OrderLineItem::getSeq)
                     .isNotNull();
         });
     }
@@ -138,10 +138,10 @@ class OrderServiceTest {
 
         OrderTable orderTable = orderTableRepository.save(orderTable(10, false));
         Order order1 = orderRepository.save(order(orderTable.getId(), MEAL));
-        OrderLineItem orderLineItem1 = orderLineItemRepository.save(orderLineItem(order1, menu.getId(), 2L));
+        OrderLineItem orderLineItem1 = orderLineItemRepository.save(orderLineItem(menu.getId(), 2L));
         order1.changeOrderLineItems(List.of(orderLineItem1));
         Order order2 = orderRepository.save(order(orderTable.getId(), COOKING));
-        OrderLineItem orderLineItem2 = orderLineItemRepository.save(orderLineItem(order2, menu.getId(), 2L));
+        OrderLineItem orderLineItem2 = orderLineItemRepository.save(orderLineItem(menu.getId(), 2L));
         order2.changeOrderLineItems(List.of(orderLineItem2));
 
         // when
