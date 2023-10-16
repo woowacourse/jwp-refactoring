@@ -49,7 +49,8 @@ class OrderServiceTest extends ServiceTest {
             Order 주문 = new Order();
             주문.setOrderLineItems(List.of(주문상품));
             주문.setOrderStatus(OrderStatus.COOKING.name());
-            주문.setOrderTableId(1L);
+            long 빈_테이블_아이디 = 1L;
+            주문.setOrderTableId(빈_테이블_아이디);
 
             //expect
             assertThatThrownBy(() -> orderService.create(주문))
