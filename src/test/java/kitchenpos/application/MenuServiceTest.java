@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -30,7 +29,7 @@ class MenuServiceTest extends ServiceTest {
         @ValueSource(longs = {-100, -1})
         void 가격은_음수일_수_없다(long price) {
             //given
-            MenuGroup 메뉴_그룹 = 메뉴_그룹_생성();
+            MenuGroup 메뉴_그룹 = 상품_메뉴_만들기();
 
             Menu 메뉴 = new Menu();
             메뉴.setMenuGroupId(메뉴_그룹.getId());
@@ -45,7 +44,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void 가격은_null일_수_없다() {
             //given
-            MenuGroup 메뉴_그룹 = 메뉴_그룹_생성();
+            MenuGroup 메뉴_그룹 = 상품_메뉴_만들기();
 
             Menu 메뉴 = new Menu();
             메뉴.setMenuGroupId(메뉴_그룹.getId());
@@ -74,7 +73,7 @@ class MenuServiceTest extends ServiceTest {
         void 메뉴에_속하는_상품이_없으면_예외가_발생한다() {
             //given
             Menu 메뉴 = new Menu();
-            메뉴.setMenuGroupId(메뉴_그룹_생성().getId());
+            메뉴.setMenuGroupId(상품_메뉴_만들기().getId());
             메뉴.setPrice(BigDecimal.valueOf(1000));
             메뉴.setMenuProducts(emptyList());
 
@@ -86,7 +85,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void 가격합이_동일하지_않은경우_예외가_발생한다() {
             //given
-            MenuGroup 메뉴_그룹 = 메뉴_그룹_생성();
+            MenuGroup 메뉴_그룹 = 상품_메뉴_만들기();
             Menu 메뉴 = new Menu();
             메뉴.setMenuGroupId(메뉴_그룹.getId());
             long 가격_합 = 메뉴_가격_상품가격합이랑_다르게_만들기(메뉴);
@@ -114,7 +113,7 @@ class MenuServiceTest extends ServiceTest {
 
     }
 
-    private MenuGroup 메뉴_그룹_생성() {
+    private MenuGroup 상품_메뉴_만들기() {
         MenuGroup 저장할_그룹 = new MenuGroup();
         저장할_그룹.setName("메뉴그룹");
         return menuGroupDao.save(저장할_그룹);
