@@ -45,10 +45,6 @@ public class MenuProduct {
         return product.getPrice().multiply(quantity);
     }
 
-    public MenuProduct mapMenu(final Menu menu) {
-        return new MenuProduct(this.seq, menu, this.product, this.quantity);
-    }
-
     public Long getSeq() {
         return seq;
     }

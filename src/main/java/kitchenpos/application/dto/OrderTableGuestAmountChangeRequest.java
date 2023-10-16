@@ -3,6 +3,7 @@ package kitchenpos.application.dto;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 public class OrderTableGuestAmountChangeRequest {
+
     private final Integer numberOfGuests;
 
     @JsonCreator

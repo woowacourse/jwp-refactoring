@@ -13,7 +13,6 @@ import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Price;
@@ -32,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
 public abstract class IntegrationTest {
+
     @Autowired
     protected MenuRepository menuRepository;
     @Autowired
@@ -54,12 +54,8 @@ public abstract class IntegrationTest {
         return menuGroupRepository.save(menuGroup);
     }
 
-    protected Menu generateMenu(final String name) {
-        final Menu menu = new Menu(
-                name,
-                BigDecimal.valueOf(220000),
-                generateMenuGroup(name + "-group")
-        );
+    protected Menu generateMenu(final String name, final Long price) {
+        final Menu menu = new Menu(name, BigDecimal.valueOf(price), generateMenuGroup(name + "-group"));
         return menuRepository.save(menu);
     }
 
@@ -68,17 +64,9 @@ public abstract class IntegrationTest {
         return productRepository.save(product);
     }
 
-    protected OrderLineItem generateOrderLineItem(final Menu menu, final Order order, final Long quantity) {
-        final OrderLineItem orderLineItem = new OrderLineItem(
-                order,
-                menu,
-                quantity
-        );
-        return orderLineItemRepository.save(orderLineItem);
-    }
-
     protected Order generateOrder(final OrderStatus orderStatus, final OrderTable orderTable) {
         final Order order = new Order(
+                null,
                 orderTable,
                 orderStatus,
                 LocalDateTime.now()

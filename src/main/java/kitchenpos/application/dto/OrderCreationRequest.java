@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.util.CollectionUtils;
 
 public class OrderCreationRequest {
+
     private final Long orderTableId;
     private final List<OrderItemsWithQuantityRequest> orderLineItems;
 

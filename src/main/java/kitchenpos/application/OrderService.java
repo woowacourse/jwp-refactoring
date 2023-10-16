@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
+
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final MenuRepository menuRepository;

@@ -60,7 +60,6 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-
     public void changeOrderStatus(final OrderStatus orderStatus) {
         if (this.orderStatus == OrderStatus.COMPLETION) {
             throw new IllegalArgumentException("Order already completed cannot be changed");

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class OrderRestController {
+
     private final OrderService orderService;
 
     public OrderRestController(final OrderService orderService) {

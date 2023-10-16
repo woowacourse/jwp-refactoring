@@ -3,6 +3,7 @@ package kitchenpos.application.dto;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 public class MenuGroupCreationRequest {
+
     private final String name;
 
     @JsonCreator

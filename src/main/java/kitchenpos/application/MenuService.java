@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MenuService {
+
     private final MenuGroupRepository menuGroupRepository;
     private final ProductRepository productRepository;
     private final MenuRepository menuRepository;
@@ -35,7 +36,7 @@ public class MenuService {
         final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                 .orElseThrow(() -> new IllegalArgumentException("MenuGroup does not exist."));
         final Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup);
-        List<MenuProduct> menuProducts = getMenuProductsByRequest(menu, request.getMenuProducts());
+        final List<MenuProduct> menuProducts = getMenuProductsByRequest(menu, request.getMenuProducts());
         menu.applyMenuProducts(menuProducts);
         return menuRepository.save(menu);
     }
