@@ -6,11 +6,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import kitchenpos.exception.NumberOfGuestIsNotPositiveException;
 import kitchenpos.exception.OrderTableEmptyException;
 import kitchenpos.exception.OrderTableNotEmptyException;
 import kitchenpos.exception.TableGroupExistsException;
 
+@Table(name = "order_table")
 @Entity
 public class OrderTable {
 
