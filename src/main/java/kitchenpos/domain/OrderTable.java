@@ -49,6 +49,13 @@ public class OrderTable {
         this(null, tableGroup, numberOfGuests, empty);
     }
 
+    public OrderTable(
+            final int numberOfGuests,
+            final boolean empty
+    ) {
+        this(null, null, numberOfGuests, empty);
+    }
+
     public boolean isAbleToGroup() {
         return this.empty && Objects.isNull(this.tableGroup);
     }
@@ -72,6 +79,44 @@ public class OrderTable {
             throw new IllegalArgumentException("Order from other table is not allowed");
         }
         orders.add(order);
+    }
+
+    public void changeEmpty(final boolean empty) {
+        validateGroupedTable();
+        validateOrdersStatus();
+        this.empty = empty;
+    }
+
+    private void validateGroupedTable() {
+        if (Objects.isNull(tableGroup)) {
+            return;
+        }
+        throw new IllegalArgumentException("Cannot change empty status of table in group");
+    }
+
+    private void validateOrdersStatus() {
+        if (orders.stream().allMatch(order -> order.getOrderStatus() == OrderStatus.COMPLETION)) {
+            return;
+        }
+        throw new IllegalArgumentException("Cannot change empty status of table with order status not completion");
+    }
+
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        validateNumberOfGuests(numberOfGuests);
+        validateTableIsEmpty();
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    private void validateNumberOfGuests(final int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("Number of guests must be greater than 0");
+        }
+    }
+    
+    private void validateTableIsEmpty() {
+        if (this.empty) {
+            throw new IllegalArgumentException("Cannot change number of guests of empty table");
+        }
     }
 
     public Long getId() {

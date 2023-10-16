@@ -71,4 +71,61 @@ class OrderTableTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Order from other table is not allowed");
     }
+
+    @Test
+    void throw_when_try_to_change_empty_status_of_grouped_table() {
+        // given
+        final OrderTable orderTable = new OrderTable(1L, new TableGroup(), 1, false);
+
+        // when & then
+        assertThatThrownBy(() -> orderTable.changeEmpty(true))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Cannot change empty status of table in group");
+    }
+
+    @Test
+    void throw_when_try_to_change_empty_status_not_completed_table() {
+        // given
+        final OrderTable orderTable = new OrderTable(1L, null, 1, false);
+        orderTable.addOrder(new Order(1L, orderTable, OrderStatus.COOKING, null));
+
+        // when & then
+        assertThatThrownBy(() -> orderTable.changeEmpty(true))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Cannot change empty status of table with order status not completion");
+    }
+
+    @Test
+    void throw_when_try_to_change_number_of_guest_to_under_zero() {
+        // given
+        final OrderTable orderTable = new OrderTable(1L, null, 1, false);
+
+        // when & then
+        assertThatThrownBy(() -> orderTable.changeNumberOfGuests(-1))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Number of guests must be greater than 0");
+    }
+
+    @Test
+    void throw_when_try_to_change_number_of_guest_of_empty_table() {
+        // given
+        final OrderTable orderTable = new OrderTable(1L, null, 1, true);
+
+        // when & then
+        assertThatThrownBy(() -> orderTable.changeNumberOfGuests(3))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Cannot change number of guests of empty table");
+    }
+
+    @Test
+    void change_number_of_guests() {
+        // given
+        final OrderTable orderTable = new OrderTable(1L, null, 1, false);
+
+        // when
+        orderTable.changeNumberOfGuests(3);
+
+        // then
+        assertThat(orderTable.getNumberOfGuests()).isEqualTo(3);
+    }
 }
