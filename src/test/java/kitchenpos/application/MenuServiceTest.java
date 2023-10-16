@@ -25,15 +25,15 @@ class MenuServiceTest extends ServiceTest {
     @Nested
     class 메뉴_생성 {
 
-        @ParameterizedTest
-        @ValueSource(longs = {-100, -1})
-        void 가격은_음수일_수_없다(long price) {
+        @Test
+        void 가격은_음수일_수_없다() {
             //given
-            MenuGroup 메뉴_그룹 = 상품_메뉴_만들기();
+            MenuGroup 메뉴_그룹 = 메뉴_그룹_만들기();
 
             Menu 메뉴 = new Menu();
+            메뉴.setName("메뉴명");
             메뉴.setMenuGroupId(메뉴_그룹.getId());
-            메뉴.setPrice(BigDecimal.valueOf(price));
+            메뉴.setPrice(BigDecimal.valueOf(-1));
             메뉴.setMenuProducts(상품_만들기());
 
             //expect
@@ -44,9 +44,10 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void 가격은_null일_수_없다() {
             //given
-            MenuGroup 메뉴_그룹 = 상품_메뉴_만들기();
+            MenuGroup 메뉴_그룹 = 메뉴_그룹_만들기();
 
             Menu 메뉴 = new Menu();
+            메뉴.setName("메뉴명");
             메뉴.setMenuGroupId(메뉴_그룹.getId());
             메뉴.setPrice(null);
             메뉴.setMenuProducts(상품_만들기());
@@ -60,6 +61,7 @@ class MenuServiceTest extends ServiceTest {
         void 그룹이_존재하지_않으면_예외가_발생한다() {
             //given
             Menu 메뉴 = new Menu();
+            메뉴.setName("메뉴명");
             메뉴.setMenuGroupId(1000000000000000L);
             List<MenuProduct> 상품 = 상품_만들기();
             메뉴.setMenuProducts(상품);
@@ -73,7 +75,8 @@ class MenuServiceTest extends ServiceTest {
         void 메뉴에_속하는_상품이_없으면_예외가_발생한다() {
             //given
             Menu 메뉴 = new Menu();
-            메뉴.setMenuGroupId(상품_메뉴_만들기().getId());
+            메뉴.setName("메뉴명");
+            메뉴.setMenuGroupId(메뉴_그룹_만들기().getId());
             메뉴.setPrice(BigDecimal.valueOf(1000));
             메뉴.setMenuProducts(emptyList());
 
@@ -82,13 +85,31 @@ class MenuServiceTest extends ServiceTest {
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
-        @Test
-        void 가격합이_동일하지_않은경우_예외가_발생한다() {
+        @ParameterizedTest
+        @ValueSource(longs = {0, 1})
+        void 메뉴가격이_상품가격합_이하여야한다(Long subtrahend) {
             //given
-            MenuGroup 메뉴_그룹 = 상품_메뉴_만들기();
+            MenuGroup 메뉴_그룹 = 메뉴_그룹_만들기();
             Menu 메뉴 = new Menu();
+            메뉴.setName("메뉴명");
             메뉴.setMenuGroupId(메뉴_그룹.getId());
-            long 가격_합 = 메뉴_가격_상품가격합이랑_다르게_만들기(메뉴);
+            메뉴.setPrice(BigDecimal.valueOf(메뉴_상품가격합_구하기(메뉴) - subtrahend));
+
+            //when
+            Menu 생성된_메뉴 = menuService.create(메뉴);
+
+            //then
+            assertThat(생성된_메뉴.getId()).isNotNull();
+        }
+
+        @Test
+        void 메뉴가격이_상품가격합보다_큰_경우_예외가_발생한다() {
+            //given
+            MenuGroup 메뉴_그룹 = 메뉴_그룹_만들기();
+            Menu 메뉴 = new Menu();
+            메뉴.setName("메뉴명");
+            메뉴.setMenuGroupId(메뉴_그룹.getId());
+            long 가격_합 = 메뉴_상품가격합_구하기(메뉴);
 
             메뉴.setPrice(BigDecimal.valueOf(가격_합 + 1));
             //expect
@@ -96,12 +117,13 @@ class MenuServiceTest extends ServiceTest {
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
-        private long 메뉴_가격_상품가격합이랑_다르게_만들기(final Menu 메뉴) {
+        private long 메뉴_상품가격합_구하기(final Menu 메뉴) {
             var 존재하는_상품_목록 = productDao.findAll().subList(0, 2);
             List<MenuProduct> 메뉴상품_목록 = 존재하는_상품_목록.stream()
                     .map(product -> {
                         MenuProduct 메뉴_상품 = new MenuProduct();
                         메뉴_상품.setProductId(product.getId());
+                        메뉴_상품.setQuantity(1);
                         return 메뉴_상품;
                     }).collect(Collectors.toList());
             메뉴.setMenuProducts(메뉴상품_목록);
@@ -113,7 +135,7 @@ class MenuServiceTest extends ServiceTest {
 
     }
 
-    private MenuGroup 상품_메뉴_만들기() {
+    private MenuGroup 메뉴_그룹_만들기() {
         MenuGroup 저장할_그룹 = new MenuGroup();
         저장할_그룹.setName("메뉴그룹");
         return menuGroupDao.save(저장할_그룹);
