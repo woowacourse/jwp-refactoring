@@ -87,7 +87,7 @@ class TableServiceTest {
         }
 
         @Test
-        void 상태_변경_시_테이블의_상태_변경_완료_이벤트를_발행한다() {
+        void 테이블의_상태_변경_완료_이벤트를_발행한다() {
             // given
             OrderTable orderTable = orderTableRepository.save(테이블(false));
 
