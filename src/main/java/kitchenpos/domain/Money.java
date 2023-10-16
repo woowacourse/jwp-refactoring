@@ -49,8 +49,19 @@ public class Money {
         return value.compareTo(BigDecimal.ZERO) < 0;
     }
 
-    public boolean lessThen(Money other) {
+    public boolean lessThan(Money other) {
         return value.compareTo(other.value) < 0;
+    }
+
+    public boolean greaterThan(Money other) {
+        return value.compareTo(other.value) > 0;
+    }
+
+    public Money multiple(long multiplicand) {
+        if (multiplicand == 0) {
+            return ZERO;
+        }
+        return new Money(value.multiply(BigDecimal.valueOf(multiplicand)));
     }
 
     public BigDecimal getValue() {
