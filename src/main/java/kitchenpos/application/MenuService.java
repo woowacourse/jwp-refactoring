@@ -3,17 +3,17 @@ package kitchenpos.application;
 import kitchenpos.application.dto.MenuRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroupRepository;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
-
-import static kitchenpos.application.dto.MenuRequest.MenuProductRequest;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class MenuService {
@@ -33,30 +33,24 @@ public class MenuService {
 
     @Transactional
     public Menu create(final MenuRequest request) {
-        final BigDecimal price = request.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("가격은 0원 이상이여야합니다");
-        }
-
         if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException("메뉴 그룹이 존재 해야합니다");
         }
+        Menu menu = getMenu(request);
+        return menuRepository.save(menu);
+    }
 
-        final List<MenuProductRequest> menuProducts = request.getMenuProductRequests();
+    private Menu getMenu(MenuRequest request) {
+        List<MenuProduct> menuProducts = toMenuProducts(request);
+        return new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(), menuProducts);
+    }
 
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProductRequest menuProduct : menuProducts) {
-            final Product product = productRepository.findById(menuProduct.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
-
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException("가격의 합이 맞지 않습니다");
-        }
-
-        return menuRepository.save(request.toMenu());
+    private List<MenuProduct> toMenuProducts(MenuRequest request) {
+        Map<Long, Product> products = productRepository.findAllByIdIn(request.getMenuProductIds()).stream()
+                .collect(Collectors.toMap(Product::getId, Function.identity()));
+        return request.getMenuProductRequests().stream()
+                .map(it -> new MenuProduct(products.get(it.getProductId()), it.getQuantity()))
+                .collect(Collectors.toList());
     }
 
     public List<Menu> list() {

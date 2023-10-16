@@ -1,12 +1,10 @@
 package kitchenpos.domain;
 
-import javax.persistence.CascadeType;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,10 +18,8 @@ public class Menu {
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
-
-    @OneToMany(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "menu_id")
-    private List<MenuProduct> menuProducts;
+    @Embedded
+    private MenuProducts menuProducts;
 
     protected Menu() {
     }
@@ -32,23 +28,30 @@ public class Menu {
         this(id, name, price, menuGroupId, new ArrayList<>());
     }
 
+    public Menu(String name, BigDecimal price, Long menuGroupId) {
+        this(name, price, menuGroupId, new ArrayList<>());
+    }
+
+    public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        this(null, name, price, menuGroupId, menuProducts);
+    }
+
     public Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
+        this.menuProducts = new MenuProducts(menuProducts);
+        validatePrice(price);
     }
 
-    public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        this.name = name;
-        this.price = price;
-        this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
-    }
-
-    public Menu(String name, BigDecimal price, Long menuGroupId) {
-        this(name, price, menuGroupId, new ArrayList<>());
+    private void validatePrice(BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("가격은 0원 이상이여야합니다");
+        }
+        if (price.compareTo(menuProducts.menuProductsPrice()) > 0) {
+            throw new IllegalArgumentException("가격의 합이 맞지 않습니다");
+        }
     }
 
     public Long getId() {
@@ -67,12 +70,8 @@ public class Menu {
         return menuGroupId;
     }
 
-    public List<MenuProduct> getMenuProducts() {
+    public MenuProducts getMenuProducts() {
         return menuProducts;
-    }
-
-    public void changeMenuProducts(List<MenuProduct> menuProducts) {
-        this.menuProducts = new ArrayList<>(menuProducts);
     }
 
     @Override

@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static kitchenpos.application.dto.MenuRequest.MenuProductRequest;
 import static kitchenpos.fixture.MenuFixture.menu;
 import static kitchenpos.fixture.MenuFixture.menuRequest;
 import static kitchenpos.fixture.MenuGroupFixture.menuGroup;
@@ -36,8 +35,6 @@ class MenuServiceTest {
     private MenuRepository menuRepository;
     private ProductRepository productRepository;
     private MenuService menuService;
-    private MenuGroup savedMenuGroup;
-    private MenuProduct savedMenuProduct;
 
     @BeforeEach
     void before() {
@@ -45,7 +42,6 @@ class MenuServiceTest {
         menuRepository = new InMemoryMenuRepository();
         productRepository = new InMemoryProductRepository();
         menuService = new MenuService(menuRepository, menuGroupRepository, productRepository);
-        savedMenuGroup = menuGroupRepository.save(menuGroup("메뉴 그룹"));
     }
 
     @Test
@@ -53,7 +49,7 @@ class MenuServiceTest {
         // Given
         Product product = productRepository.save(new Product("chicken", BigDecimal.valueOf(1_000)));
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        MenuRequest request = menuRequest("메뉴", 10_000L, menuGroup.getId(), List.of(new MenuProductRequest(product.getId(), 10L)));
+        MenuRequest request = menuRequest("메뉴", 10_000L, menuGroup.getId(), List.of(menuProduct(product, 10L)));
 
         // When
         Menu createdMenu = menuService.create(request);
@@ -65,12 +61,27 @@ class MenuServiceTest {
     @Test
     void 메뉴_가격이_0보다_작으면_예외를_던진다() {
         // given
+        MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup("메뉴 그룹"));
         MenuRequest request = menuRequest("메뉴 이름", -1L, savedMenuGroup.getId(), List.of());
 
         // expect
         assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("가격은 0원 이상이여야합니다");
+    }
+
+    @Test
+    void 메뉴의_가격이_메뉴_상품들의_금액의_합보다_큰_경우_예외를_던진다() {
+        // given
+        MenuGroup menuGroup = menuGroupRepository.save(menuGroup("pizza"));
+        Product product = productRepository.save(product("cheese pizza", 10000L));
+        MenuProduct menuProduct = menuProduct(product, 1L);
+        MenuRequest request = menuRequest("cheese pizza", 10001L, menuGroup.getId(), List.of(menuProduct));
+
+        // expect
+        assertThatThrownBy(() -> menuService.create(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("가격의 합이 맞지 않습니다");
     }
 
     @Test
@@ -85,27 +96,13 @@ class MenuServiceTest {
     }
 
     @Test
-    void 가격이_실제_메뉴_상품들의_총_가격보다_크면_예외를_던진다() {
-        // given
-        MenuRequest request = menuRequest("메뉴 이름", 2001L, savedMenuGroup.getId(), List.of());
-
-        // expect
-        assertThatThrownBy(() -> menuService.create(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("가격의 합이 맞지 않습니다");
-    }
-
-    @Test
     void 전체_메뉴를_조회할_수_있다() {
         // given
         MenuGroup menuGroup = menuGroupRepository.save(menuGroup("chicken"));
         Product product = productRepository.save(product("fried chicken", 10000L));
 
-        Menu menu1 = menuRepository.save(menu("fried chicken", 10000L, menuGroup.getId(), List.of()));
-        menu1.changeMenuProducts(List.of(menuProduct(product.getId(), 1L)));
-
-        Menu menu2 = menuRepository.save(menu("spicy chicken", 20000L, menuGroup.getId(), List.of()));
-        menu2.changeMenuProducts(List.of(menuProduct(product.getId(), 1L)));
+        Menu menu1 = menuRepository.save(menu("fried chicken", 10000L, menuGroup.getId(), List.of(menuProduct(product, 1L))));
+        Menu menu2 = menuRepository.save(menu("spicy chicken", 20000L, menuGroup.getId(), List.of(menuProduct(product, 2L))));
 
         // when
         List<Menu> result = menuService.list();

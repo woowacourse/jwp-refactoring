@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 public class InMemoryProductRepository implements ProductRepository {
     private final Map<Long, Product> map = new HashMap<>();
@@ -25,6 +26,13 @@ public class InMemoryProductRepository implements ProductRepository {
     @Override
     public Optional<Product> findById(Long id) {
         return Optional.ofNullable(map.get(id));
+    }
+
+    @Override
+    public List<Product> findAllByIdIn(List<Long> ids) {
+        return ids.stream()
+                .map(map::get)
+                .collect(Collectors.toList());
     }
 
     @Override

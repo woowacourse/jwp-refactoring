@@ -27,11 +27,13 @@ import static kitchenpos.application.dto.OrderRequest.OrderLineItemRequest;
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
 import static kitchenpos.fixture.MenuFixture.menu;
+import static kitchenpos.fixture.MenuProductFixture.menuProduct;
 import static kitchenpos.fixture.OrderFixture.order;
 import static kitchenpos.fixture.OrderFixture.orderRequest;
 import static kitchenpos.fixture.OrderLineItemFixture.orderLineItem;
 import static kitchenpos.fixture.OrderLineItemFixture.orderLineItemRequest;
 import static kitchenpos.fixture.OrderTableFixtrue.orderTable;
+import static kitchenpos.fixture.ProductFixture.product;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -82,7 +84,7 @@ class OrderServiceTest {
     @Test
     void 주문_테이블이_존재하지_않는다면_예외가_발생한다() {
         // given
-        Menu menu = menuRepository.save(menu("메뉴", 10000L, null, List.of()));
+        Menu menu = menuRepository.save(menu("메뉴", 10000L, null, List.of(menuProduct(product("chicken", 1000L), 10L))));
         OrderRequest request = orderRequest(MAX_VALUE, List.of(orderLineItemRequest(menu.getId(), 1L)));
 
         // expect
@@ -97,7 +99,7 @@ class OrderServiceTest {
         OrderTable orderTable = orderTableRepository.save(orderTable(10, true));
         OrderTable savedOrderTable = orderTableRepository.save(orderTable(10, false));
         Order savedOrder = orderRepository.save(order(savedOrderTable.getId(), COOKING));
-        Menu menu = menuRepository.save(menu("메뉴", 10000L, null, List.of()));
+        Menu menu = menuRepository.save(menu("메뉴", 10000L, null, List.of(menuProduct(product("chicken", 1000L), 10L))));
         OrderLineItem savedOrderLineItem = orderLineItemRepository.save(new OrderLineItem(savedOrder, menu.getId(), 10));
         OrderRequest orderRequest = orderRequest(orderTable.getId(), List.of(new OrderLineItemRequest(savedOrderLineItem.getMenuId(), savedOrderLineItem.getQuantity())));
 
@@ -112,7 +114,7 @@ class OrderServiceTest {
         // given
         OrderTable savedOrderTable = orderTableRepository.save(orderTable(10, false));
         Order order = orderRepository.save(order(savedOrderTable.getId(), COOKING));
-        Menu menu = menuRepository.save(menu("메뉴", 10000L, null, List.of()));
+        Menu menu = menuRepository.save(menu("메뉴", 10000L, null, List.of(menuProduct(product("chicken", 1000L), 10L))));
         OrderLineItem savedOrderLineItem = orderLineItemRepository.save(new OrderLineItem(order, menu.getId(), 10));
         OrderRequest request = orderRequest(savedOrderTable.getId(), List.of(new OrderLineItemRequest(savedOrderLineItem.getMenuId(), savedOrderLineItem.getQuantity())));
 
@@ -132,7 +134,7 @@ class OrderServiceTest {
     @Test
     void 주문을_조회한다() {
         // given
-        Menu menu = menuRepository.save(menu("메뉴", 10000L, null, List.of()));
+        Menu menu = menuRepository.save(menu("메뉴", 10000L, null, List.of(menuProduct(product("chicken", 1000L), 10L))));
 
         OrderTable orderTable = orderTableRepository.save(orderTable(10, false));
         Order order1 = orderRepository.save(order(orderTable.getId(), MEAL));
@@ -188,4 +190,5 @@ class OrderServiceTest {
             softly.assertThat(changedOrder.getId()).isEqualTo(savedOrder.getId());
         });
     }
+
 }
