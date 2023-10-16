@@ -11,9 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class MenuService {
@@ -62,11 +63,10 @@ public class MenuService {
         final Menu savedMenu = menuDao.save(menu);
 
         final Long menuId = savedMenu.getId();
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(menuId);
-            savedMenuProducts.add(menuProductDao.save(menuProduct));
-        }
+
+        final List<MenuProduct> savedMenuProducts = menuProducts.stream()
+                .map(menuProduct -> menuProductDao.save(new MenuProduct(menuId, menuProduct.getProductId(), menuProduct.getQuantity())))
+                .collect(toList());
         savedMenu.setMenuProducts(savedMenuProducts);
 
         return savedMenu;

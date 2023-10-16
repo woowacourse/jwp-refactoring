@@ -21,12 +21,14 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.spy;
 
 @SuppressWarnings("NonAsciiCharacters")
 @ExtendWith(MockitoExtension.class)
+//@MockitoSettings(strictness = Strictness.LENIENT)
 class MenuServiceTest {
 
     @InjectMocks
@@ -62,11 +64,14 @@ class MenuServiceTest {
 
             final Menu spyExpected = spy(expected);
             given(menuDao.save(expected)).willReturn(spyExpected);
-            given(spyExpected.getId()).willReturn(1L);
+            final long menuId = 1L;
+            given(spyExpected.getId()).willReturn(menuId);
 
-            given(menuProductDao.save(wooDong)).willReturn(wooDong);
-
-            given(menuProductDao.save(frenchFries)).willReturn(frenchFries);
+            final MenuProduct menuProduct1 = new MenuProduct(1L, menuId, frenchFries.getProductId(), frenchFries.getQuantity());
+            final MenuProduct menuProduct2 = new MenuProduct(2L, menuId, frenchFries.getProductId(), frenchFries.getQuantity());
+            given(menuProductDao.save(any(MenuProduct.class)))
+                    .willReturn(menuProduct1)
+                    .willReturn(menuProduct2);
 
             // when
             final Menu actual = menuService.create(expected);
