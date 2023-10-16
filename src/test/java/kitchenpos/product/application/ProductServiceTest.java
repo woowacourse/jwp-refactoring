@@ -27,13 +27,13 @@ class ProductServiceTest extends ServiceIntegrateTest {
   @DisplayName("상품을 등록할 수 있다.")
   void create_success() {
     //given, when
-    final Product savedProduct = productService.create(깐풍치킨());
+    final Product savedProduct = productService.create(깐풍치킨(BigDecimal.valueOf(10000)));
     final Product actual = productDao.findById(savedProduct.getId()).get();
 
     //then
     Assertions.assertAll(
         () -> assertThat(actual).isNotNull(),
-        () -> assertThat(actual.getName()).isEqualTo(깐풍치킨().getName())
+        () -> assertThat(actual.getName()).isEqualTo(깐풍치킨(BigDecimal.valueOf(10000)).getName())
     );
   }
 
@@ -41,8 +41,7 @@ class ProductServiceTest extends ServiceIntegrateTest {
   @DisplayName("상품을 등록할 때 상품의 가격이 0보다 작을 경우 예외를 반환한다.")
   void create_fail_negative_price() {
     //given
-    final Product product = 깐풍치킨();
-    product.setPrice(BigDecimal.valueOf(-1));
+    final Product product = 깐풍치킨(BigDecimal.valueOf(-1));
 
     //when
     final ThrowingCallable actual = () -> productService.create(product);
@@ -55,8 +54,7 @@ class ProductServiceTest extends ServiceIntegrateTest {
   @DisplayName("상품을 등록할 때 상품의 가격이 null일 경우 예외를 반환한다.")
   void create_fail_null_price() {
     //given
-    final Product product = 깐풍치킨();
-    product.setPrice(null);
+    final Product product = 깐풍치킨(null);
 
     //when
     final ThrowingCallable actual = () -> productService.create(product);
@@ -71,7 +69,7 @@ class ProductServiceTest extends ServiceIntegrateTest {
   void list_success() {
     // given
     final int beforeSize = productService.list().size();
-    productService.create(깐풍치킨());
+    productService.create(깐풍치킨(BigDecimal.valueOf(10000)));
 
     // when
     final List<Product> actual = productService.list();
@@ -82,7 +80,7 @@ class ProductServiceTest extends ServiceIntegrateTest {
     //then
     Assertions.assertAll(
         () -> assertThat(actual).hasSize(beforeSize + 1),
-        () -> assertThat(actualNames).contains(깐풍치킨().getName())
+        () -> assertThat(actualNames).contains(깐풍치킨(BigDecimal.valueOf(10000)).getName())
     );
 
   }
