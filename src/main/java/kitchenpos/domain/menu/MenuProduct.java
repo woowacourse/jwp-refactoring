@@ -1,19 +1,27 @@
 package kitchenpos.domain.menu;
 
+import kitchenpos.domain.product.Product;
+
+import java.math.BigDecimal;
+
 public class MenuProduct {
     private Long seq;
     private Long menuId;
-    private Long productId;
+    private Product product;
     private long quantity;
 
     public MenuProduct() {
     }
 
-    public MenuProduct(Long seq, Long menuId, Long productId, long quantity) {
+    public MenuProduct(Long seq, Long menuId, Product product, long quantity) {
         this.seq = seq;
         this.menuId = menuId;
-        this.productId = productId;
+        this.product = product;
         this.quantity = quantity;
+    }
+
+    public BigDecimal calculateTotalPrice() {
+        return product.multiplyWithQuantity(quantity);
     }
 
     public Long getSeq() {
@@ -32,12 +40,12 @@ public class MenuProduct {
         this.menuId = menuId;
     }
 
-    public Long getProductId() {
-        return productId;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setProductId(final Long productId) {
-        this.productId = productId;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public long getQuantity() {
@@ -46,15 +54,5 @@ public class MenuProduct {
 
     public void setQuantity(final long quantity) {
         this.quantity = quantity;
-    }
-
-    @Override
-    public String toString() {
-        return "MenuProduct{" +
-                "seq=" + seq +
-                ", menuId=" + menuId +
-                ", productId=" + productId +
-                ", quantity=" + quantity +
-                '}';
     }
 }

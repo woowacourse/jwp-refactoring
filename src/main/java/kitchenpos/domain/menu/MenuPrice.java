@@ -1,20 +1,20 @@
-package kitchenpos.domain.product;
+package kitchenpos.domain.menu;
 
 import java.math.BigDecimal;
 
-public class ProductPrice {
+public class MenuPrice {
 
     private final BigDecimal value;
 
-    public ProductPrice(BigDecimal value) {
+    public MenuPrice(BigDecimal value) {
         if (value == null || value.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
         this.value = value;
     }
 
-    public BigDecimal multiplyWithQuantity(long quantity) {
-        return value.multiply(BigDecimal.valueOf(quantity));
+    public boolean isBigger(BigDecimal price) {
+        return value.compareTo(price) > 0;
     }
 
     public BigDecimal getValue() {
