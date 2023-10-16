@@ -26,15 +26,15 @@ public class Menu {
     private BigDecimal price;
     private Long menuGroupId;
 
-    @OneToMany(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "menuId")
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "menuId", updatable = false, nullable = false)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     public Menu() {
     }
 
     public Menu(String name, BigDecimal price, Long menuGroupId) {
-        this(null, price, menuGroupId, Collections.emptyList());
+        this(name, price, menuGroupId, Collections.emptyList());
     }
 
     public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
@@ -44,6 +44,15 @@ public class Menu {
     public Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
+        }
+
+        BigDecimal sumOfEachPrice = BigDecimal.ZERO;
+        for (MenuProduct menuProduct : menuProducts) {
+            sumOfEachPrice = sumOfEachPrice.add(menuProduct.getPrice());
+        }
+
+        if (price.compareTo(sumOfEachPrice) > 0) {
+            throw new IllegalArgumentException("메뉴의 가격은 개별 상품 가격의 합보다 같거나 적어야합니다.");
         }
 
         this.id = id;

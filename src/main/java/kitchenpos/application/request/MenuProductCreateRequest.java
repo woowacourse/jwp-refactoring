@@ -3,9 +3,9 @@ package kitchenpos.application.request;
 public class MenuProductCreateRequest {
 
     private final Long productId;
-    private final long quantity;
+    private final Integer quantity;
 
-    public MenuProductCreateRequest(Long productId, long quantity) {
+    public MenuProductCreateRequest(Long productId, Integer quantity) {
         this.productId = productId;
         this.quantity = quantity;
     }
@@ -14,7 +14,7 @@ public class MenuProductCreateRequest {
         return productId;
     }
 
-    public long getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 }

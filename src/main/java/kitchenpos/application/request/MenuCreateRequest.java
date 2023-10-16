@@ -2,7 +2,6 @@ package kitchenpos.application.request;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Menu;
 
 public class MenuCreateRequest {
 
@@ -17,10 +16,6 @@ public class MenuCreateRequest {
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
-    }
-
-    public Menu toEntity() {
-        return new Menu(name, price, menuGroupId);
     }
 
     public String getName() {
