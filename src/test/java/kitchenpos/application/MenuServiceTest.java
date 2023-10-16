@@ -15,6 +15,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -75,16 +77,6 @@ class MenuServiceTest {
     }
 
     @Test
-    void 메뉴_가격이_0보다_작으면_등록할_수_없다() {
-        // given
-        menu.setPrice(BigDecimal.valueOf(-1));
-
-        // when & then
-        assertThatIllegalArgumentException()
-                .isThrownBy(() -> menuService.create(menu));
-    }
-
-    @Test
     void 메뉴_그룹이_존재하지_않으면_등록할_수_없다() {
         // given
         menu.setMenuGroupId(100L);
@@ -94,10 +86,11 @@ class MenuServiceTest {
                 .isThrownBy(() -> menuService.create(menu));
     }
 
-    @Test
-    void 메뉴_가격이_재고_가격보다_크면_등록할_수_없다() {
+    @ParameterizedTest
+    @ValueSource(ints = {-5, -1, 18000, 20000})
+    void 메뉴_가격이_0보다_작거나_재고_가격보다_크면_등록할_수_없다(int price) {
         // given
-        menu.setPrice(BigDecimal.valueOf(18000));
+        menu.setPrice(BigDecimal.valueOf(price));
 
         // when & then
         assertThatIllegalArgumentException()
