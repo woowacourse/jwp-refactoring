@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -50,13 +51,18 @@ class OrderServiceTest {
     void findAllOrders() {
         // given
         final OrderTable orderTable = tableService.create(OrderTableFixture.createNotEmpty());
-        orderService.create(OrderFixture.of(setUpMenu().getId(), orderTable.getId()));
+        final Order order = orderService.create(OrderFixture.of(setUpMenu().getId(), orderTable.getId()));
 
         // when
         final List<Order> list = orderService.list();
 
         // then
-        assertThat(list).hasSize(1);
+        assertSoftly(softly -> {
+            assertThat(list).hasSize(1);
+            assertThat(list.get(0))
+                    .usingRecursiveComparison()
+                    .isEqualTo(order);
+        });
     }
 
     @Nested

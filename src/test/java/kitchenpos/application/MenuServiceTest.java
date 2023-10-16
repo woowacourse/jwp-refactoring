@@ -161,12 +161,17 @@ class MenuServiceTest {
     void findAllMenus() {
         // given
         final Menu menu = setUpMenu();
-        menuService.create(menu);
+        final Menu savedMenu = menuService.create(menu);
 
         // when
         final List<Menu> list = menuService.list();
 
         // then
-        assertThat(list).hasSize(1);
+        assertSoftly(softly -> {
+            assertThat(list).hasSize(1);
+            assertThat(list.get(0))
+                    .usingRecursiveComparison()
+                    .isEqualTo(savedMenu);
+        });
     }
 }

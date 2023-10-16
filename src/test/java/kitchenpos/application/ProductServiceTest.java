@@ -77,13 +77,18 @@ class ProductServiceTest {
     @Test
     void findAllProducts() {
         // given
-        productService.create(ProductFixture.create());
-        productService.create(ProductFixture.create());
+        final Product product1 = productService.create(ProductFixture.create());
+        final Product product2 = productService.create(ProductFixture.create());
 
         // when
         final List<Product> list = productService.list();
 
         // then
-        assertThat(list).hasSize(2);
+        assertSoftly(softly -> {
+            assertThat(list).hasSize(2);
+            assertThat(list)
+                    .usingRecursiveComparison()
+                    .isEqualTo(List.of(product1, product2));
+        });
     }
 }

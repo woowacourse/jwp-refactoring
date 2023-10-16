@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.supports.MenuGroupFixture;
@@ -38,13 +39,19 @@ class MenuGroupServiceTest {
     @Test
     void findAllMenuGroups() {
         // given
-        menuGroupService.create(MenuGroupFixture.create());
-        menuGroupService.create(MenuGroupFixture.create());
+        final MenuGroup group1 = menuGroupService.create(MenuGroupFixture.create());
+        final MenuGroup group2 = menuGroupService.create(MenuGroupFixture.create());
 
         // when
         final List<MenuGroup> list = menuGroupService.list();
 
         // then
         assertThat(list).hasSize(2);
+        assertSoftly(softly -> {
+            assertThat(list).hasSize(2);
+            assertThat(list)
+                    .usingRecursiveComparison()
+                    .isEqualTo(List.of(group1, group2));
+        });
     }
 }
