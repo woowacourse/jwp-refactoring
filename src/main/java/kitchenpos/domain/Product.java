@@ -20,7 +20,7 @@ public class Product {
     private String name;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "price"))
+    @AttributeOverride(name = "value", column = @Column(name = "price", nullable = false))
     private Money price;
 
     protected Product() {

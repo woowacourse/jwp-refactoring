@@ -28,7 +28,7 @@ public class Menu {
     private String name;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "price"))
+    @AttributeOverride(name = "value", column = @Column(name = "price", nullable = false))
     private Money price;
 
     @JoinColumn(nullable = false)
