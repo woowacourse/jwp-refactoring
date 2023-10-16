@@ -138,9 +138,7 @@ class MenuServiceTest {
     }
 
     private Product createProduct(final int price) {
-        final Product product = new Product();
-        product.setName("테스트 상품");
-        product.setPrice(new BigDecimal(price));
+        final Product product = new Product("테스트 상품", new BigDecimal(price));
         return productDao.save(product);
     }
 
