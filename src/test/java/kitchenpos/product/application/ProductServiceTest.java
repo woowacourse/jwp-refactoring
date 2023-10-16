@@ -42,7 +42,7 @@ class ProductServiceTest extends ServiceIntegrateTest {
   @DisplayName("상품을 등록할 때 상품의 가격이 0보다 작을 경우 예외를 반환한다.")
   void create_fail_negative_price() {
     //given
-    final Product product = productService.create(new Product("아마란스 샐러드", BigDecimal.valueOf(-1)));
+    final Product product = new Product("아마란스 샐러드", BigDecimal.valueOf(-1));
 
     //when
     final ThrowingCallable actual = () -> productService.create(product);
