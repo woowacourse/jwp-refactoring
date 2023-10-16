@@ -65,4 +65,15 @@ public class OrderTable {
     public void setOrders(Orders orders) {
         this.orders = orders;
     }
+
+    public void changeNumberOfGuests(int numberOfGuests) {
+        if (numberOfGuests <= 0) {
+            throw new IllegalArgumentException();
+        }
+        if (this.empty) {
+            throw new IllegalArgumentException();
+        }
+
+        this.numberOfGuests = numberOfGuests;
+    }
 }
