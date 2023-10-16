@@ -93,6 +93,15 @@ public class OrderAcceptanceTest {
             // then
             응답_상태를_검증한다(응답, 500);
         }
+
+        @Test
+        void 주문_목록이_비어있으면_오류이다() {
+            // when
+            var 응답 = 주문_생성_요청을_보낸다(테이블_1_ID);
+
+            // then
+            응답_상태를_검증한다(응답, 500);
+        }
     }
 
     @Nested
