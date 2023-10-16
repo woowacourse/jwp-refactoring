@@ -9,6 +9,7 @@ import kitchenpos.fixture.Fixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,6 +22,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 class OrderServiceTest extends ServiceBaseTest {
 
+    @Autowired
+    protected OrderService orderService;
+
     private MenuGroup menuGroup;
     private Menu menu;
     private OrderTable orderTable;
@@ -31,14 +35,14 @@ class OrderServiceTest extends ServiceBaseTest {
         menuGroup = menuGroupDao.save(Fixture.menuGroup("메뉴 그룹"));
         menu = menuDao.save(Fixture.menu("메뉴1", 1000, menuGroup.getId(), null));
         orderTable = orderTableDao.save(Fixture.orderTable(null, 0, false));
-        orderLineItem = Fixture.orderLineItem(orderTable.getId(), menu.getId(), 3L);
+        orderLineItem = Fixture.orderLineItem(orderTable.getId(), this.menu.getId(), 3L);
     }
 
     @Test
     @DisplayName("주문을 생성할 수 있다.")
     void create() {
         //given
-        final Order order = Fixture.order(orderTable.getId(), orderTable.getId(), LocalDateTime.now(), List.of(orderLineItem));
+        final Order order = Fixture.order(null, orderTable.getId(), LocalDateTime.now(), List.of(orderLineItem));
 
         //when
         final Order createdOrder = orderService.create(order);

@@ -5,6 +5,7 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.TableGroupDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -14,24 +15,6 @@ import org.springframework.test.context.jdbc.Sql;
 @ActiveProfiles("test")
 @Sql("/data.sql")
 public abstract class ServiceBaseTest {
-
-    @Autowired
-    protected MenuGroupService menuGroupService;
-
-    @Autowired
-    protected MenuService menuService;
-
-    @Autowired
-    protected OrderService orderService;
-
-    @Autowired
-    protected ProductService productService;
-
-    @Autowired
-    protected TableGroupService tableGroupService;
-
-    @Autowired
-    protected TableService tableService;
 
     @Autowired
     protected ProductDao productDao;
@@ -47,4 +30,8 @@ public abstract class ServiceBaseTest {
 
     @Autowired
     protected OrderDao orderDao;
+
+    @Autowired
+    protected TableGroupDao tableGroupDao;
+
 }

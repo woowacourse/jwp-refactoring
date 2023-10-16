@@ -27,6 +27,9 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class TableGroupServiceTest extends ServiceBaseTest {
 
+    @Autowired
+    protected TableGroupService tableGroupService;
+
     private OrderTable orderTable1;
     private OrderTable orderTable2;
     private OrderTable nonEmptyOrderTable1;

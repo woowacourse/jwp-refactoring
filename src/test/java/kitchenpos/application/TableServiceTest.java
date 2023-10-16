@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,6 +20,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 class TableServiceTest extends ServiceBaseTest {
+
+    @Autowired
+    protected TableService tableService;
 
     private OrderTable orderTable;
 
@@ -93,7 +97,7 @@ class TableServiceTest extends ServiceBaseTest {
         final OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
         final OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
         final TableGroup tableGroup = Fixture.orderTableGroup(LocalDateTime.now(), List.of(savedOrderTable1, savedOrderTable2));
-        final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
         final OrderTable savedOrderTable = orderTableDao.save(Fixture.orderTable(savedTableGroup.getId(), 10, true));
 

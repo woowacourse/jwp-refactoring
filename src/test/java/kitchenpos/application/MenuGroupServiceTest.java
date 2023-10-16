@@ -5,9 +5,6 @@ import kitchenpos.fixture.Fixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 
@@ -15,6 +12,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 class MenuGroupServiceTest extends ServiceBaseTest {
+
+    @Autowired
+    protected MenuGroupService menuGroupService;
 
     @Test
     @DisplayName("메뉴 그룹을 생성할 수 있다.")

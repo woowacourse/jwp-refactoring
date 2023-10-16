@@ -1,30 +1,25 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.fixture.Fixture;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class MenuServiceTest extends ServiceBaseTest {
+
+    @Autowired
+    protected MenuService menuService;
 
     private MenuGroup menuGroup;
     private Product product;
@@ -33,7 +28,7 @@ class MenuServiceTest extends ServiceBaseTest {
     @BeforeEach
     void setUp() {
         menuGroup = menuGroupDao.save(Fixture.menuGroup("메뉴 그룹"));
-        product = productDao.save(Fixture.product("상품",1000));
+        product = productDao.save(Fixture.product("상품", 1000));
         menuProduct = Fixture.menuProduct(null, product.getId(), 3L);
     }
 
