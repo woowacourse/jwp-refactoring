@@ -88,7 +88,18 @@ class MenuServiceTest {
     }
 
     @Test
-    void 주문하려는_메뉴_그룹은_이미_존재하는_그룹이어야_한다() {
+    void 메뉴의_가격이_null_이면_예외발생() {
+        // given
+        Menu menu = new Menu();
+
+        // when, then
+        assertThatThrownBy(() -> menuService.create(menu))
+                .isInstanceOf(IllegalArgumentException.class);
+        then(menuGroupDao).should(never()).existsById(anyLong());
+    }
+
+    @Test
+    void 생성하려는_메뉴의_메뉴그룹이_존재하지_않으면_예외발생() {
         // given
         Menu menu = new Menu();
         menu.setMenuGroupId(1L);
@@ -101,6 +112,19 @@ class MenuServiceTest {
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
         then(productDao).should(never()).findById(anyLong());
+    }
+
+    @Test
+    void 생성하려는_메뉴의_구성_상품_중_가격이_음수인_상품이_있으면_예외발생() {
+        // given
+        Menu menu = new Menu();
+        menu.setMenuGroupId(1L);
+        menu.setPrice(BigDecimal.valueOf(-1));
+
+        // when, then
+        assertThatThrownBy(() -> menuService.create(menu))
+                .isInstanceOf(IllegalArgumentException.class);
+        then(menuGroupDao).should(never()).existsById(anyLong());
     }
 
     @Test
@@ -123,7 +147,7 @@ class MenuServiceTest {
                 .willReturn(true);
 
         given(productDao.findById(anyLong()))
-                .willReturn(Optional.empty());
+                .willReturn(Optional.of(product));
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -150,8 +174,9 @@ class MenuServiceTest {
         given(menuGroupDao.existsById(anyLong()))
                 .willReturn(true);
 
+        // 예외 상황: 존재하지 않는 상품
         given(productDao.findById(anyLong()))
-                .willReturn(Optional.of(product));
+                .willReturn(Optional.empty());
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
