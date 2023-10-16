@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import fixture.MenuGroupBuilder;
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,9 @@ class MenuGroupServiceTest extends ServiceTest {
     @Autowired
     MenuGroupService menuGroupService;
 
+    @Autowired
+    MenuGroupDao menuGroupDao;
+
     @Test
     void 메뉴그룹을_생성한다() {
         MenuGroup menuGroup = MenuGroupBuilder.init()
@@ -25,8 +29,12 @@ class MenuGroupServiceTest extends ServiceTest {
 
     @Test
     void 모든_메뉴그룹을_조회한다() {
-        List<MenuGroup> all = menuGroupService.list();
+        List<MenuGroup> expected = menuGroupDao.findAll();
 
-        assertThat(all).hasSize(4);
+        List<MenuGroup> actual = menuGroupService.list();
+
+        assertThat(actual)
+                .usingRecursiveComparison()
+                .isEqualTo(expected);
     }
 }

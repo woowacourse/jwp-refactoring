@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import fixture.OrderBuilder;
 import fixture.OrderLineItemBuilder;
+import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -17,6 +18,9 @@ class OrderServiceTest extends ServiceTest {
 
     @Autowired
     OrderService orderService;
+
+    @Autowired
+    OrderDao orderDao;
 
     @Test
     void 주문을_저장한다() {
@@ -61,9 +65,14 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 모든_주문을_조회한다() {
-        List<Order> all = orderService.list();
+        List<Order> expected = orderDao.findAll();
 
-        assertThat(all).hasSize(4);
+        List<Order> actual = orderService.list();
+
+        assertThat(actual)
+                .usingRecursiveComparison()
+                .ignoringFields("orderLineItems")
+                .isEqualTo(expected);
     }
 
     @Test

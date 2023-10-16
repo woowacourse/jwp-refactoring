@@ -71,7 +71,7 @@ class TableServiceTest extends ServiceTest {
     }
 
     @Test
-    void 주문테이블의_아이디로_조리중_식사중_상태인_오더가_존재하면_않으면_예외를_발생한다() {
+    void 주문테이블의_아이디로_조리중_식사중_상태인_주문이_존재하면_예외를_발생한다() {
         TableGroup saveTableGroup = tableGroupDao.save(TableGroupBuilder.init().build());
         OrderTable saveOrderTable = orderTableDao.save(OrderTableBuilder.init().tableGroupId(saveTableGroup.getId()).empty(false).build());
         orderDao.save(OrderBuilder.init().orderTableId(saveOrderTable.getId()).orderStatus(OrderStatus.MEAL.name()).build());

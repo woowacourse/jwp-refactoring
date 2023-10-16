@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import fixture.MenuBuilder;
 import fixture.MenuProductBuilder;
+import kitchenpos.dao.MenuDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,9 @@ class MenuServiceTest extends ServiceTest {
 
     @Autowired
     MenuService menuService;
+
+    @Autowired
+    MenuDao menuDao;
 
     @Test
     void 메뉴를_저장한다() {
@@ -73,8 +77,13 @@ class MenuServiceTest extends ServiceTest {
 
     @Test
     void 모든_메뉴를_조회힌다() {
-        List<Menu> all = menuService.list();
+        List<Menu> expected = menuDao.findAll();
 
-        assertThat(all).hasSize(6);
+        List<Menu> actual = menuService.list();
+
+        assertThat(actual)
+                .usingRecursiveComparison()
+                .ignoringFields("menuProducts")
+                .isEqualTo(expected);
     }
 }

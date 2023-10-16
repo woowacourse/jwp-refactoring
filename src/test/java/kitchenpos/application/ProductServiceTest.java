@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import fixture.ProductBuilder;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,9 @@ class ProductServiceTest extends ServiceTest {
 
     @Autowired
     ProductService productService;
+
+    @Autowired
+    ProductDao productDao;
 
     @Test
     void 제품을_저장한다() {
@@ -36,8 +40,12 @@ class ProductServiceTest extends ServiceTest {
 
     @Test
     void 모든_제품을_조회한다() {
-        List<Product> allProduct = productService.list();
+        List<Product> expected = productDao.findAll();
 
-        assertThat(allProduct).hasSize(6);
+        List<Product> actual = productService.list();
+
+        assertThat(actual)
+                .usingRecursiveComparison()
+                .isEqualTo(expected);
     }
 }
