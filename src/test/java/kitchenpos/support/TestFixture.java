@@ -1,6 +1,8 @@
 package kitchenpos.support;
 
 import kitchenpos.domain.*;
+import kitchenpos.domain.product.Product;
+import kitchenpos.ui.dto.request.ProductRequest;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -9,7 +11,7 @@ import java.util.List;
 @SuppressWarnings("NonAsciiCharacters")
 public class TestFixture {
 
-    public static Product 상품 = new Product("신상", new BigDecimal(1));
+    public static ProductRequest 상품 = new ProductRequest("신상", new BigDecimal(1));
 
     public static MenuGroup 메뉴_분류 = new MenuGroup("중식");
 

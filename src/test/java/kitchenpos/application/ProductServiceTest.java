@@ -1,7 +1,8 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
 import kitchenpos.support.ServiceTest;
+import kitchenpos.ui.dto.request.ProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -24,7 +25,7 @@ class ProductServiceTest {
 
     @Test
     void 모든_상품을_조회한다() {
-        productService.create(new Product("test", new BigDecimal("1")));
+        productService.create(new ProductRequest("test", new BigDecimal("1")));
         final List<Product> 조회한_상품들 = productService.list();
 
         assertThat(조회한_상품들).hasSize(1);
@@ -35,21 +36,22 @@ class ProductServiceTest {
     class createTest {
         @Test
         void 정상적인_상품을_저장한다() {
-            var 새상품 = new Product();
-            새상품.setName("test");
-            새상품.setPrice(new BigDecimal(10));
+            final ProductRequest 새상품 = new ProductRequest("test", new BigDecimal(10));
             var 저장_상품 = productService.create(새상품);
 
             assertSoftly(soft -> {
                 soft.assertThat(저장_상품.getId()).isNotNull();
-                soft.assertThat(저장_상품.getName()).isEqualTo(새상품.getName());
-                soft.assertThat(저장_상품.getPrice()).isEqualByComparingTo(새상품.getPrice());
+                soft.assertThat(new BigDecimal(1)).isEqualByComparingTo(new BigDecimal(1));
+                soft.assertThat(저장_상품).usingRecursiveComparison()
+                        .ignoringFields("id")
+                        .isEqualTo(새상품);
             });
         }
 
         @Test
         void 상품_가격이_0이하면_예외가_발생한다() {
-            var 새상품 = new Product("test", new BigDecimal("-1"));
+            final ProductRequest 새상품 = new ProductRequest("test", new BigDecimal(-1));
+
 
             assertThatThrownBy(() -> productService.create(새상품))
                     .isExactlyInstanceOf(IllegalArgumentException.class)
@@ -58,8 +60,7 @@ class ProductServiceTest {
 
         @Test
         void 상품_가격이_비어있다면_예외가_발생한다() {
-            var 새상품 = new Product();
-            새상품.setName("test");
+            final ProductRequest 새상품 = new ProductRequest("test", null);
 
             assertThatThrownBy(() -> productService.create(새상품))
                     .isExactlyInstanceOf(IllegalArgumentException.class)
