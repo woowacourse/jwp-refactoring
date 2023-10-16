@@ -1,8 +1,13 @@
 package kitchenpos.application;
 
+import fixture.OrderBuilder;
 import fixture.OrderTableBuilder;
 import fixture.TableGroupBuilder;
+import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Test;
@@ -17,11 +22,17 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 class TableGroupServiceTest extends ServiceTest {
 
     @Autowired
+    TableGroupService tableGroupService;
+
+    @Autowired
     OrderTableDao orderTableDao;
 
     @Autowired
-    TableGroupService tableGroupService;
+    TableGroupDao tableGroupDao;
 
+    @Autowired
+    OrderDao orderDao;
+    
     @Test
     void 테이블_그룹을_생성한다() {
         TableGroup tableGroup = TableGroupBuilder.init().build();
@@ -78,12 +89,37 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void 테이블그룹의_주문테이블들을_빈_테이블로_변경한다() {
         tableGroupService.ungroup(1L);
-
+        
+        List<OrderTable> allByTableGroupId = orderTableDao.findAllByTableGroupId(1L);
         assertSoftly(softAssertions -> {
-            List<OrderTable> allByTableGroupId = orderTableDao.findAllByTableGroupId(1L);
             for (OrderTable orderTable : allByTableGroupId) {
-                assertThat(orderTable.isEmpty()).isTrue();
+                softAssertions.assertThat(orderTable.isEmpty()).isTrue();
             }
         });
+    }
+    
+    @Test
+    void 주문_테이블의_상태가_빈_상태면_주문_테이블_고객수를_변경하지_못한다() {
+        TableGroup tableGroup = TableGroupBuilder.init()
+                .build();
+        TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        OrderTable orderTable1 = OrderTableBuilder.init()
+                .build();
+        OrderTable orderTable2 = OrderTableBuilder.init()
+                .build();
+        OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
+        OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
+        Order order1 = OrderBuilder.init()
+                .orderTableId(savedOrderTable1.getId())
+                .orderStatus(OrderStatus.MEAL.name())
+                .build();
+        Order order2 = OrderBuilder.init()
+                .orderTableId(savedOrderTable2.getId())
+                .orderStatus(OrderStatus.COMPLETION.name())
+                .build();
+        orderDao.save(order1);
+        orderDao.save(order2);
+
+        assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId())).isInstanceOf(IllegalArgumentException.class);
     }
 }

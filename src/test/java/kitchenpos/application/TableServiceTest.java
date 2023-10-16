@@ -101,6 +101,18 @@ class TableServiceTest extends ServiceTest {
     }
 
     @Test
+    void 주문_테이블의_상태가_빈_상태면_주문_테이블_고객수를_변경하지_못한다() {
+        int changeGuestCount = 10;
+        OrderTable orderTable = OrderTableBuilder.init()
+                .id(1L)
+                .numberOfGuests(changeGuestCount)
+                .empty(true)
+                .build();
+
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable)).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
     void 고객수가_음수이면_예외를_발생한다() {
         int changeGuestCount = -1;
         OrderTable orderTable = OrderTableBuilder.init()
