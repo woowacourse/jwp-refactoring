@@ -1,13 +1,19 @@
 package kitchenpos.ui;
 
+import java.net.URI;
+import java.util.List;
 import kitchenpos.application.OrderService;
 import kitchenpos.domain.Order;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.net.URI;
-import java.util.List;
-
+@RequestMapping("/api/orders")
 @RestController
 public class OrderRestController {
 
@@ -17,7 +23,7 @@ public class OrderRestController {
         this.orderService = orderService;
     }
 
-    @PostMapping("/api/orders")
+    @PostMapping
     public ResponseEntity<Order> create(@RequestBody final Order order) {
         final Order created = orderService.create(order);
         final URI uri = URI.create("/api/orders/" + created.getId());
@@ -26,14 +32,14 @@ public class OrderRestController {
                 ;
     }
 
-    @GetMapping("/api/orders")
+    @GetMapping
     public ResponseEntity<List<Order>> readAll() {
         return ResponseEntity.ok()
                 .body(orderService.readAll())
                 ;
     }
 
-    @PutMapping("/api/orders/{orderId}/order-status")
+    @PutMapping("/{orderId}/order-status")
     public ResponseEntity<Order> changeOrderStatus(
             @PathVariable final Long orderId,
             @RequestBody final Order order

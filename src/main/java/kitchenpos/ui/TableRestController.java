@@ -1,13 +1,19 @@
 package kitchenpos.ui;
 
+import java.net.URI;
+import java.util.List;
 import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.net.URI;
-import java.util.List;
-
+@RequestMapping("/api/tables")
 @RestController
 public class TableRestController {
 
@@ -17,7 +23,7 @@ public class TableRestController {
         this.tableService = tableService;
     }
 
-    @PostMapping("/api/tables")
+    @PostMapping
     public ResponseEntity<OrderTable> create(@RequestBody final OrderTable orderTable) {
         final OrderTable created = tableService.create(orderTable);
         final URI uri = URI.create("/api/tables/" + created.getId());
@@ -26,14 +32,14 @@ public class TableRestController {
                 ;
     }
 
-    @GetMapping("/api/tables")
+    @GetMapping
     public ResponseEntity<List<OrderTable>> readAll() {
         return ResponseEntity.ok()
                 .body(tableService.readAll())
                 ;
     }
 
-    @PutMapping("/api/tables/{orderTableId}/empty")
+    @PutMapping("/{orderTableId}/empty")
     public ResponseEntity<OrderTable> changeEmpty(
             @PathVariable final Long orderTableId,
             @RequestBody final OrderTable orderTable
@@ -43,7 +49,7 @@ public class TableRestController {
                 ;
     }
 
-    @PutMapping("/api/tables/{orderTableId}/number-of-guests")
+    @PutMapping("/{orderTableId}/number-of-guests")
     public ResponseEntity<OrderTable> changeNumberOfGuests(
             @PathVariable final Long orderTableId,
             @RequestBody final OrderTable orderTable
