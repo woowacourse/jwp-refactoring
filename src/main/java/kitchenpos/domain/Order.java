@@ -58,7 +58,7 @@ public class Order {
     }
 
     private void validateOrderIsNotCompleted() {
-        if (OrderStatus.COMPLETION == orderStatus) {
+        if (orderStatus.isCompleted()) {
             throw new OrderIsCompletedException();
         }
     }
@@ -75,7 +75,7 @@ public class Order {
     }
 
     public void validateOrderIsCompleted() {
-        if (OrderStatus.COMPLETION != orderStatus) {
+        if (orderStatus.isNotCompleted()) {
             throw new OrderIsNotCompletedException();
         }
     }
