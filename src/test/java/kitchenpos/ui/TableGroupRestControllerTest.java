@@ -1,31 +1,29 @@
 package kitchenpos.ui;
 
+import kitchenpos.application.TableGroupService;
+import kitchenpos.application.dto.request.CreateTableGroupRequest;
+import kitchenpos.application.dto.response.CreateTableGroupResponse;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
+import kitchenpos.fixture.TableGroupFixture;
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.util.List;
-import kitchenpos.application.TableGroupService;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
@@ -64,8 +62,9 @@ class TableGroupRestControllerTest {
         @Test
         void 주문_테이블_그룹_생성() throws Exception {
             // given
-            given(tableGroupService.create(any(TableGroup.class)))
-                    .willReturn(tableGroup);
+            CreateTableGroupResponse response = TableGroupFixture.RESPONSE.주문_테이블_그룹_생성_응답();
+            given(tableGroupService.create(any(CreateTableGroupRequest.class)))
+                    .willReturn(response);
 
             // when & then
             mockMvc.perform(post("/api/table-groups")
@@ -86,10 +85,10 @@ class TableGroupRestControllerTest {
                             header().exists("Location"),
                             jsonPath("id").value(tableGroup.getId()),
                             jsonPath("orderTables").isArray(),
-                            jsonPath("orderTables[0].id").value(orderTable.getId()),
-                            jsonPath("orderTables[0].tableGroupId").value(orderTable.getTableGroupId()),
-                            jsonPath("orderTables[0].numberOfGuests").value(orderTable.getNumberOfGuests()),
-                            jsonPath("orderTables[0].empty").value(orderTable.isEmpty())
+                            jsonPath("orderTables[0].id").value(response.getId()),
+                            jsonPath("orderTables[0].tableGroupId").value(response.getOrderTables().get(0).getTableGroupId()),
+                            jsonPath("orderTables[0].numberOfGuests").value(response.getOrderTables().get(0).getNumberOfGuests()),
+                            jsonPath("orderTables[0].empty").value(response.getOrderTables().get(0).isEmpty())
                     );
         }
 

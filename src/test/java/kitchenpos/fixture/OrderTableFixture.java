@@ -38,7 +38,7 @@ public class OrderTableFixture {
                     .id(1L)
                     .tableGroupId(1L)
                     .numberOfGuests(3)
-                    .empty(true)
+                    .empty(false)
                     .build();
         }
 
@@ -46,7 +46,15 @@ public class OrderTableFixture {
             return OrderTableResponse.builder()
                     .id(1L)
                     .numberOfGuests(3)
-                    .empty(true)
+                    .empty(false)
+                    .build();
+        }
+
+        public static OrderTableResponse 주문_테이블_N명_응답(int numberOfGuests) {
+            return OrderTableResponse.builder()
+                    .id(1L)
+                    .numberOfGuests(numberOfGuests)
+                    .empty(false)
                     .build();
         }
     }
@@ -57,15 +65,15 @@ public class OrderTableFixture {
                     .id(1L)
                     .tableGroupId(1L)
                     .numberOfGuests(3)
-                    .empty(true)
+                    .empty(false)
                     .build();
         }
 
         public static OrderTable 주문_테이블_1_비어있는가(boolean empty) {
             return OrderTable.builder()
                     .id(1L)
-                    .tableGroupId(1L)
-                    .numberOfGuests(3)
+                    .tableGroupId(empty ? null : 1L)
+                    .numberOfGuests(empty ? 0 : 3)
                     .empty(empty)
                     .build();
         }

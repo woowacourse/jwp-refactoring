@@ -129,7 +129,10 @@ class TableServiceTest {
         void 빈_테이블_상태를_변경할_때_테이블_그룹에_속해있으면_예외() {
             // given
             UpdateOrderTableEmptyRequest request = REQUEST.주문_테이블_비움_요청();
-            OrderTable orderTable = ORDER_TABLE.주문_테이블_1_비어있는가(true);
+            OrderTable orderTable = OrderTable.builder()
+                    .tableGroupId(1L)
+                    .empty(true)
+                    .build();
             given(orderTableDao.findById(any()))
                     .willReturn(Optional.of(orderTable));
 

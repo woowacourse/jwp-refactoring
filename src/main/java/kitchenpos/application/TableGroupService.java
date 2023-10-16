@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.request.CreateTableGroupRequest;
+import kitchenpos.application.dto.response.CreateTableGroupResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -14,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,20 +32,14 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
-
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+    public CreateTableGroupResponse create(final CreateTableGroupRequest request) {
+        List<Long> orderTableIds = request.getOrderTableIds();
+        if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
             throw new IllegalArgumentException();
         }
 
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
-
-        if (orderTables.size() != savedOrderTables.size()) {
+        if (orderTableIds.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
 
@@ -52,7 +49,10 @@ public class TableGroupService {
             }
         }
 
-        TableGroup updatedTableGroup = tableGroup.updateCrateDate(LocalDateTime.now());
+        TableGroup updatedTableGroup = TableGroup.builder()
+                .createdDate(LocalDateTime.now())
+                .orderTables(savedOrderTables)
+                .build();
 
         final TableGroup savedTableGroup = tableGroupDao.save(updatedTableGroup);
 
@@ -62,7 +62,16 @@ public class TableGroupService {
             orderTableDao.save(updated);
         }
 
-        return savedTableGroup.updateOrderTables(savedOrderTables);
+        TableGroup saved = savedTableGroup.updateOrderTables(savedOrderTables);
+        return CreateTableGroupResponse.from(saved);
+    }
+
+    private List<OrderTable> getOrderTables(CreateTableGroupRequest tableGroup) {
+        return tableGroup.getOrderTableIds().stream()
+                .map(orderTableDao::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
     }
 
     @Transactional

@@ -119,7 +119,7 @@
     - [x] PUT /api/tables/{orderTableId}/number-of-guests
     - [x] GET /api/menu-groups
     - [x] POST /api/menu-groups
-    - [ ] POST /api/table-groups
+    - [x] POST /api/table-groups
     - [ ] DELETE /api/table-groups/{tableGroupId}
     - [ ] GET /api/orders
     - [ ] POST /api/orders
