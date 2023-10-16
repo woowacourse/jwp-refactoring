@@ -42,7 +42,7 @@ public class MenuService {
 
         associateMenuProduct(request.getMenuProducts(), savedMenu);
         menu.verifyPrice();
-        return MenuResponse.of(savedMenu, menu.getMenuProducts());
+        return MenuResponse.from(savedMenu);
     }
 
     private void associateMenuProduct(final List<MenuProductRequest> menuProductRequests, final Menu savedMenu) {

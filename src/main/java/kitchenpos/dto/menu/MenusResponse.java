@@ -14,7 +14,7 @@ public class MenusResponse {
 
     public static MenusResponse from(final List<Menu> menus) {
         List<MenuResponse> menuResponses = menus.stream()
-                .map(menu -> MenuResponse.of(menu, menu.getMenuProducts()))
+                .map(MenuResponse::from)
                 .collect(Collectors.toUnmodifiableList());
         return new MenusResponse(menuResponses);
     }
