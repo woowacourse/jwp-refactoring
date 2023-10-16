@@ -1,8 +1,17 @@
 package kitchenpos.domain;
 
+import javax.persistence.*;
+
+@Entity
 public class MenuProduct {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "seq")
     private Long seq;
-    private Long menuId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "menu_id")
+    private Menu menu;
     private Long productId;
     private long quantity;
 
@@ -14,12 +23,12 @@ public class MenuProduct {
         this.seq = seq;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public Menu getMenu() {
+        return menu;
     }
 
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
+    public void setMenu(final Menu menu) {
+        this.menu = menu;
     }
 
     public Long getProductId() {

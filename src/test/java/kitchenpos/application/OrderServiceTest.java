@@ -1,11 +1,11 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.*;
 import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.MenuRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ class OrderServiceTest {
     @Autowired
     private OrderDao orderDao;
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
     @Autowired
     private MenuGroupRepository menuGroupRepository;
     @Autowired
@@ -43,7 +43,7 @@ class OrderServiceTest {
         // given
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroupBuilder().build());
 
-        final Menu menu = menuDao.save(new MenuBuilder(menuGroup).build());
+        final Menu menu = menuRepository.save(new MenuBuilder(menuGroup).build());
 
         final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu.getId(), 1).build();
 
@@ -79,7 +79,7 @@ class OrderServiceTest {
             // given
             final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroupBuilder().build());
 
-            final Menu menu = menuDao.save(new MenuBuilder(menuGroup).build());
+            final Menu menu = menuRepository.save(new MenuBuilder(menuGroup).build());
 
             final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu.getId(), 1).build();
 
@@ -151,7 +151,7 @@ class OrderServiceTest {
             // given
             final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroupBuilder().build());
 
-            final Menu menu = menuDao.save(new MenuBuilder(menuGroup).build());
+            final Menu menu = menuRepository.save(new MenuBuilder(menuGroup).build());
 
             final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu.getId(), 1).build();
 
@@ -172,7 +172,7 @@ class OrderServiceTest {
             // given
             final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroupBuilder().build());
 
-            final Menu menu = menuDao.save(new MenuBuilder(menuGroup).build());
+            final Menu menu = menuRepository.save(new MenuBuilder(menuGroup).build());
 
             final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu.getId(), 1).build();
 
@@ -202,7 +202,7 @@ class OrderServiceTest {
             // given
             final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroupBuilder().build());
 
-            final Menu menu = menuDao.save(new MenuBuilder(menuGroup).build());
+            final Menu menu = menuRepository.save(new MenuBuilder(menuGroup).build());
 
             final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu.getId(), 1).build();
 
@@ -233,7 +233,7 @@ class OrderServiceTest {
             // given
             final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroupBuilder().build());
 
-            final Menu menu = menuDao.save(new MenuBuilder(menuGroup).build());
+            final Menu menu = menuRepository.save(new MenuBuilder(menuGroup).build());
 
             final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu.getId(), 1).build();
 

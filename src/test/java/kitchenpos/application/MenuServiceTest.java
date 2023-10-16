@@ -1,11 +1,11 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.MenuProductRepository;
+import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,13 +34,13 @@ class MenuServiceTest {
     @Autowired
     private MenuService menuService;
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
     @Autowired
     private ProductRepository productRepository;
     @Autowired
     private MenuGroupRepository menuGroupRepository;
     @Autowired
-    private MenuProductDao menuProductDao;
+    private MenuProductRepository menuProductRepository;
 
     private MenuGroup menuGroup;
 
@@ -71,10 +71,10 @@ class MenuServiceTest {
                     .setMenuProducts(Map.of(product1, quantity, product2, quantity))
                     .build();
 
-            final List<Menu> expect = menuDao.findAll();
+            final List<Menu> expect = menuRepository.findAll();
             expect.add(menu);
 
-            menuDao.save(menu);
+            menuRepository.save(menu);
 
             // when
             final List<Menu> actual = menuService.list();
@@ -86,7 +86,7 @@ class MenuServiceTest {
                 final Menu actualMenu = actual.get(i);
                 final Menu expectMenu = expect.get(i);
                 expectMenu.setMenuProducts(
-                        menuProductDao.findAllByMenuId(expectMenu.getId())
+                        menuProductRepository.findAllByMenuId(expectMenu.getId())
                 );
 
                 assertAll(
