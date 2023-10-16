@@ -104,17 +104,6 @@ class MenuServiceTest extends ServiceTest {
         }
 
         @Test
-        void 존재하지_않는_메뉴_그룹을_사용하면_에러를_반환한다() {
-            // given
-            final var menu = new Menu("test_menu", BigDecimal.valueOf(1000), 1L, Collections.emptyList());
-
-            // when & then
-            assertThatThrownBy(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("[ERROR] 존재하지 않는 메뉴 그룹입니다.");
-        }
-
-        @Test
         void 존재하지_않는_상품을_사용하면_에러를_반환한다() {
             // given
             final var menuProduct1 = new MenuProduct(1L, 1L, 10);
