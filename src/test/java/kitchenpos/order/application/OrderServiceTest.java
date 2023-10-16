@@ -1,5 +1,6 @@
 package kitchenpos.order.application;
 
+import static kitchenpos.fixture.OrderFixture.빈_주문;
 import static kitchenpos.fixture.OrderFixture.주문;
 import static kitchenpos.fixture.OrderFixture.주문_잘못된_메뉴;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -56,8 +57,7 @@ class OrderServiceTest extends ServiceIntegrateTest {
   @DisplayName("주문을 등록할 때 메뉴가 1개도 포함되어 있지 않다면 예외를 반환한다.")
   void create_fail_empty_orderLineItem() {
     //given
-    final Order order = 주문(notEmptyOrderTableId);
-    order.setOrderLineItems(List.of());
+    final Order order = 빈_주문(notEmptyOrderTableId);
 
     //when
     final ThrowingCallable actual = () -> orderService.create(order);
@@ -120,9 +120,8 @@ class OrderServiceTest extends ServiceIntegrateTest {
   void changeOrderStatus_success() {
     //given
     final String newStatus = OrderStatus.MEAL.name();
-    final Order order = 주문(notEmptyOrderTableId);
+    final Order order = 주문(notEmptyOrderTableId, newStatus);
     final Long savedOrderId = orderService.create(order).getId();
-    order.setOrderStatus(newStatus);
 
     // when
     final Order actual = orderService.changeOrderStatus(savedOrderId, order);
@@ -136,8 +135,7 @@ class OrderServiceTest extends ServiceIntegrateTest {
   void changeOrderStatus_fail_not_exist_order() {
     //given
     final String newStatus = OrderStatus.MEAL.name();
-    final Order order = 주문(notEmptyOrderTableId);
-    order.setOrderStatus(newStatus);
+    final Order order = 주문(notEmptyOrderTableId, newStatus);
 
     // when
     final ThrowingCallable actual = () -> orderService.changeOrderStatus(999L, order);
@@ -151,10 +149,9 @@ class OrderServiceTest extends ServiceIntegrateTest {
   void changeOrderStatus_fail_already_COMPLETEION() {
     //given
     final String newStatus = OrderStatus.COMPLETION.name();
-    final Order order = 주문(notEmptyOrderTableId);
+    final Order order = 주문(notEmptyOrderTableId, newStatus);
     final Long savedOrderId = orderService.create(order).getId();
 
-    order.setOrderStatus(newStatus);
     orderService.changeOrderStatus(savedOrderId, order);
 
     // when

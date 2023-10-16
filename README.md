@@ -64,11 +64,11 @@
 ## 리팩토링 TODO List
 
 - [x] 패키지 구조 변경
-- [ ] setter 제거
+- [x] setter 제거
     - [x] product
     - [x] menu group
     - [x] menu
-    - [ ] order
+    - [x] order
     - [x] table group
     - [x] table
 - [ ] dto 생성

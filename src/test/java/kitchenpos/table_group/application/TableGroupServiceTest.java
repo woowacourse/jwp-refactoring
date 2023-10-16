@@ -1,6 +1,5 @@
 package kitchenpos.table_group.application;
 
-import static kitchenpos.fixture.OrderFixture.주문;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -153,9 +152,8 @@ class TableGroupServiceTest extends ServiceIntegrateTest {
 
     final Long savedTableGroupId = tableGroupService.create(tableGroup).getId();
 
-    final Order order = 주문(table1.getId());
-    order.setOrderStatus(OrderStatus.COOKING.name());
-    order.setOrderedTime(LocalDateTime.now());
+    final Order order = new Order(null, table1.getId(), OrderStatus.COOKING.name(),
+        LocalDateTime.now());
     orderDao.save(order);
 
     //when
