@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ProductRestController {
+
     private final ProductService productService;
 
     public ProductRestController(final ProductService productService) {
@@ -24,14 +25,14 @@ public class ProductRestController {
         final ProductDto created = productService.create(productCreateDto);
         final URI uri = URI.create("/api/products/" + created.getId());
         return ResponseEntity.created(uri)
-                .body(created)
-                ;
+            .body(created)
+            ;
     }
 
     @GetMapping("/api/products")
     public ResponseEntity<List<ProductDto>> list() {
         return ResponseEntity.ok()
-                .body(productService.list())
-                ;
+            .body(productService.list())
+            ;
     }
 }

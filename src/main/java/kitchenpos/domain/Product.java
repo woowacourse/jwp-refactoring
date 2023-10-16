@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 
 @Entity
 public class Product {
+
     private static final int PRODUCT_PRICE_COMPARE_CONDITION = 0;
     public static final int MINIMUM_PRODUCT_PRICE = 0;
     public static final int MINIMUM_PRODUCT_NAME_LENGTH = 1;
@@ -49,7 +50,8 @@ public class Product {
 
     private void validatePrice(final BigDecimal price) {
         if (Objects.isNull(price)
-                || price.compareTo(BigDecimal.valueOf(MINIMUM_PRODUCT_PRICE)) < PRODUCT_PRICE_COMPARE_CONDITION) {
+            || price.compareTo(BigDecimal.valueOf(MINIMUM_PRODUCT_PRICE))
+            < PRODUCT_PRICE_COMPARE_CONDITION) {
             throw new NoPriceException(price);
         }
     }
