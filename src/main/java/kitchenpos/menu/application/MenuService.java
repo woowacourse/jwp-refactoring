@@ -64,21 +64,22 @@ public class MenuService {
     final Long menuId = savedMenu.getId();
     final List<MenuProduct> savedMenuProducts = new ArrayList<>();
     for (final MenuProduct menuProduct : menuProducts) {
-      menuProduct.setMenuId(menuId);
-      savedMenuProducts.add(menuProductDao.save(menuProduct));
+      final MenuProduct savedMenuProduct = new MenuProduct(menuProduct.getSeq(), menuId,
+          menuProduct.getProductId(), menuProduct.getQuantity());
+      savedMenuProducts.add(menuProductDao.save(savedMenuProduct));
     }
-    savedMenu.setMenuProducts(savedMenuProducts);
-
-    return savedMenu;
+    return new Menu(savedMenu.getId(), savedMenu.getName(), savedMenu.getPrice(),
+        savedMenu.getMenuGroupId(), savedMenuProducts);
   }
 
   public List<Menu> list() {
     final List<Menu> menus = menuDao.findAll();
-
+    final List<Menu> savedMenuProducts = new ArrayList<>();
     for (final Menu menu : menus) {
-      menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
+      savedMenuProducts.add(
+          new Menu(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(),
+              menuProductDao.findAllByMenuId(menu.getId())));
     }
-
-    return menus;
+    return savedMenuProducts;
   }
 }

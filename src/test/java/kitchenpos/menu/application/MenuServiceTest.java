@@ -27,13 +27,13 @@ class MenuServiceTest extends ServiceIntegrateTest {
   @DisplayName("메뉴를 등록할 수 있다.")
   void create_success() {
     //given, when
-    final Menu savedMenu = menuService.create(만냥치킨_2마리());
+    final Menu savedMenu = menuService.create(만냥치킨_2마리(BigDecimal.valueOf(19000), 1L));
     final Menu actual = menuDao.findById(savedMenu.getId()).get();
 
     //then
     Assertions.assertAll(
         () -> assertThat(actual).isNotNull(),
-        () -> assertThat(actual.getName()).isEqualTo(만냥치킨_2마리().getName())
+        () -> assertThat(actual.getName()).isEqualTo("만냥치킨+만냥치킨")
     );
   }
 
@@ -41,8 +41,7 @@ class MenuServiceTest extends ServiceIntegrateTest {
   @DisplayName("메뉴를 등록할 때 메뉴의 가격이 0보다 작으면 예외를 반환한다.")
   void create_fail_negative_price() {
     //given
-    final Menu menu = 만냥치킨_2마리();
-    menu.setPrice(BigDecimal.valueOf(-1));
+    final Menu menu = 만냥치킨_2마리(BigDecimal.valueOf(-1), 1L);
 
     //when
     final ThrowingCallable actual = () -> menuService.create(menu);
@@ -55,8 +54,7 @@ class MenuServiceTest extends ServiceIntegrateTest {
   @DisplayName("메뉴를 등록할 때 메뉴그룹이 존재하지 않으면 예외를 반환한다.")
   void create_fail_not_exist_menuGroup() {
     //given
-    final Menu menu = 만냥치킨_2마리();
-    menu.setMenuGroupId(999L);
+    final Menu menu = 만냥치킨_2마리(BigDecimal.valueOf(19000), 999L);
 
     //when
     final ThrowingCallable actual = () -> menuService.create(menu);
@@ -82,8 +80,7 @@ class MenuServiceTest extends ServiceIntegrateTest {
   @DisplayName("메뉴를 등록할 때 메뉴의 가격이 메뉴를 구성하는 상품들의 총 가격보다 크면 예외를 반환한다.")
   void create_fail_over_price() {
     //given
-    final Menu menu = 만냥치킨_2마리();
-    menu.setPrice(BigDecimal.valueOf(40000));
+    final Menu menu = 만냥치킨_2마리(BigDecimal.valueOf(40000), 1L);
 
     //when
     final ThrowingCallable actual = () -> menuService.create(menu);

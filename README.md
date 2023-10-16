@@ -67,12 +67,13 @@
 - [ ] setter 제거
     - [x] product
     - [x] menu group
-    - [ ] menu
+    - [x] menu
     - [ ] order
     - [ ] table group
     - [ ] table
 - [ ] dto 생성
 - [ ] 도메인 객체 캡슐화
+- [ ] orderTable의 empty, numberOfGuests 변경 api를 patch api로 수정
 
 ## 용어 사전
 

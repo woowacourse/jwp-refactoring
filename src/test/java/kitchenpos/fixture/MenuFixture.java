@@ -7,30 +7,16 @@ import kitchenpos.menu.domain.MenuProduct;
 
 public class MenuFixture {
 
-  public static Menu 만냥치킨_2마리() {
-    final MenuProduct menuProduct = new MenuProduct();
-    menuProduct.setProductId(1L);
-    menuProduct.setQuantity(2L);
+  public static Menu 만냥치킨_2마리(final BigDecimal price, final Long menuGroupId) {
+    final MenuProduct menuProduct = new MenuProduct(null, null, 1L, 2L);
 
-    final Menu menu = new Menu();
-    menu.setName("만냥치킨+만냥치킨");
-    menu.setPrice(BigDecimal.valueOf(19000));
-    menu.setMenuGroupId(1L);
-    menu.setMenuProducts(List.of(menuProduct));
-    return menu;
+    return new Menu("만냥치킨+만냥치킨", price, menuGroupId, List.of(menuProduct));
   }
 
   public static Menu 만냥치킨_2마리_잘못된_상품() {
-    final MenuProduct menuProduct = new MenuProduct();
-    menuProduct.setProductId(999L);
-    menuProduct.setQuantity(2L);
+    final MenuProduct menuProduct = new MenuProduct(null, null, 999L, 2L);
 
-    final Menu menu = new Menu();
-    menu.setName("후라이드+후라이드");
-    menu.setPrice(BigDecimal.valueOf(19000));
-    menu.setMenuGroupId(1L);
-    menu.setMenuProducts(List.of(menuProduct));
-    return menu;
+    return new Menu("만냥치킨+만냥치킨", BigDecimal.valueOf(19000), 1L, List.of(menuProduct));
   }
 
 }
