@@ -4,6 +4,7 @@ import static kitchenpos.fixture.OrderFixture.주문;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.helper.ServiceIntegrateTest;
 import kitchenpos.order.application.OrderService;
@@ -94,8 +95,8 @@ class TableServiceTest extends ServiceIntegrateTest {
   @DisplayName("테이블이 비었는지 여부를 변경할 때 대상 테이블이 속한 단체 테이블이 있으면 예외를 반환한다.")
   void changeEmpty_fail_in_tableGroup() {
     //given
-    final TableGroup tableGroup = new TableGroup();
-    tableGroup.setOrderTables(List.of(table1, table2));
+    final TableGroup tableGroup = new TableGroup(null, LocalDateTime.now(),
+        List.of(table1, table2));
     tableGroupService.create(tableGroup);
 
     final OrderTable changedTable = new OrderTable(null, null, 0, false);

@@ -53,9 +53,8 @@ public class TableGroupService {
       }
     }
 
-    tableGroup.setCreatedDate(LocalDateTime.now());
-
-    final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+    final TableGroup savedTableGroup = tableGroupDao.save(
+        new TableGroup(tableGroup.getId(), LocalDateTime.now(), orderTables));
     final Long tableGroupId = savedTableGroup.getId();
 
     final List<OrderTable> orderTables2 = savedOrderTables.stream()
@@ -70,9 +69,7 @@ public class TableGroupService {
     for (final OrderTable savedOrderTable : orderTables2) {
       orderTableDao.save(savedOrderTable);
     }
-    savedTableGroup.setOrderTables(orderTables2);
-
-    return savedTableGroup;
+    return new TableGroup(savedTableGroup.getId(), savedTableGroup.getCreatedDate(), orderTables2);
   }
 
   @Transactional

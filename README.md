@@ -69,7 +69,7 @@
     - [x] menu group
     - [x] menu
     - [ ] order
-    - [ ] table group
+    - [x] table group
     - [x] table
 - [ ] dto 생성
 - [ ] 도메인 객체 캡슐화
