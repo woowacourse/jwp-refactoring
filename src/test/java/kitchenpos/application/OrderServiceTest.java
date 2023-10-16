@@ -83,7 +83,7 @@ class OrderServiceTest extends ServiceBaseTest {
     }
 
     @Test
-    @DisplayName("주문은 존재하는 주문 테이블에 존재해야한다,.")
+    @DisplayName("주문 시 주문 테이블이 존재해야한다.")
     void createValidOrderTable() {
         //given
         final Order order = Fixture.order(null, null, LocalDateTime.now(), List.of(orderLineItem));
