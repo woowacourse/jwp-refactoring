@@ -11,6 +11,8 @@ import javax.persistence.ManyToOne;
 @Entity
 public class MenuProduct {
 
+    private static final int MIN_QUANTITY = 1;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
@@ -26,38 +28,48 @@ public class MenuProduct {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    public MenuProduct() {
+    protected MenuProduct() {
+    }
+
+    public MenuProduct(
+            Menu menu,
+            Long quantity,
+            Product product
+    ) {
+        this.menu = menu;
+        this.quantity = quantity;
+        this.product = product;
+    }
+
+    public static MenuProduct of(
+            Menu menu,
+            Long quantity,
+            Product product
+    ) {
+        validateQuantity(quantity);
+
+        return new MenuProduct(menu, quantity, product);
+    }
+
+    private static void validateQuantity(Long quantity) {
+        if (quantity < MIN_QUANTITY) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getSeq() {
         return seq;
     }
 
-    public void setSeq(Long seq) {
-        this.seq = seq;
-    }
-
     public Menu getMenu() {
         return menu;
     }
 
-    public void setMenu(Menu menu) {
-        this.menu = menu;
-    }
-
-    public long getQuantity() {
+    public Long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(long quantity) {
-        this.quantity = quantity;
     }
 
     public Product getProduct() {
         return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
     }
 }

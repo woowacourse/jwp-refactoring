@@ -74,8 +74,7 @@ class MenuServiceTest {
         Product product = new Product();
         product.setId(invalidId);
 
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProduct(product);
+        MenuProduct menuProduct = MenuProduct.of(menu, 1L, product);
 
         menu.addMenuProduct(menuProduct);
 
@@ -147,7 +146,6 @@ class MenuServiceTest {
         Menu savedMenu = menuRepository.save(menu);
 
         MenuProduct menuProduct = createMenuProduct(savedProduct);
-        menuProduct.setMenu(savedMenu);
         MenuProduct savedMenuProduct = menuProductRepository.save(menuProduct);
 
         //when
@@ -180,11 +178,7 @@ class MenuServiceTest {
     }
 
     private MenuProduct createMenuProduct(Product savedProduct) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProduct(savedProduct);
-        menuProduct.setQuantity(1);
-
-        return menuProduct;
+        return MenuProduct.of(menu, 1L, savedProduct);
     }
 
 }
