@@ -36,7 +36,7 @@ class JdbcTemplateOrderLineItemDaoTest {
 
     @BeforeEach
     void setUp() {
-        Order saveOrder = orderDao.save(OrderFixture.주문_상품_없이_생성(1L, "COOKING", now(), null));
+        Order saveOrder = orderDao.save(OrderFixture.주문(1L, "COOKING", now(), null));
         orderLineItem = OrderLineItemFixture.메뉴와_수량으로_주문_생성(saveOrder.getId(), 1L, 3);
     }
 

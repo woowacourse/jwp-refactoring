@@ -29,7 +29,7 @@ class ProductServiceTest {
 
     @BeforeEach
     void setUp() {
-        product = ProductFixture.상품_생성("아메리카노", BigDecimal.valueOf(5600));
+        product = ProductFixture.아메리카노();
     }
 
     @Test

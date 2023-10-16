@@ -29,7 +29,7 @@ public class JdbcTemplateMenuDaoTest {
 
     @BeforeEach
     void setUp() {
-        menu = MenuFixture.메뉴_생성("아메리카노", BigDecimal.valueOf(10000), 1L, null);
+        menu = MenuFixture.아메리카노(1L, null);
     }
 
     @Test

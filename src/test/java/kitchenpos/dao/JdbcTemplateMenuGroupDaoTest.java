@@ -29,7 +29,7 @@ class JdbcTemplateMenuGroupDaoTest {
 
     @BeforeEach
     void setUp() {
-        menuGroup  = MenuGroupFixture.메뉴그룹_생성("음료");
+        menuGroup  = MenuGroupFixture.음료();
     }
 
     @Test

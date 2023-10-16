@@ -22,7 +22,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import static java.time.LocalDateTime.now;
@@ -59,10 +58,10 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        MenuGroup menuGroup = menuGroupDao.save(MenuGroupFixture.메뉴그룹_생성("그룹"));
-        Menu menu = menuDao.save(MenuFixture.메뉴_생성("아메리카노", new BigDecimal(1000), menuGroup.getId(), null));
+        MenuGroup menuGroup = menuGroupDao.save(MenuGroupFixture.음료());
+        Menu menu = menuDao.save(MenuFixture.아메리카노(menuGroup.getId(), null));
         OrderTable orderTable = orderTableDao.save(OrderTableFixture.주문테이블(null, 0, false));
-        order = orderDao.save(OrderFixture.주문_상품_없이_생성(orderTable.getId(), "COOKING", now(), null));
+        order = orderDao.save(OrderFixture.주문(orderTable.getId(), "COOKING", now(), null));
         orderLineItem = orderLineItemDao.save(OrderLineItemFixture.메뉴와_수량으로_주문_생성(order.getId(), menu.getId(), 3));
         order.setOrderLineItems(List.of(orderLineItem));
     }
@@ -128,9 +127,10 @@ class OrderServiceTest {
     void 주문_상태를_변경한다() {
         // given
         Order savedOrder = orderService.create(order);
+        savedOrder.setOrderStatus("MEAL");
 
         // when
-        Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), OrderFixture.주문_상태_변경(savedOrder, "MEAL"));
+        Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), savedOrder);
 
         // then
         assertThat(changedOrder.getOrderStatus()).isEqualTo("MEAL");
@@ -140,9 +140,10 @@ class OrderServiceTest {
     void 주문_상태_변경시_존재하지_않는_주문일_경우_예외가_발생한다() {
         // given
         Order savedOrder = orderService.create(order);
+        savedOrder.setOrderStatus("MEAL");
 
         // when & then
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> orderService.changeOrderStatus(100L, OrderFixture.주문_상태_변경(savedOrder, "MEAL")));
+                .isThrownBy(() -> orderService.changeOrderStatus(100L, savedOrder));
     }
 }

@@ -46,10 +46,10 @@ class MenuServiceTest {
 
     @BeforeEach
     void setUp() {
-        Product product = productDao.save(ProductFixture.상품_생성("아메리카노", BigDecimal.valueOf(5600)));
+        Product product = productDao.save(ProductFixture.아메리카노());
         MenuProduct menuProduct = menuProductDao.save(MenuProductFixture.메뉴_재고(1L, product.getId(), 3));
-        MenuGroup menuGroup = menuGroupDao.save(MenuGroupFixture.메뉴그룹_생성("음료"));
-        menu = MenuFixture.메뉴_생성("아메리카노", BigDecimal.valueOf(5600), menuGroup.getId(), List.of(menuProduct));
+        MenuGroup menuGroup = menuGroupDao.save(MenuGroupFixture.음료());
+        menu = MenuFixture.아메리카노(menuGroup.getId(), List.of(menuProduct));
     }
 
     @Test

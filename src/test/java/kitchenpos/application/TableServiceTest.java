@@ -76,10 +76,10 @@ class TableServiceTest {
     void 주문_테이블_비움_상태_변경() {
         // given
         OrderTable savedOrderTable = tableService.create(orderTable);
-        OrderTable newOrderTable = OrderTableFixture.주문테이블_비움상태_변경(savedOrderTable, false);
+        savedOrderTable.setEmpty(false);
 
         // when
-        OrderTable emptyOrderTable = tableService.changeEmpty(savedOrderTable.getId(), newOrderTable);
+        OrderTable emptyOrderTable = tableService.changeEmpty(savedOrderTable.getId(), savedOrderTable);
 
         // then
         assertThat(emptyOrderTable.isEmpty()).isFalse();
@@ -89,12 +89,12 @@ class TableServiceTest {
     void 주문_테이블_비움상태_변경시_존재하지_않는_주문_테이블id로_조회할_경우_예외가_발생한다() {
         // given
         OrderTable savedOrderTable = tableService.create(orderTable);
-        OrderTable newOrderTable = OrderTableFixture.주문테이블_비움상태_변경(savedOrderTable, false);
+        savedOrderTable.setEmpty(false);
         Long notExistId = 1000L;
 
         // when & then
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> tableService.changeEmpty(notExistId, newOrderTable));
+                .isThrownBy(() -> tableService.changeEmpty(notExistId, savedOrderTable));
     }
 
     @Test
@@ -106,23 +106,23 @@ class TableServiceTest {
 
         // when
         OrderTable savedOrderTableWithGroup = orderTableDao.save(savedOrderTable);
-        OrderTable newOrderTable = OrderTableFixture.주문테이블_비움상태_변경(savedOrderTableWithGroup, false);
+        savedOrderTableWithGroup.setEmpty(false);
 
         // then
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> tableService.changeEmpty(savedOrderTableWithGroup.getId(), newOrderTable));
+                .isThrownBy(() -> tableService.changeEmpty(savedOrderTableWithGroup.getId(), savedOrderTableWithGroup));
     }
 
     @Test
     void 주문_테이블_비움상태_변경시_주문_상태가_조리중_또는_식사중이면_예외가_발생한다() {
         // given
         OrderTable savedOrderTable = tableService.create(orderTable);
-        OrderTable newOrderTable = OrderTableFixture.주문테이블_비움상태_변경(savedOrderTable, false);
-        orderDao.save(OrderFixture.주문_상품_없이_생성(savedOrderTable.getId(), "COOKING", LocalDateTime.now(), null));
+        savedOrderTable.setEmpty(false);
+        orderDao.save(OrderFixture.주문(savedOrderTable.getId(), "COOKING", LocalDateTime.now(), null));
 
         // when & then
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), newOrderTable));
+                .isThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), savedOrderTable));
     }
 
     @Test
@@ -132,8 +132,8 @@ class TableServiceTest {
         OrderTable savedOrderTable = tableService.create(orderTable);
 
         // when
-        OrderTable guestChangeOrderTable = OrderTableFixture.주문테이블_손님수_변경(savedOrderTable, 5);
-        OrderTable changedOrderTable = tableService.changeNumberOfGuests(savedOrderTable.getId(), guestChangeOrderTable);
+        savedOrderTable.setNumberOfGuests(5);
+        OrderTable changedOrderTable = tableService.changeNumberOfGuests(savedOrderTable.getId(), savedOrderTable);
 
         // then
         assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(5);
@@ -146,11 +146,11 @@ class TableServiceTest {
         OrderTable savedOrderTable = tableService.create(orderTable);
 
         // when
-        OrderTable guestChangeOrderTable = OrderTableFixture.주문테이블_손님수_변경(savedOrderTable, -1);
+        savedOrderTable.setNumberOfGuests(-1);
 
         // then
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), guestChangeOrderTable));
+                .isThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), savedOrderTable));
     }
 
     @Test
@@ -161,11 +161,11 @@ class TableServiceTest {
         Long notExistId = 1000L;
 
         // when
-        OrderTable guestChangeOrderTable = OrderTableFixture.주문테이블_손님수_변경(savedOrderTable, 5);
+        savedOrderTable.setNumberOfGuests(5);
 
         // then
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> tableService.changeNumberOfGuests(notExistId, guestChangeOrderTable));
+                .isThrownBy(() -> tableService.changeNumberOfGuests(notExistId, savedOrderTable));
     }
 
     @Test
@@ -174,10 +174,10 @@ class TableServiceTest {
         OrderTable savedOrderTable = tableService.create(orderTable);
 
         // when
-        OrderTable guestChangeOrderTable = OrderTableFixture.주문테이블_손님수_변경(savedOrderTable, 5);
+        savedOrderTable.setNumberOfGuests(5);
 
         // then
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), guestChangeOrderTable));
+                .isThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), savedOrderTable));
     }
 }

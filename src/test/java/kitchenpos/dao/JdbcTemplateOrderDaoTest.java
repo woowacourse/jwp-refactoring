@@ -31,7 +31,7 @@ class JdbcTemplateOrderDaoTest {
 
     @BeforeEach
     void setUp() {
-        order = OrderFixture.주문_상품_없이_생성(1L, "COOKING", now(), null);
+        order = OrderFixture.주문(1L, "COOKING", now(), null);
     }
 
     @Test
