@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,41 +27,44 @@ class ProductServiceTest {
     @InjectMocks
     private ProductService productService;
 
-    @Test
-    void 상품을_생성한다() {
-        // given
-        final Product savedProduct = new Product();
-        when(productDao.save(any(Product.class)))
-                .thenReturn(savedProduct);
+    @Nested
+    class 상품_생성 {
+        @Test
+        void 상품을_생성한다() {
+            // given
+            final Product savedProduct = new Product();
+            when(productDao.save(any(Product.class)))
+                    .thenReturn(savedProduct);
 
-        // when
-        final Product product = new Product();
-        product.setPrice(new BigDecimal(1000));
-        final Product result = productService.create(product);
+            // when
+            final Product product = new Product();
+            product.setPrice(new BigDecimal(1000));
+            final Product result = productService.create(product);
 
-        // then
-        assertThat(result).isEqualTo(savedProduct);
-    }
+            // then
+            assertThat(result).isEqualTo(savedProduct);
+        }
 
-    @Test
-    void 상품을_생성할_때_가격이_없으면_실패한다() {
-        // given
-        final Product product = new Product();
+        @Test
+        void 상품을_생성할_때_가격이_없으면_실패한다() {
+            // given
+            final Product product = new Product();
 
-        // when, then
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
+            // when, then
+            assertThatThrownBy(() -> productService.create(product))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
 
-    @Test
-    void 상품을_생성할_때_가격이_0보다_작으면_실패한다() {
-        // given
-        final Product product = new Product();
-        product.setPrice(new BigDecimal(-1000));
+        @Test
+        void 상품을_생성할_때_가격이_0보다_작으면_실패한다() {
+            // given
+            final Product product = new Product();
+            product.setPrice(new BigDecimal(-1000));
 
-        // when, then
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
+            // when, then
+            assertThatThrownBy(() -> productService.create(product))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
     }
 
     @Test
