@@ -3,10 +3,10 @@ package kitchenpos.application;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -36,7 +36,7 @@ class MenuServiceTest {
     @Autowired
     private MenuDao menuDao;
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
     @Autowired
     private MenuGroupDao menuGroupDao;
     @Autowired
@@ -58,8 +58,8 @@ class MenuServiceTest {
 
         @BeforeEach
         void setUp() {
-            product1 = productDao.save(new ProductBuilder().build());
-            product2 = productDao.save(new ProductBuilder().build());
+            product1 = productRepository.save(new ProductBuilder().build());
+            product2 = productRepository.save(new ProductBuilder().build());
         }
 
         @Test
@@ -109,7 +109,7 @@ class MenuServiceTest {
 
         @BeforeEach
         void setUp() {
-            final Product product = productDao.save(new ProductBuilder().setPrice(BigDecimal.valueOf(100_000_000))
+            final Product product = productRepository.save(new ProductBuilder().setPrice(BigDecimal.valueOf(100_000_000))
                     .build());
 
             menu = new MenuBuilder(menuGroup)

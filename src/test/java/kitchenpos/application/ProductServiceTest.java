@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,19 +23,19 @@ import static org.junit.jupiter.api.Assertions.*;
 class ProductServiceTest {
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
     @Autowired
     private ProductService productService;
 
     private static Stream<List<Product>> should_return_product_list_when_request_list() {
         final Product product1 = new ProductBuilder().build();
-
         final Product product2 = new ProductBuilder().build();
+        final Product product3 = new ProductBuilder().build();
 
         return Stream.of(
                 List.of(),
                 List.of(product1),
-                List.of(product1, product2)
+                List.of(product2, product3)
         );
     }
 
@@ -44,10 +44,10 @@ class ProductServiceTest {
     @DisplayName("모든 상품 목록을 조회할 수 있다.")
     void should_return_product_list_when_request_list(final List<Product> products) {
         // given
-        final List<Product> expect = productDao.findAll();
+        final List<Product> expect = productRepository.findAll();
         expect.addAll(products);
 
-        products.forEach(product -> productDao.save(product));
+        productRepository.saveAll(products);
 
         // when
         final List<Product> actual = productService.list();
@@ -83,11 +83,13 @@ class ProductServiceTest {
             final Product expect = productService.create(product);
 
             // then
-            final Product actual = productDao.findById(expect.getId()).get();
+            final Product actual = productRepository.findById(expect.getId()).get();
 
-            assertThat(actual)
-                    .usingRecursiveComparison()
-                    .isEqualTo(expect);
+            assertAll(
+                    () -> assertEquals(expect.getId(), actual.getId()),
+                    () -> assertEquals(expect.getName(), actual.getName()),
+                    () -> assertThat(actual.getPrice()).isEqualByComparingTo(expect.getPrice())
+            );
         }
 
         @ParameterizedTest
