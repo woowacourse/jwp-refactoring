@@ -35,7 +35,7 @@ class MenuGroupServiceTest {
             given(menuGroupDao.save(any(MenuGroup.class))).willReturn(expected);
 
             // when
-            final MenuGroup actual = menuGroupService.create(new MenuGroup());
+            final MenuGroup actual = menuGroupService.create(expected);
 
             // then
             assertThat(actual.getName()).isEqualTo(expected.getName());
