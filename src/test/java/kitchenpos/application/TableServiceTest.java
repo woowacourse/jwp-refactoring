@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
 import java.util.List;
@@ -35,7 +37,7 @@ class TableServiceTest {
         //given
         final OrderTable input = new OrderTable();
         final OrderTable result = OrderTableTestSupport.builder().build();
-        given(orderTableDao.save(any())).willReturn(result);
+        given(orderTableDao.save(any(OrderTable.class))).willReturn(result);
 
         //when
 
@@ -66,8 +68,8 @@ class TableServiceTest {
         final OrderTable input = new OrderTable();
         input.setEmpty(false);
         final OrderTable savedOrder = OrderTableTestSupport.builder().tableGroupId(null).empty(true).build();
-        given(orderTableDao.findById(any())).willReturn(Optional.of(savedOrder));
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(any(), any())).willReturn(false);
+        given(orderTableDao.findById(anyLong())).willReturn(Optional.of(savedOrder));
+        given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList())).willReturn(false);
         given(orderTableDao.save(savedOrder)).willReturn(savedOrder);
 
         //when
@@ -84,7 +86,7 @@ class TableServiceTest {
         final OrderTable input = new OrderTable();
         input.setEmpty(false);
         final OrderTable savedOrder = OrderTableTestSupport.builder().tableGroupId(1L).empty(true).build();
-        given(orderTableDao.findById(any())).willReturn(Optional.of(savedOrder));
+        given(orderTableDao.findById(anyLong())).willReturn(Optional.of(savedOrder));
 
         //when
 
@@ -100,8 +102,8 @@ class TableServiceTest {
         final OrderTable input = new OrderTable();
         input.setEmpty(false);
         final OrderTable savedOrder = OrderTableTestSupport.builder().tableGroupId(null).empty(false).build();
-        given(orderTableDao.findById(any())).willReturn(Optional.of(savedOrder));
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(any(), any())).willReturn(true);
+        given(orderTableDao.findById(anyLong())).willReturn(Optional.of(savedOrder));
+        given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList())).willReturn(true);
 
         //when
 
@@ -117,7 +119,7 @@ class TableServiceTest {
         final OrderTable input = new OrderTable();
         input.setNumberOfGuests(10);
         final OrderTable savedOrder = OrderTableTestSupport.builder().numberOfGuests(1).build();
-        given(orderTableDao.findById(any())).willReturn(Optional.of(savedOrder));
+        given(orderTableDao.findById(anyLong())).willReturn(Optional.of(savedOrder));
         given(orderTableDao.save(savedOrder)).willReturn(savedOrder);
 
         //when
@@ -149,7 +151,7 @@ class TableServiceTest {
         final OrderTable input = new OrderTable();
         input.setNumberOfGuests(10);
         final OrderTable savedOrder = OrderTableTestSupport.builder().numberOfGuests(1).empty(true).build();
-        given(orderTableDao.findById(any())).willReturn(Optional.of(savedOrder));
+        given(orderTableDao.findById(anyLong())).willReturn(Optional.of(savedOrder));
 
         //when
 

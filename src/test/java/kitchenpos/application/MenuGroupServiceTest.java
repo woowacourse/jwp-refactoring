@@ -33,7 +33,7 @@ class MenuGroupServiceTest {
         final var expectedResult = new MenuGroup();
         expectedResult.setId(1L);
         expectedResult.setName(origin.getName());
-        given(menuGroupDao.save(any())).willReturn(expectedResult);
+        given(menuGroupDao.save(any(MenuGroup.class))).willReturn(expectedResult);
 
         //when
 

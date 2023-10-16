@@ -3,6 +3,8 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
 import java.util.Collections;
@@ -43,8 +45,8 @@ class TableGroupServiceTest {
 
         final TableGroup tableGroup = TableGroupTestSupport.builder().orderTables(orderTables).build();
 
-        given(orderTableDao.findAllByIdIn(any())).willReturn(orderTables);
-        given(tableGroupDao.save(any())).willReturn(tableGroup);
+        given(orderTableDao.findAllByIdIn(anyList())).willReturn(orderTables);
+        given(tableGroupDao.save(any(TableGroup.class))).willReturn(tableGroup);
         for (OrderTable orderTable : orderTables) {
             given(orderTableDao.save(orderTable)).willReturn(orderTable);
         }
@@ -75,7 +77,7 @@ class TableGroupServiceTest {
     void create_fail_invalid_table() {
         ///given
         final TableGroup tableGroup = TableGroupTestSupport.builder().build();
-        given(orderTableDao.findAllByIdIn(any())).willReturn(Collections.emptyList());
+        given(orderTableDao.findAllByIdIn(anyList())).willReturn(Collections.emptyList());
 
         //when
 
@@ -92,7 +94,7 @@ class TableGroupServiceTest {
         final OrderTable table2 = OrderTableTestSupport.builder().build();
         final List<OrderTable> orderTables = List.of(table1, table2);
         final TableGroup tableGroup = TableGroupTestSupport.builder().orderTables(orderTables).build();
-        given(orderTableDao.findAllByIdIn(any())).willReturn(orderTables);
+        given(orderTableDao.findAllByIdIn(anyList())).willReturn(orderTables);
 
         //when
 
@@ -109,7 +111,7 @@ class TableGroupServiceTest {
         final OrderTable table2 = OrderTableTestSupport.builder().empty(true).tableGroupId(1L).build();
         final List<OrderTable> orderTables = List.of(table1, table2);
         final TableGroup tableGroup = TableGroupTestSupport.builder().orderTables(orderTables).build();
-        given(orderTableDao.findAllByIdIn(any())).willReturn(orderTables);
+        given(orderTableDao.findAllByIdIn(anyList())).willReturn(orderTables);
 
         //when
 
@@ -123,8 +125,8 @@ class TableGroupServiceTest {
     void ungroup() {
         //given
         final TableGroup tableGroup = TableGroupTestSupport.builder().build();
-        given(orderTableDao.findAllByTableGroupId(any())).willReturn(tableGroup.getOrderTables());
-        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(any(), any())).willReturn(false);
+        given(orderTableDao.findAllByTableGroupId(anyLong())).willReturn(tableGroup.getOrderTables());
+        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).willReturn(false);
 
         //when
 
@@ -137,8 +139,8 @@ class TableGroupServiceTest {
     void ungroup_fail_not_COMPLETION() {
         //given
         final TableGroup tableGroup = TableGroupTestSupport.builder().build();
-        given(orderTableDao.findAllByTableGroupId(any())).willReturn(tableGroup.getOrderTables());
-        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(any(), any())).willReturn(true);
+        given(orderTableDao.findAllByTableGroupId(anyLong())).willReturn(tableGroup.getOrderTables());
+        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).willReturn(true);
 
         //when
 

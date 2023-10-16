@@ -9,6 +9,7 @@ public class MenuGroupTestSupport {
     }
 
     public static class Builder {
+
         private static Long autoCount = 0L;
 
         private Long id = ++autoCount;

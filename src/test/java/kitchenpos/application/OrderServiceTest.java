@@ -4,6 +4,8 @@ import static kitchenpos.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
 import java.util.Collections;
@@ -48,9 +50,9 @@ class OrderServiceTest {
         final Order order = OrderTestSupport.builder().orderTableId(orderTable.getId()).build();
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
 
-        given(menuDao.countByIdIn(any())).willReturn((long) orderLineItems.size());
-        given(orderTableDao.findById(any())).willReturn(Optional.of(orderTable));
-        given(orderDao.save(any())).willReturn(order);
+        given(menuDao.countByIdIn(anyList())).willReturn((long) orderLineItems.size());
+        given(orderTableDao.findById(anyLong())).willReturn(Optional.of(orderTable));
+        given(orderDao.save(any(Order.class))).willReturn(order);
         for (OrderLineItem orderLineItem : orderLineItems) {
             given(orderLineItemDao.save(orderLineItem)).willReturn(orderLineItem);
         }
@@ -80,7 +82,7 @@ class OrderServiceTest {
     void create_fail_invalid_menu() {
         //given
         final Order order = OrderTestSupport.builder().build();
-        given(menuDao.countByIdIn(any())).willReturn(0L);
+        given(menuDao.countByIdIn(anyList())).willReturn(0L);
 
         //when
 
@@ -96,8 +98,8 @@ class OrderServiceTest {
         final OrderTable orderTable = OrderTableTestSupport.builder().build();
         final Order order = OrderTestSupport.builder().orderTableId(orderTable.getId()).build();
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
-        given(menuDao.countByIdIn(any())).willReturn((long) orderLineItems.size());
-        given(orderTableDao.findById(any())).willReturn(Optional.empty());
+        given(menuDao.countByIdIn(anyList())).willReturn((long) orderLineItems.size());
+        given(orderTableDao.findById(anyLong())).willReturn(Optional.empty());
 
         //when
 
@@ -128,9 +130,9 @@ class OrderServiceTest {
         final OrderStatus beforeStatus = OrderStatus.COOKING;
         final Order order = OrderTestSupport.builder().orderStatus(beforeStatus.name()).build();
 
-        given(orderDao.findById(any())).willReturn(Optional.of(order));
-        given(orderDao.save(any())).willReturn(order);
-        given(orderLineItemDao.findAllByOrderId(any())).willReturn(order.getOrderLineItems());
+        given(orderDao.findById(anyLong())).willReturn(Optional.of(order));
+        given(orderDao.save(any(Order.class))).willReturn(order);
+        given(orderLineItemDao.findAllByOrderId(anyLong())).willReturn(order.getOrderLineItems());
 
         final Order input = new Order();
         input.setOrderStatus(MEAL.name());
@@ -149,7 +151,7 @@ class OrderServiceTest {
         final OrderStatus beforeStatus = OrderStatus.COMPLETION;
         final Order order = OrderTestSupport.builder().orderStatus(beforeStatus.name()).build();
 
-        given(orderDao.findById(any())).willReturn(Optional.of(order));
+        given(orderDao.findById(anyLong())).willReturn(Optional.of(order));
 
         //when
 
