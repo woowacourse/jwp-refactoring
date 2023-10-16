@@ -138,7 +138,7 @@ class TableServiceTest {
         // expect
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("주문 테이블은 빈 테이블일 수 없습니다");
+                .hasMessage("인원을 변경할 테이블은 빈 테이블일 수 없습니다");
     }
 
     @Test
