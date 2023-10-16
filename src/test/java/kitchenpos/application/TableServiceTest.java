@@ -3,7 +3,9 @@ package kitchenpos.application;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -32,6 +34,8 @@ class TableServiceTest {
     private OrderTableRepository orderTableRepository;
     @Autowired
     private OrderDao orderDao;
+    @Autowired
+    private TableGroupRepository tableGroupRepository;
 
     private static Stream<List<OrderTable>> listTest() {
         final OrderTable table1 = new TableBuilder().build();
@@ -101,10 +105,10 @@ class TableServiceTest {
         @DisplayName("Table의 그룹 id가 존재할 경우 IllegalArgumentException이 발생한다.")
         void should_throw_when_tableGroupId_is_exists() {
             // given
-            final long notNullTableGroupId = 1L;
+            final TableGroup savedTableGroup = tableGroupRepository.findById(1L).get();
 
             final OrderTable table = orderTableRepository.save(new TableBuilder()
-                    .setTableGroupId(notNullTableGroupId)
+                    .setTableGroup(savedTableGroup)
                     .build());
 
             // when & then

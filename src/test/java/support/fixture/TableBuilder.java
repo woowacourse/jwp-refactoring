@@ -1,6 +1,7 @@
 package support.fixture;
 
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 
 public class TableBuilder {
 
@@ -17,8 +18,8 @@ public class TableBuilder {
         return this;
     }
 
-    public TableBuilder setTableGroupId(final Long tableGroupId) {
-        table.setTableGroupId(tableGroupId);
+    public TableBuilder setTableGroup(final TableGroup tableGroup) {
+        table.setTableGroup(tableGroup);
         return this;
     }
 
