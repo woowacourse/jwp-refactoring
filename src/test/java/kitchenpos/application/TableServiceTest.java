@@ -33,10 +33,10 @@ class TableServiceTest extends ServiceBaseTest {
     }
 
     @Test
-    @DisplayName("주문 테이블을 생성할 수 있다.")
+    @DisplayName("비어있는 주문 테이블을 생성할 수 있다.")
     void create() {
         //given
-        final OrderTable orderTable = Fixture.orderTable(null, 3, false);
+        final OrderTable orderTable = Fixture.orderTable(null, 3, true);
 
         //when
         final OrderTable createdOrderTable = tableService.create(orderTable);
@@ -44,21 +44,9 @@ class TableServiceTest extends ServiceBaseTest {
         //then
         assertAll(
                 () -> assertThat(createdOrderTable).isNotNull(),
+                () -> assertThat(createdOrderTable.isEmpty()).isTrue(),
                 () -> assertThat(createdOrderTable.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests())
         );
-    }
-
-    @Test
-    @DisplayName("주문 테이블은 비어있는 상태이다.")
-    void createNullOrderTable() {
-        //given
-        final OrderTable orderTable = Fixture.orderTable(null, 0, true);
-
-        //when
-        final OrderTable createdOrderTable = tableService.create(orderTable);
-
-        //then
-        assertThat(createdOrderTable.isEmpty()).isTrue();
     }
 
     @Test
