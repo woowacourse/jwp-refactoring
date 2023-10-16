@@ -166,8 +166,7 @@ class MenuServiceTest {
     }
 
     private MenuGroup saveMenuGroup() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("TestMenuGroup");
+        MenuGroup menuGroup = MenuGroup.from("TestMenuGroup");
 
         return menuGroupRepository.save(menuGroup);
     }
