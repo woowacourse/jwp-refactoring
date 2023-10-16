@@ -9,7 +9,6 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -95,7 +94,7 @@ class MenuServiceTest {
         menu.setMenuGroupId(1L);
         menu.setPrice(BigDecimal.valueOf(100));
 
-        given(menuGroupDao.existsById(BDDMockito.anyLong()))
+        given(menuGroupDao.existsById(anyLong()))
                 .willReturn(false);
 
         // when, then
@@ -105,24 +104,53 @@ class MenuServiceTest {
     }
 
     @Test
-    void 주문하려는_메뉴에_존재하는_상품은_이미_존재하는_상품이어야_한다() {
+    void 메뉴의_가격이_구성_상품의_합보다_크면_예외발생() {
         // given
         Menu menu = new Menu();
         menu.setMenuGroupId(1L);
-        menu.setPrice(BigDecimal.valueOf(100));
+        menu.setPrice(BigDecimal.valueOf(11));
 
         MenuProduct menuProduct = new MenuProduct();
         menuProduct.setProductId(1L);
+        menuProduct.setQuantity(1);
 
         menu.setMenuProducts(List.of(menuProduct));
 
         Product product = new Product();
         product.setPrice(BigDecimal.TEN);
 
-        given(menuGroupDao.existsById(BDDMockito.anyLong()))
+        given(menuGroupDao.existsById(anyLong()))
                 .willReturn(true);
 
-        given(productDao.findById(BDDMockito.anyLong()))
+        given(productDao.findById(anyLong()))
+                .willReturn(Optional.empty());
+
+        // when, then
+        assertThatThrownBy(() -> menuService.create(menu))
+                .isInstanceOf(IllegalArgumentException.class);
+        then(menuDao).should(never()).save(any());
+    }
+
+    @Test
+    void 메뉴_구성_상품은_이미_존재하는_상품이어야_한다() {
+        // given
+        Menu menu = new Menu();
+        menu.setMenuGroupId(1L);
+        menu.setPrice(BigDecimal.valueOf(9));
+
+        MenuProduct menuProduct = new MenuProduct();
+        menuProduct.setProductId(1L);
+        menuProduct.setQuantity(1);
+
+        menu.setMenuProducts(List.of(menuProduct));
+
+        Product product = new Product();
+        product.setPrice(BigDecimal.TEN);
+
+        given(menuGroupDao.existsById(anyLong()))
+                .willReturn(true);
+
+        given(productDao.findById(anyLong()))
                 .willReturn(Optional.of(product));
 
         // when, then
@@ -147,10 +175,10 @@ class MenuServiceTest {
         Product product = new Product();
         product.setPrice(BigDecimal.ZERO);
 
-        given(menuGroupDao.existsById(BDDMockito.anyLong()))
+        given(menuGroupDao.existsById(anyLong()))
                 .willReturn(true);
 
-        given(productDao.findById(BDDMockito.anyLong()))
+        given(productDao.findById(anyLong()))
                 .willReturn(Optional.of(product));
 
         // when, then
