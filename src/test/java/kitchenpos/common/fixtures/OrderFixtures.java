@@ -1,4 +1,4 @@
-package kitchenpos.common;
+package kitchenpos.common.fixtures;
 
 import java.util.List;
 import kitchenpos.domain.Order;

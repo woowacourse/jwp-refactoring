@@ -1,7 +1,7 @@
-package kitchenpos.common;
+package kitchenpos.common.fixtures;
 
-import static kitchenpos.common.ProductFixtures.PRODUCT1_PRICE;
-import static kitchenpos.common.ProductFixtures.PRODUCT2_PRICE;
+import static kitchenpos.common.fixtures.ProductFixtures.PRODUCT1_PRICE;
+import static kitchenpos.common.fixtures.ProductFixtures.PRODUCT2_PRICE;
 
 import java.math.BigDecimal;
 import java.util.List;
