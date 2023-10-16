@@ -1,11 +1,11 @@
 package kitchenpos.application;
 
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -38,7 +38,7 @@ class MenuServiceTest {
     @Autowired
     private ProductRepository productRepository;
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
     @Autowired
     private MenuProductDao menuProductDao;
 
@@ -46,7 +46,7 @@ class MenuServiceTest {
 
     @BeforeEach
     void setUp() {
-        menuGroup = menuGroupDao.save(new MenuGroupBuilder().build());
+        menuGroup = menuGroupRepository.save(new MenuGroupBuilder().build());
     }
 
     @Nested

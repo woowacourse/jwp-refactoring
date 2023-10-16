@@ -1,7 +1,11 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.*;
+import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderLineItemDao;
+import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.*;
+import kitchenpos.domain.repository.MenuGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -27,7 +31,7 @@ class OrderServiceTest {
     @Autowired
     private MenuDao menuDao;
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
     @Autowired
     private OrderTableDao orderTableDao;
     @Autowired
@@ -37,7 +41,7 @@ class OrderServiceTest {
     @DisplayName("모든 주문 목록을 조회한다.")
     void listTest() {
         // given
-        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroupBuilder().build());
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroupBuilder().build());
 
         final Menu menu = menuDao.save(new MenuBuilder(menuGroup).build());
 
@@ -73,7 +77,7 @@ class OrderServiceTest {
         @DisplayName("생성된 주문의 상태는 COOKING이고 OrderLineItem의 OrderId는 생성된 주문의 id이다.")
         void createOrderTest() {
             // given
-            final MenuGroup menuGroup = menuGroupDao.save(new MenuGroupBuilder().build());
+            final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroupBuilder().build());
 
             final Menu menu = menuDao.save(new MenuBuilder(menuGroup).build());
 
@@ -145,7 +149,7 @@ class OrderServiceTest {
         @DisplayName("주문 테이블이 존재하지 않을 경우 IllegalArgumentException이 발생한다.")
         void should_throw_when_OrderTable_is_not_saved() {
             // given
-            final MenuGroup menuGroup = menuGroupDao.save(new MenuGroupBuilder().build());
+            final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroupBuilder().build());
 
             final Menu menu = menuDao.save(new MenuBuilder(menuGroup).build());
 
@@ -166,7 +170,7 @@ class OrderServiceTest {
         @DisplayName("주문 테이블이 비어있는 경우 IllegalArgumentException이 발생한다.")
         void should_throw_when_OrderTable_is_empty() {
             // given
-            final MenuGroup menuGroup = menuGroupDao.save(new MenuGroupBuilder().build());
+            final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroupBuilder().build());
 
             final Menu menu = menuDao.save(new MenuBuilder(menuGroup).build());
 
@@ -196,7 +200,7 @@ class OrderServiceTest {
         @DisplayName("주문 상태를 변경한다.")
         void changeOrderStatusTest(final OrderStatus orderStatus) {
             // given
-            final MenuGroup menuGroup = menuGroupDao.save(new MenuGroupBuilder().build());
+            final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroupBuilder().build());
 
             final Menu menu = menuDao.save(new MenuBuilder(menuGroup).build());
 
@@ -227,7 +231,7 @@ class OrderServiceTest {
         @DisplayName("완료된 주문의 상태를 변경할 경우 IllegalArgumentException이 발생한다.")
         void should_throw_when_change_orderStatus_completion() {
             // given
-            final MenuGroup menuGroup = menuGroupDao.save(new MenuGroupBuilder().build());
+            final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroupBuilder().build());
 
             final Menu menu = menuDao.save(new MenuBuilder(menuGroup).build());
 

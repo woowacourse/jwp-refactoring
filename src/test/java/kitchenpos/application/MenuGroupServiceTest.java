@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.repository.MenuGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -21,17 +21,17 @@ class MenuGroupServiceTest {
     @Autowired
     private MenuGroupService menuGroupService;
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     private static Stream<List<MenuGroup>> should_return_menuGroup_list_when_request_list() {
         final MenuGroup menuGroup1 = new MenuGroupBuilder().build();
-
         final MenuGroup menuGroup2 = new MenuGroupBuilder().build();
+        final MenuGroup menuGroup3 = new MenuGroupBuilder().build();
 
         return Stream.of(
                 List.of(),
                 List.of(menuGroup1),
-                List.of(menuGroup1, menuGroup2)
+                List.of(menuGroup2, menuGroup3)
         );
     }
 
@@ -40,10 +40,10 @@ class MenuGroupServiceTest {
     @DisplayName("모든 메뉴 그룹 목록을 조회할 수 있다.")
     void should_return_menuGroup_list_when_request_list(final List<MenuGroup> menuGroups) {
         // given
-        final List<MenuGroup> expect = menuGroupDao.findAll();
+        final List<MenuGroup> expect = menuGroupRepository.findAll();
         expect.addAll(menuGroups);
 
-        menuGroups.forEach(menuGroup -> menuGroupDao.save(menuGroup));
+        menuGroupRepository.saveAll(menuGroups);
 
         // when
         final List<MenuGroup> actual = menuGroupService.list();
@@ -65,7 +65,7 @@ class MenuGroupServiceTest {
         final MenuGroup expect = menuGroupService.create(menuGroup);
 
         // then
-        final MenuGroup actual = menuGroupDao.findById(expect.getId()).get();
+        final MenuGroup actual = menuGroupRepository.findById(expect.getId()).get();
 
         assertThat(actual)
                 .usingRecursiveComparison()
