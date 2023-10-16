@@ -41,9 +41,7 @@ class TableServiceTest extends ServiceIntegrateTest {
   @DisplayName("테이블을 등록할 수 있다.")
   void create_success() {
     //given
-    final OrderTable table = new OrderTable();
-    table.setNumberOfGuests(0);
-    table.setEmpty(true);
+    final OrderTable table = new OrderTable(null, null, 0, true);
 
     //when
     final OrderTable actual = tableService.create(table);
@@ -70,8 +68,7 @@ class TableServiceTest extends ServiceIntegrateTest {
   void changeEmpty_success() {
     //given
     final boolean expected = false;
-    final OrderTable changedTable = new OrderTable();
-    changedTable.setEmpty(expected);
+    final OrderTable changedTable = new OrderTable(null, null, 0, expected);
 
     //when
     final boolean actual = tableService.changeEmpty(table1.getId(), changedTable).isEmpty();
@@ -84,8 +81,7 @@ class TableServiceTest extends ServiceIntegrateTest {
   @DisplayName("테이블이 비었는지 여부를 변경할 때 대상 테이블이 존재하지 않으면 예외를 반환한다.")
   void changeEmpty_fail_not_exist_table() {
     //given
-    final OrderTable changedTable = new OrderTable();
-    changedTable.setEmpty(false);
+    final OrderTable changedTable = new OrderTable(null, null, 0, false);
 
     //when
     final ThrowingCallable actual = () -> tableService.changeEmpty(999L, changedTable);
@@ -102,8 +98,7 @@ class TableServiceTest extends ServiceIntegrateTest {
     tableGroup.setOrderTables(List.of(table1, table2));
     tableGroupService.create(tableGroup);
 
-    final OrderTable changedTable = new OrderTable();
-    changedTable.setEmpty(false);
+    final OrderTable changedTable = new OrderTable(null, null, 0, false);
 
     //when
     final ThrowingCallable actual = () -> tableService.changeEmpty(table1.getId(), changedTable);
@@ -116,13 +111,10 @@ class TableServiceTest extends ServiceIntegrateTest {
   @DisplayName("테이블이 비었는지 여부를 변경할 때 대상 테이블의 주문 중 계산이 완료되지 않은 주문이 있으면 예외를 반환한다.")
   void changeEmpty_fail_not_COMPLETION_order() {
     //given
-    table1.setNumberOfGuests(4);
-    table1.setEmpty(false);
-    orderTableDao.save(table1);
+    orderTableDao.save(new OrderTable(1L, null, 4, false));
 
     orderService.create(주문(table1.getId()));
-    final OrderTable changedTable = new OrderTable();
-    changedTable.setEmpty(true);
+    final OrderTable changedTable = new OrderTable(null, null, 0, true);
 
     //when
     final ThrowingCallable actual = () -> tableService.changeEmpty(table1.getId(), changedTable);
@@ -135,12 +127,8 @@ class TableServiceTest extends ServiceIntegrateTest {
   @DisplayName("테이블의 손님 수를 변경할 수 있다.")
   void changeNumberOfGuests_success() {
     //given
-    final OrderTable changedTable = new OrderTable();
-    changedTable.setEmpty(false);
-    tableService.changeEmpty(table1.getId(), changedTable);
-
     final int expected = 4;
-    changedTable.setNumberOfGuests(expected);
+    final OrderTable changedTable = new OrderTable(null, null, expected, false);
 
     //when
     final int actual = tableService.changeNumberOfGuests(table1.getId(), changedTable)
@@ -154,11 +142,7 @@ class TableServiceTest extends ServiceIntegrateTest {
   @DisplayName("테이블의 손님 수를 변경할 때 변경하려는 손님 수가 0 이하면 예외를 반환한다.")
   void changeNumberOfGuests_fail_not_multiple() {
     //given
-    final OrderTable changedTable = new OrderTable();
-    changedTable.setEmpty(false);
-    tableService.changeEmpty(table1.getId(), changedTable);
-
-    changedTable.setNumberOfGuests(-1);
+    final OrderTable changedTable = new OrderTable(null, null, -1, false);
 
     //when
     final ThrowingCallable actual = () -> tableService.changeNumberOfGuests(table1.getId(),
@@ -172,11 +156,7 @@ class TableServiceTest extends ServiceIntegrateTest {
   @DisplayName("테이블의 손님 수를 변경할 때 대상 테이블이 존재하지 않으면 예외를 반환한다.")
   void changeNumberOfGuests_fail_not_exist_table() {
     //given
-    final OrderTable changedTable = new OrderTable();
-    changedTable.setEmpty(false);
-    tableService.changeEmpty(table1.getId(), changedTable);
-
-    changedTable.setNumberOfGuests(4);
+    final OrderTable changedTable = new OrderTable(null, null, 4, false);
 
     //when
     final ThrowingCallable actual = () -> tableService.changeNumberOfGuests(999L, changedTable);
@@ -189,8 +169,7 @@ class TableServiceTest extends ServiceIntegrateTest {
   @DisplayName("테이블의 손님 수를 변경할 때 대상 테이블이 비어있으면 예외를 반환한다.")
   void changeNumberOfGuests_fail_empty_table() {
     //given
-    final OrderTable changedTable = new OrderTable();
-    changedTable.setNumberOfGuests(4);
+    final OrderTable changedTable = new OrderTable(null, null, 4, false);
 
     //when
     final ThrowingCallable actual = () -> tableService.changeNumberOfGuests(table1.getId(),

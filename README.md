@@ -70,7 +70,7 @@
     - [x] menu
     - [ ] order
     - [ ] table group
-    - [ ] table
+    - [x] table
 - [ ] dto 생성
 - [ ] 도메인 객체 캡슐화
 - [ ] orderTable의 empty, numberOfGuests 변경 api를 patch api로 수정

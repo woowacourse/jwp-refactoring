@@ -34,8 +34,8 @@ class OrderServiceTest extends ServiceIntegrateTest {
     notEmptyOrderTableId = 1L;
     emptyOrderTableId = 2L;
     final OrderTable orderTable = orderTableDao.findById(notEmptyOrderTableId).get();
-    orderTable.setEmpty(false);
-    orderTableDao.save(orderTable);
+    orderTableDao.save(new OrderTable(orderTable.getId(), orderTable.getTableGroupId(),
+        orderTable.getNumberOfGuests(), false));
   }
 
   @Test
