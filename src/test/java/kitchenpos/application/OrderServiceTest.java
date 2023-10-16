@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.dao.MenuDao;
@@ -88,7 +89,7 @@ class OrderServiceTest {
     void create_emptyOrderLineItems() {
         // given
         final Order order = new Order();
-        order.setOrderLineItems(List.of());
+        order.setOrderLineItems(Collections.emptyList());
 
         // when
         // then
