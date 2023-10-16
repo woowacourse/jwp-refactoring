@@ -69,7 +69,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
     @Override
     public List<OrderTable> findAllByTableGroupId(final Long tableGroupId) {
         final String sql = "SELECT id, table_group_id, number_of_guests, empty" +
-                " FROM order_table WHERE table_group_id = (:tableGroupId)";
+                           " FROM order_table WHERE table_group_id = (:tableGroupId)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("tableGroupId", tableGroupId);
         return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
@@ -84,7 +84,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
 
     private void update(final OrderTable entity) {
         final String sql = "UPDATE order_table SET table_group_id = (:tableGroupId)," +
-                " number_of_guests = (:numberOfGuests), empty = (:empty) WHERE id = (:id)";
+                           " number_of_guests = (:numberOfGuests), empty = (:empty) WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("tableGroupId", entity.getTableGroupId())
                 .addValue("numberOfGuests", entity.getNumberOfGuests())
@@ -94,11 +94,11 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
     }
 
     private OrderTable toEntity(final ResultSet resultSet) throws SQLException {
-        final OrderTable entity = new OrderTable();
-        entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setTableGroupId(resultSet.getObject("table_group_id", Long.class));
-        entity.setNumberOfGuests(resultSet.getInt("number_of_guests"));
-        entity.setEmpty(resultSet.getBoolean("empty"));
-        return entity;
+        return new OrderTable(
+                resultSet.getLong(KEY_COLUMN_NAME),
+                resultSet.getObject("table_group_id", Long.class),
+                resultSet.getInt("number_of_guests"),
+                resultSet.getBoolean("empty")
+        );
     }
 }
