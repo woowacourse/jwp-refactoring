@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.fake.FakeMenuGroupDao;
 import org.junit.jupiter.api.Test;
 

@@ -1,7 +1,7 @@
 package kitchenpos.fake;
 
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.table.TableGroup;
 
 import java.util.ArrayList;
 import java.util.HashMap;

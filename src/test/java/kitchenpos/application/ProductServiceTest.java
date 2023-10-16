@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
 import kitchenpos.fake.FakeProductDao;
 import org.junit.jupiter.api.Test;
 

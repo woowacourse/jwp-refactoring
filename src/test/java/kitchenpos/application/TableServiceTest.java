@@ -2,8 +2,8 @@ package kitchenpos.application;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.fake.FakeOrderDao;
 import kitchenpos.fake.FakeOrderTableDao;
 import org.junit.jupiter.api.BeforeEach;

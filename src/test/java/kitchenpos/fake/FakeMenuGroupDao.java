@@ -1,7 +1,7 @@
 package kitchenpos.fake;
 
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menu.MenuGroup;
 
 import java.util.ArrayList;
 import java.util.HashMap;
