@@ -17,6 +17,7 @@ import javax.validation.constraints.NotNull;
 public class Menu {
 
     private static final int MAX_NAME_LENGTH = 255;
+    private static final int MIN_PRICE = 0;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -64,7 +65,7 @@ public class Menu {
     }
 
     private static void validatePrice(BigDecimal price) {
-        if (price.doubleValue() < 0) {
+        if (price.doubleValue() < MIN_PRICE) {
             throw new IllegalArgumentException();
         }
     }
