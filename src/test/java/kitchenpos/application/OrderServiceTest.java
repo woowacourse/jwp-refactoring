@@ -44,24 +44,24 @@ class OrderServiceTest {
     @Test
     void 주문을_생성한다() {
         // given
-        final OrderTable expectedOrderTable = new OrderTable();
-        expectedOrderTable.setId(1L);
-        expectedOrderTable.setEmpty(false);
+        final OrderTable savedOrderTable = new OrderTable();
+        savedOrderTable.setId(1L);
+        savedOrderTable.setEmpty(false);
 
-        final Order expectedOrder = new Order();
-        expectedOrder.setId(1L);
+        final Order savedOrder = new Order();
+        savedOrder.setId(1L);
 
-        final OrderLineItem expectedOrderLineItem = new OrderLineItem();
-        expectedOrderLineItem.setOrderId(1L);
+        final OrderLineItem savedOrderLineItem = new OrderLineItem();
+        savedOrderLineItem.setOrderId(1L);
 
         when(menuDao.countByIdIn(any()))
                 .thenReturn(2L);
         when(orderTableDao.findById(anyLong()))
-                .thenReturn(Optional.of(expectedOrderTable));
+                .thenReturn(Optional.of(savedOrderTable));
         when(orderDao.save(any(Order.class)))
-                .thenReturn(expectedOrder);
+                .thenReturn(savedOrder);
         when(orderLineItemDao.save(any(OrderLineItem.class)))
-                .thenReturn(expectedOrderLineItem);
+                .thenReturn(savedOrderLineItem);
 
         // when
         final Order order = new Order();
@@ -141,13 +141,13 @@ class OrderServiceTest {
     @Test
     void 주문을_생성할_때_주문_테이블이_빈_상태면_실패한다() {
         // given
-        final OrderTable expectedOrderTable = new OrderTable();
-        expectedOrderTable.setEmpty(true);
+        final OrderTable savedOrderTable = new OrderTable();
+        savedOrderTable.setEmpty(true);
 
         when(menuDao.countByIdIn(any()))
                 .thenReturn(2L);
         when(orderTableDao.findById(anyLong()))
-                .thenReturn(Optional.of(expectedOrderTable));
+                .thenReturn(Optional.of(savedOrderTable));
 
         // when
         final Order order = new Order();

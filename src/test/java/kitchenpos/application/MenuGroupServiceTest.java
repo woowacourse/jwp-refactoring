@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,23 +27,29 @@ class MenuGroupServiceTest {
     @Test
     void 메뉴_그룹을_생성한다() {
         // given
-        final MenuGroup expect = new MenuGroup();
+        final MenuGroup savedMenuGroup = new MenuGroup();
+        savedMenuGroup.setId(1L);
+        savedMenuGroup.setName("신메뉴");
         when(menuGroupDao.save(any(MenuGroup.class)))
-                .thenReturn(expect);
+                .thenReturn(savedMenuGroup);
 
         // when
         final MenuGroup result = menuGroupService.create(new MenuGroup());
+        final MenuGroup expect = new MenuGroup();
+        expect.setId(1L);
+        expect.setName("신메뉴");
 
         // then
-        assertThat(result).isEqualTo(expect);
+        assertThat(result)
+                .usingRecursiveComparison()
+                .isEqualTo(expect);
     }
 
     @Test
     void 모든_메뉴_그룹을_반환한다() {
         // given
-        final List<MenuGroup> expect = List.of();
         when(menuGroupDao.findAll())
-                .thenReturn(expect);
+                .thenReturn(Collections.emptyList());
 
         // when
         final List<MenuGroup> result = menuGroupService.list();

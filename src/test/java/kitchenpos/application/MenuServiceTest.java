@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,22 +46,22 @@ class MenuServiceTest {
     @Test
     void 메뉴를_생성한다() {
         // given
-        final Menu expectMenu = new Menu();
-        expectMenu.setId(1L);
+        final Menu savedMenu = new Menu();
+        savedMenu.setId(1L);
 
-        final Product expectProduct = new Product();
-        expectProduct.setPrice(new BigDecimal(1000));
+        final Product savedProduct = new Product();
+        savedProduct.setPrice(new BigDecimal(1000));
 
-        final MenuProduct expectMenuProduct = new MenuProduct();
+        final MenuProduct savedMenuProduct = new MenuProduct();
 
         when(menuGroupDao.existsById(anyLong()))
                 .thenReturn(true);
         when(productDao.findById(anyLong()))
-                .thenReturn(Optional.of(expectProduct));
+                .thenReturn(Optional.of(savedProduct));
         when(menuDao.save(any(Menu.class)))
-                .thenReturn(expectMenu);
+                .thenReturn(savedMenu);
         when(menuProductDao.save(any(MenuProduct.class)))
-                .thenReturn(expectMenuProduct);
+                .thenReturn(savedMenuProduct);
 
         // when
         final Menu menu = new Menu();
@@ -139,13 +140,13 @@ class MenuServiceTest {
     @Test
     void 메뉴를_생성할_때_전달한_가격과_메뉴_상품들의_가격의_합이_일치하지_않으면_실패한다() {
         // given
-        final Product expectProduct = new Product();
-        expectProduct.setPrice(new BigDecimal(500));
+        final Product savedProduct = new Product();
+        savedProduct.setPrice(new BigDecimal(500));
 
         when(menuGroupDao.existsById(anyLong()))
                 .thenReturn(true);
         when(productDao.findById(anyLong()))
-                .thenReturn(Optional.of(expectProduct));
+                .thenReturn(Optional.of(savedProduct));
 
         // when
         final Menu menu = new Menu();
@@ -165,9 +166,8 @@ class MenuServiceTest {
     @Test
     void 전체_메뉴_목록을_반환한다() {
         // given
-        final List<Menu> expect = List.of();
         when(menuDao.findAll())
-                .thenReturn(expect);
+                .thenReturn(Collections.emptyList());
 
         // when
         final List<Menu> result = menuService.list();

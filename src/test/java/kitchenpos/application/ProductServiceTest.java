@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,9 +29,9 @@ class ProductServiceTest {
     @Test
     void 상품을_생성한다() {
         // given
-        final Product expect = new Product();
+        final Product savedProduct = new Product();
         when(productDao.save(any(Product.class)))
-                .thenReturn(expect);
+                .thenReturn(savedProduct);
 
         // when
         final Product product = new Product();
@@ -38,7 +39,7 @@ class ProductServiceTest {
         final Product result = productService.create(product);
 
         // then
-        assertThat(result).isEqualTo(expect);
+        assertThat(result).isEqualTo(savedProduct);
     }
 
     @Test
@@ -65,9 +66,8 @@ class ProductServiceTest {
     @Test
     void 모든_상품_목록을_반환한다() {
         // given
-        final List<Product> expect = List.of();
         when(productDao.findAll())
-                .thenReturn(expect);
+                .thenReturn(Collections.emptyList());
 
         // when
         final List<Product> result = productService.list();

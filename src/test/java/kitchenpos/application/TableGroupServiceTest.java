@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,24 +39,23 @@ class TableGroupServiceTest {
     @Test
     void 테이블_그룹을_생성한다() {
         // given
-        final OrderTable expectedOrderTable1 = new OrderTable();
-        final OrderTable expectedOrderTable2 = new OrderTable();
-        expectedOrderTable1.setEmpty(true);
-        expectedOrderTable2.setEmpty(true);
+        final OrderTable savedOrderTable1 = new OrderTable();
+        final OrderTable savedOrderTable2 = new OrderTable();
+        savedOrderTable1.setEmpty(true);
+        savedOrderTable2.setEmpty(true);
 
-        final TableGroup expectedTabledGroup = new TableGroup();
-        expectedTabledGroup.setId(1L);
+        final TableGroup savedTabledGroup = new TableGroup();
+        savedTabledGroup.setId(1L);
 
         when(orderTableDao.findAllByIdIn(any()))
-                .thenReturn(List.of(expectedOrderTable1, expectedOrderTable2));
+                .thenReturn(List.of(savedOrderTable1, savedOrderTable2));
         when(tableGroupDao.save(any(TableGroup.class)))
-                .thenReturn(expectedTabledGroup);
+                .thenReturn(savedTabledGroup);
         when(orderTableDao.save(any(OrderTable.class)))
                 .thenReturn(null);
 
         // when
         final TableGroup tableGroup = new TableGroup();
-
         final OrderTable orderTable1 = new OrderTable();
         final OrderTable orderTable2 = new OrderTable();
         orderTable1.setId(1L);
@@ -99,7 +99,7 @@ class TableGroupServiceTest {
     void 테이블_그룹을_생성할_때_전달된_주문_테이블이_DB에_존재하지_않으면_실패한다() {
         // given
         when(orderTableDao.findAllByIdIn(any()))
-                .thenReturn(List.of());
+                .thenReturn(Collections.emptyList());
 
         // when
         final TableGroup tableGroup = new TableGroup();
@@ -118,17 +118,16 @@ class TableGroupServiceTest {
     @Test
     void 테이블_그룹을_생성할_때_전달된_주문_테이블이_빈_상태가_아니면_실패한다() {
         // given
-        final OrderTable expectedOrderTable1 = new OrderTable();
-        final OrderTable expectedOrderTable2 = new OrderTable();
-        expectedOrderTable1.setEmpty(false);
-        expectedOrderTable2.setEmpty(true);
+        final OrderTable savedOrderTable1 = new OrderTable();
+        final OrderTable savedOrderTable2 = new OrderTable();
+        savedOrderTable1.setEmpty(false);
+        savedOrderTable2.setEmpty(true);
 
         when(orderTableDao.findAllByIdIn(any()))
-                .thenReturn(List.of(expectedOrderTable1, expectedOrderTable2));
+                .thenReturn(List.of(savedOrderTable1, savedOrderTable2));
 
         // when
         final TableGroup tableGroup = new TableGroup();
-
         final OrderTable orderTable1 = new OrderTable();
         final OrderTable orderTable2 = new OrderTable();
         orderTable1.setId(1L);
@@ -143,18 +142,17 @@ class TableGroupServiceTest {
     @Test
     void 테이블_그룹을_생성할_때_전달된_주문_테이블이_다른_테이블_그룹에_속해_있다면_실패한다() {
         // given
-        final OrderTable expectedOrderTable1 = new OrderTable();
-        final OrderTable expectedOrderTable2 = new OrderTable();
-        expectedOrderTable1.setEmpty(true);
-        expectedOrderTable1.setTableGroupId(1L);
-        expectedOrderTable2.setEmpty(true);
+        final OrderTable savedOrderTable1 = new OrderTable();
+        final OrderTable savedOrderTable2 = new OrderTable();
+        savedOrderTable1.setEmpty(true);
+        savedOrderTable1.setTableGroupId(1L);
+        savedOrderTable2.setEmpty(true);
 
         when(orderTableDao.findAllByIdIn(any()))
-                .thenReturn(List.of(expectedOrderTable1, expectedOrderTable2));
+                .thenReturn(List.of(savedOrderTable1, savedOrderTable2));
 
         // when
         final TableGroup tableGroup = new TableGroup();
-
         final OrderTable orderTable1 = new OrderTable();
         final OrderTable orderTable2 = new OrderTable();
         orderTable1.setId(1L);
@@ -169,13 +167,13 @@ class TableGroupServiceTest {
     @Test
     void 테이블_그룹을_삭제한다() {
         // given
-        final OrderTable expectedOrderTable1 = new OrderTable();
-        final OrderTable expectedOrderTable2 = new OrderTable();
-        expectedOrderTable1.setId(1L);
-        expectedOrderTable2.setId(2L);
+        final OrderTable savedOrderTable1 = new OrderTable();
+        final OrderTable savedOrderTable2 = new OrderTable();
+        savedOrderTable1.setId(1L);
+        savedOrderTable2.setId(2L);
 
         when(orderTableDao.findAllByTableGroupId(anyLong()))
-                .thenReturn(List.of(expectedOrderTable1, expectedOrderTable2));
+                .thenReturn(List.of(savedOrderTable1, savedOrderTable2));
         when(orderDao.existsByOrderTableIdInAndOrderStatusIn(any(), any()))
                 .thenReturn(false);
         when(orderTableDao.save(any(OrderTable.class)))
@@ -192,13 +190,13 @@ class TableGroupServiceTest {
     @Test
     void 테이블_그룹을_삭제할_때_그룹에_속한_주문_테이블_중_하나라도_COOKING이나_MEAL_상태면_실패한다() {
         // given
-        final OrderTable expectedOrderTable1 = new OrderTable();
-        final OrderTable expectedOrderTable2 = new OrderTable();
-        expectedOrderTable1.setId(1L);
-        expectedOrderTable2.setId(2L);
+        final OrderTable savedOrderTable1 = new OrderTable();
+        final OrderTable savedOrderTable2 = new OrderTable();
+        savedOrderTable1.setId(1L);
+        savedOrderTable2.setId(2L);
 
         when(orderTableDao.findAllByTableGroupId(anyLong()))
-                .thenReturn(List.of(expectedOrderTable1, expectedOrderTable2));
+                .thenReturn(List.of(savedOrderTable1, savedOrderTable2));
         when(orderDao.existsByOrderTableIdInAndOrderStatusIn(any(), any()))
                 .thenReturn(true);
 

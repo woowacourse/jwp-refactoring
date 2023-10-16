@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,11 +35,11 @@ class TableServiceTest {
     @Test
     void 주문_테이블을_생성한다() {
         // given
-        final OrderTable expected = new OrderTable();
-        expected.setId(1L);
+        final OrderTable savedOrderTable = new OrderTable();
+        savedOrderTable.setId(1L);
 
         when(orderTableDao.save(any(OrderTable.class)))
-                .thenReturn(expected);
+                .thenReturn(savedOrderTable);
 
         // when
         final OrderTable result = tableService.create(new OrderTable());
@@ -53,9 +54,8 @@ class TableServiceTest {
     @Test
     void 전체_주문_테이블_목록을_가져온다() {
         // given
-        final List<OrderTable> expected = List.of();
         when(orderTableDao.findAll())
-                .thenReturn(expected);
+                .thenReturn(Collections.emptyList());
 
         // when
         final List<OrderTable> result = tableService.list();
@@ -67,14 +67,14 @@ class TableServiceTest {
     @Test
     void 주문_테이블의_빈_상태를_변경한다() {
         // given
-        final OrderTable expected = new OrderTable();
+        final OrderTable savedOrderTable = new OrderTable();
 
         when(orderTableDao.findById(anyLong()))
-                .thenReturn(Optional.of(expected));
+                .thenReturn(Optional.of(savedOrderTable));
         when(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), any()))
                 .thenReturn(false);
         when(orderTableDao.save(any(OrderTable.class)))
-                .thenReturn(expected);
+                .thenReturn(savedOrderTable);
 
         // when
         final OrderTable result = tableService.changeEmpty(1L, new OrderTable());
@@ -86,11 +86,11 @@ class TableServiceTest {
     @Test
     void 주문_테이블의_빈_상태를_변경할_때_주문_테이블이_어떤_테이블_그룹에_속해_있을_때_실패한다() {
         // given
-        final OrderTable expected = new OrderTable();
-        expected.setTableGroupId(1L);
+        final OrderTable savedOrderTable = new OrderTable();
+        savedOrderTable.setTableGroupId(1L);
 
         when(orderTableDao.findById(anyLong()))
-                .thenReturn(Optional.of(expected));
+                .thenReturn(Optional.of(savedOrderTable));
 
         // when, then
         assertThatThrownBy(() -> tableService.changeEmpty(1L, new OrderTable()))
@@ -100,10 +100,10 @@ class TableServiceTest {
     @Test
     void 주문_테이블의_빈_상태를_변경할_때_주문_테이블의_주문_상태가_COOKING이나_MEAL이면_실패한다() {
         // given
-        final OrderTable expected = new OrderTable();
+        final OrderTable savedOrderTable = new OrderTable();
 
         when(orderTableDao.findById(anyLong()))
-                .thenReturn(Optional.of(expected));
+                .thenReturn(Optional.of(savedOrderTable));
         when(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), any()))
                 .thenReturn(true);
 
@@ -115,13 +115,13 @@ class TableServiceTest {
     @Test
     void 주문_테이블의_사용자_수를_변경한다() {
         // given
-        final OrderTable expected = new OrderTable();
-        expected.setNumberOfGuests(1);
+        final OrderTable savedOrderTable = new OrderTable();
+        savedOrderTable.setNumberOfGuests(1);
 
         when(orderTableDao.findById(anyLong()))
-                .thenReturn(Optional.of(expected));
+                .thenReturn(Optional.of(savedOrderTable));
         when(orderTableDao.save(any(OrderTable.class)))
-                .thenReturn(expected);
+                .thenReturn(savedOrderTable);
 
         // when
         final OrderTable orderTable = new OrderTable();
@@ -157,10 +157,10 @@ class TableServiceTest {
     @Test
     void 주문_테이블의_사용자_수를_변경할_때_주문_테이블이_빈_상태면_실패한다() {
         // given
-        final OrderTable expected = new OrderTable();
-        expected.setEmpty(true);
+        final OrderTable savedOrderTable = new OrderTable();
+        savedOrderTable.setEmpty(true);
         when(orderTableDao.findById(anyLong()))
-                .thenReturn(Optional.of(expected));
+                .thenReturn(Optional.of(savedOrderTable));
 
         // when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, new OrderTable()))
