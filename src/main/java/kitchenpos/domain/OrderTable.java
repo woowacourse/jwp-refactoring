@@ -5,9 +5,12 @@ import static kitchenpos.domain.exception.OrderTableExceptionType.TABLE_CANT_CHA
 import static kitchenpos.domain.exception.OrderTableExceptionType.TABLE_CANT_CHANGE_NUMBER_OF_GUESTS_EMPTY;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import kitchenpos.domain.exception.OrderTableException;
 
 @Entity
@@ -17,7 +20,9 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long tableGroupId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "table_group_id")
+    private TableGroup tableGroup;
 
     private int numberOfGuests;
 
@@ -25,19 +30,19 @@ public class OrderTable {
 
     public OrderTable(
         final Long id,
-        final Long tableGroupId,
+        final TableGroup tableGroup,
         final int numberOfGuests,
         final boolean empty
     ) {
         validateNumberOfGuest(numberOfGuests);
         this.id = id;
-        this.tableGroupId = tableGroupId;
+        this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
-    public OrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
-        this(null, tableGroupId, numberOfGuests, empty);
+    public OrderTable(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
+        this(null, tableGroup, numberOfGuests, empty);
     }
 
     protected OrderTable() {
@@ -55,11 +60,11 @@ public class OrderTable {
     }
 
     public Long getTableGroupId() {
-        return tableGroupId;
+        return tableGroup.getId();
     }
 
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
+    public void setTableGroupId(final TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
     }
 
     public int getNumberOfGuests() {
@@ -83,9 +88,13 @@ public class OrderTable {
     }
 
     public void changeEmpty(final boolean empty) {
-        if (tableGroupId != null) {
+        if (tableGroup != null) {
             throw new OrderTableException(TABLE_CANT_CHANGE_EMPTY_ALREADY_IN_GROUP);
         }
         this.empty = empty;
+    }
+
+    public void setTableGroup(final TableGroup savedOrderTable) {
+        this.tableGroup = savedOrderTable;
     }
 }

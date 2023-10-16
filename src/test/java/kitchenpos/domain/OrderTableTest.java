@@ -18,7 +18,7 @@ class OrderTableTest {
     @Test
     @DisplayName("OrderTable의 numberOfGuest가 0이하면 예외처리한다.")
     void validateNumberOfGuest() {
-        assertThatThrownBy(() -> new OrderTable(1L, -1, true))
+        assertThatThrownBy(() -> new OrderTable(null, -1, true))
             .isInstanceOf(OrderTableException.class)
             .hasMessage(NUMBER_OF_GUEST_LOWER_THAN_ZERO.getMessage());
     }
@@ -35,13 +35,13 @@ class OrderTableTest {
             orderTable.changeEmpty(false);
 
             assertThat(orderTable.isEmpty())
-                .isEqualTo(false);
+                .isFalse();
         }
 
         @Test
         @DisplayName("tableGroup에 속해있는 orderTalbe인 경우 예외처리 한다.")
         void throwExceptionTableGroupIdIsNull() {
-            final OrderTable orderTable = new OrderTable(1L, 0, true);
+            final OrderTable orderTable = new OrderTable(null, 0, true);
 
             assertThatThrownBy(() -> orderTable.changeEmpty(false))
                 .isInstanceOf(OrderTableException.class)

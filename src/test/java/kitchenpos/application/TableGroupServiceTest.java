@@ -47,7 +47,7 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
 
             //then
             tableGroup.getOrderTables().forEach(orderTable -> {
-                orderTable.setTableGroupId(savedTableGroup.getId());
+                orderTable.setTableGroup(savedTableGroup);
                 orderTable.setEmpty(false);
             });
             assertThat(savedTableGroup)
