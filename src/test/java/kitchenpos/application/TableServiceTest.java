@@ -3,24 +3,34 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-import java.util.List;
-import java.util.Optional;
+import kitchenpos.application.fakedao.InMemoryOrderDao;
+import kitchenpos.application.fakedao.InMemoryOrderTableDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.OrderFactory;
+import kitchenpos.domain.OrderLineItemFactory;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTableFactory;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 @SuppressWarnings("NonAsciiCharacters")
 class TableServiceTest {
 
-    private final OrderDao orderDao = mock(OrderDao.class);
-    private final OrderTableDao orderTableDao = mock(OrderTableDao.class);
+    private OrderDao orderDao;
+    private OrderTableDao orderTableDao;
+
+
+    @BeforeEach
+    void setUp() {
+        orderDao = new InMemoryOrderDao();
+        orderTableDao = new InMemoryOrderTableDao();
+    }
 
     @Nested
     class 테이블_등록시 {
@@ -30,7 +40,6 @@ class TableServiceTest {
             // given
             final var table = OrderTableFactory.createOrderTableOf(0, true);
             final var tableService = new TableService(orderDao, orderTableDao);
-            when(orderTableDao.save(table)).thenReturn(table);
 
             // when
             final var saved = tableService.create(table);
@@ -47,7 +56,6 @@ class TableServiceTest {
             // given
             final var table = OrderTableFactory.createOrderTableOf(0, false);
             final var tableService = new TableService(orderDao, orderTableDao);
-            when(orderTableDao.save(table)).thenReturn(table);
 
             // when
             final var saved = tableService.create(table);
@@ -76,16 +84,19 @@ class TableServiceTest {
     @Nested
     class 비어있는지_여부를_수정할시 {
 
-        @Test
-        void 주문_상태가_조리중_또는_식사중인_테이블은_비어있는지_여부를_수정할_수_없다() {
+        @ParameterizedTest
+        @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
+        void 주문_상태가_조리중_또는_식사중인_테이블은_비어있는지_여부를_수정할_수_없다(final OrderStatus orderStatus) {
             // given
             final var table = OrderTableFactory.createOrderTableOf(0, false);
+            final var savedTable = orderTableDao.save(table);
+            final var savedOrder = orderDao.save(OrderFactory.createOrderOf(savedTable.getId(), 1L, OrderLineItemFactory.createOrderLineItemOf(1L, 1L, 1L, 1L)));
+            savedOrder.setOrderStatus(orderStatus.name());
+
             final var tableService = new TableService(orderDao, orderTableDao);
-            when(orderTableDao.findById(1L)).thenReturn(Optional.of(table));
-            when(orderDao.existsByOrderTableIdAndOrderStatusIn(1L, List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).thenReturn(true);
 
             // when
-            final ThrowingCallable throwingCallable = () -> tableService.changeEmpty(1L, table);
+            final ThrowingCallable throwingCallable = () -> tableService.changeEmpty(savedTable.getId(), table);
 
             // then
             assertThatThrownBy(throwingCallable).isInstanceOf(IllegalArgumentException.class);
@@ -95,13 +106,13 @@ class TableServiceTest {
         void 테이블_그룹이_지정되어있다면_비어있는_상태로_변경할_수_없다() {
             // given
             final var table = OrderTableFactory.createOrderTableOf(0, false);
+            final var savedTable = orderTableDao.save(table);
             final var tableService = new TableService(orderDao, orderTableDao);
-            when(orderTableDao.findById(1L)).thenReturn(Optional.of(table));
-            when(orderDao.existsByOrderTableIdAndOrderStatusIn(1L, List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).thenReturn(false);
+
             table.setTableGroupId(1L);
 
             // when
-            final ThrowingCallable throwingCallable = () -> tableService.changeEmpty(1L, table);
+            final ThrowingCallable throwingCallable = () -> tableService.changeEmpty(savedTable.getId(), table);
 
             // then
             assertThatThrownBy(throwingCallable).isInstanceOf(IllegalArgumentException.class);
@@ -111,15 +122,14 @@ class TableServiceTest {
         void 비어있는_테이블은_비어있지_않은_상태로_변경할_수_있다() {
             // given
             final var table = OrderTableFactory.createOrderTableOf(0, false);
+            final var savedTable = orderTableDao.save(table);
             final var tableService = new TableService(orderDao, orderTableDao);
-            when(orderTableDao.findById(1L)).thenReturn(Optional.of(table));
-            when(orderDao.existsByOrderTableIdAndOrderStatusIn(1L, List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).thenReturn(false);
-            when(orderTableDao.save(table)).thenReturn(table);
-            final var previousState = table.isEmpty();
+
+            final var previousState = savedTable.isEmpty();
             table.setEmpty(true);
 
             // when
-            final var changed = tableService.changeEmpty(1L, table);
+            final var changed = tableService.changeEmpty(savedTable.getId(), table);
 
             // then
             assertThat(changed.isEmpty()).isNotEqualTo(previousState);
@@ -128,16 +138,15 @@ class TableServiceTest {
         @Test
         void 비어있지_않은_테이블은_비어있는_상태로_변경할_수_있다() {
             // given
-            final var table = OrderTableFactory.createOrderTableOf(0, true);
+            final var table = OrderTableFactory.createOrderTableOf(0, false);
+            final var savedTable = orderTableDao.save(table);
             final var tableService = new TableService(orderDao, orderTableDao);
-            when(orderTableDao.findById(1L)).thenReturn(Optional.of(table));
-            when(orderDao.existsByOrderTableIdAndOrderStatusIn(1L, List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).thenReturn(false);
-            when(orderTableDao.save(table)).thenReturn(table);
+
             final var previousState = table.isEmpty();
-            table.setEmpty(false);
+            table.setEmpty(true);
 
             // when
-            final var changed = tableService.changeEmpty(1L, table);
+            final var changed = tableService.changeEmpty(savedTable.getId(), table);
 
             // then
             assertThat(changed.isEmpty()).isNotEqualTo(previousState);
@@ -151,11 +160,12 @@ class TableServiceTest {
         void 손님의_수가_음수라면_예외가_발생한다() {
             // given
             final var table = OrderTableFactory.createOrderTableOf(0, false);
+            final var savedTable = orderTableDao.save(table);
             final var tableService = new TableService(orderDao, orderTableDao);
             table.setNumberOfGuests(-1);
 
             // when
-            final ThrowingCallable throwingCallable = () -> tableService.changeNumberOfGuests(1L, table);
+            final ThrowingCallable throwingCallable = () -> tableService.changeNumberOfGuests(savedTable.getId(), table);
 
             // then
             assertThatThrownBy(throwingCallable).isInstanceOf(IllegalArgumentException.class);
@@ -165,11 +175,11 @@ class TableServiceTest {
         void 비어있는_테이블의_손님의_수를_변경할_수_없다() {
             // given
             final var table = OrderTableFactory.createOrderTableOf(0, true);
+            final var savedTable = orderTableDao.save(table);
             final var tableService = new TableService(orderDao, orderTableDao);
-            when(orderTableDao.findById(1L)).thenReturn(Optional.of(table));
 
             // when
-            final ThrowingCallable throwingCallable = () -> tableService.changeNumberOfGuests(1L, table);
+            final ThrowingCallable throwingCallable = () -> tableService.changeNumberOfGuests(savedTable.getId(), table);
 
             // then
             assertThatThrownBy(throwingCallable).isInstanceOf(IllegalArgumentException.class);
@@ -178,14 +188,13 @@ class TableServiceTest {
         @Test
         void 비어있지_않고_손님의_수가_올바르면_정상적으로_변경된다() {
             // given
-            final var table = OrderTableFactory.createOrderTableOf(1, false);
+            final var table = OrderTableFactory.createOrderTableOf(0, false);
+            final var savedTable = orderTableDao.save(table);
             final var tableService = new TableService(orderDao, orderTableDao);
-            when(orderTableDao.findById(1L)).thenReturn(Optional.of(table));
-            when(orderTableDao.save(table)).thenReturn(table);
             table.setNumberOfGuests(2);
 
             // when
-            final var changed = tableService.changeNumberOfGuests(1L, table);
+            final var changed = tableService.changeNumberOfGuests(savedTable.getId(), table);
 
             // then
             assertThat(changed.getNumberOfGuests()).isEqualTo(2);
