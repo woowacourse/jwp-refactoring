@@ -1,11 +1,11 @@
 package kitchenpos.application;
 
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ class TableGroupServiceTest {
     @Autowired
     private TableGroupDao tableGroupDao;
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
     @Autowired
     private OrderDao orderDao;
 
@@ -55,8 +55,8 @@ class TableGroupServiceTest {
         @DisplayName("테이블 그룹을 생성하고 테이블의 그룹 id를 설정하고 empty를 false로 설장한다.")
         void createTest() {
             // given
-            final OrderTable table1 = orderTableDao.save(new TableBuilder().build());
-            final OrderTable table2 = orderTableDao.save(new TableBuilder().build());
+            final OrderTable table1 = orderTableRepository.save(new TableBuilder().build());
+            final OrderTable table2 = orderTableRepository.save(new TableBuilder().build());
 
             final TableGroup tableGroup = new TableGroupBuilder(List.of(table1, table2)).build();
 
@@ -70,7 +70,7 @@ class TableGroupServiceTest {
                     .ignoringFields("orderTables")
                     .isEqualTo(expectTableGroup);
 
-            orderTableDao.findById(table1.getId()).ifPresentOrElse(
+            orderTableRepository.findById(table1.getId()).ifPresentOrElse(
                     actual -> {
                         assertEquals(actualTableGroup.getId(), actual.getTableGroupId());
                         assertFalse(actual.isEmpty());
@@ -78,7 +78,7 @@ class TableGroupServiceTest {
                     () -> fail("테이블이 존재하지 않습니다.")
             );
 
-            orderTableDao.findById(table2.getId()).ifPresentOrElse(
+            orderTableRepository.findById(table2.getId()).ifPresentOrElse(
                     actual -> {
                         assertEquals(actualTableGroup.getId(), actual.getTableGroupId());
                         assertFalse(actual.isEmpty());
@@ -92,7 +92,7 @@ class TableGroupServiceTest {
         @DisplayName("OrderTable이 2개 미만일 경우 IllegalArgumentException이 발생한다.")
         void createWithEmptySmallerThenTwoTablesTest(final List<OrderTable> tables) {
             // given
-            tables.forEach(table -> orderTableDao.save(table));
+            tables.forEach(table -> orderTableRepository.save(table));
 
             final TableGroup tableGroup = new TableGroup();
             tableGroup.setOrderTables(tables);
@@ -106,8 +106,8 @@ class TableGroupServiceTest {
         @DisplayName("저장되지 않은 OrderTable이 존재할 경우 IllegalArgumentException이 발생한다.")
         void createTableWithNotSavedOrderTable() {
             // given
-            final OrderTable savedTable1 = orderTableDao.save(new TableBuilder().build());
-            final OrderTable savedTable2 = orderTableDao.save(new TableBuilder().build());
+            final OrderTable savedTable1 = orderTableRepository.save(new TableBuilder().build());
+            final OrderTable savedTable2 = orderTableRepository.save(new TableBuilder().build());
             final OrderTable notSavedTable = new TableBuilder().build();
 
             final List<OrderTable> tables = List.of(savedTable1, savedTable2, notSavedTable);
@@ -122,8 +122,8 @@ class TableGroupServiceTest {
         @DisplayName("비어있지 않은 OrderTable이 존재할 경우 IllegalArgumentException이 발생한다.")
         void should_throw_when_not_empty_orderTable_exists() {
             // given
-            final OrderTable emptyTable = orderTableDao.save(new TableBuilder().build());
-            final OrderTable notEmptyTable = orderTableDao.save(new TableBuilder()
+            final OrderTable emptyTable = orderTableRepository.save(new TableBuilder().build());
+            final OrderTable notEmptyTable = orderTableRepository.save(new TableBuilder()
                     .setEmpty(false)
                     .build());
 
@@ -143,7 +143,7 @@ class TableGroupServiceTest {
             final OrderTable groupedTable = new TableBuilder()
                     .setTableGroupId(1L)
                     .build();
-            final OrderTable table = orderTableDao.save(new TableBuilder().build());
+            final OrderTable table = orderTableRepository.save(new TableBuilder().build());
 
             final TableGroup tableGroup = new TableGroupBuilder(List.of(groupedTable, table)).build();
 
@@ -164,11 +164,11 @@ class TableGroupServiceTest {
             final TableGroup tableGroup = tableGroupDao.save(new TableGroupBuilder(List.of())
                     .build());
 
-            final OrderTable table1 = orderTableDao.save(new TableBuilder()
+            final OrderTable table1 = orderTableRepository.save(new TableBuilder()
                     .setTableGroupId(tableGroup.getId())
                     .setEmpty(true)
                     .build());
-            final OrderTable table2 = orderTableDao.save(new TableBuilder()
+            final OrderTable table2 = orderTableRepository.save(new TableBuilder()
                     .setTableGroupId(tableGroup.getId())
                     .setEmpty(true)
                     .build());
@@ -178,7 +178,7 @@ class TableGroupServiceTest {
             tableGroupService.ungroup(tableGroup.getId());
 
             // then
-            orderTableDao.findById(table1.getId()).ifPresentOrElse(
+            orderTableRepository.findById(table1.getId()).ifPresentOrElse(
                     actual -> {
                         assertNull(actual.getTableGroupId());
                         assertFalse(actual.isEmpty());
@@ -186,7 +186,7 @@ class TableGroupServiceTest {
                     () -> fail("테이블이 존재하지 않습니다.")
             );
 
-            orderTableDao.findById(table2.getId()).ifPresentOrElse(
+            orderTableRepository.findById(table2.getId()).ifPresentOrElse(
                     actual -> {
                         assertNull(actual.getTableGroupId());
                         assertFalse(actual.isEmpty());
@@ -203,7 +203,7 @@ class TableGroupServiceTest {
             final TableGroup tableGroup = tableGroupDao.save(new TableGroupBuilder(List.of())
                     .build());
 
-            final OrderTable table = orderTableDao.save(new TableBuilder()
+            final OrderTable table = orderTableRepository.save(new TableBuilder()
                     .setTableGroupId(tableGroup.getId())
                     .build());
 

@@ -2,10 +2,10 @@ package kitchenpos.application;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.*;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ class OrderServiceTest {
     @Autowired
     private MenuGroupRepository menuGroupRepository;
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
     @Autowired
     private OrderLineItemDao orderLineItemDao;
 
@@ -47,7 +47,7 @@ class OrderServiceTest {
 
         final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu.getId(), 1).build();
 
-        final OrderTable table = orderTableDao.save(new TableBuilder()
+        final OrderTable table = orderTableRepository.save(new TableBuilder()
                 .setEmpty(false)
                 .build());
 
@@ -83,7 +83,7 @@ class OrderServiceTest {
 
             final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu.getId(), 1).build();
 
-            final OrderTable table = orderTableDao.save(new TableBuilder()
+            final OrderTable table = orderTableRepository.save(new TableBuilder()
                     .setEmpty(false)
                     .build());
 
@@ -110,7 +110,7 @@ class OrderServiceTest {
         @DisplayName("OrderLineItem이 비어있을 경우 IllegalArgumentException이 발생한다.")
         void should_throw_when_OrderLineItem_is_empty() {
             // given
-            final OrderTable table = orderTableDao.save(new TableBuilder()
+            final OrderTable table = orderTableRepository.save(new TableBuilder()
                     .setEmpty(false)
                     .build());
 
@@ -131,7 +131,7 @@ class OrderServiceTest {
             final long notExistsMenuId = -1L;
             final OrderLineItem orderLineItem = new OrderLineItemBuilder(notExistsMenuId, 1).build();
 
-            final OrderTable table = orderTableDao.save(new TableBuilder()
+            final OrderTable table = orderTableRepository.save(new TableBuilder()
                     .setEmpty(false)
                     .build());
 
@@ -176,7 +176,7 @@ class OrderServiceTest {
 
             final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu.getId(), 1).build();
 
-            final OrderTable table = orderTableDao.save(new TableBuilder()
+            final OrderTable table = orderTableRepository.save(new TableBuilder()
                     .setEmpty(true)
                     .build());
 
@@ -206,7 +206,7 @@ class OrderServiceTest {
 
             final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu.getId(), 1).build();
 
-            final OrderTable table = orderTableDao.save(new TableBuilder()
+            final OrderTable table = orderTableRepository.save(new TableBuilder()
                     .setEmpty(false)
                     .build());
 
@@ -237,7 +237,7 @@ class OrderServiceTest {
 
             final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu.getId(), 1).build();
 
-            final OrderTable table = orderTableDao.save(new TableBuilder()
+            final OrderTable table = orderTableRepository.save(new TableBuilder()
                     .setEmpty(false)
                     .build());
 
