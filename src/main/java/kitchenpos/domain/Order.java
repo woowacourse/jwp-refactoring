@@ -34,6 +34,10 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
+    public void addOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        this.orderLineItems = orderLineItems;
+    }
+
     public Long getId() {
         return id;
     }
@@ -68,9 +72,5 @@ public class Order {
 
     public void setOrderedTime(final LocalDateTime orderedTime) {
         this.orderedTime = orderedTime;
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
     }
 }
