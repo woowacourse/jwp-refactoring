@@ -46,7 +46,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 주문_생성을_할_수_있다() {
             // given
-            final var time = LocalDateTime.of(2023, 10, 12, 15, 34);
+            final var time = LocalDateTime.now();
             final var orderTable = new OrderTable(1L, 3, false);
             orderTable.setId(1L);
             final var orderLineItem = new OrderLineItem(1L, 1L, 5);
@@ -173,7 +173,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 주문_상태_변경을_할_수_있다() {
             // given
-            final var time = LocalDateTime.of(2023, 10, 12, 15, 34);
+            final var time = LocalDateTime.now();
             final var orderLineItem = new OrderLineItem(1L, 1L, 5);
             final var order1 = new Order(1L, "COOKING", time, List.of(orderLineItem));
             final var order2 = new Order(1L, "MEAL", time, List.of(orderLineItem));

@@ -78,7 +78,7 @@ class MenuServiceTest extends ServiceTest {
             // when & then
             assertThatThrownBy(() -> menuService.create(menu))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("[ERROR] 금액이 NULL이거나 0 이하입니다.");
+                    .hasMessage("[ERROR] 메뉴의 금액이 없거나, 음수입니다.");
         }
 
         @Test
@@ -89,7 +89,7 @@ class MenuServiceTest extends ServiceTest {
             // when & then
             assertThatThrownBy(() -> menuService.create(menu))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("[ERROR] 금액이 NULL이거나 0 이하입니다.");
+                    .hasMessage("[ERROR] 메뉴의 금액이 없거나, 음수입니다.");
         }
 
         @Test
