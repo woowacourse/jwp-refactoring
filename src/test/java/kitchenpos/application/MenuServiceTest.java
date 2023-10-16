@@ -45,28 +45,12 @@ class MenuServiceTest {
     class Create {
 
         @DisplayName("정상적으로 생성할 수 있다")
-        @Test
-        void success() {
+        @ParameterizedTest
+        @ValueSource(ints = {0, 1000})
+        void success(int price) {
             // given
             final Menu menu = setUpMenu();
-
-            // when
-            final Menu savedMenu = menuService.create(menu);
-
-            // then
-            assertSoftly(softly -> {
-                assertThat(savedMenu.getId()).isPositive();
-                assertThat(savedMenu.getName()).isEqualTo(menu.getName());
-                assertThat(savedMenu.getMenuProducts().get(0).getMenuId()).isPositive();
-            });
-        }
-
-        @DisplayName("메뉴 가격은 0원일 수 있다")
-        @Test
-        void createMenuWithPriceZero() {
-            // given
-            final Menu menu = setUpMenu();
-            menu.setPrice(BigDecimal.valueOf(0));
+            menu.setPrice(BigDecimal.valueOf(price));
 
             // when
             final Menu savedMenu = menuService.create(menu);
