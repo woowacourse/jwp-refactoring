@@ -32,6 +32,8 @@ import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.TestConstructor.AutowireMode;
@@ -148,26 +150,14 @@ class TableServiceTest {
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
-        @Test
-        void 주문_상태가_COOKING이면_예외가_발생한다() {
+        @ParameterizedTest
+        @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
+        void 주문_상태가_COOKING_또는_MEAL이면_예외가_발생한다(final OrderStatus 주문_상태) {
             // given
             final OrderTable 주문_테이블 = 주문_테이블(null, null, 2, false);
             final OrderTable 저장된_주문_테이블 = tableService.create(주문_테이블);
 
-            주문_등록(저장된_주문_테이블, OrderStatus.COOKING.name());
-
-            // expected
-            assertThatThrownBy(() -> tableService.changeEmpty(저장된_주문_테이블.getId(), 주문_테이블(null, null, 0, true)))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 주문_상태가_MEAL이면_예외가_발생한다() {
-            // given
-            final OrderTable 주문_테이블 = 주문_테이블(null, null, 2, false);
-            final OrderTable 저장된_주문_테이블 = tableService.create(주문_테이블);
-
-            주문_등록(저장된_주문_테이블, OrderStatus.MEAL.name());
+            주문_등록(저장된_주문_테이블, 주문_상태.name());
 
             // expected
             assertThatThrownBy(() -> tableService.changeEmpty(저장된_주문_테이블.getId(), 주문_테이블(null, null, 0, true)))
@@ -225,7 +215,7 @@ class TableServiceTest {
         }
 
     }
-    
+
     private void 주문_등록(final OrderTable 저장된_주문_테이블, final String 주문_상태) {
         final MenuGroup 메뉴_그룹 = 메뉴_그룹(null, "양념 반 후라이드 반");
         final MenuGroup 저장된_메뉴_그룹 = menuGroupDao.save(메뉴_그룹);

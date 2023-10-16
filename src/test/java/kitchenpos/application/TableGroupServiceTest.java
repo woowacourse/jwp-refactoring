@@ -32,6 +32,8 @@ import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.TestConstructor.AutowireMode;
@@ -176,30 +178,15 @@ class TableGroupServiceTest {
             assertDoesNotThrow(() -> tableGroupService.ungroup(저장된_테이블_그룹.getId()));
         }
 
-        @Test
-        void 주문_상태가_COOKING인_경우_예외가_발생한다() {
+        @ParameterizedTest
+        @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
+        void 주문_상태가_COOKING_또는_MEAL인_경우_예외가_발생한다(final OrderStatus 주문_상태) {
             // given
             final TableGroup 테이블_그룹 = 테이블_그룹(null, null, List.of(저장된_주문_테이블1, 저장된_주문_테이블2));
             final TableGroup 저장된_테이블_그룹 = tableGroupService.create(테이블_그룹);
 
             final Order 주문 = 주문(null, 저장된_주문_테이블1.getId(), null, null, Collections.emptyList());
-            주문.setOrderStatus(OrderStatus.COOKING.name());
-            주문.setOrderedTime(LocalDateTime.now());
-            orderDao.save(주문);
-
-            // expected
-            assertThatThrownBy(() -> tableGroupService.ungroup(저장된_테이블_그룹.getId()))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 주문_상태가_MEAL인_경우_예외가_발생한다() {
-            // given
-            final TableGroup 테이블_그룹 = 테이블_그룹(null, null, List.of(저장된_주문_테이블1, 저장된_주문_테이블2));
-            final TableGroup 저장된_테이블_그룹 = tableGroupService.create(테이블_그룹);
-
-            final Order 주문 = 주문(null, 저장된_주문_테이블1.getId(), null, null, Collections.emptyList());
-            주문.setOrderStatus(OrderStatus.MEAL.name());
+            주문.setOrderStatus(주문_상태.name());
             주문.setOrderedTime(LocalDateTime.now());
             orderDao.save(주문);
 
