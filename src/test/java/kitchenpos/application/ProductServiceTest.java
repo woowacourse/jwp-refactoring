@@ -2,23 +2,27 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.support.domain.ProductTestSupport;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@Transactional
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
 
-    @Autowired
+    @Mock
+    ProductDao productDao;
+    @InjectMocks
     ProductService target;
 
     @DisplayName("상품을 생성한다.")
@@ -54,8 +58,8 @@ class ProductServiceTest {
         final BigDecimal price1 = new BigDecimal("1000");
         final Product product1 = ProductTestSupport.builder().price(price1).build();
         final Product product2 = ProductTestSupport.builder().build();
-        target.create(product1);
-        target.create(product2);
+
+        given(productDao.findAll()).willReturn(List.of(product1, product2));
 
         //when
         final List<Product> result = target.list();

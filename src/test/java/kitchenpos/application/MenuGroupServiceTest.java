@@ -5,7 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import java.util.List;
-import kitchenpos.application.support.dao.MockMenuGroupDao;
+import kitchenpos.application.support.domain.MenuGroupTestSupport;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.assertj.core.api.SoftAssertions;
@@ -29,10 +29,8 @@ class MenuGroupServiceTest {
     @Test
     void create() {
         //given
-        final var origin = new MenuGroup();
-        final var expectedResult = new MenuGroup();
-        expectedResult.setId(1L);
-        expectedResult.setName(origin.getName());
+        final var origin = MenuGroupTestSupport.builder().id(null).build();
+        final var expectedResult = MenuGroupTestSupport.builder().id(1L).name(origin.getName()).build();
         given(menuGroupDao.save(any(MenuGroup.class))).willReturn(expectedResult);
 
         //when
@@ -52,14 +50,15 @@ class MenuGroupServiceTest {
     @Test
     void list() {
         //given
-        final MenuGroupService menuGroupService = new MenuGroupService(new MockMenuGroupDao());
-        final MenuGroup value = new MenuGroup();
-        menuGroupService.create(value);
+        final MenuGroup menuGroup1 = MenuGroupTestSupport.builder().build();
+        final MenuGroup menuGroup2 = MenuGroupTestSupport.builder().build();
+
+        given(menuGroupDao.findAll()).willReturn(List.of(menuGroup1, menuGroup2));
 
         //when
-        final List<MenuGroup> result = menuGroupService.list();
+        final List<MenuGroup> result = target.list();
 
         //then
-        assertThat(result).contains(value);
+        assertThat(result).contains(menuGroup1, menuGroup2);
     }
 }
