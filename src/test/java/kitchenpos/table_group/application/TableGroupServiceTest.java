@@ -97,7 +97,8 @@ class TableGroupServiceTest extends ServiceIntegrateTest {
   void create_fail_not_empty_table() {
     //given
     final TableGroup tableGroup = new TableGroup();
-    final OrderTable notEmptyTable1 = new OrderTable(1L, null, 0, false);
+    final OrderTable notEmptyTable1 = orderTableDao.save(
+        new OrderTable(table1.getId(), null, 0, false));
     tableGroup.setOrderTables(List.of(notEmptyTable1, table2));
 
     //when

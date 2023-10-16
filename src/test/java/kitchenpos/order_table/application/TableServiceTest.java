@@ -128,7 +128,8 @@ class TableServiceTest extends ServiceIntegrateTest {
   void changeNumberOfGuests_success() {
     //given
     final int expected = 4;
-    final OrderTable changedTable = new OrderTable(null, null, expected, false);
+    final OrderTable changedTable = orderTableDao.save(
+        new OrderTable(table1.getId(), null, expected, false));
 
     //when
     final int actual = tableService.changeNumberOfGuests(table1.getId(), changedTable)
