@@ -42,7 +42,7 @@ class OrderServiceTest {
     private OrderService orderService;
 
     @Test
-    void 주문_시_주문하려는_상품이_존재하지_않으면_예외발생() {
+    void 주문_시_주문하려는_메뉴를_입력하지_않으면_예외발생() {
         // given
         Order order = new Order();
         order.setOrderLineItems(Collections.emptyList());
@@ -56,10 +56,30 @@ class OrderServiceTest {
     }
 
     @Test
+    void 주문_시_주문하려는_메뉴가_존재하지_않는_메뉴일_경우_예외발생() {
+        // given
+        Order order = new Order();
+        OrderLineItem orderLineItem = new OrderLineItem();
+        order.setOrderLineItems(List.of(orderLineItem));
+
+        // 존재하지 않는 상품
+        given(menuDao.countByIdIn(anyList()))
+                .willReturn(0L);
+        // when
+        assertThatThrownBy(() -> orderService.create(order))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        // then
+        then(orderTableDao).should(never()).findById(anyLong());
+    }
+
+    @Test
     void 주문_시_주문하려는_메뉴_간_중복이_있으면_예외발생() {
         // given
         Order order = new Order();
-        order.setOrderLineItems(List.of(new OrderLineItem(), new OrderLineItem()));
+        OrderLineItem orderLineItem = new OrderLineItem();
+        // 중복 아이템 존재
+        order.setOrderLineItems(List.of(orderLineItem, orderLineItem));
 
         given(menuDao.countByIdIn(anyList()))
                 .willReturn(1L);
