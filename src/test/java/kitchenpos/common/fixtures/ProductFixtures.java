@@ -2,7 +2,6 @@ package kitchenpos.common.fixtures;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import kitchenpos.domain.Product;
 import kitchenpos.dto.product.ProductCreateRequest;
 
 public class ProductFixtures {
