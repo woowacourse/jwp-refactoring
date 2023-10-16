@@ -15,12 +15,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -62,7 +62,7 @@ class MenuServiceTest {
             given(productDao.findById(1L)).willReturn(Optional.ofNullable(noodle));
             given(productDao.findById(2L)).willReturn(Optional.ofNullable(potato));
 
-            final Menu spyExpected = spy(expected);
+            final Menu spyExpected = spy(new Menu(expected.getName(), expected.getPrice(), expected.getMenuGroupId(), new ArrayList<>()));
             given(menuDao.save(expected)).willReturn(spyExpected);
             final long menuId = 1L;
             given(spyExpected.getId()).willReturn(menuId);
@@ -175,20 +175,21 @@ class MenuServiceTest {
             final MenuProduct wooDong = new MenuProduct(1L, 1);
             final MenuProduct frenchFries = new MenuProduct(2L, 1);
 
-            final Menu menu = new Menu("우동세트", BigDecimal.valueOf(9000), 1L, List.of(wooDong, frenchFries));
-            menu.setId(1L);
+            final Menu expected = new Menu("우동세트", BigDecimal.valueOf(9000), 1L, new ArrayList<>());
+            final Menu spyExpected = spy(expected);
 
-            given(menuDao.findAll()).willReturn(List.of(menu));
+            given(menuDao.findAll()).willReturn(List.of(spyExpected));
+            given(spyExpected.getId()).willReturn(1L);
+
             given(menuProductDao.findAllByMenuId(anyLong())).willReturn(List.of(wooDong, frenchFries));
 
             // when
             final List<Menu> actual = menuService.list();
 
             // then
-            assertAll(
-                    () -> assertThat(actual).containsExactly(menu),
-                    () -> assertThat(actual.get(0).getMenuProducts()).containsExactly(wooDong, frenchFries)
-            );
+            assertThat(actual)
+                    .usingRecursiveFieldByFieldElementComparator()
+                    .containsExactly(spyExpected);
         }
     }
 }
