@@ -1,9 +1,7 @@
 package kitchenpos.application;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-
-import java.util.List;
+import kitchenpos.application.dto.request.CreateMenuGroupRequest;
+import kitchenpos.application.dto.response.CreateMenuGroupResponse;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.assertj.core.api.Assertions;
@@ -14,6 +12,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
+
+import static kitchenpos.fixture.MenuGroupFixture.MENU_GROUP;
+import static kitchenpos.fixture.MenuGroupFixture.REQUEST;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
@@ -29,18 +35,17 @@ class MenuGroupServiceTest {
     @Test
     void 메뉴_그룹을_생성한다() {
         // given
-        MenuGroup menuGroup = MenuGroup.builder()
-                .id(1L)
-                .name("메뉴 그룹")
-                .build();
+        CreateMenuGroupRequest request = REQUEST.메뉴_그룹_치킨_생성_요청();
+        MenuGroup menuGroup = MENU_GROUP.메뉴_그룹_치킨();
         given(menuGroupDao.save(any()))
                 .willReturn(menuGroup);
 
         // when & then
-        MenuGroup result = menuGroupService.create(menuGroup);
-        Assertions.assertThat(result)
-                .usingRecursiveComparison()
-                .isEqualTo(menuGroup);
+        CreateMenuGroupResponse result = menuGroupService.create(request);
+        assertSoftly(softAssertions -> {
+            softAssertions.assertThat(result.getId()).isEqualTo(menuGroup.getId());
+            softAssertions.assertThat(result.getName()).isEqualTo(menuGroup.getName());
+        });
     }
 
     @Test
