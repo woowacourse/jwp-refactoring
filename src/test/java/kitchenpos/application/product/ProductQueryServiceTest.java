@@ -19,7 +19,7 @@ class ProductQueryServiceTest extends ApplicationTestConfig {
 
     @BeforeEach
     void setUp() {
-        productService = new ProductService(productDao);
+        productService = new ProductService(productRepository);
     }
 
     @DisplayName("[SUCCESS] 모든 상품 목록을 조회한다.")
@@ -28,7 +28,7 @@ class ProductQueryServiceTest extends ApplicationTestConfig {
         // given
         final List<Product> expected = new ArrayList<>();
         for (int productSaveCount = 1; productSaveCount <= 10; productSaveCount++) {
-            final Product savedProduct = productService.create(new Product("테스트용 상품 이름", new BigDecimal("10000")));
+            final Product savedProduct = productRepository.save(new Product("테스트용 상품 이름", new BigDecimal("10000")));
             expected.add(savedProduct);
         }
 
@@ -36,7 +36,9 @@ class ProductQueryServiceTest extends ApplicationTestConfig {
         final List<Product> actual = productService.list();
 
         // then
-        assertThat(actual).usingRecursiveComparison()
+        assertThat(actual)
+                .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                .usingRecursiveComparison()
                 .isEqualTo(expected);
     }
 }
