@@ -19,9 +19,14 @@ public class Product {
     protected Product() {
     }
 
-    public Product(final String name, final Price price) {
+    public Product(final Long id, final String name, final Price price) {
+        this.id = id;
         this.name = name;
         this.price = price;
+    }
+
+    public Product(final String name, final Price price) {
+        this(null, name, price);
     }
 
     public Long getId() {
