@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class MenuGroupRestController {
+
     private final MenuGroupService menuGroupService;
 
     public MenuGroupRestController(final MenuGroupService menuGroupService) {
@@ -20,18 +21,19 @@ public class MenuGroupRestController {
     }
 
     @PostMapping("/api/menu-groups")
-    public ResponseEntity<MenuGroupDto> create(@RequestBody final MenuGroupCreateDto menuGroupCreateDto) {
+    public ResponseEntity<MenuGroupDto> create(
+        @RequestBody final MenuGroupCreateDto menuGroupCreateDto) {
         final MenuGroupDto created = menuGroupService.create(menuGroupCreateDto);
         final URI uri = URI.create("/api/menu-groups/" + created.getId());
         return ResponseEntity.created(uri)
-                .body(created)
-                ;
+            .body(created)
+            ;
     }
 
     @GetMapping("/api/menu-groups")
     public ResponseEntity<List<MenuGroupDto>> list() {
         return ResponseEntity.ok()
-                .body(menuGroupService.list())
-                ;
+            .body(menuGroupService.list())
+            ;
     }
 }
