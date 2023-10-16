@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class Menu {
@@ -22,12 +23,14 @@ public class Menu {
     private Long id;
 
     @Column(nullable = false)
+    @NotNull
     private String name;
 
     @Column(nullable = false, precision = 19, scale = 2)
+    @NotNull
     private BigDecimal price;
     @ManyToOne
-    @JoinColumn(name = "menu_group_id", nullable = false)
+    @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
 
     @OneToMany(mappedBy = "menu")
@@ -55,20 +58,12 @@ public class Menu {
     }
 
     private static void validateName(String name) {
-        if (name == null) {
-            throw new IllegalArgumentException();
-        }
-
         if (name.isBlank() || name.length() > MAX_NAME_LENGTH) {
             throw new IllegalArgumentException();
         }
     }
 
     private static void validatePrice(BigDecimal price) {
-        if (price == null) {
-            throw new IllegalArgumentException();
-        }
-
         if (price.doubleValue() < 0) {
             throw new IllegalArgumentException();
         }
@@ -76,7 +71,7 @@ public class Menu {
 
     private static void validateMenuGroup(MenuGroup menuGroup) {
         if (menuGroup == null) {
-            throw new IllegalArgumentException();
+            throw new NullPointerException();
         }
     }
 

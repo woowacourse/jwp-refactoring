@@ -105,6 +105,7 @@ class TableServiceTest {
     void changeEmptyFailTest_ByOrderStatusIsNotCompletion(String orderStatus) {
         //given
         OrderTable orderTable = new OrderTable();
+        orderTable.setEmpty(false);
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         Order order = new Order();

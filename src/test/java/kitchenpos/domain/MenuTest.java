@@ -19,7 +19,7 @@ class MenuTest {
 
         //when then
         assertThatThrownBy(() -> Menu.of("TestMenu", null, menuGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(NullPointerException.class);
     }
 
     @ParameterizedTest(name = "메뉴 금액이 0원 미만인 경우, 생성할 수 없다")
@@ -41,7 +41,7 @@ class MenuTest {
         BigDecimal menuPrice = BigDecimal.valueOf(1000);
         //when then
         assertThatThrownBy(() -> Menu.of("TestMenu", menuPrice, null))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(NullPointerException.class);
     }
 
     @Test
@@ -53,7 +53,7 @@ class MenuTest {
 
         //when then
         assertThatThrownBy(() -> Menu.of(null, menuPrice, menuGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(NullPointerException.class);
     }
 
     @Test

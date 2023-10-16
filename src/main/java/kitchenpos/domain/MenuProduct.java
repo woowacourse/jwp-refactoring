@@ -1,6 +1,6 @@
 package kitchenpos.domain;
 
-import javax.persistence.Column;
+import com.sun.istack.NotNull;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,8 +19,8 @@ public class MenuProduct {
     @JoinColumn(name = "menu_id", nullable = false)
     private Menu menu;
 
-    @Column(nullable = false)
-    private long quantity;
+    @NotNull
+    private Long quantity;
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)

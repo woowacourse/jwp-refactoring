@@ -1,12 +1,12 @@
 package kitchenpos.domain;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class OrderTable {
@@ -16,14 +16,14 @@ public class OrderTable {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "table_group_id")
+    @JoinColumn(name = "table_group_id", nullable = false)
     private TableGroup tableGroup;
 
-    @Column(nullable = false)
-    private int numberOfGuests;
+    @NotNull
+    private Integer numberOfGuests = 0;
 
-    @Column(nullable = false)
-    private boolean empty;
+    @NotNull
+    private Boolean empty = false;
 
     public OrderTable() {
     }

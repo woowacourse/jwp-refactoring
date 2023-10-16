@@ -290,6 +290,7 @@ class OrderServiceTest {
     private OrderLineItem createOrderLineItem(Menu menu) {
         OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setMenu(menu);
+        orderLineItem.setQuantity(1);
 
         return orderLineItem;
     }
