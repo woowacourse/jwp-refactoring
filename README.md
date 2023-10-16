@@ -120,9 +120,8 @@
     - [x] GET /api/menu-groups
     - [x] POST /api/menu-groups
     - [x] POST /api/table-groups
-    - [ ] DELETE /api/table-groups/{tableGroupId}
     - [ ] GET /api/orders
-    - [ ] POST /api/orders
+    - [x] POST /api/orders
     - [ ] PUT /api/orders/{orderId}/order-status
 
 - [ ] 도메인이 비즈니스 로직을 가지게 한다.

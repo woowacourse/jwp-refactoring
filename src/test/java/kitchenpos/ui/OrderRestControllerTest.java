@@ -1,24 +1,10 @@
 package kitchenpos.ui;
 
-import static kitchenpos.fixture.OrderFixture.ORDER.주문_요청_계산_완료;
-import static kitchenpos.fixture.OrderFixture.ORDER.주문_요청_식사중;
-import static kitchenpos.fixture.OrderFixture.ORDER.주문_요청_조리중;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.List;
 import kitchenpos.application.OrderService;
+import kitchenpos.application.dto.request.CreateOrderRequest;
+import kitchenpos.application.dto.response.CreateOrderResponse;
 import kitchenpos.domain.Order;
-import org.junit.jupiter.api.BeforeEach;
+import kitchenpos.fixture.OrderFixture;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
@@ -27,6 +13,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.List;
+
+import static kitchenpos.fixture.OrderFixture.ORDER.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
@@ -39,13 +35,6 @@ class OrderRestControllerTest {
     @MockBean
     private OrderService orderService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @BeforeEach
-    void setUp() {
-    }
-
     @Nested
     class 정상_요청_테스트 {
 
@@ -53,8 +42,9 @@ class OrderRestControllerTest {
         void 주문_생성() throws Exception {
             // given
             Order order = 주문_요청_조리중();
-            given(orderService.create(any(Order.class)))
-                    .willReturn(order);
+            CreateOrderResponse response = OrderFixture.RESPONSE.주문_생성_응답();
+            given(orderService.create(any(CreateOrderRequest.class)))
+                    .willReturn(response);
 
             // when & then
             mockMvc.perform(post("/api/orders")
@@ -72,13 +62,12 @@ class OrderRestControllerTest {
                     .andExpectAll(
                             status().isCreated(),
                             header().exists("Location"),
-                            jsonPath("id").value(order.getId()),
-                            jsonPath("orderTableId").value(order.getOrderTableId()),
-                            jsonPath("orderStatus").value(order.getOrderStatus()),
-                            jsonPath("orderLineItems[0].seq").value(order.getOrderLineItems().get(0).getSeq()),
-                            jsonPath("orderLineItems[0].orderId").value(order.getOrderLineItems().get(0).getOrderId()),
-                            jsonPath("orderLineItems[0].menuId").value(order.getOrderLineItems().get(0).getMenuId()),
-                            jsonPath("orderLineItems[0].quantity").value(order.getOrderLineItems().get(0).getQuantity())
+                            jsonPath("id").value(response.getId()),
+                            jsonPath("orderTableId").value(response.getOrderTableId()),
+                            jsonPath("orderStatus").value(response.getOrderStatus()),
+                            jsonPath("orderLineItems[0].seq").value(response.getOrderLineItems().get(0).getSeq()),
+                            jsonPath("orderLineItems[0].menuId").value(response.getOrderLineItems().get(0).getMenuId()),
+                            jsonPath("orderLineItems[0].quantity").value(response.getOrderLineItems().get(0).getQuantity())
                     );
         }
 

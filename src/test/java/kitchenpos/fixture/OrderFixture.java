@@ -1,11 +1,16 @@
 package kitchenpos.fixture;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import kitchenpos.application.dto.request.CreateOrderRequest;
+import kitchenpos.application.dto.response.CreateOrderResponse;
+import kitchenpos.application.dto.response.OrderLineItemResponse;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class OrderFixture {
@@ -67,6 +72,67 @@ public class OrderFixture {
                 orderLineItems.add(orderLineItem);
             }
             return orderLineItems;
+        }
+    }
+
+    public static class RESPONSE {
+
+        public static CreateOrderResponse 주문_생성_응답() {
+            OrderLineItemResponse orderLineItemResponse = OrderLineItemResponse.builder()
+                    .seq(1L)
+                    .menuId(1L)
+                    .quantity(1L)
+                    .build();
+            return CreateOrderResponse.builder()
+                    .id(1L)
+                    .orderTableId(1L)
+                    .orderStatus(OrderStatus.COOKING.name())
+                    .orderedTime(LocalDateTime.of(2021, 8, 24, 0, 0, 0, 0))
+                    .orderLineItems(List.of(orderLineItemResponse))
+                    .build();
+        }
+    }
+
+    public static class REQUEST {
+
+        public static CreateOrderRequest 주문_생성_요청() {
+            return CreateOrderRequest.builder()
+                    .orderTableId(1L)
+                    .orderStatus(OrderStatus.COOKING.name())
+                    .orderedTime(LocalDateTime.of(2021, 8, 24, 0, 0, 0, 0))
+                    .orderLineItemIds(List.of(1L, 2L))
+                    .build();
+        }
+
+        public static CreateOrderRequest 주문_생성_요청_주문항목(List<Long> orderLineItemIds) {
+            return CreateOrderRequest.builder()
+                    .orderTableId(1L)
+                    .orderStatus(OrderStatus.COOKING.name())
+                    .orderedTime(LocalDateTime.of(2021, 8, 24, 0, 0, 0, 0))
+                    .orderLineItemIds(orderLineItemIds)
+                    .build();
+        }
+
+
+        public static CreateOrderRequest 주문_생성_요청_비어있는_주문항목() {
+            return CreateOrderRequest.builder()
+                    .orderTableId(1L)
+                    .orderStatus(OrderStatus.COOKING.name())
+                    .orderedTime(LocalDateTime.of(2021, 8, 24, 0, 0, 0, 0))
+                    .orderLineItemIds(Collections.emptyList())
+                    .build();
+        }
+    }
+
+    public static class ORDER_LINE_ITEM {
+
+        public static OrderLineItem 주문_항목_아이템_1개(Long orderId) {
+            return OrderLineItem.builder()
+                    .seq(1L)
+                    .orderId(orderId)
+                    .menuId(1L)
+                    .quantity(1L)
+                    .build();
         }
     }
 }
