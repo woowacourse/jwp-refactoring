@@ -83,4 +83,8 @@ public class Order {
     public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
         this.orderLineItems = new OrderLineItems(orderLineItems);
     }
+
+    public boolean isCookingOrMeal() {
+        return orderStatus == OrderStatus.COOKING || orderStatus == OrderStatus.MEAL;
+    }
 }

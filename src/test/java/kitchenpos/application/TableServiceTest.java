@@ -31,9 +31,9 @@ class TableServiceTest {
 
     @BeforeEach
     void setUp() {
-        firstTable = orderTableDao.save(new OrderTable(null, null, 3, false));
-        secondTable = orderTableDao.save(new OrderTable(null, null, 4, false));
-        orderTableDao.save(new OrderTable(null, null, 4, false));
+        firstTable = orderTableDao.save(new OrderTable(null, 3, false));
+        secondTable = orderTableDao.save(new OrderTable(null, 4, false));
+        orderTableDao.save(new OrderTable(null, 4, false));
         OrderLineItem orderLineItem = new OrderLineItem(null, 1L, 1L, 1L);
         completionOrder = orderDao.save(new Order(null, secondTable, List.of(orderLineItem)));
         completionOrder.changeOrderStatus(OrderStatus.COMPLETION);
@@ -42,7 +42,7 @@ class TableServiceTest {
 
     @Test
     void 테이블을_생성한다() {
-        OrderTable orderTable = new OrderTable(null, null, 3, false);
+        OrderTable orderTable = new OrderTable(null, 3, false);
         OrderTable saved = tableService.create(orderTable);
 
         assertThat(orderTable).usingRecursiveComparison()
@@ -51,7 +51,7 @@ class TableServiceTest {
 
     @Test
     void 테이블_그룹이_없이_생성된다() {
-        OrderTable orderTable = new OrderTable(null, 3L, 3, false);
+        OrderTable orderTable = new OrderTable(null, 3, false);
         OrderTable saved = tableService.create(orderTable);
 
         assertThat(saved.getTableGroupId()).isNull();
@@ -59,9 +59,9 @@ class TableServiceTest {
 
     @Test
     void 테이블_전체_조회를_한다() {
-        tableService.create(new OrderTable(null, null, 3, false));
-        tableService.create(new OrderTable(null, null, 4, true));
-        tableService.create(new OrderTable(null, null, 5, false));
+        tableService.create(new OrderTable(null, 3, false));
+        tableService.create(new OrderTable(null, 4, true));
+        tableService.create(new OrderTable(null, 5, false));
 
         assertThat(tableService.list()).hasSize(6);
     }
@@ -69,7 +69,7 @@ class TableServiceTest {
     @Test
     void 테이블을_빈_상태로_변경한다() {
         Long completionTableId = completionOrder.getOrderTable().getId();
-        OrderTable changeEmpty = tableService.changeEmpty(completionTableId, new OrderTable(null, null, 3, true));
+        OrderTable changeEmpty = tableService.changeEmpty(completionTableId, true);
 
         assertThat(changeEmpty.isEmpty()).isTrue();
     }
@@ -82,38 +82,38 @@ class TableServiceTest {
         order.changeOrderStatus(orderStatus);
         orderDao.save(order);
         Long tableId = order.getOrderTable().getId();
-        assertThatThrownBy(() -> tableService.changeEmpty(tableId, new OrderTable(null, null, 3, true)))
+        assertThatThrownBy(() -> tableService.changeEmpty(tableId, true))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 테이블의_손님_수를_변경한다() {
         Long completionTableId = completionOrder.getOrderTable().getId();
-        OrderTable changeNumberOfGuests = tableService.changeNumberOfGuests(completionTableId, new OrderTable(null, null, 5, false));
+        OrderTable changeNumberOfGuests = tableService.changeNumberOfGuests(completionTableId, new OrderTable(null, 5, false));
 
         assertThat(changeNumberOfGuests.getNumberOfGuests()).isEqualTo(5);
     }
 
     @Test
     void 빈_테이블의_손님_수를_변경할_수_없다() {
-        OrderTable orderTable = tableService.create(new OrderTable(null, null, 3, true));
+        OrderTable orderTable = tableService.create(new OrderTable(null, 3, true));
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), new OrderTable(null, null, 5, false)))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), new OrderTable(null, 5, false)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 존재하지_않는_테이블을_비울_수_없다() {
-        assertThatThrownBy(() -> tableService.changeEmpty(4L, new OrderTable(null, null, 3, false)))
+        assertThatThrownBy(() -> tableService.changeEmpty(4L, false))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @CsvSource(value = {"0", "-1"})
     @ParameterizedTest
     void 손님_수를_0명_이하로_변경할_수_없다(int guestCount) {
-        OrderTable orderTable = tableService.create(new OrderTable(null, null, 3, true));
+        OrderTable orderTable = tableService.create(new OrderTable(null, 3, true));
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), new OrderTable(null, null, guestCount, false)))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), new OrderTable(null, guestCount, false)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

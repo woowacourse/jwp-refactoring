@@ -28,7 +28,7 @@ class MenuServiceTest {
     private MenuProductDao menuProductDao = new FakeMenuProductDao();
     private MenuDao menuDao = new FakeMenuDao();
     private ProductDao productDao = new FakeProductDao();
-    private MenuService menuService = new MenuService(menuDao, menuGroupDao, menuProductDao, productDao);
+    private MenuService menuService = new MenuService(menuDao, menuGroupDao, menuProductDao);
 
 
     private MenuProduct menuProduct;

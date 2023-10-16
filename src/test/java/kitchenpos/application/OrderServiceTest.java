@@ -43,8 +43,8 @@ class OrderServiceTest {
         MenuProduct menuProduct = new MenuProduct(null, null, new Product(null, "후라이드", BigDecimal.valueOf(2000)), 1L);
         menuDao.save(new Menu(null, "후라이드치킨", BigDecimal.valueOf(2000), 1L, List.of(menuProduct)));
         orderLineItem = orderLineItemDao.save(new OrderLineItem(null, 1L, 1L, 1L));
-        tableFull = orderTableDao.save(new OrderTable(null, null, 3, false));
-        tableEmpty = orderTableDao.save(new OrderTable(null, null, 4, true));
+        tableFull = orderTableDao.save(new OrderTable(null, 3, false));
+        tableEmpty = orderTableDao.save(new OrderTable(null, 4, true));
     }
 
     @Test
@@ -118,7 +118,7 @@ class OrderServiceTest {
 
         @Test
         void 존재하지_않는_테이블에서_주문할_수_없다() {
-            OrderTable table = new OrderTable(null, null, 3, false);
+            OrderTable table = new OrderTable(null, 3, false);
             assertThatThrownBy(() -> orderService.create(new Order(null, table, List.of(orderLineItem))))
                     .isInstanceOf(IllegalArgumentException.class);
         }

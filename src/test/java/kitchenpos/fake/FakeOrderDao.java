@@ -2,6 +2,7 @@ package kitchenpos.fake;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.Orders;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class FakeOrderDao implements OrderDao {
 
@@ -49,5 +51,12 @@ public class FakeOrderDao implements OrderDao {
         return orders.values().stream()
                 .filter(order -> orderTableIds.contains(order.getOrderTable().getId()))
                 .anyMatch(order -> orderStatuses.contains(order.getOrderStatus()));
+    }
+
+    @Override
+    public Orders findAllByOrderTableId(long orderTableId) {
+        return new Orders(orders.values().stream()
+                .filter(order -> order.getOrderTable().getId().equals(orderTableId))
+                .collect(Collectors.toList()));
     }
 }

@@ -1,18 +1,32 @@
 package kitchenpos.domain.table;
 
+import kitchenpos.domain.order.Orders;
+
 public class OrderTable {
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
+    private Orders orders;
     private boolean empty;
 
     public OrderTable() {
     }
 
-    public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
+    public OrderTable(Long id, int numberOfGuests, boolean empty) {
         this.id = id;
-        this.tableGroupId = tableGroupId;
+        this.tableGroupId = null;
         this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
+    public void changeEmpty(boolean empty) {
+        if (this.tableGroupId != null) {
+            throw new IllegalArgumentException();
+        }
+        if (orders.inCookingOrMeal()) {
+            throw new IllegalArgumentException();
+        }
+
         this.empty = empty;
     }
 
@@ -46,5 +60,9 @@ public class OrderTable {
 
     public void setEmpty(final boolean empty) {
         this.empty = empty;
+    }
+
+    public void setOrders(Orders orders) {
+        this.orders = orders;
     }
 }
