@@ -22,7 +22,7 @@ public class TableService {
 
     @Transactional
     public OrderTable create(final OrderTable orderTable) {
-        orderTable.setTableGroupId(null);
+        orderTable.setTableGroup(null);
 
         return orderTableRepository.save(orderTable);
     }

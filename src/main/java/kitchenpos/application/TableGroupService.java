@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -20,16 +20,16 @@ public class TableGroupService {
 
     private final OrderDao orderDao;
     private final OrderTableRepository orderTableRepository;
-    private final TableGroupDao tableGroupDao;
+    private final TableGroupRepository tableGroupRepository;
 
     public TableGroupService(
         final OrderDao orderDao,
         final OrderTableRepository orderTableRepository,
-        final TableGroupDao tableGroupDao
+        final TableGroupRepository tableGroupRepository
     ) {
         this.orderDao = orderDao;
         this.orderTableRepository = orderTableRepository;
-        this.tableGroupDao = tableGroupDao;
+        this.tableGroupRepository = tableGroupRepository;
     }
 
     @Transactional
@@ -51,14 +51,14 @@ public class TableGroupService {
         }
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
+            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
                 throw new IllegalArgumentException();
             }
         }
 
         tableGroup.setCreatedDate(LocalDateTime.now());
 
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
             savedOrderTable.setTableGroup(savedTableGroup);
@@ -85,7 +85,7 @@ public class TableGroupService {
         }
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(null);
+            orderTable.setTableGroup(null);
             orderTable.setEmpty(false);
             orderTableRepository.save(orderTable);
         }

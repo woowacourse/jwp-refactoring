@@ -1,13 +1,13 @@
 package kitchenpos.domain;
 
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
 import static kitchenpos.domain.exception.OrderTableExceptionType.NUMBER_OF_GUEST_LOWER_THAN_ZERO;
 import static kitchenpos.domain.exception.OrderTableExceptionType.TABLE_CANT_CHANGE_EMPTY_ALREADY_IN_GROUP;
 import static kitchenpos.domain.exception.OrderTableExceptionType.TABLE_CANT_CHANGE_NUMBER_OF_GUESTS_EMPTY;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -17,10 +17,10 @@ import kitchenpos.domain.exception.OrderTableException;
 public class OrderTable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
 
@@ -59,11 +59,7 @@ public class OrderTable {
         return id;
     }
 
-    public Long getTableGroupId() {
-        return tableGroup.getId();
-    }
-
-    public void setTableGroupId(final TableGroup tableGroup) {
+    public void setTableGroup(final TableGroup tableGroup) {
         this.tableGroup = tableGroup;
     }
 
@@ -94,7 +90,7 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public void setTableGroup(final TableGroup savedOrderTable) {
-        this.tableGroup = savedOrderTable;
+    public TableGroup getTableGroup() {
+        return tableGroup;
     }
 }

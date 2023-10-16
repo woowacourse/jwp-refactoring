@@ -5,6 +5,7 @@ import static kitchenpos.fixture.OrderFixture.createOrderLineItem;
 import static kitchenpos.fixture.ProductFixture.후라이드;
 import static kitchenpos.fixture.TableFixture.비어있는_주문_테이블;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -63,7 +64,7 @@ public abstract class ServiceIntegrationTest {
     }
 
     protected void saveTableGroup(final OrderTable savedOrderTable) {
-        final TableGroup tableGroup = new TableGroup();
+        final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
         final OrderTable orderTable = tableService.create(비어있는_주문_테이블());
         tableGroup.setOrderTables(List.of(savedOrderTable, orderTable));
         tableGroupService.create(tableGroup);

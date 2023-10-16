@@ -40,7 +40,7 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         @DisplayName("테이블 그룹을 정상적으로 생성한다.")
         void success() {
             //given
-            final TableGroup tableGroup = new TableGroup();
+            final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
 
             //when
             final TableGroup savedTableGroup = saveTableGroupSuccessfully(tableGroup, 전체_주문_테이블());
@@ -59,7 +59,7 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         @Test
         @DisplayName("ordertable 이 비어있는 경우 예외처리한다.")
         void throwExceptionOrderTablesAreEmpty() {
-            final TableGroup tableGroup = new TableGroup();
+            final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
             tableGroup.setOrderTables(Collections.emptyList());
 
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -69,7 +69,7 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         @Test
         @DisplayName("저장되지 않은 tableGroup로 요청하는 경우 Exception을 throw한다.")
         void throwExceptionOrderTablesAreNotFound() {
-            final TableGroup tableGroup = new TableGroup();
+            final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
             tableGroup.setOrderTables(전체_주문_테이블());
 
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -81,7 +81,7 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         void throwExceptionOrderTablesAreNotEmpty() {
             final List<OrderTable> orderTables = 전체_주문_테이블();
             orderTables.forEach(orderTable -> orderTable.setEmpty(false));
-            final TableGroup tableGroup = new TableGroup();
+            final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
             tableGroup.setOrderTables(orderTables);
 
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -97,7 +97,7 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         @DisplayName("정상적으로 tableGroup을 해제한다.")
         void success() {
             //given
-            final TableGroup tableGroup = new TableGroup();
+            final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
             final TableGroup savedTableGroup = saveTableGroupSuccessfully(tableGroup, 전체_주문_테이블());
 
             //when
@@ -111,7 +111,7 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
                 savedOrderTableIds);
 
             assertThat(savedOrderTables)
-                .extracting(OrderTable::getTableGroupId, OrderTable::isEmpty)
+                .extracting(OrderTable::getTableGroup, OrderTable::isEmpty)
                 .containsExactly(
                     tuple(null, false), tuple(null, false), tuple(null, false), tuple(null, false),
                     tuple(null, false), tuple(null, false), tuple(null, false), tuple(null, false)
@@ -122,7 +122,7 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         @DisplayName("해제하려는 TableGroup에 속한 Table의 주문 상태가 완료상태가 아닌경우 예외처리")
         void throwExceptionIfOrderIsNotCompletion() {
             //given
-            final TableGroup tableGroup = new TableGroup();
+            final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
             final OrderTable savedOrderTable = orderTableRepository.save(비어있는_주문_테이블());
             final OrderTable savedOrderTable2 = orderTableRepository.save(비어있는_주문_테이블());
             saveOrderMeal(savedOrderTable);

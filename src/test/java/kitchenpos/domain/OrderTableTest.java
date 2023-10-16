@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import static java.time.LocalDateTime.now;
 import static kitchenpos.domain.exception.OrderTableExceptionType.NUMBER_OF_GUEST_LOWER_THAN_ZERO;
 import static kitchenpos.domain.exception.OrderTableExceptionType.TABLE_CANT_CHANGE_EMPTY_ALREADY_IN_GROUP;
 import static kitchenpos.domain.exception.OrderTableExceptionType.TABLE_CANT_CHANGE_NUMBER_OF_GUESTS_EMPTY;
@@ -41,7 +42,7 @@ class OrderTableTest {
         @Test
         @DisplayName("tableGroup에 속해있는 orderTalbe인 경우 예외처리 한다.")
         void throwExceptionTableGroupIdIsNull() {
-            final OrderTable orderTable = new OrderTable(null, 0, true);
+            final OrderTable orderTable = new OrderTable(new TableGroup(now()), 0, true);
 
             assertThatThrownBy(() -> orderTable.changeEmpty(false))
                 .isInstanceOf(OrderTableException.class)
