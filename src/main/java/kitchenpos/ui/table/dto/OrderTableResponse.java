@@ -23,9 +23,18 @@ public class OrderTableResponse {
     public static OrderTableResponse from(final OrderTable orderTable) {
         TableGroup tableGroup = orderTable.getTableGroup();
 
+        if (tableGroup == null) {
+            return new OrderTableResponse(
+                    orderTable.getId(),
+                    null,
+                    orderTable.getNumberOfGuests(),
+                    orderTable.isEmpty()
+            );
+        }
+
         return new OrderTableResponse(
                 orderTable.getId(),
-                tableGroup == null ? null : tableGroup.getId(),
+                tableGroup.getId(),
                 orderTable.getNumberOfGuests(),
                 orderTable.isEmpty()
         );

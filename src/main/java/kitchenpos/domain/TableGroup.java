@@ -39,6 +39,10 @@ public class TableGroup {
         return new TableGroup();
     }
 
+    public void initOrderTables(final List<OrderTable> orderTables) {
+        this.orderTables = orderTables;
+    }
+
     public Long getId() {
         return id;
     }
@@ -49,10 +53,6 @@ public class TableGroup {
 
     public List<OrderTable> getOrderTables() {
         return orderTables;
-    }
-
-    public void initOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
     }
 
     @Override
