@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
@@ -19,6 +18,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.persistence.MenuGroupRepository;
+import kitchenpos.persistence.MenuRepository;
 import kitchenpos.persistence.OrderRepository;
 import kitchenpos.persistence.OrderTableRepository;
 import kitchenpos.support.ServiceTest;
@@ -39,7 +39,7 @@ class OrderServiceTest extends ServiceTest {
     private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
     private OrderRepository orderRepository;
@@ -55,7 +55,7 @@ class OrderServiceTest extends ServiceTest {
     @BeforeEach
     void setUp() {
         Long menuGroupId = menuGroupRepository.save(new MenuGroup("세트")).getId();
-        menu = menuDao.save(new Menu("족발", BigDecimal.valueOf(1000.00), menuGroupId, null));
+        menu = menuRepository.save(new Menu("족발", BigDecimal.valueOf(1000.00), menuGroupId, null));
     }
 
     @Nested

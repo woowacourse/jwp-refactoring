@@ -4,12 +4,12 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.application.request.MenuCreateRequest;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.persistence.MenuGroupRepository;
+import kitchenpos.persistence.MenuProductRepository;
+import kitchenpos.persistence.MenuRepository;
 import kitchenpos.persistence.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,20 +17,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class MenuService {
 
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
     private MenuGroupRepository menuGroupRepository;
-    private MenuProductDao menuProductDao;
+    private MenuProductRepository menuProductRepository;
     private ProductRepository productRepository;
 
-    public MenuService(
-        MenuDao menuDao,
-        MenuGroupRepository menuGroupRepository,
-        MenuProductDao menuProductDao,
-        ProductRepository productRepository
-    ) {
-        this.menuDao = menuDao;
+    public MenuService(MenuRepository menuRepository, MenuGroupRepository menuGroupRepository,
+                       MenuProductRepository menuProductRepository, ProductRepository productRepository) {
+        this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
-        this.menuProductDao = menuProductDao;
+        this.menuProductRepository = menuProductRepository;
         this.productRepository = productRepository;
     }
 
@@ -55,13 +51,13 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        Menu savedMenu = menuDao.save(menu);
+        Menu savedMenu = menuRepository.save(menu);
 
         Long menuId = savedMenu.getId();
         List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (MenuProduct menuProduct : menuProducts) {
             menuProduct.setMenuId(menuId);
-            savedMenuProducts.add(menuProductDao.save(menuProduct));
+            savedMenuProducts.add(menuProductRepository.save(menuProduct));
         }
         savedMenu.setMenuProducts(savedMenuProducts);
 
@@ -69,12 +65,6 @@ public class MenuService {
     }
 
     public List<Menu> list() {
-        List<Menu> menus = menuDao.findAll();
-
-        for (Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
-        }
-
-        return menus;
+        return menuRepository.findAllByFetch();
     }
 }

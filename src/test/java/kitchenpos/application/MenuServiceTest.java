@@ -133,20 +133,20 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void 모든_메뉴를_반환() {
         // given
-        Product productA = productRepository.save(new Product("치킨", BigDecimal.valueOf(10000.00)));
-        Product productB = productRepository.save(new Product("치즈볼", BigDecimal.valueOf(2000.00)));
-        Product productC = productRepository.save(new Product("감튀", BigDecimal.valueOf(1000.00)));
+        Product productA = productRepository.save(new Product("치킨", BigDecimal.valueOf(10000L)));
+        Product productB = productRepository.save(new Product("치즈볼", BigDecimal.valueOf(2000L)));
+        Product productC = productRepository.save(new Product("감튀", BigDecimal.valueOf(1000L)));
 
         Long menuGroupIdA = menuGroupRepository.save(new MenuGroup("치즈볼 세트")).getId();
         Long menuGroupIdB = menuGroupRepository.save(new MenuGroup("감튀 세트")).getId();
         MenuCreateRequest menuA = new MenuCreateRequest(
-            "고추바사삭 치즈볼 세트", BigDecimal.valueOf(8000.00), menuGroupIdA,
+            "고추바사삭 치즈볼 세트", BigDecimal.valueOf(8000L), menuGroupIdA,
             List.of(
                 new MenuProductCreateRequest(productA.getId(), 1),
                 new MenuProductCreateRequest(productB.getId(), 1)
             ));
         MenuCreateRequest menuB = new MenuCreateRequest(
-            "고추바사삭 감튀 세트", BigDecimal.valueOf(9000.00), menuGroupIdB,
+            "고추바사삭 감튀 세트", BigDecimal.valueOf(9000L), menuGroupIdB,
             List.of(
                 new MenuProductCreateRequest(productA.getId(), 1),
                 new MenuProductCreateRequest(productC.getId(), 1)
