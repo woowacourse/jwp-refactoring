@@ -33,12 +33,7 @@ public class TableService {
     public OrderTable changeEmpty(Long orderTableId, boolean changedStatus) {
         OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
-
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-            orderTableId, List.of(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
-
+        validateIsCompletionOrder(orderTableId);
         savedOrderTable.changeEmpty(changedStatus);
         return orderTableRepository.save(savedOrderTable);
     }
@@ -49,5 +44,12 @@ public class TableService {
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문테이블입니다."));
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
         return orderTableRepository.save(savedOrderTable);
+    }
+
+    private void validateIsCompletionOrder(Long orderTableId) {
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId,
+            List.of(OrderStatus.MEAL, OrderStatus.COOKING))) {
+            throw new IllegalArgumentException();
+        }
     }
 }

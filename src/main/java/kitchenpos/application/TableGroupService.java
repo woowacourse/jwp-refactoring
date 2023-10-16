@@ -5,7 +5,7 @@ import static java.util.stream.Collectors.toList;
 import java.util.List;
 import kitchenpos.application.request.OrderTableDto;
 import kitchenpos.application.request.TableGroupCreateRequest;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.persistence.OrderRepository;
@@ -63,9 +63,9 @@ public class TableGroupService {
         List<Long> orderTableIds = orderTables.stream()
             .map(OrderTable::getId)
             .collect(toList());
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-            orderTableIds, List.of(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
+        List<Order> orders = orderRepository.findAllByOrderTableIdIn(orderTableIds);
+        if (orders.stream().anyMatch(Order::isNotCompletion)) {
+            throw new IllegalArgumentException("주문이 완료 상태여만 그룹을 삭제할 수 있습니다.");
         }
     }
 }
