@@ -98,7 +98,7 @@ class MenuServiceTest extends ServiceBaseTest {
     void list() {
         //given
         final Menu menu = Fixture.menu("메뉴1", 1000, menuGroup.getId(), List.of(menuProduct));
-        menuService.create(menu);
+        final Menu savedMenu = menuService.create(menu);
 
         //when
         final List<Menu> menus = menuService.list();
@@ -106,7 +106,7 @@ class MenuServiceTest extends ServiceBaseTest {
         //then
         assertAll(
                 () -> assertThat(menus).hasSize(1),
-                () -> assertThat(menus.get(0).getName()).isEqualTo(menu.getName())
+                () -> assertThat(menus.get(0).getName()).isEqualTo(savedMenu.getName())
         );
     }
 }

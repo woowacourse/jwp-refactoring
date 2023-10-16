@@ -1,7 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -13,9 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -54,7 +49,7 @@ class TableGroupServiceTest extends ServiceBaseTest {
 
         //when
         TableGroup createdTableGroup = tableGroupService.create(tableGroup);
-        final List<OrderTable> orderTables = orderTableDao.findAllByIdIn(List.of(savedOrderTable.getId(),savedOrderTabel2.getId()));
+        final List<OrderTable> orderTables = orderTableDao.findAllByIdIn(List.of(savedOrderTable.getId(), savedOrderTabel2.getId()));
 
         //then
         assertAll(
@@ -104,10 +99,8 @@ class TableGroupServiceTest extends ServiceBaseTest {
     @DisplayName("이미 지정된 테이블은 단체 지정할 수 없다.")
     void createValidAlreadyGroupTable() {
         //given
-        final OrderTable orderTable1 = Fixture.orderTable(null, 10, true);
-        final OrderTable orderTable2 = Fixture.orderTable(null, 5, true);
-        final OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
-        final OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
+        final OrderTable savedOrderTable1 = orderTableDao.save(Fixture.orderTable(null, 10, true));
+        final OrderTable savedOrderTable2 = orderTableDao.save(Fixture.orderTable(null, 5, true));
         final TableGroup tableGroup = Fixture.orderTableGroup(LocalDateTime.now(), List.of(savedOrderTable1, savedOrderTable2));
         tableGroupService.create(tableGroup);
 
@@ -120,16 +113,16 @@ class TableGroupServiceTest extends ServiceBaseTest {
     @DisplayName("테이블 단체 지정을 해제할수 있다.")
     void ungroup() {
         //given
-        final OrderTable orderTable1 = Fixture.orderTable(null, 10, true);
-        final OrderTable orderTable2 = Fixture.orderTable(null, 5, true);
-        final OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
-        final OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
+        final OrderTable savedOrderTable1 = orderTableDao.save(Fixture.orderTable(null, 10, true));
+        final OrderTable savedOrderTable2 = orderTableDao.save(Fixture.orderTable(null, 5, true));
         final TableGroup tableGroup = Fixture.orderTableGroup(LocalDateTime.now(), List.of(savedOrderTable1, savedOrderTable2));
         final TableGroup createdTableGroup = tableGroupService.create(tableGroup);
 
         //when&then
-        assertDoesNotThrow(() -> tableGroupService.ungroup(createdTableGroup.getId()));
-        assertThat(orderTableDao.findAllByTableGroupId(createdTableGroup.getId()).size()).isZero();
+        assertAll(
+                () -> assertDoesNotThrow(() -> tableGroupService.ungroup(createdTableGroup.getId())),
+                () -> assertThat(orderTableDao.findAllByTableGroupId(createdTableGroup.getId())).isEmpty()
+        );
     }
 
     @ParameterizedTest(name = "테이블 단체 지정을 해제시 상태가 요리, 식사이면 안된다.")
@@ -138,8 +131,8 @@ class TableGroupServiceTest extends ServiceBaseTest {
         //given
         final OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
         final OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
-        final TableGroup tableGroup = Fixture.orderTableGroup(LocalDateTime.now(), List.of(savedOrderTable1, savedOrderTable2));
-        final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        final TableGroup savedTableGroup = tableGroupService.create(Fixture.orderTableGroup(LocalDateTime.now(),
+                List.of(savedOrderTable1, savedOrderTable2)));
         final Order order = Fixture.order(null, savedOrderTable1.getId(), LocalDateTime.now(), null);
         order.setOrderStatus(orderStatus.name());
         orderDao.save(order);

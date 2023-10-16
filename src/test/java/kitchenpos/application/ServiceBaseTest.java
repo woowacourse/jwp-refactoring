@@ -33,5 +33,4 @@ public abstract class ServiceBaseTest {
 
     @Autowired
     protected TableGroupDao tableGroupDao;
-
 }

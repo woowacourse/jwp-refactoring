@@ -79,10 +79,6 @@ class TableServiceTest extends ServiceBaseTest {
     @Test
     @DisplayName("주문 테이블은 존재해야한다.")
     void changeEmptyValidOrderTable() {
-        //given
-        final OrderTable orderTable = Fixture.orderTable(null, 3, false);
-        orderTable.setEmpty(true);
-
         //when&then
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -92,13 +88,9 @@ class TableServiceTest extends ServiceBaseTest {
     @DisplayName("빈상태로 변경시 orderTable의 테이블 그룹 아이디가 null이 아니면 안된다.")
     void changeEmptyValidTableGroupId() {
         //given
-        final OrderTable orderTable1 = Fixture.orderTable(null, 10, true);
-        final OrderTable orderTable2 = Fixture.orderTable(null, 5, true);
-        final OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
-        final OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
-        final TableGroup tableGroup = Fixture.orderTableGroup(LocalDateTime.now(), List.of(savedOrderTable1, savedOrderTable2));
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
-
+        final OrderTable savedOrderTable1 = orderTableDao.save(Fixture.orderTable(null, 10, true));
+        final OrderTable savedOrderTable2 = orderTableDao.save(Fixture.orderTable(null, 5, true));
+        final TableGroup savedTableGroup = tableGroupDao.save(Fixture.orderTableGroup(LocalDateTime.now(), List.of(savedOrderTable1, savedOrderTable2)));
         final OrderTable savedOrderTable = orderTableDao.save(Fixture.orderTable(savedTableGroup.getId(), 10, true));
 
         //when&then
@@ -128,8 +120,10 @@ class TableServiceTest extends ServiceBaseTest {
         orderTable.setNumberOfGuests(10);
         final OrderTable savedOrderTable = tableService.create(orderTable);
 
+        //when
         final OrderTable changedOrderTable = tableService.changeNumberOfGuests(savedOrderTable.getId(), savedOrderTable);
 
+        //then
         assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests());
     }
 

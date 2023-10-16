@@ -95,8 +95,7 @@ class OrderServiceTest extends ServiceBaseTest {
     @DisplayName("주문 목록을 조회할 수 있다.")
     void list() {
         //given
-        final Order order = Fixture.order(orderTable.getId(), orderTable.getId(), LocalDateTime.now(), List.of(orderLineItem));
-        orderService.create(order);
+        final Order savedOrder = orderService.create(Fixture.order(orderTable.getId(), orderTable.getId(), LocalDateTime.now(), List.of(orderLineItem)));
 
         //when
         final List<Order> orders = orderService.list();
@@ -106,7 +105,7 @@ class OrderServiceTest extends ServiceBaseTest {
                 () -> assertThat(orders).hasSize(1),
                 () -> assertThat(orders.get(0)).usingRecursiveComparison()
                         .ignoringFields("id", "orderLineItems.seq")
-                        .isEqualTo(order)
+                        .isEqualTo(savedOrder)
         );
     }
 

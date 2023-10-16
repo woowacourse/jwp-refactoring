@@ -48,8 +48,7 @@ class ProductServiceTest extends ServiceBaseTest {
     @DisplayName("상품 목록을 조회할 수 있다.")
     void list() {
         //given
-        final Product product = Fixture.product("오션", 10000);
-        productService.create(product);
+        final Product savedProduct = productService.create(Fixture.product("오션", 10000));
 
         //when
         final List<Product> products = productService.list();
@@ -57,8 +56,8 @@ class ProductServiceTest extends ServiceBaseTest {
         //then
         assertAll(
                 () -> assertThat(products).hasSize(1),
-                () -> assertThat(products.get(0).getName()).isEqualTo(product.getName()),
-                () -> assertThat(products.get(0).getPrice().intValue()).isEqualTo(product.getPrice().intValue())
+                () -> assertThat(products.get(0).getName()).isEqualTo(savedProduct.getName()),
+                () -> assertThat(products.get(0).getPrice().intValue()).isEqualTo(savedProduct.getPrice().intValue())
         );
     }
 }

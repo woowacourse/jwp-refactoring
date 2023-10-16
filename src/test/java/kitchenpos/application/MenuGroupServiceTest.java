@@ -36,10 +36,8 @@ class MenuGroupServiceTest extends ServiceBaseTest {
     @DisplayName("메뉴 그룹들을 조회할 수 있다.")
     void list() {
         //given
-        final MenuGroup menuGroup = Fixture.menuGroup("오션 메뉴 그룹");
-        final MenuGroup menuGroup2 = Fixture.menuGroup("동해 메뉴 그룹");
-        menuGroupService.create(menuGroup);
-        menuGroupService.create(menuGroup2);
+        final MenuGroup savedMenuGroup1 = menuGroupService.create(Fixture.menuGroup("오션 메뉴 그룹"));
+        final MenuGroup savedMenuGroup2 = menuGroupService.create(Fixture.menuGroup("동해 메뉴 그룹"));
 
         //when
         final List<MenuGroup> menuGroups = menuGroupService.list();
@@ -47,8 +45,8 @@ class MenuGroupServiceTest extends ServiceBaseTest {
         //then
         assertAll(
                 () -> assertThat(menuGroups).hasSize(2),
-                () -> assertThat(menuGroups.get(0).getName()).isEqualTo(menuGroup.getName()),
-                () -> assertThat(menuGroups.get(1).getName()).isEqualTo(menuGroup2.getName())
+                () -> assertThat(menuGroups.get(0).getName()).isEqualTo(savedMenuGroup1.getName()),
+                () -> assertThat(menuGroups.get(1).getName()).isEqualTo(savedMenuGroup2.getName())
         );
     }
 }
