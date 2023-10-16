@@ -68,8 +68,6 @@ class TableServiceTest {
     void 주문_테이블을_빈_테이블로_변경한다() {
         // given
         OrderTable orderTable = orderTableRepository.save(orderTable(10, false));
-        Order order = order(orderTable, OrderStatus.COMPLETION, List.of(orderLineItem(1L, 10)));
-        orderRepository.save(order);
 
         // when
         OrderTable emptyTable = tableService.changeEmpty(orderTable.getId(), new OrderTableEmptyRequest(true));

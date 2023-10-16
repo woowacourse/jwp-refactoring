@@ -6,13 +6,11 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderLineItemRepository;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.fake.InMemoryMenuRepository;
-import kitchenpos.fake.InMemoryOrderLineItemRepository;
 import kitchenpos.fake.InMemoryOrderRepository;
 import kitchenpos.fake.InMemoryOrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +40,6 @@ class OrderServiceTest {
 
     private MenuRepository menuRepository;
     private OrderRepository orderRepository;
-    private OrderLineItemRepository orderLineItemRepository;
     private OrderTableRepository orderTableRepository;
     private OrderService orderService;
 
@@ -50,9 +47,8 @@ class OrderServiceTest {
     void before() {
         menuRepository = new InMemoryMenuRepository();
         orderRepository = new InMemoryOrderRepository();
-        orderLineItemRepository = new InMemoryOrderLineItemRepository();
         orderTableRepository = new InMemoryOrderTableRepository();
-        orderService = new OrderService(menuRepository, orderRepository, orderLineItemRepository, orderTableRepository);
+        orderService = new OrderService(menuRepository, orderRepository, orderTableRepository);
     }
 
     @Test
@@ -110,8 +106,7 @@ class OrderServiceTest {
         // given
         OrderTable savedOrderTable = orderTableRepository.save(orderTable(10, false));
         Menu menu = menuRepository.save(menu("메뉴", 10000L, null, List.of(menuProduct(product("chicken", 1000L), 10L))));
-        OrderLineItem savedOrderLineItem = orderLineItemRepository.save(new OrderLineItem(menu.getId(), 10));
-        OrderRequest request = orderRequest(savedOrderTable.getId(), List.of(orderLineItem(savedOrderLineItem.getMenuId(), savedOrderLineItem.getQuantity())));
+        OrderRequest request = orderRequest(savedOrderTable.getId(), List.of(orderLineItem(menu.getId(), 10)));
 
         // when
         Order savedOrder = orderService.create(request);
@@ -132,12 +127,8 @@ class OrderServiceTest {
         Menu menu = menuRepository.save(menu("메뉴", 10000L, null, List.of(menuProduct(product("chicken", 1000L), 10L))));
 
         OrderTable orderTable = orderTableRepository.save(orderTable(10, false));
-        Order order1 = orderRepository.save(order(orderTable, MEAL, List.of(orderLineItem(menu.getId(), 10))));
-        OrderLineItem orderLineItem1 = orderLineItemRepository.save(orderLineItem(menu.getId(), 2L));
-        order1.changeOrderLineItems(List.of(orderLineItem1));
-        Order order2 = orderRepository.save(order(orderTable, COOKING, List.of(orderLineItem(menu.getId(), 5))));
-        OrderLineItem orderLineItem2 = orderLineItemRepository.save(orderLineItem(menu.getId(), 2L));
-        order2.changeOrderLineItems(List.of(orderLineItem2));
+        Order order1 = orderRepository.save(order(orderTable, MEAL, List.of(orderLineItem(menu.getId(), 10), orderLineItem(menu.getId(), 2L))));
+        Order order2 = orderRepository.save(order(orderTable, COOKING, List.of(orderLineItem(menu.getId(), 5), orderLineItem(menu.getId(), 2L))));
 
         // when
         List<Order> orders = orderService.list();

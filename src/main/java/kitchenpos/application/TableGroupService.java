@@ -21,12 +21,12 @@ import static kitchenpos.application.dto.TableGroupRequest.OrderTableIdRequest;
 public class TableGroupService {
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
-    private final TableGroupRepository tableGroupDao;
+    private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository, final TableGroupRepository tableGroupDao) {
+    public TableGroupService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository, final TableGroupRepository tableGroupRepository) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
-        this.tableGroupDao = tableGroupDao;
+        this.tableGroupRepository = tableGroupRepository;
     }
 
     @Transactional
@@ -43,7 +43,7 @@ public class TableGroupService {
             throw new IllegalArgumentException("주문 테이블의 개수와 맞지 않습니다");
         }
 
-        TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), savedOrderTables));
+        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), savedOrderTables));
         tableGroup.changeOrderTables(savedOrderTables);
         return tableGroup;
     }
