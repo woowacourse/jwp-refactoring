@@ -2,6 +2,7 @@ package kitchenpos.fixture;
 
 import kitchenpos.application.dto.request.CreateOrderTableRequest;
 import kitchenpos.application.dto.response.CreateOrderTableResponse;
+import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.domain.OrderTable;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -26,6 +27,14 @@ public class OrderTableFixture {
             return CreateOrderTableResponse.builder()
                     .id(1L)
                     .tableGroupId(1L)
+                    .numberOfGuests(3)
+                    .empty(true)
+                    .build();
+        }
+
+        public static OrderTableResponse 주문_테이블_3명_응답() {
+            return OrderTableResponse.builder()
+                    .id(1L)
                     .numberOfGuests(3)
                     .empty(true)
                     .build();

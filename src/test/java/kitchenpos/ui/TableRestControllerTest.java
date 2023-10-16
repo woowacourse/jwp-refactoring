@@ -3,6 +3,7 @@ package kitchenpos.ui;
 import kitchenpos.application.TableService;
 import kitchenpos.application.dto.request.CreateOrderTableRequest;
 import kitchenpos.application.dto.response.CreateOrderTableResponse;
+import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.fixture.OrderTableFixture;
 import org.junit.jupiter.api.*;
@@ -73,18 +74,19 @@ class TableRestControllerTest {
         @Test
         void 테이블_목록_조회() throws Exception {
             // given
+            OrderTableResponse response = OrderTableFixture.RESPONSE.주문_테이블_3명_응답();
             given(tableService.list())
-                    .willReturn(List.of(orderTable));
+                    .willReturn(List.of(response));
 
             // when & then
             mockMvc.perform(get("/api/tables"))
                     .andExpectAll(
                             status().isOk(),
                             jsonPath("$").isArray(),
-                            jsonPath("$[0].id").value(orderTable.getId()),
-                            jsonPath("$[0].tableGroupId").value(orderTable.getTableGroupId()),
-                            jsonPath("$[0].numberOfGuests").value(orderTable.getNumberOfGuests()),
-                            jsonPath("$[0].empty").value(orderTable.isEmpty())
+                            jsonPath("$[0].id").value(response.getId()),
+                            jsonPath("$[0].tableGroupId").value(response.getTableGroupId()),
+                            jsonPath("$[0].numberOfGuests").value(response.getNumberOfGuests()),
+                            jsonPath("$[0].empty").value(response.isEmpty())
                     );
         }
 

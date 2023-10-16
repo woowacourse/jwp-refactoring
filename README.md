@@ -113,7 +113,7 @@
     - [x] POST /api/products
     - [x] GET /api/menus
     - [x] POST /api/menus
-    - [ ] GET /api/tables
+    - [x] GET /api/tables
     - [x] POST /api/tables
     - [ ] PUT /api/tables/{orderTableId}/empty
     - [ ] PUT /api/tables/{orderTableId}/number-of-guests

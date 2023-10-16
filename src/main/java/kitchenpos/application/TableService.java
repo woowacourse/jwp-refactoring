@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.request.CreateOrderTableRequest;
 import kitchenpos.application.dto.response.CreateOrderTableResponse;
+import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class TableService {
@@ -33,8 +35,10 @@ public class TableService {
         return CreateOrderTableResponse.from(saved);
     }
 
-    public List<OrderTable> list() {
-        return orderTableDao.findAll();
+    public List<OrderTableResponse> list() {
+        return orderTableDao.findAll().stream()
+                .map(OrderTableResponse::from)
+                .collect(Collectors.toList());
     }
 
     @Transactional

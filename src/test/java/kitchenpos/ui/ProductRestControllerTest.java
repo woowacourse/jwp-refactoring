@@ -4,7 +4,6 @@ import kitchenpos.application.ProductService;
 import kitchenpos.application.dto.request.CreateProductRequest;
 import kitchenpos.application.dto.response.CreateProductResponse;
 import kitchenpos.application.dto.response.ProductResponse;
-import kitchenpos.domain.Product;
 import kitchenpos.fixture.ProductFixture;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -33,15 +31,8 @@ class ProductRestControllerTest {
     @MockBean
     private ProductService productService;
 
-    private Product product;
-
     @BeforeEach
     void setUp() {
-        product = Product.builder()
-                .id(1L)
-                .name("후라이드")
-                .price(BigDecimal.valueOf(16000L))
-                .build();
     }
 
     @Nested
@@ -59,7 +50,7 @@ class ProductRestControllerTest {
                             .contentType(APPLICATION_JSON)
                             .content("{" +
                                     "\"name\":\"" + result.getName() + "\"," +
-                                    "\"price\":" + result.getPrice() +
+                                    "\"price\":\"" + result.getPrice() + "\"" +
                                     "}")
                     )
                     .andExpectAll(

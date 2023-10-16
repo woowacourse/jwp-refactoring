@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.request.CreateOrderTableRequest;
 import kitchenpos.application.dto.response.CreateOrderTableResponse;
+import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
@@ -73,10 +74,16 @@ class TableServiceTest {
             given(orderTableDao.findAll())
                     .willReturn(List.of(orderTable));
 
-            // when & then
-            assertThat(tableService.list())
-                    .usingRecursiveComparison()
-                    .isEqualTo(List.of(orderTable));
+            // when
+            List<OrderTableResponse> result = tableService.list();
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(result).hasSize(1);
+                softly.assertThat(result.get(0).getId()).isEqualTo(orderTable.getId());
+                softly.assertThat(result.get(0).getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests());
+                softly.assertThat(result.get(0).isEmpty()).isEqualTo(orderTable.isEmpty());
+            });
         }
     }
 
