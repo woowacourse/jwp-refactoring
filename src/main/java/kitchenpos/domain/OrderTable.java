@@ -34,10 +34,17 @@ public class OrderTable {
     }
 
     public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
+        validateGuestSize(numberOfGuests);
         this.id = id;
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+    }
+
+    private void validateGuestSize(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("주문 테이블의 손님 수가 0보다 커야합니다");
+        }
     }
 
     public Long getId() {
@@ -57,7 +64,34 @@ public class OrderTable {
     }
 
     public void changeEmpty(final boolean empty) {
+        validateGroup();
         this.empty = empty;
+    }
+
+    private void validateGroup() {
+        if (Objects.nonNull(tableGroup)) {
+            throw new IllegalArgumentException("단체 지정된 테이블은 변경할 수 없습니다");
+        }
+    }
+
+    public void changeTableGroup(TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+    }
+
+    public void ungroup() {
+        this.tableGroup = null;
+    }
+
+    public void changeNumberOfGuests(int numberOfGuests) {
+        validateEmpty();
+        validateGuestSize(numberOfGuests);
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    private void validateEmpty() {
+        if (this.empty) {
+            throw new IllegalArgumentException("인원을 변경할 테이블은 빈 테이블일 수 없습니다");
+        }
     }
 
     @Override
@@ -71,13 +105,5 @@ public class OrderTable {
     @Override
     public int hashCode() {
         return Objects.hash(id);
-    }
-
-    public void changeTableGroup(TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
-    }
-
-    public void ungroup() {
-        this.tableGroup = null;
     }
 }
