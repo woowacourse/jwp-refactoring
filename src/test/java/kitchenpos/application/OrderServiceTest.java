@@ -5,14 +5,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
-import kitchenpos.application.fakedao.InMemoryMenuDao;
-import kitchenpos.application.fakedao.InMemoryOrderDao;
-import kitchenpos.application.fakedao.InMemoryOrderLineItemDao;
-import kitchenpos.application.fakedao.InMemoryOrderTableDao;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.fakedao.InMemoryMenuDao;
+import kitchenpos.dao.fakedao.InMemoryOrderDao;
+import kitchenpos.dao.fakedao.InMemoryOrderLineItemDao;
+import kitchenpos.dao.fakedao.InMemoryOrderTableDao;
 import kitchenpos.domain.MenuFactory;
 import kitchenpos.domain.OrderFactory;
 import kitchenpos.domain.OrderLineItemFactory;

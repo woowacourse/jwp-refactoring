@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.math.BigDecimal;
-import kitchenpos.application.fakedao.InMemoryProductDao;
 import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.fakedao.InMemoryProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductFactory;
 import org.junit.jupiter.api.BeforeEach;

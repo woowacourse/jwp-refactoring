@@ -5,12 +5,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.stream.Collectors;
-import kitchenpos.application.fakedao.InMemoryOrderDao;
-import kitchenpos.application.fakedao.InMemoryOrderTableDao;
-import kitchenpos.application.fakedao.InMemoryTableGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.fakedao.InMemoryOrderDao;
+import kitchenpos.dao.fakedao.InMemoryOrderTableDao;
+import kitchenpos.dao.fakedao.InMemoryTableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableFactory;
 import kitchenpos.domain.TableGroupFactory;

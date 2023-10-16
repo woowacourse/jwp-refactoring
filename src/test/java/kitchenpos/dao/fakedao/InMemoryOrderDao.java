@@ -1,4 +1,4 @@
-package kitchenpos.application.fakedao;
+package kitchenpos.dao.fakedao;
 
 import java.util.ArrayList;
 import java.util.List;

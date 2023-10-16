@@ -4,10 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import kitchenpos.application.fakedao.InMemoryOrderDao;
-import kitchenpos.application.fakedao.InMemoryOrderTableDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.fakedao.InMemoryOrderDao;
+import kitchenpos.dao.fakedao.InMemoryOrderTableDao;
 import kitchenpos.domain.OrderFactory;
 import kitchenpos.domain.OrderLineItemFactory;
 import kitchenpos.domain.OrderStatus;

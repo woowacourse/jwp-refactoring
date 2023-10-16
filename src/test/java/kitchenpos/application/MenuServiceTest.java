@@ -4,14 +4,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import kitchenpos.application.fakedao.InMemoryMenuDao;
-import kitchenpos.application.fakedao.InMemoryMenuGroupDao;
-import kitchenpos.application.fakedao.InMemoryMenuProductDao;
-import kitchenpos.application.fakedao.InMemoryProductDao;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.fakedao.InMemoryMenuDao;
+import kitchenpos.dao.fakedao.InMemoryMenuGroupDao;
+import kitchenpos.dao.fakedao.InMemoryMenuProductDao;
+import kitchenpos.dao.fakedao.InMemoryProductDao;
 import kitchenpos.domain.MenuFactory;
 import kitchenpos.domain.MenuGroupFactory;
 import kitchenpos.domain.ProductFactory;
