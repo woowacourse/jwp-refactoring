@@ -67,8 +67,8 @@ class JdbcTemplateOrderLineItemDaoTest {
     @Test
     void 존재하지_않는_주문_항목id로_주문_항목_조회시_예외가_발생한다() {
         // given
-        OrderLineItem savedOrderLineItem = orderLineItemDao.save(orderLineItem);
-        Long notExistSeq = savedOrderLineItem.getSeq() + 1;
+        orderLineItemDao.save(orderLineItem);
+        Long notExistSeq = -1L;
 
         // when
         Optional<OrderLineItem> foundOrderLineItem = orderLineItemDao.findById(notExistSeq);
@@ -83,7 +83,7 @@ class JdbcTemplateOrderLineItemDaoTest {
         int originSize = orderLineItemDao.findAll().size();
 
         // when
-        OrderLineItem savedOrderLineItem = orderLineItemDao.save(orderLineItem);
+        orderLineItemDao.save(orderLineItem);
         List<OrderLineItem> foundOrderLineItems = orderLineItemDao.findAll();
 
         // then

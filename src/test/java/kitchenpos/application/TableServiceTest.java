@@ -20,7 +20,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
@@ -90,7 +89,7 @@ class TableServiceTest {
         // given
         OrderTable savedOrderTable = tableService.create(orderTable);
         savedOrderTable.setEmpty(false);
-        Long notExistId = 1000L;
+        Long notExistId = -1L;
 
         // when & then
         assertThatIllegalArgumentException()
@@ -158,7 +157,7 @@ class TableServiceTest {
         // given
         orderTable.setEmpty(false);
         OrderTable savedOrderTable = tableService.create(orderTable);
-        Long notExistId = 1000L;
+        Long notExistId = -1L;
 
         // when
         savedOrderTable.setNumberOfGuests(5);

@@ -61,8 +61,8 @@ class JdbcTemplateProductDaoTest {
     @Test
     void 존재하지_않는_상품id로_상품_조회시_예외가_발생한다() {
         // when
-        Product savedProduct = productDao.save(product);
-        Long notExistId = savedProduct.getId() + 1;
+        productDao.save(product);
+        Long notExistId = -1L;
 
         Optional<Product> foundProduct = productDao.findById(notExistId);
 

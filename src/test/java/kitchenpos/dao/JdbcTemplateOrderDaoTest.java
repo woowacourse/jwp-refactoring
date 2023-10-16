@@ -64,8 +64,8 @@ class JdbcTemplateOrderDaoTest {
     @Test
     void 존재하지_않는_주문id로_주문_조회시_예외가_발생한다() {
         // given
-        Order savedOrder = orderDao.save(order);
-        long notExistId = savedOrder.getId() + 1;
+        orderDao.save(order);
+        long notExistId = -1L;
 
         // when
         Optional<Order> foundOrder = orderDao.findById(notExistId);

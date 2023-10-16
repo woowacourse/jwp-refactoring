@@ -27,7 +27,6 @@ import java.util.List;
 import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -93,7 +92,7 @@ class OrderServiceTest {
     @Test
     void 주문_항목의_메뉴id가_존재하지_않는_메뉴면_예외가_발생한다() {
         // given
-        order.getOrderLineItems().get(0).setMenuId(100L);
+        order.getOrderLineItems().get(0).setMenuId(-1L);
 
         // when & then
         assertThatIllegalArgumentException()
@@ -103,7 +102,7 @@ class OrderServiceTest {
     @Test
     void 주문_항목의_주문테이블id가_존재하지_않는_주문테이블이면_예외가_발생한다() {
         // given
-        order.setOrderTableId(100L);
+        order.setOrderTableId(-1L);
 
         // when & then
         assertThatIllegalArgumentException()
@@ -144,6 +143,6 @@ class OrderServiceTest {
 
         // when & then
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> orderService.changeOrderStatus(100L, savedOrder));
+                .isThrownBy(() -> orderService.changeOrderStatus(-1L, savedOrder));
     }
 }
