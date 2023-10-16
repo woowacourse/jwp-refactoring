@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
-class ProductServiceTest {
+class ProductServiceTest extends MockServiceTest {
 
     @InjectMocks
     private ProductService productService;

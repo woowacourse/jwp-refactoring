@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
-class TableServiceTest {
+class TableServiceTest extends MockServiceTest {
 
     @InjectMocks
     private TableService tableService;

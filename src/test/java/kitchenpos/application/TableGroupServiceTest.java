@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @ExtendWith(MockitoExtension.class)
-class TableGroupServiceTest {
+class TableGroupServiceTest extends MockServiceTest {
 
     @InjectMocks
     private TableGroupService tableGroupService;

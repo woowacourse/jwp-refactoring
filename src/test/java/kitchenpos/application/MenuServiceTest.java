@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
-class MenuServiceTest {
+class MenuServiceTest extends MockServiceTest {
 
     @InjectMocks
     private MenuService menuService;

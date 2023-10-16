@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
-class OrderServiceTest {
+class OrderServiceTest extends MockServiceTest {
 
     @InjectMocks
     private OrderService orderService;
