@@ -1,17 +1,13 @@
 package kitchenpos.application;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.BDDMockito.any;
-import static org.mockito.BDDMockito.mock;
-import static org.mockito.BDDMockito.when;
-import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.math.BigDecimal;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.application.fakedao.InMemoryProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductFactory;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.ThrowingSupplier;
@@ -19,28 +15,23 @@ import org.junit.jupiter.api.function.ThrowingSupplier;
 @SuppressWarnings("NonAsciiCharacters")
 class ProductServiceTest {
 
-    private final ProductDao mockProductDao = mock(ProductDao.class);
-
     @Nested
     class 상품_등록시 {
 
         @Test
         void 정상적인_이름과_가격을_가진다면_상품이_등록된다() {
             // given
-            final var productService = new ProductService(mockProductDao);
+            final var fakeProductDao = new InMemoryProductDao();
+            final var productService = new ProductService(fakeProductDao);
             final var validName = "validName";
             final var validPrice = BigDecimal.valueOf(1000);
             final var productWithValidNameAndPrice = ProductFactory.createProductOf(validName, validPrice);
-            when(mockProductDao.save(any(Product.class))).thenReturn(productWithValidNameAndPrice);
 
             // when
             final ThrowingSupplier<Product> throwingSupplier = () -> productService.create(productWithValidNameAndPrice);
 
             // then
-            assertAll(
-                    () -> Assertions.assertDoesNotThrow(throwingSupplier),
-                    () -> verify(mockProductDao, only()).save(any(Product.class))
-            );
+            assertDoesNotThrow(throwingSupplier);
         }
     }
 
@@ -50,14 +41,22 @@ class ProductServiceTest {
         @Test
         void 정상적으로_조회한다() {
             // given
-            final var productDao = mock(ProductDao.class);
-            final var productService = new ProductService(productDao);
+            final var fakeProductDao = new InMemoryProductDao();
+            fakeProductDao.save(ProductFactory.createProductOf("validName", BigDecimal.valueOf(1000)));
+            fakeProductDao.save(ProductFactory.createProductOf("validName2", BigDecimal.valueOf(1000)));
+            final var productService = new ProductService(fakeProductDao);
 
             // when
-            productService.list();
+            final var products = productService.list();
 
             // then
-            verify(productDao, only()).findAll();
+            assertAll(
+                    () -> assertThat(products).hasSize(2),
+                    () -> assertThat(products).extracting(Product::getName)
+                                              .containsExactlyInAnyOrder("validName", "validName2"),
+                    () -> assertThat(products).extracting(Product::getPrice)
+                                              .containsExactlyInAnyOrder(BigDecimal.valueOf(1000), BigDecimal.valueOf(1000))
+            );
         }
     }
 }
