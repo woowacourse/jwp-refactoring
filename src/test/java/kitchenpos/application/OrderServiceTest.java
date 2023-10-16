@@ -4,6 +4,7 @@ import static kitchenpos.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -48,16 +49,17 @@ class OrderServiceTest {
         final Order order = OrderTestSupport.builder().orderTableId(orderTable.getId()).build();
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
 
-        //when
-        when(menuDao.countByIdIn(any())).thenReturn((long) orderLineItems.size());
-        when(orderTableDao.findById(any())).thenReturn(Optional.of(orderTable));
-        when(orderDao.save(any())).thenReturn(order);
+        given(menuDao.countByIdIn(any())).willReturn((long) orderLineItems.size());
+        given(orderTableDao.findById(any())).willReturn(Optional.of(orderTable));
+        given(orderDao.save(any())).willReturn(order);
         for (OrderLineItem orderLineItem : orderLineItems) {
-            when(orderLineItemDao.save(orderLineItem)).thenReturn(orderLineItem);
+            given(orderLineItemDao.save(orderLineItem)).willReturn(orderLineItem);
         }
+        
+        //when
+        final Order result = target.create(order);
 
         //then
-        final Order result = target.create(order);
         assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
     }
 
@@ -67,7 +69,9 @@ class OrderServiceTest {
         //given
         final Order order = OrderTestSupport.builder().orderLineItems(Collections.emptyList()).build();
 
+        
         //when
+        
         //then
         assertThatThrownBy(() -> target.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -78,9 +82,10 @@ class OrderServiceTest {
     void create_fail_invalid_menu() {
         //given
         final Order order = OrderTestSupport.builder().build();
-
+        given(menuDao.countByIdIn(any())).willReturn(0L);
+        
         //when
-        when(menuDao.countByIdIn(any())).thenReturn(0L);
+        
         //then
         assertThatThrownBy(() -> target.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -93,11 +98,11 @@ class OrderServiceTest {
         final OrderTable orderTable = OrderTableTestSupport.builder().build();
         final Order order = OrderTestSupport.builder().orderTableId(orderTable.getId()).build();
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
-
+        given(menuDao.countByIdIn(any())).willReturn((long) orderLineItems.size());
+        given(orderTableDao.findById(any())).willReturn(Optional.empty());
+        
         //when
-        when(menuDao.countByIdIn(any())).thenReturn((long) orderLineItems.size());
-        when(orderTableDao.findById(any())).thenReturn(Optional.empty());
-
+        
         //then
         assertThatThrownBy(() -> target.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -110,8 +115,10 @@ class OrderServiceTest {
         final Order order1 = OrderTestSupport.builder().build();
         final Order order2 = OrderTestSupport.builder().build();
         final Order order3 = OrderTestSupport.builder().build();
+        given(orderDao.findAll()).willReturn(List.of(order1, order2, order3));
+        
         //when
-        when(orderDao.findAll()).thenReturn(List.of(order1, order2, order3));
+        
         //then
         assertThat(target.list()).contains(order1, order2, order3);
     }
@@ -123,16 +130,17 @@ class OrderServiceTest {
         final OrderStatus beforeStatus = OrderStatus.COOKING;
         final Order order = OrderTestSupport.builder().orderStatus(beforeStatus.name()).build();
 
-        //when
-        when(orderDao.findById(any())).thenReturn(Optional.of(order));
-        when(orderDao.save(any())).thenReturn(order);
-        when(orderLineItemDao.findAllByOrderId(any())).thenReturn(order.getOrderLineItems());
+        given(orderDao.findById(any())).willReturn(Optional.of(order));
+        given(orderDao.save(any())).willReturn(order);
+        given(orderLineItemDao.findAllByOrderId(any())).willReturn(order.getOrderLineItems());
 
-        //then
         final Order input = new Order();
         input.setOrderStatus(MEAL.name());
+        
+        //when
         final Order result = target.changeOrderStatus(order.getId(), input);
 
+        //then
         assertThat(result.getOrderStatus()).isEqualTo(MEAL.name());
     }
 
@@ -143,9 +151,10 @@ class OrderServiceTest {
         final OrderStatus beforeStatus = OrderStatus.COMPLETION;
         final Order order = OrderTestSupport.builder().orderStatus(beforeStatus.name()).build();
 
+        given(orderDao.findById(any())).willReturn(Optional.of(order));
+        
         //when
-        when(orderDao.findById(any())).thenReturn(Optional.of(order));
-
+        
         //then
         assertThatThrownBy(() -> target.changeOrderStatus(order.getId(), order))
                 .isInstanceOf(IllegalArgumentException.class);

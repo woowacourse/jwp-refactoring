@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -42,12 +43,15 @@ class TableGroupServiceTest {
         final List<OrderTable> orderTables = List.of(table1, table2);
 
         final TableGroup tableGroup = TableGroupTestSupport.builder().orderTables(orderTables).build();
-        //when
-        when(orderTableDao.findAllByIdIn(any())).thenReturn(orderTables);
-        when(tableGroupDao.save(any())).thenReturn(tableGroup);
+
+        given(orderTableDao.findAllByIdIn(any())).willReturn(orderTables);
+        given(tableGroupDao.save(any())).willReturn(tableGroup);
         for (OrderTable orderTable : orderTables) {
-            when(orderTableDao.save(orderTable)).thenReturn(orderTable);
+            given(orderTableDao.save(orderTable)).willReturn(orderTable);
         }
+        
+        //when
+        
         //then
         assertDoesNotThrow(() -> target.create(tableGroup));
     }
@@ -59,7 +63,9 @@ class TableGroupServiceTest {
         final OrderTable orderTable = OrderTableTestSupport.builder().build();
 
         final TableGroup tableGroup = TableGroupTestSupport.builder().orderTables(List.of(orderTable)).build();
+        
         //when
+        
         //then
         assertThatThrownBy(() -> target.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -70,8 +76,10 @@ class TableGroupServiceTest {
     void create_fail_invalid_table() {
         ///given
         final TableGroup tableGroup = TableGroupTestSupport.builder().build();
+        given(orderTableDao.findAllByIdIn(any())).willReturn(Collections.emptyList());
+        
         //when
-        when(orderTableDao.findAllByIdIn(any())).thenReturn(Collections.emptyList());
+        
         //then
         assertThatThrownBy(() -> target.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -85,8 +93,10 @@ class TableGroupServiceTest {
         final OrderTable table2 = OrderTableTestSupport.builder().build();
         final List<OrderTable> orderTables = List.of(table1, table2);
         final TableGroup tableGroup = TableGroupTestSupport.builder().orderTables(orderTables).build();
+        given(orderTableDao.findAllByIdIn(any())).willReturn(orderTables);
+        
         //when
-        when(orderTableDao.findAllByIdIn(any())).thenReturn(orderTables);
+        
         //then
         assertThatThrownBy(() -> target.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -100,8 +110,10 @@ class TableGroupServiceTest {
         final OrderTable table2 = OrderTableTestSupport.builder().empty(true).tableGroupId(1L).build();
         final List<OrderTable> orderTables = List.of(table1, table2);
         final TableGroup tableGroup = TableGroupTestSupport.builder().orderTables(orderTables).build();
+        given(orderTableDao.findAllByIdIn(any())).willReturn(orderTables);
+        
         //when
-        when(orderTableDao.findAllByIdIn(any())).thenReturn(orderTables);
+        
         //then
         assertThatThrownBy(() -> target.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -112,9 +124,11 @@ class TableGroupServiceTest {
     void ungroup() {
         //given
         final TableGroup tableGroup = TableGroupTestSupport.builder().build();
+        given(orderTableDao.findAllByTableGroupId(any())).willReturn(tableGroup.getOrderTables());
+        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(any(), any())).willReturn(false);
+        
         //when
-        when(orderTableDao.findAllByTableGroupId(any())).thenReturn(tableGroup.getOrderTables());
-        when(orderDao.existsByOrderTableIdInAndOrderStatusIn(any(), any())).thenReturn(false);
+        
         //then
         assertDoesNotThrow(() -> target.ungroup(tableGroup.getId()));
     }
@@ -124,9 +138,11 @@ class TableGroupServiceTest {
     void ungroup_fail_not_COMPLETION() {
         //given
         final TableGroup tableGroup = TableGroupTestSupport.builder().build();
+        given(orderTableDao.findAllByTableGroupId(any())).willReturn(tableGroup.getOrderTables());
+        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(any(), any())).willReturn(true);
+        
         //when
-        when(orderTableDao.findAllByTableGroupId(any())).thenReturn(tableGroup.getOrderTables());
-        when(orderDao.existsByOrderTableIdInAndOrderStatusIn(any(), any())).thenReturn(true);
+        
         //then
         assertThatThrownBy(() -> target.ungroup(tableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class);

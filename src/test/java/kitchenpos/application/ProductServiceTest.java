@@ -27,7 +27,9 @@ class ProductServiceTest {
     void create() {
         //given
         final Product product = ProductTestSupport.builder().build();
+        
         //when
+        
         //then
         Assertions.assertDoesNotThrow(() -> target.create(product));
     }
@@ -38,7 +40,9 @@ class ProductServiceTest {
         //given
         final BigDecimal price = new BigDecimal("-1");
         final Product product = ProductTestSupport.builder().price(price).build();
+        
         //when
+        
         //then
         assertThatThrownBy(() -> target.create(product))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -53,8 +57,10 @@ class ProductServiceTest {
         final Product product2 = ProductTestSupport.builder().build();
         target.create(product1);
         target.create(product2);
+        
         //when
         final List<Product> result = target.list();
+
         //then
         assertThat(result).extracting(Product::getName)
                 .contains(product1.getName(), product2.getName());

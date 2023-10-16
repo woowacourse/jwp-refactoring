@@ -2,10 +2,9 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.in;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.given;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +12,6 @@ import kitchenpos.application.support.domain.OrderTableTestSupport;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,8 +35,10 @@ class TableServiceTest {
         //given
         final OrderTable input = new OrderTable();
         final OrderTable result = OrderTableTestSupport.builder().build();
+        given(orderTableDao.save(any())).willReturn(result);
+
         //when
-        when(orderTableDao.save(any())).thenReturn(result);
+
         //then
         assertDoesNotThrow(() -> target.create(input));
     }
@@ -51,8 +51,10 @@ class TableServiceTest {
         final OrderTable table2 = OrderTableTestSupport.builder().build();
         final OrderTable table3 = OrderTableTestSupport.builder().build();
         final List<OrderTable> orderTables = List.of(table1, table2, table3);
+        given(orderTableDao.findAll()).willReturn(orderTables);
+
         //when
-        when(orderTableDao.findAll()).thenReturn(orderTables);
+
         //then
         assertDoesNotThrow(() -> target.list());
     }
@@ -64,13 +66,14 @@ class TableServiceTest {
         final OrderTable input = new OrderTable();
         input.setEmpty(false);
         final OrderTable savedOrder = OrderTableTestSupport.builder().tableGroupId(null).empty(true).build();
+        given(orderTableDao.findById(any())).willReturn(Optional.of(savedOrder));
+        given(orderDao.existsByOrderTableIdAndOrderStatusIn(any(), any())).willReturn(false);
+        given(orderTableDao.save(savedOrder)).willReturn(savedOrder);
+
         //when
-        when(orderTableDao.findById(any())).thenReturn(Optional.of(savedOrder));
-        when(orderDao.existsByOrderTableIdAndOrderStatusIn(any(), any())).thenReturn(false);
-        when(orderTableDao.save(savedOrder)).thenReturn(savedOrder);
-        //then
         final OrderTable result = target.changeEmpty(savedOrder.getId(), input);
 
+        //then
         assertThat(result.isEmpty()).isEqualTo(input.isEmpty());
     }
 
@@ -81,8 +84,10 @@ class TableServiceTest {
         final OrderTable input = new OrderTable();
         input.setEmpty(false);
         final OrderTable savedOrder = OrderTableTestSupport.builder().tableGroupId(1L).empty(true).build();
+        given(orderTableDao.findById(any())).willReturn(Optional.of(savedOrder));
+
         //when
-        when(orderTableDao.findById(any())).thenReturn(Optional.of(savedOrder));
+
         //then
         assertThatThrownBy(() -> target.changeEmpty(savedOrder.getId(), input))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -95,9 +100,11 @@ class TableServiceTest {
         final OrderTable input = new OrderTable();
         input.setEmpty(false);
         final OrderTable savedOrder = OrderTableTestSupport.builder().tableGroupId(null).empty(false).build();
+        given(orderTableDao.findById(any())).willReturn(Optional.of(savedOrder));
+        given(orderDao.existsByOrderTableIdAndOrderStatusIn(any(), any())).willReturn(true);
+
         //when
-        when(orderTableDao.findById(any())).thenReturn(Optional.of(savedOrder));
-        when(orderDao.existsByOrderTableIdAndOrderStatusIn(any(), any())).thenReturn(true);
+
         //then
         assertThatThrownBy(() -> target.changeEmpty(savedOrder.getId(), input))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -110,11 +117,13 @@ class TableServiceTest {
         final OrderTable input = new OrderTable();
         input.setNumberOfGuests(10);
         final OrderTable savedOrder = OrderTableTestSupport.builder().numberOfGuests(1).build();
+        given(orderTableDao.findById(any())).willReturn(Optional.of(savedOrder));
+        given(orderTableDao.save(savedOrder)).willReturn(savedOrder);
+
         //when
-        when(orderTableDao.findById(any())).thenReturn(Optional.of(savedOrder));
-        when(orderTableDao.save(savedOrder)).thenReturn(savedOrder);
-        //then
         final OrderTable result = target.changeNumberOfGuests(savedOrder.getId(), input);
+
+        //then
         assertThat(result.getNumberOfGuests()).isEqualTo(input.getNumberOfGuests());
     }
 
@@ -125,7 +134,9 @@ class TableServiceTest {
         final OrderTable input = new OrderTable();
         input.setNumberOfGuests(0);
         final OrderTable savedOrder = OrderTableTestSupport.builder().numberOfGuests(1).build();
+
         //when
+
         //then
         assertThatThrownBy(() -> target.changeNumberOfGuests(savedOrder.getId(), input))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -138,8 +149,10 @@ class TableServiceTest {
         final OrderTable input = new OrderTable();
         input.setNumberOfGuests(10);
         final OrderTable savedOrder = OrderTableTestSupport.builder().numberOfGuests(1).empty(true).build();
+        given(orderTableDao.findById(any())).willReturn(Optional.of(savedOrder));
+
         //when
-        when(orderTableDao.findById(any())).thenReturn(Optional.of(savedOrder));
+
         //then
         assertThatThrownBy(() -> target.changeNumberOfGuests(savedOrder.getId(), input))
                 .isInstanceOf(IllegalArgumentException.class);
