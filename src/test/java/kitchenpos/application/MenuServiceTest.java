@@ -15,7 +15,6 @@ import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.MenuProductFixture;
 import kitchenpos.fixture.ProductFixture;
 import kitchenpos.support.ServiceTest;
-import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -135,7 +134,7 @@ class MenuServiceTest extends ServiceTest {
         List<Menu> actual = menuService.list();
 
         // then
-        AssertionsForClassTypes.assertThat(actual)
+        assertThat(actual)
                 .usingRecursiveComparison()
                 .isEqualTo(List.of(savedMenu));
     }
