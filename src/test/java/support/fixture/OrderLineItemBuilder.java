@@ -1,6 +1,7 @@
 package support.fixture;
 
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 
 public class OrderLineItemBuilder {
@@ -13,8 +14,8 @@ public class OrderLineItemBuilder {
         orderLineItem.setQuantity(quantity);
     }
 
-    public OrderLineItemBuilder setOrderId(final Long orderId) {
-        orderLineItem.setOrderId(orderId);
+    public OrderLineItemBuilder setOrderId(final Order order) {
+        orderLineItem.setOrder(order);
         return this;
     }
 

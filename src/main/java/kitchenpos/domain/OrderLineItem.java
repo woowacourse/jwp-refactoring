@@ -7,9 +7,9 @@ public class OrderLineItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "seq")
     private Long seq;
-    private Long orderId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Order order;
     @ManyToOne(fetch = FetchType.LAZY)
     private Menu menu;
     private long quantity;
@@ -22,12 +22,12 @@ public class OrderLineItem {
         this.seq = seq;
     }
 
-    public Long getOrderId() {
-        return orderId;
+    public Order getOrder() {
+        return order;
     }
 
-    public void setOrderId(final Long orderId) {
-        this.orderId = orderId;
+    public void setOrder(final Order order) {
+        this.order = order;
     }
 
     public Menu getMenu() {

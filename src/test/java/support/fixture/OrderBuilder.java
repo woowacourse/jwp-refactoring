@@ -3,6 +3,7 @@ package support.fixture;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -29,8 +30,8 @@ public class OrderBuilder {
         return this;
     }
 
-    public OrderBuilder setOrderTableId(final Long orderTableId) {
-        order.setOrderTableId(orderTableId);
+    public OrderBuilder setOrderTableId(final OrderTable orderTable) {
+        order.setOrderTable(orderTable);
         return this;
     }
 

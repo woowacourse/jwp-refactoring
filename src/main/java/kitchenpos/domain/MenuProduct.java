@@ -10,9 +10,9 @@ public class MenuProduct {
     @Column(name = "seq")
     private Long seq;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_id")
     private Menu menu;
-    private Long productId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Product product;
     private long quantity;
 
     public Long getSeq() {
@@ -31,12 +31,12 @@ public class MenuProduct {
         this.menu = menu;
     }
 
-    public Long getProductId() {
-        return productId;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setProductId(final Long productId) {
-        this.productId = productId;
+    public void setProduct(final Product product) {
+        this.product = product;
     }
 
     public long getQuantity() {

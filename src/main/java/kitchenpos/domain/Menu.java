@@ -13,7 +13,8 @@ public class Menu {
     private Long id;
     private String name;
     private BigDecimal price;
-    private Long menuGroupId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private MenuGroup menuGroup;
     @OneToMany(mappedBy = "menu", fetch = FetchType.LAZY)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
@@ -41,12 +42,12 @@ public class Menu {
         this.price = price;
     }
 
-    public Long getMenuGroupId() {
-        return menuGroupId;
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
     }
 
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
+    public void setMenuGroup(final MenuGroup menuGroup) {
+        this.menuGroup = menuGroup;
     }
 
     public List<MenuProduct> getMenuProducts() {

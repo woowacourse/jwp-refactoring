@@ -125,7 +125,7 @@ class TableServiceTest {
             final OrderTable table = orderTableRepository.save(new TableBuilder().build());
 
             orderRepository.save(new OrderBuilder()
-                    .setOrderTableId(table.getId())
+                    .setOrderTableId(table)
                     .setOrderStatus(orderStatus)
                     .build());
 
@@ -144,7 +144,7 @@ class TableServiceTest {
                     .build());
 
             orderRepository.save(new OrderBuilder()
-                    .setOrderTableId(table.getId())
+                    .setOrderTableId(table)
                     .setOrderStatus(OrderStatus.COMPLETION)
                     .build());
 

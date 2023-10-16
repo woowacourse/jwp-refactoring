@@ -15,6 +15,11 @@ public class MenuGroupBuilder {
         sequence++;
     }
 
+    public MenuGroupBuilder setId(final Long id) {
+        menuGroup.setId(id);
+        return this;
+    }
+
     public MenuGroupBuilder setName(final String name) {
         menuGroup.setName(name);
         return this;

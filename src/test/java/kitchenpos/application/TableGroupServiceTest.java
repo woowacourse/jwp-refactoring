@@ -210,7 +210,7 @@ class TableGroupServiceTest {
                     .build());
 
             orderRepository.save(new OrderBuilder()
-                    .setOrderTableId(table.getId())
+                    .setOrderTableId(table)
                     .setOrderStatus(orderStatus)
                     .build());
 

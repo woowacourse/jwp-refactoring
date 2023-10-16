@@ -21,7 +21,7 @@ public class MenuBuilder {
         this.menu = new Menu();
         menu.setName("메뉴" + sequence);
         menu.setPrice(BigDecimal.valueOf(0));
-        menu.setMenuGroupId(menuGroup.getId());
+        menu.setMenuGroup(menuGroup);
         menu.setMenuProducts(Collections.emptyList());
 
         sequence++;
@@ -38,7 +38,7 @@ public class MenuBuilder {
     }
 
     public MenuBuilder setMenuGroupId(final MenuGroup menuGroup) {
-        menu.setMenuGroupId(menuGroup.getId());
+        menu.setMenuGroup(menuGroup);
         return this;
     }
 
@@ -46,7 +46,7 @@ public class MenuBuilder {
         final List<MenuProduct> menuProducts = productQuantityMap.entrySet().stream()
                 .map(entry -> {
                     final MenuProduct menuProduct = new MenuProduct();
-                    menuProduct.setProductId(entry.getKey().getId());
+                    menuProduct.setProduct(entry.getKey());
                     menuProduct.setQuantity(entry.getValue());
                     return menuProduct;
                 })

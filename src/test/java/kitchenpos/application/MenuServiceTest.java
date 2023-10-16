@@ -92,7 +92,7 @@ class MenuServiceTest {
                 assertAll(
                         () -> assertEquals(expectMenu.getName(), actualMenu.getName()),
                         () -> assertThat(expectMenu.getPrice()).isEqualByComparingTo(actualMenu.getPrice()),
-                        () -> assertEquals(expectMenu.getMenuGroupId(), actualMenu.getMenuGroupId()),
+                        () -> assertEquals(expectMenu.getMenuGroup().getId(), actualMenu.getMenuGroup().getId()),
                         () -> assertThat(actualMenu.getMenuProducts())
                                 .usingRecursiveComparison()
                                 .isEqualTo(expectMenu.getMenuProducts())
@@ -131,7 +131,7 @@ class MenuServiceTest {
             assertAll(
                     () -> assertEquals(menu.getName(), actual.getName()),
                     () -> assertThat(menu.getPrice()).isEqualByComparingTo(actual.getPrice()),
-                    () -> assertEquals(menu.getMenuGroupId(), actual.getMenuGroupId())
+                    () -> assertEquals(menu.getMenuGroup().getId(), actual.getMenuGroup().getId())
             );
         }
 
@@ -151,9 +151,13 @@ class MenuServiceTest {
         @DisplayName("MenuGroup이 존재하지 않으면 IllegalArgumentException이 발생한다.")
         void invalidGroupIdTest() {
             // given
-            final long invalidMenuGroupId = -1L;
+            final long invalidId = -1L;
 
-            menu.setMenuGroupId(invalidMenuGroupId);
+            final MenuGroup notSavedMenuGroup = new MenuGroupBuilder()
+                    .setId(invalidId)
+                    .build();
+
+            menu.setMenuGroup(notSavedMenuGroup);
 
             // when & then
             assertThrowsExactly(IllegalArgumentException.class, () -> menuService.create(menu));

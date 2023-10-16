@@ -50,7 +50,7 @@ class OrderServiceTest {
         final List<Order> expect = List.of(orderRepository
                 .save(new OrderBuilder()
                         .setOrderLineItems(List.of(orderLineItem))
-                        .setOrderTableId(table.getId())
+                        .setOrderTableId(table)
                         .build()
                 )
         );
@@ -61,7 +61,7 @@ class OrderServiceTest {
         // then
         assertThat(actual)
                 .usingRecursiveComparison()
-                .ignoringFields("id", "orderLineItems")
+                .ignoringFields("id", "orderTable", "orderLineItems")
                 .isEqualTo(expect);
     }
 
@@ -85,7 +85,7 @@ class OrderServiceTest {
 
             final Order order = new OrderBuilder()
                     .setOrderLineItems(List.of(orderLineItem))
-                    .setOrderTableId(table.getId())
+                    .setOrderTableId(table)
                     .build();
 
             // when
@@ -97,7 +97,7 @@ class OrderServiceTest {
             final Long orderLineItemId = savedOrder.getOrderLineItems().get(0).getSeq();
             orderLineItemRepository.findById(orderLineItemId)
                     .ifPresentOrElse(
-                            actual -> assertEquals(savedOrder.getId(), actual.getOrderId()),
+                            actual -> assertEquals(savedOrder.getId(), actual.getOrder().getId()),
                             () -> fail("OrderLineItem이 존재하지 않습니다.")
                     );
         }
@@ -112,7 +112,7 @@ class OrderServiceTest {
 
             final Order order = new OrderBuilder()
                     .setOrderLineItems(Collections.emptyList())
-                    .setOrderTableId(table.getId())
+                    .setOrderTableId(table)
                     .build();
 
             // when & then
@@ -136,7 +136,7 @@ class OrderServiceTest {
 
             final Order order = new OrderBuilder()
                     .setOrderLineItems(List.of(orderLineItem))
-                    .setOrderTableId(table.getId())
+                    .setOrderTableId(table)
                     .build();
 
             // when & then
@@ -154,10 +154,14 @@ class OrderServiceTest {
 
             final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu, 1).build();
 
-            final long notExistsOrderTableId = -1L;
+            final long invalidId = -1L;
+            final OrderTable notSavedOrderTable = new TableBuilder()
+                    .setId(invalidId)
+                    .build();
+
             final Order order = new OrderBuilder()
                     .setOrderLineItems(List.of(orderLineItem))
-                    .setOrderTableId(notExistsOrderTableId)
+                    .setOrderTableId(notSavedOrderTable)
                     .build();
 
             // when & then
@@ -181,7 +185,7 @@ class OrderServiceTest {
 
             final Order order = new OrderBuilder()
                     .setOrderLineItems(List.of(orderLineItem))
-                    .setOrderTableId(table.getId())
+                    .setOrderTableId(table)
                     .build();
 
             // when & then
@@ -211,7 +215,7 @@ class OrderServiceTest {
 
             final Order order = orderRepository.save(new OrderBuilder()
                     .setOrderLineItems(List.of(orderLineItem))
-                    .setOrderTableId(table.getId())
+                    .setOrderTableId(table)
                     .build());
 
             // when
@@ -242,7 +246,7 @@ class OrderServiceTest {
 
             final Order order = orderRepository.save(new OrderBuilder()
                     .setOrderLineItems(List.of(orderLineItem))
-                    .setOrderTableId(table.getId())
+                    .setOrderTableId(table)
                     .setOrderStatus(OrderStatus.COMPLETION)
                     .build());
 
