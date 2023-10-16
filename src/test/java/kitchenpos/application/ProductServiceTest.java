@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Product;
+import kitchenpos.vo.product.ProductRequest;
+import kitchenpos.vo.product.ProductResponse;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,18 +25,15 @@ class ProductServiceTest {
     @DisplayName("상품 등록에 성공한다.")
     void succeedInRegisteringProduct() {
         //given
-        String productName = "치킨";
-        Product product = new Product();
-        product.setName(productName);
-        product.setPrice(BigDecimal.valueOf(17000L));
+        ProductRequest request = new ProductRequest("치킨", BigDecimal.valueOf(17000L));
 
         //when
-        Product savedProduct = productService.create(product);
+        ProductResponse response = productService.create(request);
 
         //then
         SoftAssertions.assertSoftly(softly -> {
-            softly.assertThat(savedProduct.getId()).isNotNull();
-            softly.assertThat(savedProduct.getName()).isEqualTo(productName);
+            softly.assertThat(response.getId()).isNotNull();
+            softly.assertThat(response.getName()).isEqualTo("치킨");
         });
     }
 
@@ -43,12 +41,10 @@ class ProductServiceTest {
     @DisplayName("상품 가격이 0원 미만일 경우 예외가 발생한다.")
     void failToRegisterProduct() {
         //given
-        Product product = new Product();
-        product.setName("치킨");
-        product.setPrice(BigDecimal.valueOf(-1));
+        ProductRequest productRequest = new ProductRequest("치킨", BigDecimal.valueOf(-1));
 
         //when & then
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(productRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -56,18 +52,13 @@ class ProductServiceTest {
     @DisplayName("상품 목록을 조회할 수 있다.")
     void succeedInSearchingProductList() {
         //given
-        Product productA = new Product();
-        productA.setName("치킨");
-        productA.setPrice(BigDecimal.valueOf(10000L));
-
-        Product productB = new Product();
-        productB.setName("치킨");
-        productB.setPrice(BigDecimal.valueOf(10000L));
+        ProductRequest productA = new ProductRequest("치킨", BigDecimal.valueOf(10000L));
+        ProductRequest productB = new ProductRequest("피자", BigDecimal.valueOf(15000L));
 
         productService.create(productA);
         productService.create(productB);
 
-        //when
-        assertThat(productService.list()).hasSize(2);
+        //when & then
+        assertThat(productService.list().getProducts()).hasSize(2);
     }
 }

@@ -57,9 +57,11 @@ class OrderServiceTest {
 
     @BeforeEach
     void setup() {
-        Product product = new Product();
-        product.setName("치킨");
-        product.setPrice(BigDecimal.valueOf(10000L));
+        Product product = new Product.Builder()
+                .name("치킨")
+                .price(BigDecimal.valueOf(10000L))
+                .build();
+
         savedProduct = productDao.save(product);
 
         MenuProduct menuProduct = new MenuProduct();
