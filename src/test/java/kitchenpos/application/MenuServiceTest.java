@@ -17,8 +17,6 @@ import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
@@ -46,29 +44,13 @@ class MenuServiceTest {
 
     private Menu menu;
 
+    private MenuGroup menuGroup;
+
     @BeforeEach
     void setUp() {
-        menu = new Menu();
-        menu.setName("TestMenu");
-    }
+        menuGroup = saveMenuGroup();
 
-    @Test
-    @DisplayName("메뉴 금액이 null인 경우, 생성할 수 없다.")
-    void createFailTest_ByPriceIsNull() {
-        //when then
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @ParameterizedTest(name = "메뉴 금액이 0원 미만인 경우, 생성할 수 없다")
-    @ValueSource(ints = {-100, -1})
-    void createFailTest_ByPriceIsLessThanZero(int price) {
-        //given
-        menu.setPrice(BigDecimal.valueOf(price));
-
-        //when then
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+        menu = Menu.of("TestMenu", BigDecimal.valueOf(1000), menuGroup);
     }
 
     @DisplayName("메뉴 그룹이 존재하지 않으면, 생성할 수 없다.")
@@ -76,11 +58,6 @@ class MenuServiceTest {
     void createFailTest_ByMenuGroupIsNotExists() {
         //given
         Long invalidId = 99L;
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(invalidId);
-
-        menu.setPrice(BigDecimal.ONE);
-        menu.setMenuGroup(menuGroup);
 
         assertThat(menuGroupRepository.existsById(invalidId)).isFalse();
 
@@ -97,15 +74,12 @@ class MenuServiceTest {
         Product product = new Product();
         product.setId(invalidId);
 
-        MenuGroup savedMenuGroup = saveMenuGroup();
         MenuProduct menuProduct = new MenuProduct();
         menuProduct.setProduct(product);
 
-        menu.setPrice(BigDecimal.ONE);
-        menu.setMenuGroup(savedMenuGroup);
-        menu.setMenuProducts(List.of(menuProduct));
+        menu.addMenuProduct(menuProduct);
 
-        assertThat(menuGroupRepository.existsById(savedMenuGroup.getId())).isTrue();
+        assertThat(menuGroupRepository.existsById(menuGroup.getId())).isTrue();
         assertThat(productRepository.findById(invalidId)).isEmpty();
 
         //when then
@@ -117,17 +91,14 @@ class MenuServiceTest {
     @Test
     void createFailTest_ByMenuProductsTotalPriceIsLessThanMenuPrice() {
         //given
-        int price = 10000;
+        BigDecimal price = menu.getPrice();
 
-        MenuGroup savedMenuGroup = saveMenuGroup();
-        Product savedProduct = saveProductAmountOf(price);
+        Product savedProduct = saveProductAmountOf(price.intValue() - 1);
         MenuProduct menuProduct = createMenuProduct(savedProduct);
 
-        menu.setPrice(BigDecimal.valueOf(price + 1));
-        menu.setMenuGroup(savedMenuGroup);
-        menu.setMenuProducts(List.of(menuProduct));
+        menu.addMenuProduct(menuProduct);
 
-        assertThat(menuGroupRepository.existsById(savedMenuGroup.getId())).isTrue();
+        assertThat(menuGroupRepository.existsById(menuGroup.getId())).isTrue();
         assertThat(productRepository.findById(savedProduct.getId())).isPresent();
 
         //when then
@@ -141,13 +112,10 @@ class MenuServiceTest {
         //given
         int price = 10000;
 
-        MenuGroup savedMenuGroup = saveMenuGroup();
         Product savedProduct = saveProductAmountOf(price);
         MenuProduct menuProduct = createMenuProduct(savedProduct);
 
-        menu.setPrice(BigDecimal.valueOf(price));
-        menu.setMenuGroup(savedMenuGroup);
-        menu.setMenuProducts(List.of(menuProduct));
+        menu.addMenuProduct(menuProduct);
 
         //when
         Menu savedMenu = menuService.create(menu);
@@ -174,11 +142,8 @@ class MenuServiceTest {
         //given
         int price = 10000;
 
-        MenuGroup savedMenuGroup = saveMenuGroup();
         Product savedProduct = saveProductAmountOf(price);
 
-        menu.setPrice(BigDecimal.valueOf(price));
-        menu.setMenuGroup(savedMenuGroup);
         Menu savedMenu = menuRepository.save(menu);
 
         MenuProduct menuProduct = createMenuProduct(savedProduct);

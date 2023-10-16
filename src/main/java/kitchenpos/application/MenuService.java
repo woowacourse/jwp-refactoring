@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import kitchenpos.dao.MenuGroupRepository;
@@ -61,12 +60,10 @@ public class MenuService {
 
         final Menu savedMenu = menuRepository.save(menu);
 
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProduct menuProduct : menuProducts) {
             menuProduct.setMenu(menu);
-            savedMenuProducts.add(menuProductRepository.save(menuProduct));
+            menuProductRepository.save(menuProduct);
         }
-        savedMenu.setMenuProducts(savedMenuProducts);
 
         return savedMenu;
     }
@@ -75,7 +72,8 @@ public class MenuService {
         final List<Menu> menus = menuRepository.findAll();
 
         for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductRepository.findAllByMenuId(menu.getId()));
+            menuProductRepository.findAllByMenuId(menu.getId())
+                    .forEach(menu::addMenuProduct);
         }
 
         return menus;

@@ -15,6 +15,8 @@ import javax.persistence.OneToMany;
 @Entity
 public class Menu {
 
+    private static final int MAX_NAME_LENGTH = 255;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,7 +24,7 @@ public class Menu {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal price;
     @ManyToOne
     @JoinColumn(name = "menu_group_id", nullable = false)
@@ -34,43 +36,71 @@ public class Menu {
     public Menu() {
     }
 
-    public Long getId() {
-        return id;
+    private Menu(
+            String name,
+            BigDecimal price,
+            MenuGroup menuGroup
+    ) {
+        this.name = name;
+        this.price = price;
+        this.menuGroup = menuGroup;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public static Menu of(String name, BigDecimal price, MenuGroup menuGroup) {
+        validateName(name);
+        validatePrice(price);
+        validateMenuGroup(menuGroup);
+
+        return new Menu(name, price, menuGroup);
+    }
+
+    private static void validateName(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException();
+        }
+
+        if (name.isBlank() || name.length() > MAX_NAME_LENGTH) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private static void validatePrice(BigDecimal price) {
+        if (price == null) {
+            throw new IllegalArgumentException();
+        }
+
+        if (price.doubleValue() < 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private static void validateMenuGroup(MenuGroup menuGroup) {
+        if (menuGroup == null) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void addMenuProduct(MenuProduct menuProduct) {
+        menuProducts.add(menuProduct);
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public BigDecimal getPrice() {
         return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
     }
 
     public MenuGroup getMenuGroup() {
         return menuGroup;
     }
 
-    public void setMenuGroup(MenuGroup menuGroup) {
-        this.menuGroup = menuGroup;
-    }
-
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
-    }
-
-    public void setMenuProducts(List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
     }
 }

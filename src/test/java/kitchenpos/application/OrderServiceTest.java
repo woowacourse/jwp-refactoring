@@ -75,7 +75,6 @@ class OrderServiceTest {
         Long invalidId = 99L;
 
         Menu menu = new Menu();
-        menu.setId(invalidId);
 
         OrderLineItem orderLineItem = createOrderLineItem(menu);
         order.setOrderLineItems(List.of(orderLineItem));
@@ -270,10 +269,7 @@ class OrderServiceTest {
     private Menu saveMenu() {
         MenuGroup savedMenuGroup = saveMenuGroup();
 
-        Menu menu = new Menu();
-        menu.setName("TestMenu");
-        menu.setPrice(BigDecimal.valueOf(10000));
-        menu.setMenuGroup(savedMenuGroup);
+        Menu menu = Menu.of("TestMenu", BigDecimal.valueOf(10000), savedMenuGroup);
 
         return menuRepository.save(menu);
     }
