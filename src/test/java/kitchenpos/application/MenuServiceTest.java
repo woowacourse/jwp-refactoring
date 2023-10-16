@@ -33,8 +33,7 @@ class MenuServiceTest extends ServiceTest {
     void setUp() {
         Product newProduct = Product.of("치킨", 18_000L);
 
-        MenuGroup newMenuGroup = new MenuGroup();
-        newMenuGroup.setName("튀김류");
+        MenuGroup newMenuGroup = MenuGroup.from("튀김류");
 
         product = productDao.save(newProduct);
         menuGroup = menuGroupDao.save(newMenuGroup);
