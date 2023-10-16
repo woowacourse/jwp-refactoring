@@ -1,15 +1,13 @@
 package kitchenpos.domain;
 
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-
-import java.math.BigDecimal;
-import java.util.List;
 import kitchenpos.application.ProductService;
+import kitchenpos.application.dto.request.CreateProductRequest;
+import kitchenpos.application.dto.response.CreateProductResponse;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.fixture.ProductFixture;
 import org.assertj.core.api.Assertions;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
@@ -20,6 +18,11 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
@@ -38,27 +41,30 @@ class ProductServiceTest {
         @Test
         void 상품을_등록한다() {
             // given
+            CreateProductRequest request = ProductFixture.REQUEST.후라이드_치킨_16000원();
             Product product = ProductFixture.PRODUCT.후라이드_치킨();
             given(productDao.save(any(Product.class)))
                     .willReturn(product);
 
             // when
-            Product result = productService.create(product);
+            CreateProductResponse result = productService.create(request);
 
             // then
-            Assertions.assertThat(result)
-                    .usingRecursiveComparison()
-                    .isEqualTo(product);
+            SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(result.getId()).isEqualTo(product.getId());
+                softly.assertThat(result.getName()).isEqualTo(product.getName());
+                softly.assertThat(result.getPrice()).isEqualTo(product.getPrice().toString());
+            });
         }
 
         @ParameterizedTest(name = "상품의 가격이 {0}이면 예외")
         @ValueSource(strings = {"-1", "-9999999"})
-        void 상품의_가격이_0원_미만이면_예외(Long price) {
+        void 상품의_가격이_0원_미만이면_예외(String price) {
             // given
-            Product product = ProductFixture.PRODUCT.후라이드_치킨(price);
+            CreateProductRequest request = ProductFixture.REQUEST.후라이드_치킨_N원(price);
 
             // when & then
-            Assertions.assertThatThrownBy(() -> productService.create(product))
+            Assertions.assertThatThrownBy(() -> productService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

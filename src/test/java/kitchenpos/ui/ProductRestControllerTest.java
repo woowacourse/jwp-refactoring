@@ -1,27 +1,25 @@
 package kitchenpos.ui;
 
+import kitchenpos.application.ProductService;
+import kitchenpos.application.dto.request.CreateProductRequest;
+import kitchenpos.application.dto.response.CreateProductResponse;
+import kitchenpos.domain.Product;
+import kitchenpos.fixture.ProductFixture;
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.math.BigDecimal;
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.math.BigDecimal;
-import java.util.List;
-import kitchenpos.application.ProductService;
-import kitchenpos.domain.Product;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
@@ -51,23 +49,24 @@ class ProductRestControllerTest {
         @Test
         void 상품_생성() throws Exception {
             // given
-            given(productService.create(any(Product.class)))
-                    .willReturn(product);
+            CreateProductResponse result = ProductFixture.RESPONSE.후라이드_치킨_16000원();
+            given(productService.create(any(CreateProductRequest.class)))
+                    .willReturn(result);
 
             // when & then
             mockMvc.perform(post("/api/products")
                             .contentType(APPLICATION_JSON)
                             .content("{" +
-                                    "\"name\":\"후라이드\"," +
-                                    "\"price\":16000" +
+                                    "\"name\":\"" + result.getName() + "\"," +
+                                    "\"price\":" + result.getPrice() +
                                     "}")
                     )
                     .andExpectAll(
                             status().isCreated(),
                             header().exists("Location"),
-                            jsonPath("id").value(product.getId()),
-                            jsonPath("name").value(product.getName()),
-                            jsonPath("price").value(product.getPrice().intValue())
+                            jsonPath("id").value(result.getId()),
+                            jsonPath("name").value(result.getName()),
+                            jsonPath("price").value(result.getPrice())
                     );
         }
 

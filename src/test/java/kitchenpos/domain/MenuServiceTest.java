@@ -1,7 +1,7 @@
 package kitchenpos.domain;
 
 import kitchenpos.application.MenuService;
-import kitchenpos.application.dto.MenuResponse;
+import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.application.dto.request.CreateMenuRequest;
 import kitchenpos.application.dto.response.CreateMenuResponse;
 import kitchenpos.application.dto.response.MenuProductResponse;
@@ -9,11 +9,9 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuProductFixture.MENU_PRODUCT;
 import kitchenpos.fixture.ProductFixture;
 import org.assertj.core.api.Assertions;
-import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
@@ -31,7 +29,6 @@ import java.util.Optional;
 
 import static kitchenpos.fixture.MenuFixture.MENU;
 import static kitchenpos.fixture.MenuFixture.REQUEST;
-import static org.assertj.core.api.SoftAssertions.*;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.anyLong;
