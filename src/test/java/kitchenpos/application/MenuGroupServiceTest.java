@@ -20,7 +20,7 @@ class MenuGroupServiceTest extends IntegrationTest {
 
         // when
         CreateMenuGroupResponse response = menuGroupService.create(command);
-        Optional<MenuGroup> result = menuGroupDao.findById(response.id());
+        Optional<MenuGroup> result = menuGroupRepository.findById(response.id());
 
         // then
         assertAll(
@@ -33,8 +33,8 @@ class MenuGroupServiceTest extends IntegrationTest {
     @Test
     void 메뉴_그룹들을_조회한다() {
         // given
-        menuGroupDao.save(new MenuGroup("추천메뉴"));
-        menuGroupDao.save(new MenuGroup("인기메뉴"));
+        menuGroupRepository.save(new MenuGroup("추천메뉴"));
+        menuGroupRepository.save(new MenuGroup("인기메뉴"));
 
         // when
         List<SearchMenuGroupResponse> result = menuGroupService.list();

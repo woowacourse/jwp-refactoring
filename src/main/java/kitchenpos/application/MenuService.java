@@ -3,9 +3,9 @@ package kitchenpos.application;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Product;
@@ -14,15 +14,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MenuService {
-    private final MenuGroupDao menuGroupDao;
+
     private final ProductDao productDao;
-
     private final MenuRepository menuRepository;
+    private final MenuGroupRepository menuGroupRepository;
 
-    public MenuService(MenuGroupDao menuGroupDao, ProductDao productDao, MenuRepository menuRepository) {
-        this.menuGroupDao = menuGroupDao;
+    public MenuService(ProductDao productDao, MenuRepository menuRepository, MenuGroupRepository menuGroupRepository) {
         this.productDao = productDao;
         this.menuRepository = menuRepository;
+        this.menuGroupRepository = menuGroupRepository;
     }
 
     @Transactional
@@ -33,7 +33,7 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        if (!menuGroupDao.existsById(menu.menuGroup().id())) {
+        if (!menuGroupRepository.existsById(menu.menuGroup().id())) {
             throw new IllegalArgumentException();
         }
 

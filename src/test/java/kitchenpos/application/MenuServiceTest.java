@@ -68,7 +68,7 @@ class MenuServiceTest extends IntegrationTest {
             @BeforeEach
             void setUp() {
                 MenuGroup menuGroup = new MenuGroup("추천메뉴");
-                this.menuGroup = menuGroupDao.save(menuGroup);
+                this.menuGroup = menuGroupRepository.save(menuGroup);
             }
 
             @Test

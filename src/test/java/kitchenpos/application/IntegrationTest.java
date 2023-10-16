@@ -2,10 +2,10 @@ package kitchenpos.application;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
@@ -48,9 +48,6 @@ public class IntegrationTest {
     protected TableService tableService;
 
     @Autowired
-    protected MenuGroupDao menuGroupDao;
-
-    @Autowired
     protected ProductDao productDao;
 
     @Autowired
@@ -64,6 +61,9 @@ public class IntegrationTest {
 
     @Autowired
     protected OrderTableRepository orderTableRepository;
+
+    @Autowired
+    protected MenuGroupRepository menuGroupRepository;
 
     protected Order 맛있는_메뉴_주문() {
         OrderTable 주문_테이블 = 주문_테이블(false);
@@ -128,7 +128,7 @@ public class IntegrationTest {
     }
 
     protected MenuGroup 메뉴_그룹() {
-        return menuGroupDao.save(new MenuGroup("추천메뉴"));
+        return menuGroupRepository.save(new MenuGroup("추천메뉴"));
     }
 
     protected Product 상품(String 이름, BigDecimal 가격) {
