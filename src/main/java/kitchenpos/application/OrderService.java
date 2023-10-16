@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,18 +38,13 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(CreateOrderRequest request) {
-        Order order = createOrder(request);
-        setupOrderLineItems(request, order);
-
-        return OrderResponse.from(order);
-    }
-
-    private Order createOrder(CreateOrderRequest request) {
         OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(OrderTableNotFoundException::new);
-        Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
+        Order order = Order.issue(orderTable);
+        setupOrderLineItems(request, order);
+        orderRepository.save(order);
 
-        return orderRepository.save(order);
+        return OrderResponse.from(order);
     }
 
     private void setupOrderLineItems(CreateOrderRequest request, Order order) {

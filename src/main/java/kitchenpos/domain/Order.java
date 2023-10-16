@@ -48,6 +48,10 @@ public class Order {
         this.orderedTime = orderedTime;
     }
 
+    public static Order issue(OrderTable orderTable) {
+        return new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
+    }
+
     public void changeOrderStatus(OrderStatus orderStatus) {
         validateOrderIsNotCompleted();
         this.orderStatus = orderStatus;
