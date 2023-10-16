@@ -68,8 +68,9 @@ class OrderServiceTest {
         menuProduct.setQuantity(2);
         menuProduct.setProductId(savedProduct.getId());
 
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("즐겨찾는 음식");
+        MenuGroup menuGroup = new MenuGroup.Builder()
+                .name("즐겨찾는 음식")
+                .build();
         savedMenuGroup = menuGroupDao.save(menuGroup);
 
         Menu menu = new Menu();

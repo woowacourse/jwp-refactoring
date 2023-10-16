@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import com.sun.tools.javac.util.List;
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -31,6 +32,8 @@ class MenuServiceTest {
 
     @Autowired
     private MenuGroupService menuGroupService;
+    @Autowired
+    private MenuGroupDao menuGroupDao;
 
     private ProductResponse savedProduct;
     private MenuGroup savedMenuGroup;
@@ -45,9 +48,11 @@ class MenuServiceTest {
         savedMenuProduct.setProductId(savedProduct.getId());
         savedMenuProduct.setQuantity(2L);
 
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("한식");
-        savedMenuGroup = menuGroupService.create(menuGroup);
+        MenuGroup menuGroup = new MenuGroup.Builder()
+                .name("한식")
+                .build();
+        savedMenuGroup = menuGroupDao.save(menuGroup);
+
     }
 
     @Test
@@ -111,7 +116,8 @@ class MenuServiceTest {
         menu.setPrice(BigDecimal.valueOf(20000L));
         menu.setMenuProducts(List.of(savedMenuProduct));
 
-        menu.setMenuGroupId(new MenuGroup().getId());
+        MenuGroup unsavedMenuGroup = new MenuGroup.Builder().build();
+        menu.setMenuGroupId(unsavedMenuGroup.getId());
 
         // when & then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -153,7 +159,7 @@ class MenuServiceTest {
         menuB.setMenuProducts(List.of(savedMenuProduct));
 
         // when
-        Menu 0savedMenuA = menuService.create(menuA);
+        Menu savedMenuA = menuService.create(menuA);
         Menu savedMenuB = menuService.create(menuB);
 
         // then
