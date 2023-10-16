@@ -31,9 +31,7 @@ class MenuServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        Product newProduct = new Product();
-        newProduct.setName("치킨");
-        newProduct.setPrice(BigDecimal.valueOf(18_000L));
+        Product newProduct = new Product("치킨", BigDecimal.valueOf(18_000L));
 
         MenuGroup newMenuGroup = new MenuGroup();
         newMenuGroup.setName("튀김류");

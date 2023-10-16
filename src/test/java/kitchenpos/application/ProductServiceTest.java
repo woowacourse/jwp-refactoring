@@ -84,11 +84,9 @@ class ProductServiceTest extends ServiceTest {
     }
 
     private Product createProduct(final String name, final Long price) {
-        Product product = new Product();
-        product.setName(name);
-        if (price != null) {
-            product.setPrice(BigDecimal.valueOf(price));
+        if (price == null) {
+            return new Product(name, null);
         }
-        return product;
+        return new Product(name, BigDecimal.valueOf(price));
     }
 }
