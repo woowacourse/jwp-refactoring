@@ -18,6 +18,16 @@ public class Order {
                  final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems
     ) {
+        this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
+    }
+
+    public Order(final Long id,
+                 final Long orderTableId,
+                 final String orderStatus,
+                 final LocalDateTime orderedTime,
+                 final List<OrderLineItem> orderLineItems
+    ) {
+        this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
