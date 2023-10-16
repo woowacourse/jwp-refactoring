@@ -17,9 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 class ProductServiceTest extends ServiceTest {
 
     @Autowired
-    private ProductService productService;
-
-    @Autowired
     private ProductDao productDao;
 
     @Nested

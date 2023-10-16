@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import java.util.List;
@@ -15,8 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @SuppressWarnings("NonAsciiCharacters")
 class TableServiceTest extends ServiceTest {
 
-    @Autowired
-    private TableService tableService;
+
     @Autowired
     private OrderDao orderDao;
     @Autowired

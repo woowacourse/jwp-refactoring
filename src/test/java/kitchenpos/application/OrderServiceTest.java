@@ -12,8 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @SuppressWarnings("NonAsciiCharacters")
 class OrderServiceTest extends ServiceTest {
 
-    @Autowired
-    private OrderService orderService;
+
     @Autowired
     private MenuDao menuDao;
     @Autowired

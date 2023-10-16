@@ -11,8 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @SuppressWarnings("NonAsciiCharacters")
 class TableGroupServiceTest extends ServiceTest {
 
-    @Autowired
-    private TableGroupService tableGroupService;
+
     @Autowired
     private OrderDao orderDao;
     @Autowired
