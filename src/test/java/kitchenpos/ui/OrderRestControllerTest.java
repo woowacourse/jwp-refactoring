@@ -21,9 +21,9 @@ class OrderRestControllerTest extends ControllerTest {
         // given
         Order order = 주문();
         String request = objectMapper.writeValueAsString(order);
-        order.setId(1L);
-        given(orderService.create(any())).willReturn(order);
-        String response = objectMapper.writeValueAsString(order);
+        Order savedOrder = 주문(1L);
+        given(orderService.create(any())).willReturn(savedOrder);
+        String response = objectMapper.writeValueAsString(savedOrder);
 
         // when & then
         mockMvc.perform(post("/api/orders")
@@ -36,10 +36,8 @@ class OrderRestControllerTest extends ControllerTest {
     @Test
     void 주문_조회() throws Exception {
         // given
-        Order order1 = 주문();
-        order1.setId(1L);
-        Order order2 = 주문();
-        order2.setId(2L);
+        Order order1 = 주문(1L);
+        Order order2 = 주문(2L);
         List<Order> orders = List.of(order1, order2);
         given(orderService.list()).willReturn(orders);
         String response = objectMapper.writeValueAsString(orders);
@@ -55,9 +53,9 @@ class OrderRestControllerTest extends ControllerTest {
         // given
         Order order = 주문();
         String request = objectMapper.writeValueAsString(order);
-        order.setId(1L);
-        given(orderService.changeOrderStatus(anyLong(), any())).willReturn(order);
-        String response = objectMapper.writeValueAsString(order);
+        Order savedOrder = 주문(1L);
+        given(orderService.changeOrderStatus(anyLong(), any())).willReturn(savedOrder);
+        String response = objectMapper.writeValueAsString(savedOrder);
 
         // when & then
         mockMvc.perform(put("/api/orders/1/order-status")

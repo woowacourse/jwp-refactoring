@@ -2,6 +2,7 @@ package kitchenpos.ui;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.application.MenuService;
@@ -80,31 +81,50 @@ public class ControllerTest {
     }
 
     protected Order 주문() {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1);
+        OrderLineItem orderLineItem = new OrderLineItem(메뉴(1L), 1);
+        return new Order(
+                null,
+                new OrderTable(1L, 테이블_그룹(), 0, false),
+                null,
+                null,
+                List.of(orderLineItem)
+        );
+    }
 
-        Order order = new Order();
-        order.setOrderTableId(1L);
-        order.setOrderLineItems(List.of(orderLineItem));
-
-        return order;
+    protected Order 주문(Long id) {
+        OrderLineItem orderLineItem = new OrderLineItem(메뉴(1L), 1);
+        return new Order(
+                id,
+                new OrderTable(1L, 테이블_그룹(), 0, false),
+                null,
+                null,
+                List.of(orderLineItem)
+        );
     }
 
     protected TableGroup 테이블_그룹() {
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
+        OrderTable orderTable1 = new OrderTable(1L);
+        OrderTable orderTable2 = new OrderTable(2L);
         TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
+        tableGroup.addOrderTable(orderTable1);
+        tableGroup.addOrderTable(orderTable2);
+        return tableGroup;
+    }
+
+    protected TableGroup 테이블_그룹(Long id) {
+        OrderTable orderTable1 = new OrderTable(1L);
+        OrderTable orderTable2 = new OrderTable(2L);
+        TableGroup tableGroup = new TableGroup(id, null, new ArrayList<>());
+        tableGroup.addOrderTable(orderTable1);
+        tableGroup.addOrderTable(orderTable2);
         return tableGroup;
     }
 
     protected OrderTable 주문_테이블() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(0);
-        orderTable.setEmpty(true);
-        return orderTable;
+        return new OrderTable(0, true);
+    }
+
+    protected OrderTable 주문_테이블(Long id) {
+        return new OrderTable(id, null, 0, true);
     }
 }

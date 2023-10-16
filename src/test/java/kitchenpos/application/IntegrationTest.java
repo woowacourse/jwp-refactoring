@@ -1,26 +1,23 @@
 package kitchenpos.application;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.TableGroupRepository;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,16 +54,16 @@ public class IntegrationTest {
     protected ProductDao productDao;
 
     @Autowired
-    protected OrderTableDao orderTableDao;
-
-    @Autowired
-    protected OrderDao orderDao;
-
-    @Autowired
-    protected TableGroupDao tableGroupDao;
-
-    @Autowired
     protected MenuRepository menuRepository;
+
+    @Autowired
+    protected TableGroupRepository tableGroupRepository;
+
+    @Autowired
+    protected OrderRepository orderRepository;
+
+    @Autowired
+    protected OrderTableRepository orderTableRepository;
 
     protected Order 맛있는_메뉴_주문() {
         OrderTable 주문_테이블 = 주문_테이블(false);
@@ -91,33 +88,25 @@ public class IntegrationTest {
 
     protected TableGroup 테이블_그룹(OrderTable... 주문_테이블들) {
         TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList(주문_테이블들));
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        return tableGroupDao.save(tableGroup);
+        Arrays.stream(주문_테이블들).forEach(tableGroup::addOrderTable);
+        return tableGroupRepository.save(tableGroup);
     }
 
     protected Order 주문(OrderTable orderTable, OrderStatus orderStatus, Menu... 메뉴들) {
-        Order order = new Order();
-        order.setOrderStatus(orderStatus.name());
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderTableId(orderTable.getId());
-        List<OrderLineItem> orderLineItems = Arrays.stream(메뉴들)
+        Order order = new Order(orderTable, orderStatus.name());
+        Arrays.stream(메뉴들)
                 .map(this::toOrderLineItem)
-                .collect(Collectors.toList());
-        order.setOrderLineItems(orderLineItems);
-        return orderDao.save(order);
+                .forEach(order::addOrderLineItem);
+        return orderRepository.save(order);
     }
 
     private OrderLineItem toOrderLineItem(Menu 메뉴) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(메뉴.id());
-        return orderLineItem;
+        return new OrderLineItem(null, null, 메뉴, 0);
     }
 
     protected OrderTable 주문_테이블(boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(empty);
-        return orderTableDao.save(orderTable);
+        OrderTable orderTable = new OrderTable(0, empty);
+        return orderTableRepository.save(orderTable);
     }
 
     protected Menu 맛있는_메뉴() {

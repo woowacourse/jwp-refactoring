@@ -16,25 +16,20 @@ import org.junit.jupiter.api.Test;
 
 class OrderServiceTest extends IntegrationTest {
 
-    private Order order;
-
-    @BeforeEach
-    void setUp() {
-        order = new Order();
-    }
-
     @Test
     void 주문_항목이_null이면_예외가_발생한다() {
+        // given
+        Order order = new Order(null, null);
+
         // when & then
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
-
     }
 
     @Test
     void 주문_항목이_없으면_예외가_발생한다() {
         // given
-        order.setOrderLineItems(List.of());
+        Order order = new Order(null, null, null, null, List.of());
 
         // when & then
         assertThatThrownBy(() -> orderService.create(order))
@@ -45,9 +40,9 @@ class OrderServiceTest extends IntegrationTest {
     @Test
     void 존재하지_않는_메뉴를_주문하면_예외가_발생한다() {
         // given
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        order.setOrderLineItems(List.of(orderLineItem));
+        Menu menu = new Menu(1L, null, null, null, null);
+        OrderLineItem orderLineItem = new OrderLineItem(menu, 0);
+        Order order = new Order(null, null, null, null, List.of(orderLineItem));
 
         // when & then
         assertThatThrownBy(() -> orderService.create(order))
@@ -57,18 +52,20 @@ class OrderServiceTest extends IntegrationTest {
     @Nested
     class 메뉴가_있는경우 {
 
+        private Order order;
+
         @BeforeEach
         void setUp() {
-            Menu menu = 맛있는_메뉴();
-            OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setMenuId(menu.id());
-            order.setOrderLineItems(List.of(orderLineItem));
+            OrderLineItem orderLineItem = new OrderLineItem(맛있는_메뉴(), 0);
+            order = new Order(null, null, null, null, List.of(orderLineItem));
         }
 
         @Test
         void 존재하지_않는_주문테이블로_주문하면_예외가_발생한다() {
             // given
-            order.setOrderTableId(1L);
+            OrderLineItem orderLineItem = new OrderLineItem(맛있는_메뉴(), 0);
+            OrderTable orderTable = new OrderTable(1L);
+            order = new Order(null, orderTable, null, null, List.of(orderLineItem));
 
             // when & then
             assertThatThrownBy(() -> orderService.create(order))
@@ -78,9 +75,9 @@ class OrderServiceTest extends IntegrationTest {
         @Test
         void 주문_테이블이_비어있으면_예외가_발생한다() {
             // given
-            OrderTable orderTable = new OrderTable();
-            orderTableDao.save(orderTable);
-            order.setOrderTableId(orderTable.getId());
+            OrderTable orderTable = new OrderTable(1L);
+            OrderLineItem orderLineItem = new OrderLineItem(맛있는_메뉴(), 0);
+            Order order = new Order(null, orderTable, null, null, List.of(orderLineItem));
 
             // when & then
             assertThatThrownBy(() -> orderService.create(order))
@@ -90,30 +87,29 @@ class OrderServiceTest extends IntegrationTest {
         @Nested
         class 주문_테이블이_비어있지_않은_경우 {
 
-            @BeforeEach
-            void setUp() {
-                OrderTable orderTable = new OrderTable();
-                orderTable.setEmpty(false);
-                OrderTable savedOrderTable = orderTableDao.save(orderTable);
-                order.setOrderTableId(savedOrderTable.getId());
-            }
-
             @Test
             void 주문을_저장한다() {
+                // given
+                OrderTable orderTable = new OrderTable(0, false);
+                OrderTable savedOrderTable = orderTableRepository.save(orderTable);
+                OrderLineItem orderLineItem = new OrderLineItem(맛있는_메뉴(), 0);
+                Order order = new Order(savedOrderTable);
+                order.addOrderLineItem(orderLineItem);
+
                 // when
                 Order result = orderService.create(order);
 
                 // then
                 assertAll(
-                        () -> assertThat(result.getId()).isPositive(),
-                        () -> assertThat(result.getOrderLineItems().get(0).getOrderId()).isEqualTo(result.getId())
+                        () -> assertThat(result.id()).isPositive(),
+                        () -> assertThat(result.orderLineItems().get(0).order().id()).isEqualTo(result.id())
                 );
             }
 
             @Test
             void 주문들을_조회한다() {
                 // given
-                Order order1 = orderService.create(order);
+                Order order1 = 맛있는_메뉴_주문();
                 Order order2 = 맛있는_메뉴_주문();
 
                 // when
@@ -122,8 +118,8 @@ class OrderServiceTest extends IntegrationTest {
                 // then
                 assertAll(
                         () -> assertThat(result).hasSize(2),
-                        () -> assertThat(result.get(0).getId()).isEqualTo(order1.getId()),
-                        () -> assertThat(result.get(1).getId()).isEqualTo(order2.getId())
+                        () -> assertThat(result.get(0).id()).isEqualTo(order1.id()),
+                        () -> assertThat(result.get(1).id()).isEqualTo(order2.id())
                 );
             }
 
@@ -141,7 +137,7 @@ class OrderServiceTest extends IntegrationTest {
                 Order 맛있는_메뉴_주문 = 맛있는_메뉴_주문();
 
                 // when & then
-                assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), 맛있는_메뉴_주문))
+                assertThatThrownBy(() -> orderService.changeOrderStatus(order.id(), 맛있는_메뉴_주문))
                         .isInstanceOf(IllegalArgumentException.class);
             }
 
@@ -152,10 +148,10 @@ class OrderServiceTest extends IntegrationTest {
                 Order 식사중인_주문 = 식사중인_주문();
 
                 // when
-                Order result = orderService.changeOrderStatus(order.getId(), 식사중인_주문);
+                Order result = orderService.changeOrderStatus(order.id(), 식사중인_주문);
 
                 // then
-                assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
+                assertThat(result.orderStatus()).isEqualTo(OrderStatus.MEAL.name());
             }
         }
     }

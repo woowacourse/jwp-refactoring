@@ -20,9 +20,9 @@ class TableGroupRestControllerTest extends ControllerTest {
         // given
         TableGroup tableGroup = 테이블_그룹();
         String request = objectMapper.writeValueAsString(tableGroup);
-        tableGroup.setId(1L);
-        given(tableGroupService.create(any())).willReturn(tableGroup);
-        String response = objectMapper.writeValueAsString(tableGroup);
+        TableGroup savedTableGroup = 테이블_그룹(1L);
+        given(tableGroupService.create(any())).willReturn(savedTableGroup);
+        String response = objectMapper.writeValueAsString(savedTableGroup);
 
         // when & then
         mockMvc.perform(post("/api/table-groups")

@@ -21,9 +21,9 @@ class TableRestControllerTest extends ControllerTest {
         // given
         OrderTable orderTable = 주문_테이블();
         String request = objectMapper.writeValueAsString(orderTable);
-        orderTable.setId(1L);
-        given(tableService.create(any())).willReturn(orderTable);
-        String response = objectMapper.writeValueAsString(orderTable);
+        OrderTable savedOrderTable = 주문_테이블(1L);
+        given(tableService.create(any())).willReturn(savedOrderTable);
+        String response = objectMapper.writeValueAsString(savedOrderTable);
 
         // when & then
         mockMvc.perform(post("/api/tables")
@@ -36,10 +36,8 @@ class TableRestControllerTest extends ControllerTest {
     @Test
     void 주문_테이블_조회() throws Exception {
         // given
-        OrderTable orderTable1 = 주문_테이블();
-        orderTable1.setId(1L);
-        OrderTable orderTable2 = 주문_테이블();
-        orderTable1.setId(2L);
+        OrderTable orderTable1 = 주문_테이블(1L);
+        OrderTable orderTable2 = 주문_테이블(2L);
         List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
         given(tableService.list()).willReturn(orderTables);
         String response = objectMapper.writeValueAsString(orderTables);
@@ -55,9 +53,9 @@ class TableRestControllerTest extends ControllerTest {
         // given
         OrderTable orderTable1 = 주문_테이블();
         String request = objectMapper.writeValueAsString(orderTable1);
-        orderTable1.setId(1L);
-        given(tableService.changeEmpty(anyLong(), any())).willReturn(orderTable1);
-        String response = objectMapper.writeValueAsString(orderTable1);
+        OrderTable savedOrderTable1 = 주문_테이블(1L);
+        given(tableService.changeEmpty(anyLong(), any())).willReturn(savedOrderTable1);
+        String response = objectMapper.writeValueAsString(savedOrderTable1);
 
         // when & then
         mockMvc.perform(put("/api/tables/1/empty")
@@ -72,9 +70,9 @@ class TableRestControllerTest extends ControllerTest {
         // given
         OrderTable orderTable1 = 주문_테이블();
         String request = objectMapper.writeValueAsString(orderTable1);
-        orderTable1.setId(1L);
-        given(tableService.changeNumberOfGuests(anyLong(), any())).willReturn(orderTable1);
-        String response = objectMapper.writeValueAsString(orderTable1);
+        OrderTable savedOrderTable1 = 주문_테이블(1L);
+        given(tableService.changeNumberOfGuests(anyLong(), any())).willReturn(savedOrderTable1);
+        String response = objectMapper.writeValueAsString(savedOrderTable1);
 
         // when & then
         mockMvc.perform(put("/api/tables/1/number-of-guests")
