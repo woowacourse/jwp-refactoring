@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
 
 public class FakeOrderTableDao implements OrderTableDao {
 
-    private Map<OrderTable, OrderTable> orderTables = new HashMap<OrderTable, OrderTable>();
-    private OrderTable id = 0L;
+    private Map<Long, OrderTable> orderTables = new HashMap<>();
+    private Long id = 0L;
 
     @Override
     public OrderTable save(OrderTable entity) {
@@ -27,7 +27,7 @@ public class FakeOrderTableDao implements OrderTableDao {
     }
 
     @Override
-    public Optional<OrderTable> findById(OrderTable id) {
+    public Optional<OrderTable> findById(Long id) {
         return Optional.ofNullable(orderTables.get(id));
     }
 

@@ -39,7 +39,7 @@ public class TableRestController {
 
     @PutMapping("/api/tables/{orderTableId}/empty")
     public ResponseEntity<OrderTable> changeEmpty(
-            @PathVariable final OrderTable orderTableId,
+            @PathVariable final Long orderTableId,
             @RequestBody final OrderTable orderTable
     ) {
         return ResponseEntity.ok()
@@ -49,7 +49,7 @@ public class TableRestController {
 
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
     public ResponseEntity<OrderTable> changeNumberOfGuests(
-            @PathVariable final OrderTable orderTableId,
+            @PathVariable final Long orderTableId,
             @RequestBody final OrderTable orderTable
     ) {
         return ResponseEntity.ok()

@@ -3,6 +3,8 @@ package kitchenpos.application;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.fake.FakeOrderDao;
 import kitchenpos.fake.FakeOrderTableDao;
@@ -10,6 +12,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EnumSource;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -21,14 +26,18 @@ class TableServiceTest {
     private TableService tableService = new TableService(orderDao, orderTableDao);
 
     private Order completionOrder;
+    private OrderTable firstTable;
+    private OrderTable secondTable;
 
     @BeforeEach
     void setUp() {
-        completionOrder = orderDao.save(new Order(null, 2L, "COMPLETION", null, null));
-
-        orderTableDao.save(new OrderTable(1L, null, 3, false));
-        orderTableDao.save(new OrderTable(2L, null, 4, false));
-        orderTableDao.save(new OrderTable(2L, null, 4, false));
+        firstTable = orderTableDao.save(new OrderTable(null, null, 3, false));
+        secondTable = orderTableDao.save(new OrderTable(null, null, 4, false));
+        orderTableDao.save(new OrderTable(null, null, 4, false));
+        OrderLineItem orderLineItem = new OrderLineItem(null, 1L, 1L, 1L);
+        completionOrder = orderDao.save(new Order(null, secondTable, List.of(orderLineItem)));
+        completionOrder.changeOrderStatus(OrderStatus.COMPLETION);
+        orderDao.save(completionOrder);
     }
 
     @Test
@@ -54,29 +63,32 @@ class TableServiceTest {
         tableService.create(new OrderTable(null, null, 4, true));
         tableService.create(new OrderTable(null, null, 5, false));
 
-        assertThat(tableService.list()).hasSize(3);
+        assertThat(tableService.list()).hasSize(6);
     }
 
     @Test
     void 테이블을_빈_상태로_변경한다() {
-        OrderTable completionTableId = completionOrder.getOrderTable();
+        Long completionTableId = completionOrder.getOrderTable().getId();
         OrderTable changeEmpty = tableService.changeEmpty(completionTableId, new OrderTable(null, null, 3, true));
 
         assertThat(changeEmpty.isEmpty()).isTrue();
     }
 
-    @CsvSource(value = {"COOKING", "MEAL"})
+    @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     @ParameterizedTest
-    void 완료상태가_아니면_테이블을_빈_상태로_변경할_수_없다(String status) {
-        Order order = orderDao.save(new Order(null, 1L, status, null, null));
-        OrderTable tableId = order.getOrderTable();
+    void 완료상태가_아니면_테이블을_빈_상태로_변경할_수_없다(OrderStatus orderStatus) {
+        OrderLineItem orderLineItem = new OrderLineItem(null, 1L, 1L, 1L);
+        Order order = new Order(null, firstTable, List.of(orderLineItem));
+        order.changeOrderStatus(orderStatus);
+        orderDao.save(order);
+        Long tableId = order.getOrderTable().getId();
         assertThatThrownBy(() -> tableService.changeEmpty(tableId, new OrderTable(null, null, 3, true)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 테이블의_손님_수를_변경한다() {
-        OrderTable completionTableId = completionOrder.getOrderTable();
+        Long completionTableId = completionOrder.getOrderTable().getId();
         OrderTable changeNumberOfGuests = tableService.changeNumberOfGuests(completionTableId, new OrderTable(null, null, 5, false));
 
         assertThat(changeNumberOfGuests.getNumberOfGuests()).isEqualTo(5);

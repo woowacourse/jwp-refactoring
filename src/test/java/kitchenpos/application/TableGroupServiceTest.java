@@ -4,13 +4,16 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
 import kitchenpos.fake.FakeOrderDao;
 import kitchenpos.fake.FakeOrderTableDao;
 import kitchenpos.fake.FakeTableGroupDao;
-import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static java.util.List.of;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,7 +36,7 @@ class TableGroupServiceTest {
         TableGroup tableGroup = new TableGroup(null, null, of(orderTable1, orderTable2));
         TableGroup saved = tableGroupService.create(tableGroup);
 
-        AssertionsForClassTypes.assertThat(tableGroup).usingRecursiveComparison()
+        assertThat(tableGroup).usingRecursiveComparison()
                 .isEqualTo(saved);
     }
 
@@ -111,7 +114,9 @@ class TableGroupServiceTest {
         TableGroup tableGroup = new TableGroup(null, null, of(orderTable1, orderTable2));
         TableGroup saved = tableGroupService.create(tableGroup);
 
-        Order cookingOrder = new Order(null, orderTable1.getId(), "COOKING", null, null);
+        OrderLineItem orderLineItem = new OrderLineItem(null, 1L, 1L, 1L);
+        Order cookingOrder = new Order(null, orderTable1, List.of(orderLineItem));
+        cookingOrder.changeOrderStatus(OrderStatus.COOKING);
         orderDao.save(cookingOrder);
 
         assertThatThrownBy(() -> tableGroupService.ungroup(saved.getId()))
@@ -126,7 +131,9 @@ class TableGroupServiceTest {
         TableGroup tableGroup = new TableGroup(null, null, of(orderTable1, orderTable2));
         TableGroup saved = tableGroupService.create(tableGroup);
 
-        Order mealOrder = new Order(null, orderTable1.getId(), "MEAL", null, null);
+        OrderLineItem orderLineItem = new OrderLineItem(null, 1L, 1L, 1L);
+        Order mealOrder = new Order(null, orderTable1, List.of(orderLineItem));
+        mealOrder.changeOrderStatus(OrderStatus.MEAL);
         orderDao.save(mealOrder);
 
         assertThatThrownBy(() -> tableGroupService.ungroup(saved.getId()))

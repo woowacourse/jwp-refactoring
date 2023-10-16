@@ -37,6 +37,13 @@ public class Order {
         }
     }
 
+    public void changeOrderStatus(OrderStatus orderStatus) {
+        if (this.orderStatus == OrderStatus.COMPLETION) {
+            throw new IllegalArgumentException();
+        }
+        this.orderStatus = orderStatus;
+    }
+
     public Long getId() {
         return id;
     }

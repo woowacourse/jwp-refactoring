@@ -25,13 +25,15 @@ public class JdbcTemplateOrderDao implements OrderDao {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
+    private final OrderTableDao orderTableDao;
 
-    public JdbcTemplateOrderDao(final DataSource dataSource) {
+    public JdbcTemplateOrderDao(final DataSource dataSource, OrderTableDao orderTableDao) {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName(TABLE_NAME)
                 .usingGeneratedKeyColumns(KEY_COLUMN_NAME)
         ;
+        this.orderTableDao = orderTableDao;
     }
 
     @Override
@@ -61,7 +63,7 @@ public class JdbcTemplateOrderDao implements OrderDao {
     }
 
     @Override
-    public boolean existsByOrderTableIdAndOrderStatusIn(final OrderTable orderTableId, final List<String> orderStatuses) {
+    public boolean existsByOrderTableIdAndOrderStatusIn(final Long orderTableId, final List<String> orderStatuses) {
         final String sql = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END" +
                 " FROM orders WHERE order_table_id = (:orderTableId) AND order_status IN (:orderStatuses)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
@@ -98,7 +100,9 @@ public class JdbcTemplateOrderDao implements OrderDao {
     private Order toEntity(final ResultSet resultSet) throws SQLException {
         final Order entity = new Order();
         entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setOrderTableId(resultSet.getLong("order_table_id"));
+        OrderTable orderTable = orderTableDao.findById(resultSet.getLong("order_table_id"))
+                .orElseThrow();
+        entity.setOrderTable(orderTable);
         entity.setOrderStatus(resultSet.getString("order_status"));
         entity.setOrderedTime(resultSet.getObject("ordered_time", LocalDateTime.class));
         return entity;
