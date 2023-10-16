@@ -4,10 +4,6 @@ import kitchenpos.domain.Product;
 import kitchenpos.fixture.Fixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 
@@ -56,10 +52,9 @@ class ProductServiceTest extends ServiceBaseTest {
 
         //then
         assertAll(
-                () -> assertThat(assertThat(products).hasSize(1)),
-                () -> assertThat(products).usingRecursiveComparison()
-                        .ignoringFields("id", "price")
-                        .isEqualTo(List.of(product))
+                () -> assertThat(products).hasSize(1),
+                () -> assertThat(products.get(0).getName()).isEqualTo(product.getName()),
+                () -> assertThat(products.get(0).getPrice().intValue()).isEqualTo(product.getPrice().intValue())
         );
     }
 }
