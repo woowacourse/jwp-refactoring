@@ -169,7 +169,7 @@ class TableServiceTest extends ServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("빈 테이블의 손님 수를 변경하면 에외가 발생한다.")
+    @DisplayName("빈 테이블의 손님 수를 변경하면 예외가 발생한다.")
     @Test
     void changeNumberOfGuests_EmptyTable_ExceptionThrown() {
         // given
