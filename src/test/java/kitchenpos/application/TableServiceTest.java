@@ -5,9 +5,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order_table.application.TableService;
+import kitchenpos.order_table.domain.OrderTable;
+import kitchenpos.order_table.persistence.OrderTableDao;
+import kitchenpos.table_group.application.TableGroupService;
+import kitchenpos.table_group.domain.TableGroup;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

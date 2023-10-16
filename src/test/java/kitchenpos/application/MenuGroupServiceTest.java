@@ -5,8 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.menu_group.application.MenuGroupService;
+import kitchenpos.menu_group.domain.MenuGroup;
+import kitchenpos.menu_group.persistence.MenuGroupDao;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
