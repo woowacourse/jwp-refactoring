@@ -44,8 +44,8 @@ public class Order {
         this(null, orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
     }
 
-    public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
-        this(null, orderTable, orderStatus, orderedTime, new ArrayList<>());
+    public Order(OrderTable orderTable, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
+        this(null, orderTable, orderStatus, LocalDateTime.now(), orderLineItems);
     }
 
     public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
@@ -88,10 +88,6 @@ public class Order {
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public void changeOrderLineItems(List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = new ArrayList<>(orderLineItems);
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {
