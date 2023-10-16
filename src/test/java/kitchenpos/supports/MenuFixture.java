@@ -28,7 +28,7 @@ public class MenuFixture {
         menu.setMenuGroupId(menuGroupId);
         menu.setName(DEFAULT_NAME);
         menu.setMenuProducts(menuProducts);
-        menu.setPrice(totalPrice.subtract(BigDecimal.ONE)); // 상품의 단품들의 가격 총합보다 작게 설정
+        menu.setPrice(totalPrice.subtract(BigDecimal.ONE));
         return menu;
     }
 }

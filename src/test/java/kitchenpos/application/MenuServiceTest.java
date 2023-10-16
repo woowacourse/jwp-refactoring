@@ -143,7 +143,9 @@ class MenuServiceTest {
             menuProduct.setProductId(product.getId());
 
             final Menu menu = new Menu();
-            menu.setPrice(product.getPrice().multiply(BigDecimal.valueOf(2)).add(BigDecimal.ONE)); // 상품 단품 가격들의 합보다 크게 설정
+            final BigDecimal productPrice = product.getPrice();
+            final BigDecimal productCount = BigDecimal.valueOf(2);
+            menu.setPrice(productPrice.multiply(productCount).add(BigDecimal.ONE));
             menu.setName("상품+상품");
             menu.setMenuGroupId(menuGroup.getId());
             menu.setMenuProducts(List.of(menuProduct));
