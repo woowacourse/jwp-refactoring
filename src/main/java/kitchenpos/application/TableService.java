@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.request.CreateOrderTableRequest;
 import kitchenpos.application.dto.request.UpdateOrderTableEmptyRequest;
+import kitchenpos.application.dto.request.UpdateOrderTableGuestsRequest;
 import kitchenpos.application.dto.response.CreateOrderTableResponse;
 import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.dao.OrderDao;
@@ -63,8 +64,8 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final UpdateOrderTableGuestsRequest request) {
+        final int numberOfGuests = request.getNumberOfGuests();
 
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();
@@ -79,6 +80,6 @@ public class TableService {
 
         OrderTable updated = savedOrderTable.updateNumberOfGuests(numberOfGuests);
 
-        return orderTableDao.save(updated);
+        return OrderTableResponse.from(orderTableDao.save(updated));
     }
 }

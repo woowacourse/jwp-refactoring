@@ -18,6 +18,7 @@ public class OrderTableResponse {
     public static OrderTableResponse from(final OrderTable orderTable) {
         return builder()
                 .id(orderTable.getId())
+                .tableGroupId(orderTable.getTableGroupId())
                 .numberOfGuests(orderTable.getNumberOfGuests())
                 .empty(orderTable.isEmpty())
                 .build();

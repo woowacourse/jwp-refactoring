@@ -116,7 +116,7 @@
     - [x] GET /api/tables
     - [x] POST /api/tables
     - [x] PUT /api/tables/{orderTableId}/empty
-    - [ ] PUT /api/tables/{orderTableId}/number-of-guests
+    - [x] PUT /api/tables/{orderTableId}/number-of-guests
     - [ ] GET /api/menu-groups
     - [ ] POST /api/menu-groups
     - [ ] POST /api/table-groups

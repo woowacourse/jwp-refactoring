@@ -2,12 +2,12 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.request.CreateOrderTableRequest;
 import kitchenpos.application.dto.request.UpdateOrderTableEmptyRequest;
+import kitchenpos.application.dto.request.UpdateOrderTableGuestsRequest;
 import kitchenpos.application.dto.response.CreateOrderTableResponse;
 import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
-import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
@@ -22,7 +22,6 @@ import java.util.Optional;
 
 import static kitchenpos.fixture.OrderTableFixture.ORDER_TABLE;
 import static kitchenpos.fixture.OrderTableFixture.REQUEST;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.*;
@@ -106,7 +105,7 @@ class TableServiceTest {
             OrderTableResponse result = tableService.changeEmpty(1L, request);
 
             // then
-            SoftAssertions.assertSoftly(softly -> {
+            assertSoftly(softly -> {
                 softly.assertThat(result.getId()).isEqualTo(orderTable.getId());
                 softly.assertThat(result.getTableGroupId()).isEqualTo(orderTable.getTableGroupId());
                 softly.assertThat(result.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests());
@@ -161,40 +160,45 @@ class TableServiceTest {
         @Test
         void 방문한_손님_수를_변경한다() {
             // given
+            UpdateOrderTableGuestsRequest request = REQUEST.주문_테이블_인원_변경_요청(133);
             OrderTable orderTable = ORDER_TABLE.주문_테이블_1_비어있는가(false);
-            given(orderTableDao.findById(any()))
+            given(orderTableDao.findById(anyLong()))
                     .willReturn(Optional.of(orderTable));
-            given(orderTableDao.save(any()))
-                    .willReturn(orderTable);
+            given(orderTableDao.save(any(OrderTable.class)))
+                    .willReturn(orderTable.updateNumberOfGuests(133));
 
             // when
-            OrderTable result = tableService.changeNumberOfGuests(1L, orderTable);
+            OrderTableResponse result = tableService.changeNumberOfGuests(1L, request);
 
             // then
-            assertThat(result)
-                    .usingRecursiveComparison()
-                    .isEqualTo(orderTable);
+            assertSoftly(softly -> {
+                softly.assertThat(result.getId()).isEqualTo(orderTable.getId());
+                softly.assertThat(result.getTableGroupId()).isEqualTo(orderTable.getTableGroupId());
+                softly.assertThat(result.getNumberOfGuests()).isEqualTo(result.getNumberOfGuests());
+                softly.assertThat(result.isEmpty()).isEqualTo(result.isEmpty());
+            });
         }
 
         @Test
         void 방문한_손님_수를_변경할_때_손님_수가_음수이면_예외() {
             // given
-            OrderTable orderTable = OrderTable.builder().empty(false).numberOfGuests(-1).build();
+            UpdateOrderTableGuestsRequest request = REQUEST.주문_테이블_인원_변경_요청(-1);
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 방문한_손님_수를_변경할_때_테이블이_비어있으면_예외() {
             // given
+            UpdateOrderTableGuestsRequest request = REQUEST.주문_테이블_인원_변경_요청(33);
             OrderTable orderTable = ORDER_TABLE.주문_테이블_1_비어있는가(true);
             given(orderTableDao.findById(any()))
                     .willReturn(Optional.of(orderTable));
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

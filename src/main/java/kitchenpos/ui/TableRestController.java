@@ -3,9 +3,9 @@ package kitchenpos.ui;
 import kitchenpos.application.TableService;
 import kitchenpos.application.dto.request.CreateOrderTableRequest;
 import kitchenpos.application.dto.request.UpdateOrderTableEmptyRequest;
+import kitchenpos.application.dto.request.UpdateOrderTableGuestsRequest;
 import kitchenpos.application.dto.response.CreateOrderTableResponse;
 import kitchenpos.application.dto.response.OrderTableResponse;
-import kitchenpos.domain.OrderTable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,12 +47,12 @@ public class TableRestController {
     }
 
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
-    public ResponseEntity<OrderTable> changeNumberOfGuests(
+    public ResponseEntity<OrderTableResponse> changeNumberOfGuests(
             @PathVariable final Long orderTableId,
-            @RequestBody final OrderTable orderTable
+            @RequestBody final UpdateOrderTableGuestsRequest request
     ) {
         return ResponseEntity.ok()
-                .body(tableService.changeNumberOfGuests(orderTableId, orderTable))
+                .body(tableService.changeNumberOfGuests(orderTableId, request))
                 ;
     }
 }

@@ -2,6 +2,7 @@ package kitchenpos.fixture;
 
 import kitchenpos.application.dto.request.CreateOrderTableRequest;
 import kitchenpos.application.dto.request.UpdateOrderTableEmptyRequest;
+import kitchenpos.application.dto.request.UpdateOrderTableGuestsRequest;
 import kitchenpos.application.dto.response.CreateOrderTableResponse;
 import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.domain.OrderTable;
@@ -24,6 +25,10 @@ public class OrderTableFixture {
 
         public static UpdateOrderTableEmptyRequest 주문_테이블_비움_요청() {
             return new UpdateOrderTableEmptyRequest(true);
+        }
+
+        public static UpdateOrderTableGuestsRequest 주문_테이블_인원_변경_요청(int numberOfGuests) {
+            return new UpdateOrderTableGuestsRequest(numberOfGuests);
         }
     }
 

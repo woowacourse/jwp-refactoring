@@ -3,10 +3,10 @@ package kitchenpos.ui;
 import kitchenpos.application.TableService;
 import kitchenpos.application.dto.request.CreateOrderTableRequest;
 import kitchenpos.application.dto.request.UpdateOrderTableEmptyRequest;
+import kitchenpos.application.dto.request.UpdateOrderTableGuestsRequest;
 import kitchenpos.application.dto.response.CreateOrderTableResponse;
 import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.fixture.OrderTableFixture;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import static kitchenpos.fixture.OrderTableFixture.RESPONSE;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -51,7 +52,7 @@ class TableRestControllerTest {
         @Test
         void 테이블_생성() throws Exception {
             // given
-            CreateOrderTableResponse response = OrderTableFixture.RESPONSE.주문_테이블_생성_3명_응답();
+            CreateOrderTableResponse response = RESPONSE.주문_테이블_생성_3명_응답();
             given(tableService.create(any(CreateOrderTableRequest.class)))
                     .willReturn(response);
 
@@ -76,7 +77,7 @@ class TableRestControllerTest {
         @Test
         void 테이블_목록_조회() throws Exception {
             // given
-            OrderTableResponse response = OrderTableFixture.RESPONSE.주문_테이블_3명_응답();
+            OrderTableResponse response = RESPONSE.주문_테이블_3명_응답();
             given(tableService.list())
                     .willReturn(List.of(response));
 
@@ -95,7 +96,7 @@ class TableRestControllerTest {
         @Test
         void 테이블_상태_변경() throws Exception {
             // given
-            OrderTableResponse response = OrderTableFixture.RESPONSE.주문_테이블_3명_응답();
+            OrderTableResponse response = RESPONSE.주문_테이블_3명_응답();
             given(tableService.changeEmpty(anyLong(), any(UpdateOrderTableEmptyRequest.class)))
                     .willReturn(response);
 
@@ -118,23 +119,23 @@ class TableRestControllerTest {
         @Test
         void 테이블_방문_손님_변경() throws Exception {
             // given
-            OrderTable updated = orderTable.updateNumberOfGuests(3);
-            given(tableService.changeNumberOfGuests(any(), any()))
-                    .willReturn(updated);
+            OrderTableResponse response = RESPONSE.주문_테이블_3명_응답();
+            given(tableService.changeNumberOfGuests(anyLong(), any(UpdateOrderTableGuestsRequest.class)))
+                    .willReturn(response);
 
             // when & then
             mockMvc.perform(put("/api/tables/1/number-of-guests")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content("{\n" +
-                                    "  \"numberOfGuests\": 3\n" +
+                            .content("{" +
+                                    "\"numberOfGuests\": 3" +
                                     "}")
                     )
                     .andExpectAll(
                             status().isOk(),
-                            jsonPath("id").value(updated.getId()),
-                            jsonPath("tableGroupId").value(updated.getTableGroupId()),
-                            jsonPath("numberOfGuests").value(updated.getNumberOfGuests()),
-                            jsonPath("empty").value(updated.isEmpty())
+                            jsonPath("id").value(response.getId()),
+                            jsonPath("tableGroupId").value(response.getTableGroupId()),
+                            jsonPath("numberOfGuests").value(response.getNumberOfGuests()),
+                            jsonPath("empty").value(response.isEmpty())
                     );
         }
     }
