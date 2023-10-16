@@ -1,11 +1,13 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.request.CreateOrderTableRequest;
+import kitchenpos.application.dto.request.UpdateOrderTableEmptyRequest;
 import kitchenpos.application.dto.response.CreateOrderTableResponse;
 import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
@@ -23,7 +25,7 @@ import static kitchenpos.fixture.OrderTableFixture.REQUEST;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -93,56 +95,62 @@ class TableServiceTest {
         @Test
         void 빈_테이블_상태를_변경한다() {
             // given
-            OrderTable orderTable = OrderTable.builder().empty(true).build();
+            UpdateOrderTableEmptyRequest request = REQUEST.주문_테이블_비움_요청();
+            OrderTable orderTable = ORDER_TABLE.비어있는_테이블();
             given(orderTableDao.findById(any()))
                     .willReturn(Optional.of(orderTable));
             given(orderTableDao.save(any()))
                     .willReturn(orderTable);
 
             // when
-            OrderTable result = tableService.changeEmpty(1L, orderTable);
+            OrderTableResponse result = tableService.changeEmpty(1L, request);
 
             // then
-            assertThat(result)
-                    .usingRecursiveComparison()
-                    .isEqualTo(orderTable);
+            SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(result.getId()).isEqualTo(orderTable.getId());
+                softly.assertThat(result.getTableGroupId()).isEqualTo(orderTable.getTableGroupId());
+                softly.assertThat(result.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests());
+                softly.assertThat(result.isEmpty()).isEqualTo(result.isEmpty());
+            });
         }
 
         @Test
         void 테이블이_존재하지_않으면_예외() {
             // given
-            OrderTable orderTable = ORDER_TABLE.주문_테이블_1();
+            UpdateOrderTableEmptyRequest request = REQUEST.주문_테이블_비움_요청();
             given(orderTableDao.findById(any()))
                     .willReturn(Optional.empty());
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(1L, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 빈_테이블_상태를_변경할_때_테이블_그룹에_속해있으면_예외() {
             // given
-            OrderTable orderTable = OrderTable.builder().empty(true).tableGroupId(1L).build();
+            UpdateOrderTableEmptyRequest request = REQUEST.주문_테이블_비움_요청();
+            OrderTable orderTable = ORDER_TABLE.주문_테이블_1_비어있는가(true);
             given(orderTableDao.findById(any()))
                     .willReturn(Optional.of(orderTable));
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(1L, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 빈_테이블_상태를_변경할_때_주문_상태가_조리중_또는_식사중이면_예외() {
             // given
-            OrderTable orderTable = OrderTable.builder().empty(true).build();
-            given(orderTableDao.findById(any()))
+            UpdateOrderTableEmptyRequest request = REQUEST.주문_테이블_비움_요청();
+            OrderTable orderTable = ORDER_TABLE.비어있는_테이블();
+            given(orderTableDao.findById(anyLong()))
                     .willReturn(Optional.of(orderTable));
-            given(orderDao.existsByOrderTableIdAndOrderStatusIn(any(), any()))
+            given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList()))
                     .willReturn(true);
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(1L, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -153,7 +161,7 @@ class TableServiceTest {
         @Test
         void 방문한_손님_수를_변경한다() {
             // given
-            OrderTable orderTable = ORDER_TABLE.주문_테이블_1(false);
+            OrderTable orderTable = ORDER_TABLE.주문_테이블_1_비어있는가(false);
             given(orderTableDao.findById(any()))
                     .willReturn(Optional.of(orderTable));
             given(orderTableDao.save(any()))
@@ -181,7 +189,7 @@ class TableServiceTest {
         @Test
         void 방문한_손님_수를_변경할_때_테이블이_비어있으면_예외() {
             // given
-            OrderTable orderTable = ORDER_TABLE.주문_테이블_1(true);
+            OrderTable orderTable = ORDER_TABLE.주문_테이블_1_비어있는가(true);
             given(orderTableDao.findById(any()))
                     .willReturn(Optional.of(orderTable));
 

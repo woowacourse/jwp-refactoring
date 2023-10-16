@@ -1,19 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.OrderTableFixture.ORDER_TABLE;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.any;
-import static org.mockito.BDDMockito.given;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -32,6 +18,21 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static kitchenpos.fixture.OrderTableFixture.ORDER_TABLE;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.given;
 
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -65,7 +66,7 @@ class OrderServiceTest {
             given(menuDao.countByIdIn(any()))
                     .willReturn((long) order.getOrderLineItems().size());
             given(orderTableDao.findById(order.getOrderTableId()))
-                    .willReturn(Optional.of(ORDER_TABLE.주문_테이블_1(false)));
+                    .willReturn(Optional.of(ORDER_TABLE.주문_테이블_1_비어있는가(false)));
             given(orderDao.save(any(Order.class)))
                     .willReturn(order);
             given(orderLineItemDao.save(any(OrderLineItem.class)))
@@ -129,7 +130,7 @@ class OrderServiceTest {
             given(menuDao.countByIdIn(anyList()))
                     .willReturn((long) order.getOrderLineItems().size());
             given(orderTableDao.findById(order.getOrderTableId()))
-                    .willReturn(Optional.of(ORDER_TABLE.주문_테이블_1(true)));
+                    .willReturn(Optional.of(ORDER_TABLE.주문_테이블_1_비어있는가(true)));
 
             // when & then
             assertThatThrownBy(() -> orderService.create(order))

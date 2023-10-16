@@ -2,6 +2,7 @@ package kitchenpos.ui;
 
 import kitchenpos.application.TableService;
 import kitchenpos.application.dto.request.CreateOrderTableRequest;
+import kitchenpos.application.dto.request.UpdateOrderTableEmptyRequest;
 import kitchenpos.application.dto.response.CreateOrderTableResponse;
 import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.domain.OrderTable;
@@ -16,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -93,23 +95,23 @@ class TableRestControllerTest {
         @Test
         void 테이블_상태_변경() throws Exception {
             // given
-            OrderTable updated = orderTable.updateEmpty(false);
-            given(tableService.changeEmpty(any(), any()))
-                    .willReturn(updated);
+            OrderTableResponse response = OrderTableFixture.RESPONSE.주문_테이블_3명_응답();
+            given(tableService.changeEmpty(anyLong(), any(UpdateOrderTableEmptyRequest.class)))
+                    .willReturn(response);
 
             // when & then
             mockMvc.perform(put("/api/tables/1/empty")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content("{\n" +
-                                    "  \"empty\": false\n" +
+                            .content("{" +
+                                    " \"empty\": false" +
                                     "}")
                     )
                     .andExpectAll(
                             status().isOk(),
-                            jsonPath("id").value(updated.getId()),
-                            jsonPath("tableGroupId").value(updated.getTableGroupId()),
-                            jsonPath("numberOfGuests").value(updated.getNumberOfGuests()),
-                            jsonPath("empty").value(updated.isEmpty())
+                            jsonPath("id").value(response.getId()),
+                            jsonPath("tableGroupId").value(response.getTableGroupId()),
+                            jsonPath("numberOfGuests").value(response.getNumberOfGuests()),
+                            jsonPath("empty").value(response.isEmpty())
                     );
         }
 
