@@ -120,9 +120,9 @@
     - [x] GET /api/menu-groups
     - [x] POST /api/menu-groups
     - [x] POST /api/table-groups
-    - [ ] GET /api/orders
+    - [x] GET /api/orders
     - [x] POST /api/orders
-    - [ ] PUT /api/orders/{orderId}/order-status
+    - [x] PUT /api/orders/{orderId}/order-status
 
 - [ ] 도메인이 비즈니스 로직을 가지게 한다.
     - [ ] MenuGroup

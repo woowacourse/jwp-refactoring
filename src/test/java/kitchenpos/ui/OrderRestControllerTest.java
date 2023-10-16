@@ -2,9 +2,10 @@ package kitchenpos.ui;
 
 import kitchenpos.application.OrderService;
 import kitchenpos.application.dto.request.CreateOrderRequest;
+import kitchenpos.application.dto.request.UpdateOrderStatusRequest;
 import kitchenpos.application.dto.response.CreateOrderResponse;
+import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.domain.Order;
-import kitchenpos.fixture.OrderFixture;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
@@ -16,7 +17,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static kitchenpos.fixture.OrderFixture.ORDER.*;
+import static kitchenpos.fixture.OrderFixture.ORDER.주문_요청_조리중;
+import static kitchenpos.fixture.OrderFixture.RESPONSE;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -42,7 +44,7 @@ class OrderRestControllerTest {
         void 주문_생성() throws Exception {
             // given
             Order order = 주문_요청_조리중();
-            CreateOrderResponse response = OrderFixture.RESPONSE.주문_생성_응답();
+            CreateOrderResponse response = RESPONSE.주문_생성_응답_조리중();
             given(orderService.create(any(CreateOrderRequest.class)))
                     .willReturn(response);
 
@@ -74,7 +76,7 @@ class OrderRestControllerTest {
         @Test
         void 주문_목록_조회() throws Exception {
             // given
-            List<Order> orders = List.of(주문_요청_조리중(), 주문_요청_식사중(), 주문_요청_계산_완료());
+            List<OrderResponse> orders = List.of(RESPONSE.주문_조리중_응답());
             given(orderService.list())
                     .willReturn(orders);
 
@@ -82,19 +84,22 @@ class OrderRestControllerTest {
             mockMvc.perform(get("/api/orders"))
                     .andExpectAll(
                             status().isOk(),
-                            jsonPath("$").isArray(),
-                            jsonPath("$[0]").exists(),
-                            jsonPath("$[1]").exists(),
-                            jsonPath("$[2]").exists()
+                            jsonPath("$[0].id").value(orders.get(0).getId()),
+                            jsonPath("$[0].orderTableId").value(orders.get(0).getOrderTableId()),
+                            jsonPath("$[0].orderStatus").value(orders.get(0).getOrderStatus()),
+                            jsonPath("$[0].orderedTime").value(orders.get(0).getOrderedTime()),
+                            jsonPath("$[0].orderLineItems[0].seq").value(orders.get(0).getOrderLineItems().get(0).getSeq()),
+                            jsonPath("$[0].orderLineItems[0].menuId").value(orders.get(0).getOrderLineItems().get(0).getMenuId()),
+                            jsonPath("$[0].orderLineItems[0].quantity").value(orders.get(0).getOrderLineItems().get(0).getQuantity())
                     );
         }
 
         @Test
         void 주문_상태_수정() throws Exception {
             // given
-            Order order = 주문_요청_계산_완료();
-            given(orderService.changeOrderStatus(anyLong(), any(Order.class)))
-                    .willReturn(order);
+            OrderResponse response = RESPONSE.주문_식사중_응답();
+            given(orderService.changeOrderStatus(anyLong(), any(UpdateOrderStatusRequest.class)))
+                    .willReturn(response);
 
             // when & then
             mockMvc.perform(put("/api/orders/1/order-status")
@@ -104,9 +109,9 @@ class OrderRestControllerTest {
                                     "}"))
                     .andExpectAll(
                             status().isOk(),
-                            jsonPath("id").value(order.getId()),
-                            jsonPath("orderStatus").value(order.getOrderStatus()),
-                            jsonPath("orderTableId").value(order.getOrderTableId())
+                            jsonPath("id").value(response.getId()),
+                            jsonPath("orderStatus").value(response.getOrderStatus()),
+                            jsonPath("orderTableId").value(response.getOrderTableId())
                     );
 
         }

@@ -1,8 +1,10 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.request.CreateOrderRequest;
+import kitchenpos.application.dto.request.UpdateOrderStatusRequest;
 import kitchenpos.application.dto.response.CreateOrderResponse;
 import kitchenpos.application.dto.response.OrderLineItemResponse;
+import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -87,7 +89,7 @@ public class OrderService {
         );
     }
 
-    public List<Order> list() {
+    public List<OrderResponse> list() {
         final List<Order> orders = orderDao.findAll();
         final List<Order> result = new ArrayList<>();
 
@@ -96,11 +98,13 @@ public class OrderService {
             result.add(order.updateOrderLineItems(orderLineItems));
         }
 
-        return result;
+        return result.stream()
+                .map(OrderResponse::from)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final Order order) {
+    public OrderResponse changeOrderStatus(final Long orderId, final UpdateOrderStatusRequest request) {
         final Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -108,11 +112,11 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
+        final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
         Order updated = savedOrder.updateStatus(orderStatus);
 
         orderDao.save(updated);
 
-        return updated.updateOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
+        return OrderResponse.from(updated.updateOrderLineItems(orderLineItemDao.findAllByOrderId(orderId)));
     }
 }

@@ -53,10 +53,6 @@ public class CreateTableGroupResponse {
         private CreateTableGroupResponseBuilder() {
         }
 
-        public static CreateTableGroupResponseBuilder aCreateTableGroupResponse() {
-            return new CreateTableGroupResponseBuilder();
-        }
-
         public CreateTableGroupResponseBuilder id(Long id) {
             this.id = id;
             return this;

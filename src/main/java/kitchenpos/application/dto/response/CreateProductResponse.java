@@ -33,10 +33,6 @@ public class CreateProductResponse {
         private CreateProductResponseBuilder() {
         }
 
-        public static CreateProductResponseBuilder aCreateProductResponse() {
-            return new CreateProductResponseBuilder();
-        }
-
         public CreateProductResponseBuilder id(Long id) {
             this.id = id;
             return this;
