@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -62,8 +63,8 @@ class TableGroupServiceTest {
         tableGroup.setOrderTables(null);
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> tableGroupService.create(tableGroup));
     }
 
     @Test
@@ -72,8 +73,7 @@ class TableGroupServiceTest {
         tableGroup.setOrderTables(List.of(tableGroup.getOrderTables().get(0)));
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException().isThrownBy(() -> tableGroupService.create(tableGroup));
     }
 
     @Test
@@ -84,8 +84,8 @@ class TableGroupServiceTest {
         tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> tableGroupService.create(tableGroup));
     }
 
     @Test
@@ -96,7 +96,7 @@ class TableGroupServiceTest {
         tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> tableGroupService.create(tableGroup));
     }
 }

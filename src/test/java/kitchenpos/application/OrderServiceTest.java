@@ -27,6 +27,7 @@ import java.util.List;
 
 import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -86,8 +87,8 @@ class OrderServiceTest {
         order.setOrderLineItems(null);
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> orderService.create(order));
     }
 
     @Test
@@ -96,8 +97,8 @@ class OrderServiceTest {
         order.getOrderLineItems().get(0).setMenuId(100L);
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> orderService.create(order));
     }
 
     @Test
@@ -106,8 +107,8 @@ class OrderServiceTest {
         order.setOrderTableId(100L);
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> orderService.create(order));
     }
 
     @Test
@@ -141,7 +142,7 @@ class OrderServiceTest {
         Order savedOrder = orderService.create(order);
 
         // when & then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(100L, OrderFixture.주문_상태_변경(savedOrder, "MEAL")))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> orderService.changeOrderStatus(100L, OrderFixture.주문_상태_변경(savedOrder, "MEAL")));
     }
 }

@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -49,8 +50,8 @@ class ProductServiceTest {
         product.setPrice(null);
 
         // when & then
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> productService.create(product));
     }
 
     @Test
@@ -59,8 +60,8 @@ class ProductServiceTest {
         product.setPrice(BigDecimal.valueOf(-1));
 
         // when & then
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> productService.create(product));
     }
 
     @Test

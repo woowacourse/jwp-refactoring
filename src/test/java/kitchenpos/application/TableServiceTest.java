@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -92,8 +93,8 @@ class TableServiceTest {
         Long notExistId = 1000L;
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(notExistId, newOrderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> tableService.changeEmpty(notExistId, newOrderTable));
     }
 
     @Test
@@ -108,8 +109,8 @@ class TableServiceTest {
         OrderTable newOrderTable = OrderTableFixture.주문테이블_비움상태_변경(savedOrderTableWithGroup, false);
 
         // then
-        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTableWithGroup.getId(), newOrderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> tableService.changeEmpty(savedOrderTableWithGroup.getId(), newOrderTable));
     }
 
     @Test
@@ -120,8 +121,8 @@ class TableServiceTest {
         orderDao.save(OrderFixture.주문_상품_없이_생성(savedOrderTable.getId(), "COOKING", LocalDateTime.now(), null));
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), newOrderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), newOrderTable));
     }
 
     @Test
@@ -148,8 +149,8 @@ class TableServiceTest {
         OrderTable guestChangeOrderTable = OrderTableFixture.주문테이블_손님수_변경(savedOrderTable, -1);
 
         // then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), guestChangeOrderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), guestChangeOrderTable));
     }
 
     @Test
@@ -163,8 +164,8 @@ class TableServiceTest {
         OrderTable guestChangeOrderTable = OrderTableFixture.주문테이블_손님수_변경(savedOrderTable, 5);
 
         // then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(notExistId, guestChangeOrderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> tableService.changeNumberOfGuests(notExistId, guestChangeOrderTable));
     }
 
     @Test
@@ -176,7 +177,7 @@ class TableServiceTest {
         OrderTable guestChangeOrderTable = OrderTableFixture.주문테이블_손님수_변경(savedOrderTable, 5);
 
         // then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), guestChangeOrderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), guestChangeOrderTable));
     }
 }

@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -69,8 +70,8 @@ class MenuServiceTest {
         menu.setPrice(null);
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> menuService.create(menu));
     }
 
     @Test
@@ -79,8 +80,8 @@ class MenuServiceTest {
         menu.setPrice(BigDecimal.valueOf(-1));
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> menuService.create(menu));
     }
 
     @Test
@@ -89,8 +90,8 @@ class MenuServiceTest {
         menu.setMenuGroupId(100L);
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> menuService.create(menu));
     }
 
     @Test
@@ -99,8 +100,8 @@ class MenuServiceTest {
         menu.setPrice(BigDecimal.valueOf(18000));
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> menuService.create(menu));
     }
 
     @Test
@@ -112,7 +113,7 @@ class MenuServiceTest {
         List<Menu> menus = menuService.list();
 
         // then
-        assertThat(menus.get(menus.size()-1))
+        assertThat(menus.get(menus.size() - 1))
                 .usingRecursiveComparison()
                 .ignoringFields("id", "menuProducts.seq")
                 .isEqualTo(savedMenu);
