@@ -22,6 +22,7 @@ import java.util.List;
 
 import static kitchenpos.application.dto.TableGroupRequest.OrderTableIdRequest;
 import static kitchenpos.fixture.OrderFixture.order;
+import static kitchenpos.fixture.OrderLineItemFixture.orderLineItem;
 import static kitchenpos.fixture.OrderTableFixtrue.orderTable;
 import static kitchenpos.fixture.TableGroupFixture.tableGroup;
 import static kitchenpos.fixture.TableGroupFixture.tableGroupRequest;
@@ -140,7 +141,7 @@ class TableGroupServiceTest {
         TableGroup tableGroup = tableGroupDao.save(tableGroupWithoutOrderTable(LocalDateTime.now()));
         OrderTable orderTable = orderTableRepository.save(orderTable(tableGroup, 10, false));
         OrderTable orderTable2 = orderTableRepository.save(orderTable(tableGroup, 3, false));
-        orderRepository.save(order(orderTable.getId(), OrderStatus.COMPLETION));
+        orderRepository.save(order(orderTable, OrderStatus.COMPLETION, List.of(orderLineItem(1L, 10))));
 
         // when
         tableGroupService.ungroup(tableGroup.getId());
@@ -163,7 +164,7 @@ class TableGroupServiceTest {
         TableGroup tableGroup = tableGroupDao.save(tableGroupWithoutOrderTable(LocalDateTime.now()));
         OrderTable orderTable = orderTableRepository.save(orderTable(tableGroup, 10, false));
         OrderTable orderTable2 = orderTableRepository.save(orderTable(tableGroup, 3, false));
-        orderRepository.save(order(orderTable.getId(), orderStatus));
+        orderRepository.save(order(orderTable, orderStatus, List.of(orderLineItem(1L, 10))));
 
         // when
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))

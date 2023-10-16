@@ -20,8 +20,10 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static kitchenpos.fixture.OrderFixture.order;
+import static kitchenpos.fixture.OrderLineItemFixture.orderLineItem;
 import static kitchenpos.fixture.OrderTableFixtrue.orderTable;
 import static kitchenpos.fixture.OrderTableFixtrue.orderTableNumberOfGuestsRequest;
 import static kitchenpos.fixture.OrderTableFixtrue.orderTableRequest;
@@ -67,7 +69,7 @@ class TableServiceTest {
     void 주문_테이블을_빈_테이블로_변경한다() {
         // given
         OrderTable orderTable = orderTableRepository.save(orderTable(10, false));
-        Order order = order(orderTable.getId(), OrderStatus.COMPLETION);
+        Order order = order(orderTable, OrderStatus.COMPLETION, List.of(orderLineItem(1L, 10)));
         orderRepository.save(order);
 
         // when
@@ -94,7 +96,7 @@ class TableServiceTest {
     void 주문_테이블을_빈_테이블로_변경할_때_주문_상태가_완료가_아니면_예외가_발생한다(OrderStatus orderStatus) {
         // given
         OrderTable orderTable = orderTableRepository.save(orderTable(10, false));
-        Order order = order(orderTable.getId(), orderStatus);
+        Order order = order(orderTable, orderStatus, List.of(orderLineItem(1L, 10)));
         orderRepository.save(order);
 
         // expect

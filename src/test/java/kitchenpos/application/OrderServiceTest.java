@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static java.lang.Long.MAX_VALUE;
-import static kitchenpos.application.dto.OrderRequest.OrderLineItemRequest;
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
 import static kitchenpos.fixture.MenuFixture.menu;
@@ -31,7 +30,6 @@ import static kitchenpos.fixture.MenuProductFixture.menuProduct;
 import static kitchenpos.fixture.OrderFixture.order;
 import static kitchenpos.fixture.OrderFixture.orderRequest;
 import static kitchenpos.fixture.OrderLineItemFixture.orderLineItem;
-import static kitchenpos.fixture.OrderLineItemFixture.orderLineItemRequest;
 import static kitchenpos.fixture.OrderTableFixtrue.orderTable;
 import static kitchenpos.fixture.ProductFixture.product;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -73,7 +71,7 @@ class OrderServiceTest {
     void 주문_항목의_메뉴가_존재하지_않는다면_예외가_발생한다() {
         // given
         OrderTable savedOrderTable = orderTableRepository.save(orderTable(10, false));
-        OrderRequest request = orderRequest(savedOrderTable.getId(), List.of(orderLineItemRequest(MAX_VALUE, 1L)));
+        OrderRequest request = orderRequest(savedOrderTable.getId(), List.of(orderLineItem(MAX_VALUE, 1L)));
 
         // expect
         assertThatThrownBy(() -> orderService.create(request))
@@ -85,7 +83,7 @@ class OrderServiceTest {
     void 주문_테이블이_존재하지_않는다면_예외가_발생한다() {
         // given
         Menu menu = menuRepository.save(menu("메뉴", 10000L, null, List.of(menuProduct(product("chicken", 1000L), 10L))));
-        OrderRequest request = orderRequest(MAX_VALUE, List.of(orderLineItemRequest(menu.getId(), 1L)));
+        OrderRequest request = orderRequest(MAX_VALUE, List.of(orderLineItem(menu.getId(), 1L)));
 
         // expect
         assertThatThrownBy(() -> orderService.create(request))
@@ -97,14 +95,12 @@ class OrderServiceTest {
     void 주문_테이블이_빈_테이블이면_예외가_발생한다() {
         // given
         OrderTable orderTable = orderTableRepository.save(orderTable(10, true));
-        OrderTable savedOrderTable = orderTableRepository.save(orderTable(10, false));
-        Order savedOrder = orderRepository.save(order(savedOrderTable.getId(), COOKING));
         Menu menu = menuRepository.save(menu("메뉴", 10000L, null, List.of(menuProduct(product("chicken", 1000L), 10L))));
-        OrderLineItem savedOrderLineItem = orderLineItemRepository.save(new OrderLineItem(menu.getId(), 10));
-        OrderRequest orderRequest = orderRequest(orderTable.getId(), List.of(new OrderLineItemRequest(savedOrderLineItem.getMenuId(), savedOrderLineItem.getQuantity())));
+        OrderLineItem orderLineItem = orderLineItem(menu.getId(), 2L);
+        OrderRequest request = orderRequest(orderTable.getId(), List.of(orderLineItem));
 
         // expect
-        assertThatThrownBy(() -> orderService.create(orderRequest))
+        assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문 테이블이 빈 테이블입니다");
     }
@@ -113,10 +109,9 @@ class OrderServiceTest {
     void 주문을_생성한다() {
         // given
         OrderTable savedOrderTable = orderTableRepository.save(orderTable(10, false));
-        Order order = orderRepository.save(order(savedOrderTable.getId(), COOKING));
         Menu menu = menuRepository.save(menu("메뉴", 10000L, null, List.of(menuProduct(product("chicken", 1000L), 10L))));
         OrderLineItem savedOrderLineItem = orderLineItemRepository.save(new OrderLineItem(menu.getId(), 10));
-        OrderRequest request = orderRequest(savedOrderTable.getId(), List.of(new OrderLineItemRequest(savedOrderLineItem.getMenuId(), savedOrderLineItem.getQuantity())));
+        OrderRequest request = orderRequest(savedOrderTable.getId(), List.of(orderLineItem(savedOrderLineItem.getMenuId(), savedOrderLineItem.getQuantity())));
 
         // when
         Order savedOrder = orderService.create(request);
@@ -124,7 +119,7 @@ class OrderServiceTest {
         // then
         assertSoftly(softly -> {
             softly.assertThat(savedOrder.getOrderStatus()).isEqualTo(COOKING);
-            softly.assertThat(savedOrder.getOrderTableId()).isEqualTo(request.getOrderTableId());
+            softly.assertThat(savedOrder.getOrderTable().getId()).isEqualTo(request.getOrderTableId());
             softly.assertThat(savedOrder.getOrderedTime()).isNotNull();
             softly.assertThat(savedOrder.getOrderLineItems()).map(OrderLineItem::getSeq)
                     .isNotNull();
@@ -137,10 +132,10 @@ class OrderServiceTest {
         Menu menu = menuRepository.save(menu("메뉴", 10000L, null, List.of(menuProduct(product("chicken", 1000L), 10L))));
 
         OrderTable orderTable = orderTableRepository.save(orderTable(10, false));
-        Order order1 = orderRepository.save(order(orderTable.getId(), MEAL));
+        Order order1 = orderRepository.save(order(orderTable, MEAL, List.of(orderLineItem(menu.getId(), 10))));
         OrderLineItem orderLineItem1 = orderLineItemRepository.save(orderLineItem(menu.getId(), 2L));
         order1.changeOrderLineItems(List.of(orderLineItem1));
-        Order order2 = orderRepository.save(order(orderTable.getId(), COOKING));
+        Order order2 = orderRepository.save(order(orderTable, COOKING, List.of(orderLineItem(menu.getId(), 5))));
         OrderLineItem orderLineItem2 = orderLineItemRepository.save(orderLineItem(menu.getId(), 2L));
         order2.changeOrderLineItems(List.of(orderLineItem2));
 
@@ -164,7 +159,7 @@ class OrderServiceTest {
     @Test
     void 주문의_상태를_변경할_때_상태가_완료면_예외가_발생한다() {
         // given
-        Order order = order(1L, OrderStatus.COMPLETION);
+        Order order = order(orderTable(10, false), OrderStatus.COMPLETION, List.of(orderLineItem(1L, 10)));
         Order savedOrder = orderRepository.save(order);
         OrderChangeStatusRequest request = new OrderChangeStatusRequest(COOKING);
 
@@ -177,7 +172,7 @@ class OrderServiceTest {
     @Test
     void 주문의_상태를_변경한다() {
         // given
-        Order order = order(1L, COOKING);
+        Order order = order(orderTable(10, false), COOKING, List.of(orderLineItem(1L, 10)));
         Order savedOrder = orderRepository.save(order);
         OrderChangeStatusRequest newOrder = new OrderChangeStatusRequest(OrderStatus.MEAL);
 

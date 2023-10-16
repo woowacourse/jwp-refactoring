@@ -13,10 +13,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
+import static kitchenpos.fixture.OrderFixture.order;
+import static kitchenpos.fixture.OrderLineItemFixture.orderLineItem;
+import static kitchenpos.fixture.OrderTableFixtrue.orderTable;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
@@ -42,7 +43,7 @@ class OrderRestControllerTest {
     @Test
     void 주문을_생성한다() throws Exception {
         // given
-        Order createdOrder = new Order(1L, 1L, OrderStatus.MEAL, LocalDateTime.now(), new ArrayList<>());
+        Order createdOrder = order(orderTable(10, false), List.of(orderLineItem(1L, 10)));
 
         // when
         when(orderService.create(any(OrderRequest.class))).thenReturn(createdOrder);
@@ -59,8 +60,8 @@ class OrderRestControllerTest {
     @Test
     void 주문_목록을_조회한다() throws Exception {
         // given
-        Order order1 = new Order(1L, 1L, OrderStatus.MEAL, LocalDateTime.now(), new ArrayList<>());
-        Order order2 = new Order(2L, 2L, OrderStatus.COOKING, LocalDateTime.now(), new ArrayList<>());
+        Order order1 = order(orderTable(1, false), List.of(orderLineItem(1L, 10)));
+        Order order2 = order(orderTable(1, false), List.of(orderLineItem(1L, 10)));
 
         // when
         when(orderService.list()).thenReturn(List.of(order1, order2));
@@ -77,7 +78,7 @@ class OrderRestControllerTest {
         // given
         Long orderId = 1L;
         OrderChangeStatusRequest request = new OrderChangeStatusRequest(OrderStatus.COMPLETION);
-        Order response = new Order(1L, 1L, OrderStatus.COMPLETION, LocalDateTime.now(), List.of());
+        Order response = order(orderTable(1, false), OrderStatus.COMPLETION, List.of(orderLineItem(1L, 10)));
 
         // when
         when(orderService.changeOrderStatus(anyLong(), any(OrderChangeStatusRequest.class)))

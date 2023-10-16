@@ -21,7 +21,7 @@ public class InMemoryOrderRepository implements OrderRepository {
     public Order save(Order entity) {
         if (Objects.isNull(entity.getId())) {
             long id = this.id.getAndIncrement();
-            Order order = new Order(id, entity.getOrderTableId(), entity.getOrderStatus(), entity.getOrderedTime(), entity.getOrderLineItems());
+            Order order = new Order(id, entity.getOrderTable(), entity.getOrderStatus(), entity.getOrderedTime(), entity.getOrderLineItems());
             database.put(id, order);
             return order;
         }
@@ -42,14 +42,14 @@ public class InMemoryOrderRepository implements OrderRepository {
     @Override
     public boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<OrderStatus> orderStatuses) {
         return database.values().stream()
-                .anyMatch(it -> it.getOrderTableId().equals(orderTableId) &&
+                .anyMatch(it -> it.getOrderTable().getId().equals(orderTableId) &&
                         orderStatuses.contains(it.getOrderStatus()));
     }
 
     @Override
     public boolean existsByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds, List<OrderStatus> orderStatuses) {
         return database.values().stream()
-                .anyMatch(it -> orderTableIds.contains(it.getOrderTableId()) &&
+                .anyMatch(it -> orderTableIds.contains(it.getOrderTable().getId()) &&
                         orderStatuses.contains(it.getOrderStatus()));
     }
 }

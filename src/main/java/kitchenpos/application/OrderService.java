@@ -7,14 +7,11 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderLineItemRepository;
 import kitchenpos.domain.OrderRepository;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,10 +40,6 @@ public class OrderService {
     public Order create(final OrderRequest request) {
         final List<OrderLineItemRequest> orderLineItems = request.getOrderLineItems();
 
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException("주문 항목은 하나 이상이여야 합니다");
-        }
-
         final List<Long> menuIds = orderLineItems.stream()
                 .map(OrderLineItemRequest::getMenuId)
                 .collect(Collectors.toList());
@@ -62,7 +55,8 @@ public class OrderService {
             throw new IllegalArgumentException("주문 테이블이 빈 테이블입니다");
         }
 
-        final Order savedOrder = orderRepository.save(new Order(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now()));
+        Order entity = getOrder(orderTable, request);
+        final Order savedOrder = orderRepository.save(entity);
 
         List<OrderLineItem> savedOrderLineItems = orderLineItems.stream()
                 .map(it -> orderLineItemRepository.save(new OrderLineItem(it.getMenuId(), it.getQuantity())))
@@ -70,6 +64,13 @@ public class OrderService {
         savedOrder.changeOrderLineItems(savedOrderLineItems);
 
         return savedOrder;
+    }
+
+    private Order getOrder(OrderTable orderTable, OrderRequest request) {
+        List<OrderLineItem> orderLineItems = request.getOrderLineItems().stream()
+                .map(it -> new OrderLineItem(it.getMenuId(), it.getQuantity()))
+                .collect(Collectors.toList());
+        return new Order(orderTable, orderLineItems);
     }
 
     public List<Order> list() {
