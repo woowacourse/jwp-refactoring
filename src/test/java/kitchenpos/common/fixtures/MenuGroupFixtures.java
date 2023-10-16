@@ -11,17 +11,13 @@ public class MenuGroupFixtures {
     public static final String MENU_GROUP2_NAME = "한마리메뉴";
 
     /**
-     * REQUEST
+     * ENTITY
      */
-    public static MenuGroup MENU_GROUP1_REQUEST() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(MENU_GROUP1_NAME);
-        return menuGroup;
+    public static MenuGroup MENU_GROUP1() {
+        return new MenuGroup(MENU_GROUP1_NAME);
     }
 
-    public static MenuGroup MENU_GROUP2_REQUEST() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(MENU_GROUP2_NAME);
-        return menuGroup;
+    public static MenuGroup MENU_GROUP2() {
+        return new MenuGroup(MENU_GROUP2_NAME);
     }
 }

@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.product.Product;
 
 @Entity
 public class Menu {
@@ -38,6 +39,22 @@ public class Menu {
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
+    }
+
+    public void verifyPrice() {
+        final BigDecimal totalMenuProductPrice = getTotalMenuProductPrice();
+        if (price.compareTo(totalMenuProductPrice) > 0) {
+            throw new IllegalArgumentException("[ERROR] 메뉴의 가격이 메뉴 상품 가격의 합보다 클 수 없습니다.");
+        }
+    }
+
+    private BigDecimal getTotalMenuProductPrice() {
+        final int menuProductPrice = menuProducts.stream()
+                .mapToInt(menuProduct -> {
+                    final Product product = menuProduct.getProduct();
+                    return product.calculateTotalPrice(menuProduct.getQuantity()).intValue();
+                }).reduce(0, Integer::sum);
+        return BigDecimal.valueOf(menuProductPrice);
     }
 
     public Long getId() {

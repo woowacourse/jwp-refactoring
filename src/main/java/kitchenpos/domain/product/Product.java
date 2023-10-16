@@ -20,11 +20,16 @@ public class Product {
     @Embedded
     private Price price;
 
-    protected Product() {}
+    protected Product() {
+    }
 
     public Product(final String name, final BigDecimal price) {
         this.name = name;
         this.price = new Price(price);
+    }
+
+    public BigDecimal calculateTotalPrice(final long targetQuantity) {
+        return price.multiply(BigDecimal.valueOf(targetQuantity));
     }
 
     public Long getId() {

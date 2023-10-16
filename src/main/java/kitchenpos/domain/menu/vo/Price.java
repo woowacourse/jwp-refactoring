@@ -1,4 +1,4 @@
-package kitchenpos.domain.product.vo;
+package kitchenpos.domain.menu.vo;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -11,7 +11,8 @@ public class Price {
     @Column(name = "price")
     private BigDecimal value;
 
-    protected Price() {}
+    protected Price() {
+    }
 
     public Price(final BigDecimal value) {
         validate(value);
@@ -20,12 +21,8 @@ public class Price {
 
     private void validate(final BigDecimal value) {
         if (Objects.isNull(value) || value.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("[ERROR] 상품 가격은 null 또는 0 미만의 값일 수 없습니다.");
+            throw new IllegalArgumentException("[ERROR] 메뉴 가격은 null 또는 0 미만의 값일 수 없습니다.");
         }
-    }
-
-    public BigDecimal multiply(final BigDecimal target) {
-        return this.value.multiply(target);
     }
 
     public BigDecimal getValue() {

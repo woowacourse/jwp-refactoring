@@ -1,6 +1,10 @@
 package kitchenpos.common.fixtures;
 
+import static kitchenpos.common.fixtures.ProductFixtures.PRODUCT1;
+import static kitchenpos.common.fixtures.ProductFixtures.PRODUCT2;
+
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.dto.menu.MenuProductRequest;
 
 public class MenuProductFixtures {
 
@@ -28,27 +32,26 @@ public class MenuProductFixtures {
     /**
      * REQUEST
      */
-    public static MenuProduct MENU_PRODUCT1_REQUEST() {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(MENU_PRODUCT1_MENU_ID);
-        menuProduct.setProductId(MENU_PRODUCT1_PRODUCT_ID);
-        menuProduct.setQuantity(MENU_PRODUCT1_QUANTITY);
-        return menuProduct;
+    public static MenuProductRequest MENU_PRODUCT1_REQUEST() {
+        return new MenuProductRequest(MENU_PRODUCT1_PRODUCT_ID, MENU_PRODUCT1_QUANTITY);
     }
 
-    public static MenuProduct MENU_PRODUCT2_REQUEST() {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(MENU_PRODUCT2_MENU_ID);
-        menuProduct.setProductId(MENU_PRODUCT2_PRODUCT_ID);
-        menuProduct.setQuantity(MENU_PRODUCT2_QUANTITY);
-        return menuProduct;
+    public static MenuProductRequest MENU_PRODUCT2_REQUEST() {
+        return new MenuProductRequest(MENU_PRODUCT2_PRODUCT_ID, MENU_PRODUCT2_QUANTITY);
     }
 
-    public static MenuProduct MENU_PRODUCT3_REQUEST() {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(MENU_PRODUCT3_MENU_ID);
-        menuProduct.setProductId(MENU_PRODUCT3_PRODUCT_ID);
-        menuProduct.setQuantity(MENU_PRODUCT3_QUANTITY);
-        return menuProduct;
+    public static MenuProductRequest MENU_PRODUCT3_REQUEST() {
+        return new MenuProductRequest(MENU_PRODUCT3_PRODUCT_ID, MENU_PRODUCT3_QUANTITY);
+    }
+
+    /**
+     * ENTITY
+     */
+    public static MenuProduct MENU_PRODUCT1() {
+        return new MenuProduct(PRODUCT1(), MENU_PRODUCT1_QUANTITY);
+    }
+
+    public static MenuProduct MENU_PRODUCT2() {
+        return new MenuProduct(PRODUCT2(), MENU_PRODUCT2_QUANTITY);
     }
 }
