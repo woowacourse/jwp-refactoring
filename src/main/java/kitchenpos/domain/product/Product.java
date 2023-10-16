@@ -32,18 +32,6 @@ public class Product {
         this.price = price;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public void setName(final Name name) {
-        this.name = name;
-    }
-
-    public void setPrice(final Price price) {
-        this.price = price;
-    }
-
     public Long getId() {
         return id;
     }

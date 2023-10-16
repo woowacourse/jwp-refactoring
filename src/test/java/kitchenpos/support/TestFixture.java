@@ -1,7 +1,9 @@
 package kitchenpos.support;
 
 import kitchenpos.domain.*;
+import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.product.Product;
+import kitchenpos.ui.dto.request.MenuGroupRequest;
 import kitchenpos.ui.dto.request.ProductRequest;
 
 import java.math.BigDecimal;
@@ -13,7 +15,7 @@ public class TestFixture {
 
     public static ProductRequest 상품 = new ProductRequest("신상", new BigDecimal(1));
 
-    public static MenuGroup 메뉴_분류 = new MenuGroup("중식");
+    public static MenuGroupRequest 메뉴_분류 = new MenuGroupRequest("중식");
 
     public static Menu 메뉴(List<Product> 등록하려는_상품들, MenuGroup 메뉴그룹) {
         final List<MenuProduct> 메뉴에_속하는_수량이_있는_상품 = new ArrayList<>();

@@ -1,7 +1,8 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.support.ServiceTest;
+import kitchenpos.ui.dto.request.MenuGroupRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,18 +22,18 @@ class MenuGroupServiceTest {
 
     @Test
     void 메뉴_분류를_저장한다() {
-        final MenuGroup 새로운_메뉴_분류 = new MenuGroup("괴식");
+        final MenuGroupRequest 새로운_메뉴_분류 = new MenuGroupRequest("괴식");
         final MenuGroup 저장된_메뉴_분류 = menuGroupService.create(새로운_메뉴_분류);
 
         assertSoftly(soft -> {
             soft.assertThat(저장된_메뉴_분류.getId()).isNotNull();
-            soft.assertThat(저장된_메뉴_분류.getName()).isEqualTo(새로운_메뉴_분류.getName());
+            soft.assertThat(저장된_메뉴_분류.getName().getName()).isEqualTo(새로운_메뉴_분류.getName());
         });
     }
 
     @Test
     void 모든_메뉴_분류를_조회한다() {
-        menuGroupService.create(new MenuGroup("괴식"));
+        menuGroupService.create(new MenuGroupRequest("괴식"));
         final List<MenuGroup> 저장된_메뉴_분류 = menuGroupService.list();
 
         assertThat(저장된_메뉴_분류).hasSize(1);

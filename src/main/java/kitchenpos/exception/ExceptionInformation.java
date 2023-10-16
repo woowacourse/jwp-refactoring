@@ -7,6 +7,11 @@ public enum ExceptionInformation {
     PRODUCT_NAME_LENGTH_OUT_OF_BOUNCE(101, "상품 이름 글자수가 허용 범위 밖입니다"),
     PRODUCT_PRICE_IS_NULL(102, "상품 가격은 비어있을 수 없습니다"),
     PRODUCT_PRICE_LENGTH_OUT_OF_BOUNCE(103, "상품 가격이 허용 범위 밖입니다"),
+
+    // 2__: 메뉴 그룹
+    MENU_GROUP_NAME_IS_NULL(104, "메뉴 그룹 이름은 비어있을 수 없습니다"),
+    MENU_GROUP_NAME_LENGTH_OUT_OF_BOUNCE(105, "메뉴 그룹 이름 글자수가 허용 범위 밖입니다")
+
     ;
 
     private int code;
