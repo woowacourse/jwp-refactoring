@@ -28,6 +28,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -52,7 +53,7 @@ class OrderServiceTest {
     @Autowired
     private ProductDao productDao;
 
-    private List<OrderLineItem> orderLineItems;
+    private List<OrderLineItem> orderLineItems = new ArrayList<>();
     private OrderTable savedOrderTable;
 
     @BeforeEach
@@ -61,7 +62,7 @@ class OrderServiceTest {
         final Product savedProduct = productDao.save(new Product(null, "상품", BigDecimal.ONE));
         final List<MenuProduct> menuProducts = List.of(new MenuProduct(null, null, savedProduct.getId(), 2));
         final Menu savedMenu = menuDao.save(new Menu(null, "메뉴", BigDecimal.ONE, savedMenuGroup.getId(), menuProducts));
-        orderLineItems = List.of(new OrderLineItem(null, null, savedMenu.getId(), 1));
+        orderLineItems.add(new OrderLineItem(null, null, savedMenu.getId(), 1));
         savedOrderTable = orderTableDao.save(new OrderTable(null, null, 5, false));
     }
 
@@ -101,6 +102,16 @@ class OrderServiceTest {
         @Test
         void 주문_항목들이_비어있으면_예외가_발생한다() {
             final Order order = new Order(null, savedOrderTable.getId(), null, null, List.of());
+
+            assertThatThrownBy(() -> orderService.create(order))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void 주문_항목들에_메뉴가_중복되면_예외가_발생한다() {
+            final OrderLineItem orderLineItem = orderLineItems.get(0);
+            orderLineItems.add(orderLineItem);
+            final Order order = new Order(null, savedOrderTable.getId(), null, null, orderLineItems);
 
             assertThatThrownBy(() -> orderService.create(order))
                     .isInstanceOf(IllegalArgumentException.class);
