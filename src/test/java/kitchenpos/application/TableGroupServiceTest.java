@@ -22,6 +22,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class TableGroupServiceTest extends ServiceBaseTest {
@@ -50,11 +51,14 @@ class TableGroupServiceTest extends ServiceBaseTest {
 
         //when
         TableGroup createdTableGroup = tableGroupService.create(tableGroup);
-        orderTable1.setTableGroupId(tableGroup.getId());
-        orderTable2.setTableGroupId(tableGroup.getId());
+        final List<OrderTable> orderTables = orderTableDao.findAllByIdIn(List.of(savedOrderTable.getId(),savedOrderTabel2.getId()));
 
         //then
-        assertThat(createdTableGroup.getId()).isNotNull();
+        assertAll(
+                () -> assertThat(createdTableGroup.getId()).isNotNull(),
+                () -> assertThat(orderTables.get(0).isEmpty()).isFalse(),
+                () -> assertThat(orderTables.get(1).isEmpty()).isFalse()
+        );
     }
 
     @Test
@@ -122,6 +126,7 @@ class TableGroupServiceTest extends ServiceBaseTest {
 
         //when&then
         assertDoesNotThrow(() -> tableGroupService.ungroup(createdTableGroup.getId()));
+        assertThat(orderTableDao.findAllByTableGroupId(createdTableGroup.getId()).size()).isZero();
     }
 
     @ParameterizedTest(name = "테이블 단체 지정을 해제시 상태가 요리, 식사이면 안된다.")
