@@ -9,15 +9,16 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
+@Transactional
 @Service
 public class ProductService {
+
     private final ProductDao productDao;
 
     public ProductService(final ProductDao productDao) {
         this.productDao = productDao;
     }
 
-    @Transactional
     public Product create(final Product product) {
         final BigDecimal price = product.getPrice();
 
@@ -28,6 +29,7 @@ public class ProductService {
         return productDao.save(product);
     }
 
+    @Transactional(readOnly = true)
     public List<Product> list() {
         return productDao.findAll();
     }
