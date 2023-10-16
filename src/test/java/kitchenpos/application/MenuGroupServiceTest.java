@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.application.request.MenuGroupCreateRequest;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.persistence.MenuGroupRepository;
 import kitchenpos.support.ServiceTest;
@@ -26,7 +27,7 @@ class MenuGroupServiceTest extends ServiceTest {
     @Test
     void 메뉴_그룹을_저장한다() {
         // given
-        MenuGroup expected = new MenuGroup("순살");
+        MenuGroupCreateRequest expected = new MenuGroupCreateRequest("순살");
 
         // when
         MenuGroup actual = menuGroupService.create(expected);
