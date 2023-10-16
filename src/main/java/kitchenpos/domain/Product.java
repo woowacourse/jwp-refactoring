@@ -1,11 +1,13 @@
 package kitchenpos.domain;
 
-import java.math.BigDecimal;
+import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import kitchenpos.exception.KitchenPosException;
 
 @Entity
 public class Product {
@@ -17,30 +19,38 @@ public class Product {
     @Column(length = 255, nullable = false)
     private String name;
 
-    @Column(precision = 19, scale = 2, nullable = false)
-    private BigDecimal price;
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "price"))
+    private Money price;
+
+    protected Product() {
+    }
+
+    public Product(Long id, String name, Money price) {
+        validate(price);
+        this.id = id;
+        this.name = name;
+        this.price = price;
+    }
+
+    private void validate(Money price) {
+        if (price == null) {
+            throw new KitchenPosException("상품의 가격은 null이 될 수 없습니다.");
+        }
+        if (price.lessThen(Money.ZERO)) {
+            throw new KitchenPosException("상품의 가격은 0보다 작을 수 없습니다.");
+        }
+    }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public BigDecimal getPrice() {
+    public Money getPrice() {
         return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
     }
 }
