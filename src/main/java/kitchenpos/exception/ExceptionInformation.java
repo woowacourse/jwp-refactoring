@@ -5,7 +5,8 @@ public enum ExceptionInformation {
     // 1__: 상품
     PRODUCT_NAME_IS_NULL(100, "상품 이름은 비어있을 수 없습니다"),
     PRODUCT_NAME_LENGTH_OUT_OF_BOUNCE(101, "상품 이름 글자수가 허용 범위 밖입니다"),
-    PRODUCT_PRICE_LENGTH_OUT_OF_BOUNCE(102, "상품 가격이 허용 범위 밖입니다"),
+    PRODUCT_PRICE_IS_NULL(102, "상품 가격은 비어있을 수 없습니다"),
+    PRODUCT_PRICE_LENGTH_OUT_OF_BOUNCE(103, "상품 가격이 허용 범위 밖입니다"),
     ;
 
     private int code;

@@ -2,50 +2,77 @@ package kitchenpos.domain.product;
 
 import kitchenpos.exception.KitchenposException;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+import static kitchenpos.exception.ExceptionInformation.PRODUCT_PRICE_IS_NULL;
 import static kitchenpos.exception.ExceptionInformation.PRODUCT_PRICE_LENGTH_OUT_OF_BOUNCE;
 
+@Embeddable
 public class Price {
     public static final BigDecimal MIN_PRICE = new BigDecimal(0);
     public static final BigDecimal MAX_PRICE = new BigDecimal(Integer.MAX_VALUE);
+    public static final int MAX_SCALE = 2;
 
-    private final BigDecimal value;
+    @Column(nullable = false, columnDefinition = "decimal", precision = 19, scale = 2)
+    private BigDecimal price;
 
-    public Price(final BigDecimal value) {
-        this.value = value;
+    protected Price(){
     }
 
-    public static Price from(final BigDecimal value) {
-        validateBound(value);
-        return new Price(value);
+    public Price(final BigDecimal price) {
+        this.price = price;
     }
 
-    private static void validateBound(final BigDecimal value) {
-        if (value.compareTo(MIN_PRICE) < 0 || value.compareTo(MAX_PRICE) > 0) {
+    public static Price from(final BigDecimal price) {
+        validateNotNull(price);
+        validateBound(price);
+        validateScale(price);
+        return new Price(price);
+    }
+
+    private static void validateNotNull(final BigDecimal price) {
+        if(Objects.isNull(price)){
+            throw new KitchenposException(PRODUCT_PRICE_IS_NULL);
+        }
+    }
+
+    private static void validateBound(final BigDecimal price) {
+        if (price.compareTo(MIN_PRICE) < 0 || price.compareTo(MAX_PRICE) > 0) {
+            throw new KitchenposException(PRODUCT_PRICE_LENGTH_OUT_OF_BOUNCE);
+        }
+    }
+
+    private static void validateScale(final BigDecimal price) {
+        if (price.scale() > MAX_SCALE) {
             throw new KitchenposException(PRODUCT_PRICE_LENGTH_OUT_OF_BOUNCE);
         }
     }
 
     public BigDecimal multiply(BigDecimal other) {
-        return this.value.multiply(other);
+        return this.price.multiply(other);
     }
 
-    public BigDecimal getValue() {
-        return value;
+    public void setPrice(final BigDecimal value) {
+        this.price = value;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
     }
 
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        final Price price = (Price) o;
-        return Objects.equals(value, price.value);
+        final Price otherPrice = (Price) o;
+        return Objects.equals(this.price, otherPrice.price);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(value);
+        return Objects.hash(price);
     }
 }

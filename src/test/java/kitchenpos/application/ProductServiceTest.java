@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.product.Product;
+import kitchenpos.exception.KitchenposException;
 import kitchenpos.support.ServiceTest;
 import kitchenpos.ui.dto.request.ProductRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static kitchenpos.exception.ExceptionInformation.PRODUCT_PRICE_IS_NULL;
+import static kitchenpos.exception.ExceptionInformation.PRODUCT_PRICE_LENGTH_OUT_OF_BOUNCE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -41,10 +44,8 @@ class ProductServiceTest {
 
             assertSoftly(soft -> {
                 soft.assertThat(저장_상품.getId()).isNotNull();
-                soft.assertThat(new BigDecimal(1)).isEqualByComparingTo(new BigDecimal(1));
-                soft.assertThat(저장_상품).usingRecursiveComparison()
-                        .ignoringFields("id")
-                        .isEqualTo(새상품);
+                soft.assertThat(저장_상품.getPrice().getPrice()).isEqualTo(새상품.getPrice());
+                soft.assertThat(저장_상품.getName().getName()).isEqualTo(새상품.getName());
             });
         }
 
@@ -54,8 +55,8 @@ class ProductServiceTest {
 
 
             assertThatThrownBy(() -> productService.create(새상품))
-                    .isExactlyInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("상품의 가격은 0원 이상이여야 합니다");
+                    .isExactlyInstanceOf(KitchenposException.class)
+                    .hasMessage(PRODUCT_PRICE_LENGTH_OUT_OF_BOUNCE.getMessage());
         }
 
         @Test
@@ -63,8 +64,8 @@ class ProductServiceTest {
             final ProductRequest 새상품 = new ProductRequest("test", null);
 
             assertThatThrownBy(() -> productService.create(새상품))
-                    .isExactlyInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("상품의 가격은 0원 이상이여야 합니다");
+                    .isExactlyInstanceOf(KitchenposException.class)
+                    .hasMessage(PRODUCT_PRICE_IS_NULL.getMessage());
         }
     }
 }

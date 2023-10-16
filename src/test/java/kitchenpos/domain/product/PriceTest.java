@@ -31,4 +31,11 @@ class PriceTest {
                 .hasMessage(PRODUCT_PRICE_LENGTH_OUT_OF_BOUNCE.getMessage());
     }
 
+    @Test
+    void 상품_가격이_소수점_셋째짜리이상은_만들_수_없다() {
+        assertThatThrownBy(() -> Price.from(new BigDecimal(3.333)))
+                .isExactlyInstanceOf(KitchenposException.class)
+                .hasMessage(PRODUCT_PRICE_LENGTH_OUT_OF_BOUNCE.getMessage());
+    }
+
 }
