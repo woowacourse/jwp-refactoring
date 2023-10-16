@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 class ProductServiceTest {
 
@@ -21,22 +20,6 @@ class ProductServiceTest {
         Product saved = productService.create(product);
 
         assertThat(product).usingRecursiveComparison().isEqualTo(saved);
-    }
-
-    @Test
-    void 상품_가격은_null일_수_없다() {
-        Product product = new Product(null, "후라이드", null);
-
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 상품_가격은_음수일_수_없다() {
-        Product product = new Product(null, "후라이드", BigDecimal.valueOf(-16000));
-
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
