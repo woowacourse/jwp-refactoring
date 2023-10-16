@@ -17,6 +17,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
@@ -58,72 +59,77 @@ class MenuServiceTest {
         저장된_메뉴_그룹 = menuGroupDao.save(메뉴_그룹);
     }
 
-    @Test
-    void 메뉴를_정상적으로_등록한다() {
-        // given
-        final Menu 메뉴 = 메뉴(null, "메뉴", BigDecimal.valueOf(22000, 2), 저장된_메뉴_그룹.getId(), List.of(메뉴_상품_1, 메뉴_상품_2));
+    @Nested
+    class 메뉴_등록_시 {
 
-        // when
-        final Menu 저장된_메뉴 = menuService.create(메뉴);
+        @Test
+        void 메뉴를_정상적으로_등록한다() {
+            // given
+            final Menu 메뉴 = 메뉴(null, "메뉴", BigDecimal.valueOf(22000, 2), 저장된_메뉴_그룹.getId(), List.of(메뉴_상품_1, 메뉴_상품_2));
 
-        // then
-        assertAll(
-                () -> assertThat(저장된_메뉴.getId()).isNotNull(),
-                () -> assertThat(저장된_메뉴).usingRecursiveComparison()
-                        .ignoringFields("id", "menuProducts.seq")
-                        .isEqualTo(메뉴)
-        );
-    }
+            // when
+            final Menu 저장된_메뉴 = menuService.create(메뉴);
 
-    @Test
-    void 메뉴_등록시_메뉴의_가격이_0보다_작으면_예외가_발생한다() {
-        // given
-        final Menu 메뉴 = 메뉴(null, "메뉴", BigDecimal.valueOf(-22000, 2), 저장된_메뉴_그룹.getId(), List.of(메뉴_상품_1, 메뉴_상품_2));
+            // then
+            assertAll(
+                    () -> assertThat(저장된_메뉴.getId()).isNotNull(),
+                    () -> assertThat(저장된_메뉴).usingRecursiveComparison()
+                            .ignoringFields("id", "menuProducts.seq")
+                            .isEqualTo(메뉴)
+            );
+        }
 
-        // expected
-        assertThatThrownBy(() -> menuService.create(메뉴))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
+        @Test
+        void 메뉴의_가격이_0보다_작으면_예외가_발생한다() {
+            // given
+            final Menu 메뉴 = 메뉴(null, "메뉴", BigDecimal.valueOf(-22000, 2), 저장된_메뉴_그룹.getId(), List.of(메뉴_상품_1, 메뉴_상품_2));
 
-    @Test
-    void 메뉴_등록시_메뉴의_가격이_없으면_예외가_발생한다() {
-        // given
-        final Menu 메뉴 = 메뉴(null, "메뉴", null, 저장된_메뉴_그룹.getId(), List.of(메뉴_상품_1, 메뉴_상품_2));
+            // expected
+            assertThatThrownBy(() -> menuService.create(메뉴))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
 
-        // expected
-        assertThatThrownBy(() -> menuService.create(메뉴))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
+        @Test
+        void 메뉴의_가격이_없으면_예외가_발생한다() {
+            // given
+            final Menu 메뉴 = 메뉴(null, "메뉴", null, 저장된_메뉴_그룹.getId(), List.of(메뉴_상품_1, 메뉴_상품_2));
 
-    @Test
-    void 메뉴_등록시_메뉴_그룹이_존재하지_않으면_예외가_발생한다() {
-        // given
-        final Menu 메뉴 = 메뉴(null, "메뉴", BigDecimal.valueOf(22000, 2), 저장된_메뉴_그룹.getId() + 1, List.of(메뉴_상품_1, 메뉴_상품_2));
+            // expected
+            assertThatThrownBy(() -> menuService.create(메뉴))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
 
-        // expected
-        assertThatThrownBy(() -> menuService.create(메뉴))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
+        @Test
+        void 메뉴_그룹이_존재하지_않으면_예외가_발생한다() {
+            // given
+            final Menu 메뉴 = 메뉴(null, "메뉴", BigDecimal.valueOf(22000, 2), 저장된_메뉴_그룹.getId() + 1,
+                    List.of(메뉴_상품_1, 메뉴_상품_2));
 
-    @Test
-    void 메뉴_등록시_상품이_존재하지_않으면_예외가_발생한다() {
-        // given
-        final Menu 메뉴 = 메뉴(null, "메뉴", BigDecimal.valueOf(22000, 2), 저장된_메뉴_그룹.getId(),
-                List.of(메뉴_상품_1, 메뉴_상품(null, null, 메뉴_상품_2.getProductId() + 1, 1)));
+            // expected
+            assertThatThrownBy(() -> menuService.create(메뉴))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
 
-        // expected
-        assertThatThrownBy(() -> menuService.create(메뉴))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
+        @Test
+        void 상품이_존재하지_않으면_예외가_발생한다() {
+            // given
+            final Menu 메뉴 = 메뉴(null, "메뉴", BigDecimal.valueOf(22000, 2), 저장된_메뉴_그룹.getId(),
+                    List.of(메뉴_상품_1, 메뉴_상품(null, null, 메뉴_상품_2.getProductId() + 1, 1)));
 
-    @Test
-    void 메뉴_등록시_입력한_가격이_상품들의_가격합_보다_크면_예외가_발생한다() {
-        // given
-        final Menu 메뉴 = 메뉴(null, "메뉴", BigDecimal.valueOf(23000, 2), 저장된_메뉴_그룹.getId(), List.of(메뉴_상품_1, 메뉴_상품_2));
+            // expected
+            assertThatThrownBy(() -> menuService.create(메뉴))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
 
-        // expected
-        assertThatThrownBy(() -> menuService.create(메뉴))
-                .isInstanceOf(IllegalArgumentException.class);
+        @Test
+        void 입력한_가격이_상품들의_가격합_보다_크면_예외가_발생한다() {
+            // given
+            final Menu 메뉴 = 메뉴(null, "메뉴", BigDecimal.valueOf(23000, 2), 저장된_메뉴_그룹.getId(), List.of(메뉴_상품_1, 메뉴_상품_2));
+
+            // expected
+            assertThatThrownBy(() -> menuService.create(메뉴))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
     }
 
     @Test

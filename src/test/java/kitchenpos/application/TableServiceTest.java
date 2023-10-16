@@ -30,6 +30,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
@@ -99,123 +100,132 @@ class TableServiceTest {
                 .isEqualTo(List.of(주문_테이블1, 주문_테이블2));
     }
 
-    @Test
-    void 주문_테이블을_빈_테이블로_변경한다() {
-        // given
-        final OrderTable 주문_테이블 = 주문_테이블(null, null, 2, false);
-        final OrderTable 저장된_주문_테이블 = tableService.create(주문_테이블);
+    @Nested
+    class 주문_테이블을_빈_테이블로_변경_시 {
 
-        // when
-        final OrderTable 빈_테이블로_변경된_주문_테이블 = tableService.changeEmpty(저장된_주문_테이블.getId(),
-                주문_테이블(null, null, 0, true));
+        @Test
+        void 주문_테이블을_빈_테이블로_변경한다() {
+            // given
+            final OrderTable 주문_테이블 = 주문_테이블(null, null, 2, false);
+            final OrderTable 저장된_주문_테이블 = tableService.create(주문_테이블);
 
-        // then
-        assertThat(빈_테이블로_변경된_주문_테이블.isEmpty()).isTrue();
+            // when
+            final OrderTable 빈_테이블로_변경된_주문_테이블 = tableService.changeEmpty(저장된_주문_테이블.getId(),
+                    주문_테이블(null, null, 0, true));
+
+            // then
+            assertThat(빈_테이블로_변경된_주문_테이블.isEmpty()).isTrue();
+        }
+
+        @Test
+        void 주문_테이블이_존재하지_않으면_예외가_발생한다() {
+            // given
+            final OrderTable 주문_테이블 = 주문_테이블(null, null, 2, false);
+            final OrderTable 저장된_주문_테이블 = tableService.create(주문_테이블);
+
+            // expected
+            assertThatThrownBy(() -> tableService.changeEmpty(저장된_주문_테이블.getId() + 1, 주문_테이블(null, null, 0, true)))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void 주문_테이블이_이미_테이블_그룹에_속해있으면_예외가_발생한다() {
+            // given
+            final OrderTable 저장된_주문_테이블1 = tableService.create(주문_테이블(null, null, 2, false));
+            final OrderTable 저장된_주문_테이블2 = tableService.create(주문_테이블(null, null, 3, false));
+
+            final TableGroup 테이블_그룹 = 테이블_그룹(null, null, List.of(저장된_주문_테이블1, 저장된_주문_테이블2));
+            테이블_그룹.setCreatedDate(LocalDateTime.now());
+            final TableGroup 저장된_테이블_그룹 = tableGroupDao.save(테이블_그룹);
+            저장된_주문_테이블1.setTableGroupId(저장된_테이블_그룹.getId());
+            저장된_주문_테이블2.setTableGroupId(저장된_테이블_그룹.getId());
+
+            orderTableDao.save(저장된_주문_테이블1);
+            orderTableDao.save(저장된_주문_테이블2);
+
+            // expected
+            assertThatThrownBy(() -> tableService.changeEmpty(저장된_주문_테이블1.getId(), 주문_테이블(null, null, 0, true)))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void 주문_상태가_COOKING이면_예외가_발생한다() {
+            // given
+            final OrderTable 주문_테이블 = 주문_테이블(null, null, 2, false);
+            final OrderTable 저장된_주문_테이블 = tableService.create(주문_테이블);
+
+            주문_등록(저장된_주문_테이블, OrderStatus.COOKING.name());
+
+            // expected
+            assertThatThrownBy(() -> tableService.changeEmpty(저장된_주문_테이블.getId(), 주문_테이블(null, null, 0, true)))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void 주문_상태가_MEAL이면_예외가_발생한다() {
+            // given
+            final OrderTable 주문_테이블 = 주문_테이블(null, null, 2, false);
+            final OrderTable 저장된_주문_테이블 = tableService.create(주문_테이블);
+
+            주문_등록(저장된_주문_테이블, OrderStatus.MEAL.name());
+
+            // expected
+            assertThatThrownBy(() -> tableService.changeEmpty(저장된_주문_테이블.getId(), 주문_테이블(null, null, 0, true)))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
     }
 
-    @Test
-    void 주문_테이블을_빈_테이블로_변경시_주문_테이블이_존재하지_않으면_예외가_발생한다() {
-        // given
-        final OrderTable 주문_테이블 = 주문_테이블(null, null, 2, false);
-        final OrderTable 저장된_주문_테이블 = tableService.create(주문_테이블);
+    @Nested
+    class 주문_테이블의_방문_손님수_변경_시 {
 
-        // expected
-        assertThatThrownBy(() -> tableService.changeEmpty(저장된_주문_테이블.getId() + 1, 주문_테이블(null, null, 0, true)))
-                .isInstanceOf(IllegalArgumentException.class);
+        @Test
+        void 주문_테이블의_방문_손님수를_정상적으로_변경한다() {
+            // given
+            final OrderTable 주문_테이블 = tableService.create(주문_테이블(null, null, 2, false));
+            final OrderTable 변경할_주문_테이블 = 주문_테이블(null, null, 5, false);
+
+            // when
+            final OrderTable 방문_손님수가_변경된_주문_테이블 = tableService.changeNumberOfGuests(주문_테이블.getId(), 변경할_주문_테이블);
+
+            // then
+            assertThat(방문_손님수가_변경된_주문_테이블.getNumberOfGuests()).isEqualTo(5);
+        }
+
+        @Test
+        void 변경할_수가_0보다_작으면_예외가_발생한다() {
+            // given
+            final OrderTable 주문_테이블 = tableService.create(주문_테이블(null, null, 2, false));
+            final OrderTable 변경할_주문_테이블 = 주문_테이블(null, null, -1, false);
+
+            // expected
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(주문_테이블.getId(), 변경할_주문_테이블))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void 변경할_주문_테이블이_존재하지_않으면_예외가_발생한다() {
+            // given
+            final OrderTable 주문_테이블 = tableService.create(주문_테이블(null, null, 2, false));
+            final OrderTable 변경할_주문_테이블 = 주문_테이블(null, null, -1, false);
+
+            // expected
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(주문_테이블.getId() + 1, 변경할_주문_테이블))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void 입력받은_주문_테이블이_비어있으면_예외가_발생한다() {
+            // given
+            final OrderTable 주문_테이블 = tableService.create(주문_테이블(null, null, 2, false));
+            final OrderTable 변경할_주문_테이블 = 주문_테이블(null, null, -1, true);
+
+            // expected
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(주문_테이블.getId() + 1, 변경할_주문_테이블))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
     }
-
-    @Test
-    void 주문_테이블을_빈_테이블로_변경시_주문_테이블이_이미_테이블_그룹에_속해있으면_예외가_발생한다() {
-        // given
-        final OrderTable 저장된_주문_테이블1 = tableService.create(주문_테이블(null, null, 2, false));
-        final OrderTable 저장된_주문_테이블2 = tableService.create(주문_테이블(null, null, 3, false));
-
-        final TableGroup 테이블_그룹 = 테이블_그룹(null, null, List.of(저장된_주문_테이블1, 저장된_주문_테이블2));
-        테이블_그룹.setCreatedDate(LocalDateTime.now());
-        final TableGroup 저장된_테이블_그룹 = tableGroupDao.save(테이블_그룹);
-        저장된_주문_테이블1.setTableGroupId(저장된_테이블_그룹.getId());
-        저장된_주문_테이블2.setTableGroupId(저장된_테이블_그룹.getId());
-
-        orderTableDao.save(저장된_주문_테이블1);
-        orderTableDao.save(저장된_주문_테이블2);
-
-        // expected
-        assertThatThrownBy(() -> tableService.changeEmpty(저장된_주문_테이블1.getId(), 주문_테이블(null, null, 0, true)))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 주문_테이블을_빈_테이블로_변경시_주문_상태가_COOKING이면_예외가_발생한다() {
-        // given
-        final OrderTable 주문_테이블 = 주문_테이블(null, null, 2, false);
-        final OrderTable 저장된_주문_테이블 = tableService.create(주문_테이블);
-
-        주문_등록(저장된_주문_테이블, OrderStatus.COOKING.name());
-
-        // expected
-        assertThatThrownBy(() -> tableService.changeEmpty(저장된_주문_테이블.getId(), 주문_테이블(null, null, 0, true)))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 주문_테이블을_빈_테이블로_변경시_주문_상태가_MEAL이면_예외가_발생한다() {
-        // given
-        final OrderTable 주문_테이블 = 주문_테이블(null, null, 2, false);
-        final OrderTable 저장된_주문_테이블 = tableService.create(주문_테이블);
-
-        주문_등록(저장된_주문_테이블, OrderStatus.MEAL.name());
-
-        // expected
-        assertThatThrownBy(() -> tableService.changeEmpty(저장된_주문_테이블.getId(), 주문_테이블(null, null, 0, true)))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 주문_테이블의_방문_손님수를_정상적으로_변경한다() {
-        // given
-        final OrderTable 주문_테이블 = tableService.create(주문_테이블(null, null, 2, false));
-        final OrderTable 변경할_주문_테이블 = 주문_테이블(null, null, 5, false);
-
-        // when
-        final OrderTable 방문_손님수가_변경된_주문_테이블 = tableService.changeNumberOfGuests(주문_테이블.getId(), 변경할_주문_테이블);
-
-        // then
-        assertThat(방문_손님수가_변경된_주문_테이블.getNumberOfGuests()).isEqualTo(5);
-    }
-
-    @Test
-    void 주문_테이블의_방문_손님수_변경시_변경할_수가_0보다_작으면_예외가_발생한다() {
-        // given
-        final OrderTable 주문_테이블 = tableService.create(주문_테이블(null, null, 2, false));
-        final OrderTable 변경할_주문_테이블 = 주문_테이블(null, null, -1, false);
-
-        // expected
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(주문_테이블.getId(), 변경할_주문_테이블))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 주문_테이블의_방문_손님수_변경시_변경할_주문_테이블이_존재하지_않으면_예외가_발생한다() {
-        // given
-        final OrderTable 주문_테이블 = tableService.create(주문_테이블(null, null, 2, false));
-        final OrderTable 변경할_주문_테이블 = 주문_테이블(null, null, -1, false);
-
-        // expected
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(주문_테이블.getId() + 1, 변경할_주문_테이블))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 주문_테이블의_방문_손님수_변경시_입력받은_주문_테이블이_비어있으면_예외가_발생한다() {
-        // given
-        final OrderTable 주문_테이블 = tableService.create(주문_테이블(null, null, 2, false));
-        final OrderTable 변경할_주문_테이블 = 주문_테이블(null, null, -1, true);
-
-        // expected
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(주문_테이블.getId() + 1, 변경할_주문_테이블))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
+    
     private void 주문_등록(final OrderTable 저장된_주문_테이블, final String 주문_상태) {
         final MenuGroup 메뉴_그룹 = 메뉴_그룹(null, "양념 반 후라이드 반");
         final MenuGroup 저장된_메뉴_그룹 = menuGroupDao.save(메뉴_그룹);

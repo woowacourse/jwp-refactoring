@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Product;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
@@ -25,41 +26,45 @@ class ProductServiceTest {
         this.productService = productService;
     }
 
-    @Test
-    void 상품을_정상적으로_등록한다() {
-        // given
-        final Product 등록할_상품 = 상품(null, "상품", BigDecimal.valueOf(10000, 2));
+    @Nested
+    class 상품_등록_시 {
 
-        // when
-        final Product 등록된_상품 = productService.create(등록할_상품);
+        @Test
+        void 상품을_정상적으로_등록한다() {
+            // given
+            final Product 등록할_상품 = 상품(null, "상품", BigDecimal.valueOf(10000, 2));
 
-        // then
-        assertAll(
-                () -> assertThat(등록된_상품.getId()).isNotNull(),
-                () -> assertThat(등록된_상품).usingRecursiveComparison()
-                        .ignoringFields("id")
-                        .isEqualTo(등록할_상품)
-        );
-    }
+            // when
+            final Product 등록된_상품 = productService.create(등록할_상품);
 
-    @Test
-    void 상품_등록시_상품의_가격이_0보다_작으면_예외가_발생한다() {
-        // given
-        final Product 등록할_상품 = 상품(null, "상품", BigDecimal.valueOf(-10000));
+            // then
+            assertAll(
+                    () -> assertThat(등록된_상품.getId()).isNotNull(),
+                    () -> assertThat(등록된_상품).usingRecursiveComparison()
+                            .ignoringFields("id")
+                            .isEqualTo(등록할_상품)
+            );
+        }
 
-        // expected
-        assertThatThrownBy(() -> productService.create(등록할_상품))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
+        @Test
+        void 상품의_가격이_0보다_작으면_예외가_발생한다() {
+            // given
+            final Product 등록할_상품 = 상품(null, "상품", BigDecimal.valueOf(-10000));
 
-    @Test
-    void 상품_등록시_상품의_가격이_없으면_예외가_발생한다() {
-        // given
-        final Product 등록할_상품 = 상품(null, "상품", null);
+            // expected
+            assertThatThrownBy(() -> productService.create(등록할_상품))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
 
-        // expected
-        assertThatThrownBy(() -> productService.create(등록할_상품))
-                .isInstanceOf(IllegalArgumentException.class);
+        @Test
+        void 상품의_가격이_없으면_예외가_발생한다() {
+            // given
+            final Product 등록할_상품 = 상품(null, "상품", null);
+
+            // expected
+            assertThatThrownBy(() -> productService.create(등록할_상품))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
     }
 
     @Test
