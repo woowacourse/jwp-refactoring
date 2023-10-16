@@ -149,6 +149,14 @@ class MenuServiceTest {
             assertThatThrownBy(() -> menuService.create(menu))
                     .isInstanceOf(IllegalArgumentException.class);
         }
+
+        @Test
+        void 메뉴_가격이_메뉴_상품들의_금액을_합한_가격보다_크면_예외가_발생한다() {
+            final Menu menu = new Menu(null, "메뉴", BigDecimal.valueOf(3), savedMenuGroupId, menuProducts);
+
+            assertThatThrownBy(() -> menuService.create(menu))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
     }
 
     @Test
