@@ -89,7 +89,7 @@ class TableServiceTest {
             // given
             final var table = OrderTableFactory.createOrderTableOf(0, false);
             final var savedTable = fakeOrderTableDao.save(table);
-            final var savedOrder = fakeOrderDao.save(OrderFactory.createOrderOf(savedTable.getId(), 1L, OrderLineItemFactory.createOrderLineItemOf(1L, 1L, 1L, 1L)));
+            final var savedOrder = fakeOrderDao.save(OrderFactory.createOrderOf(savedTable.getId(), OrderLineItemFactory.createOrderLineItemOf(1L, 1L)));
             savedOrder.setOrderStatus(orderStatus.name());
 
             final var tableService = new TableService(fakeOrderDao, fakeOrderTableDao);

@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.fakedao.InMemoryOrderDao;
 import kitchenpos.application.fakedao.InMemoryOrderTableDao;
@@ -42,7 +41,7 @@ class TableGroupServiceTest {
             // given
             final var tableOne = fakeOrderTableDao.save(OrderTableFactory.createOrderTableOf(0, true));
 
-            final var tableGroup = TableGroupFactory.createTableGroupTableOf(List.of(tableOne));
+            final var tableGroup = TableGroupFactory.createTableGroupTableOf(tableOne);
             final var tableGroupService = new TableGroupService(fakeOrderDao, fakeOrderTableDao, fakeTableGroupDao);
 
             //when
@@ -58,7 +57,7 @@ class TableGroupServiceTest {
             final var tableOne = fakeOrderTableDao.save(OrderTableFactory.createOrderTableOf(0, true));
             final var tableTwo = OrderTableFactory.createOrderTableOf(0, true);
             tableTwo.setId(Long.MAX_VALUE);
-            final var tableGroup = TableGroupFactory.createTableGroupTableOf(List.of(tableOne, tableTwo));
+            final var tableGroup = TableGroupFactory.createTableGroupTableOf(tableOne, tableTwo);
             final var tableGroupService = new TableGroupService(fakeOrderDao, fakeOrderTableDao, fakeTableGroupDao);
 
             //when
@@ -73,7 +72,7 @@ class TableGroupServiceTest {
             // given
             final var tableOne = fakeOrderTableDao.save(OrderTableFactory.createOrderTableOf(0, false));
             final var tableTwe = fakeOrderTableDao.save(OrderTableFactory.createOrderTableOf(0, true));
-            final var tableGroup = TableGroupFactory.createTableGroupTableOf(List.of(tableOne, tableTwe));
+            final var tableGroup = TableGroupFactory.createTableGroupTableOf(tableOne, tableTwe);
             final var tableGroupService = new TableGroupService(fakeOrderDao, fakeOrderTableDao, fakeTableGroupDao);
 
             //when
@@ -88,7 +87,7 @@ class TableGroupServiceTest {
             // given
             final var tableOne = fakeOrderTableDao.save(OrderTableFactory.createOrderTableOf(0, true));
             final var tableTwe = fakeOrderTableDao.save(OrderTableFactory.createOrderTableOf(0, true));
-            final var tableGroup = TableGroupFactory.createTableGroupTableOf(List.of(tableOne, tableTwe));
+            final var tableGroup = TableGroupFactory.createTableGroupTableOf(tableOne, tableTwe);
             final var tableGroupService = new TableGroupService(fakeOrderDao, fakeOrderTableDao, fakeTableGroupDao);
 
             //when
