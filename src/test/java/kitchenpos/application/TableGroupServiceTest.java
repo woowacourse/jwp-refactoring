@@ -16,6 +16,7 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -160,8 +161,16 @@ class TableGroupServiceTest extends ServiceTest {
                     Boolean.FALSE);
             given(orderTableDao.save(any(OrderTable.class))).willAnswer(invocation -> invocation.getArgument(0));
 
-            // when & then
+            // when
             tableGroupService.ungroup(1L);
+
+            // then
+            SoftAssertions.assertSoftly(soft -> {
+                soft.assertThat(orderTable1.getTableGroupId()).isNull();
+                soft.assertThat(orderTable1.isEmpty()).isFalse();
+                soft.assertThat(orderTable2.getTableGroupId()).isNull();
+                soft.assertThat(orderTable2.isEmpty()).isFalse();
+            });
         }
     }
 
