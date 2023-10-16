@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import kitchenpos.application.dto.request.CreateProductRequest;
 import kitchenpos.application.dto.response.CreateProductResponse;
+import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.domain.Product;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -47,8 +48,16 @@ public class ProductFixture {
     }
 
     public static class RESPONSE {
-        public static CreateProductResponse 후라이드_치킨_16000원() {
+        public static CreateProductResponse 후라이드_치킨_16000원_생성_응답() {
             return CreateProductResponse.builder()
+                    .id(1L)
+                    .name("후라이드치킨")
+                    .price("16000")
+                    .build();
+        }
+
+        public static ProductResponse 후라이드_치킨_16000원_응답() {
+            return ProductResponse.builder()
                     .id(1L)
                     .name("후라이드치킨")
                     .price("16000")

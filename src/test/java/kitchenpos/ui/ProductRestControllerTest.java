@@ -49,7 +49,7 @@ class ProductRestControllerTest {
         @Test
         void 상품_생성() throws Exception {
             // given
-            CreateProductResponse result = ProductFixture.RESPONSE.후라이드_치킨_16000원();
+            CreateProductResponse result = ProductFixture.RESPONSE.후라이드_치킨_16000원_생성_응답();
             given(productService.create(any(CreateProductRequest.class)))
                     .willReturn(result);
 
@@ -74,7 +74,7 @@ class ProductRestControllerTest {
         void 상품_목록_조회() throws Exception {
             // given
             given(productService.list())
-                    .willReturn(List.of(product));
+                    .willReturn(List.of(ProductFixture.RESPONSE.후라이드_치킨_16000원_응답()));
 
             // when & then
             mockMvc.perform(get("/api/products"))

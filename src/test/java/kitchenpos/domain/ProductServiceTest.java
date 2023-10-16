@@ -4,6 +4,7 @@ package kitchenpos.domain;
 import kitchenpos.application.ProductService;
 import kitchenpos.application.dto.request.CreateProductRequest;
 import kitchenpos.application.dto.response.CreateProductResponse;
+import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.fixture.ProductFixture;
 import org.assertj.core.api.Assertions;
@@ -80,12 +81,17 @@ class ProductServiceTest {
                     .willReturn(products);
 
             // when
-            List<Product> result = productService.list();
+            List<ProductResponse> result = productService.list();
 
             // then
-            Assertions.assertThat(result)
-                    .usingRecursiveComparison()
-                    .isEqualTo(products);
+            SoftAssertions.assertSoftly(softly -> {
+                Product product = products.get(0);
+                ProductResponse productResponse = result.get(0);
+                softly.assertThat(result).hasSize(1);
+                softly.assertThat(productResponse.getId()).isEqualTo(product.getId());
+                softly.assertThat(productResponse.getName()).isEqualTo(product.getName());
+                softly.assertThat(productResponse.getPrice()).isEqualTo(product.getPrice().toString());
+            });
         }
     }
 }

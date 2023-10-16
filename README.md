@@ -109,7 +109,7 @@
     - [x] MenuProduct
 
 - [ ] 요청, 응답을 도메인이 아닌 Dto를 활용한다.
-    - [ ] GET /api/products
+    - [x] GET /api/products
     - [x] POST /api/products
     - [x] GET /api/menus
     - [x] POST /api/menus
