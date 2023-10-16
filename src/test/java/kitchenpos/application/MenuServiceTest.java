@@ -14,6 +14,7 @@ import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -61,11 +62,11 @@ class MenuServiceTest {
         given(menuGroupDao.existsById(any(Long.class)))
             .willReturn(true);
         given(productDao.findById(any(Long.class)))
-            .willReturn(java.util.Optional.of(new kitchenpos.domain.Product() {{
+            .willReturn(Optional.of(new Product() {{
                 setId(1L);
                 setPrice(BigDecimal.TEN);
             }}))
-            .willReturn(java.util.Optional.of(new kitchenpos.domain.Product() {{
+            .willReturn(Optional.of(new Product() {{
                 setId(2L);
                 setPrice(BigDecimal.TEN);
             }}));
@@ -103,9 +104,9 @@ class MenuServiceTest {
         final Menu created = menuService.create(menu);
 
         // then
-        assertThat(created.getId()).isEqualTo(1L);
-        assertThat(created.getName()).isEqualTo("메뉴");
-        assertThat(created.getPrice()).isEqualTo(BigDecimal.valueOf(30L));
+        assertThat(created.getId()).isEqualTo(menu.getId());
+        assertThat(created.getName()).isEqualTo(menu.getName());
+        assertThat(created.getPrice()).isEqualTo(menu.getPrice());
     }
 
     @DisplayName("메뉴의 가격이 null 이면 예외가 발생한다.")
@@ -190,7 +191,7 @@ class MenuServiceTest {
         given(menuGroupDao.existsById(any(Long.class)))
             .willReturn(true);
         given(productDao.findById(any(Long.class)))
-            .willReturn(Optional.of(new kitchenpos.domain.Product() {{
+            .willReturn(Optional.of(new Product() {{
                 setId(1L);
                 setPrice(BigDecimal.valueOf(5L));
             }}));

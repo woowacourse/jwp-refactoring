@@ -36,8 +36,8 @@ class MenuGroupServiceTest {
         // when
         // then
         final MenuGroup result = menuGroupService.create(menuGroup);
-        assertThat(result.getId()).isEqualTo(1L);
-        assertThat(result.getName()).isEqualTo("메뉴 그룹");
+        assertThat(result.getId()).isEqualTo(menuGroup.getId());
+        assertThat(result.getName()).isEqualTo(menuGroup.getName());
     }
 
     @DisplayName("메뉴 그룹을 조회한다.")

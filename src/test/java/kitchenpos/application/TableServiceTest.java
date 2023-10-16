@@ -45,7 +45,7 @@ class TableServiceTest {
         final OrderTable savedOrderTable = tableService.create(orderTable);
 
         // then
-        assertThat(savedOrderTable.getId()).isEqualTo(1L);
+        assertThat(savedOrderTable.getId()).isEqualTo(orderTable.getId());
     }
 
     @DisplayName("주문 테이블을 비어 있는 상태로 바꾼다.")

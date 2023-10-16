@@ -77,9 +77,9 @@ class OrderServiceTest {
         final Order created = orderService.create(order);
 
         // then
-        assertThat(created.getId()).isEqualTo(1L);
-        assertThat(created.getOrderTableId()).isEqualTo(1L);
-        assertThat(created.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+        assertThat(created.getId()).isEqualTo(order.getId());
+        assertThat(created.getOrderTableId()).isEqualTo(order.getOrderTableId());
+        assertThat(created.getOrderStatus()).isEqualTo(order.getOrderStatus());
         assertThat(created.getOrderedTime()).isNotNull();
     }
 

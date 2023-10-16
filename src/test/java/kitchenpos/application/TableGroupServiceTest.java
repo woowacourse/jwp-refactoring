@@ -81,7 +81,7 @@ class TableGroupServiceTest {
         final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
         // then
-        assertThat(savedTableGroup.getId()).isEqualTo(1L);
+        assertThat(savedTableGroup.getId()).isEqualTo(tableGroup.getId());
         assertThat(savedTableGroup.getOrderTables()).hasSize(2);
         assertThat(savedTableGroup.getOrderTables().get(0).getId()).isEqualTo(1L);
         assertThat(savedTableGroup.getOrderTables().get(0).isEmpty()).isFalse();

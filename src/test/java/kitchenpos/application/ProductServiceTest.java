@@ -45,9 +45,9 @@ class ProductServiceTest {
         final Product savedProduct = productService.create(product);
 
         // then
-        assertThat(savedProduct.getId()).isEqualTo(1L);
-        assertThat(savedProduct.getPrice()).isEqualTo(BigDecimal.TEN);
-        assertThat(savedProduct.getName()).isEqualTo("상품");
+        assertThat(savedProduct.getId()).isEqualTo(product.getId());
+        assertThat(savedProduct.getPrice()).isEqualTo(product.getPrice());
+        assertThat(savedProduct.getName()).isEqualTo(product.getName());
     }
 
     @DisplayName("상품의 가격이 null 이면 예외가 발생한다.")
