@@ -5,30 +5,31 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.CreateProductCommand;
 import kitchenpos.application.dto.CreateProductResponse;
 import kitchenpos.application.dto.SearchProductResponse;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProductService {
-    private final ProductDao productDao;
 
-    public ProductService(final ProductDao productDao) {
-        this.productDao = productDao;
+    private final ProductRepository productRepository;
+
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     @Transactional
     public CreateProductResponse create(CreateProductCommand command) {
         Price price = new Price(command.price());
         Product product = new Product(command.name(), price);
-        Product savedProduct = productDao.save(product);
+        Product savedProduct = productRepository.save(product);
         return CreateProductResponse.from(savedProduct);
     }
 
     public List<SearchProductResponse> list() {
-        List<Product> products = productDao.findAll();
+        List<Product> products = productRepository.findAll();
         return products.stream()
                 .map(SearchProductResponse::from)
                 .collect(Collectors.toList());

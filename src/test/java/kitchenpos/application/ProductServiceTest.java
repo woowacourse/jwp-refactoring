@@ -23,7 +23,7 @@ class ProductServiceTest extends IntegrationTest {
 
         // when
         CreateProductResponse response = productService.create(command);
-        Optional<Product> result = productDao.findById(response.id());
+        Optional<Product> result = productRepository.findById(response.id());
 
         // then
         assertAll(
@@ -57,9 +57,9 @@ class ProductServiceTest extends IntegrationTest {
     void 상품들을_조회한다() {
         // given
         Product product1 = new Product("상품1", new Price(BigDecimal.ONE));
-        productDao.save(product1);
+        productRepository.save(product1);
         Product product2 = new Product("상품2", new Price(BigDecimal.TEN));
-        productDao.save(product2);
+        productRepository.save(product2);
 
         // when
         List<SearchProductResponse> result = productService.list();

@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
@@ -16,6 +15,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductRepository;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupRepository;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -48,9 +48,6 @@ public class IntegrationTest {
     protected TableService tableService;
 
     @Autowired
-    protected ProductDao productDao;
-
-    @Autowired
     protected MenuRepository menuRepository;
 
     @Autowired
@@ -64,6 +61,9 @@ public class IntegrationTest {
 
     @Autowired
     protected MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    protected ProductRepository productRepository;
 
     protected Order 맛있는_메뉴_주문() {
         OrderTable 주문_테이블 = 주문_테이블(false);
@@ -133,6 +133,6 @@ public class IntegrationTest {
 
     protected Product 상품(String 이름, BigDecimal 가격) {
         Product product = new Product(이름, new Price(가격));
-        return productDao.save(product);
+        return productRepository.save(product);
     }
 }

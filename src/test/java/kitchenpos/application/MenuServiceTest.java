@@ -114,10 +114,10 @@ class MenuServiceTest extends IntegrationTest {
                     @BeforeEach
                     void setUp() {
                         Product product1 = new Product("상품1", new Price(BigDecimal.valueOf(1)));
-                        this.product1 = productDao.save(product1);
+                        this.product1 = productRepository.save(product1);
 
                         Product product2 = new Product("상품2", new Price(BigDecimal.valueOf(3)));
-                        this.product2 = productDao.save(product2);
+                        this.product2 = productRepository.save(product2);
 
                         menuProduct1 = new MenuProduct(this.product1, 2);
                         menuProduct2 = new MenuProduct(this.product2, 3);
