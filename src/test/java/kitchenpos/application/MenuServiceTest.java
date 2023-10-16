@@ -6,11 +6,11 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,7 +24,7 @@ class MenuServiceTest {
     private MenuService menuService;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
     private MenuGroupDao menuGroupDao;
@@ -66,7 +66,7 @@ class MenuServiceTest {
 
         // then
         assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -85,7 +85,7 @@ class MenuServiceTest {
 
         // then
         assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -103,7 +103,7 @@ class MenuServiceTest {
 
         // then
         assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -129,17 +129,17 @@ class MenuServiceTest {
         // then
         assertThat(results).hasSize(1);
         assertThat(savedMenuResult).usingRecursiveComparison()
-                .ignoringFields("id", "price", "menuProducts")
-                .isEqualTo(menu);
+            .ignoringFields("id", "price", "menuProducts")
+            .isEqualTo(menu);
         assertThat(savedMenuResult.getPrice()).isEqualByComparingTo(price);
         assertThat(savedMenuResult.getMenuProducts()).usingRecursiveComparison()
-                .ignoringFields("seq")
-                .isEqualTo(menuProducts);
+            .ignoringFields("seq")
+            .isEqualTo(menuProducts);
     }
 
     private Product createProduct(final int price) {
         final Product product = new Product("테스트 상품", new BigDecimal(price));
-        return productDao.save(product);
+        return productRepository.save(product);
     }
 
     private MenuProduct makeMenuProduct(final Product savedProduct) {
