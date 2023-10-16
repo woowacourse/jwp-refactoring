@@ -9,6 +9,7 @@ import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,6 +19,9 @@ class OrderServiceTest extends ServiceTest {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Nested
     class 주문_생성 {
@@ -61,16 +65,22 @@ class OrderServiceTest extends ServiceTest {
         void 테이블이_존재하지_않는경우_예외가_발생한다() {
             //given
             OrderLineItem 주문상품 = 주문_상품_만들기();
+            OrderTable 삭제된_테이블 = 비어있지_않은_테이블_생성();
+            테이블_지우기(삭제된_테이블);
 
             Order 주문 = new Order();
             주문.setOrderLineItems(List.of(주문상품));
             주문.setOrderStatus(OrderStatus.COOKING.name());
-            주문.setOrderTableId(100000000L);
+            주문.setOrderTableId(삭제된_테이블.getId());
 
             //expect
             assertThatThrownBy(() -> orderService.create(주문))
                     .isInstanceOf(IllegalArgumentException.class);
 
+        }
+
+        private void 테이블_지우기(OrderTable 테이블) {
+            jdbcTemplate.update("delete from order_table where id = ?", 테이블.getId());
         }
 
         @Test
