@@ -79,8 +79,6 @@ class TableGroupServiceTest {
 
         @Test
         void 테이블_그룹을_생성할_때_전달된_주문_테이블이_없으면_실패한다() {
-            // given
-
             // when, then
             assertThatThrownBy(() -> tableGroupService.create(new TableGroup()))
                     .isInstanceOf(IllegalArgumentException.class);

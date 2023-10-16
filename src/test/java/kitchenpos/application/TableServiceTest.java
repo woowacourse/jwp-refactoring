@@ -71,6 +71,7 @@ class TableServiceTest {
         void 주문_테이블의_빈_상태를_변경한다 () {
             // given
             final OrderTable savedOrderTable = new OrderTable();
+            savedOrderTable.setId(1L);
 
             when(orderTableDao.findById(anyLong()))
                     .thenReturn(Optional.of(savedOrderTable));
@@ -80,7 +81,10 @@ class TableServiceTest {
                     .thenReturn(savedOrderTable);
 
             // when
-            final OrderTable result = tableService.changeEmpty(1L, new OrderTable());
+            final OrderTable orderTable = new OrderTable();
+            orderTable.setEmpty(false);
+
+            final OrderTable result = tableService.changeEmpty(savedOrderTable.getId(), orderTable);
 
             // then
             assertThat(result.isEmpty()).isFalse();
@@ -150,13 +154,16 @@ class TableServiceTest {
         }
 
         @Test
-        void 주문_테이블의_사용자_수를_변경할_때_존재한는_주문_테이블이_아니면_실패한다() {
+        void 주문_테이블의_사용자_수를_변경할_때_존재하는_주문_테이블이_아니면_실패한다() {
             // given
             when(orderTableDao.findById(anyLong()))
                     .thenReturn(Optional.empty());
 
-            // when, then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, new OrderTable()))
+            // when
+            final Long notExistTableId = 1L;
+
+            // then
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(notExistTableId, new OrderTable()))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
