@@ -57,7 +57,7 @@ class MenuServiceTest extends ServiceTest {
             assertAll(
                 () -> assertThat(actual.getId()).isPositive(),
                 () -> assertThat(actual.getMenuProducts())
-                    .allSatisfy(it -> assertThat(it.getSeq()).isPositive())
+                    .allSatisfy(it -> assertThat(it.getId()).isPositive())
             );
         }
 
@@ -161,6 +161,7 @@ class MenuServiceTest extends ServiceTest {
 
         // then
         assertThat(actual).usingRecursiveComparison()
+            .ignoringFields("menuProducts.product")
             .isEqualTo(expected);
     }
 }

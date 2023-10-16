@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -55,7 +56,7 @@ class OrderServiceTest extends ServiceTest {
     @BeforeEach
     void setUp() {
         Long menuGroupId = menuGroupRepository.save(new MenuGroup("세트")).getId();
-        menu = menuRepository.save(new Menu("족발", BigDecimal.valueOf(1000.00), menuGroupId, null));
+        menu = menuRepository.save(new Menu("족발", BigDecimal.valueOf(1000.00), menuGroupId));
     }
 
     @Nested
@@ -65,7 +66,7 @@ class OrderServiceTest extends ServiceTest {
         void 성공() {
             // given
             Long orderTableId = orderTableRepository.save(new OrderTable(5, false)).getId();
-            Order order = new Order(orderTableId, COMPLETION, null, List.of(new OrderLineItem(menu.getId(), 2)));
+            Order order = new Order(orderTableId, COMPLETION, LocalDateTime.now(), List.of(new OrderLineItem(menu.getId(), 2)));
 
             // when
             Order actual = orderService.create(order);
@@ -85,7 +86,7 @@ class OrderServiceTest extends ServiceTest {
             Order order = new Order(
                 orderTableId,
                 COMPLETION,
-                null,
+                LocalDateTime.now(),
                 Collections.emptyList());
 
             // when && then
@@ -100,7 +101,7 @@ class OrderServiceTest extends ServiceTest {
             Order order = new Order(
                 orderTableId,
                 COMPLETION,
-                null,
+                LocalDateTime.now(),
                 Arrays.asList(new OrderLineItem(menu.getId(), 2), new OrderLineItem(100L, 3)));
 
             // when && then
@@ -115,7 +116,7 @@ class OrderServiceTest extends ServiceTest {
             Order order = new Order(
                 orderTableId,
                 COMPLETION,
-                null,
+                LocalDateTime.now(),
                 Arrays.asList(new OrderLineItem(menu.getId(), 2)));
 
             // when && then
