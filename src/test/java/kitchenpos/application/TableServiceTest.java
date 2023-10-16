@@ -8,11 +8,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.application.request.OrderTableCreateRequest;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.persistence.OrderRepository;
 import kitchenpos.persistence.OrderTableRepository;
 import kitchenpos.persistence.TableGroupRepository;
 import kitchenpos.support.ServiceTest;
@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 class TableServiceTest extends ServiceTest {
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
     private OrderTableRepository orderTableRepository;
@@ -124,7 +124,7 @@ class TableServiceTest extends ServiceTest {
         void 해당하는_주문테이블의_주문이_요리중이면_예외() {
             // given
             Long givenId = orderTableRepository.save(new OrderTable(5, true)).getId();
-            orderDao.save(new Order(givenId, OrderStatus.COOKING, LocalDateTime.now(), null));
+            orderRepository.save(new Order(givenId, OrderStatus.COOKING, LocalDateTime.now(), null));
 
             // when && then
             assertThatThrownBy(() -> tableService.changeEmpty(givenId, true))
@@ -135,7 +135,7 @@ class TableServiceTest extends ServiceTest {
         void 해당하는_주문테이블의_주문이_식사중이면_예외() {
             // given
             Long givenId = orderTableRepository.save(new OrderTable(5, true)).getId();
-            orderDao.save(new Order(givenId, OrderStatus.MEAL, LocalDateTime.now(), null));
+            orderRepository.save(new Order(givenId, OrderStatus.MEAL, LocalDateTime.now(), null));
 
             // when && then
             assertThatThrownBy(() -> tableService.changeEmpty(givenId, true))

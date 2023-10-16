@@ -10,11 +10,11 @@ import java.util.Collections;
 import java.util.List;
 import kitchenpos.application.request.OrderTableDto;
 import kitchenpos.application.request.TableGroupCreateRequest;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.persistence.OrderRepository;
 import kitchenpos.persistence.OrderTableRepository;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -30,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 class TableGroupServiceTest extends ServiceTest {
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
     private OrderTableRepository orderTableRepository;
@@ -39,7 +39,7 @@ class TableGroupServiceTest extends ServiceTest {
     private TableGroupService tableGroupService;
 
     @Nested
-    class 테이블_그룹_생성 {
+    class 테이블_그룹_생성시 {
 
         @Test
         void 성공() {
@@ -68,7 +68,8 @@ class TableGroupServiceTest extends ServiceTest {
 
             // when && then
             assertThatThrownBy(() -> tableGroupService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("테이블 그룹은 최소 2개 이상의 테이블이 필요합니다.");
         }
 
         @Test
@@ -80,7 +81,8 @@ class TableGroupServiceTest extends ServiceTest {
 
             // when && then
             assertThatThrownBy(() -> tableGroupService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("테이블 그룹은 최소 2개 이상의 테이블이 필요합니다.");
         }
 
         @Test
@@ -119,12 +121,12 @@ class TableGroupServiceTest extends ServiceTest {
             OrderTable orderTableA = orderTableRepository.save(new OrderTable(2, true));
             OrderTable orderTableB = orderTableRepository.save(new OrderTable(3, true));
 
-            orderDao.save(
+            orderRepository.save(
                 new Order(orderTableA.getId(), OrderStatus.COMPLETION, LocalDateTime.now(), Collections.emptyList()));
-            orderDao.save(
+            orderRepository.save(
                 new Order(orderTableB.getId(), OrderStatus.COMPLETION, LocalDateTime.now(), Collections.emptyList()));
             TableGroup tableGroup = tableGroupService.create(new TableGroupCreateRequest(
-                List.of(new OrderTableDto(orderTableA.getId()),new OrderTableDto(orderTableB.getId()))));
+                List.of(new OrderTableDto(orderTableA.getId()), new OrderTableDto(orderTableB.getId()))));
 
             // when
             assertDoesNotThrow(() -> tableGroupService.ungroup(tableGroup.getId()));
@@ -136,12 +138,12 @@ class TableGroupServiceTest extends ServiceTest {
             // given
             OrderTable orderTableA = orderTableRepository.save(new OrderTable(2, true));
             OrderTable orderTableB = orderTableRepository.save(new OrderTable(3, true));
-            orderDao.save(
+            orderRepository.save(
                 new Order(orderTableA.getId(), orderStatus, LocalDateTime.now(), Collections.emptyList()));
-            orderDao.save(
+            orderRepository.save(
                 new Order(orderTableB.getId(), orderStatus, LocalDateTime.now(), Collections.emptyList()));
             TableGroup tableGroup = tableGroupService.create(new TableGroupCreateRequest(
-                List.of(new OrderTableDto(orderTableA.getId()),new OrderTableDto(orderTableB.getId()))));
+                List.of(new OrderTableDto(orderTableA.getId()), new OrderTableDto(orderTableB.getId()))));
 
             // when && then
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))

@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.persistence.OrderRepository;
 import kitchenpos.persistence.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,18 +21,18 @@ import org.springframework.util.CollectionUtils;
 public class OrderService {
 
     private final MenuDao menuDao;
-    private final OrderDao orderDao;
+    private final OrderRepository orderRepository;
     private final OrderLineItemDao orderLineItemDao;
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(
         final MenuDao menuDao,
-        final OrderDao orderDao,
+        final OrderRepository orderRepository,
         final OrderLineItemDao orderLineItemDao,
         final OrderTableRepository orderTableRepository
     ) {
         this.menuDao = menuDao;
-        this.orderDao = orderDao;
+        this.orderRepository = orderRepository;
         this.orderLineItemDao = orderLineItemDao;
         this.orderTableRepository = orderTableRepository;
     }
@@ -63,10 +63,10 @@ public class OrderService {
         }
 
         order.setOrderTableId(orderTable.getId());
-        order.setOrderStatus(OrderStatus.COOKING.name());
+        order.setOrderStatus(OrderStatus.COOKING);
         order.setOrderedTime(LocalDateTime.now());
 
-        final Order savedOrder = orderDao.save(order);
+        final Order savedOrder = orderRepository.save(order);
 
         final Long orderId = savedOrder.getId();
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
@@ -80,7 +80,7 @@ public class OrderService {
     }
 
     public List<Order> list() {
-        final List<Order> orders = orderDao.findAll();
+        final List<Order> orders = orderRepository.findAll();
 
         for (final Order order : orders) {
             order.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
@@ -91,17 +91,17 @@ public class OrderService {
 
     @Transactional
     public Order changeOrderStatus(Long orderId, OrderStatus changedOrderStatus) {
-        Order savedOrder = orderDao.findById(orderId)
+        Order savedOrder = orderRepository.findById(orderId)
             .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
+        if (Objects.equals(OrderStatus.COMPLETION, savedOrder.getOrderStatus())) {
             throw new IllegalArgumentException();
         }
 
         OrderStatus orderStatus = OrderStatus.valueOf(changedOrderStatus.name());
-        savedOrder.setOrderStatus(orderStatus.name());
+        savedOrder.setOrderStatus(orderStatus);
 
-        orderDao.save(savedOrder);
+        orderRepository.save(savedOrder);
 
         savedOrder.setOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
 

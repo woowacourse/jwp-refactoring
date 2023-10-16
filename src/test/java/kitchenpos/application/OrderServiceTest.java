@@ -13,13 +13,13 @@ import java.util.Collections;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.persistence.OrderRepository;
 import kitchenpos.persistence.OrderTableRepository;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +42,7 @@ class OrderServiceTest extends ServiceTest {
     private MenuDao menuDao;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
     private OrderTableRepository orderTableRepository;
@@ -65,11 +65,7 @@ class OrderServiceTest extends ServiceTest {
         void 성공() {
             // given
             Long orderTableId = orderTableRepository.save(new OrderTable(5, false)).getId();
-            Order order = new Order(
-                orderTableId,
-                COMPLETION,
-                null,
-                Arrays.asList(new OrderLineItem(menu.getId(), 2)));
+            Order order = new Order(orderTableId, COMPLETION, null, List.of(new OrderLineItem(menu.getId(), 2)));
 
             // when
             Order actual = orderService.create(order);
@@ -133,13 +129,13 @@ class OrderServiceTest extends ServiceTest {
         // given
         List<Order> expected = new ArrayList<>();
         Long orderTableIdA = orderTableRepository.save(new OrderTable(5, true)).getId();
-        expected.add(orderDao.save(new Order(orderTableIdA, COOKING, Collections.emptyList())));
+        expected.add(orderRepository.save(new Order(orderTableIdA, COOKING, Collections.emptyList())));
 
         Long orderTableIdB = orderTableRepository.save(new OrderTable(5, true)).getId();
-        expected.add(orderDao.save(new Order(orderTableIdB, COOKING, Collections.emptyList())));
+        expected.add(orderRepository.save(new Order(orderTableIdB, COOKING, Collections.emptyList())));
 
         Long orderTableIdC = orderTableRepository.save(new OrderTable(5, true)).getId();
-        expected.add(orderDao.save(new Order(orderTableIdC, COOKING, Collections.emptyList())));
+        expected.add(orderRepository.save(new Order(orderTableIdC, COOKING, Collections.emptyList())));
 
         // when
         List<Order> actual = orderService.list();
@@ -157,21 +153,21 @@ class OrderServiceTest extends ServiceTest {
         void 변경_성공(OrderStatus originStatus, OrderStatus changedStatus) {
             // given
             Long orderTableIdA = orderTableRepository.save(new OrderTable(5, true)).getId();
-            Long orderId = orderDao.save(new Order(orderTableIdA, originStatus, Collections.emptyList()))
+            Long orderId = orderRepository.save(new Order(orderTableIdA, originStatus, Collections.emptyList()))
                 .getId();
 
             // when
             Order actual = orderService.changeOrderStatus(orderId, changedStatus);
 
             // then
-            assertThat(actual.getOrderStatus()).isEqualTo(changedStatus.name());
+            assertThat(actual.getOrderStatus()).isEqualTo(changedStatus);
         }
 
         @Test
         void 바꿀려는_주문의_상태가_완료면_예외() {
             // given
             Long orderTableIdA = orderTableRepository.save(new OrderTable(5, true)).getId();
-            Long orderId = orderDao.save(new Order(orderTableIdA, COMPLETION, Collections.emptyList()))
+            Long orderId = orderRepository.save(new Order(orderTableIdA, COMPLETION, Collections.emptyList()))
                 .getId();
 
             // when && then

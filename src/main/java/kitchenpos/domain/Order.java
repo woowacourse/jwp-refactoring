@@ -18,7 +18,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long orderTableId;
-    private String orderStatus;
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
 
     @OneToMany
@@ -29,19 +29,15 @@ public class Order {
     }
 
     public Order(Long orderTableId, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, orderStatus.name(), LocalDateTime.now(), orderLineItems);
+        this(null, orderTableId, orderStatus, LocalDateTime.now(), orderLineItems);
     }
 
     public Order(Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
                  List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, orderStatus.name(), orderedTime, orderLineItems);
-    }
-
-    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
-    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
+    public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
                  List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
@@ -66,11 +62,11 @@ public class Order {
         this.orderTableId = orderTableId;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(final String orderStatus) {
+    public void setOrderStatus(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
 

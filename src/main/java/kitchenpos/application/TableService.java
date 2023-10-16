@@ -1,11 +1,10 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
 import java.util.List;
 import kitchenpos.application.request.OrderTableCreateRequest;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.persistence.OrderRepository;
 import kitchenpos.persistence.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,11 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableService {
 
-    private final OrderDao orderDao;
+    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(OrderDao orderDao, OrderTableRepository orderTableRepository) {
-        this.orderDao = orderDao;
+    public TableService(OrderRepository orderRepository, OrderTableRepository orderTableRepository) {
+        this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -35,8 +34,8 @@ public class TableService {
         OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
 
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-            orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
+            orderTableId, List.of(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
 
