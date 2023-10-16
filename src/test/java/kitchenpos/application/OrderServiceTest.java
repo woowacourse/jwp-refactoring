@@ -14,13 +14,13 @@ import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.persistence.OrderTableRepository;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -45,7 +45,7 @@ class OrderServiceTest extends ServiceTest {
     private OrderDao orderDao;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private OrderService orderService;
@@ -64,7 +64,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 성공() {
             // given
-            Long orderTableId = orderTableDao.save(new OrderTable(5, false)).getId();
+            Long orderTableId = orderTableRepository.save(new OrderTable(5, false)).getId();
             Order order = new Order(
                 orderTableId,
                 COMPLETION,
@@ -85,7 +85,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 오더라인_아이템이_없으면_예외() {
             // given
-            Long orderTableId = orderTableDao.save(new OrderTable(5, false)).getId();
+            Long orderTableId = orderTableRepository.save(new OrderTable(5, false)).getId();
             Order order = new Order(
                 orderTableId,
                 COMPLETION,
@@ -100,7 +100,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 주문한_메뉴가_없는_메뉴가_있으면_예외() {
             // given
-            Long orderTableId = orderTableDao.save(new OrderTable(5, false)).getId();
+            Long orderTableId = orderTableRepository.save(new OrderTable(5, false)).getId();
             Order order = new Order(
                 orderTableId,
                 COMPLETION,
@@ -115,7 +115,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 주문테이블이_비어있으면_예외() {
             // given
-            Long orderTableId = orderTableDao.save(new OrderTable(5, true)).getId();
+            Long orderTableId = orderTableRepository.save(new OrderTable(5, true)).getId();
             Order order = new Order(
                 orderTableId,
                 COMPLETION,
@@ -132,13 +132,13 @@ class OrderServiceTest extends ServiceTest {
     void 주문_목록을_조회한다() {
         // given
         List<Order> expected = new ArrayList<>();
-        Long orderTableIdA = orderTableDao.save(new OrderTable(5, true)).getId();
+        Long orderTableIdA = orderTableRepository.save(new OrderTable(5, true)).getId();
         expected.add(orderDao.save(new Order(orderTableIdA, COOKING, Collections.emptyList())));
 
-        Long orderTableIdB = orderTableDao.save(new OrderTable(5, true)).getId();
+        Long orderTableIdB = orderTableRepository.save(new OrderTable(5, true)).getId();
         expected.add(orderDao.save(new Order(orderTableIdB, COOKING, Collections.emptyList())));
 
-        Long orderTableIdC = orderTableDao.save(new OrderTable(5, true)).getId();
+        Long orderTableIdC = orderTableRepository.save(new OrderTable(5, true)).getId();
         expected.add(orderDao.save(new Order(orderTableIdC, COOKING, Collections.emptyList())));
 
         // when
@@ -156,7 +156,7 @@ class OrderServiceTest extends ServiceTest {
         @CsvSource(value = {"COOKING : MEAL", "MEAL : COOKING"}, delimiter = ':')
         void 변경_성공(OrderStatus originStatus, OrderStatus changedStatus) {
             // given
-            Long orderTableIdA = orderTableDao.save(new OrderTable(5, true)).getId();
+            Long orderTableIdA = orderTableRepository.save(new OrderTable(5, true)).getId();
             Long orderId = orderDao.save(new Order(orderTableIdA, originStatus, Collections.emptyList()))
                 .getId();
 
@@ -170,7 +170,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 바꿀려는_주문의_상태가_완료면_예외() {
             // given
-            Long orderTableIdA = orderTableDao.save(new OrderTable(5, true)).getId();
+            Long orderTableIdA = orderTableRepository.save(new OrderTable(5, true)).getId();
             Long orderId = orderDao.save(new Order(orderTableIdA, COMPLETION, Collections.emptyList()))
                 .getId();
 

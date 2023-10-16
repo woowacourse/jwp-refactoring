@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.persistence.ProductRepository;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 class ProductServiceTest extends ServiceTest {
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
     private ProductService productService;
@@ -48,9 +48,9 @@ class ProductServiceTest extends ServiceTest {
     void 모든_상품_조회() {
         // given
         List<Product> expected = new ArrayList<>();
-        expected.add(productDao.save(new Product("고추바사삭", 10000L)));
-        expected.add(productDao.save(new Product("뿌링클", 20000L)));
-        expected.add(productDao.save(new Product("맛초킹", 3000L)));
+        expected.add(productRepository.save(new Product("고추바사삭", 10000L)));
+        expected.add(productRepository.save(new Product("뿌링클", 20000L)));
+        expected.add(productRepository.save(new Product("맛초킹", 3000L)));
 
         // when
         List<Product> actual = productService.list();

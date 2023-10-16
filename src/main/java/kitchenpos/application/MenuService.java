@@ -7,10 +7,10 @@ import kitchenpos.application.request.MenuCreateRequest;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.persistence.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,18 +20,18 @@ public class MenuService {
     private MenuDao menuDao;
     private MenuGroupDao menuGroupDao;
     private MenuProductDao menuProductDao;
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     public MenuService(
         MenuDao menuDao,
         MenuGroupDao menuGroupDao,
         MenuProductDao menuProductDao,
-        ProductDao productDao
+        ProductRepository productRepository
     ) {
         this.menuDao = menuDao;
         this.menuGroupDao = menuGroupDao;
         this.menuProductDao = menuProductDao;
-        this.productDao = productDao;
+        this.productRepository = productRepository;
     }
 
     @Transactional
@@ -46,7 +46,7 @@ public class MenuService {
 
         BigDecimal sum = BigDecimal.ZERO;
         for (MenuProduct menuProduct : menuProducts) {
-            Product product = productDao.findById(menuProduct.getProductId())
+            Product product = productRepository.findById(menuProduct.getProductId())
                 .orElseThrow(IllegalArgumentException::new);
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }

@@ -36,6 +36,7 @@ public class Menu {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
+
         this.id = id;
         this.name = name;
         this.price = price;

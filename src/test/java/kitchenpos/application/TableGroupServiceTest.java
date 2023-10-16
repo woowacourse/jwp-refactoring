@@ -11,11 +11,11 @@ import java.util.List;
 import kitchenpos.application.request.OrderTableDto;
 import kitchenpos.application.request.TableGroupCreateRequest;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.persistence.OrderTableRepository;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -33,7 +33,7 @@ class TableGroupServiceTest extends ServiceTest {
     private OrderDao orderDao;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private TableGroupService tableGroupService;
@@ -116,8 +116,8 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void 성공() {
             // given
-            OrderTable orderTableA = orderTableDao.save(new OrderTable(2, true));
-            OrderTable orderTableB = orderTableDao.save(new OrderTable(3, true));
+            OrderTable orderTableA = orderTableRepository.save(new OrderTable(2, true));
+            OrderTable orderTableB = orderTableRepository.save(new OrderTable(3, true));
 
             orderDao.save(
                 new Order(orderTableA.getId(), OrderStatus.COMPLETION, LocalDateTime.now(), Collections.emptyList()));
@@ -134,8 +134,8 @@ class TableGroupServiceTest extends ServiceTest {
         @ValueSource(strings = {"COOKING", "MEAL"})
         void 해당하는_테이블의_주문이_요리중이거나_식사중이면_예외(OrderStatus orderStatus) {
             // given
-            OrderTable orderTableA = orderTableDao.save(new OrderTable(2, true));
-            OrderTable orderTableB = orderTableDao.save(new OrderTable(3, true));
+            OrderTable orderTableA = orderTableRepository.save(new OrderTable(2, true));
+            OrderTable orderTableB = orderTableRepository.save(new OrderTable(3, true));
             orderDao.save(
                 new Order(orderTableA.getId(), orderStatus, LocalDateTime.now(), Collections.emptyList()));
             orderDao.save(
@@ -151,7 +151,7 @@ class TableGroupServiceTest extends ServiceTest {
     }
 
     private OrderTableDto getPersistOrderTableRequest(int numberOfGuests, boolean empty) {
-        OrderTable orderTable = orderTableDao.save(new OrderTable(numberOfGuests, empty));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(numberOfGuests, empty));
         return new OrderTableDto(orderTable.getId());
     }
 }

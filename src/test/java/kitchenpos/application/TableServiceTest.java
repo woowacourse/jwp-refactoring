@@ -9,12 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.application.request.OrderTableCreateRequest;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.persistence.OrderTableRepository;
+import kitchenpos.persistence.TableGroupRepository;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -32,10 +32,10 @@ class TableServiceTest extends ServiceTest {
     private OrderDao orderDao;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
     private TableService tableService;
@@ -60,9 +60,9 @@ class TableServiceTest extends ServiceTest {
     void 모든_주문_테이블_조회() {
         // given
         List<OrderTable> expected = new ArrayList<>();
-        expected.add(orderTableDao.save(new OrderTable(3, true)));
-        expected.add(orderTableDao.save(new OrderTable(4, false)));
-        expected.add(orderTableDao.save(new OrderTable(2, true)));
+        expected.add(orderTableRepository.save(new OrderTable(3, true)));
+        expected.add(orderTableRepository.save(new OrderTable(4, false)));
+        expected.add(orderTableRepository.save(new OrderTable(2, true)));
 
         // when
         List<OrderTable> actual = tableService.list();
@@ -79,7 +79,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 이용가능에서_사용중으로_변경() {
             // given
-            Long givenId = orderTableDao.save(new OrderTable(5, false)).getId();
+            Long givenId = orderTableRepository.save(new OrderTable(5, false)).getId();
 
             // when
             OrderTable actual = tableService.changeEmpty(givenId, true);
@@ -91,7 +91,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 사용중에서_이용가능으로_변경() {
             // given
-            Long givenId = orderTableDao.save(new OrderTable(5, true)).getId();
+            Long givenId = orderTableRepository.save(new OrderTable(5, true)).getId();
 
             // when
             OrderTable actual = tableService.changeEmpty(givenId, false);
@@ -110,8 +110,8 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 특정_테이블그룹에_속한다면_예외() {
             // given
-            Long tableGroupId = tableGroupDao.save(new TableGroup()).getId();
-            Long givenId = orderTableDao.save(new OrderTable(tableGroupId,3, true)).getId();
+            Long tableGroupId = tableGroupRepository.save(new TableGroup()).getId();
+            Long givenId = orderTableRepository.save(new OrderTable(tableGroupId,3, true)).getId();
 
             // when && then
             assertThatThrownBy(() -> tableService.changeEmpty(givenId, false))
@@ -123,7 +123,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 해당하는_주문테이블의_주문이_요리중이면_예외() {
             // given
-            Long givenId = orderTableDao.save(new OrderTable(5, true)).getId();
+            Long givenId = orderTableRepository.save(new OrderTable(5, true)).getId();
             orderDao.save(new Order(givenId, OrderStatus.COOKING, LocalDateTime.now(), null));
 
             // when && then
@@ -134,7 +134,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 해당하는_주문테이블의_주문이_식사중이면_예외() {
             // given
-            Long givenId = orderTableDao.save(new OrderTable(5, true)).getId();
+            Long givenId = orderTableRepository.save(new OrderTable(5, true)).getId();
             orderDao.save(new Order(givenId, OrderStatus.MEAL, LocalDateTime.now(), null));
 
             // when && then
@@ -150,7 +150,7 @@ class TableServiceTest extends ServiceTest {
         @ValueSource(ints = {1, 2, 3})
         void 성공(int changedNumberOfGuests) {
             // given
-            Long givenId = orderTableDao.save(new OrderTable(5, false)).getId();
+            Long givenId = orderTableRepository.save(new OrderTable(5, false)).getId();
 
             // when
             OrderTable actual = tableService.changeNumberOfGuests(givenId, changedNumberOfGuests);
@@ -163,7 +163,7 @@ class TableServiceTest extends ServiceTest {
         @ValueSource(ints = {-100, -1})
         void 변경할려는_방문자수가_음수면_예외(int wrongValue) {
             // given
-            Long givenId = orderTableDao.save(new OrderTable(5, false)).getId();
+            Long givenId = orderTableRepository.save(new OrderTable(5, false)).getId();
 
             // when & then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(givenId, wrongValue))
@@ -184,7 +184,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 주문테이블이_비어있으면_예외() {
             // given
-            Long givenId = orderTableDao.save(new OrderTable(5, true)).getId();
+            Long givenId = orderTableRepository.save(new OrderTable(5, true)).getId();
 
             // when & then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(givenId, 4))
