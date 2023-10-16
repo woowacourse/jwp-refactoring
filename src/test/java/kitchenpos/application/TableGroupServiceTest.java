@@ -4,19 +4,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.dao.TableGroupRepository;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.EnumSource.Mode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
@@ -38,6 +45,12 @@ class TableGroupServiceTest {
 
     @Autowired
     private TableGroupRepository tableGroupRepository;
+
+    @Autowired
+    private MenuRepository menuRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     @DisplayName("주문 테이블이 2개 미만이면, 주문 테이블 그룹을 생성할 수 없다.")
     @Test
@@ -148,17 +161,22 @@ class TableGroupServiceTest {
     }
 
     @ParameterizedTest(name = "완료(COMPLETION)되지 않은 상태의 테이블이 존재할 경우, 삭제할 수 없다.")
-    @ValueSource(strings = {"COOKING", "MEAL"})
-    void ungroupFailTest_ByTableOrderStatusIsNotCompletion(String status) {
-        OrderTable savedOrderTable1 = saveOrderTableForEmpty(true);
-        OrderTable savedOrderTable2 = saveOrderTableForEmpty(true);
+    @EnumSource(mode = Mode.INCLUDE, names = {"COOKING", "MEAL"})
+    void ungroupFailTest_ByTableOrderStatusIsNotCompletion(OrderStatus status) {
+        OrderTable savedOrderTable1 = saveOrderTableForEmpty(false);
+        OrderTable savedOrderTable2 = saveOrderTableForEmpty(false);
+//        Menu menu = saveMenu();
 
-        Order order = new Order();
-        order.setOrderStatus(OrderStatus.valueOf(status));
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderTable(savedOrderTable1);
+        OrderLineItem orderLineItem = new OrderLineItem();
+//        orderLineItem.setMenu(menu);
+//        orderLineItem.setQuantity(1L);
+        Order order = Order.of(status, savedOrderTable1, List.of(orderLineItem));
+//        orderLineItem.setOrder(order);
 
         orderRepository.save(order);
+
+        savedOrderTable1.setEmpty(true);
+        savedOrderTable2.setEmpty(true);
 
         TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(List.of(savedOrderTable1, savedOrderTable2));
@@ -173,13 +191,15 @@ class TableGroupServiceTest {
     @DisplayName("그룹을 해제하면, 각 주문 테이블은 해당 그룹에 속하지 않고, 주문이 가능한 상태(Not Empty)로 변한다.")
     @Test
     void ungroupSuccessTest_InitializeRelatedData() {
-        OrderTable savedOrderTable1 = saveOrderTableForEmpty(true);
-        OrderTable savedOrderTable2 = saveOrderTableForEmpty(true);
+        OrderTable savedOrderTable1 = saveOrderTableForEmpty(false);
+        OrderTable savedOrderTable2 = saveOrderTableForEmpty(false);
 
-        Order order = new Order();
-        order.setOrderStatus(OrderStatus.COMPLETION);
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderTable(savedOrderTable1);
+        OrderLineItem orderLineItem = new OrderLineItem();
+
+        Order order = Order.of(OrderStatus.COMPLETION, savedOrderTable1,List.of(orderLineItem));
+
+        savedOrderTable1.setEmpty(true);
+        savedOrderTable2.setEmpty(true);
 
         orderRepository.save(order);
 
@@ -203,6 +223,20 @@ class TableGroupServiceTest {
         orderTable.setEmpty(empty);
 
         return orderTableRepository.save(orderTable);
+    }
+
+    private Menu saveMenu() {
+        Menu menu = Menu.of("TestMenu", BigDecimal.TEN, MenuGroup.from("TestMenuGroup"));
+
+        return menuRepository.save(menu);
+    }
+
+    private OrderLineItem createOrderLineItem(Menu menu, Order order) {
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setMenu(menu);
+        orderLineItem.setOrder(order);
+
+        return orderLineItem;
     }
 
 }

@@ -9,12 +9,15 @@ import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.EnumSource.Mode;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -101,17 +104,15 @@ class TableServiceTest {
 
 
     @ParameterizedTest(name = "완료(COMPLETION)되지 않은 상태(COOKING, MEAL)의 주문이 있는 경우, 변경할 수 없다.")
-    @ValueSource(strings = {"COOKING", "MEAL"})
-    void changeEmptyFailTest_ByOrderStatusIsNotCompletion(String orderStatus) {
+    @EnumSource(mode = Mode.INCLUDE, names = {"COOKING", "MEAL"})
+    void changeEmptyFailTest_ByOrderStatusIsNotCompletion(OrderStatus orderStatus) {
         //given
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(false);
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        Order order = new Order();
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderStatus(OrderStatus.valueOf(orderStatus));
-        order.setOrderTable(savedOrderTable);
+        Order order = Order.of(orderStatus, orderTable, List.of(new OrderLineItem()));
+
         orderRepository.save(order);
 
         assertThat(order.getOrderStatus()).isNotEqualTo(OrderStatus.COMPLETION);
@@ -128,14 +129,13 @@ class TableServiceTest {
     void changeEmptySuccessTest() {
         //given
         OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
+        orderTable.setEmpty(false);
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        Order order = new Order();
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderStatus(OrderStatus.COMPLETION);
-        order.setOrderTable(savedOrderTable);
+        Order order = Order.of(OrderStatus.COMPLETION, orderTable, List.of(new OrderLineItem()));
         orderRepository.save(order);
+
+        orderTable.setEmpty(true);
 
         OrderTable findOrderTable = orderTableRepository.findById(savedOrderTable.getId()).get();
         assertThat(findOrderTable.isEmpty()).isTrue();

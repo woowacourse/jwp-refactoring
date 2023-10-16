@@ -4,8 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.dao.MenuGroupRepository;
@@ -19,7 +17,6 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,24 +47,6 @@ class OrderServiceTest {
     @Autowired
     private OrderRepository orderRepository;
 
-    private Order order;
-
-    @BeforeEach
-    void setup() {
-        order = new Order();
-    }
-
-    @DisplayName("주문 메뉴(내역)가 비어있을 경우, 생성할 수 없다.")
-    @Test
-    void createFailTest_ByOrderLineItemIsEmpty() {
-        //given
-        order.setOrderLineItems(Collections.emptyList());
-
-        //when then
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @DisplayName("주문 하려는 메뉴가 존재하지 않을 경우, 생성할 수 없다.")
     @Test
     void createFailTest_ByOrderLineItemIsNotExists() {
@@ -75,9 +54,9 @@ class OrderServiceTest {
         Long invalidId = 99L;
 
         Menu menu = Menu.of("TestMenu", BigDecimal.TEN, MenuGroup.from("TestMenuGroup"));
-
         OrderLineItem orderLineItem = createOrderLineItem(menu);
-        order.setOrderLineItems(List.of(orderLineItem));
+
+        Order order = Order.createNewOrder(new OrderTable(), List.of(orderLineItem));
 
         assertThat(menuRepository.findById(invalidId)).isEmpty();
 
@@ -90,19 +69,13 @@ class OrderServiceTest {
     @Test
     void createFailTest_ByOrderTableIsNotExists() {
         //given
-        Long invalidId = 99L;
-
         Menu menu = saveMenu();
         OrderLineItem orderLineItem = createOrderLineItem(menu);
 
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(invalidId);
-
-        order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderTable(orderTable);
+        Order order = Order.createNewOrder(new OrderTable(), List.of(orderLineItem));
 
         assertThat(menuRepository.findById(menu.getId())).isPresent();
-        assertThat(orderTableRepository.findById(invalidId)).isEmpty();
+        assertThat(order.getOrderTable().getId()).isNull();
 
         //when then
         assertThatThrownBy(() -> orderService.create(order))
@@ -114,12 +87,13 @@ class OrderServiceTest {
     void createFailTest_ByOrderTableIsEmpty() {
         //given
         Menu menu = saveMenu();
-        OrderTable savedOrderTable = saveOrderTableForEmpty(true);
+        OrderTable savedOrderTable = saveOrderTableForEmpty(false);
 
         OrderLineItem orderLineItem = createOrderLineItem(menu);
 
-        order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderTable(savedOrderTable);
+        Order order = Order.createNewOrder(new OrderTable(), List.of(orderLineItem));
+
+        savedOrderTable.setEmpty(true);
 
         assertThat(menuRepository.findById(menu.getId())).isPresent();
         assertThat(orderTableRepository.findById(savedOrderTable.getId())).isPresent();
@@ -136,13 +110,10 @@ class OrderServiceTest {
         //given
         Menu menu = saveMenu();
         OrderTable savedOrderTable = saveOrderTableForEmpty(false);
-
         OrderLineItem orderLineItem = createOrderLineItem(menu);
 
-        order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderTable(savedOrderTable);
+        Order order = Order.createNewOrder(savedOrderTable, List.of(orderLineItem));
 
-        assertThat(order.getOrderStatus()).isNull();
         assertThat(order.getOrderedTime()).isNull();
 
         //when
@@ -150,7 +121,6 @@ class OrderServiceTest {
 
         //then
         assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
-        assertThat(order.getOrderedTime()).isNotNull();
     }
 
     @DisplayName("주문이 생성될 때, 주문에 포함된 메뉴들도 저장된다.")
@@ -159,11 +129,9 @@ class OrderServiceTest {
         //given
         Menu menu = saveMenu();
         OrderTable savedOrderTable = saveOrderTableForEmpty(false);
-
         OrderLineItem orderLineItem = createOrderLineItem(menu);
 
-        order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderTable(savedOrderTable);
+        Order order = Order.createNewOrder(savedOrderTable, List.of(orderLineItem));
 
         Optional<OrderLineItem> findOrderLineItemBeforeCreatingOrder = orderLineItemRepository.findAll()
                 .stream()
@@ -192,8 +160,7 @@ class OrderServiceTest {
         OrderTable savedOrderTable = saveOrderTableForEmpty(false);
         OrderLineItem orderLineItem = createOrderLineItem(menu);
 
-        order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderTable(savedOrderTable);
+        Order order = Order.createNewOrder(savedOrderTable, List.of(orderLineItem));
 
         Order savedOrder = orderService.create(order);
 
@@ -229,13 +196,9 @@ class OrderServiceTest {
         OrderTable savedOrderTable = saveOrderTableForEmpty(false);
         OrderLineItem orderLineItem = createOrderLineItem(menu);
 
-        order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderTable(savedOrderTable);
-        order.setOrderStatus(OrderStatus.COMPLETION);
-        order.setOrderedTime(LocalDateTime.now());
+        Order order = Order.of(OrderStatus.COMPLETION, savedOrderTable, List.of(orderLineItem));
 
         //when then
-        Order otherOrder = new Order();
         Long savedOrderId = orderRepository.save(order).getId();
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrderId, OrderStatus.COMPLETION))
@@ -250,10 +213,7 @@ class OrderServiceTest {
         OrderTable savedOrderTable = saveOrderTableForEmpty(false);
         OrderLineItem orderLineItem = createOrderLineItem(menu);
 
-        order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderTable(savedOrderTable);
-        order.setOrderStatus(OrderStatus.COOKING);
-        order.setOrderedTime(LocalDateTime.now());
+        Order order = Order.createNewOrder(savedOrderTable, List.of(orderLineItem));
 
         Long savedOrderId = orderRepository.save(order).getId();
 

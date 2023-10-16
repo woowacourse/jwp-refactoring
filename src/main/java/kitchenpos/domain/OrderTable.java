@@ -16,7 +16,7 @@ public class OrderTable {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "table_group_id", nullable = false)
+    @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
 
     @NotNull

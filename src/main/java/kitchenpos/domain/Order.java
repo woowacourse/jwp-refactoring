@@ -1,8 +1,8 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
@@ -12,7 +12,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -33,53 +32,82 @@ public class Order {
     @JoinColumn(name = "order_table_id")
     private OrderTable orderTable;
 
+    @Embedded
+    private OrderLineItems orderLineItems;
+
     @CreatedDate
     @NotNull
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order")
-    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+    protected Order() {
+    }
 
-    public Order() {
+    private Order(
+            OrderStatus orderStatus,
+            OrderTable orderTable,
+            OrderLineItems orderLineItems
+    ) {
+        this.orderStatus = orderStatus;
+        this.orderTable = orderTable;
+        this.orderLineItems = orderLineItems;
+    }
+
+    public static Order of(
+            OrderStatus orderStatus,
+            OrderTable orderTable,
+            List<OrderLineItem> orderLineItems) {
+        validateOrderTable(orderTable);
+
+        return new Order(orderStatus, orderTable, OrderLineItems.from(orderLineItems));
+    }
+
+    public static Order createNewOrder(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+        validateOrderTable(orderTable);
+
+        return new Order(OrderStatus.COOKING, orderTable, OrderLineItems.from(orderLineItems));
+    }
+
+
+    private static void validateOrderTable(OrderTable orderTable) {
+        if (orderTable == null) {
+            throw new NullPointerException();
+        }
+
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void changeOrderStatus(OrderStatus orderStatus) {
+        if (OrderStatus.COMPLETION.equals(this.orderStatus)) {
+            throw new IllegalArgumentException();
+        }
+
+        this.orderStatus = orderStatus;
+    }
+
+    public void addOrderLineItem(OrderLineItem orderLineItem) {
+        orderLineItems.add(orderLineItem);
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public OrderStatus getOrderStatus() {
         return orderStatus;
-    }
-
-    public void setOrderStatus(OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
     }
 
     public OrderTable getOrderTable() {
         return orderTable;
     }
 
-    public void setOrderTable(OrderTable orderTable) {
-        this.orderTable = orderTable;
+    public List<OrderLineItem> getOrderLineItems() {
+        return orderLineItems.getOrderLineItems();
     }
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
     }
 
-    public void setOrderedTime(LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
-    }
-
-    public void setOrderLineItems(List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
-    }
 }
