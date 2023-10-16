@@ -20,6 +20,10 @@ import kitchenpos.exception.OrderIsCompletedException;
 import kitchenpos.exception.OrderLineEmptyException;
 import kitchenpos.exception.OrderNotFoundException;
 import kitchenpos.exception.OrderTableNotFoundException;
+import kitchenpos.fixture.MenuFixture;
+import kitchenpos.fixture.MenuGroupFixture;
+import kitchenpos.fixture.OrderFixture;
+import kitchenpos.fixture.OrderTableFixture;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +33,7 @@ class OrderServiceTest extends ServiceTestContext {
     @Test
     void 주문_항목이_없다면_예외를_던진다() {
         // given
-        OrderTable orderTable = new OrderTable(null, 1, false);
+        OrderTable orderTable = OrderTableFixture.of(null, 1, false);
         orderTableRepository.save(orderTable);
 
         CreateOrderRequest request = new CreateOrderRequest(orderTable.getId(),
@@ -43,7 +47,7 @@ class OrderServiceTest extends ServiceTestContext {
     @Test
     void 주문_항목의_메뉴가_존재하지_않는다면_예외를_던진다() {
         // given
-        OrderTable orderTable = new OrderTable(null, 1, false);
+        OrderTable orderTable = OrderTableFixture.of(null, 1, false);
         orderTableRepository.save(orderTable);
 
         CreateOrderRequest request = new CreateOrderRequest(orderTable.getId(),
@@ -57,8 +61,8 @@ class OrderServiceTest extends ServiceTestContext {
     @Test
     void 주문_테이블이_존재하지_않는다면_예외를_던진다() {
         // given
-        MenuGroup menuGroup = new MenuGroup("name");
-        Menu menu = new Menu("name", BigDecimal.valueOf(1000L), menuGroup);
+        MenuGroup menuGroup = MenuGroupFixture.from("name");
+        Menu menu = MenuFixture.of("name", BigDecimal.valueOf(1000L), menuGroup);
 
         menuGroupRepository.save(menuGroup);
         menuRepository.save(menu);
@@ -74,9 +78,9 @@ class OrderServiceTest extends ServiceTestContext {
     @Test
     void 주문은_생성되면_COOKING_상태로_설정된다() {
         // given
-        MenuGroup menuGroup = new MenuGroup("name");
-        Menu menu = new Menu("name", BigDecimal.valueOf(1000L), menuGroup);
-        OrderTable orderTable = new OrderTable(null, 1, false);
+        MenuGroup menuGroup = MenuGroupFixture.from("name");
+        Menu menu = MenuFixture.of("name", BigDecimal.valueOf(1000L), menuGroup);
+        OrderTable orderTable = OrderTableFixture.of(null, 1, false);
 
         menuGroupRepository.save(menuGroup);
         menuRepository.save(menu);
@@ -95,9 +99,9 @@ class OrderServiceTest extends ServiceTestContext {
     @Test
     void 주문을_정상적으로_생성하는_경우_생성한_주문이_반환된다() {
         // given
-        MenuGroup menuGroup = new MenuGroup("name");
-        Menu menu = new Menu("name", BigDecimal.valueOf(1000L), menuGroup);
-        OrderTable orderTable = new OrderTable(null, 1, false);
+        MenuGroup menuGroup = MenuGroupFixture.from("name");
+        Menu menu = MenuFixture.of("name", BigDecimal.valueOf(1000L), menuGroup);
+        OrderTable orderTable = OrderTableFixture.of(null, 1, false);
 
         menuGroupRepository.save(menuGroup);
         menuRepository.save(menu);
@@ -116,9 +120,9 @@ class OrderServiceTest extends ServiceTestContext {
     @Test
     void 전체_주문을_조회할_수_있다() {
         // given
-        MenuGroup menuGroup = new MenuGroup("name");
-        Menu menu = new Menu("name", BigDecimal.valueOf(1000L), menuGroup);
-        OrderTable orderTable = new OrderTable(null, 1, false);
+        MenuGroup menuGroup = MenuGroupFixture.from("name");
+        Menu menu = MenuFixture.of("name", BigDecimal.valueOf(1000L), menuGroup);
+        OrderTable orderTable = OrderTableFixture.of(null, 1, false);
 
         menuGroupRepository.save(menuGroup);
         menuRepository.save(menu);
@@ -150,8 +154,8 @@ class OrderServiceTest extends ServiceTestContext {
     @Test
     void 이미_완료된_주문이라면_상태를_변경할_수_없다() {
         // given
-        OrderTable orderTable = new OrderTable(null, 1, false);
-        Order order = new Order(orderTable, OrderStatus.MEAL, LocalDateTime.now());
+        OrderTable orderTable = OrderTableFixture.of(null, 1, false);
+        Order order = OrderFixture.of(orderTable, OrderStatus.MEAL, LocalDateTime.now());
 
         orderTableRepository.save(orderTable);
         orderRepository.save(order);
@@ -167,8 +171,8 @@ class OrderServiceTest extends ServiceTestContext {
     @Test
     void 주문을_정상적으로_변경하는_경우_변경한_주문이_반환된다() {
         // given
-        OrderTable orderTable = new OrderTable(null, 1, false);
-        Order order = new Order(orderTable, OrderStatus.MEAL, LocalDateTime.now());
+        OrderTable orderTable = OrderTableFixture.of(null, 1, false);
+        Order order = OrderFixture.of(orderTable, OrderStatus.MEAL, LocalDateTime.now());
 
         orderTableRepository.save(orderTable);
         orderRepository.save(order);

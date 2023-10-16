@@ -17,6 +17,9 @@ import kitchenpos.exception.OrderIsNotCompletedException;
 import kitchenpos.exception.OrderTableCountNotEnoughException;
 import kitchenpos.exception.OrderTableNotEmptyException;
 import kitchenpos.exception.OrderTableNotFoundException;
+import kitchenpos.fixture.OrderFixture;
+import kitchenpos.fixture.OrderTableFixture;
+import kitchenpos.fixture.TableGroupFixture;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -32,7 +35,7 @@ class TableGroupServiceTest extends ServiceTestContext {
         // given
         List<OrderTableRequest> orderTableRequests = new ArrayList<>();
         for (int i = 0; i < tableSize; i++) {
-            OrderTable orderTable = new OrderTable(null, 1, true);
+            OrderTable orderTable = OrderTableFixture.of(null, 1, true);
             orderTableRepository.save(orderTable);
 
             orderTableRequests.add(new OrderTableRequest(orderTable.getId()));
@@ -63,8 +66,8 @@ class TableGroupServiceTest extends ServiceTestContext {
     @Test
     void 그룹_지정_대상이_빈_테이블이_아니라면_예외를_던진다() {
         // given
-        OrderTable orderTable1 = new OrderTable(null, 1, false);
-        OrderTable orderTable2 = new OrderTable(null, 1, false);
+        OrderTable orderTable1 = OrderTableFixture.of(null, 1, false);
+        OrderTable orderTable2 = OrderTableFixture.of(null, 1, false);
 
         orderTableRepository.save(orderTable1);
         orderTableRepository.save(orderTable2);
@@ -84,11 +87,11 @@ class TableGroupServiceTest extends ServiceTestContext {
     @Test
     void 그룹_지정_대상이_이미_그룹이_존재한다면_예외를_던진다() {
         // given
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
+        TableGroup tableGroup = TableGroupFixture.from(LocalDateTime.now());
         tableGroupRepository.save(tableGroup);
 
-        OrderTable orderTable1 = new OrderTable(tableGroup, 1, false);
-        OrderTable orderTable2 = new OrderTable(tableGroup, 1, false);
+        OrderTable orderTable1 = OrderTableFixture.of(tableGroup, 1, false);
+        OrderTable orderTable2 = OrderTableFixture.of(tableGroup, 1, false);
 
         orderTableRepository.save(orderTable1);
         orderTableRepository.save(orderTable2);
@@ -108,8 +111,8 @@ class TableGroupServiceTest extends ServiceTestContext {
     @Test
     void 정상적으로_그룹을_생성하면_생성한_그룹을_반환한다() {
         // given
-        OrderTable orderTable1 = new OrderTable(null, 0, true);
-        OrderTable orderTable2 = new OrderTable(null, 0, true);
+        OrderTable orderTable1 = OrderTableFixture.of(null, 0, true);
+        OrderTable orderTable2 = OrderTableFixture.of(null, 0, true);
 
         orderTableRepository.save(orderTable1);
         orderTableRepository.save(orderTable2);
@@ -132,13 +135,13 @@ class TableGroupServiceTest extends ServiceTestContext {
     @EnumSource(mode = Mode.INCLUDE, names = {"COOKING", "MEAL"})
     void 주문_상태가_COOKING이거나_MEAL인_경우_그룹을_해체할_수_없다(OrderStatus orderStatus) {
         // given
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
+        TableGroup tableGroup = TableGroupFixture.from(LocalDateTime.now());
         tableGroupRepository.save(tableGroup);
 
-        OrderTable orderTable = new OrderTable(tableGroup, 0, false);
+        OrderTable orderTable = OrderTableFixture.of(tableGroup, 0, false);
         orderTableRepository.save(orderTable);
 
-        Order order = new Order(orderTable, orderStatus, LocalDateTime.now());
+        Order order = OrderFixture.of(orderTable, orderStatus, LocalDateTime.now());
         orderRepository.save(order);
 
         // when, then
