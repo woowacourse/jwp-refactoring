@@ -45,11 +45,11 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void 메뉴를_생성하다() {
             // given
-            final var product1 = new Product("test_product_one", BigDecimal.valueOf(1000));
-            final var product2 = new Product("test_product_two", BigDecimal.valueOf(200));
+            final var product1 = new Product("상품_이름1", BigDecimal.valueOf(1000));
+            final var product2 = new Product("상품_이름2", BigDecimal.valueOf(200));
             final var menuProduct1 = new MenuProduct(1L, 1L, 10);
             final var menuProduct2 = new MenuProduct(1L, 2L, 5);
-            final var menu = new Menu("test_menu", BigDecimal.valueOf(11000L), 1L, List.of(menuProduct1, menuProduct2));
+            final var menu = new Menu("메뉴_이름", BigDecimal.valueOf(11000L), 1L, List.of(menuProduct1, menuProduct2));
 
             given(productDao.findById(1L)).willReturn(Optional.of(product1));
             given(productDao.findById(2L)).willReturn(Optional.of(product2));
@@ -73,7 +73,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void 가격이_존재하지_않으면_에러를_반환한다() {
             // given
-            final var menu = new Menu("test_menu", null, 1L, Collections.emptyList());
+            final var menu = new Menu("메뉴_이름", null, 1L, Collections.emptyList());
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menu))
@@ -84,7 +84,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void 가격이_0보다_작으면_에러를_반환한다() {
             // given
-            final var menu = new Menu("test_menu", BigDecimal.valueOf(-1000), 1L, Collections.emptyList());
+            final var menu = new Menu("메뉴_이름", BigDecimal.valueOf(-1000), 1L, Collections.emptyList());
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menu))
@@ -95,7 +95,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void 존재하지_않은_메뉴_그룹을_사용하면_에러를_반환한다() {
             // given
-            final var menu = new Menu("test_menu", BigDecimal.valueOf(1000), 1L, Collections.emptyList());
+            final var menu = new Menu("메뉴_이름", BigDecimal.valueOf(1000), 1L, Collections.emptyList());
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menu))
@@ -107,7 +107,7 @@ class MenuServiceTest extends ServiceTest {
         void 존재하지_않는_상품을_사용하면_에러를_반환한다() {
             // given
             final var menuProduct1 = new MenuProduct(1L, 1L, 10);
-            final var menu = new Menu("test_menu", BigDecimal.valueOf(1000), 1L, List.of(menuProduct1));
+            final var menu = new Menu("메뉴_이름", BigDecimal.valueOf(1000), 1L, List.of(menuProduct1));
 
             given(menuGroupDao.existsById(1L)).willReturn(true);
 
@@ -120,7 +120,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void 메뉴의_총_가격이_각_상품의_합보다_크면_에러를_반환한다() {
             // given
-            final var menu = new Menu("test_menu", BigDecimal.valueOf(1000), 1L, Collections.emptyList());
+            final var menu = new Menu("메뉴_이름", BigDecimal.valueOf(1000), 1L, Collections.emptyList());
 
             given(menuGroupDao.existsById(1L)).willReturn(true);
 
@@ -149,7 +149,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void 메뉴가_하나_이상_존재하면_메뉴_목록을_반환한다() {
             // given
-            final var menu = new Menu("test_menu", BigDecimal.valueOf(1000), 1L, Collections.emptyList());
+            final var menu = new Menu("메뉴_이름", BigDecimal.valueOf(1000), 1L, Collections.emptyList());
             given(menuService.list()).willReturn(List.of(menu));
 
             final var expected = List.of(menu);

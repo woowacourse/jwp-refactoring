@@ -30,7 +30,7 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void 상품을_생성할_수_있다() {
             // given
-            final var product = new Product("test", BigDecimal.valueOf(1000));
+            final var product = new Product("상품_이름", BigDecimal.valueOf(1000));
 
             given(productDao.save(product)).willReturn(product);
 
@@ -49,7 +49,7 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void 상품의_금액이_NULL이면_에러를_반환한다() {
             // given
-            final var product = new Product("test", null);
+            final var product = new Product("상품_이름", null);
 
             // when & then
             assertThatThrownBy(() -> productService.create(product))
@@ -60,7 +60,7 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void 상품의_금액이_음수이면_에러를_반환한다() {
             // given
-            final var product = new Product("test", BigDecimal.valueOf(-1000));
+            final var product = new Product("상품_이름", BigDecimal.valueOf(-1000));
 
             // when & then
             assertThatThrownBy(() -> productService.create(product))
@@ -87,7 +87,7 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void 주문이_하나_이상_존재하면_주문_목록을_반환한다() {
             // given
-            final var product = new Product("test", BigDecimal.valueOf(1000));
+            final var product = new Product("상품_이름", BigDecimal.valueOf(1000));
 
             given(productService.list()).willReturn(List.of(product));
 

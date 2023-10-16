@@ -28,7 +28,7 @@ class MenuGroupServiceTest extends ServiceTest {
         @Test
         void 메뉴_그룹을_생성할_수_있다() {
             // given
-            final var menuGroup = new MenuGroup("test");
+            final var menuGroup = new MenuGroup("메뉴_그룹_이름");
             menuGroup.setId(1L);
             given(menuGroupDao.save(menuGroup)).willReturn(menuGroup);
 
@@ -63,7 +63,7 @@ class MenuGroupServiceTest extends ServiceTest {
         @Test
         void 메뉴_그룹이_하나_이상_존재하면_메뉴_그룹_목록을_반환한다() {
             // given
-            final var menuGroup = new MenuGroup("test");
+            final var menuGroup = new MenuGroup("메뉴_그룹_이름");
             given(menuGroupDao.findAll()).willReturn(List.of(menuGroup));
 
             final var expected = List.of(menuGroup);
