@@ -1,5 +1,6 @@
 package kitchenpos.ui;
 
+import static kitchenpos.fixture.MenuFixture.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -11,7 +12,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.MenuService;
+import kitchenpos.application.dto.request.CreateMenuRequest;
+import kitchenpos.application.dto.response.CreateMenuResponse;
 import kitchenpos.domain.Menu;
+import kitchenpos.fixture.MenuFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -52,8 +56,8 @@ class MenuRestControllerTest {
         @Test
         void 메뉴_생성() throws Exception {
             // given
-            given(menuService.create(any(Menu.class)))
-                    .willReturn(menu);
+            given(menuService.create(any(CreateMenuRequest.class)))
+                    .willReturn(RESPONSE.후라이드_치킨());
 
             // when & then
             mockMvc.perform(post("/api/menus")
