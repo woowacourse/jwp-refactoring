@@ -7,10 +7,10 @@ import kitchenpos.domain.MenuProduct;
 
 public class MenuFixture {
 
-    public static Menu create(Long menuGroupId, List<MenuProduct> menuProducts) {
+    public static Menu create(String name, int price, Long menuGroupId, List<MenuProduct> menuProducts) {
         Menu menu = new Menu();
-        menu.setName("치킨 피자 세트");
-        menu.setPrice(BigDecimal.valueOf(30000));
+        menu.setName(name);
+        menu.setPrice(BigDecimal.valueOf(price));
         menu.setMenuGroupId(menuGroupId);
         menu.setMenuProducts(menuProducts);
 
