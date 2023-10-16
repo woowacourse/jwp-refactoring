@@ -1,6 +1,9 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,7 +20,9 @@ public class Product {
 
     private String name;
 
-    private BigDecimal price;
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "price"))
+    private Money price;
 
     protected Product() {
     }
@@ -26,7 +31,7 @@ public class Product {
         validatePriceIsNonNull(price);
         validatePriceIsNotNegative(price);
         this.name = name;
-        this.price = price;
+        this.price = new Money(price);
     }
 
     private void validatePriceIsNonNull(BigDecimal price) {
@@ -50,6 +55,6 @@ public class Product {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getValue();
     }
 }

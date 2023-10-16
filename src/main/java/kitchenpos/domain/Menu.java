@@ -3,7 +3,10 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.AttributeOverride;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -23,7 +26,9 @@ public class Menu {
 
     private String name;
 
-    private BigDecimal price;
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "price"))
+    private Money price;
 
     @ManyToOne
     @JoinColumn(name = "menu_group_id")
@@ -38,7 +43,7 @@ public class Menu {
     public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
         validatePrice(price);
         this.name = name;
-        this.price = price;
+        this.price = new Money(price);
         this.menuGroup = menuGroup;
     }
 
@@ -54,12 +59,13 @@ public class Menu {
     }
 
     private void validateMenuPriceIsNotBiggerThanActualPrice() {
-        BigDecimal actualPrice = menuProducts.stream()
+        Money actualPrice = menuProducts.stream()
                 .map(MenuProduct::calculatePrice)
-                .reduce(BigDecimal::add)
-                .orElse(BigDecimal.ZERO);
+                .map(Money::new)
+                .reduce(Money::add)
+                .orElse(Money.ZERO);
 
-        if (price.compareTo(actualPrice) > 0) {
+        if (price.isGreaterThan(actualPrice)) {
             throw new MenuPriceIsBiggerThanActualPriceException();
         }
     }
@@ -73,7 +79,7 @@ public class Menu {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getValue();
     }
 
     public MenuGroup getMenuGroup() {
