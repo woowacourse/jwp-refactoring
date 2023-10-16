@@ -70,6 +70,13 @@ public class Order {
         }
     }
 
+    public void changeOrderStatus(OrderStatus orderStatus) {
+        if (this.orderStatus == OrderStatus.COMPLETION) {
+            throw new IllegalArgumentException("완료 상태의 주문은 변경할 수 없습니다");
+        }
+        this.orderStatus = orderStatus;
+    }
+
     public Long getId() {
         return id;
     }
@@ -88,12 +95,5 @@ public class Order {
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public void changeOrderStatus(OrderStatus orderStatus) {
-        if (this.orderStatus == OrderStatus.COMPLETION) {
-            throw new IllegalArgumentException("완료 상태의 주문은 변경할 수 없습니다");
-        }
-        this.orderStatus = orderStatus;
     }
 }

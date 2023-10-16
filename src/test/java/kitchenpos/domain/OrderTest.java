@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static java.util.List.of;
-import static kitchenpos.domain.OrderStatus.MEAL;
 import static kitchenpos.fixture.OrderLineItemFixture.orderLineItem;
 import static kitchenpos.fixture.OrderTableFixtrue.orderTable;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class OrderTest {
@@ -42,8 +42,22 @@ class OrderTest {
         Order order = new Order(orderTable, OrderStatus.COMPLETION, List.of(orderLineItem));
 
         // expect
-        assertThatThrownBy(() -> order.changeOrderStatus(MEAL))
+        assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.MEAL))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("완료 상태의 주문은 변경할 수 없습니다");
+    }
+
+    @Test
+    void 주문_상태를_변경한다() {
+        // given
+        OrderTable orderTable = orderTable(10, false);
+        OrderLineItem orderLineItem = orderLineItem(1L, 10);
+        Order order = new Order(orderTable, OrderStatus.COOKING, List.of(orderLineItem));
+
+        // when
+        order.changeOrderStatus(OrderStatus.MEAL);
+
+        // then
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.MEAL);
     }
 }
