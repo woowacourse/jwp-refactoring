@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.Fixture.INVALID_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -87,7 +88,7 @@ class OrderServiceTest extends ServiceIntegrationTest {
     void create_tableNullException() {
         // given
         final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1);
-        final Order order = new Order(-1L, List.of(orderLineItem));
+        final Order order = new Order(INVALID_ID, List.of(orderLineItem));
 
         // when & then
         assertThatThrownBy(() -> orderService.create(order))
@@ -149,7 +150,7 @@ class OrderServiceTest extends ServiceIntegrationTest {
     @Test
     void changeOrderStatus_orderNullException() {
         // when & then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(-1L, ORDER_STATUS_COOKING))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(INVALID_ID, ORDER_STATUS_COOKING))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

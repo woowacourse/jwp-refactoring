@@ -10,7 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 class ProductServiceTest extends ServiceIntegrationTest {
-
+    private static final BigDecimal INVALID_PRICE = BigDecimal.valueOf(-1);
+    
     @Autowired
     private ProductService productService;
 
@@ -29,7 +30,7 @@ class ProductServiceTest extends ServiceIntegrationTest {
     @Test
     void create_priceException() {
         // given
-        final Product product = new Product("강정치킨", BigDecimal.valueOf(-1));
+        final Product product = new Product("강정치킨", INVALID_PRICE);
 
         // when & then
         assertThatThrownBy(() -> productService.create(product))

@@ -63,7 +63,7 @@ class MenuServiceTest extends ServiceIntegrationTest {
     @Test
     void create_menuGroupException() {
         // given
-        final Menu menu = new Menu("후라이드+후라이드", BigDecimal.valueOf(-1), -1L, List.of(menuProduct));
+        final Menu menu = new Menu("후라이드+후라이드", BigDecimal.valueOf(1000), -1L, List.of(menuProduct));
 
         // when & then
         assertThatThrownBy(() -> menuService.create(menu))

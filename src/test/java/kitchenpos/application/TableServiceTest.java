@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.Fixture.INVALID_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -20,11 +21,11 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 class TableServiceTest extends ServiceIntegrationTest {
+    private static final long ANY_VALID_ID = 1L;
     private static final OrderTable ORDER_TABLE_STATUS_EMPTY = new OrderTable(true);
     private static final OrderTable ORDER_TABLE_STATUS_NOT_EMPTY = new OrderTable(false);
     private static final OrderTable ORDER_TABLE_GUEST_POSITIVE = new OrderTable(1);
     private static final OrderTable ORDER_TABLE_GUEST_NEGATIVE = new OrderTable(-1);
-
     @Autowired
     private TableService tableService;
 
@@ -90,7 +91,7 @@ class TableServiceTest extends ServiceIntegrationTest {
     @Test
     void changeEmpty_tableNullException() {
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(-1L, ORDER_TABLE_STATUS_NOT_EMPTY))
+        assertThatThrownBy(() -> tableService.changeEmpty(INVALID_ID, ORDER_TABLE_STATUS_NOT_EMPTY))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -98,7 +99,7 @@ class TableServiceTest extends ServiceIntegrationTest {
     void changeEmpty_tableGroupException() {
         // given
         final OrderTable saved = tableService.create(Fixture.ORDER_TABLE_EMPTY);
-        saved.setTableGroupId(1L);
+        saved.setTableGroupId(ANY_VALID_ID);
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(saved.getTableGroupId(), ORDER_TABLE_STATUS_NOT_EMPTY))
@@ -158,7 +159,7 @@ class TableServiceTest extends ServiceIntegrationTest {
     @Test
     void changeNumberOfGuests_tableNullException() {
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(-1L, ORDER_TABLE_GUEST_POSITIVE))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(INVALID_ID, ORDER_TABLE_GUEST_POSITIVE))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

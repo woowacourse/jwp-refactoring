@@ -134,7 +134,7 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         // then
         final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroup.getId());
         assertSoftly(softly -> {
-            softly.assertThat(orderTables).hasSize(0);
+            softly.assertThat(orderTables).isEmpty();
             final OrderTable savedOrderTable1 = orderTableDao.findById(orderTable1.getId()).get();
             softly.assertThat(savedOrderTable1.getTableGroupId()).isNull();
             softly.assertThat(savedOrderTable1.isEmpty()).isFalse();
