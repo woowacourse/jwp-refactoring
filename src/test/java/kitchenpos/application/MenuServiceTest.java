@@ -150,8 +150,7 @@ class MenuServiceTest {
     }
 
     private MenuGroup createMenuGroup(final String groupName) {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(groupName);
+        final MenuGroup menuGroup = new MenuGroup(groupName);
         return menuGroupDao.save(menuGroup);
     }
 }

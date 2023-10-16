@@ -54,8 +54,7 @@ class OrderServiceTest {
         orderTable.setNumberOfGuests(4);
         mockOrderTable = orderTableDao.save(orderTable);
 
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("테스트 메뉴 그룹");
+        final MenuGroup menuGroup = new MenuGroup("테스트 메뉴 그룹");
         final MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
 
         final Menu menu = new Menu();
