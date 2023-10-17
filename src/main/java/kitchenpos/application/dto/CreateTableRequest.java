@@ -10,6 +10,11 @@ public class CreateTableRequest {
     public CreateTableRequest() {
     }
 
+    public CreateTableRequest(final int numberOfGuests, final boolean empty) {
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
     public OrderTable toDomain() {
         OrderTable orderTable = new OrderTable();
 

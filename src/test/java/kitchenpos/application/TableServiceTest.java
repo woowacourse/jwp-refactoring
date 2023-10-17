@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import java.util.List;
+import kitchenpos.application.dto.ChangeTableEmptyRequest;
 import kitchenpos.application.dto.CreateTableRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -127,10 +128,10 @@ class TableServiceTest extends ServiceTest {
             OrderTable 테이블 = new OrderTable();
             테이블.setEmpty(false);
             OrderTable 생성된_테이블 = orderTableDao.save(테이블);
-            생성된_테이블.setEmpty(true);
+            ChangeTableEmptyRequest 테이블_비우기_요청 = new ChangeTableEmptyRequest(생성된_테이블.getId(), true);
 
             //when
-            OrderTable 변경된_테이블 = tableService.changeEmpty(생성된_테이블.getId(), 생성된_테이블);
+            OrderTable 변경된_테이블 = tableService.changeEmpty(테이블_비우기_요청);
 
             //then
             assertThat(변경된_테이블.isEmpty()).isTrue();
@@ -143,11 +144,10 @@ class TableServiceTest extends ServiceTest {
             테이블.setEmpty(false);
             OrderTable 생성된_테이블 = orderTableDao.save(테이블);
             주문만들기(생성된_테이블);
-
-            생성된_테이블.setEmpty(true);
+            ChangeTableEmptyRequest 테이블_비우기_요청 = new ChangeTableEmptyRequest(생성된_테이블.getId(), true);
 
             //expect
-            assertThatThrownBy(() -> tableService.changeEmpty(생성된_테이블.getId(), 생성된_테이블))
+            assertThatThrownBy(() -> tableService.changeEmpty(테이블_비우기_요청))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -180,8 +180,10 @@ class TableServiceTest extends ServiceTest {
             테이블.setTableGroupId(생성된_그룹.getId());
             OrderTable 생성된_테이블 = orderTableDao.save(테이블);
 
+            ChangeTableEmptyRequest 테이블_비우기_요청 = new ChangeTableEmptyRequest(생성된_테이블.getId(), true);
+
             //expect
-            assertThatThrownBy(() -> tableService.changeEmpty(생성된_테이블.getId(), 생성된_테이블))
+            assertThatThrownBy(() -> tableService.changeEmpty(테이블_비우기_요청))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
