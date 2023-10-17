@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
 import kitchenpos.application.test.ServiceIntegrateTest;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.repository.MenuGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 class MenuGroupServiceIntegrateTest extends ServiceIntegrateTest {
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private MenuGroupService menuGroupService;
@@ -41,7 +41,7 @@ class MenuGroupServiceIntegrateTest extends ServiceIntegrateTest {
         @BeforeEach
         void setUp() {
             MenuGroup 인기_메뉴 = 인기_메뉴_생성();
-            menuGroupDao.save(인기_메뉴);
+            menuGroupRepository.save(인기_메뉴);
         }
 
         @Test
