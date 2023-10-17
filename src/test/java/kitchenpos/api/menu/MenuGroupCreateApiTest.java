@@ -2,6 +2,7 @@ package kitchenpos.api.menu;
 
 import kitchenpos.api.config.ApiTestConfig;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.ui.dto.request.MenuGroupCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +28,7 @@ class MenuGroupCreateApiTest extends ApiTestConfig {
         final Long expectedId = 1L;
         final MenuGroup expectedMenuGroup = new MenuGroup();
         expectedMenuGroup.setId(expectedId);
-        when(menuGroupService.create(any(MenuGroup.class))).thenReturn(expectedMenuGroup);
+        when(menuGroupService.create(any(MenuGroupCreateRequest.class))).thenReturn(expectedMenuGroup);
 
         // then
         mockMvc.perform(post("/api/menu-groups")

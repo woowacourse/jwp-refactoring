@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.application.config.ServiceTestConfig;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.ui.dto.request.MenuGroupCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -28,14 +29,13 @@ class MenuGroupServiceTest extends ServiceTestConfig {
         @Test
         void success() {
             // given
-            final MenuGroup menuGroupInput = new MenuGroup();
-            menuGroupInput.setName("메뉴 그룹");
+            final MenuGroupCreateRequest request = new MenuGroupCreateRequest("메뉴 그룹");
 
             // when
-            final MenuGroup actual = menuGroupService.create(menuGroupInput);
+            final MenuGroup actual = menuGroupService.create(request);
 
             // then
-            assertThat(actual.getName()).isEqualTo(menuGroupInput.getName());
+            assertThat(actual.getName()).isEqualTo(request.getName());
         }
     }
 
