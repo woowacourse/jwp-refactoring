@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.exception.OrderTableException;
+
 public class OrderTable {
     private Long id;
     private Long tableGroupId;
@@ -35,6 +37,12 @@ public class OrderTable {
     }
 
     public void setNumberOfGuests(final int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new OrderTableException("손님 수는 0명 이상이어야 합니다.");
+        }
+        if (isEmpty()) {
+            throw new OrderTableException("비어있지 않은 테이블의 경우 손님 수를 변경할 수 없습니다.");
+        }
         this.numberOfGuests = numberOfGuests;
     }
 
