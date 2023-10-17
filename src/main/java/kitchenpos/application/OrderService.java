@@ -49,8 +49,7 @@ public class OrderService {
 
     @Transactional
     public Order changeOrderStatus(final Long orderId, final Order order) {
-        final Order savedOrder = orderRepository.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+        Order savedOrder = orderRepository.getById(orderId);
 
         if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.orderStatus())) {
             throw new IllegalArgumentException();

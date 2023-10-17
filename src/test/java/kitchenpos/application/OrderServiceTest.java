@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static kitchenpos.exception.MenuExceptionType.MENU_NOT_FOUND;
 import static kitchenpos.exception.OrderExceptionType.ORDER_LINE_ITEMS_CAN_NOT_EMPTY;
+import static kitchenpos.exception.OrderExceptionType.ORDER_NOT_FOUND;
 import static kitchenpos.exception.OrderExceptionType.ORDER_TABLE_CAN_NOT_EMPTY;
 import static kitchenpos.exception.OrderTableExceptionType.ORDER_TABLE_NOT_FOUND;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -136,9 +137,13 @@ class OrderServiceTest extends IntegrationTest {
             OrderLineItem orderLineItem = new OrderLineItem(맛있는_메뉴(), 0);
             Order order = new Order(null, orderTable, null, null, List.of(orderLineItem));
 
-            // when & then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(1L, order))
-                    .isInstanceOf(IllegalArgumentException.class);
+            // when
+            BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                    orderService.changeOrderStatus(1L, order)
+            ).exceptionType();
+
+            // then
+            assertThat(exceptionType).isEqualTo(ORDER_NOT_FOUND);
         }
 
         @Test
