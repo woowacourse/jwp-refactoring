@@ -21,7 +21,7 @@ class ProductServiceTest extends ServiceTestConfig {
 
     @BeforeEach
     void setUp() {
-        productService = new ProductService(productDao);
+        productService = new ProductService(productRepository);
     }
 
     @DisplayName("상품 생성")

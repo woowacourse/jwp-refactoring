@@ -20,6 +20,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -37,7 +38,7 @@ import java.util.ArrayList;
 public class ServiceTestConfig {
 
     @Autowired
-    protected ProductDao productDao;
+    protected ProductRepository productRepository;
 
     @Autowired
     protected MenuProductDao menuProductDao;
@@ -62,7 +63,7 @@ public class ServiceTestConfig {
 
     protected Product saveProduct() {
         final Product product = new Product(null, "여우가 좋아하는 피자", BigDecimal.valueOf(10000));
-        return productDao.save(product);
+        return productRepository.save(product);
     }
 
     protected MenuGroup saveMenuGroup() {
