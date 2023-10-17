@@ -49,7 +49,7 @@ class OrderServiceTest extends ServiceTest {
         final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
         final OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 0, false));
         final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("마라탕그룹"));
-        final Menu menu = menuDao.save(new Menu("디노 마라탕", new BigDecimal(20000), menuGroup.getId(), null));
+        final Menu menu = menuDao.save(new Menu("디노 마라탕", new BigDecimal(20000), menuGroup.getId()));
         final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
 
         //when
@@ -78,7 +78,7 @@ class OrderServiceTest extends ServiceTest {
         final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
         final OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 0, false));
         final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("마라탕그룹"));
-        final Menu menu = menuDao.save(new Menu("디노 마라탕", new BigDecimal(20000), menuGroup.getId(), null));
+        final Menu menu = menuDao.save(new Menu("디노 마라탕", new BigDecimal(20000), menuGroup.getId()));
         final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
 
         //when, then
@@ -93,7 +93,7 @@ class OrderServiceTest extends ServiceTest {
         final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
         final OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 0, true));
         final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("마라탕그룹"));
-        final Menu menu = menuDao.save(new Menu("디노 마라탕", new BigDecimal(20000), menuGroup.getId(), null));
+        final Menu menu = menuDao.save(new Menu("디노 마라탕", new BigDecimal(20000), menuGroup.getId()));
         final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
 
         //when, then
@@ -108,7 +108,7 @@ class OrderServiceTest extends ServiceTest {
         final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
         final OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 0, false));
         final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("마라탕그룹"));
-        final Menu menu = menuDao.save(new Menu("디노 마라탕", new BigDecimal(20000), menuGroup.getId(), null));
+        final Menu menu = menuDao.save(new Menu("디노 마라탕", new BigDecimal(20000), menuGroup.getId()));
         final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
         orderDao.save(new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), List.of(orderLineItem)));
 
@@ -125,7 +125,7 @@ class OrderServiceTest extends ServiceTest {
         final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
         final OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 0, false));
         final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("마라탕그룹"));
-        final Menu menu = menuDao.save(new Menu("디노 마라탕", new BigDecimal(20000), menuGroup.getId(), null));
+        final Menu menu = menuDao.save(new Menu("디노 마라탕", new BigDecimal(20000), menuGroup.getId()));
         final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
         final Order order = orderDao.save(new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
                 List.of(orderLineItem)));
@@ -144,7 +144,7 @@ class OrderServiceTest extends ServiceTest {
         final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
         final OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 0, false));
         final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("마라탕그룹"));
-        final Menu menu = menuDao.save(new Menu("디노 마라탕", new BigDecimal(20000), menuGroup.getId(), null));
+        final Menu menu = menuDao.save(new Menu("디노 마라탕", new BigDecimal(20000), menuGroup.getId()));
         final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
         final Order order = orderDao.save(new Order(orderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now(),
                 List.of(orderLineItem)));

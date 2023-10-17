@@ -22,7 +22,7 @@ class JdbcTemplateMenuDaoTest extends RepositoryTest {
     @Test
     void saveAndFindById() {
         //given
-        final Menu menu = new Menu("디노통구이", new BigDecimal(20000), 2L, null);
+        final Menu menu = new Menu("디노통구이", new BigDecimal(20000), 2L);
 
         // when
         jdbcTemplateMenuDao.save(menu);

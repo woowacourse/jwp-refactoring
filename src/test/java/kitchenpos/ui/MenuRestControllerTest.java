@@ -4,10 +4,9 @@ import io.restassured.RestAssured;
 import kitchenpos.common.controller.ControllerTest;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.MenuCreateRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -30,12 +29,10 @@ class MenuRestControllerTest extends ControllerTest {
     void Menu를_생성하면_201을_반환한다() {
         // given
         final Product product = productDao.save(new Product("디노 초코 케이크", new BigDecimal(25000)));
-        final MenuProduct menuProduct = new MenuProduct(null, product.getId(), 1);
         final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("디노 디저트"));
-        final Menu 메뉴 = new Menu("디노 케이크", new BigDecimal(25000),
-                menuGroup.getId(), List.of(menuProduct));
         final var 요청_준비 = RestAssured.given()
-                .body(메뉴)
+                .body(new MenuCreateRequest("디노 케이크", new BigDecimal(25000),
+                        menuGroup.getId(), List.of(product.getId()), List.of(1)))
                 .contentType(JSON);
 
         // when

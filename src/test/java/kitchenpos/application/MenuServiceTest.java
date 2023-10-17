@@ -6,7 +6,6 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,44 +35,33 @@ class MenuServiceTest extends ServiceTest {
         //given
         final Product product = productDao.save(new Product("디노 탕후루", new BigDecimal(4000)));
         final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("탕후루"));
-        final MenuProduct menuProduct = new MenuProduct(null, product.getId(), 2);
-        final Menu menu = new Menu("디노 세트", new BigDecimal(8000),
-                menuGroup.getId(), List.of(menuProduct));
 
         //when
-        final Menu saveMenu = menuService.create(menu);
+        final Long menuId = menuService.create("디노 세트", new BigDecimal(8000), menuGroup.getId(),
+                List.of(product.getId()), List.of(2));
 
         //then
-        assertThat(saveMenu.getId()).isNotNull();
+        assertThat(menuId).isNotNull();
     }
 
     @Test
     void price가_null이면_예외가_발생한다() {
-        //given
-        final Menu menu = new Menu("디노 찜구이", null, 1L, null);
-
         //when, then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create("디노 세트", null, null, null, null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void price가_0원보다_작으면_예외가_발생한다() {
-        //given
-        final Menu menu = new Menu("디노 찜구이", new BigDecimal(-1), 1L, null);
-
         //when, then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create("디노 세트", new BigDecimal(-1), null, null, null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void menuGroup이_존재하지_않으면_예외가_발생한다() {
-        //given
-        final Menu menu = new Menu("디노 찜구이", new BigDecimal(20000), 987654321L, null);
-
         //when, then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create("디노 세트", new BigDecimal(20000), 987654321L, null, null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -82,14 +70,10 @@ class MenuServiceTest extends ServiceTest {
         //given
         final Product product = productDao.save(new Product("디노 탕후루", new BigDecimal(4000)));
         final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("탕후루"));
-        final MenuProduct menuProduct = new MenuProduct(null, product.getId(), 2);
 
-        //when
-        final Menu menu = new Menu("디노 세트", new BigDecimal(9000),
-                menuGroup.getId(), List.of(menuProduct));
-
-        //then
-        assertThatThrownBy(() -> menuService.create(menu))
+        //when, then
+        assertThatThrownBy(() -> menuService.create("디노 세트", new BigDecimal(9000), menuGroup.getId(),
+                List.of(product.getId()), List.of(2)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -98,9 +82,7 @@ class MenuServiceTest extends ServiceTest {
         //given
         final Product product = productDao.save(new Product("디노 탕후루", new BigDecimal(4000)));
         final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("탕후루"));
-        final MenuProduct menuProduct = new MenuProduct(null, product.getId(), 2);
-        final Menu menu = new Menu("디노 세트", new BigDecimal(8000),
-                menuGroup.getId(), List.of(menuProduct));
+        final Menu menu = new Menu("디노 세트", new BigDecimal(8000), menuGroup.getId());
         menuDao.save(menu);
 
         //when

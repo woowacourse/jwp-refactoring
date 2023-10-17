@@ -49,7 +49,7 @@ class OrderRestControllerTest extends ControllerTest {
         final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
         final OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 0, false));
         final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("마라탕그룹"));
-        final Menu menu = menuDao.save(new Menu("디노 마라탕", new BigDecimal(20000), menuGroup.getId(), null));
+        final Menu menu = menuDao.save(new Menu("디노 마라탕", new BigDecimal(20000), menuGroup.getId()));
         final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
         final Order 주문 = new Order(orderTable.getId(), null, LocalDateTime.now(),
                 List.of(orderLineItem));
@@ -87,7 +87,7 @@ class OrderRestControllerTest extends ControllerTest {
         final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
         final OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 0, false));
         final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("마라탕그룹"));
-        final Menu menu = menuDao.save(new Menu("디노 마라탕", new BigDecimal(20000), menuGroup.getId(), null));
+        final Menu menu = menuDao.save(new Menu("디노 마라탕", new BigDecimal(20000), menuGroup.getId()));
         final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
         final Order 주문 = orderService.create(new Order(orderTable.getId(), null, LocalDateTime.now(),
                 List.of(orderLineItem)));
