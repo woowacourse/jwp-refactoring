@@ -7,7 +7,9 @@ import java.util.Objects;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.exception.InvalidMenuException;
+import org.springframework.stereotype.Component;
 
+@Component
 public class MenuValidator {
 
     private final MenuGroupDao menuGroupDao;
