@@ -26,7 +26,7 @@ class TableGroupServiceTest extends ServiceTest {
         void 테이블_그룹을_생성할_수_있다() {
             //given
             TableGroup 테이블그룹 = new TableGroup();
-            테이블그룹.setOrderTables(List.of(테이블_생성(), 테이블_생성()));
+            테이블그룹.setOrderTables(List.of(빈_테이블_생성(), 빈_테이블_생성()));
 
             //when
             TableGroup 생성된_테이블그룹 = tableGroupService.create(테이블그룹);
@@ -50,7 +50,7 @@ class TableGroupServiceTest extends ServiceTest {
         void 테이블이_존재하지_않으면_예외가_발생한다() {
             //given
             TableGroup 테이블그룹 = new TableGroup();
-            테이블그룹.setOrderTables(List.of(테이블_생성(), new OrderTable()));
+            테이블그룹.setOrderTables(List.of(빈_테이블_생성(), new OrderTable()));
 
             //expect
             assertThatThrownBy(() -> tableGroupService.create(테이블그룹))
@@ -60,13 +60,13 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void 이미_그룹에_속한_테이블이_있으면_에외가_발생한다() {
             //given
-            OrderTable 테이블 = 테이블_생성();
+            OrderTable 테이블 = 빈_테이블_생성();
             TableGroup 그룹 = new TableGroup();
-            그룹.setOrderTables(List.of(테이블, 테이블_생성()));
+            그룹.setOrderTables(List.of(테이블, 빈_테이블_생성()));
             tableGroupService.create(그룹);
 
             TableGroup 새_그룹 = new TableGroup();
-            새_그룹.setOrderTables(List.of(테이블, 테이블_생성()));
+            새_그룹.setOrderTables(List.of(테이블, 빈_테이블_생성()));
 
             //expect
             assertThatThrownBy(() -> tableGroupService.create(새_그룹))
@@ -75,10 +75,8 @@ class TableGroupServiceTest extends ServiceTest {
 
     }
 
-    private OrderTable 테이블_생성() {
-        final var 테이블 = new OrderTable();
-        테이블.changeEmpty(true);
-        테이블.changeNumberOfGuests(4);
+    private OrderTable 빈_테이블_생성() {
+        final var 테이블 = new OrderTable(0, true);
         return orderTableDao.save(테이블);
     }
 
@@ -88,13 +86,13 @@ class TableGroupServiceTest extends ServiceTest {
         void 성공() {
             //given
             TableGroup 테이블_그룹 = new TableGroup();
-            OrderTable 테이블 = 테이블_생성();
+            OrderTable 테이블 = 빈_테이블_생성();
             Order 주문 = new Order();
             주문.setOrderTableId(테이블.getId());
             주문.setOrderStatus(OrderStatus.COMPLETION.name());
             주문.setOrderedTime(now());
             orderDao.save(주문);
-            테이블_그룹.setOrderTables(List.of(테이블, 테이블_생성()));
+            테이블_그룹.setOrderTables(List.of(테이블, 빈_테이블_생성()));
             TableGroup 생성된_테이블_그룹 = tableGroupService.create(테이블_그룹);
 
             //when
@@ -108,13 +106,13 @@ class TableGroupServiceTest extends ServiceTest {
         void COMPLETION이_아닌_주문이_있으면_예외가_발생한다() {
             //given
             TableGroup 테이블_그룹 = new TableGroup();
-            OrderTable 테이블 = 테이블_생성();
+            OrderTable 테이블 = 빈_테이블_생성();
             Order 주문 = new Order();
             주문.setOrderTableId(테이블.getId());
             주문.setOrderStatus(OrderStatus.COOKING.name());
             주문.setOrderedTime(now());
             orderDao.save(주문);
-            테이블_그룹.setOrderTables(List.of(테이블, 테이블_생성()));
+            테이블_그룹.setOrderTables(List.of(테이블, 빈_테이블_생성()));
             TableGroup 생성된_테이블_그룹 = tableGroupService.create(테이블_그룹);
 
             //expect

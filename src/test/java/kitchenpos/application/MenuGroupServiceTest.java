@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.application.dto.CreateMenuGroupCommand;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,16 +20,15 @@ class MenuGroupServiceTest extends ServiceTest {
     @Test
     void 메뉴_그룹을_생성할_수_있다() {
         //given
-        MenuGroup 메뉴_그룹 = new MenuGroup();
-        메뉴_그룹.setName("메뉴그룹");
+        CreateMenuGroupCommand 커맨드 = new CreateMenuGroupCommand("메뉴그룹");
 
         //when
-        MenuGroup 생성된_메뉴그룹 = menuGroupService.create(메뉴_그룹);
+        MenuGroup 생성된_메뉴그룹 = menuGroupService.create(커맨드);
 
         //then
         assertAll(
                 () -> assertThat(생성된_메뉴그룹.getId()).isNotNull(),
-                () -> assertThat(생성된_메뉴그룹.getName()).isEqualTo(메뉴_그룹.getName())
+                () -> assertThat(생성된_메뉴그룹.getName()).isEqualTo(커맨드.getName())
         );
     }
 
