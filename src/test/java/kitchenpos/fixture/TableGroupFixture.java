@@ -1,7 +1,7 @@
 package kitchenpos.fixture;
 
 import java.time.LocalDateTime;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.table.domain.TableGroup;
 
 public class TableGroupFixture {
 
