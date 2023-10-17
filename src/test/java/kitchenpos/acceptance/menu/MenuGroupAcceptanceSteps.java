@@ -5,7 +5,7 @@ import static kitchenpos.acceptance.AcceptanceSteps.생성된_ID를_추출한다
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.application.dto.MenuGroupCreateRequest;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class MenuGroupAcceptanceSteps {
@@ -15,9 +15,9 @@ public class MenuGroupAcceptanceSteps {
     }
 
     public static ExtractableResponse<Response> 메뉴_그릅_등록_요청을_보낸다(String 메뉴_그룹_이름) {
-        MenuGroup menuGroup = new MenuGroup(메뉴_그룹_이름);
+        MenuGroupCreateRequest request = new MenuGroupCreateRequest(메뉴_그룹_이름);
         return given()
-                .body(menuGroup)
+                .body(request)
                 .post("/api/menu-groups")
                 .then()
                 .log().all()
