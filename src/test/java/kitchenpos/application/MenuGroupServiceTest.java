@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.MenuGroupCreateDto;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.Menu.MenuGroup;
 import kitchenpos.domain.Menu.MenuGroupName;
@@ -54,18 +55,17 @@ class MenuGroupServiceTest extends MockServiceTest {
                 1L,
                 new MenuGroupName("고기"));
 
-        MenuGroup argumentMenuGroup = new MenuGroup(
-                new MenuGroupName("고기"));
+        MenuGroupCreateDto menuGroupCreateDto = new MenuGroupCreateDto("고기");
 
         MenuGroup mockReturnMenuGroup = new MenuGroup(
                 1L,
                 new MenuGroupName("고기"));
 
-        BDDMockito.given(menuGroupDao.save(argumentMenuGroup))
+        BDDMockito.given(menuGroupDao.save(BDDMockito.any(MenuGroup.class)))
                 .willReturn(mockReturnMenuGroup);
 
         // when
-        MenuGroup actual = menuGroupService.create(argumentMenuGroup);
+        MenuGroup actual = menuGroupService.create(menuGroupCreateDto);
 
         // then
         Assertions.assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
@@ -78,18 +78,17 @@ class MenuGroupServiceTest extends MockServiceTest {
                 1L,
                 new MenuGroupName(""));
 
-        MenuGroup argumentMenuGroup = new MenuGroup(
-                new MenuGroupName(""));
+        MenuGroupCreateDto menuGroupCreateDto = new MenuGroupCreateDto("");
 
         MenuGroup mockReturnMenuGroup = new MenuGroup(
                 1L,
                 new MenuGroupName(""));
 
-        BDDMockito.given(menuGroupDao.save(argumentMenuGroup))
+        BDDMockito.given(menuGroupDao.save(BDDMockito.any(MenuGroup.class)))
                 .willReturn(mockReturnMenuGroup);
 
         // when
-        MenuGroup actual = menuGroupService.create(argumentMenuGroup);
+        MenuGroup actual = menuGroupService.create(menuGroupCreateDto);
 
         // then
         Assertions.assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
