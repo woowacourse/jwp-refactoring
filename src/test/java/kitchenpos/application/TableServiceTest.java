@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +21,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.verify;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -72,14 +74,19 @@ class TableServiceTest {
         @Test
         void 주문_테이블을_비어있는_상태로_만들_수_있다() {
             // given
-            final OrderTable target = new OrderTable(5, false);
-            given(orderTableDao.findById(anyLong())).willReturn(Optional.ofNullable(target));
+            final OrderTable spyOrderTable = spy(new OrderTable(5, false));
+            given(orderTableDao.findById(anyLong())).willReturn(Optional.ofNullable(spyOrderTable));
+
+            final TableGroup emptyTableGroup = mock(TableGroup.class);
+            given(spyOrderTable.getTableGroup()).willReturn(emptyTableGroup);
+            final Long emptyTableGroupId = null;
+            given(emptyTableGroup.getId()).willReturn(emptyTableGroupId);
 
             final long orderTableId = 1L;
             given(orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, List.of(COOKING.name(), MEAL.name()))).willReturn(false);
 
             // when
-            tableService.changeEmpty(orderTableId, target);
+            tableService.changeEmpty(orderTableId, spyOrderTable);
 
             // then
             verify(orderTableDao, times(1)).save(any(OrderTable.class));
@@ -92,8 +99,10 @@ class TableServiceTest {
             given(orderTableDao.findById(anyLong())).willReturn(Optional.ofNullable(target));
 
             // when
-            final long nonNullId = 1L;
-            when(target.getTableGroupId()).thenReturn(nonNullId);
+            final TableGroup nonNullTableGroup = mock(TableGroup.class);
+            final long nonNullTableGroupId = 1L;
+            when(nonNullTableGroup.getId()).thenReturn(nonNullTableGroupId);
+            when(target.getTableGroup()).thenReturn(nonNullTableGroup);
 
             // then
             final long orderTableId = 1L;
@@ -104,14 +113,19 @@ class TableServiceTest {
         @Test
         void 주문상태가_요리중이거나_식사중이면_예외가_발생한다() {
             // given
-            final OrderTable target = new OrderTable(5, false);
-            given(orderTableDao.findById(anyLong())).willReturn(Optional.ofNullable(target));
+            final OrderTable orderTable = spy(new OrderTable(5, false));
+            given(orderTableDao.findById(anyLong())).willReturn(Optional.ofNullable(orderTable));
+
+            final TableGroup emptyTableGroup = mock(TableGroup.class);
+            given(orderTable.getTableGroup()).willReturn(emptyTableGroup);
+            final Long emptyTableGroupId = null;
+            given(emptyTableGroup.getId()).willReturn(emptyTableGroupId);
 
             final long orderTableId = 1L;
             given(orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, List.of(COOKING.name(), MEAL.name()))).willReturn(true);
 
             // when, then
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, target))
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, orderTable))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

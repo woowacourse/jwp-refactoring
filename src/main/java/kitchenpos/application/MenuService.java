@@ -43,7 +43,7 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
+        if (!menuGroupDao.existsById(menu.getMenuGroup().getId())) {
             throw new IllegalArgumentException();
         }
 
@@ -51,7 +51,7 @@ public class MenuService {
 
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = productDao.findById(menuProduct.getProductId())
+            final Product product = productDao.findById(menuProduct.getProduct().getId())
                     .orElseThrow(IllegalArgumentException::new);
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
@@ -62,10 +62,8 @@ public class MenuService {
 
         final Menu savedMenu = menuDao.save(menu);
 
-        final Long menuId = savedMenu.getId();
-
         final List<MenuProduct> savedMenuProducts = menuProducts.stream()
-                .map(menuProduct -> menuProductDao.save(new MenuProduct(menuId, menuProduct.getProductId(), menuProduct.getQuantity())))
+                .map(menuProduct -> menuProductDao.save(new MenuProduct(menu, menuProduct.getProduct(), menuProduct.getQuantity())))
                 .collect(toList());
         savedMenu.addMenuProducts(savedMenuProducts);
 

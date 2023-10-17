@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static kitchenpos.application.fixture.TableGroupFixture.tableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -53,7 +54,6 @@ class TableGroupServiceTest {
             given(orderTableDao.findAllByIdIn(anyList())).willReturn(List.of(orderTable1, orderTable2));
 
             final TableGroup spyExpected = spy(new TableGroup(expected.getCreatedDate(), new ArrayList<>()));
-            given(spyExpected.getId()).willReturn(1L);
             given(tableGroupDao.save(any(TableGroup.class))).willReturn(spyExpected);
 
             // when
@@ -118,7 +118,8 @@ class TableGroupServiceTest {
         void 저장된_주문_테이블이_이미_그룹이면_실패한다() {
             // given
             final OrderTable alreadyHaveTableGroup = new OrderTable(3, true);
-            alreadyHaveTableGroup.changeGroup(1L);
+            final TableGroup tableGroup = tableGroup(LocalDateTime.now(), List.of(alreadyHaveTableGroup));
+            alreadyHaveTableGroup.changeGroup(tableGroup);
             final OrderTable notHaveTableGroup = new OrderTable(5, true);
             final List<OrderTable> orderTables = new ArrayList<>(List.of(alreadyHaveTableGroup, notHaveTableGroup));
             final TableGroup expected = new TableGroup(LocalDateTime.now(), orderTables);
@@ -151,9 +152,9 @@ class TableGroupServiceTest {
 
             // then
             assertAll(
-                    () -> assertThat(spyOrderTable1.getTableGroupId()).isEqualTo(null),
+                    () -> assertThat(spyOrderTable1.getTableGroup()).isNull(),
                     () -> assertThat(spyOrderTable1.isEmpty()).isFalse(),
-                    () -> assertThat(spyOrderTable2.getTableGroupId()).isEqualTo(null),
+                    () -> assertThat(spyOrderTable2.getTableGroup()).isNull(),
                     () -> assertThat(spyOrderTable2.isEmpty()).isFalse()
             );
         }

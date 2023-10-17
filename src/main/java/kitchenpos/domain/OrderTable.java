@@ -1,21 +1,35 @@
 package kitchenpos.domain;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+import static javax.persistence.FetchType.LAZY;
+
+@Entity
 public class OrderTable {
+
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     private Long id;
-    private Long tableGroupId;
+
+    @ManyToOne(fetch = LAZY)
+    private TableGroup tableGroup;
     private int numberOfGuests;
     private boolean empty;
 
-    private OrderTable() {
+    protected OrderTable() {
     }
 
     public OrderTable(final int numberOfGuests, final boolean empty) {
         this(null, null, numberOfGuests, empty);
     }
 
-    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+    public OrderTable(final Long id, final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
         this.id = id;
-        this.tableGroupId = tableGroupId;
+        this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -24,8 +38,8 @@ public class OrderTable {
         return id;
     }
 
-    public Long getTableGroupId() {
-        return tableGroupId;
+    public TableGroup getTableGroup() {
+        return tableGroup;
     }
 
     public int getNumberOfGuests() {
@@ -36,8 +50,8 @@ public class OrderTable {
         return empty;
     }
 
-    public void changeGroup(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
+    public void changeGroup(final TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
     }
 
     public void changeEmpty(final boolean empty) {
