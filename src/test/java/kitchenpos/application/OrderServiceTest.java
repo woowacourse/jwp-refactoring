@@ -56,9 +56,7 @@ public class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        savedMenuGroup = new MenuGroup();
-        savedMenuGroup.setId(1L);
-        savedMenuGroup.setName("추천메뉴");
+        savedMenuGroup = new MenuGroup(1L, "추천메뉴");
 
         savedMenu = new Menu();
         savedMenu.setId(1L);

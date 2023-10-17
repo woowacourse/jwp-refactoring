@@ -50,9 +50,7 @@ public class MenuServiceTest {
 
     @BeforeEach
     void setUp() {
-        savedMenuGroup = new MenuGroup();
-        savedMenuGroup.setId(1L);
-        savedMenuGroup.setName("추천메뉴");
+        savedMenuGroup = new MenuGroup(1L, "추천메뉴");
 
         savedMenu = new Menu();
         savedMenu.setId(1L);
@@ -60,10 +58,7 @@ public class MenuServiceTest {
         savedMenu.setPrice(BigDecimal.valueOf(19000));
         savedMenu.setMenuGroupId(savedMenuGroup.getId());
 
-        savedProduct = new Product();
-        savedProduct.setId(1L);
-        savedProduct.setName("강정치킨");
-        savedProduct.setPrice(BigDecimal.valueOf(17000));
+        savedProduct = new Product(1L, "강정치킨", BigDecimal.valueOf(17000));
 
         savedMenuProduct = new MenuProduct();
         savedMenuProduct.setSeq(1L);
