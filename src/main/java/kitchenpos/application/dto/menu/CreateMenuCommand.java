@@ -1,8 +1,12 @@
 package kitchenpos.application.dto.menu;
 
+import static kitchenpos.exception.MenuExceptionType.MENU_PRODUCT_COMMANDS_CAN_NOT_NULL;
+
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import kitchenpos.application.dto.menuproduct.MenuProductCommand;
+import kitchenpos.exception.MenuException;
 
 public class CreateMenuCommand {
 
@@ -17,6 +21,9 @@ public class CreateMenuCommand {
             Long menuGroupId,
             List<MenuProductCommand> menuProductCommands
     ) {
+        if (Objects.isNull(menuProductCommands)) {
+            throw new MenuException(MENU_PRODUCT_COMMANDS_CAN_NOT_NULL);
+        }
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;

@@ -73,11 +73,6 @@ public class IntegrationTest {
         return 주문(주문_테이블, OrderStatus.COOKING, 맛있는_메뉴());
     }
 
-    protected Order 식사중인_주문() {
-        OrderTable 주문_테이블 = 주문_테이블(false);
-        return 주문(주문_테이블, OrderStatus.MEAL, 맛있는_메뉴());
-    }
-
     protected Order 완료된_주문() {
         OrderTable 주문_테이블 = 주문_테이블(false);
         return 주문(주문_테이블, OrderStatus.COMPLETION, 맛있는_메뉴());
@@ -113,20 +108,16 @@ public class IntegrationTest {
     }
 
     protected Menu 맛있는_메뉴() {
-        Menu menu = 메뉴(메뉴_그룹(),
+        return 메뉴(메뉴_그룹(),
                 BigDecimal.valueOf(5),
                 "맛있는 메뉴",
                 new MenuProduct(상품("상품1", BigDecimal.valueOf(1)), 3),
                 new MenuProduct(상품("상품2", BigDecimal.valueOf(2)), 2)
         );
-        menu.addMenuProduct(new MenuProduct(상품("상품1", BigDecimal.valueOf(1)), 3));
-        menu.addMenuProduct(new MenuProduct(상품("상품2", BigDecimal.valueOf(2)), 2));
-        return menu;
     }
 
     protected Menu 메뉴(MenuGroup 메뉴_그룹, BigDecimal 가격, String 이름, MenuProduct... 메뉴_상품들) {
-        Menu menu = new Menu(이름, new Price(가격), 메뉴_그룹);
-        Arrays.stream(메뉴_상품들).forEach(menu::addMenuProduct);
+        Menu menu = new Menu(이름, new Price(가격), 메뉴_그룹, Arrays.asList(메뉴_상품들));
         return menuRepository.save(menu);
     }
 

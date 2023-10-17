@@ -1,6 +1,9 @@
 package kitchenpos.application;
 
+import static kitchenpos.exception.MenuExceptionType.SUM_OF_MENU_PRODUCTS_PRICE_MUST_BE_LESS_THAN_PRICE;
 import static kitchenpos.exception.MenuGroupExceptionType.MENU_GROUP_NOT_FOUND;
+import static kitchenpos.exception.PriceExceptionType.PRICE_CAN_NOT_NEGATIVE;
+import static kitchenpos.exception.PriceExceptionType.PRICE_CAN_NOT_NULL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -30,7 +33,7 @@ class MenuServiceTest extends IntegrationTest {
     @Test
     void 메뉴_그룹이_존재하지_않으면_예외가_발생한다() {
         // given
-        CreateMenuCommand command = new CreateMenuCommand(null, BigDecimal.ZERO, 1L, null);
+        CreateMenuCommand command = new CreateMenuCommand(null, BigDecimal.ZERO, 1L, List.of());
 
         // when & then
         BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
@@ -53,37 +56,45 @@ class MenuServiceTest extends IntegrationTest {
         }
 
         @Test
+        void 메뉴_상품이_없어도_예외가_발생하지_않는다() {
+            // given
+            CreateMenuCommand command = new CreateMenuCommand("메뉴", BigDecimal.ZERO, menuGroup.id(), List.of());
+
+            // when
+            assertThatCode(() -> menuService.create(command))
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
         void 메뉴의_가격이_null이면_예외가_발생한다() {
             // given
-            CreateMenuCommand command = new CreateMenuCommand(null, null, menuGroup.id(), null);
+            CreateMenuCommand command = new CreateMenuCommand(null, null, menuGroup.id(), List.of());
 
-            // when & then
-            assertThatThrownBy(() -> menuService.create(command))
-                    .isInstanceOf(IllegalArgumentException.class);
+            // when
+            BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                    menuService.create(command)
+            ).exceptionType();
+
+            // then
+            assertThat(exceptionType).isEqualTo(PRICE_CAN_NOT_NULL);
         }
 
         @Test
         void 메뉴의_가격이_0보다_작으면_예외가_발생한다() {
             // given
-            CreateMenuCommand command = new CreateMenuCommand(null, BigDecimal.valueOf(-1), menuGroup.id(), null);
+            CreateMenuCommand command = new CreateMenuCommand(null, BigDecimal.valueOf(-1), menuGroup.id(), List.of());
 
-            // when & then
-            assertThatThrownBy(() -> menuService.create(command))
-                    .isInstanceOf(IllegalArgumentException.class);
+            // when
+            BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                    menuService.create(command)
+            ).exceptionType();
+
+            // then
+            assertThat(exceptionType).isEqualTo(PRICE_CAN_NOT_NEGATIVE);
         }
 
         @Nested
         class 메뉴_가격이_올바른_경우 {
-
-            @Test
-            void 메뉴_상품들이_null이면_예외가_발생한다() {
-                // given
-                CreateMenuCommand command = new CreateMenuCommand(null, BigDecimal.ZERO, menuGroup.id(), null);
-
-                // when & then
-                assertThatThrownBy(() -> menuService.create(command))
-                        .isInstanceOf(NullPointerException.class);
-            }
 
             @Test
             void 메뉴_이름이_없으면_DB에서_예외가_발생한다() {
@@ -97,17 +108,6 @@ class MenuServiceTest extends IntegrationTest {
 
             @Nested
             class 메뉴_이름이_있는경우 {
-
-                @Test
-                void 메뉴_상품이_없어도_예외가_발생하지_않는다() {
-                    // given
-                    CreateMenuCommand command = new CreateMenuCommand("메뉴", BigDecimal.ZERO, menuGroup.id(),
-                            List.of());
-
-                    // when
-                    assertThatCode(() -> menuService.create(command))
-                            .doesNotThrowAnyException();
-                }
 
                 @Nested
                 class 메뉴_상품들이_있는경우 {
@@ -134,9 +134,13 @@ class MenuServiceTest extends IntegrationTest {
                                         new MenuProductCommand(product2.id(), 3)
                                 ));
 
-                        // when & then
-                        assertThatThrownBy(() -> menuService.create(command))
-                                .isInstanceOf(IllegalArgumentException.class);
+                        // when
+                        BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                                menuService.create(command)
+                        ).exceptionType();
+
+                        // then
+                        assertThat(exceptionType).isEqualTo(SUM_OF_MENU_PRODUCTS_PRICE_MUST_BE_LESS_THAN_PRICE);
                     }
 
                     @Test
@@ -171,17 +175,15 @@ class MenuServiceTest extends IntegrationTest {
                     @Test
                     void 메뉴들을_조회한다() {
                         // given
-                        Menu menu = new Menu("메뉴", new Price(BigDecimal.valueOf(11)), menuGroup);
-                        MenuProduct menuProduct1 = new MenuProduct(product1, 2);
-                        MenuProduct menuProduct2 = new MenuProduct(product2, 3);
-                        menu.addMenuProduct(menuProduct1);
-                        menu.addMenuProduct(menuProduct2);
+                        Menu menu = new Menu("메뉴", new Price(BigDecimal.valueOf(11)), menuGroup, List.of(
+                                new MenuProduct(product1, 2),
+                                new MenuProduct(product2, 3)
+                        ));
 
-                        Menu menu2 = new Menu("메뉴2", new Price(BigDecimal.valueOf(9)), menuGroup);
-                        MenuProduct menuProduct3 = new MenuProduct(product1, 3);
-                        MenuProduct menuProduct4 = new MenuProduct(product2, 2);
-                        menu2.addMenuProduct(menuProduct3);
-                        menu2.addMenuProduct(menuProduct4);
+                        Menu menu2 = new Menu("메뉴2", new Price(BigDecimal.valueOf(9)), menuGroup, List.of(
+                                new MenuProduct(product1, 3),
+                                new MenuProduct(product2, 2)
+                        ));
 
                         menuRepository.save(menu);
                         menuRepository.save(menu2);

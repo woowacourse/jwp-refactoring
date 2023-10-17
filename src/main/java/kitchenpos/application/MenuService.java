@@ -35,13 +35,11 @@ public class MenuService {
     @Transactional
     public CreateMenuResponse create(CreateMenuCommand command) {
         MenuGroup menuGroup = menuGroupRepository.getById(command.menuGroupId());
-        Menu menu = new Menu(command.name(), new Price(command.price()), menuGroup);
-        command.menuProductCommands().stream()
+        List<MenuProduct> menuProducts = command.menuProductCommands().stream()
                 .map(it -> new MenuProduct(productRepository.getById(it.productId()), it.quantity()))
-                .forEach(menu::addMenuProduct);
-        menu.validatePrice();
-        Menu savedMenu = menuRepository.save(menu);
-        return CreateMenuResponse.from(savedMenu);
+                .collect(Collectors.toList());
+        Menu menu = new Menu(command.name(), new Price(command.price()), menuGroup, menuProducts);
+        return CreateMenuResponse.from(menuRepository.save(menu));
     }
 
     public List<SearchMenuResponse> list() {

@@ -1,8 +1,10 @@
 package kitchenpos.application;
 
+import static kitchenpos.exception.PriceExceptionType.PRICE_CAN_NOT_NEGATIVE;
+import static kitchenpos.exception.PriceExceptionType.PRICE_CAN_NOT_NULL;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -12,6 +14,8 @@ import kitchenpos.application.dto.product.CreateProductResponse;
 import kitchenpos.application.dto.product.SearchProductResponse;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
+import kitchenpos.exception.BaseException;
+import kitchenpos.exception.BaseExceptionType;
 import org.junit.jupiter.api.Test;
 
 class ProductServiceTest extends IntegrationTest {
@@ -38,9 +42,13 @@ class ProductServiceTest extends IntegrationTest {
         // given
         CreateProductCommand command = new CreateProductCommand("상품", null);
 
-        // when & then
-        assertThatThrownBy(() -> productService.create(command))
-                .isInstanceOf(IllegalArgumentException.class);
+        // when
+        BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                productService.create(command)
+        ).exceptionType();
+
+        // then
+        assertThat(exceptionType).isEqualTo(PRICE_CAN_NOT_NULL);
     }
 
     @Test
@@ -48,9 +56,13 @@ class ProductServiceTest extends IntegrationTest {
         // given
         CreateProductCommand command = new CreateProductCommand("상품", BigDecimal.valueOf(-1));
 
-        // when & then
-        assertThatThrownBy(() -> productService.create(command))
-                .isInstanceOf(IllegalArgumentException.class);
+        // when
+        BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                productService.create(command)
+        ).exceptionType();
+
+        // then
+        assertThat(exceptionType).isEqualTo(PRICE_CAN_NOT_NEGATIVE);
     }
 
     @Test

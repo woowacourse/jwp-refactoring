@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.EAGER;
+import static kitchenpos.exception.MenuExceptionType.SUM_OF_MENU_PRODUCTS_PRICE_MUST_BE_LESS_THAN_PRICE;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import kitchenpos.exception.MenuException;
 
 @Entity
 public class Menu {
@@ -40,21 +42,13 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(String name, Price price, MenuGroup menuGroup) {
-        this.name = name;
-        this.price = price;
-        this.menuGroup = menuGroup;
-    }
-
     public Menu(String name, Price price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
         this(null, name, price, menuGroup, menuProducts);
     }
 
-    public Menu(Long id, String name, Price price, MenuGroup menuGroup) {
-        this(id, name, price, menuGroup, new ArrayList<>());
-    }
-
     public Menu(Long id, String name, Price price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+        validatePrice(price, menuProducts);
+        menuProducts.forEach(it -> it.setMenu(this));
         this.id = id;
         this.name = name;
         this.price = price;
@@ -62,13 +56,13 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    public void validatePrice() {
+    private void validatePrice(Price price, List<MenuProduct> menuProducts) {
         BigDecimal sum = BigDecimal.ZERO;
         for (MenuProduct menuProduct : menuProducts) {
             sum = sum.add(menuProduct.product().price().multiply(BigDecimal.valueOf(menuProduct.quantity())));
         }
         if (price.value().compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
+            throw new MenuException(SUM_OF_MENU_PRODUCTS_PRICE_MUST_BE_LESS_THAN_PRICE);
         }
     }
 
