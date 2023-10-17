@@ -45,8 +45,7 @@ class OrderServiceTest {
     @Test
     void 주문_항목에_메뉴_ID가_존재하지_않는경우_예외가_발생한다() {
         Order order = new Order();
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
+        OrderLineItem orderLineItem = OrderLineItemFixtures.로제떡볶이_주문항목();
         order.setOrderLineItems(List.of(orderLineItem));
 
         when(menuDao.countByIdIn(List.of(1L))).thenReturn(0L);
@@ -58,8 +57,7 @@ class OrderServiceTest {
     void 주문_테이블이_존재하지_않는_경우_예외가_발생한다() {
         Order order = new Order();
         order.setOrderTableId(2L);
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
+        OrderLineItem orderLineItem = OrderLineItemFixtures.로제떡볶이_주문항목();
         order.setOrderLineItems(List.of(orderLineItem));
 
         when(menuDao.countByIdIn(List.of(1L))).thenReturn(1L);
@@ -73,8 +71,7 @@ class OrderServiceTest {
     void 주문_생성할_수_있다() {
         Order order = new Order();
         order.setOrderTableId(2L);
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
+        OrderLineItem orderLineItem = OrderLineItemFixtures.로제떡볶이_주문항목();
         order.setOrderLineItems(List.of(orderLineItem));
 
         when(menuDao.countByIdIn(List.of(1L))).thenReturn(1L);
