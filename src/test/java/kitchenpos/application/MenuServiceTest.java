@@ -118,25 +118,6 @@ class MenuServiceTest {
     }
 
     @Test
-    @DisplayName("메뉴의 가격이 null이면 예외가 발생한다.")
-    void create_fail_price1() {
-        menu.setPrice(null);
-
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(NoPriceException.class);
-    }
-
-    @Test
-    @DisplayName("메뉴의 가격이 0미만이면 예외가 발생한다.")
-    void create_fail_price2() {
-        menu.setPrice(BigDecimal.valueOf(-1));
-
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(NoPriceException.class);
-    }
-
-
-    @Test
     @DisplayName("메뉴의 가격이 전체 상품의 가격보다 크면 예외가 발생한다.")
     void create_fail_price3() {
         menu.setPrice(BigDecimal.valueOf(PRODUCT1_PRICE * PRODUCT1_QUANTITY + PRODUCT2_PRICE * PRODUCT2_QUANTITY + 1));

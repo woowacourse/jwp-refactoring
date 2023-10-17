@@ -41,24 +41,6 @@ class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("상품의 가격이 0원 미만이면 예외가 발생한다.")
-    void create_fail_price1() {
-        product.setPrice(BigDecimal.valueOf(-1));
-
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(NoPriceException.class);
-    }
-
-    @Test
-    @DisplayName("상품의 가격이 null이면 예외가 발생한다.")
-    void create_fail_price2() {
-        product.setPrice(null);
-
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(NoPriceException.class);
-    }
-
-    @Test
     @DisplayName("상품 목록을 확인할 수 있다.")
     void list_success() {
         productService.list();

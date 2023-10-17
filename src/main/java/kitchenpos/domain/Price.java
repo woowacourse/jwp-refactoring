@@ -2,13 +2,19 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import kitchenpos.domain.exception.NoPriceException;
 
+@Embeddable
 public class Price {
 
     private static final BigDecimal LOWER_BOUND = BigDecimal.ZERO;
 
-    private final BigDecimal value;
+    @Column
+    private BigDecimal value;
+
+    protected Price() {}
 
     private Price(final BigDecimal value) {
         this.value = value;
