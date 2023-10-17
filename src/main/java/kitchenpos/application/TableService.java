@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.Orders;
 import kitchenpos.domain.table.OrderTable;
 import org.springframework.stereotype.Service;
@@ -36,8 +37,8 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        Orders orders = orderDao.findAllByOrderTableId(orderTableId);
-        savedOrderTable.setOrders(orders);
+        List<Order> orders = orderDao.findAllByOrderTableId(orderTableId);
+        savedOrderTable.setOrders(new Orders(orders));
 
         savedOrderTable.changeEmpty(empty);
 

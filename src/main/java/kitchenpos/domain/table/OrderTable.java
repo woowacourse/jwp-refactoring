@@ -51,6 +51,7 @@ public class OrderTable {
 
     public void unGroup() {
         this.tableGroupId = null;
+        this.empty = true;
     }
 
     public boolean isNotEmpty() {

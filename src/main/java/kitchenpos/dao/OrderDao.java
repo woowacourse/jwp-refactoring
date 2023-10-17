@@ -1,7 +1,6 @@
 package kitchenpos.dao;
 
 import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.Orders;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,5 +16,5 @@ public interface OrderDao {
 
     boolean existsByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds, List<String> orderStatuses);
 
-    Orders findAllByOrderTableId(long orderTableId);
+    List<Order> findAllByOrderTableId(long orderTableId);
 }
