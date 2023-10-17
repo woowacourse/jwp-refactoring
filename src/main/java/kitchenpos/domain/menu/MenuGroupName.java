@@ -1,4 +1,4 @@
-package kitchenpos.domain.Menu;
+package kitchenpos.domain.menu;
 
 import java.util.Objects;
 

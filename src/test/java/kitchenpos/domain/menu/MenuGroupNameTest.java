@@ -1,4 +1,4 @@
-package kitchenpos.domain.Menu;
+package kitchenpos.domain.menu;
 
 import kitchenpos.BaseTest;
 import org.assertj.core.api.Assertions;
