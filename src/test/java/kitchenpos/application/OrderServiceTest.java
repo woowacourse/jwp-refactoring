@@ -76,7 +76,7 @@ class OrderServiceTest {
 
         when(menuDao.countByIdIn(List.of(1L))).thenReturn(1L);
 
-        when(orderTableDao.findById(2L)).thenReturn(Optional.of(new OrderTable()));
+        when(orderTableDao.findById(2L)).thenReturn(Optional.of(OrderTableFixtures.주문테이블1번()));
         when(orderDao.save(order)).thenReturn(order);
 
         orderService.create(order);

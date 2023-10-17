@@ -27,7 +27,7 @@ class TableServiceTest {
 
     @Test
     void 주문_테이블_생성할_수_있다() {
-        OrderTable orderTable = new OrderTable();
+        OrderTable orderTable = OrderTableFixtures.빈테이블3번();
         tableService.create(orderTable);
         verify(orderTableDao).save(orderTable);
     }
@@ -40,18 +40,16 @@ class TableServiceTest {
 
     @Test
     void 주문_테이블_Id가_존재하지_않는경우_예외가_발생한다() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
+        OrderTable orderTable = OrderTableFixtures.빈테이블3번();
         when(orderTableDao.findById(orderTable.getId())).thenReturn(Optional.empty());
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), orderTable)).isInstanceOf(
                 IllegalArgumentException.class);
     }
 
     @Test
-    void 주문_테이블_그룹_Id가_존재하지_않는경우_예외가_발생한다() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setTableGroupId(2L);
+    void 주문_테이블_그룹_Id가_존재하는_경우_예외가_발생한다() {
+        OrderTable orderTable = OrderTableFixtures.빈테이블3번();
+        orderTable.attachTableGroup(1L);
         when(orderTableDao.findById(orderTable.getId())).thenReturn(Optional.of(orderTable));
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), orderTable)).isInstanceOf(
                 IllegalArgumentException.class);
@@ -59,8 +57,7 @@ class TableServiceTest {
 
     @Test
     void 주문_테이블_아이디_주문상태가_존재하는_경우_예외가_발생한다() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
+        OrderTable orderTable = OrderTableFixtures.빈테이블3번();
 
         when(orderTableDao.findById(orderTable.getId())).thenReturn(Optional.of(orderTable));
         when(orderDao.existsByOrderTableIdAndOrderStatusIn(orderTable.getId(),
@@ -72,8 +69,7 @@ class TableServiceTest {
 
     @Test
     void 주문_테이블_상태를_빈_테이블_변경할_수_있다() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
+        OrderTable orderTable = OrderTableFixtures.빈테이블3번();
 
         when(orderTableDao.findById(orderTable.getId())).thenReturn(Optional.of(orderTable));
         when(orderDao.existsByOrderTableIdAndOrderStatusIn(orderTable.getId(),
@@ -86,18 +82,15 @@ class TableServiceTest {
 
     @Test
     void 게스트_수는_0명_이하일_수_없다() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setNumberOfGuests(0);
+        OrderTable orderTable = OrderTableFixtures.빈테이블3번();
+        orderTable.changeNumberOfGuests(0);
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 주문_테이블_Id가_존재하지_않는_경우_예외가_발생한다() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setNumberOfGuests(2);
+        OrderTable orderTable = OrderTableFixtures.주문테이블1번();
 
         when(orderTableDao.findById(orderTable.getId())).thenReturn(Optional.empty());
 
@@ -107,9 +100,7 @@ class TableServiceTest {
 
     @Test
     void 주문_테이블_방문한_손님_수_변경을_할_수_있다() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setNumberOfGuests(2);
+        OrderTable orderTable = OrderTableFixtures.주문테이블1번();
 
         when(orderTableDao.findById(orderTable.getId())).thenReturn(Optional.of(orderTable));
 
