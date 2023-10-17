@@ -6,9 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MenuRepository extends JpaRepository<Menu, Long> {
 
-    long countByIdIn(List<Long> ids);
-
-    default Menu findByIdOrThrow(Long id) {
-        return findById(id).orElseThrow(IllegalArgumentException::new);
-    }
+    List<Menu> findAllByIdIn(List<Long> ids);
 }

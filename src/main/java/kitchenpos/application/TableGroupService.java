@@ -2,6 +2,8 @@ package kitchenpos.application;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.GroupOrderTableRequest;
 import kitchenpos.application.dto.TableGroupingRequest;
@@ -29,14 +31,33 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResult create(final TableGroupingRequest request) {
-        final List<OrderTable> orderTables = request.getOrderTables().stream()
-                .map(GroupOrderTableRequest::getId)
-                .map(orderTableId -> orderTableRepository.findById(orderTableId)
-                        .orElseThrow(() -> new IllegalArgumentException("Order table does not exist.")))
-                .collect(Collectors.toList());
+        final List<OrderTable> orderTables = getOrderTablesByRequest(request);
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
         tableGroup.groupOrderTables(orderTables);
         return TableGroupResult.from(tableGroupRepository.save(tableGroup));
+    }
+
+    private List<OrderTable> getOrderTablesByRequest(final TableGroupingRequest request) {
+        final List<Long> orderTableIds = extractOrderTableIds(request);
+        final Map<Long, OrderTable> orderTablesById = orderTableRepository.findAllByIdIn(orderTableIds).stream()
+                .collect(Collectors.toMap(OrderTable::getId, Function.identity()));
+        return request.getOrderTables().stream().map(orderTableRequest ->
+                getOrderTableByRequest(orderTableRequest, orderTablesById)).collect(Collectors.toList());
+    }
+
+    private OrderTable getOrderTableByRequest(
+            final GroupOrderTableRequest orderTableRequest,
+            final Map<Long, OrderTable> orderTablesById
+    ) {
+        return orderTablesById.computeIfAbsent(orderTableRequest.getId(), id -> {
+            throw new IllegalArgumentException("Order table does not exist.");
+        });
+    }
+
+    private List<Long> extractOrderTableIds(final TableGroupingRequest request) {
+        return request.getOrderTables().stream()
+                .map(GroupOrderTableRequest::getId)
+                .collect(Collectors.toList());
     }
 
     @Transactional

@@ -47,7 +47,6 @@ public class TableService {
     ) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("Order table does not exist."));
-
         orderTable.changeNumberOfGuests(request.getNumberOfGuests());
         return OrderTableResult.from(orderTableRepository.save(orderTable));
     }

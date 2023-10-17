@@ -1,6 +1,8 @@
 package kitchenpos.application;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderCreationRequest;
 import kitchenpos.application.dto.OrderItemsWithQuantityRequest;
@@ -48,12 +50,28 @@ public class OrderService {
             final Order order,
             final List<OrderItemsWithQuantityRequest> orderLineItemRequests
     ) {
+        final List<Long> menuIds = extractMenuIds(orderLineItemRequests);
+        final Map<Long, Menu> menusById = menuRepository.findAllByIdIn(menuIds).stream()
+                .collect(Collectors.toMap(Menu::getId, Function.identity()));
         return orderLineItemRequests.stream().map(orderItemRequest -> {
-            final Long menuId = orderItemRequest.getMenuId();
-            final Menu menu = menuRepository.findById(menuId)
-                    .orElseThrow(() -> new IllegalArgumentException("Menu does not exist."));
+            final Menu menu = getMenuByRequestId(orderItemRequest, menusById);
             return new OrderLineItem(order, menu, orderItemRequest.getQuantity());
         }).collect(Collectors.toList());
+    }
+
+    private Menu getMenuByRequestId(
+            final OrderItemsWithQuantityRequest orderItemRequest,
+            final Map<Long, Menu> menusById
+    ) {
+        return menusById.computeIfAbsent(orderItemRequest.getMenuId(), id -> {
+            throw new IllegalArgumentException("Menu does not exist.");
+        });
+    }
+
+    private List<Long> extractMenuIds(final List<OrderItemsWithQuantityRequest> orderLineItemRequests) {
+        return orderLineItemRequests.stream()
+                .map(OrderItemsWithQuantityRequest::getMenuId)
+                .collect(Collectors.toList());
     }
 
     public List<OrderResult> list() {
