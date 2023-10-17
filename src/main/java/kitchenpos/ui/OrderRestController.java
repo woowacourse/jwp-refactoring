@@ -3,9 +3,10 @@ package kitchenpos.ui;
 import java.net.URI;
 import java.util.List;
 import kitchenpos.application.OrderService;
-import kitchenpos.application.dto.order.ChangeOrderStatusCommand;
+import kitchenpos.application.dto.order.ChangeOrderStatusResponse;
 import kitchenpos.application.dto.order.CreateOrderResponse;
 import kitchenpos.domain.Order;
+import kitchenpos.ui.dto.ChangeOrderStatusRequest;
 import kitchenpos.ui.dto.CreateOrderRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,11 +40,10 @@ public class OrderRestController {
     }
 
     @PutMapping("/api/orders/{orderId}/order-status")
-    public ResponseEntity<Order> changeOrderStatus(
+    public ResponseEntity<ChangeOrderStatusResponse> changeOrderStatus(
             @PathVariable final Long orderId,
-            @RequestBody final Order order
+            @RequestBody final ChangeOrderStatusRequest request
     ) {
-        ChangeOrderStatusCommand command = new ChangeOrderStatusCommand(orderId, order.orderStatus());
-        return ResponseEntity.ok(orderService.changeOrderStatus(command));
+        return ResponseEntity.ok(orderService.changeOrderStatus(request.toCommand(orderId)));
     }
 }

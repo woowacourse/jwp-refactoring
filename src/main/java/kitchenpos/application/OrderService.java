@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.order.ChangeOrderStatusCommand;
+import kitchenpos.application.dto.order.ChangeOrderStatusResponse;
 import kitchenpos.application.dto.order.CreateOrderCommand;
 import kitchenpos.application.dto.order.CreateOrderResponse;
 import kitchenpos.domain.MenuRepository;
@@ -48,9 +49,9 @@ public class OrderService {
     }
 
     @Transactional
-    public Order changeOrderStatus(ChangeOrderStatusCommand command) {
+    public ChangeOrderStatusResponse changeOrderStatus(ChangeOrderStatusCommand command) {
         Order savedOrder = orderRepository.getById(command.orderId());
         savedOrder.changeOrderStatus(command.orderStatus());
-        return orderRepository.save(savedOrder);
+        return ChangeOrderStatusResponse.from(orderRepository.save(savedOrder));
     }
 }

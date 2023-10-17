@@ -9,8 +9,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
+import kitchenpos.application.dto.order.ChangeOrderStatusResponse;
 import kitchenpos.application.dto.order.CreateOrderResponse;
 import kitchenpos.domain.Order;
+import kitchenpos.ui.dto.ChangeOrderStatusRequest;
 import kitchenpos.ui.dto.CreateOrderRequest;
 import kitchenpos.ui.dto.OrderLineItemRequest;
 import org.junit.jupiter.api.Test;
@@ -56,11 +58,12 @@ class OrderRestControllerTest extends ControllerTest {
     @Test
     void 주문_상태_변경() throws Exception {
         // given
-        Order order = 주문();
-        String request = objectMapper.writeValueAsString(order);
-        Order savedOrder = 주문(1L);
-        given(orderService.changeOrderStatus(any())).willReturn(savedOrder);
-        String response = objectMapper.writeValueAsString(savedOrder);
+        ChangeOrderStatusRequest changeOrderStatusRequest = new ChangeOrderStatusRequest("COMPLETION");
+        String request = objectMapper.writeValueAsString(changeOrderStatusRequest);
+
+        ChangeOrderStatusResponse changeOrderStatusResponse = ChangeOrderStatusResponse.from(식사중인_주문(1L));
+        given(orderService.changeOrderStatus(any())).willReturn(changeOrderStatusResponse);
+        String response = objectMapper.writeValueAsString(changeOrderStatusResponse);
 
         // when & then
         mockMvc.perform(put("/api/orders/1/order-status")

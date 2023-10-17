@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 import kitchenpos.application.dto.order.ChangeOrderStatusCommand;
+import kitchenpos.application.dto.order.ChangeOrderStatusResponse;
 import kitchenpos.application.dto.order.CreateOrderCommand;
 import kitchenpos.application.dto.order.CreateOrderResponse;
 import kitchenpos.application.dto.orderlineitem.OrderLineItemCommand;
@@ -167,10 +168,10 @@ class OrderServiceTest extends IntegrationTest {
             ChangeOrderStatusCommand command = new ChangeOrderStatusCommand(order.id(), OrderStatus.MEAL);
 
             // when
-            Order result = orderService.changeOrderStatus(command);
+            ChangeOrderStatusResponse result = orderService.changeOrderStatus(command);
 
             // then
-            assertThat(result.orderStatus()).isEqualTo(OrderStatus.MEAL);
+            assertThat(result.orderStatus()).isEqualTo(OrderStatus.MEAL.name());
         }
     }
 }
