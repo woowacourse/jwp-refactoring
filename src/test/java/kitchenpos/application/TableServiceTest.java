@@ -156,11 +156,7 @@ class TableServiceTest extends ServiceTest {
 
         private void 주문만들기(final OrderTable 생성된_테이블) {
             OrderLineItem 주문상품 = 주문_상품_만들기();
-            Order 주문 = new Order();
-            주문.setOrderLineItems(List.of(주문상품));
-            주문.setOrderStatus(OrderStatus.COOKING.name());
-            주문.setOrderTableId(생성된_테이블.getId());
-            주문.setOrderedTime(now());
+            Order 주문 = new Order(null, 생성된_테이블.getId(), OrderStatus.COOKING.name(), now(), List.of(주문상품));
             orderDao.save(주문);
         }
 

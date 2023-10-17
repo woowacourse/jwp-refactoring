@@ -59,12 +59,8 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        Order order = new Order();
-        order.setId(null);
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
-
+        // todo: order repository save (return orderRepository.save(order))
+        Order order = new Order(null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), null);
         final Order savedOrder = orderDao.save(order);
         final Long orderId = savedOrder.getId();
         final List<OrderLineItem> savedOrderLineItems = orderLineItemRequests.stream()
@@ -76,7 +72,6 @@ public class OrderService {
                     return orderLineItemDao.save(orderLineItem);
                 })
                 .collect(Collectors.toList());
-
         savedOrder.setOrderLineItems(savedOrderLineItems);
         return savedOrder;
     }

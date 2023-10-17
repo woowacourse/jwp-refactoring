@@ -80,15 +80,13 @@ class TableGroupServiceTest extends ServiceTest {
 
     @Nested
     class 테이블_그룹_해제 {
+
         @Test
         void 성공() {
             //given
             OrderTable 테이블 = 빈_테이블_생성();
 
-            Order 주문 = new Order();
-            주문.setOrderTableId(테이블.getId());
-            주문.setOrderStatus(OrderStatus.COMPLETION.name());
-            주문.setOrderedTime(now());
+            Order 주문 = new Order(null, 테이블.getId(), OrderStatus.COMPLETION.name(), now(), null);
             orderDao.save(주문);
 
             TableGroup 테이블_그룹 = new TableGroup(null, now(), List.of(테이블, 빈_테이블_생성()));
@@ -106,10 +104,7 @@ class TableGroupServiceTest extends ServiceTest {
             //given
             OrderTable 테이블 = 빈_테이블_생성();
 
-            Order 주문 = new Order();
-            주문.setOrderTableId(테이블.getId());
-            주문.setOrderStatus(OrderStatus.COOKING.name());
-            주문.setOrderedTime(now());
+            Order 주문 = new Order(null, 테이블.getId(), OrderStatus.COOKING.name(), now(), null);
             orderDao.save(주문);
 
             TableGroup 테이블_그룹 = new TableGroup(null, now(), List.of(테이블, 빈_테이블_생성()));
@@ -123,6 +118,7 @@ class TableGroupServiceTest extends ServiceTest {
             assertThatThrownBy(() -> tableGroupService.ungroup(생성된_테이블_그룹.getId()))
                     .isInstanceOf(IllegalArgumentException.class);
         }
+
     }
 
 }

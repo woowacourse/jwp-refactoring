@@ -156,7 +156,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 주문이_존재하지_않으면_예외가_발생한다() {
             //expect
-            assertThatThrownBy(() -> orderService.changeOrderStatus(1000000L, new Order()))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(1000000L, new Order(null, null, null, null, null)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
