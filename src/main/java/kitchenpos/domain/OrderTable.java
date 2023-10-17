@@ -11,6 +11,13 @@ public class OrderTable {
     public OrderTable() {
     }
 
+    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        this.id = id;
+        this.tableGroupId = tableGroupId;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
     public OrderTable(final int numberOfGuests, final boolean empty) {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException("테이블 인원수는 0명 이상이어야 합니다.");

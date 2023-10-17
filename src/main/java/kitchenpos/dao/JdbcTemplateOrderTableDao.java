@@ -18,6 +18,7 @@ import java.util.Optional;
 
 @Repository
 public class JdbcTemplateOrderTableDao implements OrderTableDao {
+
     private static final String TABLE_NAME = "order_table";
     private static final String KEY_COLUMN_NAME = "id";
 
@@ -94,11 +95,12 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
     }
 
     private OrderTable toEntity(final ResultSet resultSet) throws SQLException {
-        final OrderTable entity = new OrderTable();
-        entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setTableGroupId(resultSet.getObject("table_group_id", Long.class));
-        entity.changeNumberOfGuests(resultSet.getInt("number_of_guests"));
-        entity.changeEmpty(resultSet.getBoolean("empty"));
-        return entity;
+        return new OrderTable(
+                resultSet.getLong(KEY_COLUMN_NAME),
+                resultSet.getObject("table_group_id", Long.class),
+                resultSet.getInt("number_of_guests"),
+                resultSet.getBoolean("empty")
+        );
     }
+
 }

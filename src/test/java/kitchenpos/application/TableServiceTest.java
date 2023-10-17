@@ -119,6 +119,7 @@ class TableServiceTest extends ServiceTest {
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(커맨드))
                     .isInstanceOf(IllegalArgumentException.class);
         }
+
     }
 
     @Nested
@@ -174,20 +175,23 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 그룹에속한_테이블이면_예외가_발생한다() {
             //given
-            TableGroup 그룹 = new TableGroup();
-            그룹.setCreatedDate(now());
-            TableGroup 생성된_그룹 = tableGroupDao.save(그룹);
-            OrderTable 테이블 = new OrderTable();
-            테이블.changeEmpty(false);
-            테이블.setTableGroupId(생성된_그룹.getId());
-            OrderTable 생성된_테이블 = orderTableDao.save(테이블);
-
-            ChangeTableEmptyCommand 테이블_비우기_요청 = new ChangeTableEmptyCommand(생성된_테이블.getId(), true);
+            OrderTable 그룹있는_테이블 = orderTableDao.save(new OrderTable(0, true));
+            TableGroup 생성된_그룹 = 그룹_생성하기(그룹있는_테이블);
+            그룹있는_테이블.setTableGroupId(생성된_그룹.getId());
+            orderTableDao.save(그룹있는_테이블);
 
             //expect
+            ChangeTableEmptyCommand 테이블_비우기_요청 = new ChangeTableEmptyCommand(그룹있는_테이블.getId(), true);
             assertThatThrownBy(() -> tableService.changeEmpty(테이블_비우기_요청))
                     .isInstanceOf(IllegalArgumentException.class);
         }
+
+        private TableGroup 그룹_생성하기(final OrderTable 포함할_테이블) {
+            List<OrderTable> 테이블_목록 = List.of(포함할_테이블, new OrderTable(0, true));
+            TableGroup 그룹_엔티티 = new TableGroup(null, now(), 테이블_목록);
+            return tableGroupDao.save(그룹_엔티티);
+        }
+
     }
 
 }

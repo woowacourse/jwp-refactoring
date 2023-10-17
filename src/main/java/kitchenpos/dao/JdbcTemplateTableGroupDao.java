@@ -18,6 +18,7 @@ import java.util.Optional;
 
 @Repository
 public class JdbcTemplateTableGroupDao implements TableGroupDao {
+
     private static final String TABLE_NAME = "table_group";
     private static final String KEY_COLUMN_NAME = "id";
 
@@ -62,9 +63,9 @@ public class JdbcTemplateTableGroupDao implements TableGroupDao {
     }
 
     private TableGroup toEntity(final ResultSet resultSet) throws SQLException {
-        final TableGroup entity = new TableGroup();
-        entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setCreatedDate(resultSet.getObject("created_date", LocalDateTime.class));
+        // TODO: TableGroup(id, createdDate, orderTables) 로 변경하고 사용하던 생성자 지우기
+        final TableGroup entity = new TableGroup(resultSet.getLong(KEY_COLUMN_NAME), resultSet.getObject("created_date", LocalDateTime.class));
         return entity;
     }
+
 }
