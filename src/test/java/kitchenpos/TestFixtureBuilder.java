@@ -18,34 +18,34 @@ public final class TestFixtureBuilder {
     private EntitySupporter entitySupporter;
 
     public MenuGroup buildMenuGroup(final MenuGroup menuGroup) {
-        return entitySupporter.getMenuGroupDao().save(menuGroup);
+        return entitySupporter.getMenuGroupRepository().save(menuGroup);
     }
 
     public MenuProduct buildMenuProduct(final MenuProduct menuProduct) {
-        return entitySupporter.getMenuProductDao().save(menuProduct);
+        return entitySupporter.getMenuProductRepository().save(menuProduct);
     }
 
     public Menu buildMenu(final Menu menu) {
-        return entitySupporter.getMenuDao().save(menu);
+        return entitySupporter.getMenuRepository().save(menu);
     }
 
     public Order buildOrder(final Order order) {
-        return entitySupporter.getOrderDao().save(order);
+        return entitySupporter.getOrderRepository().save(order);
     }
 
-    public OrderLineItem buildOrderLineItem(final OrderLineItem orderLineItemDao) {
-        return entitySupporter.getOrderLineItemDao().save(orderLineItemDao);
+    public OrderLineItem buildOrderLineItem(final OrderLineItem orderLineItem) {
+        return entitySupporter.getOrderLineItemRepository().save(orderLineItem);
     }
 
     public OrderTable buildOrderTable(final OrderTable orderTable) {
-        return entitySupporter.getOrderTableDao().save(orderTable);
+        return entitySupporter.getOrderTableRepository().save(orderTable);
     }
 
     public Product buildProduct(final Product product) {
-        return entitySupporter.getProductDao().save(product);
+        return entitySupporter.getProductRepository().save(product);
     }
 
-    public TableGroup buildTableGroup(final TableGroup tableGroupDao) {
-        return entitySupporter.getTableGroupDao().save(tableGroupDao);
+    public TableGroup buildTableGroup(final TableGroup tableGroup) {
+        return entitySupporter.getTableGroupRepository().save(tableGroup);
     }
 }

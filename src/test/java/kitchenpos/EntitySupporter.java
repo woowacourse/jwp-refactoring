@@ -1,13 +1,13 @@
 package kitchenpos;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.menu.MenuGroupRepository;
+import kitchenpos.domain.menu.MenuProductRepository;
+import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.order.OrderLineItemRepository;
+import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.product.ProductRepository;
+import kitchenpos.domain.table.OrderTableRepository;
+import kitchenpos.domain.table.TableGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,58 +15,58 @@ import org.springframework.stereotype.Component;
 public final class EntitySupporter {
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuProductDao menuProductDao;
+    private MenuProductRepository menuProductRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private OrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
-    public MenuGroupDao getMenuGroupDao() {
-        return menuGroupDao;
+    public MenuGroupRepository getMenuGroupRepository() {
+        return menuGroupRepository;
     }
 
-    public MenuProductDao getMenuProductDao() {
-        return menuProductDao;
+    public MenuProductRepository getMenuProductRepository() {
+        return menuProductRepository;
     }
 
-    public MenuDao getMenuDao() {
-        return menuDao;
+    public MenuRepository getMenuRepository() {
+        return menuRepository;
     }
 
-    public OrderDao getOrderDao() {
-        return orderDao;
+    public OrderRepository getOrderRepository() {
+        return orderRepository;
     }
 
-    public OrderLineItemDao getOrderLineItemDao() {
-        return orderLineItemDao;
+    public OrderLineItemRepository getOrderLineItemRepository() {
+        return orderLineItemRepository;
     }
 
-    public OrderTableDao getOrderTableDao() {
-        return orderTableDao;
+    public OrderTableRepository getOrderTableRepository() {
+        return orderTableRepository;
     }
 
-    public ProductDao getProductDao() {
-        return productDao;
+    public ProductRepository getProductRepository() {
+        return productRepository;
     }
 
-    public TableGroupDao getTableGroupDao() {
-        return tableGroupDao;
+    public TableGroupRepository getTableGroupRepository() {
+        return tableGroupRepository;
     }
 }
