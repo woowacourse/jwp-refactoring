@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.MenuGroupCreateDto;
+import kitchenpos.application.dto.MenuGroupDto;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.Menu.MenuGroup;
 import kitchenpos.domain.Menu.MenuGroupName;
@@ -23,13 +24,9 @@ class MenuGroupServiceTest extends MockServiceTest {
     @Test
     void 메뉴그룹_목록을_조회한다() {
         // given
-        MenuGroup expectedFirstMenuGroup = new MenuGroup(
-                1L,
-                new MenuGroupName("고기"));
-        MenuGroup expectedSecondMenuGroup = new MenuGroup(
-                2L,
-                new MenuGroupName("물고기"));
-        List<MenuGroup> expected = List.of(expectedFirstMenuGroup, expectedSecondMenuGroup);
+        MenuGroupDto expectedFirstMenuGroup = new MenuGroupDto(1L, "고기");
+        MenuGroupDto expectedSecondMenuGroup = new MenuGroupDto(2L, "물고기");
+        List<MenuGroupDto> expected = List.of(expectedFirstMenuGroup, expectedSecondMenuGroup);
 
         MenuGroup mockFirstMenuGroup = new MenuGroup(
                 1L,
@@ -42,7 +39,7 @@ class MenuGroupServiceTest extends MockServiceTest {
                 .willReturn(List.of(mockFirstMenuGroup, mockSecondMenuGroup));
 
         // when
-        List<MenuGroup> actual = menuGroupService.list();
+        List<MenuGroupDto> actual = menuGroupService.list();
 
         // then
         Assertions.assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
@@ -51,9 +48,7 @@ class MenuGroupServiceTest extends MockServiceTest {
     @Test
     void 메뉴그룹을_추가한다() {
         // given
-        MenuGroup expected = new MenuGroup(
-                1L,
-                new MenuGroupName("고기"));
+        MenuGroupDto expected = new MenuGroupDto(1L, "고기");
 
         MenuGroupCreateDto menuGroupCreateDto = new MenuGroupCreateDto("고기");
 
@@ -65,7 +60,7 @@ class MenuGroupServiceTest extends MockServiceTest {
                 .willReturn(mockReturnMenuGroup);
 
         // when
-        MenuGroup actual = menuGroupService.create(menuGroupCreateDto);
+        MenuGroupDto actual = menuGroupService.create(menuGroupCreateDto);
 
         // then
         Assertions.assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
@@ -74,9 +69,7 @@ class MenuGroupServiceTest extends MockServiceTest {
     @Test
     void 메뉴그룹을_추가할_때_이름이_공백일_수_있다() {
         // given
-        MenuGroup expected = new MenuGroup(
-                1L,
-                new MenuGroupName(""));
+        MenuGroupDto expected = new MenuGroupDto(1L, "");
 
         MenuGroupCreateDto menuGroupCreateDto = new MenuGroupCreateDto("");
 
@@ -88,7 +81,7 @@ class MenuGroupServiceTest extends MockServiceTest {
                 .willReturn(mockReturnMenuGroup);
 
         // when
-        MenuGroup actual = menuGroupService.create(menuGroupCreateDto);
+        MenuGroupDto actual = menuGroupService.create(menuGroupCreateDto);
 
         // then
         Assertions.assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
