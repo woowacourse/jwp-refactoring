@@ -9,11 +9,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.dto.MenuGroupRequest;
 
-@SpringBootTest
 @DisplayName("메뉴 그룹 테스트")
-class MenuGroupServiceTest {
+class MenuGroupServiceTest extends BaseServiceTest{
 
     @Autowired
     private MenuGroupService menuGroupService;
@@ -22,16 +22,15 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹을 생성한다.")
     void createTest() {
         //given
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("분식");
+        final MenuGroupRequest request = new MenuGroupRequest("분식");
 
         //when
-        final MenuGroup createdMenuGroup = menuGroupService.create(menuGroup);
+        final MenuGroup createdMenuGroup = menuGroupService.create(request);
 
         //then
         assertSoftly(softAssertions -> {
             assertThat(createdMenuGroup.getId()).isNotNull();
-            assertThat(createdMenuGroup.getName()).isEqualTo(menuGroup.getName());
+            assertThat(createdMenuGroup.getName()).isEqualTo(request.getName());
         });
     }
 
