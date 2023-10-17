@@ -2,8 +2,7 @@ package kitchenpos.ui;
 
 import kitchenpos.application.ProductService;
 import kitchenpos.application.dto.ProductCreateDto;
-import kitchenpos.domain.product.Product;
-import kitchenpos.ui.request.ProductCreateRequest;
+import kitchenpos.application.dto.ProductDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,17 +22,16 @@ public class ProductRestController {
     }
 
     @PostMapping("/api/products")
-    public ResponseEntity<Product> create(@RequestBody ProductCreateRequest request) {
-        Product created = productService.create(request.toDto());
-        URI uri = URI.create("/api/products/" + created.getId());
+    public ResponseEntity<ProductDto> create(@RequestBody ProductCreateDto request) {
+        ProductDto productDto = productService.create(request);
+        URI uri = URI.create("/api/products/" + productDto.getId());
         return ResponseEntity.created(uri)
-                .body(created);
+                .body(productDto);
     }
 
     @GetMapping("/api/products")
-    public ResponseEntity<List<Product>> list() {
+    public ResponseEntity<List<ProductDto>> list() {
         return ResponseEntity.ok()
-                .body(productService.list())
-                ;
+                .body(productService.list());
     }
 }
