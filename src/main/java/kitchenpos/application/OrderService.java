@@ -1,5 +1,10 @@
 package kitchenpos.application;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -15,12 +20,6 @@ import kitchenpos.dto.response.OrderResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -57,9 +56,6 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final Order order = new Order();
-        order.setId(null);
-
         final OrderTable orderTable = orderTableDao.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -67,34 +63,49 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
+        final Order order = Order.builder()
+                .orderTableId(request.getOrderTableId())
+                .orderStatus(OrderStatus.COOKING.name())
+                .orderedTime(LocalDateTime.now())
+                .build();
 
-        final Order savedOrder = orderDao.save(order);
-
-        final Long orderId = savedOrder.getId();
+        final Long orderId = orderDao.save(order).getId();
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         final List<OrderLineItem> orderLineItems = orderLineItemDtos.stream()
                 .map(OrderLineItem::from)
                 .collect(Collectors.toList());
         for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.setOrderId(orderId);
-            savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
+            final OrderLineItem newOrderLineItem = new OrderLineItem(
+                    orderLineItem.getSeq(),
+                    orderId,
+                    orderLineItem.getMenuId(),
+                    orderLineItem.getQuantity()
+            );
+            savedOrderLineItems.add(orderLineItemDao.save(newOrderLineItem));
         }
-        savedOrder.setOrderLineItems(savedOrderLineItems);
 
-        return OrderResponse.from(savedOrder);
+        return OrderResponse.from(Order.builder()
+                .id(orderId)
+                .orderTableId(order.getOrderTableId())
+                .orderStatus(order.getOrderStatus())
+                .orderedTime(order.getOrderedTime())
+                .orderLineItems(savedOrderLineItems)
+                .build()
+        );
     }
 
     public List<OrderResponse> list() {
         final List<Order> orders = orderDao.findAll();
 
-        for (final Order order : orders) {
-            order.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
-        }
-
         return orders.stream()
+                .map(order -> Order.builder()
+                        .id(order.getId())
+                        .orderTableId(order.getOrderTableId())
+                        .orderStatus(order.getOrderStatus())
+                        .orderedTime(order.getOrderedTime())
+                        .orderLineItems(orderLineItemDao.findAllByOrderId(order.getId()))
+                        .build()
+                )
                 .map(OrderResponse::from)
                 .collect(Collectors.toList());
     }
@@ -109,12 +120,17 @@ public class OrderService {
         }
 
         final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
 
-        orderDao.save(savedOrder);
+        final Order order = Order.builder()
+                .id(orderId)
+                .orderTableId(savedOrder.getOrderTableId())
+                .orderStatus(orderStatus.name())
+                .orderedTime(savedOrder.getOrderedTime())
+                .orderLineItems(orderLineItemDao.findAllByOrderId(orderId))
+                .build();
 
-        savedOrder.setOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
+        orderDao.save(order);
 
-        return OrderResponse.from(savedOrder);
+        return OrderResponse.from(order);
     }
 }

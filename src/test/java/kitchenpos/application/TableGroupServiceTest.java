@@ -109,11 +109,11 @@ class TableGroupServiceTest extends ServiceTest {
         // given
         final OrderTableRequest orderTableRequest1 = getRequest(OrderTableRequest.class, 1L, 1L);
         final OrderTableRequest orderTableRequest2 = getRequest(OrderTableRequest.class, id, 1L);
-        final CreateTableGroupRequest tableGroup = getRequest(
+        final CreateTableGroupRequest request = getRequest(
                 CreateTableGroupRequest.class, 1L,
                 List.of(orderTableRequest1, orderTableRequest2)
         );
-        final Long tableGroupId = tableGroupService.create(tableGroup).getId();
+        final Long tableGroupId = tableGroupService.create(request).getId();
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))

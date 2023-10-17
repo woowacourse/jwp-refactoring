@@ -1,20 +1,19 @@
 package kitchenpos.application;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.request.table.ChangeNumberOfGuestsRequest;
 import kitchenpos.dto.request.table.ChangeEmptyRequest;
+import kitchenpos.dto.request.table.ChangeNumberOfGuestsRequest;
 import kitchenpos.dto.request.table.CreateOrderTableRequest;
 import kitchenpos.dto.response.OrderTableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
 
 @Service
 public class TableService {
@@ -28,8 +27,9 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse create(final CreateOrderTableRequest request) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(request.getNumberOfGuests());
+        final OrderTable orderTable = OrderTable.builder()
+                .numberOfGuests(request.getNumberOfGuests())
+                .build();
 
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
         return OrderTableResponse.from(savedOrderTable);
@@ -55,7 +55,10 @@ public class TableService {
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
-        final OrderTable orderTable = new OrderTable(orderTableId, request.getEmpty());
+        final OrderTable orderTable = OrderTable.builder()
+                .id(orderTableId)
+                .empty(request.getEmpty())
+                .build();
 
         final OrderTable updatedOrderTable = orderTableDao.save(orderTable);
 
@@ -77,8 +80,10 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        final OrderTable orderTable = new OrderTable(orderTableId,request.getNumberOfGuests());
-
+        final OrderTable orderTable = OrderTable.builder()
+                .id(orderTableId)
+                .numberOfGuests(request.getNumberOfGuests())
+                .build();
         return OrderTableResponse.from(orderTableDao.save(orderTable));
     }
 }
