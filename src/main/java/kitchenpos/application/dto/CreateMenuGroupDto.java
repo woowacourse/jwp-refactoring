@@ -1,10 +1,10 @@
 package kitchenpos.application.dto;
 
-public class MenuGroupCreateDto {
+public class CreateMenuGroupDto {
 
     private final String name;
 
-    public MenuGroupCreateDto(String name) {
+    public CreateMenuGroupDto(String name) {
         this.name = name;
     }
 

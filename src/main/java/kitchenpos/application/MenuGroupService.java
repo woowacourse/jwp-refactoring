@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.application.dto.MenuGroupCreateDto;
+import kitchenpos.application.dto.CreateMenuGroupDto;
 import kitchenpos.application.dto.MenuGroupDto;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.menu.MenuGroup;
@@ -21,9 +21,9 @@ public class MenuGroupService {
     }
 
     @Transactional
-    public MenuGroupDto create(MenuGroupCreateDto menuGroupCreateDto) {
+    public MenuGroupDto create(CreateMenuGroupDto createMenuGroupDto) {
         MenuGroup menuGroup = new MenuGroup(
-                new MenuGroupName(menuGroupCreateDto.getName()));
+                new MenuGroupName(createMenuGroupDto.getName()));
         MenuGroup savedManuGroup = menuGroupDao.save(menuGroup);
 
         return new MenuGroupDto(
