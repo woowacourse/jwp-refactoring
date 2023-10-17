@@ -24,7 +24,6 @@ public class MenuCreateRequest {
     public Menu toEntity() {
         final Menu menu = new Menu();
         menu.setName(name);
-        menu.setMenuProducts(menuProducts);
         menu.setMenuGroupId(menuGroupId);
         menu.setPrice(price);
         return menu;

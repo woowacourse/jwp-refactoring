@@ -7,7 +7,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+
+import static javax.persistence.CascadeType.PERSIST;
+import static javax.persistence.CascadeType.REMOVE;
 
 @Entity
 public class Menu {
@@ -19,9 +23,9 @@ public class Menu {
     private BigDecimal price;
     private Long menuGroupId;
 
-    @JoinColumn(name = "menuId")
-    @OneToMany
-    private List<MenuProduct> menuProducts;
+    @JoinColumn(name = "menu_id")
+    @OneToMany(cascade = {PERSIST, REMOVE}, orphanRemoval = true)
+    private List<MenuProduct> menuProducts = new ArrayList<>();
 
     public Long getId() {
         return id;

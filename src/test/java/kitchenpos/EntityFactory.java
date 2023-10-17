@@ -135,7 +135,6 @@ public class EntityFactory {
         request.setName("떡볶이 세트");
         final Menu menu = menuRepository.save(request);
 
-        menuProduct.setMenuId(menu.getId());
         final MenuProduct saved = menuProductRepository.save(menuProduct);
 
         menu.setMenuProducts(singletonList(saved));
