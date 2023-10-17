@@ -16,11 +16,11 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -50,7 +50,7 @@ class OrderServiceTest extends ServiceTest {
     private MenuDao menuDao;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private OrderTableDao orderTableDao;
@@ -64,7 +64,7 @@ class OrderServiceTest extends ServiceTest {
         void setUp() {
             Product product = productRepository.save(상품("텐동", BigDecimal.valueOf(11000)));
             MenuProduct menuProduct = 메뉴_상품(null, product.getId(), 1);
-            MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("일식"));
+            MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("일식"));
             menu = menuDao.save(메뉴("텐동", BigDecimal.valueOf(11000), menuGroup.getId(), List.of(menuProduct)));
             menuProduct.setMenuId(menu.getId());
             menuProductDao.save(menuProduct);
@@ -152,7 +152,7 @@ class OrderServiceTest extends ServiceTest {
             //given
             Product product = 상품("텐동", BigDecimal.valueOf(11000));
             MenuProduct menuProduct = 메뉴_상품(null, product.getId(), 1);
-            MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("일식"));
+            MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("일식"));
             Menu menu = menuDao.save(메뉴("텐동", BigDecimal.valueOf(11000), menuGroup.getId(), List.of(menuProduct)));
 
             OrderTable orderTable = orderTableDao.save(테이블(null, 10, false));
@@ -189,7 +189,7 @@ class OrderServiceTest extends ServiceTest {
         void setUp() {
             Product product = 상품("텐동", BigDecimal.valueOf(11000));
             MenuProduct menuProduct = 메뉴_상품(null, product.getId(), 1);
-            MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("일식"));
+            MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("일식"));
             Menu menu = menuDao.save(메뉴("텐동", BigDecimal.valueOf(11000), menuGroup.getId(), List.of(menuProduct)));
 
             OrderTable orderTable = orderTableDao.save(테이블(null, 10, false));

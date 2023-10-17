@@ -10,9 +10,9 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
@@ -33,7 +33,7 @@ class MenuServiceTest extends ServiceTest {
     private ProductRepository productRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Nested
     class 메뉴_추가_시 {
@@ -41,7 +41,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void 정상적인_메뉴라면_메뉴를_추가한다() {
             //given
-            MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("일식"));
+            MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("일식"));
             Product product = productRepository.save(상품("텐동", BigDecimal.valueOf(11000)));
             MenuProduct menuProduct = 메뉴_상품(null, product.getId(), 1);
             Menu menu = 메뉴("텐동", BigDecimal.valueOf(11000), menuGroup.getId(), List.of(menuProduct));
@@ -66,7 +66,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void 가격이_NULL이면_예외를_던진다() {
             //given
-            MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("일식"));
+            MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("일식"));
             Product product = productRepository.save(상품("텐동", BigDecimal.valueOf(11000)));
             MenuProduct menuProduct = 메뉴_상품(null, product.getId(), 1);
             Menu menu = 메뉴("텐동", null, menuGroup.getId(), List.of(menuProduct));
@@ -80,7 +80,7 @@ class MenuServiceTest extends ServiceTest {
         @ValueSource(longs = {Integer.MIN_VALUE, -1})
         void 가격이_0보다_작으면_예외를_던진다(long price) {
             //given
-            MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("일식"));
+            MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("일식"));
             Product product = productRepository.save(상품("텐동", BigDecimal.valueOf(11000)));
             MenuProduct menuProduct = 메뉴_상품(null, product.getId(), 1);
             Menu menu = 메뉴("텐동", BigDecimal.valueOf(price), menuGroup.getId(), List.of(menuProduct));
@@ -105,7 +105,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void 존재하지_않은_상품이라면_예외를_던진다() {
             //given
-            MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("일식"));
+            MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("일식"));
             MenuProduct menuProduct = 메뉴_상품(null, -1L, 1);
             Menu menu = 메뉴("텐동", BigDecimal.valueOf(11000), menuGroup.getId(), List.of(menuProduct));
 
@@ -117,7 +117,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void 총_상품_가격보다_메뉴_가격이_크다면_예외를_던진다() {
             //given
-            MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("일식"));
+            MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("일식"));
             Product product = productRepository.save(상품("텐동", BigDecimal.valueOf(11000)));
             MenuProduct menuProduct = 메뉴_상품(null, product.getId(), 1);
             Menu menu = 메뉴("텐동", BigDecimal.valueOf(12000), menuGroup.getId(), List.of(menuProduct));
@@ -134,7 +134,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void 모든_메뉴_목록을_조회한다() {
             //given
-            MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("일식"));
+            MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("일식"));
             Product product = productRepository.save(상품("텐동", BigDecimal.valueOf(11000)));
             MenuProduct menuProduct = 메뉴_상품(null, product.getId(), 1);
             Menu menuA = 메뉴("기본 텐동", BigDecimal.valueOf(11000), menuGroup.getId(), List.of(menuProduct));
