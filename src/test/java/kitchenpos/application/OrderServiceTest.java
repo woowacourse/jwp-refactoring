@@ -2,7 +2,7 @@ package kitchenpos.application;
 
 import com.sun.tools.javac.util.List;
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
@@ -48,7 +48,7 @@ class OrderServiceTest {
     private ProductDao productDao;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     private Menu savedMenu;
     private MenuProduct savedMenuProduct;
@@ -68,10 +68,8 @@ class OrderServiceTest {
         menuProduct.setQuantity(2);
         menuProduct.setProductId(savedProduct.getId());
 
-        MenuGroup menuGroup = new MenuGroup.Builder()
-                .name("즐겨찾는 음식")
-                .build();
-        savedMenuGroup = menuGroupDao.save(menuGroup);
+        MenuGroup menuGroup = new MenuGroup("즐겨찾는 음식");
+        savedMenuGroup = menuGroupRepository.save(menuGroup);
 
         Menu menu = new Menu();
         menu.setName("두마리치킨");
