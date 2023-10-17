@@ -2,7 +2,8 @@ package kitchenpos.application;
 
 import kitchenpos.application.config.ServiceTestConfig;
 import kitchenpos.domain.Product;
-import kitchenpos.ui.dto.ProductCreateRequest;
+import kitchenpos.ui.dto.request.ProductCreateRequest;
+import kitchenpos.ui.dto.response.ProductCreateResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -33,7 +34,7 @@ class ProductServiceTest extends ServiceTestConfig {
             final ProductCreateRequest request = new ProductCreateRequest("상품이름", BigDecimal.valueOf(10000));
 
             // when
-            final Product actual = productService.create(request);
+            final ProductCreateResponse actual = productService.create(request);
 
             // then
             assertSoftly(softly -> {

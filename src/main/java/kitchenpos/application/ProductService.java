@@ -2,7 +2,8 @@ package kitchenpos.application;
 
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
-import kitchenpos.ui.dto.ProductCreateRequest;
+import kitchenpos.ui.dto.request.ProductCreateRequest;
+import kitchenpos.ui.dto.response.ProductCreateResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +20,7 @@ public class ProductService {
     }
 
     @Transactional
-    public Product create(final ProductCreateRequest nameAndPrice) {
+    public ProductCreateResponse create(final ProductCreateRequest nameAndPrice) {
         final BigDecimal price = nameAndPrice.getPrice();
 
         // TODO: domain 으로 이동
@@ -29,7 +30,7 @@ public class ProductService {
         final Product product = new Product();
         product.setPrice(price);
         product.setName(nameAndPrice.getName());
-        return productDao.save(product);
+        return ProductCreateResponse.from(productDao.save(product));
     }
 
     public List<Product> list() {
