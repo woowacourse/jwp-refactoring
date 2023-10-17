@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class TableService {
@@ -40,17 +39,13 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableDao.findById(tableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
-        }
+        savedOrderTable.changeEmpty(request.getEmpty());
 
+        // TODO: JPA 적용 뒤 OrderTable에서 함께 검증 수행
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
                 tableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
-
-        savedOrderTable.setEmpty(request.getEmpty());
-
         return orderTableDao.save(savedOrderTable);
     }
 

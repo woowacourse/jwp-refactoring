@@ -77,7 +77,7 @@ class TableGroupServiceTest extends ServiceTest {
 
     private OrderTable 테이블_생성() {
         final var 테이블 = new OrderTable();
-        테이블.setEmpty(true);
+        테이블.changeEmpty(true);
         테이블.changeNumberOfGuests(4);
         return orderTableDao.save(테이블);
     }

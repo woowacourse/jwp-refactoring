@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import static java.util.Objects.nonNull;
+
 public class OrderTable {
     private Long id;
     private Long tableGroupId;
@@ -52,7 +54,10 @@ public class OrderTable {
         return empty;
     }
 
-    public void setEmpty(final boolean empty) {
+    public void changeEmpty(final boolean empty) {
+        if (empty && nonNull(tableGroupId)) {
+            throw new IllegalArgumentException("그룹이 지정된 테이블은 empty로 설정할 수 없습니다.");
+        }
         this.empty = empty;
     }
 }

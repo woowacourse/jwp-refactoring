@@ -73,7 +73,7 @@ class TableServiceTest extends ServiceTest {
 
         private OrderTable empty가_아닌_테이블_조회() {
             OrderTable 테이블 = orderTableDao.findAll().get(0);
-            테이블.setEmpty(false);
+            테이블.changeEmpty(false);
             orderTableDao.save(테이블);
             return 테이블;
         }
@@ -110,7 +110,7 @@ class TableServiceTest extends ServiceTest {
         void 테이블이_empty이면_예외가_발생한다() {
             //given
             OrderTable 테이블 = orderTableDao.findAll().get(0);
-            테이블.setEmpty(true);
+            테이블.changeEmpty(true);
             orderTableDao.save(테이블);
 
             ChangeNumberOfQuestsCommand 커맨드 = new ChangeNumberOfQuestsCommand(테이블.getId(), 9);
@@ -128,7 +128,7 @@ class TableServiceTest extends ServiceTest {
         void 성공() {
             //given
             OrderTable 테이블 = new OrderTable();
-            테이블.setEmpty(false);
+            테이블.changeEmpty(false);
             OrderTable 생성된_테이블 = orderTableDao.save(테이블);
             ChangeTableEmptyCommand 테이블_비우기_요청 = new ChangeTableEmptyCommand(생성된_테이블.getId(), true);
 
@@ -143,7 +143,7 @@ class TableServiceTest extends ServiceTest {
         void 테이블에_COMPLETION_상태가_아닌_주문이_있으면_예외가_발생한다() {
             //given
             OrderTable 테이블 = new OrderTable();
-            테이블.setEmpty(false);
+            테이블.changeEmpty(false);
             OrderTable 생성된_테이블 = orderTableDao.save(테이블);
             주문만들기(생성된_테이블);
             ChangeTableEmptyCommand 테이블_비우기_요청 = new ChangeTableEmptyCommand(생성된_테이블.getId(), true);
@@ -178,7 +178,7 @@ class TableServiceTest extends ServiceTest {
             그룹.setCreatedDate(now());
             TableGroup 생성된_그룹 = tableGroupDao.save(그룹);
             OrderTable 테이블 = new OrderTable();
-            테이블.setEmpty(false);
+            테이블.changeEmpty(false);
             테이블.setTableGroupId(생성된_그룹.getId());
             OrderTable 생성된_테이블 = orderTableDao.save(테이블);
 

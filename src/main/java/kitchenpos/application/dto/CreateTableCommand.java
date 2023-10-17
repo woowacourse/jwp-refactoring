@@ -19,7 +19,7 @@ public class CreateTableCommand {
         OrderTable orderTable = new OrderTable();
 
         orderTable.changeNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
+        orderTable.changeEmpty(empty);
         orderTable.setId(null);
         orderTable.setTableGroupId(null);
 

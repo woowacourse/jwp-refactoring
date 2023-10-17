@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -40,4 +41,22 @@ class OrderTableTest {
         assertThatThrownBy(() -> orderTable.changeNumberOfGuests(2))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
+
+    @Nested
+    class empty_설정 {
+
+        @Test
+        void 포함된_그룹이_있는_경우_예외가_발생한다() {
+            //given
+            OrderTable 테이블 = new OrderTable(1, false);
+            테이블.setTableGroupId(1L);
+
+            //expect
+            assertThatThrownBy(() -> 테이블.changeEmpty(true))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+    }
+
 }
