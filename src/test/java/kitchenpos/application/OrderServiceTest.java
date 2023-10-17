@@ -19,7 +19,6 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -28,6 +27,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductRepository;
 import kitchenpos.test.ServiceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -41,7 +41,7 @@ class OrderServiceTest extends ServiceTest {
     private OrderService orderService;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
     private MenuProductDao menuProductDao;
@@ -62,7 +62,7 @@ class OrderServiceTest extends ServiceTest {
 
         @BeforeEach
         void setUp() {
-            Product product = productDao.save(상품("텐동", BigDecimal.valueOf(11000)));
+            Product product = productRepository.save(상품("텐동", BigDecimal.valueOf(11000)));
             MenuProduct menuProduct = 메뉴_상품(null, product.getId(), 1);
             MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("일식"));
             menu = menuDao.save(메뉴("텐동", BigDecimal.valueOf(11000), menuGroup.getId(), List.of(menuProduct)));
