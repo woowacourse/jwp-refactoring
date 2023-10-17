@@ -14,9 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import kitchenpos.domain.menu.Product;
+import kitchenpos.dto.ProductRequest;
 
-@SpringBootTest
-class ProductServiceTest {
+class ProductServiceTest extends BaseServiceTest {
 
     @Autowired
     private ProductService productService;
@@ -29,19 +29,17 @@ class ProductServiceTest {
         @DisplayName("프로덕트를 생성한다.")
         void createProduct() {
             // Given
-            Product product = new Product();
-            product.setPrice(BigDecimal.TEN);
-            product.setName("치킨");
+            final ProductRequest request = new ProductRequest("떡볶이", BigDecimal.ONE);
 
             // When
-            Product createdProduct = productService.create(product);
+            Product createdProduct = productService.create(request);
 
 
             // Then
             assertSoftly(softAssertions -> {
                 assertThat(createdProduct.getId()).isNotNull();
-                assertThat(createdProduct.getName()).isEqualTo(product.getName());
-                assertThat(createdProduct.getPrice()).isEqualByComparingTo(product.getPrice());
+                assertThat(createdProduct.getName()).isEqualTo(request.getName());
+                assertThat(createdProduct.getPrice()).isEqualByComparingTo(request.getPrice());
             });
         }
 
@@ -49,11 +47,10 @@ class ProductServiceTest {
         @DisplayName("가격이 0미만인 경우 예외가 발생한다.")
         void createProductWithSubZeroPrice() {
             // Given
-            Product product = new Product();
-            product.setPrice(BigDecimal.valueOf(-10));
+            final ProductRequest request = new ProductRequest("떡볶이", BigDecimal.valueOf(-10));
 
             // When & Then
-            assertThatThrownBy(() -> productService.create(product))
+            assertThatThrownBy(() -> productService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -61,10 +58,10 @@ class ProductServiceTest {
         @DisplayName("가격이 null인 경우 예외가 발생한다.")
         void createProductWithNullPrice() {
             // Given
-            Product product = new Product();
+            final ProductRequest request = new ProductRequest("떡볶이", null);
 
             // When & Then
-            assertThatThrownBy(() -> productService.create(product))
+            assertThatThrownBy(() -> productService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

@@ -50,7 +50,6 @@ public class TableGroupService {
 //                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
 //            throw new IllegalArgumentException("그룹해제 할수 없는 상태의 테이블을 포함하고 있습니다.");
 //        }
-
         orderTables.forEach(OrderTable::ungroup);
     }
 }

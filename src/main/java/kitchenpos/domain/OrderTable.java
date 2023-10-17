@@ -62,7 +62,13 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
+
+    public void changeGroup(final TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+    }
+
     public void ungroup() {
+        tableGroup.remove(this);
         this.tableGroup = null;
         this.empty = false;
     }
@@ -82,4 +88,5 @@ public class OrderTable {
     public boolean isEmpty() {
         return empty;
     }
+
 }

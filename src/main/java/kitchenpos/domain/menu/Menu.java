@@ -36,7 +36,7 @@ public class Menu {
 
     public Menu(final Long id, final String name, final BigDecimal price, final MenuGroup menuGroup,
                 final MenuProducts menuProducts) {
-        validatePrice();
+        validatePrice(price, menuProducts);
         this.id = id;
         this.name = name;
         this.price = price;
@@ -44,7 +44,7 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    private void validatePrice() {
+    private void validatePrice(final BigDecimal price, final MenuProducts menuProducts) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("가격이 음수에요");
         }

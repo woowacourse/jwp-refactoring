@@ -5,7 +5,6 @@ import static java.util.Objects.nonNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -37,6 +36,7 @@ public class TableGroup {
 
     public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         validateOrderTables(orderTables);
+        orderTables.forEach(orderTable -> orderTable.changeGroup(this));
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
@@ -48,7 +48,7 @@ public class TableGroup {
         }
 
         final boolean containsInvalidOrderTable = orderTables.stream()
-                .anyMatch(orderTable -> orderTable.isEmpty() || nonNull(orderTable.getTableGroup()));
+                .anyMatch(orderTable -> !orderTable.isEmpty() || nonNull(orderTable.getTableGroup()));
 
         if (containsInvalidOrderTable) {
             throw new IllegalArgumentException("비어있지 않거나, 이미 그룹화된 테이블을 포함하고 있습니다.");
@@ -65,5 +65,9 @@ public class TableGroup {
 
     public List<OrderTable> getOrderTables() {
         return orderTables;
+    }
+
+    public void remove(final OrderTable orderTable) {
+        orderTables.remove(orderTable);
     }
 }
