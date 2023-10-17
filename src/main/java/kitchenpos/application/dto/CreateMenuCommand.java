@@ -2,6 +2,7 @@ package kitchenpos.application.dto;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.application.dto.common.MenuProductCommand;
 
 public class CreateMenuCommand {
 

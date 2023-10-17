@@ -1,4 +1,4 @@
-package kitchenpos.application.dto;
+package kitchenpos.application.dto.common;
 
 public class MenuProductCommand {
 

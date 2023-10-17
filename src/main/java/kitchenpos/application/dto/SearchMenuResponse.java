@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.application.dto.common.MenuGroupResponse;
+import kitchenpos.application.dto.common.MenuProductResponse;
 import kitchenpos.domain.Menu;
 
 public class SearchMenuResponse {
