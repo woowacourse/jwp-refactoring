@@ -12,6 +12,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,11 +48,13 @@ class TableGroupServiceTest {
             // given
             final OrderTable orderTable1 = new OrderTable(3, true);
             final OrderTable orderTable2 = new OrderTable(5, true);
-            final TableGroup expected = new TableGroup(List.of(orderTable1, orderTable2));
+            final TableGroup expected = new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2));
 
             given(orderTableDao.findAllByIdIn(anyList())).willReturn(List.of(orderTable1, orderTable2));
 
-            given(tableGroupDao.save(any(TableGroup.class))).willReturn(expected);
+            final TableGroup spyExpected = spy(new TableGroup(expected.getCreatedDate(), new ArrayList<>()));
+            given(spyExpected.getId()).willReturn(1L);
+            given(tableGroupDao.save(any(TableGroup.class))).willReturn(spyExpected);
 
             // when
             final TableGroup actual = tableGroupService.create(expected);
@@ -63,7 +67,7 @@ class TableGroupServiceTest {
         void 주문_테이블이_null이면_예외가_발생한다() {
             // given
             final List<OrderTable> nullOrderTables = null;
-            final TableGroup expected = new TableGroup(nullOrderTables);
+            final TableGroup expected = new TableGroup(LocalDateTime.now(), nullOrderTables);
 
             // when, then
             assertThatThrownBy(() -> tableGroupService.create(expected))
@@ -75,7 +79,7 @@ class TableGroupServiceTest {
             // given
             final OrderTable orderTable = new OrderTable(3, true);
             final List<OrderTable> oneOrderTable = List.of(orderTable);
-            final TableGroup expected = new TableGroup(oneOrderTable);
+            final TableGroup expected = new TableGroup(LocalDateTime.now(), oneOrderTable);
 
             // when, then
             assertThatThrownBy(() -> tableGroupService.create(expected))
@@ -87,7 +91,7 @@ class TableGroupServiceTest {
             // given
             final OrderTable orderTable1 = new OrderTable(3, true);
             final OrderTable orderTable2 = new OrderTable(5, true);
-            final TableGroup expected = new TableGroup(List.of(orderTable1, orderTable2));
+            final TableGroup expected = new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2));
 
             given(orderTableDao.findAllByIdIn(anyList())).willReturn(List.of(orderTable1));
 
@@ -101,7 +105,7 @@ class TableGroupServiceTest {
             // given
             final OrderTable notEmptyOrderTable = new OrderTable(3, false);
             final OrderTable emptyOrderTable = new OrderTable(5, true);
-            final TableGroup expected = new TableGroup(List.of(notEmptyOrderTable, emptyOrderTable));
+            final TableGroup expected = new TableGroup(LocalDateTime.now(), List.of(notEmptyOrderTable, emptyOrderTable));
 
             given(orderTableDao.findAllByIdIn(anyList())).willReturn(List.of(notEmptyOrderTable, emptyOrderTable));
 
@@ -114,9 +118,10 @@ class TableGroupServiceTest {
         void 저장된_주문_테이블이_이미_그룹이면_실패한다() {
             // given
             final OrderTable alreadyHaveTableGroup = new OrderTable(3, true);
-            alreadyHaveTableGroup.setTableGroupId(1L);
+            alreadyHaveTableGroup.changeGroup(1L);
             final OrderTable notHaveTableGroup = new OrderTable(5, true);
-            final TableGroup expected = new TableGroup(List.of(alreadyHaveTableGroup, notHaveTableGroup));
+            final List<OrderTable> orderTables = new ArrayList<>(List.of(alreadyHaveTableGroup, notHaveTableGroup));
+            final TableGroup expected = new TableGroup(LocalDateTime.now(), orderTables);
 
             given(orderTableDao.findAllByIdIn(anyList())).willReturn(List.of(alreadyHaveTableGroup, notHaveTableGroup));
 
