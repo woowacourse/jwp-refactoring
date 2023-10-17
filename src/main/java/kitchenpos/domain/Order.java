@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -28,7 +30,8 @@ public class Order {
     private OrderTable orderTable;
 
     @Column(nullable = false)
-    private String orderStatus;
+    @Enumerated(value = STRING)
+    private OrderStatus orderStatus;
 
     @Column(nullable = false)
     private LocalDateTime orderedTime;
@@ -61,7 +64,7 @@ public class Order {
         return orderTable.getId();
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
@@ -76,7 +79,7 @@ public class Order {
     public static class Builder {
         private Long id;
         private Long orderTableId;
-        private String orderStatus;
+        private OrderStatus orderStatus;
         private LocalDateTime orderedTime;
         private List<OrderLineItem> orderLineItems;
 
@@ -90,7 +93,7 @@ public class Order {
             return this;
         }
 
-        public Builder orderStatus(String orderStatus) {
+        public Builder orderStatus(OrderStatus orderStatus) {
             this.orderStatus = orderStatus;
             return this;
         }

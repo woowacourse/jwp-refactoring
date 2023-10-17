@@ -61,7 +61,7 @@ public class OrderService {
 
         final Order order = Order.builder()
                 .orderTableId(request.getOrderTableId())
-                .orderStatus(OrderStatus.COOKING.name())
+                .orderStatus(OrderStatus.COOKING)
                 .orderedTime(LocalDateTime.now())
                 .build();
 
@@ -111,7 +111,7 @@ public class OrderService {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
+        if (Objects.equals(OrderStatus.COMPLETION, savedOrder.getOrderStatus())) {
             throw new IllegalArgumentException();
         }
 
@@ -120,7 +120,7 @@ public class OrderService {
         final Order order = Order.builder()
                 .id(orderId)
                 .orderTableId(savedOrder.getOrderTable())
-                .orderStatus(orderStatus.name())
+                .orderStatus(orderStatus)
                 .orderedTime(savedOrder.getOrderedTime())
                 .orderLineItems(orderLineItemRepository.findAllByOrderId(orderId))
                 .build();
