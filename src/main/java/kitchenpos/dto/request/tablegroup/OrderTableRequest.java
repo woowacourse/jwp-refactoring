@@ -12,12 +12,4 @@ public class OrderTableRequest {
     public Long getTableGroupId() {
         return tableGroupId;
     }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setTableGroupId(Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-    }
 }

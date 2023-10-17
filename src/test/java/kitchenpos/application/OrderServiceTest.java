@@ -11,7 +11,7 @@ import kitchenpos.domain.entity.OrderLineItem;
 import kitchenpos.domain.value.Quantity;
 import kitchenpos.dto.request.order.ChangeOrderRequest;
 import kitchenpos.dto.request.order.CreateOrderRequest;
-import kitchenpos.dto.request.order.OrderLineItemsDto;
+import kitchenpos.dto.OrderLineItemsDto;
 import kitchenpos.dto.response.OrderResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

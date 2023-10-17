@@ -10,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import kitchenpos.domain.value.Quantity;
-import kitchenpos.dto.request.order.OrderLineItemsDto;
+import kitchenpos.dto.OrderLineItemsDto;
 
 @Entity
 public class OrderLineItem {

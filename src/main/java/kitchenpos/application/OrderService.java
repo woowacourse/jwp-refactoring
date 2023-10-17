@@ -11,7 +11,7 @@ import kitchenpos.domain.entity.OrderStatus;
 import kitchenpos.domain.entity.OrderTable;
 import kitchenpos.dto.request.order.ChangeOrderRequest;
 import kitchenpos.dto.request.order.CreateOrderRequest;
-import kitchenpos.dto.request.order.OrderLineItemsDto;
+import kitchenpos.dto.OrderLineItemsDto;
 import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;

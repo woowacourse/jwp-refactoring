@@ -6,8 +6,4 @@ public class ChangeNumberOfGuestsRequest {
     public Integer getNumberOfGuests() {
         return numberOfGuests;
     }
-
-    public void setNumberOfGuests(Integer numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
 }

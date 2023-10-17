@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 import kitchenpos.domain.entity.MenuProduct;
 import kitchenpos.domain.value.Quantity;
 import kitchenpos.dto.request.menu.CreateMenuRequest;
-import kitchenpos.dto.request.menu.MenuProductDto;
+import kitchenpos.dto.MenuProductDto;
 import kitchenpos.dto.response.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

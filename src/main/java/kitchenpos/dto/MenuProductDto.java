@@ -1,4 +1,4 @@
-package kitchenpos.dto.request.menu;
+package kitchenpos.dto;
 
 import kitchenpos.domain.entity.MenuProduct;
 
@@ -9,7 +9,7 @@ public class MenuProductDto {
     private Long productId;
     private Long quantity;
 
-    public MenuProductDto(Long seq, Long menuId, Long productId, Long quantity) {
+    private MenuProductDto(Long seq, Long menuId, Long productId, Long quantity) {
         this.seq = seq;
         this.menuId = menuId;
         this.productId = productId;
