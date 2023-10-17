@@ -17,10 +17,7 @@ class ProductTest {
         BigDecimal nullPrice = null;
 
         // when & then
-        assertThatThrownBy(() -> new Product.Builder()
-                .name(productName)
-                .price(nullPrice)
-                .build())
+        assertThatThrownBy(() -> new Product(productName, nullPrice))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -32,10 +29,7 @@ class ProductTest {
         BigDecimal wrongPrice = BigDecimal.valueOf(-1);
 
         // when & then
-        assertThatThrownBy(() -> new Product.Builder()
-                .name(productName)
-                .price(wrongPrice)
-                .build())
+        assertThatThrownBy(() -> new Product(productName, wrongPrice))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

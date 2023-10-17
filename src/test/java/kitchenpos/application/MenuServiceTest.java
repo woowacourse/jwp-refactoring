@@ -49,7 +49,6 @@ class MenuServiceTest {
         savedMenuProduct.setQuantity(2L);
 
         MenuGroup menuGroup = new MenuGroup("한식");
-
         savedMenuGroup = menuGroupRepository.save(menuGroup);
 
     }

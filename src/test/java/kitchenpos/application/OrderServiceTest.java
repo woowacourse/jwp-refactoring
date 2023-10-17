@@ -5,7 +5,7 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -45,7 +45,7 @@ class OrderServiceTest {
     private MenuDao menuDao;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
     private MenuGroupRepository menuGroupRepository;
@@ -57,12 +57,8 @@ class OrderServiceTest {
 
     @BeforeEach
     void setup() {
-        Product product = new Product.Builder()
-                .name("치킨")
-                .price(BigDecimal.valueOf(10000L))
-                .build();
-
-        savedProduct = productDao.save(product);
+        Product product = new Product("치킨", BigDecimal.valueOf(10000L));
+        savedProduct = productRepository.save(product);
 
         MenuProduct menuProduct = new MenuProduct();
         menuProduct.setQuantity(2);
