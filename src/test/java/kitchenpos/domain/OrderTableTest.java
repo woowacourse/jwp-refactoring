@@ -20,9 +20,9 @@ class OrderTableTest {
 
         @ParameterizedTest
         @ValueSource(ints = {3, 6, 10})
-        void 성공한다(int numberOfGuests) {
+        void 성공(int numberOfGuests) {
             // given
-            OrderTable orderTable = new OrderTable(1L, 1L, 5, false);
+            OrderTable orderTable = new OrderTable(5, false);
 
             // when
             orderTable.changeNumberOfGuests(numberOfGuests);
@@ -33,9 +33,9 @@ class OrderTableTest {
 
         @ParameterizedTest
         @ValueSource(ints = {-100, -1})
-        void 음수로_변경할_수_없다(int numberOfGuests) {
+        void 음수로_요청하면_예외(int numberOfGuests) {
             // given
-            OrderTable orderTable = new OrderTable(1L, 1L, 5, false);
+            OrderTable orderTable = new OrderTable(5, false);
 
             // when && then
             assertThatThrownBy(() -> orderTable.changeNumberOfGuests(numberOfGuests))
@@ -44,9 +44,9 @@ class OrderTableTest {
         }
 
         @Test
-        void 테이블이_비어있으면_변경이_불가능하다() {
+        void 테이블이_비어있으면_예외() {
             // given
-            OrderTable orderTable = new OrderTable(1L, 1L, 5, true);
+            OrderTable orderTable = new OrderTable(5, true);
 
             // when && then
             assertThatThrownBy(() -> orderTable.changeNumberOfGuests(3))
@@ -60,9 +60,9 @@ class OrderTableTest {
 
         @ParameterizedTest
         @ValueSource(booleans = {true, false})
-        void 성공한다(boolean empty) {
+        void 성공(boolean empty) {
             // given
-            OrderTable orderTable = new OrderTable(1L, null, 5, !empty);
+            OrderTable orderTable = new OrderTable(null, 5, !empty);
 
             // when
             orderTable.changeEmpty(empty);
@@ -72,9 +72,9 @@ class OrderTableTest {
         }
 
         @Test
-        void 연관된_테이블_그룹이_존재하면_테이블_상태를_변경할_수_없다() {
+        void 연관된_테이블_그룹이_존재하면_예외() {
             // given
-            OrderTable orderTable = new OrderTable(1L, 1L, 5, true);
+            OrderTable orderTable = new OrderTable(1L, 5, true);
 
             // when && then
             assertThatThrownBy(() -> orderTable.changeEmpty(false))
@@ -104,7 +104,7 @@ class OrderTableTest {
         }
 
         @Test
-        void 비어있지않은_테이블이면_실패() {
+        void 테이블이_비어있지_않으면_예외() {
             // given
             TableGroup tableGroup = new TableGroup(1L);
             OrderTable orderTable = new OrderTable(5, false);
@@ -116,7 +116,7 @@ class OrderTableTest {
         }
 
         @Test
-        void 이미_그룹화된_테이블이면_실패() {
+        void 이미_그룹화된_테이블이면_예외() {
             // given
             TableGroup tableGroup = new TableGroup(1L);
             OrderTable orderTable = new OrderTable(2L,5, true);

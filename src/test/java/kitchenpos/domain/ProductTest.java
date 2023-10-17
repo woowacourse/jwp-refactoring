@@ -21,7 +21,7 @@ class ProductTest {
 
         @ParameterizedTest
         @ValueSource(longs = {10, 50, 100, 1000, 10000})
-        void 검증에_통과하면_성공한다(Long price) {
+        void 성공(Long price) {
             // when && then
             assertThatNoException().isThrownBy(() -> new Product("상품", price));
         }

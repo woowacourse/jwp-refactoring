@@ -23,10 +23,10 @@ class TableGroupTest {
         void 성공() {
             // given
             List<OrderTable> orderTables = List.of(
-                new OrderTable(1L, null, 3, true),
-                new OrderTable(2L, null, 2, true)
+                new OrderTable(null, 3, true),
+                new OrderTable(null, 2, true)
             );
-            TableGroup tableGroup = new TableGroup();
+            TableGroup tableGroup = TableGroup.createEmpty();
 
             // when && then
             assertThatNoException().isThrownBy(() -> tableGroup.group(orderTables));
@@ -40,8 +40,7 @@ class TableGroupTest {
             for (long i = 1; i <= size; i++) {
                 orderTables.add(new OrderTable(i, null, 2, false));
             }
-            ;
-            TableGroup tableGroup = new TableGroup();
+            TableGroup tableGroup = TableGroup.createEmpty();
 
             // when && then
             assertThatThrownBy(() -> tableGroup.group(orderTables))
@@ -56,7 +55,7 @@ class TableGroupTest {
                 new OrderTable(1L, null, 3, true),
                 new OrderTable(2L, null, 2, false)
             );
-            TableGroup tableGroup = new TableGroup();
+            TableGroup tableGroup = TableGroup.createEmpty();
 
             // when && then
             assertThatThrownBy(() -> tableGroup.group(orderTables))
@@ -71,7 +70,7 @@ class TableGroupTest {
                 new OrderTable(1L, null, 3, true),
                 new OrderTable(2L, 1L, 2, false)
             );
-            TableGroup tableGroup = new TableGroup();
+            TableGroup tableGroup = TableGroup.createEmpty();
 
             // when && then
             assertThatThrownBy(() -> tableGroup.group(orderTables))

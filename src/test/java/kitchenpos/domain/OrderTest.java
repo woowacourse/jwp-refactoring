@@ -18,20 +18,18 @@ class OrderTest {
 
     @ParameterizedTest
     @EnumSource(value = OrderStatus.class, names = {"COMPLETION"} ,mode = EXCLUDE)
-    void 주문상태가_완료가_아닌지_확인한다_맞는경우(OrderStatus orderStatus) {
+    void 주문상태가_완료가_아닌지_확인한다_true(OrderStatus orderStatus) {
         // given
-        List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(1L, 2));
-        Order order = new Order(new OrderTable(1L, 5, false), orderStatus, orderLineItems);
+        Order order = getOrder(orderStatus);
 
         // when && then
         assertThat(order.isNotCompletion()).isTrue();
     }
 
     @Test
-    void 주문상태가_완료가_아닌지_확인한다_틀린경우() {
+    void 주문상태가_완료가_아닌지_확인한다_false() {
         // given
-        List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(1L, 2));
-        Order order = new Order(new OrderTable(1L, 5, false), OrderStatus.COMPLETION, orderLineItems);
+        Order order = getOrder(OrderStatus.COMPLETION);
 
         // when && then
         assertThat(order.isNotCompletion()).isFalse();
@@ -42,10 +40,9 @@ class OrderTest {
 
         @ParameterizedTest
         @EnumSource(value = OrderStatus.class, names = {"COMPLETION"} ,mode = EXCLUDE)
-        void 성공한다(OrderStatus orderStatus) {
+        void 성공(OrderStatus orderStatus) {
             // given
-            List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(1L, 2));
-            Order order = new Order(new OrderTable(1L, 5, false), orderStatus, orderLineItems);
+            Order order = getOrder(orderStatus);
 
             // when
             order.changeOrderStatus(orderStatus);
@@ -56,15 +53,19 @@ class OrderTest {
 
         @ParameterizedTest
         @EnumSource(value = OrderStatus.class)
-        void 주문상태가_완료라면_변경할_수_없다(OrderStatus orderStatus) {
+        void 주문상태가_완료라면_예외(OrderStatus orderStatus) {
             // given
-            List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(1L, 2));
-            Order order = new Order(new OrderTable(1L, 5, false), OrderStatus.COMPLETION, orderLineItems);
+            Order order = getOrder(OrderStatus.COMPLETION);
 
             // when && then
             assertThatThrownBy(() -> order.changeOrderStatus(orderStatus))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("주문이 완료 상태면 변경할 수 없습니다.");
         }
+    }
+
+    private Order getOrder(OrderStatus orderStatus) {
+        List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(1L, 2));
+        return new Order(new OrderTable(1L, 5, false), orderStatus, orderLineItems);
     }
 }
