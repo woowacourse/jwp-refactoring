@@ -5,6 +5,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import static java.util.Objects.isNull;
+
 @Entity
 public class MenuProduct {
 
@@ -14,27 +16,34 @@ public class MenuProduct {
     private Long productId;
     private long quantity;
 
-    public Long getSeq() {
-        return seq;
+    protected MenuProduct() {
     }
 
-    public void setSeq(final Long seq) {
+    public MenuProduct(final Long seq, final Long productId, final long quantity) {
+        if (isNull(productId)) {
+            throw new IllegalArgumentException("상품이 존재해야 합니다.");
+        }
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("상품의 갯수는 양수여야 합니다.");
+        }
         this.seq = seq;
+        this.productId = productId;
+        this.quantity = quantity;
+    }
+
+    public MenuProduct(final Long productId, final long quantity) {
+        this(null, productId, quantity);
+    }
+
+    public Long getSeq() {
+        return seq;
     }
 
     public Long getProductId() {
         return productId;
     }
 
-    public void setProductId(final Long productId) {
-        this.productId = productId;
-    }
-
     public long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
     }
 }

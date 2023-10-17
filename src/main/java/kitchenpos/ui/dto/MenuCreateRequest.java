@@ -22,11 +22,7 @@ public class MenuCreateRequest {
     }
 
     public Menu toEntity() {
-        final Menu menu = new Menu();
-        menu.setName(name);
-        menu.setMenuGroupId(menuGroupId);
-        menu.setPrice(price);
-        return menu;
+        return new Menu(name, price, menuGroupId, menuProducts);
     }
 
     public String getName() {

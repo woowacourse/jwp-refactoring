@@ -126,18 +126,11 @@ public class EntityFactory {
 
     public Menu saveMenu() {
         final Product product = saveProduct("연어", 4000);
-        final MenuProduct menuProduct = createMenuProduct(4, product);
+        final MenuProduct menuProduct = new MenuProduct(product.getId(), 4);
         final MenuGroup menuGroup = saveMenuGroup("일식");
 
-        final Menu request = new Menu();
-        request.setMenuGroupId(menuGroup.getId());
-        request.setPrice(BigDecimal.valueOf(16000));
-        request.setName("떡볶이 세트");
-        final Menu menu = menuRepository.save(request);
-
-        final MenuProduct saved = menuProductRepository.save(menuProduct);
-
-        menu.setMenuProducts(singletonList(saved));
+        final Menu request = new Menu("떡볶이 세트", BigDecimal.valueOf(16000), menuGroup.getId(),
+                singletonList(menuProduct));
 
         return menuRepository.save(request);
     }
@@ -145,14 +138,6 @@ public class EntityFactory {
     public Product saveProduct(final String name, final int price) {
         final Product product = new Product(name, BigDecimal.valueOf(price));
         return productRepository.save(product);
-    }
-
-    public MenuProduct createMenuProduct(final int quantity, final Product product) {
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(product.getId());
-        menuProduct.setQuantity(quantity);
-
-        return menuProduct;
     }
 
     public MenuGroup saveMenuGroup(final String name) {
