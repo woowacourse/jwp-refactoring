@@ -16,7 +16,7 @@ public class MenuProduct {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "menu_product_id")
+    @Column(name = "seq")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
