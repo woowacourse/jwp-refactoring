@@ -1,21 +1,15 @@
 package kitchenpos.domain;
 
-import org.springframework.util.CollectionUtils;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Table(name = "orders")
@@ -33,9 +27,7 @@ public class Order {
 
     private LocalDateTime orderedTime;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "order_id")
-    private List<OrderLineItem> orderLineItems;
+    private OrderLineItems orderLineItems;
 
     protected Order() {
     }
@@ -49,24 +41,17 @@ public class Order {
     }
 
     public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
-        validateOrderLineItems(orderLineItems);
         validateOrderTable(orderTable);
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = new ArrayList<>(orderLineItems);
+        this.orderLineItems = new OrderLineItems(orderLineItems);
     }
 
     private void validateOrderTable(OrderTable orderTable) {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException("주문 테이블이 빈 테이블입니다");
-        }
-    }
-
-    private void validateOrderLineItems(List<OrderLineItem> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException("주문 항목은 하나 이상이여야 합니다");
         }
     }
 
@@ -94,6 +79,6 @@ public class Order {
     }
 
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+        return orderLineItems.getItems();
     }
 }
