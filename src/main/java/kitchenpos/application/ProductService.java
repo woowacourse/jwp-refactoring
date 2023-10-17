@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.application.dto.ProductCreateDto;
+import kitchenpos.application.dto.CreateProductDto;
 import kitchenpos.application.dto.ProductDto;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.product.Product;
@@ -22,10 +22,10 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductDto create(ProductCreateDto productCreateDto) {
+    public ProductDto create(CreateProductDto createProductDto) {
         Product product = new Product(
-                new ProductName(productCreateDto.getName()),
-                new ProductPrice(productCreateDto.getPrice()));
+                new ProductName(createProductDto.getName()),
+                new ProductPrice(createProductDto.getPrice()));
 
         Product savedProduct = productDao.save(product);
         return new ProductDto(

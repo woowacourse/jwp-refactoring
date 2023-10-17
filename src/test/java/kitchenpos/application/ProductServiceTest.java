@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.application.dto.ProductCreateDto;
+import kitchenpos.application.dto.CreateProductDto;
 import kitchenpos.application.dto.ProductDto;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.product.Product;
@@ -68,7 +68,7 @@ class ProductServiceTest extends MockServiceTest {
                 "pizza",
                 BigDecimal.valueOf(18000L));
 
-        ProductCreateDto productCreateDto = new ProductCreateDto(
+        CreateProductDto createProductDto = new CreateProductDto(
                 "pizza",
                 BigDecimal.valueOf(18000L));
 
@@ -81,7 +81,7 @@ class ProductServiceTest extends MockServiceTest {
                 .willReturn(mockReturnProduct);
 
         // when
-        ProductDto actual = productService.create(productCreateDto);
+        ProductDto actual = productService.create(createProductDto);
 
         // then
         Assertions.assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
@@ -90,7 +90,7 @@ class ProductServiceTest extends MockServiceTest {
     @Test
     void 상품을_추가할_때_가격이_0_일_수_있다() {
         // given
-        ProductCreateDto productCreateDto = new ProductCreateDto(
+        CreateProductDto createProductDto = new CreateProductDto(
                 "pizza",
                 BigDecimal.valueOf(0L));
         BDDMockito.given(productDao.save(BDDMockito.any(Product.class)))
@@ -101,13 +101,13 @@ class ProductServiceTest extends MockServiceTest {
 
         // when, then
         Assertions.assertThatNoException()
-                .isThrownBy(() -> productService.create(productCreateDto));
+                .isThrownBy(() -> productService.create(createProductDto));
     }
 
     @Test
     void 상품을_추가할_때_이름이_공백_일_수_있다() {
         // given
-        ProductCreateDto productCreateDto = new ProductCreateDto(
+        CreateProductDto createProductDto = new CreateProductDto(
                 "",
                 BigDecimal.valueOf(1000L));
         BDDMockito.given(productDao.save(BDDMockito.any(Product.class)))
@@ -118,30 +118,30 @@ class ProductServiceTest extends MockServiceTest {
 
         // when, then
         Assertions.assertThatNoException()
-                .isThrownBy(() -> productService.create(productCreateDto));
+                .isThrownBy(() -> productService.create(createProductDto));
     }
 
     @Test
     void 상품을_추가할_때_가격이_null_이면_예외를_던진다() {
         // given
-        ProductCreateDto productCreateDto = new ProductCreateDto(
+        CreateProductDto createProductDto = new CreateProductDto(
                 "pizza",
                 null);
 
         // when, then
-        Assertions.assertThatThrownBy(() -> productService.create(productCreateDto))
+        Assertions.assertThatThrownBy(() -> productService.create(createProductDto))
                 .isInstanceOf(ProductPriceException.class);
     }
 
     @Test
     void 상품을_추가할_때_가격이_음수면_예외를_던진다() {
         // given
-        ProductCreateDto productCreateDto = new ProductCreateDto(
+        CreateProductDto createProductDto = new CreateProductDto(
                 "pizza",
                 BigDecimal.valueOf(-100L));
 
         // when, then
-        Assertions.assertThatThrownBy(() -> productService.create(productCreateDto))
+        Assertions.assertThatThrownBy(() -> productService.create(createProductDto))
                 .isInstanceOf(ProductPriceException.class);
     }
 }

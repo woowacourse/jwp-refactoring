@@ -2,12 +2,12 @@ package kitchenpos.application.dto;
 
 import java.math.BigDecimal;
 
-public class ProductCreateDto {
+public class CreateProductDto {
 
     private final String name;
     private final BigDecimal price;
 
-    public ProductCreateDto(String name, BigDecimal price) {
+    public CreateProductDto(String name, BigDecimal price) {
         this.name = name;
         this.price = price;
     }
