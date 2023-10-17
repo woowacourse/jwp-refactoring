@@ -38,7 +38,10 @@ public class OrderTable {
         return numberOfGuests;
     }
 
-    public void setNumberOfGuests(final int numberOfGuests) {
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("테이블 인원수는 0명 이상이어야 합니다.");
+        }
         this.numberOfGuests = numberOfGuests;
     }
 
