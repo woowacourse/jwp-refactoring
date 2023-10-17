@@ -129,7 +129,7 @@ class TableGroupServiceTest extends ServiceTest {
     }
 
     @Nested
-    class 테이블_그룹_해제 {
+    class 테이블_그룹을_해제할_때 {
 
         private Menu menu;
 
@@ -170,7 +170,6 @@ class TableGroupServiceTest extends ServiceTest {
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class);
         }
-
     }
 
     private OrderTableDto createOrderTableDto(int numberOfGuests, boolean empty) {

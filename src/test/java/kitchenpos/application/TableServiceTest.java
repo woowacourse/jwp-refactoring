@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.application.request.OrderTableCreateRequest;
@@ -22,6 +21,8 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.EnumSource.Mode;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -120,28 +121,17 @@ class TableServiceTest extends ServiceTest {
 
         }
 
-        @Test
-        void 해당하는_주문테이블의_주문이_요리중이면_예외() {
+        @ParameterizedTest
+        @EnumSource(value = OrderStatus.class, names = {"COMPLETION"}, mode = Mode.EXCLUDE)
+        void 해당하는_주문테이블의_주문이_완료되지_않았으면_예외(OrderStatus orderStatus) {
             // given
             OrderTable orderTable = orderTableRepository.save(new OrderTable(5, false));
-            orderRepository.save(
-                new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(1L, 5))));
+            orderRepository.save(new Order(orderTable, orderStatus, List.of(new OrderLineItem(1L, 5))));
 
             // when && then
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), true))
-                .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 해당하는_주문테이블의_주문이_식사중이면_예외() {
-            // given
-            OrderTable orderTable = orderTableRepository.save(new OrderTable(5, false));
-            orderRepository.save(
-                new Order(orderTable, OrderStatus.MEAL, LocalDateTime.now(), List.of(new OrderLineItem(1L, 5))));
-
-            // when && then
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), true))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("주문이 완료된 테이블만 상태를 변경할 수 있습니다.");
         }
     }
 

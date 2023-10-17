@@ -60,7 +60,7 @@ class OrderServiceTest extends ServiceTest {
     private Menu menu;
 
     @BeforeEach
-    void setUp() {
+    void createMenu() {
         Product product = productRepository.save(new Product("족발", BigDecimal.valueOf(1000.00)));
         Long menuGroupId = menuGroupRepository.save(new MenuGroup("세트")).getId();
         menu = menuRepository.save(
@@ -69,7 +69,7 @@ class OrderServiceTest extends ServiceTest {
     }
 
     @Nested
-    class 메뉴_생성 {
+    class 메뉴_생성시 {
 
         @Test
         void 성공() {
@@ -126,17 +126,13 @@ class OrderServiceTest extends ServiceTest {
     }
 
     @Test
-    void 주문_목록을_조회한다() {
+    void 주문_목록을_조회() {
         // given
         List<Order> expected = new ArrayList<>();
-        OrderTable orderTableA = orderTableRepository.save(new OrderTable(5, false));
-        expected.add(orderRepository.save(new Order(orderTableA, COOKING, List.of(new OrderLineItem(1L, 5)))));
-
-        OrderTable orderTableB = orderTableRepository.save(new OrderTable(5, false));
-        expected.add(orderRepository.save(new Order(orderTableB, COOKING, List.of(new OrderLineItem(1L, 5)))));
-
-        OrderTable orderTableC = orderTableRepository.save(new OrderTable(5, false));
-        expected.add(orderRepository.save(new Order(orderTableC, COOKING, List.of(new OrderLineItem(1L, 5)))));
+        for (int i = 0; i < 3; i++) {
+            OrderTable orderTable = orderTableRepository.save(new OrderTable(5, false));
+            expected.add(orderRepository.save(new Order(orderTable, COOKING, List.of(new OrderLineItem(1L, 5)))));
+        }
 
         // when
         List<Order> actual = orderService.list();
@@ -148,15 +144,15 @@ class OrderServiceTest extends ServiceTest {
     }
 
     @Nested
-    class 주문_상태_변경 {
+    class 주문_상태_변경시 {
 
         @ParameterizedTest
         @CsvSource(value = {"COOKING : MEAL", "MEAL : COOKING"}, delimiter = ':')
-        void 변경_성공(OrderStatus originStatus, OrderStatus changedStatus) {
+        void 성공(OrderStatus originStatus, OrderStatus changedStatus) {
             // given
             OrderTable orderTableA = orderTableRepository.save(new OrderTable(5, false));
-            Long orderId = orderRepository.save(new Order(orderTableA, originStatus, List.of(new OrderLineItem(1L, 5))))
-                .getId();
+            Order order = new Order(orderTableA, originStatus, List.of(new OrderLineItem(1L, 5)));
+            Long orderId = orderRepository.save(order).getId();
 
             // when
             Order actual = orderService.changeOrderStatus(orderId, changedStatus);
@@ -169,8 +165,8 @@ class OrderServiceTest extends ServiceTest {
         void 바꿀려는_주문의_상태가_완료면_예외() {
             // given
             OrderTable orderTableA = orderTableRepository.save(new OrderTable(5, false));
-            Long orderId = orderRepository.save(new Order(orderTableA, COMPLETION, List.of(new OrderLineItem(1L, 5))))
-                .getId();
+            Order order = new Order(orderTableA, COMPLETION, List.of(new OrderLineItem(1L, 5)));
+            Long orderId = orderRepository.save(order).getId();
 
             // when && then
             assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, COOKING))

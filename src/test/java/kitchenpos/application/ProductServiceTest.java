@@ -28,7 +28,7 @@ class ProductServiceTest extends ServiceTest {
     private ProductService productService;
 
     @Test
-    void 상품을_저장_성공() {
+    void 상품_저장_성공() {
         // given
         var request = new ProductCreateRequest("고추바사삭", BigDecimal.valueOf(10000L));
 
@@ -41,7 +41,7 @@ class ProductServiceTest extends ServiceTest {
 
     @ParameterizedTest
     @ValueSource(longs = {-10000L, -1L})
-    void 상품_저장_실패_가격이_음수(Long price) {
+    void 가격이_음수면_상품_저장시_예외(Long price) {
         // given
         var request = new ProductCreateRequest("고추바사삭", BigDecimal.valueOf(price));
 

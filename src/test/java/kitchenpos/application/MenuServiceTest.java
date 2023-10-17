@@ -41,7 +41,7 @@ class MenuServiceTest extends ServiceTest {
     private MenuService menuService;
 
     @Nested
-    class 생성 {
+    class 메뉴_생성시 {
 
         @Test
         void 성공() {
@@ -124,7 +124,6 @@ class MenuServiceTest extends ServiceTest {
             assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
         }
-
     }
 
     @Test

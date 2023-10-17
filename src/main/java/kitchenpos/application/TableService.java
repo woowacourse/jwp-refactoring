@@ -49,7 +49,7 @@ public class TableService {
     private void validateIsCompletionOrder(Long orderTableId) {
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId,
             List.of(OrderStatus.MEAL, OrderStatus.COOKING))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문이 완료된 테이블만 상태를 변경할 수 있습니다.");
         }
     }
 }
