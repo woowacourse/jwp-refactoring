@@ -11,6 +11,7 @@ import static kitchenpos.acceptance.oreder.OrderAcceptanceSteps.주문_생성후
 import static kitchenpos.acceptance.oreder.OrderAcceptanceSteps.주문_조회_결과를_검증한다;
 import static kitchenpos.acceptance.oreder.OrderAcceptanceSteps.주문_조회_요청을_보낸다;
 import static kitchenpos.acceptance.oreder.OrderAcceptanceSteps.주문_항목;
+import static kitchenpos.acceptance.oreder.OrderAcceptanceSteps.주문_항목_요청;
 import static kitchenpos.acceptance.product.ProductAcceptanceSteps.상품_등록후_생성된_ID를_가져온다;
 import static kitchenpos.acceptance.table.TableAcceptanceSteps.비어있음;
 import static kitchenpos.acceptance.table.TableAcceptanceSteps.비어있지_않음;
@@ -71,8 +72,8 @@ public class OrderAcceptanceTest {
         void 주문을_생성한다() {
             // when
             var 응답 = 주문_생성_요청을_보낸다(테이블_1_ID,
-                    주문_항목(말랑_메뉴_ID, 2),
-                    주문_항목(말랑_메뉴_2_ID, 1)
+                    주문_항목_요청(말랑_메뉴_ID, 2),
+                    주문_항목_요청(말랑_메뉴_2_ID, 1)
             );
 
             // then
@@ -86,8 +87,8 @@ public class OrderAcceptanceTest {
 
             // when
             var 응답 = 주문_생성_요청을_보낸다(비어있는_테이블_ID,
-                    주문_항목(말랑_메뉴_ID, 2),
-                    주문_항목(말랑_메뉴_2_ID, 1)
+                    주문_항목_요청(말랑_메뉴_ID, 2),
+                    주문_항목_요청(말랑_메뉴_2_ID, 1)
             );
 
             // then
@@ -117,8 +118,8 @@ public class OrderAcceptanceTest {
         void 주문의_상태를_변경한다() {
             // given
             var 주문_ID = 주문_생성후_ID를_가져온다(테이블_1_ID,
-                    주문_항목(말랑_메뉴_ID, 2),
-                    주문_항목(말랑_메뉴_2_ID, 1)
+                    주문_항목_요청(말랑_메뉴_ID, 2),
+                    주문_항목_요청(말랑_메뉴_2_ID, 1)
             );
 
             // when
@@ -130,8 +131,8 @@ public class OrderAcceptanceTest {
             주문_조회_결과를_검증한다(
                     조회_응답,
                     주문(주문_ID, 테이블_1_ID, MEAL,
-                            주문_항목(말랑_메뉴_ID, 2),
-                            주문_항목(말랑_메뉴_2_ID, 1)
+                            주문_항목(주문_ID, 말랑_메뉴_ID, 2),
+                            주문_항목(주문_ID, 말랑_메뉴_2_ID, 1)
                     )
             );
         }
@@ -140,8 +141,8 @@ public class OrderAcceptanceTest {
         void 계산_완료된_주문의_상태는_변경할_수_없다() {
             // given
             var 주문_ID = 주문_생성후_ID를_가져온다(테이블_1_ID,
-                    주문_항목(말랑_메뉴_ID, 2),
-                    주문_항목(말랑_메뉴_2_ID, 1)
+                    주문_항목_요청(말랑_메뉴_ID, 2),
+                    주문_항목_요청(말랑_메뉴_2_ID, 1)
             );
             주문_상태_변경_요청을_보낸다(주문_ID, COMPLETION);
 
@@ -154,8 +155,8 @@ public class OrderAcceptanceTest {
             주문_조회_결과를_검증한다(
                     조회_응답,
                     주문(주문_ID, 테이블_1_ID, COMPLETION,
-                            주문_항목(말랑_메뉴_ID, 2),
-                            주문_항목(말랑_메뉴_2_ID, 1)
+                            주문_항목(주문_ID, 말랑_메뉴_ID, 2),
+                            주문_항목(주문_ID, 말랑_메뉴_2_ID, 1)
                     )
             );
         }
@@ -174,12 +175,12 @@ public class OrderAcceptanceTest {
         void 주문들을_조회한다() {
             // given
             Long 주문1_ID = 주문_생성후_ID를_가져온다(테이블_1_ID,
-                    주문_항목(말랑_메뉴_ID, 2),
-                    주문_항목(말랑_메뉴_2_ID, 1)
+                    주문_항목_요청(말랑_메뉴_ID, 2),
+                    주문_항목_요청(말랑_메뉴_2_ID, 1)
             );
             Long 주문2_ID = 주문_생성후_ID를_가져온다(테이블_2_ID,
-                    주문_항목(말랑_메뉴_ID, 3),
-                    주문_항목(말랑_메뉴_2_ID, 2)
+                    주문_항목_요청(말랑_메뉴_ID, 3),
+                    주문_항목_요청(말랑_메뉴_2_ID, 2)
             );
 
             // when
