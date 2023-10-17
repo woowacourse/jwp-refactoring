@@ -1,17 +1,19 @@
 package kitchenpos;
 
-import kitchenpos.application.MenuService;
-import kitchenpos.application.OrderService;
-import kitchenpos.application.TableGroupService;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuProductRepository;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.OrderLineItemRepository;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.ProductRepository;
+import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
@@ -28,34 +30,35 @@ import static java.util.Collections.singletonList;
 public class EntityFactory {
 
     @Autowired
-    private TableGroupService tableGroupService;
+    private OrderLineItemRepository orderLineItemRepository;
     @Autowired
-    private OrderService orderService;
+    private MenuProductRepository menuProductRepository;
     @Autowired
-    private MenuService menuService;
-
+    private MenuRepository menuRepository;
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderRepository orderRepository;
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private OrderTableRepository orderTableRepository;
     @Autowired
-    private ProductDao productDao;
+    private MenuGroupRepository menuGroupRepository;
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private ProductRepository productRepository;
+    @Autowired
+    private TableGroupRepository tableGroupRepository;
 
     public OrderTable saveOrderTable() {
         final OrderTable request = new OrderTable();
         request.setNumberOfGuests(5);
         request.setEmpty(true);
 
-        return orderTableDao.save(request);
+        return orderTableRepository.save(request);
     }
 
     public OrderTable saveOrderTableWithNotEmpty() {
         final OrderTable request = new OrderTable();
         request.setNumberOfGuests(5);
 
-        return orderTableDao.save(request);
+        return orderTableRepository.save(request);
     }
 
     public OrderTable saveOrderTableWithTableGroup(final TableGroup tableGroup) {
@@ -63,21 +66,21 @@ public class EntityFactory {
         request.setNumberOfGuests(5);
         request.setTableGroupId(tableGroup.getId());
 
-        return orderTableDao.save(request);
+        return orderTableRepository.save(request);
     }
 
     public TableGroup saveTableGroup(final OrderTable orderTable1, final OrderTable orderTable2) {
-        final TableGroup request = new TableGroup();
-        request.setOrderTables(List.of(orderTable1, orderTable2));
+        final TableGroup tableGroup = new TableGroup();
+        tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
 
-        return tableGroupService.create(request);
+        return tableGroupRepository.save(tableGroup);
     }
 
     public TableGroup saveTableGroup() {
         final TableGroup tableGroup = new TableGroup();
         tableGroup.setCreatedDate(LocalDateTime.now());
 
-        return tableGroupDao.save(tableGroup);
+        return tableGroupRepository.save(tableGroup);
     }
 
     public Order saveOrder(final OrderTable orderTable) {
@@ -86,9 +89,14 @@ public class EntityFactory {
 
         final Order request = new Order();
         request.setOrderTableId(orderTable.getId());
-        request.setOrderLineItems(List.of(orderLineItem));
+        request.setOrderStatus(OrderStatus.COOKING);
+        final Order order = orderRepository.save(request);
 
-        return orderService.create(request);
+        orderLineItem.setOrderId(order.getId());
+        final OrderLineItem savedOrderLineItem = orderLineItemRepository.save(orderLineItem);
+        order.setOrderLineItems(List.of(savedOrderLineItem));
+
+        return orderRepository.save(order);
     }
 
     public Order saveOrder() {
@@ -98,9 +106,14 @@ public class EntityFactory {
 
         final Order request = new Order();
         request.setOrderTableId(orderTable.getId());
-        request.setOrderLineItems(List.of(orderLineItem));
+        request.setOrderStatus(OrderStatus.COOKING);
+        final Order order = orderRepository.save(request);
 
-        return orderService.create(request);
+        orderLineItem.setOrderId(order.getId());
+        final OrderLineItem savedOrderLineItem = orderLineItemRepository.save(orderLineItem);
+        order.setOrderLineItems(List.of(savedOrderLineItem));
+
+        return orderRepository.save(request);
     }
 
     public OrderLineItem createOrderLineItem(final Menu menu, final int quantity) {
@@ -120,9 +133,14 @@ public class EntityFactory {
         request.setMenuGroupId(menuGroup.getId());
         request.setPrice(BigDecimal.valueOf(16000));
         request.setName("떡볶이 세트");
-        request.setMenuProducts(singletonList(menuProduct));
+        final Menu menu = menuRepository.save(request);
 
-        return menuService.create(request);
+        menuProduct.setMenuId(menu.getId());
+        final MenuProduct saved = menuProductRepository.save(menuProduct);
+
+        menu.setMenuProducts(singletonList(saved));
+
+        return menuRepository.save(request);
     }
 
     public Product saveProduct(final String name, final int price) {
@@ -130,7 +148,7 @@ public class EntityFactory {
         product.setName(name);
         product.setPrice(BigDecimal.valueOf(price));
 
-        return productDao.save(product);
+        return productRepository.save(product);
     }
 
     public MenuProduct createMenuProduct(final int quantity, final Product product) {
@@ -145,6 +163,6 @@ public class EntityFactory {
         final MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(name);
 
-        return menuGroupDao.save(menuGroup);
+        return menuGroupRepository.save(menuGroup);
     }
 }

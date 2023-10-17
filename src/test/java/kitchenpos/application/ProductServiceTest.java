@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.ProductCreateRequest;
+import kitchenpos.ui.dto.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -27,12 +28,10 @@ class ProductServiceTest {
         @DisplayName("상품을 생성할 수 있다")
         void create() {
             //given
-            final Product request = new Product();
-            request.setName("떡볶이");
-            request.setPrice(BigDecimal.valueOf(5000));
+            final ProductCreateRequest request = new ProductCreateRequest("떡볶이", BigDecimal.valueOf(5000));
 
             //when
-            final Product product = productService.create(request);
+            final ProductResponse product = productService.create(request);
 
             //then
             assertSoftly(softAssertions -> {
@@ -46,9 +45,7 @@ class ProductServiceTest {
         @DisplayName("상품을 생성할 때 가격이 음수면 예외가 발생한다")
         void create_fail() {
             //given
-            final Product request = new Product();
-            request.setName("떡볶이");
-            request.setPrice(BigDecimal.valueOf(-1));
+            final ProductCreateRequest request = new ProductCreateRequest("떡볶이", BigDecimal.valueOf(-1));
 
             //when
             assertThatThrownBy(() -> productService.create(request))
@@ -59,8 +56,7 @@ class ProductServiceTest {
         @DisplayName("상품을 생성할 때 가격이 존재하지 않으면 예외가 발생한다")
         void create_fail2() {
             //given
-            final Product request = new Product();
-            request.setName("떡볶이");
+            final ProductCreateRequest request = new ProductCreateRequest("떡볶이", null);
 
             //when
             assertThatThrownBy(() -> productService.create(request))

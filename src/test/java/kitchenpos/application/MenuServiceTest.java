@@ -1,10 +1,11 @@
 package kitchenpos.application;
 
 import kitchenpos.EntityFactory;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.MenuCreateRequest;
+import kitchenpos.ui.dto.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -38,14 +39,11 @@ class MenuServiceTest {
             final MenuProduct menuProduct = createMenuProduct(4, product);
             final MenuGroup menuGroup = entityFactory.saveMenuGroup("일식");
 
-            final Menu request = new Menu();
-            request.setMenuGroupId(menuGroup.getId());
-            request.setPrice(BigDecimal.valueOf(16000));
-            request.setName("떡볶이 세트");
-            request.setMenuProducts(singletonList(menuProduct));
+            final MenuCreateRequest request = new MenuCreateRequest("떡볶이 세트", BigDecimal.valueOf(16000),
+                    menuGroup.getId(), singletonList(menuProduct));
 
             //when
-            final Menu menu = menuService.create(request);
+            final MenuResponse menu = menuService.create(request);
 
             //then
             assertThat(menu.getId()).isNotNull();
@@ -58,11 +56,8 @@ class MenuServiceTest {
             final Product product = entityFactory.saveProduct("연어", 4000);
             final MenuProduct menuProduct = createMenuProduct(4, product);
 
-            final Menu request = new Menu();
-            request.setMenuGroupId(0L);
-            request.setPrice(BigDecimal.valueOf(16000));
-            request.setName("떡볶이 세트");
-            request.setMenuProducts(singletonList(menuProduct));
+            final MenuCreateRequest request = new MenuCreateRequest("떡볶이 세트", BigDecimal.valueOf(16000),
+                    0L, singletonList(menuProduct));
 
             //when, then
             assertThatThrownBy(() -> menuService.create(request))
@@ -76,11 +71,8 @@ class MenuServiceTest {
             final MenuProduct menuProduct = createMenuProduct(4, product);
             final MenuGroup menuGroup = entityFactory.saveMenuGroup("일식");
 
-            final Menu request = new Menu();
-            request.setMenuGroupId(menuGroup.getId());
-            request.setPrice(BigDecimal.valueOf(16001));
-            request.setName("떡볶이 세트");
-            request.setMenuProducts(singletonList(menuProduct));
+            final MenuCreateRequest request = new MenuCreateRequest("떡볶이 세트", BigDecimal.valueOf(16001),
+                    menuGroup.getId(), singletonList(menuProduct));
 
             //when, then
             assertThatThrownBy(() -> menuService.create(request))
@@ -91,14 +83,12 @@ class MenuServiceTest {
         @DisplayName("메뉴를 생성할 때 실제 상품이 존재하지 않으면 예외가 발생한다")
         void create_fail3() {
             final Product product = new Product();
+            product.setId(0L);
             final MenuProduct menuProduct = createMenuProduct(4, product);
             final MenuGroup menuGroup = entityFactory.saveMenuGroup("일식");
 
-            final Menu request = new Menu();
-            request.setMenuGroupId(menuGroup.getId());
-            request.setPrice(BigDecimal.valueOf(16000));
-            request.setName("떡볶이 세트");
-            request.setMenuProducts(singletonList(menuProduct));
+            final MenuCreateRequest request = new MenuCreateRequest("떡볶이 세트", BigDecimal.valueOf(16000),
+                    menuGroup.getId(), singletonList(menuProduct));
 
             //when, then
             assertThatThrownBy(() -> menuService.create(request))

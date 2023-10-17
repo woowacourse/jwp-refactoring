@@ -2,8 +2,13 @@ package kitchenpos.application;
 
 import kitchenpos.EntityFactory;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.dto.OrderTableCreateRequest;
+import kitchenpos.ui.dto.OrderTableResponse;
+import kitchenpos.ui.dto.OrderTableUpdateRequest;
+import kitchenpos.ui.dto.OrderUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -32,11 +37,10 @@ class OrderTableServiceTest {
     @DisplayName("주문 테이블을 생성할 수 있다")
     void create() {
         //given
-        final OrderTable request = new OrderTable();
-        request.setNumberOfGuests(5);
+        final OrderTableCreateRequest request = new OrderTableCreateRequest(5);
 
         //when
-        final OrderTable orderTable = orderTableService.create(request);
+        final OrderTableResponse orderTable = orderTableService.create(request);
 
         //then
         assertSoftly(softAssertions -> {
@@ -61,12 +65,10 @@ class OrderTableServiceTest {
         void changeEmpty() {
             //given
             final OrderTable orderTable = entityFactory.saveOrderTable();
-
-            final OrderTable request = new OrderTable();
-            request.setEmpty(true);
+            final OrderTableUpdateRequest request = new OrderTableUpdateRequest(4, true);
 
             //when
-            final OrderTable changedOrderTable = orderTableService.changeEmpty(orderTable.getId(), request);
+            final OrderTableResponse changedOrderTable = orderTableService.changeEmpty(orderTable.getId(), request);
 
             //then
             assertThat(changedOrderTable.isEmpty()).isTrue();
@@ -76,8 +78,7 @@ class OrderTableServiceTest {
         @DisplayName("주문 테이블의 빈 테이블 여부를 변경할 때 주문 테이블이 존재하지 않으면 예외가 발생한다")
         void changeEmpty_fail() {
             //given
-            final OrderTable request = new OrderTable();
-            request.setEmpty(true);
+            final OrderTableUpdateRequest request = new OrderTableUpdateRequest(4, true);
 
             //when, then
             assertThatThrownBy(() -> orderTableService.changeEmpty(0L, request))
@@ -91,8 +92,7 @@ class OrderTableServiceTest {
             final TableGroup tableGroup = entityFactory.saveTableGroup();
             final OrderTable orderTable = entityFactory.saveOrderTableWithTableGroup(tableGroup);
 
-            final OrderTable request = new OrderTable();
-            request.setEmpty(true);
+            final OrderTableUpdateRequest request = new OrderTableUpdateRequest(4, true);
 
             //when, then
             assertThatThrownBy(() -> orderTableService.changeEmpty(orderTable.getId(), request))
@@ -102,17 +102,15 @@ class OrderTableServiceTest {
         @ParameterizedTest
         @ValueSource(strings = {"COOKING", "MEAL"})
         @DisplayName("주문 테이블의 빈 테이블 여부를 변경할 때 주문 상태가 COOKING 또는 MEAL이면 예외가 발생한다")
-        void changeEmpty_fail3(final String status) {
+        void changeEmpty_fail3(final OrderStatus status) {
             //given
             final OrderTable orderTable = entityFactory.saveOrderTableWithNotEmpty();
 
-            final OrderTable request = new OrderTable();
-            request.setEmpty(true);
-
             final Order order = entityFactory.saveOrder(orderTable);
-            final Order requestToChangeStatus = new Order();
-            requestToChangeStatus.setOrderStatus(status);
+            final OrderUpdateRequest requestToChangeStatus = new OrderUpdateRequest(status);
             orderService.changeOrderStatus(order.getId(), requestToChangeStatus);
+
+            final OrderTableUpdateRequest request = new OrderTableUpdateRequest(4, true);
 
             //when, then
             assertThatThrownBy(() -> orderTableService.changeEmpty(orderTable.getId(), request))
@@ -129,12 +127,10 @@ class OrderTableServiceTest {
         void changeNumberOfGuests() {
             //given
             final OrderTable orderTable = entityFactory.saveOrderTableWithNotEmpty();
-
-            final OrderTable request = new OrderTable();
-            request.setNumberOfGuests(10);
+            final OrderTableUpdateRequest request = new OrderTableUpdateRequest(10, true);
 
             //when
-            final OrderTable changedOrderTable = orderTableService.changeNumberOfGuests(orderTable.getId(), request);
+            final OrderTableResponse changedOrderTable = orderTableService.changeNumberOfGuests(orderTable.getId(), request);
 
             //then
             assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(10);
@@ -146,8 +142,7 @@ class OrderTableServiceTest {
             //given
             final OrderTable orderTable = entityFactory.saveOrderTable();
 
-            final OrderTable request = new OrderTable();
-            request.setNumberOfGuests(-1);
+            final OrderTableUpdateRequest request = new OrderTableUpdateRequest(-1, true);
 
             //when, then
             assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(orderTable.getId(), request))
@@ -158,8 +153,7 @@ class OrderTableServiceTest {
         @DisplayName("주문 테이블의 방문한 손님 수를 변경할 때 주문 테이블이 존재하지 않으면 예외가 발생한다")
         void changeNumberOfGuests_fail2() {
             //given
-            final OrderTable request = new OrderTable();
-            request.setNumberOfGuests(10);
+            final OrderTableUpdateRequest request = new OrderTableUpdateRequest(4, true);
 
             //when, then
             assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(0L, request))
@@ -172,8 +166,7 @@ class OrderTableServiceTest {
             //given
             final OrderTable orderTable = entityFactory.saveOrderTable();
 
-            final OrderTable request = new OrderTable();
-            request.setNumberOfGuests(10);
+            final OrderTableUpdateRequest request = new OrderTableUpdateRequest(4, true);
 
             //when, then
             assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(orderTable.getId(), request))
