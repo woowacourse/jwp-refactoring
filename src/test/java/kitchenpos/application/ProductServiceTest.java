@@ -3,7 +3,7 @@ package kitchenpos.application;
 import kitchenpos.application.config.ServiceTestConfig;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.request.ProductCreateRequest;
-import kitchenpos.ui.dto.response.ProductCreateResponse;
+import kitchenpos.ui.dto.response.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -34,7 +34,7 @@ class ProductServiceTest extends ServiceTestConfig {
             final ProductCreateRequest request = new ProductCreateRequest("상품이름", BigDecimal.valueOf(10000));
 
             // when
-            final ProductCreateResponse actual = productService.create(request);
+            final ProductResponse actual = productService.create(request);
 
             // then
             assertSoftly(softly -> {
@@ -76,13 +76,12 @@ class ProductServiceTest extends ServiceTestConfig {
             final Product savedProduct = saveProduct();
 
             // when
-            final List<Product> actual = productService.list();
+            final List<ProductResponse> actual = productService.list();
 
             // then
-            // FIXME: equals&hashcode 적용
             assertSoftly(softly -> {
                 softly.assertThat(actual.size()).isEqualTo(1);
-//                softly.assertThat(actual).containsExactly(savedProduct);
+                softly.assertThat(actual.get(0).getId()).isEqualTo(savedProduct.getId());
             });
         }
     }

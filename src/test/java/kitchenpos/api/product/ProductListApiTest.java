@@ -2,6 +2,7 @@ package kitchenpos.api.product;
 
 import kitchenpos.api.config.ApiTestConfig;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -20,17 +21,13 @@ class ProductListApiTest extends ApiTestConfig {
     @Test
     void listProduct() throws Exception {
         // when
-        // FIXME: domain -> dto 로 변경
-        final Product expectedProduct = new Product(1L, "피자", BigDecimal.valueOf(17000));
-        when(productService.list()).thenReturn(List.of(expectedProduct));
+        final ProductResponse response = ProductResponse.from(new Product(1L, "피자", BigDecimal.valueOf(17000)));
+        when(productService.list()).thenReturn(List.of(response));
 
         // then
         mockMvc.perform(get("/api/products"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON))
-                .andExpect(jsonPath("$.size()", is(1)))
-                .andExpect(jsonPath("$[0].id", is(expectedProduct.getId().intValue())))
-                .andExpect(jsonPath("$[0].name", is(expectedProduct.getName())))
-                .andExpect(jsonPath("$[0].price", is(expectedProduct.getPrice().intValue())));
+                .andExpect(content().string(objectMapper.writeValueAsString(List.of(response))));
     }
 }

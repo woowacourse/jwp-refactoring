@@ -3,7 +3,7 @@ package kitchenpos.api.product;
 import kitchenpos.api.config.ApiTestConfig;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.request.ProductCreateRequest;
-import kitchenpos.ui.dto.response.ProductCreateResponse;
+import kitchenpos.ui.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +27,7 @@ class ProductCreateApiTest extends ApiTestConfig {
 
         // when
         final Product product = new Product(1L, request.getName(), request.getPrice());
-        final ProductCreateResponse response = ProductCreateResponse.from(product);
+        final ProductResponse response = ProductResponse.from(product);
         when(productService.create(eq(request))).thenReturn(response);
 
         // then
