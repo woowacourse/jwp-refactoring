@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.order.CreateOrderCommand;
 import kitchenpos.application.dto.order.CreateOrderResponse;
@@ -50,14 +49,7 @@ public class OrderService {
     @Transactional
     public Order changeOrderStatus(final Long orderId, final Order order) {
         Order savedOrder = orderRepository.getById(orderId);
-
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.orderStatus())) {
-            throw new IllegalArgumentException();
-        }
-
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.orderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
-
+        savedOrder.changeOrderStatus(order.orderStatus());
         return orderRepository.save(savedOrder);
     }
 }

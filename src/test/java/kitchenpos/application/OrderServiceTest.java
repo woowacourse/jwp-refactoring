@@ -1,12 +1,12 @@
 package kitchenpos.application;
 
 import static kitchenpos.exception.MenuExceptionType.MENU_NOT_FOUND;
+import static kitchenpos.exception.OrderExceptionType.CAN_NOT_CHANGE_COMPLETION_ORDER_STATUS;
 import static kitchenpos.exception.OrderExceptionType.ORDER_LINE_ITEMS_CAN_NOT_EMPTY;
 import static kitchenpos.exception.OrderExceptionType.ORDER_NOT_FOUND;
 import static kitchenpos.exception.OrderExceptionType.ORDER_TABLE_CAN_NOT_EMPTY;
 import static kitchenpos.exception.OrderTableExceptionType.ORDER_TABLE_NOT_FOUND;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -152,9 +152,13 @@ class OrderServiceTest extends IntegrationTest {
             Order order = 완료된_주문();
             Order 맛있는_메뉴_주문 = 맛있는_메뉴_주문();
 
-            // when & then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(order.id(), 맛있는_메뉴_주문))
-                    .isInstanceOf(IllegalArgumentException.class);
+            // when
+            BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                    orderService.changeOrderStatus(order.id(), 맛있는_메뉴_주문)
+            ).exceptionType();
+
+            // then
+            assertThat(exceptionType).isEqualTo(CAN_NOT_CHANGE_COMPLETION_ORDER_STATUS);
         }
 
         @Test
