@@ -47,22 +47,6 @@ public class OrderTable {
         }
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public TableGroup getTableGroup() {
-        return tableGroup;
-    }
-
-    public int getNumberOfGuests() {
-        return numberOfGuests;
-    }
-
-    public boolean isEmpty() {
-        return empty;
-    }
-
     public void changeEmpty(final boolean empty) {
         validateGroup();
         this.empty = empty;
@@ -92,6 +76,22 @@ public class OrderTable {
         if (this.empty) {
             throw new IllegalArgumentException("인원을 변경할 테이블은 빈 테이블일 수 없습니다");
         }
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public TableGroup getTableGroup() {
+        return tableGroup;
+    }
+
+    public int getNumberOfGuests() {
+        return numberOfGuests;
+    }
+
+    public boolean isEmpty() {
+        return empty;
     }
 
     @Override
