@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.ProductCreateDto;
+import kitchenpos.application.dto.ProductDto;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductName;
@@ -26,16 +27,16 @@ class ProductServiceTest extends MockServiceTest {
     @Test
     void 상품_목록을_조회한다() {
         // given
-        Product expectedFirstProduct = new Product(
+        ProductDto expectedFirstProduct = new ProductDto(
                 1L,
-                new ProductName("pizza"),
-                new ProductPrice(BigDecimal.valueOf(18000L)));
-        Product expectedSecondProduct = new Product(
+                "pizza",
+                BigDecimal.valueOf(18000L));
+        ProductDto expectedSecondProduct = new ProductDto(
                 2L,
-                new ProductName("chicken"),
-                new ProductPrice(BigDecimal.valueOf(21000L)));
+                "chicken",
+                BigDecimal.valueOf(21000L));
 
-        List<Product> expected = List.of(
+        List<ProductDto> expected = List.of(
                 expectedFirstProduct,
                 expectedSecondProduct
         );
@@ -53,7 +54,7 @@ class ProductServiceTest extends MockServiceTest {
                 .willReturn(List.of(mockFirstProduct, mockSecondProduct));
 
         // when
-        List<Product> actual = productService.list();
+        List<ProductDto> actual = productService.list();
 
         // then
         Assertions.assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
@@ -62,10 +63,10 @@ class ProductServiceTest extends MockServiceTest {
     @Test
     void 상품을_추가한다() {
         // given
-        Product expected = new Product(
+        ProductDto expected = new ProductDto(
                 1L,
-                new ProductName("pizza"),
-                new ProductPrice(BigDecimal.valueOf(18000L)));
+                "pizza",
+                BigDecimal.valueOf(18000L));
 
         ProductCreateDto productCreateDto = new ProductCreateDto(
                 "pizza",
@@ -80,7 +81,7 @@ class ProductServiceTest extends MockServiceTest {
                 .willReturn(mockReturnProduct);
 
         // when
-        Product actual = productService.create(productCreateDto);
+        ProductDto actual = productService.create(productCreateDto);
 
         // then
         Assertions.assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
@@ -92,6 +93,11 @@ class ProductServiceTest extends MockServiceTest {
         ProductCreateDto productCreateDto = new ProductCreateDto(
                 "pizza",
                 BigDecimal.valueOf(0L));
+        BDDMockito.given(productDao.save(BDDMockito.any(Product.class)))
+                .willReturn(new Product(
+                        1L,
+                        new ProductName("pizza"),
+                        new ProductPrice(BigDecimal.valueOf(0L))));
 
         // when, then
         Assertions.assertThatNoException()
@@ -104,6 +110,11 @@ class ProductServiceTest extends MockServiceTest {
         ProductCreateDto productCreateDto = new ProductCreateDto(
                 "",
                 BigDecimal.valueOf(1000L));
+        BDDMockito.given(productDao.save(BDDMockito.any(Product.class)))
+                .willReturn(new Product(
+                        1L,
+                        new ProductName(""),
+                        new ProductPrice(BigDecimal.valueOf(1000L))));
 
         // when, then
         Assertions.assertThatNoException()
