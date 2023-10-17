@@ -1,11 +1,14 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.MenuGroupCreateRequest;
+import kitchenpos.dto.MenuGroupResponse;
+import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.supports.MenuGroupFixture;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -22,7 +25,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class MenuGroupServiceTest {
 
     @Mock
-    MenuGroupDao menuGroupDao;
+    MenuGroupRepository menuGroupRepository;
 
     @InjectMocks
     MenuGroupService menuGroupService;
@@ -35,17 +38,17 @@ class MenuGroupServiceTest {
             // given
             String name = "안주류";
 
-            MenuGroup menuGroup = MenuGroupFixture.fixture().name(name).build();
-            MenuGroup expected = MenuGroupFixture.fixture().id(1L).name(name).build();
-
-            given(menuGroupService.create(menuGroup))
-                .willReturn(expected);
+            MenuGroupCreateRequest request = new MenuGroupCreateRequest(name);
+            given(menuGroupRepository.save(any(MenuGroup.class)))
+                .willReturn(MenuGroupFixture.fixture().id(1L).name(name).build());
 
             // when
-            MenuGroup actual = menuGroupService.create(menuGroup);
+            MenuGroupResponse actual = menuGroupService.create(request);
 
             // then
-            assertThat(actual).isEqualTo(expected);
+            assertThat(actual)
+                .usingRecursiveComparison()
+                .isEqualTo(new MenuGroupResponse(1L, name));
         }
     }
 
@@ -56,18 +59,20 @@ class MenuGroupServiceTest {
         void 전체_메뉴_그룹을_조회한다() {
             // given
             List<MenuGroup> expected = List.of(
-                MenuGroupFixture.fixture().id(1L).build(),
-                MenuGroupFixture.fixture().id(2L).build()
+                MenuGroupFixture.fixture().id(1L).name("치킨").build(),
+                MenuGroupFixture.fixture().id(2L).name("피자").build()
             );
 
-            given(menuGroupService.list())
+            given(menuGroupRepository.findAll())
                 .willReturn(expected);
 
             // when
-            List<MenuGroup> actual = menuGroupService.list();
+            List<MenuGroupResponse> actual = menuGroupService.list();
 
             // then
-            assertThat(actual).isEqualTo(expected);
+            assertThat(actual)
+                .map(MenuGroupResponse::getId)
+                .containsExactly(1L, 2L);
         }
     }
 }
