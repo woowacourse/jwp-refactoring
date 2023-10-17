@@ -4,7 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
@@ -22,45 +24,38 @@ class OrderRepositoryTest {
     OrderRepository orderRepository;
 
     @Nested
-    class existsByOrderTableIdAndOrderStatusIn {
+    class findByOrderTableId {
 
-        @ParameterizedTest
-        @ValueSource(strings = {"COOKING", "MEAL"})
-        void 주문_테이블_식별자와_주문_상태가_포함되면_true(String status) {
+        @Test
+        void 주문_테이블_식별자에_대한_주문이_없으면_empty() {
             // given
-            Long orderTableId = 4885L;
-            List<String> orderStatues = List.of("COOKING", "MEAL");
-
             Order order = new Order();
-            order.setOrderTableId(orderTableId);
-            order.setOrderStatus(status);
+            order.setOrderTableId(1L);
+            order.setOrderStatus(OrderStatus.COMPLETION);
             order.setOrderedTime(LocalDateTime.parse("2023-10-15T22:40:00"));
             orderRepository.save(order);
 
-            // when
-            boolean actual = orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, orderStatues);
+            //when
+            Optional<Order> actual = orderRepository.findByOrderTableId(4885L);
 
             // then
-            assertThat(actual).isTrue();
+            assertThat(actual).isEmpty();
         }
 
         @Test
-        void 주문_테이블_식별자가_있지만_주문_상태가_포함되지_않으면_false() {
+        void 주문_테이블_식별자에_대한_주문이_있으면_present() {
             // given
-            Long orderTableId = 4885L;
-            List<String> orderStatues = List.of("COOKING", "MEAL");
-
             Order order = new Order();
-            order.setOrderTableId(orderTableId);
-            order.setOrderStatus("COMPLETION");
+            order.setOrderTableId(4885L);
+            order.setOrderStatus(OrderStatus.COMPLETION);
             order.setOrderedTime(LocalDateTime.parse("2023-10-15T22:40:00"));
             orderRepository.save(order);
 
-            // when
-            boolean actual = orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, orderStatues);
+            //when
+            Optional<Order> actual = orderRepository.findByOrderTableId(4885L);
 
             // then
-            assertThat(actual).isFalse();
+            assertThat(actual).isPresent();
         }
     }
 
@@ -69,10 +64,10 @@ class OrderRepositoryTest {
 
         @ParameterizedTest
         @ValueSource(strings = {"COOKING", "MEAL"})
-        void 주문_테이블_식별자_목록이_포함되고_주문_상태가_포함되면_true(String status) {
+        void 주문_테이블_식별자_목록이_포함되고_주문_상태가_포함되면_true(OrderStatus status) {
             // given
             List<Long> orderTableIds = List.of(4885L, 4886L);
-            List<String> orderStatues = List.of("COOKING", "MEAL");
+            List<OrderStatus> orderStatues = List.of(OrderStatus.COOKING, OrderStatus.MEAL);
 
             Order order = new Order();
             order.setOrderTableId(4885L);
@@ -89,10 +84,10 @@ class OrderRepositoryTest {
 
         @ParameterizedTest
         @ValueSource(strings = {"COOKING", "MEAL"})
-        void 주문_테이블_식별자_목록에_포함이_되지_않고_주문_상태가_포함되면_false(String status) {
+        void 주문_테이블_식별자_목록에_포함이_되지_않고_주문_상태가_포함되면_false(OrderStatus status) {
             // given
             List<Long> orderTableIds = List.of(4885L, 4886L);
-            List<String> orderStatues = List.of("COOKING", "MEAL");
+            List<OrderStatus> orderStatues = List.of(OrderStatus.COOKING, OrderStatus.MEAL);
 
             Order order = new Order();
             order.setOrderTableId(4884L);
@@ -112,11 +107,11 @@ class OrderRepositoryTest {
         void 주문_테이블_식별자_목록에_포함되고_주문_상태가_포함되지_않으면_false(Long orderTableId) {
             // given
             List<Long> orderTableIds = List.of(4885L, 4886L);
-            List<String> orderStatues = List.of("COOKING", "MEAL");
+            List<OrderStatus> orderStatues = List.of(OrderStatus.COOKING, OrderStatus.MEAL);
 
             Order order = new Order();
             order.setOrderTableId(orderTableId);
-            order.setOrderStatus("COMPLETION");
+            order.setOrderStatus(OrderStatus.COMPLETION);
             order.setOrderedTime(LocalDateTime.parse("2023-10-15T22:40:00"));
             orderRepository.save(order);
 

@@ -20,7 +20,7 @@ public class Order {
     private Long id;
 
     @Column(length = 255, nullable = false)
-    private String orderStatus;
+    private OrderStatus orderStatus;
 
     @Column(nullable = false)
     private LocalDateTime orderedTime;
@@ -39,11 +39,11 @@ public class Order {
         this.id = id;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(String orderStatus) {
+    public void setOrderStatus(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
 

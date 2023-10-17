@@ -26,7 +26,7 @@ class OrderTableRepositoryTest {
             // given
             List<Long> ids = List.of(1L, 2L, 3L);
             for (int i = 0; i < 3; i++) {
-                OrderTable orderTable = new OrderTable();
+                OrderTable orderTable = new OrderTable(null, false, 0);
                 orderTableRepository.save(orderTable);
             }
 
@@ -46,8 +46,8 @@ class OrderTableRepositoryTest {
             // given
             Long tableGroupId = 4885L;
             for (int i = 0; i < 3; i++) {
-                OrderTable orderTable = new OrderTable();
-                orderTable.setTableGroupId(tableGroupId);
+                OrderTable orderTable = new OrderTable(null, false, 0);
+                orderTable.changeTableGroupId(tableGroupId);
                 orderTableRepository.save(orderTable);
             }
 
