@@ -3,6 +3,8 @@ package kitchenpos.domain;
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
+import static kitchenpos.exception.OrderExceptionType.ORDER_LINE_ITEMS_CAN_NOT_EMPTY;
+import static kitchenpos.exception.OrderExceptionType.ORDER_TABLE_CAN_NOT_EMPTY;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,6 +17,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import kitchenpos.exception.OrderException;
+import org.springframework.util.CollectionUtils;
 
 @Entity
 @Table(name = "orders")
@@ -52,13 +56,29 @@ public class Order {
         this(id, orderTable, null, null, new ArrayList<>());
     }
 
-    public Order(Long id, OrderTable orderTable, String orderStatus, LocalDateTime orderedTime,
-                 List<OrderLineItem> orderLineItems) {
+    public Order(
+            Long id,
+            OrderTable orderTable,
+            String orderStatus,
+            LocalDateTime orderedTime,
+            List<OrderLineItem> orderLineItems
+    ) {
+        validate(orderTable, orderLineItems);
+        orderLineItems.forEach(it -> it.setOrder(this));
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
+    }
+
+    private void validate(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+        if (orderTable.empty()) {
+            throw new OrderException(ORDER_TABLE_CAN_NOT_EMPTY);
+        }
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new OrderException(ORDER_LINE_ITEMS_CAN_NOT_EMPTY);
+        }
     }
 
     public void addOrderLineItem(OrderLineItem orderLineItem) {

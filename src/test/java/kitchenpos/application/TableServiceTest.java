@@ -79,7 +79,7 @@ class TableServiceTest extends IntegrationTest {
         @Test
         void 조리중이거나_식사중인_테이블을_변경하면_예외가_발생한다() {
             // given
-            OrderTable orderTable1 = new OrderTable(0, true);
+            OrderTable orderTable1 = new OrderTable(0, false);
             OrderTable orderTable2 = new OrderTable(0, true);
             OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
             주문(savedOrderTable1, OrderStatus.COOKING, 맛있는_메뉴());

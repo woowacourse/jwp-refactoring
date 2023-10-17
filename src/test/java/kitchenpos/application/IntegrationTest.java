@@ -1,7 +1,10 @@
 package kitchenpos.application;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
@@ -81,8 +84,8 @@ public class IntegrationTest {
     }
 
     protected TableGroup 빈_테이블들을_그룹으로_지정한다() {
-        OrderTable orderTable1 = 주문_테이블(true);
-        OrderTable orderTable2 = 주문_테이블(true);
+        OrderTable orderTable1 = new OrderTable(0, true);
+        OrderTable orderTable2 = new OrderTable(0, true);
         return 테이블_그룹(orderTable1, orderTable2);
     }
 
@@ -93,10 +96,10 @@ public class IntegrationTest {
     }
 
     protected Order 주문(OrderTable orderTable, OrderStatus orderStatus, Menu... 메뉴들) {
-        Order order = new Order(orderTable, orderStatus.name());
-        Arrays.stream(메뉴들)
+        List<OrderLineItem> orderLineItems = Arrays.stream(메뉴들)
                 .map(this::toOrderLineItem)
-                .forEach(order::addOrderLineItem);
+                .collect(Collectors.toList());
+        Order order = new Order(null, orderTable, orderStatus.name(), LocalDateTime.now(), orderLineItems);
         return orderRepository.save(order);
     }
 

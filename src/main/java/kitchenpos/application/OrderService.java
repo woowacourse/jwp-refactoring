@@ -1,11 +1,11 @@
 package kitchenpos.application;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.order.CreateOrderCommand;
 import kitchenpos.application.dto.order.CreateOrderResponse;
-import kitchenpos.application.dto.orderlineitem.OrderLineItemCommand;
 import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -15,7 +15,6 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
@@ -36,32 +35,12 @@ public class OrderService {
 
     @Transactional
     public CreateOrderResponse create(CreateOrderCommand command) {
-        List<OrderLineItemCommand> orderLineItemCommands = command.orderLineItemCommands();
-        if (CollectionUtils.isEmpty(orderLineItemCommands)) {
-            throw new IllegalArgumentException();
-        }
-
-        final List<Long> menuIds = orderLineItemCommands.stream()
-                .map(OrderLineItemCommand::menuId)
-                .collect(Collectors.toList());
-
-        if (orderLineItemCommands.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
-        }
-
-        final OrderTable orderTable = orderTableRepository.findById(command.orderTableId())
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (orderTable.empty()) {
-            throw new IllegalArgumentException();
-        }
-
-        Order order = new Order(orderTable, OrderStatus.COOKING.name());
-        orderLineItemCommands.stream()
+        OrderTable orderTable = orderTableRepository.getById(command.orderTableId());
+        List<OrderLineItem> orderLineItems = command.orderLineItemCommands().stream()
                 .map(it -> new OrderLineItem(menuRepository.getById(it.menuId()), it.quantity()))
-                .forEach(order::addOrderLineItem);
-        Order savedOrder = orderRepository.save(order);
-        return CreateOrderResponse.from(savedOrder);
+                .collect(Collectors.toList());
+        Order order = new Order(null, orderTable, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
+        return CreateOrderResponse.from(orderRepository.save(order));
     }
 
     public List<Order> list() {

@@ -1,14 +1,22 @@
 package kitchenpos.application;
 
+import static kitchenpos.exception.TableGroupExceptionType.CAN_NOT_UNGROUP_COOKING_OR_MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.application.dto.tablegroup.CreateTableGroupCommand;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.exception.BaseException;
+import kitchenpos.exception.BaseExceptionType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -129,20 +137,26 @@ class TableGroupServiceTest extends IntegrationTest {
             @Test
             void 조리중이거나_식사중인_테이블의_그룹을_해제하면_예외가_발생한다() {
                 // given
-                OrderTable orderTable1 = new OrderTable(0, true);
+                OrderTable orderTable1 = new OrderTable(0, false);
                 OrderTable orderTable2 = new OrderTable(0, true);
-                OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
-                OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
+                TableGroup tableGroup = new TableGroup();
+                tableGroup.addOrderTable(orderTable1);
+                tableGroup.addOrderTable(orderTable2);
+                TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-                주문(savedOrderTable1, OrderStatus.COOKING, 맛있는_메뉴());
-                CreateTableGroupCommand command = new CreateTableGroupCommand(List.of(
-                        savedOrderTable1.id(), savedOrderTable2.id()
-                ));
-                TableGroup savedTableGroup = tableGroupService.create(command);
+                Menu 맛있는_메뉴 = 맛있는_메뉴();
+                OrderLineItem orderLineItem = new OrderLineItem(맛있는_메뉴, 1);
+                Order order = new Order(null, orderTable1, OrderStatus.COOKING.name(), LocalDateTime.now(),
+                        List.of(orderLineItem));
+                orderRepository.save(order);
 
-                // when & then
-                assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.id()))
-                        .isInstanceOf(IllegalArgumentException.class);
+                // when
+                BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                        tableGroupService.ungroup(savedTableGroup.id())
+                ).exceptionType();
+
+                // then
+                assertThat(exceptionType).isEqualTo(CAN_NOT_UNGROUP_COOKING_OR_MEAL);
             }
         }
     }

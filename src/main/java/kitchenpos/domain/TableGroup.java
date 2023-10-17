@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import java.time.LocalDateTime;
@@ -21,7 +22,7 @@ public class TableGroup {
     @Column(nullable = false)
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "tableGroup")
+    @OneToMany(mappedBy = "tableGroup", cascade = ALL)
     private List<OrderTable> orderTables;
 
     public TableGroup() {

@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static kitchenpos.exception.TableGroupExceptionType.CAN_NOT_UNGROUP_COOKING_OR_MEAL;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -11,6 +13,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupRepository;
+import kitchenpos.exception.TableGroupException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -68,9 +71,8 @@ public class TableGroupService {
 
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new TableGroupException(CAN_NOT_UNGROUP_COOKING_OR_MEAL);
         }
-
         // [TODO] orderTable tableGroupId, setEmpty 설정
     }
 }
