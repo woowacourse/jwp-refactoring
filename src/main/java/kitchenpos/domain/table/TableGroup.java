@@ -6,15 +6,19 @@ import java.util.List;
 public class TableGroup {
     private Long id;
     private LocalDateTime createdDate;
-    private List<OrderTable> orderTables;
+    private OrderTables orderTables;
 
     public TableGroup() {
     }
 
-    public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
+    public TableGroup(Long id, List<OrderTable> orderTables) {
         this.id = id;
-        this.createdDate = createdDate;
-        this.orderTables = orderTables;
+        this.createdDate = LocalDateTime.now();
+        this.orderTables = new OrderTables(orderTables);
+    }
+
+    public void unGroup() {
+        orderTables.unGroup();
     }
 
     public Long getId() {
@@ -34,10 +38,10 @@ public class TableGroup {
     }
 
     public List<OrderTable> getOrderTables() {
-        return orderTables;
+        return orderTables.getCollection();
     }
 
     public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
+        this.orderTables = new OrderTables(orderTables);
     }
 }

@@ -30,6 +30,33 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public boolean hasCookingOrMealOrder() {
+        return orders.inCookingOrMeal();
+    }
+
+    public void changeNumberOfGuests(int numberOfGuests) {
+        if (numberOfGuests <= 0) {
+            throw new IllegalArgumentException();
+        }
+        if (this.empty) {
+            throw new IllegalArgumentException();
+        }
+
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    public boolean hasTableGroup() {
+        return this.tableGroupId != null;
+    }
+
+    public void unGroup() {
+        this.tableGroupId = null;
+    }
+
+    public boolean isNotEmpty() {
+        return !this.empty;
+    }
+
     public Long getId() {
         return id;
     }
@@ -66,14 +93,7 @@ public class OrderTable {
         this.orders = orders;
     }
 
-    public void changeNumberOfGuests(int numberOfGuests) {
-        if (numberOfGuests <= 0) {
-            throw new IllegalArgumentException();
-        }
-        if (this.empty) {
-            throw new IllegalArgumentException();
-        }
-
-        this.numberOfGuests = numberOfGuests;
+    public void makeFull() {
+        this.empty = false;
     }
 }
