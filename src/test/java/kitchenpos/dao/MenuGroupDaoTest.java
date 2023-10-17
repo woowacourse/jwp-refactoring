@@ -58,8 +58,8 @@ class MenuGroupDaoTest {
     }
 
     private MenuGroup createMenuGroupEntity() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("chicken");
-        return menuGroup;
+        return MenuGroup.builder()
+                .name("chicken")
+                .build();
     }
 }
