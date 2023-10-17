@@ -19,14 +19,12 @@ public class ProductService {
     }
 
     @Transactional
-    public Product create(final Product product) {
-        final BigDecimal price = product.getPrice();
-
+    public Long create(final String name, final BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
 
-        return productRepository.save(product);
+        return productRepository.save(new Product(name, price)).getId();
     }
 
     public List<Product> list() {

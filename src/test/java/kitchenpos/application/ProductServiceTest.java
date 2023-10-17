@@ -24,23 +24,23 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void Product를_생성할_수_있다() {
         //when
-        final Product product = productService.create(new Product("치킨", new BigDecimal(20000)));
+        final Long productId = productService.create("치킨", new BigDecimal(20000));
 
         //then
-        assertThat(product.getId()).isNotNull();
+        assertThat(productId).isNotNull();
     }
 
     @Test
     void price가_null이면_예외가_발생한다() {
         //when, then
-        Assertions.assertThatThrownBy(() -> productService.create(new Product("치킨", null)))
+        Assertions.assertThatThrownBy(() -> productService.create("치킨", null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void price가_0원보다_작으면_예외가_발생한다() {
         //when, then
-        Assertions.assertThatThrownBy(() -> productService.create(new Product("치킨", new BigDecimal(-1))))
+        Assertions.assertThatThrownBy(() -> productService.create("치킨", new BigDecimal(-1)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
