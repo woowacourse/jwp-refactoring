@@ -2,8 +2,8 @@ package kitchenpos.application.dto;
 
 public class MenuGroupDto {
 
-    private Long id;
-    private String name;
+    private final Long id;
+    private final String name;
 
     public MenuGroupDto(Long id, String name) {
         this.id = id;
