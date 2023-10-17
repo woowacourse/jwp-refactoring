@@ -1,4 +1,4 @@
-package kitchenpos.domain.product;
+package kitchenpos.domain.menu;
 
 import kitchenpos.exception.ExceptionInformation;
 import kitchenpos.exception.KitchenposException;
@@ -31,19 +31,19 @@ public class Name {
 
     private static void validateNotNull(final String name) {
         if(Objects.isNull(name)){
-            throw new KitchenposException(ExceptionInformation.PRODUCT_NAME_IS_NULL);
+            throw new KitchenposException(ExceptionInformation.MENU_NAME_IS_NULL);
         }
     }
 
     private static void validateBlank(final String name) {
         if (name.isBlank()) {
-            throw new KitchenposException(ExceptionInformation.PRODUCT_NAME_LENGTH_OUT_OF_BOUNCE);
+            throw new KitchenposException(ExceptionInformation.MENU_NAME_LENGTH_OUT_OF_BOUNCE);
         }
     }
 
     private static void validateLength(final String name) {
         if (name.length() < MIN_NAME_LENGTH || name.length() > MAX_NAME_LENGTH) {
-            throw new KitchenposException(ExceptionInformation.PRODUCT_NAME_LENGTH_OUT_OF_BOUNCE);
+            throw new KitchenposException(ExceptionInformation.MENU_NAME_LENGTH_OUT_OF_BOUNCE);
         }
     }
 

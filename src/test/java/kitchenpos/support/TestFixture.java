@@ -1,9 +1,14 @@
 package kitchenpos.support;
 
 import kitchenpos.domain.*;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuProducts;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.product.Product;
 import kitchenpos.ui.dto.request.MenuGroupRequest;
+import kitchenpos.ui.dto.request.MenuProductRequest;
+import kitchenpos.ui.dto.request.MenuRequest;
 import kitchenpos.ui.dto.request.ProductRequest;
 
 import java.math.BigDecimal;
@@ -17,10 +22,10 @@ public class TestFixture {
 
     public static MenuGroupRequest 메뉴_분류 = new MenuGroupRequest("중식");
 
-    public static Menu 메뉴(List<Product> 등록하려는_상품들, MenuGroup 메뉴그룹) {
-        final List<MenuProduct> 메뉴에_속하는_수량이_있는_상품 = new ArrayList<>();
+    public static MenuRequest 메뉴(List<Product> 등록하려는_상품들, MenuGroup 메뉴그룹) {
+        final List<MenuProductRequest> 메뉴에_속하는_수량이_있는_상품 = new ArrayList<>();
         for (Product product : 등록하려는_상품들) {
-            메뉴에_속하는_수량이_있는_상품.add(new MenuProduct(product.getId(), 1));
+            메뉴에_속하는_수량이_있는_상품.add(new MenuProductRequest(product.getId(), 1));
         }
 
         BigDecimal 실제_상품_가격과_갯수를_곱한_총합 = BigDecimal.ZERO;
@@ -28,13 +33,7 @@ public class TestFixture {
             실제_상품_가격과_갯수를_곱한_총합 = 실제_상품_가격과_갯수를_곱한_총합.add(등록하려는_상품들.get(i).getPrice().multiply(new BigDecimal(메뉴에_속하는_수량이_있는_상품.get(i).getQuantity())));
         }
 
-        final Menu 신메뉴 = new Menu();
-        신메뉴.setName("신메뉴");
-        신메뉴.setPrice(실제_상품_가격과_갯수를_곱한_총합);
-        신메뉴.setMenuGroupId(메뉴그룹.getId());
-        신메뉴.setMenuProducts(메뉴에_속하는_수량이_있는_상품);
-
-        return 신메뉴;
+        return new MenuRequest("신메뉴", 실제_상품_가격과_갯수를_곱한_총합, 메뉴그룹.getId(), 메뉴에_속하는_수량이_있는_상품);
     }
 
     public static Order 주문(OrderTable 테이블, List<Menu> 주문_할_메뉴들){

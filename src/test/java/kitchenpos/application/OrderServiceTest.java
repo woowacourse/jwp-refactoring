@@ -1,9 +1,12 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.*;
+import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.product.Product;
 import kitchenpos.support.ServiceTest;
+import kitchenpos.ui.dto.request.MenuProductRequest;
+import kitchenpos.ui.dto.request.MenuRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -46,7 +49,7 @@ class OrderServiceTest {
         final Product 상품1 = productService.create(상품);
         final Product 상품2 = productService.create(상품);
         final MenuGroup 메뉴그룹 = menuGroupService.create(메뉴_분류);
-        final Menu 신메뉴 = 메뉴(List.of(상품1, 상품2), 메뉴그룹);
+        final MenuRequest 신메뉴 = 메뉴(List.of(상품1, 상품2), 메뉴그룹);
         final Menu 저장한_신메뉴 = menuService.create(신메뉴);
 
         final OrderTable 테이블 = tableService.create(new OrderTable());
@@ -78,7 +81,7 @@ class OrderServiceTest {
             final Product 상품1 = productService.create(상품);
             final Product 상품2 = productService.create(상품);
             final MenuGroup 메뉴그룹 = menuGroupService.create(메뉴_분류);
-            final Menu 신메뉴 = 메뉴(List.of(상품1, 상품2), 메뉴그룹);
+            final MenuRequest 신메뉴 = 메뉴(List.of(상품1, 상품2), 메뉴그룹);
             final Menu 저장한_신메뉴 = menuService.create(신메뉴);
 
             final OrderTable 테이블 = tableService.create(new OrderTable());
@@ -135,7 +138,7 @@ class OrderServiceTest {
         void 같은_메뉴를_두개의_주문항목으로_저장하려하면_예외가_발생한다() {
             final Product 상품1 = productService.create(상품);
             final MenuGroup 메뉴그룹 = menuGroupService.create(메뉴_분류);
-            final Menu 신메뉴 = 메뉴(List.of(상품1), 메뉴그룹);
+            final MenuRequest 신메뉴 = 메뉴(List.of(상품1), 메뉴그룹);
             final Menu 저장한_신메뉴 = menuService.create(신메뉴);
 
             final OrderTable 테이블 = tableService.create(new OrderTable());
@@ -157,7 +160,7 @@ class OrderServiceTest {
         void 주문_테이블이_존재하지_않으면_예외가_발생한다() {
             final Product 상품1 = productService.create(상품);
             final MenuGroup 메뉴그룹 = menuGroupService.create(메뉴_분류);
-            final Menu 신메뉴 = 메뉴(List.of(상품1), 메뉴그룹);
+            final MenuRequest 신메뉴 = 메뉴(List.of(상품1), 메뉴그룹);
             final Menu 저장한_신메뉴 = menuService.create(신메뉴);
 
             final OrderLineItem 주문1 = new OrderLineItem(저장한_신메뉴.getId(), 1);
@@ -176,7 +179,7 @@ class OrderServiceTest {
         void 주문_테이블의_상태가_empty라면_예외가_발생한다() {
             final Product 상품1 = productService.create(상품);
             final MenuGroup 메뉴그룹 = menuGroupService.create(메뉴_분류);
-            final Menu 신메뉴 = 메뉴(List.of(상품1), 메뉴그룹);
+            final MenuRequest 신메뉴 = 메뉴(List.of(상품1), 메뉴그룹);
             final Menu 저장한_신메뉴 = menuService.create(신메뉴);
 
             // 테이블의 상태를 emtpy로 설정한다
@@ -207,7 +210,7 @@ class OrderServiceTest {
             final Product 상품1 = productService.create(상품);
             final Product 상품2 = productService.create(상품);
             final MenuGroup 메뉴그룹 = menuGroupService.create(메뉴_분류);
-            final Menu 신메뉴 = 메뉴(List.of(상품1, 상품2), 메뉴그룹);
+            final MenuRequest 신메뉴 = 메뉴(List.of(상품1, 상품2), 메뉴그룹);
             final Menu 저장한_신메뉴 = menuService.create(신메뉴);
 
             final OrderTable 테이블 = tableService.create(new OrderTable());
