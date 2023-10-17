@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
@@ -23,8 +24,11 @@ class MenuGroupServiceTest {
         final MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName("떡볶이");
 
-        //when, then
-        assertDoesNotThrow(() -> menuGroupService.create(menuGroup));
+        //when
+        final MenuGroup saved = menuGroupService.create(menuGroup);
+
+        //then
+        assertThat(saved.getId()).isNotNull();
     }
 
     @Test

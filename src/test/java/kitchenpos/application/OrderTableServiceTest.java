@@ -180,5 +180,4 @@ class OrderTableServiceTest {
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
-
 }
