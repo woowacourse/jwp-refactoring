@@ -53,6 +53,9 @@ public class OrderTable {
     }
 
     public void changeTableGroup(TableGroup tableGroup) {
+        if (!empty || Objects.nonNull(this.tableGroup)) {
+            throw new IllegalArgumentException("단체 지정은 빈 테이블만 가능합니다");
+        }
         this.tableGroup = tableGroup;
     }
 
