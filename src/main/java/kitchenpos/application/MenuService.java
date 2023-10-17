@@ -1,5 +1,11 @@
 package kitchenpos.application;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import kitchenpos.application.dto.MenuCreateRequest;
+import kitchenpos.application.dto.MenuCreateRequest.MenuProductInfo;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -9,11 +15,6 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 @Service
 public class MenuService {
@@ -35,18 +36,18 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final Menu menu) {
-        final BigDecimal price = menu.getPrice();
+    public Menu create(final MenuCreateRequest request) {
+        final BigDecimal price = request.getPrice();
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
 
-        if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
+        if (!menuGroupDao.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
 
-        final List<MenuProduct> menuProducts = menu.getMenuProducts();
+        final List<MenuProduct> menuProducts = menuProducts(request.getMenuProducts());
 
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
@@ -59,6 +60,12 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
+        Menu menu = new Menu(
+                request.getName(),
+                request.getPrice(),
+                request.getMenuGroupId(),
+                menuProducts
+        );
         final Menu savedMenu = menuDao.save(menu);
 
         final Long menuId = savedMenu.getId();
@@ -70,6 +77,12 @@ public class MenuService {
         savedMenu.setMenuProducts(savedMenuProducts);
 
         return savedMenu;
+    }
+
+    private List<MenuProduct> menuProducts(List<MenuProductInfo> menuProducts) {
+        return menuProducts.stream()
+                .map(it -> new MenuProduct(it.getProductId(), it.getQuantity()))
+                .toList();
     }
 
     public List<Menu> list() {
