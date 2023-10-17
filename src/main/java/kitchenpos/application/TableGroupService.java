@@ -32,8 +32,7 @@ public class TableGroupService {
     @Transactional
     public TableGroupResult create(final TableGroupingRequest request) {
         final List<OrderTable> orderTables = getOrderTablesByRequest(request);
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
-        tableGroup.groupOrderTables(orderTables);
+        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
         return TableGroupResult.from(tableGroupRepository.save(tableGroup));
     }
 

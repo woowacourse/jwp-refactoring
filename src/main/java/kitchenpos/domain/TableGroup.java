@@ -23,23 +23,27 @@ public class TableGroup {
     protected TableGroup() {
     }
 
-    public TableGroup(final Long id, final LocalDateTime createdDate) {
+    public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+        validateOrderTables(orderTables);
         this.id = id;
         this.createdDate = createdDate;
+        this.orderTables = orderTables;
+        orderTables.forEach(orderTable -> orderTable.groupByTableGroup(this));
     }
 
-    public TableGroup(final LocalDateTime createdDate) {
-        this(null, createdDate);
+    public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+        this(null, createdDate, orderTables);
     }
 
-    public void groupOrderTables(final List<OrderTable> orderTables) {
+    private void validateOrderTables(final List<OrderTable> orderTables) {
         validateSize(orderTables);
-        if (isOrderTablesAbleToGroup(orderTables)) {
-            this.orderTables = orderTables;
-            orderTables.forEach(orderTable -> orderTable.groupByTableGroup(this));
-            return;
+        validateGroupOrderTableIsAvailable(orderTables);
+    }
+
+    private void validateGroupOrderTableIsAvailable(final List<OrderTable> orderTables) {
+        if (!isOrderTablesAbleToGroup(orderTables)) {
+            throw new IllegalArgumentException("Cannot group non-empty table or already grouped table.");
         }
-        throw new IllegalArgumentException("Cannot group non-empty table or already grouped table.");
     }
 
     private void validateSize(final List<OrderTable> orderTables) {

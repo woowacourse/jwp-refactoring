@@ -106,9 +106,9 @@ class TableGroupServiceTest extends IntegrationTest {
         @Test
         void any_order_table_is_already_in_other_table_group() {
             // given
-            final TableGroup alreadyExistTableGroup = generateTableGroup();
             final OrderTable orderTableA = generateOrderTable(1, true);
-            final OrderTable orderTableB = generateOrderTable(3, true, alreadyExistTableGroup);
+            final OrderTable orderTableB = generateOrderTable(3, true);
+            generateTableGroup(List.of(orderTableA, orderTableB));
             final TableGroupingRequest request = new TableGroupingRequest(List.of(
                     new GroupOrderTableRequest(orderTableA.getId()),
                     new GroupOrderTableRequest(orderTableB.getId())
@@ -124,10 +124,9 @@ class TableGroupServiceTest extends IntegrationTest {
     @Test
     void ungroup_table_group_success() {
         // given
-        final TableGroup tableGroup = generateTableGroup();
         final OrderTable orderTableA = generateOrderTableWithOutTableGroup(1, true);
         final OrderTable orderTableB = generateOrderTableWithOutTableGroup(2, true);
-        tableGroup.groupOrderTables(List.of(orderTableA, orderTableB));
+        final TableGroup tableGroup = generateTableGroup(List.of(orderTableA, orderTableB));
         orderTableA.addOrder(generateOrder(OrderStatus.COMPLETION, orderTableA));
         orderTableB.addOrder(generateOrder(OrderStatus.COMPLETION, orderTableB));
 
@@ -147,10 +146,9 @@ class TableGroupServiceTest extends IntegrationTest {
         @Test
         void any_order_status_is_not_completion() {
             // given
-            final TableGroup tableGroup = generateTableGroup();
             final OrderTable orderTableA = generateOrderTableWithOutTableGroup(1, true);
             final OrderTable orderTableB = generateOrderTableWithOutTableGroup(2, true);
-            tableGroup.groupOrderTables(List.of(orderTableA, orderTableB));
+            final TableGroup tableGroup = generateTableGroup(List.of(orderTableA, orderTableB));
             orderTableA.addOrder(generateOrder(OrderStatus.COOKING, orderTableA));
             orderTableB.addOrder(generateOrder(OrderStatus.COMPLETION, orderTableB));
 

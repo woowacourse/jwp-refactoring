@@ -20,10 +20,9 @@ class TableGroupTest {
                 new OrderTable(null, 1, true),
                 new OrderTable(null, 3, notEmptyStatus)
         );
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
 
         // when & then
-        assertThatThrownBy(() -> tableGroup.groupOrderTables(orderTables))
+        assertThatThrownBy(() -> new TableGroup(LocalDateTime.now(), orderTables))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Cannot group non-empty table or already grouped table.");
     }
@@ -32,13 +31,18 @@ class TableGroupTest {
     void throw_when_try_to_group_already_grouped_order_table() {
         // given
         final List<OrderTable> orderTables = List.of(
-                new OrderTable(new TableGroup(1L, null), 1, true),
-                new OrderTable(new TableGroup(1L, null), 3, true)
+                new OrderTable(null, 1, true),
+                new OrderTable(null, 2, true)
         );
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
+        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
+
+        final List<OrderTable> alreadyGroupedOrderTables = List.of(
+                new OrderTable(tableGroup, 3, true),
+                new OrderTable(tableGroup, 4, true)
+        );
 
         // when & then
-        assertThatThrownBy(() -> tableGroup.groupOrderTables(orderTables))
+        assertThatThrownBy(() -> new TableGroup(LocalDateTime.now(), alreadyGroupedOrderTables))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Cannot group non-empty table or already grouped table.");
     }
@@ -46,31 +50,27 @@ class TableGroupTest {
     @Test
     void throw_when_try_to_group_under_two_order_tables() {
         // given
-        final List<OrderTable> orderTables = List.of(
-                new OrderTable(new TableGroup(1L, null), 1, true)
-        );
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
+        final List<OrderTable> orderTables = List.of(new OrderTable(null, 1, true));
 
         // when & then
-        assertThatThrownBy(() -> tableGroup.groupOrderTables(orderTables))
+        assertThatThrownBy(() -> new TableGroup(LocalDateTime.now(), orderTables))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Table group must have at least two tables.");
     }
 
     @Test
-    void grouping_order_table() {
+    void initialize_with_order_tables() {
         // given
         final List<OrderTable> orderTables = List.of(
                 new OrderTable(null, 1, true),
                 new OrderTable(null, 3, true)
         );
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
 
         // when
-        tableGroup.groupOrderTables(orderTables);
+        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
 
         // then
-        assertThat(tableGroup.getOrderTables())
-                .containsExactlyElementsOf(orderTables);
+        assertThat(tableGroup.getOrderTables()).map(OrderTable::getTableGroup)
+                .containsOnly(tableGroup);
     }
 }

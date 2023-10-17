@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuProductRepository;
 import kitchenpos.dao.MenuRepository;
@@ -75,11 +76,11 @@ public abstract class IntegrationTest {
     }
 
     protected OrderTable generateOrderTable(final int numberOfGuests) {
-        return generateOrderTable(numberOfGuests, false, generateTableGroup());
+        return generateOrderTable(numberOfGuests, false, null);
     }
 
     protected OrderTable generateOrderTable(final int numberOfGuests, final boolean empty) {
-        return generateOrderTable(numberOfGuests, empty, generateTableGroup());
+        return generateOrderTable(numberOfGuests, empty, null);
     }
 
     protected OrderTable generateOrderTableWithOutTableGroup(final int numberOfGuests, final boolean empty) {
@@ -99,8 +100,8 @@ public abstract class IntegrationTest {
         return orderTableRepository.save(orderTable);
     }
 
-    protected TableGroup generateTableGroup() {
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
+    protected TableGroup generateTableGroup(final List<OrderTable> orderTables) {
+        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
         return tableGroupRepository.save(tableGroup);
     }
 }

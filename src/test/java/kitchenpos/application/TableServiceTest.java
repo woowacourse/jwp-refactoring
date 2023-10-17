@@ -77,12 +77,13 @@ class TableServiceTest extends IntegrationTest {
         @Test
         void order_table_is_still_group_by_table_group() {
             // given
-            final TableGroup savedTableGroup = generateTableGroup();
-            final OrderTable orderTable = generateOrderTable(1, true, savedTableGroup);
+            final OrderTable orderTableA = generateOrderTable(1, true);
+            final OrderTable orderTableB = generateOrderTable(1, true);
+            final TableGroup savedTableGroup = generateTableGroup(List.of(orderTableA, orderTableB));
             final OrderTableEmptyStatusChangeRequest request = new OrderTableEmptyStatusChangeRequest(false);
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), request))
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTableA.getId(), request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("Cannot change empty status of table in group");
         }
