@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.application.dto.order.ChangeOrderStatusCommand;
 import kitchenpos.application.dto.order.CreateOrderCommand;
 import kitchenpos.application.dto.order.CreateOrderResponse;
 import kitchenpos.domain.MenuRepository;
@@ -38,7 +39,7 @@ public class OrderService {
         List<OrderLineItem> orderLineItems = command.orderLineItemCommands().stream()
                 .map(it -> new OrderLineItem(menuRepository.getById(it.menuId()), it.quantity()))
                 .collect(Collectors.toList());
-        Order order = new Order(null, orderTable, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
+        Order order = new Order(null, orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
         return CreateOrderResponse.from(orderRepository.save(order));
     }
 
@@ -47,9 +48,9 @@ public class OrderService {
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final Order order) {
-        Order savedOrder = orderRepository.getById(orderId);
-        savedOrder.changeOrderStatus(order.orderStatus());
+    public Order changeOrderStatus(ChangeOrderStatusCommand command) {
+        Order savedOrder = orderRepository.getById(command.orderId());
+        savedOrder.changeOrderStatus(command.orderStatus());
         return orderRepository.save(savedOrder);
     }
 }

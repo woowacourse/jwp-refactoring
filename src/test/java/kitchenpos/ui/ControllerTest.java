@@ -17,6 +17,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
@@ -117,6 +118,17 @@ public class ControllerTest {
                 id,
                 new OrderTable(1L, 테이블_그룹(), 0, false),
                 null,
+                null,
+                List.of(orderLineItem)
+        );
+    }
+
+    protected Order 식사중인_주문(Long id) {
+        OrderLineItem orderLineItem = new OrderLineItem(메뉴(1L), 1);
+        return new Order(
+                id,
+                new OrderTable(1L, 테이블_그룹(), 0, false),
+                OrderStatus.MEAL,
                 null,
                 List.of(orderLineItem)
         );

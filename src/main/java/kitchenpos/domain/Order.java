@@ -1,17 +1,19 @@
 package kitchenpos.domain;
 
 import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
+import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.exception.OrderExceptionType.CAN_NOT_CHANGE_COMPLETION_ORDER_STATUS;
 import static kitchenpos.exception.OrderExceptionType.ORDER_LINE_ITEMS_CAN_NOT_EMPTY;
 import static kitchenpos.exception.OrderExceptionType.ORDER_TABLE_CAN_NOT_EMPTY;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -34,7 +36,8 @@ public class Order {
     private OrderTable orderTable;
 
     @Column(nullable = false)
-    private String orderStatus;
+    @Enumerated(STRING)
+    private OrderStatus orderStatus;
 
     @Column(nullable = false)
     private LocalDateTime orderedTime;
@@ -48,7 +51,7 @@ public class Order {
     public Order(
             Long id,
             OrderTable orderTable,
-            String orderStatus,
+            OrderStatus orderStatus,
             LocalDateTime orderedTime,
             List<OrderLineItem> orderLineItems
     ) {
@@ -70,8 +73,8 @@ public class Order {
         }
     }
 
-    public void changeOrderStatus(String orderStatus) {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
+    public void changeOrderStatus(OrderStatus orderStatus) {
+        if (this.orderStatus == COMPLETION) {
             throw new OrderException(CAN_NOT_CHANGE_COMPLETION_ORDER_STATUS);
         }
         this.orderStatus = orderStatus;
@@ -85,7 +88,7 @@ public class Order {
         return orderTable;
     }
 
-    public String orderStatus() {
+    public OrderStatus orderStatus() {
         return orderStatus;
     }
 

@@ -1,7 +1,6 @@
 package kitchenpos.ui;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -27,7 +26,7 @@ class OrderRestControllerTest extends ControllerTest {
         ));
         String request = objectMapper.writeValueAsString(createOrderRequest);
 
-        CreateOrderResponse createOrderResponse = CreateOrderResponse.from(주문(1L));
+        CreateOrderResponse createOrderResponse = CreateOrderResponse.from(식사중인_주문(1L));
         given(orderService.create(any())).willReturn(createOrderResponse);
         String response = objectMapper.writeValueAsString(createOrderResponse);
 
@@ -60,7 +59,7 @@ class OrderRestControllerTest extends ControllerTest {
         Order order = 주문();
         String request = objectMapper.writeValueAsString(order);
         Order savedOrder = 주문(1L);
-        given(orderService.changeOrderStatus(anyLong(), any())).willReturn(savedOrder);
+        given(orderService.changeOrderStatus(any())).willReturn(savedOrder);
         String response = objectMapper.writeValueAsString(savedOrder);
 
         // when & then

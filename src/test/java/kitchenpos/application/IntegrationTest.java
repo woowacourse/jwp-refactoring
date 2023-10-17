@@ -99,7 +99,7 @@ public class IntegrationTest {
         List<OrderLineItem> orderLineItems = Arrays.stream(메뉴들)
                 .map(this::toOrderLineItem)
                 .collect(Collectors.toList());
-        Order order = new Order(null, orderTable, orderStatus.name(), LocalDateTime.now(), orderLineItems);
+        Order order = new Order(null, orderTable, orderStatus, LocalDateTime.now(), orderLineItems);
         return orderRepository.save(order);
     }
 

@@ -11,12 +11,12 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
+import kitchenpos.application.dto.order.ChangeOrderStatusCommand;
 import kitchenpos.application.dto.order.CreateOrderCommand;
 import kitchenpos.application.dto.order.CreateOrderResponse;
 import kitchenpos.application.dto.orderlineitem.OrderLineItemCommand;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.exception.BaseException;
@@ -134,12 +134,11 @@ class OrderServiceTest extends IntegrationTest {
         @Test
         void 주문이_존재하지_않으면_예외가_발생한다() {
             // given
-            OrderLineItem orderLineItem = new OrderLineItem(맛있는_메뉴(), 0);
-            Order order = new Order(null, orderTable, null, null, List.of(orderLineItem));
+            ChangeOrderStatusCommand command = new ChangeOrderStatusCommand(1L, null);
 
             // when
             BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
-                    orderService.changeOrderStatus(1L, order)
+                    orderService.changeOrderStatus(command)
             ).exceptionType();
 
             // then
@@ -150,11 +149,11 @@ class OrderServiceTest extends IntegrationTest {
         void 완료된_주문의_상태를_변경하면_예외가_발생한다() {
             // given
             Order order = 완료된_주문();
-            Order 맛있는_메뉴_주문 = 맛있는_메뉴_주문();
+            ChangeOrderStatusCommand command = new ChangeOrderStatusCommand(order.id(), OrderStatus.COOKING);
 
             // when
             BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
-                    orderService.changeOrderStatus(order.id(), 맛있는_메뉴_주문)
+                    orderService.changeOrderStatus(command)
             ).exceptionType();
 
             // then
@@ -165,13 +164,13 @@ class OrderServiceTest extends IntegrationTest {
         void 주문의_상태를_변경한다() {
             // given
             Order order = 맛있는_메뉴_주문();
-            Order 식사중인_주문 = 식사중인_주문();
+            ChangeOrderStatusCommand command = new ChangeOrderStatusCommand(order.id(), OrderStatus.MEAL);
 
             // when
-            Order result = orderService.changeOrderStatus(order.id(), 식사중인_주문);
+            Order result = orderService.changeOrderStatus(command);
 
             // then
-            assertThat(result.orderStatus()).isEqualTo(OrderStatus.MEAL.name());
+            assertThat(result.orderStatus()).isEqualTo(OrderStatus.MEAL);
         }
     }
 }

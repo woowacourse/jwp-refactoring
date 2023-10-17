@@ -70,7 +70,7 @@ public class TableGroupService {
                 .collect(Collectors.toList());
 
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+                orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new TableGroupException(CAN_NOT_UNGROUP_COOKING_OR_MEAL);
         }
         // [TODO] orderTable tableGroupId, setEmpty 설정

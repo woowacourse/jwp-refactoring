@@ -38,7 +38,7 @@ public class CreateOrderResponse {
         return new CreateOrderResponse(
                 order.id(),
                 order.orderTable().id(),
-                order.orderStatus(),
+                order.orderStatus().name(),
                 order.orderedTime(),
                 order.orderLineItems().stream()
                         .map(OrderLineItemResponse::from)

@@ -3,6 +3,7 @@ package kitchenpos.ui;
 import java.net.URI;
 import java.util.List;
 import kitchenpos.application.OrderService;
+import kitchenpos.application.dto.order.ChangeOrderStatusCommand;
 import kitchenpos.application.dto.order.CreateOrderResponse;
 import kitchenpos.domain.Order;
 import kitchenpos.ui.dto.CreateOrderRequest;
@@ -42,6 +43,7 @@ public class OrderRestController {
             @PathVariable final Long orderId,
             @RequestBody final Order order
     ) {
-        return ResponseEntity.ok(orderService.changeOrderStatus(orderId, order));
+        ChangeOrderStatusCommand command = new ChangeOrderStatusCommand(orderId, order.orderStatus());
+        return ResponseEntity.ok(orderService.changeOrderStatus(command));
     }
 }

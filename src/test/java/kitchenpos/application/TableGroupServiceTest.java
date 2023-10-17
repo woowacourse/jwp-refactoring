@@ -146,7 +146,7 @@ class TableGroupServiceTest extends IntegrationTest {
 
                 Menu 맛있는_메뉴 = 맛있는_메뉴();
                 OrderLineItem orderLineItem = new OrderLineItem(맛있는_메뉴, 1);
-                Order order = new Order(null, orderTable1, OrderStatus.COOKING.name(), LocalDateTime.now(),
+                Order order = new Order(null, orderTable1, OrderStatus.COOKING, LocalDateTime.now(),
                         List.of(orderLineItem));
                 orderRepository.save(order);
 
