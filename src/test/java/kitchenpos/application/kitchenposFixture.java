@@ -1,0 +1,57 @@
+package kitchenpos.application;
+
+import java.math.BigDecimal;
+import java.util.List;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
+
+public class kitchenposFixture {
+    public static Menu 저장할메뉴만들기(final String name, final String price, final Long menuGroupId, final MenuProduct... menuProducts) {
+        final Menu menu = new Menu();
+        menu.setId(9987L);
+        menu.setName(name);
+        menu.setPrice(new BigDecimal(price));
+        menu.setMenuGroupId(menuGroupId);
+        menu.setMenuProducts(List.of(menuProducts));
+        return menu;
+    }
+
+    public static MenuProduct 메뉴상품만들기(final Product savedProduct, final long quantity) {
+        final MenuProduct menuProduct = new MenuProduct();
+        menuProduct.setSeq(999L);
+        menuProduct.setProductId(savedProduct.getId());
+        menuProduct.setQuantity(quantity);
+        return menuProduct;
+    }
+
+    public static Product 상품만들기(final String name, final String price, final ProductService productService) {
+        final Product product = new Product();
+        product.setName(name);
+        product.setPrice(new BigDecimal(price));
+        final Product savedProduct = productService.create(product);
+        return savedProduct;
+    }
+
+    public static MenuGroup 메뉴그룹만들기(final MenuGroupService menuGroupService) {
+        final MenuGroup menuGroup = new MenuGroup();
+        menuGroup.setName("코딱지메뉴그룹");
+        return menuGroupService.create(menuGroup);
+    }
+
+    public static OrderTable 주문테이블만들기(final TableService tableService, final boolean isEmpty) {
+        final OrderTable orderTable = new OrderTable();
+        orderTable.setEmpty(isEmpty);
+        return tableService.create(orderTable);
+    }
+
+    public static OrderLineItem 주문할메뉴만들기(final Menu savedMenu, final int quantity) {
+        final OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setQuantity(quantity);
+        orderLineItem.setMenuId(savedMenu.getId());
+        return orderLineItem;
+    }
+}
