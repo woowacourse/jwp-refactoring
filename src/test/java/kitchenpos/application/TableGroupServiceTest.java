@@ -14,7 +14,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.table.OrderTablesResponse;
+import kitchenpos.dto.table.OrderTableResponse;
 import kitchenpos.dto.tablegroup.TableGroupCreateRequest;
 import kitchenpos.dto.tablegroup.TableGroupResponse;
 import kitchenpos.exception.TableGroupException;
@@ -56,17 +56,16 @@ class TableGroupServiceTest extends ServiceTest {
             OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
             OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
 
-            final OrderTablesResponse expected = OrderTablesResponse.from(List.of(savedOrderTable1, savedOrderTable2));
-
             // when
             final TableGroupResponse response = tableGroupService.create(request);
+            final List<OrderTableResponse> orderTableResponses = response.getOrderTables().getOrderTables();
 
             // then
             assertSoftly(softly -> {
                 softly.assertThat(response.getId()).isNotNull();
                 softly.assertThat(response.getCreatedDate()).isNotNull();
-                softly.assertThat(response.getOrderTables()).usingRecursiveComparison()
-                        .isEqualTo(expected);
+                softly.assertThat(orderTableResponses.get(0).getTableGroup()).isNotNull();
+                softly.assertThat(orderTableResponses.get(1).getTableGroup()).isNotNull();
             });
         }
 

@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -7,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import kitchenpos.exception.OrderTableException;
 
 @Entity
 public class OrderTable {
@@ -36,16 +38,16 @@ public class OrderTable {
         return tableGroup;
     }
 
-    public void setTableGroup(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
-    }
-
     public int getNumberOfGuests() {
         return numberOfGuests;
     }
 
     public boolean isEmpty() {
         return empty;
+    }
+
+    public boolean isExistTableGroup() {
+        return Objects.nonNull(this.tableGroup);
     }
 
     public void confirmTableGroup(final TableGroup tableGroup) {
@@ -56,5 +58,19 @@ public class OrderTable {
     public void unGroup() {
         this.tableGroup = null;
         this.empty = false;
+    }
+
+    public void changeEmptyStatus(final boolean isEmpty) {
+        this.empty = isEmpty;
+    }
+
+    public void validateAvailableChangeNumberOfGuests() {
+        if (this.empty == true) {
+            throw new OrderTableException.CannotChangeNumberOfGuestsStateInEmptyException();
+        }
+    }
+
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        this.numberOfGuests = numberOfGuests;
     }
 }
