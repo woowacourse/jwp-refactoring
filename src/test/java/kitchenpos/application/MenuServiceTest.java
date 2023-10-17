@@ -2,9 +2,9 @@ package kitchenpos.application;
 
 import kitchenpos.EntityFactory;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.MenuCreateRequest;
+import kitchenpos.ui.dto.MenuProductRequest;
 import kitchenpos.ui.dto.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -36,7 +36,7 @@ class MenuServiceTest {
         void create() {
             //given
             final Product product = entityFactory.saveProduct("연어", 4000);
-            final MenuProduct menuProduct = new MenuProduct(product.getId(), 4);
+            final MenuProductRequest menuProduct = new MenuProductRequest(product.getId(), 4);
             final MenuGroup menuGroup = entityFactory.saveMenuGroup("일식");
 
             final MenuCreateRequest request = new MenuCreateRequest("떡볶이 세트", BigDecimal.valueOf(16000),
@@ -54,7 +54,7 @@ class MenuServiceTest {
         void create_fail1() {
             //given
             final Product product = entityFactory.saveProduct("연어", 4000);
-            final MenuProduct menuProduct = new MenuProduct(product.getId(), 4);
+            final MenuProductRequest menuProduct = new MenuProductRequest(product.getId(), 4);
 
             final MenuCreateRequest request = new MenuCreateRequest("떡볶이 세트", BigDecimal.valueOf(16000),
                     0L, singletonList(menuProduct));
@@ -69,7 +69,7 @@ class MenuServiceTest {
         @DisplayName("메뉴를 생성할 때 실제 금액보다 요청 금액이 크면 예외가 발생한다")
         void create_fail2() {
             final Product product = entityFactory.saveProduct("연어", 4000);
-            final MenuProduct menuProduct = new MenuProduct(product.getId(), 4);
+            final MenuProductRequest menuProduct = new MenuProductRequest(product.getId(), 4);
             final MenuGroup menuGroup = entityFactory.saveMenuGroup("일식");
 
             final MenuCreateRequest request = new MenuCreateRequest("떡볶이 세트", BigDecimal.valueOf(16001),
@@ -85,7 +85,7 @@ class MenuServiceTest {
         @DisplayName("메뉴를 생성할 때 실제 상품이 존재하지 않으면 예외가 발생한다")
         void create_fail3() {
             final Product product = new Product(0L, "연어", BigDecimal.TEN);
-            final MenuProduct menuProduct = new MenuProduct(product.getId(), 4);
+            final MenuProductRequest menuProduct = new MenuProductRequest(product.getId(), 4);
             final MenuGroup menuGroup = entityFactory.saveMenuGroup("일식");
 
             final MenuCreateRequest request = new MenuCreateRequest("떡볶이 세트", BigDecimal.valueOf(16000),
