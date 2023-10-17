@@ -34,9 +34,7 @@ public class Fixture {
     }
 
     public static MenuGroup menuGroup(final String name){
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
-
+        final MenuGroup menuGroup = new MenuGroup(name);
         return menuGroup;
     }
 
