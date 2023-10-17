@@ -1,4 +1,4 @@
-package kitchenpos.application.dto.common;
+package kitchenpos.application.dto.menugroup;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import kitchenpos.domain.MenuGroup;

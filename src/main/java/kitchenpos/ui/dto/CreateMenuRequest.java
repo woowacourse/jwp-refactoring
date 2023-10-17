@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.CreateMenuCommand;
-import kitchenpos.application.dto.common.MenuProductCommand;
+import kitchenpos.application.dto.menu.CreateMenuCommand;
+import kitchenpos.application.dto.menuproduct.MenuProductCommand;
 
 public class CreateMenuRequest {
 

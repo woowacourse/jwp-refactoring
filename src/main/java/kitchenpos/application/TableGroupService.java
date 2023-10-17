@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.CreateTableGroupCommand;
+import kitchenpos.application.dto.tablegroup.CreateTableGroupCommand;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;

@@ -1,11 +1,11 @@
-package kitchenpos.application.dto;
+package kitchenpos.application.dto.menu;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.common.MenuGroupResponse;
-import kitchenpos.application.dto.common.MenuProductResponse;
+import kitchenpos.application.dto.menugroup.MenuGroupResponse;
+import kitchenpos.application.dto.menuproduct.MenuProductResponse;
 import kitchenpos.domain.Menu;
 
 public class CreateMenuResponse {

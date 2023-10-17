@@ -7,10 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.application.dto.CreateMenuCommand;
-import kitchenpos.application.dto.CreateMenuResponse;
-import kitchenpos.application.dto.SearchMenuResponse;
-import kitchenpos.application.dto.common.MenuProductCommand;
+import kitchenpos.application.dto.menu.CreateMenuCommand;
+import kitchenpos.application.dto.menu.CreateMenuResponse;
+import kitchenpos.application.dto.menu.SearchMenuResponse;
+import kitchenpos.application.dto.menuproduct.MenuProductCommand;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;

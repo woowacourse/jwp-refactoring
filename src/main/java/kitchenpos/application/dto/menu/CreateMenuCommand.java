@@ -1,8 +1,8 @@
-package kitchenpos.application.dto;
+package kitchenpos.application.dto.menu;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.application.dto.common.MenuProductCommand;
+import kitchenpos.application.dto.menuproduct.MenuProductCommand;
 
 public class CreateMenuCommand {
 

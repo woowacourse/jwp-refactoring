@@ -5,9 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.application.dto.CreateOrderCommand;
-import kitchenpos.application.dto.CreateOrderResponse;
-import kitchenpos.application.dto.common.OrderLineItemCommand;
+import kitchenpos.application.dto.order.CreateOrderCommand;
+import kitchenpos.application.dto.order.CreateOrderResponse;
+import kitchenpos.application.dto.orderlineitem.OrderLineItemCommand;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;

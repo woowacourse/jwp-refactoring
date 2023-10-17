@@ -1,4 +1,4 @@
-package kitchenpos.application.dto.common;
+package kitchenpos.application.dto.orderlineitem;
 
 public class OrderLineItemCommand {
 

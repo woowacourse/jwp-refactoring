@@ -2,9 +2,9 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.CreateMenuCommand;
-import kitchenpos.application.dto.CreateMenuResponse;
-import kitchenpos.application.dto.SearchMenuResponse;
+import kitchenpos.application.dto.menu.CreateMenuCommand;
+import kitchenpos.application.dto.menu.CreateMenuResponse;
+import kitchenpos.application.dto.menu.SearchMenuResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;

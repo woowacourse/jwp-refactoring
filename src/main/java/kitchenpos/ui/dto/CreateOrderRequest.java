@@ -3,8 +3,8 @@ package kitchenpos.ui.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.CreateOrderCommand;
-import kitchenpos.application.dto.common.OrderLineItemCommand;
+import kitchenpos.application.dto.order.CreateOrderCommand;
+import kitchenpos.application.dto.orderlineitem.OrderLineItemCommand;
 
 public class CreateOrderRequest {
 

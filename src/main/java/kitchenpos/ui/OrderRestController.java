@@ -3,7 +3,7 @@ package kitchenpos.ui;
 import java.net.URI;
 import java.util.List;
 import kitchenpos.application.OrderService;
-import kitchenpos.application.dto.CreateOrderResponse;
+import kitchenpos.application.dto.order.CreateOrderResponse;
 import kitchenpos.domain.Order;
 import kitchenpos.ui.dto.CreateOrderRequest;
 import org.springframework.http.ResponseEntity;

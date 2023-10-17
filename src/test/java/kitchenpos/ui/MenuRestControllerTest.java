@@ -9,8 +9,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.application.dto.CreateMenuResponse;
-import kitchenpos.application.dto.SearchMenuResponse;
+import kitchenpos.application.dto.menu.CreateMenuResponse;
+import kitchenpos.application.dto.menu.SearchMenuResponse;
 import kitchenpos.ui.dto.CreateMenuRequest;
 import kitchenpos.ui.dto.MenuProductRequest;
 import org.junit.jupiter.api.Test;

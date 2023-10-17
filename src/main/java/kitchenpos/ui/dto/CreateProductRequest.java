@@ -2,7 +2,7 @@ package kitchenpos.ui.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
-import kitchenpos.application.dto.CreateProductCommand;
+import kitchenpos.application.dto.product.CreateProductCommand;
 
 public class CreateProductRequest {
 

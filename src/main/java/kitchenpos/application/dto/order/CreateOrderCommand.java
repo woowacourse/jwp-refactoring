@@ -1,7 +1,7 @@
-package kitchenpos.application.dto;
+package kitchenpos.application.dto.order;
 
 import java.util.List;
-import kitchenpos.application.dto.common.OrderLineItemCommand;
+import kitchenpos.application.dto.orderlineitem.OrderLineItemCommand;
 
 public class CreateOrderCommand {
 

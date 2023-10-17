@@ -2,7 +2,7 @@ package kitchenpos.ui.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
-import kitchenpos.application.dto.CreateTableGroupCommand;
+import kitchenpos.application.dto.tablegroup.CreateTableGroupCommand;
 
 public class CreateTableGroupRequest {
 

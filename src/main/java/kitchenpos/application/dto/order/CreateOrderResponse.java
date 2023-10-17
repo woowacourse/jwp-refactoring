@@ -1,10 +1,10 @@
-package kitchenpos.application.dto;
+package kitchenpos.application.dto.order;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.common.OrderLineItemResponse;
+import kitchenpos.application.dto.orderlineitem.OrderLineItemResponse;
 import kitchenpos.domain.Order;
 
 public class CreateOrderResponse {

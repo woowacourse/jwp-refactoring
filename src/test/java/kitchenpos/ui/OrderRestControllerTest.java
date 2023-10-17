@@ -10,7 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
-import kitchenpos.application.dto.CreateOrderResponse;
+import kitchenpos.application.dto.order.CreateOrderResponse;
 import kitchenpos.domain.Order;
 import kitchenpos.ui.dto.CreateOrderRequest;
 import kitchenpos.ui.dto.OrderLineItemRequest;

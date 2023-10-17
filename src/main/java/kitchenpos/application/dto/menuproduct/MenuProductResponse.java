@@ -1,6 +1,7 @@
-package kitchenpos.application.dto.common;
+package kitchenpos.application.dto.menuproduct;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import kitchenpos.application.dto.product.ProductResponse;
 import kitchenpos.domain.MenuProduct;
 
 public class MenuProductResponse {

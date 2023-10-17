@@ -1,10 +1,10 @@
-package kitchenpos.application.dto;
+package kitchenpos.application.dto.product;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import kitchenpos.domain.Product;
 
-public class SearchProductResponse {
+public class CreateProductResponse {
 
     @JsonProperty("id")
     private final Long id;
@@ -13,14 +13,14 @@ public class SearchProductResponse {
     @JsonProperty("price")
     private final BigDecimal price;
 
-    private SearchProductResponse(Long id, String name, BigDecimal price) {
+    private CreateProductResponse(Long id, String name, BigDecimal price) {
         this.id = id;
         this.name = name;
         this.price = price;
     }
 
-    public static SearchProductResponse from(Product product) {
-        return new SearchProductResponse(product.id(), product.name(), product.price());
+    public static CreateProductResponse from(Product product) {
+        return new CreateProductResponse(product.id(), product.name(), product.price());
     }
 
     public Long id() {

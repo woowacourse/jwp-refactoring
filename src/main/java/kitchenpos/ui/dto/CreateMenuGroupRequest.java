@@ -1,7 +1,7 @@
 package kitchenpos.ui.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import kitchenpos.application.dto.CreateMenuGroupCommand;
+import kitchenpos.application.dto.menugroup.CreateMenuGroupCommand;
 
 public class CreateMenuGroupRequest {
 

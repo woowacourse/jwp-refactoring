@@ -8,8 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
-import kitchenpos.application.dto.CreateMenuGroupResponse;
-import kitchenpos.application.dto.SearchMenuGroupResponse;
+import kitchenpos.application.dto.menugroup.CreateMenuGroupResponse;
+import kitchenpos.application.dto.menugroup.SearchMenuGroupResponse;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.ui.dto.CreateMenuGroupRequest;
 import org.junit.jupiter.api.Test;
@@ -44,7 +44,7 @@ class MenuGroupRestControllerTest extends ControllerTest {
                 SearchMenuGroupResponse.from(new MenuGroup(1L, "추천메뉴")),
                 SearchMenuGroupResponse.from(new MenuGroup(2L, "인기메뉴"))
         );
-        
+
         given(menuGroupService.list()).willReturn(menuGroupResponses);
         String response = objectMapper.writeValueAsString(menuGroupResponses);
 

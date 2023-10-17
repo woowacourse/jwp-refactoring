@@ -5,9 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.application.dto.CreateMenuGroupCommand;
-import kitchenpos.application.dto.CreateMenuGroupResponse;
-import kitchenpos.application.dto.SearchMenuGroupResponse;
+import kitchenpos.application.dto.menugroup.CreateMenuGroupCommand;
+import kitchenpos.application.dto.menugroup.CreateMenuGroupResponse;
+import kitchenpos.application.dto.menugroup.SearchMenuGroupResponse;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.Test;
 

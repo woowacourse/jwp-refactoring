@@ -9,8 +9,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.application.dto.CreateProductResponse;
-import kitchenpos.application.dto.SearchProductResponse;
+import kitchenpos.application.dto.product.CreateProductResponse;
+import kitchenpos.application.dto.product.SearchProductResponse;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.CreateProductRequest;
