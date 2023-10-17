@@ -46,6 +46,10 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
+    public boolean isCompletion() {
+        return orderStatus == OrderStatus.COMPLETION;
+    }
+
     public boolean isNotCompletion() {
         return orderStatus != OrderStatus.COMPLETION;
     }
@@ -88,5 +92,12 @@ public class Order {
 
     public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
         this.orderLineItems = orderLineItems;
+    }
+
+    public void changeOrderStatus(OrderStatus changedOrderStatus) {
+        if (isCompletion()) {
+            throw new IllegalArgumentException("주문이 완료 상태면 변경할 수 없습니다.");
+        }
+        this.orderStatus = changedOrderStatus;
     }
 }

@@ -3,7 +3,6 @@ package kitchenpos.application;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.domain.Order;
@@ -93,18 +92,7 @@ public class OrderService {
     public Order changeOrderStatus(Long orderId, OrderStatus changedOrderStatus) {
         Order savedOrder = orderRepository.findById(orderId)
             .orElseThrow(IllegalArgumentException::new);
-
-        if (Objects.equals(OrderStatus.COMPLETION, savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
-        }
-
-        OrderStatus orderStatus = OrderStatus.valueOf(changedOrderStatus.name());
-        savedOrder.setOrderStatus(orderStatus);
-
-        orderRepository.save(savedOrder);
-
-        savedOrder.setOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
-
+        savedOrder.changeOrderStatus(changedOrderStatus);
         return savedOrder;
     }
 }
