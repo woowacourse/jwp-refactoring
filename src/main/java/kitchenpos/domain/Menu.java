@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.LAZY;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
@@ -59,6 +60,16 @@ public class Menu {
         this.price = price;
         this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
+    }
+
+    public void validatePrice() {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (MenuProduct menuProduct : menuProducts) {
+            sum = sum.add(menuProduct.product().price().multiply(BigDecimal.valueOf(menuProduct.quantity())));
+        }
+        if (price.value().compareTo(sum) > 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public void addMenuProduct(MenuProduct menuProduct) {

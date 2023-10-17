@@ -22,13 +22,31 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 class MenuServiceTest extends IntegrationTest {
 
+    @Test
+    void 메뉴_그룹이_존재하지_않으면_예외가_발생한다() {
+        // given
+        CreateMenuCommand command = new CreateMenuCommand(null, BigDecimal.ZERO, 1L, null);
+
+        // when & then
+        assertThatThrownBy(() -> menuService.create(command))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
     @Nested
-    class 메뉴_가격이_올바르지_않은경우 {
+    class 메뉴_그룹이_있는경우 {
+
+        private MenuGroup menuGroup;
+
+        @BeforeEach
+        void setUp() {
+            MenuGroup menuGroup = new MenuGroup("추천메뉴");
+            this.menuGroup = menuGroupRepository.save(menuGroup);
+        }
 
         @Test
         void 메뉴의_가격이_null이면_예외가_발생한다() {
             // given
-            CreateMenuCommand command = new CreateMenuCommand(null, null, null, null);
+            CreateMenuCommand command = new CreateMenuCommand(null, null, menuGroup.id(), null);
 
             // when & then
             assertThatThrownBy(() -> menuService.create(command))
@@ -38,41 +56,15 @@ class MenuServiceTest extends IntegrationTest {
         @Test
         void 메뉴의_가격이_0보다_작으면_예외가_발생한다() {
             // given
-            CreateMenuCommand command = new CreateMenuCommand(null, BigDecimal.valueOf(-1), null, null);
+            CreateMenuCommand command = new CreateMenuCommand(null, BigDecimal.valueOf(-1), menuGroup.id(), null);
 
             // when & then
             assertThatThrownBy(() -> menuService.create(command))
                     .isInstanceOf(IllegalArgumentException.class);
         }
-    }
-
-    @Nested
-    class 메뉴_가격이_올바른_경우 {
 
         @Nested
-        class 메뉴_그룹이_없는경우 {
-
-            @Test
-            void 메뉴_그룹이_존재하지_않으면_예외가_발생한다() {
-                // given
-                CreateMenuCommand command = new CreateMenuCommand(null, BigDecimal.ZERO, 1L, null);
-
-                // when & then
-                assertThatThrownBy(() -> menuService.create(command))
-                        .isInstanceOf(IllegalArgumentException.class);
-            }
-        }
-
-        @Nested
-        class 메뉴_그룹이_있는경우 {
-
-            private MenuGroup menuGroup;
-
-            @BeforeEach
-            void setUp() {
-                MenuGroup menuGroup = new MenuGroup("추천메뉴");
-                this.menuGroup = menuGroupRepository.save(menuGroup);
-            }
+        class 메뉴_가격이_올바른_경우 {
 
             @Test
             void 메뉴_상품들이_null이면_예외가_발생한다() {
@@ -100,7 +92,8 @@ class MenuServiceTest extends IntegrationTest {
                 @Test
                 void 메뉴_상품이_없어도_예외가_발생하지_않는다() {
                     // given
-                    CreateMenuCommand command = new CreateMenuCommand("메뉴", BigDecimal.ZERO, menuGroup.id(), List.of());
+                    CreateMenuCommand command = new CreateMenuCommand("메뉴", BigDecimal.ZERO, menuGroup.id(),
+                            List.of());
 
                     // when
                     assertThatCode(() -> menuService.create(command))
@@ -125,7 +118,8 @@ class MenuServiceTest extends IntegrationTest {
                     @Test
                     void 메뉴의_가격이_메뉴_상품_가격들의_합보다_크면_예외가_발생한다() {
                         // given
-                        CreateMenuCommand command = new CreateMenuCommand("메뉴", BigDecimal.valueOf(12), menuGroup.id(),
+                        CreateMenuCommand command = new CreateMenuCommand("메뉴", BigDecimal.valueOf(12),
+                                menuGroup.id(),
                                 List.of(
                                         new MenuProductCommand(product1.id(), 2),
                                         new MenuProductCommand(product2.id(), 3)
@@ -139,7 +133,8 @@ class MenuServiceTest extends IntegrationTest {
                     @Test
                     void 메뉴를_저장한다() {
                         // given
-                        CreateMenuCommand command = new CreateMenuCommand("메뉴", BigDecimal.valueOf(11), menuGroup.id(),
+                        CreateMenuCommand command = new CreateMenuCommand("메뉴", BigDecimal.valueOf(11),
+                                menuGroup.id(),
                                 List.of(
                                         new MenuProductCommand(product1.id(), 2),
                                         new MenuProductCommand(product2.id(), 3)
@@ -154,10 +149,13 @@ class MenuServiceTest extends IntegrationTest {
                                 () -> assertThat(result.id()).isPositive(),
                                 () -> assertThat(result.name()).isEqualTo("메뉴"),
                                 () -> assertThat(result.price()).isEqualByComparingTo(BigDecimal.valueOf(11)),
-                                () -> assertThat(result.menuGroupResponse().id()).isEqualByComparingTo(menuGroup.id()),
+                                () -> assertThat(result.menuGroupResponse().id()).isEqualByComparingTo(
+                                        menuGroup.id()),
                                 () -> assertThat(result.menuProductResponses()).hasSize(2),
-                                () -> assertThat(result.menuProductResponses().get(0).menuId()).isEqualTo(result.id()),
-                                () -> assertThat(result.menuProductResponses().get(1).menuId()).isEqualTo(result.id())
+                                () -> assertThat(result.menuProductResponses().get(0).menuId()).isEqualTo(
+                                        result.id()),
+                                () -> assertThat(result.menuProductResponses().get(1).menuId()).isEqualTo(
+                                        result.id())
                         );
                     }
 

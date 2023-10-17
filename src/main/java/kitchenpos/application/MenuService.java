@@ -1,17 +1,14 @@
 package kitchenpos.application;
 
-import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.dto.CreateMenuCommand;
 import kitchenpos.application.dto.CreateMenuResponse;
-import kitchenpos.application.dto.MenuProductCommand;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Price;
-import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,23 +32,13 @@ public class MenuService {
 
     @Transactional
     public CreateMenuResponse create(CreateMenuCommand command) {
-        List<MenuProductCommand> menuProductCommands = command.menuProductCommands();
-        Price price = new Price(command.price());
         MenuGroup menuGroup = menuGroupRepository.findById(command.menuGroupId())
                 .orElseThrow(IllegalArgumentException::new);
-        Menu menu = new Menu(command.name(), price, menuGroup);
-
-        BigDecimal sum = BigDecimal.ZERO;
-        for (MenuProductCommand menuProductCommand : menuProductCommands) {
-            Product product = productRepository.getById(menuProductCommand.productId());
-            long quantity = menuProductCommand.quantity();
-            sum = sum.add(product.price().multiply(BigDecimal.valueOf(quantity)));
-            MenuProduct menuProduct = new MenuProduct(product, quantity);
-            menu.addMenuProduct(menuProduct);
-        }
-        if (price.value().compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
+        Menu menu = new Menu(command.name(), new Price(command.price()), menuGroup);
+        command.menuProductCommands().stream()
+                .map(it -> new MenuProduct(productRepository.getById(it.productId()), it.quantity()))
+                .forEach(menu::addMenuProduct);
+        menu.validatePrice();
         Menu savedMenu = menuRepository.save(menu);
         return CreateMenuResponse.from(savedMenu);
     }
