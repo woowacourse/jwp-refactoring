@@ -1,6 +1,5 @@
 package kitchenpos.domain.common;
 
-import static kitchenpos.fixture.PriceFixture.가격_10원_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -34,8 +33,8 @@ class PriceTest {
     @Test
     void plus는_price에_더할_price를_전달하면_그_값을_더한_price를_반환한다() {
         // given
-        final Price targetPrice = 가격_10원_생성();
-        final Price otherPrice = 가격_10원_생성();
+        final Price targetPrice = new Price(BigDecimal.TEN);
+        final Price otherPrice = new Price(BigDecimal.TEN);
 
         // when
         final Price actual = targetPrice.plus(otherPrice);
@@ -47,7 +46,7 @@ class PriceTest {
     @Test
     void times는_price에_곱할_값을_전달하면_그_값을_곱한_price를_반환한다() {
         // given
-        final Price targetPrice = 가격_10원_생성();
+        final Price targetPrice = new Price(BigDecimal.TEN);
 
         // when
         final Price actual = targetPrice.times(3);

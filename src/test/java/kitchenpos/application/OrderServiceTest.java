@@ -6,11 +6,11 @@ import static kitchenpos.fixture.MenuProductFixture.메뉴_상품_생성;
 import static kitchenpos.fixture.OrderFixture.주문_생성;
 import static kitchenpos.fixture.OrderLineItemFixture.주문_항목_생성;
 import static kitchenpos.fixture.OrderTableFixture.주문_테이블_생성;
-import static kitchenpos.fixture.ProductFixture.상품_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -25,6 +25,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.fixture.OrderFixture;
@@ -59,7 +60,7 @@ class OrderServiceTest {
     void create_메서드는_order를_전달하면_order를_저장하고_반환한다() {
         // given
         final MenuGroup persistMenuGroup = menuGroupDao.save(메뉴_그룹_생성());
-        final Product persistProduct = productDao.save(상품_생성());
+        final Product persistProduct = productDao.save(new Product("상품", BigDecimal.TEN));
         final MenuProduct menuProduct = 메뉴_상품_생성(persistProduct.getId());
         final Menu persistMenu = menuDao.save(메뉴_생성(persistMenuGroup.getId(), Arrays.asList(menuProduct)));
         final OrderLineItem persistOrderLineItem = 주문_항목_생성(persistMenu.getId());
@@ -70,6 +71,10 @@ class OrderServiceTest {
         final Order actual = orderService.create(order);
 
         // then
+        assertAll(
+                () -> assertThat(actual.getId()).isPositive(),
+                () -> assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name())
+        );
         assertThat(actual.getId()).isPositive();
     }
 
@@ -100,7 +105,7 @@ class OrderServiceTest {
     void create_메서드는_order의_orderTable이_없다면_예외가_발생한다() {
         // given
         final MenuGroup persistMenuGroup = menuGroupDao.save(메뉴_그룹_생성());
-        final Product persistProduct = productDao.save(상품_생성());
+        final Product persistProduct = productDao.save(new Product("상품", BigDecimal.TEN));
         final MenuProduct menuProduct = 메뉴_상품_생성(persistProduct.getId());
         final Menu persistMenu = menuDao.save(메뉴_생성(persistMenuGroup.getId(), Arrays.asList(menuProduct)));
         final OrderLineItem persistOrderLineItem = 주문_항목_생성(persistMenu.getId());
@@ -115,7 +120,7 @@ class OrderServiceTest {
     void list_메서드는_등록한_모든_order를_반환한다() {
         // given
         final MenuGroup persistMenuGroup = menuGroupDao.save(메뉴_그룹_생성());
-        final Product persistProduct = productDao.save(상품_생성());
+        final Product persistProduct = productDao.save(new Product("상품", BigDecimal.TEN));
         final MenuProduct menuProduct = 메뉴_상품_생성(persistProduct.getId());
         final Menu persistMenu = menuDao.save(메뉴_생성(persistMenuGroup.getId(), Arrays.asList(menuProduct)));
         final OrderLineItem persistOrderLineItem = 주문_항목_생성(persistMenu.getId());
@@ -139,7 +144,7 @@ class OrderServiceTest {
     void changeOrderStatus_메서드는_전달한_orderId의_상태가_COMPLETION이_아닌_order라면_전달한_상태로_변경한다(final String orderStatus) {
         // given
         final MenuGroup persistMenuGroup = menuGroupDao.save(메뉴_그룹_생성());
-        final Product persistProduct = productDao.save(상품_생성());
+        final Product persistProduct = productDao.save(new Product("상품", BigDecimal.TEN));
         final MenuProduct menuProduct = 메뉴_상품_생성(persistProduct.getId());
         final Menu persistMenu = menuDao.save(메뉴_생성(persistMenuGroup.getId(), Arrays.asList(menuProduct)));
         final OrderLineItem persistOrderLineItem = 주문_항목_생성(persistMenu.getId());
@@ -161,7 +166,7 @@ class OrderServiceTest {
     void changeOrderStatus_메서드는_전달한_orderId의_상태가_COMPLETION이라면_예외가_발생한다(final String orderStatus) {
         // given
         final MenuGroup persistMenuGroup = menuGroupDao.save(메뉴_그룹_생성());
-        final Product persistProduct = productDao.save(상품_생성());
+        final Product persistProduct = productDao.save(new Product("상품", BigDecimal.TEN));
         final MenuProduct menuProduct = 메뉴_상품_생성(persistProduct.getId());
         final Menu persistMenu = menuDao.save(메뉴_생성(persistMenuGroup.getId(), Arrays.asList(menuProduct)));
         final OrderLineItem persistOrderLineItem = 주문_항목_생성(persistMenu.getId());
