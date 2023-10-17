@@ -37,20 +37,6 @@ class MenuServiceTest {
     private MenuService menuService;
 
     @Test
-    void 메뉴_가격은_NULL_일_수_없다() {
-        Menu menu = new Menu(1L, "분식", null, 1L);
-
-        assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 메뉴_가격은_음수일_수_없다() {
-        Menu menu = new Menu(1L, "분식", BigDecimal.valueOf(-1), 1L);
-
-        assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
     void 메뉴_그룹_ID_가_존재하지_않은_경우_예외가_발생한다() {
         Menu 분식메뉴 = MenuFixtures.떡볶이메뉴();
 

@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -64,6 +65,6 @@ public class JdbcTemplateProductDao implements ProductDao {
         long id = resultSet.getLong(KEY_COLUMN_NAME);
         String name = resultSet.getString("name");
         BigDecimal price = resultSet.getBigDecimal("price");
-        return new Product(id, name, price);
+        return new Product(id, name, Price.of(price));
     }
 }

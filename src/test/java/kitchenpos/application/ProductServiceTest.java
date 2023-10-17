@@ -21,20 +21,6 @@ class ProductServiceTest {
     private ProductService productService;
 
     @Test
-    void 상품_가격은_NULL_일_수_없다() {
-        Product product = new Product(1L, "NULL", null);
-
-        assertThatThrownBy(() -> productService.create(product)).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 상품_가격은_음수일_수_없다() {
-        Product product = new Product(1L, "NULL", BigDecimal.valueOf(-1));
-
-        assertThatThrownBy(() -> productService.create(product)).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
     void 상품_생성할_수_있다() {
         Product 로제떡볶이 = ProductFixtures.로제떡볶이();
 
