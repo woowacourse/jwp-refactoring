@@ -39,6 +39,9 @@ public class OrderTable {
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
+        if (empty) {
+            throw new IllegalArgumentException("빈 테이블의 인원수는 변경할 수 없습니다.");
+        }
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException("테이블 인원수는 0명 이상이어야 합니다.");
         }

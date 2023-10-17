@@ -28,4 +28,16 @@ class OrderTableTest {
         assertThatThrownBy(() -> orderTable.changeNumberOfGuests(-1))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
+    @Test
+    void 테이블이_empty일때_인원수를_변경할_수_없다() {
+        //given
+        int numberOfGuests = 1;
+        boolean empty = true;
+        OrderTable orderTable = new OrderTable(numberOfGuests, empty);
+
+        //expect
+        assertThatThrownBy(() -> orderTable.changeNumberOfGuests(2))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 }
