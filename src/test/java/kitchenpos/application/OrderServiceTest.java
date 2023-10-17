@@ -85,7 +85,7 @@ class OrderServiceTest extends ServiceTest {
             assertAll(
                 () -> assertThat(actual.getId()).isPositive(),
                 () -> assertThat(actual.getOrderLineItems())
-                    .allSatisfy(it -> assertThat(it.getSeq()).isPositive())
+                    .allSatisfy(it -> assertThat(it.getId()).isPositive())
             );
         }
 

@@ -111,11 +111,12 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 특정_테이블그룹에_속한다면_예외() {
             // given
-            Long tableGroupId = tableGroupRepository.save(new TableGroup()).getId();
-            Long givenId = orderTableRepository.save(new OrderTable(tableGroupId, 3, true)).getId();
+            Long tableGroupId = tableGroupRepository.save(TableGroup.createEmpty()).getId();
+            OrderTable orderTableA = orderTableRepository.save(new OrderTable(null, tableGroupId,3, true));
+            OrderTable orderTableB = orderTableRepository.save(new OrderTable(null, tableGroupId,2, true));
 
             // when && then
-            assertThatThrownBy(() -> tableService.changeEmpty(givenId, false))
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTableA.getId(), false))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("테이블그룹에 속한 테이블의 상태를 변경할 수 없습니다.");
 

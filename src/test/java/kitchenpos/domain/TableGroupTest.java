@@ -23,8 +23,8 @@ class TableGroupTest {
         void 성공() {
             // given
             List<OrderTable> orderTables = List.of(
-                new OrderTable(null, 3, true),
-                new OrderTable(null, 2, true)
+                new OrderTable(3, true),
+                new OrderTable(2, true)
             );
             TableGroup tableGroup = TableGroup.createEmpty();
 

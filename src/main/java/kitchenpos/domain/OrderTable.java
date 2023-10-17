@@ -19,15 +19,7 @@ public class OrderTable {
     private int numberOfGuests;
     private boolean empty;
 
-    public OrderTable() {
-    }
-
-    public OrderTable(boolean empty) {
-        this(null, null, 0, empty);
-    }
-
-    public OrderTable(Long tableGroupId, int numberOfGuests, boolean empty) {
-        this(null, tableGroupId, numberOfGuests, empty);
+    protected OrderTable() {
     }
 
     public OrderTable(int numberOfGuests, boolean empty) {
@@ -81,16 +73,8 @@ public class OrderTable {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public Long getTableGroupId() {
         return tableGroupId;
-    }
-
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
     }
 
     public int getNumberOfGuests() {
@@ -99,13 +83,5 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
-    }
-
-    public void setNumberOfGuests(int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
     }
 }

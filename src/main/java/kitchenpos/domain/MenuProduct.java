@@ -17,46 +17,34 @@ public class MenuProduct {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Product product;
-    private long quantity;
+    private int quantity;
 
-    public MenuProduct() {
+    protected MenuProduct() {
     }
 
-    public MenuProduct(Product product, long quantity) {
+    public MenuProduct(Product product, int quantity) {
         this(null, product, quantity);
     }
 
-    public MenuProduct(Long id, Product product, long quantity) {
+    public MenuProduct(Long id, Product product, int quantity) {
         this.id = id;
         this.product = product;
         this.quantity = quantity;
     }
 
     public BigDecimal getPrice() {
-        return product.getPrice().multiply(BigDecimal.valueOf(getQuantity()));
+        return product.getPrice().multiply(BigDecimal.valueOf(quantity));
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long seq) {
-        this.id = seq;
-    }
-
     public Product getProduct() {
         return product;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
-    public long getQuantity() {
+    public int getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
     }
 }

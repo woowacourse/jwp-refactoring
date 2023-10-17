@@ -122,7 +122,8 @@ class MenuServiceTest extends ServiceTest {
 
             // when && then
             assertThatThrownBy(() -> menuService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("메뉴의 가격은 개별 상품 가격의 합보다 같거나 적어야합니다.");
         }
     }
 

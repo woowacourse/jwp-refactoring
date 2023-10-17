@@ -24,7 +24,7 @@ public class TableGroup {
     @JoinColumn(name = "table_group_id")
     private final List<OrderTable> orderTables = new ArrayList<>();
 
-    public TableGroup() {
+    protected TableGroup() {
     }
 
     public TableGroup(Long id) {
@@ -52,16 +52,8 @@ public class TableGroup {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public LocalDateTime getCreatedDate() {
         return createdDate;
-    }
-
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
     }
 
     public List<OrderTable> getOrderTables() {

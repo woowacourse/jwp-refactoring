@@ -62,7 +62,7 @@ class OrderTableTest {
         @ValueSource(booleans = {true, false})
         void 성공(boolean empty) {
             // given
-            OrderTable orderTable = new OrderTable(null, 5, !empty);
+            OrderTable orderTable = new OrderTable(1L, null, 5, !empty);
 
             // when
             orderTable.changeEmpty(empty);
@@ -74,14 +74,13 @@ class OrderTableTest {
         @Test
         void 연관된_테이블_그룹이_존재하면_예외() {
             // given
-            OrderTable orderTable = new OrderTable(1L, 5, true);
+            OrderTable orderTable = new OrderTable(1L, 1L, 5, true);
 
             // when && then
             assertThatThrownBy(() -> orderTable.changeEmpty(false))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("테이블그룹에 속한 테이블의 상태를 변경할 수 없습니다.");
         }
-
     }
 
     @Nested
@@ -119,7 +118,7 @@ class OrderTableTest {
         void 이미_그룹화된_테이블이면_예외() {
             // given
             TableGroup tableGroup = new TableGroup(1L);
-            OrderTable orderTable = new OrderTable(2L,5, true);
+            OrderTable orderTable = new OrderTable(1L, 2L,5, true);
 
             // when && then
             assertThatThrownBy(() -> orderTable.group(tableGroup))

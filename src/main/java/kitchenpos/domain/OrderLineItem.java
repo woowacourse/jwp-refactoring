@@ -10,48 +10,32 @@ public class OrderLineItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long seq;
+    private Long id;
     private Long menuId;
-    private long quantity;
+    private int quantity;
 
-    public OrderLineItem() {
+    protected OrderLineItem() {
     }
 
-    public OrderLineItem(Long menuId, long quantity) {
+    public OrderLineItem(Long menuId, int quantity) {
         this(null, menuId, quantity);
     }
 
-    public OrderLineItem(Long seq, Long menuId, long quantity) {
-        this.seq = seq;
+    public OrderLineItem(Long id, Long menuId, int quantity) {
+        this.id = id;
         this.menuId = menuId;
         this.quantity = quantity;
     }
 
-    public Long getSeq() {
-        return seq;
-    }
-
-    public void setSeq(final Long seq) {
-        this.seq = seq;
+    public Long getId() {
+        return id;
     }
 
     public Long getMenuId() {
         return menuId;
     }
 
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
-    }
-
-    public long getQuantity() {
+    public int getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
-    }
-
-    public void setOrderId(Long orderId) {
-
     }
 }
