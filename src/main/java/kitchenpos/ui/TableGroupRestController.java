@@ -3,7 +3,7 @@ package kitchenpos.ui;
 import java.net.URI;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.application.dto.TableGroupingRequest;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.application.dto.result.TableGroupResult;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,8 +21,8 @@ public class TableGroupRestController {
     }
 
     @PostMapping("/api/table-groups")
-    public ResponseEntity<TableGroup> create(@RequestBody final TableGroupingRequest request) {
-        final TableGroup created = tableGroupService.create(request);
+    public ResponseEntity<TableGroupResult> create(@RequestBody final TableGroupingRequest request) {
+        final TableGroupResult created = tableGroupService.create(request);
         final URI uri = URI.create("/api/table-groups/" + created.getId());
         return ResponseEntity.created(uri)
                 .body(created)

@@ -1,9 +1,11 @@
 package kitchenpos.application;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderTableCreationRequest;
 import kitchenpos.application.dto.OrderTableEmptyStatusChangeRequest;
 import kitchenpos.application.dto.OrderTableGuestAmountChangeRequest;
+import kitchenpos.application.dto.result.OrderTableResult;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Service;
@@ -19,29 +21,34 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTableCreationRequest request) {
+    public OrderTableResult create(final OrderTableCreationRequest request) {
         final OrderTable orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
-        return orderTableRepository.save(orderTable);
+        return OrderTableResult.from(orderTableRepository.save(orderTable));
     }
 
-    public List<OrderTable> list() {
-        return orderTableRepository.findAll();
+    public List<OrderTableResult> list() {
+        return orderTableRepository.findAll().stream()
+                .map(OrderTableResult::from)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTableEmptyStatusChangeRequest request) {
+    public OrderTableResult changeEmpty(final Long orderTableId, final OrderTableEmptyStatusChangeRequest request) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("Order table does not exist."));
         orderTable.changeEmpty(request.getEmpty());
-        return orderTableRepository.save(orderTable);
+        return OrderTableResult.from(orderTableRepository.save(orderTable));
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTableGuestAmountChangeRequest request) {
+    public OrderTableResult changeNumberOfGuests(
+            final Long orderTableId,
+            final OrderTableGuestAmountChangeRequest request
+    ) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("Order table does not exist."));
 
         orderTable.changeNumberOfGuests(request.getNumberOfGuests());
-        return orderTableRepository.save(orderTable);
+        return OrderTableResult.from(orderTableRepository.save(orderTable));
     }
 }

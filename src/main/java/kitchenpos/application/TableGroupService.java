@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.GroupOrderTableRequest;
 import kitchenpos.application.dto.TableGroupingRequest;
+import kitchenpos.application.dto.result.TableGroupResult;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.OrderTable;
@@ -27,7 +28,7 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroupingRequest request) {
+    public TableGroupResult create(final TableGroupingRequest request) {
         final List<OrderTable> orderTables = request.getOrderTables().stream()
                 .map(GroupOrderTableRequest::getId)
                 .map(orderTableId -> orderTableRepository.findById(orderTableId)
@@ -35,7 +36,7 @@ public class TableGroupService {
                 .collect(Collectors.toList());
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
         tableGroup.groupOrderTables(orderTables);
-        return tableGroupRepository.save(tableGroup);
+        return TableGroupResult.from(tableGroupRepository.save(tableGroup));
     }
 
     @Transactional

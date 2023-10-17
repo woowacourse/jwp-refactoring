@@ -16,7 +16,7 @@ import kitchenpos.application.TableService;
 import kitchenpos.application.dto.OrderTableCreationRequest;
 import kitchenpos.application.dto.OrderTableEmptyStatusChangeRequest;
 import kitchenpos.application.dto.OrderTableGuestAmountChangeRequest;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.application.dto.result.OrderTableResult;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -39,7 +39,7 @@ class TableRestControllerTest {
     @Test
     void create() throws Exception {
         // given
-        final OrderTable result = new OrderTable(1L, null, 4, false);
+        final OrderTableResult result = new OrderTableResult(1L, 4, false);
         given(tableService.create(any())).willReturn(result);
 
         final OrderTableCreationRequest request = new OrderTableCreationRequest(4, false);
@@ -56,8 +56,8 @@ class TableRestControllerTest {
     @Test
     void list() throws Exception {
         // given
-        final OrderTable resultA = new OrderTable(1L, null, 4, false);
-        final OrderTable resultB = new OrderTable(2L, null, 4, false);
+        final OrderTableResult resultA = new OrderTableResult(1L, 4, false);
+        final OrderTableResult resultB = new OrderTableResult(2L, 4, false);
         given(tableService.list()).willReturn(List.of(resultA, resultB));
 
         // when
@@ -70,7 +70,7 @@ class TableRestControllerTest {
     @Test
     void changeEmpty() throws Exception {
         // given
-        final OrderTable result = new OrderTable(1L, null, 4, false);
+        final OrderTableResult result = new OrderTableResult(1L, 4, false);
         given(tableService.changeEmpty(any(), any())).willReturn(result);
 
         final OrderTableEmptyStatusChangeRequest request = new OrderTableEmptyStatusChangeRequest(true);
@@ -87,7 +87,7 @@ class TableRestControllerTest {
     @Test
     void changeNumberOfGuests() throws Exception {
         // given
-        final OrderTable result = new OrderTable(1L, null, 1, false);
+        final OrderTableResult result = new OrderTableResult(1L, 4, false);
         given(tableService.changeNumberOfGuests(any(), any())).willReturn(result);
 
         final OrderTableGuestAmountChangeRequest request = new OrderTableGuestAmountChangeRequest(4);

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.MenuCreationRequest;
 import kitchenpos.application.dto.MenuProductWithQuantityRequest;
+import kitchenpos.application.dto.result.MenuResult;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.ProductRepository;
@@ -32,13 +33,13 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuCreationRequest request) {
+    public MenuResult create(final MenuCreationRequest request) {
         final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                 .orElseThrow(() -> new IllegalArgumentException("MenuGroup does not exist."));
         final Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup);
         final List<MenuProduct> menuProducts = getMenuProductsByRequest(menu, request.getMenuProducts());
         menu.applyMenuProducts(menuProducts);
-        return menuRepository.save(menu);
+        return MenuResult.from(menuRepository.save(menu));
     }
 
     private List<MenuProduct> getMenuProductsByRequest(
@@ -52,7 +53,9 @@ public class MenuService {
         }).collect(Collectors.toList());
     }
 
-    public List<Menu> list() {
-        return menuRepository.findAll();
+    public List<MenuResult> list() {
+        return menuRepository.findAll().stream()
+                .map(MenuResult::from)
+                .collect(Collectors.toList());
     }
 }

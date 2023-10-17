@@ -16,13 +16,8 @@ public class MenuGroup {
     protected MenuGroup() {
     }
 
-    public MenuGroup(final Long id, final String name) {
-        this.id = id;
-        this.name = name;
-    }
-
     public MenuGroup(final String name) {
-        this(null, name);
+        this.name = name;
     }
 
     public Long getId() {

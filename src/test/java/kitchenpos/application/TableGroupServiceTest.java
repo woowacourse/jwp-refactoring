@@ -7,6 +7,8 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import java.util.List;
 import kitchenpos.application.dto.GroupOrderTableRequest;
 import kitchenpos.application.dto.TableGroupingRequest;
+import kitchenpos.application.dto.result.OrderTableResult;
+import kitchenpos.application.dto.result.TableGroupResult;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -30,13 +32,13 @@ class TableGroupServiceTest extends IntegrationTest {
         ));
 
         // when
-        final TableGroup savedTableGroup = tableGroupService.create(request);
+        final TableGroupResult savedTableGroup = tableGroupService.create(request);
 
         // then
         assertSoftly(softly -> {
             softly.assertThat(savedTableGroup.getId()).isNotNull();
-            softly.assertThat(savedTableGroup.getOrderTables())
-                    .extracting(OrderTable::isEmpty)
+            softly.assertThat(savedTableGroup.getOrderTableResults())
+                    .extracting(OrderTableResult::isEmpty)
                     .containsOnly(false);
         });
     }

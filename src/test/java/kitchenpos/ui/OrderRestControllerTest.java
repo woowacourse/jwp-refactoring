@@ -16,9 +16,8 @@ import kitchenpos.application.OrderService;
 import kitchenpos.application.dto.OrderCreationRequest;
 import kitchenpos.application.dto.OrderItemsWithQuantityRequest;
 import kitchenpos.application.dto.OrderStatusChangeRequest;
-import kitchenpos.domain.Order;
+import kitchenpos.application.dto.result.OrderResult;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -41,7 +40,7 @@ class OrderRestControllerTest {
     @Test
     void create() throws Exception {
         // given
-        final Order result = new Order(1L, new OrderTable(null, 0, false), null, null);
+        final OrderResult result = new OrderResult(1L, "COOKING", null, List.of());
         given(orderService.create(any())).willReturn(result);
 
         final OrderCreationRequest request = new OrderCreationRequest(1L, List.of(
@@ -61,8 +60,8 @@ class OrderRestControllerTest {
     @Test
     void list() throws Exception {
         // given
-        final Order resultA = new Order(new OrderTable(null, 0, false));
-        final Order resultB = new Order(new OrderTable(null, 0, false));
+        final OrderResult resultA = new OrderResult(1L, "COOKING", null, List.of());
+        final OrderResult resultB = new OrderResult(2L, "COOKING", null, List.of());
         given(orderService.list()).willReturn(List.of(resultA, resultB));
 
         // when
@@ -75,7 +74,7 @@ class OrderRestControllerTest {
     @Test
     void changeOrderStatus() throws Exception {
         // given
-        final Order result = new Order(new OrderTable(null, 0, false));
+        final OrderResult result = new OrderResult(1L, "COOKING", null, List.of());
         given(orderService.changeOrderStatus(any(), any())).willReturn(result);
 
         final OrderStatusChangeRequest request = new OrderStatusChangeRequest(OrderStatus.MEAL);

@@ -15,6 +15,7 @@ import java.util.List;
 import kitchenpos.application.MenuService;
 import kitchenpos.application.dto.MenuCreationRequest;
 import kitchenpos.application.dto.MenuProductWithQuantityRequest;
+import kitchenpos.application.dto.result.MenuResult;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Price;
 import org.junit.jupiter.api.Test;
@@ -39,7 +40,7 @@ class MenuRestControllerTest {
     @Test
     void create() throws Exception {
         // given
-        final Menu result = menuFixtureWithId(1L, "chicken-set", 28000L);
+        final MenuResult result = new MenuResult(1L, "chicken-set", 28000L, null, null);
         given(menuService.create(any())).willReturn(result);
 
         final MenuCreationRequest request = new MenuCreationRequest(
@@ -61,8 +62,8 @@ class MenuRestControllerTest {
     @Test
     void list() throws Exception {
         // given
-        final Menu resultA = menuFixtureWithId(1L, "chicken-setA", 23000L);
-        final Menu resultB = menuFixtureWithId(2L, "chicken-setB", 26000L);
+        final MenuResult resultA = new MenuResult(1L, "chicken-set", 28000L, null, null);
+        final MenuResult resultB = new MenuResult(2L, "chicken-set", 26000L, null, null);
         given(menuService.list()).willReturn(List.of(resultA, resultB));
 
         // when

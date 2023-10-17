@@ -7,6 +7,7 @@ import java.util.List;
 import kitchenpos.application.dto.OrderTableCreationRequest;
 import kitchenpos.application.dto.OrderTableEmptyStatusChangeRequest;
 import kitchenpos.application.dto.OrderTableGuestAmountChangeRequest;
+import kitchenpos.application.dto.result.OrderTableResult;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -25,7 +26,7 @@ class TableServiceTest extends IntegrationTest {
         final OrderTableCreationRequest request = new OrderTableCreationRequest(1, true);
 
         // when
-        final OrderTable createdOrderTable = tableService.create(request);
+        final OrderTableResult createdOrderTable = tableService.create(request);
 
         // then
         assertThat(createdOrderTable.getId()).isNotNull();
@@ -39,7 +40,7 @@ class TableServiceTest extends IntegrationTest {
         generateOrderTable(1);
 
         // when
-        final List<OrderTable> findAll = tableService.list();
+        final List<OrderTableResult> findAll = tableService.list();
 
         // then
         assertThat(findAll).hasSize(3);
@@ -54,7 +55,7 @@ class TableServiceTest extends IntegrationTest {
         final OrderTableEmptyStatusChangeRequest request = new OrderTableEmptyStatusChangeRequest(false);
 
         // when
-        final OrderTable changedOrderTable = tableService.changeEmpty(orderTable.getId(), request);
+        final OrderTableResult changedOrderTable = tableService.changeEmpty(orderTable.getId(), request);
 
         // then
         assertThat(changedOrderTable.isEmpty()).isFalse();
@@ -108,7 +109,7 @@ class TableServiceTest extends IntegrationTest {
         final OrderTableGuestAmountChangeRequest request = new OrderTableGuestAmountChangeRequest(3);
 
         // when
-        final OrderTable changedOrderTable = tableService.changeNumberOfGuests(orderTable.getId(), request);
+        final OrderTableResult changedOrderTable = tableService.changeNumberOfGuests(orderTable.getId(), request);
 
         // then
         assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(3);

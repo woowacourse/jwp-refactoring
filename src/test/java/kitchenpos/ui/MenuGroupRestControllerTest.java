@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.application.dto.MenuGroupCreationRequest;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.application.dto.result.MenuGroupResult;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -36,7 +36,7 @@ class MenuGroupRestControllerTest {
     @Test
     void create() throws Exception {
         // given
-        final MenuGroup result = new MenuGroup(1L, "chicken-group");
+        final MenuGroupResult result = new MenuGroupResult(1L, "chicken-group");
         given(menuGroupService.create(any())).willReturn(result);
         final MenuGroupCreationRequest request = new MenuGroupCreationRequest("chicken-group");
 
@@ -52,8 +52,8 @@ class MenuGroupRestControllerTest {
     @Test
     void list() throws Exception {
         // given
-        final MenuGroup resultA = new MenuGroup("chicken-group");
-        final MenuGroup resultB = new MenuGroup("chicken-group");
+        final MenuGroupResult resultA = new MenuGroupResult(1L, "chicken-group");
+        final MenuGroupResult resultB = new MenuGroupResult(2L, "chicken-group");
         given(menuGroupService.list()).willReturn(List.of(resultA, resultB));
 
         // when

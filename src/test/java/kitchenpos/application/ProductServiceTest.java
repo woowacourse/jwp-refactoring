@@ -7,7 +7,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.dto.ProductCreationRequest;
-import kitchenpos.domain.Product;
+import kitchenpos.application.dto.result.ProductResult;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ class ProductServiceTest extends IntegrationTest {
         final ProductCreationRequest request = new ProductCreationRequest("chicken", BigDecimal.valueOf(10000L));
 
         // when
-        final Product savedProduct = productService.create(request);
+        final ProductResult savedProduct = productService.create(request);
 
         // then
         assertSoftly(softly -> {
@@ -66,7 +66,7 @@ class ProductServiceTest extends IntegrationTest {
         generateProduct("chicken-2", 10000L);
 
         // when
-        final List<Product> products = productService.list();
+        final List<ProductResult> products = productService.list();
 
         // then
         assertThat(products).hasSize(2);

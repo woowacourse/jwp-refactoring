@@ -15,7 +15,7 @@ import java.util.List;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.application.dto.GroupOrderTableRequest;
 import kitchenpos.application.dto.TableGroupingRequest;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.application.dto.result.TableGroupResult;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -38,7 +38,7 @@ class TableGroupRestControllerTest {
     @Test
     void create() throws Exception {
         // given
-        final TableGroup result = new TableGroup(1L, LocalDateTime.now());
+        final TableGroupResult result = new TableGroupResult(1L, LocalDateTime.now(), null);
         given(tableGroupService.create(any())).willReturn(result);
 
         final TableGroupingRequest request = new TableGroupingRequest(

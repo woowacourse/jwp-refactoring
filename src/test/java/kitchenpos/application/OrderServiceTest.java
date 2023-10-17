@@ -4,12 +4,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.application.dto.OrderCreationRequest;
 import kitchenpos.application.dto.OrderItemsWithQuantityRequest;
 import kitchenpos.application.dto.OrderStatusChangeRequest;
+import kitchenpos.application.dto.result.OrderResult;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Nested;
@@ -36,13 +39,13 @@ class OrderServiceTest extends IntegrationTest {
         );
 
         // when
-        final Order savedOrder = orderService.create(request);
+        final OrderResult savedOrder = orderService.create(request);
 
         // then
         assertSoftly(softly -> {
             softly.assertThat(savedOrder.getId()).isNotNull();
-            softly.assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
-            softly.assertThat(savedOrder.getOrderLineItems()).hasSize(2);
+            softly.assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+            softly.assertThat(savedOrder.getMenuResults()).hasSize(2);
         });
     }
 
@@ -108,17 +111,20 @@ class OrderServiceTest extends IntegrationTest {
     @Test
     void list() {
         // given
-        generateOrder(OrderStatus.COOKING, generateOrderTable(3));
+        final Order order = generateOrder(OrderStatus.COOKING, generateOrderTable(3));
+        order.applyOrderLineItems(List.of(
+                orderLineItemRepository.save(new OrderLineItem(order, generateMenu("chicken", 20000L), 1L))
+        ));
 
         // when
-        final List<Order> list = orderService.list();
+        final List<OrderResult> list = orderService.list();
 
         // then
         assertThat(list).hasSize(1);
-        final Order foundOrder = list.get(0);
+        final OrderResult foundOrder = list.get(0);
         assertSoftly(softly -> {
             softly.assertThat(foundOrder.getId()).isNotNull();
-            softly.assertThat(foundOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
+            softly.assertThat(foundOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
         });
     }
 
@@ -127,14 +133,17 @@ class OrderServiceTest extends IntegrationTest {
         // given
         final OrderStatusChangeRequest request = new OrderStatusChangeRequest(OrderStatus.MEAL);
         final Order existOrder = generateOrder(OrderStatus.COOKING, generateOrderTable(3));
+        existOrder.applyOrderLineItems(new ArrayList<>(List.of(
+                orderLineItemRepository.save(new OrderLineItem(existOrder, generateMenu("chicken", 20000L), 1L))
+        )));
 
         // when
-        final Order changedOrder = orderService.changeOrderStatus(existOrder.getId(), request);
+        final OrderResult changedOrder = orderService.changeOrderStatus(existOrder.getId(), request);
 
         // then
         assertSoftly(softly -> {
             softly.assertThat(changedOrder.getId()).isEqualTo(existOrder.getId());
-            softly.assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL);
+            softly.assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
         });
     }
 

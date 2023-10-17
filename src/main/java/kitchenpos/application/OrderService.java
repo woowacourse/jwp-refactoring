@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderCreationRequest;
 import kitchenpos.application.dto.OrderItemsWithQuantityRequest;
 import kitchenpos.application.dto.OrderStatusChangeRequest;
+import kitchenpos.application.dto.result.OrderResult;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
@@ -33,14 +34,14 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final OrderCreationRequest request) {
+    public OrderResult create(final OrderCreationRequest request) {
         final List<OrderItemsWithQuantityRequest> orderLineItemRequests = request.getOrderLineItems();
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(() -> new IllegalArgumentException("Order table does not exist."));
         final Order order = new Order(orderTable);
         final List<OrderLineItem> orderLineItems = getOrderLineItemsByRequest(order, orderLineItemRequests);
         order.applyOrderLineItems(orderLineItems);
-        return orderRepository.save(order);
+        return OrderResult.from(orderRepository.save(order));
     }
 
     private List<OrderLineItem> getOrderLineItemsByRequest(
@@ -55,15 +56,17 @@ public class OrderService {
         }).collect(Collectors.toList());
     }
 
-    public List<Order> list() {
-        return orderRepository.findAll();
+    public List<OrderResult> list() {
+        return orderRepository.findAll().stream()
+                .map(OrderResult::from)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final OrderStatusChangeRequest request) {
+    public OrderResult changeOrderStatus(final Long orderId, final OrderStatusChangeRequest request) {
         final Order existOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
         existOrder.changeOrderStatus(request.getOrderStatus());
-        return orderRepository.save(existOrder);
+        return OrderResult.from(orderRepository.save(existOrder));
     }
 }

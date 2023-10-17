@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.dto.MenuCreationRequest;
 import kitchenpos.application.dto.MenuProductWithQuantityRequest;
+import kitchenpos.application.dto.result.MenuResult;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -38,11 +39,11 @@ class MenuServiceTest extends IntegrationTest {
         );
 
         // when
-        final Menu createdMenu = menuService.create(creationRequest);
+        final MenuResult createdMenu = menuService.create(creationRequest);
 
         // then
         assertThat(createdMenu.getId()).isNotNull();
-        assertThat(createdMenu.getMenuProducts()).hasSize(2);
+        assertThat(createdMenu.getMenuProductResults()).hasSize(2);
     }
 
     @Nested
@@ -164,7 +165,7 @@ class MenuServiceTest extends IntegrationTest {
         menuRepository.save(menuB);
 
         // when
-        final List<Menu> list = menuService.list();
+        final List<MenuResult> list = menuService.list();
 
         // then
         assertThat(list).hasSize(2);

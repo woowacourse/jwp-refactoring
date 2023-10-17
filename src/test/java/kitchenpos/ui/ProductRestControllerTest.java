@@ -14,8 +14,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.ProductService;
 import kitchenpos.application.dto.ProductCreationRequest;
-import kitchenpos.domain.Price;
-import kitchenpos.domain.Product;
+import kitchenpos.application.dto.result.ProductResult;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -38,7 +37,7 @@ class ProductRestControllerTest {
     @Test
     void create() throws Exception {
         // given
-        final Product result = new Product(1L, "chicken", Price.from(10000L));
+        final ProductResult result = new ProductResult(1L, "chicken", 10000L);
         given(productService.create(any())).willReturn(result);
 
         final ProductCreationRequest request = new ProductCreationRequest("chicken", BigDecimal.valueOf(10000L));
@@ -55,8 +54,8 @@ class ProductRestControllerTest {
     @Test
     void list() throws Exception {
         // given
-        final Product resultA = new Product(1L, "chicken", Price.from(10000L));
-        final Product resultB = new Product(2L, "chicken-2", Price.from(10000L));
+        final ProductResult resultA = new ProductResult(1L, "chicken", 10000L);
+        final ProductResult resultB = new ProductResult(2L, "chicken-2", 10000L);
         given(productService.list()).willReturn(List.of(resultA, resultB));
 
         // when
