@@ -15,10 +15,7 @@ public class ProductCreateRequest {
     }
 
     public Product toEntity() {
-        final Product product = new Product();
-        product.setName(name);
-        product.setPrice(price);
-        return product;
+        return new Product(name, price);
     }
 
     public String getName() {

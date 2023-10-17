@@ -144,10 +144,7 @@ public class EntityFactory {
     }
 
     public Product saveProduct(final String name, final int price) {
-        final Product product = new Product();
-        product.setName(name);
-        product.setPrice(BigDecimal.valueOf(price));
-
+        final Product product = new Product(name, BigDecimal.valueOf(price));
         return productRepository.save(product);
     }
 

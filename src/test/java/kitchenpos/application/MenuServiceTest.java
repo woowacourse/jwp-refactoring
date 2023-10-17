@@ -82,8 +82,7 @@ class MenuServiceTest {
         @Test
         @DisplayName("메뉴를 생성할 때 실제 상품이 존재하지 않으면 예외가 발생한다")
         void create_fail3() {
-            final Product product = new Product();
-            product.setId(0L);
+            final Product product = new Product(0L, "연어", BigDecimal.TEN);
             final MenuProduct menuProduct = createMenuProduct(4, product);
             final MenuGroup menuGroup = entityFactory.saveMenuGroup("일식");
 
