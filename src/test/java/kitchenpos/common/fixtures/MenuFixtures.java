@@ -70,4 +70,8 @@ public class MenuFixtures {
     public static Menu MENU1() {
         return new Menu(MENU1_NAME, MENU1_PRICE, MENU_GROUP1());
     }
+
+    public static Menu MENU2() {
+        return new Menu(MENU2_NAME, MENU2_PRICE, MENU_GROUP1());
+    }
 }

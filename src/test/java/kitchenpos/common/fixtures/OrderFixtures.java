@@ -1,8 +1,10 @@
 package kitchenpos.common.fixtures;
 
 import java.util.List;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.dto.order.OrderChangeStatusRequest;
+import kitchenpos.dto.order.OrderCreateRequest;
+import kitchenpos.dto.order.OrderLineItemRequest;
 
 public class OrderFixtures {
 
@@ -12,22 +14,24 @@ public class OrderFixtures {
     public static final Long ORDER1_ORDER_TABLE_ID = 1L;
 
     /**
-     * ORDER_LINE_ITEM
+     * ORDER_LINE_ITEMS_REQUEST
      */
-    public static List<OrderLineItem> ORDER1_ORDER_LINE_ITEMS() {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1L);
-        return List.of(orderLineItem);
+    public static List<OrderLineItemRequest> ORDER1_ORDER_LINE_ITEMS_REQUEST() {
+        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1L);
+        return List.of(orderLineItemRequest);
     }
 
     /**
-     * REQUEST
+     * CREATE_REQUEST
      */
-    public static Order ORDER1_CREATE_REQUEST() {
-        Order order = new Order();
-        order.setOrderTableId(ORDER1_ORDER_TABLE_ID);
-        order.setOrderLineItems(ORDER1_ORDER_LINE_ITEMS());
-        return order;
+    public static OrderCreateRequest ORDER1_CREATE_REQUEST() {
+        return new OrderCreateRequest(ORDER1_ORDER_TABLE_ID, ORDER1_ORDER_LINE_ITEMS_REQUEST());
+    }
+
+    /**
+     * CHANGE_STATUS_REQUEST
+     */
+    public static OrderChangeStatusRequest ORDER1_CHANGE_STATUS_REQUEST() {
+        return new OrderChangeStatusRequest(OrderStatus.MEAL.name());
     }
 }
