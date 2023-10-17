@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.dto.request.menu.CreateMenuRequest;
 import kitchenpos.dto.request.menu.MenuProductDto;
 import kitchenpos.dto.response.MenuResponse;
@@ -30,8 +31,8 @@ class MenuServiceTest extends ServiceTest {
         // given
         final int newMenuId = menuService.list().size() + 1;
         final List<MenuProductDto> dto = List.of(
-                getRequest(MenuProductDto.class, 1L, 1L, 1L, 1L),
-                getRequest(MenuProductDto.class, 2L, 2L, 2L, 2L)
+                MenuProductDto.from(new MenuProduct(1L,1L,1L,1L)),
+                MenuProductDto.from(new MenuProduct(2L,2L,2L,2L))
         );
         final CreateMenuRequest request = getRequest(CreateMenuRequest.class, "test", BigDecimal.valueOf(29), 1L, dto);
         // when
@@ -55,7 +56,7 @@ class MenuServiceTest extends ServiceTest {
         // given
         final List<MenuProductDto> dto = new ArrayList<>();
         for (Long productId : products) {
-            dto.add(getRequest(MenuProductDto.class, productId, productId, productId, productId));
+            dto.add(MenuProductDto.from(new MenuProduct(productId, productId, productId, productId)));
         }
         final CreateMenuRequest request = getRequest(CreateMenuRequest.class, "test", price, menuGroupId, dto);
         // when & then
