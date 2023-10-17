@@ -61,13 +61,19 @@ public class Order {
         }
     }
 
-    public void changeOrderSteatus(final OrderStatus orderStatus) {
+    public void changeOrderStatus(final OrderStatus orderStatus) {
         validateOrderStatus();
         this.orderStatus = orderStatus;
     }
 
     private void validateOrderStatus() {
         if (Objects.equals(OrderStatus.COMPLETION, orderStatus)) {
+            throw new IllegalOrderStatusException();
+        }
+    }
+
+    public void validateOrderComplete(){
+        if(orderStatus.equals(OrderStatus.MEAL) || orderStatus.equals(OrderStatus.COOKING)){
             throw new IllegalOrderStatusException();
         }
     }
