@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import kitchenpos.domain.exception.OrderTableException;
 
 public class OrderTable {
+
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
@@ -30,6 +31,7 @@ public class OrderTable {
 
     public void setTableGroupId(final Long tableGroupId) {
         this.tableGroupId = tableGroupId;
+        this.empty = false;
     }
 
     public int getNumberOfGuests() {
@@ -50,7 +52,21 @@ public class OrderTable {
         return empty;
     }
 
-    public void setEmpty(final boolean empty) {
+    public void setEmpty(OrderTableValidator orderTableValidator, final boolean empty) {
+        orderTableValidator.validateChangeEmpty(this);
+        setEmpty(empty);
+    }
+
+    public void setEmpty(boolean empty) {
         this.empty = empty;
+    }
+
+    public void grouping(Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
+        this.empty = false;
+    }
+
+    public void ungroup() {
+        this.tableGroupId = null;
     }
 }
