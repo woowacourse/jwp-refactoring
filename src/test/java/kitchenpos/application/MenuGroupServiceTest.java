@@ -2,7 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.CreateMenuGroupDto;
 import kitchenpos.application.dto.MenuGroupDto;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.application.repository.MenuGroupRepository;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuGroupName;
 import org.assertj.core.api.Assertions;
@@ -19,7 +19,7 @@ class MenuGroupServiceTest extends MockServiceTest {
     private MenuGroupService menuGroupService;
 
     @Mock
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Test
     void 메뉴그룹_목록을_조회한다() {
@@ -35,7 +35,7 @@ class MenuGroupServiceTest extends MockServiceTest {
                 2L,
                 new MenuGroupName("물고기"));
 
-        BDDMockito.given(menuGroupDao.findAll())
+        BDDMockito.given(menuGroupRepository.findAll())
                 .willReturn(List.of(mockFirstMenuGroup, mockSecondMenuGroup));
 
         // when
@@ -56,7 +56,7 @@ class MenuGroupServiceTest extends MockServiceTest {
                 1L,
                 new MenuGroupName("고기"));
 
-        BDDMockito.given(menuGroupDao.save(BDDMockito.any(MenuGroup.class)))
+        BDDMockito.given(menuGroupRepository.save(BDDMockito.any(MenuGroup.class)))
                 .willReturn(mockReturnMenuGroup);
 
         // when
@@ -77,7 +77,7 @@ class MenuGroupServiceTest extends MockServiceTest {
                 1L,
                 new MenuGroupName(""));
 
-        BDDMockito.given(menuGroupDao.save(BDDMockito.any(MenuGroup.class)))
+        BDDMockito.given(menuGroupRepository.save(BDDMockito.any(MenuGroup.class)))
                 .willReturn(mockReturnMenuGroup);
 
         // when

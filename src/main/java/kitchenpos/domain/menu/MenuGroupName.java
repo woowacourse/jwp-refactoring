@@ -1,10 +1,15 @@
 package kitchenpos.domain.menu;
 
+import javax.persistence.Embeddable;
 import java.util.Objects;
 
+@Embeddable
 public class MenuGroupName {
 
-    private final String name;
+    private String name;
+
+    protected MenuGroupName() {
+    }
 
     public MenuGroupName(String name) {
         this.name = name;

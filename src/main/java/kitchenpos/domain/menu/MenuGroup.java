@@ -1,12 +1,21 @@
 package kitchenpos.domain.menu;
 
+import javax.persistence.*;
 import java.util.Objects;
 
+@Entity
 public class MenuGroup {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Embedded
     private MenuGroupName name;
 
+    protected MenuGroup() {
+    }
+    
     public MenuGroup(MenuGroupName name) {
         this(null, name);
     }
