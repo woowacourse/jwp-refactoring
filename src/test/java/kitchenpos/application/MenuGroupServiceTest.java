@@ -21,9 +21,9 @@ class MenuGroupServiceTest {
 
     @Test
     void 메뉴_그룹_생성할_수_있다() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroupService.create(menuGroup);
-        verify(menuGroupDao).save(menuGroup);
+        MenuGroup 메뉴그룹 = MenuGroupFixtures.메뉴그룹();
+        menuGroupService.create(메뉴그룹);
+        verify(menuGroupDao).save(메뉴그룹);
     }
 
     @Test
