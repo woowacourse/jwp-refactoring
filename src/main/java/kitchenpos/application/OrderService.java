@@ -7,6 +7,7 @@ import kitchenpos.application.dto.order.ChangeOrderStatusCommand;
 import kitchenpos.application.dto.order.ChangeOrderStatusResponse;
 import kitchenpos.application.dto.order.CreateOrderCommand;
 import kitchenpos.application.dto.order.CreateOrderResponse;
+import kitchenpos.application.dto.order.SearchOrderResponse;
 import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -44,8 +45,11 @@ public class OrderService {
         return CreateOrderResponse.from(orderRepository.save(order));
     }
 
-    public List<Order> list() {
-        return orderRepository.findAll();
+    public List<SearchOrderResponse> list() {
+        List<Order> orders = orderRepository.findAll();
+        return orders.stream()
+                .map(SearchOrderResponse::from)
+                .collect(Collectors.toList());
     }
 
     @Transactional

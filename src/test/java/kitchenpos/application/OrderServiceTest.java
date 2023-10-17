@@ -15,6 +15,7 @@ import kitchenpos.application.dto.order.ChangeOrderStatusCommand;
 import kitchenpos.application.dto.order.ChangeOrderStatusResponse;
 import kitchenpos.application.dto.order.CreateOrderCommand;
 import kitchenpos.application.dto.order.CreateOrderResponse;
+import kitchenpos.application.dto.order.SearchOrderResponse;
 import kitchenpos.application.dto.orderlineitem.OrderLineItemCommand;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
@@ -122,7 +123,7 @@ class OrderServiceTest extends IntegrationTest {
             Order order2 = 맛있는_메뉴_주문();
 
             // when
-            List<Order> result = orderService.list();
+            List<SearchOrderResponse> result = orderService.list();
 
             // then
             assertAll(

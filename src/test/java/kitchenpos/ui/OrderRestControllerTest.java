@@ -11,7 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.List;
 import kitchenpos.application.dto.order.ChangeOrderStatusResponse;
 import kitchenpos.application.dto.order.CreateOrderResponse;
-import kitchenpos.domain.Order;
+import kitchenpos.application.dto.order.SearchOrderResponse;
 import kitchenpos.ui.dto.ChangeOrderStatusRequest;
 import kitchenpos.ui.dto.CreateOrderRequest;
 import kitchenpos.ui.dto.OrderLineItemRequest;
@@ -43,11 +43,12 @@ class OrderRestControllerTest extends ControllerTest {
     @Test
     void 주문_조회() throws Exception {
         // given
-        Order order1 = 주문(1L);
-        Order order2 = 주문(2L);
-        List<Order> orders = List.of(order1, order2);
-        given(orderService.list()).willReturn(orders);
-        String response = objectMapper.writeValueAsString(orders);
+        List<SearchOrderResponse> searchOrderResponses = List.of(
+                SearchOrderResponse.from(식사중인_주문(1L)),
+                SearchOrderResponse.from(식사중인_주문(2L))
+        );
+        given(orderService.list()).willReturn(searchOrderResponses);
+        String response = objectMapper.writeValueAsString(searchOrderResponses);
 
         // when & then
         mockMvc.perform(get("/api/orders"))

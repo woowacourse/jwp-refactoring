@@ -1,6 +1,5 @@
 package kitchenpos.domain;
 
-import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.Column;
@@ -17,11 +16,11 @@ public class OrderLineItem {
     @GeneratedValue(strategy = IDENTITY)
     private Long seq;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne
     @JoinColumn(name = "menu_id")
     private Menu menu;
 
