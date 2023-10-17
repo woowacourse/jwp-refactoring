@@ -1,84 +1,63 @@
 package kitchenpos.application;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuProductDao;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.ProductQuantityDto;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
+import kitchenpos.dto.request.MenuProductRequest;
+import kitchenpos.dto.request.MenuRequest;
+import kitchenpos.dto.response.MenuResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Service
 public class MenuService {
 
-    private final MenuDao menuDao;
-    private final MenuProductDao menuProductDao;
+    private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
     private final ProductRepository productRepository;
 
     public MenuService(
-            MenuDao menuDao,
-            MenuProductDao menuProductDao,
+            MenuRepository menuRepository,
             MenuGroupRepository menuGroupRepository,
             ProductRepository productRepository
     ) {
-        this.menuDao = menuDao;
-        this.menuProductDao = menuProductDao;
+        this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
         this.productRepository = productRepository;
     }
 
-    @Transactional
-    public Menu create(Menu menu) {
-        BigDecimal price = menu.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        if (!menuGroupRepository.existsById(menu.getMenuGroupId())) {
-            throw new IllegalArgumentException();
-        }
-
-        List<MenuProduct> menuProducts = menu.getMenuProducts();
-
-        BigDecimal sum = BigDecimal.ZERO;
-        for (MenuProduct menuProduct : menuProducts) {
-            Product product = productRepository.findById(menuProduct.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
-
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
-
-        Menu savedMenu = menuDao.save(menu);
-
-        Long menuId = savedMenu.getId();
-        List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(menuId);
-            savedMenuProducts.add(menuProductDao.save(menuProduct));
-        }
-        savedMenu.setMenuProducts(savedMenuProducts);
-
-        return savedMenu;
+    @Transactional(readOnly = true)
+    public List<MenuResponse> list() {
+        return menuRepository.findAll()
+                .stream()
+                .map(MenuResponse::from)
+                .collect(Collectors.toList());
     }
 
-    public List<Menu> list() {
-        List<Menu> menus = menuDao.findAll();
+    public MenuResponse create(MenuRequest menuRequest) {
+        MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않은 메뉴 그룹입니다."));
 
-        for (Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
-        }
+        List<ProductQuantityDto> productQuantities = menuRequest.getMenuProducts()
+                .stream()
+                .map(this::convertToProductQuantity)
+                .collect(Collectors.toList());
 
-        return menus;
+        Menu menu = menuRepository.save(new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup));
+        menu.updateProducts(productQuantities);
+        return MenuResponse.from(menu);
+    }
+
+    private ProductQuantityDto convertToProductQuantity(MenuProductRequest menuProductRequest) {
+        Product product = productRepository.findById(menuProductRequest.getProductId())
+                .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 상품입니다."));
+        return new ProductQuantityDto(product, menuProductRequest.getQuantity());
     }
 }
