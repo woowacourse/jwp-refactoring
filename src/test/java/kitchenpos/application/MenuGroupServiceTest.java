@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
 import kitchenpos.common.service.ServiceTest;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.repository.MenuGroupRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -14,7 +14,7 @@ class MenuGroupServiceTest extends ServiceTest {
     private MenuGroupService menuGroupService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Test
     void MenuGroup_을_생성할_수_있다() {
@@ -30,8 +30,8 @@ class MenuGroupServiceTest extends ServiceTest {
         //given
         final MenuGroup chickenGroup = new MenuGroup("치킨");
         final MenuGroup pizzaGroup = new MenuGroup("피자");
-        menuGroupDao.save(chickenGroup);
-        menuGroupDao.save(pizzaGroup);
+        menuGroupRepository.save(chickenGroup);
+        menuGroupRepository.save(pizzaGroup);
 
         //when
         final var result = menuGroupService.list();

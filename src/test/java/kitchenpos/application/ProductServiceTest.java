@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
 import kitchenpos.common.service.ServiceTest;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.ProductRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ class ProductServiceTest extends ServiceTest {
     private ProductService productService;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
 
     @Test
@@ -49,8 +49,8 @@ class ProductServiceTest extends ServiceTest {
         //given
         final Product chicken = new Product("치킨", new BigDecimal(20000));
         final Product pizza = new Product("피자", new BigDecimal(20000));
-        productDao.save(chicken);
-        productDao.save(pizza);
+        productRepository.save(chicken);
+        productRepository.save(pizza);
 
         //when
         final List<Product> list = productService.list();

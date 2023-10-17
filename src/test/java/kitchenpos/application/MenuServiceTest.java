@@ -1,12 +1,12 @@
 package kitchenpos.application;
 
 import kitchenpos.common.service.ServiceTest;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,19 +22,19 @@ class MenuServiceTest extends ServiceTest {
     private MenuService menuService;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Test
     void Menu를_생성할_수_있다() {
         //given
-        final Product product = productDao.save(new Product("디노 탕후루", new BigDecimal(4000)));
-        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("탕후루"));
+        final Product product = productRepository.save(new Product("디노 탕후루", new BigDecimal(4000)));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("탕후루"));
 
         //when
         final Long menuId = menuService.create("디노 세트", new BigDecimal(8000), menuGroup.getId(),
@@ -68,8 +68,8 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void 메뉴_가격이_메뉴_상품의_가격_합계를_초과하면_예외가_발생한다() {
         //given
-        final Product product = productDao.save(new Product("디노 탕후루", new BigDecimal(4000)));
-        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("탕후루"));
+        final Product product = productRepository.save(new Product("디노 탕후루", new BigDecimal(4000)));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("탕후루"));
 
         //when, then
         assertThatThrownBy(() -> menuService.create("디노 세트", new BigDecimal(9000), menuGroup.getId(),
@@ -80,10 +80,10 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void Menu를_조회할_수_있다() {
         //given
-        final Product product = productDao.save(new Product("디노 탕후루", new BigDecimal(4000)));
-        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("탕후루"));
+        final Product product = productRepository.save(new Product("디노 탕후루", new BigDecimal(4000)));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("탕후루"));
         final Menu menu = new Menu("디노 세트", new BigDecimal(8000), menuGroup.getId());
-        menuDao.save(menu);
+        menuRepository.save(menu);
 
         //when
         final List<Menu> list = menuService.list();
