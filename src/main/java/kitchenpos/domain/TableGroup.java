@@ -12,6 +12,7 @@ import org.springframework.util.CollectionUtils;
 @Entity
 public class TableGroup {
 
+    private static final int MINIMUM_TABLE_SIZE = 2;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -42,7 +43,7 @@ public class TableGroup {
     }
 
     private void validateSize(final List<OrderTable> orderTables) {
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < MINIMUM_TABLE_SIZE) {
             throw new IllegalArgumentException("Table group must have at least two tables.");
         }
     }
