@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +27,7 @@ import static kitchenpos.domain.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -60,23 +62,37 @@ class OrderServiceTest {
             final OrderLineItem wooDong = new OrderLineItem(1L, 1L, 1);
             final OrderLineItem frenchFries = new OrderLineItem(1L, 2L, 1);
             final List<OrderLineItem> orderLineItems = List.of(wooDong, frenchFries);
-            final Order order = spy(new Order(OrderStatus.COMPLETION.name(), LocalDateTime.now(), orderLineItems));
-
+            final Order order = new Order(1L, COOKING.name(), LocalDateTime.now(), orderLineItems);
             given(menuDao.countByIdIn(anyList())).willReturn((long) orderLineItems.size());
 
+            final Order spyOrder = spy(new Order(order.getOrderTableId(), order.getOrderStatus(), order.getOrderedTime(), new ArrayList<>()));
+            given(orderDao.save(any(Order.class))).willReturn(spyOrder);
+
             final OrderTable orderTable = new OrderTable(6, false);
+            final OrderTable spyOrderTable = spy(orderTable);
+            given(orderTableDao.findById(anyLong())).willReturn(Optional.ofNullable(spyOrderTable));
+
+            given(orderLineItemDao.save(any(OrderLineItem.class)))
+                    .willReturn(wooDong)
+                    .willReturn(frenchFries);
+
             final long orderTableId = 1L;
-            given(order.getOrderTableId()).willReturn(orderTableId);
-            given(orderTableDao.findById(anyLong())).willReturn(Optional.ofNullable(orderTable));
-            given(orderDao.save(order)).willReturn(order);
+            given(spyOrderTable.getId()).willReturn(orderTableId);
+
+            final long orderId = 1L;
+            given(spyOrder.getId()).willReturn(orderId);
 
             // when
-            orderService.create(order);
+            final Order actual = orderService.create(order);
 
             // then
             assertAll(
-                    () -> assertThat(order.getOrderTableId()).isEqualTo(orderTableId),
-                    () -> assertThat(order.getOrderStatus()).isEqualTo(COOKING.name())
+                    () -> assertThat(actual.getId()).isNotNull(),
+                    () -> assertThat(actual.getOrderTableId()).isEqualTo(orderTableId),
+                    () -> assertThat(actual.getOrderStatus()).isEqualTo(COOKING.name()),
+                    () -> assertThat(actual.getOrderLineItems())
+                            .usingRecursiveFieldByFieldElementComparator()
+                            .containsExactly(wooDong, frenchFries)
             );
         }
 
@@ -161,7 +177,7 @@ class OrderServiceTest {
 
             given(orderLineItemDao.findAllByOrderId(orderId)).willReturn(orderLineItems);
 
-            final Order spyOrder = spy(new Order(OrderStatus.COMPLETION.name(), LocalDateTime.now(), null));
+            final Order spyOrder = spy(new Order(OrderStatus.COMPLETION.name(), LocalDateTime.now(), new ArrayList<>()));
             given(spyOrder.getId()).willReturn(orderId);
             given(orderDao.findAll()).willReturn(List.of(spyOrder));
 
@@ -191,7 +207,7 @@ class OrderServiceTest {
             final long orderId = 1;
             final OrderLineItem wooDong = new OrderLineItem(orderId, 1L, 1);
             final OrderLineItem frenchFries = new OrderLineItem(orderId, 2L, 1);
-            final List<OrderLineItem> orderLineItems = List.of(wooDong, frenchFries);
+            final List<OrderLineItem> orderLineItems = new ArrayList<>(List.of(wooDong, frenchFries));
 
             final Order order = new Order(validedOrderStatus.name(), LocalDateTime.now(), orderLineItems);
             given(orderDao.findById(orderId)).willReturn(Optional.ofNullable(order));
