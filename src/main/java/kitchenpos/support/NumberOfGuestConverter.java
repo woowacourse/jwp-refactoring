@@ -1,13 +1,13 @@
 package kitchenpos.support;
 
-import kitchenpos.domain.NumberOfGuest;
+import kitchenpos.domain.vo.NumberOfGuest;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
 @Converter(autoApply = true)
 public class NumberOfGuestConverter implements AttributeConverter<NumberOfGuest, Integer> {
-    
+
     @Override
     public Integer convertToDatabaseColumn(NumberOfGuest attribute) {
         return attribute.getValue();

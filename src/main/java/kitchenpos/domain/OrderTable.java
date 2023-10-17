@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.vo.NumberOfGuest;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;

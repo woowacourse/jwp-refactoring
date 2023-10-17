@@ -1,6 +1,6 @@
 package kitchenpos.support;
 
-import kitchenpos.domain.Money;
+import kitchenpos.domain.vo.Money;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
