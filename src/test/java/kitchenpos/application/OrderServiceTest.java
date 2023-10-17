@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -38,60 +39,57 @@ class OrderServiceTest {
 
     @Test
     void 주문_아이템이_존재하지_않는_경우_예외가_발생한다() {
-        Order order = new Order();
-        assertThatThrownBy(() -> orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
+        Order 주문1번 = OrderFixtures.주문1번();
+        assertThatThrownBy(() -> orderService.create(주문1번)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 주문_항목에_메뉴_ID가_존재하지_않는경우_예외가_발생한다() {
-        Order order = new Order();
+        Order 주문1번 = OrderFixtures.주문1번();
         OrderLineItem orderLineItem = OrderLineItemFixtures.로제떡볶이_주문항목();
-        order.setOrderLineItems(List.of(orderLineItem));
+        주문1번.setOrderLineItems(List.of(orderLineItem));
 
         when(menuDao.countByIdIn(List.of(1L))).thenReturn(0L);
 
-        assertThatThrownBy(() -> orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(주문1번)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 주문_테이블이_존재하지_않는_경우_예외가_발생한다() {
-        Order order = new Order();
-        order.setOrderTableId(2L);
-        OrderLineItem orderLineItem = OrderLineItemFixtures.로제떡볶이_주문항목();
-        order.setOrderLineItems(List.of(orderLineItem));
+        Order 주문2번 = OrderFixtures.주문2번();
+        OrderLineItem 로제떡볶이_주문항목 = OrderLineItemFixtures.로제떡볶이_주문항목();
+        주문2번.setOrderLineItems(List.of(로제떡볶이_주문항목));
 
         when(menuDao.countByIdIn(List.of(1L))).thenReturn(1L);
 
         when(orderTableDao.findById(2L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(주문2번)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 주문_생성할_수_있다() {
-        Order order = new Order();
-        order.setOrderTableId(2L);
-        OrderLineItem orderLineItem = OrderLineItemFixtures.로제떡볶이_주문항목();
-        order.setOrderLineItems(List.of(orderLineItem));
+        Order 주문2번 = OrderFixtures.주문2번();
+        OrderLineItem 로제떡볶이_주문항목 = OrderLineItemFixtures.로제떡볶이_주문항목();
+        주문2번.setOrderLineItems(List.of(로제떡볶이_주문항목));
 
         when(menuDao.countByIdIn(List.of(1L))).thenReturn(1L);
 
-        when(orderTableDao.findById(2L)).thenReturn(Optional.of(OrderTableFixtures.주문테이블1번()));
-        when(orderDao.save(order)).thenReturn(order);
+        OrderTable 주문테이블2번 = OrderTableFixtures.주문테이블2번();
+        when(orderTableDao.findById(2L)).thenReturn(Optional.of(주문테이블2번));
+        when(orderDao.save(any(Order.class))).thenReturn(주문2번);
 
-        orderService.create(order);
+        orderService.create(주문2번);
 
-        verify(orderDao).save(order);
-        verify(orderLineItemDao).save(orderLineItem);
+        verify(orderDao).save(any(Order.class));
+        verify(orderLineItemDao).save(로제떡볶이_주문항목);
     }
 
     @Test
     void 전체_주문_조회할_수_있다() {
-        Order order1 = new Order();
-        order1.setId(1L);
-        Order order2 = new Order();
-        order2.setId(2L);
-        when(orderDao.findAll()).thenReturn(List.of(order1, order2));
+        Order 주문1번 = OrderFixtures.주문1번();
+        Order 주문2번 = OrderFixtures.주문2번();
+        when(orderDao.findAll()).thenReturn(List.of(주문1번, 주문2번));
 
         orderService.list();
 
@@ -101,7 +99,7 @@ class OrderServiceTest {
 
     @Test
     void 주문_ID가_존재하지_않는_경우_예외가_발생한다() {
-        Order order = new Order();
+        Order order = new Order(null, null);
 
         when(orderDao.findById(order.getId())).thenReturn(Optional.empty());
 
@@ -111,9 +109,8 @@ class OrderServiceTest {
 
     @Test
     void 주문_상태가_COMPLETION_상태이면_예외가_발생한다() {
-        Order order = new Order();
-        order.setId(1L);
-        order.setOrderStatus(String.valueOf(OrderStatus.COMPLETION));
+        Order order = OrderFixtures.주문1번();
+        order.setOrderStatus(OrderStatus.COMPLETION);
 
         when(orderDao.findById(order.getId())).thenReturn(Optional.of(order));
 
@@ -123,15 +120,14 @@ class OrderServiceTest {
 
     @Test
     void 주문_상태를_변경할_수_있다() {
-        Order order = new Order();
-        order.setId(1L);
-        order.setOrderStatus(String.valueOf(OrderStatus.COOKING));
+        Order 주문1번 = OrderFixtures.주문1번();
+        주문1번.setOrderStatus(OrderStatus.COOKING);
 
-        when(orderDao.findById(order.getId())).thenReturn(Optional.of(order));
+        when(orderDao.findById(주문1번.getId())).thenReturn(Optional.of(주문1번));
 
-        orderService.changeOrderStatus(order.getId(), order);
+        orderService.changeOrderStatus(주문1번.getId(), 주문1번);
 
-        verify(orderDao).save(order);
-        verify(orderLineItemDao).findAllByOrderId(order.getId());
+        verify(orderDao).save(주문1번);
+        verify(orderLineItemDao).findAllByOrderId(주문1번.getId());
     }
 }
