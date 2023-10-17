@@ -1,12 +1,12 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.ProductCreateDto;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductName;
 import kitchenpos.domain.product.ProductPrice;
 import kitchenpos.exception.ProductPriceException;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
@@ -67,9 +67,9 @@ class ProductServiceTest extends MockServiceTest {
                 new ProductName("pizza"),
                 new ProductPrice(BigDecimal.valueOf(18000L)));
 
-        Product argumentProduct = new Product(
-                new ProductName("pizza"),
-                new ProductPrice(BigDecimal.valueOf(18000L)));
+        ProductCreateDto productCreateDto = new ProductCreateDto(
+                "pizza",
+                BigDecimal.valueOf(18000L));
 
         Product mockReturnProduct = new Product(
                 1L,
@@ -80,7 +80,7 @@ class ProductServiceTest extends MockServiceTest {
                 .willReturn(mockReturnProduct);
 
         // when
-        Product actual = productService.create(argumentProduct);
+        Product actual = productService.create(productCreateDto);
 
         // then
         Assertions.assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
@@ -89,56 +89,48 @@ class ProductServiceTest extends MockServiceTest {
     @Test
     void 상품을_추가할_때_가격이_0_일_수_있다() {
         // given
-        Product argumentProduct = new Product(
-                new ProductName("pizza"),
-                new ProductPrice(BigDecimal.valueOf(0L)));
+        ProductCreateDto productCreateDto = new ProductCreateDto(
+                "pizza",
+                BigDecimal.valueOf(0L));
 
         // when, then
         Assertions.assertThatNoException()
-                .isThrownBy(() -> productService.create(argumentProduct));
+                .isThrownBy(() -> productService.create(productCreateDto));
     }
 
     @Test
     void 상품을_추가할_때_이름이_공백_일_수_있다() {
         // given
-        Product argumentProduct = new Product(
-                new ProductName(""),
-                new ProductPrice(BigDecimal.valueOf(1000L)));
+        ProductCreateDto productCreateDto = new ProductCreateDto(
+                "",
+                BigDecimal.valueOf(1000L));
 
         // when, then
         Assertions.assertThatNoException()
-                .isThrownBy(() -> productService.create(argumentProduct));
+                .isThrownBy(() -> productService.create(productCreateDto));
     }
 
-    /*
-    TODO: 인자를 DTO로 바꾼 뒤 제거
-     */
-    @Disabled
     @Test
     void 상품을_추가할_때_가격이_null_이면_예외를_던진다() {
         // given
-        Product argumentProduct = new Product(
-                new ProductName("pizza"),
-                new ProductPrice(null));
+        ProductCreateDto productCreateDto = new ProductCreateDto(
+                "pizza",
+                null);
 
         // when, then
-        Assertions.assertThatThrownBy(() -> productService.create(argumentProduct))
+        Assertions.assertThatThrownBy(() -> productService.create(productCreateDto))
                 .isInstanceOf(ProductPriceException.class);
     }
 
-    /*
-    TODO: 인자를 DTO로 바꾼 뒤 제거
-     */
-    @Disabled
     @Test
     void 상품을_추가할_때_가격이_음수면_예외를_던진다() {
         // given
-        Product argumentProduct = new Product(
-                new ProductName("pizza"),
-                new ProductPrice(BigDecimal.valueOf(-100L)));
+        ProductCreateDto productCreateDto = new ProductCreateDto(
+                "pizza",
+                BigDecimal.valueOf(-100L));
 
         // when, then
-        Assertions.assertThatThrownBy(() -> productService.create(argumentProduct))
+        Assertions.assertThatThrownBy(() -> productService.create(productCreateDto))
                 .isInstanceOf(ProductPriceException.class);
     }
 }
