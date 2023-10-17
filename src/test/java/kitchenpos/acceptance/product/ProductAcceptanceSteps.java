@@ -6,7 +6,7 @@ import static kitchenpos.acceptance.AcceptanceSteps.생성된_ID를_추출한다
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.math.BigDecimal;
-import kitchenpos.domain.Product;
+import kitchenpos.application.dto.ProductCreateRequest;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class ProductAcceptanceSteps {
@@ -16,11 +16,9 @@ public class ProductAcceptanceSteps {
     }
 
     public static ExtractableResponse<Response> 상품_등록_요청을_보낸다(String 상품_이름, double 가격) {
-        Product product = new Product();
-        product.setName(상품_이름);
-        product.setPrice(new BigDecimal(가격));
+        ProductCreateRequest request = new ProductCreateRequest(상품_이름, new BigDecimal(가격));
         return given()
-                .body(product)
+                .body(request)
                 .post("/api/products")
                 .then()
                 .log().all()
