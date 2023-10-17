@@ -3,10 +3,12 @@ package kitchenpos.api.menu;
 import kitchenpos.api.config.ApiTestConfig;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.ui.dto.request.MenuGroupCreateRequest;
+import kitchenpos.ui.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -19,21 +21,21 @@ class MenuGroupCreateApiTest extends ApiTestConfig {
     @Test
     void createMenuGroup() throws Exception {
         // given
-        final String request = "{\n" +
-                "  \"name\": \"추천메뉴\"\n" +
-                "}";
+        final MenuGroupCreateRequest request = new MenuGroupCreateRequest("추천 메뉴");
 
         // when
         // FIXME: domain -> dto 로 변경
         final Long expectedId = 1L;
         final MenuGroup expectedMenuGroup = new MenuGroup();
         expectedMenuGroup.setId(expectedId);
-        when(menuGroupService.create(any(MenuGroupCreateRequest.class))).thenReturn(expectedMenuGroup);
+        expectedMenuGroup.setName(request.getName());
+        final MenuGroupResponse response = MenuGroupResponse.from(expectedMenuGroup);
+        when(menuGroupService.create(eq(request))).thenReturn(response);
 
         // then
         mockMvc.perform(post("/api/menu-groups")
                         .contentType(APPLICATION_JSON_VALUE)
-                        .content(request))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(redirectedUrl(String.format("/api/menu-groups/%d", expectedId)));
     }

@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.ui.dto.request.MenuGroupCreateRequest;
+import kitchenpos.ui.dto.response.MenuGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,10 +18,10 @@ public class MenuGroupService {
     }
 
     @Transactional
-    public MenuGroup create(final MenuGroupCreateRequest groupName) {
+    public MenuGroupResponse create(final MenuGroupCreateRequest groupName) {
         final MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(groupName.getName());
-        return menuGroupDao.save(menuGroup);
+        return MenuGroupResponse.from(menuGroupDao.save(menuGroup));
     }
 
     public List<MenuGroup> list() {
