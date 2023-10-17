@@ -112,9 +112,25 @@ class MenuServiceTest extends ServiceTest {
         });
     }
 
-    @DisplayName("메뉴 등록 시 메뉴 가격이 음수이거나, 상품 총 가격보다 큰 경우 예외가 발생한다.")
+    @DisplayName("메뉴 등록 시 메뉴 가격이 음수인 경우 예외가 발생한다.")
     @ParameterizedTest
-    @ValueSource(longs = {-1L, -100L, 33000L})
+    @ValueSource(longs = {-1L, -100L})
+    void create_FailWithNegativeMenuPrice(long invalidMenuPrice) {
+        // given
+        Menu invalidMenu = new Menu();
+        invalidMenu.setName("후라이드1+양념1");
+        invalidMenu.setPrice(BigDecimal.valueOf(invalidMenuPrice));
+        invalidMenu.setMenuGroupId(두마리메뉴.getId());
+        invalidMenu.setMenuProducts(List.of(후라이드_한마리, 양념치킨_한마리));
+
+        // when & then
+        assertThatThrownBy(() -> menuService.create(invalidMenu))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("메뉴 등록 시 메뉴 가격이 상품 총 가격보다 큰 경우 예외가 발생한다.")
+    @ParameterizedTest
+    @ValueSource(longs = {33000L, Long.MAX_VALUE})
     void create_FailWithInvalidMenuPrice(long invalidMenuPrice) {
         // given
         Menu invalidMenu = new Menu();
