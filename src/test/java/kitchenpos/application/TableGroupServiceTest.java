@@ -35,21 +35,21 @@ class TableGroupServiceTest {
 
     @Test
     void 주문_테이블_리스트는_빈값일_수_없습니다() {
-        TableGroup tableGroup = new TableGroup();
+        TableGroup tableGroup = TableGroupFixtures.단체지정();
         tableGroup.setOrderTables(Collections.EMPTY_LIST);
         assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 주문_테이블_리스트_개수는_1개_이하일_수_없습니다() {
-        TableGroup tableGroup = new TableGroup();
+        TableGroup tableGroup = TableGroupFixtures.단체지정();
         tableGroup.setOrderTables(List.of(new OrderTable()));
         assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 주문_테이블_개수와_실제_저장된_테이블의_개수가_다르면_예외를_반환한다() {
-        TableGroup tableGroup = new TableGroup();
+        TableGroup tableGroup = TableGroupFixtures.단체지정();
         OrderTable orderTable1 = new OrderTable();
         orderTable1.setId(1L);
         OrderTable orderTable2 = new OrderTable();
@@ -63,7 +63,7 @@ class TableGroupServiceTest {
 
     @Test
     void 저장된_주문_테이블은_empty일_수_없다() {
-        TableGroup tableGroup = new TableGroup();
+        TableGroup tableGroup = TableGroupFixtures.단체지정();
         OrderTable orderTable1 = new OrderTable();
         orderTable1.setId(1L);
         orderTable1.setEmpty(false);
@@ -79,7 +79,7 @@ class TableGroupServiceTest {
 
     @Test
     void 저장된_주문_테이블은_테이블_그룹이_존재해야한다() {
-        TableGroup tableGroup = new TableGroup();
+        TableGroup tableGroup = TableGroupFixtures.단체지정();
         OrderTable orderTable1 = new OrderTable();
         orderTable1.setId(1L);
         orderTable1.setEmpty(true);
@@ -96,7 +96,7 @@ class TableGroupServiceTest {
 
     @Test
     void 단체_테이블_생성할_수_있다() {
-        TableGroup tableGroup = new TableGroup();
+        TableGroup tableGroup = TableGroupFixtures.단체지정();
         OrderTable orderTable1 = new OrderTable();
         orderTable1.setId(1L);
         orderTable1.setEmpty(true);
