@@ -1,10 +1,24 @@
 package kitchenpos.domain.product;
 
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.math.BigDecimal;
 
+@Entity
 public class Product {
+
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     private Long id;
+
+    @Column(nullable = false)
     private String name;
+
+    @Convert(converter = ProductPriceConverter.class)
     private ProductPrice price;
 
     public Product() {
