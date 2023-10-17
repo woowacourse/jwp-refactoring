@@ -18,14 +18,11 @@ class MenuGroupServiceTest extends ServiceTest {
 
     @Test
     void MenuGroup_을_생성할_수_있다() {
-        //given
-        final MenuGroup menuGroup = new MenuGroup("치킨");
-
         //when
-        final MenuGroup createdMenuGroup = menuGroupService.create(menuGroup);
+        final Long menuGroupId = menuGroupService.create("치킨");
 
         //then
-        assertThat(createdMenuGroup.getId()).isNotNull();
+        assertThat(menuGroupId).isNotNull();
     }
 
     @Test

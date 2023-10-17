@@ -2,7 +2,7 @@ package kitchenpos.ui;
 
 import io.restassured.RestAssured;
 import kitchenpos.common.controller.ControllerTest;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.ui.dto.MenuGroupCreateRequest;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.http.ContentType.JSON;
@@ -15,7 +15,7 @@ class MenuGroupRestControllerTest extends ControllerTest {
     void MenuGroup을_생성하면_201을_반환한다() {
         // given
         final var 요청_준비 = RestAssured.given()
-                .body(new MenuGroup("디노 극락 메뉴"))
+                .body(new MenuGroupCreateRequest("디노 극락 메뉴"))
                 .contentType(JSON);
 
         // when
