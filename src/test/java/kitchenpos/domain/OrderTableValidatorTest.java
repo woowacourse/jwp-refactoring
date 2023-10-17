@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 @DisplayName("주문 테이블 검증기(OrderTableValidator) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-class OrderValidatorTest {
+class OrderTableValidatorTest {
 
     private final OrderDao orderDao = mock(OrderDao.class);
     private final OrderTableValidator orderTableValidator = new OrderTableValidator(orderDao);
