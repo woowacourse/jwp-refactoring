@@ -20,7 +20,7 @@ class MenuGroupServiceTest extends ServiceTestConfig {
 
     @BeforeEach
     void setUp() {
-        menuGroupService = new MenuGroupService(menuGroupDao);
+        menuGroupService = new MenuGroupService(menuGroupRepository);
     }
 
     @DisplayName("메뉴 그룹 생성")
@@ -47,16 +47,16 @@ class MenuGroupServiceTest extends ServiceTestConfig {
         @Test
         void success() {
             // given
-            final MenuGroup menuGroup = saveMenuGroup();
+            final MenuGroup savedMenuGroup = saveMenuGroup();
 
             // when
-            final List<MenuGroup> actual = menuGroupService.list();
+            final List<MenuGroupResponse> actual = menuGroupService.list();
 
             // then
             // FIXME: equals&hashcode 적용
             assertSoftly(softly -> {
                 softly.assertThat(actual.size()).isEqualTo(1);
-//                softly.assertThat(actual).containsExactly(savedProduct);
+                softly.assertThat(actual.get(0).getId()).isEqualTo(savedMenuGroup.getId());
             });
         }
     }

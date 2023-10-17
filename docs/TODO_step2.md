@@ -27,5 +27,5 @@
 - [x] 도메인 별 JPA Repository 생성
 
 ## business
-- [ ] validaton 분리 및 domain의 역할로 전가
-- [ ] 메소드 길이 10 이하로 설정
+- [x] validaton 분리 및 domain의 역할로 전가
+- [x] 메소드 길이 10 이하로 설정

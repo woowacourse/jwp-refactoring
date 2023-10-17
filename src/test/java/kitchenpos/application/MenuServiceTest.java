@@ -23,7 +23,7 @@ class MenuServiceTest extends ServiceTestConfig {
 
     @BeforeEach
     void setUp() {
-        menuService = new MenuService(menuDao, menuGroupDao, menuProductDao, productDao);
+        menuService = new MenuService(menuDao, menuGroupRepository, menuProductDao, productDao);
     }
 
     @DisplayName("메뉴 생성")

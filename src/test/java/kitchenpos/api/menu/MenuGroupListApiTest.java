@@ -2,6 +2,7 @@ package kitchenpos.api.menu;
 
 import kitchenpos.api.config.ApiTestConfig;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.ui.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -19,18 +20,15 @@ class MenuGroupListApiTest extends ApiTestConfig {
     @Test
     void listMenuGroup() throws Exception {
         // given
-        // FIXME: domain -> dto 로 변경
-        final MenuGroup expectedMenuGroup = new MenuGroup(1L, "여우 메뉴 그룹");
+        final MenuGroupResponse response = MenuGroupResponse.from(new MenuGroup(1L, "여우가 좋아하는 메뉴 그룹"));
 
         // when
-        when(menuGroupService.list()).thenReturn(List.of(expectedMenuGroup));
+        when(menuGroupService.list()).thenReturn(List.of(response));
 
         // then
         mockMvc.perform(get("/api/menu-groups"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON))
-                .andExpect(jsonPath("$.size()", is(1)))
-                .andExpect(jsonPath("$[0].id", is(expectedMenuGroup.getId().intValue())))
-                .andExpect(jsonPath("$[0].name", is(expectedMenuGroup.getName())));
+                .andExpect(content().string(objectMapper.writeValueAsString(response)));
     }
 }

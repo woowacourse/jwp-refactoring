@@ -1,6 +1,7 @@
 package kitchenpos.application.config;
 
 import kitchenpos.common.DataTestExecutionListener;
+import kitchenpos.config.JpaConfig;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -18,8 +19,11 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.repository.MenuGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestExecutionListeners;
 
@@ -27,8 +31,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-@JdbcTest
-@Import(DaoConfig.class)
+@DataJpaTest
+@Import({DaoConfig.class, JpaConfig.class}) // TODO: jpa로 다 변환하고 dao config 제거하기
 @TestExecutionListeners(value = DataTestExecutionListener.class, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public class ServiceTestConfig {
 
@@ -42,7 +46,7 @@ public class ServiceTestConfig {
     protected MenuDao menuDao;
 
     @Autowired
-    protected MenuGroupDao menuGroupDao;
+    protected MenuGroupRepository menuGroupRepository;
 
     @Autowired
     protected OrderDao orderDao;
@@ -63,7 +67,7 @@ public class ServiceTestConfig {
 
     protected MenuGroup saveMenuGroup() {
         final MenuGroup menuGroup = new MenuGroup(null, "여우가 좋아하는 메뉴 그룹");
-        return menuGroupDao.save(menuGroup);
+        return menuGroupRepository.save(menuGroup);
     }
 
     protected Menu saveMenu(final MenuGroup menuGroup) {
