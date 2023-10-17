@@ -8,7 +8,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.entity.MenuProduct;
+import kitchenpos.domain.value.Quantity;
 import kitchenpos.dto.request.menu.CreateMenuRequest;
 import kitchenpos.dto.request.menu.MenuProductDto;
 import kitchenpos.dto.response.MenuResponse;
@@ -31,8 +32,8 @@ class MenuServiceTest extends ServiceTest {
         // given
         final int newMenuId = menuService.list().size() + 1;
         final List<MenuProductDto> dto = List.of(
-                MenuProductDto.from(new MenuProduct(1L,1L,1L,1L)),
-                MenuProductDto.from(new MenuProduct(2L,2L,2L,2L))
+                MenuProductDto.from(new MenuProduct(1L,1L,1L,new Quantity(1L))),
+                MenuProductDto.from(new MenuProduct(2L,2L,2L,new Quantity(2L)))
         );
         final CreateMenuRequest request = getRequest(CreateMenuRequest.class, "test", BigDecimal.valueOf(29), 1L, dto);
         // when
@@ -52,17 +53,24 @@ class MenuServiceTest extends ServiceTest {
             final List<Long> products,
             final Class exception,
             final String message
-    ) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    ) {
         // given
-        final List<MenuProductDto> dto = new ArrayList<>();
-        for (Long productId : products) {
-            dto.add(MenuProductDto.from(new MenuProduct(productId, productId, productId, productId)));
-        }
-        final CreateMenuRequest request = getRequest(CreateMenuRequest.class, "test", price, menuGroupId, dto);
         // when & then
-        assertThatThrownBy(() -> menuService.create(request))
+        assertThatThrownBy(() -> menuService.create(createMenuRequest(products,price,menuGroupId)))
                 .isInstanceOf(exception)
                 .hasMessage(message);
+    }
+
+    private CreateMenuRequest createMenuRequest(
+            final List<Long> products,
+            final BigDecimal price,
+            final Long menuGroupId
+    ) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        final List<MenuProductDto> dto = new ArrayList<>();
+        for (Long productId : products) {
+            dto.add(MenuProductDto.from(new MenuProduct(productId, productId, productId, new Quantity(productId))));
+        }
+        return getRequest(CreateMenuRequest.class, "test", price, menuGroupId, dto);
     }
 
     private static Stream<Arguments> menuParameterProvider() {

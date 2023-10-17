@@ -7,6 +7,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
+import kitchenpos.domain.entity.OrderLineItem;
+import kitchenpos.domain.value.Quantity;
 import kitchenpos.dto.request.order.ChangeOrderRequest;
 import kitchenpos.dto.request.order.CreateOrderRequest;
 import kitchenpos.dto.request.order.OrderLineItemsDto;
@@ -30,8 +32,8 @@ class OrderServiceTest extends ServiceTest {
         // given
         final int newOrderId = orderService.list().size() + 1;
         final List<OrderLineItemsDto> dto = List.of(
-                getRequest(OrderLineItemsDto.class, 1L, 1L, 1L, 1L),
-                getRequest(OrderLineItemsDto.class, 2L, 2L, 2L, 2L)
+                OrderLineItemsDto.from(new OrderLineItem(1L, 1L, 1L, new Quantity(1L))),
+                OrderLineItemsDto.from(new OrderLineItem(2L, 2L, 2L, new Quantity(2L)))
         );
         final CreateOrderRequest request = getRequest(CreateOrderRequest.class, 5L, dto);
         // when
@@ -48,16 +50,29 @@ class OrderServiceTest extends ServiceTest {
             final String name,
             final Long id,
             final List<Long> products
+    ) {
+
+
+        // when
+        assertThatThrownBy(() -> orderService.create(createOrderRequest(id,products)))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private CreateOrderRequest createOrderRequest(final Long id, final List<Long> products
     ) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         // given
         final List<OrderLineItemsDto> dto = new ArrayList<>();
         for (Long productId : products) {
-            dto.add(getRequest(OrderLineItemsDto.class, productId, productId, productId, productId));
+            dto.add(OrderLineItemsDto.from(new OrderLineItem(
+                                    productId,
+                                    productId,
+                                    productId,
+                                    new Quantity(productId)
+                            )
+                    )
+            );
         }
-        final CreateOrderRequest request = getRequest(CreateOrderRequest.class, id, dto);
-
-        // when
-        assertThatThrownBy(() -> orderService.create(request));
+        return getRequest(CreateOrderRequest.class, id, dto);
     }
 
     private static Stream<Arguments> orderTableProvider() {

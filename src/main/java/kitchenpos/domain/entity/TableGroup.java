@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.entity;
 
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.LAZY;
@@ -36,11 +36,6 @@ public class TableGroup {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
-    }
-
-    public TableGroup(Long id, LocalDateTime createdDate) {
-        this.id = id;
-        this.createdDate = createdDate;
     }
 
     public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {

@@ -1,6 +1,6 @@
 package kitchenpos.dto.request.order;
 
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.entity.OrderLineItem;
 
 public class OrderLineItemsDto {
 
@@ -8,8 +8,6 @@ public class OrderLineItemsDto {
     private Long orderId;
     private Long menuId;
     private Long quantity;
-
-    private OrderLineItemsDto(){}
 
     public OrderLineItemsDto(Long seq, Long orderId, Long menuId, Long quantity) {
         this.seq = seq;
@@ -23,7 +21,7 @@ public class OrderLineItemsDto {
                 orderLineItem.getSeq(),
                 orderLineItem.getOrderId(),
                 orderLineItem.getMenuId(),
-                orderLineItem.getQuantity()
+                orderLineItem.getQuantity().getValue()
         );
     }
 

@@ -4,8 +4,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.entity.OrderStatus;
+import kitchenpos.domain.entity.OrderTable;
+import kitchenpos.domain.value.NumberOfGuests;
 import kitchenpos.dto.request.table.ChangeEmptyRequest;
 import kitchenpos.dto.request.table.ChangeNumberOfGuestsRequest;
 import kitchenpos.dto.request.table.CreateOrderTableRequest;
@@ -28,7 +29,7 @@ public class TableService {
     @Transactional
     public OrderTableResponse create(final CreateOrderTableRequest request) {
         final OrderTable orderTable = OrderTable.builder()
-                .numberOfGuests(request.getNumberOfGuests())
+                .numberOfGuests(new NumberOfGuests(request.getNumberOfGuests()))
                 .build();
 
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
@@ -55,8 +56,10 @@ public class TableService {
                 orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
+
         final OrderTable orderTable = OrderTable.builder()
                 .id(orderTableId)
+                .numberOfGuests(savedOrderTable.getNumberOfGuests())
                 .empty(request.getEmpty())
                 .build();
 
@@ -67,11 +70,7 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final ChangeNumberOfGuestsRequest request) {
-        final int numberOfGuests = request.getNumberOfGuests();
-
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
+        final NumberOfGuests numberOfGuests = new NumberOfGuests(request.getNumberOfGuests());
 
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
@@ -82,7 +81,7 @@ public class TableService {
 
         final OrderTable orderTable = OrderTable.builder()
                 .id(orderTableId)
-                .numberOfGuests(request.getNumberOfGuests())
+                .numberOfGuests(numberOfGuests)
                 .build();
         return OrderTableResponse.from(orderTableRepository.save(orderTable));
     }

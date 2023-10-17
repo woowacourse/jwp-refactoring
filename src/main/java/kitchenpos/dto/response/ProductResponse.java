@@ -1,7 +1,7 @@
 package kitchenpos.dto.response;
 
 import java.math.BigDecimal;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.entity.Product;
 
 public class ProductResponse {
 
@@ -19,7 +19,7 @@ public class ProductResponse {
         return new ProductResponse(
                 product.getId(),
                 product.getName(),
-                product.getPrice()
+                product.getPriceValue()
         );
     }
 

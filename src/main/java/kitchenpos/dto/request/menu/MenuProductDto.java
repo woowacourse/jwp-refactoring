@@ -1,6 +1,6 @@
 package kitchenpos.dto.request.menu;
 
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.entity.MenuProduct;
 
 public class MenuProductDto {
 
@@ -21,7 +21,7 @@ public class MenuProductDto {
                 menuProduct.getSeq(),
                 menuProduct.getMenu(),
                 menuProduct.getProduct(),
-                menuProduct.getQuantity()
+                menuProduct.getQuantity().getValue()
         );
     }
 

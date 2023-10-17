@@ -3,7 +3,7 @@ package kitchenpos.dto.response;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Order;
+import kitchenpos.domain.entity.Order;
 import kitchenpos.dto.request.order.OrderLineItemsDto;
 
 public class OrderResponse {

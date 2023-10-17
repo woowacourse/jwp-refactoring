@@ -3,12 +3,12 @@ package kitchenpos.application;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.entity.Menu;
+import kitchenpos.domain.entity.MenuGroup;
+import kitchenpos.domain.entity.MenuProduct;
+import kitchenpos.domain.entity.Product;
+import kitchenpos.domain.value.Price;
 import kitchenpos.dto.request.menu.CreateMenuRequest;
 import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.repository.MenuGroupRepository;
@@ -36,11 +36,7 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final CreateMenuRequest request) {
-        final BigDecimal price = request.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
+        final Price price = new Price(request.getPrice());
 
         final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                 .orElseThrow(IllegalArgumentException::new);
@@ -53,12 +49,10 @@ public class MenuService {
         for (final MenuProduct menuProduct : menuProducts) {
             final Product product = productRepository.findById(menuProduct.getProduct())
                     .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+            sum = sum.add(product.getPrice().multiply(menuProduct.getQuantity()));
         }
 
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
+        price.isValidPrice(sum);
 
         final Menu menu = Menu.builder()
                 .name(request.getName())

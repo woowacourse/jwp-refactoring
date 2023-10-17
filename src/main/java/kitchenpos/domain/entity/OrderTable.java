@@ -1,14 +1,16 @@
-package kitchenpos.domain;
+package kitchenpos.domain.entity;
 
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import kitchenpos.domain.value.NumberOfGuests;
 
 @Entity
 public class OrderTable {
@@ -21,11 +23,11 @@ public class OrderTable {
     @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
 
-    @Column(nullable = false)
-    private int numberOfGuests;
+    @Embedded
+    private NumberOfGuests numberOfGuests;
 
     @Column(nullable = false)
-    private boolean empty;
+    private Boolean empty;
 
     public OrderTable() {
     }
@@ -45,15 +47,16 @@ public class OrderTable {
         return id;
     }
 
-    public Long getTableGroup() {
-        if (tableGroup == null) {
-            return null;
-        }
-        return tableGroup.getId();
+    public TableGroup getTableGroup() {
+        return tableGroup;
     }
 
-    public int getNumberOfGuests() {
+    public NumberOfGuests getNumberOfGuests() {
         return numberOfGuests;
+    }
+
+    public int getNumberOfGuestsValue(){
+        return numberOfGuests.getNumberOfGuests();
     }
 
     public boolean isEmpty() {
@@ -63,7 +66,7 @@ public class OrderTable {
     public static class Builder {
         private Long id;
         private TableGroup tableGroupId;
-        private int numberOfGuests;
+        private NumberOfGuests numberOfGuests;
         private boolean empty;
 
         public Builder id(Long id) {
@@ -76,7 +79,7 @@ public class OrderTable {
             return this;
         }
 
-        public Builder numberOfGuests(int numberOfGuests) {
+        public Builder numberOfGuests(NumberOfGuests numberOfGuests) {
             this.numberOfGuests = numberOfGuests;
             return this;
         }

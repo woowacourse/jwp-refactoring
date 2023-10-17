@@ -1,7 +1,7 @@
 package kitchenpos.repository;
 
 import java.util.List;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.entity.OrderLineItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
