@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static kitchenpos.fixture.MenuFixture.메뉴_생성;
-import static kitchenpos.fixture.MenuGroupFixture.메뉴_그룹_생성;
 import static kitchenpos.fixture.MenuProductFixture.메뉴_상품_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -46,7 +45,7 @@ class MenuServiceTest {
     @Test
     void create_메서드는_menu를_전달하면_menu를_저장하고_반환한다() {
         // given
-        final MenuGroup persistMenuGroup = menuGroupDao.save(메뉴_그룹_생성());
+        final MenuGroup persistMenuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
         final Product persistProduct = productDao.save(new Product("상품", BigDecimal.TEN));
         final MenuProduct menuProduct = 메뉴_상품_생성(persistProduct.getId());
         final Menu menu = 메뉴_생성(persistMenuGroup.getId(), Arrays.asList(menuProduct));
@@ -64,7 +63,7 @@ class MenuServiceTest {
     @ValueSource(strings = {"-1", "-2", "-3"})
     void create_메서드는_menu의_price가_음수라면_예외가_발생한다(final String invalidPrice) {
         // given
-        final MenuGroup persistMenuGroup = menuGroupDao.save(메뉴_그룹_생성());
+        final MenuGroup persistMenuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
         final Product persistProduct = productDao.save(new Product("상품", BigDecimal.TEN));
         final MenuProduct menuProduct = 메뉴_상품_생성(persistProduct.getId());
         final Menu invalidMenu = 메뉴_생성(
@@ -82,7 +81,7 @@ class MenuServiceTest {
     @Test
     void create_메서드는_menu의_price가_null이라면_예외가_발생한다() {
         // given
-        final MenuGroup persistMenuGroup = menuGroupDao.save(메뉴_그룹_생성());
+        final MenuGroup persistMenuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
         final Product persistProduct = productDao.save(new Product("상품", BigDecimal.TEN));
         final MenuProduct menuProduct = 메뉴_상품_생성(persistProduct.getId());
         final Menu invalidMenu = 메뉴_생성(
@@ -116,7 +115,7 @@ class MenuServiceTest {
     @Test
     void create_메서드는_menu의_menuPrice가_존재하지_않는다면_예외가_발생한다() {
         // given
-        final MenuGroup persistMenuGroup = menuGroupDao.save(메뉴_그룹_생성());
+        final MenuGroup persistMenuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
         final Product persistProduct = productDao.save(new Product("상품", BigDecimal.TEN));
         final Menu invalidMenu = 메뉴_생성(
                 persistMenuGroup.getId(),
@@ -133,7 +132,7 @@ class MenuServiceTest {
     @Test
     void list_메서드는_등록한_모든_menu를_반환한다() {
         // given
-        final MenuGroup persistMenuGroup = menuGroupDao.save(메뉴_그룹_생성());
+        final MenuGroup persistMenuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
         final Product persistProduct = productDao.save(new Product("상품", BigDecimal.TEN));
         final Menu expected = menuDao.save(
                 메뉴_생성(persistMenuGroup.getId(), Arrays.asList(메뉴_상품_생성(persistProduct.getId())))
