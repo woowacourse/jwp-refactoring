@@ -40,79 +40,64 @@ class TableGroupServiceTest extends ServiceTest {
         //given
         final OrderTable orderTable = orderTableDao.save(new OrderTable(null, 0, true));
         final OrderTable orderTable1 = orderTableDao.save(new OrderTable(null, 0, true));
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(),
-                List.of(orderTable, orderTable1));
 
         //when
-        final TableGroup saveTableGroup = tableGroupService.create(tableGroup);
+        final Long tableGroupId = tableGroupService.create(List.of(orderTable.getId(), orderTable1.getId()));
 
         //then
-        assertThat(saveTableGroup.getId()).isNotNull();
+        assertThat(tableGroupId).isNotNull();
     }
 
     @Test
     void 주문_테이블이_널인경우_예외가_발생한다() {
-        //given
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), null);
-
         //when
-        Assertions.assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        Assertions.assertThatThrownBy(() -> tableGroupService.create(null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 주문_테이블의_사이즈가_2미만인_경우_예외가_발생한다() {
         //given
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(),
-                List.of(new OrderTable(null, 0, true)));
+        final OrderTable orderTable = orderTableDao.save(new OrderTable(null, 0, true));
 
         //when
-        Assertions.assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        Assertions.assertThatThrownBy(() -> tableGroupService.create(List.of(orderTable.getId())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 주문_테이블의_사이즈가_DB에_저장된_사이즈와_다른_경우_예외가_발생한다() {
         //given
-        final TableGroup saveTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
+        final TableGroup saveTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
         final OrderTable orderTable = orderTableDao.save(new OrderTable(saveTableGroup.getId(), 0, true));
         final OrderTable orderTable1 = orderTableDao.save(new OrderTable(saveTableGroup.getId(), 0, true));
 
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(),
-                List.of(orderTable, orderTable, orderTable1));
-
         //when, then
-        Assertions.assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        Assertions.assertThatThrownBy(() -> tableGroupService.create(List.of(orderTable.getId(), orderTable1.getId())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 주문_테이블이_비어있지_않은_경우_예외가_발생한다() {
         //given
-        final TableGroup saveTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
+        final TableGroup saveTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
         final OrderTable orderTable = orderTableDao.save(new OrderTable(saveTableGroup.getId(), 0, false));
         final OrderTable orderTable1 = orderTableDao.save(new OrderTable(saveTableGroup.getId(), 0, false));
 
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(),
-                List.of(orderTable, orderTable1));
-
         //when, then
-        Assertions.assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        Assertions.assertThatThrownBy(() -> tableGroupService.create(List.of(orderTable.getId(), orderTable1.getId())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 주문_테이블의_단체_지정아이디가_널이_아닌_경우_예외가_발생한다() {
         //given
-        final TableGroup saveTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
+        final TableGroup saveTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
         final OrderTable orderTable = orderTableDao.save(new OrderTable(saveTableGroup.getId(), 0, true));
         final OrderTable orderTable1 = orderTableDao.save(new OrderTable(saveTableGroup.getId(), 0, true));
 
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(),
-                List.of(orderTable, orderTable1));
-
         //when, then
-        Assertions.assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        Assertions.assertThatThrownBy(() -> tableGroupService.create(List.of(orderTable.getId(), orderTable1.getId())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -121,12 +106,10 @@ class TableGroupServiceTest extends ServiceTest {
         //given
         final OrderTable orderTable = orderTableDao.save(new OrderTable(null, 0, true));
         final OrderTable orderTable1 = orderTableDao.save(new OrderTable(null, 0, true));
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(),
-                List.of(orderTable, orderTable1));
-        final TableGroup saveTableGroup = tableGroupService.create(tableGroup);
+        final Long tableGroupId = tableGroupService.create(List.of(orderTable.getId(), orderTable1.getId()));
 
         //when
-        tableGroupService.ungroup(saveTableGroup.getId());
+        tableGroupService.ungroup(tableGroupId);
 
         //then
         assertAll(
@@ -143,15 +126,13 @@ class TableGroupServiceTest extends ServiceTest {
         //given
         final OrderTable orderTable = orderTableDao.save(new OrderTable(null, 0, true));
         final OrderTable orderTable1 = orderTableDao.save(new OrderTable(null, 0, true));
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(),
-                List.of(orderTable, orderTable1));
-        final TableGroup saveTableGroup = tableGroupService.create(tableGroup);
+        final Long tableGroupId = tableGroupService.create(List.of(orderTable.getId(), orderTable1.getId()));
 
         final Order order = new Order(orderTable.getId(), orderStatus.name(), LocalDateTime.now());
         orderDao.save(order);
 
         //when, then
-        assertThatThrownBy(() -> tableGroupService.ungroup(saveTableGroup.getId()))
+        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

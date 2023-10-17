@@ -39,4 +39,28 @@ class OrderRepositoryTest {
         //then
         assertThat(result).isFalse();
     }
+
+    @Test
+    void existsByOrderTableIdInAndOrderStatusIn() {
+        //given
+        orderRepository.save(new Order(1L, "COOKING", LocalDateTime.now()));
+
+        //when
+        final boolean result = orderRepository.existsByOrderTableIdInAndOrderStatusIn(List.of(1L), List.of("COOKING"));
+
+        //then
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void existsByOrderTableIdInAndOrderStatusInIfNotMatchOrderTableId() {
+        //given
+        orderRepository.save(new Order(1L, "COOKING", LocalDateTime.now()));
+
+        //when
+        final boolean result = orderRepository.existsByOrderTableIdInAndOrderStatusIn(List.of(3L), List.of("COOKING"));
+
+        //then
+        assertThat(result).isFalse();
+    }
 }

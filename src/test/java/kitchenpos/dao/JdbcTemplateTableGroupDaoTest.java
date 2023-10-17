@@ -22,7 +22,7 @@ class JdbcTemplateTableGroupDaoTest extends RepositoryTest {
     @Test
     void saveAndFindById() {
         //when
-        final TableGroup tableGroup = jdbcTemplateTableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
+        final TableGroup tableGroup = jdbcTemplateTableGroupDao.save(new TableGroup(LocalDateTime.now()));
 
         //then
         assertThat(jdbcTemplateTableGroupDao.findById(tableGroup.getId())).isNotNull();

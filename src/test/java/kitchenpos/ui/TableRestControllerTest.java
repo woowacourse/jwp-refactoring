@@ -76,7 +76,7 @@ class TableRestControllerTest extends ControllerTest {
 
     @Test
     void OrderTable의_손님_수를_변경하면_200을_반환한다() {
-        final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
+        final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
         final OrderTable 주문_테이블 = orderTableRepository.save(new OrderTable(tableGroup.getId(), 0, false));
         final var 요청_준비 = RestAssured.given()
                 .body(new OrderTable(null, 0, false))

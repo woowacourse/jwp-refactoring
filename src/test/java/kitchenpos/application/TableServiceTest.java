@@ -73,7 +73,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 주문_테이블의_단체_지정_id가_널이_아니면_예외가_발생한다() {
         //given
-        final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
+        final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 0, true));
 
         //when, then
@@ -85,7 +85,7 @@ class TableServiceTest extends ServiceTest {
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     void 주문_상태가_COOKING이나MEAL이면_예외가_발생한다(OrderStatus orderStatus) {
         //given
-        final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
+        final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 0, true));
         orderRepository.save(new Order(orderTable.getId(), orderStatus.name(), LocalDateTime.now()));
 
@@ -98,7 +98,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 주문_테이블의_손님_수를_변경할_수_있다() {
         //given
-        final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
+        final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 0, false));
 
         //when
@@ -112,7 +112,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 손님의_수가_0미만인_경우_예외가_발생한다() {
         //given
-        final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
+        final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 0, false));
 
         //when, then
@@ -124,7 +124,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 주문_테이블이_비어있으면_예외가_발생한다() {
         //given
-        final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
+        final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 0, true));
 
         //when, then
