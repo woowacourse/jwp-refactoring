@@ -3,7 +3,7 @@ package kitchenpos.application.dto;
 import java.math.BigDecimal;
 import kitchenpos.domain.Product;
 
-public class CreateProductRequest {
+public class CreateProductCommand {
 
     private String name;
     private BigDecimal price;
@@ -12,10 +12,10 @@ public class CreateProductRequest {
         return new Product(name, price);
     }
 
-    public CreateProductRequest() {
+    public CreateProductCommand() {
     }
 
-    public CreateProductRequest(final String name, final BigDecimal price) {
+    public CreateProductCommand(final String name, final BigDecimal price) {
         this.name = name;
         this.price = price;
     }

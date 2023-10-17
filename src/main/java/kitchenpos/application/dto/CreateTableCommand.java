@@ -2,15 +2,15 @@ package kitchenpos.application.dto;
 
 import kitchenpos.domain.OrderTable;
 
-public class CreateTableRequest {
+public class CreateTableCommand {
 
     private int numberOfGuests;
     private boolean empty;
 
-    public CreateTableRequest() {
+    public CreateTableCommand() {
     }
 
-    public CreateTableRequest(final int numberOfGuests, final boolean empty) {
+    public CreateTableCommand(final int numberOfGuests, final boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -18,7 +18,7 @@ public class CreateTableRequest {
     public OrderTable toDomain() {
         OrderTable orderTable = new OrderTable();
 
-        orderTable.setNumberOfGuests(numberOfGuests);
+        orderTable.changeNumberOfGuests(numberOfGuests);
         orderTable.setEmpty(empty);
         orderTable.setId(null);
         orderTable.setTableGroupId(null);

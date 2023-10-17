@@ -1,13 +1,13 @@
 package kitchenpos.application.dto;
 
-public class ChangeTableEmptyRequest {
+public class ChangeTableEmptyCommand {
     private Long tableId;
     private boolean empty;
 
-    public ChangeTableEmptyRequest() {
+    public ChangeTableEmptyCommand() {
     }
 
-    public ChangeTableEmptyRequest(final Long tableId, final boolean empty) {
+    public ChangeTableEmptyCommand(final Long tableId, final boolean empty) {
         this.tableId = tableId;
         this.empty = empty;
     }

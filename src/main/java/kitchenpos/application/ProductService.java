@@ -1,14 +1,12 @@
 package kitchenpos.application;
 
-import kitchenpos.application.dto.CreateProductRequest;
+import kitchenpos.application.dto.CreateProductCommand;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class ProductService {
@@ -19,7 +17,7 @@ public class ProductService {
     }
 
     @Transactional
-    public Product create(final CreateProductRequest request) {
+    public Product create(final CreateProductCommand request) {
         Product product = request.toDomain();
         return productDao.save(product);
     }

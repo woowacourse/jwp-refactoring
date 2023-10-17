@@ -1,8 +1,9 @@
 package kitchenpos.application;
 
 import java.util.List;
-import kitchenpos.application.dto.ChangeTableEmptyRequest;
-import kitchenpos.application.dto.CreateTableRequest;
+import kitchenpos.application.dto.ChangeNumberOfQuestsCommand;
+import kitchenpos.application.dto.ChangeTableEmptyCommand;
+import kitchenpos.application.dto.CreateTableCommand;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -31,7 +32,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 테이블을_생성할_수_있다() {
         //given
-        CreateTableRequest 테이블_생성_요청 = new CreateTableRequest();
+        CreateTableCommand 테이블_생성_요청 = new CreateTableCommand();
 
         //when
         OrderTable 생성된_주문 = tableService.create(테이블_생성_요청);
@@ -61,10 +62,10 @@ class TableServiceTest extends ServiceTest {
         void 성공() {
             //given
             OrderTable 테이블 = empty가_아닌_테이블_조회();
-            테이블.setNumberOfGuests(9);
+            ChangeNumberOfQuestsCommand 커맨드 = new ChangeNumberOfQuestsCommand(테이블.getId(), 9);
 
             //when
-            OrderTable 변경된_테이블 = tableService.changeNumberOfGuests(테이블.getId(), 테이블);
+            OrderTable 변경된_테이블 = tableService.changeNumberOfGuests(커맨드);
 
             //then
             assertThat(변경된_테이블.getNumberOfGuests()).isEqualTo(9);
@@ -81,10 +82,10 @@ class TableServiceTest extends ServiceTest {
         void 인원이_음수면_예외가_발생한다() {
             //given
             OrderTable 테이블 = orderTableDao.findAll().get(0);
-            테이블.setNumberOfGuests(-1);
+            ChangeNumberOfQuestsCommand 커맨드 = new ChangeNumberOfQuestsCommand(테이블.getId(), -1);
 
             //expect
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(테이블.getId(), 테이블))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(커맨드))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -93,11 +94,11 @@ class TableServiceTest extends ServiceTest {
             //given
             OrderTable 테이블_엔티티 = new OrderTable();
             OrderTable 테이블 = orderTableDao.save(테이블_엔티티);
-            Long 삭제된_테이블_아이디 = 테이블.getId();
             테이블_삭제(테이블);
+            ChangeNumberOfQuestsCommand 커맨드 = new ChangeNumberOfQuestsCommand(테이블.getId(), 1);
 
             //expect
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(삭제된_테이블_아이디, 테이블_엔티티))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(커맨드))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -111,10 +112,11 @@ class TableServiceTest extends ServiceTest {
             OrderTable 테이블 = orderTableDao.findAll().get(0);
             테이블.setEmpty(true);
             orderTableDao.save(테이블);
-            테이블.setNumberOfGuests(9);
+
+            ChangeNumberOfQuestsCommand 커맨드 = new ChangeNumberOfQuestsCommand(테이블.getId(), 9);
 
             //expect
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(테이블.getId(), 테이블))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(커맨드))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -128,7 +130,7 @@ class TableServiceTest extends ServiceTest {
             OrderTable 테이블 = new OrderTable();
             테이블.setEmpty(false);
             OrderTable 생성된_테이블 = orderTableDao.save(테이블);
-            ChangeTableEmptyRequest 테이블_비우기_요청 = new ChangeTableEmptyRequest(생성된_테이블.getId(), true);
+            ChangeTableEmptyCommand 테이블_비우기_요청 = new ChangeTableEmptyCommand(생성된_테이블.getId(), true);
 
             //when
             OrderTable 변경된_테이블 = tableService.changeEmpty(테이블_비우기_요청);
@@ -144,7 +146,7 @@ class TableServiceTest extends ServiceTest {
             테이블.setEmpty(false);
             OrderTable 생성된_테이블 = orderTableDao.save(테이블);
             주문만들기(생성된_테이블);
-            ChangeTableEmptyRequest 테이블_비우기_요청 = new ChangeTableEmptyRequest(생성된_테이블.getId(), true);
+            ChangeTableEmptyCommand 테이블_비우기_요청 = new ChangeTableEmptyCommand(생성된_테이블.getId(), true);
 
             //expect
             assertThatThrownBy(() -> tableService.changeEmpty(테이블_비우기_요청))
@@ -180,7 +182,7 @@ class TableServiceTest extends ServiceTest {
             테이블.setTableGroupId(생성된_그룹.getId());
             OrderTable 생성된_테이블 = orderTableDao.save(테이블);
 
-            ChangeTableEmptyRequest 테이블_비우기_요청 = new ChangeTableEmptyRequest(생성된_테이블.getId(), true);
+            ChangeTableEmptyCommand 테이블_비우기_요청 = new ChangeTableEmptyCommand(생성된_테이블.getId(), true);
 
             //expect
             assertThatThrownBy(() -> tableService.changeEmpty(테이블_비우기_요청))
