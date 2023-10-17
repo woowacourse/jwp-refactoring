@@ -37,6 +37,9 @@ public class Order {
     }
 
     public void setOrderStatus(final String orderStatus) {
+        if (this.orderStatus.equals(orderStatus)) {
+            throw new IllegalArgumentException("같은 상태로 변경할 수 없습니다.");
+        }
         this.orderStatus = orderStatus;
     }
 

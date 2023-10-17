@@ -2,10 +2,10 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.application.dto.ChangeOrderStatusCommand;
 import kitchenpos.application.dto.CreateOrderCommand;
 import kitchenpos.application.dto.CreateOrderCommand.OrderLineItemRequest;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Nested;
@@ -144,20 +144,33 @@ class OrderServiceTest extends ServiceTest {
         void 성공() {
             //given
             Order 주문 = 주문_생성();
-            주문.setOrderStatus(OrderStatus.COOKING.name());
+
+            ChangeOrderStatusCommand 커맨드 = new ChangeOrderStatusCommand(주문.getId(),
+                    OrderStatus.MEAL.name());
 
             //when
-            Order 실제주문 = orderService.changeOrderStatus(주문.getId(), 주문);
+            Order 실제주문 = orderService.changeOrderStatus(커맨드);
 
             //then
-            assertThat(실제주문.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+            assertThat(실제주문.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
         }
 
         @Test
         void 주문이_존재하지_않으면_예외가_발생한다() {
+            OrderTable 테이블_엔티티 = new OrderTable();
+            OrderTable 테이블 = orderTableDao.save(테이블_엔티티);
+            Long 삭제된_테이블_아이디 = 테이블.getId();
+            테이블_삭제(테이블);
+
+            ChangeOrderStatusCommand 커맨드 = new ChangeOrderStatusCommand(삭제된_테이블_아이디,
+                    OrderStatus.COOKING.name());
             //expect
-            assertThatThrownBy(() -> orderService.changeOrderStatus(1000000L, new Order(null, null, null, null, null)))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(커맨드))
                     .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        private void 테이블_삭제(OrderTable 테이블) {
+            jdbcTemplate.execute("delete from order_table where id = " + 테이블.getId());
         }
 
         @Test
@@ -167,8 +180,11 @@ class OrderServiceTest extends ServiceTest {
             주문.setOrderStatus(OrderStatus.COMPLETION.name());
             orderDao.save(주문);
 
+            ChangeOrderStatusCommand 커맨드 = new ChangeOrderStatusCommand(주문.getId(),
+                    OrderStatus.COMPLETION.name());
+
             //expect
-            assertThatThrownBy(() -> orderService.changeOrderStatus(주문.getId(), 주문))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(커맨드))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
