@@ -2,7 +2,6 @@ package kitchenpos.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -34,19 +33,22 @@ class MenuProductDaoTest {
 
     @BeforeEach
     void setUp() {
-        MenuGroup menuGroupEntity = new MenuGroup();
-        menuGroupEntity.setName("샐러드");
+        MenuGroup menuGroupEntity = MenuGroup.builder()
+                .name("샐러드")
+                .build();
         MenuGroup menuGroup = menuGroupDao.save(menuGroupEntity);
 
-        Menu menuEntity = new Menu();
-        menuEntity.setName("닭가슴살");
-        menuEntity.setPrice(BigDecimal.valueOf(1_000));
-        menuEntity.setMenuGroupId(menuGroup.getId());
+        Menu menuEntity = Menu.builder()
+                .name("닭가슴살")
+                .price(1_000)
+                .menuGroup(menuGroup)
+                .build();
         menu = menuDao.save(menuEntity);
 
-        Product productEntity = new Product();
-        productEntity.setName("닭가슴살 볼");
-        productEntity.setPrice(BigDecimal.valueOf(3_000));
+        Product productEntity = Product.builder()
+                .name("닭가슴살 볼")
+                .price(3_000)
+                .build();
         product = productDao.save(productEntity);
     }
 
@@ -56,7 +58,7 @@ class MenuProductDaoTest {
 
         MenuProduct savedMenuProduct = menuProductDao.save(menuProductEntity);
 
-        assertThat(savedMenuProduct.getSeq()).isPositive();
+        assertThat(savedMenuProduct.getId()).isPositive();
     }
 
     @Test
@@ -64,7 +66,7 @@ class MenuProductDaoTest {
         MenuProduct menuProductEntity = createMenuProduct();
         MenuProduct savedMenuProduct = menuProductDao.save(menuProductEntity);
 
-        assertThat(menuProductDao.findById(savedMenuProduct.getSeq())).isPresent();
+        assertThat(menuProductDao.findById(savedMenuProduct.getId())).isPresent();
     }
 
     @Test
@@ -94,10 +96,10 @@ class MenuProductDaoTest {
     }
 
     private MenuProduct createMenuProduct() {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(menu.getId());
-        menuProduct.setProductId(product.getId());
-        menuProduct.setQuantity(10);
-        return menuProduct;
+        return MenuProduct.builder()
+                .menu(menu)
+                .product(product)
+                .quantity(10)
+                .build();
     }
 }
