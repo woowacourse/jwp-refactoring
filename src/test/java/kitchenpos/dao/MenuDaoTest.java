@@ -2,7 +2,6 @@ package kitchenpos.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -24,8 +23,9 @@ class MenuDaoTest {
 
     @BeforeEach
     void setUp() {
-        MenuGroup menuGroupEntity = new MenuGroup();
-        menuGroupEntity.setName("반려식물");
+        MenuGroup menuGroupEntity = MenuGroup.builder()
+                .name("반려 식물")
+                .build();
         menuGroup = menuGroupDao.save(menuGroupEntity);
     }
 
@@ -72,10 +72,10 @@ class MenuDaoTest {
     }
 
     private Menu createMenu() {
-        Menu menu = new Menu();
-        menu.setName("스투키");
-        menu.setPrice(BigDecimal.valueOf(10_000));
-        menu.setMenuGroupId(menuGroup.getId());
-        return menu;
+        return Menu.builder()
+                .name("스투키")
+                .price(10_000)
+                .menuGroup(menuGroup)
+                .build();
     }
 }
