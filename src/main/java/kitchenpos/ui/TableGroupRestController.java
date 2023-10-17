@@ -28,6 +28,5 @@ public class TableGroupRestController {
     public ResponseEntity<Void> ungroup(@PathVariable final Long tableGroupId) {
         tableGroupService.ungroup(tableGroupId);
         return ResponseEntity.noContent().build();
-
     }
 }
