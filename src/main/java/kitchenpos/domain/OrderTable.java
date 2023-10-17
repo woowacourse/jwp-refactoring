@@ -1,40 +1,96 @@
 package kitchenpos.domain;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import kitchenpos.exception.NotEnoughGuestsException;
+import kitchenpos.exception.OrderTableEmptyException;
+import kitchenpos.exception.OrderTableNotEmptyException;
+import kitchenpos.exception.TableGroupExistsException;
+
+@Table(name = "order_table")
+@Entity
 public class OrderTable {
+
+    private static final int NUMBER_OF_GUESTS_LOWER_LIMIT = 0;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long tableGroupId;
+
+    @ManyToOne
+    @JoinColumn(name = "table_group_id")
+    private TableGroup tableGroup;
+
     private int numberOfGuests;
+
     private boolean empty;
 
-    public Long getId() {
-        return id;
+    protected OrderTable() {
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public Long getTableGroupId() {
-        return tableGroupId;
-    }
-
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-    }
-
-    public int getNumberOfGuests() {
-        return numberOfGuests;
-    }
-
-    public void setNumberOfGuests(final int numberOfGuests) {
+    public OrderTable(TableGroup tableGroup, int numberOfGuests, boolean empty) {
+        this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
+    public void changeTableGroup(TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+    }
+
+    public void changeEmpty(boolean empty) {
+        validateTableGroupNotExists();
+        this.empty = empty;
+    }
+
+    public void validateTableGroupNotExists() {
+        if (tableGroup != null) {
+            throw new TableGroupExistsException();
+        }
+    }
+
+    public void changeNumberOfGuests(int numberOfGuests) {
+        validateIsNotEmpty();
+        validateNumberOfGuests(numberOfGuests);
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    public void validateIsNotEmpty() {
+        if (isEmpty()) {
+            throw new OrderTableEmptyException();
+        }
+    }
+
+    private void validateNumberOfGuests(int numberOfGuests) {
+        if (numberOfGuests < NUMBER_OF_GUESTS_LOWER_LIMIT) {
+            throw new NotEnoughGuestsException();
+        }
+    }
+
+    public void validateIsEmpty() {
+        if (!isEmpty()) {
+            throw new OrderTableNotEmptyException();
+        }
     }
 
     public boolean isEmpty() {
         return empty;
     }
 
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
+    public Long getId() {
+        return id;
+    }
+
+    public TableGroup getTableGroup() {
+        return tableGroup;
+    }
+
+    public int getNumberOfGuests() {
+        return numberOfGuests;
     }
 }

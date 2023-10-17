@@ -3,9 +3,27 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.request.ChangeOrderStatusRequest;
+import kitchenpos.dto.request.CreateOrderRequest;
+import kitchenpos.dto.request.OrderLineItemRequest;
+import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.exception.MenuNotFoundException;
+import kitchenpos.exception.OrderIsCompletedException;
+import kitchenpos.exception.OrderLineEmptyException;
+import kitchenpos.exception.OrderNotFoundException;
+import kitchenpos.exception.OrderTableNotFoundException;
+import kitchenpos.fixture.MenuFixture;
+import kitchenpos.fixture.MenuGroupFixture;
+import kitchenpos.fixture.OrderFixture;
+import kitchenpos.fixture.OrderTableFixture;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 
@@ -15,136 +33,159 @@ class OrderServiceTest extends ServiceTestContext {
     @Test
     void 주문_항목이_없다면_예외를_던진다() {
         // given
-        Order order = new Order();
-        order.setOrderLineItems(List.of());
-        order.setOrderTableId(savedOrderTable.getId());
+        OrderTable orderTable = OrderTableFixture.of(null, 1, false);
+        orderTableRepository.save(orderTable);
+
+        CreateOrderRequest request = new CreateOrderRequest(orderTable.getId(),
+                List.of());
 
         // when, then
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(request))
+                .isInstanceOf(OrderLineEmptyException.class);
     }
 
     @Test
     void 주문_항목의_메뉴가_존재하지_않는다면_예외를_던진다() {
         // given
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(Long.MAX_VALUE);
-        orderLineItem.setQuantity(1L);
+        OrderTable orderTable = OrderTableFixture.of(null, 1, false);
+        orderTableRepository.save(orderTable);
 
-        Order order = new Order();
-        order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderTableId(savedOrderTable.getId());
+        CreateOrderRequest request = new CreateOrderRequest(orderTable.getId(),
+                List.of(new OrderLineItemRequest(Long.MAX_VALUE, 1L)));
 
         // when, then
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(request))
+                .isInstanceOf(MenuNotFoundException.class);
     }
 
     @Test
     void 주문_테이블이_존재하지_않는다면_예외를_던진다() {
         // given
-        Order order = new Order();
-        order.setOrderLineItems(List.of(savedOrderLineItem));
-        order.setOrderTableId(Long.MAX_VALUE);
+        MenuGroup menuGroup = MenuGroupFixture.from("name");
+        Menu menu = MenuFixture.of("name", BigDecimal.valueOf(1000L), menuGroup);
+
+        menuGroupRepository.save(menuGroup);
+        menuRepository.save(menu);
+
+        CreateOrderRequest request = new CreateOrderRequest(Long.MAX_VALUE,
+                List.of(new OrderLineItemRequest(menu.getId(), 1L)));
 
         // when, then
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(request))
+                .isInstanceOf(OrderTableNotFoundException.class);
     }
 
     @Test
     void 주문은_생성되면_COOKING_상태로_설정된다() {
         // given
-        Order order = new Order();
-        order.setOrderLineItems(List.of(savedOrderLineItem));
-        order.setOrderTableId(savedOrderTable.getId());
+        MenuGroup menuGroup = MenuGroupFixture.from("name");
+        Menu menu = MenuFixture.of("name", BigDecimal.valueOf(1000L), menuGroup);
+        OrderTable orderTable = OrderTableFixture.of(null, 1, false);
+
+        menuGroupRepository.save(menuGroup);
+        menuRepository.save(menu);
+        orderTableRepository.save(orderTable);
+
+        CreateOrderRequest request = new CreateOrderRequest(orderTable.getId(),
+                List.of(new OrderLineItemRequest(menu.getId(), 1L)));
 
         // when
-        Order createdOrder = orderService.create(order);
+        OrderResponse response = orderService.create(request);
 
         // then
-        assertThat(createdOrder.getOrderStatus()).isEqualTo("COOKING");
+        assertThat(response.getOrderStatus()).isEqualTo("COOKING");
     }
 
     @Test
     void 주문을_정상적으로_생성하는_경우_생성한_주문이_반환된다() {
         // given
-        Order order = new Order();
-        order.setOrderLineItems(List.of(savedOrderLineItem));
-        order.setOrderTableId(savedOrderTable.getId());
+        MenuGroup menuGroup = MenuGroupFixture.from("name");
+        Menu menu = MenuFixture.of("name", BigDecimal.valueOf(1000L), menuGroup);
+        OrderTable orderTable = OrderTableFixture.of(null, 1, false);
+
+        menuGroupRepository.save(menuGroup);
+        menuRepository.save(menu);
+        orderTableRepository.save(orderTable);
+
+        CreateOrderRequest request = new CreateOrderRequest(orderTable.getId(),
+                List.of(new OrderLineItemRequest(menu.getId(), 1L)));
 
         // when
-        Order createdOrder = orderService.create(order);
+        OrderResponse response = orderService.create(request);
 
         // then
-        assertThat(createdOrder.getId()).isNotNull();
+        assertThat(response.getId()).isNotNull();
     }
 
     @Test
     void 전체_주문을_조회할_수_있다() {
         // given
-        Order order = new Order();
-        order.setOrderLineItems(List.of(savedOrderLineItem));
-        order.setOrderTableId(savedOrderTable.getId());
+        MenuGroup menuGroup = MenuGroupFixture.from("name");
+        Menu menu = MenuFixture.of("name", BigDecimal.valueOf(1000L), menuGroup);
+        OrderTable orderTable = OrderTableFixture.of(null, 1, false);
 
-        orderService.create(order);
+        menuGroupRepository.save(menuGroup);
+        menuRepository.save(menu);
+        orderTableRepository.save(orderTable);
+
+        CreateOrderRequest request = new CreateOrderRequest(orderTable.getId(),
+                List.of(new OrderLineItemRequest(menu.getId(), 1L)));
+
+        orderService.create(request);
 
         // when
-        List<Order> orders = orderService.list();
+        List<OrderResponse> response = orderService.findAll();
 
         // then
-        assertThat(orders).hasSize(2);
+        assertThat(response).hasSize(1);
     }
 
     @Test
     void 주문이_존재하지_않으면_상태를_변경하려_할_때_예외를_던진다() {
         // given
         Long orderId = Long.MAX_VALUE;
-
-        Order order = new Order();
-        order.setOrderLineItems(List.of(savedOrderLineItem));
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderStatus("MEAL");
+        ChangeOrderStatusRequest request = new ChangeOrderStatusRequest("MEAL");
 
         // when, then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, order))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, request))
+                .isInstanceOf(OrderNotFoundException.class);
     }
 
     @Test
     void 이미_완료된_주문이라면_상태를_변경할_수_없다() {
         // given
-        Long orderId = savedOrder.getId();
+        OrderTable orderTable = OrderTableFixture.of(null, 1, false);
+        Order order = OrderFixture.of(orderTable, OrderStatus.MEAL, LocalDateTime.now());
 
-        Order order = new Order();
-        order.setOrderLineItems(List.of(savedOrderLineItem));
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderStatus("COMPLETION");
+        orderTableRepository.save(orderTable);
+        orderRepository.save(order);
 
-        orderService.changeOrderStatus(orderId, order);
+        ChangeOrderStatusRequest request = new ChangeOrderStatusRequest("COMPLETION");
+        orderService.changeOrderStatus(order.getId(), request);
 
         // when, then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, order))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), request))
+                .isInstanceOf(OrderIsCompletedException.class);
     }
 
     @Test
     void 주문을_정상적으로_변경하는_경우_변경한_주문이_반환된다() {
         // given
-        Long orderId = savedOrder.getId();
+        OrderTable orderTable = OrderTableFixture.of(null, 1, false);
+        Order order = OrderFixture.of(orderTable, OrderStatus.MEAL, LocalDateTime.now());
 
-        Order order = new Order();
-        order.setOrderLineItems(List.of(savedOrderLineItem));
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderStatus("COMPLETION");
+        orderTableRepository.save(orderTable);
+        orderRepository.save(order);
+
+        ChangeOrderStatusRequest request = new ChangeOrderStatusRequest("COMPLETION");
 
         // when
-        Order changedOrder = orderService.changeOrderStatus(orderId, order);
+        OrderResponse response = orderService.changeOrderStatus(order.getId(), request);
 
         // then
         SoftAssertions.assertSoftly(softly -> {
-            softly.assertThat(changedOrder.getId()).isNotNull();
-            assertThat(changedOrder.getOrderStatus()).isEqualTo("COMPLETION");
+            softly.assertThat(response.getId()).isNotNull();
+            assertThat(response.getOrderStatus()).isEqualTo("COMPLETION");
         });
     }
 }

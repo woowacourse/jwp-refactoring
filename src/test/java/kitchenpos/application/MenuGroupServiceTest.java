@@ -3,7 +3,8 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.request.CreateMenuGroupRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -12,28 +13,25 @@ class MenuGroupServiceTest extends ServiceTestContext {
     @Test
     void 메뉴_그룹을_생성할_수_있다() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("menuGroup");
+        CreateMenuGroupRequest request = new CreateMenuGroupRequest("menuGroup");
 
         // when
-        MenuGroup created = menuGroupService.create(menuGroup);
+        MenuGroupResponse response = menuGroupService.create(request);
 
         // then
-        assertThat(created.getId()).isNotNull();
+        assertThat(response.getId()).isNotNull();
     }
 
     @Test
     void 모든_메뉴_그룹을_조회할_수_있다() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("menuGroup");
-
-        menuGroupService.create(menuGroup);
+        CreateMenuGroupRequest request = new CreateMenuGroupRequest("menuGroup");
+        menuGroupService.create(request);
 
         // when
-        List<MenuGroup> menuGroups = menuGroupService.list();
+        List<MenuGroupResponse> response = menuGroupService.findAll();
 
         // then
-        assertThat(menuGroups).hasSize(2);
+        assertThat(response).hasSize(1);
     }
 }
