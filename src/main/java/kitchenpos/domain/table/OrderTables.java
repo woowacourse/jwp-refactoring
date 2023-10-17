@@ -35,6 +35,10 @@ public class OrderTables {
                 .anyMatch(OrderTable::hasCookingOrMealOrder)) {
             throw new IllegalArgumentException();
         }
+        if (collection.stream()
+                .anyMatch(OrderTable::hasNoTableGroup)) {
+            throw new IllegalArgumentException();
+        }
         for (OrderTable orderTable : collection) {
             orderTable.unGroup();
         }

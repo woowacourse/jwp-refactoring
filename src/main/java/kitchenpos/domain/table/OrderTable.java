@@ -49,6 +49,10 @@ public class OrderTable {
         return this.tableGroupId != null;
     }
 
+    public boolean hasNoTableGroup() {
+        return this.tableGroupId == null;
+    }
+
     public void unGroup() {
         this.tableGroupId = null;
         this.empty = true;
