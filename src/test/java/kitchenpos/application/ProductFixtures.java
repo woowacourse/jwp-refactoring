@@ -14,6 +14,6 @@ public class ProductFixtures {
     }
 
     public static Product 마라떡볶이() {
-        return new Product(3L, "마라떡볶이", BigDecimal.valueOf(900));
+        return new Product(3L, "마라떡볶이", BigDecimal.valueOf(1100));
     }
 }

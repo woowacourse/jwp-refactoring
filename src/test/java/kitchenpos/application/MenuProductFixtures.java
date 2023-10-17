@@ -14,4 +14,9 @@ public class MenuProductFixtures {
         Product 짜장떡볶이 = ProductFixtures.짜장떡볶이();
         return new MenuProduct(2L, 1L, 짜장떡볶이.getId(), 1L);
     }
+
+    public static MenuProduct 메뉴상품_마라떡볶이() {
+        Product 마라떡볶이 = ProductFixtures.마라떡볶이();
+        return new MenuProduct(3L, 1L, 마라떡볶이.getId(), 1L);
+    }
 }
