@@ -2,7 +2,6 @@ package kitchenpos.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
@@ -47,9 +46,9 @@ class ProductDaoTest {
     }
 
     private Product createProductEntity() {
-        Product product = new Product();
-        product.setName("juice");
-        product.setPrice(BigDecimal.valueOf(1_000_000_000));
-        return product;
+        return Product.builder()
+                .name("juice")
+                .price(1_000_000_000)
+                .build();
     }
 }
