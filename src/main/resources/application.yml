@@ -1,0 +1,18 @@
+logging:
+  level:
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+spring:
+  h2:
+    console:
+      enabled: true
+  datasource:
+    generate-unique-name: false
+  flyway:
+    enabled: true
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
