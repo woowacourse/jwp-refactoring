@@ -21,7 +21,6 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.persistence.MenuGroupRepository;
-import kitchenpos.persistence.MenuProductRepository;
 import kitchenpos.persistence.MenuRepository;
 import kitchenpos.persistence.OrderRepository;
 import kitchenpos.persistence.OrderTableRepository;
@@ -45,9 +44,6 @@ class OrderServiceTest extends ServiceTest {
 
     @Autowired
     private ProductRepository productRepository;
-
-    @Autowired
-    private MenuProductRepository menuProductRepository;
 
     @Autowired
     private MenuRepository menuRepository;

@@ -30,10 +30,10 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void 상품을_저장_성공() {
         // given
-        ProductCreateRequest expected = new ProductCreateRequest("고추바사삭", BigDecimal.valueOf(10000L));
+        var request = new ProductCreateRequest("고추바사삭", BigDecimal.valueOf(10000L));
 
         // when
-        Product actual = productService.create(expected);
+        Product actual = productService.create(request);
 
         // then
         assertThat(actual.getId()).isPositive();
@@ -43,10 +43,10 @@ class ProductServiceTest extends ServiceTest {
     @ValueSource(longs = {-10000L, -1L})
     void 상품_저장_실패_가격이_음수(Long price) {
         // given
-        ProductCreateRequest given = new ProductCreateRequest("고추바사삭", BigDecimal.valueOf(price));
+        var request = new ProductCreateRequest("고추바사삭", BigDecimal.valueOf(price));
 
         // when && then
-        assertThatThrownBy(() -> productService.create(given))
+        assertThatThrownBy(() -> productService.create(request))
             .isInstanceOf(IllegalArgumentException.class);
     }
 

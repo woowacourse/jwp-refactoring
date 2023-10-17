@@ -44,7 +44,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 주문테이블을_저장() {
         // given
-        OrderTableCreateRequest request = new OrderTableCreateRequest(4, true);
+        var request = new OrderTableCreateRequest(4, true);
 
         // when
         OrderTable actual = tableService.create(request);
@@ -69,8 +69,7 @@ class TableServiceTest extends ServiceTest {
         List<OrderTable> actual = tableService.list();
 
         // then
-        assertThat(actual)
-            .usingRecursiveComparison()
+        assertThat(actual).usingRecursiveComparison()
             .isEqualTo(expected);
     }
 
@@ -112,7 +111,7 @@ class TableServiceTest extends ServiceTest {
         void 특정_테이블그룹에_속한다면_예외() {
             // given
             Long tableGroupId = tableGroupRepository.save(new TableGroup()).getId();
-            Long givenId = orderTableRepository.save(new OrderTable(tableGroupId,3, true)).getId();
+            Long givenId = orderTableRepository.save(new OrderTable(tableGroupId, 3, true)).getId();
 
             // when && then
             assertThatThrownBy(() -> tableService.changeEmpty(givenId, false))
@@ -125,7 +124,8 @@ class TableServiceTest extends ServiceTest {
         void 해당하는_주문테이블의_주문이_요리중이면_예외() {
             // given
             OrderTable orderTable = orderTableRepository.save(new OrderTable(5, false));
-            orderRepository.save(new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(1L, 5))));
+            orderRepository.save(
+                new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(1L, 5))));
 
             // when && then
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), true))
@@ -136,7 +136,8 @@ class TableServiceTest extends ServiceTest {
         void 해당하는_주문테이블의_주문이_식사중이면_예외() {
             // given
             OrderTable orderTable = orderTableRepository.save(new OrderTable(5, false));
-            orderRepository.save(new Order(orderTable, OrderStatus.MEAL, LocalDateTime.now(), List.of(new OrderLineItem(1L, 5))));
+            orderRepository.save(
+                new Order(orderTable, OrderStatus.MEAL, LocalDateTime.now(), List.of(new OrderLineItem(1L, 5))));
 
             // when && then
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), true))
@@ -174,8 +175,6 @@ class TableServiceTest extends ServiceTest {
 
         @Test
         void 해당하는_주문테이블이_없으면_예외() {
-            List<OrderTable> list = tableService.list();
-            System.out.println("list = " + list);
             // when & then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, 1))
                 .isInstanceOf(IllegalArgumentException.class)
