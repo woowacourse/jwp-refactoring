@@ -2,6 +2,8 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.application.dto.CreateOrderCommand;
+import kitchenpos.application.dto.CreateOrderCommand.OrderLineItemRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -29,17 +31,13 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 성공() {
             //given
-            OrderLineItem 주문상품 = 주문_상품_만들기();
-
-            Order 주문 = new Order();
-            주문.setOrderLineItems(List.of(주문상품));
-            주문.setOrderStatus(OrderStatus.COOKING.name());
-
+            OrderLineItemRequest 주문상품 = 주문_상품_초기화();
             OrderTable 테이블 = 비어있지_않은_테이블_생성();
-            주문.setOrderTableId(테이블.getId());
+
+            CreateOrderCommand 커맨드 = new CreateOrderCommand(테이블.getId(), List.of(주문상품));
 
             //when
-            Order 실제주문 = orderService.create(주문);
+            Order 실제주문 = orderService.create(커맨드);
 
             //then
             assertThat(실제주문.getId()).isNotNull();
@@ -48,33 +46,27 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 빈_테이블일_경우_예외가_발생한다() {
             //given
-            OrderLineItem 주문상품 = 주문_상품_만들기();
-
-            Order 주문 = new Order();
-            주문.setOrderLineItems(List.of(주문상품));
-            주문.setOrderStatus(OrderStatus.COOKING.name());
+            OrderLineItemRequest 주문상품 = 주문_상품_초기화();
             long 빈_테이블_아이디 = 1L;
-            주문.setOrderTableId(빈_테이블_아이디);
+
+            CreateOrderCommand 커맨드 = new CreateOrderCommand(빈_테이블_아이디, List.of(주문상품));
 
             //expect
-            assertThatThrownBy(() -> orderService.create(주문))
+            assertThatThrownBy(() -> orderService.create(커맨드))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 테이블이_존재하지_않는경우_예외가_발생한다() {
             //given
-            OrderLineItem 주문상품 = 주문_상품_만들기();
+            OrderLineItemRequest 주문상품 = 주문_상품_초기화();
             OrderTable 삭제된_테이블 = 비어있지_않은_테이블_생성();
             테이블_지우기(삭제된_테이블);
 
-            Order 주문 = new Order();
-            주문.setOrderLineItems(List.of(주문상품));
-            주문.setOrderStatus(OrderStatus.COOKING.name());
-            주문.setOrderTableId(삭제된_테이블.getId());
+            CreateOrderCommand 커맨드 = new CreateOrderCommand(삭제된_테이블.getId(), List.of(주문상품));
 
             //expect
-            assertThatThrownBy(() -> orderService.create(주문))
+            assertThatThrownBy(() -> orderService.create(커맨드))
                     .isInstanceOf(IllegalArgumentException.class);
 
         }
@@ -86,29 +78,24 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 주문에_포함된_상품이_없으면_예외가_발생한다() {
             //given
-            Order 주문 = new Order();
-            주문.setOrderLineItems(emptyList());
-            주문.setOrderStatus(OrderStatus.COOKING.name());
             OrderTable 테이블 = 비어있지_않은_테이블_생성();
-            주문.setOrderTableId(테이블.getId());
+            CreateOrderCommand 커맨드 = new CreateOrderCommand(테이블.getId(), emptyList());
 
             //expect
-            assertThatThrownBy(() -> orderService.create(주문))
+            assertThatThrownBy(() -> orderService.create(커맨드))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 같은_상품이_있으면_예외가_발생한다() {
             //given
-            OrderLineItem 주문상품 = 주문_상품_만들기();
-            Order 주문 = new Order();
-            주문.setOrderLineItems(List.of(주문상품, 주문상품));
-            주문.setOrderStatus(OrderStatus.COOKING.name());
+            OrderLineItemRequest 주문상품 = 주문_상품_초기화();
             OrderTable 테이블 = 비어있지_않은_테이블_생성();
-            주문.setOrderTableId(테이블.getId());
+
+            CreateOrderCommand 커맨드 = new CreateOrderCommand(테이블.getId(), List.of(주문상품, 주문상품));
 
             //expect
-            assertThatThrownBy(() -> orderService.create(주문))
+            assertThatThrownBy(() -> orderService.create(커맨드))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -121,12 +108,9 @@ class OrderServiceTest extends ServiceTest {
         return orderTableDao.save(테이블);
     }
 
-    private OrderLineItem 주문_상품_만들기() {
+    private OrderLineItemRequest 주문_상품_초기화() {
         final var 메뉴 = menuDao.findAll().get(0);
-        OrderLineItem 주문상품 = new OrderLineItem();
-        주문상품.setMenuId(메뉴.getId());
-        주문상품.setQuantity(1);
-        return 주문상품;
+        return new OrderLineItemRequest(메뉴.getId(), 1);
     }
 
     @Test
@@ -148,16 +132,12 @@ class OrderServiceTest extends ServiceTest {
     class 주문_상태_변경 {
 
         private Order 주문_생성() {
-            OrderLineItem 주문상품 = 주문_상품_만들기();
-
-            Order 주문 = new Order();
-            주문.setOrderLineItems(List.of(주문상품));
-            주문.setOrderStatus(OrderStatus.COOKING.name());
-
+            OrderLineItemRequest 주문상품 = 주문_상품_초기화();
             OrderTable 테이블 = 비어있지_않은_테이블_생성();
-            주문.setOrderTableId(테이블.getId());
 
-            return orderService.create(주문);
+            CreateOrderCommand 커맨드 = new CreateOrderCommand(테이블.getId(), List.of(주문상품));
+
+            return orderService.create(커맨드);
         }
 
         @Test
