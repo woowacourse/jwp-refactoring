@@ -21,12 +21,6 @@ public class ProductService {
 
     @Transactional
     public ProductCreateResponse create(final ProductCreateRequest nameAndPrice) {
-        final BigDecimal price = nameAndPrice.getPrice();
-
-        // TODO: domain 으로 이동
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
         final Product product = new Product(null, nameAndPrice.getName(), nameAndPrice.getPrice());
         return ProductCreateResponse.from(productDao.save(product));
     }
