@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.product.CreateProductRequest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -26,10 +27,10 @@ class ProductServiceTest {
     @Test
     void 상품을_저장할_수_있다() {
         // given
-        final Product expected = new Product("치즈피자", new BigDecimal(7_000));
+        final CreateProductRequest createProductRequest = new CreateProductRequest("치즈피자", 7_000);
 
         // when
-        final Product actual = productService.create(expected);
+        final Product actual = productService.create(createProductRequest);
 
         // then
         assertAll(
