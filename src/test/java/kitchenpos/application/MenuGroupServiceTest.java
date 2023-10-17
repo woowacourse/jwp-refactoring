@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.util.List;
 
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.ui.dto.menugroup.CreateMenuGroupRequest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -10,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import static kitchenpos.fixture.FixtureFactory.메뉴_그룹_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -26,15 +26,15 @@ class MenuGroupServiceTest {
     @Test
     void 메뉴_그룹을_저장할_수_있다() {
         // given
-        final MenuGroup expected = 메뉴_그룹_생성("퓨전피자메뉴");
+        final CreateMenuGroupRequest createMenuGroupRequest = new CreateMenuGroupRequest("피자");
 
         // when
-        final MenuGroup actual = menuGroupService.create(expected);
+        final MenuGroup actual = menuGroupService.create(createMenuGroupRequest);
 
         // then
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getName()).isEqualTo("퓨전피자메뉴")
+                () -> assertThat(actual.getName()).isEqualTo("피자")
         );
     }
 
