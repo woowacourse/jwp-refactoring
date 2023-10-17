@@ -88,7 +88,7 @@ class TableServiceTest extends ServiceTest {
         void 정상적인_테이블이라면_테이블을_빈_테이블로_수정한다() {
             //given
             OrderTable orderTable = tableService.create(테이블(null, 5, false));
-            OrderTable updateTable = 테이블(null, 10, false);
+            OrderTable updateTable = 테이블(null, 0, true);
 
             //when
             OrderTable updatedTable = tableService.changeEmpty(orderTable.getId(), updateTable);
@@ -97,6 +97,7 @@ class TableServiceTest extends ServiceTest {
             assertSoftly(softly -> {
                 softly.assertThat(updatedTable.getId()).isEqualTo(orderTable.getId());
                 softly.assertThat(updatedTable.getTableGroupId()).isNull();
+                softly.assertThat(updatedTable.isEmpty()).isTrue();
             });
         }
 
