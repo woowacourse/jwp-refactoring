@@ -10,6 +10,7 @@ import kitchenpos.application.OrderService;
 import kitchenpos.application.ProductService;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.application.TableService;
+import kitchenpos.application.dto.CreateMenuResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -78,6 +79,15 @@ public class ControllerTest {
                 new MenuGroup(1L, "추천메뉴"),
                 List.of(menuProduct)
         );
+    }
+
+    protected CreateMenuResponse 메뉴_응답() {
+        MenuGroup menuGroup = new MenuGroup(1L, "메뉴그룹");
+        Menu menu = new Menu(1L, "메뉴", BigDecimal.ONE, menuGroup);
+        Product product = new Product(1L, "상품", new Price(BigDecimal.ONE));
+        MenuProduct menuProduct = new MenuProduct(1L, product, 3);
+        menu.addMenuProduct(menuProduct);
+        return CreateMenuResponse.from(menu);
     }
 
     protected Order 주문() {

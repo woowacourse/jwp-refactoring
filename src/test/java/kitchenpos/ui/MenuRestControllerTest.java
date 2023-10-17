@@ -7,8 +7,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.application.dto.CreateMenuResponse;
 import kitchenpos.domain.Menu;
+import kitchenpos.ui.dto.CreateMenuRequest;
+import kitchenpos.ui.dto.MenuProductRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
@@ -17,11 +21,17 @@ class MenuRestControllerTest extends ControllerTest {
     @Test
     void 메뉴_생성() throws Exception {
         // given
-        Menu menu = 메뉴();
-        String request = objectMapper.writeValueAsString(menu);
-        Menu savedMenu = 메뉴(1L);
-        given(menuService.create(any())).willReturn(savedMenu);
-        String response = objectMapper.writeValueAsString(savedMenu);
+        CreateMenuRequest createMenuRequest = new CreateMenuRequest(
+                "후라이드+후라이드",
+                BigDecimal.valueOf(19000),
+                1L,
+                List.of(new MenuProductRequest(1L, 2))
+        );
+        String request = objectMapper.writeValueAsString(createMenuRequest);
+
+        CreateMenuResponse createMenuResponse = 메뉴_응답();
+        given(menuService.create(any())).willReturn(createMenuResponse);
+        String response = objectMapper.writeValueAsString(createMenuResponse);
 
         // when & then
         mockMvc.perform(post("/api/menus")
