@@ -1,5 +1,9 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.TableChangeEmptyStatusRequest;
+import kitchenpos.application.dto.TableChangeNumberOfGuestRequest;
+import kitchenpos.application.dto.TableCreateRequest;
+import kitchenpos.application.dto.TableResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
@@ -10,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class TableService {
@@ -22,19 +27,25 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
+    public TableResponse create(final TableCreateRequest request) {
+        final OrderTable orderTable = new OrderTable();
         orderTable.setId(null);
         orderTable.setTableGroupId(null);
+        orderTable.setNumberOfGuests(request.getNumberOfGuest());
+        orderTable.setEmpty(request.getEmpty());
 
-        return orderTableDao.save(orderTable);
+        return TableResponse.from(orderTableDao.save(orderTable));
     }
 
-    public List<OrderTable> list() {
-        return orderTableDao.findAll();
+    public List<TableResponse> list() {
+        return orderTableDao.findAll()
+                .stream()
+                .map(TableResponse::from)
+                .collect(Collectors.toUnmodifiableList());
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
+    public TableResponse changeEmpty(final Long orderTableId, final TableChangeEmptyStatusRequest request) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -47,14 +58,14 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setEmpty(orderTable.isEmpty());
+        savedOrderTable.setEmpty(request.getEmpty());
 
-        return orderTableDao.save(savedOrderTable);
+        return TableResponse.from(orderTableDao.save(savedOrderTable));
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
+    public TableResponse changeNumberOfGuests(final Long orderTableId, final TableChangeNumberOfGuestRequest request) {
+        final int numberOfGuests = request.getNumberOfGuests();
 
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();
@@ -69,6 +80,6 @@ public class TableService {
 
         savedOrderTable.setNumberOfGuests(numberOfGuests);
 
-        return orderTableDao.save(savedOrderTable);
+        return TableResponse.from(orderTableDao.save(savedOrderTable));
     }
 }
