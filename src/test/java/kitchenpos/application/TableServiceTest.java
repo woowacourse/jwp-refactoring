@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import java.util.List;
+import kitchenpos.application.dto.CreateTableRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -27,12 +28,12 @@ class TableServiceTest extends ServiceTest {
 
 
     @Test
-    void 테이블의_주문을_생성할_수_있다() {
+    void 테이블을_생성할_수_있다() {
         //given
-        OrderTable 주문 = new OrderTable();
+        CreateTableRequest 테이블_생성_요청 = new CreateTableRequest();
 
         //when
-        OrderTable 생성된_주문 = tableService.create(주문);
+        OrderTable 생성된_주문 = tableService.create(테이블_생성_요청);
 
         //then
         assertThat(생성된_주문.getId()).isNotNull();

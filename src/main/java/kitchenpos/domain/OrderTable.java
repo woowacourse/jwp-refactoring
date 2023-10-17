@@ -6,6 +6,18 @@ public class OrderTable {
     private int numberOfGuests;
     private boolean empty;
 
+    public OrderTable() {
+
+    }
+
+    public OrderTable(final int numberOfGuests, final boolean empty) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("테이블 인원수는 0명 이상이어야 합니다.");
+        }
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
     public Long getId() {
         return id;
     }
