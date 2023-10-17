@@ -34,8 +34,7 @@ public class MenuService {
 
     @Transactional
     public CreateMenuResponse create(CreateMenuCommand command) {
-        MenuGroup menuGroup = menuGroupRepository.findById(command.menuGroupId())
-                .orElseThrow(IllegalArgumentException::new);
+        MenuGroup menuGroup = menuGroupRepository.getById(command.menuGroupId());
         Menu menu = new Menu(command.name(), new Price(command.price()), menuGroup);
         command.menuProductCommands().stream()
                 .map(it -> new MenuProduct(productRepository.getById(it.productId()), it.quantity()))

@@ -1,9 +1,11 @@
 package kitchenpos.application;
 
+import static kitchenpos.exception.MenuGroupExceptionType.MENU_GROUP_NOT_FOUND;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -16,6 +18,8 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
+import kitchenpos.exception.BaseException;
+import kitchenpos.exception.BaseExceptionType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -29,8 +33,12 @@ class MenuServiceTest extends IntegrationTest {
         CreateMenuCommand command = new CreateMenuCommand(null, BigDecimal.ZERO, 1L, null);
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(command))
-                .isInstanceOf(IllegalArgumentException.class);
+        BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                menuService.create(command)
+        ).exceptionType();
+
+        // then
+        assertThat(exceptionType).isEqualTo(MENU_GROUP_NOT_FOUND);
     }
 
     @Nested
