@@ -18,8 +18,7 @@ public class OrderTable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
-
-    private int numberOfGuests;
+    private NumberOfGuest numberOfGuests;
     private boolean empty;
 
     public OrderTable() {
@@ -34,17 +33,10 @@ public class OrderTable {
     }
 
     public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
-        validateGuestSize(numberOfGuests);
         this.id = id;
         this.tableGroup = tableGroup;
-        this.numberOfGuests = numberOfGuests;
+        this.numberOfGuests = new NumberOfGuest(numberOfGuests);
         this.empty = empty;
-    }
-
-    private void validateGuestSize(int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException("주문 테이블의 손님 수가 0보다 커야합니다");
-        }
     }
 
     public void changeEmpty(final boolean empty) {
@@ -68,8 +60,7 @@ public class OrderTable {
 
     public void changeNumberOfGuests(int numberOfGuests) {
         validateEmpty();
-        validateGuestSize(numberOfGuests);
-        this.numberOfGuests = numberOfGuests;
+        this.numberOfGuests = new NumberOfGuest(numberOfGuests);
     }
 
     private void validateEmpty() {
@@ -87,7 +78,7 @@ public class OrderTable {
     }
 
     public int getNumberOfGuests() {
-        return numberOfGuests;
+        return numberOfGuests.getValue();
     }
 
     public boolean isEmpty() {
