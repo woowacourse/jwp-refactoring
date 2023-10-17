@@ -1,13 +1,13 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuGroupRepository;
+import kitchenpos.domain.menu.MenuRepository;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -32,12 +32,11 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 @ServiceTest
 class OrderServiceTest {
 
+    @Autowired
+    MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
-
-    @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
     private OrderTableDao orderTableDao;
@@ -52,8 +51,8 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        menuGroup = menuGroupDao.save(menuGroupFixture("메뉴 그룹"));
-        menu = menuDao.save(menuFixture("메뉴", BigDecimal.valueOf(30000), menuGroup.getId(), null));
+        menuGroup = menuGroupRepository.save(menuGroupFixture("메뉴 그룹"));
+        menu = menuRepository.save(menuFixture("메뉴", BigDecimal.valueOf(30000), menuGroup.getId(), null));
         orderTable = orderTableDao.save(orderTableFixture(null, 1, false));
         orderLineItem = orderLineItemFixture(null, menu.getId(), 1);
     }

@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductRepository;
 import kitchenpos.ui.dto.ProductRequest;
 import kitchenpos.ui.dto.ProductResponse;
 import org.junit.jupiter.api.Nested;
@@ -28,7 +28,7 @@ class ProductServiceTest {
     private ProductService productService;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Nested
     class 상품등록_테스트 {
@@ -57,9 +57,9 @@ class ProductServiceTest {
         Product product1 = productFixture("product1", BigDecimal.ZERO);
         Product product2 = productFixture("product2", BigDecimal.ONE);
         Product product3 = productFixture("product3", new BigDecimal("1000"));
-        productDao.save(product1);
-        productDao.save(product2);
-        productDao.save(product3);
+        productRepository.save(product1);
+        productRepository.save(product2);
+        productRepository.save(product3);
 
         List<ProductResponse> list = productService.list();
 

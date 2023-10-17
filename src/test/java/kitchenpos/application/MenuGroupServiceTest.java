@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.Fixture.Fixture;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menu.MenuGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

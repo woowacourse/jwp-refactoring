@@ -1,71 +1,53 @@
 package kitchenpos.Fixture;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.ui.dto.OrderTableDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
 public abstract class Fixture {
-    public static Menu menuFixture(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(menuProducts);
+    public static Menu menuFixture(String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+        Menu menu = new Menu(name, price, menuGroup);
+        menu.addMenuProducts(menuProducts);
         return menu;
     }
 
     public static MenuGroup menuGroupFixture(String name) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
-        return menuGroup;
+        return new MenuGroup(name);
     }
 
-    public static MenuProduct menuProductFixture(Long menuId, Long productId, long quantity) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(menuId);
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-        return menuProduct;
+    public static MenuProduct menuProductFixture(Menu menu, Product product, long quantity) {
+        return new MenuProduct(null, menu, product, quantity);
     }
 
     public static Product productFixture(String name, BigDecimal price) {
         return new Product(null, name, price);
     }
 
-    public static Order orderFixture(Long orderTableId, String orderStatus,
+    public static Order orderFixture(OrderTable orderTable, String orderStatus,
                                      LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus(orderStatus);
-        order.setOrderedTime(orderedTime);
-        order.setOrderLineItems(orderLineItems);
-        return order;
+        return new Order(orderTable, orderStatus, orderedTime, orderLineItems);
     }
 
-
-    public static OrderLineItem orderLineItemFixture(Long orderId, Long menuId, long quantity) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setOrderId(orderId);
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setQuantity(quantity);
-        return orderLineItem;
+    public static OrderLineItem orderLineItemFixture(Order order, Menu menu, long quantity) {
+        return new OrderLineItem(null, order, menu, quantity);
     }
 
-    public static OrderTable orderTableFixture(Long tableGroupId, int numberOfGuests, boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        return orderTable;
+    public static OrderTable orderTableFixture(TableGroup tableGroup, int numberOfGuests, boolean empty) {
+        return new OrderTable(tableGroup, numberOfGuests, empty);
+    }
+
+    public static OrderTableDto orderTableDtoFixture(Long tableGroupId, int numberOfGuests, boolean empty) {
+        return new OrderTableDto(tableGroupId, numberOfGuests, empty);
     }
 
     public static TableGroup tableGroupFixture(LocalDateTime createdDate, List<OrderTable> orderTables) {
