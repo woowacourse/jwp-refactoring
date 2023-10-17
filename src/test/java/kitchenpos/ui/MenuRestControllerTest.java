@@ -10,7 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.dto.CreateMenuResponse;
-import kitchenpos.domain.Menu;
+import kitchenpos.application.dto.SearchMenuResponse;
 import kitchenpos.ui.dto.CreateMenuRequest;
 import kitchenpos.ui.dto.MenuProductRequest;
 import org.junit.jupiter.api.Test;
@@ -44,11 +44,11 @@ class MenuRestControllerTest extends ControllerTest {
     @Test
     void 메뉴_조회() throws Exception {
         // given
-        Menu 메뉴1 = 메뉴(1L);
-        Menu 메뉴2 = 메뉴(2L);
-        List<Menu> menus = List.of(메뉴1, 메뉴2);
-        given(menuService.list()).willReturn(menus);
-        String response = objectMapper.writeValueAsString(menus);
+        SearchMenuResponse searchMenuResponse1 = 메뉴_조회_응답();
+        SearchMenuResponse searchMenuResponse2 = 메뉴_조회_응답();
+        List<SearchMenuResponse> searchMenuResponses = List.of(searchMenuResponse1, searchMenuResponse2);
+        given(menuService.list()).willReturn(searchMenuResponses);
+        String response = objectMapper.writeValueAsString(searchMenuResponses);
 
         // when & then
         mockMvc.perform(get("/api/menus"))

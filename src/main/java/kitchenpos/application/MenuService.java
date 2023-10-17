@@ -1,8 +1,10 @@
 package kitchenpos.application;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.application.dto.CreateMenuCommand;
 import kitchenpos.application.dto.CreateMenuResponse;
+import kitchenpos.application.dto.SearchMenuResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
@@ -43,7 +45,9 @@ public class MenuService {
         return CreateMenuResponse.from(savedMenu);
     }
 
-    public List<Menu> list() {
-        return menuRepository.findAll();
+    public List<SearchMenuResponse> list() {
+        return menuRepository.findAll().stream()
+                .map(SearchMenuResponse::from)
+                .collect(Collectors.toList());
     }
 }

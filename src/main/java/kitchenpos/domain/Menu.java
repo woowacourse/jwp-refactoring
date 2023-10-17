@@ -1,7 +1,7 @@
 package kitchenpos.domain;
 
 import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.FetchType.EAGER;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -30,11 +30,11 @@ public class Menu {
     @Column(nullable = false)
     private Price price;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
 
-    @OneToMany(mappedBy = "menu", cascade = ALL)
+    @OneToMany(mappedBy = "menu", cascade = ALL, fetch = EAGER)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected Menu() {

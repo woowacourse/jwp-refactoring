@@ -10,6 +10,7 @@ import java.util.List;
 import kitchenpos.application.dto.CreateMenuCommand;
 import kitchenpos.application.dto.CreateMenuResponse;
 import kitchenpos.application.dto.MenuProductCommand;
+import kitchenpos.application.dto.SearchMenuResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -168,10 +169,9 @@ class MenuServiceTest extends IntegrationTest {
                         menu.addMenuProduct(menuProduct1);
                         menu.addMenuProduct(menuProduct2);
 
+                        Menu menu2 = new Menu("메뉴2", new Price(BigDecimal.valueOf(9)), menuGroup);
                         MenuProduct menuProduct3 = new MenuProduct(product1, 3);
                         MenuProduct menuProduct4 = new MenuProduct(product2, 2);
-
-                        Menu menu2 = new Menu("메뉴2", new Price(BigDecimal.valueOf(9)), menuGroup);
                         menu2.addMenuProduct(menuProduct3);
                         menu2.addMenuProduct(menuProduct4);
 
@@ -179,7 +179,7 @@ class MenuServiceTest extends IntegrationTest {
                         menuRepository.save(menu2);
 
                         // when
-                        List<Menu> result = menuService.list();
+                        List<SearchMenuResponse> result = menuService.list();
 
                         // then
                         assertThat(result).hasSize(2);

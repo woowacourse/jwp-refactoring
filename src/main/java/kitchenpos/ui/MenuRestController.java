@@ -4,7 +4,7 @@ import java.net.URI;
 import java.util.List;
 import kitchenpos.application.MenuService;
 import kitchenpos.application.dto.CreateMenuResponse;
-import kitchenpos.domain.Menu;
+import kitchenpos.application.dto.SearchMenuResponse;
 import kitchenpos.ui.dto.CreateMenuRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +29,7 @@ public class MenuRestController {
     }
 
     @GetMapping("/api/menus")
-    public ResponseEntity<List<Menu>> list() {
+    public ResponseEntity<List<SearchMenuResponse>> list() {
         return ResponseEntity.ok()
                 .body(menuService.list());
     }
