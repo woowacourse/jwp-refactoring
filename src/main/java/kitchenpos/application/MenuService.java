@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 import kitchenpos.application.dto.CreateMenuCommand;
 import kitchenpos.application.dto.CreateMenuResponse;
 import kitchenpos.application.dto.MenuProductCommand;
@@ -11,6 +10,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuRepository;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -36,10 +36,7 @@ public class MenuService {
     @Transactional
     public CreateMenuResponse create(CreateMenuCommand command) {
         List<MenuProductCommand> menuProductCommands = command.menuProductCommands();
-        BigDecimal price = command.price();
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
+        Price price = new Price(command.price());
         MenuGroup menuGroup = menuGroupRepository.findById(command.menuGroupId())
                 .orElseThrow(IllegalArgumentException::new);
         Menu menu = new Menu(command.name(), price, menuGroup);
@@ -52,7 +49,7 @@ public class MenuService {
             MenuProduct menuProduct = new MenuProduct(product, quantity);
             menu.addMenuProduct(menuProduct);
         }
-        if (price.compareTo(sum) > 0) {
+        if (price.value().compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }
         Menu savedMenu = menuRepository.save(menu);

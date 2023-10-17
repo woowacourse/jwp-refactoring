@@ -122,7 +122,7 @@ public class IntegrationTest {
     }
 
     protected Menu 메뉴(MenuGroup 메뉴_그룹, BigDecimal 가격, String 이름, MenuProduct... 메뉴_상품들) {
-        Menu menu = new Menu(이름, 가격, 메뉴_그룹);
+        Menu menu = new Menu(이름, new Price(가격), 메뉴_그룹);
         Arrays.stream(메뉴_상품들).forEach(menu::addMenuProduct);
         return menuRepository.save(menu);
     }

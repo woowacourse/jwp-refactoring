@@ -36,7 +36,7 @@ public class CreateMenuResponse {
         return new CreateMenuResponse(
                 menu.id(),
                 menu.name(),
-                menu.price(),
+                menu.price().value(),
                 MenuGroupResponse.from(menu.menuGroup()),
                 menu.menuProducts().stream()
                         .map(MenuProductResponse::from)

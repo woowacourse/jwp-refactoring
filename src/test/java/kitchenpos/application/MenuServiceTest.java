@@ -164,7 +164,7 @@ class MenuServiceTest extends IntegrationTest {
                     @Test
                     void 메뉴들을_조회한다() {
                         // given
-                        Menu menu = new Menu("메뉴", BigDecimal.valueOf(11), menuGroup);
+                        Menu menu = new Menu("메뉴", new Price(BigDecimal.valueOf(11)), menuGroup);
                         MenuProduct menuProduct1 = new MenuProduct(product1, 2);
                         MenuProduct menuProduct2 = new MenuProduct(product2, 3);
                         menu.addMenuProduct(menuProduct1);
@@ -173,7 +173,7 @@ class MenuServiceTest extends IntegrationTest {
                         MenuProduct menuProduct3 = new MenuProduct(product1, 3);
                         MenuProduct menuProduct4 = new MenuProduct(product2, 2);
 
-                        Menu menu2 = new Menu("메뉴2", BigDecimal.valueOf(9), menuGroup);
+                        Menu menu2 = new Menu("메뉴2", new Price(BigDecimal.valueOf(9)), menuGroup);
                         menu2.addMenuProduct(menuProduct3);
                         menu2.addMenuProduct(menuProduct4);
 

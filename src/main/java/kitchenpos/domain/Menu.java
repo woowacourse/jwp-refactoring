@@ -3,10 +3,10 @@ package kitchenpos.domain;
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.LAZY;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -25,8 +25,9 @@ public class Menu {
     @Column(nullable = false)
     private String name;
 
+    @Embedded
     @Column(nullable = false)
-    private BigDecimal price;
+    private Price price;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "menu_group_id")
@@ -38,21 +39,21 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
+    public Menu(String name, Price price, MenuGroup menuGroup) {
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
     }
 
-    public Menu(String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+    public Menu(String name, Price price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
         this(null, name, price, menuGroup, menuProducts);
     }
 
-    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup) {
+    public Menu(Long id, String name, Price price, MenuGroup menuGroup) {
         this(id, name, price, menuGroup, new ArrayList<>());
     }
 
-    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+    public Menu(Long id, String name, Price price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -73,7 +74,7 @@ public class Menu {
         return name;
     }
 
-    public BigDecimal price() {
+    public Price price() {
         return price;
     }
 

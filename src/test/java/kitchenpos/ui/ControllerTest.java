@@ -60,7 +60,7 @@ public class ControllerTest {
 
         return new Menu(
                 "후라이드+후라이드",
-                BigDecimal.valueOf(19000),
+                new Price(BigDecimal.valueOf(19000)),
                 new MenuGroup(1L, "추천메뉴"),
                 List.of(menuProduct)
         );
@@ -75,7 +75,7 @@ public class ControllerTest {
         return new Menu(
                 id,
                 "후라이드+후라이드",
-                BigDecimal.valueOf(19000),
+                new Price(BigDecimal.valueOf(19000)),
                 new MenuGroup(1L, "추천메뉴"),
                 List.of(menuProduct)
         );
@@ -83,7 +83,7 @@ public class ControllerTest {
 
     protected CreateMenuResponse 메뉴_응답() {
         MenuGroup menuGroup = new MenuGroup(1L, "메뉴그룹");
-        Menu menu = new Menu(1L, "메뉴", BigDecimal.ONE, menuGroup);
+        Menu menu = new Menu(1L, "메뉴", new Price(BigDecimal.ONE), menuGroup);
         Product product = new Product(1L, "상품", new Price(BigDecimal.ONE));
         MenuProduct menuProduct = new MenuProduct(1L, product, 3);
         menu.addMenuProduct(menuProduct);
