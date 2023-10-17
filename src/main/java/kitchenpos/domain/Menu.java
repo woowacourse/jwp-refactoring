@@ -53,7 +53,7 @@ public class Menu {
         if (price == null) {
             throw new KitchenPosException("메뉴의 가격은 null이 될 수 없습니다.");
         }
-        if (price.lessThan(Money.ZERO)) {
+        if (price.isLessThan(Money.ZERO)) {
             throw new KitchenPosException("메뉴의 가격은 0보다 작을 수 없습니다.");
         }
     }
@@ -67,7 +67,7 @@ public class Menu {
         Money totalPrice = menuProducts.stream()
             .map(MenuProduct::getTotalPrice)
             .reduce(Money.ZERO, Money::plus);
-        if (price.greaterThan(totalPrice)) {
+        if (price.isGreaterThan(totalPrice)) {
             throw new KitchenPosException("메뉴의 가격은 메뉴 상품의 총합 가격보다 작아야 합니다.");
         }
     }

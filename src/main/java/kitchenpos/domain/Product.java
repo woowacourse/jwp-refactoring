@@ -37,7 +37,7 @@ public class Product {
         if (price == null) {
             throw new KitchenPosException("상품의 가격은 null이 될 수 없습니다.");
         }
-        if (price.lessThan(Money.ZERO)) {
+        if (price.isLessThan(Money.ZERO)) {
             throw new KitchenPosException("상품의 가격은 0보다 작을 수 없습니다.");
         }
     }

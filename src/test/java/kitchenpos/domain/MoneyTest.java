@@ -123,7 +123,7 @@ class MoneyTest {
     }
 
     @Nested
-    class lessThan {
+    class isLessThan {
 
         @Test
         void 넘어온_인수가_자신보다_작으면_false() {
@@ -132,7 +132,7 @@ class MoneyTest {
             Money small = Money.from(999);
 
             // when
-            boolean actual = big.lessThan(small);
+            boolean actual = big.isLessThan(small);
 
             // then
             assertThat(actual).isFalse();
@@ -145,7 +145,7 @@ class MoneyTest {
             Money small = Money.from(999);
 
             // when
-            boolean actual = small.lessThan(big);
+            boolean actual = small.isLessThan(big);
 
             // then
             assertThat(actual).isTrue();
@@ -158,7 +158,7 @@ class MoneyTest {
             Money sameAs = Money.from(1000);
 
             // when
-            boolean actual = same.lessThan(sameAs);
+            boolean actual = same.isLessThan(sameAs);
 
             // then
             assertThat(actual).isFalse();
@@ -166,7 +166,7 @@ class MoneyTest {
     }
 
     @Nested
-    class greaterThan {
+    class isGreaterThan {
 
         @Test
         void 넘어온_인수가_자신보다_작으면_true() {
@@ -175,7 +175,7 @@ class MoneyTest {
             Money small = Money.from(999);
 
             // when
-            boolean actual = big.greaterThan(small);
+            boolean actual = big.isGreaterThan(small);
 
             // then
             assertThat(actual).isTrue();
@@ -188,7 +188,7 @@ class MoneyTest {
             Money small = Money.from(999);
 
             // when
-            boolean actual = small.greaterThan(big);
+            boolean actual = small.isGreaterThan(big);
 
             // then
             assertThat(actual).isFalse();
@@ -201,7 +201,7 @@ class MoneyTest {
             Money sameAs = Money.from(1000);
 
             // when
-            boolean actual = same.greaterThan(sameAs);
+            boolean actual = same.isGreaterThan(sameAs);
 
             // then
             assertThat(actual).isFalse();

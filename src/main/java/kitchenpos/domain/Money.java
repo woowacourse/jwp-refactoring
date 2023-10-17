@@ -49,11 +49,11 @@ public class Money {
         return value.compareTo(BigDecimal.ZERO) < 0;
     }
 
-    public boolean lessThan(Money other) {
+    public boolean isLessThan(Money other) {
         return value.compareTo(other.value) < 0;
     }
 
-    public boolean greaterThan(Money other) {
+    public boolean isGreaterThan(Money other) {
         return value.compareTo(other.value) > 0;
     }
 
