@@ -95,18 +95,21 @@ class TableServiceTest extends ServiceTest {
     }
 
     @DisplayName("테이블의 empty 상태를 변경할 수 있다.")
-    @ParameterizedTest
-    @ValueSource(booleans = { true, false })
-    void changeEmpty(boolean emptyStatus) {
+    @Test
+    void changeEmpty() {
         // given
         OrderTable 주문테이블 = tableService.create(orderTable);
-        주문테이블.setEmpty(emptyStatus);
 
-        // when
-        OrderTable Empty_상태가_변경된_주문테이블 = tableService.changeEmpty(주문테이블.getId(), 주문테이블);
+        // when & then
+        assertThat(주문테이블.isEmpty()).isEqualTo(true);
 
-        // then
-        assertThat(Empty_상태가_변경된_주문테이블.isEmpty()).isEqualTo(emptyStatus);
+        주문테이블.setEmpty(false);
+        OrderTable Empty_상태가_FALSE_변경된_주문테이블 = tableService.changeEmpty(주문테이블.getId(), 주문테이블);
+        assertThat(Empty_상태가_FALSE_변경된_주문테이블.isEmpty()).isEqualTo(false);
+
+        주문테이블.setEmpty(true);
+        OrderTable Empty_상태가_TRUE_변경된_주문테이블 = tableService.changeEmpty(주문테이블.getId(), 주문테이블);
+        assertThat(Empty_상태가_TRUE_변경된_주문테이블.isEmpty()).isEqualTo(true);
     }
 
     @DisplayName("테이블 empty 상태 변경 시, 주문 테이블을 찾을 수 없는 경우 예외가 발생한다.")
@@ -177,7 +180,7 @@ class TableServiceTest extends ServiceTest {
 
     @DisplayName("테이블의 numberOfGuests 변경 시, numberOfGuests가 음수인 경우 예외가 발생한다.")
     @ParameterizedTest
-    @ValueSource(ints = { -1, -100 })
+    @ValueSource(ints = {-1, -100})
     void changeNumberOfGuests_FailWithInvalidNumberOfGuests(int invalidNumberOfGuests) {
         // given
         orderTable.setEmpty(false);
