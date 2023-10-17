@@ -62,8 +62,7 @@ public class ServiceTestConfig {
     }
 
     protected MenuGroup saveMenuGroup() {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("메뉴 그룹");
+        final MenuGroup menuGroup = new MenuGroup(null, "여우가 좋아하는 메뉴 그룹");
         return menuGroupDao.save(menuGroup);
     }
 

@@ -97,7 +97,7 @@ class MenuServiceTest extends ServiceTestConfig {
         @Test
         void fail_if_menuGroup_not_exist() {
             // given
-            final MenuGroup menuGroup = new MenuGroup();
+            final MenuGroup menuGroup = new MenuGroup(null, "없는 그룹");
             final Menu menuInput = new Menu();
             menuInput.setName("여우곰탕");
             menuInput.setPrice(BigDecimal.valueOf(-1));

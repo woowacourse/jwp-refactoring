@@ -24,11 +24,7 @@ class MenuGroupCreateApiTest extends ApiTestConfig {
         final MenuGroupCreateRequest request = new MenuGroupCreateRequest("추천 메뉴");
 
         // when
-        // FIXME: domain -> dto 로 변경
-        final Long expectedId = 1L;
-        final MenuGroup expectedMenuGroup = new MenuGroup();
-        expectedMenuGroup.setId(expectedId);
-        expectedMenuGroup.setName(request.getName());
+        final MenuGroup expectedMenuGroup = new MenuGroup(1L, request.getName());
         final MenuGroupResponse response = MenuGroupResponse.from(expectedMenuGroup);
         when(menuGroupService.create(eq(request))).thenReturn(response);
 
@@ -37,6 +33,6 @@ class MenuGroupCreateApiTest extends ApiTestConfig {
                         .contentType(APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
-                .andExpect(redirectedUrl(String.format("/api/menu-groups/%d", expectedId)));
+                .andExpect(redirectedUrl(String.format("/api/menu-groups/%d", response.getId())));
     }
 }

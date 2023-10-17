@@ -20,9 +20,7 @@ class MenuGroupListApiTest extends ApiTestConfig {
     void listMenuGroup() throws Exception {
         // given
         // FIXME: domain -> dto 로 변경
-        final MenuGroup expectedMenuGroup = new MenuGroup();
-        expectedMenuGroup.setId(1L);
-        expectedMenuGroup.setName("여우메뉴그룹");
+        final MenuGroup expectedMenuGroup = new MenuGroup(1L, "여우 메뉴 그룹");
 
         // when
         when(menuGroupService.list()).thenReturn(List.of(expectedMenuGroup));

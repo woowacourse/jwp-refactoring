@@ -39,9 +39,7 @@ class MenuListApiTest extends ApiTestConfig {
 
         expectedMenu.setMenuProducts(List.of(menuProduct));
 
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(1L);
-        menuGroup.setName("여우메뉴그룹");
+        final MenuGroup menuGroup = new MenuGroup(1L, "여우 메뉴 그룹");
 
         expectedMenu.setMenuGroupId(menuGroup.getId());
 
