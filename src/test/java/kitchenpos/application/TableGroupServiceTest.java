@@ -113,10 +113,10 @@ class TableGroupServiceTest extends ServiceTest {
                 CreateTableGroupRequest.class, 1L,
                 List.of(orderTableRequest1, orderTableRequest2)
         );
-        final Long tableGroupId = tableGroupService.create(request).getId();
+        final TableGroupResponse response = tableGroupService.create(request);
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
+        assertThatThrownBy(() -> tableGroupService.ungroup(response.getId()))
                 .isInstanceOf(exception);
     }
 }

@@ -4,16 +4,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.request.tablegroup.OrderTableRequest;
 
 public class TableGroupResponse {
 
-    private Long id;
-    private LocalDateTime createdDate;
-    private List<OrderTableResponse> orderTables;
-
-    public TableGroupResponse() {
-    }
+    private final Long id;
+    private final LocalDateTime createdDate;
+    private final List<OrderTableResponse> orderTables;
 
     public TableGroupResponse(Long id, LocalDateTime createdDate, List<OrderTableResponse> orderTables) {
         this.id = id;
@@ -21,10 +17,10 @@ public class TableGroupResponse {
         this.orderTables = orderTables;
     }
 
-    public static TableGroupResponse from(final TableGroup tableGroup){
+    public static TableGroupResponse from(final TableGroup tableGroup) {
 
         final List<OrderTableResponse> orderTableResponses = tableGroup.getOrderTables().stream()
-                .map(orderTable -> OrderTableResponse.from(orderTable))
+                .map(OrderTableResponse::from)
                 .collect(Collectors.toList());
 
         return new TableGroupResponse(

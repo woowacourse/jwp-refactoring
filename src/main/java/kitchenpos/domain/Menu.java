@@ -1,20 +1,46 @@
 package kitchenpos.domain;
 
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
+
 import java.math.BigDecimal;
 import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
+@Entity
 public class Menu {
-    private final Long id;
-    private final String name;
-    private final BigDecimal price;
-    private final Long menuGroupId;
-    private final List<MenuProduct> menuProducts;
+
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
+    private BigDecimal price;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "menu_group_id")
+    private MenuGroup menuGroup;
+
+    @OneToMany(fetch = LAZY, mappedBy = "menu")
+    private List<MenuProduct> menuProducts;
+
+    protected Menu() {
+    }
 
     private Menu(Builder builder) {
         this.id = builder.id;
         this.name = builder.name;
         this.price = builder.price;
-        this.menuGroupId = builder.menuGroupId;
+        this.menuGroup = builder.menuGroup;
         this.menuProducts = builder.menuProducts;
     }
 
@@ -34,8 +60,8 @@ public class Menu {
         return price;
     }
 
-    public Long getMenuGroupId() {
-        return menuGroupId;
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
     }
 
     public List<MenuProduct> getMenuProducts() {
@@ -46,7 +72,7 @@ public class Menu {
         private Long id;
         private String name;
         private BigDecimal price;
-        private Long menuGroupId;
+        private MenuGroup menuGroup;
         private List<MenuProduct> menuProducts;
 
         public Builder id(Long id) {
@@ -64,8 +90,8 @@ public class Menu {
             return this;
         }
 
-        public Builder menuGroupId(Long menuGroupId) {
-            this.menuGroupId = menuGroupId;
+        public Builder menuGroup(MenuGroup menuGroup) {
+            this.menuGroup = menuGroup;
             return this;
         }
 

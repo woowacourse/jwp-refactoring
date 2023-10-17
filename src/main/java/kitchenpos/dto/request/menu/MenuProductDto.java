@@ -9,9 +9,6 @@ public class MenuProductDto {
     private Long productId;
     private Long quantity;
 
-    public MenuProductDto() {
-    }
-
     public MenuProductDto(Long seq, Long menuId, Long productId, Long quantity) {
         this.seq = seq;
         this.menuId = menuId;
@@ -22,8 +19,8 @@ public class MenuProductDto {
     public static MenuProductDto from(final MenuProduct menuProduct){
         return new MenuProductDto(
                 menuProduct.getSeq(),
-                menuProduct.getMenuId(),
-                menuProduct.getProductId(),
+                menuProduct.getMenu(),
+                menuProduct.getProduct(),
                 menuProduct.getQuantity()
         );
     }

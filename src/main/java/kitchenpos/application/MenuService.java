@@ -5,35 +5,33 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.menu.CreateMenuRequest;
 import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MenuService {
-    private final MenuDao menuDao;
-    private final MenuGroupDao menuGroupDao;
-    private final MenuProductDao menuProductDao;
-    private final ProductDao productDao;
+    private final MenuRepository menuRepository;
+    private final MenuGroupRepository menuGroupRepository;
+    private final MenuProductRepository menuProductRepository;
+    private final ProductRepository productRepository;
 
-    public MenuService(
-            final MenuDao menuDao,
-            final MenuGroupDao menuGroupDao,
-            final MenuProductDao menuProductDao,
-            final ProductDao productDao
-    ) {
-        this.menuDao = menuDao;
-        this.menuGroupDao = menuGroupDao;
-        this.menuProductDao = menuProductDao;
-        this.productDao = productDao;
+
+    public MenuService(MenuRepository menuRepository, MenuGroupRepository menuGroupRepository,
+                       MenuProductRepository menuProductRepository, ProductRepository productRepository) {
+        this.menuRepository = menuRepository;
+        this.menuGroupRepository = menuGroupRepository;
+        this.menuProductRepository = menuProductRepository;
+        this.productRepository = productRepository;
     }
 
     @Transactional
@@ -44,9 +42,8 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        if (!menuGroupDao.existsById(request.getMenuGroupId())) {
-            throw new IllegalArgumentException();
-        }
+        final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
+                .orElseThrow(IllegalArgumentException::new);
 
         final List<MenuProduct> menuProducts = request.getMenuProducts().stream()
                 .map(MenuProduct::from)
@@ -54,7 +51,7 @@ public class MenuService {
 
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = productDao.findById(menuProduct.getProductId())
+            final Product product = productRepository.findById(menuProduct.getProduct())
                     .orElseThrow(IllegalArgumentException::new);
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
@@ -66,43 +63,44 @@ public class MenuService {
         final Menu menu = Menu.builder()
                 .name(request.getName())
                 .price(request.getPrice())
-                .menuGroupId(request.getMenuGroupId())
+                .menuGroup(menuGroup)
                 .menuProducts(menuProducts)
                 .build();
-        final Menu savedMenu = menuDao.save(menu);
+
+        final Menu savedMenu = menuRepository.save(menu);
 
         final Long menuId = savedMenu.getId();
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProduct menuProduct : menuProducts) {
             final MenuProduct newMenuProduct = new MenuProduct(
-                    menuProduct.getMenuId(),
+                    menuProduct.getMenu(),
                     menuId,
-                    menuProduct.getProductId(),
+                    menuProduct.getProduct(),
                     menuProduct.getQuantity()
             );
-            savedMenuProducts.add(menuProductDao.save(newMenuProduct));
+            savedMenuProducts.add(menuProductRepository.save(newMenuProduct));
         }
 
         return MenuResponse.from(Menu.builder()
                 .id(savedMenu.getId())
                 .name(savedMenu.getName())
                 .price(savedMenu.getPrice())
-                .menuGroupId(savedMenu.getMenuGroupId())
+                .menuGroup(menuGroup)
                 .menuProducts(savedMenuProducts)
                 .build()
         );
     }
 
     public List<MenuResponse> list() {
-        final List<Menu> menus = menuDao.findAll();
+        final List<Menu> menus = menuRepository.findAll();
 
         return menus.stream()
                 .map(menu -> Menu.builder()
                         .id(menu.getId())
                         .name(menu.getName())
                         .price(menu.getPrice())
-                        .menuGroupId(menu.getMenuGroupId())
-                        .menuProducts(menuProductDao.findAllByMenuId(menu.getId()))
+                        .menuGroup(new MenuGroup(menu.getMenuGroup().getId()))
+                        .menuProducts(menuProductRepository.findAllByMenu(menu))
                         .build())
                 .map(MenuResponse::from)
                 .collect(Collectors.toList());

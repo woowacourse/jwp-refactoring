@@ -3,22 +3,22 @@ package kitchenpos.dto.response;
 import kitchenpos.domain.OrderTable;
 
 public class OrderTableResponse {
-    private Long id;
-    private Long tableGroupId;
-    private Integer numberOfGuests;
-    private Boolean empty;
+    private final Long id;
+    private final Long tableGroupId;
+    private final Integer numberOfGuests;
+    private final Boolean empty;
 
-    public OrderTableResponse(Long id, Long tableGroupId, Integer numberOfGuests, Boolean empty) {
+    private OrderTableResponse(Long id, Long tableGroupId, Integer numberOfGuests, Boolean empty) {
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
-    public static OrderTableResponse from(final OrderTable orderTable){
+    public static OrderTableResponse from(final OrderTable orderTable) {
         return new OrderTableResponse(
                 orderTable.getId(),
-                orderTable.getTableGroupId(),
+                orderTable.getTableGroup(),
                 orderTable.getNumberOfGuests(),
                 orderTable.isEmpty()
         );
@@ -38,21 +38,5 @@ public class OrderTableResponse {
 
     public Boolean getEmpty() {
         return empty;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setTableGroupId(Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-    }
-
-    public void setNumberOfGuests(Integer numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
-
-    public void setEmpty(Boolean empty) {
-        this.empty = empty;
     }
 }

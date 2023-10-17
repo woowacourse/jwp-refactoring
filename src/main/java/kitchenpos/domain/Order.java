@@ -1,18 +1,49 @@
 package kitchenpos.domain;
 
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
+
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
+@Entity
+@Table(name = "orders")
 public class Order {
-    private final Long id;
-    private final Long orderTableId;
-    private final String orderStatus;
-    private final LocalDateTime orderedTime;
-    private final List<OrderLineItem> orderLineItems;
+
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "order_table_id")
+    private OrderTable orderTable;
+
+    @Column(nullable = false)
+    private String orderStatus;
+
+    @Column(nullable = false)
+    private LocalDateTime orderedTime;
+
+    @OneToMany(mappedBy = "order", fetch = LAZY, cascade = ALL)
+    private List<OrderLineItem> orderLineItems;
+
+    protected Order() {
+    }
 
     private Order(Builder builder) {
         this.id = builder.id;
-        this.orderTableId = builder.orderTableId;
+        this.orderTable = OrderTable.builder()
+                .id(builder.orderTableId)
+                .build();
         this.orderStatus = builder.orderStatus;
         this.orderedTime = builder.orderedTime;
         this.orderLineItems = builder.orderLineItems;
@@ -26,8 +57,8 @@ public class Order {
         return id;
     }
 
-    public Long getOrderTableId() {
-        return orderTableId;
+    public Long getOrderTable() {
+        return orderTable.getId();
     }
 
     public String getOrderStatus() {

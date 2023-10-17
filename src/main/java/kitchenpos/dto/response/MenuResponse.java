@@ -8,13 +8,13 @@ import kitchenpos.dto.request.menu.MenuProductDto;
 
 public class MenuResponse {
 
-    private Long id;
-    private String name;
-    private BigDecimal price;
-    private Long menuGroupId;
-    private List<MenuProductDto> menuProducts;
+    private final Long id;
+    private final String name;
+    private final BigDecimal price;
+    private final Long menuGroupId;
+    private final List<MenuProductDto> menuProducts;
 
-    public MenuResponse(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProductDto> menuProducts) {
+    private MenuResponse(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProductDto> menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -22,17 +22,17 @@ public class MenuResponse {
         this.menuProducts = menuProducts;
     }
 
-    public static MenuResponse from(final Menu menu){
+    public static MenuResponse from(final Menu menu) {
 
         final List<MenuProductDto> menuProductDtos = menu.getMenuProducts().stream()
-                .map(dto -> MenuProductDto.from(dto))
+                .map(MenuProductDto::from)
                 .collect(Collectors.toList());
 
         return new MenuResponse(
                 menu.getId(),
                 menu.getName(),
                 menu.getPrice(),
-                menu.getMenuGroupId(),
+                menu.getMenuGroup().getId(),
                 menuProductDtos
         );
     }
