@@ -7,6 +7,8 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductName;
+import kitchenpos.domain.product.ProductPrice;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,15 +51,15 @@ class MenuServiceTest extends MockServiceTest {
         firstMenu.setPrice(BigDecimal.valueOf(45000L));
         firstMenu.setMenuGroupId(1L);
 
-        firstProduct = new Product();
-        firstProduct.setId(1L);
-        firstProduct.setName("pizza");
-        firstProduct.setPrice(BigDecimal.valueOf(10000L));
+        firstProduct = new Product(
+                1L,
+                new ProductName("pizza"),
+                new ProductPrice(BigDecimal.valueOf(10000L)));
 
-        secondProduct = new Product();
-        secondProduct.setId(2L);
-        secondProduct.setName("chicken");
-        secondProduct.setPrice(BigDecimal.valueOf(25000L));
+        secondProduct = new Product(
+                2L,
+                new ProductName("chicken"),
+                new ProductPrice(BigDecimal.valueOf(25000L)));
 
         firstMenuProduct = new MenuProduct();
         firstMenuProduct.setSeq(1L);
