@@ -55,6 +55,9 @@ class TableGroupServiceTest {
 
         orderTable1.setEmpty(true);
         orderTable2.setEmpty(true);
+
+        orderTable1.setTableGroupId(null);
+        orderTable2.setTableGroupId(null);
     }
 
     @Test
@@ -135,6 +138,7 @@ class TableGroupServiceTest {
     @DisplayName("주문 테이블은 빈 테이블이 아니면 예외가 발생한다.")
     void create_fail_cannot_assign_tableGroup2() {
         orderTable1.setEmpty(false);
+
         List<OrderTable> foundOrderTables = List.of(orderTable1, orderTable2);
         when(orderTableDao.findAllByIdIn(List.of(orderTable1.getId(), orderTable2.getId())))
                 .thenReturn(foundOrderTables);

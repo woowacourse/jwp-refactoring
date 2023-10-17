@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class OrderLineItem {
@@ -12,10 +13,10 @@ public class OrderLineItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
+    @ManyToOne
+    private Order order;
     @Column
-    private Long orderId;
-    @Column
-    private Long menuId;
+    private Long menuId; // 애그리거트 분리를 위해 id 참조
     @Column
     private long quantity;
 
@@ -28,12 +29,13 @@ public class OrderLineItem {
     }
 
     public Long getOrderId() {
-        return orderId;
+        return order.getId();
     }
 
     public void setOrderId(final Long orderId) {
-        this.orderId = orderId;
-    }
+        this.order = new Order();
+        this.order.setId(orderId);
+}
 
     public Long getMenuId() {
         return menuId;

@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 @Entity
@@ -20,8 +21,8 @@ public class Menu {
     private String name;
     @Embedded
     private Price price;
-    @Column
-    private Long menuGroupId;
+    @ManyToOne
+    private MenuGroup menuGroup;
     @OneToMany
     private List<MenuProduct> menuProducts;
 
@@ -50,11 +51,12 @@ public class Menu {
     }
 
     public Long getMenuGroupId() {
-        return menuGroupId;
+        return menuGroup.getId();
     }
 
     public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
+        this.menuGroup = new MenuGroup();
+        this.menuGroup.setId(menuGroupId);
     }
 
     public List<MenuProduct> getMenuProducts() {

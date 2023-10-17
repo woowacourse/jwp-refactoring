@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 @Entity
 public class Order {
@@ -17,8 +18,8 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column
-    private Long orderTableId;
+    @OneToOne
+    private OrderTable orderTable;
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
     @Column
@@ -35,11 +36,12 @@ public class Order {
     }
 
     public Long getOrderTableId() {
-        return orderTableId;
+        return orderTable.getId();
     }
 
     public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
+        this.orderTable = new OrderTable();
+        this.orderTable.setTableGroupId(orderTableId);
     }
 
     public String getOrderStatus() {

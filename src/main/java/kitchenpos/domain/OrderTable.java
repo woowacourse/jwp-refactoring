@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class OrderTable {
@@ -12,8 +13,8 @@ public class OrderTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column
-    private Long tableGroupId;
+    @ManyToOne
+    private TableGroup tableGroup;
     @Column
     private int numberOfGuests;
     @Column
@@ -28,11 +29,12 @@ public class OrderTable {
     }
 
     public Long getTableGroupId() {
-        return tableGroupId;
+        return tableGroup.getId();
     }
 
     public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
+        this.tableGroup = new TableGroup();
+        this.tableGroup.setId(tableGroupId);
     }
 
     public int getNumberOfGuests() {
