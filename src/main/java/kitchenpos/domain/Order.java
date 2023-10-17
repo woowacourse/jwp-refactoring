@@ -3,8 +3,6 @@ package kitchenpos.domain;
 import static kitchenpos.domain.OrderStatus.COMPLETION;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -67,6 +65,10 @@ public class Order {
             throw new IllegalArgumentException("더 이상 상태를 변경할 수 없습니다");
         }
         this.orderStatus = orderStatus;
+    }
+
+    public boolean isNotCompletionStatus() {
+        return !orderStatus.equals(COMPLETION);
     }
 
     public Long getId() {

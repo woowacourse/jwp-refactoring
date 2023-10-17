@@ -64,6 +64,7 @@ public class OrderTable {
 
 
     public void changeGroup(final TableGroup tableGroup) {
+        this.empty = false;
         this.tableGroup = tableGroup;
     }
 

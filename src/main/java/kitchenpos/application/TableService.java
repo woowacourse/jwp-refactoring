@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.dto.ChangeEmptyRequest;
@@ -15,9 +17,11 @@ import kitchenpos.dto.OrderTableRequest;
 @Transactional(readOnly = true)
 public class TableService {
     private final OrderTableRepository orderTableRepository;
+    private final OrderRepository orderRepository;
 
-    public TableService(final OrderTableRepository orderTableRepository) {
+    public TableService(final OrderTableRepository orderTableRepository, final OrderRepository orderRepository) {
         this.orderTableRepository = orderTableRepository;
+        this.orderRepository = orderRepository;
     }
 
     @Transactional
@@ -34,11 +38,12 @@ public class TableService {
     public OrderTable changeEmpty(final Long orderTableId, final ChangeEmptyRequest request) {
         final OrderTable savedOrderTable = getOrderTable(orderTableId);
 
-        // TODO: 2023/10/17 ORDER REPOSITORY 만들고 나서 작업하기
-//        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-//                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-//            throw new IllegalArgumentException("이미 주문이 진행 중이에요");
-//        }
+        final List<Order> orders = orderRepository.findByOrderByOrderTableId(orderTableId);
+        final boolean containsNotCompletionOrder = orders.stream()
+                .anyMatch(Order::isNotCompletionStatus);
+        if (containsNotCompletionOrder) {
+            throw new IllegalArgumentException("이미 주문이 진행 중이에요");
+        }
 
         savedOrderTable.updateEmptyStatus(request.isEmpty());
         return savedOrderTable;

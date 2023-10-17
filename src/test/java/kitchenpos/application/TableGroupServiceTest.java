@@ -187,7 +187,7 @@ class TableGroupServiceTest extends BaseServiceTest{
             //when & then
             assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("그룹해제 할수 없는 상태의 테이블을 포함하고 있습니다.");
+                    .hasMessage("이미 주문이 진행 중이에요");
         }
     }
 }

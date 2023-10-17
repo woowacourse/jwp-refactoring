@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.TableGroup;
@@ -15,13 +17,16 @@ import kitchenpos.dto.TableGroupRequest;
 public class TableGroupService {
     private final TableGroupRepository tableGroupRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderRepository orderRepository;
 
     public TableGroupService(
             final TableGroupRepository tableGroupRepository,
-            final OrderTableRepository orderTableRepository
+            final OrderTableRepository orderTableRepository,
+            final OrderRepository orderRepository
     ) {
         this.tableGroupRepository = tableGroupRepository;
         this.orderTableRepository = orderTableRepository;
+        this.orderRepository = orderRepository;
     }
 
     @Transactional
@@ -41,15 +46,14 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByGroupId(tableGroupId);
 
-        // TODO: 2023/10/17 Order repository 만들고 작업
-//
-//        final List<Long> orderTableIds = orderTables.stream()
-//                .map(OrderTable::getId)
-//                .collect(Collectors.toList());
-//        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
-//                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-//            throw new IllegalArgumentException("그룹해제 할수 없는 상태의 테이블을 포함하고 있습니다.");
-//        }
+        final List<Order> orders = orderRepository.findByOrderByTableGroupId(tableGroupId);
+        final boolean containsNotCompletionOrder = orders.stream()
+                .anyMatch(Order::isNotCompletionStatus);
+        if (containsNotCompletionOrder) {
+            throw new IllegalArgumentException("이미 주문이 진행 중이에요");
+        }
+
+
         orderTables.forEach(OrderTable::ungroup);
     }
 }
