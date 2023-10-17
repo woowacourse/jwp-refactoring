@@ -1,11 +1,10 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.vo.Price;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -15,7 +14,8 @@ class ProductTest {
     @DisplayName("[SUCCESS] 생성한다.")
     @Test
     void success_create() {
-        assertThatCode(() -> new Product("테스트용 상품명", new BigDecimal("10000")))
+        assertThatCode(() -> new Product("테스트용 상품명", new
+                Price("10000")))
                 .doesNotThrowAnyException();
     }
 
@@ -32,7 +32,7 @@ class ProductTest {
     @ValueSource(strings = {"-1", "-10", "-100", "-1000000"})
     void throwException_when_price_isNegative(final String value) {
         // expect
-        assertThatThrownBy(() -> new Product("테스트용 상품명", new BigDecimal(value)))
+        assertThatThrownBy(() -> new Product("테스트용 상품명", new Price(value)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
