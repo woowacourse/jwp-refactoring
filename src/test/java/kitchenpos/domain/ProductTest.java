@@ -25,4 +25,11 @@ class ProductTest {
                 .hasMessage("상품의 금액이 존재하지 않거나 음수입니다.");
     }
 
+    @Test
+    @DisplayName("상품을 생성할 때 이름이 존재하지 않으면 예외가 발생한다")
+    void create_fail3() {
+        assertThatThrownBy(() -> new Product("  ", BigDecimal.TEN))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("상품의 이름이 존재하지 않습니다.");
+    }
 }
