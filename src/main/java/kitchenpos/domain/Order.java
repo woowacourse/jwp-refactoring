@@ -7,7 +7,6 @@ import static kitchenpos.exception.OrderExceptionType.ORDER_LINE_ITEMS_CAN_NOT_E
 import static kitchenpos.exception.OrderExceptionType.ORDER_TABLE_CAN_NOT_EMPTY;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -44,18 +43,6 @@ public class Order {
     protected Order() {
     }
 
-    public Order(OrderTable orderTable, String orderStatus) {
-        this(null, orderTable, orderStatus, LocalDateTime.now(), new ArrayList<>());
-    }
-
-    public Order(OrderTable orderTable) {
-        this(null, orderTable, null, LocalDateTime.now(), new ArrayList<>());
-    }
-
-    public Order(Long id, OrderTable orderTable) {
-        this(id, orderTable, null, null, new ArrayList<>());
-    }
-
     public Order(
             Long id,
             OrderTable orderTable,
@@ -79,11 +66,6 @@ public class Order {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new OrderException(ORDER_LINE_ITEMS_CAN_NOT_EMPTY);
         }
-    }
-
-    public void addOrderLineItem(OrderLineItem orderLineItem) {
-        orderLineItems.add(orderLineItem);
-        orderLineItem.setOrder(this);
     }
 
     public void setOrderStatus(String orderStatus) {
