@@ -14,24 +14,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class Fixture {
-    public static Menu menu(final String name, final int price, final Long menuGroupId, final List<MenuProduct> products){
-        final Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(new BigDecimal(price));
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(products);
-
-        return menu;
-    }
-
-    public static MenuProduct menuProduct(final Long menuId, final Long productId, final Long quantity){
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(menuId);
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-
-        return menuProduct;
-    }
 
     public static MenuGroup menuGroup(final String name){
         final MenuGroup menuGroup = new MenuGroup(name);
