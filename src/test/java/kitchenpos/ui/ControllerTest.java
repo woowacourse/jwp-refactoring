@@ -54,20 +54,6 @@ public class ControllerTest {
     @Autowired
     protected ObjectMapper objectMapper;
 
-    protected Menu 메뉴() {
-        MenuProduct menuProduct = new MenuProduct(
-                new Product(1L, "상품", new Price(BigDecimal.ONE)),
-                2
-        );
-
-        return new Menu(
-                "후라이드+후라이드",
-                new Price(BigDecimal.valueOf(19000)),
-                new MenuGroup(1L, "추천메뉴"),
-                List.of(menuProduct)
-        );
-    }
-
     protected Menu 메뉴(Long id) {
         MenuProduct menuProduct = new MenuProduct(
                 new Product(1L, "상품", new Price(BigDecimal.ONE)),
@@ -99,28 +85,6 @@ public class ControllerTest {
         MenuProduct menuProduct = new MenuProduct(1L, product, 3);
         menu.addMenuProduct(menuProduct);
         return SearchMenuResponse.from(menu);
-    }
-
-    protected Order 주문() {
-        OrderLineItem orderLineItem = new OrderLineItem(메뉴(1L), 1);
-        return new Order(
-                null,
-                new OrderTable(1L, 테이블_그룹(), 0, false),
-                null,
-                null,
-                List.of(orderLineItem)
-        );
-    }
-
-    protected Order 주문(Long id) {
-        OrderLineItem orderLineItem = new OrderLineItem(메뉴(1L), 1);
-        return new Order(
-                id,
-                new OrderTable(1L, 테이블_그룹(), 0, false),
-                null,
-                null,
-                List.of(orderLineItem)
-        );
     }
 
     protected Order 식사중인_주문(Long id) {
