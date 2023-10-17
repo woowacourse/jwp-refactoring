@@ -57,4 +57,8 @@ public class Order {
     public void setOrderedTime(final LocalDateTime orderedTime) {
         this.orderedTime = orderedTime;
     }
+
+    public void changeOrderStatus(String orderStatus) {
+        this.orderStatus = orderStatus;
+    }
 }
