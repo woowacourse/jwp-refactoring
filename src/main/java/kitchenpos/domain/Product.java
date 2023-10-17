@@ -19,6 +19,17 @@ public class Product {
     @Embedded
     private Price price;
 
+    public Product() {}
+
+    private Product(final String name, final Price price) {
+        this.name = name;
+        this.price = price;
+    }
+
+    public static Product of(final String name, final BigDecimal price) {
+        return new Product(name, Price.from(price));
+    }
+
     public Long getId() {
         return id;
     }

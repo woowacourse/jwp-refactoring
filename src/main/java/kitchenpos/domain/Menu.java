@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import kitchenpos.application.exception.MenuServiceException.PriceMoreThanProductsException;
 
 @Entity
 public class Menu {
@@ -25,6 +26,37 @@ public class Menu {
     private MenuGroup menuGroup;
     @OneToMany
     private List<MenuProduct> menuProducts;
+
+    public Menu() {
+    }
+
+    private Menu(final String name, final Price price, final MenuGroup menuGroup, final List<MenuProduct> menuProducts) {
+        this.name = name;
+        this.price = price;
+        this.menuGroup = menuGroup;
+        this.menuProducts = menuProducts;
+    }
+
+    public static Menu of(final String name,
+                       final Price price,
+                       final MenuGroup menuGroup,
+                       final List<MenuProduct> menuProducts) {
+
+        validateTotalPrice(price, menuProducts);
+
+        return new Menu(name, price, menuGroup, menuProducts);
+    }
+
+    private static void validateTotalPrice(Price price, List<MenuProduct> menuProducts) {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (final MenuProduct menuProduct : menuProducts) {
+            sum = sum.add(menuProduct.getMenuProductPrice());
+        }
+
+        if (price.isBiggerThan(sum)) {
+            throw new PriceMoreThanProductsException(price.getValue(), sum);
+        }
+    }
 
     public Long getId() {
         return id;
