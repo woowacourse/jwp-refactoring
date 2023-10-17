@@ -2,20 +2,24 @@ package kitchenpos.application;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.fixture.Fixture;
-import org.junit.jupiter.api.BeforeEach;
+import kitchenpos.dto.request.OrderLineItemRequest;
+import kitchenpos.dto.request.OrderRequest;
+import kitchenpos.dto.request.OrderStatusRequest;
+import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.exception.IllegalOrderStatusException;
+import kitchenpos.exception.MenuNotFoundException;
+import kitchenpos.exception.OrderNotFoundException;
+import kitchenpos.exception.OrderTableNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
 import java.util.List;
 
 import static kitchenpos.domain.OrderStatus.COMPLETION;
-import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -25,87 +29,72 @@ class OrderServiceTest extends ServiceBaseTest {
     @Autowired
     protected OrderService orderService;
 
-    private MenuGroup menuGroup;
-    private Menu menu;
-    private OrderTable orderTable;
-    private OrderLineItem orderLineItem;
-
-    @BeforeEach
-    void setUp() {
-        menuGroup = menuGroupDao.save(Fixture.menuGroup("메뉴 그룹"));
-        menu = menuDao.save(Fixture.menu("메뉴1", 1000, menuGroup.getId(), null));
-        orderTable = orderTableDao.save(Fixture.orderTable(null, 0, false));
-        orderLineItem = Fixture.orderLineItem(orderTable.getId(), this.menu.getId(), 3L);
-    }
-
     @Test
     @DisplayName("주문을 생성할 수 있다.")
     void create() {
         //given
-        final Order order = Fixture.order(null, orderTable.getId(), LocalDateTime.now(), List.of(orderLineItem));
+        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
+        final Menu menu = menuRepository.save(new Menu("메뉴1", new BigDecimal(1000), menuGroup));
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 0, false));
+        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 3L);
+
+        final OrderRequest orderRequest = new OrderRequest(orderTable.getId(), List.of(orderLineItemRequest));
 
         //when
-        final Order createdOrder = orderService.create(order);
+        final OrderResponse orderResponse = orderService.create(orderRequest);
 
         //then
-        assertAll(
-                () -> assertThat(createdOrder.getOrderedTime()).isEqualTo(order.getOrderedTime()),
-                () -> assertThat(createdOrder.getOrderLineItems()).usingRecursiveComparison()
-                        .ignoringFields("id", "seq")
-                        .isEqualTo(order.getOrderLineItems())
-        );
-    }
-
-    @Test
-    @DisplayName("주문 항목은 존재해야 한다.")
-    void createValidOrder() {
-        //given
-        final Order order = Fixture.order(null, null, null, null);
-
-        //when&then
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThat(orderResponse.getId()).isNotNull();
     }
 
     @Test
     @DisplayName("주문 항목의 메뉴가 모두 존재해야한다.")
     void createValidOrderItem() {
         //given
-        final OrderLineItem tmpOrderLineItem = Fixture.orderLineItem(null, null, 1L);
-        final Order order = Fixture.order(orderTable.getId(), orderTable.getId(), LocalDateTime.now(), List.of(tmpOrderLineItem));
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 0, false));
+        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(999L, 3L);
+
+        final OrderRequest orderRequest = new OrderRequest(orderTable.getId(), List.of(orderLineItemRequest));
 
         //when&then
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(orderRequest))
+                .isInstanceOf(MenuNotFoundException.class)
+                .hasMessage("메뉴를 찾을 수 없습니다.");
     }
 
     @Test
     @DisplayName("주문 시 주문 테이블이 존재해야한다.")
     void createValidOrderTable() {
         //given
-        orderTable = orderTableDao.save(Fixture.orderTable(null, 0, true));
-        final Order order = Fixture.order(null, orderTable.getId(), LocalDateTime.now(), List.of(orderLineItem));
+        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(999L, 3L);
+        final OrderRequest orderRequest = new OrderRequest(999L, List.of(orderLineItemRequest));
 
         //when&then
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(orderRequest))
+                .isInstanceOf(OrderTableNotFoundException.class)
+                .hasMessage("OrderTable을 찾을 수 없습니다.");
     }
 
     @Test
     @DisplayName("주문 목록을 조회할 수 있다.")
     void list() {
         //given
-        final Order savedOrder = orderService.create(Fixture.order(orderTable.getId(), orderTable.getId(), LocalDateTime.now(), List.of(orderLineItem)));
+        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
+        final Menu menu = menuRepository.save(new Menu("메뉴1", new BigDecimal(1000), menuGroup));
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 0, false));
+        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 3L);
+        final OrderRequest orderRequest = new OrderRequest(orderTable.getId(), List.of(orderLineItemRequest));
+        final OrderResponse orderResponse = orderService.create(orderRequest);
 
         //when
-        final List<Order> orders = orderService.list();
+        final List<OrderResponse> orderResponses = orderService.list();
 
         //then
         assertAll(
-                () -> assertThat(orders).hasSize(1),
-                () -> assertThat(orders.get(0)).usingRecursiveComparison()
+                () -> assertThat(orderResponses).hasSize(1),
+                () -> assertThat(orderResponses.get(0).getOrderLineItems()).usingRecursiveComparison()
                         .ignoringFields("id", "orderLineItems.seq")
-                        .isEqualTo(savedOrder)
+                        .isEqualTo(orderResponse.getOrderLineItems())
         );
     }
 
@@ -113,36 +102,49 @@ class OrderServiceTest extends ServiceBaseTest {
     @DisplayName("주문 상태를 변경할 수 있다.")
     void changeOrderStatus() {
         //given
-        final Order order = orderService.create(Fixture.order(orderTable.getId(), orderTable.getId(), LocalDateTime.now(), List.of(orderLineItem)));
-        order.setOrderStatus(COOKING.name());
+        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
+        final Menu menu = menuRepository.save(new Menu("메뉴1", new BigDecimal(1000), menuGroup));
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 0, false));
+        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 3L);
+        final OrderRequest orderRequest = new OrderRequest(orderTable.getId(), List.of(orderLineItemRequest));
+        final OrderResponse orderResponse = orderService.create(orderRequest);
+        final OrderStatusRequest orderStatusRequest = new OrderStatusRequest(MEAL);
 
         //when
-        final Order changedOrder = orderService.changeOrderStatus(order.getId(), order);
+        final OrderResponse chageOrderResponse = orderService.changeOrderStatus(orderResponse.getId(), orderStatusRequest);
 
         //then
-        assertThat(changedOrder.getOrderStatus()).isEqualTo(order.getOrderStatus());
+        assertThat(chageOrderResponse.getOrderStatus()).isEqualTo(MEAL.name());
     }
 
     @Test
     @DisplayName("상태를 변경하려는 주문은 존재해야한다.")
     void changeOrderStatusValidOrder() {
         //when&then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(null, null))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.changeOrderStatus(999L, null))
+                .isInstanceOf(OrderNotFoundException.class)
+                .hasMessage("주문을 찾을 수 없습니다.");
     }
 
     @Test
     @DisplayName("완료된 주문은 상태를 변경할 수 없다.")
     void changeOrderStatusValidComplitionOrder() {
         //given
-        final Order order = orderService.create(Fixture.order(orderTable.getId(), orderTable.getId(), LocalDateTime.now(), List.of(orderLineItem)));
-        order.setOrderStatus(COMPLETION.name());
+        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
+        final Menu menu = menuRepository.save(new Menu("메뉴1", new BigDecimal(1000), menuGroup));
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 0, false));
+        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 3L);
+        final OrderRequest orderRequest = new OrderRequest(orderTable.getId(), List.of(orderLineItemRequest));
+        final OrderResponse orderResponse = orderService.create(orderRequest);
+        final OrderStatusRequest orderStatusRequest = new OrderStatusRequest(COMPLETION);
+        final OrderStatusRequest orderStatusRequest2 = new OrderStatusRequest(MEAL);
 
         //when
-        orderService.changeOrderStatus(order.getId(), order);
+        final OrderResponse orderResponse2 = orderService.changeOrderStatus(orderResponse.getId(), orderStatusRequest);
 
         //then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), order))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.changeOrderStatus(orderResponse.getId(), orderStatusRequest2))
+                .isInstanceOf(IllegalOrderStatusException.class)
+                .hasMessage("잘못된 주문 상태입니다.");
     }
 }
