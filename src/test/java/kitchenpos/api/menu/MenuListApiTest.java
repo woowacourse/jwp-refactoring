@@ -24,10 +24,7 @@ class MenuListApiTest extends ApiTestConfig {
     void listMenu() throws Exception {
         // given
         // FIXME: domain -> dto 로 변경
-        final Product product = new Product();
-        product.setId(1L);
-        product.setName("여우고기");
-        product.setPrice(BigDecimal.valueOf(17000));
+        final Product product = new Product(1L, "여우가 좋아하는 피자", BigDecimal.valueOf(17000));
 
         final Menu expectedMenu = new Menu();
         expectedMenu.setId(1L);

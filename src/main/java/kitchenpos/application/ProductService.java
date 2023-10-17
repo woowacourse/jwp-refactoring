@@ -27,9 +27,7 @@ public class ProductService {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
-        final Product product = new Product();
-        product.setPrice(price);
-        product.setName(nameAndPrice.getName());
+        final Product product = new Product(null, nameAndPrice.getName(), nameAndPrice.getPrice());
         return ProductCreateResponse.from(productDao.save(product));
     }
 

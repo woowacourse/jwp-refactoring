@@ -21,10 +21,7 @@ class ProductListApiTest extends ApiTestConfig {
     void listProduct() throws Exception {
         // when
         // FIXME: domain -> dto 로 변경
-        final Product expectedProduct = new Product();
-        expectedProduct.setId(1L);
-        expectedProduct.setName("여우고기");
-        expectedProduct.setPrice(BigDecimal.valueOf(17000));
+        final Product expectedProduct = new Product(1L, "피자", BigDecimal.valueOf(17000));
         when(productService.list()).thenReturn(List.of(expectedProduct));
 
         // then

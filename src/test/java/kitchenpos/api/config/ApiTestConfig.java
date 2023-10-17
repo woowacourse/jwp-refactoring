@@ -1,5 +1,6 @@
 package kitchenpos.api.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.application.MenuService;
 import kitchenpos.application.OrderService;
@@ -31,6 +32,9 @@ public class ApiTestConfig {
 
     @Autowired
     protected MockMvc mockMvc;
+
+    @Autowired
+    protected ObjectMapper objectMapper;
 
     @MockBean
     protected ProductService productService;

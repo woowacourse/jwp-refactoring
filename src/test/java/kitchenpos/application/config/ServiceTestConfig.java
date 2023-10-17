@@ -57,9 +57,7 @@ public class ServiceTestConfig {
     protected TableGroupDao tableGroupDao;
 
     protected Product saveProduct() {
-        final Product product = new Product();
-        product.setName("여우 상품");
-        product.setPrice(BigDecimal.valueOf(10000));
+        final Product product = new Product(null, "여우가 좋아하는 피자", BigDecimal.valueOf(10000));
         return productDao.save(product);
     }
 
