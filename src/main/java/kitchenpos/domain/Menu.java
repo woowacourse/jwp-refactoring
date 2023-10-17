@@ -11,7 +11,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 @Entity
@@ -27,7 +26,7 @@ public class Menu {
     private Long menuGroupId;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "menuId", updatable = false, nullable = false)
+    @Column(name = "menuId", updatable = false, nullable = false)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     public Menu() {

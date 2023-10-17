@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.application.request.OrderTableCreateRequest;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -123,22 +124,22 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 해당하는_주문테이블의_주문이_요리중이면_예외() {
             // given
-            Long givenId = orderTableRepository.save(new OrderTable(5, true)).getId();
-            orderRepository.save(new Order(givenId, OrderStatus.COOKING, LocalDateTime.now(), null));
+            OrderTable orderTable = orderTableRepository.save(new OrderTable(5, false));
+            orderRepository.save(new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), List.of(new OrderLineItem(1L, 5))));
 
             // when && then
-            assertThatThrownBy(() -> tableService.changeEmpty(givenId, true))
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), true))
                 .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 해당하는_주문테이블의_주문이_식사중이면_예외() {
             // given
-            Long givenId = orderTableRepository.save(new OrderTable(5, true)).getId();
-            orderRepository.save(new Order(givenId, OrderStatus.MEAL, LocalDateTime.now(), null));
+            OrderTable orderTable = orderTableRepository.save(new OrderTable(5, false));
+            orderRepository.save(new Order(orderTable, OrderStatus.MEAL, LocalDateTime.now(), List.of(new OrderLineItem(1L, 5))));
 
             // when && then
-            assertThatThrownBy(() -> tableService.changeEmpty(givenId, true))
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), true))
                 .isInstanceOf(IllegalArgumentException.class);
         }
     }

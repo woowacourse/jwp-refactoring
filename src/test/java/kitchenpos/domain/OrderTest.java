@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
 
-import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
@@ -20,7 +20,8 @@ class OrderTest {
     @EnumSource(value = OrderStatus.class, names = {"COMPLETION"} ,mode = EXCLUDE)
     void 주문상태가_완료가_아닌지_확인한다_맞는경우(OrderStatus orderStatus) {
         // given
-        Order order = new Order(1L, orderStatus, Collections.emptyList());
+        List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(1L, 2));
+        Order order = new Order(new OrderTable(1L, 5, false), orderStatus, orderLineItems);
 
         // when && then
         assertThat(order.isNotCompletion()).isTrue();
@@ -29,7 +30,8 @@ class OrderTest {
     @Test
     void 주문상태가_완료가_아닌지_확인한다_틀린경우() {
         // given
-        Order order = new Order(1L, OrderStatus.COMPLETION, Collections.emptyList());
+        List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(1L, 2));
+        Order order = new Order(new OrderTable(1L, 5, false), OrderStatus.COMPLETION, orderLineItems);
 
         // when && then
         assertThat(order.isNotCompletion()).isFalse();
@@ -42,7 +44,8 @@ class OrderTest {
         @EnumSource(value = OrderStatus.class, names = {"COMPLETION"} ,mode = EXCLUDE)
         void 성공한다(OrderStatus orderStatus) {
             // given
-            Order order = new Order(1L, orderStatus, Collections.emptyList());
+            List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(1L, 2));
+            Order order = new Order(new OrderTable(1L, 5, false), orderStatus, orderLineItems);
 
             // when
             order.changeOrderStatus(orderStatus);
@@ -55,7 +58,8 @@ class OrderTest {
         @EnumSource(value = OrderStatus.class)
         void 주문상태가_완료라면_변경할_수_없다(OrderStatus orderStatus) {
             // given
-            Order order = new Order(1L, OrderStatus.COMPLETION, Collections.emptyList());
+            List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(1L, 2));
+            Order order = new Order(new OrderTable(1L, 5, false), OrderStatus.COMPLETION, orderLineItems);
 
             // when && then
             assertThatThrownBy(() -> order.changeOrderStatus(orderStatus))
